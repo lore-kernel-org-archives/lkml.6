@@ -2,117 +2,172 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF78ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E9FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54C121476
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:07:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eVfyepG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54C121476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6980320853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:07:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6980320853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeINSWI (ORCPT
+        id S1728307AbeINSWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:22:08 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:17934 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINSWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:22:08 -0400
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w8ED7av3028093;
-        Fri, 14 Sep 2018 22:07:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w8ED7av3028093
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536930457;
-        bh=zHqXSJtCWOn47J+1yfnfb8sNmfaG+JMjWYj1f4x7Q/I=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=eVfyepG+58vdr1zMk4M6ZJXLTumTcNiCZt06SYNM+/jAiCX8MIJYyMWKO+lUnz+l2
-         u3sfUtcgi2RQTvGF/volpBMcafkzSVgFVHN+SQDNZBta+0tT/Qbc22yWYOj/iQWrDY
-         MSk/fwio+4CsAddlAvubbDXDHrLbwOe8iqd2oJtuyH32uI5pUx9oHd4ts7YTgMzHFz
-         7HW06tvWbxaVpQ+NRPGDd1Qplhedx5Iv0Qu1Q6v8suM7wv47F9nris+fz/8OZlZ6hJ
-         299Am/bkT9khV3VEUSysDVzaSiVZTOxblsxmesSY30QcysAidrGKazOJoFXRQMGfTT
-         3UracwHIeyk7g==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id m10-v6so467618vsk.1;
-        Fri, 14 Sep 2018 06:07:36 -0700 (PDT)
-X-Gm-Message-State: APzg51CSP06/Szkrqhe0xNwuAfoKNhhQMfng00HCzP7Vh469OzZ6DGRY
-        AX+gXmJmtUhlBP4vHwuvX05qUHkGckqonGynuiY=
-X-Google-Smtp-Source: ANB0VdZNsx7xu1eYMwaYToEG5SN3qJlwdFGIhG2ht8EGfMnEIr30Do6wPwagheW16XKeZrBrLN3M+/6cgxJTlz/9jc4=
-X-Received: by 2002:a67:7cc9:: with SMTP id x192-v6mr4368947vsc.9.1536930455285;
- Fri, 14 Sep 2018 06:07:35 -0700 (PDT)
+        Fri, 14 Sep 2018 14:22:21 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12135 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727013AbeINSWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:22:21 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1460CF14D8EFD;
+        Fri, 14 Sep 2018 21:07:51 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 14 Sep
+ 2018 21:07:28 +0800
+Date:   Fri, 14 Sep 2018 21:05:35 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180914130535.GD207969@Turing-Arch-b>
+References: <20180907165303.GA3519@redhat.com>
+ <20180910032809.GJ230707@Turing-Arch-b>
+ <20180910145423.GA3488@redhat.com>
+ <20180911024209.GK230707@Turing-Arch-b>
+ <20180911033358.GA4730@redhat.com>
+ <20180911064043.GA207969@Turing-Arch-b>
+ <20180911134013.GA3932@redhat.com>
+ <20180913083232.GB207969@Turing-Arch-b>
+ <20180913145149.GB3576@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 06:06:54
- -0700 (PDT)
-In-Reply-To: <1536733082-19110-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1536733082-19110-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 14 Sep 2018 22:06:54 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARaKFfC_VR8HXWvMf7HQtP2b9YvHfH_WTLer0uGdkPVzg@mail.gmail.com>
-Message-ID: <CAK7LNARaKFfC_VR8HXWvMf7HQtP2b9YvHfH_WTLer0uGdkPVzg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: remove old check for CFLAGS use
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-12 15:18 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> This check has been here more than a decade since commit 0c53c8e6eb45
-> ("kbuild: check for wrong use of CFLAGS").
->
-> Enough time for migration has passed.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On Fri, Sep 14, 2018 at 06:50:55AM +0000, Tian, Kevin wrote:
+> Date: Fri, 14 Sep 2018 06:50:55 +0000
+> From: "Tian, Kevin" <kevin.tian@intel.com>
+> To: Jerome Glisse <jglisse@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>
+> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
+>  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+>  "kvm@vger.kernel.org" <kvm@vger.kernel.org>, Jonathan Corbet
+>  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zaibo
+>  Xu <xuzaibo@huawei.com>, "linux-doc@vger.kernel.org"
+>  <linux-doc@vger.kernel.org>, "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+>  Hao Fang <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
+>  <linux-kernel@vger.kernel.org>, "linuxarm@huawei.com"
+>  <linuxarm@huawei.com>, "iommu@lists.linux-foundation.org"
+>  <iommu@lists.linux-foundation.org>, "David S . Miller"
+>  <davem@davemloft.net>, "linux-crypto@vger.kernel.org"
+>  <linux-crypto@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+>  Philippe Ombredanne <pombredanne@nexb.com>, Thomas Gleixner
+>  <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
+>  "linux-accelerators@lists.ozlabs.org"
+>  <linux-accelerators@lists.ozlabs.org>, Lu Baolu <baolu.lu@linux.intel.com>
+> Subject: RE: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+> Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
+> 
+> > From: Jerome Glisse
+> > Sent: Thursday, September 13, 2018 10:52 PM
+> >
+> [...]
+>  > AFAIK, on x86 and PPC at least, all PCIE devices are in the same group
+> > by default at boot or at least all devices behind the same bridge.
+> 
+> the group thing reflects physical hierarchy limitation, not changed
+> cross boot. Please note iommu group defines the minimal isolation
+> boundary - all devices within same group must be attached to the
+> same iommu domain or address space, because physically IOMMU
+> cannot differentiate DMAs out of those devices. devices behind
+> legacy PCI-X bridge is one example. other examples include devices
+> behind a PCIe switch port which doesn't support ACS thus cannot
+> route p2p transaction to IOMMU. If talking about typical PCIe 
+> endpoint (with upstreaming ports all supporting ACS), you'll get
+> one device per group.
+> 
+> One iommu group today is attached to only one iommu domain.
+> In the future one group may attach to multiple domains, as the
+> aux domain concept being discussed in another thread.
+> 
+> > 
+> > Maybe they are kernel option to avoid that and userspace init program
+> > can definitly re-arrange that base on sysadmin policy).
+> 
+> I don't think there is such option, as it may break isolation model
+> enabled by IOMMU.
+> 
+> [...]
+> > > > That is why i am being pedantic :) on making sure there is good reasons
+> > > > to do what you do inside VFIO. I do believe that we want a common
+> > frame-
+> > > > work like the one you are proposing but i do not believe it should be
+> > > > part of VFIO given the baggages it comes with and that are not relevant
+> > > > to the use cases for this kind of devices.
+> > >
+> 
+> The purpose of VFIO is clear - the kernel portal for granting generic 
+> device resource (mmio, irq, etc.) to user space. VFIO doesn't care
+> what exactly a resource is used for (queue, cmd reg, etc.). If really
+> pursuing VFIO path is necessary, maybe such common framework
+> should lay down in user space, which gets all granted resource from
+> kernel driver thru VFIO and then provides accelerator services to 
+> other processes?
 
-Applied to linux-kbuild.
+Yes. I think this is exactly what WarpDrive is now doing. This patch is just let
+the type1 driver use parent IOMMU for mdev.
 
->  scripts/Makefile.build | 10 ----------
->  1 file changed, 10 deletions(-)
->
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 5a2d1c9..cb03774 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -36,21 +36,11 @@ subdir-ccflags-y :=
->
->  include scripts/Kbuild.include
->
-> -# For backward compatibility check that these variables do not change
-> -save-cflags := $(CFLAGS)
-> -
->  # The filename Kbuild has precedence over Makefile
->  kbuild-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
->  kbuild-file := $(if $(wildcard $(kbuild-dir)/Kbuild),$(kbuild-dir)/Kbuild,$(kbuild-dir)/Makefile)
->  include $(kbuild-file)
->
-> -# If the save-* variables changed error out
-> -ifeq ($(KBUILD_NOPEDANTIC),)
-> -        ifneq ("$(save-cflags)","$(CFLAGS)")
-> -                $(error CFLAGS was changed in "$(kbuild-file)". Fix it to use ccflags-y)
-> -        endif
-> -endif
-> -
->  include scripts/Makefile.lib
->
->  # Do not include host rules unless needed
-> --
-> 2.7.4
->
-
-
+> 
+> Thanks
+> Kevin
 
 -- 
-Best Regards
-Masahiro Yamada
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
+
