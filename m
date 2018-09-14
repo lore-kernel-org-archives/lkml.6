@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C197FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D60ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD1420882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:12:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD1420882
+	by mail.kernel.org (Postfix) with ESMTP id CDB9A20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB9A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbeINOZu (ORCPT
+        id S1728037AbeINOaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:25:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33920 "EHLO mx1.suse.de"
+        Fri, 14 Sep 2018 10:30:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34690 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727403AbeINOZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:25:50 -0400
+        id S1727772AbeINOaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:30:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 10774AD65;
-        Fri, 14 Sep 2018 09:12:14 +0000 (UTC)
-Subject: Re: [PATCH 5/6] xenbus: process be_watch events in xenwatch
- multithreading
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9F2F3ADEF;
+        Fri, 14 Sep 2018 09:16:30 +0000 (UTC)
+Subject: Re: [PATCH 6/6] drivers: enable xenwatch multithreading for
+ xen-netback and xen-blkback driver
 To:     Dongli Zhang <dongli.zhang@oracle.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 Cc:     boris.ostrovsky@oracle.com, paul.durrant@citrix.com,
         wei.liu2@citrix.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
         srinivas.eeda@oracle.com
 References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
- <1536910456-13337-6-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-7-git-send-email-dongli.zhang@oracle.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -68,12 +68,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <8d6457cf-a105-3d88-bd38-d46b24f70501@suse.com>
-Date:   Fri, 14 Sep 2018 11:12:13 +0200
+Message-ID: <518d3ec9-0d2d-7f77-e750-3e1329f7e97b@suse.com>
+Date:   Fri, 14 Sep 2018 11:16:30 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1536910456-13337-6-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1536910456-13337-7-git-send-email-dongli.zhang@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,84 +83,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 14/09/18 09:34, Dongli Zhang wrote:
-> This is the 5th patch of a (6-patch) patch set.
+> This is the 6th patch of a (6-patch) patch set.
 > 
-> With this patch, watch event in relative path pattern
-> 'backend/<pvdev>/<domid>i/...' can be processed in per-domU xenwatch
-
-superfluous "i" ----------^
-
-> thread.
+> As the 'use_mtwatch' for xen-netback and xen-blkback are set to true,
+> probing any xenbus devices of those two drivers would create the per-domU
+> xenwatch thread for the domid the new devices belong to, or increment the
+> reference count  of existing thread.
+> 
+> Xenwatch multithreading might be enabled for more xen backend pv drivers in
+> the future.
 > 
 > Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
 > ---
->  drivers/xen/xenbus/xenbus_probe.c         |  2 +-
->  drivers/xen/xenbus/xenbus_probe_backend.c | 32 +++++++++++++++++++++++++++++++
->  include/xen/xenbus.h                      |  2 ++
->  3 files changed, 35 insertions(+), 1 deletion(-)
+>  drivers/block/xen-blkback/xenbus.c | 3 ++-
+>  drivers/net/xen-netback/xenbus.c   | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
-> index ba0644c..aa1b15a 100644
-> --- a/drivers/xen/xenbus/xenbus_probe.c
-> +++ b/drivers/xen/xenbus/xenbus_probe.c
-> @@ -552,7 +552,7 @@ int xenbus_probe_devices(struct xen_bus_type *bus)
->  }
->  EXPORT_SYMBOL_GPL(xenbus_probe_devices);
+> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> index a4bc74e..debbbd0 100644
+> --- a/drivers/block/xen-blkback/xenbus.c
+> +++ b/drivers/block/xen-blkback/xenbus.c
+> @@ -1108,7 +1108,8 @@ static struct xenbus_driver xen_blkbk_driver = {
+>  	.ids  = xen_blkbk_ids,
+>  	.probe = xen_blkbk_probe,
+>  	.remove = xen_blkbk_remove,
+> -	.otherend_changed = frontend_changed
+> +	.otherend_changed = frontend_changed,
+> +	.use_mtwatch = true,
+>  };
 >  
-> -static unsigned int char_count(const char *str, char c)
-> +unsigned int char_count(const char *str, char c)
+>  int xen_blkif_xenbus_init(void)
+> diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+> index cd51492..63d46a7 100644
+> --- a/drivers/net/xen-netback/xenbus.c
+> +++ b/drivers/net/xen-netback/xenbus.c
+> @@ -1203,6 +1203,7 @@ static struct xenbus_driver netback_driver = {
+>  	.remove = netback_remove,
+>  	.uevent = netback_uevent,
+>  	.otherend_changed = frontend_changed,
+> +	.use_mtwatch = true,
 
-Please change the name of the function when making it globally
-visible, e.g. by prefixing "xenbus_".
+Is there a special reason why kernel based backends shouldn't all use
+the multithread model? This would avoid the need for the use_mtwatch
+struct member.
 
-Generally I think you don't need to use it below.
+This is meant as an honest question. I'm really not sure we should
+switch all backends at once. OTOH I can't see any real downsides.
 
->  {
->  	unsigned int i, ret = 0;
->  
-> diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
-> index b0bed4f..50df86a 100644
-> --- a/drivers/xen/xenbus/xenbus_probe_backend.c
-> +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
-> @@ -211,9 +211,41 @@ static void backend_changed(struct xenbus_watch *watch,
->  	xenbus_dev_changed(path, &xenbus_backend);
->  }
->  
-> +static domid_t path_to_domid(const char *path)
-> +{
-> +	const char *p = path;
-> +	domid_t domid = 0;
-> +
-> +	while (*p) {
-> +		if (*p < '0' || *p > '9')
-> +			break;
-> +		domid = (domid << 3) + (domid << 1) + (*p - '0');
-
-reinventing atoi()?
-
-Please don't do that. kstrtou16() seems to be a perfect fit.
-
-> +		p++;
-> +	}
-> +
-> +	return domid;
-> +}
-> +
-> +/* path: backend/<pvdev>/<domid>/... */
-> +static domid_t be_get_domid(struct xenbus_watch *watch,
-> +			    const char *path,
-> +			    const char *token)
-> +{
-> +	const char *p = path;
-> +
-> +	if (char_count(path, '/') < 2)
-> +		return 0;
-> +
-> +	p = strchr(p, '/') + 1;
-> +	p = strchr(p, '/') + 1;
-
-Drop the call of char_count() above and test p for being non-NULL
-after each call of strchr?
+Thoughts?
 
 
 Juergen
