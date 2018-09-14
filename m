@@ -2,85 +2,111 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835D0FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9DBECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C9120861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:24:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C9120861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A8E420861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8E420861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeINQjA (ORCPT
+        id S1728131AbeINQjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:39:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:57033 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727645AbeINQjA (ORCPT
+        Fri, 14 Sep 2018 12:39:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34934 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbeINQjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:39:00 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1g0mDT-000051-KR; Fri, 14 Sep 2018 11:24:51 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: greybus: fix spelling mistake "entires" -> "entries"
-Date:   Fri, 14 Sep 2018 12:24:51 +0100
-Message-Id: <20180914112451.4127-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 14 Sep 2018 12:39:11 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48FA6C8A;
+        Fri, 14 Sep 2018 11:25:07 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 13:25:04 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.19-rc4
+Message-ID: <20180914112504.GA27511@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
-Trivial fix to spelling mistake
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/greybus/tools/README.loopback | 2 +-
- drivers/staging/greybus/tools/loopback_test.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/staging/greybus/tools/README.loopback b/drivers/staging/greybus/tools/README.loopback
-index 845b08dc4696..070a510cbe7c 100644
---- a/drivers/staging/greybus/tools/README.loopback
-+++ b/drivers/staging/greybus/tools/README.loopback
-@@ -79,7 +79,7 @@ Here is the summary of the available options:
-    -t     must be one of the test names - sink, transfer or ping
-    -i     iteration count - the number of iterations to run the test over
-  Optional arguments
--   -S     sysfs location - location for greybus 'endo' entires default /sys/bus/greybus/devices/
-+   -S     sysfs location - location for greybus 'endo' entries default /sys/bus/greybus/devices/
-    -D     debugfs location - location for loopback debugfs entries default /sys/kernel/debug/gb_loopback/
-    -s     size of data packet to send during test - defaults to zero
-    -m     mask - a bit mask of connections to include example: -m 8 = 4th connection -m 9 = 1st and 4th connection etc
-diff --git a/drivers/staging/greybus/tools/loopback_test.c b/drivers/staging/greybus/tools/loopback_test.c
-index b82e2befe935..2fa88092514d 100644
---- a/drivers/staging/greybus/tools/loopback_test.c
-+++ b/drivers/staging/greybus/tools/loopback_test.c
-@@ -192,7 +192,7 @@ void usage(void)
- 	"   -t     must be one of the test names - sink, transfer or ping\n"
- 	"   -i     iteration count - the number of iterations to run the test over\n"
- 	" Optional arguments\n"
--	"   -S     sysfs location - location for greybus 'endo' entires default /sys/bus/greybus/devices/\n"
-+	"   -S     sysfs location - location for greybus 'endo' entries default /sys/bus/greybus/devices/\n"
- 	"   -D     debugfs location - location for loopback debugfs entries default /sys/kernel/debug/gb_loopback/\n"
- 	"   -s     size of data packet to send during test - defaults to zero\n"
- 	"   -m     mask - a bit mask of connections to include example: -m 8 = 4th connection -m 9 = 1st and 4th connection etc\n"
--- 
-2.17.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-4.19-rc4
 
+for you to fetch changes up to 422b3db2a5036add39a82425b1dd9fb6c96481e8:
+
+  firmware: Fix security issue with request_firmware_into_buf() (2018-09-12 09:31:00 +0200)
+
+----------------------------------------------------------------
+Char/Misc driver fixes for 4.19-rc4
+
+Here are a small handful of char/misc driver fixes for 4.19-rc4.
+
+All of them are simple, resolving reported problems in a few drivers.
+Full details are in the shortlog.
+
+All of these have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alexander Usyskin (1):
+      mei: ignore not found client in the enumeration
+
+Bryant G. Ly (1):
+      misc: ibmvsm: Fix wrong assignment of return code
+
+Gustavo A. R. Silva (1):
+      misc: hmc6352: fix potential Spectre v1
+
+John Hubbard (1):
+      mei: fix use-after-free in mei_cl_write
+
+K. Y. Srinivasan (1):
+      Tools: hv: Fix a bug in the key delete code
+
+Minchan Kim (1):
+      android: binder: fix the race mmap and alloc_new_buf_locked
+
+Rishabh Bhatnagar (1):
+      firmware: Fix security issue with request_firmware_into_buf()
+
+Stephen Hemminger (1):
+      vmbus: don't return values for uninitalized channels
+
+Tomas Winkler (2):
+      mei: bus: fix hw module get/put balance
+      mei: bus: need to unlink client before freeing
+
+Wei Yongjun (1):
+      fpga: dfl: fme: fix return value check in in pr_mgmt_init()
+
+ drivers/android/binder_alloc.c      | 43 ++++++++++++++++++++++++++++++-------
+ drivers/base/firmware_loader/main.c | 30 +++++++++++++++-----------
+ drivers/fpga/dfl-fme-pr.c           |  2 +-
+ drivers/hv/vmbus_drv.c              |  3 +++
+ drivers/misc/hmc6352.c              |  2 ++
+ drivers/misc/ibmvmc.c               |  2 +-
+ drivers/misc/mei/bus.c              | 12 +++++------
+ drivers/misc/mei/client.c           |  2 +-
+ drivers/misc/mei/hbm.c              |  9 +++++---
+ tools/hv/hv_kvp_daemon.c            |  2 +-
+ 10 files changed, 73 insertions(+), 34 deletions(-)
