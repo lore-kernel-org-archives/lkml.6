@@ -2,92 +2,146 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BB4ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6B6ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED6720853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:19:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED6720853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 68C75206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:20:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="icwvZZnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C75206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbeINSd6 (ORCPT
+        id S1728023AbeINSfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:33:58 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49975 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbeINSd5 (ORCPT
+        Fri, 14 Sep 2018 14:35:17 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36040 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINSfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:33:57 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g0o0L-0006lC-05; Fri, 14 Sep 2018 15:19:25 +0200
-Date:   Fri, 14 Sep 2018 15:19:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        virtualization@lists.linux-foundation.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/11] x86/vdso: Cleanups, simmplifications and CLOCK_TAI
- support
-In-Reply-To: <63a0f67d-fdb1-e2fc-5d4d-4f3cfbf86fd1@redhat.com>
-Message-ID: <alpine.DEB.2.21.1809141514180.10480@nanos.tec.linutronix.de>
-References: <20180914125006.349747096@linutronix.de> <2f723b28-8f81-4b02-861c-42f756a8825a@redhat.com> <alpine.DEB.2.21.1809141459530.10480@nanos.tec.linutronix.de> <63a0f67d-fdb1-e2fc-5d4d-4f3cfbf86fd1@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 14 Sep 2018 14:35:16 -0400
+Received: from [192.168.0.23] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C59ECCE;
+        Fri, 14 Sep 2018 15:20:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536931246;
+        bh=pf0GCovhYCE3fX8DkcqJDq29V1iIoXYz9G8liI8KQIs=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=icwvZZnZMgz94t/cEvCS35OsPGFhHrsmuYQJO83aIVLCwwGMj3urdRcx9k/M/E+Ql
+         2oBFzshXW2AYF054SZpFfDx9kS0xs6DPN+mKuAumtcJQoxdC1LeL+lOOfN5cQ1xl43
+         q8ZCqGBtqSJ0T6gIwj8GzUf+39IuJDI4QHAardLg=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/3] drm: rcar-du: Add pixel format support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
+ <3865052.iN5JJav0kF@avalon>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <b338a8f7-6af6-8e35-7de3-67f43dd2d52d@ideasonboard.com>
+Date:   Fri, 14 Sep 2018 14:20:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <3865052.iN5JJav0kF@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2018, Florian Weimer wrote:
+Hi Laurent,
 
-> On 09/14/2018 03:05 PM, Thomas Gleixner wrote:
-> > On Fri, 14 Sep 2018, Florian Weimer wrote:
-> > 
-> > > On 09/14/2018 02:50 PM, Thomas Gleixner wrote:
-> > > > Matt attempted to add CLOCK_TAI support to the VDSO clock_gettime()
-> > > > implementation, which extended the clockid switch case and added yet
-> > > > another slightly different copy of the same code.
-> > > > 
-> > > > Especially the extended switch case is problematic as the compiler tends
-> > > > to
-> > > > generate a jump table which then requires to use retpolines.
-> > > 
-> > > Does vDSO code really have to use retpolines?  It's in userspace, after
-> > > all.
-> > 
-> > Unless you have IBRS/STIPB enabled, you need user space ratpoutine as well.
+On 14/09/18 12:17, Laurent Pinchart wrote:
+> Hi Kieran,
 > 
-> I don't think this is a consensus position, and it obviously depends on the
-> (sub)architecture.
+> On Friday, 31 August 2018 21:12:58 EEST Kieran Bingham wrote:
+>> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>>
+>> This patch supports pixel format of RGB332, ARGB4444, XRGB4444,
+>> BGR888, RGB888, BGRA8888, BGRX8888 and YVYU.
+>> VYUY pixel format is not supported by H/W specification.
+> 
+> Should VYUY be removed from rcar_du_vsp.c ? This can be done in a separate 
+> patch.
 
-It does, but we are not building kernels for specific micro architectures
-nor do distros AFAIK.
+On further consideration - yes, I believe it should.
 
-But that aside, even with jump tables the generated code (ratpoutine
-disabled) is not any better than with the current approach. It's even worse
-and needs the same optimizations at the end and then the main difference is
-that you have 3 copies of one function and 2 of the other. Not a win at
-all.
+Removal patch generated, and doesn't negatively affect the current
+kms-tests, so expect it in your inbox imminently.
 
-Thanks,
+--
+Regards
 
-	tglx
+Kieran
 
+
+> 
+>> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>>
+>> This patch does not remove existing support for multiplanar YVUY, even
+>> though the hardware does not explicitly provide it, because we support
+>> it through software by swapping the plane buffers.
+>>
+>>  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 32 +++++++++++++++++++++++++++
+>>  1 file changed, 32 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 7c7aff8cdf77..d1bd174ec893
+>> 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> @@ -124,6 +124,38 @@ static const struct rcar_du_format_info
+>> rcar_du_format_infos[] = { .fourcc = DRM_FORMAT_YVU444,
+>>  		.bpp = 24,
+>>  		.planes = 3,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_RGB332,
+>> +		.bpp = 8,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_ARGB4444,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_XRGB4444,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGR888,
+>> +		.bpp = 24,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_RGB888,
+>> +		.bpp = 24,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGRA8888,
+>> +		.bpp = 32,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGRX8888,
+>> +		.bpp = 32,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_YVYU,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>>  	},
+>>  };
+> 
+> 
 
