@@ -2,163 +2,110 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888F0FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31929FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263BE20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263BE20861
+	by mail.kernel.org (Postfix) with ESMTP id C271120861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:14:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C271120861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeINMYO (ORCPT
+        id S1727771AbeINM1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:24:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46892 "EHLO mx1.suse.de"
+        Fri, 14 Sep 2018 08:27:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47386 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727005AbeINMYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:24:13 -0400
+        id S1726527AbeINM1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 08:27:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B20A9AC3B;
-        Fri, 14 Sep 2018 07:11:04 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 09:10:56 +0200
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9CE25AE1D;
+        Fri, 14 Sep 2018 07:14:35 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 09:14:34 +0200
 From:   Borislav Petkov <bp@suse.de>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v8 1/2] x86/mm: add .bss..decrypted section to hold
- shared variables
-Message-ID: <20180914071056.GA4747@zn.tnic>
-References: <1536875471-17391-1-git-send-email-brijesh.singh@amd.com>
- <1536875471-17391-2-git-send-email-brijesh.singh@amd.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, jnwang@suse.com, tiwai@suse.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?SsO2cmcgUsO2ZGVs?= <jroedel@suse.de>
+Subject: Re: [REGRESSION] Errors at reboot after 722e5f2b1eec
+Message-ID: <20180914071434.GB4747@zn.tnic>
+References: <s5hk1ns1m8n.wl-tiwai@suse.de>
+ <2551848.SakgYeHO72@aspire.rjw.lan>
+ <CAFgQCTuNb4XOg6LaY=m92zbhDTNmYkh11Dxy4OGbXtY09oXb9A@mail.gmail.com>
+ <1606736.qIHCQIUCDK@aspire.rjw.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1536875471-17391-2-git-send-email-brijesh.singh@amd.com>
+In-Reply-To: <1606736.qIHCQIUCDK@aspire.rjw.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 04:51:10PM -0500, Brijesh Singh wrote:
-> kvmclock defines few static variables which are shared with the
-> hypervisor during the kvmclock initialization.
++ Jörg.
 
-...
-
-> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-> index 8047379..c16af27 100644
-> --- a/arch/x86/kernel/head64.c
-> +++ b/arch/x86/kernel/head64.c
-> @@ -112,6 +112,7 @@ static bool __head check_la57_support(unsigned long physaddr)
->  unsigned long __head __startup_64(unsigned long physaddr,
->  				  struct boot_params *bp)
->  {
-> +	unsigned long vaddr, vaddr_end;
->  	unsigned long load_delta, *p;
->  	unsigned long pgtable_flags;
->  	pgdval_t *pgd;
-> @@ -235,6 +236,21 @@ unsigned long __head __startup_64(unsigned long physaddr,
->  	sme_encrypt_kernel(bp);
->  
->  	/*
-> +	 * Clear the memory encryption mask from the .bss..decrypted section.
-> +	 * The bss section will be memset to zero later in the initialization so
-> +	 * there is no need to zero it after changing the memory encryption
-> +	 * attribute.
-> +	 */
-> +	if (mem_encrypt_active()) {
-> +		vaddr = (unsigned long)__start_bss_decrypted;
-> +		vaddr_end = (unsigned long)__end_bss_decrypted;
-> +		for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
-> +			i = pmd_index(vaddr);
-> +			pmd[i] -= sme_get_me_mask();
-> +		}
-> +	}
-
-Why isn't this chunk at the end of sme_encrypt_kernel() instead of here?
-
-> +	/*
->  	 * Return the SME encryption mask (if SME is active) to be used as a
->  	 * modifier for the initial pgdir entry programmed into CR3.
->  	 */
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index 9c77d2d..0d618ee 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -65,6 +65,23 @@ jiffies_64 = jiffies;
->  #define ALIGN_ENTRY_TEXT_BEGIN	. = ALIGN(PMD_SIZE);
->  #define ALIGN_ENTRY_TEXT_END	. = ALIGN(PMD_SIZE);
->  
-> +/*
-> + * This section contains data which will be mapped as decrypted. Memory
-> + * encryption operates on a page basis. Make this section PMD-aligned
-> + * to avoid splitting the pages while mapping the section early.
-> + *
-> + * Note: We use a separate section so that only this section gets
-> + * decrypted to avoid exposing more than we wish.
-> + */
-> +#define BSS_DECRYPTED						\
-> +	. = ALIGN(PMD_SIZE);					\
-> +	__start_bss_decrypted = .;				\
-> +	*(.bss..decrypted);					\
-> +	. = ALIGN(PAGE_SIZE);					\
-> +	__start_bss_decrypted_unused = .;			\
-> +	. = ALIGN(PMD_SIZE);					\
-> +	__end_bss_decrypted = .;				\
-> +
->  #else
->  
->  #define X86_ALIGN_RODATA_BEGIN
-> @@ -74,6 +91,7 @@ jiffies_64 = jiffies;
->  
->  #define ALIGN_ENTRY_TEXT_BEGIN
->  #define ALIGN_ENTRY_TEXT_END
-> +#define BSS_DECRYPTED
->  
->  #endif
->  
-> @@ -345,6 +363,7 @@ SECTIONS
->  		__bss_start = .;
->  		*(.bss..page_aligned)
->  		*(.bss)
-> +		BSS_DECRYPTED
->  		. = ALIGN(PAGE_SIZE);
->  		__bss_stop = .;
-
-Putting it in the BSS would need a bit of care in the future as it poses
-a certain ordering on the calls in x86_64_start_kernel() (not that there
-isn't any now :)):
-
-You have:
-
-x86_64_start_kernel:
-
-	...
-
-	clear_bss();
-
-	...
-
-	x86_64_start_reservations() -> ... -> setup_arch() -> kvmclock_init()
-
-so it would be prudent to put at least a comment somewhere, say, over
-the definition of BSS_DECRYPTED or so, that attention should be paid to
-the clear_bss() call early.
-
-Thx.
+On Fri, Sep 14, 2018 at 08:26:07AM +0200, Rafael J. Wysocki wrote:
+> On Friday, September 14, 2018 4:29:46 AM CEST Pingfan Liu wrote:
+> > On Thu, Sep 13, 2018 at 10:15 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > On Thursday, September 13, 2018 12:03:36 PM CEST James Wang wrote:
+> > > >  This is a multi-part message in MIME format.
+> > > > --------------F5519E624D0AD1E3F7DDA019
+> > > > Content-Type: text/plain; charset=utf-8
+> > > > Content-Transfer-Encoding: 8bit
+> > > >
+> > > >
+> > > >
+> > > > On 09/11/2018 02:15 PM, Takashi Iwai wrote:
+> > > > > On Tue, 11 Sep 2018 14:11:30 +0200,
+> > > > > James Wang wrote:
+> > > > >> I did try it from kernel : head
+> > > > > OK, then the bug is present with 4.19-rc2, at least.
+> > > > > Please check my test kernel later (it's still being built).
+> > > > Hi folks,  I attach two log about 4.19-rc3 and 4.19-rc3+Rafeal suggestion.
+> > >
+> > > OK, no difference AFAICS.
+> > >
+> > > This means that the commit turned up by bisection simply uncovered an existing
+> > > ordering issue, apparently between an IOMMU and its client (ie. it appears that
+> > > the client is shut down after the IOMMU).
+> > >
+> > > This isn't limited to shutdown and you'd see the same issue on system-wide
+> > > suspend/resume (in fact, the Pingfan Liu's patches make shutdown use the
+> > > same device list that is used for system-wide PM).
+> > >
+> > > One way to mitigate such issues is to add a device link between the two
+> > > devices in question to enforce the correct suspend/resume/shutdown ordering
+> > > between them.
+> > >
+> > I found the iommu was at  " 0000:00:00.2", while  ohci-pci is at
+> > 0000:00:13.1. Hence ohci-pci should be shutdown before iommu. Not
+> > familiar with AMD's iommu code, but I think there is no shutdown
+> > interface exported to drivers/base. It is shutdown by platform code in
+> > arch/x86. So I think there should be someone teared down the iotbl,
+> > e.g. by invalidating pages, before the shutdown of ohci-pci. I wonder
+> > whether adding a device link can fix this bug or not. (Forgive me if I
+> > made a mistake, since I am ignorant in this field)
+> 
+> Adding a device link should help, as it effectively causes dpm_list to
+> be reordered in accordance with the link direction, but it also takes
+> care of the other children and linked devices as appropriate.
+> 
+> The difficulty is that whoever wants to add a device link between two
+> devices needs to have pointers to the device objects in question upfront.
+> 
+> Thanks,
+> Rafael
+> 
 
 -- 
 Regards/Gruss,
