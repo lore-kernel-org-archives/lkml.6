@@ -3,87 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A4CC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFC7C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D55A320882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F8F720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:01:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvE+Z6Cg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D55A320882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=6wind-com.20150623.gappssmtp.com header.i=@6wind-com.20150623.gappssmtp.com header.b="z7AnqtIi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8F720861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=6wind.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeINNG7 (ORCPT
+        id S1728034AbeINNO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:06:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38871 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeINNG7 (ORCPT
+        Fri, 14 Sep 2018 09:14:59 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41929 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbeINNO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:06:59 -0400
-Received: by mail-it0-f66.google.com with SMTP id p129-v6so1419418ite.3;
-        Fri, 14 Sep 2018 00:53:43 -0700 (PDT)
+        Fri, 14 Sep 2018 09:14:58 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y17-v6so6771587ljy.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:01:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=6wind-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CEjH+hq+lDksk3ILSwjRxrjDuRRIxRJIhJMgyKr6nYk=;
-        b=lvE+Z6CgpFfvIxAu0j+XFxk+XA4A/j2o+lIehynnCpvyFAbytpjqGTXXZS7vhPtUuH
-         +oBqoMHxU2NagpfaDL6ivg1lHvD1XY035sASsSooDao6a0ZlkX63oPRNlkQrK3fuCwgw
-         CeeD9NDxHehFQWkfsDS3ut+pPwd5SDnRxXdR6vIaRdDCT9OsHMwbZtanreL7X3pADr5T
-         TqkxVZdVDlXcxQbvAr23Or0+FQXqoplJUMRDVBuqr4Qy8GoOuuLUvgvNFG4HXn06+58B
-         qilW59mMsavOziOx6uFyoB59ePx2mVF6TuO79Cnm6lP0qpt6d8nuDV8eZrD81AezuDAW
-         3npA==
+         :cc:content-transfer-encoding;
+        bh=x74HoJSqQfCB8Z5Lb4LcgZvgqTAwUhUcK/T5a7KFt+U=;
+        b=z7AnqtIiZB7H/85aHBOlfL37hGU8sTdX/EARRV3vNm+t4EuHEk9mADFHBmR98TGN57
+         QjnSLadXIa+ZL39DXVB61kc4jr3l6WekEUjzR3zr19Wi4qckkWWI6p+eLHlfjTgpCB3H
+         pLTtd7jyzMQwk/ZW8YM9f2YbAyfDKs1IpLjC3L4F6GHIMeSjTvEBAe1GCDcctwBU8v63
+         /o7iLgxP9p9osfJAEsJXe1NFqKt+Ng1slcCgGtYlm3vs+JkAN9osPanZdVhr9HUJ7NRn
+         OJzl5c0epDmvQ8v0hIMcEodxVSS81G8p7V5gLWRprZm9Vm+lpuYh1FhubPy6f263q+2c
+         dcIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CEjH+hq+lDksk3ILSwjRxrjDuRRIxRJIhJMgyKr6nYk=;
-        b=kxOIfoSA1iHGaDcvoak+dzfMuu4+Tzd0i7fAKZ2cd6M8AifDkdcza8DQyuQl5afp/a
-         NIIqbSFpyA/lKQTk/O+ENptToZ+z3HTLPat1rpR0RlAdNwU1ZUHe+vPNAEZ0TZR1Hqw0
-         u6G4KkSmgLu/3UkQ9rDP0mg0Y4WkOm2Q6m9AaPHh6ceWYjWVuzKFkbjM2tlwK0WkvU4F
-         5cG2acTHXSJRZn7RTNWq58dtxvrk8vIxe708Ef37FCsKbuHY+3jZnz+kWTwcKReRbQO8
-         QWPNB7qwTZMrImY+gO+tQLS2zdcexdAN2B+bIV9LgxLcVAlsWzlGOKzVnVznIL1gV3FU
-         DF4w==
-X-Gm-Message-State: APzg51BWMD3ap7J/uMU6XIhtCj/gq64t0ES0lHfCkXiHSNExi0QgaADs
-        AVKJYswz2Llm5qZIfeU7vCG25Jb4kaW5CbvLMjA=
-X-Google-Smtp-Source: ANB0Vdal1fSAillEyZ9wpUQtCM1j6mbc3Rb9aFu3he87ao+WLhJKcWEYvjZGnd329syh1u8gpZWQJ4uD3UDDvgA63dY=
-X-Received: by 2002:a02:45cf:: with SMTP id o76-v6mr10030833jad.128.1536911623477;
- Fri, 14 Sep 2018 00:53:43 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=x74HoJSqQfCB8Z5Lb4LcgZvgqTAwUhUcK/T5a7KFt+U=;
+        b=mkwFcFvQFVH/VfsuZ5kY6AGpYU3agqMaruiZJs0QWXIg1TUIvEPsCtsbTOFKOG/Fv3
+         OgE3tCN2I7uzWDDNU6D1ifxBBXy0GIl5oVQUo3oZIcnkA+kbFcv7kgbU5b4+/gAtUnAm
+         cgEM58mbI4mZ2QjDPTYgch77nU7o0furFYWNQZ0yllC8lcx27k0pmvKrW2gzEUgwXxoN
+         qhFPf86eov8AR0iNlb8t16fYqvfhGGk8Uw9f+XniVu1eHEvBfdUqQflVxlMCGD1kTRmf
+         KjoZonXhWbSVjJNs6LE9y9wETgyceJ+Mb4o/Z3IJV2wRV5XP1jurxNq4dKk8SP1XMJA1
+         vK7g==
+X-Gm-Message-State: APzg51BIdNCJ0OV08dzA3PNrcFt5OnIFkPKuk3a/tF0F+zEhcab8z5dI
+        /wrMaMrj7qgJVzsPLzJZOt5NfqCVKkTnjGLLLmA9Gw==
+X-Google-Smtp-Source: ANB0VdbA5tFeWjpwlQaCeVXiwxdz8qEssZfGYdwgqCAHPc+IR0XuUO91OARZil2IWh56GY774j5chZSiR1OsHjVen4s=
+X-Received: by 2002:a2e:c49:: with SMTP id o9-v6mr6794855ljd.16.1536912098027;
+ Fri, 14 Sep 2018 01:01:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAKfDRXiVbE3-eteTCZjEqyR0LaLMpN8t4P_ihzHPChse9=FxmQ@mail.gmail.com>
- <8ce10eef-f332-a1c0-e16e-fb1c2055131a@gmail.com> <CAKfDRXgTL6L27JLbbOLLsXd9KK8vBtVCjrTNpv6R_MYCJoZqPg@mail.gmail.com>
- <de1b5aa3-d9d6-da49-7e49-553694f5b666@gmail.com> <CAKfDRXi3QdB0qCvqHPFXpxdpiHSJ2WoSqZGgjD3gEzAaPbBPUQ@mail.gmail.com>
- <f2c15eef-ed8d-12c0-2ba4-3dc068ca9fd4@gmail.com> <f3c647ec7c50ae390fb92861d492e7aa4bef8c6f.camel@redhat.com>
- <87y3c6a1zw.fsf@miraculix.mork.no> <20180913091753.GA3443@localhost>
- <CAKfDRXgNxohLv_SzAZ0niv5QreToSotACadTMx_fqSi_ozObvg@mail.gmail.com> <20180914075114.GA1362@localhost>
-In-Reply-To: <20180914075114.GA1362@localhost>
-From:   Kristian Evensen <kristian.evensen@gmail.com>
-Date:   Fri, 14 Sep 2018 09:53:31 +0200
-Message-ID: <CAKfDRXg93B+GZuifG0=rznQJ5G8Zw6GjOwhJunGYTrTKXDHnDg@mail.gmail.com>
-Subject: Re: [PATCH] option: Improve Quectel EP06 detection
-To:     Johan Hovold <johan@kernel.org>
-Cc:     =?UTF-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>, dcbw@redhat.com,
-        Lars Melin <larsm17@gmail.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
+ <3448099.9yk84El3Sa@stwm.de> <20180913163848.ni5xc4gc4d6uusdn@breakpoint.cc>
+ <20180913.102305.939671149040995911.davem@davemloft.net> <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
+ <20180914050651.GD23674@gauss3.secunet.de> <20180914055437.77pffp2jrbfnykbp@breakpoint.cc>
+ <20180914060132.GE23674@gauss3.secunet.de>
+In-Reply-To: <20180914060132.GE23674@gauss3.secunet.de>
+From:   Christophe Gouault <christophe.gouault@6wind.com>
+Date:   Fri, 14 Sep 2018 10:01:11 +0200
+Message-ID: <CADdy8Hox-zji01dAqpAh9=BLZRHX88qt65yrL=Noe1yYoCJwtA@mail.gmail.com>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec tunnels
+To:     Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     fw@strlen.de, "David S. Miller" <davem@davemloft.net>,
+        linux@stwm.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
-On Fri, Sep 14, 2018 at 9:51 AM Johan Hovold <johan@kernel.org> wrote:
-> Great, thanks for testing. Do you mind if I add your tested-by to the
-> patch?
+Le ven. 14 sept. 2018 =C3=A0 08:01, Steffen Klassert
+<steffen.klassert@secunet.com> a =C3=A9crit :
+> > > The hash threshold can be configured like this:
+> > >
+> > > ip x p set hthresh4 0 0
+> > >
+> > > This sets the hash threshold to local /0 and remote /0 netmasks.
+> > > With this configuration, all policies should go to the hashtable.
+> >
+> > Yes, but won't they all be hashed to same bucket?
+> >
+> > [ jhash(addr & 0, addr & 0) ] ?
+>
+> Hm, yes. Maybe something between /0 and /32 makes more sense.
 
-Not at all, go right ahead! I should probably have replied to the
-patch with a Tested-by. Sorry about forgetting that.
+Indeed, hash thresholds not only determine which policies will be
+hashed, but also the number of bits of the local and remote address
+that will be used to calculate the hash key. Big thresholds mean
+potentially fewer hashed policies, but better distribution in the hash
+table, and vice versa.
 
-BR,
-Kristian
+A good trade off must be found depending on the prefix lengths used in
+your policies.
+
+Best regards,
+Christophe
