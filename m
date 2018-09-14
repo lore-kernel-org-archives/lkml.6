@@ -2,93 +2,144 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D188BFC6183
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CDFFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB3A20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB3A20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3952620853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3952620853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeINIX6 (ORCPT
+        id S1728510AbeINIXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 04:23:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54820 "EHLO mx1.redhat.com"
+        Fri, 14 Sep 2018 04:23:54 -0400
+Received: from mga09.intel.com ([134.134.136.24]:20433 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbeINIX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 04:23:57 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 70B6E81DE9;
-        Fri, 14 Sep 2018 03:11:34 +0000 (UTC)
-Received: from [10.72.12.184] (ovpn-12-184.pek2.redhat.com [10.72.12.184])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 827D78B721;
-        Fri, 14 Sep 2018 03:11:21 +0000 (UTC)
-Subject: Re: [PATCH net-next V2 11/11] vhost_net: batch submitting XDP buffers
- to underlayer sockets
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org
-References: <20180912031709.14112-1-jasowang@redhat.com>
- <20180912031709.14112-12-jasowang@redhat.com>
- <20180913140332-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <dfc04379-125b-dd4e-b903-4b9323a25506@redhat.com>
-Date:   Fri, 14 Sep 2018 11:11:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180913140332-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 14 Sep 2018 03:11:34 +0000 (UTC)
+        id S1728139AbeINIXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 04:23:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 20:11:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,371,1531810800"; 
+   d="scan'208";a="232778779"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2018 20:11:13 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 850FE3001F2; Thu, 13 Sep 2018 20:11:13 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, kim.phillips@arm.com,
+        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v4 1/8] perf tools: Report itrace options in help
+Date:   Thu, 13 Sep 2018 20:10:31 -0700
+Message-Id: <20180914031038.4160-2-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180914031038.4160-1-andi@firstfloor.org>
+References: <20180914031038.4160-1-andi@firstfloor.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Andi Kleen <ak@linux.intel.com>
 
+I often forget all the options that --itrace accepts. Instead of burying
+them in the man page only report them in the normal command line help
+too to make them easier accessible.
 
-On 2018年09月14日 02:04, Michael S. Tsirkin wrote:
-> On Wed, Sep 12, 2018 at 11:17:09AM +0800, Jason Wang wrote:
->> +static void vhost_tx_batch(struct vhost_net *net,
->> +			   struct vhost_net_virtqueue *nvq,
->> +			   struct socket *sock,
->> +			   struct msghdr *msghdr)
->> +{
->> +	struct tun_msg_ctl ctl = {
->> +		.type = TUN_MSG_PTR,
->> +		.num = nvq->batched_xdp,
->> +		.ptr = nvq->xdp,
->> +	};
->> +	int err;
->> +
->> +	if (nvq->batched_xdp == 0)
->> +		goto signal_used;
->> +
->> +	msghdr->msg_control = &ctl;
->> +	err = sock->ops->sendmsg(sock, msghdr, 0);
->> +	if (unlikely(err < 0)) {
->> +		vq_err(&nvq->vq, "Fail to batch sending packets\n");
->> +		return;
->> +	}
->> +
->> +signal_used:
->> +	vhost_net_signal_used(nvq);
->> +	nvq->batched_xdp = 0;
->> +}
->> +
-> Given it's all tun-specific now, how about just exporting tap_sendmsg
-> and calling that? Will get rid of some indirection too.
->
+v2: Align
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/builtin-inject.c |  3 ++-
+ tools/perf/builtin-report.c |  2 +-
+ tools/perf/builtin-script.c |  2 +-
+ tools/perf/util/auxtrace.h  | 19 +++++++++++++++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
 
-Yes we can do it on top in the future.
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index a3b346359ba0..b649a0511ed8 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -803,7 +803,8 @@ int cmd_inject(int argc, const char **argv)
+ 			   "kallsyms pathname"),
+ 		OPT_BOOLEAN('f', "force", &data.force, "don't complain, do it"),
+ 		OPT_CALLBACK_OPTARG(0, "itrace", &inject.itrace_synth_opts,
+-				    NULL, "opts", "Instruction Tracing options",
++				    NULL, "opts", "Instruction Tracing options\n"
++				    ITRACE_HELP,
+ 				    itrace_parse_synth_opts),
+ 		OPT_BOOLEAN(0, "strip", &inject.strip,
+ 			    "strip non-synthesized events (use with --itrace)"),
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 02f7a3c27761..d48ea050e95e 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1105,7 +1105,7 @@ int cmd_report(int argc, const char **argv)
+ 	OPT_CALLBACK(0, "percentage", NULL, "relative|absolute",
+ 		     "how to display percentage of filtered entries", parse_filter_percentage),
+ 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
+-			    "Instruction Tracing options",
++			    "Instruction Tracing options\n" ITRACE_HELP,
+ 			    itrace_parse_synth_opts),
+ 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
+ 			"Show full source file name path for source lines"),
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 568ddfac3213..910e0f1f2876 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3193,7 +3193,7 @@ int cmd_script(int argc, const char **argv)
+ 	OPT_BOOLEAN(0, "ns", &nanosecs,
+ 		    "Use 9 decimal places when displaying time"),
+ 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
+-			    "Instruction Tracing options",
++			    "Instruction Tracing options\n" ITRACE_HELP,
+ 			    itrace_parse_synth_opts),
+ 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
+ 			"Show full source file name path for source lines"),
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index e731f55da072..041ee64a63bc 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -576,6 +576,23 @@ static inline void auxtrace__free(struct perf_session *session)
+ 	return session->auxtrace->free(session);
+ }
+ 
++#define ITRACE_HELP \
++"				i:	    		synthesize instructions events\n"		\
++"				b:	    		synthesize branches events\n"		\
++"				c:	    		synthesize branches events (calls only)\n"	\
++"				r:	    		synthesize branches events (returns only)\n" \
++"				x:	    		synthesize transactions events\n"		\
++"				w:	    		synthesize ptwrite events\n"		\
++"				p:	    		synthesize power events\n"			\
++"				e:	    		synthesize error events\n"			\
++"				d:	    		create a debug log\n"			\
++"				g[len]:     		synthesize a call chain (use with i or x)\n" \
++"				l[len]:     		synthesize last branch entries (use with i or x)\n" \
++"				sNUMBER:    		skip initial number of events\n"		\
++"				PERIOD[ns|us|ms|i|t]:   specify period to sample stream\n" \
++"				concatenate multiple options. Default is ibxwpe or cewp\n"
++
++
+ #else
+ 
+ static inline struct auxtrace_record *
+@@ -716,6 +733,8 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
+ 				   struct perf_evlist *evlist, int idx,
+ 				   bool per_cpu);
+ 
++#define ITRACE_HELP ""
++
+ #endif
+ 
+ #endif
+-- 
+2.17.1
 
-Thanks
