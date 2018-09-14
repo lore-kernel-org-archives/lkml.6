@@ -2,165 +2,205 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6D7FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300E2ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF2F206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:30:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF2F206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B5C8820861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:34:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uW56jEf6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C8820861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbeINTpc (ORCPT
+        id S1728024AbeINTso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:45:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34262 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeINTpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:45:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 307F018A;
-        Fri, 14 Sep 2018 07:30:45 -0700 (PDT)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 669DA3F575;
-        Fri, 14 Sep 2018 07:30:43 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
-        john.garry@huawei.com
-Subject: [PATCH v7 6/6] iommu/arm-smmu: Support non-strict mode
-Date:   Fri, 14 Sep 2018 15:30:24 +0100
-Message-Id: <09be4304bf23dde899be48dbddd93b09296f76bd.1536935328.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.19.0.dirty
-In-Reply-To: <cover.1536935328.git.robin.murphy@arm.com>
-References: <cover.1536935328.git.robin.murphy@arm.com>
+        Fri, 14 Sep 2018 15:48:44 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38304 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINTso (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:48:44 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8EEXYjB104798;
+        Fri, 14 Sep 2018 14:33:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=np+CwPrccdU2WJ65XzX5VDQajFTxPT0dUAiahoGxGx0=;
+ b=uW56jEf6TKCFf3UvXxIU+/C4JIYOandppo0JPFRrlO9HYT3QA7WUzqW0nmOjxHQfirHr
+ Sj19fmRR34NwLb0JwIx9JjdFwC9D6qaS10QTlZ1SN/WwZ5VxhvwELqG0gyHvYJd9HW05
+ +XGeJ+nbaNIwIlpfVlVo5YXyERvDzEXL1FJOqmWarC5wMxunFvkDvdUfloI2b0uU9lIq
+ iRMI2S7BhmrMjVJEfzDQ2eUAYmL/8uNBrfjFJZA2q6i7UgkPJQjyeGv7SAaC7T2qR1f2
+ SB4DuDE0c9sQnyZNgnzIKtISnf8dhK/gcfpOvPv1XP1Oa9Fz7KdK8tA/vPC6U7NJ+oqD Qw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2mc6cq7fk4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 14:33:51 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8EEXj6x009497
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 14:33:46 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8EEXjnU008053;
+        Fri, 14 Sep 2018 14:33:45 GMT
+Received: from [10.191.8.88] (/10.191.8.88)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 14 Sep 2018 07:33:44 -0700
+Subject: Re: [Xen-devel] [PATCH 5/6] xenbus: process be_watch events in
+ xenwatch multithreading
+To:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-6-git-send-email-dongli.zhang@oracle.com>
+ <8d6457cf-a105-3d88-bd38-d46b24f70501@suse.com>
+Cc:     wei.liu2@citrix.com, konrad.wilk@oracle.com,
+        srinivas.eeda@oracle.com, paul.durrant@citrix.com,
+        boris.ostrovsky@oracle.com, roger.pau@citrix.com
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+Message-ID: <4ff0a18e-1971-0758-d59c-bc5096c6961a@oracle.com>
+Date:   Fri, 14 Sep 2018 22:33:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d6457cf-a105-3d88-bd38-d46b24f70501@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809140151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All we need is to wire up .flush_iotlb_all properly and implement the
-domain attribute, and iommu-dma and io-pgtable-arm will do the rest for
-us. Rather than bother implementing it for v7s format for the highly
-unlikely chance of that being relevant, we can simply hide the
-non-strict flag from io-pgtable for that combination just so anyone who
-does actually try it will simply get over-invalidation instead of
-failure to initialise domains.
+Hi Juergen,
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/arm-smmu.c | 40 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 7 deletions(-)
+On 09/14/2018 05:12 PM, Juergen Gross wrote:
+> On 14/09/18 09:34, Dongli Zhang wrote:
+>> This is the 5th patch of a (6-patch) patch set.
+>>
+>> With this patch, watch event in relative path pattern
+>> 'backend/<pvdev>/<domid>i/...' can be processed in per-domU xenwatch
+> 
+> superfluous "i" ----------^
+> 
+>> thread.
+>>
+>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+>> ---
+>>  drivers/xen/xenbus/xenbus_probe.c         |  2 +-
+>>  drivers/xen/xenbus/xenbus_probe_backend.c | 32 +++++++++++++++++++++++++++++++
+>>  include/xen/xenbus.h                      |  2 ++
+>>  3 files changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+>> index ba0644c..aa1b15a 100644
+>> --- a/drivers/xen/xenbus/xenbus_probe.c
+>> +++ b/drivers/xen/xenbus/xenbus_probe.c
+>> @@ -552,7 +552,7 @@ int xenbus_probe_devices(struct xen_bus_type *bus)
+>>  }
+>>  EXPORT_SYMBOL_GPL(xenbus_probe_devices);
+>>  
+>> -static unsigned int char_count(const char *str, char c)
+>> +unsigned int char_count(const char *str, char c)
+> 
+> Please change the name of the function when making it globally
+> visible, e.g. by prefixing "xenbus_".
+> 
+> Generally I think you don't need to use it below.
+> 
+>>  {
+>>  	unsigned int i, ret = 0;
+>>  
+>> diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+>> index b0bed4f..50df86a 100644
+>> --- a/drivers/xen/xenbus/xenbus_probe_backend.c
+>> +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+>> @@ -211,9 +211,41 @@ static void backend_changed(struct xenbus_watch *watch,
+>>  	xenbus_dev_changed(path, &xenbus_backend);
+>>  }
+>>  
+>> +static domid_t path_to_domid(const char *path)
+>> +{
+>> +	const char *p = path;
+>> +	domid_t domid = 0;
+>> +
+>> +	while (*p) {
+>> +		if (*p < '0' || *p > '9')
+>> +			break;
+>> +		domid = (domid << 3) + (domid << 1) + (*p - '0');
+> 
+> reinventing atoi()?
+> 
+> Please don't do that. kstrtou16() seems to be a perfect fit.
+> 
+>> +		p++;
+>> +	}
+>> +
+>> +	return domid;
+>> +}
+>> +
+>> +/* path: backend/<pvdev>/<domid>/... */
+>> +static domid_t be_get_domid(struct xenbus_watch *watch,
+>> +			    const char *path,
+>> +			    const char *token)
+>> +{
+>> +	const char *p = path;
+>> +
+>> +	if (char_count(path, '/') < 2)
+>> +		return 0;
+>> +
+>> +	p = strchr(p, '/') + 1;
+>> +	p = strchr(p, '/') + 1;
+> 
+> Drop the call of char_count() above and test p for being non-NULL
+> after each call of strchr?
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index fd1b80ef9490..aa5be334753b 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -246,6 +246,7 @@ struct arm_smmu_domain {
- 	const struct iommu_gather_ops	*tlb_ops;
- 	struct arm_smmu_cfg		cfg;
- 	enum arm_smmu_domain_stage	stage;
-+	bool				non_strict;
- 	struct mutex			init_mutex; /* Protects smmu pointer */
- 	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
- 	struct iommu_domain		domain;
-@@ -863,6 +864,9 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
- 	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
- 		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
- 
-+	if (smmu_domain->non_strict && cfg->fmt != ARM_SMMU_CTX_FMT_AARCH32_S)
-+		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_NON_STRICT;
-+
- 	smmu_domain->smmu = smmu;
- 	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
- 	if (!pgtbl_ops) {
-@@ -1252,6 +1256,14 @@ static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
- 	return ops->unmap(ops, iova, size);
- }
- 
-+static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
-+{
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+
-+	if (smmu_domain->tlb_ops)
-+		smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
-+}
-+
- static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
- {
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-@@ -1470,13 +1482,17 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
- {
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 
--	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
--		return -EINVAL;
--
- 	switch (attr) {
- 	case DOMAIN_ATTR_NESTING:
-+		if (domain->type != IOMMU_DOMAIN_UNMANAGED)
-+			return -EINVAL;
- 		*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
- 		return 0;
-+	case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
-+		if (domain->type != IOMMU_DOMAIN_DMA)
-+			return -EINVAL;
-+		*(int *)data = smmu_domain->non_strict;
-+		return 0;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -1488,13 +1504,15 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 	int ret = 0;
- 	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
- 
--	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
--		return -EINVAL;
--
- 	mutex_lock(&smmu_domain->init_mutex);
- 
- 	switch (attr) {
- 	case DOMAIN_ATTR_NESTING:
-+		if (domain->type != IOMMU_DOMAIN_UNMANAGED) {
-+			ret = -EINVAL;
-+			goto out_unlock;
-+		}
-+
- 		if (smmu_domain->smmu) {
- 			ret = -EPERM;
- 			goto out_unlock;
-@@ -1505,6 +1523,14 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
- 		else
- 			smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
- 
-+		break;
-+	case DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE:
-+		if (domain->type != IOMMU_DOMAIN_DMA) {
-+			ret = -EINVAL;
-+			goto out_unlock;
-+		}
-+
-+		smmu_domain->non_strict = *(int *)data;
- 		break;
- 	default:
- 		ret = -ENODEV;
-@@ -1562,7 +1588,7 @@ static struct iommu_ops arm_smmu_ops = {
- 	.attach_dev		= arm_smmu_attach_dev,
- 	.map			= arm_smmu_map,
- 	.unmap			= arm_smmu_unmap,
--	.flush_iotlb_all	= arm_smmu_iotlb_sync,
-+	.flush_iotlb_all	= arm_smmu_flush_iotlb_all,
- 	.iotlb_sync		= arm_smmu_iotlb_sync,
- 	.iova_to_phys		= arm_smmu_iova_to_phys,
- 	.add_device		= arm_smmu_add_device,
--- 
-2.19.0.dirty
+The usage of char_count() is copied from xenbus_dev_changed() which is used to
+process pattern 'backend/<type>/...'.
 
+I use char_count() just because I would prefer we always use the same
+equation/algorithm to process xenstore path in linux kernel.
+
+I can drop it if it is better to not change char_count() from static to global
+function.
+
+556 void xenbus_dev_changed(const char *node, struct xen_bus_type *bus)
+557 {
+558         int exists, rootlen;
+559         struct xenbus_device *dev;
+560         char type[XEN_BUS_ID_SIZE];
+561         const char *p, *root;
+562
+563         if (char_count(node, '/') < 2)
+564                 return;
+565
+566         exists = xenbus_exists(XBT_NIL, node, "");
+567         if (!exists) {
+568                 xenbus_cleanup_devices(node, &bus->bus);
+569                 return;
+570         }
+571
+572         /* backend/<type>/... or device/<type>/... */
+573         p = strchr(node, '/') + 1;
+574         snprintf(type, XEN_BUS_ID_SIZE, "%.*s", (int)strcspn(p, "/"), p);
+575         type[XEN_BUS_ID_SIZE-1] = '\0';
+
+Dongli Zhang
+
+> 
+> 
+> Juergen
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
+> 
