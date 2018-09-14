@@ -2,174 +2,268 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EDEFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56810ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432D420882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB7E20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u0IdYcDZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432D420882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BLImT0SQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GRgxG1+9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB7E20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeINOyH (ORCPT
+        id S1728196AbeINO4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:54:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46577 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbeINOyH (ORCPT
+        Fri, 14 Sep 2018 10:56:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53068 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbeINO4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:54:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a108-v6so9775334wrc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 02:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=52a0z7VDHdIt5YIzVsgyaZUjQUdjM56N0Cpykg5QRCM=;
-        b=u0IdYcDZ717W7Z+olHzbaAgJOPBzJWynJybqgaVqPuw87jgC7WFES6IvrDgYK1xlno
-         3STTjPLoYDg42/GQoUz7mLuio2JI3N12eIglXM1DFAZYxPAT4OuuWZbXtL8PQ9b9P/xK
-         D63m+SzBJlPefjf/cydV80WeGJvSjanXw/rG/K++KipejPXDMkY250nKFesNoCqnzKmA
-         DSsjBDfiQ6JUz0GRHE90GmbNdHPPgwtEZRI/raBJFpF7PjegCC5jhIT/vjlC4BkJkADv
-         FWZqd4QhOQM2t6ybvWghjj/xElc+hudgdbMoZZaduhVYW15RCeQ7L2NJql0OhjFMwmZH
-         1PCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=52a0z7VDHdIt5YIzVsgyaZUjQUdjM56N0Cpykg5QRCM=;
-        b=kAiIB3se4Qjarp9CFi20gUmKT1Qh6jbU1U1YSqkNZNW86hfe3SyxjzOxbb9PRwz6kU
-         B4Tb+MWTK5GWKS/tbNhwi+BTaXJE2k2zpB9WnirpCVBJFjJSlHPwkKJmMHYRGcmFAHM9
-         SdIJS8S6rPrsPufuUEtdnaP9dFNZWp5i8dQmm93HKi6vl5T9QetlSpYFa+43Rbwo2r8D
-         wPD8voUkSGzeRsVhdiLlDNA7S9dTnjr63TG0EZ5FHDf5pNhDwe99FvO+rWWm8H8P1Gd0
-         UZ13xOt/daRSI/gycLETNbulcdaI3KNTetBD+p61DkJgsVbToyNVoIaYf+kPReYMd0PC
-         WrYQ==
-X-Gm-Message-State: APzg51C5TYrUx3wd83URGVC8Z9pQybLy6K3zefHoe0NmzS7wGP1H/QyE
-        fQjMcnXO3Cqp7VBJIuwDl4A=
-X-Google-Smtp-Source: ANB0VdYZ1bhzSlzI8fUPV4psEVDFyNiAqqwYi+oQYKQJOU4ToMGSKko1UAlEZXSuOLXhdLgC3rxotg==
-X-Received: by 2002:a5d:4e0a:: with SMTP id p10-v6mr8607360wrt.48.1536918025232;
-        Fri, 14 Sep 2018 02:40:25 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v16-v6sm8231097wrw.12.2018.09.14.02.40.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 02:40:24 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 11:40:22 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Namhyung Kim <namhyung@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914094022.GB96351@gmail.com>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
- <20180914082307.GF24224@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914082307.GF24224@krava>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 14 Sep 2018 10:56:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3B8BE60997; Fri, 14 Sep 2018 09:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536918183;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BLImT0SQktijgl3PNFVIJTUJ90+dnmIopYXmFMy7wTeEz/oknUBLNYXst6mZeYWAx
+         VHQAePmnX25sdtMYjmfHug9hd20TwxZ+SStbsf4KK/dAC3UlPuqAlHmhdiObmqpiyh
+         44tThz3Z+5V8Dn8fW6cfMp7uXBrEZCvO76EX1LnM=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A7B26081C;
+        Fri, 14 Sep 2018 09:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536918182;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GRgxG1+9zbIilVnPDyHtuemGmsPb2qomHBDomTaT/Ts5F/iCrberbZjAuFSPqNvrm
+         FHCY38rsokfIX8dWxJxewwgt6E1qffGpA41CjTE5OXUCOshkoZs8e0tBlUT0aYlx/J
+         /cxfKRiaQBzrUt5PPhGjNtmkLaiOKZzo6lAvn0xQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A7B26081C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     stummala@codeaurora.org, adrian.hunter@intel.com,
+        jlbec@evilplan.org, linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V13 1/2] scsi: ufs: set the device reference clock setting
+Date:   Fri, 14 Sep 2018 15:12:37 +0530
+Message-Id: <1536918159-311-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1536918159-311-1-git-send-email-sayalil@codeaurora.org>
+References: <1536918159-311-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-* Jiri Olsa <jolsa@redhat.com> wrote:
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-> On Fri, Sep 14, 2018 at 11:29:10AM +0900, Namhyung Kim wrote:
-> > On Thu, Sep 13, 2018 at 07:10:35PM +0300, Alexey Budankov wrote:
-> > > Hi,
-> > 
-> > Hello,
-> > 
-> > > 
-> > > On 13.09.2018 15:54, Jiri Olsa wrote:
-> > > > hi,
-> > > > sending *RFC* for threads support in perf record command.
-> > > > 
-> > > > In big picture this patchset adds perf record --threads
-> > > > option that allows to create threads in following modes:
-> > > > 
-> > > > 1) single thread mode (current)
-> > > > 
-> > > >   $ perf record ...
-> > > >   $ perf record --threads=1 ...
-> > > > 
-> > > >   - all maps are read/stored under process thread
-> > > > 
-> > > > 2) mode with specific (X) number of threads
-> > > > 
-> > > >   $ perf record --threads=X ...
-> > > > 
-> > > >   - maps are spread equaly among threads
-> > > > 
-> > > > 3) mode that creates thread for every monitored memory map
-> > > > 
-> > > >   $ perf record --threads ...
-> > > > 
-> > > >   - which in perf record is equal to number of CPUs, and
-> > > >     it pins each thread to its map's cpu:
-> > > > 
-> > > > 4) TODO - NUMA aware threads/maps separation
-> > > >    ...
-> > > > 
-> > > > The perf.data stays as a single file.
-> > 
-> > I'm not sure we really need to keep it as a single file.  As it's a
-> > kind of big changes, we might consider breaking compatibility and use
-> > a directory structure.
-> 
-> moving the files into the perf.data at the end is actualy
-> not a lot code.. and I think it's one of the 'small' things
-> that make this feature more user friendly
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+---
+ drivers/scsi/ufs/ufs.h           | 14 +++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+ drivers/scsi/ufs/ufshcd.c        | 90 ++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h        |  2 +
+ 4 files changed, 108 insertions(+)
 
-So the user shouldn't really care about the structure of the file when most uses of perf 
-tooling, and 'single file' versus 'single directory' has similar usability IMHO.
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..a2e76b1 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,20 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ufs_ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0,
++	REF_CLK_FREQ_26_MHZ	= 1,
++	REF_CLK_FREQ_38_4_MHZ	= 2,
++	REF_CLK_FREQ_52_MHZ	= 3,
++	REF_CLK_FREQ_INVAL	= -1,
++};
++
++struct ufs_ref_clk {
++	u32 freq_hz;
++	enum ufs_ref_clk_freq val;
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..0953563 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..e01cdc0 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
++	{19200000, REF_CLK_FREQ_19_2_MHZ},
++	{26000000, REF_CLK_FREQ_26_MHZ},
++	{38400000, REF_CLK_FREQ_38_4_MHZ},
++	{52000000, REF_CLK_FREQ_52_MHZ},
++	{0, REF_CLK_FREQ_INVAL},
++};
++
++static inline enum ufs_ref_clk_freq
++ufs_get_bref_clk_from_hz(u32 freq)
++{
++	int i = 0;
++
++	while (ufs_ref_clk_freqs[i].freq_hz != freq) {
++		if (!ufs_ref_clk_freqs[i].freq_hz)
++			return REF_CLK_FREQ_INVAL;
++		i++;
++	}
++
++	return ufs_ref_clk_freqs[i].val;
++}
++
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	struct device_node *np = dev->of_node;
++	struct clk *refclk = NULL;
++	u32 freq = 0;
++
++	if (!np)
++		return;
++
++	refclk = of_clk_get_by_name(np, "ref_clk");
++	if (!refclk)
++		return;
++
++	freq = clk_get_rate(refclk);
++
++	hba->dev_ref_clk_freq =
++		ufs_get_bref_clk_from_hz(freq);
++
++	if (hba->dev_ref_clk_freq == REF_CLK_FREQ_INVAL)
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, freq);
++}
++
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err, ref_clk = -1;
++	u32 freq = hba->dev_ref_clk_freq;
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
++
++	if (err) {
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++		goto out;
++	}
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6444,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+@@ -7690,6 +7779,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	hba->host = host;
+ 	hba->dev = dev;
+ 	*hba_handle = hba;
++	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+ 
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..45013b6 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	enum ufs_ref_clk_freq dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
+ {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-When moving across machines it's recommended to use 'perf archive' anyway, which already 
-creates a tarball that includes debuginfo and other context.
-
-In fact keeping the files separate has scalability advantages for 'perf report' and similar 
-parsing tools: they could read all the streams in a per-CPU fashion already, from the very 
-beginning.
-
-
-BTW., random annoyance bugreport, for me 'perf archive' is spewing a ton of these messages:
-
-  $ perf archive
-  unwind: target platform=x86 is not supported
-  unwind: target platform=x86 is not supported
-  unwind: target platform=x86 is not supported
-  ...
-  unwind: target platform=x86 is not supported
-  unwind: target platform=x86 is not supported
-
-  Now please run:
-
-  $ tar xvf perf.data.tar.bz2 -C ~/.debug
-
-  wherever you need to run 'perf report' on.
-
-  $ perf version
-  perf version 4.19.rc2.gcb48b6
-
-That message is repeated 7,200 times (!) and immediately nuked my terminal history. :-/
-
-Even if we want to emit that warning (we really shouldn't unless it's important for the user to 
-know), there's no reason to print thousands of messages to stderr.
-
-Thanks,
-
-	Ingo
