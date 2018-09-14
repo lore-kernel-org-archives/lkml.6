@@ -2,300 +2,118 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E4DFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240AFFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 614BB20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 614BB20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B005120853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:30:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQCVtD+n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B005120853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbeINHlY (ORCPT
+        id S1728435AbeINHmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 03:41:24 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:44509 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbeINHlY (ORCPT
+        Fri, 14 Sep 2018 03:42:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36707 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbeINHmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:41:24 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.51 with ESMTP; 14 Sep 2018 11:29:10 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.126 with ESMTP; 14 Sep 2018 11:29:10 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Fri, 14 Sep 2018 11:29:10 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914022910.GA15146@sejong>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+        Fri, 14 Sep 2018 03:42:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f4-v6so6219431edq.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 19:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=asArhCha9PMyxs6xs3GfCK9YGyVt2CRBoO69o7MTjA0=;
+        b=YQCVtD+nGCH14gqR87hnOGzbphp1RP1Fa4rwLpgVatWzRdRO1OLVa5N2T6jscXAZ33
+         SbkeLfz68pRmkH24gtRDfoEJXWtx8ewfAxKnu8Sgyy/hac75VpHRw1y/KWYiMKAHgp3V
+         NZNZ3W2jK6Rkl7lymkyeWKLsLwAd3tb3O3Kh5Hop/gC7rKmG7UhqF2ou+Fzv+YMUETaI
+         DJ8i22c9hzItGh2sBhAMdlIabICycRVJvZDl1K9AtaGyjl0zls3gQSrVt3Mch24N3rX7
+         YB/KY4OMI/2NOOyEELEJsRJEi8cVxPrpBNrPmVTN6iqoCqrln8FHGt/KAkO2TCqvU3dB
+         w6ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=asArhCha9PMyxs6xs3GfCK9YGyVt2CRBoO69o7MTjA0=;
+        b=its5Z9HwcF9+Sh3bfecmGPZmxJwirdgZUzW3ZzIq4PMyiP0cr+iGtrzKCXRr9IK3/V
+         GrDi78kZtgTmwRpKGz1wO2j7AdpptSSV12iqVTlo5oZGWJC+JctGLo11cmAd7utbqUSR
+         MkV1V0DQpz4mQ37Nt6AvVyeznB8KEUDhkY1OgxuKzdJxHjpoezk7RPpRInKrxptkM7Nq
+         tD0Bu/1yd4M0w5I+JKO6cSmBvoQ5xW89snQpInvTlTt57NhZk3+K9Y6pFHiaH8Dvw7UV
+         b6qxHS+iytUuwjgIlSph93yf/DML3Et1Yg4rUb/Yu1PyjDwSLh2ZTU3IPXxwB+g9i/ur
+         pWlQ==
+X-Gm-Message-State: APzg51CG46eERQM55vFP8S0lDN6709R+41CeopbpxumHSsAflk9ueWTi
+        Yiqj8Neum4Ki9ZWE0YCsZNgQdTjGXHzdAVd8PQ==
+X-Google-Smtp-Source: ANB0VdZQ8seVW9wZ30R/QOzOB3v07OUkP+XzEa0yX+jiG7xDIjiJ2aZUiIyqqE5YU09i4HW5frIEPUr5S5xeN6s/a+Y=
+X-Received: by 2002:a50:ba39:: with SMTP id g54-v6mr15212066edc.148.1536892197979;
+ Thu, 13 Sep 2018 19:29:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <s5hk1ns1m8n.wl-tiwai@suse.de> <s5hlg88z0un.wl-tiwai@suse.de>
+ <8d9cf4b9-4c52-2e1d-6778-312c7a2fdffe@suse.com> <2551848.SakgYeHO72@aspire.rjw.lan>
+In-Reply-To: <2551848.SakgYeHO72@aspire.rjw.lan>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Fri, 14 Sep 2018 10:29:46 +0800
+Message-ID: <CAFgQCTuNb4XOg6LaY=m92zbhDTNmYkh11Dxy4OGbXtY09oXb9A@mail.gmail.com>
+Subject: Re: [REGRESSION] Errors at reboot after 722e5f2b1eec
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc:     jnwang@suse.com, tiwai@suse.de, bp@suse.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 07:10:35PM +0300, Alexey Budankov wrote:
-> Hi,
-
-Hello,
-
-> 
-> On 13.09.2018 15:54, Jiri Olsa wrote:
-> > hi,
-> > sending *RFC* for threads support in perf record command.
-> > 
-> > In big picture this patchset adds perf record --threads
-> > option that allows to create threads in following modes:
-> > 
-> > 1) single thread mode (current)
-> > 
-> >   $ perf record ...
-> >   $ perf record --threads=1 ...
-> > 
-> >   - all maps are read/stored under process thread
-> > 
-> > 2) mode with specific (X) number of threads
-> > 
-> >   $ perf record --threads=X ...
-> > 
-> >   - maps are spread equaly among threads
-> > 
-> > 3) mode that creates thread for every monitored memory map
-> > 
-> >   $ perf record --threads ...
-> > 
-> >   - which in perf record is equal to number of CPUs, and
-> >     it pins each thread to its map's cpu:
-> > 
-> > 4) TODO - NUMA aware threads/maps separation
-> >    ...
-> > 
-> > The perf.data stays as a single file.
-
-I'm not sure we really need to keep it as a single file.  As it's a
-kind of big changes, we might consider breaking compatibility and use
-a directory structure.
-
-
-> > 
-> > v2 changes:
-> >   - rebased to current Arnaldo's perf/core
-> >     (also based on few fixes from my perf/core, see the branch details below)
-> > 
-> > This patchset contains lot of preparation changes to make
-> > threaded record possible:
-> > 
-> >   - Namhyung's changes to create multiple data streams in
-> >     perf data file, which allows having each thread data
-> >     being stored in separate files and merged into single
-> >     perf data after
-> > 
-> >   - Namhyung's changes to create track mmaps for auxiliary
-> >     events
-> > 
-> >   - Namhyung's changes to search for threads/mmaps/comms
-> >     using the time. This is needed because we have now
-> >     multiple data streams which are processed separately,
-> >     but they all need access to complete auxiliary events
-> >     data (threads/mmaps/comms). That's also a reason why
-> >     the auxiliary events are stored into separate data
-> >     stream, which is processed before real data.
-> > 
-> >   - the rest of the code that adds threads abstraction into
-> >     record command allows to create them and distribute maps
-> >     among them
-> > 
-> >   - other preparational changes
-> > 
-> > The threaded monitoring currently can't monitor backward maps
-> > and there are probably more limitations which I haven't spotted
-> > yet.
-> > 
-> > So far I tested on laptop:
-> >   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
-> > 
-> > and a one bigger server:
-> >   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
-> > 
-> > I can see decrease in recorded LOST events, but both the benchmark
-> > and the monitoring must be carefully configured wrt:
-> >   - number of events (frequency)
-> >   - size of the memory maps
-> >   - size of events (callchains)
-> >   - final perf.data size
-> > 
-> > It's also available in:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
-> >   perf/record_threads
-> > 
-> > thoughts? ;-) thanks
-> > jirka
-> 
-> It is preferable to split into smaller pieces that bring 
-> some improvement proved by metrics numbers and ready for 
-> merging and upstream. Do we have more metrics than the 
-> data loss from trace AIO patches?
-
-Well, this change is to enable parallel access of perf data so the
-preparation works don't affect single thread processing (hopefully) or
-make it even worse.  I'm not sure if could be split for performance
-benefits.
-
-
-> 
-> There is usage of Posix threading API but there is no 
-> its implementation in the patch series, to avoid dependency 
-> on externally coded designs in the core of the tool.
-
-Do you mean it needs to implement its own threading?  I don't think
-that's what Ingo wanted to.
+On Thu, Sep 13, 2018 at 10:15 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Thursday, September 13, 2018 12:03:36 PM CEST James Wang wrote:
+> >  This is a multi-part message in MIME format.
+> > --------------F5519E624D0AD1E3F7DDA019
+> > Content-Type: text/plain; charset=utf-8
+> > Content-Transfer-Encoding: 8bit
+> >
+> >
+> >
+> > On 09/11/2018 02:15 PM, Takashi Iwai wrote:
+> > > On Tue, 11 Sep 2018 14:11:30 +0200,
+> > > James Wang wrote:
+> > >> I did try it from kernel : head
+> > > OK, then the bug is present with 4.19-rc2, at least.
+> > > Please check my test kernel later (it's still being built).
+> > Hi folks,  I attach two log about 4.19-rc3 and 4.19-rc3+Rafeal suggestion.
+>
+> OK, no difference AFAICS.
+>
+> This means that the commit turned up by bisection simply uncovered an existing
+> ordering issue, apparently between an IOMMU and its client (ie. it appears that
+> the client is shut down after the IOMMU).
+>
+> This isn't limited to shutdown and you'd see the same issue on system-wide
+> suspend/resume (in fact, the Pingfan Liu's patches make shutdown use the
+> same device list that is used for system-wide PM).
+>
+> One way to mitigate such issues is to add a device link between the two
+> devices in question to enforce the correct suspend/resume/shutdown ordering
+> between them.
+>
+I found the iommu was at  " 0000:00:00.2", while  ohci-pci is at
+0000:00:13.1. Hence ohci-pci should be shutdown before iommu. Not
+familiar with AMD's iommu code, but I think there is no shutdown
+interface exported to drivers/base. It is shutdown by platform code in
+arch/x86. So I think there should be someone teared down the iotbl,
+e.g. by invalidating pages, before the shutdown of ohci-pci. I wonder
+whether adding a device link can fix this bug or not. (Forgive me if I
+made a mistake, since I am ignorant in this field)
 
 Thanks,
-Namhyung
-
-
-> 
-> > 
-> > 
-> > ---
-> > Jiri Olsa (30):
-> >       perf tools: Remove perf_tool from event_op2
-> >       perf tools: Remove perf_tool from event_op3
-> >       perf tools: Pass struct perf_mmap into auxtrace_mmap__read* functions
-> >       perf tools: Add struct perf_mmap arg into record__write
-> >       perf tools: Create separate mmap for dummy tracking event
-> >       perf tools: Make copyfile_offset global
-> >       perf tools: Add perf_data__create_index function
-> >       perf record: Add --index option for building index table
-> >       perf tools: Convert dead thread list into rbtree
-> >       perf tools: Add thread::exited flag
-> >       perf callchain: Maintain libunwind's address space in map_groups
-> >       perf tools: Rename perf_evlist__munmap_filtered to perf_mmap__put_filtered
-> >       tools lib fd array: Introduce fdarray__add_clone function
-> >       tools lib subcmd: Add OPT_INTEGER_OPTARG|_SET options
-> >       perf tools: Move __perf_session__process_events args into struct
-> >       perf ui progress: Fix index progress display
-> >       perf tools: Add threads debug variable
-> >       perf tools: Add perf_mmap__read_tail function
-> >       perf record: Introduce struct record_thread
-> >       perf record: Read record thread's mmaps
-> >       perf record: Move waking into struct record
-> >       perf record: Move samples into struct record_thread
-> >       perf record: Move bytes_written into struct record_thread
-> >       perf record: Add record_thread start/stop/process functions
-> >       perf record: Wait for all threads being started
-> >       perf record: Add --threads option
-> >       perf record: Add --thread-stats option support
-> >       perf record: Add maps to --thread-stats output
-> >       perf record: Spread maps for --threads option
-> >       perf record: Spread maps for --threads=X option
-> > 
-> > Namhyung Kim (18):
-> >       perf tools: Use a software dummy event to track task/mmap events
-> >       perf tools: Extend perf_evlist__mmap_ex() to use track mmap
-> >       perf report: Skip dummy tracking event
-> >       perf tools: Add HEADER_DATA_INDEX feature
-> >       perf tools: Handle indexed data file properly
-> >       perf tools: Introduce thread__comm(_str)_by_time() helpers
-> >       perf tools: Add a test case for thread comm handling
-> >       perf tools: Use thread__comm_by_time() when adding hist entries
-> >       perf tools: Introduce machine__find*_thread_by_time()
-> >       perf tools: Add a test case for timed thread handling
-> >       perf tools: Maintain map groups list in a leader thread
-> >       perf tools: Introduce thread__find_symbol_by_time() and friends
-> >       perf callchain: Use thread__find_addr_location_by_time() and friends
-> >       perf tools: Add a test case for timed map groups handling
-> >       perf tools: Save timestamp of a map creation
-> >       perf tools: Introduce map_groups__{insert,find}_by_time()
-> >       perf tools: Use map_groups__find_addr_by_time()
-> >       perf tools: Add testcase for managing maps with time
-> > 
-> >  tools/lib/api/fd/array.c                 |  17 +
-> >  tools/lib/api/fd/array.h                 |   1 +
-> >  tools/lib/subcmd/parse-options.c         |   2 +
-> >  tools/lib/subcmd/parse-options.h         |   9 +
-> >  tools/perf/Documentation/perf-record.txt |   4 +
-> >  tools/perf/Documentation/perf.txt        |   1 +
-> >  tools/perf/builtin-annotate.c            |   7 +-
-> >  tools/perf/builtin-inject.c              |  32 +-
-> >  tools/perf/builtin-record.c              | 899 +++++++++++++++++++++++++++++--
-> >  tools/perf/builtin-report.c              |  12 +-
-> >  tools/perf/builtin-script.c              |  38 +-
-> >  tools/perf/builtin-stat.c                |  23 +-
-> >  tools/perf/perf.c                        |   1 +
-> >  tools/perf/perf.h                        |   3 +
-> >  tools/perf/tests/Build                   |   4 +
-> >  tools/perf/tests/builtin-test.c          |  16 +
-> >  tools/perf/tests/dwarf-unwind.c          |   4 +-
-> >  tools/perf/tests/hists_common.c          |   2 +-
-> >  tools/perf/tests/hists_link.c            |   2 +-
-> >  tools/perf/tests/tests.h                 |   4 +
-> >  tools/perf/tests/thread-comm.c           |  48 ++
-> >  tools/perf/tests/thread-lookup-time.c    | 181 +++++++
-> >  tools/perf/tests/thread-map-time.c       |  90 ++++
-> >  tools/perf/tests/thread-mg-share.c       |   7 +-
-> >  tools/perf/tests/thread-mg-time.c        |  94 ++++
-> >  tools/perf/ui/browsers/hists.c           |  30 +-
-> >  tools/perf/ui/gtk/hists.c                |   3 +
-> >  tools/perf/util/auxtrace.c               |  30 +-
-> >  tools/perf/util/auxtrace.h               |  21 +-
-> >  tools/perf/util/data.c                   |  64 +++
-> >  tools/perf/util/data.h                   |   5 +
-> >  tools/perf/util/debug.c                  |   2 +
-> >  tools/perf/util/debug.h                  |   1 +
-> >  tools/perf/util/dso.c                    |   2 +-
-> >  tools/perf/util/event.c                  | 135 ++++-
-> >  tools/perf/util/evlist.c                 |  96 +++-
-> >  tools/perf/util/evlist.h                 |   7 +-
-> >  tools/perf/util/evsel.h                  |  15 +
-> >  tools/perf/util/header.c                 |  93 +++-
-> >  tools/perf/util/header.h                 |  18 +-
-> >  tools/perf/util/hist.c                   |   4 +-
-> >  tools/perf/util/intel-pt.c               |   2 +-
-> >  tools/perf/util/machine.c                | 293 ++++++++--
-> >  tools/perf/util/machine.h                |  22 +-
-> >  tools/perf/util/map.c                    |  79 ++-
-> >  tools/perf/util/map.h                    |  40 +-
-> >  tools/perf/util/mmap.c                   |   6 +-
-> >  tools/perf/util/mmap.h                   |  33 +-
-> >  tools/perf/util/session.c                | 178 +++---
-> >  tools/perf/util/session.h                |   5 +-
-> >  tools/perf/util/stat.c                   |   5 +-
-> >  tools/perf/util/stat.h                   |   5 +-
-> >  tools/perf/util/symbol-elf.c             |   2 +-
-> >  tools/perf/util/symbol.c                 |   4 +-
-> >  tools/perf/util/thread.c                 | 200 ++++++-
-> >  tools/perf/util/thread.h                 |  27 +-
-> >  tools/perf/util/tool.h                   |   7 +-
-> >  tools/perf/util/unwind-libdw.c           |   6 +-
-> >  tools/perf/util/unwind-libunwind-local.c |  39 +-
-> >  tools/perf/util/unwind-libunwind.c       |   9 +-
-> >  tools/perf/util/unwind.h                 |   7 +-
-> >  tools/perf/util/util.c                   |   2 +-
-> >  tools/perf/util/util.h                   |   2 +
-> >  63 files changed, 2608 insertions(+), 392 deletions(-)
-> >  create mode 100644 tools/perf/tests/thread-comm.c
-> >  create mode 100644 tools/perf/tests/thread-lookup-time.c
-> >  create mode 100644 tools/perf/tests/thread-map-time.c
-> >  create mode 100644 tools/perf/tests/thread-mg-time.c
-> > 
+Pingfan
