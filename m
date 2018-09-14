@@ -3,107 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A4FECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15286ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E2D20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E2D20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C128721476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C128721476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeINPpP (ORCPT
+        id S1728149AbeINPqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:45:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47462 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeINPpP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:45:15 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g0lNf-0002CW-3q; Fri, 14 Sep 2018 12:31:19 +0200
-Date:   Fri, 14 Sep 2018 12:31:18 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Multi-parent IRQ domains
-In-Reply-To: <20180913155945.GA19903@ulmo>
-Message-ID: <alpine.DEB.2.21.1809141211200.1473@nanos.tec.linutronix.de>
-References: <20180913155945.GA19903@ulmo>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Fri, 14 Sep 2018 11:46:49 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:3756 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726868AbeINPqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:46:49 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42BX0G5z02z9ttgD;
+        Fri, 14 Sep 2018 12:32:46 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id utc2cr_4KTjH; Fri, 14 Sep 2018 12:32:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42BX0G5Sckz9ttg2;
+        Fri, 14 Sep 2018 12:32:46 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B9D0C8B8BA;
+        Fri, 14 Sep 2018 12:32:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id jU7EBzOrf-oq; Fri, 14 Sep 2018 12:32:50 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 895D28B8B4;
+        Fri, 14 Sep 2018 12:32:50 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 461C671925; Fri, 14 Sep 2018 10:32:50 +0000 (UTC)
+Message-Id: <379467c33068e86235272401edfe60a57f2130bb.1536883882.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] serial: cpm_uart: return immediately from console poll
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-serial@vger.kernel.org, stable@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>
+Date:   Fri, 14 Sep 2018 10:32:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Sep 2018, Thierry Reding wrote:
-> I've been trying to implement a feature on recent Tegra chips that's
-> called "wake events". These wake events are implemented as part of the
-> power management controller (PMC) and they control which events can be
-> used to wake the system from suspend. Events include things like an
-> alarm interrupt from an RTC, or the GPIO interrupt hooked up to a
-> power button for example.
-> 
-> We already have a driver for a couple of other things that the PMC does,
-> so I thought it'd be natural to implement this functionality as an IRQ
-> chip in the PMC driver. The way that this would work is that for all the
-> devices that are wakeup sources, we'd end up specifying the PMC as the
-> interrupt parent and the PMC would then itself have the main GIC as its
-> parent. That way, the hierarchical IRQ domain infrastructure would take
-> care of pretty much everything.
-> 
-> Unfortunately I've run into some issues here. One problem that I'm
-> facing is that PMC could have more than one parent. For example, the RTC
-> alarm interrupt goes straight to the GIC, but the power button GPIO goes
-> through the GPIO controller first and then to the GIC. This doesn't seem
-> to be something that's currently possible.
+kgdb expects poll function to return immediately and
+returning NO_POLL_CHAR when no character is available.
 
-So what you are saying is that the RTC is directly wired up to the GIC and
-the GPIO interrupts are demultiplxed by a single GIC interrupt first, but
-at the same time have the requirement to talk to the PMC.
+Fixes: f5316b4aea024 ("kgdb,8250,pl011: Return immediately from console poll")
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/tty/serial/cpm_uart/cpm_uart_core.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Lets look at the current implementation without taking PMC into account.
-
-- RTC gets its interrupt directly from the GIC domain
-
-- GPIO gets its interrupt from the GPIO domain. The GPIO domain does not
-  have a parent domain. It is stand alone because it sets up a demultiplex
-  interrupt from the GIC domain.
-
-  So there is absolutely no irqdomain relationship between a single GPIO
-  and the GIC. The indirection through the demultiplex interrupt does not
-  create one, really.
-
-Now, you need the PMC for both, the GPIOs and the RTC. What you can do here
-is to provide two irq domains in PMC. One which has GIC as its parent and
-one which has no parent. Surely they need to share some resources, but
-that should be a solvable problem.
-
-Now you connect RTC to the GIC parented one and let the PMC irq chip just
-hand through, except for the set_wake() functionality.
-
-The GPIO domain is connected to the parentless PMC domain and the irq chip
-merily provides the set_wake() stuff and everything else is a noop.
-
-So GPIO ends up as a hierarchy which is still not connected to the GIC
-directly.
-
-Hmm?
-
-Thanks,
-
-	tglx
-
+diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+index cd3f3fc4e0a5..280acc4dfa90 100644
+--- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
++++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
+@@ -1093,8 +1093,8 @@ static int poll_wait_key(char *obuf, struct uart_cpm_port *pinfo)
+ 	/* Get the address of the host memory buffer.
+ 	 */
+ 	bdp = pinfo->rx_cur;
+-	while (bdp->cbd_sc & BD_SC_EMPTY)
+-		;
++	if (bdp->cbd_sc & BD_SC_EMPTY)
++		return NO_POLL_CHAR;
+ 
+ 	/* If the buffer address is in the CPM DPRAM, don't
+ 	 * convert it.
+@@ -1129,7 +1129,11 @@ static int cpm_get_poll_char(struct uart_port *port)
+ 		poll_chars = 0;
+ 	}
+ 	if (poll_chars <= 0) {
+-		poll_chars = poll_wait_key(poll_buf, pinfo);
++		int ret = poll_wait_key(poll_buf, pinfo);
++
++		if (ret == NO_POLL_CHAR)
++			return ret;
++		poll_chars = ret;
+ 		pollp = poll_buf;
+ 	}
+ 	poll_chars--;
+-- 
+2.13.3
 
