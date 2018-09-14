@@ -2,134 +2,251 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DF1C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93C6C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5F720853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 498EA20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:34:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxGcvhJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5F720853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cYMBUaRp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498EA20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeINMjl (ORCPT
+        id S1727841AbeINMrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:39:41 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:43561 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbeINMjl (ORCPT
+        Fri, 14 Sep 2018 08:47:09 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41058 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbeINMrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:39:41 -0400
-Received: by mail-ua1-f66.google.com with SMTP id f4-v6so6596492uao.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 00:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=scwqT49AcEnW3+76PRPG5WOxruMIRhxgal+sAhxELSQ=;
-        b=DxGcvhJOBjEYCYHCkcer8IJKkTGt+7kYWit5bAoX6kV01dJmG2UIDaJpnabG9FokHK
-         C1t1CuIZPjNDnDOHbGO1FNqlvXfG7gLNAiZXDg2f2a9O5R4B3ZseJud670gJDYjyN3hb
-         AinsohtZ2czRlt9bAXii7zNzmLJ6TuKxER4fmgxx2tIz2fn/wqSo+OkOlimg9AbhBPFB
-         RF9AwpFGZvsXdU5iDDXRwr3QEhEoohjmJDgGAGb1LdsGv5rf0QLIHeCzzupJm+6O3emL
-         zLw0zvhKqEQnUiust9qoyPob7+f1eq1oNh6Fs9v5zEW0nhQ9bCVyKLpLz9+StHZ8M5mB
-         sueg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=scwqT49AcEnW3+76PRPG5WOxruMIRhxgal+sAhxELSQ=;
-        b=CHV1Jacs7LyK1mbuFx5ClNC4iloz1pHEL9kaOMb88xLNaF2yGRfh0RK34lzTMWo9zW
-         c1yIBUrie7Rsay8xaCxSpTuBw/BovggG8ApKhCnc/l/EQpTlFKiwGH9VUkTGhoplKWuu
-         +P3cpUejipsENyiqVr0dO+Pk1HjpdhR8mWT66mqsP/XU56nSRAQv4uaY8c4x0KPtq0Pa
-         Afl4uQsBLVd8yzl2Rm+4UuyS5EmSeSN2z8Td7ENMDgqeNq50ESQBAqklTliJxajKbGW4
-         3l9/9h6SBcbUJxqwl4+b6g4FaJ/47zbRDN6sE+0uNk7sXRVzwWLryG3fSAKkuWV5JAec
-         vIiw==
-X-Gm-Message-State: APzg51DtX/XxMEIyd1SSSEUE4/DEUYK0mtlCAl/2ZZPPyLKpEuPcShIz
-        1qEiTds0aANfTsq5u+TGFJXyN/GtfNaMb3tDamg=
-X-Google-Smtp-Source: ANB0VdbajbHXIdbH3+S3HHoU/R9j12XFtuo4faUaexIJPF3aPEy4P+9GH4WDxrAMFGXgkDEdqpl08leQv4Iiz8h7xtQ=
-X-Received: by 2002:a9f:25d5:: with SMTP id 79-v6mr3562877uaf.183.1536909990552;
- Fri, 14 Sep 2018 00:26:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180724132719.GA32237@embeddedor.com> <d9e87a82-f70f-3eca-5f63-2450863e7099@embeddedor.com>
- <f35a04a0-fa60-7905-96bf-36a0dfb055a8@nvidia.com> <CAGXu5jKd5SEabmr4sCW-=Oksi6WvO11tDB_9Un1fRYQAoq2h0w@mail.gmail.com>
-In-Reply-To: <CAGXu5jKd5SEabmr4sCW-=Oksi6WvO11tDB_9Un1fRYQAoq2h0w@mail.gmail.com>
-From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Fri, 14 Sep 2018 17:26:19 +1000
-Message-ID: <CACAvsv4V6yJyB1yNaSR7OCHZztc5e3ZoPirz5NorE_Xy222RXA@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/acr: fix memory leak
-To:     keescook@chromium.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dave Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 14 Sep 2018 08:47:09 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8E7TNxl102249;
+        Fri, 14 Sep 2018 07:33:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=1A4s/nLeeyzhFEWxXzqKNCTTzc7ZjPhZU+G2dnvbbcM=;
+ b=cYMBUaRpOgG6LGo0qO7QFFgUF+2vQsYrXZa4kdLm5jhFGWliiRx7PuGuF/vSqmsAi8PF
+ 9w5TkMpnx0Zl4VjMZx6i6LV/cVtbunaZ2/C/0AdOqPXx6vQEbmGOBMAsvIC1aI+L05Rp
+ TXFAM06McLtCbLrpadL6qbI2q9nj7LFd1ZSlDeWqzoEGD9NL3I0VBsOJachcLowna9Wu
+ aJ6B4zILrlSLISrxvXVd5MRsHMUrFYHxL4sDke9uYf9VbtdIDRm+P4nsQYR1y5RUK/sN
+ 2yWL+PPQNdfS/OJL36Eg6grJs1/+QkVk35TClbetX1md0VcDqPXVCfEFcTK+PIA0TQvd SQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2mc5utwdy7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 07:33:51 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8E7XodZ004933
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Sep 2018 07:33:50 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8E7XoX4010161;
+        Fri, 14 Sep 2018 07:33:50 GMT
+Received: from linux.cn.oracle.com (/10.182.70.168)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 14 Sep 2018 07:33:49 +0000
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        paul.durrant@citrix.com, wei.liu2@citrix.com,
+        konrad.wilk@oracle.com, roger.pau@citrix.com,
+        srinivas.eeda@oracle.com
+Subject: [PATCH 1/6] xenbus: prepare data structures and parameter for xenwatch multithreading
+Date:   Fri, 14 Sep 2018 15:34:11 +0800
+Message-Id: <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809140080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2018 at 07:35, Kees Cook <keescook@chromium.org> wrote:
->
-> On Fri, Sep 7, 2018 at 8:02 PM, John Hubbard <jhubbard@nvidia.com> wrote:
-> > On 8/2/18 12:51 PM, Gustavo A. R. Silva wrote:
-> >> Hi all,
-> >>
-> >> Friendly ping! Who can take this?
-> >>
-> >> Thanks
-> >> --
-> >> Gustavo
-> >>
-> >> On 07/24/2018 08:27 AM, Gustavo A. R. Silva wrote:
-> >>> In case memory resources for *bl_desc* were allocated, release
-> >>> them before return.
-> >>>
-> >>> Addresses-Coverity-ID: 1472021 ("Resource leak")
-> >>> Fixes: 0d466901552a ("drm/nouveau/secboot/acr: Remove VLA usage")
-> >>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> >>> ---
-> >>>  drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c | 1 +
-> >>>  1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> >>> index d02e183..5c14d6a 100644
-> >>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> >>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
-> >>> @@ -801,6 +801,7 @@ acr_r352_load(struct nvkm_acr *_acr, struct nvkm_falcon *falcon,
-> >>>              bl = acr->hsbl_unload_blob;
-> >>>      } else {
-> >>>              nvkm_error(_acr->subdev, "invalid secure boot blob!\n");
-> >>> +            kfree(bl_desc);
-> >>>              return -EINVAL;
-> >>>      }
-> >>>
-> >>>
-> >
-> > Hi Gustavo,
-> >
-> > Seeing as how I've been working on this corner of Nouveau lately (don't ask, haha),
-> > I reviewed and also tested this. It looks good, you can add:
-> >
-> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
->
-> Ben can you take this?
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-I've got it in my tree.  Thanks!
+This is the 1st patch of a (6-patch) patch set.
 
->
-> -Kees
->
-> --
-> Kees Cook
-> Pixel Security
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+This patch set of six patches introduces xenwatch multithreading (or
+multithreaded xenwatch, abbreviated as 'mtwatch') to dom0 kernel. In
+addition to the existing single xenwatch thread, each domU has its own
+kernel thread ([xen-mtwatch-<domid>]) to process its xenwatch event.
+
+A kernel parameter 'xen_mtwatch' is introduced to control whether the
+feature is enabled or not during dom0 kernel boot. The feature is disabled
+by default if 'xen_mtwatch' is not set in grub. In addition, this patch
+also introduces the data structures to maintain the status of each per-domU
+xenwatch thread. The status of each xenwatch thread (except the default
+one) is maintained by a mtwatch domain.
+
+The feature is available only on dom0.
+
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  3 ++
+ drivers/xen/xenbus/xenbus_xs.c                  | 31 ++++++++++++
+ include/xen/xenbus.h                            | 65 +++++++++++++++++++++++++
+ 3 files changed, 99 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 64a3bf5..fc295ef 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4992,6 +4992,9 @@
+ 				the unplug protocol
+ 			never -- do not unplug even if version check succeeds
+ 
++	xen_mtwatch     [KNL,XEN]
++			Enables the multithreaded xenwatch (mtwatch).
++
+ 	xen_nopvspin	[X86,XEN]
+ 			Disables the ticketlock slowpath using Xen PV
+ 			optimizations.
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 49a3874..3f137d2 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -95,6 +95,19 @@ static pid_t xenwatch_pid;
+ static DEFINE_MUTEX(xenwatch_mutex);
+ static DECLARE_WAIT_QUEUE_HEAD(watch_events_waitq);
+ 
++bool xen_mtwatch;
++EXPORT_SYMBOL_GPL(xen_mtwatch);
++
++struct mtwatch_info *mtwatch_info;
++
++static bool param_xen_mtwatch;
++static __init int xen_parse_mtwatch(char *arg)
++{
++	param_xen_mtwatch = true;
++	return 0;
++}
++early_param("xen_mtwatch", xen_parse_mtwatch);
++
+ static void xs_suspend_enter(void)
+ {
+ 	spin_lock(&xs_state_lock);
+@@ -929,6 +942,24 @@ int xs_init(void)
+ 	if (err)
+ 		return err;
+ 
++	if (xen_initial_domain() && param_xen_mtwatch) {
++		int i;
++
++		mtwatch_info = kmalloc(sizeof(*mtwatch_info), GFP_KERNEL);
++
++		for (i = 0; i < MTWATCH_HASH_SIZE; i++)
++			INIT_HLIST_HEAD(&mtwatch_info->domain_hash[i]);
++		spin_lock_init(&mtwatch_info->domain_lock);
++		INIT_LIST_HEAD(&mtwatch_info->domain_list);
++
++		spin_lock_init(&mtwatch_info->purge_lock);
++		INIT_LIST_HEAD(&mtwatch_info->purge_list);
++
++		xen_mtwatch = true;
++
++		pr_info("xenwatch multithreading is enabled\n");
++	}
++
+ 	task = kthread_run(xenwatch_thread, NULL, "xenwatch");
+ 	if (IS_ERR(task))
+ 		return PTR_ERR(task);
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 869c816..e807114 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -62,6 +62,13 @@ struct xenbus_watch
+ 	/* Callback (executed in a process context with no locks held). */
+ 	void (*callback)(struct xenbus_watch *,
+ 			 const char *path, const char *token);
++
++	/* Callback to help calculate the domid the path belongs to */
++	domid_t (*get_domid)(struct xenbus_watch *watch,
++			     const char *path, const char *token);
++
++	/* The owner's domid if the watch is for a specific domain */
++	domid_t owner_id;
+ };
+ 
+ 
+@@ -93,6 +100,7 @@ struct xenbus_device_id
+ struct xenbus_driver {
+ 	const char *name;       /* defaults to ids[0].devicetype */
+ 	const struct xenbus_device_id *ids;
++	bool use_mtwatch;
+ 	int (*probe)(struct xenbus_device *dev,
+ 		     const struct xenbus_device_id *id);
+ 	void (*otherend_changed)(struct xenbus_device *dev,
+@@ -233,4 +241,61 @@ extern const struct file_operations xen_xenbus_fops;
+ extern struct xenstore_domain_interface *xen_store_interface;
+ extern int xen_store_evtchn;
+ 
++extern bool xen_mtwatch;
++
++#define MTWATCH_HASH_SIZE 256
++#define MTWATCH_HASH(_id) ((int)(_id)&(MTWATCH_HASH_SIZE-1))
++
++struct mtwatch_info {
++	/*
++	 * The mtwatch_domain is put on both a hash table and a list.
++	 * domain_list is used to optimize xenbus_watch un-registration.
++	 *
++	 * The mtwatch_domain is removed from domain_hash (with state set
++	 * to MTWATCH_DOMAIN_DOWN) when its refcnt is zero. However, it is
++	 * left on domain_list until all events belong to such
++	 * mtwatch_domain are processed in mtwatch_thread().
++	 *
++	 * While there may exist two mtwatch_domain with the same domid on
++	 * domain_list simultaneously, all mtwatch_domain on hash_hash
++	 * should have unique domid.
++	 */
++	spinlock_t domain_lock;
++	struct hlist_head domain_hash[MTWATCH_HASH_SIZE];
++	struct list_head domain_list;
++
++	/*
++	 * When a per-domU kthread is going to be destroyed, it is put
++	 * on the purge_list, and will be flushed by purge_work later.
++	 */
++	struct work_struct purge_work;
++	spinlock_t purge_lock;
++	struct list_head purge_list;
++};
++
++enum mtwatch_domain_state {
++	MTWATCH_DOMAIN_UP = 1,
++	MTWATCH_DOMAIN_DOWN = 2,
++};
++
++struct mtwatch_domain {
++	domid_t domid;
++	struct task_struct *task;
++	atomic_t refcnt;
++
++	pid_t pid;
++	struct mutex domain_mutex;
++	struct rcu_head rcu;
++
++	struct hlist_node hash_node;
++	struct list_head list_node;
++	struct list_head purge_node;
++
++	wait_queue_head_t events_wq;
++
++	spinlock_t events_lock;
++	struct list_head events;
++	enum mtwatch_domain_state state;
++};
++
+ #endif /* _XEN_XENBUS_H */
+-- 
+2.7.4
+
