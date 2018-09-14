@@ -2,89 +2,196 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E81BECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BBEECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C159206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0712083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCRgomt1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C159206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="i6UcrPJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0712083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeINS6b (ORCPT
+        id S1728045AbeINTA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:58:31 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40517 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINS6a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:58:30 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x26-v6so7910451lfi.7
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 06:43:55 -0700 (PDT)
+        Fri, 14 Sep 2018 15:00:57 -0400
+Received: from mail-eopbgr720041.outbound.protection.outlook.com ([40.107.72.41]:36592
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727013AbeINTA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:00:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i1P3z+MABd/HgjSfh2qiQ+SkWmEyrH7VXPs/XVzfH0k=;
-        b=fCRgomt1zXn19hOYJqtuwEh5D7oVIIUEaUfBm+O7SnnlsH/1ILeHvvUrPPlwOU33OB
-         HEIlen96yMLL5luY6lPQQ9I2/vvkgDr1I213pbJG32IbodeqN+d011PVzMKZna0WpLtB
-         3HzagVHoYt73kNnP78So0GzZQMI/A/RC/APW2AgB+8RnS/ZumEm48/sfX0s7DLFbMkD6
-         +rnuC7cnQyC9Lcsw4+r1WtrhGSxUOl7QcZmYx6AW6PTmfyEy+AVWG/9m0jFCNL8eazmL
-         JeYxjAYQc+g+9YcsqXSgTArZ5r4Qj1u8h3PngkEKy1USBcVYBowRy45fzQ4T7rhEDDdv
-         7BnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i1P3z+MABd/HgjSfh2qiQ+SkWmEyrH7VXPs/XVzfH0k=;
-        b=efNzBVar/EGX5VUAb+29rbq0OOk1fowWuDycXYdRPFqNQunvtGhEoWw8Apxc7kLYPd
-         +8KzyQ1Ss/bnkWIXhcNZK41/3UNbqMFIwW/90TqwG/fCnvQWGokDz3moxmmKYDLXMwu8
-         tdQQ085Jg9sB1s3hkUge4kuoQqfAynpOdy891mlm5x0YZs9CJx+UqALLfybKLWYl25ab
-         DSXIdF7CHFGSZj/WUj5KZlQEEDHSLPc86RnEOJd+KV8b/LoonTQ68Q1g5nJajXLuD9qK
-         MAYB0F5JJCVP39ciUYTFlW/cr7wwPc7FWd3AI59V4qJvgzqGxEDMyg5TDFMe3B27mKbQ
-         m3Hg==
-X-Gm-Message-State: APzg51Bd/SmNvo+N4Pvfv8RE+fWTMynXHfMkrJWq/OdPkS1mHHE7qZ5p
-        ODoNFAv9nXwoKr3KmezoNYY=
-X-Google-Smtp-Source: ANB0VdbW1ZgXvLBYlO1iZaCha/v2S6L5WkvWCWVH/eOA/z+fRqUS0kgmcp0dyPFBUf1py7JEY7RzNQ==
-X-Received: by 2002:a19:2841:: with SMTP id o62-v6mr8072097lfo.86.1536932634777;
-        Fri, 14 Sep 2018 06:43:54 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id z189-v6sm1273707lfa.14.2018.09.14.06.43.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 06:43:54 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g0oO4-0002hJ-J4; Fri, 14 Sep 2018 15:43:56 +0200
-Date:   Fri, 14 Sep 2018 15:43:56 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/50] f81534: switch to ->get_serial()
-Message-ID: <20180914134356.GI1362@localhost>
-References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
- <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
- <20180913024049.24567-21-viro@ZenIV.linux.org.uk>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6nqxsU7v6jy2y6YrDI/meab/8G1tV7xTNEUOsmlhDys=;
+ b=i6UcrPJmtmPh3Cbd+nXiCoU4Sue/Z8rJQ87HSyUHxe4Xx4LSNNsBiULoirvuXGwX9vI4kqP7fDSjJaxoa+bRlDPV2yTQ3IF0IZTPUYOy7j+VHtZBSWnGF75RT3C//Yo/+DVrI8DFe+g5hcWeD5ChE+oIh4eDkcyAMiiWFw7stU4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
+ BYAPR12MB2679.namprd12.prod.outlook.com (2603:10b6:a03:69::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.15; Fri, 14 Sep 2018 13:46:14 +0000
+From:   Brijesh Singh <brijesh.singh@amd.com>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v9 0/2] x86: Fix SEV guest regression
+Date:   Fri, 14 Sep 2018 08:45:57 -0500
+Message-Id: <1536932759-12905-1-git-send-email-brijesh.singh@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913024049.24567-21-viro@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [165.204.77.1]
+X-ClientProxiedBy: BN6PR21CA0013.namprd21.prod.outlook.com
+ (2603:10b6:404:8e::23) To BYAPR12MB2679.namprd12.prod.outlook.com
+ (2603:10b6:a03:69::28)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1aca687a-43d5-4283-e4fd-08d61a48713d
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2679;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2679;3:Ab3SDYDAnxgtfKDNM2oCUWrDMAhELE7OsdKC6mLZOyO0GcC3rDBYjNuC9EInTSWtjgkkXV2GV82aHlq/qeQYs/UfMrgvPbggBkkdJXF+3aUT47SYttjc9G0Yg+M/43NtC3haVs2YyPVDqaKITqjchuxRz4j5fO7EjiwqkmPkEbF95ngk7rbKYlbZgE7bTY47qamauSCJT/WxV2Kl6kbH+hDp+Ola6rl/LECddOTEgLXStJscWcUvHNgd7aZUePBG;25:khiAbWGgGJiGRa1S3yywUNXJ81borWdy7kdCbY47i1II0gJxPU74uH0ak377gqlj0q/ZDHXkztzd5zO0gXf0pErtsVr6NwRYA5lhg0dAY0Q+RpC8gMxVNp4k2n0nQ4uftygI4eMpArsDvq4q3BaOsS/QXFWTNb4tuJ+pCFcAY1zBC+LbsjY4q38zwC9R+nnNnThd7RGNSjhi1WK64ZTfXW/wSLxbHVZFF9SB9+xiwNQcokGCxew18yqcodNJ1HF3V2AQAeP/xRNZdUHxiVqWEgzk5VsUL7jWkDLuidtEjXdFwOu1ITIWsgQYMYarTipqf3uHatfNCte55Evsb9KLuw==;31:hR3R5wN6m5/wkhRQHdo0ipVapji1X4ZFqf7EOnqIpsovQ+dvJTYqbAsOybn9e/UmDsWwWeahBgNCOFxEbha8MIIz8btzAxnoftYCq8FM3SyvBWMeslYsptxOCIL9kxJLlBrbWwh/m2HyUqnQqFCKE7B/NU1UTrxEE9Ft6YisPljNQgTGOdSnIqz1oZjEsg/QFJL/NHVrUWyc7y7v72p369dP4BGAJxikz+gTlRw2Am4=
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2679:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2679;20:9gsue527yHyq9klJfBY9i69jF19qsnBoFGGhcXDxo8IBQVoV2hfFanJXyIiKZehKIyAnUOu3J8UahADgubaf3yOVm9fvoStTd4djqHfjWdWxyunhG/Wp6LABVpgcqmgl+z/KerFlYaA5B0M8IlaY3a6tnfvZAFeOwt+1L9rAG9Ed9448ZQ51uptnJH8IvoLSooHjyhXoi+iEoRP1vOt62ncJHJXAmNEQu0YfNqVXGFj5GF1T7eoFoyWes8SqzVt/eaA1Yv8LIZiODLGNPY3sWHYkdnoZsnJlZu3hJP3F14wMpe4pgIDFxHiDcdxLPP6ErQMfWtI9lm3xLqEugffZh6AVoygPENucOpglVs+43++3JdCXWCN2KNDFSurIxup5wLwfrlZnq5VxDhPWQXrBQfoCuzzciVfwQuh4omJ0UKHjxJBbCelLLqNYji/JD/dfWWcjrssI369l6eoLC6gPscflAXyyteyevRVMhH3lvJzgKw2T0fDowCjBWqB6D+/S;4:GhU4TxHkUBIgR49OE/1YTwxV0lX0FkIep4OzgZyTu0TpSso9GTEGK2CSXj8SPINDF2ar9K9yMxZOu6WqUwJrfFxqH795iz9yhGD1Ofc4LPW/eT3IyPmhbIQZlItscCfmGQiSWeJ8De2HjJmr++Bs2858Lj8F9iTbKPWAtp38OW1UTWzn/9utGB4tqERTEzykto9/7UoyfMDb79kRrUfAWagvWnrmCLeN7Q3Cj8RCJ3gkButA6edAqnnLTcNqn7WDzMkuOVra+AYgfBrhCKBo4EiihrYCyE0c64M85E3AhE/l7YvtjhdRZ61oMG0f8BgXQqtWqU0VxbPUB0HHEQVqWoO9JqpW1n4S3XsIwW5AWoKWKK3bLNPszatApNgdF+PF76+Eq/PtuBEU0c1ROlAUOXOmC4baM0xykusYZgHdoPE=
+X-Microsoft-Antispam-PRVS: <BYAPR12MB2679D5942E2962B643175D4EE5190@BYAPR12MB2679.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(767451399110)(84791874153150)(228905959029699);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699050);SRVR:BYAPR12MB2679;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2679;
+X-Forefront-PRVS: 07954CC105
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(396003)(376002)(136003)(189003)(199004)(2906002)(386003)(36756003)(8676002)(81156014)(5660300001)(2870700001)(81166006)(47776003)(53416004)(316002)(54906003)(50466002)(86362001)(97736004)(14444005)(6486002)(476003)(26005)(68736007)(50226002)(7736002)(66066001)(486006)(956004)(44832011)(53936002)(6116002)(106356001)(16526019)(305945005)(186003)(25786009)(7696005)(4326008)(3846002)(52116002)(478600001)(966005)(2616005)(6666003)(6306002)(105586002)(23676004)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2679;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjEyTUIyNjc5OzIzOjc0VVZSMHozWklqMnpTYWpLRWt6dHI2MjRq?=
+ =?utf-8?B?L0dXemRCMzBianFyUFYranEwOEhDcmEvU3pxMFRKM0s5dStndzJ1VmV2cEFl?=
+ =?utf-8?B?Z3JrVk1iajkxQjhDT1VGZnhSQnVpRWF5bGtLUHZQcmtaa1I5NmlldG1SNmwz?=
+ =?utf-8?B?RHdyMUFVazRPYmh5SmlkNkxmVWtDM3pkK25lMHEwU3llSm5WWi9wSkpzVGtE?=
+ =?utf-8?B?aGgxeSsreURuUitYZFhraVBuejlDRmpqb2xBWWFhRTVUOHhtczVMcU9GbWNu?=
+ =?utf-8?B?LzBiSlZ4d2pvcThXTEpMYU55bjJPcG9yallyS2o2Q2RLNzJjb25ocU9SL2lZ?=
+ =?utf-8?B?d0hHSDVlNk9GakxTYWk2V1FPakx3bUQ3b2NaVXc1ZVRSTTVmeS9XRnkwbEFi?=
+ =?utf-8?B?dVFqa0RDNzBRbkZyY2FVdGdHZFRreEpORk1QY2ZNbVI2UTR3a29XalVxd1hp?=
+ =?utf-8?B?djg3bHRuVEtUWXNUdEpYNVdlekJKckE1WG5SSzlDc3JPWmlyNGR5RzlnQ1Qr?=
+ =?utf-8?B?bHdETFY2VWlWR09JQnRQVDg2WVY3OSt4ekpHV0ZzMmNtaXVSVlJVOEZzK3V4?=
+ =?utf-8?B?UE5nTGl5bFhRYnRhbXlVS0t3eWpmUDhZWUVubkVxNnJCZTEyeGl4QStZS2xq?=
+ =?utf-8?B?Si9FMU9Ramw5Y0t1aWNWN0h5eGNTdW9rMXBjMDI5bXhKS0w1VU42S0IvZFll?=
+ =?utf-8?B?R3cyU3NFeVdmNEZGOUZwQkIzYSs1OXdTMER4eGoxUnE1MDRubmhBSjd2WUxP?=
+ =?utf-8?B?NUlZU2RUem5TTHNRdGxMWEpPQ3E5K1F6NEgwSjBSSXdHUFpSeDVpY1VIVmdF?=
+ =?utf-8?B?WGZBakR3bm1lVEo2dmVxZjNKRHlVdTJGWUdOQWZ6Y0dKMUdjZGNYOXc5L1BE?=
+ =?utf-8?B?N21LTGZDemxMTlRzeEpRUktoanJuamtwclBNMFBXanc2b3RrSlpRLzdZb2pP?=
+ =?utf-8?B?Ulo5YW40eTB2VlBBc0FuL2FQaTYwZVdCaUNUcytXOWFnWkdYcDVEYlIrT1J3?=
+ =?utf-8?B?dFF5TzlQN09QaVQ1S3N2UU1UM3Z3bWxMdzVSRC9QK3Z3OC9BbDloMkREVXow?=
+ =?utf-8?B?WFpacmcvQm1scnhWOURaVG1USHQ3NmN6UDM5MXFZUU1haHczRVdKNnFTMkpU?=
+ =?utf-8?B?alEvbnVCaUNsdTJZVHJSaUhrWEoxVXNlcTBTUTRYaFdzUEhzMzEyWURhWmZh?=
+ =?utf-8?B?Q2Z6Q295QXo2OXRqL09nTHhmdGJKeEpkTG1Yb0JGMEg3dkdxdjc3dTBJcTBu?=
+ =?utf-8?B?TkcyUkZqNjVLazM0WkF2azRvL2p2akoxc09SK2ZRc3NZOHgzVW83UjNRMTBi?=
+ =?utf-8?B?SnBuOEx4VEVHNW5FRFV6dzIyMFlHTHN5bUJRQ1Y2R2Rzc2I0T1p5TE53SUhr?=
+ =?utf-8?B?N0E2QnVWTjdENVhWUW1QQU5UYjRVbjUzYXlSMys3RElqMEVRVTZQaC9rYlRa?=
+ =?utf-8?B?cC85SnZ1OHdraFpzNmkzVXV1SGN5TnROU0ZSN3JLVTQ4WThPSjdieTY1MjRS?=
+ =?utf-8?B?cThlUFJtN1lwL1BWd1k2NkovdkNlU1hGdkYvTjRvWHovUnp6di9YcUJ6T3d1?=
+ =?utf-8?Q?Zvrl+j75JYiPedVi9zKZxic+L4KFumGYrkdAY1n1xaG8=3D?=
+X-Microsoft-Antispam-Message-Info: Klnu3Tv4vPAZ+x1aHS162vSIFogx+odpB2+7M1ZjgpPeLOn4Z+RfzmtPbQs6IzHJPdNiSSsDyrJqmd2cz4tHPXOQCM4hCHibuPxgH945p8fJwlJikmPwFCpTMKooLLuyp6O/cfSCp79d+Ywv0C6g7W6JE6TJXhXTVRH1kc59KmFbHp0oYreO1vthoxGsvJqz8goNCtoZkaht/HJyn+bPOTRokIiANa/H6M+m8V87mKEseGK7Yc6WvWUsOXUNCZ/g5QGgHBz60dJ9cUgTddlbQ+uIIPEojfmn2COGLyLrSy6q4uKXN2YzAQzhF71jrNzxnT0qrcTDd6c2t5TJli25zRITmR8e6ucRe4U3Acr6cdg=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2679;6:EbuOBWqeW0jyDrPKro0Oc2LfPFKhd42kHzdzrUtadqrHE3jELhSuQC+9axySfsn+ZXgdgn/Kjfzz3Z0FAW3Aw89iab+B4b78/MZ2I+qs1ajkeAD8d0dphAtO9UFmwgBL3FEobSzGenNflRCwnDxkXJDE9GOB6D9+2MnKytkpwcSEayLioRBsBtTnNOBh6CTrEsdTG/6VRO6bTPCKskbWr53SRhBD/ZecN2wHPGZFSRrdGvZ7/J07MtD/3TnTAMjhlfwo57bzZi3rc7zgKcO4lUnXNsKr7/0Y76EO2teulLU3Ig6DMn8NDjbdZUqp5JyIMtpXVzs8H1K6pklvwr8JB1XEkkk2Drzycxg4hwUnB7WM2ChB9eAnCEmfpRKr4H1kyJZu2JdYPCC/3x87pUMm+cdWlexOdAZuAEU3NaYoJvDvaNkwWjpGkgxc0SJszaxAssRtOUsXem1vRnAR8jXw1w==;5:BNasS55WfMdWHYpeIY/fcODiQS/HfpZ221KC+h4KYf00lmJNireFirMUXjm1J9T6iBaniwsP8kB6+jfLcs/q6U9fpKTLr/LntyB8fnepGFdfOSnEAISeC5FYYD7R80hth5UIyuvbVFRQGB0R53Bv2NHUsvQwExUVI+piR6B8XZk=;7:0d5/lKr8sZwjNicypCgesO4HyCvLXCj55EebgX80UWambzCoZIhgEOxkr+OFhtWOP41Ksk14R2T5N8KqsuMQzWK2nxNM27Xk8GH4AY6HVsB31w3bMaeHRzQWxiiAnK3nAp2wghICnNr6WkvCpL994Wl9/PPg00khKJemqUdP962/1IUsm9xiyN01/JGwkkjNQz5YZmQQQ0ZBDJKjsxBz2M8OOc8xPAp6M7H9dpEgNDysAg6O8qaMwww7CgZuPgO2
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2679;20:dlQTzUkGQJLB0gIRDCHZXRk+r36OF5asgaMdGAKHy2onVR+pB6XWniYNu3sG4bg+AWQ0bPjAAk6dGpIIoNCg0Ap1oIBP5q4tvflIfrR0Ulj54YOJpvkC6QnkA6bDywmFGQxBPx9rWY3TgipFcTZF82vNF129Bj06UQmzsL9rX09vt0YIxQU9uhVwLiJWihQulNyDlZUqvdpxxjEEkIwdieTlzzicxGBw+PIYqwWWAz2V2YPRBHas7ufScRKoE5uz
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 13:46:14.5603 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1aca687a-43d5-4283-e4fd-08d61a48713d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2679
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 03:40:20AM +0100, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+The following commit
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+"
+x86/kvmclock: Remove memblock dependency
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
+"
+
+introduced SEV guest regression.
+
+The guest physical address holding the wall_clock and hv_clock_boot
+are shared with the hypervisor must be mapped with C=0 when SEV
+is active. To clear the C-bit we use  kernel_physical_mapping_init() to
+split the large pages. The above commit moved the kvmclock initialization
+very early and kernel_physical_mapping_init() fails to allocate memory
+while spliting the large page.
+
+To solve it, we add a special .data..decrypted section, this section can be
+used to hold the shared variables. Early boot code maps this section with
+C=0. The section is pmd aligned and sized to avoid the need to split the pages.
+Caller can use __decrypted attribute to add the variables in .data..decrypted
+section. 
+
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+
+Changes since v8:
+ - restore the C-bit before freeing unused decrypted memory
+ - fix compiler warning when NR_CPUS=1
+
+Changes since v7:
+ - As per Thomas Gleixner suggestion move the decrypted data in .bss..decrypted section
+ - remove the second auxiliary array from SEV case
+ - allocate memory for pvclock data pointer early and map with C=0 for SEV case
+
+Changes since v6:
+ - improve commit messages
+ - rename free_decrypted_mem -> mem_encrypt_free_decrypted_mem
+
+Changes since v5:
+ - rename hvclock_boot_dec -> hvclock_boot_aux.
+ - rename section from .data..decrypted_aux -> .data..decrypted.aux.
+ - use NR_CPUS instead of random number elements in hv_clock_aux variable.
+
+Changes since v4:
+ - define few static pages in .data..decrypted which can be used
+   for cpus > HVC_BOOT_ARRAY_SIZE when SEV is active.
+
+Changes since v3:
+ - commit message improvements (based on Sean's feedback)
+
+Changes since v2:
+ - commit message and code comment improvements (based on Boris feedback)
+ - move sme_populate_pgd fixes in new patch.
+ - drop stable Cc - will submit to stable after patch is upstreamed.
+
+Changes since v1:
+ - move the logic to re-arrange mapping in new patch
+ - move the definition of __start_data_* in mem_encrypt.h
+ - map the workarea buffer as encrypted when SEV is enabled
+ - enhance the sme_populate_pgd to update the pte/pmd flags when mapping exist
+
+Brijesh Singh (2):
+  x86/mm: add .bss..decrypted section to hold shared variables
+  x86/kvm: use __bss_decrypted attribute in shared variables
+
+ arch/x86/include/asm/mem_encrypt.h |  7 +++++
+ arch/x86/kernel/head64.c           | 16 ++++++++++++
+ arch/x86/kernel/kvmclock.c         | 52 +++++++++++++++++++++++++++++++++++---
+ arch/x86/kernel/vmlinux.lds.S      | 19 ++++++++++++++
+ arch/x86/mm/init.c                 |  4 +++
+ arch/x86/mm/mem_encrypt.c          | 24 ++++++++++++++++++
+ 6 files changed, 119 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
+
