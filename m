@@ -2,110 +2,211 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886DFECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AEAFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25F8A20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:51:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TIbDPUeQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F8A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id EC94220866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:53:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC94220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeINPF0 (ORCPT
+        id S1728029AbeINPGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:05:26 -0400
-Received: from m12-11.163.com ([220.181.12.11]:35729 "EHLO m12-11.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbeINPF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:05:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=7UBpilPnsKaTQPnAbt
-        va6+x1zvWlZWKjPW37uDKpvJI=; b=TIbDPUeQGrWWH4fatNMGyXT6RZQuCVf/zI
-        rLaWIyBnpO/6ZCrD7AUyoNmkWp2YEe041vqYwuPMYRqFeIv3DN183v5BfJKg+lyf
-        qqxSoiWuN7mu2fmS1arQ+pK/cu0KoWobArrNguyPvRiJankYHQK2sI42zWsBmxki
-        wavUNr4To=
-Received: from localhost.localdomain (unknown [117.136.0.171])
-        by smtp7 (Coremail) with SMTP id C8CowAAHhSqmhJtbfcAgAQ--.41883S4;
-        Fri, 14 Sep 2018 17:51:35 +0800 (CST)
-From:   Dongbo Cao <cdbdyx@163.com>
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
-Subject: [PATCH] add label interface for cache device in sysfs
-Date:   Fri, 14 Sep 2018 17:51:20 +0800
-Message-Id: <20180914095120.2699-1-cdbdyx@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: C8CowAAHhSqmhJtbfcAgAQ--.41883S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7GrWDZrWxCw1fWryrWF43GFg_yoW8JrWfpF
-        W3W34rWw1kX347Jrn3CF17GaySg3ySya4kWrW2yay8Za4jq3WDC3yFgayY9ryktr45Ca93
-        Ar18tF45Wa1UWFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8Xo7UUUUU=
-X-Originating-IP: [117.136.0.171]
-X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiJQ-B3FUMM6ZMHgAAsp
+        Fri, 14 Sep 2018 11:06:44 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53995 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeINPGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:06:44 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 0970692a9123ede9; Fri, 14 Sep 2018 11:52:57 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
+Date:   Fri, 14 Sep 2018 11:50:15 +0200
+Message-ID: <5398488.CyAMIAYSYI@aspire.rjw.lan>
+In-Reply-To: <20180809153925.GA20329@red-moon>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org> <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com> <20180809153925.GA20329@red-moon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-label interface will be called by bcache tools in user space.
+On Thursday, August 9, 2018 5:39:25 PM CEST Lorenzo Pieralisi wrote:
+> On Mon, Aug 06, 2018 at 11:20:59AM +0200, Rafael J. Wysocki wrote:
+> 
+> [...]
+> 
+> > >>> > @@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
+> > >>> >     return false;
+> > >>> >  }
+> > >>> >
+> > >>> > +static bool cpu_power_down_ok(struct dev_pm_domain *pd)
+> > >>> > +{
+> > >>> > +   struct generic_pm_domain *genpd = pd_to_genpd(pd);
+> > >>> > +   ktime_t domain_wakeup, cpu_wakeup;
+> > >>> > +   s64 idle_duration_ns;
+> > >>> > +   int cpu, i;
+> > >>> > +
+> > >>> > +   if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
+> > >>> > +           return true;
+> > >>> > +
+> > >>> > +   /*
+> > >>> > +    * Find the next wakeup for any of the online CPUs within the PM domain
+> > >>> > +    * and its subdomains. Note, we only need the genpd->cpus, as it already
+> > >>> > +    * contains a mask of all CPUs from subdomains.
+> > >>> > +    */
+> > >>> > +   domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
+> > >>> > +   for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
+> > >>> > +           cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
+> > >>> > +           if (ktime_before(cpu_wakeup, domain_wakeup))
+> > >>> > +                   domain_wakeup = cpu_wakeup;
+> > >>> > +   }
+> > >>
+> > >> Here's a concern I have missed before. :-/
+> > >>
+> > >> Say, one of the CPUs you're walking here is woken up in the meantime.
+> > >
+> > > Yes, that can happen - when we miss-predicted "next wakeup".
+> > >
+> > >>
+> > >> I don't think it is valid to evaluate tick_nohz_get_next_wakeup() for it then
+> > >> to update domain_wakeup.  We really should just avoid the domain power off in
+> > >> that case at all IMO.
+> > >
+> > > Correct.
+> > >
+> > > However, we also want to avoid locking contentions in the idle path,
+> > > which is what this boils done to.
+> > 
+> > This already is done under genpd_lock() AFAICS, so I'm not quite sure
+> > what exactly you mean.
+> > 
+> > Besides, this is not just about increased latency, which is a concern
+> > by itself but maybe not so much in all environments, but also about
+> > possibility of missing a CPU wakeup, which is a major issue.
+> > 
+> > If one of the CPUs sharing the domain with the current one is woken up
+> > during cpu_power_down_ok() and the wakeup is an edge-triggered
+> > interrupt and the domain is turned off regardless, the wakeup may be
+> > missed entirely if I'm not mistaken.
+> > 
+> > It looks like there needs to be a way for the hardware to prevent a
+> > domain poweroff when there's a pending interrupt or I don't quite see
+> > how this can be handled correctly.
+> > 
+> > >> Sure enough, if the domain power off is already started and one of the CPUs
+> > >> in the domain is woken up then, too bad, it will suffer the latency (but in
+> > >> that case the hardware should be able to help somewhat), but otherwise CPU
+> > >> wakeup should prevent domain power off from being carried out.
+> > >
+> > > The CPU is not prevented from waking up, as we rely on the FW to deal with that.
+> > >
+> > > Even if the above computation turns out to wrongly suggest that the
+> > > cluster can be powered off, the FW shall together with the genpd
+> > > backend driver prevent it.
+> > 
+> > Fine, but then the solution depends on specific FW/HW behavior, so I'm
+> > not sure how generic it really is.  At least, that expectation should
+> > be clearly documented somewhere, preferably in code comments.
+> > 
+> > > To cover this case for PSCI, we also use a per cpu variable for the
+> > > CPU's power off state, as can be seen later in the series.
+> > 
+> > Oh great, but the generic part should be independent on the underlying
+> > implementation of the driver.  If it isn't, then it also is not
+> > generic.
+> > 
+> > > Hope this clarifies your concern, else tell and will to elaborate a bit more.
+> > 
+> > Not really.
+> > 
+> > There also is one more problem and that is the interaction between
+> > this code and the idle governor.
+> > 
+> > Namely, the idle governor may select a shallower state for some
+> > reason, for example due to an additional latency limit derived from
+> > CPU utilization (like in the menu governor), and how does the code in
+> > cpu_power_down_ok() know what state has been selected and how does it
+> > honor the selection made by the idle governor?
+> 
+> That's a good question and it maybe gives a path towards a solution.
+> 
+> AFAICS the genPD governor only selects the idle state parameter that
+> determines the idle state at, say, GenPD cpumask level it does not touch
+> the CPUidle decision, that works on a subset of idle states (at cpu
+> level).
 
-Signed-off-by: Dongbo Cao <cdbdyx@163.com>
----
- drivers/md/bcache/sysfs.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+I've deferred responding to this as I wasn't quite sure if I followed you
+at that time, but I'm afraid I'm still not following you now. :-)
 
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 225b15aa..e64c718f 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -950,6 +950,13 @@ SHOW(__bch_cache)
- 		return ret;
- 	}
- 
-+	if (attr == &sysfs_label) {
-+		memcpy(buf, ca->sb.label, SB_LABEL_SIZE);
-+		buf[SB_LABEL_SIZE + 1] = '\0';
-+		strcat(buf, "\n");
-+		return strlen(buf);
-+	}
-+
- 	return 0;
- }
- SHOW_LOCKED(bch_cache)
-@@ -993,6 +1000,17 @@ STORE(__bch_cache)
- 		atomic_set(&ca->io_errors, 0);
- 	}
- 
-+	if (attr == &sysfs_label) {
-+		if (size > SB_LABEL_SIZE)
-+			return -EINVAL;
-+		memcpy(ca->sb.label, buf, size);
-+		if (size < SB_LABEL_SIZE)
-+			ca->sb.label[size] = '\0';
-+		if (size && ca->sb.label[size - 1] == '\n')
-+			ca->sb.label[size - 1] = '\0';
-+		bcache_write_super(ca->set);
-+	}
-+
- 	return size;
- }
- STORE_LOCKED(bch_cache)
-@@ -1009,6 +1027,7 @@ static struct attribute *bch_cache_files[] = {
- 	&sysfs_io_errors,
- 	&sysfs_clear_stats,
- 	&sysfs_cache_replacement_policy,
-+	&sysfs_label,
- 	NULL
- };
- KTYPE(bch_cache);
--- 
-2.17.1
+The idle governor has to take the total worst-case wakeup latency into
+account.  Not just from the logical CPU itself, but also from whatever
+state the SoC may end up in as a result of this particular logical CPU
+going idle, this way or another.
 
+So for example, if your logical CPU has an idle state A that may trigger an
+idle state X at the cluster level (if the other logical CPUs happen to be in
+the right states and so on), then the worst-case exit latency for that
+is the one of state X.
+
+> That's my understanding, which can be wrong so please correct me
+> if that's the case because that's a bit confusing.
+> 
+> Let's imagine that we flattened out the list of idle states and feed
+> CPUidle with it (all of them - cpu, cluster, package, system - as it is
+> in the mainline _now_). Then the GenPD governor can run-through the
+> CPUidle selection and _demote_ the idle state if necessary since it
+> understands that some CPUs in the GenPD will wake up shortly and break
+> the target residency hyphothesis the CPUidle governor is expecting.
+> 
+> The whole idea about this series is improving CPUidle decision when
+> the target idle state is _shared_ among groups of cpus (again, please
+> do correct me if I am wrong).
+> 
+> It is obvious that a GenPD governor must only demote - never promote a
+> CPU idle state selection given that hierarchy implies more power
+> savings and higher target residencies required.
+
+So I see a problem here, because the way patch 9 in this series is done,
+the genpd governor for CPUs has no idea what states have been selected by
+the idle governor, so how does it know how deep it can go with turning
+off domains?
+
+My point is that the selection made by the idle governor need not be
+based only on timers which is the only thing that the genpd governor
+seems to be looking at.  The genpd governor should rather look at what
+idle states have been selected for each CPU in the domain by the idle
+governor and work within the boundaries of those.
+
+Thanks,
+Rafael
 
