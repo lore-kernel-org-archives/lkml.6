@@ -2,176 +2,593 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBCECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C5DFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A4E20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A4E20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 63CB520882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63CB520882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeINPlg (ORCPT
+        id S1728181AbeINPm3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:41:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38045 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeINPlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:41:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8279D208D9; Fri, 14 Sep 2018 12:27:42 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4EFE32080A;
-        Fri, 14 Sep 2018 12:27:32 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 12:27:32 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Romain Izard <romain.izard.pro@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] watchdog: sama5d4: write the mode register in two
- steps
-Message-ID: <20180914102732.GP14988@piout.net>
-References: <20180914101339.7382-1-romain.izard.pro@gmail.com>
- <20180914101339.7382-3-romain.izard.pro@gmail.com>
+        Fri, 14 Sep 2018 11:42:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727726AbeINPm3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:42:29 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8EAJxsx103653
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 06:28:34 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mgamusgyf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 06:28:33 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 14 Sep 2018 11:28:32 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Sep 2018 11:28:27 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8EASQ5W48365720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Sep 2018 10:28:26 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89ECA42045;
+        Fri, 14 Sep 2018 13:28:16 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E3C442041;
+        Fri, 14 Sep 2018 13:28:16 +0100 (BST)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Sep 2018 13:28:16 +0100 (BST)
+Date:   Fri, 14 Sep 2018 12:28:24 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, npiggin@gmail.com,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com
+Subject: Re: [RFC][PATCH 01/11] asm-generic/tlb: Provide a comment
+In-Reply-To: <20180913123937.GX24124@hirez.programming.kicks-ass.net>
+References: <20180913092110.817204997@infradead.org>
+        <20180913092811.894806629@infradead.org>
+        <20180913123014.0d9321b8@mschwideX1>
+        <20180913105738.GW24124@hirez.programming.kicks-ass.net>
+        <20180913141827.1776985e@mschwideX1>
+        <20180913123937.GX24124@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914101339.7382-3-romain.izard.pro@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18091410-0012-0000-0000-000002A8CA0F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091410-0013-0000-0000-000020DD1464
+Message-Id: <20180914122824.181d9778@mschwideX1>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809140111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/09/2018 12:13:39+0200, Romain Izard wrote:
-> The specification for SAMA5D2 and SAMA5D4 chips, that use this IP for
-> their watchdog timer, has the following advice regarding the Mode Register:
+On Thu, 13 Sep 2018 14:39:37 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Thu, Sep 13, 2018 at 02:18:27PM +0200, Martin Schwidefsky wrote:
+> > We may get something working with a common code mmu_gather, but I fear the
+> > day someone makes a "minor" change to that subtly break s390. The debugging of
+> > TLB related problems is just horrible..  
 > 
-> "When setting the WDDIS bit, and while it is set, the fields WDV and WDD
-> must not be modified."
+> Yes it is, not just on s390 :/
 > 
-> I have observed on a board based on a SAMA5D2 chip that using any other
-> timeout duration than the default 16s in the device tree will reset the
-> board when the watchdog device is opened; this is probably due to ignoring
-> the aforementioned constraint.
+> And this is not something that's easy to write sanity checks for either
+> AFAIK. I mean we can do a few multi-threaded mmap()/mprotect()/munmap()
+> proglets and catch faults, but that doesn't even get close to covering
+> all the 'fun' spots.
 > 
-> To fix this, read the content of the Mode Register before writing it,
-> and split the access into two parts if WDV or WDD need to be changed.
+> Then again, you're more than welcome to the new:
 > 
-
-Hum, that is really weird because when I developed
-015b528644a84b0018d3286ecd6ea5f82dce0180, I tested with a program doing:
-
-	flags = WDIOS_DISABLECARD;
-	ioctl(fd, WDIOC_SETOPTIONS, &flags);
-	for (i = 16; i > 2; i--) {
-		ioctl(fd, WDIOC_SETTIMEOUT, &i);
-	}
-
-	ioctl(fd, WDIOC_KEEPALIVE, &dummy);
-
-	flags = WDIOS_ENABLECARD;
-	ioctl(fd, WDIOC_SETOPTIONS, &flags);
-
-	for (i = 16; i > 2; i--) {
-		ioctl(fd, WDIOC_SETTIMEOUT, &i);
-	}
-
-This would immediately reproduce the reset when changing WDV/WDD with
-WDDIS set.
-
-I'll test again.
-
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  drivers/watchdog/sama5d4_wdt.c | 27 ++++++++++++++++++++-------
->  1 file changed, 20 insertions(+), 7 deletions(-)
+>   MMU GATHER AND TLB INVALIDATION
 > 
-> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-> index 1e93c1b0e3cf..1e05268ad94b 100644
-> --- a/drivers/watchdog/sama5d4_wdt.c
-> +++ b/drivers/watchdog/sama5d4_wdt.c
-> @@ -46,7 +46,10 @@ MODULE_PARM_DESC(nowayout,
->  	"Watchdog cannot be stopped once started (default="
->  	__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
->  
-> -#define wdt_enabled (!(wdt->mr & AT91_WDT_WDDIS))
-> +#define wdt_enabled(reg) (!((reg) & AT91_WDT_WDDIS))
-> +
-> +#define wdt_different_counters(reg_a, reg_b) \
-> +	(((reg_a) ^ (reg_b)) & (AT91_WDT_WDV | AT91_WDT_WDD))
->  
->  #define wdt_read(wdt, field) \
->  	readl_relaxed((wdt)->reg_base + (field))
-> @@ -78,8 +81,11 @@ static void wdt_write_nosleep(struct sama5d4_wdt *wdt, u32 field, u32 val)
->  static int sama5d4_wdt_start(struct watchdog_device *wdd)
->  {
->  	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
-> +	u32 reg = wdt_read(wdt, AT91_WDT_MR);
->  
->  	wdt->mr &= ~AT91_WDT_WDDIS;
-> +	if (!wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
-> +		wdt_write(wdt, AT91_WDT_MR, reg & ~AT91_WDT_WDDIS);
->  	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
->  
->  	return 0;
-> @@ -88,8 +94,11 @@ static int sama5d4_wdt_start(struct watchdog_device *wdd)
->  static int sama5d4_wdt_stop(struct watchdog_device *wdd)
->  {
->  	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
-> +	u32 reg = wdt_read(wdt, AT91_WDT_MR);
->  
->  	wdt->mr |= AT91_WDT_WDDIS;
-> +	if (wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
-> +		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
->  	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
->  
->  	return 0;
-> @@ -122,7 +131,7 @@ static int sama5d4_wdt_set_timeout(struct watchdog_device *wdd,
->  	 * If the watchdog is enabled, then the timeout can be updated. Else,
->  	 * wait that the user enables it.
->  	 */
-> -	if (wdt_enabled)
-> +	if (wdt_enabled(wdt->mr))
->  		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
->  
->  	wdd->timeout = timeout;
-> @@ -186,13 +195,17 @@ static int sama5d4_wdt_init(struct sama5d4_wdt *wdt)
->  	 * If the watchdog is already running, we can safely update it.
->  	 * Else, we have to disable it properly.
->  	 */
-> -	if (wdt_enabled) {
-> +	reg = wdt_read(wdt, AT91_WDT_MR);
-> +	if (wdt_enabled(reg)) {
-> +		if (!wdt_enabled(wdt->mr))
-> +			wdt_write_nosleep(wdt, AT91_WDT_MR,
-> +					  wdt->mr & ~AT91_WDT_WDDIS);
->  		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
-> -	} else {
-> -		reg = wdt_read(wdt, AT91_WDT_MR);
-> -		if (!(reg & AT91_WDT_WDDIS))
-> +	} else if (wdt_enabled(wdt->mr)) {
-> +		if (wdt_different_counters(reg, wdt->mr))
->  			wdt_write_nosleep(wdt, AT91_WDT_MR,
-> -					  reg | AT91_WDT_WDDIS);
-> +					  reg & ~AT91_WDT_WDDIS);
-> +		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
->  	}
->  	return 0;
->  }
-> -- 
-> 2.17.1
-> 
+> section in MAINTAINERS.
+
+I spent some time to get s390 converted to the common mmu_gather code.
+There is one thing I would like to request, namely the ability to
+disable the page gather part of mmu_gather. For my prototype patch
+see below, it defines the negative HAVE_RCU_NO_GATHER_PAGES Kconfig
+symbol that if defined will remove some parts from common code.
+Ugly but good enough for the prototype to convey the idea.
+For the final solution we better use a positive Kconfig symbol and
+add that to all arch Kconfig files except for s390.
+
+The code itself is less hairy than I feared, it worked on the first
+try and survived my fork/munmap/mprotect TLB stress test. But as
+this is TLB flushing there probably is some subtle problem left..
+
+Here we go:
+--
+From f222a7e40427b625700f2ca0919c32f07931c19a Mon Sep 17 00:00:00 2001
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Date: Fri, 14 Sep 2018 10:50:58 +0200
+Subject: [PATCH] s390/tlb: convert s390 to generic mmu_gather
+
+Introduce HAVE_RCU_NO_GATHER_PAGES to allow the arch code to disable
+page gathering in the generic mmu_gather code, then enable the generic
+mmu_gather code for s390.
+
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+---
+ arch/Kconfig                |   3 +
+ arch/s390/Kconfig           |   3 +
+ arch/s390/include/asm/tlb.h | 131 ++++++++++++++------------------------------
+ arch/s390/mm/pgalloc.c      |  63 +--------------------
+ include/asm-generic/tlb.h   |   7 +++
+ mm/mmu_gather.c             |  18 +++++-
+ 6 files changed, 72 insertions(+), 153 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 053c44703539..9b257929a7c1 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -359,6 +359,9 @@ config HAVE_PERF_USER_STACK_DUMP
+ config HAVE_ARCH_JUMP_LABEL
+ 	bool
+ 
++config HAVE_RCU_NO_GATHER_PAGES
++	bool
++
+ config HAVE_RCU_TABLE_FREE
+ 	bool
+ 
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 9a9c7a6fe925..521457e3c5e4 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -161,6 +161,9 @@ config S390
+ 	select HAVE_NOP_MCOUNT
+ 	select HAVE_OPROFILE
+ 	select HAVE_PERF_EVENTS
++	select HAVE_RCU_NO_GATHER_PAGES
++	select HAVE_RCU_TABLE_FREE
++	select HAVE_RCU_TABLE_INVALIDATE
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+index cf3d64313740..8073ff272b2b 100644
+--- a/arch/s390/include/asm/tlb.h
++++ b/arch/s390/include/asm/tlb.h
+@@ -22,98 +22,40 @@
+  * Pages used for the page tables is a different story. FIXME: more
+  */
+ 
+-#include <linux/mm.h>
+-#include <linux/pagemap.h>
+-#include <linux/swap.h>
+-#include <asm/processor.h>
+-#include <asm/pgalloc.h>
+-#include <asm/tlbflush.h>
+-
+-struct mmu_gather {
+-	struct mm_struct *mm;
+-	struct mmu_table_batch *batch;
+-	unsigned int fullmm;
+-	unsigned long start, end;
+-};
+-
+-struct mmu_table_batch {
+-	struct rcu_head		rcu;
+-	unsigned int		nr;
+-	void			*tables[0];
+-};
+-
+-#define MAX_TABLE_BATCH		\
+-	((PAGE_SIZE - sizeof(struct mmu_table_batch)) / sizeof(void *))
+-
+-extern void tlb_table_flush(struct mmu_gather *tlb);
+-extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
+-
+-static inline void
+-arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+-			unsigned long start, unsigned long end)
+-{
+-	tlb->mm = mm;
+-	tlb->start = start;
+-	tlb->end = end;
+-	tlb->fullmm = !(start | (end+1));
+-	tlb->batch = NULL;
+-}
+-
+-static inline void tlb_flush_mmu_tlbonly(struct mmu_gather *tlb)
+-{
+-	__tlb_flush_mm_lazy(tlb->mm);
+-}
+-
+-static inline void tlb_flush_mmu_free(struct mmu_gather *tlb)
+-{
+-	tlb_table_flush(tlb);
+-}
+-
++void __tlb_remove_table(void *_table);
++static inline void tlb_flush(struct mmu_gather *tlb);
++static inline bool __tlb_remove_page_size(struct mmu_gather *tlb,
++					  struct page *page, int page_size);
+ 
+-static inline void tlb_flush_mmu(struct mmu_gather *tlb)
+-{
+-	tlb_flush_mmu_tlbonly(tlb);
+-	tlb_flush_mmu_free(tlb);
+-}
++#define tlb_start_vma(tlb, vma)			do { } while (0)
++#define tlb_end_vma(tlb, vma)			do { } while (0)
++#define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
+ 
+-static inline void
+-arch_tlb_finish_mmu(struct mmu_gather *tlb,
+-		unsigned long start, unsigned long end, bool force)
+-{
+-	if (force) {
+-		tlb->start = start;
+-		tlb->end = end;
+-	}
++#define tlb_flush tlb_flush
++#define pte_free_tlb pte_free_tlb
++#define pmd_free_tlb pmd_free_tlb
++#define p4d_free_tlb p4d_free_tlb
++#define pud_free_tlb pud_free_tlb
+ 
+-	tlb_flush_mmu(tlb);
+-}
++#include <asm/pgalloc.h>
++#include <asm/tlbflush.h>
++#include <asm-generic/tlb.h>
+ 
+ /*
+  * Release the page cache reference for a pte removed by
+  * tlb_ptep_clear_flush. In both flush modes the tlb for a page cache page
+  * has already been freed, so just do free_page_and_swap_cache.
+  */
+-static inline bool __tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+-{
+-	free_page_and_swap_cache(page);
+-	return false; /* avoid calling tlb_flush_mmu */
+-}
+-
+-static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+-{
+-	free_page_and_swap_cache(page);
+-}
+-
+ static inline bool __tlb_remove_page_size(struct mmu_gather *tlb,
+ 					  struct page *page, int page_size)
+ {
+-	return __tlb_remove_page(tlb, page);
++	free_page_and_swap_cache(page);
++	return false;
+ }
+ 
+-static inline void tlb_remove_page_size(struct mmu_gather *tlb,
+-					struct page *page, int page_size)
++static inline void tlb_flush(struct mmu_gather *tlb)
+ {
+-	return tlb_remove_page(tlb, page);
++	__tlb_flush_mm_lazy(tlb->mm);
+ }
+ 
+ /*
+@@ -121,9 +63,18 @@ static inline void tlb_remove_page_size(struct mmu_gather *tlb,
+  * page table from the tlb.
+  */
+ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+-				unsigned long address)
++                                unsigned long address)
+ {
+-	page_table_free_rcu(tlb, (unsigned long *) pte, address);
++	__tlb_adjust_range(tlb, address, PAGE_SIZE);
++	tlb->mm->context.flush_mm = 1;
++	tlb->freed_tables = 1;
++	tlb->cleared_ptes = 1;
++	/*
++	 * page_table_free_rcu takes care of the allocation bit masks
++	 * of the 2K table fragments in the 4K page table page,
++	 * then calls tlb_remove_table.
++	 */
++        page_table_free_rcu(tlb, (unsigned long *) pte, address);
+ }
+ 
+ /*
+@@ -139,6 +90,10 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ 	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
+ 		return;
+ 	pgtable_pmd_page_dtor(virt_to_page(pmd));
++	__tlb_adjust_range(tlb, address, PAGE_SIZE);
++	tlb->mm->context.flush_mm = 1;
++	tlb->freed_tables = 1;
++	tlb->cleared_puds = 1;
+ 	tlb_remove_table(tlb, pmd);
+ }
+ 
+@@ -154,6 +109,10 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+ {
+ 	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
+ 		return;
++	__tlb_adjust_range(tlb, address, PAGE_SIZE);
++	tlb->mm->context.flush_mm = 1;
++	tlb->freed_tables = 1;
++	tlb->cleared_p4ds = 1;
+ 	tlb_remove_table(tlb, p4d);
+ }
+ 
+@@ -169,19 +128,11 @@ static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
+ {
+ 	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
+ 		return;
++	tlb->mm->context.flush_mm = 1;
++	tlb->freed_tables = 1;
++	tlb->cleared_puds = 1;
+ 	tlb_remove_table(tlb, pud);
+ }
+ 
+-#define tlb_start_vma(tlb, vma)			do { } while (0)
+-#define tlb_end_vma(tlb, vma)			do { } while (0)
+-#define tlb_remove_tlb_entry(tlb, ptep, addr)	do { } while (0)
+-#define tlb_remove_pmd_tlb_entry(tlb, pmdp, addr)	do { } while (0)
+-#define tlb_migrate_finish(mm)			do { } while (0)
+-#define tlb_remove_huge_tlb_entry(h, tlb, ptep, address)	\
+-	tlb_remove_tlb_entry(tlb, ptep, address)
+-
+-static inline void tlb_change_page_size(struct mmu_gather *tlb, unsigned int page_size)
+-{
+-}
+ 
+ #endif /* _S390_TLB_H */
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 76d89ee8b428..f7656a0b3a1a 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -288,7 +288,7 @@ void page_table_free_rcu(struct mmu_gather *tlb, unsigned long *table,
+ 	tlb_remove_table(tlb, table);
+ }
+ 
+-static void __tlb_remove_table(void *_table)
++void __tlb_remove_table(void *_table)
+ {
+ 	unsigned int mask = (unsigned long) _table & 3;
+ 	void *table = (void *)((unsigned long) _table ^ mask);
+@@ -314,67 +314,6 @@ static void __tlb_remove_table(void *_table)
+ 	}
+ }
+ 
+-static void tlb_remove_table_smp_sync(void *arg)
+-{
+-	/* Simply deliver the interrupt */
+-}
+-
+-static void tlb_remove_table_one(void *table)
+-{
+-	/*
+-	 * This isn't an RCU grace period and hence the page-tables cannot be
+-	 * assumed to be actually RCU-freed.
+-	 *
+-	 * It is however sufficient for software page-table walkers that rely
+-	 * on IRQ disabling. See the comment near struct mmu_table_batch.
+-	 */
+-	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
+-	__tlb_remove_table(table);
+-}
+-
+-static void tlb_remove_table_rcu(struct rcu_head *head)
+-{
+-	struct mmu_table_batch *batch;
+-	int i;
+-
+-	batch = container_of(head, struct mmu_table_batch, rcu);
+-
+-	for (i = 0; i < batch->nr; i++)
+-		__tlb_remove_table(batch->tables[i]);
+-
+-	free_page((unsigned long)batch);
+-}
+-
+-void tlb_table_flush(struct mmu_gather *tlb)
+-{
+-	struct mmu_table_batch **batch = &tlb->batch;
+-
+-	if (*batch) {
+-		call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
+-		*batch = NULL;
+-	}
+-}
+-
+-void tlb_remove_table(struct mmu_gather *tlb, void *table)
+-{
+-	struct mmu_table_batch **batch = &tlb->batch;
+-
+-	tlb->mm->context.flush_mm = 1;
+-	if (*batch == NULL) {
+-		*batch = (struct mmu_table_batch *)
+-			__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
+-		if (*batch == NULL) {
+-			__tlb_flush_mm_lazy(tlb->mm);
+-			tlb_remove_table_one(table);
+-			return;
+-		}
+-		(*batch)->nr = 0;
+-	}
+-	(*batch)->tables[(*batch)->nr++] = table;
+-	if ((*batch)->nr == MAX_TABLE_BATCH)
+-		tlb_flush_mmu(tlb);
+-}
+-
+ /*
+  * Base infrastructure required to generate basic asces, region, segment,
+  * and page tables that do not make use of enhanced features like EDAT1.
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index 21c751cd751e..930e25abf4de 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -179,6 +179,7 @@ extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
+ 
+ #endif
+ 
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ /*
+  * If we can't allocate a page to make a big batch of page pointers
+  * to work on, then just handle a few from the on-stack structure.
+@@ -203,6 +204,8 @@ struct mmu_gather_batch {
+  */
+ #define MAX_GATHER_BATCH_COUNT	(10000UL/MAX_GATHER_BATCH)
+ 
++#endif
++
+ /*
+  * struct mmu_gather is an opaque type used by the mm code for passing around
+  * any data needed by arch specific code for tlb_remove_page.
+@@ -249,6 +252,7 @@ struct mmu_gather {
+ 
+ 	unsigned int		batch_count;
+ 
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	struct mmu_gather_batch *active;
+ 	struct mmu_gather_batch	local;
+ 	struct page		*__pages[MMU_GATHER_BUNDLE];
+@@ -256,6 +260,7 @@ struct mmu_gather {
+ #ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+ 	unsigned int page_size;
+ #endif
++#endif
+ };
+ 
+ void arch_tlb_gather_mmu(struct mmu_gather *tlb,
+@@ -264,8 +269,10 @@ void tlb_flush_mmu(struct mmu_gather *tlb);
+ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 			 unsigned long start, unsigned long end, bool force);
+ void tlb_flush_mmu_free(struct mmu_gather *tlb);
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ extern bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page,
+ 				   int page_size);
++#endif
+ 
+ static inline void __tlb_adjust_range(struct mmu_gather *tlb,
+ 				      unsigned long address,
+diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+index 2d5e617131f6..d3d2763d91b2 100644
+--- a/mm/mmu_gather.c
++++ b/mm/mmu_gather.c
+@@ -13,6 +13,8 @@
+ 
+ #ifdef HAVE_GENERIC_MMU_GATHER
+ 
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
++
+ static bool tlb_next_batch(struct mmu_gather *tlb)
+ {
+ 	struct mmu_gather_batch *batch;
+@@ -41,6 +43,8 @@ static bool tlb_next_batch(struct mmu_gather *tlb)
+ 	return true;
+ }
+ 
++#endif
++
+ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 				unsigned long start, unsigned long end)
+ {
+@@ -49,12 +53,14 @@ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 	/* Is it from 0 to ~0? */
+ 	tlb->fullmm     = !(start | (end+1));
+ 	tlb->need_flush_all = 0;
++
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	tlb->local.next = NULL;
+ 	tlb->local.nr   = 0;
+ 	tlb->local.max  = ARRAY_SIZE(tlb->__pages);
+ 	tlb->active     = &tlb->local;
+ 	tlb->batch_count = 0;
+-
++#endif
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ 	tlb->batch = NULL;
+ #endif
+@@ -67,16 +73,20 @@ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 
+ void tlb_flush_mmu_free(struct mmu_gather *tlb)
+ {
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	struct mmu_gather_batch *batch;
++#endif
+ 
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ 	tlb_table_flush(tlb);
+ #endif
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	for (batch = &tlb->local; batch && batch->nr; batch = batch->next) {
+ 		free_pages_and_swap_cache(batch->pages, batch->nr);
+ 		batch->nr = 0;
+ 	}
+ 	tlb->active = &tlb->local;
++#endif
+ }
+ 
+ void tlb_flush_mmu(struct mmu_gather *tlb)
+@@ -92,7 +102,9 @@ void tlb_flush_mmu(struct mmu_gather *tlb)
+ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 		unsigned long start, unsigned long end, bool force)
+ {
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	struct mmu_gather_batch *batch, *next;
++#endif
+ 
+ 	if (force) {
+ 		__tlb_reset_range(tlb);
+@@ -104,13 +116,16 @@ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 	/* keep the page table cache within bounds */
+ 	check_pgt_cache();
+ 
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ 	for (batch = tlb->local.next; batch; batch = next) {
+ 		next = batch->next;
+ 		free_pages((unsigned long)batch, 0);
+ 	}
+ 	tlb->local.next = NULL;
++#endif
+ }
+ 
++#ifndef CONFIG_HAVE_RCU_NO_GATHER_PAGES
+ /* __tlb_remove_page
+  *	Must perform the equivalent to __free_pte(pte_get_and_clear(ptep)), while
+  *	handling the additional races in SMP caused by other CPUs caching valid
+@@ -143,6 +158,7 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
+ 
+ 	return false;
+ }
++#endif
+ 
+ #endif /* HAVE_GENERIC_MMU_GATHER */
+ 
+-- 
+2.16.4
+
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
