@@ -2,124 +2,176 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4911DECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBCECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CA920833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:25:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rGB/pED8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CA920833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 83A4E20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A4E20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeINPji (ORCPT
+        id S1728118AbeINPlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:39:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34314 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeINPji (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:39:38 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5703ACE;
-        Fri, 14 Sep 2018 12:25:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536920746;
-        bh=vFT4IRnmKU2yD4bACmQeGvBUaLjOYi48CmHCgqcQT/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rGB/pED8aDKrc/hx9IuqqHdCq+q5uTomMgX9OCyILE43GNAf3NIgIm3lYRxcCf448
-         zHmQW/ycaOn1IPJene/4xuNqM+9AmmXE+VqCEHuJIiM33H76HmhDL1ARCeRZAf3kKz
-         W5J3AXm0PdM8qjj7hVeFfEDWiozm+wFH7pScIkKc=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
-Date:   Fri, 14 Sep 2018 13:25:59 +0300
-Message-ID: <4407219.HP1UPh24hA@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
-References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com> <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 14 Sep 2018 11:41:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38045 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726868AbeINPlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:41:35 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8279D208D9; Fri, 14 Sep 2018 12:27:42 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4EFE32080A;
+        Fri, 14 Sep 2018 12:27:32 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 12:27:32 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Romain Izard <romain.izard.pro@gmail.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] watchdog: sama5d4: write the mode register in two
+ steps
+Message-ID: <20180914102732.GP14988@piout.net>
+References: <20180914101339.7382-1-romain.izard.pro@gmail.com>
+ <20180914101339.7382-3-romain.izard.pro@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914101339.7382-3-romain.izard.pro@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Friday, 31 August 2018 17:40:40 EEST Kieran Bingham wrote:
-> DRM pipelines now support tri-planar as well as packed formats with
-> YCbCr, however the pitch calculation was not updated to support this.
+On 14/09/2018 12:13:39+0200, Romain Izard wrote:
+> The specification for SAMA5D2 and SAMA5D4 chips, that use this IP for
+> their watchdog timer, has the following advice regarding the Mode Register:
 > 
-> Correct this by adjusting the bytesperline accordingly when 3 planes are
-> used.
+> "When setting the WDDIS bit, and while it is set, the fields WDV and WDD
+> must not be modified."
 > 
-> Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> I have observed on a board based on a SAMA5D2 chip that using any other
+> timeout duration than the default 16s in the device tree will reset the
+> board when the watchdog device is opened; this is probably due to ignoring
+> the aforementioned constraint.
+> 
+> To fix this, read the content of the Mode Register before writing it,
+> and split the access into two parts if WDV or WDD need to be changed.
+> 
 
-I already have a similar patch from Matsuoka-san in my tree, please see 
-https://patchwork.kernel.org/patch/10425565/. I'll update it with the fixes 
-tag.
+Hum, that is really weird because when I developed
+015b528644a84b0018d3286ecd6ea5f82dce0180, I tested with a program doing:
 
+	flags = WDIOS_DISABLECARD;
+	ioctl(fd, WDIOC_SETOPTIONS, &flags);
+	for (i = 16; i > 2; i--) {
+		ioctl(fd, WDIOC_SETTIMEOUT, &i);
+	}
+
+	ioctl(fd, WDIOC_KEEPALIVE, &dummy);
+
+	flags = WDIOS_ENABLECARD;
+	ioctl(fd, WDIOC_SETOPTIONS, &flags);
+
+	for (i = 16; i > 2; i--) {
+		ioctl(fd, WDIOC_SETTIMEOUT, &i);
+	}
+
+This would immediately reproduce the reset when changing WDV/WDD with
+WDDIS set.
+
+I'll test again.
+
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
 > ---
->  drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
->  include/media/vsp1.h                   |  2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
+>  drivers/watchdog/sama5d4_wdt.c | 27 ++++++++++++++++++++-------
+>  1 file changed, 20 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
-> b/drivers/media/platform/vsp1/vsp1_drm.c index b9c0f695d002..b9afd98f6867
-> 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> @@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned
-> int pipe_index, rpf->format.num_planes = fmtinfo->planes;
->  	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
->  	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
+> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+> index 1e93c1b0e3cf..1e05268ad94b 100644
+> --- a/drivers/watchdog/sama5d4_wdt.c
+> +++ b/drivers/watchdog/sama5d4_wdt.c
+> @@ -46,7 +46,10 @@ MODULE_PARM_DESC(nowayout,
+>  	"Watchdog cannot be stopped once started (default="
+>  	__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+>  
+> -#define wdt_enabled (!(wdt->mr & AT91_WDT_WDDIS))
+> +#define wdt_enabled(reg) (!((reg) & AT91_WDT_WDDIS))
 > +
-> +	/*
-> +	 * Packed YUV formats are subsampled, but the packing of two components
-> +	 * into a single plane compensates for this leaving the bytesperline
-> +	 * to be the correct value. For multiplanar formats we must adjust the
-> +	 * pitch accordingly.
-> +	 */
-> +	if (fmtinfo->planes == 3)
-> +		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
-> +
->  	rpf->alpha = cfg->alpha;
+> +#define wdt_different_counters(reg_a, reg_b) \
+> +	(((reg_a) ^ (reg_b)) & (AT91_WDT_WDV | AT91_WDT_WDD))
+>  
+>  #define wdt_read(wdt, field) \
+>  	readl_relaxed((wdt)->reg_base + (field))
+> @@ -78,8 +81,11 @@ static void wdt_write_nosleep(struct sama5d4_wdt *wdt, u32 field, u32 val)
+>  static int sama5d4_wdt_start(struct watchdog_device *wdd)
+>  {
+>  	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
+> +	u32 reg = wdt_read(wdt, AT91_WDT_MR);
+>  
+>  	wdt->mr &= ~AT91_WDT_WDDIS;
+> +	if (!wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
+> +		wdt_write(wdt, AT91_WDT_MR, reg & ~AT91_WDT_WDDIS);
+>  	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
+>  
+>  	return 0;
+> @@ -88,8 +94,11 @@ static int sama5d4_wdt_start(struct watchdog_device *wdd)
+>  static int sama5d4_wdt_stop(struct watchdog_device *wdd)
+>  {
+>  	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
+> +	u32 reg = wdt_read(wdt, AT91_WDT_MR);
+>  
+>  	wdt->mr |= AT91_WDT_WDDIS;
+> +	if (wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
+> +		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
+>  	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
+>  
+>  	return 0;
+> @@ -122,7 +131,7 @@ static int sama5d4_wdt_set_timeout(struct watchdog_device *wdd,
+>  	 * If the watchdog is enabled, then the timeout can be updated. Else,
+>  	 * wait that the user enables it.
+>  	 */
+> -	if (wdt_enabled)
+> +	if (wdt_enabled(wdt->mr))
+>  		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
+>  
+>  	wdd->timeout = timeout;
+> @@ -186,13 +195,17 @@ static int sama5d4_wdt_init(struct sama5d4_wdt *wdt)
+>  	 * If the watchdog is already running, we can safely update it.
+>  	 * Else, we have to disable it properly.
+>  	 */
+> -	if (wdt_enabled) {
+> +	reg = wdt_read(wdt, AT91_WDT_MR);
+> +	if (wdt_enabled(reg)) {
+> +		if (!wdt_enabled(wdt->mr))
+> +			wdt_write_nosleep(wdt, AT91_WDT_MR,
+> +					  wdt->mr & ~AT91_WDT_WDDIS);
+>  		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
+> -	} else {
+> -		reg = wdt_read(wdt, AT91_WDT_MR);
+> -		if (!(reg & AT91_WDT_WDDIS))
+> +	} else if (wdt_enabled(wdt->mr)) {
+> +		if (wdt_different_counters(reg, wdt->mr))
+>  			wdt_write_nosleep(wdt, AT91_WDT_MR,
+> -					  reg | AT91_WDT_WDDIS);
+> +					  reg & ~AT91_WDT_WDDIS);
+> +		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
+>  	}
+>  	return 0;
+>  }
+> -- 
+> 2.17.1
 > 
->  	rpf->mem.addr[0] = cfg->mem[0];
-> diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-> index 3093b9cb9067..0ce19b595cc7 100644
-> --- a/include/media/vsp1.h
-> +++ b/include/media/vsp1.h
-> @@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
-> pipe_index, /**
->   * struct vsp1_du_atomic_config - VSP atomic configuration parameters
->   * @pixelformat: plane pixel format (V4L2 4CC)
-> - * @pitch: line pitch in bytes, for all planes
-> + * @pitch: line pitch in bytes
-
-Should I update the above-mentioned patch with this as well ? How about 
-phrasing it as "line pitch in bytes for the first plane" ?
-
->   * @mem: DMA memory address for each plane of the frame buffer
->   * @src: source rectangle in the frame buffer (integer coordinates)
->   * @dst: destination rectangle on the display (integer coordinates)
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
