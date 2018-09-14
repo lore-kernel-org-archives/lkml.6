@@ -2,113 +2,145 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69CDFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326E2FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A06922146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBCC02083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:22:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJNW/Z5I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A06922146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="21O/+C2D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBCC02083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeINVg5 (ORCPT
+        id S1728224AbeINVh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:36:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38236 "EHLO mail.kernel.org"
+        Fri, 14 Sep 2018 17:37:58 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:58315 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbeINVg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:36:57 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDC2A2083A;
-        Fri, 14 Sep 2018 16:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536942105;
-        bh=l/MtbRycAf5F2mkJ/Zzh+1W2fM7r4fKUik1yNIhWp8M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WJNW/Z5IdCRRz5aSWS/XHrqiOqjq3mlUEroI/13F5CjcLIbIMc8V9AkEx4puthRli
-         OMYrExa8N+0X3ogoHPrcX0fSq9OxdzjVahN2NLTsA5dXBhc8petNm2iV2MEI8DdZyu
-         vQSB2xvcxPdJBY/ysLRWDQxCmugePEllfZ+xx4KM=
-Date:   Fri, 14 Sep 2018 09:21:43 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Colin Walters <walters@verbum.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
-Message-ID: <20180914162142.GA734@sol.localdomain>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-2-ebiggers@kernel.org>
- <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
- <20180825044852.GB726@sol.localdomain>
- <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
+        id S1726900AbeINVh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:37:58 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 6098c2e2;
+        Fri, 14 Sep 2018 16:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:mime-version:content-type
+        :content-transfer-encoding; s=mail; bh=2BM4AahMtlNuHnmkXOxU0Sr3/
+        kY=; b=21O/+C2D+JKIaLQfks2fvkavfintZyD+JaeyUwaqC0BYCG4NI2OzR58e9
+        775mfbAx2VxJxyZfGCyN8bGENs6ntJjoJeOOIAShPezwmPpwLhGgk+p4rrfk5WpT
+        gTNHDJI/+k8BOykyjBoU+XUyeLdhSCqWXZ9sJpaZx9Rv5SiHXfv2DuHR7teDgTmy
+        vnJgWqhr1A1r3mqeIv8Nndk/1eS0fZVnANTmo4/g7cy+zltE7DKcfY05j6Zy+K5x
+        g60FkaXi1iwUC3vGr60UAY1K8UBVLB3TwhC4z3MD7lKSgCZVQlUbmd9AivPLcEHk
+        wfVQnr56SrQTOxmM6PTVx09Mapy1A==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b207425d (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 14 Sep 2018 16:05:40 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH net-next v4 00/20] WireGuard: Secure Network Tunnel
+Date:   Fri, 14 Sep 2018 18:22:20 +0200
+Message-Id: <20180914162240.7925-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536930930.1003187.1508104496.6465C44D@webmail.messagingengine.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
+Changes v3->v4:
+  - Remove mistaken double 07/17 patch.
+  - Fix whitespace issues in blake2s assembly.
+  - It's not possible to put compound literals into __initconst, so
+    we now instead just use boring fixed size struct members.
+  - Move away from makefile ifdef maze and instead prefer kconfig values,
+    which also makes the design a bit more modular too, which could help
+    in the future.
+  - Port old crypto API implementations (ChaCha20 and Poly1305) to Zinc.
+  - Port security/keys/big_key to Zinc as second example of a good usage of
+    Zinc.
+  - Document precisely what is different between the kernel code and
+    CRYPTOGAMS code when the CRYPTOGAMS code is used.
+  - Move changelog to top of 00/20 message so that people can
+    actually find it.
 
-On Fri, Sep 14, 2018 at 09:15:30AM -0400, Colin Walters wrote:
-> On Sat, Aug 25, 2018, at 12:48 AM, Eric Biggers wrote:
-> >
-> > As Ted pointed out, only truncates are denied on fs-verity files, not other
-> > metadata changes like chmod().
-> > 
-> > Think of it this way: the purpose of fs-verity is *not* to make files immutable.
-> > It's to hash them.
-> 
-> Sorry for my unfamiliarity with Android internals but - in earlier discussion
-> I believe it was mentioned that APK (zip files?) that are being targeted here, right?
-> 
-> Now AIUI, Zip files have an internal header that contains e.g. the size and
-> indexes into the internal files.  So if someone added random data to the end
-> of a zip file, nothing is going to end up actually reading it.
-> 
-> However, there are file formats that use the size of the file reported by stat();
-> at least OSTree does this with serializing GVariant.  I'm sure there are others -
-> I'd imagine at least some things parsing ELF do this?
-> In such a case, we really want to deny appending to the file as well.
-> 
-> Unless there's some mechanism to deny applications reading not-verified
-> data?
-> 
-> And "hidden" data after fs-verity protected files would be a nice place
-> for persistent malware to hide.
-> 
-> Does anyone know of a use case for appending to a fs-verity file?
-> 
-> The slides here:
-> https://events.linuxfoundation.org/wp-content/uploads/2017/11/fs-verify_Mike-Halcrow_Eric-Biggers.pdf
-> even say "File becomes read-only!"
-> 
-> If not, then here's a strawman: Require that at FS_IOC_ENABLE_VERITY time
-> the file does not have any +w bits set (and I guess no ACLs that do so...
-> that may get ugly).  
-> 
-> I think that would make it easier to later factor out a "_CONTENTS_IMMUTABLE"
-> flag.
-> 
+-----------------------------------------------------------
 
-After the verity bit is enabled, the verity metadata is not visible to
-userspace.  Yes, that means i_size is adjusted too.  Also all contents
-modifications are denied, including appends.
+This patchset is available on git.kernel.org in this branch, where it may be
+pulled directly for inclusion into net-next:
 
-- Eric
+  * https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/log/?h=jd/wireguard
+
+-----------------------------------------------------------
+
+WireGuard is a secure network tunnel written especially for Linux, which
+has faced around three years of serious development, deployment, and
+scrutiny. It delivers excellent performance and is extremely easy to
+use and configure. It has been designed with the primary goal of being
+both easy to audit by virtue of being small and highly secure from a
+cryptography and systems security perspective. WireGuard is used by some
+massive companies pushing enormous amounts of traffic, and likely
+already today you've consumed bytes that at some point transited through
+a WireGuard tunnel. Even as an out-of-tree module, WireGuard has been
+integrated into various userspace tools, Linux distributions, mobile
+phones, and data centers. There are ports in several languages to
+several operating systems, and even commercial hardware and services
+sold integrating WireGuard. It is time, therefore, for WireGuard to be
+properly integrated into Linux.
+
+Ample information, including documentation, installation instructions,
+and project details, is available at:
+
+  * https://www.wireguard.com/
+  * https://www.wireguard.com/papers/wireguard.pdf
+
+As it is currently an out-of-tree module, it lives in its own git repo
+and has its own mailing list, and every commit for the module is tested
+against every stable kernel since 3.10 on a variety of architectures
+using an extensive test suite:
+
+  * https://git.zx2c4.com/WireGuard
+    https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/WireGuard.git/
+  * https://lists.zx2c4.com/mailman/listinfo/wireguard
+  * https://www.wireguard.com/build-status/
+
+The project has been broadly discussed at conferences, and was presented
+to the Netdev developers in Seoul last November, where a paper was
+released detailing some interesting aspects of the project. Dave asked
+me after the talk if I would consider sending in a v1 "sooner rather
+than later", hence this patchset. A decision is still waiting from the
+Linux Plumbers Conference, but an update on these topics may be presented
+in Vancouver in a few months. Prior presentations:
+
+  * https://www.wireguard.com/presentations/
+  * https://www.wireguard.com/papers/wireguard-netdev22.pdf
+
+The cryptography in the protocol itself has been formally verified by
+several independent academic teams with positive results, and I know of
+two additional efforts on their way to further corroborate those
+findings. The version 1 protocol is "complete", and so the purpose of
+this review is to assess the implementation of the protocol. However, it
+still may be of interest to know that the thing you're reviewing uses a
+protocol with various nice security properties:
+
+  * https://www.wireguard.com/formal-verification/
+
+This patchset is divided into four segments. The first introduces a very
+simple helper for working with the FPU state for the purposes of amortizing
+SIMD operations. The second segment is a small collection of cryptographic
+primitives, split up into several commits by primitive and by hardware. The
+third shows usage of Zinc within the existing crypto API and as a replacement
+to the existing crypto API. The last is WireGuard itself, presented as an
+unintrusive and self-contained virtual network driver.
+
+It is intended that this entire patch series enter the kernel through
+DaveM's net-next tree. Subsequently, WireGuard patches will go through
+DaveM's net-next tree, while Zinc patches will go through Greg KH's tree.
+
+Enjoy,
+Jason
