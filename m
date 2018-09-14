@@ -2,111 +2,221 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843D6FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77A3FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4642A20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4642A20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 62AA220882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AA220882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbeINNhX (ORCPT
+        id S1728143AbeINNhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:37:23 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57383 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeINNhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:37:23 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 47BBB806F9; Fri, 14 Sep 2018 10:23:59 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 10:23:58 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-Message-ID: <20180914082358.GB21830@amd>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com>
- <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
- <20180912214938.GA30654@amd>
- <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
+        Fri, 14 Sep 2018 09:37:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726618AbeINNhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:37:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E88D32B677;
+        Fri, 14 Sep 2018 08:24:25 +0000 (UTC)
+Received: from [10.72.12.117] (ovpn-12-117.pek2.redhat.com [10.72.12.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C700F5C542;
+        Fri, 14 Sep 2018 08:24:20 +0000 (UTC)
+Subject: Re: [PATCH net-next V2] virtio_net: ethtool tx napi configuration
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>
+References: <20180913053545.18585-1-jasowang@redhat.com>
+ <CAF=yD-LSgCEnL_kTH44A8-FH3nut3y=bonf4Bgf75=jd=D64hw@mail.gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <561c236e-9bd2-2762-2a1a-e2e4336692c7@redhat.com>
+Date:   Fri, 14 Sep 2018 16:24:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
-Content-Disposition: inline
-In-Reply-To: <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAF=yD-LSgCEnL_kTH44A8-FH3nut3y=bonf4Bgf75=jd=D64hw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 14 Sep 2018 08:24:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---cmJC7u66zC7hs+87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 2018年09月13日 23:20, Willem de Bruijn wrote:
+> On Thu, Sep 13, 2018 at 1:40 AM Jason Wang <jasowang@redhat.com> wrote:
+>> Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
+>> Interrupt moderation is currently not supported, so these accept and
+>> display the default settings of 0 usec and 1 frame.
+>>
+>> Toggle tx napi through a bit in tx-frames. So as to not interfere
+>> with possible future interrupt moderation, value 1 means tx napi while
+>> value 0 means not.
+>>
+>> To properly synchronize with the data path, tx napi is disabled and
+>> tx lock is held when changing the value of napi weight. And two more
+>> places that can access tx napi weight:
+>>
+>> - speculative tx polling in rx napi, we can leave it as is since it
+>>    not a must for correctness.
+>> - skb_xmit_done(), one more check of napi weight is added before
+>>    trying to enable tx to avoid tx to be disabled forever if napi is
+>>    disabled after skb_xmit_done() but before the napi
+>>
+>> Link: https://patchwork.ozlabs.org/patch/948149/
+>> Suggested-by: Jason Wang <jasowang@redhat.com>
+>> Signed-off-by: Willem de Bruijn <willemb@google.com>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>> ---
+>> Changes from V1:
+>> - try to synchronize with datapath to allow changing mode when
+>>    interface is up.
+>> - use tx-frames 0 as to disable tx napi while tx-frames 1 to enable tx napi
+>> ---
+>>   drivers/net/virtio_net.c | 64 +++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 63 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+>> index 765920905226..6e70864f5899 100644
+>> --- a/drivers/net/virtio_net.c
+>> +++ b/drivers/net/virtio_net.c
+>> @@ -66,6 +66,8 @@ DECLARE_EWMA(pkt_len, 0, 64)
+>>
+>>   #define VIRTNET_DRIVER_VERSION "1.0.0"
+>>
+>> +static const u32 ethtool_coalesce_napi_mask = (1UL << 10);
+>> +
+> This is no longer needed
 
-> All be it the analog side of these devices may be the same but the digita=
-l side for each chip is different.
-> The register maps are not the same, the number of supported LED strings a=
-re not
-> the same, there are features not supported by this driver and will
-> be a pain to add.
+Yes, will remove this.
 
-Digital side looks similar enough that Milo was able to share code
-between them.
+>
+>>   static const unsigned long guest_offloads[] = {
+>>          VIRTIO_NET_F_GUEST_TSO4,
+>>          VIRTIO_NET_F_GUEST_TSO6,
+>> @@ -1444,7 +1446,10 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
+>>
+>>          virtqueue_napi_complete(napi, sq->vq, 0);
+>>
+>> -       if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS)
+>> +       /* Check napi.weight to avoid tx stall since it could be set
+>> +        * to zero by ethtool after skb_xmit_done().
+>> +        */
+>> +       if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS || !sq->napi.weight)
+>>                  netif_tx_wake_queue(txq);
+> I see. This assumes that the napi handler will always be called on
+> conversion from napi to no-napi mode.
+>
+> That is safe to assume because if it isn't called (and will not call
+> netif_tx_wake_queue) that implies that napi was not scheduled, and
+> thus the tx interrupt was not suppressed and thus there was no tx
+> completion work to be scheduled?
 
-Yes, obviously register map will be different.
+If it isn't called it means skb_xmit_done() wakeup tx directly instead 
+of schedule tx. This could be a little bit early since there may be 
+still lots of pending tx packets. But it doesn't harm, start_xmit() can 
+handle this by re enable a delayed tx interrupt and disable TX.
 
-> Adding features will be a complete night mare especially for the LM3632 w=
-hich also support Torch and Flash.
->=20
->=20
-> Here are where a single driver will start getting messy and support diffi=
-cult
-> LM3533 has ALS and an ADC for an ALS analog sensor
-> LM3631 has no ALS functionality
-> LM3632 has strobe/torch functionality and no ramp support
-> LM3633 has lvled support coupled with the hvled support
-> LM3695 does not even appear to be available publicly
-> LM3697 is the only device that that this driver could be used for as is.
+But there's a bug, look like I need remove the check of 
+(!sq->napi.weight) in the beginning of the function.
 
-We already been through this once. More than one of these has ramp
-support, and more than one has overvoltage protection. (Plus, all of
-them are LED drivers).
+>
+>>          return 0;
+>> @@ -2181,6 +2186,61 @@ static int virtnet_get_link_ksettings(struct net_device *dev,
+>>          return 0;
+>>   }
+>>
+>> +static int virtnet_set_coalesce(struct net_device *dev,
+>> +                               struct ethtool_coalesce *ec)
+>> +{
+>> +       struct ethtool_coalesce ec_default = {
+>> +               .cmd = ETHTOOL_SCOALESCE,
+>> +               .rx_max_coalesced_frames = 1,
+>> +       };
+>> +       struct virtnet_info *vi = netdev_priv(dev);
+>> +       int i, napi_weight;
+>> +
+>> +       if (ec->tx_max_coalesced_frames > 1)
+>> +               return -EINVAL;
+>> +
+>> +       ec_default.tx_max_coalesced_frames = ec->tx_max_coalesced_frames;
+>> +       napi_weight = ec->tx_max_coalesced_frames ? NAPI_POLL_WEIGHT : 0;
+>> +
+>> +       /* disallow changes to fields not explicitly tested above */
+>> +       if (memcmp(ec, &ec_default, sizeof(ec_default)))
+>> +               return -EINVAL;
+>> +
+>> +       if (napi_weight ^ vi->sq[0].napi.weight) {
+>> +               for (i = 0; i < vi->max_queue_pairs; i++) {
+>> +                       struct netdev_queue *txq =
+>> +                              netdev_get_tx_queue(vi->dev, i);
+>> +
+>> +                       virtnet_napi_tx_disable(&vi->sq[i].napi);
+>> +                       __netif_tx_lock_bh(txq);
+>> +                       vi->sq[i].napi.weight = napi_weight;
+>> +                       __netif_tx_unlock_bh(txq);
+>> +                       virtnet_napi_tx_enable(vi, vi->sq[i].vq,
+>> +                                              &vi->sq[i].napi);
+>> +               }
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int virtnet_get_coalesce(struct net_device *dev,
+>> +                               struct ethtool_coalesce *ec)
+>> +{
+>> +       struct ethtool_coalesce ec_default = {
+>> +               .cmd = ETHTOOL_GCOALESCE,
+>> +               .rx_max_coalesced_frames = 1,
+>> +               .tx_max_coalesced_frames = 0,
+> no need to explicitly initialize to 0 (unless you did this for
+> documentation purposes, which is fine).
 
-Surely non-ugly design can be done where the code is shared?
+Yes.
 
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Thanks
 
---cmJC7u66zC7hs+87
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>> +       };
+>> +       struct virtnet_info *vi = netdev_priv(dev);
+>> +
+>> +       memcpy(ec, &ec_default, sizeof(ec_default));
+>> +
+>> +       if (vi->sq[0].napi.weight)
+>> +               ec->tx_max_coalesced_frames = 1;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>   static void virtnet_init_settings(struct net_device *dev)
+>>   {
+>>          struct virtnet_info *vi = netdev_priv(dev);
+>> @@ -2219,6 +2279,8 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
+>>          .get_ts_info = ethtool_op_get_ts_info,
+>>          .get_link_ksettings = virtnet_get_link_ksettings,
+>>          .set_link_ksettings = virtnet_set_link_ksettings,
+>> +       .set_coalesce = virtnet_set_coalesce,
+>> +       .get_coalesce = virtnet_get_coalesce,
+>>   };
+>>
+>>   static void virtnet_freeze_down(struct virtio_device *vdev)
+>> --
+>> 2.17.1
+>>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlubcB4ACgkQMOfwapXb+vIx/ACdGLXPOdVkAMSp7NmhmCy2KVeL
-cRUAoIQy7E5m6AYFpZEe0fo4ejivKwqL
-=XvZc
------END PGP SIGNATURE-----
-
---cmJC7u66zC7hs+87--
