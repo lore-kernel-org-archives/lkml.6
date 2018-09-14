@@ -2,115 +2,202 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E8CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14019FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4C620882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:06:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJfLN0gg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4C620882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CD3C420866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:07:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3C420866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeINOU3 (ORCPT
+        id S1728132AbeINOUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:20:29 -0400
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:33217 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeINOU3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:20:29 -0400
-Received: by mail-ot1-f50.google.com with SMTP id i10-v6so3896690oth.0;
-        Fri, 14 Sep 2018 02:06:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=1bkKxS2Yw3/LD52o6gHxSDeq6fym5N2PzqrAFFJPcuA=;
-        b=kJfLN0gg0IbP261IXhu1PTp67JP8rshPMKCn+H/tthS0kVzbbITX+3VKX7/6vjSHjk
-         ux8N1MFkMpFuMTI/qSjj7cs4uj4tduCvA58aDH8P1otd93eM8UP2nC5umqMbUBE1/dk2
-         d52vuytQzwkPO1QkmFNctuqV6VYOIPztVS25CGPP4c06Ch2dWIT8RaLJCIos2/YSoPkX
-         54ShNrKJB+wyJ6SDTGW5x+4C4zKxR34g+7juO3Hxi6CsdNLTopzvajHjnZsSsjTpmLFS
-         7yb2YiAQKOhO7ec7IPimvaJkqZbJtWgCkedVTs6sz6UMgysrVc8ol0B4nqeGZ6YjqD45
-         dX+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=1bkKxS2Yw3/LD52o6gHxSDeq6fym5N2PzqrAFFJPcuA=;
-        b=lTNLDUVc42KrQDaXnv/iq+Aojn4rTHcgNrPE0PIFFpBL0ECzquDdvvhUukLOZdr7Ov
-         hUxBx10QAQqONTBr5MBhSni+ZTmJ0HlyxCMNkTwqaG1+KlVVdSA8VXYZ+6+HaonG71HJ
-         qrvuHH5gts4CteNOQ42PSL0MIUO/bFhrg8ROB7tlnSFcns3RJuXBebbmgPtoc5rHhh+8
-         TNitVZ9d/IMeQLJChWIgUi1hyROfdq6HMpj3xpab7eB93FaF2rYoVkJdOcztxjip1RJy
-         GsUjAIu1V+xTU3TTgCXwLEoWX66v7WtSvw4gvX6rtW63eVuajek4WGPKk/SYEsdwRatS
-         aCog==
-X-Gm-Message-State: APzg51B2qrx8emiOIhGuCGBsrjH4lJriDR2RVn7kQJg4NkWHKDoHcCfo
-        Q2+02cjjlMQRzL17My9k9lZhWSaq9KW0LTU0fPfjMaJh40QlrA==
-X-Google-Smtp-Source: ANB0VdZu8KMnTsYwMgpRZHZ3hw5mw9YRoOk1+Kaet7TD2J83H3JVLe1Azw/S59SnCr7YNkbY4hnMqcqdSQ1FP+jnQxY=
-X-Received: by 2002:a9d:30d1:: with SMTP id r17-v6mr3909822otg.182.1536916015314;
- Fri, 14 Sep 2018 02:06:55 -0700 (PDT)
+        Fri, 14 Sep 2018 10:20:49 -0400
+Received: from mga12.intel.com ([192.55.52.136]:53964 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726883AbeINOUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:20:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 02:07:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
+   d="scan'208";a="85980025"
+Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Sep 2018 02:07:12 -0700
+Date:   Fri, 14 Sep 2018 17:04:40 +0800
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelly@microsoft.com,
+        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: Re: [PATCH v1 2/3] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Message-ID: <20180914090440.GB11769@yi.y.sun>
+References: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1536830005-37260-3-git-send-email-yi.y.sun@linux.intel.com>
+ <alpine.DEB.2.21.1809131307110.1473@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-From:   =?UTF-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
-Date:   Fri, 14 Sep 2018 17:06:44 +0800
-Message-ID: <CAJDTihzzLV3qwg0tGH_D4xAjCrgMy+oc4H9snpnMC_RC2q7nyw@mail.gmail.com>
-Subject: metadata operation reordering regards to crash
-To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1809131307110.1473@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, all,
+On 18-09-13 13:24:07, Thomas Gleixner wrote:
+> On Thu, 13 Sep 2018, Yi Sun wrote:
+> > +++ b/arch/x86/hyperv/hv_spinlock.c
+> > @@ -0,0 +1,99 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Hyper-V specific spinlock code.
+> > + *
+> > + * Copyright (C) 2018, Intel, Inc.
+> > + *
+> > + * Author : Yi Sun <yi.y.sun@linux.intel.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify it
+> > + * under the terms of the GNU General Public License version 2 as published
+> > + * by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope that it will be useful, but
+> > + * WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+> > + * NON INFRINGEMENT.  See the GNU General Public License for more
+> > + * details.
+> 
+> Please remove the boilerplate. The SPDX identifier is enough. If in doubt
+> talk to Intel legal.
+> 
+I will check this. Thanks!
 
-A probably bit of complex question:
-Does nowadays practical filesystems, eg., extX, btfs, preserve metadata
-operation order through a crash/power failure?
+> > +static bool hv_pvspin = true;
+> 
+> __initdata please.
+> 
+> > +static u32 spin_wait_info = 0;
+> 
+> No need for 0 initialization.
+> 
+Will modify them.
 
-What I know is modern filesystems ensure metadata consistency
-after crash/power failure. Journal filesystems like extX do that by
-write-ahead logging of metadata operations into transactions. Other
-filesystems do that in various ways as btfs do that by COW.
+> > +
+> > +static void hv_notify_long_spin_wait(void)
+> > +{
+> > +	u64 input = spin_wait_info | 0x00000000ffffffff;
+> 
+> What? The result is always 0x00000000ffffffff .....
+> 
+Oh, sorry for such error.
 
-What I'm not so far clear is whether these filesystems preserve
-metadata operation order after a crash.
+> > +	spin_wait_info++;
+> > +	hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT, input);
+> > +}
+> > +
+> > +static void hv_qlock_kick(int cpu)
+> > +{
+> > +	spin_wait_info--;
+> 
+> Looking at the above this is completely pointless and I have no idea what
+> that variable is supposed to do.
+> 
+Per Microsoft Hypervisor Top Level Functional Specification, the input
+parameter of HVCALL_NOTIFY_LONG_SPIN_WAIT is defined as below:
 
-For example,
-op 1.  rename(A, B)
-op 2.  rename(C, D)
+SpinwaitInfo – Specifies the accumulated count the guest was spinning.
 
-As mentioned above,  metadata consistency is ensured after a crash.
-Thus, B is either the original B(or not exists) or has been replaced by A.
-The same to D.
+So, it is increased when guest is spinning and reduced when spinlock is
+released.
 
-Is it possible that, after a crash, D has been replaced by C but B is still
-the original file(or not exists)?
+I may add comments to explain it.
 
-Or, from the view of implementation, before the crash
-- in a journal filesystem,
-Is the atomic transaction `rename(C, D)` permitted to be written to disk journal
-before the transaction `rename(A, B)`?
-- in other filesystems, say btfs,
-Is it permit to reorder `rename(C,D)` and `rename(A,B)` atomic operation hiting
-disk?
+> > +	apic->send_IPI(cpu, X86_PLATFORM_IPI_VECTOR);
+> > +}
+> > +
+> > +/*
+> > + * Halt the current CPU & release it back to the host
+> > + */
+> > +static void hv_qlock_wait(u8 *byte, u8 val)
+> > +{
+> > +	unsigned long msr_val;
+> > +
+> > +	if (READ_ONCE(*byte) != val)
+> > +		return;
+> > +
+> > +	hv_notify_long_spin_wait();
+> > +
+> > +	rdmsrl(HV_X64_MSR_GUEST_IDLE, msr_val);
+> 
+> Magic rdmsrl(). That wants a comment what this is for.
+> 
+Per above spec, reading HV_X64_MSR_GUEST_IDLE can make guest idle.
 
-The question is meaningful as many applications do that:
-if (flag_file_says_need_generate_data) {
-    open_write_sync_close(data_tmp);
-    rename(data_tmp, data);
+I will add comment here.
 
-    open_write_sync_close(flag_file_tmp, no_need_to_generate_data);
-    rename(flag_file_tmp, flag_file)
-}
-use_data_file()
+> > +/*
+> > + * Hyper-V does not support this so far.
+> > + */
+> > +bool hv_vcpu_is_preempted(int vcpu)
+> 
+> static ?
+> 
+PV_CALLEE_SAVE_REGS_THUNK definition is below. 
 
-If flag is here but data is not after a crash, that is a problem.
+#define PV_CALLEE_SAVE_REGS_THUNK(func) \
+        extern typeof(func) __raw_callee_save_##func; \
+        ......
 
-Thanks,
-Trol
+So, the hv_vcpu_is_preempted cannot be declared as 'static'. Otherwise,
+the make fails with below info.
+
+arch/x86/hyperv/hv_spinlock.o: In function `__raw_callee_save_hv_vcpu_is_preempted':
+hv_spinlock.c:(.text+0xd): undefined reference to `hv_vcpu_is_preempted'
+
+> > +{
+> > +	return false;
+> > +}
+> > +PV_CALLEE_SAVE_REGS_THUNK(hv_vcpu_is_preempted);
+> > +
+> > +void __init hv_init_spinlocks(void)
+> > +{
+> > +	if (!hv_pvspin ||
+> > +	    !apic ||
+> > +	    !(ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) ||
+> > +	    !(ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)) {
+> > +		pr_warn("hv: PV spinlocks disabled\n");
+> 
+> Why does this need to be pr_warn? This is purely informational. Also please
+> use pr_fmt instead of the 'hv:' prefix.
+> 
+Got it. Thanks!
+
+> > +static __init int hv_parse_nopvspin(char *arg)
+> > +{
+> > +	hv_pvspin = false;
+> > +	return 0;
+> > +}
+> > +early_param("hv_nopvspin", hv_parse_nopvspin);
+> 
+> That lacks Documentation of the command line parameter. Wants to be in the
+> same patch.
+> 
+Will merge patch 3 into 2. Thanks!
+
+> Thanks,
+> 
+> 	tglx
