@@ -2,98 +2,100 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DF9FC6183
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE91ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31EF62083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:12:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EF62083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 239F12083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239F12083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeINV1K (ORCPT
+        id S1728169AbeINVeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:27:10 -0400
-Received: from sauhun.de ([88.99.104.3]:46280 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727676AbeINV1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:27:08 -0400
-Received: from localhost (p54B33424.dip0.t-ipconnect.de [84.179.52.36])
-        by pokefinder.org (Postfix) with ESMTPSA id 1601F2C015D;
-        Fri, 14 Sep 2018 18:11:57 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 18:11:56 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling
- dma_ops when detaching from IOMMU
-Message-ID: <20180914161156.GB906@kunai>
-References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com>
- <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
+        Fri, 14 Sep 2018 17:34:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36080 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbeINVeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:34:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB0680D;
+        Fri, 14 Sep 2018 09:18:50 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BE5B83F557;
+        Fri, 14 Sep 2018 09:18:50 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 5D6D21AE2F82; Fri, 14 Sep 2018 17:19:08 +0100 (BST)
+Date:   Fri, 14 Sep 2018 17:19:08 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com
+Subject: [GIT PULL] arm64: fixes for -rc4
+Message-ID: <20180914161908.GF6236@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The trickle of arm64 fixes continues to come in. Nothing that's the end
+of the world, but we've got a fix for PCI IO port accesses, an accidental
+naked "asm goto" and a fix to the vmcoreinfo PT_NOTE merged this time
+around which we'd like to get sorted before it becomes ABI.
 
-On Fri, Sep 14, 2018 at 02:15:01PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Sep 13, 2018 at 5:18 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Update the comment because we don't set the pointer to NULL anymore.
-> > Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
-> >
-> > Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu=
-_detach_device()")
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Nice catch!
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Details in the tag, but please pull.
 
-Thanks, so I sent this seperately via ALKML now.
+Thanks,
 
+Will
 
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
+--->8
 
------BEGIN PGP SIGNATURE-----
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlub3cwACgkQFA3kzBSg
-KbZBbRAAr9FUPBM/xafVRAtQivVuRwm9hR8mLRKPGHRuj6GBiEIcwH50OokDvsrS
-vH4PiT6mXjS7HEkQ+N9INFIKJNibcj62IUZyVXe2GIEUft6A1xVeronjv/278Yg9
-ExDON7xo3xR2FPapTDKrsEPKhc9r20DGlaHnOoHl8cRDvTeHaUdVIck74kV+irby
-Fz0x2OGNeMo+5iW9NuodQdmGWJZKNDjisSd3jl/0BVp6skLt38NId3HHY0H1IbI8
-2sVBVOgFZ17gQxAV4I3iu3XMjJWpWhXt3gNIBhp/duK1/N61SURd0x8dfYGUdLVi
-s7LpGsv4x16mp4Vl1oSkwqSLfgHTOKoBS1hRei90nAkFLS1CuHNdJoKoo7yQpxX2
-E+WqccOQiKkhMaepGxmycUDzTfslNEsVG2FV/pyZ9SoDJQE/iTXKrllcttpitfyf
-6X9NOqeunyRJDyBseqS3zsCMivD20197ZOG0yu/wv+ixzlVSKCGUljUPlqx00S3H
-Sa1+JiKPr7yRneb4T7IdEAE5pUr+flxDXHWu85676AUAmbxN2JVnwGzRJ2BgSnGf
-6bE4dhAkLSPOd18UzsZeu/Tj61Ys8xLzagA1Akq4uHWkpegTa/23qIfccDzN1G6d
-Vl96IMyXBXNE7zbBwvXzq+SNtrJe46XWPLoJcKu4/Z+iGVaouJI=
-=+tnW
------END PGP SIGNATURE-----
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
 
---yNb1oOkm5a9FJOVX--
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to 500dd232449e7c07500e713dc6970aa713f8e4f1:
+
+  asm-generic: io: Fix ioport_map() for !CONFIG_GENERIC_IOMAP && CONFIG_INDIRECT_PIO (2018-09-14 09:49:21 +0100)
+
+----------------------------------------------------------------
+arm64 fixes
+
+- Fix ioport_map() mapping the wrong physical address for some I/O BARs
+
+- Remove direct use of "asm goto", since some compilers don't like that
+
+- Ensure kimage_voffset is always present in vmcoreinfo PT_NOTE
+
+----------------------------------------------------------------
+Andrew Murray (1):
+      asm-generic: io: Fix ioport_map() for !CONFIG_GENERIC_IOMAP && CONFIG_INDIRECT_PIO
+
+James Morse (1):
+      arm64: kernel: arch_crash_save_vmcoreinfo() should depend on CONFIG_CRASH_CORE
+
+Miguel Ojeda (1):
+      arm64: jump_label.h: use asm_volatile_goto macro instead of "asm goto"
+
+ arch/arm64/include/asm/jump_label.h |  4 ++--
+ arch/arm64/kernel/Makefile          |  1 +
+ arch/arm64/kernel/crash_core.c      | 19 +++++++++++++++++++
+ arch/arm64/kernel/machine_kexec.c   | 11 -----------
+ include/asm-generic/io.h            |  3 ++-
+ 5 files changed, 24 insertions(+), 14 deletions(-)
+ create mode 100644 arch/arm64/kernel/crash_core.c
