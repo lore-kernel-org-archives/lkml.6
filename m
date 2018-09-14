@@ -4,79 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C87DECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5ABECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D4620881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB8820881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:08:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Mkb8tamH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D4620881
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="1kw4y0QD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB8820881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeINXVq (ORCPT
+        id S1727774AbeINXXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:21:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33836 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727152AbeINXVq (ORCPT
+        Fri, 14 Sep 2018 19:23:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59536 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbeINXXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:21:46 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8EI4BmP143088;
-        Fri, 14 Sep 2018 18:05:01 GMT
+        Fri, 14 Sep 2018 19:23:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8EI5s82099765;
+        Fri, 14 Sep 2018 18:08:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=EWscqU7EF63v27EsIoJmrbB2/s8O6H++OEmYpQdt6oo=;
- b=Mkb8tamHjn30y8Jhym7GAyS7Ti97NJJzxjWAXwljw1H7fNfBYgxYzw0k9xtxRg5a8Ppc
- M+RYvZw3yjdHfqWOUvibQVRiVW8MQ/S502xV2hEzqtQ+EB7HUHb66czrINBfQaeJ3lLu
- +QWMigc+A8aZ4frEETuKlbSCoO12008lnujkLKqQpsA27Mtfv//6S6VCCvVrFGvw+2j3
- gZ7mb1aXjtpO1hRY5MSkSZ+gRxA2AZV4nRqClYplhoOLZdyCD4Np5fdCpG/XhfsQfnsn
- aWjHNaMrfjTCVM+LCByISrFbRtXRj65CGvL75j/lgom0dzAH7I0k4xYtCfuCirbHK7jc Hg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2mc6cq8hbe-1
+ bh=aw2uVSSo4luOAl/xmtZULD2VmfXuOLhxnuIUVhofiRc=;
+ b=1kw4y0QDuGOSuEP37IUhGxdzbDfBT1LoAGgxnhoSnYo50oviaCaPz3Vi9BRYtllW+u7v
+ 8VEB3PwvpwQiw6mQaHgsEaDIJZjS0yl3ZQdiPRb46IZE3XpreTIrCSIX5JRu5GNXWtM5
+ SPRmverA1EAcHzHOn4OsGnEB8AXxcYrVF7G886MpFxJz9rNdjVz5Hsw7+dbIxVchyN2u
+ Du7mRO52uzw9JJYLvgRLqoxlRNFVmj7e3HEqGa5PlX2UtZhLRUE7WGeatozipBqzOHR7
+ ECg6fE4leArW5stb2gYTWYognYAV0rH28W1NlAVAnaP+4IdTTH9LPJjN5BhG6oZvEt2d CA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2mc72r8frr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 18:05:01 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8EI4x7F015108
+        Fri, 14 Sep 2018 18:08:03 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8EI7uxU023541
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 18:04:59 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8EI4x03002311;
-        Fri, 14 Sep 2018 18:04:59 GMT
+        Fri, 14 Sep 2018 18:07:57 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8EI7tx0004297;
+        Fri, 14 Sep 2018 18:07:55 GMT
 Received: from dhcp-10-159-150-22.vpn.oracle.com (/10.159.150.22)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 Sep 2018 11:04:58 -0700
-Subject: Re: [PATCH V2 0/6] VA to numa node information
-To:     Steven Sistare <steven.sistare@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dave.hansen@intel.com, nao.horiguchi@gmail.com,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        khandual@linux.vnet.ibm.com
-References: <1536783844-4145-1-git-send-email-prakash.sangappa@oracle.com>
- <20180913084011.GC20287@dhcp22.suse.cz>
- <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
- <20180914055637.GH20287@dhcp22.suse.cz>
- <91988f05-2723-3120-5607-40fabe4a170d@oracle.com>
+        with ESMTP ; Fri, 14 Sep 2018 11:07:55 -0700
+Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
+To:     Jann Horn <jannh@google.com>, Michal Hocko <mhocko@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        n-horiguchi@ah.jp.nec.com, Ulrich Drepper <drepper@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Horiguchi Naoya <nao.horiguchi@gmail.com>,
+        steven.sistare@oracle.com
+References: <2ce01d91-5fba-b1b7-2956-c8cc1853536d@intel.com>
+ <33f96879-351f-674a-ca23-43f233f4eb1d@linux.vnet.ibm.com>
+ <82d2b35c-272a-ad02-692f-2c109aacdfb6@oracle.com>
+ <8569dabb-4930-aa20-6249-72457e2df51e@intel.com>
+ <51145ccb-fc0d-0281-9757-fb8a5112ec24@oracle.com>
+ <c72fea44-59f3-b106-8311-b5eae2d254e7@intel.com>
+ <addeaadc-5ab2-f0c9-2194-dd100ae90f3a@oracle.com>
+ <aaca3180-7510-c008-3e12-8bbe92344ef4@intel.com>
+ <94ee0b6c-4663-0705-d4a8-c50342f6b483@oracle.com>
+ <CAG48ez1YhHKTDHZoH2tEFaLk4LcCSw5G60=+KpGRaMQxvw1qLw@mail.gmail.com>
+ <20180914062132.GI20287@dhcp22.suse.cz>
+ <CAG48ez2RSn-EQkf-ahs41tOKpzt23JMGYZxUtWMRPe8c5jAq-A@mail.gmail.com>
 From:   Prakash Sangappa <prakash.sangappa@oracle.com>
-Message-ID: <a26a71cb-101b-e7a2-9a2f-78995538dbca@oracle.com>
-Date:   Fri, 14 Sep 2018 11:04:54 -0700
+Message-ID: <a1834be4-0f8e-9d07-1013-7477d3a5e6be@oracle.com>
+Date:   Fri, 14 Sep 2018 11:07:53 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
  Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <91988f05-2723-3120-5607-40fabe4a170d@oracle.com>
+In-Reply-To: <CAG48ez2RSn-EQkf-ahs41tOKpzt23JMGYZxUtWMRPe8c5jAq-A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9016 signatures=668708
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=876
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1807170000 definitions=main-1809140185
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,43 +99,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 9/14/18 9:01 AM, Steven Sistare wrote:
-> On 9/14/2018 1:56 AM, Michal Hocko wrote:
->> On Thu 13-09-18 15:32:25, prakash.sangappa wrote:
->>>
->>> The proc interface provides an efficient way to export address range
->>> to numa node id mapping information compared to using the API.
->> Do you have any numbers?
->>
->>> For example, for sparsely populated mappings, if a VMA has large portions
->>> not have any physical pages mapped, the page walk done thru the /proc file
->>> interface can skip over non existent PMDs / ptes. Whereas using the
->>> API the application would have to scan the entire VMA in page size units.
->> What prevents you from pre-filtering by reading /proc/$pid/maps to get
->> ranges of interest?
-> That works for skipping holes, but not for skipping huge pages.  I did a
-> quick experiment to time move_pages on a 3 GHz Xeon and a 4.18 kernel.
-> Allocate 128 GB and touch every small page.  Call move_pages with nodes=NULL
-> to get the node id for all pages, passing 512 consecutive small pages per
-> call to move_nodes. The total move_nodes time is 1.85 secs, and 55 nsec
-> per page.  Extrapolating to a 1 TB range, it would take 15 sec to retrieve
-> the numa node for every small page in the range.  That is not terrible, but
-> it is not interactive, and it becomes terrible for multiple TB.
+On 9/14/18 5:49 AM, Jann Horn wrote:
+> On Fri, Sep 14, 2018 at 8:21 AM Michal Hocko <mhocko@kernel.org> wrote:
+>> On Fri 14-09-18 03:33:28, Jann Horn wrote:
+>>> On Wed, Sep 12, 2018 at 10:43 PM prakash.sangappa
+>>> <prakash.sangappa@oracle.com> wrote:
+>>>> On 05/09/2018 04:31 PM, Dave Hansen wrote:
+>>>>> On 05/07/2018 06:16 PM, prakash.sangappa wrote:
+>>>>>> It will be /proc/<pid>/numa_vamaps. Yes, the behavior will be
+>>>>>> different with respect to seeking. Output will still be text and
+>>>>>> the format will be same.
+>>>>>>
+>>>>>> I want to get feedback on this approach.
+>>>>> I think it would be really great if you can write down a list of the
+>>>>> things you actually want to accomplish.  Dare I say: you need a
+>>>>> requirements list.
+>>>>>
+>>>>> The numa_vamaps approach continues down the path of an ever-growing list
+>>>>> of highly-specialized /proc/<pid> files.  I don't think that is
+>>>>> sustainable, even if it has been our trajectory for many years.
+>>>>>
+>>>>> Pagemap wasn't exactly a shining example of us getting new ABIs right,
+>>>>> but it sounds like something along those is what we need.
+>>>> Just sent out a V2 patch.  This patch simplifies the file content. It
+>>>> only provides VA range to numa node id information.
+>>>>
+>>>> The requirement is basically observability for performance analysis.
+>>>>
+>>>> - Need to be able to determine VA range to numa node id information.
+>>>>     Which also gives an idea of which range has memory allocated.
+>>>>
+>>>> - The proc file /proc/<pid>/numa_vamaps is in text so it is easy to
+>>>>     directly view.
+>>>>
+>>>> The V2 patch supports seeking to a particular process VA from where
+>>>> the application could read the VA to  numa node id information.
+>>>>
+>>>> Also added the 'PTRACE_MODE_READ_REALCREDS' check when opening the
+>>>> file /proc file as was indicated by Michal Hacko
+>>> procfs files should use PTRACE_MODE_*_FSCREDS, not PTRACE_MODE_*_REALCREDS.
+>> Out of my curiosity, what is the semantic difference? At least
+>> kernel_move_pages uses PTRACE_MODE_READ_REALCREDS. Is this a bug?
+> No, that's fine. REALCREDS basically means "look at the caller's real
+> UID for the access check", while FSCREDS means "look at the caller's
+> filesystem UID". The ptrace access check has historically been using
+> the real UID, which is sorta weird, but normally works fine. Given
+> that this is documented, I didn't see any reason to change it for most
+> things that do ptrace access checks, even if the EUID would IMO be
+> more appropriate. But things that capture caller credentials at points
+> like open() really shouldn't look at the real UID; instead, they
+> should use the filesystem UID (which in practice is basically the same
+> as the EUID).
 >
+> So in short, it depends on the interface you're coming through: Direct
+> syscalls use REALCREDS, things that go through the VFS layer use
+> FSCREDS.
 
-Also, for valid VMAs in  'maps' file, if the VMA is sparsely populated 
-with  physical pages,
-the page walk can skip over non existing page table entires (PMDs) and 
-so can be faster.
-
-For example  reading va range of a 400GB VMA which has few pages mapped
-in beginning and few pages at the end and the rest of VMA does not have 
-any pages, it
-takes 0.001s using the /proc interface. Whereas with move_page() api 
-passing 1024
-consecutive small pages address, it takes about 2.4secs. This is on a 
-similar system
-running 4.19 kernel.
+So in this case can the REALCREDS check be done in the read() system call
+when reading the /proc file instead of the open call?
 
 
 
