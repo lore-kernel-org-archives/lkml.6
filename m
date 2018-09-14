@@ -2,89 +2,123 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE88BECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D79EFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A11220853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:40:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="H6xOLBXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A11220853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DDE3E21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE3E21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbeINW4Y (ORCPT
+        id S1728198AbeINW5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:56:24 -0400
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:41242 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbeINW4X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:56:23 -0400
-Received: by mail-ot1-f45.google.com with SMTP id e18-v6so5350303oti.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LNjGpuLxCcWQWpdF58YgOaCxoCjPp8J7c7Q6w8SmxjU=;
-        b=H6xOLBXzlW97tBQ97/WUw94R8NspYYsGCOOg25OVWQpCe0LcD/ZTN9p7VtuNx730HW
-         6qXaRsmuQxjUKnv0ckMhj3QcMS3wGN3N8lGsPNfzZCB4DsZF6tVHE/yU4hcUxTxCy0z5
-         RAbiguTAndXUPngquxvFKrwu3BhKcqoa8VGb0qL8LxGZeBXEPtin5pIcZQ5rm/wj5zos
-         +v6OddKOWSpOfU0MbEERxZ+mP3wsENfP2jeDhhFGB279VFcBtzf+2Ifid3iQ/b+I0NlX
-         Z7JJwiJoasFJD8ui+eBgBhAT27iS1PYSgA2eHne/8WuzPx8SCj961zHiuRsW791U63+9
-         ocRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LNjGpuLxCcWQWpdF58YgOaCxoCjPp8J7c7Q6w8SmxjU=;
-        b=rb7UPVFjQRxF1DasoT/ncKNTYFJKExEEgG7s/dASBeAVwuPbPEa8dKra7oXI4JBRjb
-         8c8oJK5ubrUAcIE0Nx6W6fyRUXMadf+YocaUjMKTnrtJ7UTh0lFz8YyhQhmD39TAOVqT
-         GsnMqfKGOSHNb5d9WFW27a3e0vpEUOwma3/rJBONyCaRYgn917eZ0nzMcatjd0bwlB3g
-         L84CUXfybaAoyo3kiGjNl0CQgL3d9GYXSl6YIJTk9wuCP7txCoosXJiLBNWfUqJ6HORE
-         Smry8H3qjPDqV5ZqZIqsrWvUC59LJglWH04cxtRgeUAvSYH3T05pQYLoleRb4h2v2sOU
-         SotQ==
-X-Gm-Message-State: APzg51AbIKlvj+fvukSHd/j2p3O3Amy+4UQ8fk1/5tOOgna47aeMxxrK
-        7+8rMvwCuAVfc72OtRFChCEkVCxsioOheGmdQ+IuXg==
-X-Google-Smtp-Source: ANB0VdYNzziC2fHIcxoLoIMMwrzj+qmwF+yMkyIRQGXf4fJs2HmWdFL/63XouVUZkOKOgcC9xVxciy+W+CXIB8t9dMU=
-X-Received: by 2002:a9d:7353:: with SMTP id l19-v6mr4863094otk.7.1536946853053;
- Fri, 14 Sep 2018 10:40:53 -0700 (PDT)
+        Fri, 14 Sep 2018 18:57:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46482 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727623AbeINW5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:57:49 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E135930023AC;
+        Fri, 14 Sep 2018 17:42:18 +0000 (UTC)
+Received: from [10.36.116.58] (ovpn-116-58.ams2.redhat.com [10.36.116.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 84ECC2015AC0;
+        Fri, 14 Sep 2018 17:42:14 +0000 (UTC)
+Subject: Re: [ 1/1] KVM/MMU: Fix comment in walk_shadow_page_lockless_end()
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20180907054446.37674-1-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1645470f-b14a-63ce-4a0b-de49cfc796f4@redhat.com>
+Date:   Fri, 14 Sep 2018 19:42:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 10:40:52
- -0700 (PDT)
-In-Reply-To: <20180914131420.GC27141@lst.de>
-References: <153680531988.453305.8080706591516037706.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153680533172.453305.5701902165148172434.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180914131420.GC27141@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 14 Sep 2018 10:40:52 -0700
-Message-ID: <CAPcyv4gj1E75rZ7kUVfO--CDK_u=-Qci06qmu+cQhaH8V=szGA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/7] mm, devm_memremap_pages: Kill mapping "System RAM" support
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180907054446.37674-1-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 14 Sep 2018 17:42:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 6:14 AM, Christoph Hellwig <hch@lst.de> wrote:
-> On Wed, Sep 12, 2018 at 07:22:11PM -0700, Dan Williams wrote:
->> Given the fact that devm_memremap_pages() requires a percpu_ref that is
->> torn down by devm_memremap_pages_release() the current support for
->> mapping RAM is broken.
->
-> I agree.  Do you remember why we even added it in the first place?
+On 07/09/2018 07:45, Tianyu Lan wrote:
+> kvm_commit_zap_page() has been renamed to kvm_mmu_commit_zap_page()
+> This patch is to fix the commit.
+> 
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> ---
+>  arch/x86/kvm/mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index 7ccd29b95746..648b839a349d 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -947,7 +947,7 @@ static void walk_shadow_page_lockless_end(struct kvm_vcpu *vcpu)
+>  {
+>  	/*
+>  	 * Make sure the write to vcpu->mode is not reordered in front of
+> -	 * reads to sptes.  If it does, kvm_commit_zap_page() can see us
+> +	 * reads to sptes.  If it does, kvm_mmu_commit_zap_page() can see us
+>  	 * OUTSIDE_GUEST_MODE and proceed to free the shadow page table.
+>  	 */
+>  	smp_store_release(&vcpu->mode, OUTSIDE_GUEST_MODE);
+> 
 
-It was initially a copy over from memremap() that catches these
-attempts and returns a direct-map pointer.
+Queued, thanks.
+
+Paolo
