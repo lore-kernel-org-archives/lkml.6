@@ -2,261 +2,247 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD14CECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A73ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC7E20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE4C20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="IoaWJQEk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC7E20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="c93/4Vsi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE4C20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeIOA4e (ORCPT
+        id S1728004AbeIOBAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 20:56:34 -0400
-Received: from mail-eopbgr680063.outbound.protection.outlook.com ([40.107.68.63]:54657
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726969AbeIOA4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 20:56:33 -0400
+        Fri, 14 Sep 2018 21:00:30 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39916 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeIOBA3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 21:00:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h4-v6so8302708edi.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 12:44:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JrJg8WuU4Q5FHv+Mu37FlEw6dlRWX2QSWzPFzlLmDbs=;
- b=IoaWJQEkMzrz5/E3p6u0ViHBbOg8vnPLfwKI9Yz0aMEhLlS2D2BGthY9tWJUrNefE2qKK7AN2Uov7ZAFyp4w6bffqtP84TzGrAQSqPqIgy6DAExmRR99ekzS1h43eTKz7Muymw+z42Bfqp6sWYpqxA/iA9h9q7wUL/l4KsNUR0g=
-Received: from SN4PR0201CA0047.namprd02.prod.outlook.com
- (2603:10b6:803:2e::33) by DM6PR02MB5113.namprd02.prod.outlook.com
- (2603:10b6:5:51::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.15; Fri, 14 Sep
- 2018 19:40:19 +0000
-Received: from SN1NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::206) by SN4PR0201CA0047.outlook.office365.com
- (2603:10b6:803:2e::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
- Transport; Fri, 14 Sep 2018 19:40:19 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT053.mail.protection.outlook.com (10.152.72.102) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1143.14
- via Frontend Transport; Fri, 14 Sep 2018 19:40:19 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1g0tww-0005SG-OB; Fri, 14 Sep 2018 12:40:18 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1g0twr-0006TC-KJ; Fri, 14 Sep 2018 12:40:13 -0700
-Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8EJe20u012223;
-        Fri, 14 Sep 2018 12:40:03 -0700
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jollys@xilinx.com>)
-        id 1g0twg-0006EA-6D; Fri, 14 Sep 2018 12:40:02 -0700
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     <matthias.bgg@gmail.com>, <andy.gross@linaro.org>,
-        <shawnguo@kernel.org>, <geert+renesas@glider.be>,
-        <bjorn.andersson@linaro.org>, <sean.wang@mediatek.com>,
-        <m.szyprowski@samsung.com>, <michal.simek@xilinx.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <rajanv@xilinx.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v4 2/3] firmware: xilinx: Implement ZynqMP power management APIs
-Date:   Fri, 14 Sep 2018 12:39:49 -0700
-Message-ID: <1536953990-12755-3-git-send-email-jollys@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536953990-12755-1-git-send-email-jollys@xilinx.com>
-References: <1536953990-12755-1-git-send-email-jollys@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(136003)(2980300002)(438002)(199004)(189003)(126002)(14444005)(51416003)(305945005)(7696005)(356003)(8676002)(26005)(7416002)(76176011)(476003)(2616005)(2201001)(11346002)(47776003)(426003)(16586007)(446003)(336012)(63266004)(478600001)(186003)(44832011)(486006)(72206003)(106002)(77096007)(36756003)(110136005)(50226002)(6666003)(2906002)(36386004)(107886003)(316002)(5660300001)(54906003)(50466002)(4326008)(9786002)(81166006)(106466001)(81156014)(48376002)(8936002)(39060400002)(107986001)(921003)(83996005)(1121003)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5113;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT053;1:Ypsf+rMkjPXw8h5t5pHzfSnQ7i4KVhrotMuhT56LKXpFfhcMKgFleQLd3IyfBWSYXM22TPCluEo636LNdKpmOut759ZWO9VEVPkOdwiiuL/ZWFQyXdBIJX6H8gedpCtt
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7z3Sysg1v6kRkLUOFqAezJoFrE+Oi5ekgzeYgH7c390=;
+        b=c93/4VsipWl1Ob3DFue5NsL9/Pc6md1sxiiIcZn+HriH26sHQnznc/RSA9JmcWP2gp
+         GHkNB1ae/+zhchsl3tPe5C/y6/S/HSwbZr1JiUFEvCpyC5zMAjUpgA80IXnR3sz96KSt
+         XN7xeZALlzbzLxWUebCPVdAdF0jqaJHDu11rs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7z3Sysg1v6kRkLUOFqAezJoFrE+Oi5ekgzeYgH7c390=;
+        b=Xq9QZU3L4GycVZBJhYRA4dSfIu0G2/qKHXWvRe/Sc0nGVKPcE0hdg9CrP6X8JTlA9t
+         FYhBPamnQ3B7u+QuNrtQg1nPGOvJv5G3SEeALEm6BUfT4/D3aJ0uhQPdrMzAnqz8w0xC
+         7Xy1C0Ajp+J/SDDh0zTbfJofh74ULW7aoTC42tvj91V0PAPsKkYN8YXrS2g6dtfLGMbr
+         Ylcdh+VZfwHywqc28lzQtdcDARo8m/ZOZFPd13+PA6benaXwmIQNq6vsoV8Te2ar4qYy
+         bZvFlUvjLHYhbdY5kuPILIohgE1cD/jZg6V+R/nPntYFz1rdAFIavHZFHLg8r1PkMqOX
+         oQcw==
+X-Gm-Message-State: APzg51BPwHB2SpcCdSrqaNgU5sWz/7N61eJ4hbXznqfIQyTgh3Wu4Dfz
+        g0On5QFihGUhT9JUU6Mz63IiGw==
+X-Google-Smtp-Source: ANB0VdaipMgiCrM5+uP75JlBB/rmZF5ayiU8uOvbxr8oY0tT/aS18joTK9C3tBB0lo917y940F7BUQ==
+X-Received: by 2002:a50:94c3:: with SMTP id t3-v6mr23181712eda.249.1536954272216;
+        Fri, 14 Sep 2018 12:44:32 -0700 (PDT)
+Received: from andrea ([94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id w20-v6sm7881185edc.12.2018.09.14.12.44.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 12:44:31 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 21:44:23 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-arch@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, akiyks@gmail.com,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
+ locks and remove it for ordinary release/acquire
+Message-ID: <20180914194423.GA3264@andrea>
+References: <20180914143752.GA7467@andrea>
+ <Pine.LNX.4.44L0.1809141210530.1482-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3ca4619e-26a0-4206-21fd-08d61a79e780
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM6PR02MB5113;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB5113;3:vS4ATr6OuK0wIoyctOl8DKefn6soynT539qoDoOmJ0/TYNl4SqKgLm8nGrvebRE0wICTpyxxnp9RD9v2w6E65ip+Jr/271A8Aze674eRjQ4IfKdtuchhjT0VNucxczaZrHcNRVQm5FF+mbHZmFVajGDuV0WHiWfaFjb0Psb20ZszKckBq5+0Z0LWJAj9KkKT+aw5RZh5FmrqbKOJRbTMXVsj3oGLt1VDse9/ta/FmENi3yqQlMfFN+oqu37MXsc/qENrAfk6fiiqAQRjB2cwO6ouLQqgp/F/073Qcw2LClL5NunlI8kiEWQv/ILbkSRw3s1Ls5l/mnd0NsVO6fWihn31VF6sqorADiCTQ8Iu6GQ=;25:tPcvG1n3SzZQfsFjPzdwamQh6gv7XMM4giE5zJdCu8A/5fsiKcY1DTNYoThRlq0rRTQ2oU8SOxk6RoqPtqD88dlGSHwUS0YUq6ol6dJHFazlktBXV4SJLmEU/RBoslMtojjOZMbZ2hb0v5R8NAmXrIdTMTw22SawxmX8aZrxF1wZC6OafT+x/aOPwQwUqsIDjfprkCNyHM/363VVPysv5G20yZrinsXCFwi/tLrWT/UUxPK2fd6FHU31ReIdt+W82zxj+4nE4kxFLpcmF0Cx2B0WLvGsHtggdyIFOvRcY3H3BFW9kNFrE8gXusQf+aG7eISdWWBdNX6/E1enmif+GQ==
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5113:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB5113;31:loPVp4HnYcuP69hLBruAEx2cZPbCtQZDS0x3h79ZLltL+vEWp5nxLIROhM/V5FEF0rBv64d3GVSZBU8Hw+RLdbHi1JeQSlwghH97wfmqVxaaMOVAo5TPv2r1oT6mvtWXbTfKToapw3rVfa+iEiyyL16xh5jWR7nHhub5y5BItGt9uklcn33zUvVoifr808nZEfLKLUb/T2GSEYountNBzyiB1yiHTEFfibP6gXkr3yI=;20:JY3Shqs0uP6RDHIX4GZmYK+JCbDjbvAnQHqsHjhJ+E7cecYSfLqFdG7llq+pI8ByzoHbHo/k0cqbBPrk79QhB+ha1S7qJYaSpvLKkeR2O7XDNCMR/9KYK2SQyIrGJbLT8z0RjKIJrqUoh9YhTgBpegMbqvY0KwqfKsJhb0g+EmQmoAEBclomyqxRreR8iwFenJkd2NjOyel1fKfi5EpA1WfAqUvHVT2vg/FJ1e+sxLcRMbi06HjY4McbQZZ/pGByOUAgvT2sXEnW35FB8rOXbaHNfyPoKqcy+Sawnj9agoLyDIJotySJ8KhP720I+7YBZF2P5Fwo0xLpy/oSmhCQ/SAIKmL1OgYMQ0wRAbnysk/4BVOFroIWdnIM8q525NtWSvINjWKkhfXGXJcifEX1NTP035qT5Yujp091SlgUhvYt2AiskdKaTUjMv4O8wj34CTZihPTx4aY8ZYRvp/XhNbYg7ZaSfb1T2mFQP5VWx9IfqMR4WNFanvu3O4lCv53h
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <DM6PR02MB51133C4237AEA5F57A492E23B8190@DM6PR02MB5113.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93004095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:DM6PR02MB5113;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB5113;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB5113;4:Ai6ub3xbekXxRRIvZ9YvAv9g2liE6e+HERj7RVnD2Q9kwEro1ft1Ga54/TfgsDOlQfN1Ej79tXwf2DA7+p9KQ4PZR8m2UB+TSnIhfBIkyvZYPoFsZw7DMpwtx8h0UiRYZgEArYVtO9JJC/hEdtvVMHdSjduGqme1RwvilHSx7+v4CM9T7xMX6huTcv+jVLteiZeEZ2wqkm6XUWpXkUwrwr3+wqswFmhlWTN3B1XYOjjmQ5F98re4NWQujauyt/T/ROkPI25l7yZxgzC5ZrXp8z55iTm34MnJ26MpPmddo35+NoN5XC2wsXaW5fsa/Kxq
-X-Forefront-PRVS: 07954CC105
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB5113;23:2zx1ER7y115h/0eG06jPMBDJ0v3tGrM78ZLnfxpct?=
- =?us-ascii?Q?TE7t1noPnkasrG7cDgH6LaAwStNLVBrWw74dcB5U4PgM0PCYaSwm38bcypWF?=
- =?us-ascii?Q?NgKRsS7rmcCP8fRkhQVFrS+3B1YiGmle1vof0nFg2ouWBawUIqXSsduoilYI?=
- =?us-ascii?Q?quhbyts1RW5B1afxRn1cNoxqqpjTfUthYIb6j8zdj9BvBPuQN1dpix4+DKW3?=
- =?us-ascii?Q?QVr1Mod+C3Khch1sfTkaeEPYeS7DtXAgKXwE/B2ItR6VDGNq/+DgI1NcmJaR?=
- =?us-ascii?Q?MH8djHJO5xuszlQMU9z9v2u+ylkbzbmTeslHek0y0H6Q09gj0hWsQCb+vCM+?=
- =?us-ascii?Q?h1PGxLcg3TLEaIxZgaAMCoN5M6g8qCIM9FMpkgP5HDwVm0ZW4MPPoSqcNCsk?=
- =?us-ascii?Q?HybzG4fbKYtfk8I2yYSBj7aMKEDMOssQPBl7Oq0YFAb6yNAcref4hKA8N6nC?=
- =?us-ascii?Q?UPk8tjVcV5rdTqId/qDTl3iHDCa+go3a+jzQoTH6F0S1NwHOD/xOw9zVUoqb?=
- =?us-ascii?Q?qaLhb+MYCSRdfsX8Xz7V+baTJG3XSIlcRkB7veLmc4MztuEiwQWznVfxRrqc?=
- =?us-ascii?Q?femxfrHk2rXVnJx+9xy+SXkJDMRV6jImh/p0WmvVJAQtnKfZff1yRHdCFnXm?=
- =?us-ascii?Q?Q5zxmAda8hTJP7b/7UoreoNOK/QI/uukmpKPvG9UghjJAwcwyAwLvdL/0M+x?=
- =?us-ascii?Q?fRn/tm188ZZFpI588qXnDJ+iUOgqCQV6lIZK9x0LZUXNCORwHXHdW8Qq7rUS?=
- =?us-ascii?Q?JdUNFs98FYlXiQyjJtA/jVjVUDMrYIoFpAUgVptm/c2T7WzuRwmEXNILFZAP?=
- =?us-ascii?Q?94I7so4coQG4DQnRHK3tC9+pkP1n9Yax1Z6hQn5QF2/STcEfZTlaxMVaX+6T?=
- =?us-ascii?Q?6M4+m1HVqJKSkRsvWWc93N4yuTKOT/OunrOI/99F6KtPTO7TBnpQ8DSsrLIR?=
- =?us-ascii?Q?bBO5lkhx8OCx8AfO9sImMiU0DitdKycfuEU8Qix4inpOEy/rLJ11nwEZnC5G?=
- =?us-ascii?Q?Ro6nzCTLx1FiFvFz9hSqcnkX59zNZw8j1LhYYKD1ZKSyHcnJBexhjBDcq+Nh?=
- =?us-ascii?Q?RxLNVG8JxzqmWmprNuIbQescLbDwA9oNKKBoTjOJSwgr7v9v2cY92V6EzeTc?=
- =?us-ascii?Q?xsqv7cHT2vch2gg5FbjlKTuhSjVXnIY4BsFbOe4X2RvFO970iKqb7fWhI0Ep?=
- =?us-ascii?Q?uKD3LrBSWtxU0xbNLFdF09rP9FQ8ABZZobsLb0ISPoZmpIQsgmcRHj9e9gpY?=
- =?us-ascii?Q?yHfiSB0oSOGzMyYVZbXXjxHby6pbIsnfQqUaz1daNxWoi6mNm9i4EJp2Ob0a?=
- =?us-ascii?Q?24tisdaP7+4BrLeuUGYlc8=3D?=
-X-Microsoft-Antispam-Message-Info: VUuO9CdfK2BdLvj1yuwFyfkyHL+mNYg3aTskr4zRhouc4uk0umu5QgDu+aHLx0Nyd8+wJTeAgIQiQZLtymbDLbpuMNGqn/o+ZGdD29fV654jHjrqpnQbN3W+J9YikTS4c9DOezQpMllPI1u2GLhKz77eeoliVslbois1y0R0HxIpzQ7jG7rqDQ1qpr1xtkw8wG87K+K8rIBdLndwCD7YGCeM7bL6XWM4zlIYS9dm28iFFZo/AwL4h9NpPjSL0O7kSvxUlzSS3swWju+whaFGT1jRncxIwVOpCVX1G1bpQka+6s81+QULewMc9xGIQus6dmSaJqPWUO/4YOcY7q56S10M0vmFWV0vbbyVkzrVIJI=
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB5113;6:eO9wRUsVlpu16NsYIthrrTSWr3q9v0KAIJAAjszzRGq+jSXXTJOpptRD/I2J6jIHER2K5Oy838l7vA34R6KXxY9GA0tUMhENr9X1o4XwT+5sLAHyWoN6jmNaoxlAXUqkb2h5X/me3g5scsnCilzGZMwyF7laxBrvE63pLDERQ3gIEX4+a2gt+9D+0W6ByAQqHo3TbGA7r5wCjbOwGThD7gxX2yqPladOyAxUP9YL7cukpeNopGAD97BYNBf/qEE6EVctdzgGY8ZUo3d5dqI2/0VNWZHGE4ZsWrGKY3ut4xfojOwSHJ06AUsM0hpWf6wkMSeq1OkVKRPQ7dlmCh2w3vWo7uzy1bcMuSc3XL6IZgj3VjaObZTlZBRDX6ihfCKAdGmvI5BP9S79OYkYDCR1UfTA1Xtqlfkupj/76n8b89yY4VifWT7JHot4c0V2GnZ8U1SsdlmWd8ZqgbALLb8rKA==;5:iL4TB/rR/6MdIiVK5y3BBshDuz/3lMg7M8LW3ZAlPTIW4NuNjbRyGtqYbRCS2j/BLCloCFAJ4iVTjyBSFlLjhuB+nuL/wETUdw0slOUFzB73ri5IIGzocCB1E2rkln6c0u0+AkN+fuFZdVSq+atR5TwvrtML7u/k4GD/DKsi8zo=;7://gobCvAVaxQDniGwgffba9HEY/QCVUUyMbpqDH29lN4Cq85hT0bdNwb/+W46XH8eqDL2mkzX3j0pdhtmNq7AW3DjxWdbMhgIyWFePR8N1EjN/E4r/AxtICbnUTTQH5IVzjmcxzyKS7wsU07Aut0k48f40Z6RjxDf2IFk8KRSMezTylaMxdlLHOz7R/dHe8foWEjQNbgNbOunUfe8fJuk7Hx/WxuK4wP6iM07CELPQszRFYX/wqpyKmEDRlWT9pB
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 19:40:19.1490
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ca4619e-26a0-4206-21fd-08d61a79e780
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1809141210530.1482-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+> The updated Changelog draft is below.
+> 
+> Alan.
+> 
+> --------------------------------------------------------------------------
+> More than one kernel developer has expressed the opinion that the LKMM
+> should enforce ordering of writes by locking.  In other words, given
+> the following code:
+> 
+> 	WRITE_ONCE(x, 1);
+> 	spin_unlock(&s):
+> 	spin_lock(&s);
+> 	WRITE_ONCE(y, 1);
+> 
+> the stores to x and y should be propagated in order to all other CPUs,
+> even though those other CPUs might not access the lock s.  In terms of
+> the memory model, this means expanding the cumul-fence relation.
+> 
+> Locks should also provide read-read (and read-write) ordering in a
+> similar way.  Given:
+> 
+> 	READ_ONCE(x);
+> 	spin_unlock(&s);
+> 	spin_lock(&s);
+> 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> 
+> the load of x should be executed before the load of (or store to) y.
+> The LKMM already provides this ordering, but it provides it even in
+> the case where the two accesses are separated by a release/acquire
+> pair of fences rather than unlock/lock.  This would prevent
+> architectures from using weakly ordered implementations of release and
+> acquire, which seems like an unnecessary restriction.  The patch
+> therefore removes the ordering requirement from the LKMM for that
+> case.
+> 
+> There are several arguments both for and against this change.  Let us
+> refer to these enhanced ordering properties by saying that the LKMM
+> would require locks to be RCtso (a bit of a misnomer, but analogous to
+> RCpc and RCsc) and it would require ordinary acquire/release only to
+> be RCpc.  (Note: In the following, the phrase "all supported
+> architectures" is meant not to include RISC-V.  Although RISC-V is
+> indeed supported by the kernel, the implementation is still somewhat
+> in a state of flux and therefore statements about it would be
+> premature.)
+> 
+> Pros:
+> 
+> 	The kernel already provides RCtso ordering for locks on all
+> 	supported architectures, even though this is not stated
+> 	explicitly anywhere.  Therefore the LKMM should formalize it.
+> 
+> 	In theory, guaranteeing RCtso ordering would reduce the need
+> 	for additional barrier-like constructs meant to increase the
+> 	ordering strength of locks.
+> 
+> 	Will Deacon and Peter Zijlstra are strongly in favor of
+> 	formalizing the RCtso requirement.  Linus Torvalds and Peter
+> 	would like to go even further, requiring locks to have RCsc
+> 	behavior (ordering preceding writes against later reads), but
+> 	they recognize that this would incur a noticeable performance
+> 	degradation on the POWER architecture.  Linus also points out
+> 	that people have made the mistake, in the past, of assuming
+> 	that locking has stronger ordering properties than is
+> 	currently guaranteed, and this change would reduce the
+> 	likelihood of such mistakes.
+> 
+> 	Not requiring ordinary acquire/release to be any stronger than
+> 	RCpc may prove advantageous for future architectures, allowing
+> 	them to implement smp_load_acquire() and smp_store_release()
+> 	with more efficient machine instructions than would be
+> 	possible if the operations had to be RCtso.  Will and Linus
+> 	approve this rationale, hypothetical though it is at the
+> 	moment (it may end up affecting the RISC-V implementation).
+> 	The same argument may or may not apply to RMW-acquire/release;
+> 	see also the second Con entry below.
+> 
+> 	Linus feels that locks should be easy for people to use
+> 	without worrying about memory consistency issues, since they
+> 	are so pervasive in the kernel, whereas acquire/release is
+> 	much more of an "experts only" tool.  Requiring locks to be
+> 	RCtso is a step in this direction.
+> 
+> Cons:
+> 
+> 	Andrea Parri and Luc Maranget think that locks should have the
+> 	same ordering properties as ordinary acquire/release (indeed,
+> 	Luc points out that the names "acquire" and "release" derive
+> 	from the usage of locks).  Andrea points out that having
+> 	different ordering properties for different forms of acquires
+> 	and releases is not only unnecessary, it would also be
+> 	confusing and unmaintainable.
+> 
+> 	Locks are constructed from lower-level primitives, typically
+> 	RMW-acquire (for locking) and ordinary release (for unlock).
+> 	It is illogical to require stronger ordering properties from
+> 	the high-level operations than from the low-level operations
+> 	they comprise.  Thus, this change would make
+> 
+> 		while (cmpxchg_acquire(&s, 0, 1) != 0)
+> 			cpu_relax();
+> 
+> 	an incorrect implementation of spin_lock(&s) as far as the
+> 	LKMM is concerned.  In theory this weakness can be ameliorated
+> 	by changing the LKMM even further, requiring
+> 	RMW-acquire/release also to be RCtso (which it already is on
+> 	all supported architectures).
+> 
+> 	As far as I know, nobody has singled out any examples of code
+> 	in the kernel that actually relies on locks being RCtso.
+> 	(People mumble about RCU and the scheduler, but nobody has
+> 	pointed to any actual code.  If there are any real cases,
+> 	their number is likely quite small.)  If RCtso ordering is not
+> 	needed, why require it?
+> 
+> 	A handful of locking constructs (qspinlocks, qrwlocks, and
+> 	mcs_spinlocks) are built on top of smp_cond_load_acquire()
+> 	instead of an RMW-acquire instruction.  It currently provides
+> 	only the ordinary acquire semantics, not the stronger ordering
+> 	this patch would require of locks.  In theory this could be
+> 	ameliorated by requiring smp_cond_load_acquire() in
+> 	combination with ordinary release also to be RCtso (which is
+> 	currently true on all supported architectures).
+> 
+> 	On future weakly ordered architectures, people may be able to
+> 	implement locks in a non-RCtso fashion with significant
+> 	performance improvement.  Meeting the RCtso requirement would
+> 	necessarily add run-time overhead.
+> 
+> Overall, the technical aspects of these arguments seem relatively
+> minor, and it appears mostly to boil down to a matter of opinion.
+> Since the opinions of senior kernel maintainers such as Linus,
+> Peter, and Will carry more weight than those of Luc and Andrea, this
+> patch changes the model in accordance with the maintainers' wishes.
+> 
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 
-Add Xilinx ZynqMP firmware APIs to set suspend mode
-and inform firmware that master has initialized its
-own power management.
+Thank you for integrating the log.
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 29 +++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+I remain more sensitive to those Cons (and skeptical about that
+po-unlock-rf-lock-po), but: (1) this doesn't make an objection,
+and (2) you wore me down. ;-)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 84b3fd2..c7a3b6c 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -428,6 +428,33 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
- 	return ret;
- }
- 
-+/**
-+ * zynqmp_pm_init_finalize() - PM call to inform firmware that the caller
-+ *			       master has initialized its own power management
-+ *
-+ * This API function is to be used for notify the power management controller
-+ * about the completed power management initialization.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_init_finalize(void)
-+{
-+	return zynqmp_pm_invoke_fn(PM_PM_INIT_FINALIZE, 0, 0, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_set_suspend_mode()	- Set system suspend mode
-+ * @mode:	Mode to set for system suspend
-+ *
-+ * This API function is used to set mode of system suspend.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_set_suspend_mode(u32 mode)
-+{
-+	return zynqmp_pm_invoke_fn(PM_SET_SUSPEND_MODE, mode, 0, 0, 0, NULL);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.query_data = zynqmp_pm_query_data,
-@@ -440,6 +467,8 @@ static const struct zynqmp_eemi_ops eemi_ops = {
- 	.clock_getrate = zynqmp_pm_clock_getrate,
- 	.clock_setparent = zynqmp_pm_clock_setparent,
- 	.clock_getparent = zynqmp_pm_clock_getparent,
-+	.init_finalize = zynqmp_pm_init_finalize,
-+	.set_suspend_mode = zynqmp_pm_set_suspend_mode,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 015e130..1424170 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -28,12 +28,21 @@
- /* SMC SIP service Call Function Identifier Prefix */
- #define PM_SIP_SVC			0xC2000000
- #define PM_GET_TRUSTZONE_VERSION	0xa03
-+#define PM_SET_SUSPEND_MODE		0xa02
-+#define GET_CALLBACK_DATA		0xa01
- 
- /* Number of 32bits values in payload */
- #define PAYLOAD_ARG_CNT	4U
- 
-+/* Number of arguments for a callback */
-+#define CB_ARG_CNT	4
-+
-+/* Payload size (consists of callback API ID + arguments) */
-+#define CB_PAYLOAD_SIZE (CB_ARG_CNT + 1)
-+
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
-+	PM_PM_INIT_FINALIZE = 21,
- 	PM_QUERY_DATA = 35,
- 	PM_CLOCK_ENABLE,
- 	PM_CLOCK_DISABLE,
-@@ -73,6 +82,12 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_ATTRIBUTES,
- };
- 
-+enum zynqmp_pm_suspend_reason {
-+	SUSPEND_POWER_REQUEST = 201,
-+	SUSPEND_ALERT,
-+	SUSPEND_SYSTEM_SHUTDOWN,
-+};
-+
- /**
-  * struct zynqmp_pm_query_data - PM query data
-  * @qid:	query ID
-@@ -99,8 +114,13 @@ struct zynqmp_eemi_ops {
- 	int (*clock_getrate)(u32 clock_id, u64 *rate);
- 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
- 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
-+	int (*init_finalize)(void);
-+	int (*set_suspend_mode)(u32 mode);
- };
- 
-+int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
-+			u32 arg2, u32 arg3, u32 *ret_payload);
-+
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
- const struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void);
- #else
--- 
-2.7.4
+So unless new arguments are brought to light, feel free to add:
 
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+
+  Andrea
+
+
+> 
+> v.5: Incorporated feedback from Andrea regarding the updated Changelog.
+> 
+> v.4: Added pros and cons discussion to the Changelog.
+> 
+> v.3: Rebased against the dev branch of Paul's linux-rcu tree.
+> Changed unlock-rf-lock-po to po-unlock-rf-lock-po, making it more
+> symmetrical and more in accordance with the use of fence.tso for
+> the release on RISC-V.
+> 
+> v.2: Restrict the ordering to lock operations, not general release
+> and acquire fences.
+> 
