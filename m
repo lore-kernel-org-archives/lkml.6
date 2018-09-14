@@ -2,113 +2,98 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95980ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E30FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16F920881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:35:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16F920881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8E04B20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E04B20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeINRuE (ORCPT
+        id S1728183AbeINRuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:50:04 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:19343 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727803AbeINRuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:50:04 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42BZk50C2Zz9ttgN;
-        Fri, 14 Sep 2018 14:35:41 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id b-sd0dd7qyXy; Fri, 14 Sep 2018 14:35:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42BZk46jDxz9ttgK;
-        Fri, 14 Sep 2018 14:35:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 174FC8B8BE;
-        Fri, 14 Sep 2018 14:35:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id kneS0n2lw0Pg; Fri, 14 Sep 2018 14:35:45 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D2F8C8B8BC;
-        Fri, 14 Sep 2018 14:35:44 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A8DF1718F8; Fri, 14 Sep 2018 12:35:44 +0000 (UTC)
-Message-Id: <ff05bd36b338f4f914780176e9eba8138e1b254b.1536927765.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] kdb: use correct pointer when 'btc' calls 'btt'
-To:     Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kgdb-bugreport@lists.sourceforge.net, stable@vger.kernel.org
-Date:   Fri, 14 Sep 2018 12:35:44 +0000 (UTC)
+        Fri, 14 Sep 2018 13:50:50 -0400
+Received: from [101.8.162.226] ([101.8.162.226]:15824 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727803AbeINRuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 13:50:50 -0400
+X-Greylist: delayed 4042 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Sep 2018 13:50:50 EDT
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 1F031C23C1;
+        Fri, 14 Sep 2018 16:58:19 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, jongpil19.jung@samsung.com, rajatja@chromium.org,
+        Harry Pan <harry.pan@intel.com>, gregkh@linuxfoundation.org,
+        kai.heng.feng@canonical.com, stern@rowland.harvard.edu,
+        felipe.balbi@linux.intel.com, snecknico@gmail.com,
+        jackstocker.93@gmail.com, oneukum@suse.com,
+        linux-usb@vger.kernel.org
+Subject: [PATCH] usb: core: safely deal with the dynamic quirk lists
+Date:   Fri, 14 Sep 2018 16:58:16 +0800
+Message-Id: <20180914085816.10888-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a powerpc 8xx, 'btc' fails as follows:
+Applying dynamic usbcore quirks in early booting when the slab is
+not yet ready would cause kernel panic of null pointer dereference
+because the quirk_count has been counted as 1 while the quirk_list
+was failed to allocate.
 
-Entering kdb (current=0x(ptrval), pid 282) due to Keyboard Entry
-kdb> btc
-btc: cpu status: Currently on cpu 0
-Available cpus: 0
-kdb_getarea: Bad address 0x0
+i.e.,
+[    1.044970] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[    1.044995] IP: [<ffffffffb0953ec7>] usb_detect_quirks+0x88/0xd1
+[    1.045016] PGD 0
+[    1.045026] Oops: 0000 [#1] PREEMPT SMP
+[    1.046986] gsmi: Log Shutdown Reason 0x03
+[    1.046995] Modules linked in:
+[    1.047008] CPU: 0 PID: 81 Comm: kworker/0:3 Not tainted 4.4.154 #28
+[    1.047016] Hardware name: Google Coral/Coral, BIOS Google_Coral.10068.27.0 12/04/2017
+[    1.047028] Workqueue: usb_hub_wq hub_event
+[    1.047037] task: ffff88017a321c80 task.stack: ffff88017a384000
+[    1.047044] RIP: 0010:[<ffffffffb0953ec7>]  [<ffffffffb0953ec7>] usb_detect_quirks+0x88/0xd1
 
-when booting the kernel with 'debug_boot_weak_hash', it fails as well
+To tackle this odd, let's balance the quirk_count to 0 when the kcalloc
+call fails, and defer the quirk setting into a lower level callback
+which ensures that the kernel memory management has been initialized.
 
-Entering kdb (current=0xba99ad80, pid 284) due to Keyboard Entry
-kdb> btc
-btc: cpu status: Currently on cpu 0
-Available cpus: 0
-kdb_getarea: Bad address 0xba99ad80
+Fixes: 027bd6cafd9a ("usb: core: Add "quirks" parameter for usbcore")
 
-On other platforms, Oopses have been observed too, see
-https://github.com/linuxppc/linux/issues/139
-
-This is due to btc calling 'btt' with %p pointer as an argument.
-
-This patch replaces %p by %px to get the real pointer value as
-expected by 'btt'
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: <stable@vger.kernel.org> # 4.15+
+Signed-off-by: Harry Pan <harry.pan@intel.com>
 ---
- kernel/debug/kdb/kdb_bt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/core/quirks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
-index 6ad4a9fcbd6f..7921ae4fca8d 100644
---- a/kernel/debug/kdb/kdb_bt.c
-+++ b/kernel/debug/kdb/kdb_bt.c
-@@ -179,14 +179,14 @@ kdb_bt(int argc, const char **argv)
- 				kdb_printf("no process for cpu %ld\n", cpu);
- 				return 0;
- 			}
--			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
-+			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
- 			kdb_parse(buf);
- 			return 0;
- 		}
- 		kdb_printf("btc: cpu status: ");
- 		kdb_parse("cpu\n");
- 		for_each_online_cpu(cpu) {
--			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
-+			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
- 			kdb_parse(buf);
- 			touch_nmi_watchdog();
- 		}
+diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
+index 097057d2eacf..1fe9843fb9c8 100644
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -58,6 +58,7 @@ static int quirks_param_set(const char *val, const struct kernel_param *kp)
+ 	quirk_list = kcalloc(quirk_count, sizeof(struct quirk_entry),
+ 			     GFP_KERNEL);
+ 	if (!quirk_list) {
++		quirk_count = 0;
+ 		mutex_unlock(&quirk_mutex);
+ 		return -ENOMEM;
+ 	}
+@@ -154,7 +155,7 @@ static struct kparam_string quirks_param_string = {
+ 	.string = quirks_param,
+ };
+ 
+-module_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
++device_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
+ MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
+ 
+ /* Lists of quirky USB devices, split in device quirks and interface quirks.
 -- 
-2.13.3
+2.16.4
 
