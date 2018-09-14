@@ -2,164 +2,113 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC72CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA07FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BBE2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:27:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WTm3qP4c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73BBE2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AD3AC20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3AC20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeINRlZ (ORCPT
+        id S1728126AbeINRm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:41:25 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36799 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbeINRlZ (ORCPT
+        Fri, 14 Sep 2018 13:42:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57883 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726966AbeINRm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:41:25 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v26-v6so7375328ljj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IuqJ988JHm7HPVOx4hvd7xrz9HWcvF6gvGPQAT+0wIY=;
-        b=WTm3qP4cRSMhcFt8vwmVQiSKzB5l/sg26zOrPE8bY8t0W4s2vj/WFWE6QB+OKDjKBL
-         ITFfcWge/pSP4bTNxF2bBEQd3jPiXqgF3QaZmgjY0bUFaRBqL7LSuggsAavKwcmh4VE1
-         ZsInrlLMPBscX3wf6jr+YDC/MaqRXlISTZC5Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IuqJ988JHm7HPVOx4hvd7xrz9HWcvF6gvGPQAT+0wIY=;
-        b=Uodl2+bGB4v8wMNdy8sR5zY4Zdz+R+7K8yVzmcl3q9xAyWyAizGMZ+HLloajzWqJzv
-         ec9pSDQBR5/tNtcnoylL7qY7GWFNzt2OyS/qBx/JTiAWvE+ZU/fY5q2APstHlueLsXr0
-         qI+Jm89DPK485DpBd0YSsYy0Ongon1y7XIobH5XKnd0mF6v0QlEujl8uKTHmBUKOd7Bx
-         zxXma/OjhX3vcx8ry7pv+PcWEnU/qRmb4WZvmVkUtWxF/8RSFLQlgjCgIwisF6bagqFt
-         nN81DyeNDXq13dmfHkujzztuXBPS2b9FcHCa7D9BbZHZ91kyCLyQnJFsEKIdDswU2BI1
-         Eh1A==
-X-Gm-Message-State: APzg51AAiA0eBo5vbrt6iOom/XHgpWhhl9yi7nrB7ySvMI48uXSDTdX2
-        u/GHIGDSX76eJuuLec89WUtrBq3QB7rb9md5WQEB/A==
-X-Google-Smtp-Source: ANB0VdakfyaEfM6Qnrrxopyj4/Mb4sT4LHM9uyv7ZJyBHSjrQmRkoTqkRj1mlTh+zVLxVnJzJx7VjqkFbza4ECPdwQ8=
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr7908035ljh.18.1536928028042;
- Fri, 14 Sep 2018 05:27:08 -0700 (PDT)
+        Fri, 14 Sep 2018 13:42:28 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g0nCi-0003qG-WC; Fri, 14 Sep 2018 12:28:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "Nicholas A . Bellinger" <nab@linux-iscsi.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        target-devel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: iscsi: target: fix spelling mistake "entires" -> "entries"
+Date:   Fri, 14 Sep 2018 13:28:08 +0100
+Message-Id: <20180914122808.5447-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 05:27:07
- -0700 (PDT)
-In-Reply-To: <20180913131841.568116777@linuxfoundation.org>
-References: <20180913131841.568116777@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 14 Sep 2018 17:57:07 +0530
-Message-ID: <CA+G9fYtUJxWDgH9E1Kdp0HC0i3ANc4-FKLTu8fe3SkDZeHmwLA@mail.gmail.com>
-Subject: Re: [PATCH 4.18 000/197] 4.18.8-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 September 2018 at 18:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.18.8 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Sep 15 13:17:57 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.18.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.18.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Colin Ian King <colin.king@canonical.com>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64 and i386.
+Trivial fix to spelling mistake in function name and comment
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/target/iscsi/iscsi_target.c       | 2 +-
+ drivers/target/iscsi/iscsi_target_erl2.c  | 2 +-
+ drivers/target/iscsi/iscsi_target_erl2.h  | 2 +-
+ drivers/target/iscsi/iscsi_target_login.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Summary
-------------------------------------------------------------------------
+diff --git a/drivers/target/iscsi/iscsi_target.c b/drivers/target/iscsi/iscsi_target.c
+index cc756a123fd8..c1d5a173553d 100644
+--- a/drivers/target/iscsi/iscsi_target.c
++++ b/drivers/target/iscsi/iscsi_target.c
+@@ -4355,7 +4355,7 @@ int iscsit_close_session(struct iscsi_session *sess)
+ 	transport_deregister_session(sess->se_sess);
+ 
+ 	if (sess->sess_ops->ErrorRecoveryLevel == 2)
+-		iscsit_free_connection_recovery_entires(sess);
++		iscsit_free_connection_recovery_entries(sess);
+ 
+ 	iscsit_free_all_ooo_cmdsns(sess);
+ 
+diff --git a/drivers/target/iscsi/iscsi_target_erl2.c b/drivers/target/iscsi/iscsi_target_erl2.c
+index 8df9c90f3db3..b08b620b1bf0 100644
+--- a/drivers/target/iscsi/iscsi_target_erl2.c
++++ b/drivers/target/iscsi/iscsi_target_erl2.c
+@@ -125,7 +125,7 @@ struct iscsi_conn_recovery *iscsit_get_inactive_connection_recovery_entry(
+ 	return NULL;
+ }
+ 
+-void iscsit_free_connection_recovery_entires(struct iscsi_session *sess)
++void iscsit_free_connection_recovery_entries(struct iscsi_session *sess)
+ {
+ 	struct iscsi_cmd *cmd, *cmd_tmp;
+ 	struct iscsi_conn_recovery *cr, *cr_tmp;
+diff --git a/drivers/target/iscsi/iscsi_target_erl2.h b/drivers/target/iscsi/iscsi_target_erl2.h
+index 93e180d68d07..a39b0caf2337 100644
+--- a/drivers/target/iscsi/iscsi_target_erl2.h
++++ b/drivers/target/iscsi/iscsi_target_erl2.h
+@@ -13,7 +13,7 @@ extern void iscsit_create_conn_recovery_datain_values(struct iscsi_cmd *, __be32
+ extern void iscsit_create_conn_recovery_dataout_values(struct iscsi_cmd *);
+ extern struct iscsi_conn_recovery *iscsit_get_inactive_connection_recovery_entry(
+ 			struct iscsi_session *, u16);
+-extern void iscsit_free_connection_recovery_entires(struct iscsi_session *);
++extern void iscsit_free_connection_recovery_entries(struct iscsi_session *);
+ extern int iscsit_remove_active_connection_recovery_entry(
+ 			struct iscsi_conn_recovery *, struct iscsi_session *);
+ extern int iscsit_remove_cmd_from_connection_recovery(struct iscsi_cmd *,
+diff --git a/drivers/target/iscsi/iscsi_target_login.c b/drivers/target/iscsi/iscsi_target_login.c
+index bb90c80ff388..ae3209efd0e0 100644
+--- a/drivers/target/iscsi/iscsi_target_login.c
++++ b/drivers/target/iscsi/iscsi_target_login.c
+@@ -578,7 +578,7 @@ int iscsi_login_post_auth_non_zero_tsih(
+ 	}
+ 
+ 	/*
+-	 * Check for any connection recovery entires containing CID.
++	 * Check for any connection recovery entries containing CID.
+ 	 * We use the original ExpStatSN sent in the first login request
+ 	 * to acknowledge commands for the failed connection.
+ 	 *
+-- 
+2.17.1
 
-kernel: 4.18.8-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.18.y
-git commit: ae285c20144a3ff94c31498fe34ca1decb2f0b4c
-git describe: v4.18.7-198-gae285c20144a
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
-ild/v4.18.7-198-gae285c20144a
-
-No regressions (compared to build v4.18.7)
-
-
-Ran 20231 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
