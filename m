@@ -2,159 +2,153 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E997C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5313FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAAB020866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5474321476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:33:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZUBQBA/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAAB020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ju23o8fn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5474321476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeINNq6 (ORCPT
+        id S1728244AbeINNrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:46:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36574 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeINNq5 (ORCPT
+        Fri, 14 Sep 2018 09:47:04 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36794 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728208AbeINNrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:46:57 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b11-v6so3977239pfo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:33:32 -0700 (PDT)
+        Fri, 14 Sep 2018 09:47:03 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j192-v6so1108216wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xw9O3VYKyILcFNk7g1v1ex6Kcw733SokGsK5eSOn6DE=;
-        b=ZUBQBA/ijLxqvShtSFxrSq72PIvvpD6YAsei8aPSZGBUJXs/fioclzZ/VRxX9O7L8K
-         k62QaibwTFxu+Sw9xWnXvjTuliFZwmcHVRzxWmBIr0cyL2jFlEtWwZNlOXlnVi+9qVef
-         fBk85ek6sg3P1bpw3eFt5hz79GTHSuytQq2s4=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dQhaPjYqWaqAejgvdTvRL+ZVVdq++l2SgN73yGLHxlw=;
+        b=Ju23o8fnXnMZpUFovGaVG10cBGifZYYKteEtljlUcXktCxQUqqJ4gNVYko9mCfzlcD
+         xG2ezMwcxRyVfYZ2mpO7w608HZoFyS+2ybhr9NbSRNcsDUlCJs0YriDX6KVcXc+1fEDO
+         pXE24m6VVJLk2CVv3tsnIoLqh08XauS7woll5WaYRg/y6ksI8SdkDjQV0KnrVkODW97A
+         8RyL7mLdC9SZu3xLZIWt95NrFFM7XrNy3yQjLKk52HoDi2iI05HvDAiViYhSAXHzql7W
+         B9kmUjEclofkUumLHTrC649XAop1Z9z673t+bpDgqFtbPTeuZXtPF222Jrd7A4IqH4cX
+         2cEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xw9O3VYKyILcFNk7g1v1ex6Kcw733SokGsK5eSOn6DE=;
-        b=HkX0XHVvrf0iYru/NoZz3rHYjGUObu6a1rCtniGUeaCPJVE1z9LGedDDXUwcmd+5kw
-         oOMB2eFC7o80+jgX6NV6YUX1AejOZ0Nowqj8OFrQY7LwDvpxpc3CxyGxfmxBQgArnGLw
-         gkr4SH1jpkD6MRJ4V3sZFgtpzoKNpfk4rKhuGwuAPf5sQbWEUyFmOVu2kCD5hq/vrPAa
-         Zy6kQp3bNfAMhGc501DAaXvlPw5bcyTkYR0lVdFgTJCprxRCTOxZn41jabbiewliG8Gj
-         kAHAZYIouKT6N6S6xwq9H6XSH29dLy//McAkKYwuk5U5bGZ0VqzobbAp65pFlVooIjuR
-         tNeA==
-X-Gm-Message-State: APzg51A+jW1CldUBAyH5CILbJ912cwEvLS4G6uPmtHwZ+UJzYDtIpXdI
-        K0VSOo2f8eFq6nBlGYzssW2xuA==
-X-Google-Smtp-Source: ANB0VdYqndyO5ZvMKTe+l6HJbxxjaFFfDpNRgj+WEjIwn/x790VfYpKfp2xW4lfWBaFSG2bg1UttuQ==
-X-Received: by 2002:a63:ac11:: with SMTP id v17-v6mr10649167pge.196.1536914012191;
-        Fri, 14 Sep 2018 01:33:32 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.60.83])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm12427070pgt.66.2018.09.14.01.33.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Sep 2018 01:33:31 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 0/3] System call table generation support
-Date:   Fri, 14 Sep 2018 14:02:57 +0530
-Message-Id: <1536913980-4811-1-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dQhaPjYqWaqAejgvdTvRL+ZVVdq++l2SgN73yGLHxlw=;
+        b=kFYqZT/mtHopj8I1QJgywyaUm5nuEwq6TvnPJxD6KcSVMctbt1/HEySyY+U48n47CW
+         zJNrbiAvlI4ssZbOnYrzG/A6er0omInAfwJSB+iaJ5f7cQ10a8+OjZpTlZqKrQLB5stf
+         Iq0xcQr9GJSgT5LcHJF713YtD90jtU/MJRVyXF+C6bJwQSQkh7bFGdIbs9qHE254iLaH
+         JspTc0KKrRf0/pB/z5huZ9+/bWtO91vpRvMqtDvewFqZyVnorYbU1TlzcbRMhHFyByf0
+         z68vXpQ+/bPcOhrTO8p//Pf+QMCtJm+QhW5gJe+Zh2KvkaDXhDE/DNFCVE9Xj+33CrmX
+         Msjw==
+X-Gm-Message-State: APzg51CacOws2maslh7je4gS9ZkoRTYbKX5juJtD3YIMKeDoL5gCqfZS
+        ncFnX9PadosSk2rq9xZoQAiErQ==
+X-Google-Smtp-Source: ANB0VdZUZ/TlL7JRUgzXu/mNbvA/bzagAjX+fhzLYmp+plaa/DiOMiLI/74QNL/0tsRX6JcQ88ZuFw==
+X-Received: by 2002:a1c:ce0b:: with SMTP id e11-v6mr1432144wmg.47.1536914016832;
+        Fri, 14 Sep 2018 01:33:36 -0700 (PDT)
+Received: from boomer (uluru.liltaz.com. [163.172.81.188])
+        by smtp.gmail.com with ESMTPSA id z101-v6sm10397717wrb.55.2018.09.14.01.33.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 01:33:36 -0700 (PDT)
+Message-ID: <6f12fc39c52adaaf63cb99cefe0809a52606c3a8.camel@baylibre.com>
+Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Fri, 14 Sep 2018 10:33:35 +0200
+In-Reply-To: <977d8010-6d82-5eac-5da5-6dbe0f73971a@amlogic.com>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+         <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
+         <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
+         <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
+         <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+         <977d8010-6d82-5eac-5da5-6dbe0f73971a@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is:
-1. We can easily add/modify/delete system call by changing entry 
-in syscall.tbl file. No need to manually edit many files.
+On Tue, 2018-08-28 at 11:35 +0800, Jian Hu wrote:
+> Hi: Jerome
+> 
+> On 2018/8/27 21:07, Jerome Brunet wrote:
+> > On Fri, 2018-08-24 at 21:34 +0800, Jian Hu wrote:
+> > > > 
+> > > 
+> > > I am confued about aoclk81's parent clocks.
+> > > 
+> > > I can not get the example of axg audio clock driver, Could you provide
+> > > the link? Had it merged into clk-meson.git?
+> > 
+> > Yes and mainline as well : drivers/clk/meson/axg-audio.c
+> > 
+> > Basically this driver is creating bypass input clocks (audio_pclk, mst_in[0-9],
+> > etc...) .
+> > 
+> > This allows to collect input clocks from DT (like any consumer should) will
+> > keeping constant in the controller clock tree.
+> > 
+> > > From what I've seen of your controller drivers, the EE controller should have
+> > 
+> > one input, the AO should have 3.
+> > 
+> > 
+> > 
+> > .
+> > 
+> 
+> I still can not get the example meaning in axg audio driver.
 
-2. It is easy to unify the system call implementation across all 
-the architectures. 
+here is one specific example:
 
-The system call tables are in different format in all architecture 
-and it will be difficult to manually add or modify the system calls
-in the respective files manually. To make it easy by keeping a script 
-and which'll generate the header file and syscall table file so this 
-change will unify them across all architectures.
 
-syscall.tbl contains the list of available system calls along with 
-system call number and corresponding entry point. Add a new system 
-call in this architecture will be possible by adding new entry in 
-the syscall.tbl file.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/meson/axg-audio.c?h=v4.19-rc1#n785
 
-Adding a new table entry consisting of:
-        - System call number.
-        - ABI.
-        - System call name.
-        - Entry point name.
-        - Compat entry name, if required.
 
-ARM, s390 and x86 architecuture does exist the similar support. I 
-leverage their implementation to come up with a generic solution.
+> 
+> In 26 page of A113D_Datasheet V0.7 20170725-Baylibre.pdf,We can see the 
+> aoclk81 has two parents. clk81 and ao_slow_clk. I can not get 3 parents.
+> 
+>                           clk81|\
+>                         -------| \        aoclk81
+> src0 |\                       |  |-------------------
+> -----| \     ao_slow_clk      |  |
+>       |  |---------------------| /
+> -----| /                      |/
+>   src1|/
+> 
+> 
+> src0 is from xtal, if can generate 32k clock, but it is never used.
+> src1 is from gpio clock, It is never used. If necessary， the ao_slow_clk 
+> maybe described.
+> 
+> So why aoclk81 has 3 parents?
 
-I have done the same support for work for alpha, m68k, microblaze, 
-ia64, mips, parisc, sh, sparc, and xtensa. But I started sending 
-the patch for one architecuture for review. Below mentioned git
-repository contains more details.
-Git repo:- https://github.com/frzkhn/system_call_table_generator/
+I never said that. I said your clock controller driver should have 3 input
+clocks. These clock are the one used by the controller but not produced by it:
+for the AO controller xtal, ao_xtal, and ee controller clk81.
 
-Finally, this is the ground work for solving the Y2038 issue. We 
-need to add/change two dozen of system calls to solve Y2038 issue. 
-So this patch series will help to easily modify from existing 
-system call to Y2038 compatible system calls.
 
-I started working system call table generation on 4.17-rc1. I used 
-marcin's script - https://github.com/hrw/syscalls-table to generate 
-the syscall.tbl file. And this will be the input to the system call 
-table generation script. But there are couple system call got add 
-in the latest rc release. If run Marcin's script on latest release,
-It will generate a new syscall.tbl. But I still use the old file - 
-syscall.tbl and once all review got over I'll update syscall.tbl 
-alone w.r.to the tip of the kernel. The impact of this thing, few 
-of the system call won't work. 
-
-Firoz Khan (3):
-  powerpc: Replace NR_syscalls macro from asm/unistd.h
-  powerpc: Add system call table generation support
-  powerpc: uapi header and system call table file generation
-
- arch/powerpc/Makefile                       |   3 +
- arch/powerpc/include/asm/Kbuild             |   3 +
- arch/powerpc/include/asm/unistd.h           |   3 +-
- arch/powerpc/include/uapi/asm/Kbuild        |   2 +
- arch/powerpc/include/uapi/asm/unistd.h      | 391 +---------------------------
- arch/powerpc/kernel/Makefile                |   3 +-
- arch/powerpc/kernel/syscall_table_32.S      |   9 +
- arch/powerpc/kernel/syscall_table_64.S      |  17 ++
- arch/powerpc/kernel/syscalls/Makefile       |  51 ++++
- arch/powerpc/kernel/syscalls/syscall_32.tbl | 378 +++++++++++++++++++++++++++
- arch/powerpc/kernel/syscalls/syscall_64.tbl | 372 ++++++++++++++++++++++++++
- arch/powerpc/kernel/syscalls/syscallhdr.sh  |  37 +++
- arch/powerpc/kernel/syscalls/syscalltbl.sh  |  38 +++
- arch/powerpc/kernel/systbl.S                |  50 ----
- 14 files changed, 916 insertions(+), 441 deletions(-)
- create mode 100644 arch/powerpc/kernel/syscall_table_32.S
- create mode 100644 arch/powerpc/kernel/syscall_table_64.S
- create mode 100644 arch/powerpc/kernel/syscalls/Makefile
- create mode 100644 arch/powerpc/kernel/syscalls/syscall_32.tbl
- create mode 100644 arch/powerpc/kernel/syscalls/syscall_64.tbl
- create mode 100644 arch/powerpc/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/powerpc/kernel/syscalls/syscalltbl.sh
- delete mode 100644 arch/powerpc/kernel/systbl.S
-
--- 
-1.9.1
 
