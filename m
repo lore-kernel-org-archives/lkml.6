@@ -2,109 +2,108 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D49ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2A2ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CED20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:37:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0CED20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 91E5620853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E5620853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeINOvZ (ORCPT
+        id S1728169AbeINOwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:51:25 -0400
-Received: from mga14.intel.com ([192.55.52.115]:62088 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbeINOvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:51:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 02:37:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
-   d="scan'208";a="88716932"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Sep 2018 02:37:45 -0700
-Received: from [10.125.251.160] (abudanko-mobl.ccr.corp.intel.com [10.125.251.160])
-        by linux.intel.com (Postfix) with ESMTP id CD75158053F;
-        Fri, 14 Sep 2018 02:37:42 -0700 (PDT)
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
-Date:   Fri, 14 Sep 2018 12:37:41 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 10:52:41 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:27136 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbeINOwl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:52:41 -0400
+X-IronPort-AV: E=Sophos;i="5.53,372,1531785600"; 
+   d="scan'208";a="65299678"
+Date:   Fri, 14 Sep 2018 10:38:58 +0100
+From:   Wei Liu <wei.liu2@citrix.com>
+To:     Juergen Gross <jgross@suse.com>
+CC:     Dongli Zhang <dongli.zhang@oracle.com>,
+        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <boris.ostrovsky@oracle.com>, <paul.durrant@citrix.com>,
+        <wei.liu2@citrix.com>, <konrad.wilk@oracle.com>,
+        <roger.pau@citrix.com>, <srinivas.eeda@oracle.com>
+Subject: Re: [PATCH 6/6] drivers: enable xenwatch multithreading for
+ xen-netback and xen-blkback driver
+Message-ID: <20180914093858.fwu6aqwwjbsdbbt4@zion.uk.xensource.com>
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-7-git-send-email-dongli.zhang@oracle.com>
+ <518d3ec9-0d2d-7f77-e750-3e1329f7e97b@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20180914082858.GH24224@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <518d3ec9-0d2d-7f77-e750-3e1329f7e97b@suse.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.09.2018 11:28, Jiri Olsa wrote:
-> On Fri, Sep 14, 2018 at 10:26:53AM +0200, Jiri Olsa wrote:
+On Fri, Sep 14, 2018 at 11:16:30AM +0200, Juergen Gross wrote:
+> On 14/09/18 09:34, Dongli Zhang wrote:
+> > This is the 6th patch of a (6-patch) patch set.
+> > 
+> > As the 'use_mtwatch' for xen-netback and xen-blkback are set to true,
+> > probing any xenbus devices of those two drivers would create the per-domU
+> > xenwatch thread for the domid the new devices belong to, or increment the
+> > reference count  of existing thread.
+> > 
+> > Xenwatch multithreading might be enabled for more xen backend pv drivers in
+> > the future.
+> > 
+> > Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> > ---
+> >  drivers/block/xen-blkback/xenbus.c | 3 ++-
+> >  drivers/net/xen-netback/xenbus.c   | 1 +
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> > index a4bc74e..debbbd0 100644
+> > --- a/drivers/block/xen-blkback/xenbus.c
+> > +++ b/drivers/block/xen-blkback/xenbus.c
+> > @@ -1108,7 +1108,8 @@ static struct xenbus_driver xen_blkbk_driver = {
+> >  	.ids  = xen_blkbk_ids,
+> >  	.probe = xen_blkbk_probe,
+> >  	.remove = xen_blkbk_remove,
+> > -	.otherend_changed = frontend_changed
+> > +	.otherend_changed = frontend_changed,
+> > +	.use_mtwatch = true,
+> >  };
+> >  
+> >  int xen_blkif_xenbus_init(void)
+> > diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+> > index cd51492..63d46a7 100644
+> > --- a/drivers/net/xen-netback/xenbus.c
+> > +++ b/drivers/net/xen-netback/xenbus.c
+> > @@ -1203,6 +1203,7 @@ static struct xenbus_driver netback_driver = {
+> >  	.remove = netback_remove,
+> >  	.uevent = netback_uevent,
+> >  	.otherend_changed = frontend_changed,
+> > +	.use_mtwatch = true,
 > 
-> SNIP
+> Is there a special reason why kernel based backends shouldn't all use
+> the multithread model? This would avoid the need for the use_mtwatch
+> struct member.
 > 
->>>> The threaded monitoring currently can't monitor backward maps
->>>> and there are probably more limitations which I haven't spotted
->>>> yet.
->>>>
->>>> So far I tested on laptop:
->>>>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
->>>>
->>>> and a one bigger server:
->>>>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
->>>>
->>>> I can see decrease in recorded LOST events, but both the benchmark
->>>> and the monitoring must be carefully configured wrt:
->>>>   - number of events (frequency)
->>>>   - size of the memory maps
->>>>   - size of events (callchains)
->>>>   - final perf.data size
->>>>
->>>> It's also available in:
->>>>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->>>>   perf/record_threads
->>>>
->>>> thoughts? ;-) thanks
->>>> jirka
->>>
->>> It is preferable to split into smaller pieces that bring 
->>> some improvement proved by metrics numbers and ready for 
->>> merging and upstream. Do we have more metrics than the 
->>> data loss from trace AIO patches?
->>
->> well the primary focus is to get more events in,
->> so the LOST metric is the main one
+> This is meant as an honest question. I'm really not sure we should
+> switch all backends at once. OTOH I can't see any real downsides.
 > 
-> actualy I was hoping, could you please run it through the same
-> tests as you do for AIO code on some huge server? 
+> Thoughts?
 
-Yeah, I will, but it takes some time.
+I don't see any downside.
+
+Wei.
 
 > 
-> thanks,
-> jirka
 > 
+> Juergen
