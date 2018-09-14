@@ -2,145 +2,249 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6890AFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0219FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3D820671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:20:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XX+MEKuo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3D820671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 90D5120671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D5120671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeINVgB (ORCPT
+        id S1728265AbeINVgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:36:01 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:51553 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeINVgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:36:01 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0b5ec985;
-        Fri, 14 Sep 2018 16:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
-        :subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=mail; bh=2BM4AahMtlNuHnmkXOxU0Sr3/
-        kY=; b=XX+MEKuokFjPiwSEpkKDc7cyx3Xq1XvhF0HHzBju35gsrcrO9DPs1Nocb
-        0BYorMhI6qypmp9LpCFnOv4h9KTK4f14pmMRfzTD2CpCWSfkE+XqfNZ/PVSZ+dEs
-        83lpQGkt8i3ijCnSTT19jwV0Py6vk5fCkoqlACn71BgFXeoX2Kbwlx9x5RTZ052l
-        y2GegsO/ddhvTlNzvBe3d7CYZxsAAYMvBevWZNNBJPqhAQR5zORj7QUo39Naztwa
-        H/GxG/5Wn+ZUkvjiyEIXPws9/Gg4V8R3tkGzWXOqFb9LPI0cft8/S9AxkwDWsfhw
-        LebrpjHKFki7qcVEA/5zQ/uofvaYQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f615f54a (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Fri, 14 Sep 2018 16:03:43 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH net-next v4 00/20] WireGuard: Secure Network Tunnel
-Date:   Fri, 14 Sep 2018 18:19:34 +0200
-Message-Id: <20180914161954.7325-1-Jason@zx2c4.com>
+        Fri, 14 Sep 2018 17:36:14 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:16656 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeINVgN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:36:13 -0400
+X-IronPort-AV: E=Sophos;i="5.53,373,1531810800"; 
+   d="scan'208";a="20707933"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Sep 2018 09:21:00 -0700
+Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch04.mchp-main.com
+ (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Fri, 14 Sep 2018
+ 09:20:51 -0700
+Subject: Re: [RESEND PATCH v5 0/9] extend PWM framework to support PWM modes
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <thierry.reding@gmail.com>, <alexandre.belloni@bootlin.com>,
+        <linux-pwm@vger.kernel.org>, <treding@nvidia.com>
+CC:     <shc_work@mail.ru>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <corbet@lwn.net>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <b95d0de2-1a97-36f0-03ad-3b5e52b1fa5d@microchip.com>
+Date:   Fri, 14 Sep 2018 18:20:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes v3->v4:
-  - Remove mistaken double 07/17 patch.
-  - Fix whitespace issues in blake2s assembly.
-  - It's not possible to put compound literals into __initconst, so
-    we now instead just use boring fixed size struct members.
-  - Move away from makefile ifdef maze and instead prefer kconfig values,
-    which also makes the design a bit more modular too, which could help
-    in the future.
-  - Port old crypto API implementations (ChaCha20 and Poly1305) to Zinc.
-  - Port security/keys/big_key to Zinc as second example of a good usage of
-    Zinc.
-  - Document precisely what is different between the kernel code and
-    CRYPTOGAMS code when the CRYPTOGAMS code is used.
-  - Move changelog to top of 00/20 message so that people can
-    actually find it.
+Thierry,
 
------------------------------------------------------------
+On 28/08/2018 at 15:01, Claudiu Beznea wrote:
+> Hi,
+> 
+> Please give feedback on these patches which extends the PWM framework in
+> order to support multiple PWM modes of operations. This series is a rework
+> of [1] and [2].
 
-This patchset is available on git.kernel.org in this branch, where it may be
-pulled directly for inclusion into net-next:
+This series started with a RFC back on 5 April 2017 "extend PWM 
+framework to support PWM modes". The continuous work starting with v2 of 
+this series on January 12, 2018.
 
-  * https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/log/?h=jd/wireguard
+Then Claudiu tried to address all comments up to v4 which didn't have 
+any more reviews. He posted a v5 without comments since May 22, 2018. 
+This series is basically a resent of the v5 (as said in the $subject).
 
------------------------------------------------------------
+We would like to know what is preventing this series to be included in 
+the PWM sub-system. Note that if some issue still remain with it, we are 
+ready to help to solve them.
 
-WireGuard is a secure network tunnel written especially for Linux, which
-has faced around three years of serious development, deployment, and
-scrutiny. It delivers excellent performance and is extremely easy to
-use and configure. It has been designed with the primary goal of being
-both easy to audit by virtue of being small and highly secure from a
-cryptography and systems security perspective. WireGuard is used by some
-massive companies pushing enormous amounts of traffic, and likely
-already today you've consumed bytes that at some point transited through
-a WireGuard tunnel. Even as an out-of-tree module, WireGuard has been
-integrated into various userspace tools, Linux distributions, mobile
-phones, and data centers. There are ports in several languages to
-several operating systems, and even commercial hardware and services
-sold integrating WireGuard. It is time, therefore, for WireGuard to be
-properly integrated into Linux.
+Without feedback from you side, we fear that we would miss a merge 
+window again for no obvious reason (DT part is Acked by Rob: patch 5/9).
 
-Ample information, including documentation, installation instructions,
-and project details, is available at:
+Best regards,
+   Nicolas
 
-  * https://www.wireguard.com/
-  * https://www.wireguard.com/papers/wireguard.pdf
 
-As it is currently an out-of-tree module, it lives in its own git repo
-and has its own mailing list, and every commit for the module is tested
-against every stable kernel since 3.10 on a variety of architectures
-using an extensive test suite:
+> The current patch series add the following PWM modes:
+> - PWM mode normal
+> - PWM mode complementary
+> - PWM mode push-pull
+> 
+> Normal mode - for PWM channels with one output; output waveforms looks like
+> this:
+>               __    __    __    __
+>      PWM   __|  |__|  |__|  |__|  |__
+>              <--T-->
+> 
+>      Where T is the signal period
+> 
+> Since PWMs with more than one output per channel could be used as one
+> output PWM the normal mode is the default mode for all PWMs (if not
+> specified otherwise).
+> 
+> Complementary mode - for PWM channels with two outputs; output waveforms
+> for a PWM channel in complementary mode looks line this:
+>               __    __    __    __
+>      PWMH1 __|  |__|  |__|  |__|  |__
+>            __    __    __    __    __
+>      PWML1   |__|  |__|  |__|  |__|
+>              <--T-->
+> 
+>      Where T is the signal period.
+> 
+> Push-pull mode - for PWM channels with two outputs; output waveforms for a
+> PWM channel in push-pull mode with normal polarity looks like this:
+>              __          __
+>      PWMH __|  |________|  |________
+>                    __          __
+>      PWML ________|  |________|  |__
+>             <--T-->
+> 
+>      If polarity is inversed:
+>           __    ________    ________
+>      PWMH   |__|        |__|
+>           ________    ________    __
+>      PWML         |__|        |__|
+>             <--T-->
+> 
+>      Where T is the signal period.
+> 
+> The PWM working modes are per PWM channel registered as PWM's capabilities.
+> The driver registers itself to PWM core a get_caps() function, in
+> struct pwm_ops, that will be used by PWM core to retrieve PWM capabilities.
+> If this function is not registered in driver's probe, a default function
+> will be used to retrieve PWM capabilities. Currently, the default
+> capabilities includes only PWM normal mode.
+> 
+> PWM state has been updated to keep PWM mode. PWM mode could be configured
+> via sysfs or via DT. pwm_apply_state() will do the preliminary validation
+> for PWM mode to be applied.
+> 
+> In sysfs, user could get PWM modes by reading mode file of PWM device:
+> root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# ls -l
+> total 0
+> -r--r--r-- 1 root root 4096 Oct  9 09:07 capture
+> lrwxrwxrwx 1 root root    0 Oct  9 09:07 device -> ../../pwmchip0
+> -rw-r--r-- 1 root root 4096 Oct  9 08:42 duty_cycle
+> -rw-r--r-- 1 root root 4096 Oct  9 08:44 enable
+> --w------- 1 root root 4096 Oct  9 09:07 export
+> -rw-r--r-- 1 root root 4096 Oct  9 08:43 mode
+> -r--r--r-- 1 root root 4096 Oct  9 09:07 npwm
+> -rw-r--r-- 1 root root 4096 Oct  9 08:42 period
+> -rw-r--r-- 1 root root 4096 Oct  9 08:44 polarity
+> drwxr-xr-x 2 root root    0 Oct  9 09:07 power
+> lrwxrwxrwx 1 root root    0 Oct  9 09:07 subsystem -> ../../../../../../../../class/pwm
+> -rw-r--r-- 1 root root 4096 Oct  9 08:42 uevent
+> --w------- 1 root root 4096 Oct  9 09:07 unexport
+> root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
+> normal complementary [push-pull]
+> 
+> The mode enclosed in bracket is the currently active mode.
+> 
+> The mode could be set, via sysfs, by writing to mode file one of the modes
+> displayed at read:
+> root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# echo normal > mode
+> root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
+> [normal] complementary push-pull
+> 
+> The PWM push-pull mode could be usefull in applications like half bridge
+> converters.
+> 
+> This series also add PWM modes support for Atmel/Microchip SoCs.
+> 
+> Thank you,
+> Claudiu Beznea
+> 
+> [1] https://www.spinics.net/lists/arm-kernel/msg580275.html
+> [2] https://lkml.org/lkml/2018/1/12/359
+> 
+> Changes in v5:
+> - solved kbuild errors by removing dummy functions for case where
+>    CONFIG_PWM is not defined; adopted this approach since the removed
+>    function are used only when CONFIG_PWM is defined (in PWM core
+>    and few drivers from drivers/pwm/ directory)
+> 
+> Changes in v4:
+> - removed changes related to pwm_config() as per maintainer proposals
+> - added pwm_mode_get_valid() to retrieve a valid PWM mode fror PWM device
+>    instead of using BIT(ffs(caps.mode) - 1) and changed drivers to use
+>    pwm_mode_get_valid() instead of pwm_get_caps() + BIT(ffs(caps.mode) - 1)
+>    (patches 2, 3, 4 from this series)
+> - renamed PWM_MODE() macro in PWMC_MODE() to avoid conflicts with
+>    pwm-sun4i.c driver ('C' stands for capability)
+> - removed pwm_caps_valid() function
+> - renamed PWM_DTMODE_COMPLEMENTARY and PWM_DTMODE_PUSH_PULL macros in
+>    PWM_MODE_COMPLEMENTARY and PWM_MODE_PUSH_PULL
+> 
+> Changes in v3:
+> - removed changes related to only one of_xlate function for all PWM drivers
+> - switch to PWM capabilities per PWM channel nor per PWM chip
+> - squash documentation and bindings patches as requeted by reviewer
+> - introduced PWM_MODE(name) macro and used a bit enum for pwm modes
+> - related to DT bindings, used flags cell also for PWM modes
+> - updated of_xlate specific functions with "state->mode = mode;"
+>    instructions to avoid pwm_apply_state() failures
+> - use available modes for PWM channel in pwm_config() by first calling
+>    pwm_get_caps() to get caps.modes
+> - use loops through available modes in mode_store()/mode_show() and also in
+>    of_pwm_xlate_with_flags() instead of "if else" instructions; in this way,
+>    the addition of a new mode is independent of this code sections
+> - use DTLI=1, DTHI=0 register settings to obtain push-pull mode waveforms
+>    for Atmel/Microchip PWM controller.
+> 
+> Changes in v2:
+> - remove of_xlate and of_pwm_n_cells and use generic functions to pharse DT
+>    inputs; this is done in patches 1, 2, 3, 4, 5, 6, 7 of this series; this will
+>    make easy the addition of PWM mode support from DT
+> - add PWM mode normal
+> - register PWM modes as capabilities of PWM chips at driver probe and, in case
+>    driver doesn't provide these capabilities use default ones
+> - change the way PWM mode is pharsed via DT by using a new input for pwms
+>    binding property
+> 
+> 
+> Claudiu Beznea (9):
+>    pwm: extend PWM framework with PWM modes
+>    pwm: clps711x: populate PWM mode in of_xlate function
+>    pwm: cros-ec: populate PWM mode in of_xlate function
+>    pwm: pxa: populate PWM mode in of_xlate function
+>    pwm: add PWM modes
+>    pwm: atmel: add pwm capabilities
+>    pwm: add push-pull mode support
+>    pwm: add documentation for pwm push-pull mode
+>    pwm: atmel: add push-pull mode support
+> 
+>   Documentation/devicetree/bindings/pwm/pwm.txt |  11 ++-
+>   Documentation/pwm.txt                         |  42 ++++++++-
+>   drivers/pwm/core.c                            | 125 +++++++++++++++++++++++++-
+>   drivers/pwm/pwm-atmel.c                       | 118 +++++++++++++++++-------
+>   drivers/pwm/pwm-clps711x.c                    |  10 ++-
+>   drivers/pwm/pwm-cros-ec.c                     |   1 +
+>   drivers/pwm/pwm-pxa.c                         |   1 +
+>   drivers/pwm/sysfs.c                           |  61 +++++++++++++
+>   include/dt-bindings/pwm/pwm.h                 |   2 +
+>   include/linux/pwm.h                           |  64 +++++++++++++
+>   10 files changed, 395 insertions(+), 40 deletions(-)
+> 
 
-  * https://git.zx2c4.com/WireGuard
-    https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/WireGuard.git/
-  * https://lists.zx2c4.com/mailman/listinfo/wireguard
-  * https://www.wireguard.com/build-status/
 
-The project has been broadly discussed at conferences, and was presented
-to the Netdev developers in Seoul last November, where a paper was
-released detailing some interesting aspects of the project. Dave asked
-me after the talk if I would consider sending in a v1 "sooner rather
-than later", hence this patchset. A decision is still waiting from the
-Linux Plumbers Conference, but an update on these topics may be presented
-in Vancouver in a few months. Prior presentations:
-
-  * https://www.wireguard.com/presentations/
-  * https://www.wireguard.com/papers/wireguard-netdev22.pdf
-
-The cryptography in the protocol itself has been formally verified by
-several independent academic teams with positive results, and I know of
-two additional efforts on their way to further corroborate those
-findings. The version 1 protocol is "complete", and so the purpose of
-this review is to assess the implementation of the protocol. However, it
-still may be of interest to know that the thing you're reviewing uses a
-protocol with various nice security properties:
-
-  * https://www.wireguard.com/formal-verification/
-
-This patchset is divided into four segments. The first introduces a very
-simple helper for working with the FPU state for the purposes of amortizing
-SIMD operations. The second segment is a small collection of cryptographic
-primitives, split up into several commits by primitive and by hardware. The
-third shows usage of Zinc within the existing crypto API and as a replacement
-to the existing crypto API. The last is WireGuard itself, presented as an
-unintrusive and self-contained virtual network driver.
-
-It is intended that this entire patch series enter the kernel through
-DaveM's net-next tree. Subsequently, WireGuard patches will go through
-DaveM's net-next tree, while Zinc patches will go through Greg KH's tree.
-
-Enjoy,
-Jason
+-- 
+Nicolas Ferre
