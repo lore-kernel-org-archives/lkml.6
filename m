@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3A5C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AA5FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925C320861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:52:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925C320861
+	by mail.kernel.org (Postfix) with ESMTP id EA1A220882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:52:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1A220882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbeINNF3 (ORCPT
+        id S1728080AbeINNFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:05:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:45570 "EHLO mga07.intel.com"
+        Fri, 14 Sep 2018 09:05:46 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60659 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727011AbeINNF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:05:29 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1727011AbeINNFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:05:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 00:52:14 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 00:52:31 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
-   d="scan'208";a="70782153"
+   d="scan'208";a="80383243"
 Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga008.fm.intel.com with SMTP; 14 Sep 2018 00:52:11 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 14 Sep 2018 10:52:11 +0300
-Date:   Fri, 14 Sep 2018 10:52:11 +0300
+  by FMSMGA003.fm.intel.com with SMTP; 14 Sep 2018 00:52:29 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 14 Sep 2018 10:52:28 +0300
+Date:   Fri, 14 Sep 2018 10:52:28 +0300
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -40,14 +41,14 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Yehezkel Bernat <YehezkelShB@gmail.com>,
         Lukas Wunner <lukas@wunner.de>,
         Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH 1/2] thunderbolt: Do not handle ICM events after domain
- is stopped
-Message-ID: <20180914075211.GP14465@lahna.fi.intel.com>
+Subject: Re: [PATCH 2/2] thunderbolt: Initialize after IOMMUs
+Message-ID: <20180914075228.GQ14465@lahna.fi.intel.com>
 References: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
+ <20180903132012.23531-2-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180903132012.23531-1-mika.westerberg@linux.intel.com>
+In-Reply-To: <20180903132012.23531-2-mika.westerberg@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,17 +56,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 03, 2018 at 04:20:11PM +0300, Mika Westerberg wrote:
-> If there is a long chain of devices connected when the driver is loaded
-> ICM sends device connected event for each and those are put to tb->wq
-> for later processing. Now if the driver gets unloaded in the middle, so
-> that the work queue is not yet empty it gets flushed by tb_domain_stop().
-> However, by that time the root switch is already removed so the driver
-> crashes when it tries to dereference it in ICM event handling callbacks.
+On Mon, Sep 03, 2018 at 04:20:12PM +0300, Mika Westerberg wrote:
+> If IOMMU is enabled and Thunderbolt driver is built into the kernel
+> image, it will be probed before IOMMUs are attached to the PCI bus.
+> Because of this DMA mappings the driver does will not go through IOMMU
+> and start failing right after IOMMUs are enabled.
 > 
-> Fix this by checking whether the root switch is already removed. If it
-> is we know that the domain is stopped and we should merely skip handling
-> the event.
+> For this reason move the Thunderbolt driver initialization happen at
+> rootfs level.
 > 
 > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
