@@ -3,62 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B823ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF89ECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1787620882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1787620882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E41A121476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:21:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E41A121476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728218AbeIOCdF (ORCPT
+        id S1728286AbeIOChz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 22:33:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41222 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIOCdF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 22:33:05 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7764F142A39DC;
-        Fri, 14 Sep 2018 14:16:51 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 14:16:50 -0700 (PDT)
-Message-Id: <20180914.141650.1899234204768709995.davem@davemloft.net>
-To:     r.aviolat@gmail.com
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IDE: ide-dma: fix coding style issues with spaces
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180914202540.11977-1-r.aviolat@gmail.com>
-References: <20180914202540.11977-1-r.aviolat@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+        Fri, 14 Sep 2018 22:37:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:9165 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727762AbeIOChz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 22:37:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 14:21:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
+   d="scan'208";a="73321823"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 14 Sep 2018 14:21:40 -0700
+Message-ID: <1536959832.12990.34.camel@intel.com>
+Subject: Re: [RFC PATCH v3 05/24] Documentation/x86: Add CET description
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Fri, 14 Sep 2018 14:17:12 -0700
+In-Reply-To: <20180830203948.GB1936@amd>
+References: <20180830143904.3168-1-yu-cheng.yu@intel.com>
+         <20180830143904.3168-6-yu-cheng.yu@intel.com> <20180830203948.GB1936@amd>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Sep 2018 14:16:51 -0700 (PDT)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Romain Aviolat <r.aviolat@gmail.com>
-Date: Fri, 14 Sep 2018 22:25:40 +0200
-
-> Fixing multiple coding style issues:
-> 	* prohibited spaces before that ','
-> 	* spaces before tabs
+On Thu, 2018-08-30 at 22:39 +0200, Pavel Machek wrote:
+> Hi!
 > 
-> Signed-off-by: Romain Aviolat <r.aviolat@gmail.com>
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> > b/Documentation/admin-guide/kernel-parameters.txt
+> > index 9871e649ffef..b090787188b4 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2764,6 +2764,12 @@
+> >  			noexec=on: enable non-executable mappings (default)
+> >  			noexec=off: disable non-executable mappings
+> >  
+> > +	no_cet_ibt	[X86-64] Disable indirect branch tracking for
+> > user-mode
+> > +			applications
+> > +
+> > +	no_cet_shstk	[X86-64] Disable shadow stack support for user-
+> > mode
+> > +			applications
+> Hmm, not too consistent with "nosmap" below. Would it make sense to
+> have cet=on/off/ibt/shstk instead?
 
-This kind of coding style fix has very little value for a subsystem
-which is essentially frozen from changes, and to which the less
-changes that happen to it the better in order to avoid potential
-regressions.
+We also have noxsave, noxsaveopt, noxsaves, etc.  This style is more decisive?
+If "cet=" is preferred, we can change it later?
 
-Therefore I am not applying this patch, sorry.
+Yu-cheng
