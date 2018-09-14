@@ -2,273 +2,103 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759B9ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC99FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1804520882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:15:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUG7vI4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1804520882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E98CE20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98CE20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbeINXba (ORCPT
+        id S1727872AbeINXci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:31:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726849AbeINXba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:31:30 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0CF020833;
-        Fri, 14 Sep 2018 18:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536948951;
-        bh=ZPYkahM6e2D6RokT/eTz3+UByoDjxpxlnSK2c+IaPvE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sUG7vI4m2fg13pv0YNACyvTNdFxMy71BdqmDGsLbkeRnEgIEuCZiDSSYGmwUZX1C4
-         27wYB7knY7x8nzD3v0ZdGwnNEWLE9c0cbIrCKRp5d9Zy5l5o+KF6lls50XzJPEjwdh
-         RMC+mMXvBaJCC1UTRXZP1vvqVTtXRWKobXjXwO+U=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 5DA74140260; Fri, 14 Sep 2018 15:15:47 -0300 (-03)
-Date:   Fri, 14 Sep 2018 15:15:47 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH 29/48] perf callchain: Maintain libunwind's address space
- in map_groups
-Message-ID: <20180914181547.GB25154@kernel.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-30-jolsa@kernel.org>
+        Fri, 14 Sep 2018 19:32:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53420 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726849AbeINXci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 19:32:38 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78F6BBBF;
+        Fri, 14 Sep 2018 18:16:58 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 20:16:56 +0200
+From:   gregkh <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 02/50] move compat handling of tty ioctls to
+ tty_compat_ioctl()
+Message-ID: <20180914181656.GB20521@kroah.com>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-2-viro@ZenIV.linux.org.uk>
+ <CAK8P3a1feqfJOTvQEC+tmdYToGzL0zmKLQmGzPe-UQry0AuW-g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180913125450.21342-30-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK8P3a1feqfJOTvQEC+tmdYToGzL0zmKLQmGzPe-UQry0AuW-g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Sep 13, 2018 at 02:54:31PM +0200, Jiri Olsa escreveu:
-> Currently the address_space was kept in thread struct but it's more
-> appropriate to keep it in map_groups as it's maintained throughout
-> exec's with timestamps.  Also we should not flush the address space
-> after exec since it still can be accessed when used with an indexed
-> data file.
+On Fri, Sep 14, 2018 at 05:15:52PM +0200, Arnd Bergmann wrote:
+> On Thu, Sep 13, 2018 at 4:40 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > From: Al Viro <viro@zeniv.linux.org.uk>
+> >
+> > ioctls that are
+> >         * callable only via tty_ioctl()
+> >         * not driver-specific
+> >         * not demand data structure conversions
+> >         * either always need passing arg as is or always demand compat_ptr()
+> > get intercepted in tty_compat_ioctl() from the very beginning and
+> > redirecter to tty_ioctl().  As the result, their entries in fs/compat_ioctl.c
+> > (some of those had been missing, BTW) got removed, as well as
+> > n_tty_compat_ioctl_helper() (now it's never called with any cmd it would accept).
+> >
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Link: http://lkml.kernel.org/n/tip-hjryh6x2yfnrz8g0djhez24z@git.kernel.org
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/util/map.h                    |  5 ++++-
->  tools/perf/util/thread.h                 |  1 -
->  tools/perf/util/unwind-libunwind-local.c | 28 ++++++++++++++----------
->  tools/perf/util/unwind-libunwind.c       |  9 ++++----
->  tools/perf/util/unwind.h                 |  7 +++---
->  5 files changed, 29 insertions(+), 21 deletions(-)
+> One more thing I just remembered when looking at my obsolete patches:
+> Your patch is fixing a couple of ioctl commands (I had identified only
+> TIOCVHANGUP and TIOCGPTPEER, you found a couple more)
 > 
-> diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-> index 02c6f6962eb1..b1efe57b8563 100644
-> --- a/tools/perf/util/map.h
-> +++ b/tools/perf/util/map.h
-> @@ -65,10 +65,13 @@ struct maps {
->  
->  struct map_groups {
->  	struct maps	 maps;
-> -	struct machine	 *machine;
-> +	struct machine	*machine;
->  	refcount_t	 refcnt;
->  	u64		 timestamp;
->  	struct list_head list;
+> It would be good to mark those as cc:stable@vger.kernel.org so we
+> can also get the fixes into older kernels. Looking through the
+> series again, I did not spot anything else that we need in stable,
+> in particular I would not bother with the compat_ptr() fixups there,
+> and the many cleanups of dead code and setserial wouldn't
+> be stable material anyway, but missing translation seems important
+> enough.
+> 
+> Looking at the changes in your patches, these are the ones
+> that you add in tty_compat_ioctl() that did not have a corresponding
+> entry in fs/compat_ioctl.c:
+> 
+> +       case TCSETX:
+> +       case TCSETXF:
+> +       case TCSETXW:
+> +       case TIOCGETC:
+> +       case TIOCGETP:
+> +       case TIOCGPTPEER:
+> +       case TIOCSERCONFIG:
+> +       case TIOCSETC:
+> +       case TIOCSETN:
+> +       case TIOCSETP:
+> +       case TIOCVHANGUP:
+> 
+> Should these all be added in a stable backport patch?
 
-Hey, avoid these distractions, this doesn't change anything and besides
-having the * aligned with the names of non-pointers is what is common
-practice, see for instance 'struct task_struct', 'struct inode', to name
-just two widely used structs in the kernel source :-)
+Why?  What is being "fixed" here that anyone has noticed before that is
+causing problems in those old kernels?  If no one has complained about
+the lack of compat fixups, well...  :)
 
-I'll get these two fixed up, i.e. remove the above hunk, align the one
-below :-)
+thanks,
 
-- Arnaldo
-
-> +#ifdef HAVE_LIBUNWIND_SUPPORT
-> +	void		*addr_space;
-> +#endif
->  };
->  
->  struct map_groups *map_groups__new(struct machine *machine);
-> diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-> index 86186a0773a0..637775f622b3 100644
-> --- a/tools/perf/util/thread.h
-> +++ b/tools/perf/util/thread.h
-> @@ -40,7 +40,6 @@ struct thread {
->  	struct thread_stack	*ts;
->  	struct nsinfo		*nsinfo;
->  #ifdef HAVE_LIBUNWIND_SUPPORT
-> -	void				*addr_space;
->  	struct unwind_libunwind_ops	*unwind_libunwind_ops;
->  #endif
->  };
-> diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
-> index da6f39315b47..f7c921f87bcf 100644
-> --- a/tools/perf/util/unwind-libunwind-local.c
-> +++ b/tools/perf/util/unwind-libunwind-local.c
-> @@ -617,32 +617,35 @@ static unw_accessors_t accessors = {
->  	.get_proc_name		= get_proc_name,
->  };
->  
-> -static int _unwind__prepare_access(struct thread *thread)
-> +static int _unwind__prepare_access(struct map_groups *mg)
->  {
->  	if (!dwarf_callchain_users)
->  		return 0;
-> -	thread->addr_space = unw_create_addr_space(&accessors, 0);
-> -	if (!thread->addr_space) {
-> +
-> +	mg->addr_space = unw_create_addr_space(&accessors, 0);
-> +	if (!mg->addr_space) {
->  		pr_err("unwind: Can't create unwind address space.\n");
->  		return -ENOMEM;
->  	}
->  
-> -	unw_set_caching_policy(thread->addr_space, UNW_CACHE_GLOBAL);
-> +	unw_set_caching_policy(mg->addr_space, UNW_CACHE_GLOBAL);
->  	return 0;
->  }
->  
-> -static void _unwind__flush_access(struct thread *thread)
-> +static void _unwind__flush_access(struct map_groups *mg)
->  {
->  	if (!dwarf_callchain_users)
->  		return;
-> -	unw_flush_cache(thread->addr_space, 0, 0);
-> +
-> +	unw_flush_cache(mg->addr_space, 0, 0);
->  }
->  
-> -static void _unwind__finish_access(struct thread *thread)
-> +static void _unwind__finish_access(struct map_groups *mg)
->  {
->  	if (!dwarf_callchain_users)
->  		return;
-> -	unw_destroy_addr_space(thread->addr_space);
-> +
-> +	unw_destroy_addr_space(mg->addr_space);
->  }
->  
->  static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
-> @@ -650,7 +653,6 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
->  {
->  	u64 val;
->  	unw_word_t ips[max_stack];
-> -	unw_addr_space_t addr_space;
->  	unw_cursor_t c;
->  	int ret, i = 0;
->  
-> @@ -666,13 +668,15 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
->  	 * unwind itself.
->  	 */
->  	if (max_stack - 1 > 0) {
-> +		struct map_groups *mg;
-> +
->  		WARN_ONCE(!ui->thread, "WARNING: ui->thread is NULL");
-> -		addr_space = ui->thread->addr_space;
->  
-> -		if (addr_space == NULL)
-> +		mg = thread__get_map_groups(ui->thread, ui->sample->time);
-> +		if (mg == NULL || mg->addr_space == NULL)
->  			return -1;
->  
-> -		ret = unw_init_remote(&c, addr_space, ui);
-> +		ret = unw_init_remote(&c, mg->addr_space, ui);
->  		if (ret)
->  			display_error(ret);
->  
-> diff --git a/tools/perf/util/unwind-libunwind.c b/tools/perf/util/unwind-libunwind.c
-> index b029a5e9ae49..ce8408e460f2 100644
-> --- a/tools/perf/util/unwind-libunwind.c
-> +++ b/tools/perf/util/unwind-libunwind.c
-> @@ -18,12 +18,13 @@ static void unwind__register_ops(struct thread *thread,
->  int unwind__prepare_access(struct thread *thread, struct map *map,
->  			   bool *initialized)
->  {
-> +	struct map_groups *mg = thread->mg;
->  	const char *arch;
->  	enum dso_type dso_type;
->  	struct unwind_libunwind_ops *ops = local_unwind_libunwind_ops;
->  	int err;
->  
-> -	if (thread->addr_space) {
-> +	if (mg->addr_space) {
->  		pr_debug("unwind: thread map already set, dso=%s\n",
->  			 map->dso->name);
->  		if (initialized)
-> @@ -56,7 +57,7 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
->  out_register:
->  	unwind__register_ops(thread, ops);
->  
-> -	err = thread->unwind_libunwind_ops->prepare_access(thread);
-> +	err = thread->unwind_libunwind_ops->prepare_access(thread->mg);
->  	if (initialized)
->  		*initialized = err ? false : true;
->  	return err;
-> @@ -65,13 +66,13 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
->  void unwind__flush_access(struct thread *thread)
->  {
->  	if (thread->unwind_libunwind_ops)
-> -		thread->unwind_libunwind_ops->flush_access(thread);
-> +		thread->unwind_libunwind_ops->flush_access(thread->mg);
->  }
->  
->  void unwind__finish_access(struct thread *thread)
->  {
->  	if (thread->unwind_libunwind_ops)
-> -		thread->unwind_libunwind_ops->finish_access(thread);
-> +		thread->unwind_libunwind_ops->finish_access(thread->mg);
->  }
->  
->  int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
-> diff --git a/tools/perf/util/unwind.h b/tools/perf/util/unwind.h
-> index 8a44a1569a21..0f18a0858904 100644
-> --- a/tools/perf/util/unwind.h
-> +++ b/tools/perf/util/unwind.h
-> @@ -9,6 +9,7 @@ struct map;
->  struct perf_sample;
->  struct symbol;
->  struct thread;
-> +struct map_groups;
->  
->  struct unwind_entry {
->  	struct map	*map;
-> @@ -19,9 +20,9 @@ struct unwind_entry {
->  typedef int (*unwind_entry_cb_t)(struct unwind_entry *entry, void *arg);
->  
->  struct unwind_libunwind_ops {
-> -	int (*prepare_access)(struct thread *thread);
-> -	void (*flush_access)(struct thread *thread);
-> -	void (*finish_access)(struct thread *thread);
-> +	int (*prepare_access)(struct map_groups *mg);
-> +	void (*flush_access)(struct map_groups *mg);
-> +	void (*finish_access)(struct map_groups *mg);
->  	int (*get_entries)(unwind_entry_cb_t cb, void *arg,
->  			   struct thread *thread,
->  			   struct perf_sample *data, int max_stack);
-> -- 
-> 2.17.1
+greg k-h
