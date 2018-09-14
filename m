@@ -2,124 +2,155 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 057F2ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A22ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9724120882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83120206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="q0REFQG0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9724120882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OWMfxOBi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83120206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeINSQ2 (ORCPT
+        id S1728050AbeINSQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:16:28 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:34554 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeINSQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:16:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=76P+7sosZOjBwy10dZ05jlKGrqDPIegzOkR5vs0b7is=;
-        b=q0REFQG0DqxGWsXEmsxFF/Kfa0NrVsPoJUv/ajgg2LXJs+S7ZLxm+aSW6GokGSdupw7WfUY+DhZqaKCXqLDG8lOQaA10fcKxKNQ4zQKEQhWZRNqGZl9DLyZfyJwPFulkngEJk6qvOYtaMp3eALwskm/XkXMR/XR8bntploTECzc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1g0njQ-0004AK-2k; Fri, 14 Sep 2018 15:01:56 +0200
-Date:   Fri, 14 Sep 2018 15:01:56 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
-Subject: Re: [PATCH net-next 1/5] net: phy: mscc: add ethtool statistics
- counters
-Message-ID: <20180914130156.GB14865@lunn.ch>
-References: <cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com>
- <e220fe75053e200f91554b752905d84b14b76eb6.1536913944.git-series.quentin.schulz@bootlin.com>
+        Fri, 14 Sep 2018 14:16:38 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35844 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINSQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:16:38 -0400
+Received: from [192.168.0.23] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5A681CE;
+        Fri, 14 Sep 2018 15:02:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536930132;
+        bh=ErlC2AmuISSvKzOqr4aFhboQ8wun04npQwOxsuhtFoA=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OWMfxOBihP8Do6iPiFtTRUlitz35ldK3Ymd+J/5ciiw6ql+fvkgTdEp9YSmpU9noJ
+         Wf1CQkHjvqVrxSzlFceYFXTWpMFrYB/CJdLjGvn16WCv/wgAzlI0My59/oxrdIsglH
+         OJXyYK7ujr0+5RZoOd//C7PMrPEoi7aIQx42vyT0=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/3] drm: rcar-du: Add pixel format support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180831181259.29529-3-kieran.bingham+renesas@ideasonboard.com>
+ <9318122.8LJjaKzHaP@avalon>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <e9a443fa-729b-fad9-cb06-9a8d2d65b408@ideasonboard.com>
+Date:   Fri, 14 Sep 2018 14:02:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e220fe75053e200f91554b752905d84b14b76eb6.1536913944.git-series.quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <9318122.8LJjaKzHaP@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin
+Hi Laurent,
 
-> +static struct vsc85xx_hw_stat vsc85xx_hw_stats[] = {
+On 14/09/18 12:11, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> How about renaming the subject line to "Add support for missing pixel formats" 
+> ?
+> 
 
-You could add a const to that.
+Ack.
 
-> +	{
-> +		.string	= "phy_receive_errors",
-> +		.reg	= MSCC_PHY_ERR_RX_CNT,
-> +		.page	= MSCC_PHY_PAGE_STANDARD,
-> +		.mask	= ERR_CNT_MASK,
-> +	}, {
-> +		.string	= "phy_false_carrier",
-> +		.reg	= MSCC_PHY_ERR_FALSE_CARRIER_CNT,
-> +		.page	= MSCC_PHY_PAGE_STANDARD,
-> +		.mask	= ERR_CNT_MASK,
-> +	}, {
-> +		.string	= "phy_cu_media_link_disconnect",
-> +		.reg	= MSCC_PHY_ERR_LINK_DISCONNECT_CNT,
-> +		.page	= MSCC_PHY_PAGE_STANDARD,
-> +		.mask	= ERR_CNT_MASK,
-> +	}, {
-> +		.string	= "phy_cu_media_crc_good_count",
-> +		.reg	= MSCC_PHY_CU_MEDIA_CRC_VALID_CNT,
-> +		.page	= MSCC_PHY_PAGE_EXTENDED,
-> +		.mask	= VALID_CRC_CNT_CRC_MASK,
-> +	}, {
-> +		.string	= "phy_cu_media_crc_error_count",
-> +		.reg	= MSCC_PHY_EXT_PHY_CNTL_4,
-> +		.page	= MSCC_PHY_PAGE_EXTENDED,
-> +		.mask	= ERR_CNT_MASK,
-> +	},
-> +};
+> On Friday, 31 August 2018 21:12:58 EEST Kieran Bingham wrote:
+>> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>>
+>> This patch supports pixel format of RGB332, ARGB4444, XRGB4444,
+>> BGR888, RGB888, BGRA8888, BGRX8888 and YVYU.
+>> VYUY pixel format is not supported by H/W specification.
+>>
+>> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>>
+>> This patch does not remove existing support for multiplanar YVUY, even
+>> though the hardware does not explicitly provide it, because we support
+>> it through software by swapping the plane buffers.
+>>
+>>  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 32 +++++++++++++++++++++++++++
+>>  1 file changed, 32 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 7c7aff8cdf77..d1bd174ec893
+>> 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+>> @@ -124,6 +124,38 @@ static const struct rcar_du_format_info
+>> rcar_du_format_infos[] = { .fourcc = DRM_FORMAT_YVU444,
+>>  		.bpp = 24,
+>>  		.planes = 3,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_RGB332,
+>> +		.bpp = 8,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_ARGB4444,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_XRGB4444,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGR888,
+>> +		.bpp = 24,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_RGB888,
+>> +		.bpp = 24,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGRA8888,
+>> +		.bpp = 32,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_BGRX8888,
+>> +		.bpp = 32,
+>> +		.planes = 1,
+>> +	}, {
+>> +		.fourcc = DRM_FORMAT_YVYU,
+>> +		.bpp = 16,
+>> +		.planes = 1,
+>>  	},
+>>  };
+> 
+> I would list the RGB formats first, followed by the packed YUV format, and 
+> then the multiplanar YUV formats. With this changed,
+> 
+Ack.
 
-> +static u64 vsc85xx_get_stat(struct phy_device *phydev, int i)
-> +{
-> +	struct vsc8531_private *priv = phydev->priv;
-> +	int val;
-> +	u64 ret;
-> +
-> +	vsc85xx_phy_page_set(phydev, priv->hw_stats[i].page);
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> If you're fine with the changes there's no need to resubmit.
 
-I might of asked this before...
 
-Does changing the page effect registers in the lower range? It is
-possible for other operations to happen at the same time, and you
-don't want for example a status read to happen from some other
-extended page register because a statistics read is happening.
+That's fine by me.
 
-phy_read_page() and phy_write_page() will do the needed locking if
-this is an issue.
+Thanks
 
-> @@ -673,6 +782,13 @@ static int vsc85xx_probe(struct phy_device *phydev)
->  	vsc8531->rate_magic = rate_magic;
->  	vsc8531->nleds = 2;
->  	vsc8531->supp_led_modes = VSC85XX_SUPP_LED_MODES;
-> +	vsc8531->hw_stats = vsc85xx_hw_stats;
-> +	vsc8531->nstats = ARRAY_SIZE(vsc85xx_hw_stats);
-> +	vsc8531->stats = devm_kzalloc(&phydev->mdio.dev,
-> +				      sizeof(u64) * vsc8531->nstats,
-> +				      GFP_KERNEL);
+--
+Kieran
 
-devm_kmalloc_array()? The security people prefer that.
 
-> +	if (!vsc8531->stats)
-> +		return -ENOMEM;
->  
->  	return vsc85xx_dt_led_modes_get(phydev, default_mode);
->  }
-
-   Andrew
