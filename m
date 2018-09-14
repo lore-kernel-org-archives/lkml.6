@@ -2,139 +2,142 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B35FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAE8FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2438020866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkyDxRlp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2438020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D20C720866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20C720866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeINNkw (ORCPT
+        id S1728224AbeINNk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:40:52 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36171 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbeINNkw (ORCPT
+        Fri, 14 Sep 2018 09:40:58 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40575 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727839AbeINNk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:40:52 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p5-v6so3868655plk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zMC8k40pj5pQI2mZhgUNgHT0ATkeiBUzIOSkhSJbf2Y=;
-        b=MkyDxRlpTE1z+sXJl9oJhjBkIroORjHP0+gcHo25E0eNQy+Chisu66VCFmPJX6ozic
-         MBrt+uFcIYdHRy0vr/6IMkApBO6zX/WM5gDslHsAYQcflGmpH9tpsb6YYrYWGfd5ysQS
-         op09IT3pdUzvAk58KtyuYH1qix1EK7CJsDgVM=
+        Fri, 14 Sep 2018 09:40:58 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x26-v6so7132315lfi.7;
+        Fri, 14 Sep 2018 01:27:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=zMC8k40pj5pQI2mZhgUNgHT0ATkeiBUzIOSkhSJbf2Y=;
-        b=r6fn3R/fiE3ZATEvQFrF46SaSdCx7LMa5xnEhsVNbdnfsyvFy0fZtR7cHCF4xoAPR0
-         PeoTkvkay14WA44cIDtJmxkAJDfvWf+NCK+z8hGk6tusSoO8uzU4b/UNI6zP0fkd3nxh
-         qQ9K8nQo8HRcF4kpLsqnTr28GZNhsqofLcq65wQLdHNbeZ8YYdOw24Omd2tdxXzz2ZVj
-         bX5yXYLAmrQS7cOPCN/ZIkN5O1DIDeMFtTbtSid2tqy01f71+a1SYJTDjytd5KA+8YNW
-         jIGX7j2MWweptSquGwl0e6Xp0LPwKkguOkuQ45mzCwI6GPCyp0KTcfw/S6H+DkN56xQ7
-         4f/g==
-X-Gm-Message-State: APzg51BPKYdwo7Veay5P6+Xhh05905/6Encchzi7Fc4oNK2bjr09Zkce
-        /7fXRxNUDkcGOfcZPtsWC+dvLg==
-X-Google-Smtp-Source: ANB0VdYfPSoSSRwXLVKQlieRirLVJWQ24chmiRdciEzFlWslpnUx7evuTJ3Bm5q1tJNUI56DF28oQA==
-X-Received: by 2002:a17:902:e088:: with SMTP id cb8-v6mr10976530plb.189.1536913649809;
-        Fri, 14 Sep 2018 01:27:29 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.60.83])
-        by smtp.gmail.com with ESMTPSA id q80-v6sm8919855pfd.15.2018.09.14.01.27.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Sep 2018 01:27:29 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     Thibaut Varene <T-Bone@parisc-linux.org>,
-        linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 2/4] parisc: Replace __NR_Linux_syscalls macro with __NR_syscalls
-Date:   Fri, 14 Sep 2018 13:56:41 +0530
-Message-Id: <1536913603-4584-3-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536913603-4584-1-git-send-email-firoz.khan@linaro.org>
-References: <1536913603-4584-1-git-send-email-firoz.khan@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=DKS+4f0Oh3iExl2o5ewfVatgd8aylwSwlVQHFwjW+hk=;
+        b=q6NE1LIS9/4bcViGoro8uRhncfzH2wawjgnNPku32kQv3JEoErkGOoEQBVRtI261HX
+         KoJrXzyV/ZxNYIquKfKvEQ8B8/zen0Vqwi/KAmdNrmiVITBf7WR6MfA9uTif12nMcC6q
+         oDGm0dElyjZknKQWHgwaRCDUD8pCoqc5+g52snw+PU6ngmPkJnlCsmXKx7w0NHy85GyO
+         4XTA0RO9ZxyjSfyfsjlAD5FkXq07XWtQL/W6rDmiolteXpgq8YvcYtUsyH85jrdPgTx2
+         iyHwR7P9m/bPz6+STro1P0My29zoXKZMYXUvH0fKJWL7xVPZkxIzHRbBzOY3mpADYbDc
+         v73w==
+X-Gm-Message-State: APzg51A62Qfmrt2zyncbRPJ2FmQV0Q43VnzDvjhzVVDz5tEKihZfr9J3
+        Tc2emams1aHVeKM9I3rkz/A=
+X-Google-Smtp-Source: ANB0VdZtuj0YargIOBjDfWZV1BGVeULe5nSbc5BVJ5eAIOqbo7yrRyYXezhdeaKGLnujo8mCRPJ7QQ==
+X-Received: by 2002:a19:f802:: with SMTP id a2-v6mr7367129lff.33.1536913653776;
+        Fri, 14 Sep 2018 01:27:33 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g10-v6sm1165235lfl.11.2018.09.14.01.27.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 01:27:33 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 11:27:20 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/7] regulator/mfd/dt_bindings: bd718x7: Support ROHM
+ bd71847
+Message-ID: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__NR_Linux_syscalls macro holds the number of system call exist in
-PARISC architecture. This macro is currently the part of uapi/asm/
-unistd.h file. We have to change the value of __NR_Linux_syscalls,
-if we add or delete a system call.
+Patch series adding support for ROHM BD71847 PMIC.
 
-One of the patch in this patch series has a script which will generate
-a uapi header based on syscall.tbl file. The syscall.tbl file contains
-the number of system call information. So we have two option to update
-__NR_Linux_syscalls value.
+ROHM BD71847 is modified version of ROHM BD71837 Power Management IC.
+BD71847 integrates 6 buck regulators and 6  LDO’s.
 
-1. Update __NR_Linux_syscalls in uapi/asm/unistd.h manually by counting
-   the no.of system calls. No need to update NR_syscalls until we
-   either add a new system call or delete an existing system call.
+The patch series adds support for BD71847 in BD71837 driver. It also
+extends BD71837 to support all BUCK/LDO output voltages.
 
-2. We can keep this feature it above mentioned script, that'll
-   count the number of syscalls and keep it in a generated file.
-   In this case we don't need to explicitly update __NR_Linux_syscalls
-   in asm/unistd.h file.
+Support for "pickable voltage ranges" is introduced in order to fully
+support BD71837/BD71847 voltage selection registers. Some of the voltage
+regulators provide different multiple voltage ranges and output voltage
+is determined by range selection bit(s) and voltage selection bits
+instead of plain voltage selection bits.
 
-The 2nd option will be the recommended one. For that, I moved the
-__NR_Linux_syscalls macro from uapi/asm/unistd.h to asm/unistd.h. The
-macro name also changed form __NR_Linux_syscalls to __NR_syscalls for
-making the name convention same across all architecture. While __NR_
-syscalls isn't strictly part of the uapi, having it as part of the
-generated header to simplifies the implementation.
+Changelog v3
+- Fix warning caused by void * to unsigned int cast
+- Fix patch dependency issue (patch 4 used define from patch 5)
+- Fix indent problem.
+Changelog v2
+- Dropped first patch (voltage monitoring fix) and "rebased" on top of
+  next-20180912 because first patch was already applied.
+- Fixed two commit message typos.
+Fixes based on comments from Lee Jones
+- removed PMIC revision check.
+- stored chip type directly to data pointer
+- minor readability improvement to DT binding
+- unified naming for last enum members
+- moved unrelated changes from pickable ranges patch
+- removed C++ style comment
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- arch/parisc/include/asm/unistd.h      | 2 ++
- arch/parisc/include/uapi/asm/unistd.h | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Patch 2:
+	limited BD71847 support (without range selection)
+Patch 3:
+	BD71847 device-tree bindings for regulators
+Patch 4:
+	BD71847 device-tree bindings for mfd
+Patch 5:
+	Voltage range selection support to regulator helpers
+Patch 6:
+	Simple renaming plenty of BD71837 occurrences to BD718XX
+Patch 7:
+	BD71837/BD71847 Full voltage range support using helpers from
+	patch 5
+Patch 8:
+	Renaming bd71837 regulator driver to bd718x7
 
-diff --git a/arch/parisc/include/asm/unistd.h b/arch/parisc/include/asm/unistd.h
-index fc71edf..71417c1 100644
---- a/arch/parisc/include/asm/unistd.h
-+++ b/arch/parisc/include/asm/unistd.h
-@@ -8,6 +8,8 @@
- 
- #define SYS_ify(syscall_name)   __NR_##syscall_name
- 
-+#define __NR_Linux_syscalls __NR_syscalls
-+
- #ifndef ASM_LINE_SEP
- # define ASM_LINE_SEP ;
- #endif
-diff --git a/arch/parisc/include/uapi/asm/unistd.h b/arch/parisc/include/uapi/asm/unistd.h
-index bb52e12..7532817 100644
---- a/arch/parisc/include/uapi/asm/unistd.h
-+++ b/arch/parisc/include/uapi/asm/unistd.h
-@@ -366,7 +366,7 @@
- #define __NR_statx		(__NR_Linux + 349)
- #define __NR_io_pgetevents	(__NR_Linux + 350)
- 
--#define __NR_Linux_syscalls	(__NR_io_pgetevents + 1)
-+#define __NR_syscalls           (__NR_Linux + 351)
- 
- #define LINUX_GATEWAY_ADDR      0x100
- 
+this patch series is based on linux-next tag next-20180912.
+
+Matti Vaittinen (7):
+  regulator/mfd: Support ROHM BD71847 power management IC
+  regulator: dt bindings: add BD71847 device-tree binding documentation
+  mfd: dt bindings: add BD71847 device-tree binding documentation
+  regulator: Support regulators where voltage ranges are selectable
+  regulator/mfd: bd718xx: rename bd71837/bd71847 common instances
+  regulator: bd718XX use pickable ranges
+  regulator: bd718xx: rename bd71837 to 718xx
+
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |   17 +-
+ .../bindings/regulator/rohm,bd71837-regulator.txt  |   12 +-
+ drivers/mfd/rohm-bd718x7.c                         |  162 ++-
+ drivers/regulator/Kconfig                          |    2 +-
+ drivers/regulator/Makefile                         |    2 +-
+ drivers/regulator/bd71837-regulator.c              |  644 -----------
+ drivers/regulator/bd718x7-regulator.c              | 1138 ++++++++++++++++++++
+ drivers/regulator/core.c                           |    5 +
+ drivers/regulator/helpers.c                        |  232 ++++
+ include/linux/mfd/rohm-bd718x7.h                   |  333 +++---
+ include/linux/regulator/driver.h                   |   20 +-
+ 11 files changed, 1646 insertions(+), 921 deletions(-)
+ delete mode 100644 drivers/regulator/bd71837-regulator.c
+ create mode 100644 drivers/regulator/bd718x7-regulator.c
+
 -- 
-1.9.1
+2.14.3
 
