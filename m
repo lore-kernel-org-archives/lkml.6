@@ -2,119 +2,153 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC011FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EAFECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945D520833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:43:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ppTiWdkh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945D520833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 923C120882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:48:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923C120882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbeINV6x (ORCPT
+        id S1728078AbeINWD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:58:53 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37803 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbeINV6x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:58:53 -0400
-Received: by mail-qt0-f194.google.com with SMTP id n6-v6so9313202qtl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 09:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bBDwXoUqF7xWeLzSUEbwVm+elkBhR58J0N2fe+wEUB4=;
-        b=ppTiWdkh9MF6785pE5y+PV0MNsq6vR/aa5E30i9wz7/lbf5upW57TDSVCLwHpDYNvw
-         nFTahiVh3yytBu7pCbt4soOT0XQ9VUNrfGRWGcTGnn+bwKXUJCClaJDwfevcZ8zmOQ3k
-         a4Qc9Qn6fQW85E9b+UsWJsvRT/Bf7S0PkM+DmZU+4TIE7XF1Un+3us0YndRzGdos4bMv
-         jSFYT99QlNcbrNpoV0PPcynkdxaqtKiWkcTcPTJk2uxge5btyfIKqBGsOoECfq+GXIx2
-         kyDuMWBg+RPsMZx2VbuiuUcqOL0WdotY/Fk2lTHs1Z9tT7+6f7NRJ5NVrCAsdmE4n1Pm
-         2qqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bBDwXoUqF7xWeLzSUEbwVm+elkBhR58J0N2fe+wEUB4=;
-        b=HMAjXZgKQtzi+gnZpdcXnm5vO2KxzpG3NaCfdW+65g36Yf/bCqGDb0E+m7yeIIm6eD
-         la2SfLN9DPnfSN8KGget2N85JyWQkp795QzKQ8LUfP6AKtlPuEKck7L5QpurzebqFIJE
-         f8AdXLRaBqZXHM/JCdwa+lWC0K2YL4Y6y3WgTZRgmdz7pOpS+im3/EfFpKmqG8bh/kdP
-         exCdFVb2mANJmHqScoTQqasWNUKrpLcURmTNLR5qVQnAjnSPTliBtZ1E0Y0FW1tsHDNw
-         nIuXzg+8HBf/XXtniCjSo1YlwSTrOkBG1gKpkKxnaVlYtHjGl1h46IHUVxjvcNU6xx0o
-         xffg==
-X-Gm-Message-State: APzg51BYpsE2Yj12OCTr1cnyPIMOBfV3ODULP5whsAtZUaRDvdj/mpdQ
-        uuDBl4cBiTeqoamIzla5jRgGvXNWRqNvX1sVl9mll0RQksg=
-X-Google-Smtp-Source: ANB0VdY0tV1k99hDrXGSggrvRALLfzgY5lAiuKtlEKj0yFvxBGThNs++CZxQQsMp1SKaxGA77MU4kwhqiweo3OekrME=
-X-Received: by 2002:a0c:aac9:: with SMTP id g9-v6mr9764402qvb.78.1536943415859;
- Fri, 14 Sep 2018 09:43:35 -0700 (PDT)
+        Fri, 14 Sep 2018 18:03:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:36482 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbeINWD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:03:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8E7C80D;
+        Fri, 14 Sep 2018 09:48:39 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B92713F557;
+        Fri, 14 Sep 2018 09:48:39 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 57C361AE2F82; Fri, 14 Sep 2018 17:48:57 +0100 (BST)
+Date:   Fri, 14 Sep 2018 17:48:57 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        npiggin@gmail.com, linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com
+Subject: Re: [RFC][PATCH 01/11] asm-generic/tlb: Provide a comment
+Message-ID: <20180914164857.GG6236@arm.com>
+References: <20180913092110.817204997@infradead.org>
+ <20180913092811.894806629@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 09:43:15
- -0700 (PDT)
-In-Reply-To: <1536936549-30631-1-git-send-email-zhongjiang@huawei.com>
-References: <1536936549-30631-1-git-send-email-zhongjiang@huawei.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 14 Sep 2018 18:43:15 +0200
-Message-ID: <CANiq72ndUkKyZ1gxgv9kv_Niq0sb7RwLj4QGrKNa2bg_jmd45A@mail.gmail.com>
-Subject: Re: [PATCH] sched: Fix a GCC compiled warning.
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913092811.894806629@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhong,
+Hi Peter,
 
-On Fri, Sep 14, 2018 at 4:49 PM, zhong jiang <zhongjiang@huawei.com> wrote:
-> Fix the following compile warning:
->
-> kernel/sched/core.c: In function =E2=80=98update_rq_clock_task=E2=80=99:
-> kernel/sched/core.c:139:6: warning: unused variable =E2=80=98steal=E2=80=
-=99 [-Wunused-variable]
->   s64 steal =3D 0, irq_delta =3D 0;
->
+On Thu, Sep 13, 2018 at 11:21:11AM +0200, Peter Zijlstra wrote:
+> Write a comment explaining some of this..
 
-Dou (and I, without having noticed Dou's) also sent another patch for this,=
- see:
+This comment is much-needed, thanks! Some comments inline.
 
-  https://lore.kernel.org/patchwork/patch/973402/
-  https://lore.kernel.org/patchwork/patch/983794/
+> + * The mmu_gather API consists of:
+> + *
+> + *  - tlb_gather_mmu() / tlb_finish_mmu(); start and finish a mmu_gather
+> + *
+> + *    Finish in particular will issue a (final) TLB invalidate and free
+> + *    all (remaining) queued pages.
+> + *
+> + *  - tlb_start_vma() / tlb_end_vma(); marks the start / end of a VMA
+> + *
+> + *    Defaults to flushing at tlb_end_vma() to reset the range; helps when
+> + *    there's large holes between the VMAs.
+> + *
+> + *  - tlb_remove_page() / __tlb_remove_page()
+> + *  - tlb_remove_page_size() / __tlb_remove_page_size()
+> + *
+> + *    __tlb_remove_page_size() is the basic primitive that queues a page for
+> + *    freeing. __tlb_remove_page() assumes PAGE_SIZE. Both will return a
+> + *    boolean indicating if the queue is (now) full and a call to
+> + *    tlb_flush_mmu() is required.
+> + *
+> + *    tlb_remove_page() and tlb_remove_page_size() imply the call to
+> + *    tlb_flush_mmu() when required and has no return value.
+> + *
+> + *  - tlb_change_page_size()
 
-Cheers,
-Miguel
+This doesn't seem to exist in my tree.
+[since realised you rename to it in the next patch]
 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  kernel/sched/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7577ce4..1003c1d 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -136,7 +136,7 @@ static void update_rq_clock_task(struct rq *rq, s64 d=
-elta)
->   * to sched_rt_avg_update. But I don't trust it...
->   */
->  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_=
-ACCOUNTING)
-> -       s64 steal =3D 0, irq_delta =3D 0;
-> +       s64 __maybe_unused steal =3D 0, irq_delta =3D 0;
->  #endif
->  #ifdef CONFIG_IRQ_TIME_ACCOUNTING
->         irq_delta =3D irq_time_read(cpu_of(rq)) - rq->prev_irq_time;
-> --
-> 1.7.12.4
->
+> + *
+> + *    call before __tlb_remove_page*() to set the current page-size; implies a
+> + *    possible tlb_flush_mmu() call.
+> + *
+> + *  - tlb_flush_mmu() / tlb_flush_mmu_tlbonly() / tlb_flush_mmu_free()
+> + *
+> + *    tlb_flush_mmu_tlbonly() - does the TLB invalidate (and resets
+> + *                              related state, like the range)
+> + *
+> + *    tlb_flush_mmu_free() - frees the queued pages; make absolutely
+> + *			     sure no additional tlb_remove_page()
+> + *			     calls happen between _tlbonly() and this.
+> + *
+> + *    tlb_flush_mmu() - the above two calls.
+> + *
+> + *  - mmu_gather::fullmm
+> + *
+> + *    A flag set by tlb_gather_mmu() to indicate we're going to free
+> + *    the entire mm; this allows a number of optimizations.
+> + *
+> + *    XXX list optimizations
+
+On arm64, we can elide the invalidation altogether because we won't
+re-allocate the ASID. We also have an invalidate-by-ASID (mm) instruction,
+which we could use if we needed to.
+
+> + *
+> + *  - mmu_gather::need_flush_all
+> + *
+> + *    A flag that can be set by the arch code if it wants to force
+> + *    flush the entire TLB irrespective of the range. For instance
+> + *    x86-PAE needs this when changing top-level entries.
+> + *
+> + * And requires the architecture to provide and implement tlb_flush().
+> + *
+> + * tlb_flush() may, in addition to the above mentioned mmu_gather fields, make
+> + * use of:
+> + *
+> + *  - mmu_gather::start / mmu_gather::end
+> + *
+> + *    which (when !need_flush_all; fullmm will have start = end = ~0UL) provides
+> + *    the range that needs to be flushed to cover the pages to be freed.
+
+I don't understand the mention of need_flush_all here -- I didn't think it
+was used by the core code at all.
+
+> + *
+> + *  - mmu_gather::freed_tables
+> + *
+> + *    set when we freed page table pages
+> + *
+> + *  - tlb_get_unmap_shift() / tlb_get_unmap_size()
+> + *
+> + *    returns the smallest TLB entry size unmapped in this range
+> + *
+> + * Additionally there are a few opt-in features:
+> + *
+> + *  HAVE_MMU_GATHER_PAGE_SIZE
+> + *
+> + *  This ensures we call tlb_flush() every time tlb_change_page_size() actually
+> + *  changes the size and provides mmu_gather::page_size to tlb_flush().
+
+Ah, you add this later in the series. I think Nick reckoned we could get rid
+of this (the page_size field) eventually...
+
+Will
