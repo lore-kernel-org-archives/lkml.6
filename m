@@ -2,134 +2,120 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00961C04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23547C04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B1120853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B607720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:43:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vdGi0VGy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B1120853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Jy0yBUA6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B607720861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeINHqt (ORCPT
+        id S1728432AbeINHz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 03:46:49 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41324 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbeINHqt (ORCPT
+        Fri, 14 Sep 2018 03:55:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45732 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbeINHz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:46:49 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b12-v6so3466252plr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 19:34:36 -0700 (PDT)
+        Fri, 14 Sep 2018 03:55:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id u83-v6so6247952lje.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 19:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iE+hmny/AFB3RBHaZ6K43O3+XOBARtZC94kXQw1FLkw=;
-        b=vdGi0VGyknWZ78o6j4/eFGqaEgxvLktR7g17uMKChCTJCaUddk5mRKS+o+bqxnfdBM
-         gDtNvKBMiulooleIlVmvUGj57Du2qHYfAnlCYBhxnaIL5rNvAWBTcARmE5koHOzZU66G
-         JUEVL0GA9H5Crv0vGYI5v5CKPxOp3/n+nI/FQMMoU2WNJ8FzW+fFiERX5jwX3SiWVYhR
-         8je18Qlx8P5Jq1vzOW6gmQ7ASuyAPyHUcEOP20c1Tly4ccWB4qeulaHuUszhiY9JO+C4
-         5zBcSPHG8iRZe0M34UxU7/tayOtx16bYdBWA+LORot15d0Xs5YjtOhV8m8DZSolZIvRN
-         qx6g==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IBnF/Iug2VprWavKp/yn7LsTqdpP4SbGPhMzwmaCiTU=;
+        b=Jy0yBUA6aSyZBj3WzUqar32R9N1nCnSamzQXQyy7LPPs/dI2cm4nop3XrbC0crDMAN
+         UzuZob1K1dkl+ZGGxH+Anlig5ON1U4gjD9RydgiG713yvumgeRKIP4A39z1z+gRq2iQ1
+         SwkXiQridnLMGK8oZpg6UtWxIAv/vDy0ZURr9jf+nzdZ2ppLwYUJKG9sGf7a5YYQIZJq
+         C1Hj7M1vt7SxZXx2/zAPEMwmYqLPDZaqr54PeJRtv6Pk0CSaSLqcASg8U3hdy9KQi+8l
+         OVX+0klscmMIGaHGOscgrZd4tpvIITj2W2pXyD6+ZztorMPb1nqqhemk9f8XZX9ueini
+         D/Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iE+hmny/AFB3RBHaZ6K43O3+XOBARtZC94kXQw1FLkw=;
-        b=kciUPcztca3SiPcqDYbHLtZbRJN1/MmH5zKqs7hJCHPi5K+MY7zBUc1hTWl3WXktyc
-         086+WsTDmQz83fBeEUW6qmPsfS8flNtucHxLaMNnANBNleiTgnyQ3omarEHVJuQ50Q1f
-         hVtFYGb+fjw4i0R5nF6Z2Dd8H6bW43jIvsFegWSQkf2GqVweCeahtXv6gUtkXR7vlGuF
-         JuzuUnPZIkYcxoOVRrx5NVi/VPwnGmGIusvWxeGpMhbcjUFTVahO17tlBecPJHvRA64f
-         HfUJsUIUUBzRmDDXyLQTMgY59FQe8/lQo8PRIRSSWg24dphZsvUcf4AxTvAJwlQQhKcN
-         dIAg==
-X-Gm-Message-State: APzg51DhNYyE8FEUlBQuMlXEiI+9uoZG9WfHEdfba97mlbqtgd1P4Apu
-        JXj0E6gr6OfQ+VckTQoILcP7BDU1OPU=
-X-Google-Smtp-Source: ANB0VdbbLEKibKz7oKdrpwNdG8V8t63iQCOtMkx4YvgAgRgAZBOvQNpdZ/4BvHYfoCCX1EsnOaDWNw==
-X-Received: by 2002:a17:902:7798:: with SMTP id o24-v6mr9767780pll.93.1536892476563;
-        Thu, 13 Sep 2018 19:34:36 -0700 (PDT)
-Received: from localhost.localdomain ([39.7.18.191])
-        by smtp.gmail.com with ESMTPSA id a90-v6sm12764321pfg.106.2018.09.13.19.34.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 19:34:35 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH] printk: CON_PRINTBUFFER console registration is a bit racy
-Date:   Fri, 14 Sep 2018 11:34:28 +0900
-Message-Id: <20180914023428.814-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IBnF/Iug2VprWavKp/yn7LsTqdpP4SbGPhMzwmaCiTU=;
+        b=EdwiPCVRQ2AP2AhZCgpJPlnkTzrcwmKeUoAlaObouMyiLI0t7GIxcaIQDNzOGXjSDa
+         XmmMRwaTTKTXVQzncpC9+XWxyPvttPyY68zVjetloThe5l+OX5QymH3rt3hsOYgmfdu6
+         1PLbWFsVtkag6ZxSTex5uOhwZD8LeBq/DbhZlxL3z3rIdu2HRyO1I4++FGUvK7S1Z4PB
+         YgjsFpXHfxW1FU1upmoJQnDIB2vcJqeDze74HeYRJzBk3RYTBI7hx1m0CR5H96AQHj6M
+         9TrYIAupds/GiJtmsOwCG+dSyzuMsARvP4/KxxK4oAu5l9c19ZULZNDZ6QdSe7/pcut+
+         g0Rg==
+X-Gm-Message-State: APzg51Aa5D7nICoVgpRLq5jVD/Ye/Bk/Yvi1vDiXUX0uZpJTFlh/s2r/
+        2RnJ1Hxij3deV2OdcpymOqXvHWGBCiXBwqFrkLoI
+X-Google-Smtp-Source: ANB0VdYeFYN9tkS6RJFW/0mYUwIJHyN40LM/8fiwEWWY422NFyr0SzJ5I1phc/OQov+p9kaP3i+IAlxXFj1itsP87GY=
+X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr6249259ljf.102.1536892991008;
+ Thu, 13 Sep 2018 19:43:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+ <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+ <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+ <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
+ <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
+ <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
+ <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com> <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
+In-Reply-To: <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 13 Sep 2018 22:42:59 -0400
+Message-ID: <CAHC9VhRXOuGqSw9yu18QZeA1z+vYwLFixTqEJ1WyBBFCeLebuA@mail.gmail.com>
+Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+To:     keescook@chromium.org
+Cc:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        selinux@tycho.nsa.gov, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-fsdevel@vger.kernel.org, adobriyan@gmail.com,
+        casey.schaufler@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CON_PRINTBUFFER console registration requires us to do several
-preparation steps:
-- Rollback console_seq to replay logbuf messages which were already
-  seen on other consoles;
-- Set exclusive_console flag so console_unlock() will ->write() logbuf
-  messages only to the exclusive_console driver.
+On Thu, Sep 13, 2018 at 5:52 PM Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Sep 13, 2018 at 2:38 PM, Paul Moore <paul@paul-moore.com> wrote:
+> > The infrastructure bits aren't really my concern; in fact I *like*
+> > that the infrastructure is always exercised, it makes
+> > testing/debugging easier.  I also like the ability to limit the
+> > user/admin to one LSM at boot time to make support easier; my goal is
+> > to allow a distro to build support for multiple LSMs without also
+> > requiring that distro to support *stacked* LSMs
+>
+> I see your point, but as soon as SARA and Landlock appear, they'll have:
+>
+>     depends on SECURITY_STACKING
+>
+> and then all distros will enable it and there will be no sensible
+> runtime way to manage it. If, instead, we make it entirely runtime
+> now, then a CONFIG can control the default state and we can provide
+> guidance to how SARA and Landlock should expose their "enable"ness.
 
-The way we do it, however, is a bit racy
+I question why SARA and LandLock require stacking.  While some LSMs
+may benefit from stacking, e.g. Yama, traditionally each LSM has been
+able to stand on its own.  I think this is a quality that should be
+preserved.
 
-	logbuf_lock_irqsave(flags);
-	console_seq = syslog_seq;
-	console_idx = syslog_idx;
-	logbuf_unlock_irqrestore(flags);
-						<< preemption enabled
-						<< irqs enabled
-	exclusive_console = newcon;
-	console_unlock();
+> > (see my earlier
+> > comments about the difficulty in determining the source of a failed
+> > operation).
+>
+> Agreed. I would hope that audit could help for that case. *stare at blue sky*
 
-We rollback console_seq under logbuf_lock with IRQs disabled, but
-we set exclusive_console with local IRQs enabled and logbuf unlocked.
-If the system oops-es or panic-s before we set exclusive_console - and
-given that we have IRQs and preemption enabled there is such a
-possibility - we will re-play all logbuf messages to every registered
-console, which may be a bit annoying and time consuming.
+*also staring at blue sky*
 
-Move exclusive_console assignment under the same IRQs-disabled and
-logbuf_lock protected section where we rollback console_seq.
+Audit can help, but it is independent of the LSMs and not a hard
+requirement for all, and even when it is enabled the config might not
+be suitable to provide enough information to be helpful in this case.
 
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
- kernel/printk/printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 992bb6bb7ac2..c52a986a72b3 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2705,7 +2705,6 @@ void register_console(struct console *newcon)
- 		logbuf_lock_irqsave(flags);
- 		console_seq = syslog_seq;
- 		console_idx = syslog_idx;
--		logbuf_unlock_irqrestore(flags);
- 		/*
- 		 * We're about to replay the log buffer.  Only do this to the
- 		 * just-registered console to avoid excessive message spam to
-@@ -2713,6 +2712,7 @@ void register_console(struct console *newcon)
- 		 */
- 		exclusive_console = newcon;
- 		exclusive_console_stop_seq = console_seq;
-+		logbuf_unlock_irqrestore(flags);
- 	}
- 	console_unlock();
- 	console_sysfs_notify();
 -- 
-2.19.0
-
+paul moore
+www.paul-moore.com
