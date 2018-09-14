@@ -2,132 +2,158 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8EBFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C643C04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E07E20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8890220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 02:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8Iuyid4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E07E20861
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdvXrQPv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8890220861
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbeINHH1 (ORCPT
+        id S1728415AbeINHMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 03:07:27 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33216 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeINHH0 (ORCPT
+        Fri, 14 Sep 2018 03:12:33 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:34911 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeINHMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:07:26 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b30-v6so3442042pla.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:55:21 -0700 (PDT)
+        Fri, 14 Sep 2018 03:12:33 -0400
+Received: by mail-qt0-f179.google.com with SMTP id j7-v6so7413783qtp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 19:00:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O4OKcV2sMFnGzGzL/9+Cpt1JG7IyKFHG/ze9KlVPzA0=;
-        b=d8Iuyid4O4UR0LnbyvNqzDW6kCvfrxb1hG0Q/YhEXX+4tkVd2hJP+894oZoMd1BLhH
-         9dI0ZdoI5Wbb0bep1m813xEuBOOrZA/YzCb+CUe7vkaxMyQW/Spsxq0ws1iE9iDFnWvs
-         28D62d2DMFbxniR0LFlTxq2idIWY2t4FIK3UWvDDalHwla3lHx2SG8N0TfJG6YwB/7nJ
-         4f9DP/OrH5cLnjMiVHEmQ3T7FdbN8Gd68n+2sR34T3KTQ0rhonC4xnKdSGTnmf/U8oaU
-         +/Wl4RlbPiLfY0bvcoCbjdK45QlGpNz6ymJKrQ7oNEFzhx0N/KVELxLq4GfsI1LVV1jV
-         zmRA==
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=3pwsSPKMrZBOManHClzRzSXqbO6DYtTKX2ujv0eHHZo=;
+        b=TdvXrQPvDIuo4uQKePKJJ2YGvqWnwZO6pvxWKanSjGd1IXdeNsbbKH5ME29d86RrJF
+         YrB95nNX+4D37wroY4mN8cGmJzfqcZ8WYhUBUV768logwV4NOkLYKPgdrE+aQIA2Wazb
+         ZCf3uouSmVUzkuqMhaN6zcqx1Q6R2KQ9ZuWI2V8iEil989RuR8QhB5dDL4TfCVzJU2qM
+         Jl+EWExjTYe9z4Oabi0uVc6eSiA1wirYfjLsZbWvFjG70yCXWDHaLyKTw1++NwdwA+dp
+         ZYrlfX5xLCcfESYIZbKY5ZSR+hIpOvD1+5SnoVI3nrU4UEQHlRs4Z3f8AT56yzDVtFHm
+         vbng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O4OKcV2sMFnGzGzL/9+Cpt1JG7IyKFHG/ze9KlVPzA0=;
-        b=A6JDAgVxzAxgtx4y492T8HfgPgEGKR1CL0bz1IYz49KOlim3AxGzM6A0G0qNJby5/c
-         SitUYkLGzwP4waiWW51A3ezrWsER/IPSQfkvueAI3kr3ZP/+tQqBBBz7uO9o5M6lGpky
-         qyVt7a+Pd7XMYC4/DAw7wGu6uttThCAYhZUhmyPCRpB58ZG1Lv7Jo0GheYQX5+qz4X72
-         B9cdKbomcdc14YGsBmBbORCMkpU4YROc728dErn0xg5+a/79kl335bjKa0Xa4ZlvkbCi
-         +iwhWCjKXU/ypzNCQwIKgto+ls6HgolXcToUX6D93fg6GpOHyHgbcHf3AdVP6Hl7aLEQ
-         CIZg==
-X-Gm-Message-State: APzg51AJ03v0OCMaI6Fx2rH42LOr/UwoSXsJ017nYUebo1XfT4OMyWBs
-        YnAEGVaeURj85BwqcI/99PA=
-X-Google-Smtp-Source: ANB0VdZ8Ji2mXxU3U2RUHKmTSspC4evHo0JnXRUH2+XQgNfCJ/uRG0JekAGmZ9zuTGL+4bJbcDu1Kw==
-X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr9516550plg.57.1536890121399;
-        Thu, 13 Sep 2018 18:55:21 -0700 (PDT)
-Received: from localhost ([39.7.18.191])
-        by smtp.gmail.com with ESMTPSA id b21-v6sm13608691pfm.97.2018.09.13.18.55.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Sep 2018 18:55:20 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:55:16 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        penguin-kernel@i-love.sakura.ne.jp,
-        kbuild test robot <fengguang.wu@intel.com>, pmladek@suse.com,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180914015516.GA1108@jagdpanzerIV>
-References: <20180620091541.GB444@jagdpanzerIV>
- <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
- <20180620110759.GD444@jagdpanzerIV>
- <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
- <20180620130628.GA1000@tigerII.localdomain>
- <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
- <20180912065307.GA606@jagdpanzerIV>
- <20180912120548.4280f04a@vmware.local.home>
- <20180913071204.GA604@jagdpanzerIV>
- <20180913211232.06e6ad64@vmware.local.home>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=3pwsSPKMrZBOManHClzRzSXqbO6DYtTKX2ujv0eHHZo=;
+        b=GBSJ2gNrddkIJ5YshOhJ0YS6/pQdZrA9prA/6QMEyzBtAR1em2fWY/sGMvQur+iOih
+         QUKJOiAi1YWCb38Krr7ikm9OntC3nCklks62eqfTzEdAeiAQ70N5UfFP3wpiDmtHYGa3
+         iDoB0PVkrZfPb2574JHxcftKHGUEw7d7pCqUAAYWzQh70kGZOcefLQssYn7Iiz+XyIQT
+         0NSq2HGQ7baAmzBJQpEYka+6k+D5LCVQmG21O/xSfx9/JAQNJ7tskWGBnzWeX4AjkP68
+         ejYpLted0/iUm27OeY5rx71UQ+kN5Tb/VnkDTCslc+NGbczMXtoioJQRQhQ+19+Quq5h
+         ZHnA==
+X-Gm-Message-State: APzg51AXnVXchKK7pnZFe3Wdv3adywPuIXry26Zomn3gFuCSPHDuu9xL
+        zH48+GuCio8sRHEGSTq4sbIsCqhLe72q1r83eJw=
+X-Google-Smtp-Source: ANB0VdZ5x9hfIWfeERtzQk3Br7Mp40k9ElIsFGsiOG858ZCSnLiEpDsDO9zoO/PJfW7zMAA4hdajXThKJcr6VmgNJUU=
+X-Received: by 2002:a0c:b88f:: with SMTP id y15-v6mr7303610qvf.203.1536890425915;
+ Thu, 13 Sep 2018 19:00:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913211232.06e6ad64@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 14 Sep 2018 12:00:13 +1000
+Message-ID: <CAPM=9tyHrA5a+gxtakZ+QFvUF0XB61_x_dD6fGprwojkFAA8AQ@mail.gmail.com>
+Subject: [git pull] drm fixes for v4.19-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/13/18 21:12), Steven Rostedt wrote:
-> >  
-> > +#define __SEQ_BUF_INITIALIZER(buf, length) {				\
-> > +	.buffer			= (buf),				\
-> > +	.size			= (length),				\
-> > +	.len			= 0,					\
-> > +	.readpos		= 0, }
-> 
-> Nit, but the end bracket '}' should be on it's own line. Even when
-> part of a macro.
+Hi Linus,
 
-No prob, will change.
+This is the general drm fixes pull for rc4.
 
-I thought about putting it on its own line, but then checked
-include/linux/wait.h - __WAITQUEUE_INITIALIZER and
-__WAIT_QUEUE_HEAD_INITIALIZER.
+i915:
+   Two GVT fixes (one for the mm reference issue you pointed out).
+   Gen 2 video playback fix
+   IPS timeout error suppression on Broadwell
 
-> > +#define DEFINE_PR_LINE(lev, name)					\
-> > +	char		__line[__PR_LINE_BUF_SZ];			\
-> 
-> To protect against name space collision could you use:
-> 
-> 	char		__line_##name[__PR_LINE_BUF_SZ];
+amdgpu:
+   Small memory leak, SR-IOV reset, locking and updated SDMA golden registe=
+rs
 
-Yes.
+nouveau:
+   Remove some leftover debugging.
 
-> The rest looks fine to me.
-> 
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Thanks,
+Dave.
 
-Thanks.
+drm-fixes-2018-09-14:
+i915, amdgpu and a single nouveau cleanup
+The following changes since commit 2887e5ce15ddaa2f9a19e66f7462bbf0fe6867e0=
+:
 
-Just, to make sure, we are OK with seq_buf dependency and want
-anyone who wants to use pr_line to include linux/seq_buf.h?
+  Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into
+drm-fixes (2018-09-11 16:54:46 +1000)
 
-	-ss
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-09-14
+
+for you to fetch changes up to 2b6318a09fd346edea42a60f8d0c07b2eea2d079:
+
+  Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into
+drm-fixes (2018-09-14 09:38:42 +1000)
+
+----------------------------------------------------------------
+i915, amdgpu and a single nouveau cleanup
+
+----------------------------------------------------------------
+Ben Skeggs (1):
+      drm/nouveau/devinit: fix warning when PMU/PRE_OS is missing
+
+Chris Wilson (1):
+      drm/i915/overlay: Allocate physical registers from stolen
+
+Christian K=C3=B6nig (2):
+      drm/amdgpu: fix amdgpu_mn_unlock() in the CS error path
+      drm/amdgpu: fix error handling in amdgpu_cs_user_fence_chunk
+
+Dave Airlie (3):
+      Merge tag 'drm-intel-fixes-2018-09-11' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge branch 'drm-fixes-4.19' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge branch 'linux-4.19' of git://github.com/skeggsb/linux into drm-=
+fixes
+
+Emily Deng (1):
+      drm/amdgpu: move PSP init prior to IH in gpu reset
+
+Imre Deak (1):
+      drm/i915/bdw: Increase IPS disable timeout to 100ms
+
+Rodrigo Vivi (1):
+      Merge tag 'gvt-fixes-2018-09-10' of
+https://github.com/intel/gvt-linux into drm-intel-fixes
+
+Tao Zhou (1):
+      drm/amdgpu: Fix SDMA hang in prt mode v2
+
+Weinan Li (1):
+      drm/i915/gvt: Fix the incorrect length of child_device_config issue
+
+Zhenyu Wang (1):
+      drm/i915/gvt: Fix life cycle reference on KVM mm
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |  25 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |   2 +-
+ drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c             |   7 +-
+ drivers/gpu/drm/i915/gvt/kvmgt.c                   |  10 +-
+ drivers/gpu/drm/i915/gvt/opregion.c                |  20 +-
+ drivers/gpu/drm/i915/intel_display.c               |   8 +-
+ drivers/gpu/drm/i915/intel_overlay.c               | 228 +++++++----------=
+----
+ .../gpu/drm/nouveau/nvkm/subdev/devinit/gm200.c    |  21 +-
+ 8 files changed, 131 insertions(+), 190 deletions(-)
