@@ -6,140 +6,117 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4ADECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A46ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D9C2147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D9C2147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E51592083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51592083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbeINUtJ (ORCPT
+        id S1728271AbeINUtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 16:49:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41162 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeINUtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 16:49:09 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 32D28C05680E;
-        Fri, 14 Sep 2018 15:34:07 +0000 (UTC)
-Received: from x2.localnet (ovpn-124-50.rdu2.redhat.com [10.10.124.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDE319A328;
-        Fri, 14 Sep 2018 15:34:01 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, omosnace@redhat.com,
-        linux-audit@redhat.com, mlichvar@redhat.com,
-        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
-Date:   Fri, 14 Sep 2018 11:34:00 -0400
-Message-ID: <2062051.Ftk13INWii@x2>
-Organization: Red Hat
-In-Reply-To: <20180914151643.gwvm5te4nvion5ex@madcap2.tricolour.ca>
-References: <20180824120001.20771-1-omosnace@redhat.com> <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com> <20180914151643.gwvm5te4nvion5ex@madcap2.tricolour.ca>
+        Fri, 14 Sep 2018 16:49:14 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:37601 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINUtK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 16:49:10 -0400
+Received: by mail-qt0-f194.google.com with SMTP id n6-v6so9102426qtl.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 08:34:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+07kIwD2hSywqITsmMbqKKEJYTSm7IfqHnRKXchrBNg=;
+        b=AoScQJiIouDYxAkeVyGe6Sy7drdof4pGnyApQUz0Ef6euk3MFK0ZxLreNmxKgfsrqO
+         5RBWwrVrlXwsht23+AiIoGng5emWtp4/GtA4LL2EZTDD2JxcZfBqQm57SWM6tqkTMjlc
+         9zNxssvCmt/QbtqKIKF+oKRQLkADUgOgJIZ0jK9gAk2UCZH4i28AZVO9vKy8VosuCStR
+         eRAQtOdZv53gPTwSWlAmuR6gS/PZ6gjHTsA1ICuwBihgtoI62QCR9ICXAJubKkfzDQG8
+         NilibQ31QvjqjPkQCethwV5KHbWZlce7pzytDbAgUxAmLADyoB+2ntvzvO8JZwpkNnW5
+         8+sQ==
+X-Gm-Message-State: APzg51ANHXwS+2XubDy6Q+4Fh+m8A8yD9Xz/7Nf2C/O6yGOgLUPghpGB
+        zx0U09UW173LP8x3MoiItI6TIRvAPwCsP34FeFo=
+X-Google-Smtp-Source: ANB0VdbanxpWYKvZYlChFHKBat8bXSGTJTtHCcM93vleNCVWTHBxjC5vOZYO2SOFYlgnCqHg7rm4qEjI0qMuPS1Uqco=
+X-Received: by 2002:aed:3608:: with SMTP id e8-v6mr9449723qtb.75.1536939247366;
+ Fri, 14 Sep 2018 08:34:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 14 Sep 2018 15:34:07 +0000 (UTC)
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk> <CAK8P3a2LpC6sw5KQ_6kcXKNfgUXkjsxbFkD30kdMgQjurGgy9Q@mail.gmail.com>
+ <20180913203145.GU19965@ZenIV.linux.org.uk> <CAK8P3a3LD58jnwP38OpnEWHMzAAfrqtfjHamWVU5PwaKoWyKjg@mail.gmail.com>
+ <20180914022737.GX19965@ZenIV.linux.org.uk> <CAK8P3a0wN0uMZdj-mxXwbN9AnZjHzMU6_b01H5y+Vpdt+UoeAw@mail.gmail.com>
+ <20180914151011.GZ19965@ZenIV.linux.org.uk>
+In-Reply-To: <20180914151011.GZ19965@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 14 Sep 2018 17:33:51 +0200
+Message-ID: <CAK8P3a2vbLueZ=h6RY74wucH9u2St1z3z62CHUqz9uBs-at7Ew@mail.gmail.com>
+Subject: Re: [PATCHES] tty ioctls cleanups, compat and not only
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Miller <davem@davemloft.net>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, September 14, 2018 11:16:43 AM EDT Richard Guy Briggs wrote:
-> On 2018-09-13 23:18, Paul Moore wrote:
-> > On Fri, Aug 24, 2018 at 8:00 AM Ondrej Mosnacek <omosnace@redhat.com> 
-wrote:
-> > > This patch adds two auxiliary record types that will be used to
-> > > annotate
-> > > the adjtimex SYSCALL records with the NTP/timekeeping values that have
-> > > been changed.
-> > > 
-> > > Next, it adds two functions to the audit interface:
-> > >  - audit_tk_injoffset(), which will be called whenever a timekeeping
-> > >  
-> > >    offset is injected by a syscall from userspace,
-> > >  
-> > >  - audit_ntp_adjust(), which will be called whenever an NTP internal
-> > >  
-> > >    variable is changed by a syscall from userspace.
-> > > 
-> > > Quick reference for the fields of the new records:
-> > >     AUDIT_TIME_INJOFFSET
-> > >     
-> > >         sec - the 'seconds' part of the offset
-> > >         nsec - the 'nanoseconds' part of the offset
-> > >     
-> > >     AUDIT_TIME_ADJNTPVAL
-> > >     
-> > >         op - which value was adjusted:
-> > >             offset - corresponding to the time_offset variable
-> > >             freq   - corresponding to the time_freq variable
-> > >             status - corresponding to the time_status variable
-> > >             adjust - corresponding to the time_adjust variable
-> > >             tick   - corresponding to the tick_usec variable
-> > >             tai    - corresponding to the timekeeping's TAI offset
-> > 
-> > I understand that reusing "op" is tempting, but the above aren't
-> > really operations, they are state variables which are being changed.
-> > Using the CONFIG_CHANGE record as a basis, I wonder if we are better
-> > 
-> > off with something like the following:
-> >  type=TIME_CHANGE <var>=<value_new> old=<value_old>
-> > 
-> > ... you might need to preface the variable names with something like
-> > "ntp_" or "offset_".  You'll notice I'm also suggesting we use a
-> > single record type here; is there any reason why two records types are
-> > required?
-> 
-> Why not do something like:
-> 
-> 	 type=TIME_CHANGE var=<var> new=<value_new> old=<value_old>
-> 
-> So that we don't pollute the field namespace *and* create 8 variants on
-> the same record format?  This shouldn't be much of a concern with binary
-> record formats, but we're stuck with the current parsing scheme for now.
+On Fri, Sep 14, 2018 at 5:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, Sep 14, 2018 at 10:21:53AM +0200, Arnd Bergmann wrote:
+>
+> > This does sound very appealing, but there is a small downside:
+> > The difference between ".compat_ioctl = NULL" and
+> > ".compat_ioctl=native_ioctl" is now very subtle, and I wouldn't
+> > necessarily expect casual readers to understand that.
+>
+> ???
+>
+> One is "all non-generics take pointers to wordsize-neutral objects",
+> another "all non-generics take integers".
 
-Something like this or the other format is fine. Neither hurt parsing because 
-these are not searchable fields. We only have issues when it involves a 
-searchable field name.
+Yes, I understand that distinction, I'm just trying to look at it from
+teh perspective of the majority of developers that roughtly understand
+what compat mode is but have never deal with arch/s390 and
+compat_ptr() conversion but simply try to get stuff working.
 
-HTH...
+> That solution certainly needs to be documented more than just in commit
+> message, though; IMO the method descriptions next to declaration are the
+> best place for that.  Will update...
 
--Steve
+That helps of course.
 
-> > >         old - the old value
-> > >         new - the new value
-> > > 
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > > 
-> > >  include/linux/audit.h      | 21 +++++++++++++++++++++
-> > >  include/uapi/linux/audit.h |  2 ++
-> > >  kernel/auditsc.c           | 15 +++++++++++++++
-> > >  3 files changed, 38 insertions(+)
-> > 
-> > A reminder that we need tests for these new records and a RFE page on the
-> > wiki:
-> > 
-> > * https://github.com/linux-audit/audit-testsuite
-> > * https://github.com/linux-audit/audit-kernel/wiki
-> 
-> - RGB
-> 
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+> > If we go with my file_operations patch for generic_compat_ioctl_ptrarg
+> > and add generic_compat_ioctl_intarg, we can do the same thing here
+> > with ldisc_compat_ioctl_ptrarg/ldisc_compat_ioctl_intarg to make it
+> > a little more consistent with fops and self-documenting.
+>
+> No, we can't - ldisc ->ioctl() (or ->compat_ioctl()) doesn't get ldisc
+> in arguments.  Besides, indirect calls are costly these days...
 
+Ah right. I suppose the argument list could be changed, or
+we could call tty_ldisc_ref()/tty_ldisc_deref() again (not sure
+if that's safe when we already hold the reference).
 
+> > +        if (retval == -ENOIOCTLCMD && _IOC_TYPE(cmd) == 'T') {
+> > +                 retval = tty_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+> > +                 WARN_ON_ONCE(retval != -ENOIOCTLCMD && retval != -ENOTTY);
+> > +        }
+> >
+> > Seeing that you list every single 'T' command in tty_compat_ioctl()
+> > that we handle in the native case, that WARN_ON_ONCE should not
+> > trigger for any input, but it would catch (and warn about) any of those
+> > that might get added in the future to the native code path without the
+> > compat entry.
+>
+> Anything adding new ioctls needs careful review anyway.  And blind bets upon
+> that stuff taking compat pointer are, AFAICS, completely unfounded.
 
+I was basing it only on statistics: only two commands out of the whole set
+take a translation, and the worst case that would happen if we add a new
+command without a compat handler is that user space doesn't get what it
+wants but we do get the WARN_ON. In comparison, without that check, user
+space never gets what it wants for that command (always -ENOTTY) but
+no indication that this is a kernel bug.
 
+      Arnd
