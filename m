@@ -2,129 +2,114 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D8CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE05ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E45206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:49:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E45206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A1642083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:55:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jky9QXDR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1642083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeINTDp (ORCPT
+        id S1728005AbeINTJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:03:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41528 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727013AbeINTDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:03:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21C72AE52;
-        Fri, 14 Sep 2018 13:49:07 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 15:49:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        n-horiguchi@ah.jp.nec.com, Ulrich Drepper <drepper@gmail.com>,
-        David Rientjes <rientjes@google.com>,
-        Horiguchi Naoya <nao.horiguchi@gmail.com>,
-        steven.sistare@oracle.com
-Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
-Message-ID: <20180914134905.GA6081@dhcp22.suse.cz>
-References: <82d2b35c-272a-ad02-692f-2c109aacdfb6@oracle.com>
- <8569dabb-4930-aa20-6249-72457e2df51e@intel.com>
- <51145ccb-fc0d-0281-9757-fb8a5112ec24@oracle.com>
- <c72fea44-59f3-b106-8311-b5eae2d254e7@intel.com>
- <addeaadc-5ab2-f0c9-2194-dd100ae90f3a@oracle.com>
- <aaca3180-7510-c008-3e12-8bbe92344ef4@intel.com>
- <94ee0b6c-4663-0705-d4a8-c50342f6b483@oracle.com>
- <CAG48ez1YhHKTDHZoH2tEFaLk4LcCSw5G60=+KpGRaMQxvw1qLw@mail.gmail.com>
- <20180914062132.GI20287@dhcp22.suse.cz>
- <CAG48ez2RSn-EQkf-ahs41tOKpzt23JMGYZxUtWMRPe8c5jAq-A@mail.gmail.com>
+        Fri, 14 Sep 2018 15:09:37 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36336 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727623AbeINTJh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:09:37 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8739FCE;
+        Fri, 14 Sep 2018 15:51:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536933074;
+        bh=Jut+6EaRzIXGHgcH1Xs1/BcZ717S3UkXLYodY7y92eE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Jky9QXDRCrRguWMc9T0qiq4DY/pGv1GpOXSY/ooS/0gK2lEvCqVOj5kMRA1qmho3K
+         hCiKbfqj7aWhLZH/op9mgQ2fWAkhdZGtkQAE+tVpP2rsznKakgAKpkLC8OuXoBWvge
+         DXWnEfFmMkRkFnYELpx/WQ+HDZkDNKgMg2Bzx174=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Remove packed VYUY support
+Date:   Fri, 14 Sep 2018 16:51:28 +0300
+Message-ID: <1759929.4apJ9N5u4E@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180914132149.26354-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180914132149.26354-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2RSn-EQkf-ahs41tOKpzt23JMGYZxUtWMRPe8c5jAq-A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 14-09-18 14:49:10, Jann Horn wrote:
-> On Fri, Sep 14, 2018 at 8:21 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > On Fri 14-09-18 03:33:28, Jann Horn wrote:
-> > > On Wed, Sep 12, 2018 at 10:43 PM prakash.sangappa
-> > > <prakash.sangappa@oracle.com> wrote:
-> > > > On 05/09/2018 04:31 PM, Dave Hansen wrote:
-> > > > > On 05/07/2018 06:16 PM, prakash.sangappa wrote:
-> > > > >> It will be /proc/<pid>/numa_vamaps. Yes, the behavior will be
-> > > > >> different with respect to seeking. Output will still be text and
-> > > > >> the format will be same.
-> > > > >>
-> > > > >> I want to get feedback on this approach.
-> > > > > I think it would be really great if you can write down a list of the
-> > > > > things you actually want to accomplish.  Dare I say: you need a
-> > > > > requirements list.
-> > > > >
-> > > > > The numa_vamaps approach continues down the path of an ever-growing list
-> > > > > of highly-specialized /proc/<pid> files.  I don't think that is
-> > > > > sustainable, even if it has been our trajectory for many years.
-> > > > >
-> > > > > Pagemap wasn't exactly a shining example of us getting new ABIs right,
-> > > > > but it sounds like something along those is what we need.
-> > > >
-> > > > Just sent out a V2 patch.  This patch simplifies the file content. It
-> > > > only provides VA range to numa node id information.
-> > > >
-> > > > The requirement is basically observability for performance analysis.
-> > > >
-> > > > - Need to be able to determine VA range to numa node id information.
-> > > >    Which also gives an idea of which range has memory allocated.
-> > > >
-> > > > - The proc file /proc/<pid>/numa_vamaps is in text so it is easy to
-> > > >    directly view.
-> > > >
-> > > > The V2 patch supports seeking to a particular process VA from where
-> > > > the application could read the VA to  numa node id information.
-> > > >
-> > > > Also added the 'PTRACE_MODE_READ_REALCREDS' check when opening the
-> > > > file /proc file as was indicated by Michal Hacko
-> > >
-> > > procfs files should use PTRACE_MODE_*_FSCREDS, not PTRACE_MODE_*_REALCREDS.
-> >
-> > Out of my curiosity, what is the semantic difference? At least
-> > kernel_move_pages uses PTRACE_MODE_READ_REALCREDS. Is this a bug?
-> 
-> No, that's fine. REALCREDS basically means "look at the caller's real
-> UID for the access check", while FSCREDS means "look at the caller's
-> filesystem UID". The ptrace access check has historically been using
-> the real UID, which is sorta weird, but normally works fine. Given
-> that this is documented, I didn't see any reason to change it for most
-> things that do ptrace access checks, even if the EUID would IMO be
-> more appropriate. But things that capture caller credentials at points
-> like open() really shouldn't look at the real UID; instead, they
-> should use the filesystem UID (which in practice is basically the same
-> as the EUID).
-> 
-> So in short, it depends on the interface you're coming through: Direct
-> syscalls use REALCREDS, things that go through the VFS layer use
-> FSCREDS.
+Hi Kieran,
 
-Ahh, OK, I see. Thanks for the clarification! Then I agree that the proc
-interface should use FSCREDS.
+Thank you for the patch.
+
+On Friday, 14 September 2018 16:21:49 EEST Kieran Bingham wrote:
+> The Gen3 VSP used by the DU for display does not support packed the VYUY
+> pixel format. Gen2 VSP hardware is able to process this format, but it
+> is not officially supported there either and thus it's output can not be
+> guaranteed.
+
+I think we could guarantee proper operation on Gen2, but as DU + VSP operation 
+isn't enabled in the drivers by default, and as the VYUY format isn't a 
+strategic target, I think we can ignore that.
+
+How about updating the commit message as follows ?
+
+"The Gen3 VSP used by the DU for display does not support packed the VYUY 
+pixel format. Gen2 VSP hardware is able to process this format, but DU + VSP 
+operation isn't enabled on Gen2, and VYUY isn't a strategic format, so it can 
+be ignored."
+
+> Remove the format from the capabilities of the DU driver.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index 4480243813ec..4576119e7777
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -126,7 +126,6 @@ static const u32 formats_kms[] = {
+>  	DRM_FORMAT_ARGB8888,
+>  	DRM_FORMAT_XRGB8888,
+>  	DRM_FORMAT_UYVY,
+> -	DRM_FORMAT_VYUY,
+>  	DRM_FORMAT_YUYV,
+>  	DRM_FORMAT_YVYU,
+>  	DRM_FORMAT_NV12,
+> @@ -155,7 +154,6 @@ static const u32 formats_v4l2[] = {
+>  	V4L2_PIX_FMT_ABGR32,
+>  	V4L2_PIX_FMT_XBGR32,
+>  	V4L2_PIX_FMT_UYVY,
+> -	V4L2_PIX_FMT_VYUY,
+>  	V4L2_PIX_FMT_YUYV,
+>  	V4L2_PIX_FMT_YVYU,
+>  	V4L2_PIX_FMT_NV12M,
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards,
+
+Laurent Pinchart
+
+
+
