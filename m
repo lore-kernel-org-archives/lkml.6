@@ -2,169 +2,266 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E335C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE23FFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E04D920853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s3eqkJnU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04D920853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A2E9D20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:12:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E9D20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeINNXr (ORCPT
+        id S1728046AbeINNZe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:23:47 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33115 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbeINNXr (ORCPT
+        Fri, 14 Sep 2018 09:25:34 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:28592 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbeINNZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:23:47 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v90-v6so9448147wrc.0;
-        Fri, 14 Sep 2018 01:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fG7kJIrrRMQXij0Y3eIpZWYGGAdS/d4p+JmzLCUS5dM=;
-        b=s3eqkJnU75KrMphVvJSgHCkiwden+AvFIraq3QbvJxQD2bGH4Be0mpI0f3Zou5OxlG
-         Za26QL41J0mdUD9BlfqnWrkkWAuyPrOQf6EO7quj3hAxv1IXTePD7ztyukjQFU89rW1y
-         z8SnlgdKZqf5y4aqapfCQG8iYsKL3KyyKXzFNgh8NSDPIT5Vq8qg9KpDEydNMBUQajGJ
-         RSFQsJLt4e9IcRlo0GC77s6T5uQy/jvqHahU1hDDFjg2hso5bql1Wu5yRUfxq+6+Hk1T
-         dHU7yNB4acz/YqUSGI/HSap0uss4YFfuse6ab73s2SaxRwkbyLQuf9E/uv5Qw6mhrt9Q
-         GM+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fG7kJIrrRMQXij0Y3eIpZWYGGAdS/d4p+JmzLCUS5dM=;
-        b=FjteHADF1sMiyFDgFksgCApkwmP4n4SVQmv0a8GZ3RBfKp0yVK6DpmY84cs2D/Po8e
-         5/6ukGVWBDzfDoynAgdlS6pT9ZInHh0ScIFrWW/lMOzpMmR67zWxwUB8erREt+pbjvvt
-         2lobU7dgOUVOKDqPctf1c6kpJ8PU+A6eT3FqxT8s18m8qz6EbS6taYQJdLD+IF4spyc4
-         2E/81//puEaaTZAsLhVPZlZIFrjF4GquCLD2e96WJ6T2Avihz1Zu7+VNHlwC8gkH56OP
-         yJIFwR3CwX++Dn48fMNW2fHiCDzt4JqxC5e5hb/8hXEpGUTlWJLYzqhuRVcNbwKYLzeu
-         lqvA==
-X-Gm-Message-State: APzg51DAIQI3WWd8d9Zk8EPcO4mnrHUw6HeWQz6DpbfYZllk2j7wv+uF
-        B9XqQIS/SH6yXgjJ0wvKAJs=
-X-Google-Smtp-Source: ANB0Vda0455pfBKZ70cg1baffaH/2dO/mOgE/v+HfbMJVMOG3BYKsaF86SyEHaTialR+QdIMlmU2Kg==
-X-Received: by 2002:adf:a4d1:: with SMTP id h17-v6mr7857174wrb.167.1536912625859;
-        Fri, 14 Sep 2018 01:10:25 -0700 (PDT)
-Received: from localhost (p2E5BE549.dip0.t-ipconnect.de. [46.91.229.73])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm786278wmb.33.2018.09.14.01.10.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 01:10:24 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:10:23 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Multi-parent IRQ domains
-Message-ID: <20180914081023.GA22750@ulmo>
-References: <20180913155945.GA19903@ulmo>
- <ea9261a9-2c4d-7ca4-6dca-73f385aa46d5@gmail.com>
+        Fri, 14 Sep 2018 09:25:34 -0400
+X-IronPort-AV: E=Sophos;i="5.53,372,1531785600"; 
+   d="scan'208";a="79046966"
+From:   Paul Durrant <Paul.Durrant@citrix.com>
+To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "jgross@suse.com" <jgross@suse.com>, Wei Liu <wei.liu2@citrix.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>
+Subject: RE: [PATCH 1/6] xenbus: prepare data structures and parameter for
+ xenwatch multithreading
+Thread-Topic: [PATCH 1/6] xenbus: prepare data structures and parameter for
+ xenwatch multithreading
+Thread-Index: AQHUS/1KIp73h3xTd02qYMZ3GAH4yqTvZ8iA
+Date:   Fri, 14 Sep 2018 08:11:59 +0000
+Message-ID: <15e757cf57c241768d188470420b447c@AMSPEX02CL03.citrite.net>
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
-Content-Disposition: inline
-In-Reply-To: <ea9261a9-2c4d-7ca4-6dca-73f385aa46d5@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> -----Original Message-----
+> From: Dongli Zhang [mailto:dongli.zhang@oracle.com]
+> Sent: 14 September 2018 08:34
+> To: xen-devel@lists.xenproject.org; linux-kernel@vger.kernel.org
+> Cc: boris.ostrovsky@oracle.com; jgross@suse.com; Paul Durrant
+> <Paul.Durrant@citrix.com>; Wei Liu <wei.liu2@citrix.com>;
+> konrad.wilk@oracle.com; Roger Pau Monne <roger.pau@citrix.com>;
+> srinivas.eeda@oracle.com
+> Subject: [PATCH 1/6] xenbus: prepare data structures and parameter for
+> xenwatch multithreading
+> 
+> This is the 1st patch of a (6-patch) patch set.
+> 
+> This patch set of six patches introduces xenwatch multithreading (or
+> multithreaded xenwatch, abbreviated as 'mtwatch') to dom0 kernel. In
+> addition to the existing single xenwatch thread, each domU has its own
+> kernel thread ([xen-mtwatch-<domid>]) to process its xenwatch event.
+> 
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+^ You need to put comments like this in a cover letter. Each patch needs to stand on its own merit and the comments should only relate to the context of that patch or a 'subsequent patch'.
 
-On Thu, Sep 13, 2018 at 02:50:21PM -0700, Florian Fainelli wrote:
->=20
->=20
-> On 09/13/18 08:59, Thierry Reding wrote:
-> > Hi everyone,
-> >=20
-> > I've been trying to implement a feature on recent Tegra chips that's
-> > called "wake events". These wake events are implemented as part of the
-> > power management controller (PMC) and they control which events can be
-> > used to wake the system from suspend. Events include things like an
-> > alarm interrupt from an RTC, or the GPIO interrupt hooked up to a
-> > power button for example.
-> >=20
-> > We already have a driver for a couple of other things that the PMC does,
-> > so I thought it'd be natural to implement this functionality as an IRQ
-> > chip in the PMC driver. The way that this would work is that for all the
-> > devices that are wakeup sources, we'd end up specifying the PMC as the
-> > interrupt parent and the PMC would then itself have the main GIC as its
-> > parent. That way, the hierarchical IRQ domain infrastructure would take
-> > care of pretty much everything.
-> >=20
-> > Unfortunately I've run into some issues here. One problem that I'm
-> > facing is that PMC could have more than one parent. For example, the RTC
-> > alarm interrupt goes straight to the GIC, but the power button GPIO goes
-> > through the GPIO controller first and then to the GIC. This doesn't seem
-> > to be something that's currently possible.
-> >=20
-> > The way I imagine this to work from a DT perspective is as follows:
->=20
-> There is an interrupts-extended property which as a first cell takes a
-> phandle to the parent interrupt controller, e.g:
->=20
-> interrupts-extended =3D <&gic 73 GIPC_SPI IRQ_TYPE_LEVEL_HIGH>,
-> 			<&pmc 10>;
->=20
-> (provided that I understood your problem and example correctly). We have
-> a similar use case on our STB chips where we have "main" interrupts
-> wired to the ARM GIC and wake-up interrupts wired to a specific wake-up
-> interrupt controller in an always-on domain. The two controllers have a
-> different #interrupt-cells specifier.
->=20
-> The interrupt infrastructure in Linux already knows how to deal with
-> that and whether you use of_get_irq() or platform_get_irq() you should
-> obtain the correct virtual interrupt numbers that you expected, parented
-> to the appropriate interrupt controller.
+> A kernel parameter 'xen_mtwatch' is introduced to control whether the
+> feature is enabled or not during dom0 kernel boot. The feature is disabled
+> by default if 'xen_mtwatch' is not set in grub. 
 
-Yeah, I had looked at the interrupts-extended property as well, but
-while I think it might work, one issue with that is that we'd be
-modelling the regular IRQ and wakeup IRQ as two different IRQs. On
-Tegra, however, the wakeup interrupt is the same as the regular
-interrupt, except that the bits to enable the wake logic is in a
-different hardware block. So the PMC acts more like an additional
-mux for a subset of the interrupts in the system.
+Why is it disabled by default? Concerns about resource consumption?
 
-In addition to that, if I were to model the interrupts separately, I'd
-also have to modify existing drivers for all the wakeup-able devices to
-deal with two separate interrupts, which is rather undesirable.
+> In addition, this patch
+> also introduces the data structures to maintain the status of each per-
+> domU
+> xenwatch thread. The status of each xenwatch thread (except the default
+> one) is maintained by a mtwatch domain.
+> 
+> The feature is available only on dom0.
 
-Thierry
+Whilst I can see it is intended for a backend domain, why limit it to dom0? What about driver domains?
 
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  3 ++
+>  drivers/xen/xenbus/xenbus_xs.c                  | 31 ++++++++++++
+>  include/xen/xenbus.h                            | 65
+> +++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> b/Documentation/admin-guide/kernel-parameters.txt
+> index 64a3bf5..fc295ef 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4992,6 +4992,9 @@
+>  				the unplug protocol
+>  			never -- do not unplug even if version check succeeds
+> 
+> +	xen_mtwatch     [KNL,XEN]
+> +			Enables the multithreaded xenwatch (mtwatch).
+> +
+>  	xen_nopvspin	[X86,XEN]
+>  			Disables the ticketlock slowpath using Xen PV
+>  			optimizations.
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c
+> b/drivers/xen/xenbus/xenbus_xs.c
+> index 49a3874..3f137d2 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -95,6 +95,19 @@ static pid_t xenwatch_pid;
+>  static DEFINE_MUTEX(xenwatch_mutex);
+>  static DECLARE_WAIT_QUEUE_HEAD(watch_events_waitq);
+> 
+> +bool xen_mtwatch;
+> +EXPORT_SYMBOL_GPL(xen_mtwatch);
+> +
+> +struct mtwatch_info *mtwatch_info;
+> +
+> +static bool param_xen_mtwatch;
+> +static __init int xen_parse_mtwatch(char *arg)
+> +{
+> +	param_xen_mtwatch = true;
+> +	return 0;
+> +}
+> +early_param("xen_mtwatch", xen_parse_mtwatch);
+> +
+>  static void xs_suspend_enter(void)
+>  {
+>  	spin_lock(&xs_state_lock);
+> @@ -929,6 +942,24 @@ int xs_init(void)
+>  	if (err)
+>  		return err;
+> 
+> +	if (xen_initial_domain() && param_xen_mtwatch) {
+> +		int i;
+> +
+> +		mtwatch_info = kmalloc(sizeof(*mtwatch_info), GFP_KERNEL);
+> +
+> +		for (i = 0; i < MTWATCH_HASH_SIZE; i++)
+> +			INIT_HLIST_HEAD(&mtwatch_info->domain_hash[i]);
+> +		spin_lock_init(&mtwatch_info->domain_lock);
+> +		INIT_LIST_HEAD(&mtwatch_info->domain_list);
+> +
+> +		spin_lock_init(&mtwatch_info->purge_lock);
+> +		INIT_LIST_HEAD(&mtwatch_info->purge_list);
+> +
+> +		xen_mtwatch = true;
+> +
+> +		pr_info("xenwatch multithreading is enabled\n");
+> +	}
+> +
+>  	task = kthread_run(xenwatch_thread, NULL, "xenwatch");
+>  	if (IS_ERR(task))
+>  		return PTR_ERR(task);
+> diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> index 869c816..e807114 100644
+> --- a/include/xen/xenbus.h
+> +++ b/include/xen/xenbus.h
+> @@ -62,6 +62,13 @@ struct xenbus_watch
+>  	/* Callback (executed in a process context with no locks held). */
+>  	void (*callback)(struct xenbus_watch *,
+>  			 const char *path, const char *token);
+> +
+> +	/* Callback to help calculate the domid the path belongs to */
+> +	domid_t (*get_domid)(struct xenbus_watch *watch,
+> +			     const char *path, const char *token);
+> +
+> +	/* The owner's domid if the watch is for a specific domain */
+> +	domid_t owner_id;
+>  };
+> 
+> 
+> @@ -93,6 +100,7 @@ struct xenbus_device_id
+>  struct xenbus_driver {
+>  	const char *name;       /* defaults to ids[0].devicetype */
+>  	const struct xenbus_device_id *ids;
+> +	bool use_mtwatch;
+>  	int (*probe)(struct xenbus_device *dev,
+>  		     const struct xenbus_device_id *id);
+>  	void (*otherend_changed)(struct xenbus_device *dev,
+> @@ -233,4 +241,61 @@ extern const struct file_operations xen_xenbus_fops;
+>  extern struct xenstore_domain_interface *xen_store_interface;
+>  extern int xen_store_evtchn;
+> 
+> +extern bool xen_mtwatch;
+> +
+> +#define MTWATCH_HASH_SIZE 256
+> +#define MTWATCH_HASH(_id) ((int)(_id)&(MTWATCH_HASH_SIZE-1))
+> +
+> +struct mtwatch_info {
+> +	/*
+> +	 * The mtwatch_domain is put on both a hash table and a list.
+> +	 * domain_list is used to optimize xenbus_watch un-registration.
+> +	 *
+> +	 * The mtwatch_domain is removed from domain_hash (with state set
+> +	 * to MTWATCH_DOMAIN_DOWN) when its refcnt is zero. However, it is
+> +	 * left on domain_list until all events belong to such
+> +	 * mtwatch_domain are processed in mtwatch_thread().
+> +	 *
+> +	 * While there may exist two mtwatch_domain with the same domid on
+> +	 * domain_list simultaneously, all mtwatch_domain on hash_hash
+> +	 * should have unique domid.
+> +	 */
+> +	spinlock_t domain_lock;
+> +	struct hlist_head domain_hash[MTWATCH_HASH_SIZE];
+> +	struct list_head domain_list;
+> +
+> +	/*
+> +	 * When a per-domU 
 
------BEGIN PGP SIGNATURE-----
+'per-frontend-domain' to be more descriptive?
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlubbO0ACgkQ3SOs138+
-s6Eo4w/8CFdu6waD5JsOQH7TrFv98Q/Fsq9TLrsUvPHL/wEacrne8/PLtbidu4pv
-RohmWSf4br1GhN8+3D/U3gFw/uI5I8oD3lqHXHHRxCc297gK5t+tXXhNOZeuaZ0l
-NyuRqZ8o47EPxAkOrDsu+ZfBc1u2m9l4zYMA1OB0X3NIjT2w3Rt7msPZQapZrxlV
-mp9Iw/d6ArOegaukW0l98YtmZnSmpg4tbqB6pGzoCMfAtRsf3jf+DUuhdn36t0VD
-eBUqhRo6MVqECi3NiELGpZ+ya3rrgKn94PzU65aVDX/6K9AquOz5GdNaYR++/UsK
-zHfppn31Ecr6Y9LW9mrP8yj2k7hMAbMnlKcYcS0G23xUf++N9dc7d8aR/RWP74Q5
-CxmiIGhLttnFyTcEhU2p07+dKZOTzkNpd3ZVpNNp0OV3e43IpjUL4QpCK+IaWlWp
-zFDFtbhrCL3A2FVAW+bQcozzC2vtMalBMuiwVRIOBExSd/yLg5vZdHlJVXWU5jgT
-Xc7KBPDbGCG42im7nzF6Bt7bW/af8pLG0d+U88OKShX3drQFxRJWY5hmfTrjoq4v
-7JBJD25vDgACnHoWVwUuiiOuui5RD1WdMQQqqoe3HyHaINMjn4iroKpDWFeQ64EK
-cW2Wu5eOCizrvPxOM3C87outtt3n0OTJmlZQWFmhEp6D5Xj04yU=
-=Y+K7
------END PGP SIGNATURE-----
+  Paul
 
---qDbXVdCdHGoSgWSk--
+> kthread is going to be destroyed, it is put
+> +	 * on the purge_list, and will be flushed by purge_work later.
+> +	 */
+> +	struct work_struct purge_work;
+> +	spinlock_t purge_lock;
+> +	struct list_head purge_list;
+> +};
+> +
+> +enum mtwatch_domain_state {
+> +	MTWATCH_DOMAIN_UP = 1,
+> +	MTWATCH_DOMAIN_DOWN = 2,
+> +};
+> +
+> +struct mtwatch_domain {
+> +	domid_t domid;
+> +	struct task_struct *task;
+> +	atomic_t refcnt;
+> +
+> +	pid_t pid;
+> +	struct mutex domain_mutex;
+> +	struct rcu_head rcu;
+> +
+> +	struct hlist_node hash_node;
+> +	struct list_head list_node;
+> +	struct list_head purge_node;
+> +
+> +	wait_queue_head_t events_wq;
+> +
+> +	spinlock_t events_lock;
+> +	struct list_head events;
+> +	enum mtwatch_domain_state state;
+> +};
+> +
+>  #endif /* _XEN_XENBUS_H */
+> --
+> 2.7.4
+
