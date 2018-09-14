@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E7CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD95EFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39DDE20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7888D20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eqryql8g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DDE20882
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WUovaMA0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7888D20882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbeINXHb (ORCPT
+        id S1728272AbeINXHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:07:31 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:52984 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeINXHa (ORCPT
+        Fri, 14 Sep 2018 19:07:36 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:48720 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbeINXHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:07:30 -0400
-Received: by mail-vk1-f202.google.com with SMTP id t7-v6so1610032vke.19
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:51:57 -0700 (PDT)
+        Fri, 14 Sep 2018 19:07:35 -0400
+Received: by mail-qk1-f202.google.com with SMTP id u129-v6so7941208qkf.15
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=KxhIRbFFEU3g+V98uDkaBODNM61F/dfQeSx5dZf+fmE=;
-        b=Eqryql8gcpya0M+KPkD5Af3rfuFDkzcmHcxFUe7DNyDZ/QIaJOAN1xQ+U3WiJfdmqM
-         VQlR4QkfiZ9uXKsXxLSDddaZU4RL9CF97pB31P0DAl+lUAHaKe/DW+WsotaDfLcdbbP7
-         tu/vkEC0b3MhJg7/CK1dF7lphX0yED3C/Dc4Nvr09RkhZ/QO0gLvmEglwVPP01B60Xhi
-         /4b6MPd9uMN3gWbDE8vbyBnBPDl8BrHD9WD4g6DINmROknaAf7ydwNlhulNVauO7XYoQ
-         M1rBEyGDkCPGgkOLC6qf1FSLXDNleTBBoyyclqGce56hwau3MhGXXoD06ia1Ne+wfmls
-         1X/w==
+        bh=bFfkCPo6MxZVeUkMs4YXiEX2DGM+fhv7DZ7PrkcHdmM=;
+        b=WUovaMA0KoqsOgD1eWIilu5c6g2Kgu+2nAQ5LFcNGPyNu6ShsC4Oh1OrjbB0qSuZql
+         7Dx60Ju6D52m4ZUPbi6VgRVZkkz28ixCMfa0iL8MeNArOpKKhxKKMIH5u1gFTasSQfNj
+         /MXrPkJYkIHFz2mUf+qzPbKdovB6fTfmYLsVWbPrNOoibYIf5t9J6NXSokPjdDRSSmvx
+         S1r/NpVjJgzGkOrHhVnTyf1JRn4SncripgjXX8pLDcO10/DNy395yQTFA5b1hjoGKcKX
+         SJ7zFZLRcgZQGxD5j2JWWBy/RZrn1jZaWLeprHukXd/W759HL2ZD57nJ7NMFWxvB7RBH
+         S6LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=KxhIRbFFEU3g+V98uDkaBODNM61F/dfQeSx5dZf+fmE=;
-        b=IIFgEQhitISYfGKNkR8lyrmorBtryTgX7bEv0gvNSUxTlisC8bC+dqVqa72YUFe6Jd
-         0B60U1UIqlKhqxuhDzKKng7MVOai9DaAutX5d7fpmoznhJEIpdhBJc54Oh9Q7AKaKrui
-         LS05SgTjss8MNP+VzVIsuNxOfzTlTaoxXp+aludcjWQCPJGBHoC/B+HX5LzDUf69UBty
-         7Tylq2eumK7WBLIlFgvHBMp1W5/9bztKA6uHdJgqRfc1G7sTAmSCSDjlRWIUk0NSca7I
-         S6KHqH9RjFE1IRPMeMBzf2BNKWmimsFZJz6T9bvqd0Q0nzPH3o/bRdaijEdX2DNVdYhA
-         i0WA==
-X-Gm-Message-State: APzg51BE4PwEFfMcZ8utwT9YPgsbjNEeXVTknMvXXzsiAN9Q6Ebvld47
-        CB8eBYbdBEZhOLYEdk3k5Izu0ib4
-X-Google-Smtp-Source: ANB0VdZTzvlv7//OjclJbqsVfRwAbo3VMtsyquuY10AicR/AmOf6ZD4SrnuxnMiYfDKKqIlftpaQ0EeX
-X-Received: by 2002:a67:4944:: with SMTP id w65-v6mr2484389vsa.1.1536947516852;
- Fri, 14 Sep 2018 10:51:56 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:51:04 -0700
+        bh=bFfkCPo6MxZVeUkMs4YXiEX2DGM+fhv7DZ7PrkcHdmM=;
+        b=M8CXLQiNG3Ml2mTrj/7weBsOJnMZ7bDk59ZAvnPLGdHtPZgCgx39AbUTNnJkKQ6Lyj
+         SRjm02msdqbzrBvr5ifUwxWeySGLLIMHl9i7qwLu87z59O6Tw7+CxDwnSSYizN1w0Pji
+         XRbzO8c83hQkMbE2f83nlDV9BxGkzsKn0Endl1e32fVs7Gy5tql393yMjZFppntHCoYP
+         fll7WecCy6V3aeuGU/hxG/Yg6bc+f4E0BupFaVxsVY/BYMUp8FQd6dj/zMyrLLJrbCn9
+         SDlgQnRP2sjonMh0N2QDz/SCVemE9pELqdn2WFUttK+P4CDFHzN2uTN0IezWhYkSI+7Y
+         TXcA==
+X-Gm-Message-State: APzg51AglrnhPEqm8STPu69oVd4xKyF5fZQyDBc5vVf96NFTPTkSda5F
+        DrOO3kscJhM/fTtlTAy6dyD5oZE0
+X-Google-Smtp-Source: ANB0VdZA/I5gvoCQUQCduO8Aiq2IHxG2IXOmWBu0HqnV175n1Nhzg5H00eR27JGDR1jB95sGh56Js0TF
+X-Received: by 2002:aed:2452:: with SMTP id s18-v6mr4259840qtc.20.1536947521691;
+ Fri, 14 Sep 2018 10:52:01 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:51:05 -0700
 In-Reply-To: <20180914175122.21036-1-rkir@google.com>
-Message-Id: <20180914175122.21036-3-rkir@google.com>
+Message-Id: <20180914175122.21036-4-rkir@google.com>
 Mime-Version: 1.0
 References: <20180914175122.21036-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
-Subject: [PATCH 03/21] platform: goldfish: pipe: Remove a redundant blank line
+Subject: [PATCH 04/21] platform: goldfish: pipe: Remove redundant struct declarations
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     tkjos@google.com, linux-kernel@vger.kernel.org,
@@ -74,25 +74,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-The blank line is not required there.
+goldfish_pipe_command is defines just after declaration and
+nothing refers to goldfish_pipe before it is defined.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 6ae2b00f4bff..8747ec330b7b 100644
+index 8747ec330b7b..6b21671c75ee 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -47,7 +47,6 @@
-  * exchange is properly mapped during a transfer.
-  */
+@@ -82,8 +82,6 @@ enum {
+ };
  
--
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/interrupt.h>
+ struct goldfish_pipe_dev;
+-struct goldfish_pipe;
+-struct goldfish_pipe_command;
+ 
+ /* A per-pipe command structure, shared with the host */
+ struct goldfish_pipe_command {
 -- 
 2.19.0.397.gdd90340f6a-goog
 
