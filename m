@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3BEFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C642DFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5772F2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5772F2146E
+	by mail.kernel.org (Postfix) with ESMTP id 8400F20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:34:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8400F20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeINNr2 (ORCPT
+        id S1728473AbeINNsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:47:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34116 "EHLO mail.bootlin.com"
+        Fri, 14 Sep 2018 09:48:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34131 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727853AbeINNr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728106AbeINNr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Sep 2018 09:47:28 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3020A208AC; Fri, 14 Sep 2018 10:34:02 +0200 (CEST)
+        id 85D77208D9; Fri, 14 Sep 2018 10:34:02 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E070C207D4;
-        Fri, 14 Sep 2018 10:34:01 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4E753207D4;
+        Fri, 14 Sep 2018 10:34:02 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com
 Cc:     allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
-Subject: [PATCH net-next 1/5] net: phy: mscc: add ethtool statistics counters
-Date:   Fri, 14 Sep 2018 10:33:43 +0200
-Message-Id: <e220fe75053e200f91554b752905d84b14b76eb6.1536913944.git-series.quentin.schulz@bootlin.com>
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH net-next 3/5] net: phy: mscc: remove unneeded parenthesis
+Date:   Fri, 14 Sep 2018 10:33:45 +0200
+Message-Id: <e3a1a9940e18c69ecf9aaecc3e2d9bf2a180a939.1536913944.git-series.quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com>
 References: <cover.616d15610d44a0e3d463acd8119859f243163ad2.1536913944.git-series.quentin.schulz@bootlin.com>
@@ -46,228 +45,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
+The == operator precedes the || operator, so we can remove the
+parenthesis around (a == b) || (c == d).
 
-There are a few counters available in the PHY: receive errors, false
-carriers, link disconnects, media CRC errors and valids counters.
+The condition is rather explicit and short so removing the parenthesis
+definitely does not make it harder to read.
 
-So let's expose those in the PHY driver.
-
-Use the priv structure as the next PHY to be supported has a few
-additional counters.
-
-Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microsemi.com>
 Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
 ---
- drivers/net/phy/mscc.c | 128 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 128 insertions(+)
+ drivers/net/phy/mscc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index 2d9676d..62d6e0a 100644
+index c0a9ea9..734d9fb 100644
 --- a/drivers/net/phy/mscc.c
 +++ b/drivers/net/phy/mscc.c
-@@ -33,6 +33,11 @@ enum rgmii_rx_clock_delay {
- #define DISABLE_PAIR_SWAP_CORR_MASK	  0x0020
- #define DISABLE_POLARITY_CORR_MASK	  0x0010
+@@ -301,7 +301,7 @@ static int vsc85xx_mdix_set(struct phy_device *phydev, u8 mdix)
+ 	u16 reg_val;
  
-+#define MSCC_PHY_ERR_RX_CNT		  19
-+#define MSCC_PHY_ERR_FALSE_CARRIER_CNT	  20
-+#define MSCC_PHY_ERR_LINK_DISCONNECT_CNT  21
-+#define ERR_CNT_MASK			  GENMASK(7, 0)
-+
- #define MSCC_PHY_EXT_PHY_CNTL_1           23
- #define MAC_IF_SELECTION_MASK             0x1800
- #define MAC_IF_SELECTION_GMII             0
-@@ -64,6 +69,9 @@ enum rgmii_rx_clock_delay {
- #define MSCC_PHY_PAGE_EXTENDED_2	  0x0002 /* Extended reg - page 2 */
- 
- /* Extended Page 1 Registers */
-+#define MSCC_PHY_CU_MEDIA_CRC_VALID_CNT	  18
-+#define VALID_CRC_CNT_CRC_MASK		  GENMASK(13, 0)
-+
- #define MSCC_PHY_EXT_MODE_CNTL		  19
- #define FORCE_MDI_CROSSOVER_MASK	  0x000C
- #define FORCE_MDI_CROSSOVER_MDIX	  0x000C
-@@ -74,6 +82,8 @@ enum rgmii_rx_clock_delay {
- #define DOWNSHIFT_EN			  0x0010
- #define DOWNSHIFT_CNTL_POS		  2
- 
-+#define MSCC_PHY_EXT_PHY_CNTL_4		  23
-+
- /* Extended Page 2 Registers */
- #define MSCC_PHY_RGMII_CNTL		  20
- #define RGMII_RX_CLK_DELAY_MASK		  0x0070
-@@ -119,11 +129,50 @@ enum rgmii_rx_clock_delay {
- 				BIT(VSC8531_FORCE_LED_OFF) | \
- 				BIT(VSC8531_FORCE_LED_ON))
- 
-+struct vsc85xx_hw_stat {
-+	const char *string;
-+	u8 reg;
-+	u16 page;
-+	u16 mask;
-+};
-+
-+static struct vsc85xx_hw_stat vsc85xx_hw_stats[] = {
-+	{
-+		.string	= "phy_receive_errors",
-+		.reg	= MSCC_PHY_ERR_RX_CNT,
-+		.page	= MSCC_PHY_PAGE_STANDARD,
-+		.mask	= ERR_CNT_MASK,
-+	}, {
-+		.string	= "phy_false_carrier",
-+		.reg	= MSCC_PHY_ERR_FALSE_CARRIER_CNT,
-+		.page	= MSCC_PHY_PAGE_STANDARD,
-+		.mask	= ERR_CNT_MASK,
-+	}, {
-+		.string	= "phy_cu_media_link_disconnect",
-+		.reg	= MSCC_PHY_ERR_LINK_DISCONNECT_CNT,
-+		.page	= MSCC_PHY_PAGE_STANDARD,
-+		.mask	= ERR_CNT_MASK,
-+	}, {
-+		.string	= "phy_cu_media_crc_good_count",
-+		.reg	= MSCC_PHY_CU_MEDIA_CRC_VALID_CNT,
-+		.page	= MSCC_PHY_PAGE_EXTENDED,
-+		.mask	= VALID_CRC_CNT_CRC_MASK,
-+	}, {
-+		.string	= "phy_cu_media_crc_error_count",
-+		.reg	= MSCC_PHY_EXT_PHY_CNTL_4,
-+		.page	= MSCC_PHY_PAGE_EXTENDED,
-+		.mask	= ERR_CNT_MASK,
-+	},
-+};
-+
- struct vsc8531_private {
- 	int rate_magic;
- 	u16 supp_led_modes;
- 	u32 leds_mode[MAX_LEDS];
- 	u8 nleds;
-+	struct vsc85xx_hw_stat *hw_stats;
-+	u64 *stats;
-+	int nstats;
- };
- 
- #ifdef CONFIG_OF_MDIO
-@@ -148,6 +197,66 @@ static int vsc85xx_phy_page_set(struct phy_device *phydev, u16 page)
- 	return rc;
- }
- 
-+static int vsc85xx_get_sset_count(struct phy_device *phydev)
-+{
-+	struct vsc8531_private *priv = phydev->priv;
-+
-+	if (!priv)
-+		return 0;
-+
-+	return priv->nstats;
-+}
-+
-+static void vsc85xx_get_strings(struct phy_device *phydev, u8 *data)
-+{
-+	struct vsc8531_private *priv = phydev->priv;
-+	int i;
-+
-+	if (!priv)
-+		return;
-+
-+	for (i = 0; i < priv->nstats; i++)
-+		strlcpy(data + i * ETH_GSTRING_LEN, priv->hw_stats[i].string,
-+			ETH_GSTRING_LEN);
-+}
-+
-+static u64 vsc85xx_get_stat(struct phy_device *phydev, int i)
-+{
-+	struct vsc8531_private *priv = phydev->priv;
-+	int val;
-+	u64 ret;
-+
-+	vsc85xx_phy_page_set(phydev, priv->hw_stats[i].page);
-+
-+	val = phy_read(phydev, priv->hw_stats[i].reg);
-+	if (val < 0) {
-+		ret = U64_MAX;
-+		goto out;
-+	}
-+
-+	val = val & priv->hw_stats[i].mask;
-+	priv->stats[i] += val;
-+	ret = priv->stats[i];
-+
-+out:
-+	vsc85xx_phy_page_set(phydev, MSCC_PHY_PAGE_STANDARD);
-+
-+	return ret;
-+}
-+
-+static void vsc85xx_get_stats(struct phy_device *phydev,
-+			      struct ethtool_stats *stats, u64 *data)
-+{
-+	struct vsc8531_private *priv = phydev->priv;
-+	int i;
-+
-+	if (!priv)
-+		return;
-+
-+	for (i = 0; i < priv->nstats; i++)
-+		data[i] = vsc85xx_get_stat(phydev, i);
-+}
-+
- static int vsc85xx_led_cntl_set(struct phy_device *phydev,
- 				u8 led_num,
- 				u8 mode)
-@@ -673,6 +782,13 @@ static int vsc85xx_probe(struct phy_device *phydev)
- 	vsc8531->rate_magic = rate_magic;
- 	vsc8531->nleds = 2;
- 	vsc8531->supp_led_modes = VSC85XX_SUPP_LED_MODES;
-+	vsc8531->hw_stats = vsc85xx_hw_stats;
-+	vsc8531->nstats = ARRAY_SIZE(vsc85xx_hw_stats);
-+	vsc8531->stats = devm_kzalloc(&phydev->mdio.dev,
-+				      sizeof(u64) * vsc8531->nstats,
-+				      GFP_KERNEL);
-+	if (!vsc8531->stats)
-+		return -ENOMEM;
- 
- 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
- }
-@@ -699,6 +815,9 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.get_sset_count = &vsc85xx_get_sset_count,
-+	.get_strings    = &vsc85xx_get_strings,
-+	.get_stats      = &vsc85xx_get_stats,
- },
- {
- 	.phy_id		= PHY_ID_VSC8531,
-@@ -720,6 +839,9 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.get_sset_count = &vsc85xx_get_sset_count,
-+	.get_strings    = &vsc85xx_get_strings,
-+	.get_stats      = &vsc85xx_get_stats,
- },
- {
- 	.phy_id		= PHY_ID_VSC8540,
-@@ -741,6 +863,9 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.get_sset_count = &vsc85xx_get_sset_count,
-+	.get_strings    = &vsc85xx_get_strings,
-+	.get_stats      = &vsc85xx_get_stats,
- },
- {
- 	.phy_id		= PHY_ID_VSC8541,
-@@ -762,6 +887,9 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-+	.get_sset_count = &vsc85xx_get_sset_count,
-+	.get_strings    = &vsc85xx_get_strings,
-+	.get_stats      = &vsc85xx_get_stats,
- }
- 
- };
+ 	reg_val = phy_read(phydev, MSCC_PHY_BYPASS_CONTROL);
+-	if ((mdix == ETH_TP_MDI) || (mdix == ETH_TP_MDI_X)) {
++	if (mdix == ETH_TP_MDI || mdix == ETH_TP_MDI_X) {
+ 		reg_val |= (DISABLE_PAIR_SWAP_CORR_MASK |
+ 			    DISABLE_POLARITY_CORR_MASK  |
+ 			    DISABLE_HP_AUTO_MDIX_MASK);
 -- 
 git-series 0.9.1
