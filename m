@@ -2,107 +2,107 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8C2ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98612FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 574162083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB2D2147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvdK7IPt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574162083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=az8.co header.i=afonsobordado@az8.co header.b="cK7l9acd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB2D2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=az8.co
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeINUli (ORCPT
+        id S1728245AbeINUmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 16:41:38 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44454 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeINUli (ORCPT
+        Fri, 14 Sep 2018 16:42:19 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21447 "EHLO
+        sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINUmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 16:41:38 -0400
-Received: by mail-lf1-f68.google.com with SMTP id g24-v6so2973974lfb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 08:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XDM0YUWc9KRhvTe9BAwDRkLdtQ3OcKYKYy0uYXBl4IM=;
-        b=JvdK7IPt22JW3IDyAsSOxMCQd+jrRS3BRXSIbySf2s2cVrQoaK3VPZ+6QYNnh4slh+
-         tGmZUHEjaMT8Q4i3YpV8/ssLrgDI8iRqKNa3UWQTXtrp37MZOUPq47FAlrEz4STI47pB
-         pPZgofzX9nlpHx0JaZQMlJ38raqIyvLNg0pkLzVS6TTQG6XrU+pKZWBbA1QXT7Yy4H2x
-         eHWuNzxufvh/v/uptQNBkmOztMeFH4jUHigFdSN8tnV9adzzGLVFyQojElhkhpn617Ej
-         wM7pP57UDNaYwVsK2EaTbSTJ7VVKJgpwFCAd2RnP3KSekJdDRxFULRe4yjo11cE1jits
-         3KMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XDM0YUWc9KRhvTe9BAwDRkLdtQ3OcKYKYy0uYXBl4IM=;
-        b=UrCGBREDlqAtxayhfOwfFGDmUtng8s1N5AfVEvO0+axQqf9yiz5ZX+H3qcxQBhCbJR
-         RvKL8xBqSyfHYCpsAwHBsUknv3vhRSQZhGrVmONC24MgixFXhVbYCKj/ZovPyumzJsaP
-         UF5gIbJCJv8Ay6eYQepm3SsUH9ZjB2NvgWR3fEzeiFLPIIdSZmlQHElaVYB85f6/gEX4
-         sKp8zBmSyApkQYelra0b+R7IrBWESXhuIC85oh8TrusO+MMFUZx+wb3AAoVDlIXbcCii
-         ix8FAHEBSRovINLIVDmdgg/p4VZ8Vban2CZPp/Ylk0zNt2pwp5PRUATiFYwLGuLz/Lcs
-         QBCw==
-X-Gm-Message-State: APzg51DUWxgTCnzHQu6KwR/jJKoby7SjlwFGeVDySycWnoNzSkGhTOc7
-        TahGiaB/VMg8nKahEVmRMjI=
-X-Google-Smtp-Source: ANB0VdZBr0a8eiyV9e5lu8NI7rTM2r7Rof57iKzl432ZNOrH0DunpUVd/Nb90mcARnrLXJeKwMgNzg==
-X-Received: by 2002:a19:115b:: with SMTP id g88-v6mr8780286lfi.57.1536938795993;
-        Fri, 14 Sep 2018 08:26:35 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id n99-v6sm544284lfi.96.2018.09.14.08.26.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 08:26:35 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g0pzQ-00065R-TS; Fri, 14 Sep 2018 17:26:37 +0200
-Date:   Fri, 14 Sep 2018 17:26:36 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Johan Hovold <johan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 17/50] usb-serial: begin switching to ->[sg]et_serial()
-Message-ID: <20180914152636.GX1362@localhost>
-References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
- <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
- <20180913024049.24567-17-viro@ZenIV.linux.org.uk>
- <20180914133930.GF1362@localhost>
- <20180914152352.GB19965@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914152352.GB19965@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 14 Sep 2018 16:42:18 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1536938811; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=fY3SukZrduNRG/cDYdN9ly+P/3ZCJlzpvo0OO4tCZt/sLZX8oJJB4aQUZdKUoKm5ebsbnNAIFrWIxlxf9A2hI7/mNSGyFaTWNCKjqg/p+8QikOMa9EMBSkJ/89kgMuKNFzHOQ55sQqSR3nJm6FIOg8tELnZmstbddRFRUV5A970=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1536938811; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=GffmJL4ug1bbgMOriT1yrq5qGaWnYnM7NZH4UB+IXVc=; 
+        b=gMWpqeXXtKX9Ts+GHMVkfZNjV3sfGfrxfpiq2hpoTqp07NQj45qGRS0MzmEYP2QUKGWyiYFfna3tWqtx2LY/P4HP7UVb0CE+ArPRfvC5w8NDbLJVktS2Gbrd8HyP9ZMRnidvEZ0N32Fk4CWvT+XFGt0OIV/5KhGJ5ndmNmlVDF4=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=az8.co;
+        spf=pass  smtp.mailfrom=afonsobordado@az8.co;
+        dmarc=pass header.from=<afonsobordado@az8.co> header.from=<afonsobordado@az8.co>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1536938811;
+        s=dkimmail; d=az8.co; i=afonsobordado@az8.co;
+        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:Content-Type:Mime-Version:Content-Transfer-Encoding;
+        l=1080; bh=GffmJL4ug1bbgMOriT1yrq5qGaWnYnM7NZH4UB+IXVc=;
+        b=cK7l9acdBWKONt27E/G2NJZCjD+ghpq44u/+yMQyeuXD0R9IAiFdEJO47dra1xsU
+        B9Gw1dupgsIHwGogR0o3HYPYZMlLsi9tsp/nP3D8LL+uZHstlyCY/X3aX83hH4lN7WO
+        yl+rMnEZeAr6vPPloXPQkhURmmv4yVtOVxRA4S04=
+Received: from AYYLMAO (bl9-77-228.dsl.telepac.pt [85.242.77.228]) by mx.zohomail.com
+        with SMTPS id 1536938809664252.82219194395782; Fri, 14 Sep 2018 08:26:49 -0700 (PDT)
+Message-ID: <2cd9b1674ae88f153a5afe65c151cabf308e4fe7.camel@az8.co>
+Subject: Re: [PATCH v4 4/5] iio: fxas21002c: add ODR/Scale support
+From:   Afonso Bordado <afonsobordado@az8.co>
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     kbuild-all@01.org, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date:   Fri, 14 Sep 2018 16:26:44 +0100
+In-Reply-To: <20180912182350.GA13032@himanshu-Vostro-3559>
+References: <20180911150011.31964-4-afonsobordado@az8.co>
+         <201809121715.5Babt1QC%fengguang.wu@intel.com>
+         <20180912182350.GA13032@himanshu-Vostro-3559>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 04:23:52PM +0100, Al Viro wrote:
-> On Fri, Sep 14, 2018 at 03:39:30PM +0200, Johan Hovold wrote:
-> > > +	if (port->serial->type->get_serial)
-> > > +		return port->serial->type->get_serial(tty, ss);
-> > > +	return -ENOIOCTLCMD;
-> > > +}
-> > > +
-> > > +static int serial_set_serial(struct tty_struct *tty, struct serial_struct *ss)
-> > > +{
-> > > +	struct usb_serial_port *port = tty->driver_data;
-> > 
-> > And here.
-> > 
-> > > +	if (port->serial->type->set_serial)
-> > > +		return port->serial->type->get_serial(tty, ss);
+Hi,
+
+Thanks for your help with this.
+
+> And I suspect it may be originating from your code snippet:
 > 
-> ... and another cut'n'paste braino - it's set_serial, of course.
+> #define FXAS21002C_SCALE(scale) (IIO_DEGREE_TO_RAD(62500U >>
+> (scale)))
+> 
+> and looking at the implementation:
+> 
+> include/linux/iio/iio.h
+> /**
+>  * IIO_DEGREE_TO_RAD() - Convert degree to rad
+>  * @deg: A value in degree
+>  *
+>  * Returns the given value converted from degree to rad
+>  */
+> #define IIO_DEGREE_TO_RAD(deg) (((deg) * 314159ULL + 9000000ULL) /
+> 18000000ULL)
+> 
+> This '/' operator might be the culprit!
+> 
+> Just for checking that the error, remove the macro declaration
+> `FXAS21002C_SCALE`
+> plus its usage and re-cross compile using `make ARCH=i386`.
+> 
+> In my case I used the `div64_s64` function handles builds for both
+> 32/64
+> arch accordingly.
 
-Bah, I thought I'd checked them all. :)
+Yes, this is indeed the culprit. If `div64_s64` works the same way, I
+wonder if the best option is to change the macro definition.
 
-Thanks,
-Johan
+I can provide a patch for this along with changing the rest of the
+definitions. However i would like some confirmation before starting
+this.
+
+
