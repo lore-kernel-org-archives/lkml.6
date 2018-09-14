@@ -2,129 +2,142 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3FBECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6FCECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6192146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 580382083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OXrmVEoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6192146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpT+a9Zw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 580382083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbeINTPK (ORCPT
+        id S1727966AbeINTR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:15:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36460 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINTPK (ORCPT
+        Fri, 14 Sep 2018 15:17:27 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40202 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINTR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:15:10 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D2C97CE;
-        Fri, 14 Sep 2018 16:00:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536933630;
-        bh=R5FIxCn7qs28aGR7md6Iz7EejI3r0BllKliJsZ8pcFU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OXrmVEoVww3K2VQSuS4pprNbJNKUV89MXB9W+4n5zsDvuK22IVfDc76GgwqmT6V6y
-         TubjJzXRHilTFo9E+w8Q4Lzre1OpR2dm7dWPoDIBQu48RgdzroDjPxpwsH+c87V9XN
-         UQAxvbz40aJ04Mrnq6sJ+kiIOv3IFMz5WeJPdz7k=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     kieran.bingham+renesas@ideasonboard.com
-Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: rcar-du: Remove packed VYUY support
-Date:   Fri, 14 Sep 2018 17:00:43 +0300
-Message-ID: <2071986.YnXjGQr2Jv@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <7d2740f2-923c-4b5d-0d1e-c24fb4a8bceb@ideasonboard.com>
-References: <20180914132149.26354-1-kieran.bingham+renesas@ideasonboard.com> <1759929.4apJ9N5u4E@avalon> <7d2740f2-923c-4b5d-0d1e-c24fb4a8bceb@ideasonboard.com>
+        Fri, 14 Sep 2018 15:17:27 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x26-v6so7964859lfi.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hoefdy4zT+ZZqI+Mq9+ZS67kAssdgAXngJdXIb/iJdc=;
+        b=MpT+a9ZwEVvmnR7epyp+3gjG2DhsOtNUfJrqE8e63cTsBF7DHFzcdgt5wytk7PzN/r
+         A1VQ1XI8HvYF5EkIhCejb8+V99//lF9gys0pYjaIh9auXOSKeiqr+0+/D5s4TenbBLwq
+         CzXoFW5B03Ch22Pv9MR6StK6YkVp1UoLwnRIVY6+hVGByK0YjeLsOLDr0AmwolItbbwX
+         +tf57wvTsC4qc8O/yZCNnjgH9gRvP8eyx0NVtyuISe+J4DWXYA356utgmaMqVCdk/AvY
+         hrcVOKLe7d0+hzvxuettoEZouqm5Z0ZRH/tRoCbIO7a/9Clikl/b+L6bEFskJXjjdNFF
+         k2Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hoefdy4zT+ZZqI+Mq9+ZS67kAssdgAXngJdXIb/iJdc=;
+        b=ZU1JcaUuYEe7SPT87tszM1riMd9G/Q/2fo7V/vWPtKkyezrQ7UIXjwkF17Gw2ao6C9
+         BLXD8RlydbuO87Liadyvn/pp6Csi0ddAN3jxN/UY5JbG64zUyt3dBd0t96v2rwHmFz2K
+         A4CT3LioGQl9/Q+rqSJkIFqavBq7LmhkxiBMzya1C54id8+pfWvSOJco2Fv3OFsPGIbi
+         LhoplwlvRQaBnIt0VF8ejG33Arw0OSspGoRDr93clCD8GPEamIhBeIc/3iUJpq9wCSNy
+         anRCPZ5noEMCQzh4GLxqvCNUpySJr46jfxxa+vgpgKS3Sn1/xooj8niyJhlPILO/eIoc
+         HIrQ==
+X-Gm-Message-State: APzg51AeIhdLhVl7axl38GiGy3dVUMyMAOf51JvKuvFohJUmeu3ONNT9
+        jxIRtxB1y3gR0OJY3GBUpy0=
+X-Google-Smtp-Source: ANB0VdY4FM05fPkFLwTq5RJ3BerML9K69d/2PGGqoBxPJn8zVhqlMeYZA5vWaPOGFYLcYPNs566dwg==
+X-Received: by 2002:a19:c513:: with SMTP id w19-v6mr172218lfe.113.1536933766838;
+        Fri, 14 Sep 2018 07:02:46 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id d4-v6sm1207858lfc.57.2018.09.14.07.02.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 07:02:45 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g0ogJ-0005nl-W1; Fri, 14 Sep 2018 16:02:48 +0200
+Date:   Fri, 14 Sep 2018 16:02:47 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 25/50] mos7720: switch to ->get_serial()
+Message-ID: <20180914140247.GM1362@localhost>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-25-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913024049.24567-25-viro@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-
-On Friday, 14 September 2018 16:55:38 EEST Kieran Bingham wrote:
-> On 14/09/18 14:51, Laurent Pinchart wrote:
-> > On Friday, 14 September 2018 16:21:49 EEST Kieran Bingham wrote:
-> >> The Gen3 VSP used by the DU for display does not support packed the VYUY
-> >> pixel format. Gen2 VSP hardware is able to process this format, but it
-> >> is not officially supported there either and thus it's output can not be
-> >> guaranteed.
-> > 
-> > I think we could guarantee proper operation on Gen2, but as DU + VSP
-> > operation isn't enabled in the drivers by default, and as the VYUY format
-> > isn't a strategic target, I think we can ignore that.
-> > 
-> > How about updating the commit message as follows ?
-> > 
-> > "The Gen3 VSP used by the DU for display does not support packed the VYUY
+On Thu, Sep 13, 2018 at 03:40:24AM +0100, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> s/packed the/the packed/
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  drivers/usb/serial/mos7720.c | 38 ++++++++++++++++----------------------
+>  1 file changed, 16 insertions(+), 22 deletions(-)
 > 
-> Which was a fault in my original text :)
-> 
-> > pixel format. Gen2 VSP hardware is able to process this format, but DU +
-> > VSP operation isn't enabled on Gen2, and VYUY isn't a strategic format,
-> > so it can be ignored."
-> 
-> That sounds fine to me, though I don't think we would even need to state
-> that 'VYUY isn't a strategic format' once it's simply not available on
-> the only platform that is enabled to use the VSP. But I don't object to
-> stating it otherwise.
+> diff --git a/drivers/usb/serial/mos7720.c b/drivers/usb/serial/mos7720.c
+> index 4c06357b3ef8..451fca707e04 100644
+> --- a/drivers/usb/serial/mos7720.c
+> +++ b/drivers/usb/serial/mos7720.c
+> @@ -1786,24 +1786,22 @@ static int mos7720_tiocmset(struct tty_struct *tty,
+>  	return 0;
+>  }
+>  
+> -static int get_serial_info(struct moschip_port *mos7720_port,
+> -			   struct serial_struct __user *retinfo)
+> +static int get_serial_info(struct tty_struct *tty,
+> +			   struct serial_struct *ss)
+>  {
+> -	struct serial_struct tmp;
+> -
+> -	memset(&tmp, 0, sizeof(tmp));
+> -
+> -	tmp.type		= PORT_16550A;
+> -	tmp.line		= mos7720_port->port->minor;
+> -	tmp.port		= mos7720_port->port->port_number;
+> -	tmp.irq			= 0;
+> -	tmp.xmit_fifo_size	= NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
+> -	tmp.baud_base		= 9600;
+> -	tmp.close_delay		= 5*HZ;
+> -	tmp.closing_wait	= 30*HZ;
+> -
+> -	if (copy_to_user(retinfo, &tmp, sizeof(*retinfo)))
+> -		return -EFAULT;
+> +	struct usb_serial_port *port = tty->driver_data;
+> +	struct moschip_port *mos7720_port;
 
-It could be enabled in the drivers (I have out-of-tree patches for testing 
-purpose), so the fact that we don't need the format is still important I 
-think.
+Newline please.
 
-> >> Remove the format from the capabilities of the DU driver.
-> >> 
-> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 --
-> >>  1 file changed, 2 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> >> b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c index 4480243813ec..4576119e7777
-> >> 100644
-> >> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> >> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> >> @@ -126,7 +126,6 @@ static const u32 formats_kms[] = {
-> >>  	DRM_FORMAT_ARGB8888,
-> >>  	DRM_FORMAT_XRGB8888,
-> >>  	DRM_FORMAT_UYVY,
-> >> -	DRM_FORMAT_VYUY,
-> >>  	DRM_FORMAT_YUYV,
-> >>  	DRM_FORMAT_YVYU,
-> >>  	DRM_FORMAT_NV12,
-> >> @@ -155,7 +154,6 @@ static const u32 formats_v4l2[] = {
-> >>  	V4L2_PIX_FMT_ABGR32,
-> >>  	V4L2_PIX_FMT_XBGR32,
-> >>  	V4L2_PIX_FMT_UYVY,
-> >> -	V4L2_PIX_FMT_VYUY,
-> >>  	V4L2_PIX_FMT_YUYV,
-> >>  	V4L2_PIX_FMT_YVYU,
-> >>  	V4L2_PIX_FMT_NV12M,
+> +	mos7720_port = usb_get_serial_port_data(port);
+> +	if (mos7720_port == NULL)
+> +		return -ENODEV;
 
--- 
-Regards,
+And no need to check for NULL, even if the current ioctl does so...
 
-Laurent Pinchart
+> +	ss->type		= PORT_16550A;
+> +	ss->line		= mos7720_port->port->minor;
+> +	ss->port		= mos7720_port->port->port_number;
+> +	ss->irq			= 0;
+> +	ss->xmit_fifo_size	= NUM_URBS * URB_TRANSFER_BUFFER_SIZE;
+> +	ss->baud_base		= 9600;
+> +	ss->close_delay		= 5*HZ;
+> +	ss->closing_wait	= 30*HZ;
+>  	return 0;
+>  }
 
-
-
+Reviewed-by: Johan Hovold <johan@kernel.org>
