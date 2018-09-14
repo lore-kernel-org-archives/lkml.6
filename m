@@ -2,163 +2,110 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7AAC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340E3FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20E920866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:47:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20E920866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D655520866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D655520866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeINNAy (ORCPT
+        id S1727946AbeINNCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:00:54 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33039 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeINNAy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:00:54 -0400
-Received: by mail-ot1-f67.google.com with SMTP id i10-v6so3718986oth.0;
-        Fri, 14 Sep 2018 00:47:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FrKyp6qZRzwBDgDKF/oz/lNGiw1P+ewjt4SNqsBGbQA=;
-        b=QmmAAJRDx4qw1K+Jo9hmbT5kaYiGi9pZXFye+uxdGOmvuCFHYyz2ZbX9p7zHACo4Vm
-         WfxH/W84CdPGxgV78yHhj/q2cBS5F6NwwkNa9L9Kr3DAQgNksGlr/DoAuVsmWmTvKELY
-         ZA6Kt96VJnSbua+BMqtkEVgxIahAo2rUzcDQmvigb4+hkheRYQkO7CxHHpMhxIJ2a2jV
-         OXW3hRt9Z2UHawMmwPGHIHPJbyFxhV5tdW8NlwHjvuMSIO3cMI6Zi0JtRQ3Gqzdl5AW0
-         D5aRmyJJS1wQVcT4NpETR5WrQhMWjmrB/rtNihMY9YPnl86i+9zQ9p/gZpXVDNHrNHS6
-         HNAg==
-X-Gm-Message-State: APzg51Ac6q5eQr/SaU0mYqzCQLhME5BWdoSCqgs3bRkKAgdJrjuukPLe
-        eqNXEf8ToPhvZqTppr6GBE1nYVS10jtfEWD7xDEKJQ==
-X-Google-Smtp-Source: ANB0VdaKNdJ0G2TZfEKbezhCVfULdzNJy0rVX3pMcGw96wumTd14zpmCjvc50swOIEVLZCkOfg/2afxstAELZyV2D8M=
-X-Received: by 2002:a9d:19e8:: with SMTP id k95-v6mr3848225otk.248.1536911259768;
- Fri, 14 Sep 2018 00:47:39 -0700 (PDT)
+        Fri, 14 Sep 2018 09:02:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48198 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727194AbeINNCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:02:50 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C1EB181DE3;
+        Fri, 14 Sep 2018 07:49:35 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 82ACA308BDA5;
+        Fri, 14 Sep 2018 07:49:33 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 09/12] x86/kvm/nVMX: allow bare VMXON state migration
+References: <20180913170522.24876-1-vkuznets@redhat.com>
+        <20180913170522.24876-10-vkuznets@redhat.com>
+        <CALMp9eTTK67npZLjpCYA=6EPpvF8nZZq7fH=e7NQRhDYXZ=UNQ@mail.gmail.com>
+Date:   Fri, 14 Sep 2018 09:49:32 +0200
+In-Reply-To: <CALMp9eTTK67npZLjpCYA=6EPpvF8nZZq7fH=e7NQRhDYXZ=UNQ@mail.gmail.com>
+        (Jim Mattson's message of "Thu, 13 Sep 2018 12:21:13 -0700")
+Message-ID: <87o9d08qnn.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-References: <9611469.2z7W9akjOQ@aspire.rjw.lan> <20180914074052.GF24124@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180914074052.GF24124@hirez.programming.kicks-ass.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 14 Sep 2018 09:47:28 +0200
-Message-ID: <CAJZ5v0hnchptNz8sHxtuTDbE-f3axgfMgKMgRiasoUv2G7Z0+Q@mail.gmail.com>
-Subject: Re: [PATCH] PM / suspend: Count suspend-to-idle loop as sleep time
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 14 Sep 2018 07:49:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 9:41 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Sep 14, 2018 at 08:59:03AM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > There is a difference in behavior between suspend-to-idle and
-> > suspend-to-RAM in the timekeeping handling that leads to functional
-> > issues.  Namely, every iteration of the loop in s2idle_loop()
-> > increases the monotinic clock somewhat, even if timekeeping_suspend()
-> > and timekeeping_resume() are invoked from s2idle_enter(), and if
-> > many of them are carried out in a row, the monotonic clock can grow
-> > significantly while the system is regarded as suspended, which
-> > doesn't happen during suspend-to-RAM and so it is unexpected and
-> > leads to confusion and misbehavior in user space (similar to what
-> > ensued when we tried to combine the boottime and monotonic clocks).
-> >
-> > To avoid that, count all iterations of the loop in s2idle_loop()
-> > as "sleep time" and adjust the clock for that on exit from
-> > suspend-to-idle.
-> >
-> > [That also covers systems on which timekeeping is not suspended
-> >  by by s2idle_enter().]
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Do we want a 'warning' of sorts when the delta becomes significant (for
-> whatever that is) ? That might be an indication that there are frequent
-> wakeups which we might not be expecting. Of keep the number of spurious
-> wakeups in a stat counter somewhere -- something to look at if the
-> battery drains faster than expected.
+Jim Mattson <jmattson@google.com> writes:
 
-If you echo 1 to /sys/power/pm_debug_messages, dmesg will tell you
-that (with gory details). :-)
+> On Thu, Sep 13, 2018 at 10:05 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>> It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
+>> state needs to be preserved on migration.
+>>
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/kvm/vmx.c | 15 ++++++++-------
+>>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index d3297fadf7ed..25a25fff8dd9 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -14482,13 +14482,6 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+>>         if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
+>>                 return -EINVAL;
+>>
+>> -       if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
+>> -               return -EINVAL;
+>> -
+>> -       if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
+>> -           !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
+>> -               return -EINVAL;
+>> -
+>>         if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
+>>             (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
+>>                 return -EINVAL;
+>> @@ -14510,6 +14503,14 @@ static int vmx_set_nested_state(struct kvm_vcpu *vcpu,
+>>         if (ret)
+>>                 return ret;
+>>
+>> +       /* Empty 'VMXON' state is permitted */
+>> +       if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
+>> +               return 0;
+>
+> In the original version of this code, the early exit is:
+>
+> if (kvm_state.vmcs_pa == -1ull)
+>         return 0;
 
-> Otherwise:
->
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
-> One minor nit below:
->
-> > ---
-> >  kernel/power/suspend.c |   18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> >
-> > Index: linux-pm/kernel/power/suspend.c
-> > ===================================================================
-> > --- linux-pm.orig/kernel/power/suspend.c
-> > +++ linux-pm/kernel/power/suspend.c
-> > @@ -109,8 +109,12 @@ static void s2idle_enter(void)
-> >
-> >  static void s2idle_loop(void)
-> >  {
-> > +     ktime_t start, delta;
-> > +
-> >       pm_pr_dbg("suspend-to-idle\n");
-> >
-> > +     start = ktime_get();
-> > +
-> >       for (;;) {
-> >               int error;
-> >
-> > @@ -150,6 +154,20 @@ static void s2idle_loop(void)
-> >               pm_wakeup_clear(false);
-> >       }
-> >
-> > +     /*
-> > +      * If the monotonic clock difference between the start of the loop and
-> > +      * this point is too large, user space may get confused about whether or
-> > +      * not the system has been suspended and tasks may get killed by
-> > +      * watchdogs etc., so count the loop as "sleep time" to compensate for
-> > +      * that.
-> > +      */
-> > +     delta = ktime_sub(ktime_get(), start);
-> > +     if (ktime_to_ns(delta) > 0) {
-> > +             struct timespec64 timespec64_delta = ktime_to_timespec64(delta);
-> > +
-> > +             timekeeping_inject_sleeptime64(&timespec64_delta);
-> > +     }
-> > +
-> >       pm_pr_dbg("resume from suspend-to-idle\n");
-> >  }
->
-> Like I mentioned yesterday; I myself prefer the form:
->
->
->         u64 stamp = ktimer_get_ns();
->
->         for (;;) {
->                 /* ... */
->         }
->
->         stamp = ktime_get_ns() - stamp;
->         if (stamp)
->                 timekeeping_inject_sleeptime64(ns_to_timespec64(ns));
->
->
-> Esp. since ktime_t _is_ s64 these days, there is no point in keep using
-> all the weird ktime helpers that make the code harder to read.
+Time to restore the status quo :-)
 
-Looks like a good idea, let me try that.
+In any case this early exit should be done after enter_vmx_operation()
+as even without a valid VMCS we need to preserve VMXON state (e.g. Linux
+with loaded KVM but without any guests running).
+
+-- 
+  Vitaly
