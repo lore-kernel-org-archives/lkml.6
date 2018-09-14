@@ -6,236 +6,217 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE69FC6183
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6A8FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D94FA2147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D94FA2147D
+	by mail.kernel.org (Postfix) with ESMTP id D42CF2147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42CF2147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbeINSfa (ORCPT
+        id S1728289AbeINSfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:35:30 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49992 "EHLO
+        Fri, 14 Sep 2018 14:35:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49998 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINSfa (ORCPT
+        with ESMTP id S1727749AbeINSfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Sep 2018 14:35:30 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g0o1r-0006og-RB; Fri, 14 Sep 2018 15:20:59 +0200
-Message-Id: <20180914131301.758753236@linutronix.de>
+        id 1g0o1s-0006oj-9J; Fri, 14 Sep 2018 15:21:00 +0200
+Message-Id: <20180914131301.844514057@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 14 Sep 2018 15:09:19 +0200
+Date:   Fri, 14 Sep 2018 15:09:20 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [patch V2 02/10] x86/mm/cpa: Rework static_protections()
+Subject: [patch V2 03/10] x86/mm/cpa: Allow range check for static protections
 References: <20180914130917.155416208@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-mm-cpa--Rework-static_protections--.patch
+ filename=x86-mm-cpa--Allow-range-check-for-static-protections.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-static_protections() is pretty unreadable. Split it up into separate checks
-for each protection area.
+Checking static protections only page by page is slow especially for huge
+pages. To allow quick checks over a complete range, add the ability to do
+that.
+
+Make the checks inclusive so the ranges can be directly used for debug output
+later.
+
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/mm/pageattr.c |  159 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 95 insertions(+), 64 deletions(-)
+ arch/x86/mm/pageattr.c |   69 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 44 insertions(+), 25 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -286,84 +286,115 @@ static void cpa_flush_array(unsigned lon
+@@ -286,22 +286,29 @@ static void cpa_flush_array(unsigned lon
  	}
  }
  
-+#ifdef CONFIG_PCI_BIOS
++static bool overlaps(unsigned long r1_start, unsigned long r1_end,
++		     unsigned long r2_start, unsigned long r2_end)
++{
++	return (r1_start <= r2_end && r1_end >= r2_start) ||
++		(r2_start <= r1_end && r2_end >= r1_start);
++}
++
+ #ifdef CONFIG_PCI_BIOS
  /*
-- * Certain areas of memory on x86 require very specific protection flags,
-- * for example the BIOS area or kernel text. Callers don't always get this
-- * right (again, ioremap() on BIOS memory is not uncommon) so this function
-- * checks and fixes these known static required protection bits.
-+ * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
-+ * based config access (CONFIG_PCI_GOBIOS) support.
+  * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
+  * based config access (CONFIG_PCI_GOBIOS) support.
+  */
+ #define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
+-#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
++#define BIOS_PFN_END	PFN_DOWN(BIOS_END - 1)
+ 
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
+ {
+-	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
++	if (pcibios_enabled && overlaps(spfn, epfn, BIOS_PFN, BIOS_PFN_END))
+ 		return _PAGE_NX;
+ 	return 0;
+ }
+ #else
+-static pgprotval_t protect_pci_bios(unsigned long pfn)
++static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
+ {
+ 	return 0;
+ }
+@@ -312,12 +319,17 @@ static pgprotval_t protect_pci_bios(unsi
+  * aliases.  This also includes __ro_after_init, so do not enforce until
+  * kernel_set_to_readonly is true.
+  */
+-static pgprotval_t protect_rodata(unsigned long pfn)
++static pgprotval_t protect_rodata(unsigned long spfn, unsigned long epfn)
+ {
+-	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
+-	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
++	unsigned long epfn_ro, spfn_ro = PFN_DOWN(__pa_symbol(__start_rodata));
++
++	/*
++	 * Note: __end_rodata is at page aligned and not inclusive, so
++	 * subtract 1 to get the last enforced PFN in the rodata area.
++	 */
++	epfn_ro = PFN_DOWN(__pa_symbol(__end_rodata)) - 1;
+ 
+-	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
++	if (kernel_set_to_readonly && overlaps(spfn, epfn, spfn_ro, epfn_ro))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+@@ -327,9 +339,12 @@ static pgprotval_t protect_rodata(unsign
+  * not cover __inittext since that is gone after boot. On 64bit we do not
+  * enforce !NX on the low mapping
+  */
+-static pgprotval_t protect_kernel_text(unsigned long address)
++static pgprotval_t protect_kernel_text(unsigned long start, unsigned long end)
+ {
+-	if (within(address, (unsigned long)_text, (unsigned long)_etext))
++	unsigned long t_end = (unsigned long)_etext - 1;
++	unsigned long t_start = (unsigned long)_text;
++
++	if (overlaps(start, end, t_start, t_end))
+ 		return _PAGE_NX;
+ 	return 0;
+ }
+@@ -344,13 +359,14 @@ static pgprotval_t protect_kernel_text(u
+  * This will preserve the large page mappings for kernel text/data at no
+  * extra cost.
+  */
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
+-	unsigned long start = (unsigned long)_text;
++	unsigned long t_end = (unsigned long)__end_rodata_hpage_align - 1;
++	unsigned long t_start = (unsigned long)_text;
+ 	unsigned int level;
+ 
+-	if (!kernel_set_to_readonly || !within(address, start, end))
++	if (!kernel_set_to_readonly || !overlaps(start, end, t_start, t_end))
+ 		return 0;
+ 	/*
+ 	 * Don't enforce the !RW mapping for the kernel text mapping, if
+@@ -364,12 +380,13 @@ static pgprotval_t protect_kernel_text_r
+ 	 * so the protections for kernel text and identity mappings have to
+ 	 * be the same.
+ 	 */
+-	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
++	if (lookup_address(start, &level) && (level != PG_LEVEL_4K))
+ 		return _PAGE_RW;
+ 	return 0;
+ }
+ #else
+-static pgprotval_t protect_kernel_text_ro(unsigned long address)
++static pgprotval_t protect_kernel_text_ro(unsigned long start,
++					  unsigned long end)
+ {
+ 	return 0;
+ }
+@@ -381,18 +398,20 @@ static pgprotval_t protect_kernel_text_r
+  * right (again, ioremap() on BIOS memory is not uncommon) so this function
+  * checks and fixes these known static required protection bits.
   */
 -static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
--				   unsigned long pfn)
--{
--	pgprot_t forbidden = __pgprot(0);
-+#define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
-+#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
+-					  unsigned long pfn)
++static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
++					  unsigned long pfn, unsigned long npg)
+ {
+ 	pgprotval_t forbidden;
++	unsigned long end;
  
--	/*
--	 * The BIOS area between 640k and 1Mb needs to be executable for
--	 * PCI BIOS based config access (CONFIG_PCI_GOBIOS) support.
--	 */
--#ifdef CONFIG_PCI_BIOS
--	if (pcibios_enabled && within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
--		pgprot_val(forbidden) |= _PAGE_NX;
-+static pgprotval_t protect_pci_bios(unsigned long pfn)
-+{
-+	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
-+		return _PAGE_NX;
-+	return 0;
-+}
-+#else
-+static pgprotval_t protect_pci_bios(unsigned long pfn)
-+{
-+	return 0;
-+}
- #endif
+ 	/* Operate on the virtual address */
+-	forbidden  = protect_kernel_text(address);
+-	forbidden |= protect_kernel_text_ro(address);
++	end = start + npg * PAGE_SIZE - 1;
++	forbidden  = protect_kernel_text(start, end);
++	forbidden |= protect_kernel_text_ro(start, end);
  
--	/*
--	 * The kernel text needs to be executable for obvious reasons
--	 * Does not cover __inittext since that is gone later on. On
--	 * 64bit we do not enforce !NX on the low mapping
--	 */
--	if (within(address, (unsigned long)_text, (unsigned long)_etext))
--		pgprot_val(forbidden) |= _PAGE_NX;
-+/*
-+ * The .rodata section needs to be read-only. Using the pfn catches all
-+ * aliases.  This also includes __ro_after_init, so do not enforce until
-+ * kernel_set_to_readonly is true.
-+ */
-+static pgprotval_t protect_rodata(unsigned long pfn)
-+{
-+	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
-+	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
+ 	/* Check the PFN directly */
+-	forbidden |= protect_pci_bios(pfn);
+-	forbidden |= protect_rodata(pfn);
++	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
++	forbidden |= protect_rodata(pfn, pfn + npg - 1);
  
--	/*
--	 * The .rodata section needs to be read-only. Using the pfn
--	 * catches all aliases.  This also includes __ro_after_init,
--	 * so do not enforce until kernel_set_to_readonly is true.
--	 */
--	if (kernel_set_to_readonly &&
--	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
--		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
--		pgprot_val(forbidden) |= _PAGE_RW;
-+	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
-+		return _PAGE_RW;
-+	return 0;
-+}
-+
-+/*
-+ * The kernel text needs to be executable for obvious reasons. This does
-+ * not cover __inittext since that is gone after boot. On 64bit we do not
-+ * enforce !NX on the low mapping
-+ */
-+static pgprotval_t protect_kernel_text(unsigned long address)
-+{
-+	if (within(address, (unsigned long)_text, (unsigned long)_etext))
-+		return _PAGE_NX;
-+	return 0;
-+}
- 
- #if defined(CONFIG_X86_64)
-+/*
-+ * Once the kernel maps the text as RO (kernel_set_to_readonly is set),
-+ * kernel text mappings for the large page aligned text, rodata sections
-+ * will be always read-only. For the kernel identity mappings covering the
-+ * holes caused by this alignment can be anything that user asks.
-+ *
-+ * This will preserve the large page mappings for kernel text/data at no
-+ * extra cost.
-+ */
-+static pgprotval_t protect_kernel_text_ro(unsigned long address)
-+{
-+	unsigned long end = (unsigned long)__end_rodata_hpage_align;
-+	unsigned long start = (unsigned long)_text;
-+	unsigned int level;
-+
-+	if (!kernel_set_to_readonly || !within(address, start, end))
-+		return 0;
- 	/*
--	 * Once the kernel maps the text as RO (kernel_set_to_readonly is set),
--	 * kernel text mappings for the large page aligned text, rodata sections
--	 * will be always read-only. For the kernel identity mappings covering
--	 * the holes caused by this alignment can be anything that user asks.
-+	 * Don't enforce the !RW mapping for the kernel text mapping, if
-+	 * the current mapping is already using small page mapping.  No
-+	 * need to work hard to preserve large page mappings in this case.
- 	 *
--	 * This will preserve the large page mappings for kernel text/data
--	 * at no extra cost.
-+	 * This also fixes the Linux Xen paravirt guest boot failure caused
-+	 * by unexpected read-only mappings for kernel identity
-+	 * mappings. In this paravirt guest case, the kernel text mapping
-+	 * and the kernel identity mapping share the same page-table pages,
-+	 * so the protections for kernel text and identity mappings have to
-+	 * be the same.
- 	 */
--	if (kernel_set_to_readonly &&
--	    within(address, (unsigned long)_text,
--		   (unsigned long)__end_rodata_hpage_align)) {
--		unsigned int level;
--
--		/*
--		 * Don't enforce the !RW mapping for the kernel text mapping,
--		 * if the current mapping is already using small page mapping.
--		 * No need to work hard to preserve large page mappings in this
--		 * case.
--		 *
--		 * This also fixes the Linux Xen paravirt guest boot failure
--		 * (because of unexpected read-only mappings for kernel identity
--		 * mappings). In this paravirt guest case, the kernel text
--		 * mapping and the kernel identity mapping share the same
--		 * page-table pages. Thus we can't really use different
--		 * protections for the kernel text and identity mappings. Also,
--		 * these shared mappings are made of small page mappings.
--		 * Thus this don't enforce !RW mapping for small page kernel
--		 * text mapping logic will help Linux Xen parvirt guest boot
--		 * as well.
--		 */
--		if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
--			pgprot_val(forbidden) |= _PAGE_RW;
--	}
-+	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
-+		return _PAGE_RW;
-+	return 0;
-+}
-+#else
-+static pgprotval_t protect_kernel_text_ro(unsigned long address)
-+{
-+	return 0;
-+}
- #endif
- 
--	prot = __pgprot(pgprot_val(prot) & ~pgprot_val(forbidden));
-+/*
-+ * Certain areas of memory on x86 require very specific protection flags,
-+ * for example the BIOS area or kernel text. Callers don't always get this
-+ * right (again, ioremap() on BIOS memory is not uncommon) so this function
-+ * checks and fixes these known static required protection bits.
-+ */
-+static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
-+					  unsigned long pfn)
-+{
-+	pgprotval_t forbidden;
-+
-+	/* Operate on the virtual address */
-+	forbidden  = protect_kernel_text(address);
-+	forbidden |= protect_kernel_text_ro(address);
-+
-+	/* Check the PFN directly */
-+	forbidden |= protect_pci_bios(pfn);
-+	forbidden |= protect_rodata(pfn);
- 
--	return prot;
-+	return __pgprot(pgprot_val(prot) & ~forbidden);
+ 	return __pgprot(pgprot_val(prot) & ~forbidden);
  }
+@@ -664,10 +683,10 @@ static int __should_split_large_page(pte
+ 	 * in it results in a different pgprot than the first one of the
+ 	 * requested range. If yes, then the page needs to be split.
+ 	 */
+-	new_prot = static_protections(req_prot, address, pfn);
++	new_prot = static_protections(req_prot, address, pfn, 1);
+ 	pfn = old_pfn;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
  
- /*
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -1277,7 +1296,7 @@ static int __change_page_attr(struct cpa
+ 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+ 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+ 
+-		new_prot = static_protections(new_prot, address, pfn);
++		new_prot = static_protections(new_prot, address, pfn, 1);
+ 
+ 		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
 
 
