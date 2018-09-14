@@ -2,223 +2,216 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC8BECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12421ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E14DE20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14DE20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AFF8720882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bXvSam4b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF8720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeIOCWZ (ORCPT
+        id S1728262AbeIOCXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 22:22:25 -0400
-Received: from mga17.intel.com ([192.55.52.151]:17026 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727790AbeIOCWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 22:22:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 14:06:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
-   d="scan'208";a="90580670"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 14 Sep 2018 14:02:30 -0700
-Date:   Fri, 14 Sep 2018 14:04:33 -0700
-From:   Jacob Pan <jacob.jun.pan@intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        jacob.jun.pan@intel.com
-Subject: Re: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
-Message-ID: <20180914140433.6891a90c@jacob-builder>
-In-Reply-To: <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
-References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
-        <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
-        <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
-        <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
-        <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 14 Sep 2018 22:23:01 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46309 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728211AbeIOCXB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 22:23:01 -0400
+Received: by mail-yb1-f194.google.com with SMTP id y20-v6so5361083ybi.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 14:06:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=riMNSXIG1BZM/WhIt3n4PyZuYhb5kLa4qQ0ikFke5JQ=;
+        b=bXvSam4biS+WEXmOPolrl8eQ322/h2H4irPEq7rtNfQkbtVaSEVLyFr9aaOeHRGvvz
+         zAKlHmzI1WGCWE7rX24PpMgwHDJqyzNe3jGBke3ok77DPk9DaMiKCHXviFoO/g8u/bca
+         FY5BQfZzNS5Tyt66DgdjUCbBOKDVohjFpQ8LxOxdzCC/2PQ4MMmud01DuTD7+1Nd1tN2
+         F4s2IwiYpF6WXz/0++2nufRVYjNsZuUrnDf7H/1hvfN9hgSFaoV6lWf6/GB/Y4KhdvlJ
+         tX10TA1N0XaH14q08eRY/6X7NRrbx5+PxjqL3KyhP6ezunNmYxOXBikMma5pcWIvUbg1
+         t+oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=riMNSXIG1BZM/WhIt3n4PyZuYhb5kLa4qQ0ikFke5JQ=;
+        b=MV632Bv4gBVs6iWY//7xRQFUdrLToET4b9vGPBt6Jg1Go0Jlz/IJbCMZ+fZbp15xKd
+         zltZAto90g0Yn+30SRji9WekhMEkN9lrpx2ke6Knx61+0en5Xf4WWgcTz4uy5GqmO6gc
+         sOOFUOP1pLDEvgqbJpD6IkV5jDnHbug1ePmSrwF4x5CJmZhno5Il40JmrViZMxtrWVH9
+         HeCpSlz+Grm7NHF2jiqAXtTrfVR9xpkXFzC0uO4AZzRlTuffzQHGMA/cyXG8DJ4QhN1p
+         FsU0bx7ez4dHJq1ghkD5+JoKZrDD2I0CEmbLzW4yucNtZz4g553Bb6MXJQ64PhvoereM
+         p3pA==
+X-Gm-Message-State: APzg51AtF62Ksuf6tZco4NqzGXBOoMZ7ra+B5EfzMT2QrFspUbyDFtlX
+        9Xnm3deawQ+QXxzp5U1zrJ9kHiZB3TytpCM/IleWCQ==
+X-Google-Smtp-Source: ANB0VdZ/aGNhl3r3rL4lOIUpjyldYM4gGbZg5oJ7tAyJgvjNZajuaUNee/F9lTYZF/fM/eIRY/VbusfFarQlmtT/lAY=
+X-Received: by 2002:a25:b810:: with SMTP id v16-v6mr6395033ybj.58.1536959209373;
+ Fri, 14 Sep 2018 14:06:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+In-Reply-To: <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Fri, 14 Sep 2018 14:06:13 -0700
+Message-ID: <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        "Banik, Subrata" <subrata.banik@intel.com>, aamir.bohra@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Sep 2018 16:03:01 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> >
+> > The Icelake does not have a community-3, and the memory resources are
+> > laid out in the following order in the ACPI:
+> >
+> > resource-0: community-0 registers
+> > resource-1: community-1 registers
+> > resource-2: community-2 registers
+> > resource-3: community-4 registers
+> > resource-4: community-5 registers
+> >
+> > (EDS also describes the communities in the above order).
+> >
+> > Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+> > the corresponding community registers by getting the resourse number right.
+> > Currently the resourse number is not correct for community 4 and 5, thus
+> > fix that.
+> >
+>
+> Can you share link to the ACPI dump of the tables? (you may get one by
+> running `acpidump -o tables.dat`)
 
-> On 13/09/2018 01:19, Tian, Kevin wrote:
-> >>> This is proposed for architectures which support finer granularity
-> >>> second level translation with no impact on architectures which
-> >>> only support Source ID or the similar granularity.  
-> >>
-> >> Just to be clear, in this paragraph you're only referring to the
-> >> Nested/second-level translation for mdev, which is specific to vt-d
-> >> rev3? Other architectures can still do first-level translation with
-> >> PASID, to support some use-cases of IOMMU aware mediated device
-> >> (assigning mdevs to userspace drivers, for example)  
-> > 
-> > yes. aux domain concept applies only to vt-d rev3 which introduces
-> > scalable mode. Care is taken to avoid breaking usages on existing
-> > architectures.
-> > 
-> > one note. Assigning mdevs to user space alone doesn't imply IOMMU
-> > aware. All existing mdev usages use software or proprietary methods
-> > to isolate DMA. There is only one potential IOMMU aware mdev usage 
-> > which we talked not rely on vt-d rev3 scalable mode - wrap a random 
-> > PCI device into a single mdev instance (no sharing). In that case
-> > mdev inherits RID from parent PCI device, thus is isolated by IOMMU
-> > in RID granular. Our RFC supports this usage too. In VFIO two
-> > usages (PASID- based and RID-based) use same code path, i.e. always
-> > binding domain to the parent device of mdev. But within IOMMU they
-> > go different paths. PASID-based will go to aux-domain as
-> > iommu_enable_aux_domain has been called on that device. RID-based
-> > will follow existing unmanaged domain path, as if it is parent
-> > device assignment.  
-> 
-> For Arm SMMU we're more interested in the PASID-granular case than the
-> RID-granular one. It doesn't necessarily require vt-d rev3 scalable
-> mode, the following example can be implemented with an SMMUv3, since
-> it only needs PASID-granular first-level translation:
-> 
-> We have a PCI function that supports PASID, and can be partitioned
-> into multiple isolated entities, mdevs. Each mdev has an MMIO frame,
-> an MSI vector and a PASID.
-> 
-> Different processes (userspace drivers, not QEMU) each open one mdev.
-> A process controlling one mdev has two ways of doing DMA:
-> 
-> (1) Classically, the process uses a VFIO_TYPE1v2_IOMMU container. This
-> creates an auxiliary domain for the mdev, with PASID #35. The process
-> creates DMA mappings with VFIO_IOMMU_MAP_DMA. VFIO calls iommu_map on
-> the auxiliary domain. The IOMMU driver populates the pgtables
-> associated with PASID #35.
-> 
-> (2) SVA. One way of doing it: the process uses a new
-> "VFIO_TYPE1_SVA_IOMMU" type of container. VFIO binds the process
-> address space to the device, gets PASID #35. Simpler, but not
-> everyone wants to use SVA, especially not userspace drivers which
-> need the highest performance.
-> 
-> 
-> This example only needs to modify first-level translation, and works
-> with SMMUv3. The kernel here could be the host, in which case
-> second-level translation is disabled in the SMMU, or it could be the
-> guest, in which case second-level mappings are created by QEMU and
-> first-level translation is managed by assigning PASID tables to the
-> guest.
-There is a difference in case of guest SVA. VT-d v3 will bind guest
-PASID and guest CR3 instead of the guest PASID table. Then turn on
-nesting. In case of mdev, the second level is obtained from the aux
-domain which was setup for the default PASID. Or in case of PCI device,
-second level is harvested from RID2PASID.
+I don't have that command on my system, but I took
+/sys/firmware/acpi/tables/DSDT from the system and disassembled it
+using Intel disassembler (iasl -d) and here is the relevant portion
+that describes the GPIO controller. The port IDs for communities can
+be seen in the below output (i.e. the PCRB()):
 
-> So (2) would use iommu_sva_bind_device(), 
-We would need something different than that for guest bind, just to show
-the two cases:
+            Device (GPIO)
+            {
+                Name (_HID, "INT3455")  // _HID: Hardware ID
+                Name (_UID, Zero)  // _UID: Unique ID
+                Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+                Name (RBUF, ResourceTemplate ()
+                {
+                    Memory32Fixed (ReadWrite,
+                        0x00000000,         // Address Base
+                        0x00000000,         // Address Length
+                        _Y06)
+                    Memory32Fixed (ReadWrite,
+                        0x00000000,         // Address Base
+                        0x00000000,         // Address Length
+                        _Y07)
+                    Memory32Fixed (ReadWrite,
+                        0x00000000,         // Address Base
+                        0x00000000,         // Address Length
+                        _Y08)
+                    Memory32Fixed (ReadWrite,
+                        0x00000000,         // Address Base
+                        0x00000000,         // Address Length
+                        _Y09)
+                    Memory32Fixed (ReadWrite,
+                        0x00000000,         // Address Base
+                        0x00000000,         // Address Length
+                        _Y0A)
+                    Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+                    {
+                        0x0000000E,
+                    }
+                })
+                Method (_CRS, 0, NotSerialized)  // _CRS: Current
+Resource Settings
+                {
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._BAS,
+BAS0)  // _BAS: Base Address
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._LEN,
+LEN0)  // _LEN: Length
+                    BAS0 = PCRB (0x6E)
+                    LEN0 = 0x00010000
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._BAS,
+BAS1)  // _BAS: Base Address
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._LEN,
+LEN1)  // _LEN: Length
+                    BAS1 = PCRB (0x6D)
+                    LEN1 = 0x00010000
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._BAS,
+BAS2)  // _BAS: Base Address
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._LEN,
+LEN2)  // _LEN: Length
+                    BAS2 = PCRB (0x6C)
+                    LEN2 = 0x00010000
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._BAS,
+BAS4)  // _BAS: Base Address
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._LEN,
+LEN4)  // _LEN: Length
+                    BAS4 = PCRB (0x6A)
+                    LEN4 = 0x00010000
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._BAS,
+BAS5)  // _BAS: Base Address
+                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._LEN,
+LEN5)  // _LEN: Length
+                    BAS5 = PCRB (0x69)
+                    LEN5 = 0x00010000
+                    Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+                }
 
-int iommu_sva_bind_device(struct device *dev, struct mm_struct *mm, int
-*pasid, unsigned long flags, void *drvdata)
+                Method (_STA, 0, NotSerialized)  // _STA: Status
+                {
+                    Return (0x0F)
+                }
+            }
 
-(WIP)
-int sva_bind_gpasid(struct device *dev, struct gpasid_bind_data *data)
-where:
-/**
- * struct gpasid_bind_data - Information about device and guest PASID binding
- * @pasid:	Process address space ID used for the guest mm
- * @addr_width:	Guest address width. Paging mode can also be derived.
- * @gcr3:	Guest CR3 value from guest mm
- */
-struct gpasid_bind_data {
-	__u32 pasid;
-	__u64 gcr3;
-	__u32 addr_width;
-	__u32 flags;
-#define	IOMMU_SVA_GPASID_SRE	BIT(0) /* supervisor request */
-};
-Perhaps there is room to merge with io_mm but the life cycle management
-of guest PASID and host PASID will be different if you rely on mm
-release callback than FD.
+Please let me know if this helps, or if you need more info.
 
-> but (1) needs something
-> else. Aren't auxiliary domains suitable for (1)? Why limit auxiliary
-> domain to second-level or nested translation? It seems silly to use a
-> different API for first-level, since the flow in userspace and VFIO
-> is the same as your second-level case as far as MAP_DMA ioctl goes.
-> The difference is that in your case the auxiliary domain supports an
-> additional operation which binds first-level page tables. An
-> auxiliary domain that only supports first-level wouldn't support this
-> operation, but it can still implement iommu_map/unmap/etc.
-> 
-I think the intention is that when a mdev is created, we don;t
-know whether it will be used for SVA or IOVA. So aux domain is here to
-"hold a spot" for the default PASID such that MAP_DMA calls can work as
-usual, which is second level only. Later, if SVA is used on the mdev
-there will be another PASID allocated for that purpose.
-Do we need to create an aux domain for each PASID? the translation can
-be looked up by the combination of parent dev and pasid.
+Thanks & Best Regards,
 
-> 
-> Another note: if for some reason you did want to allow userspace to
-> choose between first-level or second-level, you could implement the
-> VFIO_TYPE1_NESTING_IOMMU container. It acts like a VFIO_TYPE1v2_IOMMU,
-> but also sets the DOMAIN_ATTR_NESTING on the IOMMU domain. So DMA_MAP
-> ioctl on a NESTING container would populate second-level, and DMA_MAP
-> on a normal container populates first-level. But if you're always
-> going to use second-level by default, the distinction isn't necessary.
-> 
-In case of guest SVA, the second level is always there.
-> 
-> >> Sounds good, I'll drop the private PASID patch if we can figure
-> >> out a solution to the attach/detach_dev problem discussed on patch
-> >> 8/10 
-> > 
-> > Can you elaborate a bit on private PASID usage? what is the
-> > high level flow on it? 
-> > 
-> > Again based on earlier explanation, aux domain is specific to IOMMU
-> > architecture supporting vtd scalable mode-like capability, which
-> > allows separate 2nd/1st level translations per PASID. Need a better
-> > understanding how private PASID is relevant here.  
-> 
-> Private PASIDs are used for doing iommu_map/iommu_unmap on PASIDs
-> (first-level translation):
-> https://www.spinics.net/lists/dri-devel/msg177003.html As above, some
-> people don't want SVA, some can't do it, some may even want a few
-> private address spaces just for their kernel driver. They need a way
-> to allocate PASIDs and do iommu_map/iommu_unmap on them, without
-> binding to a process. I was planning to add the private PASID patch
-> to my SVA series, but in my opinion the feature overlaps with
-> auxiliary domains.
-> 
-> Thanks,
-> Jean
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+Rajat
 
-[Jacob Pan]
+>
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > ---
+> >  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+> > index 630b966ce081..5b4eaf7c90df 100644
+> > --- a/drivers/pinctrl/intel/pinctrl-icelake.c
+> > +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
+> > @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
+> >  static const struct intel_community icllp_communities[] = {
+> >         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
+> >         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
+> > -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
+> > -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
+> > +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
+> > +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
+> >  };
+> >
+> >  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
+> > --
+> > 2.19.0.397.gdd90340f6a-goog
+> >
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
