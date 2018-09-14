@@ -2,99 +2,81 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A95DECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D210FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 536C9206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s0/DKPm+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 536C9206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B8D8E2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:02:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8D8E2146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbeINSQj (ORCPT
+        id S1728131AbeINSRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:16:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45316 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINSQi (ORCPT
+        Fri, 14 Sep 2018 14:17:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51276 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINSRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:16:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RFpv9F2SmIWvJGv2NrwrXdm2+blXCInEbXjfYJPDXFQ=; b=s0/DKPm+o4PHRk67o5PRGF2on
-        +88NynYwyhlEZWDbNdZXRgHzEuJqkMYXDjUnTtnT0va1FtohpqdVsUYLqh3oTqxFXmmKj3GE2qqvd
-        l0emoiMHMJWxc5Q2B48a0bTUOO9T9wV85YmLZngSreVwbYs0q9c+owminjdiHDUkYeG5mRgBcpkT9
-        0ZZoi2jNEsMlfqHpL1wB1P+MUGDmvL2QIUwnQaVoOvnFrhJIbNJaD79T+rZeFFiGdedCG9YeaZA+p
-        DlSFh+gtcW7HIDtVfUi1/Otng/hmbooUfjR4t9NESaUCH9/l8tCmEZstr3Cv2qMCGX9TMWeMbOKIv
-        CA8oifZZA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0njd-0001cP-6z; Fri, 14 Sep 2018 13:02:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1D617202C1A09; Fri, 14 Sep 2018 15:02:07 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 15:02:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, npiggin@gmail.com,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        heiko.carstens@de.ibm.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC][PATCH 01/11] asm-generic/tlb: Provide a comment
-Message-ID: <20180914130207.GD24106@hirez.programming.kicks-ass.net>
-References: <20180913092110.817204997@infradead.org>
- <20180913092811.894806629@infradead.org>
- <20180913123014.0d9321b8@mschwideX1>
- <20180913105738.GW24124@hirez.programming.kicks-ass.net>
- <20180913141827.1776985e@mschwideX1>
- <20180913123937.GX24124@hirez.programming.kicks-ass.net>
- <20180914122824.181d9778@mschwideX1>
+        Fri, 14 Sep 2018 14:17:21 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 656CDCAC;
+        Fri, 14 Sep 2018 13:02:54 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 15:02:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.18 000/197] 4.18.8-stable review
+Message-ID: <20180914130251.GD3555@kroah.com>
+References: <20180913131841.568116777@linuxfoundation.org>
+ <CA+G9fYtUJxWDgH9E1Kdp0HC0i3ANc4-FKLTu8fe3SkDZeHmwLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180914122824.181d9778@mschwideX1>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYtUJxWDgH9E1Kdp0HC0i3ANc4-FKLTu8fe3SkDZeHmwLA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 12:28:24PM +0200, Martin Schwidefsky wrote:
+On Fri, Sep 14, 2018 at 05:57:07PM +0530, Naresh Kamboju wrote:
+> On 13 September 2018 at 18:59, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > This is the start of the stable review cycle for the 4.18.8 release.
+> > There are 197 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat Sep 15 13:17:57 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.18.8-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.18.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64 and i386.
+> 
 
-> I spent some time to get s390 converted to the common mmu_gather code.
-> There is one thing I would like to request, namely the ability to
-> disable the page gather part of mmu_gather. For my prototype patch
-> see below, it defines the negative HAVE_RCU_NO_GATHER_PAGES Kconfig
-> symbol that if defined will remove some parts from common code.
-> Ugly but good enough for the prototype to convey the idea.
-> For the final solution we better use a positive Kconfig symbol and
-> add that to all arch Kconfig files except for s390.
+Wonderful, thanks for testing all of these and letting me know.
 
-In a private thread ealier Linus raised the point that the batching and
-freeing of lots of pages at once is probably better for I$.
-
-> +config HAVE_RCU_NO_GATHER_PAGES
-> +	bool
-
-I have a problem with the name more than anything else; this name
-suggests it is the RCU table freeing that should not batch, which is not
-the case, you want the regular page gather gone, but very much require
-the RCU table gather to batch.
-
-So I would like to propose calling it:
-
-config HAVE_MMU_GATHER_NO_GATHER
-
-Or something along those lines.
-
+greg k-h
