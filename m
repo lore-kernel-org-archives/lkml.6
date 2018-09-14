@@ -2,130 +2,165 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671A0C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35FAFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C27720882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E23E20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="G03ixKR0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C27720882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUA2nLyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E23E20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbeINNwM (ORCPT
+        id S1728095AbeINNwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:52:12 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:33715 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbeINNwK (ORCPT
+        Fri, 14 Sep 2018 09:52:32 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41576 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbeINNwc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:52:10 -0400
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w8E8cGOt014090
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 17:38:17 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w8E8cGOt014090
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1536914297;
-        bh=W9kH1r4dI2qL7+BSgGCVuVls7FtkCeqULWrmPBCnICI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=G03ixKR0iQEcfkdFYbXQrTWLTEDTz6SbmiBTmykUrrBKbP0tSJ6AcRWsMn/kSkyxi
-         5WA3onWW+HzqwFoo+Cm0tllXLYDPR6w3dnNTtDSsVTkba05235mijO1Nulofq7CVvK
-         KAKT5+bBTTk7FIS8F+aaQ4GXbdAy15AJP2thY+LN6kSnSDjEjE0bphrY8lw+p7TyuR
-         7CJPAIU5fQ9Bafd3sN+JJp6qPt3kCqjXmi7boUbDFx84Qp2IGYUEs4IztEuBgiy7vm
-         nEFqVYSfEXd+IhCmEIeGe+ohqdZ29hDWn0V6uiZBPN/YrJOUsHMlB6XwMLBBTvF79/
-         I84onoy/IgSBA==
-X-Nifty-SrcIP: [209.85.221.173]
-Received: by mail-vk1-f173.google.com with SMTP id s17-v6so1378469vke.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:38:17 -0700 (PDT)
-X-Gm-Message-State: APzg51DtPQWSLgx5UbW91uArIJ9hkwGh0xEQmTM3PM5LKMLL1aG4vXG7
-        zMQ+kx1UeDOc5Wv8+xWuCjxT0y1VfcCDQ6pR89Y=
-X-Google-Smtp-Source: ANB0VdZT4asU30aS0cu1bBBps1DwFvN7xqwHApQyokmrhuoiKNXLFK1QuLtfiL1m9a97uGdC5hSUf55riehBbJrjc/g=
-X-Received: by 2002:a1f:328a:: with SMTP id y132-v6mr2752080vky.84.1536914296319;
- Fri, 14 Sep 2018 01:38:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 01:37:35
- -0700 (PDT)
-In-Reply-To: <20180913102946.41a43d88@xhacker.debian>
-References: <CAK7LNASWfncdHRkRs=tq=TRaM+KUbb8bcMHMs8LiCgZzuFKCAg@mail.gmail.com>
- <20180913102946.41a43d88@xhacker.debian>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 14 Sep 2018 17:37:35 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR7ahOdnp1CGoKkpN6gg3aKr11vPR-GN9mv=VrwRCt--A@mail.gmail.com>
-Message-ID: <CAK7LNAR7ahOdnp1CGoKkpN6gg3aKr11vPR-GN9mv=VrwRCt--A@mail.gmail.com>
-Subject: Re: [Question] vendor-specific cpu enable-method
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Olof Johansson <olof@lixom.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 14 Sep 2018 09:52:32 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h79-v6so3974871pfk.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8sjNGCK0zN8Sat8B+C2dpluIvjVDRmCNhIkEV3iqyxk=;
+        b=eUA2nLyGRnjctydMlUwUjC3Zxsc9DA/J82h+uIGSi8+vWSqmJzyxPAKSxM7bMEnzVx
+         fo63TbdMJV6SK1XpOEl6tZcYIRV27B+Mr+7vi4jcILUDLv58yf2sox7cYv9pe9tAlqZf
+         yWkBCl7erYbgqzh9BsfPxeARsAUhX+mkhWxcM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8sjNGCK0zN8Sat8B+C2dpluIvjVDRmCNhIkEV3iqyxk=;
+        b=Ddq1f5wbuDLISZDfh2HGzk9CkmGV+SH7dYp9K8WEkjIgLu+STvhIBYnlh01iC/uxY8
+         cL4CcOl67vbnglwidzhkWZf/cTKIEnIMugr6enWK6NLW2FJyZVrOgxoikS2ccqx5ss88
+         RskupotbSm4gfvzhfrcDKxD72/ffcJloPkEh7vjVcUioYOVLvOIqzbDC/LfLTBZPTDqf
+         ARavl0ftSW4c080OTils627VqM4xek2yJs066I2dvVXAkAjzQbvtdY06RRUvM760oo9h
+         slRWCN5h+belhDkgycjLdz3MIDCm8ROMX9CoCBpnJ3I+G8XxXS2Z+d3nwJ/BqxziVbSX
+         jmcw==
+X-Gm-Message-State: APzg51BCB0gb7w7im2Ip388dXygmZvPoneFRhO/6Z9EhokbBsfueJkam
+        MrkCFQ/ocGK59DYQr1Vd05xg/g==
+X-Google-Smtp-Source: ANB0VdYSQefJPnfjKiiNTKhOzmrG9jTnmR1DZi4aEJwRTgwHs2CaawPWyDZmWLzxOiDKCa+oIbAfSg==
+X-Received: by 2002:a63:6746:: with SMTP id b67-v6mr10773208pgc.330.1536914345455;
+        Fri, 14 Sep 2018 01:39:05 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.60.83])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm11664289pfg.25.2018.09.14.01.38.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 14 Sep 2018 01:39:04 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH 0/3] System call table generation support
+Date:   Fri, 14 Sep 2018 14:08:31 +0530
+Message-Id: <1536914314-5026-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+The purpose of this patch series is:
+1. We can easily add/modify/delete system call by changing entry 
+in syscall.tbl file. No need to manually edit many files.
 
+2. It is easy to unify the system call implementation across all 
+the architectures. 
 
-2018-09-13 11:29 GMT+09:00 Jisheng Zhang <Jisheng.Zhang@synaptics.com>:
-> On Thu, 13 Sep 2018 10:23:35 +0900 Masahiro Yamada wrote:
->
->> Hello.
->>
->>
->> Sorry if I am asking a stupid question.
->>
->>
->> For arm64, there are only 2 cpu methods, psci and spin-table.
->>
->> Why do we still allow vendor-specific methods upstreamed
->> for arm 32bit ports?
->>
->> To me, it looks like SoC vendors continue inventing
->> different (but similar) ways to do the same thing.
->>
->> It is a historical reason for old platforms.
->>
->> However, if I look at Documentation/devicetree/bindings/arm/cpus.txt
->> enable-method properties are still increasing.
->>
->>
->> psci is available in arch/arm/kernel/psci_smp.c,
->> but not all SoCs support the security extension.
->> Is there a simpler one like spin-table available for arm32?
->
-> Per my understanding, spin-table is similar as the "pen" based
-> solution in arm32, both can't reliably support kexec, suspend etc...
+The system call tables are in different format in all architecture 
+and it will be difficult to manually add or modify the system calls
+in the respective files manually. To make it easy by keeping a script 
+and which'll generate the header file and syscall table file so this 
+change will unify them across all architectures.
 
-Right.  spin-table is based on pen-based implementation,
-and just a back-up plan in case psci is not available for some reasons.
+syscall.tbl contains the list of available system calls along with 
+system call number and corresponding entry point. Add a new system 
+call in this architecture will be possible by adding new entry in 
+the syscall.tbl file.
 
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
+        - Compat entry name, if required.
 
->>
->> If we force generic methods like psci or spin-table
->> for new platforms, we can stop proliferated smp code.
->> (Of course, we are just shifting the complexity
->> from the kernel to firmware.)
->
-> psci is good but not all SoCs support secure extensions. spin-table
-> can't support kexec, suspend. Except prefer psci for news SoCs
-> with secure extensions, no better solutions AFAIK.
+ARM, s390 and x86 architecuture does exist the similar support. I 
+leverage their implementation to come up with a generic solution.
 
-OK, psci is preferred if it is available.
+I have done the same support for work for alpha, m68k, microblaze, 
+ia64, powerpc, parisc, sh, sparc, and xtensa. But I started sending 
+the patch for one architecuture for review. Below mentioned git
+repository contains more details.
+Git repo:- https://github.com/frzkhn/system_call_table_generator/
 
-Otherwise, ... vendor specific code.
+Finally, this is the ground work for solving the Y2038 issue. We 
+need to add/change two dozen of system calls to solve Y2038 issue. 
+So this patch series will help to easily modify from existing 
+system call to Y2038 compatible system calls.
 
+I started working system call table generation on 4.17-rc1. I used 
+marcin's script - https://github.com/hrw/syscalls-table to generate 
+the syscall.tbl file. And this will be the input to the system call 
+table generation script. But there are couple system call got add 
+in the latest rc release. If run Marcin's script on latest release,
+It will generate a new syscall.tbl. But I still use the old file - 
+syscall.tbl and once all review got over I'll update syscall.tbl 
+alone w.r.to the tip of the kernel. The impact of this thing, few 
+of the system call won't work. 
 
-Thanks.
+Firoz Khan (3):
+  mips: Add __NR_syscalls macro in uapi/asm/unistd.h
+  mips: Add system call table generation support
+  mips: uapi header and system call table file generation
 
+ arch/mips/Makefile                        |    3 +
+ arch/mips/include/asm/Kbuild              |    4 +
+ arch/mips/include/uapi/asm/Kbuild         |    3 +
+ arch/mips/include/uapi/asm/unistd.h       | 1053 +----------------------------
+ arch/mips/kernel/scall32-o32.S            |  385 +----------
+ arch/mips/kernel/scall64-64.S             |  334 +--------
+ arch/mips/kernel/scall64-n32.S            |  337 +--------
+ arch/mips/kernel/scall64-o32.S            |  374 +---------
+ arch/mips/kernel/syscall_table_32_o32.S   |    8 +
+ arch/mips/kernel/syscall_table_64_64.S    |    9 +
+ arch/mips/kernel/syscall_table_64_n32.S   |    8 +
+ arch/mips/kernel/syscall_table_64_o32.S   |    9 +
+ arch/mips/kernel/syscalls/Makefile        |   62 ++
+ arch/mips/kernel/syscalls/README.md       |   16 +
+ arch/mips/kernel/syscalls/syscall_32.tbl  |  375 ++++++++++
+ arch/mips/kernel/syscalls/syscall_64.tbl  |  335 +++++++++
+ arch/mips/kernel/syscalls/syscall_n32.tbl |  339 ++++++++++
+ arch/mips/kernel/syscalls/syscallhdr.sh   |   37 +
+ arch/mips/kernel/syscalls/syscalltbl.sh   |   44 ++
+ 19 files changed, 1268 insertions(+), 2467 deletions(-)
+ create mode 100644 arch/mips/kernel/syscall_table_32_o32.S
+ create mode 100644 arch/mips/kernel/syscall_table_64_64.S
+ create mode 100644 arch/mips/kernel/syscall_table_64_n32.S
+ create mode 100644 arch/mips/kernel/syscall_table_64_o32.S
+ create mode 100644 arch/mips/kernel/syscalls/Makefile
+ create mode 100644 arch/mips/kernel/syscalls/README.md
+ create mode 100644 arch/mips/kernel/syscalls/syscall_32.tbl
+ create mode 100644 arch/mips/kernel/syscalls/syscall_64.tbl
+ create mode 100644 arch/mips/kernel/syscalls/syscall_n32.tbl
+ create mode 100644 arch/mips/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/mips/kernel/syscalls/syscalltbl.sh
 
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
+
