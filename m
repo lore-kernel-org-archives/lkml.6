@@ -5,134 +5,459 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242F4C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE43C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D898F20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:44:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D898F20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E31320861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:45:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E31320861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728366AbeINN5s (ORCPT
+        id S1728183AbeINN6d convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:57:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58226 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeINN5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:57:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C75B18A;
-        Fri, 14 Sep 2018 01:44:20 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.Emea.Arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 469933F703;
-        Fri, 14 Sep 2018 01:44:19 -0700 (PDT)
-Subject: Re: [RESEND PATCH v4 5/6] arm64/mm: Populate the swapper_pg_dir by
- fixmap.
-To:     linux-arm-kernel@lists.infradead.org
-References: <20180822095432.12125-1-yaojun8558363@gmail.com>
- <20180822095432.12125-6-yaojun8558363@gmail.com>
- <2bf9b9d1-271c-f85e-5a98-0eb74f2fedd9@arm.com> <20180910114153.GA10734@toy>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org
-From:   James Morse <james.morse@arm.com>
-Message-ID: <4a4303c6-36c3-9460-a167-d576e8a6351b@arm.com>
-Date:   Fri, 14 Sep 2018 09:44:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180910114153.GA10734@toy>
-Content-Type: text/plain; charset=utf-8
+        Fri, 14 Sep 2018 09:58:33 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:30134 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeINN6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:58:33 -0400
+X-IronPort-AV: E=Sophos;i="5.53,372,1531785600"; 
+   d="scan'208";a="79048430"
+From:   Paul Durrant <Paul.Durrant@citrix.com>
+To:     'Dongli Zhang' <dongli.zhang@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "jgross@suse.com" <jgross@suse.com>, Wei Liu <wei.liu2@citrix.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Roger Pau Monne <roger.pau@citrix.com>,
+        "srinivas.eeda@oracle.com" <srinivas.eeda@oracle.com>
+Subject: RE: [PATCH 2/6] xenbus: implement the xenwatch multithreading
+ framework
+Thread-Topic: [PATCH 2/6] xenbus: implement the xenwatch multithreading
+ framework
+Thread-Index: AQHUS/1MyUCkUcvcI0KRhr1VM7NglKTvdJww
+Date:   Fri, 14 Sep 2018 08:45:02 +0000
+Message-ID: <b91c5619ab594a5c977a4f8e7f03096e@AMSPEX02CL03.citrite.net>
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-3-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1536910456-13337-3-git-send-email-dongli.zhang@oracle.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jun,
-
-On 10/09/18 12:41, Jun Yao wrote:
-> On Fri, Sep 07, 2018 at 10:58:22AM +0100, James Morse wrote:
->> On 22/08/18 10:54, Jun Yao wrote:
->>>  	WRITE_ONCE(*pmdp, pmd);
->>>  	dsb(ishst);
->>>  }
->>> @@ -480,6 +511,19 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
->>>  
->>>  static inline void set_pud(pud_t *pudp, pud_t pud)
->>>  {
->>> +#ifdef __PAGETABLE_PUD_FOLDED
->>> +	if (in_swapper_pgdir(pudp)) {
->>> +		pud_t *fixmap_pudp;
->>> +
->>> +		spin_lock(&swapper_pgdir_lock);
->>> +		fixmap_pudp = (pud_t *)pgd_set_fixmap(__pa(pudp));
->>
->> This is a bit subtle: are you using the pgd fixmap entry because the path from
->> map_mem() uses the other three?
->>
->> Using the pgd fix slot for a pud looks a bit strange to me, but its arguably a
->> side-effect of the folding.
+> -----Original Message-----
+> From: Dongli Zhang [mailto:dongli.zhang@oracle.com]
+> Sent: 14 September 2018 08:34
+> To: xen-devel@lists.xenproject.org; linux-kernel@vger.kernel.org
+> Cc: boris.ostrovsky@oracle.com; jgross@suse.com; Paul Durrant
+> <Paul.Durrant@citrix.com>; Wei Liu <wei.liu2@citrix.com>;
+> konrad.wilk@oracle.com; Roger Pau Monne <roger.pau@citrix.com>;
+> srinivas.eeda@oracle.com
+> Subject: [PATCH 2/6] xenbus: implement the xenwatch multithreading
+> framework
 > 
-> Yes, it's a side-effect of the folding.
+> This is the 2nd patch of a (6-patch) patch set.
 > 
-> When the CONFIG_PGTABLE_LEVELS == 3, the pud is folded into the pgd. It
-> means that the pgd is never none and it is also a pud. That's why I use
-> the pgd fixmap entry.
+> This patch implements the xenwatch multithreading framework to create or
+> destroy the per-domU xenwatch thread. The xenwatch thread is created or
+> destroyed during xenbus device probing or removing (that is,
+> xenbus_dev_probe() or xenbus_dev_remove()) if the corresponding pv driver
+> has xenwatch multithreading feature enabled. As there is only one single
+> per-domU xenwatch thread for each domid, probing the xenbus device for the
+> same domid again would not create the thread for the same domid again, but
+> only increment the reference count of the thread's mtwatch domain. When a
+> xenbus device is removed, the reference count is decremented. The per-domU
+> xenwatch thread is destroyed when the reference count of its mtwatch
+> domain
+> is zero, that is, al xenbus devices (whose mtwatch feature is enabled) of
+> such mtwatch domain are removed.
 > 
-> Maybe write this more clearly:
+> Therefore, a domid has its own per-domU xenwatch thread only when it is
+> attached with dom0 backend xenbus device whose pv driver has the feature
+> enabled. The domid would not have its own xenwatch thread when it is not
+> running any mtwatch-enabled xenbus device.
 > 
-> static inline void set_pud(pud_t *pudp, pud_t pud)
-> {
-> #ifdef __PAGETABLE_PUD_FOLDED
-> 	pgd_t *pgdp = (pgd_t *)pudp;
+> When a watch (with xenwatch multithreading enabled) is unregistered, we
+> will generally traverse all mtwatch domains to remove all inflight pending
+> events fired by such watch. However, one optimization in this patch is we
+> only need to remove pending events from a specific mtwatch domain when the
+> watch is registered for a specific domid, that is, when its owner_id field
+> is non-zero.
 > 
-> 	if (...) {
-> 		pgd_t *fixmap_pgdp;
-> 		pud_t *fixmap_pudp;
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  drivers/xen/xenbus/xenbus_probe.c |   6 +
+>  drivers/xen/xenbus/xenbus_xs.c    | 273
+> ++++++++++++++++++++++++++++++++++++++
+>  include/xen/xenbus.h              |   3 +
+>  3 files changed, 282 insertions(+)
 > 
-> 		spin_lock(...);
-> 		fixmap_pgdp = pgd_set_fixmap(__pa(pgdp));
-> 		fixmap_pudp = pud_set_fixmap_offset(fixmap_pgdp, 0UL);
-
-Using two fixmap entries is excessive, this is behind __PAGETABLE_PUD_FOLDED, so
-we should know what is going on.
-
-(The folding confuses me every time I look at it)
-
-
-> Do you have any way to make it look more reasonable?
-
-I'm just reacting to a function with 'pud' in the name, that takes two pud's as
-arguments, using the pgd fixmap slot. I think its fine to leave it like this, as
-in_swapper_pg_dir() has told us this is the pgd we're dealing with, it just
-looks funny.
-
-
->> I see this called 68 times during boot on a 64K/42bit-VA, 65 of which appear to
->> be during paging_init(). What do you think to keeping paging_init()s use of the
->> pgd fixmap for swapper_pg_dir, deliberately to skip the in_swapper_pgdir() test
->> during paging_init()?
+> diff --git a/drivers/xen/xenbus/xenbus_probe.c
+> b/drivers/xen/xenbus/xenbus_probe.c
+> index 5b47188..5755596 100644
+> --- a/drivers/xen/xenbus/xenbus_probe.c
+> +++ b/drivers/xen/xenbus/xenbus_probe.c
+> @@ -236,6 +236,9 @@ int xenbus_dev_probe(struct device *_dev)
+>  	if (err)
+>  		goto fail;
 > 
-> I think the set_pud() should not be called on a 64K/42bit-VA. As only
-> the level 2 and level 3 page tables are in use. It means that the pmd is
-> folded into the pud and the pud is never none. So the set_pud() should
-> not be called.
+> +	if (xen_mtwatch && drv->use_mtwatch)
+> +		mtwatch_create_domain(dev->otherend_id);
 
-(yes, sorry, it was just the one I picked on!)
+mtwatch_get_domain()? (Since you have mtwatch_put_domain() below).
 
-
-> I think a variable can be introduced to indicate whether paging_init()
-> has been completed. And decide whether or not to skip the
-> in_swapper_pgdir() base on the value of it.
+> +
+>  	err = watch_otherend(dev);
+>  	if (err) {
+>  		dev_warn(&dev->dev, "watch_otherend on %s failed.\n",
+> @@ -263,6 +266,9 @@ int xenbus_dev_remove(struct device *_dev)
+>  	if (drv->remove)
+>  		drv->remove(dev);
 > 
-> I don't know if this is reasonable. What do you think?
+> +	if (xen_mtwatch && drv->use_mtwatch)
+> +		mtwatch_put_domain(dev->otherend_id);
+> +
+>  	free_otherend_details(dev);
+> 
+>  	xenbus_switch_state(dev, XenbusStateClosed);
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c
+> b/drivers/xen/xenbus/xenbus_xs.c
+> index 3f137d2..741dc54 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -108,6 +108,201 @@ static __init int xen_parse_mtwatch(char *arg)
+>  }
+>  early_param("xen_mtwatch", xen_parse_mtwatch);
+> 
+> +struct mtwatch_domain *mtwatch_find_domain(domid_t domid)
+> +{
+> +	struct mtwatch_domain *domain;
+> +	int hash = MTWATCH_HASH(domid);
+> +	struct hlist_head *hash_head = &mtwatch_info->domain_hash[hash];
+> +
+> +	hlist_for_each_entry_rcu(domain, hash_head, hash_node) {
+> +		if (domain->domid == domid)
+> +			return domain;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +/* per-domU thread for xenwatch multithreading. */
+> +static int mtwatch_thread(void *arg)
+> +{
+> +	struct mtwatch_domain *domain = (struct mtwatch_domain *) arg;
+> +	struct list_head *ent;
+> +	struct xs_watch_event *event;
+> +
+> +	domain->pid = current->pid;
+> +
+> +	for (;;) {
+> +		wait_event_interruptible(domain->events_wq,
+> +					 !list_empty(&domain->events) ||
+> +					 domain->state == MTWATCH_DOMAIN_DOWN);
+> +
+> +		if (domain->state == MTWATCH_DOMAIN_DOWN &&
+> +		    list_empty(&domain->events))
+> +			break;
+> +
+> +		mutex_lock(&domain->domain_mutex);
+> +
+> +		spin_lock(&domain->events_lock);
+> +		ent = domain->events.next;
+> +		if (ent != &domain->events)
+> +			list_del(ent);
+> +		spin_unlock(&domain->events_lock);
+> +
+> +		if (ent != &domain->events) {
+> +			event = list_entry(ent, struct xs_watch_event, list);
+> +			event->handle->callback(event->handle, event->path,
+> +						event->token);
+> +			kfree(event);
+> +		}
+> +
+> +		mutex_unlock(&domain->domain_mutex);
+> +	}
+> +
+> +	/*
+> +	 * domain->state is already set to MTWATCH_DOMAIN_DOWN (to avoid
+> +	 * new event to domain->events) when above for loop breaks, so
+> +	 * that there is no requirement to cleanup domain->events again.
+> +	 */
+> +
+> +	spin_lock(&mtwatch_info->domain_lock);
+> +	list_del_rcu(&domain->list_node);
+> +	spin_unlock(&mtwatch_info->domain_lock);
+> +
+> +	spin_lock(&mtwatch_info->purge_lock);
+> +	list_add(&domain->purge_node, &mtwatch_info->purge_list);
+> +	spin_unlock(&mtwatch_info->purge_lock);
+> +
+> +	schedule_work(&mtwatch_info->purge_work);
+> +
+> +	return 0;
+> +}
+> +
+> +static void delayed_destroy_domain(struct rcu_head *head)
+> +{
+> +	struct mtwatch_domain *domain;
+> +
+> +	domain = container_of(head, struct mtwatch_domain, rcu);
+> +	kfree(domain);
+> +}
+> +
+> +static void xen_mtwatch_purge_domain(struct work_struct *work)
+> +{
+> +	struct mtwatch_domain *domain;
+> +	struct list_head *node;
+> +
+> +	while (!list_empty(&mtwatch_info->purge_list)) {
+> +
+> +		spin_lock(&mtwatch_info->purge_lock);
+> +		node = mtwatch_info->purge_list.next;
+> +		if (node != &mtwatch_info->purge_list)
+> +			list_del(node);
+> +		spin_unlock(&mtwatch_info->purge_lock);
+> +
+> +		if (node != &mtwatch_info->purge_list) {
+> +			domain = list_entry(node, struct mtwatch_domain,
+> +					    purge_node);
+> +			kthread_stop(domain->task);
+> +
+> +			call_rcu(&domain->rcu, delayed_destroy_domain);
+> +		}
+> +	}
+> +}
+> +
+> +/* Running in the context of default xenwatch kthread. */
+> +void mtwatch_create_domain(domid_t domid)
+> +{
+> +	struct mtwatch_domain *domain;
+> +
+> +	if (!domid) {
+> +		pr_err("Default xenwatch thread is for dom0\n");
+> +		return;
+> +	}
+> +
+> +	spin_lock(&mtwatch_info->domain_lock);
+> +
+> +	domain = mtwatch_find_domain(domid);
+> +	if (domain) {
+> +		atomic_inc(&domain->refcnt);
+> +		spin_unlock(&mtwatch_info->domain_lock);
+> +		return;
+> +	}
+> +
+> +	domain = kzalloc(sizeof(*domain), GFP_ATOMIC);
+> +	if (!domain) {
+> +		spin_unlock(&mtwatch_info->domain_lock);
+> +		pr_err("Failed to allocate memory for mtwatch thread %d\n",
+> +		       domid);
+> +		return;
+> +	}
+> +
+> +	domain->domid = domid;
+> +	atomic_set(&domain->refcnt, 1);
+> +	mutex_init(&domain->domain_mutex);
+> +	INIT_LIST_HEAD(&domain->purge_node);
+> +
+> +	init_waitqueue_head(&domain->events_wq);
+> +	spin_lock_init(&domain->events_lock);
+> +	INIT_LIST_HEAD(&domain->events);
+> +
+> +	list_add_tail_rcu(&domain->list_node, &mtwatch_info->domain_list);
+> +
+> +	hlist_add_head_rcu(&domain->hash_node,
+> +			   &mtwatch_info->domain_hash[MTWATCH_HASH(domid)]);
+> +
+> +	spin_unlock(&mtwatch_info->domain_lock);
+> +
+> +	domain->task = kthread_run(mtwatch_thread, domain,
+> +				   "xen-mtwatch-%d", domid);
+> +
+> +	if (!domain->task) {
+> +		pr_err("mtwatch kthread creation is failed\n");
+> +		domain->state = MTWATCH_DOMAIN_DOWN;
+> +
+> +		return;
+> +	}
+> +
+> +	domain->state = MTWATCH_DOMAIN_UP;
+> +}
+> +
+> +/* Running in the context of default xenwatch kthread. */
+> +void mtwatch_put_domain(domid_t domid)
+> +{
+> +	struct mtwatch_domain *domain;
+> +
+> +	spin_lock(&mtwatch_info->domain_lock);
+> +
+> +	domain = mtwatch_find_domain(domid);
+> +	if (!domain) {
+> +		spin_unlock(&mtwatch_info->domain_lock);
+> +		pr_err("mtwatch kthread for domid=%d does not exist\n",
+> +		       domid);
+> +		return;
+> +	}
+> +
+> +	if (atomic_dec_and_test(&domain->refcnt)) {
+> +
+> +		hlist_del_rcu(&domain->hash_node);
+> +
+> +		if (!domain->task) {
+> +			/*
+> +			 * As the task is failed to initialize during
+> +			 * mtwatch_create_domain(), we do not need to wait
+> +			 * for the kernel thread to complete.
+> +			 */
+> +			list_del_rcu(&domain->list_node);
+> +			call_rcu(&domain->rcu, delayed_destroy_domain);
+> +		} else {
+> +			spin_lock(&domain->events_lock);
+> +			domain->state = MTWATCH_DOMAIN_DOWN;
+> +			spin_unlock(&domain->events_lock);
+> +
+> +			wake_up(&domain->events_wq);
+> +		}
+> +	}
+> +
+> +	spin_unlock(&mtwatch_info->domain_lock);
+> +}
+> +
+>  static void xs_suspend_enter(void)
+>  {
+>  	spin_lock(&xs_state_lock);
+> @@ -793,6 +988,80 @@ int register_xenbus_watch(struct xenbus_watch *watch)
+>  }
+>  EXPORT_SYMBOL_GPL(register_xenbus_watch);
+> 
+> +static void __unregister_single_mtwatch(struct xenbus_watch *watch,
+> +					struct mtwatch_domain *domain)
+> +{
+> +	struct xs_watch_event *event, *tmp;
+> +
+> +	if (current->pid != domain->pid)
+> +		mutex_lock(&domain->domain_mutex);
 
-I think we can just trick in_swapper_pgdir(), this code only runs once, and its
-already in a very strange environment.
+Since you avoid the lock here, what's to stop another thread with a different pid now racing with this?
 
+  Paul
 
-Thanks,
+> +
+> +	spin_lock(&domain->events_lock);
+> +	list_for_each_entry_safe(event, tmp,
+> +				 &domain->events, list) {
+> +		if (event->handle != watch)
+> +			continue;
+> +		list_del(&event->list);
+> +		kfree(event);
+> +	}
+> +	spin_unlock(&domain->events_lock);
+> +
+> +	if (current->pid != domain->pid)
+> +		mutex_unlock(&domain->domain_mutex);
+> +}
+> +
+> +static void unregister_single_mtwatch(struct xenbus_watch *watch,
+> +				      domid_t domid)
+> +{
+> +	struct mtwatch_domain *domain;
+> +	bool found = false;
+> +
+> +	rcu_read_lock();
+> +
+> +	list_for_each_entry_rcu(domain, &mtwatch_info->domain_list,
+> +				list_node) {
+> +		if (domain->domid == domid) {
+> +			found = true;
+> +			__unregister_single_mtwatch(watch, domain);
+> +		}
+> +	}
+> +
+> +	WARN_ON_ONCE(unlikely(!found));
+> +
+> +	rcu_read_unlock();
+> +}
+> +
+> +static void unregister_all_mtwatch(struct xenbus_watch *watch)
+> +{
+> +	struct mtwatch_domain *domain;
+> +
+> +	rcu_read_lock();
+> +
+> +	list_for_each_entry_rcu(domain, &mtwatch_info->domain_list,
+> +				list_node) {
+> +		__unregister_single_mtwatch(watch, domain);
+> +	}
+> +
+> +	rcu_read_unlock();
+> +}
+> +
+> +static void unregister_mtwatch(struct xenbus_watch *watch)
+> +{
+> +	/*
+> +	 * Generally, to unregister a watch. we need to traverse all
+> +	 * mtwatch domains to remove all inflight pending watch events for
+> +	 * such watch.
+> +	 *
+> +	 * One exception is we only need to remove pending watch events
+> +	 * from a single mtwatch domain when the watch is registered for a
+> +	 * specific domid.
+> +	 */
+> +	if (watch->owner_id)
+> +		unregister_single_mtwatch(watch, watch->owner_id);
+> +	else
+> +		unregister_all_mtwatch(watch);
+> +}
+> +
+>  void unregister_xenbus_watch(struct xenbus_watch *watch)
+>  {
+>  	struct xs_watch_event *event, *tmp;
+> @@ -831,6 +1100,9 @@ void unregister_xenbus_watch(struct xenbus_watch
+> *watch)
+> 
+>  	if (current->pid != xenwatch_pid)
+>  		mutex_unlock(&xenwatch_mutex);
+> +
+> +	if (xen_mtwatch && watch->get_domid)
+> +		unregister_mtwatch(watch);
+>  }
+>  EXPORT_SYMBOL_GPL(unregister_xenbus_watch);
+> 
+> @@ -954,6 +1226,7 @@ int xs_init(void)
+> 
+>  		spin_lock_init(&mtwatch_info->purge_lock);
+>  		INIT_LIST_HEAD(&mtwatch_info->purge_list);
+> +		INIT_WORK(&mtwatch_info->purge_work,
+> xen_mtwatch_purge_domain);
+> 
+>  		xen_mtwatch = true;
+> 
+> diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> index e807114..4ac2cee 100644
+> --- a/include/xen/xenbus.h
+> +++ b/include/xen/xenbus.h
+> @@ -241,6 +241,9 @@ extern const struct file_operations xen_xenbus_fops;
+>  extern struct xenstore_domain_interface *xen_store_interface;
+>  extern int xen_store_evtchn;
+> 
+> +void mtwatch_create_domain(domid_t domid);
+> +void mtwatch_put_domain(domid_t domid);
+> +
+>  extern bool xen_mtwatch;
+> 
+>  #define MTWATCH_HASH_SIZE 256
+> --
+> 2.7.4
 
-James
