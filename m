@@ -2,144 +2,100 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2C1ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C360ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE522083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE522083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 61AC32083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:44:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AC32083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbeIOB7j (ORCPT
+        id S1728170AbeIOCAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:59:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:8694 "EHLO mga06.intel.com"
+        Fri, 14 Sep 2018 22:00:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40924 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbeIOB7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:59:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 13:43:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
-   d="scan'208";a="70937186"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Sep 2018 13:43:32 -0700
-Message-ID: <1536957543.12990.9.camel@intel.com>
-Subject: Re: [RFC PATCH v3 12/24] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Jann Horn <jannh@google.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromium.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Date:   Fri, 14 Sep 2018 13:39:03 -0700
-In-Reply-To: <20180831162920.GQ24124@hirez.programming.kicks-ass.net>
-References: <1535660494.28258.36.camel@intel.com>
-         <CAG48ez0yOuDhqxB779aO3Kss3gQ3cZTJL1VphDXQm+_M9jFPvQ@mail.gmail.com>
-         <1535662366.28781.6.camel@intel.com>
-         <CAG48ez0mkr95_TbLQnDGuGUd6G+eJVLZ-fEjDkwA6dSrm+9tLw@mail.gmail.com>
-         <CAG48ez3S3+DzAyo_SnoUW1GO0Cpd_x0A83MOx2p_MkogoAatLQ@mail.gmail.com>
-         <20180831095300.GF24124@hirez.programming.kicks-ass.net>
-         <1535726032.32537.0.camel@intel.com>
-         <f5a36e32-7c5f-91fe-9e98-fb44867fda11@linux.intel.com>
-         <1535730524.501.13.camel@intel.com>
-         <6d31bd30-6d5b-bbde-1e97-1d8255eff76d@linux.intel.com>
-         <20180831162920.GQ24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727128AbeIOCAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 22:00:22 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 29471308FB98;
+        Fri, 14 Sep 2018 20:44:16 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-122-111.rdu2.redhat.com [10.10.122.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B86729959A;
+        Fri, 14 Sep 2018 20:44:10 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Sean Paul <seanpaul@chromium.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Grab runtime PM ref in nv50_mstc_detect()
+Date:   Fri, 14 Sep 2018 16:44:03 -0400
+Message-Id: <20180914204407.1214-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 14 Sep 2018 20:44:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-08-31 at 18:29 +0200, Peter Zijlstra wrote:
-> On Fri, Aug 31, 2018 at 08:58:39AM -0700, Dave Hansen wrote:
-> > 
-> > On 08/31/2018 08:48 AM, Yu-cheng Yu wrote:
-> > > 
-> > > To trigger a race in ptep_set_wrprotect(), we need to fork from one of
-> > > three pthread siblings.
-> > > 
-> > > Or do we measure only how much this affects fork?
-> > > If there is no racing, the effect should be minimal.
-> > We don't need a race.
-> > 
-> > I think the cmpxchg will be slower, even without a race, than the code
-> > that was there before.  The cmpxchg is a simple, straightforward
-> > solution, but we're putting it in place of a plain memory write, which
-> > is suboptimal.
-> Note quite, the clear_bit() is LOCK prefixed.
+While we currently grab a runtime PM ref in nouveau's normal connector
+detection code, we apparently don't do this for MST. This means if we're
+in a scenario where the GPU is suspended and userspace attempts to do a
+connector probe on an MSTC connector, the probe will fail entirely due
+to the DP aux channel and GPU not being woken up:
 
-With the updated ptep_set_wrprotect() below, I did MADV_WILLNEED to a shadow
-stack of 8 MB, then 10,000 fork()'s, but could not prove it is more or less
-efficient than the other.  So can we say this is probably fine in terms of
-efficiency?
+[  316.633489] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+[  316.635713] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+[  316.637785] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+...
 
-Yu-cheng
+So, grab a runtime PM ref here.
 
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-
-
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1203,7 +1203,36 @@ static inline pte_t ptep_get_and_clear_full(struct
-mm_struct *mm,
- static inline void ptep_set_wrprotect(struct mm_struct *mm,
- 				      unsigned long addr, pte_t *ptep)
- {
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+	pte_t new_pte, pte = READ_ONCE(*ptep);
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index c94b7f42d62d..9da0bdfe1e1c 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -938,9 +938,22 @@ static enum drm_connector_status
+ nv50_mstc_detect(struct drm_connector *connector, bool force)
+ {
+ 	struct nv50_mstc *mstc = nv50_mstc(connector);
++	enum drm_connector_status conn_status;
++	int ret;
 +
-+	/*
-+	 * Some processors can start a write, but end up
-+	 * seeing a read-only PTE by the time they get
-+	 * to the Dirty bit.  In this case, they will
-+	 * set the Dirty bit, leaving a read-only, Dirty
-+	 * PTE which looks like a Shadow Stack PTE.
-+	 *
-+	 * However, this behavior has been improved and
-+	 * will not occur on processors supporting
-+	 * Shadow Stacks.  Without this guarantee, a
-+	 * transition to a non-present PTE and flush the
-+	 * TLB would be needed.
-+	 *
-+	 * When changing a writable PTE to read-only and
-+	 * if the PTE has _PAGE_DIRTY_HW set, we move
-+	 * that bit to _PAGE_DIRTY_SW so that the PTE is
-+	 * not a valid Shadow Stack PTE.
-+	 */
-+	do {
-+		new_pte = pte_wrprotect(pte);
-+		new_pte.pte |= (new_pte.pte & _PAGE_DIRTY_HW) >>
-+				_PAGE_BIT_DIRTY_HW << _PAGE_BIT_DIRTY_SW;
-+		new_pte.pte &= ~_PAGE_DIRTY_HW;
-+	} while (!try_cmpxchg(ptep, &pte, new_pte));
-+#else
- 	clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
-+#endif
- }
+ 	if (!mstc->port)
+ 		return connector_status_disconnected;
+-	return drm_dp_mst_detect_port(connector, mstc->port->mgr, mstc->port);
++
++	ret = pm_runtime_get_sync(connector->dev->dev);
++	if (ret < 0 && ret != -EACCES)
++		return connector_status_disconnected;
++
++	conn_status = drm_dp_mst_detect_port(connector, mstc->port->mgr,
++					     mstc->port);
++
++	pm_runtime_mark_last_busy(connector->dev->dev);
++	pm_runtime_put_autosuspend(connector->dev->dev);
++	return conn_status;
+ }
+ 
+ static void
+-- 
+2.17.1
+
