@@ -6,78 +6,58 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9C6ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6620AECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1200220671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:16:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1200220671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 03C8120671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C8120671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbeINTbC (ORCPT
+        id S1728154AbeINTbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:31:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeINTbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:31:02 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C756D80466;
-        Fri, 14 Sep 2018 14:16:20 +0000 (UTC)
-Received: from redhat.com (ovpn-125-82.rdu2.redhat.com [10.10.125.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CC4ED3091330;
-        Fri, 14 Sep 2018 14:16:19 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 10:16:17 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>, akpm@linux-foundation.org,
-        Logan Gunthorpe <logang@deltatee.com>,
-        alexander.h.duyck@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/7] mm, hmm: Use devm semantics for hmm_devmem_{add,
- remove}
-Message-ID: <20180914141617.GC3826@redhat.com>
-References: <153680531988.453305.8080706591516037706.stgit@dwillia2-desk3.amr.corp.intel.com>
- <153680534781.453305.3660438915028111950.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180914131838.GF27141@lst.de>
+        Fri, 14 Sep 2018 15:31:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45732 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726845AbeINTba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:31:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2B5E8AC4F;
+        Fri, 14 Sep 2018 14:16:47 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 7CAA2DAE2F; Fri, 14 Sep 2018 16:16:46 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 16:16:46 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     dsterba@suse.com, jbacik@fb.com, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 2/2] btrfs: change remove_extent_mapping to be void
+ function
+Message-ID: <20180914141646.GG5847@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, zhong jiang <zhongjiang@huawei.com>,
+        dsterba@suse.com, jbacik@fb.com, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1536807675-25086-1-git-send-email-zhongjiang@huawei.com>
+ <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180914131838.GF27141@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Sep 2018 14:16:21 +0000 (UTC)
+In-Reply-To: <1536807675-25086-3-git-send-email-zhongjiang@huawei.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 03:18:38PM +0200, Christoph Hellwig wrote:
-> On Wed, Sep 12, 2018 at 07:22:27PM -0700, Dan Williams wrote:
-> > devm semantics arrange for resources to be torn down when
-> > device-driver-probe fails or when device-driver-release completes.
-> > Similar to devm_memremap_pages() there is no need to support an explicit
-> > remove operation when the users properly adhere to devm semantics.
-> > 
-> > Note that devm_kzalloc() automatically handles allocating node-local
-> > memory.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+On Thu, Sep 13, 2018 at 11:01:15AM +0800, zhong jiang wrote:
+> remove_extent_mapping use the variable "ret" for return value,
+> but it is not modified after initialzation. Further, I find that
+> any of the callers do not handle the return value, so it is safe
+> to drop the unneeded "ret" and make it to be void function.
 > 
-> Given that we have no single user of these function I still think we
-> should just remove them.
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-It is in the process of being upstreamed:
-
-https://cgit.freedesktop.org/~glisse/linux/log/?h=nouveau-hmm-v01
-
-and more users are coming for other devices.
-
-Yes it is taking time ... things never goes as planed.
-
-Cheers,
-Jérôme
+Reviewed-by: David Sterba <dsterba@suse.com>
