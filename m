@@ -2,96 +2,74 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A71EBECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E7EECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C972146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="rVH6+yom"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C972146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
+	by mail.kernel.org (Postfix) with ESMTP id 9435720882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:06:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9435720882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeINWR7 (ORCPT
+        id S1728023AbeINWVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:17:59 -0400
-Received: from one.firstfloor.org ([193.170.194.197]:52544 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbeINWR7 (ORCPT
+        Fri, 14 Sep 2018 18:21:40 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37851 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727152AbeINWVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:17:59 -0400
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id C1E9D868D7; Fri, 14 Sep 2018 19:02:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1536944556;
-        bh=apiZP0/lCgt59mhj8khXtpmXIo5n4GKp1s2p2uH0ipg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rVH6+yom45gBSZI7pCa2640YyPotHT0ORmQ+wocL0E7AYFNIpyIMwDViReczBLKq3
-         89HKwNFtQoAVePVpsBb4cnuDna33Rq+ryqtWr9Ll7NIgJYZbiDHqgy11qxNWh2Y/Jf
-         mKim8cJYsPZJd+cScVIs5yeKDZUnVH9pYUQUD0/M=
-Date:   Fri, 14 Sep 2018 10:02:36 -0700
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914170236.y5olkroo7ydthtvi@two.firstfloor.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
+        Fri, 14 Sep 2018 18:21:40 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7] helo=dude.pengutronix.de.)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1g0rXr-0000yl-Lz; Fri, 14 Sep 2018 19:06:15 +0200
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Robin Gong <yibin.gong@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, patchwork-lst@pengutronix.de
+Subject: [PATCH v2 4/4] dmaengine: imx-sdma: use GFP_NOWAIT for dma allocations
+Date:   Fri, 14 Sep 2018 19:06:15 +0200
+Message-Id: <20180914170615.12659-4-l.stach@pengutronix.de>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180914170615.12659-1-l.stach@pengutronix.de>
+References: <20180914170615.12659-1-l.stach@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913125450.21342-1-jolsa@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> In big picture this patchset adds perf record --threads
-> option that allows to create threads in following modes:
-> 
-> 1) single thread mode (current)
-> 
->   $ perf record ...
->   $ perf record --threads=1 ...
-> 
->   - all maps are read/stored under process thread
-> 
-> 2) mode with specific (X) number of threads
-> 
->   $ perf record --threads=X ...
-> 
->   - maps are spread equaly among threads
-> 
-> 3) mode that creates thread for every monitored memory map
-> 
->   $ perf record --threads ...
-> 
->   - which in perf record is equal to number of CPUs, and
->     it pins each thread to its map's cpu:
+DMA buffer descriptors aren't allocated from atomic context, so they
+can use the less heavyweigth GFP_NOWAIT.
 
-We need some way to flush data on a different thread than
-what is processing the perf data, so essentially more threads than
-CPUs. Something like this is needed for PT where even a single CPU can
-generate so much data that it may take longer and longer to flush. You end up
-with long gaps in the PT collection then because PT stays disabled
-while the flushing happens on the same thread. If it was done
-in the background in another thread these gaps would be much smaller.
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/dma/imx-sdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index da41e8fbf151..ac189d3d985c 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1213,7 +1213,7 @@ static int sdma_alloc_bd(struct sdma_desc *desc)
+ 	int ret = 0;
+ 
+ 	desc->bd = dma_zalloc_coherent(NULL, bd_size, &desc->bd_phys,
+-					GFP_ATOMIC);
++					GFP_NOWAIT);
+ 	if (!desc->bd) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.19.0
 
-Of course if Linux would finally get real file system AIO that wouldn't
-be needed ...
-
-
--Andi
