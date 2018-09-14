@@ -2,85 +2,112 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C39ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50457ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0292B20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:05:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0292B20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0CF2220671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:05:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GBjU7IO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF2220671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeINQT3 (ORCPT
+        id S1727972AbeINQTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:19:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47541 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINQT3 (ORCPT
+        Fri, 14 Sep 2018 12:19:32 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34724 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbeINQTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:19:29 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g0luR-0002ck-R2; Fri, 14 Sep 2018 13:05:11 +0200
-Date:   Fri, 14 Sep 2018 13:05:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jiri Kosina <jikos@kernel.org>
-cc:     "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH v6 1/3] x86/speculation: apply IBPB more strictly to
- avoid cross-process data leak
-In-Reply-To: <nycvar.YFH.7.76.1809141259010.15880@cbobk.fhfr.pm>
-Message-ID: <alpine.DEB.2.21.1809141304180.1473@nanos.tec.linutronix.de>
-References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809121055070.15880@cbobk.fhfr.pm> <nycvar.YFH.7.76.1809121105330.15880@cbobk.fhfr.pm> <99FC4B6EFCEFD44486C35F4C281DC6732144BFBC@ORSMSX107.amr.corp.intel.com>
- <nycvar.YFH.7.76.1809141259010.15880@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 14 Sep 2018 12:19:31 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A891CE;
+        Fri, 14 Sep 2018 13:05:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536923130;
+        bh=TjfBITH3ykZbb8M4EilMPSeO+/ew7fREE0U+atIwL80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GBjU7IO5BO7j3ddemEcFjFWWVT2lgk/VFuKxno7UX72CQClNJvlY+VK2Yf3kYTMLD
+         yEPDmTYWSaTqj5nDaKBrsE4L+0tjI4etDJwbrmTJeM1mzZ99G0WcB/j6y7onkeFYmE
+         3+mkNHtQq4ZiXOnQ0pcm/cRkrCeqNI9/FZVbFRMQ=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm: rcar-du: Update Gen3 output limitations
+Date:   Fri, 14 Sep 2018 14:05:44 +0300
+Message-ID: <4037354.l5ltzbp0ev@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180831181259.29529-2-kieran.bingham+renesas@ideasonboard.com>
+References: <20180831181259.29529-1-kieran.bingham+renesas@ideasonboard.com> <20180831181259.29529-2-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2018, Jiri Kosina wrote:
-> On Thu, 13 Sep 2018, Schaufler, Casey wrote:
-> 
-> > > -	return security_ptrace_access_check(task, mode);
-> > > +	if (!(mode & PTRACE_MODE_NOACCESS_CHK))
-> > > +		return security_ptrace_access_check(task, mode);
-> > > +	return 0;
-> > 
-> > Because PTRACE_MODE_IBPB includes PTRACE_MODE_NOAUDIT you
-> > shouldn't need this change. 
-> 
-> That is true, but that's not my concern here. 
-> 
-> 	security_ptrace_access_check() -> call_int_hook() -> P->hook.FUNC().
-> 
-> If it's somehow guaranteed that all functions called this ways are fine to 
-> be called from scheduler context (wrt. locks), then it's all fine and I'll 
-> happily drop that check.
-> 
-> Is it guaranteed?
+Hi Kieran,
 
-The related question is whether it is guaranteed for backports. We don't
-want to end up with a separate hell there.
+Thank you for the patch.
 
-Thanks,
+On Friday, 31 August 2018 21:12:57 EEST Kieran Bingham wrote:
+> The R-Car Gen3 DU utilises the VSP1 hardware for memory access. The
+> limits on the RPF and WPF in this pipeline are 8190x8190.
+> 
+> Update the supported maximum sizes accordingly.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-	tglx
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index ed7fa3204892..7c7aff8cdf77
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -512,12 +512,22 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+> 
+>  	dev->mode_config.min_width = 0;
+>  	dev->mode_config.min_height = 0;
+> -	dev->mode_config.max_width = 4095;
+> -	dev->mode_config.max_height = 2047;
+>  	dev->mode_config.normalize_zpos = true;
+>  	dev->mode_config.funcs = &rcar_du_mode_config_funcs;
+>  	dev->mode_config.helper_private = &rcar_du_mode_config_helper;
+> 
+> +	if (rcdu->info->gen < 3) {
+> +		dev->mode_config.max_width = 4095;
+> +		dev->mode_config.max_height = 2047;
+> +	} else {
+> +		/*
+> +		 * The Gen3 DU uses the VSP1 for memory access, and is limited
+> +		 * to frame sizes of 8190x8190.
+> +		 */
+> +		dev->mode_config.max_width = 8190;
+> +		dev->mode_config.max_height = 8190;
+> +	}
+> +
+>  	rcdu->num_crtcs = hweight8(rcdu->info->channels_mask);
+> 
+>  	ret = rcar_du_properties_init(rcdu);
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
