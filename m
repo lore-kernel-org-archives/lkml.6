@@ -2,207 +2,145 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397CAECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CFDFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0B0020881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0953D20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="isbQX+fg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B0020881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RdCWHZnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0953D20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbeINSDa (ORCPT
+        id S1728224AbeINSD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:03:30 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38330 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbeINSD3 (ORCPT
+        Fri, 14 Sep 2018 14:03:58 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43581 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728082AbeINSD6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:03:29 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d7-v6so2352723lfa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:49:08 -0700 (PDT)
+        Fri, 14 Sep 2018 14:03:58 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so12665629oib.10
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:49:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NRwdzV7ic9h0M3xY0g2RbuWGK7ta0n3rgub2bBvDnk4=;
-        b=isbQX+fgWP8Z2OFGj/4V+yh2WgBKRjXa1XOBRHX42FXTiRT4koCe/OSZB77yBCFvvr
-         4GsGJy2Mvi9WItR9y4ag1mFHt8LxDm3IMZSp79xlKRthuYJr0vDBCMxrcKEGAwFqqKKN
-         sIqrzvgjx5Xs7oERw6evN1VSoUCmxIcfuTp3I=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7A6O2BcKYRPioMxQvvtW9I/pCVYvSd2RJi2MmjtB5vM=;
+        b=RdCWHZnVYERbLHURQUmft1nogrUjQaUmRUrCMWuHZpnXYMNmqgxeQyCBTxrWYA1h2J
+         90ODzHOk8CHDNTNJEPKdP6gNhoZOJX4PTgG6ca/tJfOHe2M/FmABhm3N3BP7FeBgel+b
+         sZ92yHbNQxtntnF5T+EDih8V2T6rOzwJw9gyJDcLfDK2mveDE4lpecPdtXJmx/KAyhd6
+         Q98kIv8h7UoUTqAXchXlthZJm3NAsaGoUP5PqZTVmOl/xMbXr6TsATSJJTBqc35XbIS2
+         y7yJin1C4jly8v8o5LseI8rku4FRUyleqL7Z6pPVbing3E6gEemUN4+jPb99Tnq+ww7t
+         KzMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NRwdzV7ic9h0M3xY0g2RbuWGK7ta0n3rgub2bBvDnk4=;
-        b=MFPnmhgYUHr3S/JOqaVLMWF2X7Qzv9pUz4tbXgSUTxcN2ylT2YJsVu/BQ/vNsL+pm1
-         Fa6Fx77QJWC53IKvrHiDKfATgeWaopTOjAA7G3jZpKG/dPzSqTF2UODvXJ/qbfi30umS
-         evnfv4iHzPBQWU3HrJfyblfABaRTaEBq/uNcfPPDFA+OzRYG9qIcC0styGdcSpjito3E
-         N4VV+nUYMertO8CuWmEMAUFeAQkMw7CDJl6MFbdDY/MyWb6JxGU92GXTJT0uIBp4eolA
-         IZRKzy79Jr79moIw/6ovqjRqfAMdKnlh/eeEhpBLiajGubH6hPBUdZ3fa/zC2XbfoAu/
-         frNQ==
-X-Gm-Message-State: APzg51B6YEGWVl41DBqP7oPdNKbdhAVJStrBttTS2AFaCPvOFGRzrK/B
-        lbWY+TDBeYpy74G4mOsRIvhTvvqk9Ln4gt07AHPQ+Q==
-X-Google-Smtp-Source: ANB0Vda6sbiuAaX4Gke2T6vfMExDetgjd20ByCwYZrdcqF1Zz7FmcDIjQG66BLzJFJYbHklmXsdlB+UdN2UeqhbBJZc=
-X-Received: by 2002:a19:2ad6:: with SMTP id q83-v6mr2812544lfq.74.1536929347066;
- Fri, 14 Sep 2018 05:49:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7A6O2BcKYRPioMxQvvtW9I/pCVYvSd2RJi2MmjtB5vM=;
+        b=Z6qK/URGziWUzpIGHOBqlcSMIGrIi2JerrTTHuDomjqHy/iEyxZ5b6w2vpPSxz1onl
+         XK1B7nzrAij3yeYN6I8e+8iNAmlXTzRuAYm/tz3dW72YBe0QHKObSDyRx4jrQt9/x5kx
+         NVLesHPy66Z44hOa6z2lB+x4QfP3+sztn6llt8ITXVA0OrkDBwqs6GagE4Y25uBYOV18
+         /fVNcoD5jfL95Jcfh6Nkaag5i6eBXfC3Qvo2F6fcbau7NroPTasNXCJSwYlAGUWPGl1L
+         Wpwbp8tubJmvTRYeEPYZb46qpMWX0HnyVdbSAnDATobG7NgLQ6ayQIujKXrRz38R0A1O
+         br9Q==
+X-Gm-Message-State: APzg51BcB3HrdNkt1h0tfoSf4Gd4XNqYC4qMcct+ztSLTA2O6C9C1OlW
+        nPrQqv4NQiID7DcFM06GyFdFT/V66ZFQt13hQYiA5g==
+X-Google-Smtp-Source: ANB0VdYYuOnBYcIIIXY7sC7vyP/BCS0JP3n1jclEBtaqGKFyyh7H3zHa50uQ6B0WTAFoHAlMS/ktBhSMd8CZ5UgnaPE=
+X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr9191098oie.68.1536929376773;
+ Fri, 14 Sep 2018 05:49:36 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 05:49:06
- -0700 (PDT)
-In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
-References: <20180913131745.261413581@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 14 Sep 2018 18:19:06 +0530
-Message-ID: <CA+G9fYs7Q_rWeZ6Eqxs25VdosgSdwRfA+Xto_SrSOHYsW3LdMg@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/60] 4.4.156-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+References: <2ce01d91-5fba-b1b7-2956-c8cc1853536d@intel.com>
+ <33f96879-351f-674a-ca23-43f233f4eb1d@linux.vnet.ibm.com> <82d2b35c-272a-ad02-692f-2c109aacdfb6@oracle.com>
+ <8569dabb-4930-aa20-6249-72457e2df51e@intel.com> <51145ccb-fc0d-0281-9757-fb8a5112ec24@oracle.com>
+ <c72fea44-59f3-b106-8311-b5eae2d254e7@intel.com> <addeaadc-5ab2-f0c9-2194-dd100ae90f3a@oracle.com>
+ <aaca3180-7510-c008-3e12-8bbe92344ef4@intel.com> <94ee0b6c-4663-0705-d4a8-c50342f6b483@oracle.com>
+ <CAG48ez1YhHKTDHZoH2tEFaLk4LcCSw5G60=+KpGRaMQxvw1qLw@mail.gmail.com> <20180914062132.GI20287@dhcp22.suse.cz>
+In-Reply-To: <20180914062132.GI20287@dhcp22.suse.cz>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 14 Sep 2018 14:49:10 +0200
+Message-ID: <CAG48ez2RSn-EQkf-ahs41tOKpzt23JMGYZxUtWMRPe8c5jAq-A@mail.gmail.com>
+Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        n-horiguchi@ah.jp.nec.com, Ulrich Drepper <drepper@gmail.com>,
+        David Rientjes <rientjes@google.com>,
+        Horiguchi Naoya <nao.horiguchi@gmail.com>,
+        steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 September 2018 at 19:00, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.4.156 release.
-> There are 60 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Sep 14, 2018 at 8:21 AM Michal Hocko <mhocko@kernel.org> wrote:
+> On Fri 14-09-18 03:33:28, Jann Horn wrote:
+> > On Wed, Sep 12, 2018 at 10:43 PM prakash.sangappa
+> > <prakash.sangappa@oracle.com> wrote:
+> > > On 05/09/2018 04:31 PM, Dave Hansen wrote:
+> > > > On 05/07/2018 06:16 PM, prakash.sangappa wrote:
+> > > >> It will be /proc/<pid>/numa_vamaps. Yes, the behavior will be
+> > > >> different with respect to seeking. Output will still be text and
+> > > >> the format will be same.
+> > > >>
+> > > >> I want to get feedback on this approach.
+> > > > I think it would be really great if you can write down a list of the
+> > > > things you actually want to accomplish.  Dare I say: you need a
+> > > > requirements list.
+> > > >
+> > > > The numa_vamaps approach continues down the path of an ever-growing list
+> > > > of highly-specialized /proc/<pid> files.  I don't think that is
+> > > > sustainable, even if it has been our trajectory for many years.
+> > > >
+> > > > Pagemap wasn't exactly a shining example of us getting new ABIs right,
+> > > > but it sounds like something along those is what we need.
+> > >
+> > > Just sent out a V2 patch.  This patch simplifies the file content. It
+> > > only provides VA range to numa node id information.
+> > >
+> > > The requirement is basically observability for performance analysis.
+> > >
+> > > - Need to be able to determine VA range to numa node id information.
+> > >    Which also gives an idea of which range has memory allocated.
+> > >
+> > > - The proc file /proc/<pid>/numa_vamaps is in text so it is easy to
+> > >    directly view.
+> > >
+> > > The V2 patch supports seeking to a particular process VA from where
+> > > the application could read the VA to  numa node id information.
+> > >
+> > > Also added the 'PTRACE_MODE_READ_REALCREDS' check when opening the
+> > > file /proc file as was indicated by Michal Hacko
+> >
+> > procfs files should use PTRACE_MODE_*_FSCREDS, not PTRACE_MODE_*_REALCREDS.
 >
-> Responses should be made by Sat Sep 15 13:17:29 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.156-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Out of my curiosity, what is the semantic difference? At least
+> kernel_move_pages uses PTRACE_MODE_READ_REALCREDS. Is this a bug?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64 and i386.
+No, that's fine. REALCREDS basically means "look at the caller's real
+UID for the access check", while FSCREDS means "look at the caller's
+filesystem UID". The ptrace access check has historically been using
+the real UID, which is sorta weird, but normally works fine. Given
+that this is documented, I didn't see any reason to change it for most
+things that do ptrace access checks, even if the EUID would IMO be
+more appropriate. But things that capture caller credentials at points
+like open() really shouldn't look at the real UID; instead, they
+should use the filesystem UID (which in practice is basically the same
+as the EUID).
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.156-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 2052f80448e54f0f36a360bb5489f2818ae13026
-git describe: v4.4.155-61-g2052f80448e5
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.155-61-g2052f80448e5
-
-No regressions (compared to build v4.4.155)
-
-
-Ran 16889 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.156-rc2
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.156-rc2-hikey-20180913-283
-git commit: 8cbc538b759e57b63bc7bbb767bc7c3336634b3d
-git describe: 4.4.156-rc2-hikey-20180913-283
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.156-rc2-hikey-20180913-283
-
-
-No regressions (compared to build 4.4.156-rc1-hikey-20180913-282)
-
-
-Ran 2724 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+So in short, it depends on the interface you're coming through: Direct
+syscalls use REALCREDS, things that go through the VFS layer use
+FSCREDS.
