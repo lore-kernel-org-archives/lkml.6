@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D60ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980A2FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB9A20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB9A20866
+	by mail.kernel.org (Postfix) with ESMTP id 3A58A20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A58A20882
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeINOaI (ORCPT
+        id S1727996AbeINOcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:30:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34690 "EHLO mx1.suse.de"
+        Fri, 14 Sep 2018 10:32:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34906 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727772AbeINOaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:30:07 -0400
+        id S1726898AbeINOcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:32:14 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9F2F3ADEF;
-        Fri, 14 Sep 2018 09:16:30 +0000 (UTC)
-Subject: Re: [PATCH 6/6] drivers: enable xenwatch multithreading for
- xen-netback and xen-blkback driver
+        by mx1.suse.de (Postfix) with ESMTP id E3873ADEF;
+        Fri, 14 Sep 2018 09:18:35 +0000 (UTC)
+Subject: Re: Introduce xenwatch multithreading (mtwatch)
 To:     Dongli Zhang <dongli.zhang@oracle.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 Cc:     boris.ostrovsky@oracle.com, paul.durrant@citrix.com,
         wei.liu2@citrix.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
         srinivas.eeda@oracle.com
 References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
- <1536910456-13337-7-git-send-email-dongli.zhang@oracle.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -68,14 +66,14 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <518d3ec9-0d2d-7f77-e750-3e1329f7e97b@suse.com>
-Date:   Fri, 14 Sep 2018 11:16:30 +0200
+Message-ID: <145a7689-0b1c-3973-13c2-bb5749eb972b@suse.com>
+Date:   Fri, 14 Sep 2018 11:18:35 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1536910456-13337-7-git-send-email-dongli.zhang@oracle.com>
+In-Reply-To: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -83,54 +81,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 14/09/18 09:34, Dongli Zhang wrote:
-> This is the 6th patch of a (6-patch) patch set.
+> Hi,
 > 
-> As the 'use_mtwatch' for xen-netback and xen-blkback are set to true,
-> probing any xenbus devices of those two drivers would create the per-domU
-> xenwatch thread for the domid the new devices belong to, or increment the
-> reference count  of existing thread.
+> This patch set introduces xenwatch multithreading (mtwatch) based on the
+> below xen summit 2018 design session notes:
 > 
-> Xenwatch multithreading might be enabled for more xen backend pv drivers in
-> the future.
+> https://lists.xenproject.org/archives/html/xen-devel/2018-07/msg00017.html
 > 
-> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> ---
->  drivers/block/xen-blkback/xenbus.c | 3 ++-
->  drivers/net/xen-netback/xenbus.c   | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> index a4bc74e..debbbd0 100644
-> --- a/drivers/block/xen-blkback/xenbus.c
-> +++ b/drivers/block/xen-blkback/xenbus.c
-> @@ -1108,7 +1108,8 @@ static struct xenbus_driver xen_blkbk_driver = {
->  	.ids  = xen_blkbk_ids,
->  	.probe = xen_blkbk_probe,
->  	.remove = xen_blkbk_remove,
-> -	.otherend_changed = frontend_changed
-> +	.otherend_changed = frontend_changed,
-> +	.use_mtwatch = true,
->  };
->  
->  int xen_blkif_xenbus_init(void)
-> diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
-> index cd51492..63d46a7 100644
-> --- a/drivers/net/xen-netback/xenbus.c
-> +++ b/drivers/net/xen-netback/xenbus.c
-> @@ -1203,6 +1203,7 @@ static struct xenbus_driver netback_driver = {
->  	.remove = netback_remove,
->  	.uevent = netback_uevent,
->  	.otherend_changed = frontend_changed,
-> +	.use_mtwatch = true,
+> xenwatch_thread is a single kernel thread processing the callback function
+> for subscribed xenwatch events successively. The xenwatch is stalled in 'D'
+> state if any of callback function is stalled and uninterruptible.
+> 
+> The domU create/destroy is failed if xenwatch is stalled in 'D' state as
+> the paravirtual driver init/uninit cannot complete. Usually, the only
+> option is to reboot dom0 server unless there is solution/workaround to
+> move forward and complete the stalled xenwatch event callback function.
+> Below is the output of 'xl create' when xenwatch is stalled (the issue is
+> reproduced on purpose by hooking netif_receive_skb() to intercept an
+> sk_buff sent out from vifX.Y on dom0 with patch at
+> https://github.com/finallyjustice/patchset/blob/master/xenwatch-stall-by-vif.patch):
+> 
+> # xl create pv.cfg 
+> Parsing config from pv.cfg
+> libxl: error: libxl_device.c:1080:device_backend_callback: Domain 2:unable to add device with path /local/domain/0/backend/vbd/2/51712
+> libxl: error: libxl_create.c:1278:domcreate_launch_dm: Domain 2:unable to add disk devices
+> libxl: error: libxl_device.c:1080:device_backend_callback: Domain 2:unable to remove device with path /local/domain/0/backend/vbd/2/51712
+> libxl: error: libxl_domain.c:1073:devices_destroy_cb: Domain 2:libxl__devices_destroy failed
+> libxl: error: libxl_domain.c:1000:libxl__destroy_domid: Domain 2:Non-existant domain
+> libxl: error: libxl_domain.c:959:domain_destroy_callback: Domain 2:Unable to destroy guest
+> libxl: error: libxl_domain.c:886:domain_destroy_cb: Domain 2:Destruction of domain failed
+> 
+> 
+> The idea of this patch set is to create a per-domU xenwatch thread for each
+> domid. The per-domid thread is created when the 1st pv backend device (for
+> this domid and with xenwatch multithreading enabled) is created, while this
+> thread is destroyed when the last pv backend device (for this domid and
+> with xenwatch multithreading enabled) is removed. Per-domid xs_watch_event
+> is never put on the default event list, but is put on the per-domid event
+> list directly.
+> 
+> 
+> For more details, please refer to the xen summit 2018 design session notes
+> and presentation slides:
+> 
+> https://lists.xenproject.org/archives/html/xen-devel/2018-07/msg00017.html
+> http://www.donglizhang.org/xenwatch_multithreading.pdf
+> 
+> ----------------------------------------------------------------
+> 
+> Dongli Zhang (6):
+>     xenbus: prepare data structures and parameter for xenwatch multithreading
+>     xenbus: implement the xenwatch multithreading framework
+>     xenbus: dispatch per-domU watch event to per-domU xenwatch thread
+>     xenbus: process otherend_watch event at 'state' entry in xenwatch multithreading
+>     xenbus: process be_watch events in xenwatch multithreading
+>     drivers: enable xenwatch multithreading for xen-netback and xen-blkback driver
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |   3 +
+>  drivers/block/xen-blkback/xenbus.c              |   3 +-
+>  drivers/net/xen-netback/xenbus.c                |   1 +
+>  drivers/xen/xenbus/xenbus_probe.c               |  24 +-
+>  drivers/xen/xenbus/xenbus_probe_backend.c       |  32 +++
+>  drivers/xen/xenbus/xenbus_xs.c                  | 357 +++++++++++++++++++++++-
+>  include/xen/xenbus.h                            |  70 +++++
+>  7 files changed, 484 insertions(+), 6 deletions(-)
+> 
+> Thank you very much!
 
-Is there a special reason why kernel based backends shouldn't all use
-the multithread model? This would avoid the need for the use_mtwatch
-struct member.
-
-This is meant as an honest question. I'm really not sure we should
-switch all backends at once. OTOH I can't see any real downsides.
-
-Thoughts?
+One general remark regarding your commit messages: Please drop the
+patch number from the text itself, its enough to have it in the mail
+subject line. Later it is completely irrelevant in git history.
 
 
 Juergen
+
