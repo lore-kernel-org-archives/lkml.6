@@ -3,142 +3,199 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1BCC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41512C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB92220866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB92220866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D9C7520866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C7520866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeINMEC convert rfc822-to-8bit (ORCPT
+        id S1727403AbeINMJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:04:02 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48783 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbeINMEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:04:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 23:50:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
-   d="scan'208";a="85948567"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Sep 2018 23:50:58 -0700
-Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 13 Sep 2018 23:50:58 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 13 Sep 2018 23:50:58 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
- Fri, 14 Sep 2018 14:50:56 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jerome Glisse <jglisse@redhat.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Philippe Ombredanne" <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        "linux-accelerators@lists.ozlabs.org" 
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: RE: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Thread-Topic: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Thread-Index: AQHUQyBoMyXI/RBW1UKE39r7bd5lp6Tfs6CAgAAU6YCAArfOAIAAPyaAgADzGQCAANeMAIAD1hiAgAC/u4CAAMW/gIAADnyAgAA0LICAAHU2AIACzrEAgABp+gCAAYngAA==
-Date:   Fri, 14 Sep 2018 06:50:55 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
-References: <20180906133133.GA3830@redhat.com>
- <20180907040138.GI230707@Turing-Arch-b> <20180907165303.GA3519@redhat.com>
- <20180910032809.GJ230707@Turing-Arch-b> <20180910145423.GA3488@redhat.com>
- <20180911024209.GK230707@Turing-Arch-b> <20180911033358.GA4730@redhat.com>
- <20180911064043.GA207969@Turing-Arch-b> <20180911134013.GA3932@redhat.com>
- <20180913083232.GB207969@Turing-Arch-b> <20180913145149.GB3576@redhat.com>
-In-Reply-To: <20180913145149.GB3576@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjA2ZmUyNTktOTViZC00OWFjLTk4ODMtMWM1ZmVkOTRhZTcxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiM0FiTXlsbm8zUnA4QVo0MEZmeDZPVlRMSkJ4QmVLYTdKT1lyYlNvalZzdTBRbElGMEhBWEozNlZ3TUthaEhYcyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 14 Sep 2018 08:09:14 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:44050 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726883AbeINMJO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 08:09:14 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 0i1KgQvfnrjlY0i1OgrXUn; Fri, 14 Sep 2018 08:56:08 +0200
+Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mchehab@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
+ <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <37fba44b-f7ef-c877-5533-986d21831f9f@xs4all.nl>
+Date:   Fri, 14 Sep 2018 08:56:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGiP/tY4xX9paY7yTcEQFf0U2RebjNUfvReW7YDWH99RlPW8edcXXIt/0MHVAUnkcN96y83cGJ7ey/eGRBrK/JpqJ5pQ+O3/i1KNHLHSozKZUJvUFngD
+ YZZR0+xO6CySk3EPnY5xuby+n7+/hCTSJPew37pKlgJ4aOSvExqEH1e2Eez28pRN3+M0EFZSyXicNEXcUZio3r9JpCFHhhX8h2Jzh//eozYpSON6iGCliD1C
+ BSNlSxDTSh9xG3astIUk60hAb2OlY8+DhZZLWoXNu8iClV9O6EJpi/dIzLvbnrG50fBY3iWh982xSq8P2Kcy/Erd0wWBle1cW0YHIwMn7xtSbdJpNvp4rdv7
+ J8vWoVgslaTxebDm+mNI2DRCW/HkYRklhUgY9WG4lvkYOv41e54Vpf+eWqzejolH+z5WRA7wXhfZbgIXvnAt2Rrb9EL9zPghBEWwBxF+lNCJFcaEicauF25g
+ ZhoCxpuDPTVwTxVhSPnu/yvTNVq+sdt62I255aZrX1zgibhDgvkHWndcVvmdNfWNIrLnWAzE8uVC4ifI2aVwkbplwEbAcbR2rYXgcsPX/pzVP2o633EPU3Bd
+ uvt7XsXaWMp5L+m2e6y4e2bt406MTDLFYmqzBgcBx0URaibyHZDHscbTYrWbBg3nobM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Jerome Glisse
-> Sent: Thursday, September 13, 2018 10:52 PM
->
-[...]
- > AFAIK, on x86 and PPC at least, all PCIE devices are in the same group
-> by default at boot or at least all devices behind the same bridge.
+On 09/13/2018 09:11 PM, Eddie James wrote:
+> 
+> 
+> On 09/03/2018 06:57 AM, Hans Verkuil wrote:
+>> Hi Eddie,
+>>
+>> Thank you for your work on this. Interesting to see support for this SoC :-)
+>>
+>> On 08/29/2018 11:09 PM, Eddie James wrote:
+>>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>>> can capture and compress video data from digital or analog sources. With
+>>> the Aspeed chip acting as a service processor, the Video Engine can
+>>> capture the host processor graphics output.
+>>>
+>>> This series adds a V4L2 driver for the VE, providing a read() interface
+>>> only. The driver triggers the hardware to capture the host graphics output
+>>> and compress it to JPEG format.
+>>>
+>>> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
+>>> was significantly slower than the simple read() interface, so I have not
+>>> included the streaming part.
+>> Do you know why? It should be equal or faster, not slower.
+> 
+> Yes, it seems to be an issue with the timing of the video engine 
+> interrupts compared with how a normal v4l2 application queues buffers. 
+> With the simple read() application, the driver can swap between DMA 
+> buffers freely and get a frame ahead. With the streaming buffers, I 
+> found the driver ran through the queue quite quickly, but then, once 
+> userspace queues again, we had to wait for the next frame, as I couldn't 
+> get a frame ahead since no buffers were available during that time 
+> period. This could possibly be solved with more buffers but this gets to 
+> require a lot of memory, since each buffer is allocated for the full 
+> frame size even though we only fill a fraction of it with JPEG data...
 
-the group thing reflects physical hierarchy limitation, not changed
-cross boot. Please note iommu group defines the minimal isolation
-boundary - all devices within same group must be attached to the
-same iommu domain or address space, because physically IOMMU
-cannot differentiate DMAs out of those devices. devices behind
-legacy PCI-X bridge is one example. other examples include devices
-behind a PCIe switch port which doesn't support ACS thus cannot
-route p2p transaction to IOMMU. If talking about typical PCIe 
-endpoint (with upstreaming ports all supporting ACS), you'll get
-one device per group.
+For stream I/O you usually need 3 buffers: one is being DMAed, one is
+the next queued up frame for the DMA and the third is being processed
+in userspace. If userspace doesn't process buffers fast enough, then
+the driver will need to capture into the same buffer over and over again
+until userspace finally queues another buffer.
 
-One iommu group today is attached to only one iommu domain.
-In the future one group may attach to multiple domains, as the
-aux domain concept being discussed in another thread.
+What I don't understand here is what the frame rate is. Is the capture
+framerate the same as the host processor graphics output? Or is it
+unrelated to that?
+
+The problem with read() is that 1) it requires copying the video data, and
+2) you cannot use dmabuf for zero-copying pipelines. Whether or not 2 is
+needed depends on your hardware.
 
 > 
-> Maybe they are kernel option to avoid that and userspace init program
-> can definitly re-arrange that base on sysadmin policy).
+>>
+>> I reviewed about half of the driver, but then I stopped since there were too
+>> many things missing.
+>>
+>> First of all, you need to test your driver with v4l2-compliance (available here:
+>> https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
+>> the versions from distros tend to be too old.
+>>
+>> Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
+>> 'v4l2-compliance -s -d /dev/videoX' to test streaming.
+>>
+>> This utility checks if the driver follows the V4L2 API correctly, implements
+>> all ioctls that it should and fills in all the fields that it should.
+>>
+>> Please add the output of 'v4l2-compliance -s' to future versions of this patch
+>> series: I don't accept V4L2 drivers without a clean report of this utility.
+> 
+> Sure thing. Thanks for the guidance.
+> 
+>>
+>> If you have any questions, then mail me or (usually quicker) ask on the #v4l
+>> freenode irc channel (I'm in the CET timezone).
+>>
+>> One thing that needs more explanation: from what I could tell from the driver
+>> the VIDIOC_G_FMT ioctl returns the detected format instead of the current
+>> format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
+>> ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
+>>
+>> The normal sequence is that userspace queries the current timings with
+>> VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
+>> timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
+>> change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
+>> event.
+> 
+> OK I see. I ended up simplifying this part anyway since it's not 
+> possible to change the video size from the driver. I don't think there 
+> is a need for VIDIOC_QUERY_DV_TIMINGS now, but feel free to review.
 
-I don't think there is such option, as it may break isolation model
-enabled by IOMMU.
+You are capturing the host graphics output, right? So you need to know
+the resolution, timings, etc. of that output? What if the host changes
+resolution? That's something you need to know, or am I missing something?
 
-[...]
-> > > That is why i am being pedantic :) on making sure there is good reasons
-> > > to do what you do inside VFIO. I do believe that we want a common
-> frame-
-> > > work like the one you are proposing but i do not believe it should be
-> > > part of VFIO given the baggages it comes with and that are not relevant
-> > > to the use cases for this kind of devices.
-> >
+This is obviously a somewhat different environment than what I am used to,
+so bear with me if I ask stupid questions...
 
-The purpose of VFIO is clear - the kernel portal for granting generic 
-device resource (mmio, irq, etc.) to user space. VFIO doesn't care
-what exactly a resource is used for (queue, cmd reg, etc.). If really
-pursuing VFIO path is necessary, maybe such common framework
-should lay down in user space, which gets all granted resource from
-kernel driver thru VFIO and then provides accelerator services to 
-other processes?
+Regards,
 
-Thanks
-Kevin
+	Hans
+
+> 
+> Thanks again,
+> Eddie
+> 
+>>
+>> When the application receives this event it can take action, such as
+>> increasing the size of the buffer for the jpeg data that it reads into.
+>>
+>> The reason for this sequence of events is that you can't just change the
+>> format/resolution mid-stream without giving userspace the chance to
+>> reconfigure.
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+>>> It's also possible to use an automatic mode for the VE such that
+>>> re-triggering the HW every frame isn't necessary. However this wasn't
+>>> reliable on the AST2400, and probably used more CPU anyway due to excessive
+>>> interrupts. It was approximately 15% faster.
+>>>
+>>> The series also adds the necessary parent clock definitions to the Aspeed
+>>> clock driver, with both a mux and clock divider.
+>>>
+>>> Eddie James (4):
+>>>    clock: aspeed: Add VIDEO reset index definition
+>>>    clock: aspeed: Setup video engine clocking
+>>>    dt-bindings: media: Add Aspeed Video Engine binding documentation
+>>>    media: platform: Add Aspeed Video Engine driver
+>>>
+>>>   .../devicetree/bindings/media/aspeed-video.txt     |   23 +
+>>>   drivers/clk/clk-aspeed.c                           |   41 +-
+>>>   drivers/media/platform/Kconfig                     |    8 +
+>>>   drivers/media/platform/Makefile                    |    1 +
+>>>   drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
+>>>   include/dt-bindings/clock/aspeed-clock.h           |    1 +
+>>>   6 files changed, 1379 insertions(+), 2 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>>
+> 
+
