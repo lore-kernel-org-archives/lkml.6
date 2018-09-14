@@ -2,180 +2,101 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68799ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E14ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B10E2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:44:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B10E2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9431520882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:45:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9431520882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728433AbeINT7P (ORCPT
+        id S1728251AbeINUAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:59:15 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11714 "EHLO huawei.com"
+        Fri, 14 Sep 2018 16:00:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50324 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727749AbeINT7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:59:15 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 33E407C29C9A5;
-        Fri, 14 Sep 2018 22:44:06 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 14 Sep
- 2018 22:44:01 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Chen Gong <gongchen4@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 8/8] staging: erofs: replace BUG_ON with DBG_BUGON in data.c
-Date:   Fri, 14 Sep 2018 22:40:30 +0800
-Message-ID: <1536936030-62362-9-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
-References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
+        id S1727749AbeINUAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 16:00:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DF75FAEB6;
+        Fri, 14 Sep 2018 14:45:24 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 16:45:18 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v8 1/2] x86/mm: add .bss..decrypted section to hold
+ shared variables
+Message-ID: <20180914144518.GB29898@zn.tnic>
+References: <1536875471-17391-1-git-send-email-brijesh.singh@amd.com>
+ <1536875471-17391-2-git-send-email-brijesh.singh@amd.com>
+ <20180914071056.GA4747@zn.tnic>
+ <3517a0db-2f64-6d09-7100-dced40561d08@amd.com>
+ <alpine.DEB.2.21.1809141414390.10480@nanos.tec.linutronix.de>
+ <20180914141216.GA29898@zn.tnic>
+ <43895f0e-fea7-001e-d727-d962a20f7f6c@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <43895f0e-fea7-001e-d727-d962a20f7f6c@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Gong <gongchen4@huawei.com>
+On Fri, Sep 14, 2018 at 09:27:09AM -0500, Brijesh Singh wrote:
+> The above code will never get executed for the SEV case.
+> 
+> See if (!sme_active()) check in the start of function.
+> 
+> If we decide to go on this patch, then we have to do something like
+> this:
+> 
+> sme_encrypt_kernel(...)
+> {
+> 	if (!mem_encrypt_active())
+> 		return;
+> 
+> 	if (sev_active())
+> 		goto out;
+> 
+> 	/* Do kernel and initrd in-place encrypts for SME only case */
+> 	.....
+> 	.....
+> 
+> out:
+> 	/* Clear the C-bit from .bss..decrypted section */
+> 	...
+> 	...
 
-This patch replace BUG_ON with DBG_BUGON in data.c, and add necessary
-error handler.
+Or above do:
 
-Signed-off-by: Chen Gong <gongchen4@huawei.com>
-Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/data.c | 31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+	if (sev_active()) {
+		sev_map_bss_decrypted();
+                return;
+	}
 
-diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
-index e191610..6384f73 100644
---- a/drivers/staging/erofs/data.c
-+++ b/drivers/staging/erofs/data.c
-@@ -25,7 +25,7 @@ static inline void read_endio(struct bio *bio)
- 		struct page *page = bvec->bv_page;
- 
- 		/* page is already locked */
--		BUG_ON(PageUptodate(page));
-+		DBG_BUGON(PageUptodate(page));
- 
- 		if (unlikely(err))
- 			SetPageError(page);
-@@ -110,12 +110,12 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
- 	struct erofs_map_blocks *map,
- 	int flags)
- {
-+	int err = 0;
- 	erofs_blk_t nblocks, lastblk;
- 	u64 offset = map->m_la;
- 	struct erofs_vnode *vi = EROFS_V(inode);
- 
- 	trace_erofs_map_blocks_flatmode_enter(inode, map, flags);
--	BUG_ON(is_inode_layout_compression(inode));
- 
- 	nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
- 	lastblk = nblocks - is_inode_layout_inline(inode);
-@@ -142,18 +142,27 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
- 		map->m_plen = inode->i_size - offset;
- 
- 		/* inline data should locate in one meta block */
--		BUG_ON(erofs_blkoff(map->m_pa) + map->m_plen > PAGE_SIZE);
-+		if (erofs_blkoff(map->m_pa) + map->m_plen > PAGE_SIZE) {
-+			DBG_BUGON(1);
-+			err = -EIO;
-+			goto err_out;
-+		}
-+
- 		map->m_flags |= EROFS_MAP_META;
- 	} else {
- 		errln("internal error @ nid: %llu (size %llu), m_la 0x%llx",
- 			vi->nid, inode->i_size, map->m_la);
--		BUG();
-+		DBG_BUGON(1);
-+		err = -EIO;
-+		goto err_out;
- 	}
- 
- out:
- 	map->m_llen = map->m_plen;
-+
-+err_out:
- 	trace_erofs_map_blocks_flatmode_exit(inode, map, flags, 0);
--	return 0;
-+	return err;
- }
- 
- #ifdef CONFIG_EROFS_FS_ZIP
-@@ -209,7 +218,7 @@ static inline struct bio *erofs_read_raw_page(
- 	erofs_off_t current_block = (erofs_off_t)page->index;
- 	int err;
- 
--	BUG_ON(!nblocks);
-+	DBG_BUGON(!nblocks);
- 
- 	if (PageUptodate(page)) {
- 		err = 0;
-@@ -252,7 +261,7 @@ static inline struct bio *erofs_read_raw_page(
- 		}
- 
- 		/* for RAW access mode, m_plen must be equal to m_llen */
--		BUG_ON(map.m_plen != map.m_llen);
-+		DBG_BUGON(map.m_plen != map.m_llen);
- 
- 		blknr = erofs_blknr(map.m_pa);
- 		blkoff = erofs_blkoff(map.m_pa);
-@@ -262,7 +271,7 @@ static inline struct bio *erofs_read_raw_page(
- 			void *vsrc, *vto;
- 			struct page *ipage;
- 
--			BUG_ON(map.m_plen > PAGE_SIZE);
-+			DBG_BUGON(map.m_plen > PAGE_SIZE);
- 
- 			ipage = erofs_get_meta_page(inode->i_sb, blknr, 0);
- 
-@@ -289,7 +298,7 @@ static inline struct bio *erofs_read_raw_page(
- 		}
- 
- 		/* pa must be block-aligned for raw reading */
--		BUG_ON(erofs_blkoff(map.m_pa) != 0);
-+		DBG_BUGON(erofs_blkoff(map.m_pa));
- 
- 		/* max # of continuous pages */
- 		if (nblocks > DIV_ROUND_UP(map.m_plen, PAGE_SIZE))
-@@ -357,7 +366,7 @@ static int erofs_raw_access_readpage(struct file *file, struct page *page)
- 	if (IS_ERR(bio))
- 		return PTR_ERR(bio);
- 
--	BUG_ON(bio != NULL);	/* since we have only one bio -- must be NULL */
-+	DBG_BUGON(bio);	/* since we have only one bio -- must be NULL */
- 	return 0;
- }
- 
-@@ -395,7 +404,7 @@ static int erofs_raw_access_readpages(struct file *filp,
- 		/* pages could still be locked */
- 		put_page(page);
- 	}
--	BUG_ON(!list_empty(pages));
-+	DBG_BUGON(!list_empty(pages));
- 
- 	/* the rare case (end in gaps) */
- 	if (unlikely(bio != NULL))
+which is a separate function you call.
+
+So that you not have a label at the end of the function. Whatever tglx
+prefers.
+
 -- 
-1.9.1
+Regards/Gruss,
+    Boris.
 
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
