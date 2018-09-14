@@ -2,111 +2,265 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80271ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35279ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1078920881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:32:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1078920881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netapp.com
+	by mail.kernel.org (Postfix) with ESMTP id C371F21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C371F21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeIOBs2 (ORCPT
+        id S1728012AbeIOBvP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:48:28 -0400
-Received: from mail-bl2nam02on0053.outbound.protection.outlook.com ([104.47.38.53]:10669
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726969AbeIOBs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:48:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=netapp.onmicrosoft.com; s=selector1-netapp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UEvVErA+MHkfjz+mizYa4ezOgLzdAytGyPppL1cLNAA=;
- b=aWyo3Q3cMtFopHrcm/osC0b+ikBuFlQALYXgeBP5NmQaKnOSBnt88cS1WeHaiLGtWmdyj7Y28TusrBEcFeKwyY66OVqC4NuTtzxa6sO7vFuke4xrklhr0M6950DObY13NNsnv+JFk0pAt25dGRdzeoyNStPztR9gz+LPuDMxffo=
-Received: from DM5PR06MB3161.namprd06.prod.outlook.com (10.174.240.148) by
- DM5PR06MB3257.namprd06.prod.outlook.com (10.174.241.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.15; Fri, 14 Sep 2018 20:32:22 +0000
-Received: from DM5PR06MB3161.namprd06.prod.outlook.com
- ([fe80::114e:bdcc:c27c:c585]) by DM5PR06MB3161.namprd06.prod.outlook.com
- ([fe80::114e:bdcc:c27c:c585%2]) with mapi id 15.20.1122.020; Fri, 14 Sep 2018
- 20:32:22 +0000
-From:   "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.linux.org" <linux-nfs@vger.linux.org>
-Subject: [GIT PULL] Please pull NFS client bugfixes for 4.19
-Thread-Topic: [GIT PULL] Please pull NFS client bugfixes for 4.19
-Thread-Index: AQHUTGoKDuGh83S5P0a7kBwpWzh2aA==
-Date:   Fri, 14 Sep 2018 20:32:22 +0000
-Message-ID: <9cf28df18cd2deba1b693df949e58efbcd299019.camel@netapp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anna.Schumaker@netapp.com; 
-x-originating-ip: [68.40.188.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR06MB3257;6:ceXMNCaPtQWkUd3pYo0eMiXFYVhajAq6txAYj8Ju/OWDiluBOa5hmjG3CRmvcXh8FMI3hf0wCaJgUpeyhas/hNNb0V8+NsZ/zqwaFOVy8sBwFQIHHkWkdBTsuX6mBqNFplnfkKHqNSYpWMTuIFeuV2mL/50C2KhIk8h6ohF65mjMzQA222y0pvyExBEQweODyJoC07hn2QBZzSqBiRACfoy5AE+0qSu/YXnHkkIwXZdrGHxMX8gicPsSdp2SzSiAsaapwXOosmeNCJ1+j3qKC/8HxMZWZGAEEsBNGKDigRaw4z/dHi13CYzQ68jK3EvtzWRGAVntMPL0pwl21s5SfO57SglywzNpoWYHxzReIyQzyqvMzlIMk7w3wjgT9H0O4IzILPPqq0Yw9Xfl9jCLL+il/mi4ncASnWGOnJ2sYlx7oB6E9DGzeu1UHdAK65zfqLg+FfHQfMmx/nNGNFTLjg==;5:cvg7R9SKeCpJaCuJQBAvXhdFEyKJ3gyPeitFODRTBRUy3LsYZQQS3I3Xoa74KpwIfZZIcyoTLDR8UEO65x1qGlh7JbpL3a27W8voi7EcwRrH2KofLyKFYmy+bor1D6KhvmfEW9Gmqpu+W4EjeMnNUiqTzXhEV9Myxw0Bf58AWBI=;7:DGAyYjPr59WVR/lMiicyJJK+gxVQ94Qxk1fmu03RoSzvgVm9B6lgoyIv919BmnVyFG4N10XDn8RfHJTWsXOlkeChTGbW4EQUKKWgHpAfU7lr+WgMdX1GI5ZWVvoGKyVpHtKtAsw5XKA+7mYIyjU+EcaXS6IE7EptyneHTLSSNlG01dD7z/ShFM4nBDtVt3KNa1ef2W0IqCmoVT9sSRF1h89O3ZpRllGlZipu37M1zTr+0l+s+3FGxhRHOWfS3LId
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 01532194-8708-495a-1845-08d61a812cbf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7193020);SRVR:DM5PR06MB3257;
-x-ms-traffictypediagnostic: DM5PR06MB3257:
-x-microsoft-antispam-prvs: <DM5PR06MB3257E8372CF1B6E3449FD581F8190@DM5PR06MB3257.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(5213294742642);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:DM5PR06MB3257;BCL:0;PCL:0;RULEID:;SRVR:DM5PR06MB3257;
-x-forefront-prvs: 07954CC105
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(396003)(136003)(346002)(39860400002)(189003)(199004)(99286004)(5640700003)(81156014)(50226002)(6916009)(53936002)(6486002)(6512007)(316002)(8936002)(5660300001)(6436002)(118296001)(305945005)(2906002)(2900100001)(1730700003)(68736007)(25786009)(7736002)(81166006)(2501003)(4326008)(72206003)(478600001)(54906003)(66066001)(8676002)(14454004)(3846002)(97736004)(6116002)(105586002)(2351001)(106356001)(5250100002)(486006)(102836004)(2616005)(6506007)(26005)(186003)(476003)(256004)(86362001)(575784001)(36756003)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR06MB3257;H:DM5PR06MB3161.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: netapp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: XKcqQPbWQawLIS3nn1wOBmOPzgV0CHJmw+wxhCLDJshbZX4HLpBR+maTq9vxXHl9jid9xuBrFaSW1w3xDm3nlS7ZjLp1wENyXdWZMUeiqZtBePKUxN6qqKr2FOcSOkTimvR3v7931/Gk23vOOl8eRcemiKI+4XF4uIsBYThwQ5w5erIJ6PkpxMINbXSt8uqnaHnQTOhLa2fjntCh3vcZoqg3l/TauYRfcmmuXl1NoJ+46o66pNIZNvSl6l7lvyNscK7lRdVVFcswVw5b70o6N+xMGKIwIfuAn5GVww7c33r2mQrdQ2v2+dd6mWAE23BC+mPoZJAmrY/Bv31LgRdKFalCGK4kSaVPoa68iIWXd7g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DD9BD424906C45468CBDA5609972EBA4@namprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 14 Sep 2018 21:51:15 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50763 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbeIOBvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 21:51:14 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1g0unt-00088n-HE; Fri, 14 Sep 2018 22:35:01 +0200
+Date:   Fri, 14 Sep 2018 22:35:01 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
+Message-ID: <20180914203501.qibhpmueosvkr74w@linutronix.de>
+References: <20180912133353.20595-1-bigeasy@linutronix.de>
+ <20180912133353.20595-5-bigeasy@linutronix.de>
+ <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: netapp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01532194-8708-495a-1845-08d61a812cbf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2018 20:32:22.2217
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR06MB3257
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgMGFmNGM4YmU5
-N2ExNGQxZGY4YTc4YjQ5OTNhMDllOGRmZjU0NWExODoNCg0KICBwTkZTOiBSZW1vdmUgdW53YW50
-ZWQgb3B0aW1pc2F0aW9uIG9mIGxheW91dGdldCAoMjAxOC0wOC0yMSAxMzozOTowOCAtMDQwMCkN
-Cg0KYXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9zaXRvcnkgYXQ6DQoNCiAgZ2l0Oi8vZ2l0
-LmxpbnV4LW5mcy5vcmcvcHJvamVjdHMvYW5uYS9saW51eC1uZnMuZ2l0IHRhZ3MvbmZzLWZvci00
-LjE5LTINCg0KZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDlmMGM1MTI0ZjRhODI1MDNl
-ZTVkNTVjNjBiMGI5YzZhZmMzYWY2OGI6DQoNCiAgTkZTOiBEb24ndCBvcGVuIGNvZGUgY2xlYXJp
-bmcgb2YgZGVsZWdhdGlvbiBzdGF0ZSAoMjAxOC0wOS0xNCAxNjoyNDoyNyAtMDQwMCkNCg0KLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQ0KDQpUaGVzZSBhcmUgYSBoYW5kZnVsIG9mIGZpeGVzIGZvciBwcm9ibGVtcyB0aGF0IFRy
-b25kIGZvdW5kLiAgU29ycnkgdGhhdA0KcGF0Y2ggIzEgYW5kICMzIGhhdmUgdGhlIHNhbWUgbmFt
-ZSwgYSBzZWNvbmQgaXNzdWUgd2FzIGZvdW5kIGFmdGVyIGFwcGx5aW5nDQp0aGUgZmlyc3QgcGF0
-Y2guDQoNClRoYW5rcywNCkFubmENCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KDQpUcm9uZCBNeWtsZWJ1c3QgKDUpOg0K
-ICAgICAgTkZTdjQ6IEZpeCBhIHRyYWNlcG9pbnQgT29wcyBpbiBpbml0aWF0ZV9maWxlX2RyYWlu
-aW5nKCkNCiAgICAgIHBORlM6IEVuc3VyZSB3ZSByZXR1cm4gdGhlIGVycm9yIGlmIHNvbWVvbmUg
-a2lsbHMgYSB3YWl0aW5nIGxheW91dGdldA0KICAgICAgTkZTdjQ6IEZpeCBhIHRyYWNlcG9pbnQg
-T29wcyBpbiBpbml0aWF0ZV9maWxlX2RyYWluaW5nKCkNCiAgICAgIE5GU3Y0LjEgZml4IGluZmlu
-aXRlIGxvb3Agb24gSS9PLg0KICAgICAgTkZTOiBEb24ndCBvcGVuIGNvZGUgY2xlYXJpbmcgb2Yg
-ZGVsZWdhdGlvbiBzdGF0ZQ0KDQogZnMvbmZzL25mczRwcm9jLmMgIHwgMzEgKysrKysrKysrKysr
-KysrKysrKy0tLS0tLS0tLS0tLQ0KIGZzL25mcy9uZnM0c3RhdGUuYyB8ICAyICsrDQogZnMvbmZz
-L25mczR0cmFjZS5oIHwgIDQgKystLQ0KIGZzL25mcy9wbmZzLmMgICAgICB8IDI2ICsrKysrKysr
-KysrKysrKystLS0tLS0tLS0tDQogNCBmaWxlcyBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspLCAy
-NCBkZWxldGlvbnMoLSkNCg==
+While most of a task's FPU state is only needed in user space,
+the protection keys need to be in place immediately after a
+context switch.
+
+The reason is that any accesses to userspace memory while running
+in kernel mode also need to abide by the memory permissions
+specified in the protection keys.
+
+The pkru info is put in its own cache line in the fpu struct because
+that cache line is accessed anyway at context switch time.
+Remove XFEATURE_MASK_PKRU from supported flags. This removes the PKRU
+state from XSAVE/XRESTORE and so decouples it from the FPU state.
+
+The initial state of pkru is updated in pkru_set_init_value() via
+fpu__clear() - it is no longer affected by fpstate_init().
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+[bigeasy: load PKRU state only if we also load FPU content]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+
+v1…v2: remove PKRU from xsave/srestore.
+
+On 2018-09-12 16:18:44 [+0200], Paolo Bonzini wrote:
+
+> I think you can go a step further and exclude PKRU state from
+> copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
+> means you don't need to call __fpregs_* functions in write_pkru.
+
+something like this then? It looks like kvm excludes PKRU from
+xsave/xrestore, too. This wouldn't be required then. This is (again)
+untested since I have no box with this PKRU feature. This only available
+on Intel's Xeon Scalable, right?
+
+> Thanks,
+> 
+> Paolo
+
+ arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++--
+ arch/x86/include/asm/fpu/types.h    |  7 +++++++
+ arch/x86/include/asm/fpu/xstate.h   |  1 -
+ arch/x86/include/asm/pgtable.h      |  7 +++++--
+ arch/x86/include/asm/pkeys.h        |  2 +-
+ arch/x86/kernel/fpu/core.c          |  2 +-
+ arch/x86/kernel/fpu/xstate.c        |  4 ----
+ arch/x86/mm/pkeys.c                 | 21 ++++-----------------
+ include/linux/pkeys.h               |  2 +-
+ 9 files changed, 31 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 16c4077ffc945..903ee77b6d5b0 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -573,8 +573,18 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ 	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
+ 		       new_fpu->initialized;
+ 
+-	if (preload)
+-		__fpregs_load_activate(new_fpu, cpu);
++	if (!preload)
++		return;
++
++	__fpregs_load_activate(new_fpu, cpu);
++
++#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++	/* Protection keys need to be in place right at context switch time. */
++	if (boot_cpu_has(X86_FEATURE_OSPKE)) {
++		if (new_fpu->pkru != __read_pkru())
++			__write_pkru(new_fpu->pkru);
++	}
++#endif
+ }
+ 
+ /*
+diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+index 202c53918ecfa..257b092bdaa4e 100644
+--- a/arch/x86/include/asm/fpu/types.h
++++ b/arch/x86/include/asm/fpu/types.h
+@@ -293,6 +293,13 @@ struct fpu {
+ 	 */
+ 	unsigned int			last_cpu;
+ 
++	/*
++	 * Protection key bits. The protection key needs to be switched out
++	 * immediately at context switch time, so it is in place for things
++	 * like copy_to_user.
++	 */
++	unsigned int			pkru;
++
+ 	/*
+ 	 * @initialized:
+ 	 *
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index 48581988d78c7..abe8793fa50f9 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -29,7 +29,6 @@
+ 				 XFEATURE_MASK_OPMASK | \
+ 				 XFEATURE_MASK_ZMM_Hi256 | \
+ 				 XFEATURE_MASK_Hi16_ZMM	 | \
+-				 XFEATURE_MASK_PKRU | \
+ 				 XFEATURE_MASK_BNDREGS | \
+ 				 XFEATURE_MASK_BNDCSR)
+ 
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 690c0307afed0..d87bdfaf45e56 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -134,8 +134,11 @@ static inline u32 read_pkru(void)
+ 
+ static inline void write_pkru(u32 pkru)
+ {
+-	if (boot_cpu_has(X86_FEATURE_OSPKE))
+-		__write_pkru(pkru);
++	if (!boot_cpu_has(X86_FEATURE_OSPKE))
++		return;
++
++	current->thread.fpu.pkru = pkru;
++	__write_pkru(pkru);
+ }
+ 
+ static inline int pte_young(pte_t pte)
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index 19b137f1b3beb..b184f916319e5 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -119,7 +119,7 @@ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 		unsigned long init_val);
+ extern int __arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 		unsigned long init_val);
+-extern void copy_init_pkru_to_fpregs(void);
++extern void pkru_set_init_value(void);
+ 
+ static inline int vma_pkey(struct vm_area_struct *vma)
+ {
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 2ea85b32421a0..72cd2e2a07194 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -373,7 +373,7 @@ static inline void copy_init_fpstate_to_fpregs(void)
+ 		copy_kernel_to_fregs(&init_fpstate.fsave);
+ 
+ 	if (boot_cpu_has(X86_FEATURE_OSPKE))
+-		copy_init_pkru_to_fpregs();
++		pkru_set_init_value();
+ }
+ 
+ /*
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 87a57b7642d36..11014d841b9f7 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -920,10 +920,6 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 	int pkey_shift = (pkey * PKRU_BITS_PER_PKEY);
+ 	u32 new_pkru_bits = 0;
+ 
+-	/*
+-	 * This check implies XSAVE support.  OSPKE only gets
+-	 * set if we enable XSAVE and we enable PKU in XCR0.
+-	 */
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+ 		return -EINVAL;
+ 
+diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
+index 6e98e0a7c9231..2f9d95206c741 100644
+--- a/arch/x86/mm/pkeys.c
++++ b/arch/x86/mm/pkeys.c
+@@ -137,26 +137,13 @@ u32 init_pkru_value = PKRU_AD_KEY( 1) | PKRU_AD_KEY( 2) | PKRU_AD_KEY( 3) |
+ 		      PKRU_AD_KEY(10) | PKRU_AD_KEY(11) | PKRU_AD_KEY(12) |
+ 		      PKRU_AD_KEY(13) | PKRU_AD_KEY(14) | PKRU_AD_KEY(15);
+ 
+-/*
+- * Called from the FPU code when creating a fresh set of FPU
+- * registers.  This is called from a very specific context where
+- * we know the FPU regstiers are safe for use and we can use PKRU
+- * directly.
+- */
+-void copy_init_pkru_to_fpregs(void)
++void pkru_set_init_value(void)
+ {
+ 	u32 init_pkru_value_snapshot = READ_ONCE(init_pkru_value);
+-	/*
+-	 * Any write to PKRU takes it out of the XSAVE 'init
+-	 * state' which increases context switch cost.  Avoid
+-	 * writing 0 when PKRU was already 0.
+-	 */
+-	if (!init_pkru_value_snapshot && !read_pkru())
++
++	if (init_pkru_value_snapshot == read_pkru())
+ 		return;
+-	/*
+-	 * Override the PKRU state that came from 'init_fpstate'
+-	 * with the baseline from the process.
+-	 */
++
+ 	write_pkru(init_pkru_value_snapshot);
+ }
+ 
+diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+index 2955ba9760489..9a9efecc1388f 100644
+--- a/include/linux/pkeys.h
++++ b/include/linux/pkeys.h
+@@ -44,7 +44,7 @@ static inline bool arch_pkeys_enabled(void)
+ 	return false;
+ }
+ 
+-static inline void copy_init_pkru_to_fpregs(void)
++static inline void pkru_set_init_value(void)
+ {
+ }
+ 
+-- 
+2.19.0
+
