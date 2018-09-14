@@ -2,91 +2,77 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7182ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076F8ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612B720866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="oHse3Byw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612B720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id AECFF20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AECFF20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeINPHK (ORCPT
+        id S1727853AbeINPI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:07:10 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:49325 "EHLO frisell.zx2c4.com"
+        Fri, 14 Sep 2018 11:08:28 -0400
+Received: from mga17.intel.com ([192.55.52.151]:9123 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeINPHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:07:09 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id af004bce;
-        Fri, 14 Sep 2018 09:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=hLPb86mdSs2C6nm1+BH4PS8NEwg=; b=oHse3B
-        ywWnDW6cILtHtSKHFuD/lq27acPgZwjgWJI6ld/BDMtOecbQg5BXifUp1/MhThgC
-        FHav2O3RIhTrR/gNL3SCOBLlUTs8+L410jGKkG2eXirzo+cVO7168QEhak/AMx00
-        kIxWOXUHJMlDM11Wa4PbCaW2Xjdk/aa6nlSuhnNGAzxulUYGzOBDBMVDBnoGga+N
-        cktx8XUwtgR+Nee+/SkDE6EYmtlOtrpIKzVcM99iovj7L3i8AhmEbEY2M7KD3Ff4
-        IwGRIZiFOin+IuC4xdODXJyiYHZV52CJvcK/FytL0eQ/H1hQpcnSg++R0hR7pBZG
-        YuwtB34/eNXjBtSg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 96c77ec5 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 14 Sep 2018 09:36:21 +0000 (UTC)
-Received: by mail-oi0-f48.google.com with SMTP id t68-v6so12230516oie.12;
-        Fri, 14 Sep 2018 02:53:22 -0700 (PDT)
-X-Gm-Message-State: APzg51AtAERJX7kkQpaRPAbphXSXcv3bWYSVFGGZ4GgfL0TqezzZVSUQ
-        0ItK5cWEL1RyX50MSbKfUUBZZu5U8ofyRRkbTtk=
-X-Google-Smtp-Source: ANB0VdbnYsaf+dJk+X2VMuE3XszMMhgmr+LZaEQh4pk47PqGTrWrcnmk2XNVrJDM/RsP0Nh4BIKLWpGfIuU2Oc7GZtc=
-X-Received: by 2002:aca:310b:: with SMTP id x11-v6mr9183899oix.74.1536918802116;
- Fri, 14 Sep 2018 02:53:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
- <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
- <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
- <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
- <CALCETrU2qkLVaxC=cpU5iAeT5B7xGsR+m2ZWtLVK37jMMWtcAA@mail.gmail.com>
- <CAKv+Gu8z1r7F_wbR6-e0Vbryqby7djDy2OR6JJURCsTo6ZMa2g@mail.gmail.com>
- <CAHmME9pcODNc2m26DH1cQY6R+grxYW5dvFpNDpz_GiugM3qufw@mail.gmail.com>
- <CAKv+Gu9GVbSETjp01tANMwJgA6O9aexhnH+47836KjZg+71q2A@mail.gmail.com>
- <CAHmME9qjTyYpm_PsQ5_oZSfZBGa29zME1XHVak9F4Ued-qm67g@mail.gmail.com> <CAKv+Gu8zULznCmgz++LNNTwfTifaz5L92h=vvWb4yh5fHh-huQ@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8zULznCmgz++LNNTwfTifaz5L92h=vvWb4yh5fHh-huQ@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 14 Sep 2018 11:53:10 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qmDEk-aPYH2CA+q0G7rYfUt6W_WijAgusPVYe48OzwdQ@mail.gmail.com>
-Message-ID: <CAHmME9qmDEk-aPYH2CA+q0G7rYfUt6W_WijAgusPVYe48OzwdQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
+        id S1726618AbeINPI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:08:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 02:54:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
+   d="scan'208";a="89998192"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 14 Sep 2018 02:54:41 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 14 Sep 2018 12:54:40 +0300
+Date:   Fri, 14 Sep 2018 12:54:40 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Badhri Jagan Sridharan <badhri@google.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        USB <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] typec: tcpm: Do not disconnect link for self powered
+ devices
+Message-ID: <20180914095440.GF19329@kuha.fi.intel.com>
+References: <20180913021113.18150-1-badhri@google.com>
+ <20180913132408.GC19329@kuha.fi.intel.com>
+ <20180913175108.GA11749@roeck-us.net>
+ <CAPTae5JVv0F_9mrXSTxmB2n9A9fJvcakwC0AKV6GbB+6Y79rGg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPTae5JVv0F_9mrXSTxmB2n9A9fJvcakwC0AKV6GbB+6Y79rGg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 8:15 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> OK, so given random.c's future dependency on Zinc (for ChaCha20), and
-> the fact that Zinc is one monolithic piece of code, all versions of
-> all algorithms will always be statically linked into the kernel
-> proper. I'm not sure that is acceptable.
+Hi,
 
-v4 already addresses that issue, actually. I'll post it shortly.
+On Thu, Sep 13, 2018 at 04:16:08PM -0700, Badhri Jagan Sridharan wrote:
+> > > You do need to introduce a new device property already. Then read the
+> 
+> This would be part of usb-connector binding. right ?
 
-> BTW you haven't answered my question yet about what happens when the
-> WireGuard protocol version changes: will we need a flag day and switch
-> all deployments over at the same time?
+Yes, that is probable the correct place for that. It's not tcpm/tcpci
+specific.
 
-No, that won't be necessary, necessarily. Peers are individually
-versioned and the protocol is fairly flexible in this regard.
+But I don't think it's Type-C specific either. Perhaps it should
+go under "Optional Properties" instead of "Optional properties for
+usb-c-connector"?
+
+
+Thanks,
+
+-- 
+heikki
