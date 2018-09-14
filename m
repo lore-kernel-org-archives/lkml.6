@@ -2,136 +2,139 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833F7C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25958C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303AF20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:47:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303AF20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C97F520882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C97F520882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeINOAj (ORCPT
+        id S1728111AbeINOCs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:00:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58306 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeINOAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:00:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31A4D18A;
-        Fri, 14 Sep 2018 01:47:10 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 629B33F703;
-        Fri, 14 Sep 2018 01:47:07 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 09:47:04 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20180914084704.GL1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-3-patrick.bellasi@arm.com>
- <20180912162427.GA24106@hirez.programming.kicks-ass.net>
- <20180912174209.GI1413@e110439-lin>
- <20180913192034.GA24082@hirez.programming.kicks-ass.net>
+        Fri, 14 Sep 2018 10:02:48 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57637 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeINOCr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:02:47 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id f0624824cc37fe96; Fri, 14 Sep 2018 10:49:15 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Mika =?ISO-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: [PATCH] PM / suspend: Count suspend-to-idle loop as sleep time
+Date:   Fri, 14 Sep 2018 10:46:35 +0200
+Message-ID: <1831106.CYv9dyYV15@aspire.rjw.lan>
+In-Reply-To: <767e9ec4-cc35-9255-360a-4d12736aa4de@nextfour.com>
+References: <9611469.2z7W9akjOQ@aspire.rjw.lan> <767e9ec4-cc35-9255-360a-4d12736aa4de@nextfour.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913192034.GA24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Sep 21:20, Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 06:42:09PM +0100, Patrick Bellasi wrote:
-> > On 12-Sep 18:24, Peter Zijlstra wrote:
-> > > On Tue, Aug 28, 2018 at 02:53:10PM +0100, Patrick Bellasi wrote:
+On Friday, September 14, 2018 10:28:44 AM CEST Mika Penttilä wrote:
+> Hi!
 > 
-> > > >  {
-> > > > +	int group_id[UCLAMP_CNT] = { UCLAMP_NOT_VALID };
-> > > > +	int lower_bound, upper_bound;
-> > > > +	struct uclamp_se *uc_se;
-> > > > +	int result = 0;
-> > > 
-> > > I think the thing would become much more readable if you set
-> > > lower/upper_bound right here.
 > 
-> > Actually it could also make sense to have them before the mutex ;)
+> On 09/14/2018 09:59 AM, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > 
+> > There is a difference in behavior between suspend-to-idle and
+> > suspend-to-RAM in the timekeeping handling that leads to functional
+> > issues.  Namely, every iteration of the loop in s2idle_loop()
+> > increases the monotinic clock somewhat, even if timekeeping_suspend()
+> > and timekeeping_resume() are invoked from s2idle_enter(), and if
+> > many of them are carried out in a row, the monotonic clock can grow
+> > significantly while the system is regarded as suspended, which
+> > doesn't happen during suspend-to-RAM and so it is unexpected and
+> > leads to confusion and misbehavior in user space (similar to what
+> > ensued when we tried to combine the boottime and monotonic clocks).
+> > 
+> > To avoid that, count all iterations of the loop in s2idle_loop()
+> > as "sleep time" and adjust the clock for that on exit from
+> > suspend-to-idle.
+> > 
+> > [That also covers systems on which timekeeping is not suspended
+> >  by by s2idle_enter().]
+> > 
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> > 
+> > This is a replacement for https://patchwork.kernel.org/patch/10599209/
+> > 
+> > I decided to count the entire loop in s2idle_loop() as "sleep time" as the
+> > patch is then simpler and it also covers systems where timekeeping is not
+> > suspended in the final step of suspend-to-idle.
+> > 
+> > I dropped the "Fixes:" tag, because the monotonic clock delta problem
+> > has been present on the latter since the very introduction of "freeze"
+> > (as suspend-to-idle was referred to previously) and so this doesn't fix
+> > any particular later commits.
+> > 
+> > ---
+> >  kernel/power/suspend.c |   18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > Index: linux-pm/kernel/power/suspend.c
+> > ===================================================================
+> > --- linux-pm.orig/kernel/power/suspend.c
+> > +++ linux-pm/kernel/power/suspend.c
+> > @@ -109,8 +109,12 @@ static void s2idle_enter(void)
+> >  
+> >  static void s2idle_loop(void)
+> >  {
+> > +	ktime_t start, delta;
+> > +
+> >  	pm_pr_dbg("suspend-to-idle\n");
+> >  
+> > +	start = ktime_get();
+> > +
+> >  	for (;;) {
+> >  		int error;
+> >  
+> > @@ -150,6 +154,20 @@ static void s2idle_loop(void)
+> >  		pm_wakeup_clear(false);
+> >  	}
+> >  
+> > +	/*
+> > +	 * If the monotonic clock difference between the start of the loop and
+> > +	 * this point is too large, user space may get confused about whether or
+> > +	 * not the system has been suspended and tasks may get killed by
+> > +	 * watchdogs etc., so count the loop as "sleep time" to compensate for
+> > +	 * that.
+> > +	 */
+> > +	delta = ktime_sub(ktime_get(), start);
+> > +	if (ktime_to_ns(delta) > 0) {
+> > +		struct timespec64 timespec64_delta = ktime_to_timespec64(delta);
+> > +
+> > +		timekeeping_inject_sleeptime64(&timespec64_delta);
+> > +	}
 > 
-> Indeed.
-> 
-> +               upper_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
-> +                       ? attr->sched_util_max
-> +                       : p->uclamp[UCLAMP_MAX].value;
-> +
-> +               if (upper_bound == UCLAMP_NOT_VALID)
-> +                       upper_bound = SCHED_CAPACITY_SCALE;
-> +               if (attr->sched_util_min > upper_bound) {
-> +                       result = -EINVAL;
-> +                       goto done;
-> +               }
-> +
-> +               result = uclamp_group_find(UCLAMP_MIN, attr->sched_util_min);
-> +               if (result == -ENOSPC) {
-> +                       pr_err(UCLAMP_ENOSPC_FMT, "MIN");
-> +                       goto done;
-> +               }
-> +               group_id[UCLAMP_MIN] = result;
-> +       }
-> +       if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
-> +               lower_bound = (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
-> +                       ? attr->sched_util_min
-> +                       : p->uclamp[UCLAMP_MIN].value;
-> +
-> +               if (lower_bound == UCLAMP_NOT_VALID)
-> +                       lower_bound = 0;
-> +               if (attr->sched_util_max < lower_bound ||
-> +                   attr->sched_util_max > SCHED_CAPACITY_SCALE) {
-> +                       result = -EINVAL;
-> +                       goto done;
-> +               }
-> 
-> That would end up soething like:
-> 
-> 	unsigned int lower_bound = p->uclamp[UCLAMP_MIN].value;
-> 	unsigned int upper_bound = p->uclamp[UCLAMP_MAX].value;
-> 
-> 	if (sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
-> 		lower_bound = attr->sched_util_min;
-> 
-> 	if (sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
-> 		upper_bound = attr->sched_util_max;
-> 
-> 	if (lower_bound > upper_bound ||
-> 	    upper_bound > SCHED_CAPACITY_MAX)
-> 		return -EINVAL;
-> 
-> 	mutex_lock(...);
+> But doesn't injecting sleep time here make monotonic clock too large by the amount of sleeptime? 
+> tick_freeze() / tick_unfreeze() already injects the sleeptime (otherwise delta would be 0).
 
-Yes... much cleaner, thanks.
+No, it doesn't.
 
--- 
-#include <best/regards.h>
+The delta here is the extra time taken by the loop which hasn't been counted
+as sleep time yet.
 
-Patrick Bellasi
+Thanks,
+Rafael
+
