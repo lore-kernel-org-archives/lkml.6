@@ -2,99 +2,99 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC547ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F32ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99FD120882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:58:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99FD120882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D937E20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:02:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q8qgoasx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D937E20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbeINWOL (ORCPT
+        id S1728007AbeINWRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:14:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:36668 "EHLO foss.arm.com"
+        Fri, 14 Sep 2018 18:17:51 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34977 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727095AbeINWOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:14:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C7EF80D;
-        Fri, 14 Sep 2018 09:58:50 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0CDE13F557;
-        Fri, 14 Sep 2018 09:58:50 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 9F8321AE2F82; Fri, 14 Sep 2018 17:59:07 +0100 (BST)
-Date:   Fri, 14 Sep 2018 17:59:07 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RFC LKMM 2/7] doc: Replace smp_cond_acquire() with
- smp_cond_load_acquire()
-Message-ID: <20180914165907.GK6236@arm.com>
-References: <20180829211018.GA19646@linux.vnet.ibm.com>
- <20180829211053.20531-2-paulmck@linux.vnet.ibm.com>
+        id S1726847AbeINWRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:17:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=ak5OAcbYxLE4bMySEw3+mZli71x/Nhk0YQkd91OJsPw=;
+        b=Q8qgoasxgh8vNqzLSLdzmNPOhy3fN1+WIVMUw8Hj3B+7Z/KHXB6se3YlFJt/6Sfnxy3k0wPu4ZmXJYE7OqNS8p7Ir++9/XOSO4kisFxETod512QdHPUSwU5c3wp+FzTfGUcYYeQUMr0UCytNAiShHwg2BpymHZaL2ki0r7qB9tg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g0rU5-00062l-MM; Fri, 14 Sep 2018 19:02:21 +0200
+Date:   Fri, 14 Sep 2018 19:02:21 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
+        f.fainelli@gmail.com, allan.nielsen@microchip.com,
+        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, antoine.tenart@bootlin.com
+Subject: Re: [PATCH 5/7] MIPS: mscc: ocelot: add GPIO4 pinmuxing DT node
+Message-ID: <20180914170221.GB3811@lunn.ch>
+References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
+ <92e37a04e77003f01a67ac5e49e66ae83f87c591.1536916714.git-series.quentin.schulz@bootlin.com>
+ <20180914145446.GQ14988@piout.net>
+ <20180914162638.fgzzjin2bzgx74de@qschulz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829211053.20531-2-paulmck@linux.vnet.ibm.com>
+In-Reply-To: <20180914162638.fgzzjin2bzgx74de@qschulz>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 02:10:48PM -0700, Paul E. McKenney wrote:
-> From: Andrea Parri <andrea.parri@amarulasolutions.com>
+On Fri, Sep 14, 2018 at 06:26:38PM +0200, Quentin Schulz wrote:
+> Hi Alexandre,
 > 
-> Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
-> with smp_cond_load_acquire()") by updating the documentation accordingly.
-> Also remove some obsolete information related to the implementation.
+> On Fri, Sep 14, 2018 at 04:54:46PM +0200, Alexandre Belloni wrote:
+> > Hi,
+> > 
+> > On 14/09/2018 11:44:26+0200, Quentin Schulz wrote:
+> > > In order to use GPIO4 as a GPIO, we need to mux it in this mode so let's
+> > > declare a new pinctrl DT node for it.
+> > > 
+> > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> > > ---
+> > >  arch/mips/boot/dts/mscc/ocelot.dtsi | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > index 8ce317c..b5c4c74 100644
+> > > --- a/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> > > @@ -182,6 +182,11 @@
+> > >  			interrupts = <13>;
+> > >  			#interrupt-cells = <2>;
+> > >  
+> > > +			gpio4: gpio4 {
+> > > +				pins = "GPIO_4";
+> > > +				function = "gpio";
+> > > +			};
+> > > +
+> > 
+> > For a GPIO, I would do that in the board dts because it is not used
+> > directly in the dtsi.
+> > 
 > 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> ---
->  Documentation/memory-barriers.txt | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> index 0d8d7ef131e9..c1d913944ad8 100644
-> --- a/Documentation/memory-barriers.txt
-> +++ b/Documentation/memory-barriers.txt
-> @@ -471,8 +471,7 @@ And a couple of implicit varieties:
->       operations after the ACQUIRE operation will appear to happen after the
->       ACQUIRE operation with respect to the other components of the system.
->       ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
-> -     semantics from relying on a control dependency and smp_rmb().
-> +     and smp_cond_load_acquire() operations.
+> And the day we've two boards using this pinctrl we move it to a dtsi. Is
+> that the plan?
 
-Thanks for fixing the doc:
+Hi Quentin
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+gpio4 appears to be pretty arbitrary. Could a different design use a
+different gpio? It me, this seems like a board property.
 
-Will
+    Andrew
