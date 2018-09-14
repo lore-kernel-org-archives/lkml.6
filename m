@@ -2,304 +2,379 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DDCECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB056FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13682083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13682083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F9A02083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JAjqHIHt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9A02083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeINT4R (ORCPT
+        id S1728609AbeINT43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:56:17 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12136 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728178AbeINT4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:56:16 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6DA74C8D6EEA2;
-        Fri, 14 Sep 2018 22:41:08 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 14 Sep
- 2018 22:41:04 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 2/8] staging: erofs: clean up z_erofs_map_blocks_iter
-Date:   Fri, 14 Sep 2018 22:40:24 +0800
-Message-ID: <1536936030-62362-3-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
-References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        Fri, 14 Sep 2018 15:56:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52068 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728459AbeINTze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:55:34 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y2-v6so2191249wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lLKK18pFJM5d1X9iNpVJoHXKMT+hCg6oOMMo9UfD6ow=;
+        b=JAjqHIHtRrz4ZWJJnwIrrgcFvgJIEIVzAP5Dul7SEzHHRXYNLu+jtQF/o5G91ZCKUG
+         X1LwLBmq9SaP08ilzDQcn7OpRJYhU3tck8tHSSnlJkItbYYX2BQVm2zDzmNv40BYioXB
+         t+mYr/zSyyfReoiBtZDDeuEa6nbGteyQsQeTl7SPNsnB6kdTm37lNhEq6VcENO5zCFyd
+         pa4jUOP85m65VJc1bYJBI2RFHChROHryZVr903Hzfbtvlpj6NmNobDsfEhkDiTug780b
+         3DxKpm1bMlqLC014H3KYlKJr7J5hWsXkddUoA/A9/uNKqFrKTraI6vjFSWK9HYnRJtoM
+         UsUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lLKK18pFJM5d1X9iNpVJoHXKMT+hCg6oOMMo9UfD6ow=;
+        b=Oq+KLHT1HHqRRE7pbtVHqt3nk7VjoiMafeXX0x4sqNELQy27TI3h/z4G6JltCsSA9x
+         m0msE42P+/LYlhb+/oVZr/h/o8PpCG0nFQtPqh3kf554ryhDMlakNeg3lISrXnLFrpOU
+         jMDXy2ijRjrvPJjgWaFWp8iv3dXUMVtoBL9IuumlE9ieNnYRXFh9gb417gKxrxOea+8X
+         Uhb9zRgSRb7AC8ZcCpbxizuh7ihW8+71/F0ZqbBNdgjSasOnKCp5RsZSwHEm7sEqZmJ8
+         J+OjSKfaGfELSioLXOWKW+b4C+o67sNlcYaL5P2thBHRFNhcAYDImI2Tppsgz7XOrftN
+         t21w==
+X-Gm-Message-State: APzg51AUUNPicr1S9Aw3qOQtEPoy+s3kJU55QGFLH7LazzmnOkjjCyOV
+        WxudDDiiYOpxLrh6hiGjdpXIfQ==
+X-Google-Smtp-Source: ANB0VdYgQ6LcnKClatknIOu7Kin5m3ubslpo1cEfDIKBL3bwqzhytaAp9VXTuETldkVYrkBL2l4/bQ==
+X-Received: by 2002:a1c:9692:: with SMTP id y140-v6mr2574820wmd.82.1536936043788;
+        Fri, 14 Sep 2018 07:40:43 -0700 (PDT)
+Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
+        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 07:40:42 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 15/22] nvmem: add support for cell lookups from machine code
+Date:   Fri, 14 Sep 2018 16:40:04 +0200
+Message-Id: <20180914144011.27614-16-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180914144011.27614-1-brgl@bgdev.pl>
+References: <20180914144011.27614-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch mainly introduces `vle_map_blocks_iter_ctx' to clean up
-z_erofs_map_blocks_iter and vle_get_logical_extent_head.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-It changes the return value of `vle_get_logical_extent_head' to int
-for the later error handing. In addition, it also renames `pcn' to
-`pblk' since only `pblk' exists in erofs compression ondisk format.
+Add a way for machine code users to associate devices with nvmem cells.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+This restores the support for non-DT systems but following a different
+approach. Cells must now be associated with devices using provided
+routines and data structures before they can be retrieved using
+nvmem_cell_get().
+
+It's still possible to define cells statically in nvmem_config but
+cells created this way still need to be associated with consumers using
+lookup entries.
+
+Note that nvmem_find() must be moves higher in the source file as we
+want to call it from __nvmem_device_get() for devices that don't have
+a device node.
+
+The signature of __nvmem_device_get() is also changed as it's no longer
+used to retrieve cells.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/staging/erofs/unzip_vle.c | 139 +++++++++++++++++++++-----------------
- 1 file changed, 77 insertions(+), 62 deletions(-)
+ drivers/nvmem/core.c           | 129 ++++++++++++++++++++++++++-------
+ include/linux/nvmem-consumer.h |  28 +++++++
+ 2 files changed, 131 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index d16e3dc..d6e5956 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1410,6 +1410,13 @@ static int z_erofs_vle_normalaccess_readpages(
- 	.readpages = z_erofs_vle_normalaccess_readpages,
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 13568e7ad178..9cc86d131e1e 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -62,6 +62,9 @@ static DEFINE_IDA(nvmem_ida);
+ static DEFINE_MUTEX(nvmem_cell_mutex);
+ static LIST_HEAD(nvmem_cell_tables);
+ 
++static DEFINE_MUTEX(nvmem_lookup_mutex);
++static LIST_HEAD(nvmem_lookup_list);
++
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ static struct lock_class_key eeprom_lock_key;
+ #endif
+@@ -283,6 +286,18 @@ static struct nvmem_device *of_nvmem_find(struct device_node *nvmem_np)
+ 	return to_nvmem_device(d);
+ }
+ 
++static struct nvmem_device *nvmem_find(const char *name)
++{
++	struct device *d;
++
++	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
++
++	if (!d)
++		return NULL;
++
++	return to_nvmem_device(d);
++}
++
+ static void nvmem_cell_drop(struct nvmem_cell *cell)
+ {
+ 	mutex_lock(&nvmem_mutex);
+@@ -472,6 +487,21 @@ nvmem_find_cell_by_index(struct nvmem_device *nvmem, int index)
+ 	return cell;
+ }
+ 
++static struct nvmem_cell *
++nvmem_find_cell_by_name(struct nvmem_device *nvmem, const char *cell_id)
++{
++	struct nvmem_cell *cell = NULL;
++
++	mutex_lock(&nvmem_mutex);
++	list_for_each_entry(cell, &nvmem->cells, node) {
++		if (strcmp(cell_id, cell->name) == 0)
++			break;
++	}
++	mutex_unlock(&nvmem_mutex);
++
++	return cell;
++}
++
+ static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
+ {
+ 	struct device_node *parent, *child;
+@@ -719,16 +749,12 @@ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ EXPORT_SYMBOL(devm_nvmem_unregister);
+ 
+ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
+-					       struct nvmem_cell **cellp,
+-					       const char *cell_id)
++					       const char *nvmem_name)
+ {
+ 	struct nvmem_device *nvmem = NULL;
+ 
+-	if (!np)
+-		return ERR_PTR(-ENOENT);
+-
+ 	mutex_lock(&nvmem_mutex);
+-	nvmem = of_nvmem_find(np);
++	nvmem = np ? of_nvmem_find(np) : nvmem_find(nvmem_name);
+ 	mutex_unlock(&nvmem_mutex);
+ 	if (!nvmem)
+ 		return ERR_PTR(-EPROBE_DEFER);
+@@ -752,18 +778,6 @@ static void __nvmem_device_put(struct nvmem_device *nvmem)
+ 	kref_put(&nvmem->refcnt, nvmem_device_release);
+ }
+ 
+-static struct nvmem_device *nvmem_find(const char *name)
+-{
+-	struct device *d;
+-
+-	d = bus_find_device_by_name(&nvmem_bus_type, NULL, name);
+-
+-	if (!d)
+-		return NULL;
+-
+-	return to_nvmem_device(d);
+-}
+-
+ #if IS_ENABLED(CONFIG_OF)
+ /**
+  * of_nvmem_device_get() - Get nvmem device from a given id
+@@ -786,7 +800,7 @@ struct nvmem_device *of_nvmem_device_get(struct device_node *np, const char *id)
+ 	if (!nvmem_np)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return __nvmem_device_get(nvmem_np, NULL, NULL);
++	return __nvmem_device_get(nvmem_np, NULL);
+ }
+ EXPORT_SYMBOL_GPL(of_nvmem_device_get);
+ #endif
+@@ -890,15 +904,43 @@ struct nvmem_device *devm_nvmem_device_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL_GPL(devm_nvmem_device_get);
+ 
+-static struct nvmem_cell *nvmem_cell_get_from_list(const char *cell_id)
++static struct nvmem_cell *
++nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ {
+-	struct nvmem_cell *cell = NULL;
++	struct nvmem_cell *cell = ERR_PTR(-ENOENT);
++	struct nvmem_cell_lookup *lookup;
+ 	struct nvmem_device *nvmem;
++	const char *dev_id;
+ 
+-	nvmem = __nvmem_device_get(NULL, &cell, cell_id);
+-	if (IS_ERR(nvmem))
+-		return ERR_CAST(nvmem);
++	if (!dev)
++		return ERR_PTR(-EINVAL);
++
++	dev_id = dev_name(dev);
++
++	mutex_lock(&nvmem_lookup_mutex);
++
++	list_for_each_entry(lookup, &nvmem_lookup_list, node) {
++		if ((strcmp(lookup->dev_id, dev_id) == 0) &&
++		    (strcmp(lookup->con_id, con_id) == 0)) {
++			/* This is the right entry. */
++			nvmem = __nvmem_device_get(NULL, lookup->nvmem_name);
++			if (!nvmem) {
++				/* Provider may not be registered yet. */
++				cell = ERR_PTR(-EPROBE_DEFER);
++				goto out;
++			}
++
++			cell = nvmem_find_cell_by_name(nvmem,
++						       lookup->cell_name);
++			if (!cell) {
++				__nvmem_device_put(nvmem);
++				goto out;
++			}
++		}
++	}
+ 
++out:
++	mutex_unlock(&nvmem_lookup_mutex);
+ 	return cell;
+ }
+ 
+@@ -935,7 +977,7 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
+ 	if (!nvmem_np)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	nvmem = __nvmem_device_get(nvmem_np, NULL, NULL);
++	nvmem = __nvmem_device_get(nvmem_np, NULL);
+ 	of_node_put(nvmem_np);
+ 	if (IS_ERR(nvmem))
+ 		return ERR_CAST(nvmem);
+@@ -975,7 +1017,7 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
+ 	if (!cell_id)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	return nvmem_cell_get_from_list(cell_id);
++	return nvmem_cell_get_from_lookup(dev, cell_id);
+ }
+ EXPORT_SYMBOL_GPL(nvmem_cell_get);
+ 
+@@ -1405,6 +1447,41 @@ void nvmem_del_cell_table(struct nvmem_cell_table *table)
+ }
+ EXPORT_SYMBOL_GPL(nvmem_del_cell_table);
+ 
++/**
++ * nvmem_add_cell_lookups() - register a list of cell lookup entries
++ *
++ * @entries: array of cell lookup entries
++ * @nentries: number of cell lookup entries in the array
++ */
++void nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries)
++{
++	int i;
++
++	mutex_lock(&nvmem_lookup_mutex);
++	for (i = 0; i < nentries; i++)
++		list_add_tail(&entries[i].node, &nvmem_lookup_list);
++	mutex_unlock(&nvmem_lookup_mutex);
++}
++EXPORT_SYMBOL_GPL(nvmem_add_cell_lookups);
++
++/**
++ * nvmem_del_cell_lookups() - remove a list of previously added cell lookup
++ *                            entries
++ *
++ * @entries: array of cell lookup entries
++ * @nentries: number of cell lookup entries in the array
++ */
++void nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries)
++{
++	int i;
++
++	mutex_lock(&nvmem_lookup_mutex);
++	for (i = 0; i < nentries; i++)
++		list_del(&entries[i].node);
++	mutex_unlock(&nvmem_lookup_mutex);
++}
++EXPORT_SYMBOL_GPL(nvmem_del_cell_lookups);
++
+ /**
+  * nvmem_dev_name() - Get the name of a given nvmem device.
+  *
+diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
+index 0389fe00b177..27eee3945405 100644
+--- a/include/linux/nvmem-consumer.h
++++ b/include/linux/nvmem-consumer.h
+@@ -29,6 +29,24 @@ struct nvmem_cell_info {
+ 	unsigned int		nbits;
  };
  
-+/*
-+ * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
-+ * ---
-+ * VLE compression mode attempts to compress a number of logical data into
-+ * a physical cluster with a fixed size.
-+ * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
++/**
++ * struct nvmem_cell_lookup - cell lookup entry
++ *
++ * @nvmem_name:	Name of the provider.
++ * @cell_name:	Name of the nvmem cell as defined in the name field of
++ *		struct nvmem_cell_info.
++ * @dev_id:	Name of the consumer device that will be associated with
++ *		this cell.
++ * @con_id:	Connector id for this cell lookup.
 + */
- #define __vle_cluster_advise(x, bit, bits) \
- 	((le16_to_cpu(x) >> (bit)) & ((1 << (bits)) - 1))
- 
-@@ -1465,90 +1472,95 @@ static int z_erofs_vle_normalaccess_readpages(
- 	return erofs_blkoff(iloc(sbi, vi->nid) + ofs);
- }
- 
--/*
-- * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
-- * ---
-- * VLE compression mode attempts to compress a number of logical data into
-- * a physical cluster with a fixed size.
-- * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
-- */
--static erofs_off_t vle_get_logical_extent_head(
--	struct inode *inode,
--	struct page **page_iter,
--	void **kaddr_iter,
--	unsigned int lcn,	/* logical cluster number */
--	erofs_blk_t *pcn,
--	unsigned int *flags)
-+struct vle_map_blocks_iter_ctx {
-+	struct inode *inode;
-+	struct super_block *sb;
-+	unsigned int clusterbits;
-+
-+	struct page **mpage_ret;
-+	void **kaddr_ret;
++struct nvmem_cell_lookup {
++	const char		*nvmem_name;
++	const char		*cell_name;
++	const char		*dev_id;
++	const char		*con_id;
++	struct list_head	node;
 +};
 +
-+static int
-+vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
-+			    unsigned int lcn,	/* logical cluster number */
-+			    unsigned long long *ofs,
-+			    erofs_blk_t *pblk,
-+			    unsigned int *flags)
- {
--	/* for extent meta */
--	struct page *page = *page_iter;
--	erofs_blk_t blkaddr = vle_extent_blkaddr(inode, lcn);
-+	const unsigned int clustersize = 1 << ctx->clusterbits;
-+	const erofs_blk_t mblk = vle_extent_blkaddr(ctx->inode, lcn);
-+	struct page *mpage = *ctx->mpage_ret;	/* extent metapage */
-+
- 	struct z_erofs_vle_decompressed_index *di;
--	unsigned long long ofs;
--	struct super_block *const sb = inode->i_sb;
--	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
--	const unsigned int clustersize = 1 << clusterbits;
--	unsigned int delta0;
--
--	if (page->index != blkaddr) {
--		kunmap_atomic(*kaddr_iter);
--		unlock_page(page);
--		put_page(page);
-+	unsigned int cluster_type, delta0;
+ #if IS_ENABLED(CONFIG_NVMEM)
  
--		page = erofs_get_meta_page_nofail(sb, blkaddr, false);
--		*page_iter = page;
--		*kaddr_iter = kmap_atomic(page);
-+	if (mpage->index != mblk) {
-+		kunmap_atomic(*ctx->kaddr_ret);
-+		unlock_page(mpage);
-+		put_page(mpage);
-+
-+		mpage = erofs_get_meta_page_nofail(ctx->sb, mblk, false);
-+		*ctx->mpage_ret = mpage;
-+		*ctx->kaddr_ret = kmap_atomic(mpage);
- 	}
+ /* Cell based interface */
+@@ -57,6 +75,11 @@ int nvmem_device_cell_write(struct nvmem_device *nvmem,
  
--	di = *kaddr_iter + vle_extent_blkoff(inode, lcn);
--	switch (vle_cluster_type(di)) {
-+	di = *ctx->kaddr_ret + vle_extent_blkoff(ctx->inode, lcn);
-+
-+	cluster_type = vle_cluster_type(di);
-+	switch (cluster_type) {
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
- 		delta0 = le16_to_cpu(di->di_u.delta[0]);
- 		DBG_BUGON(!delta0);
- 		DBG_BUGON(lcn < delta0);
+ const char *nvmem_dev_name(struct nvmem_device *nvmem);
  
--		ofs = vle_get_logical_extent_head(inode,
--			page_iter, kaddr_iter,
--			lcn - delta0, pcn, flags);
--		break;
-+		return vle_get_logical_extent_head(ctx,
-+			lcn - delta0, ofs, pblk, flags);
- 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
- 		*flags ^= EROFS_MAP_ZIPPED;
-+		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
- 		/* clustersize should be a power of two */
--		ofs = ((u64)lcn << clusterbits) +
-+		*ofs = ((u64)lcn << ctx->clusterbits) +
- 			(le16_to_cpu(di->di_clusterofs) & (clustersize - 1));
--		*pcn = le32_to_cpu(di->di_u.blkaddr);
-+		*pblk = le32_to_cpu(di->di_u.blkaddr);
- 		break;
- 	default:
- 		BUG_ON(1);
- 	}
--	return ofs;
-+	return 0;
++void nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries,
++			    size_t nentries);
++void nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries,
++			    size_t nentries);
++
+ #else
+ 
+ static inline struct nvmem_cell *nvmem_cell_get(struct device *dev,
+@@ -151,6 +174,11 @@ static inline const char *nvmem_dev_name(struct nvmem_device *nvmem)
+ 	return NULL;
  }
  
- int z_erofs_map_blocks_iter(struct inode *inode,
- 	struct erofs_map_blocks *map,
- 	struct page **mpage_ret, int flags)
- {
-+	void *kaddr;
-+	const struct vle_map_blocks_iter_ctx ctx = {
-+		.inode = inode,
-+		.sb = inode->i_sb,
-+		.clusterbits = EROFS_I_SB(inode)->clusterbits,
-+		.mpage_ret = mpage_ret,
-+		.kaddr_ret = &kaddr
-+	};
-+	const unsigned int clustersize = 1 << ctx.clusterbits;
-+	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
-+	const bool initial = !map->m_llen;
++static inline void
++nvmem_add_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries) {}
++static inline void
++nvmem_del_cell_lookups(struct nvmem_cell_lookup *entries, size_t nentries) {}
 +
- 	/* logicial extent (start, end) offset */
- 	unsigned long long ofs, end;
--	struct z_erofs_vle_decompressed_index *di;
--	erofs_blk_t e_blkaddr, pcn;
--	unsigned int lcn, logical_cluster_ofs, cluster_type;
-+	unsigned int lcn;
- 	u32 ofs_rem;
-+
-+	erofs_blk_t mblk, pblk;
- 	struct page *mpage = *mpage_ret;
--	void *kaddr;
--	bool initial;
--	struct super_block *const sb = inode->i_sb;
--	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
--	const unsigned int clustersize = 1 << clusterbits;
-+	struct z_erofs_vle_decompressed_index *di;
-+	unsigned int cluster_type, logical_cluster_ofs;
- 	int err = 0;
+ #endif /* CONFIG_NVMEM */
  
--	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
--	initial = !map->m_llen;
--
- 	/* when trying to read beyond EOF, leave it unmapped */
- 	if (unlikely(map->m_la >= inode->i_size)) {
--		BUG_ON(!initial);
-+		DBG_BUGON(!initial);
- 		map->m_llen = map->m_la + 1 - inode->i_size;
- 		map->m_la = inode->i_size;
- 		map->m_flags = 0;
-@@ -1561,16 +1573,16 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 	ofs = map->m_la + map->m_llen;
- 
- 	/* clustersize should be power of two */
--	lcn = ofs >> clusterbits;
-+	lcn = ofs >> ctx.clusterbits;
- 	ofs_rem = ofs & (clustersize - 1);
- 
--	e_blkaddr = vle_extent_blkaddr(inode, lcn);
-+	mblk = vle_extent_blkaddr(inode, lcn);
- 
--	if (mpage == NULL || mpage->index != e_blkaddr) {
-+	if (!mpage || mpage->index != mblk) {
- 		if (mpage != NULL)
- 			put_page(mpage);
- 
--		mpage = erofs_get_meta_page_nofail(sb, e_blkaddr, false);
-+		mpage = erofs_get_meta_page_nofail(ctx.sb, mblk, false);
- 		*mpage_ret = mpage;
- 	} else {
- 		lock_page(mpage);
-@@ -1580,8 +1592,8 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 	kaddr = kmap_atomic(mpage);
- 	di = kaddr + vle_extent_blkoff(inode, lcn);
- 
--	debugln("%s, lcn %u e_blkaddr %u e_blkoff %u", __func__, lcn,
--		e_blkaddr, vle_extent_blkoff(inode, lcn));
-+	debugln("%s, lcn %u mblk %u e_blkoff %u", __func__, lcn,
-+		mblk, vle_extent_blkoff(inode, lcn));
- 
- 	err = vle_decompressed_index_clusterofs(&logical_cluster_ofs,
- 						clustersize, di);
-@@ -1608,13 +1620,13 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
- 		if (ofs_rem == logical_cluster_ofs) {
--			pcn = le32_to_cpu(di->di_u.blkaddr);
-+			pblk = le32_to_cpu(di->di_u.blkaddr);
- 			goto exact_hitted;
- 		}
- 
- 		if (ofs_rem > logical_cluster_ofs) {
- 			ofs = (u64)lcn * clustersize | logical_cluster_ofs;
--			pcn = le32_to_cpu(di->di_u.blkaddr);
-+			pblk = le32_to_cpu(di->di_u.blkaddr);
- 			break;
- 		}
- 
-@@ -1629,9 +1641,12 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
- 		/* get the correspoinding first chunk */
--		ofs = vle_get_logical_extent_head(inode, mpage_ret,
--			&kaddr, lcn, &pcn, &map->m_flags);
-+		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
-+						  &pblk, &map->m_flags);
- 		mpage = *mpage_ret;
-+
-+		if (unlikely(err))
-+			goto unmap_out;
- 		break;
- 	default:
- 		errln("unknown cluster type %u at offset %llu of nid %llu",
-@@ -1644,7 +1659,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- exact_hitted:
- 	map->m_llen = end - ofs;
- 	map->m_plen = clustersize;
--	map->m_pa = blknr_to_addr(pcn);
-+	map->m_pa = blknr_to_addr(pblk);
- 	map->m_flags |= EROFS_MAP_MAPPED;
- unmap_out:
- 	kunmap_atomic(kaddr);
+ #if IS_ENABLED(CONFIG_NVMEM) && IS_ENABLED(CONFIG_OF)
 -- 
-1.9.1
+2.18.0
 
