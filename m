@@ -1,300 +1,151 @@
-Return-Path: <SRS0=BZo9=L2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=5.0 tests=FUZZY_XPILL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=5.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9DCC070C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9F7ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF01820880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Sep 2018 19:21:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF01820880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 74FC520882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:42:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YZyGwjgz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kJz7nJaD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74FC520882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeIMA07 (ORCPT
+        id S1727944AbeINX6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Sep 2018 20:26:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33335 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbeIMA07 (ORCPT
+        Fri, 14 Sep 2018 19:58:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51346 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbeINX63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Sep 2018 20:26:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8CJKV4h2744098
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Sep 2018 12:20:31 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8CJKVXH2744094;
-        Wed, 12 Sep 2018 12:20:31 -0700
-Date:   Wed, 12 Sep 2018 12:20:31 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org>
-Cc:     mingo@kernel.org, jmattson@google.com, pbonzini@redhat.com,
-        wangnan0@huawei.com, dsahern@gmail.com, jolsa@kernel.org,
-        borntraeger@de.ibm.com, marc.zyngier@arm.com, peterz@infradead.org,
-        james.morse@arm.com, namhyung@kernel.org, cohuck@redhat.com,
-        david@redhat.com, ehabkost@redhat.com,
-        linux-kernel@vger.kernel.org, gengdongjiu@huawei.com,
-        hpa@zytor.com, tglx@linutronix.de, adrian.hunter@intel.com,
-        acme@redhat.com, frankja@linux.ibm.com
-Reply-To: linux-kernel@vger.kernel.org, gengdongjiu@huawei.com,
-          hpa@zytor.com, tglx@linutronix.de, frankja@linux.ibm.com,
-          adrian.hunter@intel.com, acme@redhat.com, pbonzini@redhat.com,
-          mingo@kernel.org, jmattson@google.com, dsahern@gmail.com,
-          borntraeger@de.ibm.com, marc.zyngier@arm.com, jolsa@kernel.org,
-          wangnan0@huawei.com, peterz@infradead.org, james.morse@arm.com,
-          namhyung@kernel.org, cohuck@redhat.com, david@redhat.com,
-          ehabkost@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers uapi: Update tools's copies of kvm
- headers
-Git-Commit-ID: 0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Sep 2018 19:58:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8D74160BF7; Fri, 14 Sep 2018 18:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536950565;
+        bh=+vYJ+BNdbhbGL2E8fwhABXon5Y2/19HIHSTL4804ZAM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YZyGwjgzNlF6PBZfdI1c9PBwOwBZvGuscryKoQlQ/FqRf8KNQoIjZ0S+gwUlLXDTs
+         BbgXMdBNxLonNRFr0jq+cu+KgTbomfceI1fF/IvB1XjBuc6hoQPkO4AcwQ42cNfhiM
+         +IoHdsC9PcMRlXrLe2peFcY+2s2lVO06axgMz9Bo=
+Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jackp@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 731D7609A1;
+        Fri, 14 Sep 2018 18:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1536950564;
+        bh=+vYJ+BNdbhbGL2E8fwhABXon5Y2/19HIHSTL4804ZAM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kJz7nJaDo2NaFeq3siakmzuj2ppa23WZUL6zGc2SfZpMPIU+ogeJkn4U10FOisXgB
+         hEmsPaFwFk6MUgxPViPZx4IyAzmKOshxONPPxb2WAn0jNkgZGedW0JaNtd1qxFIwVz
+         x5jRQAH1txN6jUhzd06ZttWyCWsLziMEV9TBCirI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 731D7609A1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
+Date:   Fri, 14 Sep 2018 11:42:42 -0700
+From:   Jack Pham <jackp@codeaurora.org>
+To:     Badhri Jagan Sridharan <badhri@google.com>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 2/2] typec: tcpm: Add option to maintain current limit at
+ Vsafe5V
+Message-ID: <20180914184242.GC13306@jackp-linux.qualcomm.com>
+References: <20180913021113.18150-1-badhri@google.com>
+ <20180913021113.18150-2-badhri@google.com>
+ <20180913063943.GA13306@jackp-linux.qualcomm.com>
+ <CAPTae5JLnbHnFUXv4W0GY6a=kAmGCx7XfOUKrWo0q__enbvvQA@mail.gmail.com>
+ <CAPTae5KXAeCKerHh4PMFJ=7JhmwFwbc7-CQB-3JYamYbHtV+2A@mail.gmail.com>
+ <20180913170746.GB13306@jackp-linux.qualcomm.com>
+ <CAPTae5+WyxADQfDJivzmCBpFbA8RqpCGKDys6tUpHwF8+vt8iQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAPTae5+WyxADQfDJivzmCBpFbA8RqpCGKDys6tUpHwF8+vt8iQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180912192031.LSeq5Gv8V6ZxwKY77pNUfyGQ5nlsggquByzsfUDXQ3Y@z>
 
-Commit-ID:  0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
-Gitweb:     https://git.kernel.org/tip/0210c156d7fd330bce1c2c842bee9d27f1c5dfeb
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 11 Sep 2018 11:18:58 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 11 Sep 2018 13:09:26 -0300
+Hi Badhri,
 
-tools headers uapi: Update tools's copies of kvm headers
+On Thu, Sep 13, 2018 at 04:38:10PM -0700, Badhri Jagan Sridharan wrote:
+> On Thu, Sep 13, 2018 at 10:07 AM Jack Pham <jackp@codeaurora.org> wrote:
+> > On Thu, Sep 13, 2018 at 6:43 AM Badhri Jagan Sridharan
+> > > Yeah thats for the source. But for sink, Say if the source isnt PD, then,
+> > > sink initiated hard resets happen during the connection. Sink would hard reset
+> > > couple of times before deeming that the partner is non PD. When connected
+> > > to Type-A ports/non-pd partner, vbus is not going to likely drop so there isnt
+> > > a reason to setcharge to false or drop the input current limit. Do you agree ?
+> >
+> > Sure that makes sense. In this case I wonder if TCPM even needs to call
+> > set_charge(false) considering it does not yet know if the partner is PD
+> > capable or not. For sure, if the partner is PD capable and contract had
+> > been previously established, we'd definitely need to set_current_limit()
+> > to default levels and/or turn off charging.
+> >
+> > But in the case of hard reset attempts to try to determine if the source
+> > will send its capabilities (thereby being PD capable), wouldn't the
+> > initial default current limits still be in place? I think this is the
+> > point you're trying to make, that there is no need to disrupt charging
+> > if a hard reset is not going to cause VBUS to reset.
+> 
+> Yes that's right ! I wasnt sure how to put that in words. Thanks for
+> doing that !
+> You do concur right ?
 
-To get the changes in:
+Yes.
 
-	a449938297e5 ("KVM: s390: Add huge page enablement control")
-	8fcc4b5923af ("kvm: nVMX: Introduce KVM_CAP_NESTED_STATE")
-	be26b3a73413 ("arm64: KVM: export the capability to set guest SError syndrome")
-	b7b27facc7b5 ("arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS")
-	b0960b9569db ("KVM: arm: Add 32bit get/set events support")
-	a3da7b4a3be5 ("KVM: s390: add etoken support for guests")
+> > To me it sounds like what you're trying to do makes sense only if you
+> > can make a run-time determination of a partner's PD capability, and not
+> > based on a config option.
+> 
+> Yes this should be possible. port->pd_capable already has that info.
+> 
+> To sum it up:
+> if the partner is pd capable, set charge to false in SNK_HARD_RESET_SINK_OFF and
+> readjust current limits to default in SNK_HARD_RESET_SINK_ON and turn
+> on charging.
+> 
+> If partner is not pd capable, do not turn off charging nor adjust
+> current limit as host port is
+> not going to respond to hard reset.
+> 
+> Does it make sense ?
 
-This makes 'perf trace' automagically get aware of these new ioctls:
+Right, although the "not pd capable" path could also mean the partner is
+PD capable but it is not determined yet. For example: if a sink is
+connected to a PD source, established a contract, and the sink reboots
+and has to initialize TCPM again. Assuming the sink never disconnected
+from CC when rebooting, the source won't automatically re-send its
+Source Capabilities as it will still be in its previous state(*). The
+sink TCPM however would send a hard reset in order to try to
+(re)establish a contract, so here is where this path overlaps with the
+not-pd-capable case. In this case I think it might be proper to readjust
+current limits to default also unless it was already done earlier--I see
+it is done in tcpm_reset_port() and in SNK_DISCOVERY, so you might be
+covered here.
 
-  $ cp include/uapi/linux/kvm.h tools/include/uapi/linux/kvm.h
-  $ tools/perf/trace/beauty/kvm_ioctl.sh  > /tmp/after
-  $ diff -u /tmp/before /tmp/after
-  --- /tmp/before	2018-09-11 11:18:29.173207586 -0300
-  +++ /tmp/after	2018-09-11 11:18:38.488200446 -0300
-  @@ -84,6 +84,8 @@
-        [0xbb] = "MEMORY_ENCRYPT_REG_REGION",
-        [0xbc] = "MEMORY_ENCRYPT_UNREG_REGION",
-        [0xbd] = "HYPERV_EVENTFD",
-  +     [0xbe] = "GET_NESTED_STATE",
-  +     [0xbf] = "SET_NESTED_STATE",
-        [0xe0] = "CREATE_DEVICE",
-        [0xe1] = "SET_DEVICE_ATTR",
-        [0xe2] = "G
+The question I have is whether you still need to consider calling
+set_charge(false) for this example.
 
-And cures the following warning during perf's build:
+(*) Just thought of one more thing, what if the previous contract was
+negotiated at greater than 5V VBUS? How does the sink TCPM handle
+setting charging parameters after a reboot but prior to hard reset?
 
-	Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
-	diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Dongjiu Geng <gengdongjiu@huawei.com>
-Cc: Eduardo Habkost <ehabkost@redhat.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-2vvwh2o19orn56di0ksrtgzr@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/arm/include/uapi/asm/kvm.h   | 13 ++++++++++++
- tools/arch/arm64/include/uapi/asm/kvm.h | 13 ++++++++++++
- tools/arch/s390/include/uapi/asm/kvm.h  |  5 ++++-
- tools/arch/x86/include/uapi/asm/kvm.h   | 37 +++++++++++++++++++++++++++++++++
- tools/include/uapi/linux/kvm.h          |  6 ++++++
- 5 files changed, 73 insertions(+), 1 deletion(-)
-
-diff --git a/tools/arch/arm/include/uapi/asm/kvm.h b/tools/arch/arm/include/uapi/asm/kvm.h
-index 16e006f708ca..4602464ebdfb 100644
---- a/tools/arch/arm/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm/include/uapi/asm/kvm.h
-@@ -27,6 +27,7 @@
- #define __KVM_HAVE_GUEST_DEBUG
- #define __KVM_HAVE_IRQ_LINE
- #define __KVM_HAVE_READONLY_MEM
-+#define __KVM_HAVE_VCPU_EVENTS
- 
- #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
- 
-@@ -125,6 +126,18 @@ struct kvm_sync_regs {
- struct kvm_arch_memory_slot {
- };
- 
-+/* for KVM_GET/SET_VCPU_EVENTS */
-+struct kvm_vcpu_events {
-+	struct {
-+		__u8 serror_pending;
-+		__u8 serror_has_esr;
-+		/* Align it to 8 bytes */
-+		__u8 pad[6];
-+		__u64 serror_esr;
-+	} exception;
-+	__u32 reserved[12];
-+};
-+
- /* If you need to interpret the index values, here is the key: */
- #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
- #define KVM_REG_ARM_COPROC_SHIFT	16
-diff --git a/tools/arch/arm64/include/uapi/asm/kvm.h b/tools/arch/arm64/include/uapi/asm/kvm.h
-index 4e76630dd655..97c3478ee6e7 100644
---- a/tools/arch/arm64/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm64/include/uapi/asm/kvm.h
-@@ -39,6 +39,7 @@
- #define __KVM_HAVE_GUEST_DEBUG
- #define __KVM_HAVE_IRQ_LINE
- #define __KVM_HAVE_READONLY_MEM
-+#define __KVM_HAVE_VCPU_EVENTS
- 
- #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
- 
-@@ -154,6 +155,18 @@ struct kvm_sync_regs {
- struct kvm_arch_memory_slot {
- };
- 
-+/* for KVM_GET/SET_VCPU_EVENTS */
-+struct kvm_vcpu_events {
-+	struct {
-+		__u8 serror_pending;
-+		__u8 serror_has_esr;
-+		/* Align it to 8 bytes */
-+		__u8 pad[6];
-+		__u64 serror_esr;
-+	} exception;
-+	__u32 reserved[12];
-+};
-+
- /* If you need to interpret the index values, here is the key: */
- #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
- #define KVM_REG_ARM_COPROC_SHIFT	16
-diff --git a/tools/arch/s390/include/uapi/asm/kvm.h b/tools/arch/s390/include/uapi/asm/kvm.h
-index 4cdaa55fabfe..9a50f02b9894 100644
---- a/tools/arch/s390/include/uapi/asm/kvm.h
-+++ b/tools/arch/s390/include/uapi/asm/kvm.h
-@@ -4,7 +4,7 @@
- /*
-  * KVM s390 specific structures and definitions
-  *
-- * Copyright IBM Corp. 2008
-+ * Copyright IBM Corp. 2008, 2018
-  *
-  *    Author(s): Carsten Otte <cotte@de.ibm.com>
-  *               Christian Borntraeger <borntraeger@de.ibm.com>
-@@ -225,6 +225,7 @@ struct kvm_guest_debug_arch {
- #define KVM_SYNC_FPRS   (1UL << 8)
- #define KVM_SYNC_GSCB   (1UL << 9)
- #define KVM_SYNC_BPBC   (1UL << 10)
-+#define KVM_SYNC_ETOKEN (1UL << 11)
- /* length and alignment of the sdnx as a power of two */
- #define SDNXC 8
- #define SDNXL (1UL << SDNXC)
-@@ -258,6 +259,8 @@ struct kvm_sync_regs {
- 		struct {
- 			__u64 reserved1[2];
- 			__u64 gscb[4];
-+			__u64 etoken;
-+			__u64 etoken_extension;
- 		};
- 	};
- };
-diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
-index c535c2fdea13..86299efa804a 100644
---- a/tools/arch/x86/include/uapi/asm/kvm.h
-+++ b/tools/arch/x86/include/uapi/asm/kvm.h
-@@ -378,4 +378,41 @@ struct kvm_sync_regs {
- #define KVM_X86_QUIRK_LINT0_REENABLED	(1 << 0)
- #define KVM_X86_QUIRK_CD_NW_CLEARED	(1 << 1)
- 
-+#define KVM_STATE_NESTED_GUEST_MODE	0x00000001
-+#define KVM_STATE_NESTED_RUN_PENDING	0x00000002
-+
-+#define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
-+#define KVM_STATE_NESTED_SMM_VMXON	0x00000002
-+
-+struct kvm_vmx_nested_state {
-+	__u64 vmxon_pa;
-+	__u64 vmcs_pa;
-+
-+	struct {
-+		__u16 flags;
-+	} smm;
-+};
-+
-+/* for KVM_CAP_NESTED_STATE */
-+struct kvm_nested_state {
-+	/* KVM_STATE_* flags */
-+	__u16 flags;
-+
-+	/* 0 for VMX, 1 for SVM.  */
-+	__u16 format;
-+
-+	/* 128 for SVM, 128 + VMCS size for VMX.  */
-+	__u32 size;
-+
-+	union {
-+		/* VMXON, VMCS */
-+		struct kvm_vmx_nested_state vmx;
-+
-+		/* Pad the header to 128 bytes.  */
-+		__u8 pad[120];
-+	};
-+
-+	__u8 data[0];
-+};
-+
- #endif /* _ASM_X86_KVM_H */
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index b6270a3b38e9..07548de5c988 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -949,6 +949,9 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_GET_MSR_FEATURES 153
- #define KVM_CAP_HYPERV_EVENTFD 154
- #define KVM_CAP_HYPERV_TLBFLUSH 155
-+#define KVM_CAP_S390_HPAGE_1M 156
-+#define KVM_CAP_NESTED_STATE 157
-+#define KVM_CAP_ARM_INJECT_SERROR_ESR 158
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
-@@ -1391,6 +1394,9 @@ struct kvm_enc_region {
- /* Available with KVM_CAP_HYPERV_EVENTFD */
- #define KVM_HYPERV_EVENTFD        _IOW(KVMIO,  0xbd, struct kvm_hyperv_eventfd)
- 
-+/* Available with KVM_CAP_NESTED_STATE */
-+#define KVM_GET_NESTED_STATE         _IOWR(KVMIO, 0xbe, struct kvm_nested_state)
-+#define KVM_SET_NESTED_STATE         _IOW(KVMIO,  0xbf, struct kvm_nested_state)
- 
- /* Secure Encrypted Virtualization command */
- enum sev_cmd_id {
+Jack
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
