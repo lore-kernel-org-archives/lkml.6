@@ -2,121 +2,121 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434FDC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAECFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0635A20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0635A20853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 22FDE20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:18:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22FDE20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbeINNaI (ORCPT
+        id S1728221AbeINNbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:30:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33538 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbeINNaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:30:03 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4F5A620731; Fri, 14 Sep 2018 10:16:41 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E930B207D4;
-        Fri, 14 Sep 2018 10:16:30 +0200 (CEST)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, kishon@ti.com,
-        andrew@lunn.ch, f.fainelli@gmail.com
-Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
+        Fri, 14 Sep 2018 09:31:48 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57239 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbeINNbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:31:47 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C3489806FD; Fri, 14 Sep 2018 10:18:23 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 10:18:23 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next v3 02/11] dt-bindings: net: ocelot: remove hsio from the list of register address spaces
-Date:   Fri, 14 Sep 2018 10:16:00 +0200
-Message-Id: <12a2896afe5d597dcb9a70b552aaf30874af9f0c.1536912834.git-series.quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
-References: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
-References: <cover.ff40d591b548a6da31716e6e600f11a303e0e643.1536912834.git-series.quentin.schulz@bootlin.com>
+        lee.jones@linaro.org, linux-omap@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+Message-ID: <20180914081822.GA21830@amd>
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-2-dmurphy@ti.com>
+ <20180911200530.GA28290@amd>
+ <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
+ <20180912214938.GA30654@amd>
+ <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+Content-Disposition: inline
+In-Reply-To: <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HSIO register address space should be handled outside of the MAC
-controller as there are some registers for PLL5 configuring,
-SerDes/switch port muxing and a thermal sensor IP, so let's remove it.
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- Documentation/devicetree/bindings/mips/mscc.txt       | 16 ++++++++++++-
- Documentation/devicetree/bindings/net/mscc-ocelot.txt |  9 ++-----
- 2 files changed, 19 insertions(+), 6 deletions(-)
+--HlL+5n6rz5pIUxbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/mips/mscc.txt b/Documentation/devicetree/bindings/mips/mscc.txt
-index ae15ec3..bc817e9 100644
---- a/Documentation/devicetree/bindings/mips/mscc.txt
-+++ b/Documentation/devicetree/bindings/mips/mscc.txt
-@@ -41,3 +41,19 @@ Example:
- 		compatible = "mscc,ocelot-cpu-syscon", "syscon";
- 		reg = <0x70000000 0x2c>;
- 	};
-+
-+o HSIO regs:
-+
-+The SoC has a few registers (HSIO) handling miscellaneous functionalities:
-+configuration and status of PLL5, RCOMP, SyncE, SerDes configurations and
-+status, SerDes muxing and a thermal sensor.
-+
-+Required properties:
-+- compatible: Should be "mscc,ocelot-hsio", "syscon", "simple-mfd"
-+- reg : Should contain registers location and length
-+
-+Example:
-+	syscon@10d0000 {
-+		compatible = "mscc,ocelot-hsio", "syscon", "simple-mfd";
-+		reg = <0x10d0000 0x10000>;
-+	};
-diff --git a/Documentation/devicetree/bindings/net/mscc-ocelot.txt b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
-index 0a84711..9e5c17d 100644
---- a/Documentation/devicetree/bindings/net/mscc-ocelot.txt
-+++ b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
-@@ -12,7 +12,6 @@ Required properties:
-   - "sys"
-   - "rew"
-   - "qs"
--  - "hsio"
-   - "qsys"
-   - "ana"
-   - "portX" with X from 0 to the number of last port index available on that
-@@ -45,7 +44,6 @@ Example:
- 		reg = <0x1010000 0x10000>,
- 		      <0x1030000 0x10000>,
- 		      <0x1080000 0x100>,
--		      <0x10d0000 0x10000>,
- 		      <0x11e0000 0x100>,
- 		      <0x11f0000 0x100>,
- 		      <0x1200000 0x100>,
-@@ -59,10 +57,9 @@ Example:
- 		      <0x1280000 0x100>,
- 		      <0x1800000 0x80000>,
- 		      <0x1880000 0x10000>;
--		reg-names = "sys", "rew", "qs", "hsio", "port0",
--			    "port1", "port2", "port3", "port4", "port5",
--			    "port6", "port7", "port8", "port9", "port10",
--			    "qsys", "ana";
-+		reg-names = "sys", "rew", "qs", "port0", "port1", "port2",
-+			    "port3", "port4", "port5", "port6", "port7",
-+			    "port8", "port9", "port10", "qsys", "ana";
- 		interrupts = <21 22>;
- 		interrupt-names = "xtr", "inj";
- 
--- 
-git-series 0.9.1
+Hi!
+
+> >> How do I politely explain that the original implementation was wrong f=
+or certain devices?
+> >=20
+> > Implementation? Device tree is hardware description.
+>=20
+> Yes this hardware description is incorrect.  The hardware description is
+> describing a MFD but this LED driver (and a couple others) only perform
+> 1 function and that is to drive a LED string.
+
+So what? Does not seem incorrect to me. Maybe the description should
+not be in MFD directory, but other than that...
+
+> >> Isn't code and documentation supposed to be pushed in stages
+> >> together?
+> >=20
+> > Device tree is _not_ documentation. And yes, it is normally pushed
+> > together. But that did not happen here, and bindings are already in.
+>=20
+> Hmm..  Its not documentation but it is in the Documentation folder.
+> And just because the bindings are in does not mean they cannot be
+> changed.
+
+You may want to learn more about device tree and/or talk to the device
+tree maintainers. This is an old article. https://lwn.net/Articles/561462/
+
+NAK on this patch. I see that this binding has problems, but
+introducing different binding for subset of devices is _not_ a fix.
+
+> > What about the multi function devices? They should have same binding.
+>=20
+> The MFD devices defined are not in contention here only the SFD.
+
+I'd like to see common solutions for SFD and MFD, as the hardware is
+similar, and that includes the code. Having code that is easier to
+maintain is important, and having many drivers are harder to maintain
+than one driver.
+
+Milo's code looks better than yours in that regard. I disagree about
+Milo's code being "nightmare" to modify, and care about "easy to
+maintain" more than "binary size".
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--HlL+5n6rz5pIUxbD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlubbs4ACgkQMOfwapXb+vJfLwCgvrCeYUwH6P2phaE9NTvBq/k1
+GCIAni/x5JZngbu8vHWGo+wRWYQJu+6x
+=8OgQ
+-----END PGP SIGNATURE-----
+
+--HlL+5n6rz5pIUxbD--
