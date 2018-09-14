@@ -3,159 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42AAC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1BCC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7F320853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:48:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7F320853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EB92220866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:51:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB92220866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeINMBN (ORCPT
+        id S1727640AbeINMEC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:01:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57436 "EHLO mga11.intel.com"
+        Fri, 14 Sep 2018 08:04:02 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48783 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbeINMBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:01:12 -0400
+        id S1726822AbeINMEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 08:04:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 23:48:10 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 23:50:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
-   d="scan'208";a="90387046"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 13 Sep 2018 23:47:53 -0700
-Received: from [10.125.251.160] (abudanko-mobl.ccr.corp.intel.com [10.125.251.160])
-        by linux.intel.com (Postfix) with ESMTP id EF7CE58053F;
-        Thu, 13 Sep 2018 23:47:50 -0700 (PDT)
-Subject: Re: [PATCH] perf/x86/intel/lbr: Optimize context switches for LBR
-To:     linux-kernel-owner@vger.kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, acme@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, jolsa@redhat.com, namhyung@kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>
-References: <1536869331-63561-1-git-send-email-kan.liang@linux.intel.com>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <dec78c67-0631-c4a7-95e1-4b931ce9ecd7@linux.intel.com>
-Date:   Fri, 14 Sep 2018 09:47:49 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1536869331-63561-1-git-send-email-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+   d="scan'208";a="85948567"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Sep 2018 23:50:58 -0700
+Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 13 Sep 2018 23:50:58 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 13 Sep 2018 23:50:58 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.143]) with mapi id 14.03.0319.002;
+ Fri, 14 Sep 2018 14:50:56 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: RE: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Topic: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Thread-Index: AQHUQyBoMyXI/RBW1UKE39r7bd5lp6Tfs6CAgAAU6YCAArfOAIAAPyaAgADzGQCAANeMAIAD1hiAgAC/u4CAAMW/gIAADnyAgAA0LICAAHU2AIACzrEAgABp+gCAAYngAA==
+Date:   Fri, 14 Sep 2018 06:50:55 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
+References: <20180906133133.GA3830@redhat.com>
+ <20180907040138.GI230707@Turing-Arch-b> <20180907165303.GA3519@redhat.com>
+ <20180910032809.GJ230707@Turing-Arch-b> <20180910145423.GA3488@redhat.com>
+ <20180911024209.GK230707@Turing-Arch-b> <20180911033358.GA4730@redhat.com>
+ <20180911064043.GA207969@Turing-Arch-b> <20180911134013.GA3932@redhat.com>
+ <20180913083232.GB207969@Turing-Arch-b> <20180913145149.GB3576@redhat.com>
+In-Reply-To: <20180913145149.GB3576@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjA2ZmUyNTktOTViZC00OWFjLTk4ODMtMWM1ZmVkOTRhZTcxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiM0FiTXlsbm8zUnA4QVo0MEZmeDZPVlRMSkJ4QmVLYTdKT1lyYlNvalZzdTBRbElGMEhBWEozNlZ3TUthaEhYcyJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> From: Jerome Glisse
+> Sent: Thursday, September 13, 2018 10:52 PM
+>
+[...]
+ > AFAIK, on x86 and PPC at least, all PCIE devices are in the same group
+> by default at boot or at least all devices behind the same bridge.
 
-On 13.09.2018 23:08, linux-kernel-owner@vger.kernel.org wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> LBR can bring big overhead when the benchmark has high context switches.
-> For example, a sub benchmark of Dacapo, avrora.
-> 
-> Baseline: java -jar dacapo-9.12-MR1-bach.jar avrora -n 20
-> With LBR: perf record --branch-filter any,u -- java -jar
-> dacapo-9.12-MR1-bach.jar avrora -n 20
-> 
-> Baseline (ms)    With LBR (ms)    Overhead
-> 6508		 19831		  205%
-> 
-> In principle the LBRs need to be flushed between threads. So does
-> current code.
+the group thing reflects physical hierarchy limitation, not changed
+cross boot. Please note iommu group defines the minimal isolation
+boundary - all devices within same group must be attached to the
+same iommu domain or address space, because physically IOMMU
+cannot differentiate DMAs out of those devices. devices behind
+legacy PCI-X bridge is one example. other examples include devices
+behind a PCIe switch port which doesn't support ACS thus cannot
+route p2p transaction to IOMMU. If talking about typical PCIe 
+endpoint (with upstreaming ports all supporting ACS), you'll get
+one device per group.
 
-IMHO, ideally, LBRs stack would be preserved and restored when 
-switching between execution stacks. That would allow implementing 
-per-thread statistical call graph view in Perf tools, fully based 
-on HW capabilities. It could be advantageous for some cases, in 
-comparison with traditional dwarf based call graph. 
-
-To me virtualization looks similar to e.g. HW performance counters 
-whose values are switched back and forth from perf_event object
-on context switches. But this is surely bigger effort.
-
-Thanks,
-Alexey
+One iommu group today is attached to only one iommu domain.
+In the future one group may attach to multiple domains, as the
+aux domain concept being discussed in another thread.
 
 > 
-> However in practice the LBRs clear very quickly when any code runs,
-> so it is unlikely to be a functional problem of LBR use for sampling
-> if there is a small leak shortly after each context switch.
-> It is mainly a security issue that we don't want to leak anything to an
-> attacker.
-> 
-> Different threads in a process already must trust each other so we can
-> safely leak in this case without opening security holes.
-> 
-> When switching to kernel threads (such as the common switch to idle
-> case) which also share the same mm and are guaranteed to not be
-> attackers.
-> 
-> For those cases, resetting the LBRs can be safely avoid.
-> Checking ctx_id, only resetting the LBRs when switching to a different
-> user process.
-> 
-> With the patch,
-> Baseline (ms)    With LBR (ms)    Overhead
-> 6508		 10350            59%
-> 
-> Reported-by: Sandhya Viswanathan <sandhya.viswanathan@intel.com>
-> Suggested-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  arch/x86/events/intel/lbr.c  | 16 ++++++++++++++--
->  arch/x86/events/perf_event.h |  1 +
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-> index f3e006b..26344c4 100644
-> --- a/arch/x86/events/intel/lbr.c
-> +++ b/arch/x86/events/intel/lbr.c
-> @@ -444,9 +444,21 @@ void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in)
->  	 * are not tagged with an identifier, we need to wipe the LBR, even for
->  	 * per-cpu events. You simply cannot resolve the branches from the old
->  	 * address space.
-> +	 * We don't need to wipe the LBR for a kernel thread which share the
-> +	 * same mm with previous user thread.
->  	 */
-> -	if (sched_in)
-> -		intel_pmu_lbr_reset();
-> +	if (!current || !current->mm)
-> +		return;
-> +	if (sched_in) {
-> +		/*
-> +		 * Only flush when switching to user threads
-> +		 * and mm context changed
-> +		 */
-> +		if (current->mm->context.ctx_id != cpuc->last_ctx_id)
-> +			intel_pmu_lbr_reset();
-> +	} else {
-> +		cpuc->last_ctx_id = current->mm->context.ctx_id;
-> +	}
->  }
->  
->  static inline bool branch_user_callstack(unsigned br_sel)
-> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-> index 1562863..3aa3379 100644
-> --- a/arch/x86/events/perf_event.h
-> +++ b/arch/x86/events/perf_event.h
-> @@ -217,6 +217,7 @@ struct cpu_hw_events {
->  	u64				br_sel;
->  	struct x86_perf_task_context	*last_task_ctx;
->  	int				last_log_id;
-> +	u64				last_ctx_id;
->  
->  	/*
->  	 * Intel host/guest exclude bits
-> 
+> Maybe they are kernel option to avoid that and userspace init program
+> can definitly re-arrange that base on sysadmin policy).
+
+I don't think there is such option, as it may break isolation model
+enabled by IOMMU.
+
+[...]
+> > > That is why i am being pedantic :) on making sure there is good reasons
+> > > to do what you do inside VFIO. I do believe that we want a common
+> frame-
+> > > work like the one you are proposing but i do not believe it should be
+> > > part of VFIO given the baggages it comes with and that are not relevant
+> > > to the use cases for this kind of devices.
+> >
+
+The purpose of VFIO is clear - the kernel portal for granting generic 
+device resource (mmio, irq, etc.) to user space. VFIO doesn't care
+what exactly a resource is used for (queue, cmd reg, etc.). If really
+pursuing VFIO path is necessary, maybe such common framework
+should lay down in user space, which gets all granted resource from
+kernel driver thru VFIO and then provides accelerator services to 
+other processes?
+
+Thanks
+Kevin
