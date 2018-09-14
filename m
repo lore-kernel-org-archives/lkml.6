@@ -2,143 +2,121 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9AEECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E252CECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A04C3206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A750206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:37:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tvv2L4Pz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04C3206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyVmsij7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A750206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeINSve (ORCPT
+        id S1728048AbeINSvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:51:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36586 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeINSve (ORCPT
+        Fri, 14 Sep 2018 14:51:40 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36319 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbeINSvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:51:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iIlT1/P7i83i1XCOMlt6xYGWvQXrVjHzL20Qu/825/o=; b=Tvv2L4PzzP6pJBjD6/jVe5yYF
-        gtbp8N0yyKJId0tyYw1MiVfYlhCzx5istoIIHTmcIEND0aH5sBUMouaoCYZKrpzj7kDQkK7FRlIED
-        xdYO6h9xoGj+3T0wGLEqTRTiiXFNQ6eHCwUxOut2EiCnBMUTIrxlnOLhUFQnMuA7FpDdCEO1YfJXt
-        GZ08O7criGljC2WwcaqslB1TXLTbLgfklxukVjiSwBTiuU78Jg+H/l5QiKQRDxxLpekJLwNdVNpsv
-        Ra5XypCGWvojICLnwc1NtKwrLyWuqkizyHsbDZcveDgZ2ip77Z0dOWxqplWQqNDf3gFXM2UPgnqMz
-        f/wZX4ysw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0oHH-0007j2-RJ; Fri, 14 Sep 2018 13:36:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2F683202B2E3D; Fri, 14 Sep 2018 15:36:54 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 15:36:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 06/16] sched/cpufreq: uclamp: add utilization clamping
- for FAIR tasks
-Message-ID: <20180914133654.GL24124@hirez.programming.kicks-ass.net>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-7-patrick.bellasi@arm.com>
- <20180914093240.GB24082@hirez.programming.kicks-ass.net>
- <20180914131919.GO1413@e110439-lin>
+        Fri, 14 Sep 2018 14:51:40 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b11-v6so4338882pfo.3;
+        Fri, 14 Sep 2018 06:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YUlKWKvUP55wiDo2wPb9ZZSzdJXneXdtyM8E2LuyUfM=;
+        b=SyVmsij7k+pxgELGieyvXoPfadYjvq23MwkCzUvYs5Jyu2/VMXUZJRnxxxsyellUVO
+         R/rvabVMCK4+gfydLYWBxA6NId/c307YtnpIWs2KsEEkmzUrnMoTMCvLdoVnKN0QEpLq
+         53lfi4yjz/8z2K6+bSL7cDfpx0AWMyOEXNe9lZ8O8n7PynbMaxfykw5nPurQVgUnzJVX
+         vGfKH3N1CZkl6+mPXwm7uRk0OJAW0bKehySoMwhW/fevtqy9up/uDukBKGyrrGxEonTt
+         1bCWToaACS7CVjEJTX4SxOK9CH/2ZXQcAZJkAXQkWe70dXjFAfJhacYO9cF94Niv+xVL
+         aRqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YUlKWKvUP55wiDo2wPb9ZZSzdJXneXdtyM8E2LuyUfM=;
+        b=aWA6C45N3WnRPJbnplo1gcXY4FcA3/zqCT/iTbOy9WaaIICbwYABFln2at2J7XuWYx
+         tSTxwLhrBmIdgHL+ZXgSOltu0O4Ezeabd5bPJEVJ9gFgOPs3NjDeUDOd/MMtM4R6//g7
+         nzC9Oxjkncm5rPKGFYpg2dqkYJBPVYmej3kyhjgP1iL43NBajD4U76X9fENRNN1z9cYI
+         qIQdSzkqBPf3BOwBwhEU2YIlUMM38Au/6a2ZGE9MasgBD3iFT6S0daM4NXpVN6NRnp8M
+         aG8XmeGEn3bJWRg9I9tIO9QFGRGhLm3PzKpjTdYP3eozQOyrWUtmRtTBVjUUGuJI/AGz
+         wKpw==
+X-Gm-Message-State: APzg51ASQsKWXfRMQPDeb2g1a0dD+cpTQp9c2ByLSmYW8UQNCwUbIklG
+        np6k0nAU2X+SWpxUzly9ouX8owC+
+X-Google-Smtp-Source: ANB0Vdbql8eE1ume6goocQFfZZXmyAhegWI/OC+zuPIEHUj7w7r0gChWvaLTiCjdIeyT7iidP9ntcA==
+X-Received: by 2002:a62:3241:: with SMTP id y62-v6mr12721320pfy.4.1536932226665;
+        Fri, 14 Sep 2018 06:37:06 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id k8-v6sm20886207pga.80.2018.09.14.06.37.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 06:37:06 -0700 (PDT)
+Subject: Re: [PATCH 1/2] watchdog: sama5d4: fix timeout-sec usage
+To:     Romain Izard <romain.izard.pro@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180914101339.7382-1-romain.izard.pro@gmail.com>
+ <20180914101339.7382-2-romain.izard.pro@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <0953b2f9-83b1-b57b-2a26-fa0527c8a548@roeck-us.net>
+Date:   Fri, 14 Sep 2018 06:37:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914131919.GO1413@e110439-lin>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180914101339.7382-2-romain.izard.pro@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 02:19:19PM +0100, Patrick Bellasi wrote:
-> On 14-Sep 11:32, Peter Zijlstra wrote:
-
-> > Should that not be:
-> > 
-> > 	util = clamp_util(rq, cpu_util_cfs(rq));
-> > 
-> > Because if !util might we not still want to enforce the min clamp?
+On 09/14/2018 03:13 AM, Romain Izard wrote:
+> When using watchdog_init_timeout to update the default timeout value,
+> an error means that there is no "timeout-sec" in the relevant device
+> tree node.
 > 
-> If !util CFS tasks should have been gone since a long time
-> (proportional to their estimated utilization) and thus it probably
-> makes sense to not affect further energy efficiency for tasks of other
-> classes.
-
-I don't remember what we do for util for new tasks; but weren't we
-talking about setting that to 0 recently? IIRC the problem was that if
-we start at 1 with util we'll always run new tasks on big cores, or
-something along those lines.
-
-So new tasks would still trigger this case until they'd accrued enough
-history.
-
-Either way around, I don't much care at this point except I think it
-would be good to have a comment to record the assumptions.
-
-> > Would that not be more readable as:
-> > 
-> > static inline unsigned int uclamp_value(struct rq *rq, int clamp_id)
-> > {
-> > 	unsigned int val = rq->uclamp.value[clamp_id];
-> > 
-> > 	if (unlikely(val == UCLAMP_NOT_VALID))
-> > 		val = uclamp_none(clamp_id);
-> > 
-> > 	return val;
-> > }
+> This should not prevent binding of the driver to the device.
 > 
-> I'm trying to keep consistency in variable names usages by always
-> accessing the rq's clamps via a *uc_cpu to make it easy grepping the
-> code. Does this argument make sense ?
+> Fixes: 976932e40036 ("watchdog: sama5d4: make use of timeout-secs provided in devicetree")
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>   drivers/watchdog/sama5d4_wdt.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
 > 
-> On the other side, what you propose above is more easy to read
-> by looking just at that function.... so, if you prefer it better, I'll
-> update it on v5.
-
-I prefer my version, also because it has a single load of the value (yes
-I know about CSE passes). I figure one can always grep for uclamp or
-something.
-
-> > And how come NOT_VALID is possible? I thought the idea was to always
-> > have all things a valid value.
+> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
+> index 255169916dbb..1e93c1b0e3cf 100644
+> --- a/drivers/watchdog/sama5d4_wdt.c
+> +++ b/drivers/watchdog/sama5d4_wdt.c
+> @@ -247,11 +247,7 @@ static int sama5d4_wdt_probe(struct platform_device *pdev)
+>   		}
+>   	}
+>   
+> -	ret = watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "unable to set timeout value\n");
+> -		return ret;
+> -	}
+> +	watchdog_init_timeout(wdd, wdt_timeout, &pdev->dev);
+>   
+>   	timeout = WDT_SEC2TICKS(wdd->timeout);
+>   
 > 
-> When we update the CPU's clamp for a "newly idle" CPU, there are not
-> tasks refcounting clamps and thus we end up with UCLAMP_NOT_VALID for
-> that CPU. That's how uclamp_cpu_update() is currently encoded.
-> 
-> Perhaps we can set the value to uclamp_none(clamp_id) from that
-> function, but I was thinking that perhaps it could be useful to track
-> explicitly that the CPU is now idle.
 
-IIRC you added an explicit flag to track idle somewhere.. to keep the
-last max clamp in effect or something.
-
-I think, but haven't overly thought about this, that if you always
-ensure these things are valid you can avoid a bunch of NOT_VALID
-conditions. And less conditions is always good, right? :-)
