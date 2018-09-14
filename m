@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A088AECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37E0FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56EC120853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E96A20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q6Omu+u0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EC120853
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZYiyBxkE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E96A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbeINPMY (ORCPT
+        id S1728212AbeINPMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:12:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59378 "EHLO
+        Fri, 14 Sep 2018 11:12:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59182 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbeINPMX (ORCPT
+        with ESMTP id S1726618AbeINPML (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:12:23 -0400
+        Fri, 14 Sep 2018 11:12:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mBKIY7ltGFEPcnkQoxokdxXsUUzg3Mh9YZOdV8lUC6U=; b=q6Omu+u0v/0sd/sOmEeoyvQpd
-        otGJu+0kaoBUVIURSPcVZDksnr/blh8BbnCQd23h/NG96FAU2z/uOROQaul6tzpACka4QhKFvYll+
-        3pr4PUovZY1+hXg/3CDp9P2RqupgHoSGY0bd2uThXwkgqB1vpaAn3aQJ8eMJH5o7CSyVReKAFfaXB
-        KRSpoIJ+7T5ylie8mOtxyiaLpsQdLH7bi/IIP0jchfisedMh1dxR2caL2+3C5otzuZeCpEGPGyUVR
-        wsKUicUZFXVwigGgsr/bRyIpIcbkHwG5BmSyOZcv9ab7gKY+63z6kobOMTR6ZlGeueC6BDUJzx21J
-        MYXuR3Vaw==;
+         bh=aYDMexnkrCtlRs/Rk2EfhjL4KIhddofkXoarJAzdIfI=; b=ZYiyBxkEUu7Qq5pBeoBMWctVg
+        X6pAc/QURs38uWk9Hui6rkmvQvtpMpJKiIF/wsjHsl6lyQiQWDIARLfOYKglKnolOq7pGRMKTRAoH
+        0rt2gEQJUcuh4nj0KRJw1Uu+bA2NBDob3Vu4wR0peOrKFuBnc/4CJvlMBDh/IlxGo5C2gYyMNN2ux
+        ur0mP4/rRLkXnGJSiZOddErccotgd6S/ldPZBh/dnCtKsds7KJCniX6rtXVXSy1ZlzJbLKlkFCN5c
+        54UASZEQ2yDueWN11+dIXnq0eMGqSf6X+5I+XW7bV7Ff5ku5vZkFlF7sEl2zBjg2j4oNCUsaNLt5E
+        K0yVAD78g==;
 Received: from 089144198037.atnat0007.highway.a1.net ([89.144.198.37] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0krx-0000Y1-52; Fri, 14 Sep 2018 09:58:33 +0000
+        id 1g0kri-0000S3-Tk; Fri, 14 Sep 2018 09:58:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -47,9 +47,9 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Paul Burton <paul.burton@mips.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] dma-mapping: support non-coherent devices in dma_common_get_sgtable
-Date:   Fri, 14 Sep 2018 11:58:08 +0200
-Message-Id: <20180914095808.22202-7-hch@lst.de>
+Subject: [PATCH 2/6] MIPS: don't select DMA_MAYBE_COHERENT from DMA_PERDEV_COHERENT
+Date:   Fri, 14 Sep 2018 11:58:04 +0200
+Message-Id: <20180914095808.22202-3-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180914095808.22202-1-hch@lst.de>
 References: <20180914095808.22202-1-hch@lst.de>
@@ -59,94 +59,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can use the arch_dma_coherent_to_pfn hook to provide a ->get_sgtable
-implementation.  Note that this isn't an endorsement of this interface
-(which is a horrible bad idea), but it is required to move arm64 over
-to the generic code without a loss of functionality.
+While both option select a form of conditional dma coherence they don't
+actually share any code in the implementation, so untangle them.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Paul Burton <paul.burton@mips.com>
 ---
- drivers/xen/swiotlb-xen.c   |  2 +-
- include/linux/dma-mapping.h |  7 ++++---
- kernel/dma/mapping.c        | 23 ++++++++++++++++-------
- 3 files changed, 21 insertions(+), 11 deletions(-)
+ arch/mips/Kconfig        |  2 +-
+ arch/mips/kernel/setup.c |  2 +-
+ arch/mips/mm/c-r4k.c     | 17 ++++++++---------
+ 3 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 470757ddddea..28819a0e61d0 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -689,7 +689,7 @@ xen_swiotlb_get_sgtable(struct device *dev, struct sg_table *sgt,
- 							   handle, size, attrs);
- 	}
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 35511999156a..0b25180028b8 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -1111,7 +1111,7 @@ config DMA_MAYBE_COHERENT
+ 
+ config DMA_PERDEV_COHERENT
+ 	bool
+-	select DMA_MAYBE_COHERENT
++	select DMA_NONCOHERENT
+ 
+ config DMA_NONCOHERENT
+ 	bool
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index c71d1eb7da59..6d840a44fa36 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -1067,7 +1067,7 @@ static int __init debugfs_mips(void)
+ arch_initcall(debugfs_mips);
  #endif
--	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size);
-+	return dma_common_get_sgtable(dev, sgt, cpu_addr, handle, size, attrs);
- }
  
- static int xen_swiotlb_mapping_error(struct device *dev, dma_addr_t dma_addr)
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c3378d4e0d57..bd81e74cca7b 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -483,8 +483,8 @@ dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma, void *cpu_addr,
- #define dma_mmap_coherent(d, v, c, h, s) dma_mmap_attrs(d, v, c, h, s, 0)
+-#if defined(CONFIG_DMA_MAYBE_COHERENT) && !defined(CONFIG_DMA_PERDEV_COHERENT)
++#ifdef CONFIG_DMA_MAYBE_COHERENT
+ /* User defined DMA coherency from command line. */
+ enum coherent_io_user_state coherentio = IO_COHERENCE_DEFAULT;
+ EXPORT_SYMBOL_GPL(coherentio);
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index a9ef057c79fe..05bd77727fb9 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -1955,22 +1955,21 @@ void r4k_cache_init(void)
+ 	__flush_icache_user_range	= r4k_flush_icache_user_range;
+ 	__local_flush_icache_user_range	= local_r4k_flush_icache_user_range;
  
- int
--dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
--		       void *cpu_addr, dma_addr_t dma_addr, size_t size);
-+dma_common_get_sgtable(struct device *dev, struct sg_table *sgt, void *cpu_addr,
-+		dma_addr_t dma_addr, size_t size, unsigned long attrs);
+-#if defined(CONFIG_DMA_NONCOHERENT) || defined(CONFIG_DMA_MAYBE_COHERENT)
+-# if defined(CONFIG_DMA_PERDEV_COHERENT)
+-	if (0) {
+-# else
+-	if ((coherentio == IO_COHERENCE_ENABLED) ||
+-	    ((coherentio == IO_COHERENCE_DEFAULT) && hw_coherentio)) {
+-# endif
++#ifdef CONFIG_DMA_NONCOHERENT
++#ifdef CONFIG_DMA_MAYBE_COHERENT
++	if (coherentio == IO_COHERENCE_ENABLED ||
++	    (coherentio == IO_COHERENCE_DEFAULT && hw_coherentio)) {
+ 		_dma_cache_wback_inv	= (void *)cache_noop;
+ 		_dma_cache_wback	= (void *)cache_noop;
+ 		_dma_cache_inv		= (void *)cache_noop;
+-	} else {
++	} else
++#endif /* CONFIG_DMA_MAYBE_COHERENT */
++	{
+ 		_dma_cache_wback_inv	= r4k_dma_cache_wback_inv;
+ 		_dma_cache_wback	= r4k_dma_cache_wback_inv;
+ 		_dma_cache_inv		= r4k_dma_cache_inv;
+ 	}
+-#endif
++#endif /* CONFIG_DMA_NONCOHERENT */
  
- static inline int
- dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
-@@ -496,7 +496,8 @@ dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt, void *cpu_addr,
- 	if (ops->get_sgtable)
- 		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
- 					attrs);
--	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size);
-+	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
-+			attrs);
- }
- 
- #define dma_get_sgtable(d, t, v, h, s) dma_get_sgtable_attrs(d, t, v, h, s, 0)
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 42fd73aca305..58dec7a92b7b 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -202,17 +202,26 @@ EXPORT_SYMBOL(dmam_release_declared_memory);
-  * Create scatter-list for the already allocated DMA buffer.
-  */
- int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
--		 void *cpu_addr, dma_addr_t handle, size_t size)
-+		 void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		 unsigned long attrs)
- {
--	struct page *page = virt_to_page(cpu_addr);
-+	struct page *page;
- 	int ret;
- 
--	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
--	if (unlikely(ret))
--		return ret;
-+	if (!dev_is_dma_coherent(dev)) {
-+		if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_COHERENT_TO_PFN))
-+			return -ENXIO;
- 
--	sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
--	return 0;
-+		page = pfn_to_page(arch_dma_coherent_to_pfn(dev, cpu_addr,
-+				dma_addr));
-+	} else {
-+		page = virt_to_page(cpu_addr);
-+	}
-+
-+	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
-+	if (!ret)
-+		sg_set_page(sgt->sgl, page, PAGE_ALIGN(size), 0);
-+	return ret;
- }
- EXPORT_SYMBOL(dma_common_get_sgtable);
- 
+ 	build_clear_page();
+ 	build_copy_page();
 -- 
 2.18.0
 
