@@ -2,136 +2,116 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=5.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB9DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25B5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A50520882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:51:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A50520882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=de.adit-jv.com
+	by mail.kernel.org (Postfix) with ESMTP id 57DB020881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:53:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rsalveti-net.20150623.gappssmtp.com header.i=@rsalveti-net.20150623.gappssmtp.com header.b="Uc4MSbbq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57DB020881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rsalveti.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeIOAGx (ORCPT
+        id S1728023AbeIOAJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 20:06:53 -0400
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:47513 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeIOAGx (ORCPT
+        Fri, 14 Sep 2018 20:09:27 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38852 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727246AbeIOAJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 20:06:53 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 045483C00C3;
-        Fri, 14 Sep 2018 20:51:05 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2dmFelDm2gQ6; Fri, 14 Sep 2018 20:50:56 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 147043C00C2;
-        Fri, 14 Sep 2018 20:50:56 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 14 Sep
- 2018 20:50:55 +0200
-Date:   Fri, 14 Sep 2018 20:50:51 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Jia He <hejianet@gmail.com>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCH v11 0/3] remain and optimize memblock_next_valid_pfn on
- arm and arm64
-Message-ID: <20180914185051.GA22530@vmlxhi-102.adit-jv.com>
-References: <1534907237-2982-1-git-send-email-jia.he@hxt-semitech.com>
- <CAKv+Gu9u8RcrzSHdgXiqHS9HK1aSrjbPxVUSCP0DT4erAhx0pw@mail.gmail.com>
- <20180907144447.GD12788@arm.com>
+        Fri, 14 Sep 2018 20:09:27 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p6-v6so8338615ljc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 11:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rsalveti-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rRjnGRS1bYLyzAXtzY1UvPUuddUnYex/3I0zOxiWEL4=;
+        b=Uc4MSbbqYHC589cCx6sYo0FOQhc5TDJeegaNYWnD0qfosTowW8rC8BzXlFCwh7H5el
+         yp2GyiqAg2jQDWWF9HwnzT9YJEUl16sw+Yw3/jGzWZvn4NB52XoffbIlvnkBecBMbqK0
+         aittLgVOrT+3NOcjbqsNDA6+DkJkJQpJxpvoSw5yG+NkmYHxSTupjumXd2c3Pcpmss8J
+         0Oj5DXhQfJJD3Dk1RoRDVUck36LhbLrjiSKiKT08d1Sj2XVPyjo9McjlFLKALA9Ewyta
+         WmRCrX/HmTtVL8mz2/uxDEUEC9qNGa+STvk1n6NcOZNxM2fNBR6ri5SP8XeFuyQgS6gB
+         4hLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rRjnGRS1bYLyzAXtzY1UvPUuddUnYex/3I0zOxiWEL4=;
+        b=Xj9XBnT8SlyImjC7/hax5Sy7BUCjH01mSwlDqNsibKy/1K3xRT+2smsYTQm0bLaVMn
+         J6oZ04NtDc8xpAzr4fMzb4cxIqrSlKuw/nnvqiJ7pi964RwTKU74Z+PX0R0qcHEhL0Bw
+         28SGh9XK2g2W8e0PBIQnGct3SgftmOByozxauInWvQQhE29fOHzGBXprF5/fs5eb5t6B
+         z3aQt+fNLI4viQ/iv0o+8FDZWeYwndo/DrY/d7rAzTKsoDFG10GemxTRv7MpfBmFOUYi
+         CiMyAh9kWGl7Ceqme7DIcukuS6hC+499lqsfTpT0t5STr+IodxXu49oIkkFAHgHPbAks
+         Ejeg==
+X-Gm-Message-State: APzg51BJAoht8WcTXt20udp6z1CcoJ4LaQvLw662Qic/DLRCemivZJPq
+        PSYr2q/YVSJFF0NTgngFuj5N5SaA9jGag6m345wpuw==
+X-Google-Smtp-Source: ANB0VdaJZwC6yKIZvOKXTOEECl3PReTg3VygEoLBBC2MdrZfHcMcCanAr1WJRMRmf9LSUOw6WpTO8zBJ3oexpcQWfsI=
+X-Received: by 2002:a2e:80d3:: with SMTP id r19-v6mr8479635ljg.85.1536951219386;
+ Fri, 14 Sep 2018 11:53:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180907144447.GD12788@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+References: <20180614215358.11264-1-ilia.lin@gmail.com> <20180614215358.11264-4-ilia.lin@gmail.com>
+In-Reply-To: <20180614215358.11264-4-ilia.lin@gmail.com>
+From:   Ricardo Salveti <rsalveti@rsalveti.net>
+Date:   Fri, 14 Sep 2018 15:53:02 -0300
+Message-ID: <CAHYQr0rR=mcV-SxZFW+5M4CTUaTv_f_bruyq91HiGP6sqUZ3Yw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/8] clk: Use devm_ in the register fixed factor clock
+To:     ilia.lin@gmail.com
+Cc:     ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, will.deacon@arm.com,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Renesas people
+On Thu, Jun 14, 2018 at 6:55 PM <ilia.lin@gmail.com> wrote:
+>
+> From: Ilia Lin <ilialin@codeaurora.org>
+>
+> Use devm_clk_hw_register instead of clk_hw_register
+> to simplify the usage of this API. This way drivers that call
+> the clk_hw_register_fixed_factor won't need to maintain
+> a data structure for further cleanup.
+>
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  drivers/clk/clk-fixed-factor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+> index a5d402de5584..8e39bda8e596 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+>         init.num_parents = 1;
+>
+>         hw = &fix->hw;
+> -       ret = clk_hw_register(dev, hw);
+> +       ret = devm_clk_hw_register(dev, hw);
 
-Hello Will, hello Ard, 
+Not sure what is the current state of this patch-set, but this change
+breaks drivers calling clk_hw_register_fixed_factor with a NULL dev
+(e.g. imx_clk_fixed_factor), as devm_clk_hw_register needs a valid dev
+for devres_add to work.
 
-On Fri, Sep 07, 2018 at 03:44:47PM +0100, Will Deacon wrote:
-> On Thu, Sep 06, 2018 at 01:24:22PM +0200, Ard Biesheuvel wrote:
-> > OK so we can summarize the benefits of this series as follows:
-> > - boot time on a virtual model of a Samurai CPU drops from 109 to 62 seconds
-> > - boot time on a QDF2400 arm64 server with 96 GB of RAM drops by ~15
-> > *milliseconds*
-> > 
-> > Google was not very helpful in figuring out what a Samurai CPU is and
-> > why we should care about the boot time of Linux running on a virtual
-> > model of it, and the 15 ms speedup is not that compelling either.
-> > 
-> > Apologies to Jia that it took 11 revisions to reach this conclusion,
-> > but in /my/ opinion, tweaking the fragile memblock/pfn handling code
-> > for this reason is totally unjustified, and we're better off
-> > disregarding these patches.
-> 
-> Oh, we're talking about a *simulator* for the significant boot time
-> improvement here? I didn't realise that, so I agree that the premise of
-> this patch set looks pretty questionable given how much "fun" we've had
-> with the memmap on arm and arm64.
-> 
-> Will
+>         if (ret) {
+>                 kfree(fix);
+>                 hw = ERR_PTR(ret);
+> --
+> 2.11.0
 
-Similar to https://lkml.org/lkml/2018/1/24/420, my measurements show that
-the boot time of R-Car H3-ES2.0 Salvator-X (having 4GiB RAM) is decreased
-by ~135-140ms with this patch-set applied on top of v4.19-rc3.
-
-I agree that in the Desktop realm you would barely perceive the 140ms
-difference, but saving 140ms on the automotive SoC (designed for products
-which must comply with 2s-to-rear-view-camera NHTSA US regulations) *is*
-significant.
-
-FWIW, cppcheck and `checkpatch --strict` report style issues for
-patches #2 and #3. I hope these can be fixed and the review process
-can go on? From functional standpoint, I did some dynamic testing on
-H3-Salvator-X with UBSAN/KASAN=y and didn't observe any regressions, so:
-
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-
-Best regards,
-Eugeniu.
+Cheers,
+-- 
+Ricardo Salveti de Araujo
