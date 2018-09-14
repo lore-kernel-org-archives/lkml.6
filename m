@@ -2,188 +2,81 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E642CC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B68FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F48320882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:11:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zn8MVSUr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F48320882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id CD1B220853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:13:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1B220853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbeINKYQ (ORCPT
+        id S1727384AbeINKZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 06:24:16 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:39759 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbeINKYQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 06:24:16 -0400
-Received: by mail-io1-f67.google.com with SMTP id l7-v6so5055611iok.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 22:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=z8GCFH0M6vFEl146CEF1fEQMwIgNIxnWhtLqkDqmmpg=;
-        b=Zn8MVSUrRIQ/MHrF5CEp3DvRWCmZ9D/2c9c7QqZKC1Kv5O0rASg4w43yA6tQ/oRcrx
-         Lapre5NtVwF4+1KzCYbJx3SLliy0LQzBuuVs9crsiuwTfZCCtZTcQEBze55D6KDiIudu
-         qTaiMveEbLWQlw4hbbwjqE5F3//rY2enwjNR8ieSlduIkxOAgciB4rtCCGp+VdjlD6E6
-         VFruJAduhVtuGdETthDB4qntbTfBVWkqwi7O7usShruDjWp/xUG2Dkll2baHTPYBYef1
-         xjDSlAl25bCadn6gOK2dKmUNGxMZYttY4sdrG9mkqq9mL3i5p8u1O3D1+vECmDp2IwAx
-         ni0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=z8GCFH0M6vFEl146CEF1fEQMwIgNIxnWhtLqkDqmmpg=;
-        b=YJ2VTYoCZBHhk7jkRybhZjQs927MrNRt5gldPyAPFomN+NR6/fVMOgZyi0ZI5Pqeo1
-         75rR6FFgfXtrxlrj+v6XUMoxcnO1OMSj3DlPQWV6FvcwvF1w3XaQF056fMT0nDSYG+f9
-         SGITeY9nlurdlm5mSGautq8GE4Q3QCM2RWhHo9TtMH5degzcCC1yzRX1t07vouyr3IFl
-         I/sLTjhxBTAkcKhzICRqiO7wJGBflOfEPKg7rByFAX19d5YajXRbDpWk02+uP7OUOQ0T
-         nEKtfFRUFTLrLyWG8Ug3CQS+9r8uewhkkqJcYL1Kpeh0aAiuGx4QFf5LuRqgsYMcvL/A
-         i6Zw==
-X-Gm-Message-State: APzg51DsQIhrmO1nZWkP52RT868/ieIj3x7j6dW9zDmH1Fvu3VOXRSG9
-        8DO2F7Cp9707bCM17aF5hBznNrZvXcd5dQPFZrnH6w==
-X-Google-Smtp-Source: ANB0VdaFtGV1S2AT63X8wnR3WVQkKY+22oMZbdtHvgS7afIavm0r4OdVET/sg6O9aFARIeKEMaUNAHLBtz5aa1sAEUA=
-X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr8402779ioh.271.1536901890364;
- Thu, 13 Sep 2018 22:11:30 -0700 (PDT)
+        Fri, 14 Sep 2018 06:25:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50439 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726756AbeINKZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 06:25:56 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 93B10B178EF93;
+        Fri, 14 Sep 2018 13:13:02 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Fri, 14 Sep 2018
+ 13:13:01 +0800
+Message-ID: <5B9B435C.4020300@huawei.com>
+Date:   Fri, 14 Sep 2018 13:13:00 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 22:11:09
- -0700 (PDT)
-In-Reply-To: <CAKwvOdns=3bktpXLEpo6o0J8OQPym6YE+x6Dvs_kYSBsuJKtSw@mail.gmail.com>
-References: <cover.1535462971.git.andreyknvl@google.com> <f5e73b5ead3355932ad8b5fc96b141c3f5b8c16c.1535462971.git.andreyknvl@google.com>
- <CACT4Y+aEwYiaVN--RH_0VBh0wbCcrf-Ndz+_eOaBNi6nKxrfQA@mail.gmail.com>
- <CAG48ez2oT1dtDcH8SfPLnoX5F8d6Pd=M-eOKHhYJ83EuL_j6wQ@mail.gmail.com>
- <CACT4Y+avu_68GoQcc32zpcOpAu-Pw7m71VmuKtEkOw=vKgxi7w@mail.gmail.com> <CAKwvOdns=3bktpXLEpo6o0J8OQPym6YE+x6Dvs_kYSBsuJKtSw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 14 Sep 2018 07:11:09 +0200
-Message-ID: <CACT4Y+ahqiUrcfqfLjy1CKsG=NYMLZNOtQW6ofRYXh6ZHjpkrw@mail.gmail.com>
-Subject: Re: [PATCH v6 15/18] khwasan, arm64: add brk handler for inline instrumentation
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Jann Horn <jannh@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     David Miller <davem@davemloft.net>
+CC:     <edumazet@google.com>, <kuznet@ms2.inr.ac.ru>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2] net: ipv4: Use BUG_ON directly instead of a if condition
+ followed by BUG
+References: <1536671593-14746-1-git-send-email-zhongjiang@huawei.com> <20180913.104254.1048729520825977993.davem@davemloft.net>
+In-Reply-To: <20180913.104254.1048729520825977993.davem@davemloft.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 8:09 PM, 'Nick Desaulniers' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
-> On Thu, Sep 13, 2018 at 1:37 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+On 2018/9/14 1:42, David Miller wrote:
+> From: zhong jiang <zhongjiang@huawei.com>
+> Date: Tue, 11 Sep 2018 21:13:13 +0800
+>
+>> The if condition can be removed if we use BUG_ON directly.
+>> The issule is detected with the help of Coccinelle.
 >>
->> On Wed, Sep 12, 2018 at 7:39 PM, Jann Horn <jannh@google.com> wrote:
->> > On Wed, Sep 12, 2018 at 7:16 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->> >> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
->> > [...]
->> >> > +static int khwasan_handler(struct pt_regs *regs, unsigned int esr)
->> >> > +{
->> >> > +       bool recover = esr & KHWASAN_ESR_RECOVER;
->> >> > +       bool write = esr & KHWASAN_ESR_WRITE;
->> >> > +       size_t size = KHWASAN_ESR_SIZE(esr);
->> >> > +       u64 addr = regs->regs[0];
->> >> > +       u64 pc = regs->pc;
->> >> > +
->> >> > +       if (user_mode(regs))
->> >> > +               return DBG_HOOK_ERROR;
->> >> > +
->> >> > +       kasan_report(addr, size, write, pc);
->> >> > +
->> >> > +       /*
->> >> > +        * The instrumentation allows to control whether we can proceed after
->> >> > +        * a crash was detected. This is done by passing the -recover flag to
->> >> > +        * the compiler. Disabling recovery allows to generate more compact
->> >> > +        * code.
->> >> > +        *
->> >> > +        * Unfortunately disabling recovery doesn't work for the kernel right
->> >> > +        * now. KHWASAN reporting is disabled in some contexts (for example when
->> >> > +        * the allocator accesses slab object metadata; same is true for KASAN;
->> >> > +        * this is controlled by current->kasan_depth). All these accesses are
->> >> > +        * detected by the tool, even though the reports for them are not
->> >> > +        * printed.
->> >> > +        *
->> >> > +        * This is something that might be fixed at some point in the future.
->> >> > +        */
->> >> > +       if (!recover)
->> >> > +               die("Oops - KHWASAN", regs, 0);
->> >>
->> >> Why die and not panic? Die seems to be much less used function, and it
->> >> calls panic anyway, and we call panic in kasan_report if panic_on_warn
->> >> is set.
->> >
->> > die() is vaguely equivalent to BUG(); die() and BUG() normally only
->> > terminate the current process, which may or may not leave the system
->> > somewhat usable, while panic() always brings down the whole system.
->> > AFAIK panic() shouldn't be used unless you're in some very low-level
->> > code where you know that trying to just kill the current process can't
->> > work and the entire system is broken beyond repair.
->> >
->> > If KASAN traps on some random memory access, there's a good chance
->> > that just killing the current process will allow at least parts of the
->> > system to continue. I'm not sure whether BUG() or die() is more
->> > appropriate here, but I think it definitely should not be a panic().
->>
->>
->> Nick, do you know if die() will be enough to catch problems on Android
->> phones? panic_on_warn would turn this into panic, but I guess one does
->> not want panic_on_warn on a canary phone.
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> Taking Simon's feedback into consideration...
 >
-> die() has arch specific implementations, so looking at:
+> I very often see changes like this and have to check the implementation
+> of BUG_ON() et al. to make sure it evaluates it's arguments even when
+> debugging is disabled.
 >
-> arch/arm64/kernel/traps.c:196#die
+> Even if it is always guaranteed to do so, like me people will be unsure
+> forever and have to check.
 >
-> it looks like panic is invoked if in_interrupt() or panic_on_oops(),
-> which is a configure option.  So maybe the config for KHWASAN should
-> also enable that? Otherwise seems easy to forget.  But maybe that
-> should remain configurable separately?
+> That makes auditing code and validating things more time consuming and
+> hard.
 >
-> Looking at the kernel configs for the Pixel 2, it does seem like
-> CONFIG_PANIC_ON_OOPS=y is already enabled.
-> https://android.googlesource.com/kernel/msm/+/android-msm-wahoo-4.4-pie/arch/arm64/configs/wahoo_defconfig#746
+> I also think the code as written now looks a lot nicer.
+>
+> So I'm not applying this, sorry.
+>
+> .
+>
+Get it.  Thank you for your explanation.
 
-Then I think we are good here.
+Sincerely,
+zhong jiang
 
-> Specifically to catch problems on Android, our internal debug builds
-> can report on panics, but not oops, IIUC.
