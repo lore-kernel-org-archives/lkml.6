@@ -2,221 +2,163 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77A3FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A833C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AA220882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:24:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AA220882
+	by mail.kernel.org (Postfix) with ESMTP id 44A0220866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:26:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A0220866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeINNhs (ORCPT
+        id S1727834AbeINNkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:37:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56114 "EHLO mx1.redhat.com"
+        Fri, 14 Sep 2018 09:40:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48118 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeINNhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:37:47 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1726618AbeINNkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:40:19 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E88D32B677;
-        Fri, 14 Sep 2018 08:24:25 +0000 (UTC)
-Received: from [10.72.12.117] (ovpn-12-117.pek2.redhat.com [10.72.12.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C700F5C542;
-        Fri, 14 Sep 2018 08:24:20 +0000 (UTC)
-Subject: Re: [PATCH net-next V2] virtio_net: ethtool tx napi configuration
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Willem de Bruijn <willemb@google.com>
-References: <20180913053545.18585-1-jasowang@redhat.com>
- <CAF=yD-LSgCEnL_kTH44A8-FH3nut3y=bonf4Bgf75=jd=D64hw@mail.gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <561c236e-9bd2-2762-2a1a-e2e4336692c7@redhat.com>
-Date:   Fri, 14 Sep 2018 16:24:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id D6F4588304;
+        Fri, 14 Sep 2018 08:26:56 +0000 (UTC)
+Received: from krava (unknown [10.40.205.54])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8B07C30912F4;
+        Fri, 14 Sep 2018 08:26:54 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 10:26:53 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
+Message-ID: <20180914082653.GG24224@krava>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+ <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAF=yD-LSgCEnL_kTH44A8-FH3nut3y=bonf4Bgf75=jd=D64hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 14 Sep 2018 08:24:25 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Sep 2018 08:26:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 13, 2018 at 07:10:35PM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 13.09.2018 15:54, Jiri Olsa wrote:
+> > hi,
+> > sending *RFC* for threads support in perf record command.
+> > 
+> > In big picture this patchset adds perf record --threads
+> > option that allows to create threads in following modes:
+> > 
+> > 1) single thread mode (current)
+> > 
+> >   $ perf record ...
+> >   $ perf record --threads=1 ...
+> > 
+> >   - all maps are read/stored under process thread
+> > 
+> > 2) mode with specific (X) number of threads
+> > 
+> >   $ perf record --threads=X ...
+> > 
+> >   - maps are spread equaly among threads
+> > 
+> > 3) mode that creates thread for every monitored memory map
+> > 
+> >   $ perf record --threads ...
+> > 
+> >   - which in perf record is equal to number of CPUs, and
+> >     it pins each thread to its map's cpu:
+> > 
+> > 4) TODO - NUMA aware threads/maps separation
+> >    ...
+> > 
+> > The perf.data stays as a single file.
+> > 
+> > v2 changes:
+> >   - rebased to current Arnaldo's perf/core
+> >     (also based on few fixes from my perf/core, see the branch details below)
+> > 
+> > This patchset contains lot of preparation changes to make
+> > threaded record possible:
+> > 
+> >   - Namhyung's changes to create multiple data streams in
+> >     perf data file, which allows having each thread data
+> >     being stored in separate files and merged into single
+> >     perf data after
+> > 
+> >   - Namhyung's changes to create track mmaps for auxiliary
+> >     events
+> > 
+> >   - Namhyung's changes to search for threads/mmaps/comms
+> >     using the time. This is needed because we have now
+> >     multiple data streams which are processed separately,
+> >     but they all need access to complete auxiliary events
+> >     data (threads/mmaps/comms). That's also a reason why
+> >     the auxiliary events are stored into separate data
+> >     stream, which is processed before real data.
+> > 
+> >   - the rest of the code that adds threads abstraction into
+> >     record command allows to create them and distribute maps
+> >     among them
+> > 
+> >   - other preparational changes
+> > 
+> > The threaded monitoring currently can't monitor backward maps
+> > and there are probably more limitations which I haven't spotted
+> > yet.
+> > 
+> > So far I tested on laptop:
+> >   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
+> > 
+> > and a one bigger server:
+> >   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
+> > 
+> > I can see decrease in recorded LOST events, but both the benchmark
+> > and the monitoring must be carefully configured wrt:
+> >   - number of events (frequency)
+> >   - size of the memory maps
+> >   - size of events (callchains)
+> >   - final perf.data size
+> > 
+> > It's also available in:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+> >   perf/record_threads
+> > 
+> > thoughts? ;-) thanks
+> > jirka
+> 
+> It is preferable to split into smaller pieces that bring 
+> some improvement proved by metrics numbers and ready for 
+> merging and upstream. Do we have more metrics than the 
+> data loss from trace AIO patches?
 
+well the primary focus is to get more events in,
+so the LOST metric is the main one
 
-On 2018年09月13日 23:20, Willem de Bruijn wrote:
-> On Thu, Sep 13, 2018 at 1:40 AM Jason Wang <jasowang@redhat.com> wrote:
->> Implement ethtool .set_coalesce (-C) and .get_coalesce (-c) handlers.
->> Interrupt moderation is currently not supported, so these accept and
->> display the default settings of 0 usec and 1 frame.
->>
->> Toggle tx napi through a bit in tx-frames. So as to not interfere
->> with possible future interrupt moderation, value 1 means tx napi while
->> value 0 means not.
->>
->> To properly synchronize with the data path, tx napi is disabled and
->> tx lock is held when changing the value of napi weight. And two more
->> places that can access tx napi weight:
->>
->> - speculative tx polling in rx napi, we can leave it as is since it
->>    not a must for correctness.
->> - skb_xmit_done(), one more check of napi weight is added before
->>    trying to enable tx to avoid tx to be disabled forever if napi is
->>    disabled after skb_xmit_done() but before the napi
->>
->> Link: https://patchwork.ozlabs.org/patch/948149/
->> Suggested-by: Jason Wang <jasowang@redhat.com>
->> Signed-off-by: Willem de Bruijn <willemb@google.com>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->> Changes from V1:
->> - try to synchronize with datapath to allow changing mode when
->>    interface is up.
->> - use tx-frames 0 as to disable tx napi while tx-frames 1 to enable tx napi
->> ---
->>   drivers/net/virtio_net.c | 64 +++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 63 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
->> index 765920905226..6e70864f5899 100644
->> --- a/drivers/net/virtio_net.c
->> +++ b/drivers/net/virtio_net.c
->> @@ -66,6 +66,8 @@ DECLARE_EWMA(pkt_len, 0, 64)
->>
->>   #define VIRTNET_DRIVER_VERSION "1.0.0"
->>
->> +static const u32 ethtool_coalesce_napi_mask = (1UL << 10);
->> +
-> This is no longer needed
+> 
+> There is usage of Posix threading API but there is no 
+> its implementation in the patch series, to avoid dependency 
+> on externally coded designs in the core of the tool.
 
-Yes, will remove this.
+well, we use pthreads in here, bt it's really not that
+much code.. we could make that generic in future if needed
 
->
->>   static const unsigned long guest_offloads[] = {
->>          VIRTIO_NET_F_GUEST_TSO4,
->>          VIRTIO_NET_F_GUEST_TSO6,
->> @@ -1444,7 +1446,10 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
->>
->>          virtqueue_napi_complete(napi, sq->vq, 0);
->>
->> -       if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS)
->> +       /* Check napi.weight to avoid tx stall since it could be set
->> +        * to zero by ethtool after skb_xmit_done().
->> +        */
->> +       if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS || !sq->napi.weight)
->>                  netif_tx_wake_queue(txq);
-> I see. This assumes that the napi handler will always be called on
-> conversion from napi to no-napi mode.
->
-> That is safe to assume because if it isn't called (and will not call
-> netif_tx_wake_queue) that implies that napi was not scheduled, and
-> thus the tx interrupt was not suppressed and thus there was no tx
-> completion work to be scheduled?
-
-If it isn't called it means skb_xmit_done() wakeup tx directly instead 
-of schedule tx. This could be a little bit early since there may be 
-still lots of pending tx packets. But it doesn't harm, start_xmit() can 
-handle this by re enable a delayed tx interrupt and disable TX.
-
-But there's a bug, look like I need remove the check of 
-(!sq->napi.weight) in the beginning of the function.
-
->
->>          return 0;
->> @@ -2181,6 +2186,61 @@ static int virtnet_get_link_ksettings(struct net_device *dev,
->>          return 0;
->>   }
->>
->> +static int virtnet_set_coalesce(struct net_device *dev,
->> +                               struct ethtool_coalesce *ec)
->> +{
->> +       struct ethtool_coalesce ec_default = {
->> +               .cmd = ETHTOOL_SCOALESCE,
->> +               .rx_max_coalesced_frames = 1,
->> +       };
->> +       struct virtnet_info *vi = netdev_priv(dev);
->> +       int i, napi_weight;
->> +
->> +       if (ec->tx_max_coalesced_frames > 1)
->> +               return -EINVAL;
->> +
->> +       ec_default.tx_max_coalesced_frames = ec->tx_max_coalesced_frames;
->> +       napi_weight = ec->tx_max_coalesced_frames ? NAPI_POLL_WEIGHT : 0;
->> +
->> +       /* disallow changes to fields not explicitly tested above */
->> +       if (memcmp(ec, &ec_default, sizeof(ec_default)))
->> +               return -EINVAL;
->> +
->> +       if (napi_weight ^ vi->sq[0].napi.weight) {
->> +               for (i = 0; i < vi->max_queue_pairs; i++) {
->> +                       struct netdev_queue *txq =
->> +                              netdev_get_tx_queue(vi->dev, i);
->> +
->> +                       virtnet_napi_tx_disable(&vi->sq[i].napi);
->> +                       __netif_tx_lock_bh(txq);
->> +                       vi->sq[i].napi.weight = napi_weight;
->> +                       __netif_tx_unlock_bh(txq);
->> +                       virtnet_napi_tx_enable(vi, vi->sq[i].vq,
->> +                                              &vi->sq[i].napi);
->> +               }
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int virtnet_get_coalesce(struct net_device *dev,
->> +                               struct ethtool_coalesce *ec)
->> +{
->> +       struct ethtool_coalesce ec_default = {
->> +               .cmd = ETHTOOL_GCOALESCE,
->> +               .rx_max_coalesced_frames = 1,
->> +               .tx_max_coalesced_frames = 0,
-> no need to explicitly initialize to 0 (unless you did this for
-> documentation purposes, which is fine).
-
-Yes.
-
-Thanks
-
->> +       };
->> +       struct virtnet_info *vi = netdev_priv(dev);
->> +
->> +       memcpy(ec, &ec_default, sizeof(ec_default));
->> +
->> +       if (vi->sq[0].napi.weight)
->> +               ec->tx_max_coalesced_frames = 1;
->> +
->> +       return 0;
->> +}
->> +
->>   static void virtnet_init_settings(struct net_device *dev)
->>   {
->>          struct virtnet_info *vi = netdev_priv(dev);
->> @@ -2219,6 +2279,8 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
->>          .get_ts_info = ethtool_op_get_ts_info,
->>          .get_link_ksettings = virtnet_get_link_ksettings,
->>          .set_link_ksettings = virtnet_set_link_ksettings,
->> +       .set_coalesce = virtnet_set_coalesce,
->> +       .get_coalesce = virtnet_get_coalesce,
->>   };
->>
->>   static void virtnet_freeze_down(struct virtio_device *vdev)
->> --
->> 2.17.1
->>
-
+jirka
