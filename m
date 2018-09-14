@@ -2,141 +2,110 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648D7FC6183
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E981C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B50D20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:05:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNUZ7TUi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B50D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CF45120853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF45120853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbeINKS1 (ORCPT
+        id S1727473AbeINKTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 06:18:27 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:39346 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbeINKS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 06:18:27 -0400
-Received: by mail-yb1-f194.google.com with SMTP id c4-v6so4291473ybl.6;
-        Thu, 13 Sep 2018 22:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JqrUnWv+B9rhHeVo/BJaqiQgDnER2A9r2DoAn6ut9yk=;
-        b=QNUZ7TUinjYP8RU2Qjur9IwmdlI+p3aJfiCBFFRZ2Ng0QXIAhfpR+RMR75c2lq2p+e
-         Hfu4N6GJ6QAX1zJAaM/pldrot/yK5EEDWuD2HpXaYDWiHQb46rcddGyZE3W7Dxw1/rvl
-         zet7Fb2d5Ez3LQbguijwDRJK0u9ZCjmYXPIfwKql1Kkz2jgkdS8GjSN1HWIVehXUi2sJ
-         fL5Juc3iigGhGM5+MFYzusNKiIN+aIa9JCrxK9zxxzHFlICoeDnpcUdrYveJGDGM4GHs
-         Uw8Cs1yto0DeUMYxcrcZ2uMwSXkS/ovZJRSP88doEyktIejG3fKLcZWgzESgUUGUkWsL
-         5UJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JqrUnWv+B9rhHeVo/BJaqiQgDnER2A9r2DoAn6ut9yk=;
-        b=g0ldfsmp4anoepQwFa3ABxG5O7+JR+fzxQ3/wg0NKOfQOF94NF8xVFbeMHYjaSkSy6
-         lNkTChNDDDMEBhkxQMiSiEWWojTR7bDa5qse6eXmFArEEhl3ChCMTrV3eMjIQjzt1pz4
-         E0oZhdm0P9RsdzwKKXIDuvPc380SSboC78KTA8ahhIgSEJsD/tUaqaKFdVz336x5rozD
-         /jZBsMZKe1prbhQv942FGMsN0gRMYG62JPA7qCEmKf9tShSZck/fBMLTNIVKNHfgsHPZ
-         FNjUTANCDAqBMJkaHbidqmoqz0IHptYQWavxRws8Wl8ROf69tMDpHtEVB8jXYCAL7Ma5
-         lLCw==
-X-Gm-Message-State: APzg51DzXmHNeJtawpuUUJh+b1ot//rtQ4XZxHwP8lGz2z71nTY7on8E
-        1wIKyyALGzNcHO4DtZWxaOhWvRg/5y+93xcabbQ=
-X-Google-Smtp-Source: ANB0VdbgwpTUHYN6vkd1sQlGs9mu6y60ukjpN21Qwzy8VvlCmS5rbOuL/8nJ2UtTKBrlVYh38Evodt/1v15RX+dNn+8=
-X-Received: by 2002:a5b:40c:: with SMTP id m12-v6mr4812828ybp.53.1536901542741;
- Thu, 13 Sep 2018 22:05:42 -0700 (PDT)
+        Fri, 14 Sep 2018 06:19:40 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:45684 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726756AbeINKTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 06:19:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id CD1C4201D5;
+        Fri, 14 Sep 2018 09:06:36 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id qIw_a_sAuVdG; Fri, 14 Sep 2018 09:06:34 +0200 (CEST)
+Received: from mail-essen-02.secunet.de (mail-essen-02.secunet.de [10.53.40.205])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 9B9EB20097;
+        Fri, 14 Sep 2018 09:06:34 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-02.secunet.de
+ (10.53.40.205) with Microsoft SMTP Server id 14.3.408.0; Fri, 14 Sep 2018
+ 07:06:51 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 34F22318060A;
+ Fri, 14 Sep 2018 07:06:51 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 07:06:51 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Florian Westphal <fw@strlen.de>
+CC:     David Miller <davem@davemloft.net>, <linux@stwm.de>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <christophe.gouault@6wind.com>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
+ tunnels
+Message-ID: <20180914050651.GD23674@gauss3.secunet.de>
+References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
+ <3448099.9yk84El3Sa@stwm.de>
+ <20180913163848.ni5xc4gc4d6uusdn@breakpoint.cc>
+ <20180913.102305.939671149040995911.davem@davemloft.net>
+ <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
 MIME-Version: 1.0
-Received: by 2002:a25:74d6:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 22:05:42
- -0700 (PDT)
-In-Reply-To: <20180909115205.GA17732@ming.t460p>
-References: <20180906203719.209399-1-xueweiz@google.com> <20180909115205.GA17732@ming.t460p>
-From:   =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <zenczykowski@gmail.com>
-Date:   Thu, 13 Sep 2018 22:05:42 -0700
-Message-ID: <CAHo-OozTguSTmLv=eCsKysSMdphRDKo=eiD69URJ6MV_mrm_GQ@mail.gmail.com>
-Subject: Re: [PATCH] scsi: sd: Contribute to randomness when running
- rotational device
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Xuewei Zhang <xueweiz@google.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-scsi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Aditya Kali <adityakali@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Guenter Roeck <groeck@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: cbe3d3f7-b9e3-4256-b890-f24c4306a01c
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 5A3DAFA0-D46D-459B-ADC5-B24AE2ECD78E
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 9, 2018 at 4:52 AM, Ming Lei <ming.lei@redhat.com> wrote:
-> On Thu, Sep 06, 2018 at 01:37:19PM -0700, Xuewei Zhang wrote:
->> Currently a scsi device won't contribute to kernel randomness when it
->> uses blk-mq. Since we commonly use scsi on rotational device with
->> blk-mq, it make sense to keep contributing to kernel randomness in these
->> cases. This is especially important for virtual machines.
->>
->> commit b5b6e8c8d3b4 ("scsi: virtio_scsi: fix IO hang caused by automatic
->> irq vector affinity") made all virtio-scsi device to use blk-mq, which
->> does not contribute to randomness today. So for a virtual machine only
->> having virtio-scsi disk (which is common), it will simple stop getting
->> randomness from its disks in today's implementation.
->>
->> With this patch, if the above VM has rotational virtio-scsi device, then
->> it can still benefit from the entropy generated from the disk.
->>
->> Reported-by: Xuewei Zhang <xueweiz@google.com>
->> Signed-off-by: Xuewei Zhang <xueweiz@google.com>
->> ---
->>  drivers/scsi/sd.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
->> index b79b366a94f7..5e4f10d28065 100644
->> --- a/drivers/scsi/sd.c
->> +++ b/drivers/scsi/sd.c
->> @@ -2959,6 +2959,9 @@ static void sd_read_block_characteristics(struct s=
-csi_disk *sdkp)
->>       if (rot =3D=3D 1) {
->>               blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
->>               blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
->> +     } else {
->> +             blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
->> +             blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
->>       }
->>
->>       if (sdkp->device->type =3D=3D TYPE_ZBC) {
->> --
->> 2.19.0.rc2.392.g5ba43deb5a-goog
->>
->
-> Look reasonable, especially the disk randomness is added by SCSI itself.
->
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
->
-> Thanks,
-> Ming
+On Thu, Sep 13, 2018 at 11:03:25PM +0200, Florian Westphal wrote:
+> David Miller <davem@davemloft.net> wrote:
+> > From: Florian Westphal <fw@strlen.de>
+> > Date: Thu, 13 Sep 2018 18:38:48 +0200
+> > 
+> > > Wolfgang Walter <linux@stwm.de> wrote:
+> > >> What I can say is that it depends mainly on number of policy rules and SA.
+> > > 
+> > > Thats already a good hint, I guess we're hitting long hash chains in
+> > > xfrm_policy_lookup_bytype().
+> > 
+> > I don't really see how recent changes can influence that.
+> 
+> I don't think there is a recent change that did this.
+> 
+> Walter says < 4.14 is ok, so this is likely related to flow cache removal.
+> 
+> F.e. it looks like all prefixed policies end up in a linked list
+> (net->xfrm.policy_inexact) and are not even in a hash table.
+> 
+> I am staring at b58555f1767c9f4e330fcf168e4e753d2d9196e0
+> but can't figure out how to configure that away from the
+> 'no hashing for prefixed policies' default or why we even have
+> policy_inexact in first place :/
 
-Also, see: https://bugzilla.redhat.com/show_bug.cgi?id=3D1572944
-where we're having randomness starvation problems on FC28
-running 4.18.5 due to lack of virtio-rng device in VM.
-(VM boot takes 9+ hours or 2 haswell VMs)
+The hash threshold can be configured like this:
 
-I'd kindly request we get this not only into 4.19 but also stable trees.
-(along with Ted's other randomization fixes)
+ip x p set hthresh4 0 0
 
-Reviewed-by: Maciej =C5=BBenczykowski <maze@google.com>
+This sets the hash threshold to local /0 and remote /0 netmasks.
+With this configuration, all policies should go to the hashtable.
+This might help to balance the hash chains better.
+
+Default hash thresholds are local /32 and remote /32 netmasks, so
+all prefixed policies go to the inexact list.
+
+To view the configuration:
+
+ip -s -s x p count
+
