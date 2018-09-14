@@ -2,148 +2,125 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A9ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5258DECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E02621477
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 22:54:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E02621477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DF0E520861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 23:02:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NstPgCUK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0E520861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbeIOEKu (ORCPT
+        id S1726610AbeIOESu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 00:10:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725198AbeIOEKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 00:10:50 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2683B21476;
-        Fri, 14 Sep 2018 22:54:18 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 18:54:16 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        linux-kbuild@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>
-Subject: [GIT PULL] tracing/Makefile: Fix handling redefinition of
- CC_FLAGS_FTRACE
-Message-ID: <20180914185416.5321e0f4@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 15 Sep 2018 00:18:50 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42425 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725753AbeIOESu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 00:18:50 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so4925445pff.9;
+        Fri, 14 Sep 2018 16:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bGhf4sU3pYC++35W7O4zDjMEyDgUy5YgTDYAOlFZ+To=;
+        b=NstPgCUK+PUSUYBaqeO040kkJu3K4u4ubplpGOCNsS1d1ZBAn4S+7/K0MaV6WY5mWS
+         QypR7orodqkvT18ERImDiS8mGjGbtFq43AZnAbVBG5lgFKmskIn+cQ6xQhPSorudbsHI
+         CxPasdMjnXe+Hm5uhM3+j4ufzKi4VlZzATy1tPYSoDEdO1yojOGipW3xyv8kAGqnF/6G
+         UGqLb9YuXv2d90gBfdpRd5UIo3oyCwVWM0LtOfepqn5xr97aSwx0wUTlv9dDVugdXgG5
+         2AeKbhjcpdcXk2klewD31ZXE5lmWohD+IeyfU2t6l70L8PMknc63gUK9OH9PEyUw0/Mj
+         sUxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bGhf4sU3pYC++35W7O4zDjMEyDgUy5YgTDYAOlFZ+To=;
+        b=Vj83d6FxJF9al3T1yedIQIPDsVEteO7wfb9C9jYI8F1obf5heGPBqzxB8DHXuLFage
+         5Ik9PtigqX5UnjV7H/KxMz3D8WfTi9dpz2bsPyvr2I3rb3l1cAqAv+reztvGL52CE7v7
+         4H18dZM3subF5rGrRNellRavgNz4yTPq4F/YVyNnJ7lGnC066ZWPAUPpBjUM4CnJct5/
+         2AqTlHLlq/BioQYfbcuT38ljlE3xtkHRVQLP5I3/YILOiV1SQGBQ3WE1tXja5VrM6hAT
+         LxbT1Sk6YuemeRhgaQ4IISGsa3NAX535OJSfRyG+wUfHDVjSHFPRzOX09KbBRYqCjphl
+         4Fhw==
+X-Gm-Message-State: APzg51AaKZTpkCYVd2Ig4ZuXP04hIqBv2kMHwl1uFbPe6pzvLUfZlja6
+        j0q59vRhdNIktDLuqYg2jZZA9Nuz
+X-Google-Smtp-Source: ANB0Vdaaw3YyrWI16LjTS6DuNIs2mhGDDAMi13yrsYYIA+spLNa4stn3kstgpWAdcPF6IbKzwCtzvA==
+X-Received: by 2002:a63:610:: with SMTP id 16-v6mr13452027pgg.96.1536966135043;
+        Fri, 14 Sep 2018 16:02:15 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id q62-v6sm10661889pfi.185.2018.09.14.16.02.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 16:02:13 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     rmk+kernel@armlinux.org.uk,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: phy: sfp: Prevent NULL deference of socket_ops
+Date:   Fri, 14 Sep 2018 16:01:31 -0700
+Message-Id: <20180914230132.23228-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In case we have specified a SFP and an I2C phandle in the Device Tree,
+but we somehow failed to look up the I2C adapter (e.g: the driver is not
+enabled), we will leave dangling socket_ops, and the sfp_bus will still
+have been registered. We can then observe NULL pointer dereferences
+while doing ethtool -m:
 
-Linus,
+[   20.218613] Unable to handle kernel NULL pointer dereference at virtual address 00000008
+[   20.226977] pgd = (ptrval)
+[   20.229785] [00000008] *pgd=7c400831, *pte=00000000, *ppte=00000000
+[   20.236274] Internal error: Oops: 17 [#1] SMP ARM
+[   20.241122] Modules linked in:
+[   20.244278] CPU: 0 PID: 1480 Comm: ethtool Not tainted 4.19.0-rc3 #138
+[   20.251013] Hardware name: Broadcom Northstar Plus SoC
+[   20.256316] PC is at sfp_get_module_info+0x8/0x10
+[   20.261172] LR is at dev_ethtool+0x218c/0x2afc
 
-This fixes an issue with the build system caused by a change that
-modifies CC_FLAGS_FTRACE. The issue is that it breaks the dependencies
-and causes "make targz-pkg" to rebuild the entire world.
+Specifically guard against that.
 
+Fixes: ce0aa27ff3f6 ("sfp: add sfp-bus to bridge between network devices and sfp cages")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/phy/sfp-bus.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Please pull the latest trace-v4.19-rc3 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.19-rc3
-
-Tag SHA1: f1da41d2d7997791e929e804b646dffd0765e677
-Head SHA1: b1f4ff74fcb0e82664e8633cc225c2ad4234878a
-
-
-Paulo Zanoni (1):
-      tracing/Makefile: Fix handling redefinition of CC_FLAGS_FTRACE
-
-----
- Makefile | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
----------------------------
-commit b1f4ff74fcb0e82664e8633cc225c2ad4234878a
-Author: Paulo Zanoni <paulo.r.zanoni@intel.com>
-Date:   Mon Sep 10 10:59:56 2018 -0700
-
-    tracing/Makefile: Fix handling redefinition of CC_FLAGS_FTRACE
-    
-    As a Kernel developer, I make heavy use of "make targz-pkg" in order
-    to locally compile and remotely install my development Kernels. The
-    nice feature I rely on is that after a normal "make", "make targz-pkg"
-    only generates the tarball without having to recompile everything.
-    
-    That was true until commit f28bc3c32c05 ("tracing: Handle
-    CC_FLAGS_FTRACE more accurately"). After it, running "make targz-pkg"
-    after "make" will recompile the whole Kernel tree, making my
-    development workflow much slower.
-    
-    The Kernel is choosing to recompile everything because it claims the
-    command line has changed. A diff of the .cmd files show a repeated
-    -mfentry in one of the files. That is because "make targz-pkg" calls
-    "make modules_install" and the environment is already populated with
-    the exported variables, CC_FLAGS_FTRACE being one of them. Then,
-    -mfentry gets duplicated because it is not protected behind an ifndef
-    block, like -pg.
-    
-    To complicate the problem a little bit more, architectures can define
-    their own version CC_FLAGS_FTRACE, so our code not only has to
-    consider recursive Makefiles, but also architecture overrides.
-    
-    So in this patch we move CC_FLAGS_FTRACE up and unconditionally
-    define it to -pg. Then we let the architecture Makefiles possibly
-    override it, and finally append the extra options later. This ensures
-    the variable is always fully redefined at each invocation so recursive
-    Makefiles don't keep appending, and hopefully it maintains the
-    intended behavior on how architectures can override the defaults..
-    
-    Thanks Steven Rostedt and Vasily Gorbik for the help on this
-    regression.
-    
-    Cc: Michal Marek <michal.lkml@markovi.net>
-    Cc: Ingo Molnar <mingo@redhat.com>
-    Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-    Cc: linux-kbuild@vger.kernel.org
-    Fixes: commit f28bc3c32c05 ("tracing: Handle CC_FLAGS_FTRACE more accurately")
-    Acked-by: Vasily Gorbik <gor@linux.ibm.com>
-    Signed-off-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/Makefile b/Makefile
-index 4d5c883a98e5..a5ef6818157a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -616,6 +616,11 @@ CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
- 	$(call cc-disable-warning,maybe-uninitialized,)
- export CFLAGS_GCOV
- 
-+# The arch Makefiles can override CC_FLAGS_FTRACE. We may also append it later.
-+ifdef CONFIG_FUNCTION_TRACER
-+  CC_FLAGS_FTRACE := -pg
-+endif
+diff --git a/drivers/net/phy/sfp-bus.c b/drivers/net/phy/sfp-bus.c
+index 740655261e5b..9465be501372 100644
+--- a/drivers/net/phy/sfp-bus.c
++++ b/drivers/net/phy/sfp-bus.c
+@@ -378,6 +378,9 @@ static void sfp_unregister_bus(struct sfp_bus *bus)
+  */
+ int sfp_get_module_info(struct sfp_bus *bus, struct ethtool_modinfo *modinfo)
+ {
++	if (!bus->socket_ops)
++		return -EOPNOTSUPP;
 +
- # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
- # values of the respective KBUILD_* variables
- ARCH_CPPFLAGS :=
-@@ -755,9 +760,6 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
- endif
- 
- ifdef CONFIG_FUNCTION_TRACER
--ifndef CC_FLAGS_FTRACE
--CC_FLAGS_FTRACE := -pg
--endif
- ifdef CONFIG_FTRACE_MCOUNT_RECORD
-   # gcc 5 supports generating the mcount tables directly
-   ifeq ($(call cc-option-yn,-mrecord-mcount),y)
+ 	return bus->socket_ops->module_info(bus->sfp, modinfo);
+ }
+ EXPORT_SYMBOL_GPL(sfp_get_module_info);
+@@ -396,6 +399,9 @@ EXPORT_SYMBOL_GPL(sfp_get_module_info);
+ int sfp_get_module_eeprom(struct sfp_bus *bus, struct ethtool_eeprom *ee,
+ 			  u8 *data)
+ {
++	if (!bus->socket_ops)
++		return -EOPNOTSUPP;
++
+ 	return bus->socket_ops->module_eeprom(bus->sfp, ee, data);
+ }
+ EXPORT_SYMBOL_GPL(sfp_get_module_eeprom);
+-- 
+2.17.1
+
