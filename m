@@ -6,116 +6,70 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED5FFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F0BECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B0F20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B0F20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E4DAA20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:54:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DAA20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbeINOEv (ORCPT
+        id S1728121AbeINOHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:04:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:58430 "EHLO foss.arm.com"
+        Fri, 14 Sep 2018 10:07:52 -0400
+Received: from mga12.intel.com ([192.55.52.136]:52469 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbeINOEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:04:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7D1D18A;
-        Fri, 14 Sep 2018 01:51:20 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 149AC3F703;
-        Fri, 14 Sep 2018 01:51:17 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 09:51:15 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 02/16] sched/core: uclamp: map TASK's clamp values
- into CPU's clamp groups
-Message-ID: <20180914085115.GM1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-3-patrick.bellasi@arm.com>
- <20180912134945.GZ24106@hirez.programming.kicks-ass.net>
- <20180912155619.GG1413@e110439-lin>
- <20180912161218.GW24082@hirez.programming.kicks-ass.net>
- <20180912173515.GH1413@e110439-lin>
- <20180912174236.GB24106@hirez.programming.kicks-ass.net>
- <20180912175202.GK1413@e110439-lin>
- <20180913191422.GZ24082@hirez.programming.kicks-ass.net>
+        id S1726618AbeINOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 10:07:52 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 01:54:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
+   d="scan'208";a="257194662"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga005.jf.intel.com with ESMTP; 14 Sep 2018 01:54:09 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 74EB4301376; Fri, 14 Sep 2018 01:54:09 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 01:54:09 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     linux-kernel-owner@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, acme@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        namhyung@kernel.org, Kan Liang <kan.liang@linux.intel.com>
+Subject: Re: [PATCH] perf/x86/intel/lbr: Optimize context switches for LBR
+Message-ID: <20180914085409.GA27886@tassilo.jf.intel.com>
+References: <1536869331-63561-1-git-send-email-kan.liang@linux.intel.com>
+ <dec78c67-0631-c4a7-95e1-4b931ce9ecd7@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180913191422.GZ24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <dec78c67-0631-c4a7-95e1-4b931ce9ecd7@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Sep 21:14, Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 06:52:02PM +0100, Patrick Bellasi wrote:
-> > On 12-Sep 19:42, Peter Zijlstra wrote:
-> > > On Wed, Sep 12, 2018 at 06:35:15PM +0100, Patrick Bellasi wrote:
-> > > > On 12-Sep 18:12, Peter Zijlstra wrote:
-> > > 
-> > > > > No idea; but if you want to go all fancy you can replace he whole
-> > > > > uclamp_map thing with something like:
-> > > > > 
-> > > > > struct uclamp_map {
-> > > > > 	union {
-> > > > > 		struct {
-> > > > > 			unsigned long v : 10;
-> > > > > 			unsigned long c : BITS_PER_LONG - 10;
-> > > > > 		};
-> > > > > 		atomic_long_t s;
-> > > > > 	};
-> > > > > };
-> > > > 
-> > > > That sounds really cool and scary at the same time :)
-> > > > 
-> > > > The v:10 requires that we never set SCHED_CAPACITY_SCALE>1024
-> > > > or that we use it to track a percentage value (i.e. [0..100]).
-> > > 
-> > > Or we pick 11 bits, it seems unlikely that capacity be larger than 2k.
-> > 
-> > Just remembered a past experience where we had unaligned access traps
-> > on some machine because... don't you see any potentially issue on
-> > using bitfleds like you suggest above ?
-> > 
-> > I'm thinking to:
-> > 
-> >    commit 317d359df95d ("sched/core: Force proper alignment of 'struct util_est'")
+> > In principle the LBRs need to be flushed between threads. So does
+> > current code.
 > 
-> There should not be (and I'm still confused by that particular commit
-> you reference). If we access everything through the uclamp_map::s, and
-> only use the bitfields to interpret the results, it all 'works'.
+> IMHO, ideally, LBRs stack would be preserved and restored when 
+> switching between execution stacks. That would allow implementing 
+> per-thread statistical call graph view in Perf tools, fully based 
+> on HW capabilities. It could be advantageous for some cases, in 
+> comparison with traditional dwarf based call graph. 
 
-Yes, the problem above was different... still I was wondering if there
-could be bitfields related alignment issue lurking somewhere.
-But, as you say, if we always R/W atomically via uclamp_map::s there
-should be none.
+This is already supported when you use LBR call stack mode
+(perf record --call-graph lbr)
 
-> The tricky thing we did earlier was trying to use u64 accesses for 2
-> u32 variables. And somehow ia64 didn't get the alignment right.
+This change is only optimizing the case when call stack mode is not used.
 
-Right, np... sorry for the noise.
+Of course in call stack mode the context switch overhead is even higher,
+because it not only writes, but also reads.
 
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+-Andi
