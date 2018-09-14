@@ -2,80 +2,189 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E65ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91446ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 146D720882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146D720882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3830120882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:43:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="V6wkA33W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3830120882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbeINT57 (ORCPT
+        id S1728553AbeINT6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:57:59 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12137 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727999AbeINT56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:57:58 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 430A913000856;
-        Fri, 14 Sep 2018 22:43:05 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 14 Sep
- 2018 22:42:57 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 6/8] staging: erofs: avoid magic constants when initializing clusterbits
-Date:   Fri, 14 Sep 2018 22:40:28 +0800
-Message-ID: <1536936030-62362-7-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
-References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
+        Fri, 14 Sep 2018 15:58:04 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33960 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbeINT6D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:58:03 -0400
+Received: by mail-it0-f66.google.com with SMTP id x79-v6so4869244ita.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=O3/RBsRQ5Sp/2aQAfur+vaoVbdueXI2xXyjEDxZXJcc=;
+        b=V6wkA33Wp01K5BCaYZ1HYE+vGZ34Ck0zU/SGgCAWBQev789AUws5svCUanaiJ+h8WM
+         N51JDIqQnSEYjXt2N3sycFYJ75NUB4dNOBSZpmVel1BuXQhbPfmZ3RM60OBhl37L3Wel
+         DSivSBoZDEuU6lINPi9RJ6FydMhIN8vv9SpRMhfQRvx/cYlxFu6zB9n+Pt4TGFJDThyA
+         clb2JUbqWDTA0eAyzGQ6HU46uJJh7SDgHw1M5jwhS/dBYDr5HcaAuoC/RvlAl0+qYVvr
+         LlnEd9y8C5CiYNgooFAzXmIreWVkL8KCGYs9qy6PN+93reJ0jvt1rXW3qBK+zJwexY6u
+         dU0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=O3/RBsRQ5Sp/2aQAfur+vaoVbdueXI2xXyjEDxZXJcc=;
+        b=amIo6ygzS6LJFyNgTVZ9AU2rM6h+uVGHK/8399lXTUjKvjBmSr8knCFYeEtDX9h9mt
+         TF74JbTObQ/ZZRSxwYye9IYn/N7UZNlywJVamuwW4SqNdIWYsk1KYs2PgHoMNoEWqPGw
+         pbMNPAGKuiDJOFF8qL71QfF6xFPlgtG4Dd67nD4AKG/2iQ/5EeWTmGFexl39DD4qeZ0W
+         UZ4pKsvoWSE1YrqC0nYRD0p7zmySqB9iOHDkFGwd70Bkgcd3CZf42A9RWfoHousLzCBb
+         3Ris7rQa9r7F7TubbSnp2jFvVMuQSdsirdVS6x6kaRllUcUfcYlTlcTa0g+YWAmEQnA1
+         ER3Q==
+X-Gm-Message-State: APzg51CDF3O61KQX8vDBFgVi1hXItgDIJ5Ki0XZwD2O266j1hEs0DKYy
+        T6FJ7jMzV2fXNWL5h+YTkDCfccIOWbnAkSFCEkObgw==
+X-Google-Smtp-Source: ANB0VdbxagFjVSZ0D92/qw53gw68bXwj3PVIxmhv4jHNcMzWvfKBqHOPehmL4e5U09gO6Pb/KF4ijzrX+zhHLzMyPfc=
+X-Received: by 2002:a02:95c4:: with SMTP id b62-v6mr10985875jai.43.1536936193376;
+ Fri, 14 Sep 2018 07:43:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 07:43:13
+ -0700 (PDT)
+In-Reply-To: <20180912075129.25185-1-brgl@bgdev.pl>
+References: <20180912075129.25185-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 14 Sep 2018 16:43:13 +0200
+Message-ID: <CAMRc=MeiT_QADv69AktgmOZPNJbNChmU9YK=p3f4SZ8j2mCS_g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/21] nvmem: rework of the subsystem for non-DT users
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently erofs only supports clustersize == blocksize.
-and clustersize == 2^n * blocksize will be supported in the future.
+2018-09-12 9:51 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> This series contains nvmem framework changes prerequisite for further
+> development of my previous series[1] that aims at removal of the
+> platform data struct from at24 EEPROM driver.
+>
+> The patches are conceptually split into a couple groups.
+>
+> First five patches fix issues with existing issues.
+>
+> Patch 6 switches the nvmem providers to using kref which is necessary
+> for removal of the return value from nvmem_unregister(). This is an
+> approach similar to the one used in the clock framework where the
+> provider is only removed after the last reference to it is dropped.
+>
+> Patches 7-9 convert last remaining users of nvmem_unregister() who
+> still check its return value to using devm_nvmem_unregister() and
+> patch 10 changes its return value from int to void.
+>
+> Patches 11-14 introduce the most significant changes of this series:
+> we remove the global cell list, add support for static cell definitions
+> external to the provider structure, change the way DT lookup works and
+> allow to associate resources and consumers using lookup tables. The way
+> nvmem_cell_get() for non-DT users is changed but there are no current
+> users and it's currently broken anyway (cell being removed after a call
+> to nvmem_cell_put()).
+>
+> Patch 15 updates the documentation.
+>
+> Patch 16 adds support for notifiers to nvmem so that users can
+> subscribe for events such as device or cell registration or removal.
+>
+> Patches 17 & 18 add some minor improvements to the codebase.
+>
+> Last three patches contain fixes to warnings emitted by checkpatch.
+> It's a good moment to add them if we're already touching a big part
+> of the subsystem's code.
+>
+> Tested both DT and non-DT use cases.
+>
+> [1] https://lkml.org/lkml/2018/8/10/149
+>
+> v1 -> v2:
+> - extended the lookup structure with a proper con_id independent from the
+>   cell name defined in the cell definition table
+> - added a patch that makes the naming convention for the cell name argument
+>   in the nvmem_cell_get() family of functions consistent
+> - there were two users of nvmem_unregister() that still checked the return
+>   value, now switched to devm_nvmem_register()
+> - fixed build failures reported by kbuild test robot
+>
+> v2 -> v3:
+> - dropped the patch removing unused APIs and introduced changes on top of
+>   existing code instead
+> - fixed nvmem provider reference decreasing in error paths
+> - added checkpatch fixes
+> - removed nvmem-machine.h and distributed new definitions among existing
+>   consumer and provider headers
+> - reordered patches thematically
+> - added more patches fixing issues in existing codebase
+>
+> Bartosz Golaszewski (21):
+>   nvmem: provide nvmem_dev_name()
+>   nvmem: remove the name field from struct nvmem_device
+>   nvmem: use list_for_each_entry_safe in nvmem_device_remove_all_cells()
+>   nvmem: remove a stray newline
+>   nvmem: check the return value of nvmem_add_cells()
+>   nvmem: use kref
+>   nvmem: lpc18xx_eeprom: use devm_nvmem_register()
+>   nvmem: sunxi_sid: use devm_nvmem_register()
+>   nvmem: mxs-ocotp: use devm_nvmem_register()
+>   nvmem: change the signature of nvmem_unregister()
+>   nvmem: remove the global cell list
+>   nvmem: add support for cell info
+>   nvmem: resolve cells from DT at registration time
+>   nvmem: add support for cell lookups from machine code
+>   Documentation: nvmem: document cell tables and lookup entries
+>   nvmem: add a notifier chain
+>   nvmem: use SPDX license identifiers
+>   nvmem: make the naming of arguments in nvmem_cell_get() consistent
+>   nvmem: use EOPNOTSUPP instead of ENOSYS
+>   nvmem: fix commenting style
+>   nvmem: use octal permissions instead of constants
+>
+>  Documentation/nvmem/nvmem.txt  |  31 ++
+>  drivers/nvmem/core.c           | 527 ++++++++++++++++++++++-----------
+>  drivers/nvmem/lpc18xx_eeprom.c |   6 +-
+>  drivers/nvmem/mxs-ocotp.c      |   4 +-
+>  drivers/nvmem/sunxi_sid.c      |  20 +-
+>  include/linux/nvmem-consumer.h | 100 +++++--
+>  include/linux/nvmem-provider.h |  49 +--
+>  7 files changed, 497 insertions(+), 240 deletions(-)
+>
+> --
+> 2.18.0
+>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Superseded by v4. This time I made sure all modified drivers build
+fine without warnings.
 
-diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
-index 2109b03..9e42153 100644
---- a/drivers/staging/erofs/super.c
-+++ b/drivers/staging/erofs/super.c
-@@ -116,9 +116,10 @@ static int superblock_read(struct super_block *sb)
- #endif
- 	sbi->islotbits = ffs(sizeof(struct erofs_inode_v1)) - 1;
- #ifdef CONFIG_EROFS_FS_ZIP
--	sbi->clusterbits = 12;
-+	/* TODO: clusterbits should be related to inode */
-+	sbi->clusterbits = blkszbits;
- 
--	if (1 << (sbi->clusterbits - 12) > Z_EROFS_CLUSTER_MAX_PAGES)
-+	if (1 << (sbi->clusterbits - PAGE_SHIFT) > Z_EROFS_CLUSTER_MAX_PAGES)
- 		errln("clusterbits %u is not supported on this kernel",
- 			sbi->clusterbits);
- #endif
--- 
-1.9.1
-
+Bart
