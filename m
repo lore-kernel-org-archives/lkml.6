@@ -3,108 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2448BFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 547E9C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB66820866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB66820866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id 0679E20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:19:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0679E20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeINL2z (ORCPT
+        id S1727710AbeINLcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 07:28:55 -0400
-Received: from 4.mo178.mail-out.ovh.net ([46.105.49.171]:50379 "EHLO
-        4.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeINL2z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 07:28:55 -0400
-X-Greylist: delayed 1199 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Sep 2018 07:28:54 EDT
-Received: from player761.ha.ovh.net (unknown [10.109.160.253])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 6776D2D262
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:38:52 +0200 (CEST)
-Received: from zorba.kaod.org (LFbn-1-10605-110.w90-89.abo.wanadoo.fr [90.89.196.110])
-        (Authenticated sender: postmaster@kaod.org)
-        by player761.ha.ovh.net (Postfix) with ESMTPSA id A842F4800A4;
-        Fri, 14 Sep 2018 07:38:37 +0200 (CEST)
-Subject: Re: [PATCH i2c-next v6] i2c: aspeed: Handle master/slave combined irq
- events properly
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, jarkko.nikula@linux.intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        James Feist <james.feist@linux.intel.com>
-References: <20180911233302.GA18799@roeck-us.net>
- <5698ca34-14c9-8d05-c4e6-5acf85ff9d14@linux.intel.com>
- <20180912013449.GA12612@roeck-us.net>
- <7fd98646-fb5a-be4d-ce37-84b74e0fa8b3@linux.intel.com>
- <20180912195844.GA6893@roeck-us.net>
- <da7f4691-7428-3114-32bb-e0171f6c7228@linux.intel.com>
- <20180912203059.GA18201@roeck-us.net>
- <fb185839-3ae0-01dc-09e8-f22db55ecb04@kaod.org>
- <3f86e75f-1502-eae8-0633-d087937111c8@roeck-us.net>
- <f47b3050-3abd-caa4-cc71-4b13ef60e2c0@kaod.org>
- <20180913155703.GA22605@roeck-us.net>
- <2c481986-7ee0-4887-5c9b-64e2cd9d8c04@kaod.org>
- <b4da2b68-e6e3-e068-cd6e-9e638aa67889@roeck-us.net>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-Message-ID: <ccbf7059-77fd-44e8-daee-516582814cb3@kaod.org>
-Date:   Fri, 14 Sep 2018 07:38:37 +0200
+        Fri, 14 Sep 2018 07:32:09 -0400
+Received: from mga07.intel.com ([134.134.136.100]:36159 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbeINLcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 07:32:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 23:19:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
+   d="scan'208";a="83431493"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by orsmga003.jf.intel.com with ESMTP; 13 Sep 2018 23:18:59 -0700
+Subject: Re: [PATCH RFC] scsi: ufs: Disable blk-mq for now
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Evan Green <evgreen@chromium.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Janek Kotas <jank@cadence.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        Li Wei <liwei213@huawei.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Alex Lemberg <Alex.Lemberg@sandisk.com>
+References: <20180913112848.7807-1-adrian.hunter@intel.com>
+ <20180913120459.GA4965@ming.t460p>
+ <e4d0c716-006a-72cb-0240-4ae5749b21b8@intel.com>
+ <20180914015237.GC11059@ming.t460p>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <2fdfc038-5b86-243c-9b0a-f294d281e5c0@intel.com>
+Date:   Fri, 14 Sep 2018 09:17:14 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <b4da2b68-e6e3-e068-cd6e-9e638aa67889@roeck-us.net>
+In-Reply-To: <20180914015237.GC11059@ming.t460p>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 5290603662555188096
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrjeejgdellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> That seems to suggest that none of the status bits auto-clears, and that
->>> the above code clearing intr_status should be removed entirely.
->>> Am I missing something ?
+On 14/09/18 04:52, Ming Lei wrote:
+> On Thu, Sep 13, 2018 at 03:15:39PM +0300, Adrian Hunter wrote:
+>> On 13/09/18 15:05, Ming Lei wrote:
+>>> On Thu, Sep 13, 2018 at 02:28:48PM +0300, Adrian Hunter wrote:
+>>>> blk-mq does not support runtime pm, so disable blk-mq support for now.
+>>>
+>>> So could you describe a bit what the issue you are trying to fix?
 >>
->> You are right. I just pushed another version of the previous patch with this
->> new hunk :
+>> UFS is a low-power solution, so we must be able to runtime suspend.
 >>
->> @@ -188,7 +200,6 @@ static void aspeed_i2c_bus_handle_cmd(As
->>   {
->>       bus->cmd &= ~0xFFFF;
->>       bus->cmd |= value & 0xFFFF;
->> -    bus->intr_status = 0;
->>         if (bus->cmd & I2CD_M_START_CMD) {
->>           uint8_t state = aspeed_i2c_get_state(bus) & I2CD_MACTIVE ?
+>>>
+>>> This is host level runtime PM you are trying to address, and if blk-mq
+>>> runtime isn't enabled, I guess the host won't be runtime suspended at all
+>>> because some of its descendant are always active.
+>>>
+>>> So seems we need to do nothing for preventing the host controller from
+>>> entering runtime suspend.
 >>
->>
->> The QEMU palmetto and witherspoon machines seem to behave fine. Can you give
->> it a try ?
->>
+>> We don't want to prevent the host controller from runtime suspending, quite
+>> the opposite.
 > 
-> Works fine for me for all affected qemu platforms.
+> OK, got it.
 > 
-> How do you want to proceed with the qemu patches ? I attached my patches
-> for reference. Maybe you can add them to your tree if they are ok and submit
-> the entire series together to the qemu mailing list ?
+> However, in previous discussion, it is strongly objected to use
+> per-driver/device .use_blk_mq switch, so not sure if this way can
+> be accepted.
 
-yes. They are pushed in my aspeed-3.1 branch. I will send the series 
-on the list.
+It is only needed for 4.19 so far.  Otherwise just revert d5038a13eca7
+("scsi: core: switch to scsi-mq by default")
 
-Thanks,
+> 
+> BTW, I just posted the runtime PM enablement patches[1] for blk-mq,
+> and I verified that it works fine and passed blktests & xfstest & my
+> other sanity tests, could you try it on UFS?
+> 
+> [1] https://marc.info/?l=linux-block&m=153684095523409&w=2
 
-C. 
+I will give it a go.
 
-
+Obviously, if those patches go in, we wouldn't need to disable blk-mq
+anymore, but that isn't until 4.20 at least.
