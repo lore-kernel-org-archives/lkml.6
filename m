@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC7ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54207FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9BE920833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:34:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BE920833
+	by mail.kernel.org (Postfix) with ESMTP id 0F1F020882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:34:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F1F020882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbeINWtu (ORCPT
+        id S1728456AbeINWuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:49:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46576 "EHLO mx1.redhat.com"
+        Fri, 14 Sep 2018 18:50:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:28591 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbeINWtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:49:50 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        id S1727118AbeINWuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:50:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 095A831524F8;
-        Fri, 14 Sep 2018 17:34:21 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8CD33308124C;
+        Fri, 14 Sep 2018 17:34:36 +0000 (UTC)
 Received: from [10.36.116.58] (ovpn-116-58.ams2.redhat.com [10.36.116.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E9512010CE7;
-        Fri, 14 Sep 2018 17:34:18 +0000 (UTC)
-Subject: Re: [PATCH v4 RESEND 1/5] KVM: x86: hyperv: enforce vp_index <
- KVM_MAX_VCPUS
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F362A65971;
+        Fri, 14 Sep 2018 17:34:33 +0000 (UTC)
+Subject: Re: [PATCH v4 RESEND 4/5] x86/hyper-v: rename ipi_arg_{ex,non_ex}
+ structures
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
 Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Roman Kagan <rkagan@virtuozzo.com>,
@@ -42,7 +42,7 @@ Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         linux-kernel@vger.kernel.org
 References: <20180822101832.31763-1-vkuznets@redhat.com>
- <20180822101832.31763-2-vkuznets@redhat.com>
+ <20180822101832.31763-5-vkuznets@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -80,68 +80,110 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <afb20224-da78-d9eb-2642-49333c2c8b16@redhat.com>
-Date:   Fri, 14 Sep 2018 19:34:15 +0200
+Message-ID: <893f1078-1ea9-8a2e-0467-58f524504ac7@redhat.com>
+Date:   Fri, 14 Sep 2018 19:34:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180822101832.31763-2-vkuznets@redhat.com>
+In-Reply-To: <20180822101832.31763-5-vkuznets@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Sep 2018 17:34:21 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 14 Sep 2018 17:34:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 22/08/2018 12:18, Vitaly Kuznetsov wrote:
-> Hyper-V TLFS (5.0b) states:
-> 
->> Virtual processors are identified by using an index (VP index). The
->> maximum number of virtual processors per partition supported by the
->> current implementation of the hypervisor can be obtained through CPUID
->> leaf 0x40000005. A virtual processor index must be less than the
->> maximum number of virtual processors per partition.
-> 
-> Forbid userspace to set VP_INDEX above KVM_MAX_VCPUS. get_vcpu_by_vpidx()
-> can now be optimized to bail early when supplied vpidx is >= KVM_MAX_VCPUS.
+> These structures are going to be used from KVM code so let's make
+> their names reflect their Hyper-V origin.
 > 
 > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
 > ---
->  arch/x86/kvm/hyperv.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  arch/x86/hyperv/hv_apic.c          | 12 ++++++------
+>  arch/x86/include/asm/hyperv-tlfs.h | 16 +++++++++-------
+>  2 files changed, 15 insertions(+), 13 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> index 01d209ab5481..0cd597b0f754 100644
-> --- a/arch/x86/kvm/hyperv.c
-> +++ b/arch/x86/kvm/hyperv.c
-> @@ -132,8 +132,10 @@ static struct kvm_vcpu *get_vcpu_by_vpidx(struct kvm *kvm, u32 vpidx)
->  	struct kvm_vcpu *vcpu = NULL;
->  	int i;
+> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+> index 402338365651..49284e1506b1 100644
+> --- a/arch/x86/hyperv/hv_apic.c
+> +++ b/arch/x86/hyperv/hv_apic.c
+> @@ -93,14 +93,14 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
+>   */
+>  static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
+>  {
+> -	struct ipi_arg_ex **arg;
+> -	struct ipi_arg_ex *ipi_arg;
+> +	struct hv_send_ipi_ex **arg;
+> +	struct hv_send_ipi_ex *ipi_arg;
+>  	unsigned long flags;
+>  	int nr_bank = 0;
+>  	int ret = 1;
 >  
-> -	if (vpidx < KVM_MAX_VCPUS)
-> -		vcpu = kvm_get_vcpu(kvm, vpidx);
-> +	if (vpidx >= KVM_MAX_VCPUS)
-> +		return NULL;
+>  	local_irq_save(flags);
+> -	arg = (struct ipi_arg_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	arg = (struct hv_send_ipi_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
+>  
+>  	ipi_arg = *arg;
+>  	if (unlikely(!ipi_arg))
+> @@ -130,8 +130,8 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
+>  static bool __send_ipi_mask(const struct cpumask *mask, int vector)
+>  {
+>  	int cur_cpu, vcpu;
+> -	struct ipi_arg_non_ex **arg;
+> -	struct ipi_arg_non_ex *ipi_arg;
+> +	struct hv_send_ipi **arg;
+> +	struct hv_send_ipi *ipi_arg;
+>  	int ret = 1;
+>  	unsigned long flags;
+>  
+> @@ -148,7 +148,7 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
+>  		return __send_ipi_mask_ex(mask, vector);
+>  
+>  	local_irq_save(flags);
+> -	arg = (struct ipi_arg_non_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	arg = (struct hv_send_ipi **)this_cpu_ptr(hyperv_pcpu_input_arg);
+>  
+>  	ipi_arg = *arg;
+>  	if (unlikely(!ipi_arg))
+> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+> index 08e24f552030..d0554409a3de 100644
+> --- a/arch/x86/include/asm/hyperv-tlfs.h
+> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+> @@ -725,19 +725,21 @@ struct hv_enlightened_vmcs {
+>  #define HV_STIMER_AUTOENABLE		(1ULL << 3)
+>  #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
+>  
+> -struct ipi_arg_non_ex {
+> -	u32 vector;
+> -	u32 reserved;
+> -	u64 cpu_mask;
+> -};
+> -
+>  struct hv_vpset {
+>  	u64 format;
+>  	u64 valid_bank_mask;
+>  	u64 bank_contents[];
+>  };
+>  
+> -struct ipi_arg_ex {
+> +/* HvCallSendSyntheticClusterIpi hypercall */
+> +struct hv_send_ipi {
+> +	u32 vector;
+> +	u32 reserved;
+> +	u64 cpu_mask;
+> +};
 > +
-> +	vcpu = kvm_get_vcpu(kvm, vpidx);
->  	if (vcpu && vcpu_to_hv_vcpu(vcpu)->vp_index == vpidx)
->  		return vcpu;
->  	kvm_for_each_vcpu(i, vcpu, kvm)
-> @@ -1044,7 +1046,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
->  
->  	switch (msr) {
->  	case HV_X64_MSR_VP_INDEX:
-> -		if (!host)
-> +		if (!host || (u32)data >= KVM_MAX_VCPUS)
->  			return 1;
->  		hv->vp_index = (u32)data;
->  		break;
+> +/* HvCallSendSyntheticClusterIpiEx hypercall */
+> +struct hv_send_ipi_ex {
+>  	u32 vector;
+>  	u32 reserved;
+>  	struct hv_vpset vp_set;
 > 
 
-Queued, thanks.
+This doesn't apply anymore, sorry.
 
 Paolo
