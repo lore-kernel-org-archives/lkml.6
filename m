@@ -2,240 +2,276 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD6EECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2125ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98DD220861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:34:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DD220861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 79B8A20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:40:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B8A20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbeINQsc (ORCPT
+        id S1727996AbeINQyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:48:32 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34780 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINQsc (ORCPT
+        Fri, 14 Sep 2018 12:54:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:53115 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeINQyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:48:32 -0400
-Received: by mail-ot1-f65.google.com with SMTP id i12-v6so4238582otl.1;
-        Fri, 14 Sep 2018 04:34:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0QfFIQD21TzZagJqmH+2KrLKAy9nQnSeVvnoZtkagi0=;
-        b=IwF6HZ1HDr/OiuvtVqF/aOvn//XRE9eNOs/D3RUbm15/Lyi10bbZMZN/s2xNQzgbYc
-         IW/vrsKOWyaD/gVNr5nnsNGgGz+FwISWNeEXtFDiKHjahDO7APCH1PDFLrVMdtWCy72s
-         D+1IYXQhTQbPwDZ6rEE8iyXtpmhFKRXWVT0eSaASilv64n99GKbHgCJ+8HeK7LgivC9o
-         uMf9BHl3kWMwX9tr+GTwn6Epadisv/ijrbOpM6lzI1IRlbPMMbxkTY1TE/UNpchRR0Fd
-         tFcGZ2VFE+NiizxQwQIo3BgMdhgWY5mkAhb8PDs7uCOeCaX795YjbYzdJulxwoGifks1
-         jP2g==
-X-Gm-Message-State: APzg51B2LzVzEcHMMFt+cpmESCJ+9S+SF/RDxQYwHpk7DX9gVRYJse2P
-        ilzq9YTHz5qzXjcIZ7p4CRh6JO2l9m/OPsOhmxE=
-X-Google-Smtp-Source: ANB0VdZrwcqyJhOJTtgRo0VcxT9s4q0zb1tyQwmOwSMvnq7kohfEMAMQLVp6j5E6Lf+m6iInah8r5e/3APiYDEyOl0Q=
-X-Received: by 2002:a9d:2645:: with SMTP id a63-v6mr3949973otb.270.1536924865801;
- Fri, 14 Sep 2018 04:34:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180620172226.15012-1-ulf.hansson@linaro.org>
- <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com>
- <20180809153925.GA20329@red-moon> <5398488.CyAMIAYSYI@aspire.rjw.lan> <20180914104431.GA20567@e107981-ln.cambridge.arm.com>
-In-Reply-To: <20180914104431.GA20567@e107981-ln.cambridge.arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 14 Sep 2018 13:34:14 +0200
-Message-ID: <CAJZ5v0j27p9XHsLsJ+Eg9PGh1bbF5CRNFOrVW8qvNx1Am6W-2A@mail.gmail.com>
-Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Fri, 14 Sep 2018 12:54:14 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MOhx9-1gC5tc2caV-00QDTl; Fri, 14 Sep 2018 13:39:31 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-arch@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?Joseph=20Myers=C2=A0?= <joseph@codesourcery.com>,
+        David Howells <dhowells@redhat.com>, libc-alpha@sourceware.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [RFC] making uapi/linux/elfcore.h useful again
+Date:   Fri, 14 Sep 2018 13:38:50 +0200
+Message-Id: <20180914113929.953895-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:IvQnIY3ns+ZrMCu5VYbbMbMWoe6/vWDHhdQVrYx04i3GkHbZhvw
+ 2TNDTxM63rbM2T7ZsQ2j3Q/LovVf9bzIYF+nbtjVZewHSF9s/s2ARwIMeCGrhqcogqr9BTp
+ LVBnA2CW+mM53FS3XsR8PVD+A+DaFVMgHLMZGVz9eCWeLzBVwj2/8dlkQ+9ckg3M9W//MJ/
+ ljE0+YncDdxjuQUyVrjYA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:OLsWcUYBQhE=:PjE+99rKcz/kzibynS49B7
+ zwJq05E8oYaoKtx5euW1xyQ4vd9vTGQVeCyYXVZOIAjwATr4MlQd+Y9A+b8ifsNyertfMHfm6
+ 30jyzx5EaQ9w6mizFw13wnsNxQEKUdwTE0hqd4BbIenLneMrOY1rfwStuLrX7+wlOcX7YZNkG
+ Ri0w5SVlD6y3Dp+veQ/wv5fQUzjzCm8t//0OY7LKLGnITiN0YJaux9fk7fYa2qDfQcIIDE4FE
+ wV+nvYK1jEIQtorxeHLHnWjaaop/pvrfPpICLzibsplRun/rBcwZoWugxNMXVqxCVHPd/9ZO8
+ jbjtgft16PnCy/1snw6KUlZfg8wrzTG+LIDBz4YF6jUiwxaZdw4+YH7qvvl73b4LM+gyuvFvX
+ UltvO+t8qsA2PXfaVpCO0xQlgyBCy6KFHJOVf58cKd+JK19ZDFMvt4axugBf3SUEwJnJ8cb2u
+ eSXiCehS7S2GYImnS8yHWIqvsfGkP7IRv74ydwiMHlHByx/WVJ96OagxZveP4+LQ3jxWooSCT
+ /mVxJ9PGCDMg6ICpjwy0tOaF96ys7/KoVFrSgjpWOQckh8Q23kWSTL+/pa3Hq2g5yuFGTSnJS
+ TSrVEhJ7M69tCvZqPSLAaWIWaBuKeYSs+Cn+KDeZeYfEV1E7Zki6+3S4tIUahNvo9yeKG5sNm
+ pDCZiRBN1HTM+9uPS6xYAEshhaQ/MaXvozYPnh+mMpcQMTJo3z6tI+BQ3Jj783Me13VPW5UoY
+ PL742Pmzq5jFYPLU
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 12:44 PM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
->
-> On Fri, Sep 14, 2018 at 11:50:15AM +0200, Rafael J. Wysocki wrote:
-> > On Thursday, August 9, 2018 5:39:25 PM CEST Lorenzo Pieralisi wrote:
-> > > On Mon, Aug 06, 2018 at 11:20:59AM +0200, Rafael J. Wysocki wrote:
-> > >
-> > > [...]
-> > >
-> > > > >>> > @@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
-> > > > >>> >     return false;
-> > > > >>> >  }
-> > > > >>> >
-> > > > >>> > +static bool cpu_power_down_ok(struct dev_pm_domain *pd)
-> > > > >>> > +{
-> > > > >>> > +   struct generic_pm_domain *genpd = pd_to_genpd(pd);
-> > > > >>> > +   ktime_t domain_wakeup, cpu_wakeup;
-> > > > >>> > +   s64 idle_duration_ns;
-> > > > >>> > +   int cpu, i;
-> > > > >>> > +
-> > > > >>> > +   if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
-> > > > >>> > +           return true;
-> > > > >>> > +
-> > > > >>> > +   /*
-> > > > >>> > +    * Find the next wakeup for any of the online CPUs within the PM domain
-> > > > >>> > +    * and its subdomains. Note, we only need the genpd->cpus, as it already
-> > > > >>> > +    * contains a mask of all CPUs from subdomains.
-> > > > >>> > +    */
-> > > > >>> > +   domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
-> > > > >>> > +   for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
-> > > > >>> > +           cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
-> > > > >>> > +           if (ktime_before(cpu_wakeup, domain_wakeup))
-> > > > >>> > +                   domain_wakeup = cpu_wakeup;
-> > > > >>> > +   }
-> > > > >>
-> > > > >> Here's a concern I have missed before. :-/
-> > > > >>
-> > > > >> Say, one of the CPUs you're walking here is woken up in the meantime.
-> > > > >
-> > > > > Yes, that can happen - when we miss-predicted "next wakeup".
-> > > > >
-> > > > >>
-> > > > >> I don't think it is valid to evaluate tick_nohz_get_next_wakeup() for it then
-> > > > >> to update domain_wakeup.  We really should just avoid the domain power off in
-> > > > >> that case at all IMO.
-> > > > >
-> > > > > Correct.
-> > > > >
-> > > > > However, we also want to avoid locking contentions in the idle path,
-> > > > > which is what this boils done to.
-> > > >
-> > > > This already is done under genpd_lock() AFAICS, so I'm not quite sure
-> > > > what exactly you mean.
-> > > >
-> > > > Besides, this is not just about increased latency, which is a concern
-> > > > by itself but maybe not so much in all environments, but also about
-> > > > possibility of missing a CPU wakeup, which is a major issue.
-> > > >
-> > > > If one of the CPUs sharing the domain with the current one is woken up
-> > > > during cpu_power_down_ok() and the wakeup is an edge-triggered
-> > > > interrupt and the domain is turned off regardless, the wakeup may be
-> > > > missed entirely if I'm not mistaken.
-> > > >
-> > > > It looks like there needs to be a way for the hardware to prevent a
-> > > > domain poweroff when there's a pending interrupt or I don't quite see
-> > > > how this can be handled correctly.
-> > > >
-> > > > >> Sure enough, if the domain power off is already started and one of the CPUs
-> > > > >> in the domain is woken up then, too bad, it will suffer the latency (but in
-> > > > >> that case the hardware should be able to help somewhat), but otherwise CPU
-> > > > >> wakeup should prevent domain power off from being carried out.
-> > > > >
-> > > > > The CPU is not prevented from waking up, as we rely on the FW to deal with that.
-> > > > >
-> > > > > Even if the above computation turns out to wrongly suggest that the
-> > > > > cluster can be powered off, the FW shall together with the genpd
-> > > > > backend driver prevent it.
-> > > >
-> > > > Fine, but then the solution depends on specific FW/HW behavior, so I'm
-> > > > not sure how generic it really is.  At least, that expectation should
-> > > > be clearly documented somewhere, preferably in code comments.
-> > > >
-> > > > > To cover this case for PSCI, we also use a per cpu variable for the
-> > > > > CPU's power off state, as can be seen later in the series.
-> > > >
-> > > > Oh great, but the generic part should be independent on the underlying
-> > > > implementation of the driver.  If it isn't, then it also is not
-> > > > generic.
-> > > >
-> > > > > Hope this clarifies your concern, else tell and will to elaborate a bit more.
-> > > >
-> > > > Not really.
-> > > >
-> > > > There also is one more problem and that is the interaction between
-> > > > this code and the idle governor.
-> > > >
-> > > > Namely, the idle governor may select a shallower state for some
-> > > > reason, for example due to an additional latency limit derived from
-> > > > CPU utilization (like in the menu governor), and how does the code in
-> > > > cpu_power_down_ok() know what state has been selected and how does it
-> > > > honor the selection made by the idle governor?
-> > >
-> > > That's a good question and it maybe gives a path towards a solution.
-> > >
-> > > AFAICS the genPD governor only selects the idle state parameter that
-> > > determines the idle state at, say, GenPD cpumask level it does not touch
-> > > the CPUidle decision, that works on a subset of idle states (at cpu
-> > > level).
-> >
-> > I've deferred responding to this as I wasn't quite sure if I followed you
-> > at that time, but I'm afraid I'm still not following you now. :-)
-> >
-> > The idle governor has to take the total worst-case wakeup latency into
-> > account.  Not just from the logical CPU itself, but also from whatever
-> > state the SoC may end up in as a result of this particular logical CPU
-> > going idle, this way or another.
-> >
-> > So for example, if your logical CPU has an idle state A that may trigger an
-> > idle state X at the cluster level (if the other logical CPUs happen to be in
-> > the right states and so on), then the worst-case exit latency for that
-> > is the one of state X.
->
-> I will provide an example:
->
-> IDLE STATE A (affects CPU {0,1}): exit latency 1ms, min-residency 1.5ms
->
-> CPU 0 is about to enter IDLE state A since its "next-event" fulfill the
-> residency requirements and exit latency constraints.
->
-> CPU 1 is in idle state A (given that CPU 0 is ON, some of the common
-> logic shared between CPU {0,1} is still ON, but, as soon as CPU 0
-> enters idle state A CPU {0,1} can enter the "full" idle state A
-> power savings mode).
->
-> The current CPUidle governor does not check the "next-event" for CPU 1,
-> that it may wake up in, say, 10us.
+After finding a bug in glibc the question came up how linux/elfcore.h
+is supposed to be used from user space. As far as I can tell, it's
+not possible, as it references data types that are simply unavailable
+there.
 
-Right.
+The #ifndef __KERNEL__ section in that header dates back to when the
+file was introduced in linux-1.3.5, and presumably was meant to
+provide the structures for the libc sys/procfs.h implementation.
+However, this was never portable to architectures other than x86-32,
+and has been broken on that architecture at a later point.
 
-> Requesting IDLE STATE A is a waste of power (if firmware or hardware
-> does not demote it since it does peek at CPU 1 next-event and actually
-> demote CPU 0 request).
+These are the steps that I needed to make it possible to include the
+header file, e.g. for libc self-testing in order to make sure the
+structures are compatible with its own:
 
-OK, I see.
+- drop the #ifndef __KERNEL__ section that are obviously useless
+  and get in the way
 
-That's because the state is "collaborative" so to speak.  But was't
-that supposed to be covered by the "coupled" thing?
+- change the pid_t references to __kernel_pid_t
 
-> The current flat list of idle states has no notion of CPUs sharing
-> an idle state request and that's where I think this series kicks in
-> and that's the reason I say that the genPD governor can only demote
-> an idle state request.
->
-> Linking power domains to idle states is the only sensible way I see
-> to define what logical cpus are affected by an idle state entry, this
-> information is missing in the current kernel (whether that's wortwhile
-> adding it that's another question).
+- Move required data from the private x86 asm/elf.h file into
+  a new uapi/asm/elf.h. Some other architectures already do that,
+  but most of them do not. Before applying the patch, we have
+  to do this for all architectures
 
-OK, thanks for the clarification!
+- Change ELF_NGREG to an integer literal constant instead of
+  a sizeof operation based on a private type.
 
-Cheers,
-Rafael
+Cc: Joseph Myers <joseph@codesourcery.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: libc-alpha@sourceware.org
+Link: https://patchwork.ozlabs.org/patch/969540/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/x86/include/asm/elf.h         | 24 +-----------------------
+ arch/x86/include/uapi/asm/elf.h    | 30 ++++++++++++++++++++++++++++++
+ arch/x86/include/uapi/asm/signal.h |  2 +-
+ include/uapi/linux/elf.h           |  1 +
+ include/uapi/linux/elfcore.h       | 26 +++++---------------------
+ 5 files changed, 38 insertions(+), 45 deletions(-)
+ create mode 100644 arch/x86/include/uapi/asm/elf.h
+
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 0d157d2a1e2a..973bd7b5b164 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -10,18 +10,10 @@
+ #include <asm/ptrace.h>
+ #include <asm/user.h>
+ #include <asm/auxvec.h>
+-
+-typedef unsigned long elf_greg_t;
+-
+-#define ELF_NGREG (sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
+-typedef elf_greg_t elf_gregset_t[ELF_NGREG];
+-
+-typedef struct user_i387_struct elf_fpregset_t;
++#include <uapi/asm/elf.h>
+ 
+ #ifdef __i386__
+ 
+-typedef struct user_fxsr_struct elf_fpxregset_t;
+-
+ #define R_386_NONE	0
+ #define R_386_32	1
+ #define R_386_PC32	2
+@@ -35,13 +27,6 @@ typedef struct user_fxsr_struct elf_fpxregset_t;
+ #define R_386_GOTPC	10
+ #define R_386_NUM	11
+ 
+-/*
+- * These are used to set parameters in the core dumps.
+- */
+-#define ELF_CLASS	ELFCLASS32
+-#define ELF_DATA	ELFDATA2LSB
+-#define ELF_ARCH	EM_386
+-
+ #else
+ 
+ /* x86-64 relocation types */
+@@ -65,13 +50,6 @@ typedef struct user_fxsr_struct elf_fpxregset_t;
+ 
+ #define R_X86_64_NUM		16
+ 
+-/*
+- * These are used to set parameters in the core dumps.
+- */
+-#define ELF_CLASS	ELFCLASS64
+-#define ELF_DATA	ELFDATA2LSB
+-#define ELF_ARCH	EM_X86_64
+-
+ #endif
+ 
+ #include <asm/vdso.h>
+diff --git a/arch/x86/include/uapi/asm/elf.h b/arch/x86/include/uapi/asm/elf.h
+new file mode 100644
+index 000000000000..a640e1224939
+--- /dev/null
++++ b/arch/x86/include/uapi/asm/elf.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_ASM_X86_ELF_H
++#define _UAPI_ASM_X86_ELF_H
++
++#ifdef __i386__
++
++/*
++ * These are used to set parameters in the core dumps.
++ */
++#define ELF_CLASS	ELFCLASS32
++#define ELF_DATA	ELFDATA2LSB
++#define ELF_ARCH	EM_386
++#define ELF_NGREG	17
++
++#else
++
++/*
++ * These are used to set parameters in the core dumps.
++ */
++#define ELF_CLASS	ELFCLASS64
++#define ELF_DATA	ELFDATA2LSB
++#define ELF_ARCH	EM_X86_64
++#define ELF_NGREG	27
++
++#endif /* __i386__ */
++
++typedef unsigned long elf_greg_t;
++typedef elf_greg_t elf_gregset_t[ELF_NGREG];
++
++#endif
+diff --git a/arch/x86/include/uapi/asm/signal.h b/arch/x86/include/uapi/asm/signal.h
+index e5745d593dc7..00f273eaddf7 100644
+--- a/arch/x86/include/uapi/asm/signal.h
++++ b/arch/x86/include/uapi/asm/signal.h
+@@ -128,7 +128,7 @@ struct sigaction {
+ typedef struct sigaltstack {
+ 	void __user *ss_sp;
+ 	int ss_flags;
+-	size_t ss_size;
++	__kernel_size_t ss_size;
+ } stack_t;
+ 
+ #endif /* __ASSEMBLY__ */
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index c5358e0ae7c5..e1e4561ed9c2 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/elf-em.h>
++#include <asm/elf.h>
+ 
+ /* 32-bit ELF base types. */
+ typedef __u32	Elf32_Addr;
+diff --git a/include/uapi/linux/elfcore.h b/include/uapi/linux/elfcore.h
+index baf03562306d..9c0078004275 100644
+--- a/include/uapi/linux/elfcore.h
++++ b/include/uapi/linux/elfcore.h
+@@ -16,15 +16,6 @@ struct elf_siginfo
+ 	int	si_errno;			/* errno */
+ };
+ 
+-
+-#ifndef __KERNEL__
+-typedef elf_greg_t greg_t;
+-typedef elf_gregset_t gregset_t;
+-typedef elf_fpregset_t fpregset_t;
+-typedef elf_fpxregset_t fpxregset_t;
+-#define NGREG ELF_NGREG
+-#endif
+-
+ /*
+  * Definitions to generate Intel SVR4-like core files.
+  * These mostly have the same names as the SVR4 types with "elf_"
+@@ -49,10 +40,10 @@ struct elf_prstatus
+ 	struct sigaltstack pr_altstack;	/* Alternate stack info */
+ 	struct sigaction pr_action;	/* Signal action for current sig */
+ #endif
+-	pid_t	pr_pid;
+-	pid_t	pr_ppid;
+-	pid_t	pr_pgrp;
+-	pid_t	pr_sid;
++	__kernel_pid_t	pr_pid;
++	__kernel_pid_t	pr_ppid;
++	__kernel_pid_t	pr_pgrp;
++	__kernel_pid_t	pr_sid;
+ 	struct __kernel_old_timeval pr_utime;	/* User time */
+ 	struct __kernel_old_timeval pr_stime;	/* System time */
+ 	struct __kernel_old_timeval pr_cutime;	/* Cumulative user time */
+@@ -85,17 +76,10 @@ struct elf_prpsinfo
+ 	unsigned long pr_flag;	/* flags */
+ 	__kernel_uid_t	pr_uid;
+ 	__kernel_gid_t	pr_gid;
+-	pid_t	pr_pid, pr_ppid, pr_pgrp, pr_sid;
++	__kernel_pid_t	pr_pid, pr_ppid, pr_pgrp, pr_sid;
+ 	/* Lots missing */
+ 	char	pr_fname[16];	/* filename of executable */
+ 	char	pr_psargs[ELF_PRARGSZ];	/* initial part of arg list */
+ };
+ 
+-#ifndef __KERNEL__
+-typedef struct elf_prstatus prstatus_t;
+-typedef struct elf_prpsinfo prpsinfo_t;
+-#define PRARGSZ ELF_PRARGSZ 
+-#endif
+-
+-
+ #endif /* _UAPI_LINUX_ELFCORE_H */
+-- 
+2.18.0
+
