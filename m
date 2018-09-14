@@ -2,140 +2,145 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 129DDFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72EDECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C044A2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ehBne27m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C044A2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 68BF82083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BF82083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbeINT42 (ORCPT
+        id S1728623AbeINT4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:56:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36636 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeINTze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:55:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e1-v6so10902152wrt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rjARCe3NpsJLpu+gwm8Y4x+0pJknacrTsP46NqsklWs=;
-        b=ehBne27meR4PyxNCUPBVLcSfQlbZbVl7xJaoMM+y1SldpCWucVmRWNQ02YfBoKlyrQ
-         g4wHbPqW8q+LvM8BfzrqI3DrHrsjkqmtvKGud4P2hgJnhiNuqRD8CTLPs6koOpMuh3A9
-         PYK8zvCn2EMKZ0vtPaVvaAtERAC4oXhjRcCeb77BWk5E7h+vGM9uO0B7fz9sy98ZN+Bp
-         pX7dSsH8P9brxc85RCbgRPyOVmqa6x3FS6Z/io1fetyvDIJ0JS7XojWkA6vWF7t7wgIX
-         x0P7EgfCxnyMI6z0DIKUvBeRGEZBqxdyCiukDKov1bEE1i22YOYccM5q9mHiHzVvFvMP
-         bj7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rjARCe3NpsJLpu+gwm8Y4x+0pJknacrTsP46NqsklWs=;
-        b=pn0OeVpRQFPN8g4Y5y4LS+cKd2n01hIANNYzhru0rbwp8esWp6qq3qZfOw/hCyJWX3
-         kzJhQ5lqA0Dk7TqsmtQeT5MZx0LAIJ0DmsOl+nWfHBQznGMdeuATMv/QboOb4MLjnaFp
-         MmMg1d0PzeVux0llg0I7+VAvkkNjnXqDapKAH2t5lXTgxRqC8+gcSRLOVV1dZbzBqxG9
-         rHahVVpIQnOklLQmk8eRUiionjacqOu6/tRyEtZ/o5lOUHihNlpv/zgXdKZ7d/4MKxxH
-         nxveD/+a5OeIHvZSJGC6xA6Hb9YdYG3hsa+6XNt2St369kkVg6MXw0K4VyikbODuYkgv
-         LsPQ==
-X-Gm-Message-State: APzg51ASoVVk1WKJONksg0nTEfmVGee018/Ktu9H15qLVeP/LOxRd1kT
-        FqhOlrvWRNjTtoGA5XtPXXeY4XqvKGU=
-X-Google-Smtp-Source: ANB0VdYkLruEia5UqmkWWvf/+HeCNtupZRYryHgb8VDENNxCVWiGFO+ctoDMZJ3RE1WRgggXgFckag==
-X-Received: by 2002:a5d:4648:: with SMTP id j8-v6mr9723585wrs.52.1536936045075;
-        Fri, 14 Sep 2018 07:40:45 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 07:40:44 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 16/22] Documentation: nvmem: document cell tables and lookup entries
-Date:   Fri, 14 Sep 2018 16:40:05 +0200
-Message-Id: <20180914144011.27614-17-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180914144011.27614-1-brgl@bgdev.pl>
-References: <20180914144011.27614-1-brgl@bgdev.pl>
+        Fri, 14 Sep 2018 15:56:38 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43140 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728459AbeINT4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:56:38 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 453A32456250A;
+        Fri, 14 Sep 2018 22:41:44 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 14 Sep
+ 2018 22:41:36 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 3/8] staging: erofs: complete error handing of z_erofs_map_blocks_iter
+Date:   Fri, 14 Sep 2018 22:40:25 +0800
+Message-ID: <1536936030-62362-4-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
+References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This patch completes error handing of z_erofs_map_blocks_iter
+and vle_get_logical_extent_head, including no memory and
+io error cases.
 
-Document the new nvmem kernel APIs.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- Documentation/nvmem/nvmem.txt | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/staging/erofs/unzip_vle.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/nvmem/nvmem.txt b/Documentation/nvmem/nvmem.txt
-index 8d8d8f58f96f..fc2fe4b18655 100644
---- a/Documentation/nvmem/nvmem.txt
-+++ b/Documentation/nvmem/nvmem.txt
-@@ -58,6 +58,37 @@ static int qfprom_probe(struct platform_device *pdev)
- It is mandatory that the NVMEM provider has a regmap associated with its
- struct device. Failure to do would return error code from nvmem_register().
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index d6e5956..d4998fe 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -1500,7 +1500,11 @@ struct vle_map_blocks_iter_ctx {
+ 		unlock_page(mpage);
+ 		put_page(mpage);
  
-+Users of board files can define and register nvmem cells using the
-+nvmem_cell_table struct:
-+
-+static struct nvmem_cell_info foo_nvmem_cells[] = {
-+	{
-+		.name		= "macaddr",
-+		.offset		= 0x7f00,
-+		.bytes		= ETH_ALEN,
-+	}
-+};
-+
-+static struct nvmem_cell_table foo_nvmem_cell_table = {
-+	.nvmem_name		= "i2c-eeprom",
-+	.cells			= foo_nvmem_cells,
-+	.ncells			= ARRAY_SIZE(foo_nvmem_cells),
-+};
-+
-+nvmem_add_cell_table(&foo_nvmem_cell_table);
-+
-+Additionally it is possible to create nvmem cell lookup entries and register
-+them with the nvmem framework from machine code as shown in the example below:
-+
-+static struct nvmem_cell_lookup foo_nvmem_lookup = {
-+	.nvmem_name		= "i2c-eeprom",
-+	.cell_name		= "macaddr",
-+	.dev_id			= "foo_mac.0",
-+	.con_id			= "mac-address",
-+};
-+
-+nvmem_add_cell_lookups(&foo_nvmem_lookup, 1);
-+
- NVMEM Consumers
- +++++++++++++++
+-		mpage = erofs_get_meta_page_nofail(ctx->sb, mblk, false);
++		mpage = erofs_get_meta_page(ctx->sb, mblk, false);
++		if (IS_ERR(mpage)) {
++			*ctx->mpage_ret = NULL;
++			return PTR_ERR(mpage);
++		}
+ 		*ctx->mpage_ret = mpage;
+ 		*ctx->kaddr_ret = kmap_atomic(mpage);
+ 	}
+@@ -1511,9 +1515,12 @@ struct vle_map_blocks_iter_ctx {
+ 	switch (cluster_type) {
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
+ 		delta0 = le16_to_cpu(di->di_u.delta[0]);
+-		DBG_BUGON(!delta0);
+-		DBG_BUGON(lcn < delta0);
+-
++		if (unlikely(!delta0 || delta0 > lcn)) {
++			errln("invalid NONHEAD dl0 %u at lcn %u of nid %llu",
++			      delta0, lcn, EROFS_V(ctx->inode)->nid);
++			DBG_BUGON(1);
++			return -EIO;
++		}
+ 		return vle_get_logical_extent_head(ctx,
+ 			lcn - delta0, ofs, pblk, flags);
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
+@@ -1526,7 +1533,10 @@ struct vle_map_blocks_iter_ctx {
+ 		*pblk = le32_to_cpu(di->di_u.blkaddr);
+ 		break;
+ 	default:
+-		BUG_ON(1);
++		errln("unknown cluster type %u at lcn %u of nid %llu",
++		      cluster_type, lcn, EROFS_V(ctx->inode)->nid);
++		DBG_BUGON(1);
++		return -EIO;
+ 	}
+ 	return 0;
+ }
+@@ -1582,7 +1592,11 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		if (mpage != NULL)
+ 			put_page(mpage);
+ 
+-		mpage = erofs_get_meta_page_nofail(ctx.sb, mblk, false);
++		mpage = erofs_get_meta_page(ctx.sb, mblk, false);
++		if (IS_ERR(mpage)) {
++			err = PTR_ERR(mpage);
++			goto out;
++		}
+ 		*mpage_ret = mpage;
+ 	} else {
+ 		lock_page(mpage);
+@@ -1645,8 +1659,11 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 						  &pblk, &map->m_flags);
+ 		mpage = *mpage_ret;
+ 
+-		if (unlikely(err))
+-			goto unmap_out;
++		if (unlikely(err)) {
++			if (mpage)
++				goto unmap_out;
++			goto out;
++		}
+ 		break;
+ 	default:
+ 		errln("unknown cluster type %u at offset %llu of nid %llu",
+@@ -1670,7 +1687,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		map->m_llen, map->m_plen, map->m_flags);
+ 
+ 	/* aggressively BUG_ON iff CONFIG_EROFS_FS_DEBUG is on */
+-	DBG_BUGON(err < 0);
++	DBG_BUGON(err < 0 && err != -ENOMEM);
+ 	return err;
+ }
  
 -- 
-2.18.0
+1.9.1
 
