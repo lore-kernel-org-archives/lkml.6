@@ -2,144 +2,131 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBB9ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC483ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD49B20833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:20:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD49B20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DD4320882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 18:23:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD4320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeINXf4 (ORCPT
+        id S1728198AbeINXip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:35:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37508 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726849AbeINXf4 (ORCPT
+        Fri, 14 Sep 2018 19:38:45 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:53494 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbeINXip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:35:56 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8EI9SM6094314
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 14:20:16 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mgfmjxd08-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 14:20:16 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 14 Sep 2018 14:20:15 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Sep 2018 14:20:10 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8EIK93b45482014
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Sep 2018 18:20:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D4A1B2068;
-        Fri, 14 Sep 2018 14:18:45 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F1B5EB2066;
-        Fri, 14 Sep 2018 14:18:44 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Sep 2018 14:18:44 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 97D0116C1B39; Fri, 14 Sep 2018 11:20:09 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 11:20:09 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RFC LKMM 2/7] doc: Replace smp_cond_acquire() with
- smp_cond_load_acquire()
-Reply-To: paulmck@linux.ibm.com
-References: <20180829211018.GA19646@linux.vnet.ibm.com>
- <20180829211053.20531-2-paulmck@linux.vnet.ibm.com>
- <20180914165907.GK6236@arm.com>
+        Fri, 14 Sep 2018 19:38:45 -0400
+Received: by mail-io1-f71.google.com with SMTP id h20-v6so9485614iob.20
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 11:23:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=dA3z8t4KZONv9tgd5JM9kMouiAmGD4FgYgsVKK+y0ro=;
+        b=suG8pIKPw0V4NTLA04vzZSGVJVIGXI/gBFmsGQp7JxXFDjt5pdW7ggyhRFPwbjoCxZ
+         4WTfkWy0XjPr5d6h3TfczIaOfdyUSOGLkv1LMYzg+2akebPIqa7fIKRa3EYtcGwxA5JZ
+         oDXCPBQjT/5QvV2HKaeAencaf7IIQ7YdpQqEDtqAojYyOqHXkTzRaEeQ9JRyKdiN0I2o
+         MuHYNwOB8lBiIKyp0qaopIwXy8d+1EfbPfDVut3tgKkCiweNdZVOYR16Dq3bIAgrbMmX
+         x1g8sRGx8LJR8d/r9OtWs61MQoMgeR828IQJ4aY+DmeItrWNoWIksgZOfFX29r+RAUSC
+         P+cw==
+X-Gm-Message-State: APzg51BbDXBeTFFwaYC1na2gRKP3NAO0hSYzjbcfjYjL0wBprcrwlx4y
+        qLEdBh9PDZBz/+KuMUOMltwX7eEApkMB1kgnd7vyW27ml2gt
+X-Google-Smtp-Source: ANB0VdbjFXhHmmMEUb+Wev1eT8qwPYZqhaFrtfhPZXAypyvWwkkv3UhFZjbqJ2Iz02VQFjci43xqhgX74cKFPgT242UrJFjgDW+G
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914165907.GK6236@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18091418-0072-0000-0000-000003A2F7BE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009721; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01088300; UDB=6.00562047; IPR=6.00868311;
- MB=3.00023294; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-14 18:20:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091418-0073-0000-0000-0000496BD318
-Message-Id: <20180914182009.GB652@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=958 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809140186
+X-Received: by 2002:a24:2944:: with SMTP id p65-v6mr3131655itp.49.1536949384222;
+ Fri, 14 Sep 2018 11:23:04 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 11:23:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000015a13b0575d8eae8@google.com>
+Subject: KMSAN: uninit-value in do_ip_vs_set_ctl
+From:   syzbot <syzbot+23b5f9e7caf61d9a3898@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        wensong@linux-vs.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 05:59:07PM +0100, Will Deacon wrote:
-> On Wed, Aug 29, 2018 at 02:10:48PM -0700, Paul E. McKenney wrote:
-> > From: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > 
-> > Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
-> > with smp_cond_load_acquire()") by updating the documentation accordingly.
-> > Also remove some obsolete information related to the implementation.
-> > 
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> > Cc: Luc Maranget <luc.maranget@inria.fr>
-> > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > Cc: Akira Yokosawa <akiyks@gmail.com>
-> > Cc: Daniel Lustig <dlustig@nvidia.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > ---
-> >  Documentation/memory-barriers.txt | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> > index 0d8d7ef131e9..c1d913944ad8 100644
-> > --- a/Documentation/memory-barriers.txt
-> > +++ b/Documentation/memory-barriers.txt
-> > @@ -471,8 +471,7 @@ And a couple of implicit varieties:
-> >       operations after the ACQUIRE operation will appear to happen after the
-> >       ACQUIRE operation with respect to the other components of the system.
-> >       ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> > -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
-> > -     semantics from relying on a control dependency and smp_rmb().
-> > +     and smp_cond_load_acquire() operations.
-> 
-> Thanks for fixing the doc:
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
+Hello,
 
-Applied, thank you Will!
+syzbot found the following crash on:
 
-							Thanx, Paul
+HEAD commit:    06b2df0593a8 kmsan: unpoison only the created pages in get..
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a6ae37800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=23b5f9e7caf61d9a3898
+compiler:       clang version 7.0.0 (trunk 329391)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14008417800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11deb017800000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+23b5f9e7caf61d9a3898@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KMSAN: uninit-value in do_ip_vs_set_ctl+0x15ac/0x2760  
+net/netfilter/ipvs/ip_vs_ctl.c:2424
+CPU: 1 PID: 4464 Comm: syz-executor844 Not tainted 4.17.0-rc3+ #94
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1084
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  do_ip_vs_set_ctl+0x15ac/0x2760 net/netfilter/ipvs/ip_vs_ctl.c:2424
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x476/0x4d0 net/netfilter/nf_sockopt.c:115
+  ip_setsockopt+0x24b/0x2b0 net/ipv4/ip_sockglue.c:1253
+  raw_setsockopt+0x2e5/0x350 net/ipv4/raw.c:868
+  sock_common_setsockopt+0x136/0x170 net/core/sock.c:3039
+  __sys_setsockopt+0x4af/0x560 net/socket.c:1903
+  __do_sys_setsockopt net/socket.c:1914 [inline]
+  __se_sys_setsockopt net/socket.c:1911 [inline]
+  __x64_sys_setsockopt+0x15c/0x1c0 net/socket.c:1911
+  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x43fca9
+RSP: 002b:00007fff7a4795b8 EFLAGS: 00000213 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fca9
+RDX: 0000000000000480 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004015d0
+R13: 0000000000401660 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable description: ----arg@do_ip_vs_set_ctl
+Variable was created at:
+  read_pnet include/net/net_namespace.h:288 [inline]
+  sock_net include/net/sock.h:2306 [inline]
+  do_ip_vs_set_ctl+0x93/0x2760 net/netfilter/ipvs/ip_vs_ctl.c:2347
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x476/0x4d0 net/netfilter/nf_sockopt.c:115
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
