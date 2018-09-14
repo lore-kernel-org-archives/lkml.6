@@ -2,238 +2,134 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_DIGITS,
+	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AA4FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06E2ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD9221479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543C820853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:55:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="COUvarIB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD9221479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dWz7EaR8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543C820853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeINQHM (ORCPT
+        id S1728282AbeINQJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:07:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48102 "EHLO mail.kernel.org"
+        Fri, 14 Sep 2018 12:09:46 -0400
+Received: from m50-133.163.com ([123.125.50.133]:47625 "EHLO m50-133.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbeINQHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:07:11 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 705C220861;
-        Fri, 14 Sep 2018 10:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536922394;
-        bh=lA7osnlAmR73ib4kWX0Lme0oh3sFvrFzKmU9uzbNdXM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=COUvarIBjG0Wd7imCSIvThR1NpRH6BjBY/6KvYvj0qF6ISSQhnXE8dJ/Ta1YoChX0
-         TFVK5KO93sX2ilV22pK+3NFoPpeZZh1LXtgk2wL7aDZ1hsZ95Rz0oxGCrxql/QLw+q
-         gabIqmv3Kkous1QP9FaD7x66Rv1zaa/VWs2AuscM=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     viro@zeniv.linux.org.uk
-Cc:     ebiederm@xmission.com, berrange@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] exec: separate thread_count for files_struct
-Date:   Fri, 14 Sep 2018 06:53:08 -0400
-Message-Id: <20180914105310.6454-2-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180914105310.6454-1-jlayton@kernel.org>
-References: <20180914105310.6454-1-jlayton@kernel.org>
+        id S1727839AbeINQJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 12:09:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=8KoSZbUYztV9OOS36K
+        mzY/EPI4k/1Ig+NKtcxAEHfEc=; b=dWz7EaR8euIc7w906JpO6hcOwVPToPu+45
+        n1HbSchXgBckkNY51iCXMEZJKoVCxpTyA/L6gO8DP7Qo+NUtn1AYai7Yrf37TYpc
+        binZdayp2+X/trA9YeT9SdkTqFjCcVeoKz+QDYny8zI/7pqiJ/3lSP379s115b4V
+        WMcGfg728=
+Received: from lx-virtual-machine.localdomain (unknown [159.226.94.148])
+        by smtp3 (Coremail) with SMTP id DdGowADHYCSok5tbIuQrAA--.12S3;
+        Fri, 14 Sep 2018 18:55:45 +0800 (CST)
+From:   My Name <18650033736@163.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Xin Lin <18650033736@163.com>
+Subject: [PATCH] kernel: prevent submission of creds with higher privileges inside container
+Date:   Fri, 14 Sep 2018 18:55:36 +0800
+Message-Id: <1536922536-5803-1-git-send-email-18650033736@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: DdGowADHYCSok5tbIuQrAA--.12S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZrykCFy3ZF4DtF47tr47urg_yoW5XrW7pF
+        sFkr9xGws5J3W7tan7Wr4YvFWfAw4fAry2gas5Kw4Yvwn2ka48u34ku3W3GFnrurW7KayU
+        KFW5GrsIgrZ8Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UeUDXUUUUU=
+X-Originating-IP: [159.226.94.148]
+X-CM-SenderInfo: rprylkyqqtjlmtwbiqqrwthudrp/xtbBRx3BflO-8G7GFgAAsH
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, we have a single refcount variable inside the files_struct.
-When we go to unshare the files_struct, we check this counter and if
-it's elevated, then we allocate a new files_struct instead of just
-repurposing the old one, under the assumption that that indicates that
-it's shared between tasks.
+From: Xin Lin <18650033736@163.com>
 
-This is not necessarily the case, however. Each task associated with the
-files_struct does get a long-held reference, but the refcount can be
-elevated for other reasons as well, by callers of get_files_struct.
+Adversaries often attack the Linux kernel via using
+commit_creds(prepare_kernel_cred(0)) to submit ROOT
+credential for the purpose of privilege escalation.
+For processes inside the Linux container, the above
+approach also works, because the container and the
+host share the same Linux kernel. Therefore, we en-
+force a check in commit_creds() before updating the
+cred of the caller process. If the process is insi-
+de a container (judging from the Namespace ID) and
+try to submit credentials with higher privileges t-
+han current (judging from the uid, gid, and cap_bset
+in the new cred), we will stop the modification. We
+consider that if the namespace ID of the process is
+different from the init Namespace ID (enumed in /i-
+nclude/linux/proc_ns.h), the process is inside a c-
+ontainer. And if the uid/gid in the new cred is sm-
+aller or the cap_bset (capability bounding set) in
+the new cred is larger, it may be a privilege esca-
+lation operation.
 
-This means that we can end up allocating a new files_struct if we just
-happen to race with a call to get_files_struct. Fix this by adding a new
-counter to track the number associated threads, and use that to
-determine whether to allocate a new files_struct when unsharing.
-
-We protect this new counter with the file_lock instead of doing it with
-atomics, as a later patch will need to track an "in_exec" flag that will
-need to be handled in conjunction with the thread counter.
-
-Reported-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Xin Lin <18650033736@163.com>
 ---
- fs/coredump.c           |  2 +-
- fs/exec.c               |  2 +-
- fs/file.c               | 18 ++++++++++++++++--
- include/linux/fdtable.h |  2 ++
- kernel/fork.c           | 16 ++++++++++++----
- 5 files changed, 32 insertions(+), 8 deletions(-)
+ kernel/cred.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 1e2c87acac9b..02374a4febc4 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -751,7 +751,7 @@ void do_coredump(const siginfo_t *siginfo)
- 	if (retval)
- 		goto close_fail;
- 	if (displaced)
--		put_files_struct(displaced);
-+		release_files_struct(displaced);
- 	if (!dump_interrupted()) {
- 		file_start_write(cprm.file);
- 		core_dumped = binfmt->core_dump(&cprm);
-diff --git a/fs/exec.c b/fs/exec.c
-index 1ebf6e5a521d..e71a70d70158 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1832,7 +1832,7 @@ static int __do_execve_file(int fd, struct filename *filename,
- 	if (filename)
- 		putname(filename);
- 	if (displaced)
--		put_files_struct(displaced);
-+		release_files_struct(displaced);
- 	return retval;
+diff --git a/kernel/cred.c b/kernel/cred.c
+index ecf0365..b9a313d 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -19,6 +19,12 @@
+ #include <linux/security.h>
+ #include <linux/binfmts.h>
+ #include <linux/cn_proc.h>
++#include <linux/proc_ns.h>
++#include <linux/ipc_namespace.h>
++#include "../fs/mount.h"
++#include <net/net_namespace.h>
++#include <linux/capability.h>
++#include <linux/cgroup.h>
  
- out:
-diff --git a/fs/file.c b/fs/file.c
-index 7ffd6e9d103d..e35eeff4593c 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -284,6 +284,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
- 	atomic_set(&newf->count, 1);
+ #if 0
+ #define kdebug(FMT, ...)						\
+@@ -33,6 +39,8 @@ do {									\
+ } while (0)
+ #endif
  
- 	spin_lock_init(&newf->file_lock);
-+	newf->thread_count = 1;
- 	newf->resize_in_progress = false;
- 	init_waitqueue_head(&newf->resize_wait);
- 	newf->next_fd = 0;
-@@ -415,6 +416,8 @@ void put_files_struct(struct files_struct *files)
- 	if (atomic_dec_and_test(&files->count)) {
- 		struct fdtable *fdt = close_files(files);
++bool flag = true;
++static struct net *initnet;
+ static struct kmem_cache *cred_jar;
  
-+		WARN_ON_ONCE(files->thread_count);
+ /* init to 2 - one for init_task, one to ensure it is never freed */
+@@ -425,6 +433,22 @@ int commit_creds(struct cred *new)
+ 	struct task_struct *task = current;
+ 	const struct cred *old = task->real_cred;
+ 
++	if (flag) {
++		initnet = get_net_ns_by_pid(1);
++		flag = false;
++	}
++	if (task->nsproxy->uts_ns->ns.inum != PROC_UTS_INIT_INO ||
++	task->nsproxy->ipc_ns->ns.inum != PROC_IPC_INIT_INO ||
++	task->nsproxy->mnt_ns->ns.inum != 0xF0000000U ||
++	task->nsproxy->pid_ns_for_children->ns.inum != PROC_PID_INIT_INO ||
++	task->nsproxy->net_ns->ns.inum != initnet->ns.inum ||
++	old->user_ns->ns.inum != PROC_USER_INIT_INO ||
++	task->nsproxy->cgroup_ns->ns.inum != PROC_CGROUP_INIT_INO) {
++		if (new->uid.val < old->uid.val || new->gid.val < old->gid.val
++		|| new->cap_bset.cap[0] > old->cap_bset.cap[0])
++			return 0;
++	}
 +
- 		/* free the arrays if they are not embedded */
- 		if (fdt != &files->fdtab)
- 			__free_fdtable(fdt);
-@@ -422,16 +425,26 @@ void put_files_struct(struct files_struct *files)
- 	}
- }
- 
-+void release_files_struct(struct files_struct *files)
-+{
-+	spin_lock(&files->file_lock);
-+	--files->thread_count;
-+	spin_unlock(&files->file_lock);
-+	put_files_struct(files);
-+}
-+
- void reset_files_struct(struct files_struct *files)
- {
- 	struct task_struct *tsk = current;
- 	struct files_struct *old;
- 
- 	old = tsk->files;
-+
- 	task_lock(tsk);
- 	tsk->files = files;
- 	task_unlock(tsk);
--	put_files_struct(old);
-+
-+	release_files_struct(old);
- }
- 
- void exit_files(struct task_struct *tsk)
-@@ -442,7 +455,7 @@ void exit_files(struct task_struct *tsk)
- 		task_lock(tsk);
- 		tsk->files = NULL;
- 		task_unlock(tsk);
--		put_files_struct(files);
-+		release_files_struct(files);
- 	}
- }
- 
-@@ -457,6 +470,7 @@ struct files_struct init_files = {
- 		.full_fds_bits	= init_files.full_fds_bits_init,
- 	},
- 	.file_lock	= __SPIN_LOCK_UNLOCKED(init_files.file_lock),
-+	.thread_count	= 1,
- };
- 
- static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index 41615f38bcff..2cb02f438201 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -59,6 +59,7 @@ struct files_struct {
-    * written part on a separate cache line in SMP
-    */
- 	spinlock_t file_lock ____cacheline_aligned_in_smp;
-+	int thread_count;
- 	unsigned int next_fd;
- 	unsigned long close_on_exec_init[1];
- 	unsigned long open_fds_init[1];
-@@ -107,6 +108,7 @@ struct task_struct;
- 
- struct files_struct *get_files_struct(struct task_struct *);
- void put_files_struct(struct files_struct *fs);
-+void release_files_struct(struct files_struct *fs);
- void reset_files_struct(struct files_struct *);
- int unshare_files(struct files_struct **);
- struct files_struct *dup_fd(struct files_struct *, int *) __latent_entropy;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index f0b58479534f..c7eb63e4d5c1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1373,6 +1373,9 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk)
- 
- 	if (clone_flags & CLONE_FILES) {
- 		atomic_inc(&oldf->count);
-+		spin_lock(&oldf->file_lock);
-+		oldf->thread_count++;
-+		spin_unlock(&oldf->file_lock);
- 		goto out;
- 	}
- 
-@@ -2416,10 +2419,15 @@ static int unshare_fs(unsigned long unshare_flags, struct fs_struct **new_fsp)
- static int unshare_fd(unsigned long unshare_flags, struct files_struct **new_fdp)
- {
- 	struct files_struct *fd = current->files;
--	int error = 0;
-+	int error, count;
-+
-+	if (!(unshare_flags & CLONE_FILES) || !fd)
-+		return 0;
- 
--	if ((unshare_flags & CLONE_FILES) &&
--	    (fd && atomic_read(&fd->count) > 1)) {
-+	spin_lock(&fd->file_lock);
-+	count = fd->thread_count;
-+	spin_unlock(&fd->file_lock);
-+	if (count > 1) {
- 		*new_fdp = dup_fd(fd, &error);
- 		if (!*new_fdp)
- 			return error;
-@@ -2542,7 +2550,7 @@ int ksys_unshare(unsigned long unshare_flags)
- 		put_cred(new_cred);
- bad_unshare_cleanup_fd:
- 	if (new_fd)
--		put_files_struct(new_fd);
-+		release_files_struct(new_fd);
- 
- bad_unshare_cleanup_fs:
- 	if (new_fs)
+ 	kdebug("commit_creds(%p{%d,%d})", new,
+ 	       atomic_read(&new->usage),
+ 	       read_cred_subscribers(new));
 -- 
-2.17.1
+2.7.4
+
 
