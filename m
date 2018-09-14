@@ -2,173 +2,100 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCC5FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6769CECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C562820882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195F120882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlb4nVdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C562820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZneZxW2C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195F120882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbeINP1u (ORCPT
+        id S1728282AbeINP2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:27:50 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36667 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbeINP1t (ORCPT
+        Fri, 14 Sep 2018 11:28:12 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34208 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbeINP2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:27:49 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e1-v6so9947577wrt.3;
-        Fri, 14 Sep 2018 03:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8pXDek8ZnrmjczAVnmQjU/AsOxmvJrcBH5KF6yK3Dzk=;
-        b=dlb4nVdw5HTnxFtaAsbUYEw+BkbjDdyaJJOuo5wet0S0KlmqJ4lneuPGwg3Tweq8bg
-         x1FyKECxMxWs8uU3Ew0K0T6YFHZWQYdUOvtYwUMsY0KLL23u3fq9WEozgENy9Gsx/QjC
-         B5myXHWfXbXcG1POIqs6qVtphtKHBkbnG1uWOtY35LOEd6VdBm4aYu+C4dN6G8Aa1TKU
-         UJrIE+J31f0uzVBgjWGfQi89XPSalpcwkCVrI4JOK+gXiuUYPo7Qrxt0FmOv8pNVRRW/
-         dc3P6+7a1V/bmlXrasW6ccNQkeFqhoWjyUw8xxySkwARDu7EBy50edHpM8unup4yVWHw
-         j/bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8pXDek8ZnrmjczAVnmQjU/AsOxmvJrcBH5KF6yK3Dzk=;
-        b=cCfBHxpxHC00G8svfY3FpE9bV1uXCDJsLnmFcv+2w55r77m0a+mCPrpDG17XvEXzhM
-         +IHQuTjsF7Ay9DmRDiFX+vGIytvdST//tFlKMlGR0KgSgfqPbJHKiJVZ8bGf3xMSgzZA
-         4CXBMlvqWGrgpHmJiSDYMjBfgfnpdUGq49bi3yGsOaasSJqj4rksKzyFFYrQt/plEqby
-         cpKM8/AnVaW7xD1FrNwkm9fTzcrQMUmQLsFwqZbhytf7M05vs/CDMenxVT9DszidUtJI
-         k01bd93CBLipmDxMA3Hg1t+YsZje1KivKpvch9g2pi4+IuiILsUyRKOH945X+R7dO0L/
-         Bafg==
-X-Gm-Message-State: APzg51D3FDR7Ax772+kqEuIfBKSryFiE/NiojuhoXwQtJiHzT36xOSPy
-        BMofO96sNiBDKcY6KvUNlX+T0LZT
-X-Google-Smtp-Source: ANB0Vdb+j3PuUK6bFY5ESy++Ho91fghuKNst5FC737O8vv0WGDBl04xj4qr3kf0qs26cP/9WaAXnNQ==
-X-Received: by 2002:adf:959a:: with SMTP id p26-v6mr8542795wrp.202.1536920038176;
-        Fri, 14 Sep 2018 03:13:58 -0700 (PDT)
-Received: from localhost.localdomain (static-css-cqn-143221.business.bouyguestelecom.com. [176.149.143.221])
-        by smtp.gmail.com with ESMTPSA id x15-v6sm5618524wrt.53.2018.09.14.03.13.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 03:13:57 -0700 (PDT)
-From:   Romain Izard <romain.izard.pro@gmail.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH 2/2] watchdog: sama5d4: write the mode register in two steps
-Date:   Fri, 14 Sep 2018 12:13:39 +0200
-Message-Id: <20180914101339.7382-3-romain.izard.pro@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180914101339.7382-1-romain.izard.pro@gmail.com>
-References: <20180914101339.7382-1-romain.izard.pro@gmail.com>
+        Fri, 14 Sep 2018 11:28:12 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 62B12CE;
+        Fri, 14 Sep 2018 12:14:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536920062;
+        bh=HvUS6OFJy/7Rxq9wV/ZfzNTSXT25/YQeCAyN5pi18DE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZneZxW2CSejesZdf3E4EMLjFcFoRi0RZwWfRQLaX1Uij1JZ3OUVjjkpSl98CFsjdL
+         RpUg2DLTk1dubWPG6QwY7mVGexZZs2DT46J/gmxV+ngoMOBnNjbI9f9BUPTD5Hn8Rx
+         HrZ+uPD13uTFD2DnCoSa0TWuDe6aMY7XDTVfwOEk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     jacopo mondi <jacopo@jmondi.org>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-kernel@vger.kernel.org, kbingham@kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/4] MAINTAINERS: rcar-du: Add co-maintainer
+Date:   Fri, 14 Sep 2018 13:14:36 +0300
+Message-ID: <1670376.fKoVCqDDkR@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180913093700.GZ28160@w540>
+References: <20180806143904.4716-1-kieran.bingham@ideasonboard.com> <20180913093700.GZ28160@w540>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The specification for SAMA5D2 and SAMA5D4 chips, that use this IP for
-their watchdog timer, has the following advice regarding the Mode Register:
+Hi Jacopo,
 
-"When setting the WDDIS bit, and while it is set, the fields WDV and WDD
-must not be modified."
+On Thursday, 13 September 2018 12:37:00 EEST jacopo mondi wrote:
+> Hi Kieran, Laurent
+> 
+> On Mon, Aug 06, 2018 at 03:39:01PM +0100, Kieran Bingham wrote:
+> > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > Add myself as a co-maintainer for the Renesas DRM drivers.
+> > 
+> > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > ---
+> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: linux-renesas-soc@vger.kernel.org
+> > 
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 7cebd5bba8a8..c7cecb9201b3 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4764,6 +4764,7 @@
+> > F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.
+> > txt
+> >  DRM DRIVERS FOR RENESAS
+> >  M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > +M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >  L:	dri-devel@lists.freedesktop.org
+> >  L:	linux-renesas-soc@vger.kernel.org
+> >  T:	git git://linuxtv.org/pinchartl/fbdev
+> 
+> Am I wrong or this git repository isn't actual anymore for DU?
 
-I have observed on a board based on a SAMA5D2 chip that using any other
-timeout duration than the default 16s in the device tree will reset the
-board when the watchdog device is opened; this is probably due to ignoring
-the aforementioned constraint.
+You're right, the fix will be in my pull request for v4.20.
 
-To fix this, read the content of the Mode Register before writing it,
-and split the access into two parts if WDV or WDD need to be changed.
-
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- drivers/watchdog/sama5d4_wdt.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-index 1e93c1b0e3cf..1e05268ad94b 100644
---- a/drivers/watchdog/sama5d4_wdt.c
-+++ b/drivers/watchdog/sama5d4_wdt.c
-@@ -46,7 +46,10 @@ MODULE_PARM_DESC(nowayout,
- 	"Watchdog cannot be stopped once started (default="
- 	__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
- 
--#define wdt_enabled (!(wdt->mr & AT91_WDT_WDDIS))
-+#define wdt_enabled(reg) (!((reg) & AT91_WDT_WDDIS))
-+
-+#define wdt_different_counters(reg_a, reg_b) \
-+	(((reg_a) ^ (reg_b)) & (AT91_WDT_WDV | AT91_WDT_WDD))
- 
- #define wdt_read(wdt, field) \
- 	readl_relaxed((wdt)->reg_base + (field))
-@@ -78,8 +81,11 @@ static void wdt_write_nosleep(struct sama5d4_wdt *wdt, u32 field, u32 val)
- static int sama5d4_wdt_start(struct watchdog_device *wdd)
- {
- 	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
-+	u32 reg = wdt_read(wdt, AT91_WDT_MR);
- 
- 	wdt->mr &= ~AT91_WDT_WDDIS;
-+	if (!wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
-+		wdt_write(wdt, AT91_WDT_MR, reg & ~AT91_WDT_WDDIS);
- 	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
- 
- 	return 0;
-@@ -88,8 +94,11 @@ static int sama5d4_wdt_start(struct watchdog_device *wdd)
- static int sama5d4_wdt_stop(struct watchdog_device *wdd)
- {
- 	struct sama5d4_wdt *wdt = watchdog_get_drvdata(wdd);
-+	u32 reg = wdt_read(wdt, AT91_WDT_MR);
- 
- 	wdt->mr |= AT91_WDT_WDDIS;
-+	if (wdt_enabled(reg) && wdt_different_counters(reg, wdt->mr))
-+		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
- 	wdt_write(wdt, AT91_WDT_MR, wdt->mr);
- 
- 	return 0;
-@@ -122,7 +131,7 @@ static int sama5d4_wdt_set_timeout(struct watchdog_device *wdd,
- 	 * If the watchdog is enabled, then the timeout can be updated. Else,
- 	 * wait that the user enables it.
- 	 */
--	if (wdt_enabled)
-+	if (wdt_enabled(wdt->mr))
- 		wdt_write(wdt, AT91_WDT_MR, wdt->mr & ~AT91_WDT_WDDIS);
- 
- 	wdd->timeout = timeout;
-@@ -186,13 +195,17 @@ static int sama5d4_wdt_init(struct sama5d4_wdt *wdt)
- 	 * If the watchdog is already running, we can safely update it.
- 	 * Else, we have to disable it properly.
- 	 */
--	if (wdt_enabled) {
-+	reg = wdt_read(wdt, AT91_WDT_MR);
-+	if (wdt_enabled(reg)) {
-+		if (!wdt_enabled(wdt->mr))
-+			wdt_write_nosleep(wdt, AT91_WDT_MR,
-+					  wdt->mr & ~AT91_WDT_WDDIS);
- 		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
--	} else {
--		reg = wdt_read(wdt, AT91_WDT_MR);
--		if (!(reg & AT91_WDT_WDDIS))
-+	} else if (wdt_enabled(wdt->mr)) {
-+		if (wdt_different_counters(reg, wdt->mr))
- 			wdt_write_nosleep(wdt, AT91_WDT_MR,
--					  reg | AT91_WDT_WDDIS);
-+					  reg & ~AT91_WDT_WDDIS);
-+		wdt_write_nosleep(wdt, AT91_WDT_MR, wdt->mr);
- 	}
- 	return 0;
- }
 -- 
-2.17.1
+Regards,
+
+Laurent Pinchart
+
+
 
