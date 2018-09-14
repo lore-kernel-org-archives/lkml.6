@@ -2,145 +2,185 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82DDFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C4BC04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85F0C2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:03:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V9NkIe/c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85F0C2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id CA5C120853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:05:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5C120853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeINFPm (ORCPT
+        id S1728109AbeINFRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 01:15:42 -0400
-Received: from sonic311-29.consmr.mail.ne1.yahoo.com ([66.163.188.210]:38128
-        "EHLO sonic311-29.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726939AbeINFPm (ORCPT
+        Fri, 14 Sep 2018 01:17:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58954 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726851AbeINFRS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 01:15:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1536883434; bh=KwkHP5YDYbvY8PCtLTk+LZqVJSk+cGSwgxM2XR/WbfE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=V9NkIe/cManpTJPskrWMd88YDqHIQpFPMQ7mihTjZt25JR+qUVRuZBP25gbuXQE1oxNx9azUBz6HisDyppEmfU7HF1VDqFW2bqpTFNxtlcCzdtTnPgGzGNEhmwT5KtemWltmffnfsNySMlD+xMhKQOW4Tg5NQA4W5vBwp6KWdK1j2TP5fLit7J+0FRv4pdc6++8x3K5dmZYfmp8pInwMCksa61zRjMt8l3D7rk0Ald9RV4JJ54vG4sjAnMqp5Nliv7NGKVbNG+wDPz1E1TUmkwrQMh86rBtyWOF2TjfsquCPuE/rgoQu+fUXRrNXJ2XgPpCCoi9y9d1ZpmZBPSk8ow==
-X-YMail-OSG: kxavvygVM1nqdUlvR.Aj9blZQVnjQN9_jyMoCrENsWfDifYWTNSU08Hd8PmpwC5
- iii7UQHsuyAr2eQuQsn8X5rWZ0891akRr1MHR176ZA3yUk2CUsx3Ljs863oNDMGibjTvCgLz1RmI
- CXUBTYVIHJhCcovr8VTvajHhEbRAY5Fi2Ptag._yRibXZLBm18PDhDdYdRl1UabIBkLa64paFQsb
- HRe6EvFHfYBlMUlqDTnP9VYtrUI_m6NY0Y5qtLSZYUM1JgEXyV7UAiv2ERm3YW7kIA2mdNwXzXOZ
- QwUnUYjJSzREdmNMtbRVbRtv6.lw3sEYFQa9a8gg00_oSNwzYZ86SEcCAiAisopcee3HgGHVuQwP
- pDwkHvq9IV_nd7wmKHlgfaIudSq5tPuv7grWEoZnbfwLv_Ao0UpOiTHL3gcUtFMZ18XbvwIYhYab
- _XqxXLJu0GR1ZBnWP_IGxSXS3BjGHseK9ooFWucKp_3lXvm8mVMOjS.2aiCzj8GtK8wkBQVGFUPS
- S935RqjplN6XRvFj9sEZ2zSwIi5KKGIDJ54cnLfnhJtvurm7jZxtCwxuB_32RiuBCaXwpNnHog.Q
- SHpRGf__1c2ANMZMp8j_EplB1gBJe2Dt0lZSrs.8WimrAffHxq1pTzNyMib6zTPZPVUZwG1Gc.An
- Tem8Oop5avfg.1gij6vnV0EnNuvG8TwILNap5zMLDWd_QiydSUhmVCsk3DjP.aydQ9G6bELUkpyL
- vNKI_w7aeqbLedW3GiQachvPLMbaOLuStYvFaMI.l7spqUgpv7cVPL8nwosqXIcvQhXvs3A_ymi0
- XIfi3wG3q.fWgZmKqCAYAm0g3F7p87zvpSr6nH9ChoI1___nMW.C3M5z2ZcR5KDyPwxZYL_llp4g
- l_fXJY9K.akBf39svb0qCj0pV09Nku_fFVX81CbOAqzGaycuthHedUVDo8Xr2WvBnqdizpOY3l1.
- Uf_r55T3H5r0FH5kSm7m5WN9b.T0wZP42J1YLsiO20HNRkD6aWK7cigxHN1LLxso_w8TfkveoMNH
- Q8tZUp7CfpWdN234-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Sep 2018 00:03:54 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp427.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ba9551b23cf89fcd004e95b6ce426145;
-          Fri, 14 Sep 2018 00:03:53 +0000 (UTC)
-Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
- <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
- <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
- <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
- <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
- <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
- <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
- <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
- <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
- <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
- <0eb75e66-ed50-4013-6440-38bc2f814c6f@canonical.com>
- <CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
-Date:   Thu, 13 Sep 2018 17:03:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Sep 2018 01:17:18 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8E04WDo093960
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 20:05:30 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mfvg33v7p-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 20:05:30 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <sbobroff@linux.ibm.com>;
+        Fri, 14 Sep 2018 01:05:28 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Sep 2018 01:05:24 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8E05NN765274050
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Sep 2018 00:05:24 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B67F4C04A;
+        Fri, 14 Sep 2018 03:05:14 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C4C034C040;
+        Fri, 14 Sep 2018 03:05:13 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Sep 2018 03:05:13 +0100 (BST)
+Received: from tungsten.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 174F0A0120;
+        Fri, 14 Sep 2018 10:05:21 +1000 (AEST)
+Date:   Fri, 14 Sep 2018 10:05:20 +1000
+From:   Sam Bobroff <sbobroff@linux.ibm.com>
+To:     Russell Currey <ruscur@russell.cc>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, oohall@gmail.com
+Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error handling
+References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180912165846.GH118330@bhelgaas-glaptop.roam.corp.google.com>
+ <94b8929d44af6dd965600b7d159458312d500582.camel@russell.cc>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <94b8929d44af6dd965600b7d159458312d500582.camel@russell.cc>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-TM-AS-GCONF: 00
+x-cbid: 18091400-4275-0000-0000-000002BA1780
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091400-4276-0000-0000-000037C35266
+Message-Id: <20180914000520.GA7655@tungsten.ozlabs.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-13_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809140000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/13/2018 4:51 PM, Kees Cook wrote:
-> On Thu, Sep 13, 2018 at 4:32 PM, John Johansen
-> <john.johansen@canonical.com> wrote:
->> On 09/13/2018 04:06 PM, Kees Cook wrote:
->>> - what order should any stacking happen? Makefile? security=?
->>>
->> Preferably not. For the single LSM we have the ability to choose the default LSM, ideally we let the distro decide in the Kconfig and the user with security=...
-> I can't find a non-crazy way to do this in Kconfig. Right now, if I
-> threw out all the _DEFAULT stuff, I could do:
->
-> config SECURITY_SELINUX_ENABLED
->         bool "SELinux LSM enabled at boot time"
->         depends on SECURITY_SELINUX
->         depends on !SECURITY_APPARMOR_ENABLED && !SECURITY_SMACK_ENABLED
->         default SECURITY_SELINUX
->
-> config SECURITY_SMACK_ENABLED
->         bool "SMACK LSM enabled at boot time"
->         depends on SECURITY_SMACK
->         depends on !SECURITY_APPARMOR_ENABLED && !SECURITY_SELINUX_ENABLED
->         default SECURITY_SMACK
->
-> config SECURITY_APPARMOR_ENABLED
->         bool "AppArmor LSM enabled at boot time"
->         depends on SECURITY_APPARMOR
->         depends on !SECURITY_SMACK_ENABLED && !SECURITY_SELINUX_ENABLED
->         default SECURITY_APPARMOR
->
-> config SECURITY_TOMOYO_ENABLED
->         bool "TOMOYO LSM enabled at boot time"
->         depends on SECURITY_TOMOYO
->         default y if !SECURITY_SELINUX_ENABLED &&
-> !SECURITY_SMACK_ENABLED && !SECURITY_APPARMOR_ENABLED
->
-> config DEFAULT_SECURITY
->         string
->         default "selinux" if SECURITY_SELINUX_ENABLED
->         default "smack" if SECURITY_SMACK_ENABLED
->         default "apparmor" if SECURITY_APPARMOR_ENABLED
->         default "tomoyo" if SECURITY_TOMOYO_ENABLED
->
-> (As before CONFIG_DEFAULT_SECURITY basically means the effective
-> "security=" contents. Reminder than Kconfig default are "first match",
-> so tomoyo would only happen if all others are not enabled by default.)
->
-> But this doesn't provide a way for Kconfig to declare the ordering of
-> TOMOYO followed by SELinux. If we just declare ordering is a function
-> of the Makefile, then the above would work as expected. The
-> "conflicting major LSM" could be specified on "security=" and stacked
-> could be enabled with $lsm.enable=1 (or disabled).
->
-> So, before we can really make a decision, I think we have to decide:
-> should ordering be arbitrary for even this level of stacking?
 
-Do we have a case where it matters? I know that I could write a
-module that would have issues if one hook got called and another
-didn't because because a precursor module hook failed. I don't
-think that any of the existing modules have this problem.
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 13, 2018 at 12:26:55PM +1000, Russell Currey wrote:
+> On Wed, 2018-09-12 at 11:58 -0500, Bjorn Helgaas wrote:
+> > On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
+> > > From: Bjorn Helgaas <bhelgaas@google.com>
+> > >=20
+> > > The original PCI error recovery functionality was for the powerpc-spe=
+cific
+> > > IBM EEH feature.  PCIe subsequently added some similar features, incl=
+uding
+> > > AER and DPC, that can be used on any architecture.
+> > >=20
+> > > We want the generic PCI core error handling support to work with all =
+of
+> > > these features.  Driver error recovery callbacks should be independen=
+t of
+> > > which feature the platform provides.
+> > >=20
+> > > Add the generic PCI core error recovery files to the powerpc EEH
+> > > MAINTAINERS entry so the powerpc folks will be copied on changes to t=
+he
+> > > generic PCI error handling strategy.
+> >=20
+> > I really want to make sure the powerpc folks are plugged into any PCI c=
+ore
+> > error handling discussions.  Please let me know if there's a better way
+> > than this patch, or if there are other people who should be added.
+>=20
+> I think this patch is definitely a good idea.
+>=20
+> Alongside this (whether you want to include it in your patch or not, Bjor=
+n),
+> Sam Bobroff should replace myself as maintainer.  He's been very active i=
+n fixing,
+> reworking and reviewing in EEH land and will probably do a better job of =
+keeping
+> his finger on the pulse of the generic PCI error handling code than I did.
+>=20
+> - Russell
+
+That's fine with me. You can add me or let me know if I should send a
+patch.
+
+Sam.
+
+>=20
+> >=20
+> > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > > ---
+> > >  MAINTAINERS |    4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >=20
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 7e10ba65bfe4..d6699597fd89 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -11202,6 +11202,10 @@ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
+> > >  M:	Russell Currey <ruscur@russell.cc>
+> > >  L:	linuxppc-dev@lists.ozlabs.org
+> > >  S:	Supported
+> > > +F:	Documentation/PCI/pci-error-recovery.txt
+> > > +F:	drivers/pci/pcie/aer.c
+> > > +F:	drivers/pci/pcie/dpc.c
+> > > +F:	drivers/pci/pcie/err.c
+> > >  F:	Documentation/powerpc/eeh-pci-error-recovery.txt
+> > >  F:	arch/powerpc/kernel/eeh*.c
+> > >  F:	arch/powerpc/platforms/*/eeh*.c
+> > >=20
+>=20
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEELWWF8pdtWK5YQRohMX8w6AQl/iIFAlua+zEACgkQMX8w6AQl
+/iKOcQf+JdfQFAngmcHC2C0vnnnEQQqLURa4IOJ1v4MhPTFoPBNoAaFuXXTeCC/L
+6UEq5ZWULO+9LjgcDrXyzB30dFLv3o+Vdy/atZqogaiAFdFn77IQoO2IQJkZyA1v
+oS1Vd5YbepFuJyxSX1lSlV5aljuUQkcc7QRQ93w3j/j6KsRqJiyjCpI782ANZFtY
+CvomFGtSfdQgEVC/4VfXSIs4ZSbvB8LmprXWnIVmPTuw7gnkVJGpLACmmsLcwuvf
+bRZmVvveTvoyfVzJV9PCifKLJhojr1mfgtIbmQ9UWdWfjELnvKle9zAnilrppBmL
++iPh3HV5N0DSOfeYraEGzM5F7DQO0A==
+=fTc4
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
 
