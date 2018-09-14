@@ -2,137 +2,144 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31EAECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68BEFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F95620861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E4320861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkFJgn2e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F95620861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QKJE5EBb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E4320861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbeINW1i (ORCPT
+        id S1727807AbeINW1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:27:38 -0400
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:37092 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbeINW1h (ORCPT
+        Fri, 14 Sep 2018 18:27:50 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:46901 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeINW1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:27:37 -0400
-Received: by mail-qt0-f182.google.com with SMTP id n6-v6so9398277qtl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:12:14 -0700 (PDT)
+        Fri, 14 Sep 2018 18:27:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rzpbwCynHfZ/Xor0x/HIU1nC6Oo+JfxJZnN3D+ikNHs=;
-        b=hkFJgn2eOzU6bqo7ddGqRytrFe1FRYYyrTnPlVd5d3sfH9e6OP+cIfFSwcep7ri6bH
-         dvPGYnUn2mpP5gEdxZ1OaKjOu2HBBvqIKS54YLDUqtclM2iN8FTUzhJWancbhv7IXHyM
-         /PX9scVrZ+TXSnpKLtIcmdwbv3sB9LZsS0prw1QDXj2JF2Q7VuBZbCOTJawhvs+583V0
-         GI2ZJsIg7YvJOHeO/ZsoIJL37BcMi7KIUjL6IndF3hNtRUQmWwUI6ClrlCAM2gwWUwLL
-         jz+cFUdz2HTObwPZDiGnQLSgqctPzCwOn6tYLFZ50AB0Z079szPi3G54X6gv0dJcOUJi
-         71dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rzpbwCynHfZ/Xor0x/HIU1nC6Oo+JfxJZnN3D+ikNHs=;
-        b=nWJzZeSy/37tk9knA8u9Vo+A2kr8jgOcvRYIQa0DzAUjqUyfhnxvFIMPt9yAfOghpO
-         UrTZGIpoPmzFumFBG2Xtg28J2cA6UjpfyMzR/5QWkohfV/RoDGyjJyK957IWir2Gf3Fd
-         Lkp4VxlfSzLJ7+XziL0IeCpwZpX9lFN0Dm/CM+EsLenbZGgj3oL07LC2RIs7p1dIKjqK
-         5gh/Zri9R6NMPEYQEqqlUkFH90pw6ADTNjX7bMvDsZ2zCvSOjR3TVE7UV3cxCKkhQLZ5
-         ciyfHbisCRrs9h6APcX0DSKSn0Twt5eDuEU/Kq+aj/GBj98s1AA4ct1W3yiKQzGY/yJg
-         7Srg==
-X-Gm-Message-State: APzg51Cd79ebyTaCZxH5lTa6g2ycUi6EQwz94IMW7EenaFfb/w2cf25r
-        bt01CeFsn6XhN7ykEjz6Cd/nFKBEVB2kGx41l0EOsA==
-X-Google-Smtp-Source: ANB0Vdbwm2IIhQlvHPIiKdSs3tldA9Hvq3+U9RK8IE5aevKK+Ab0qY2uDAbaaSuhAcbUtqQEZjrDGd94vFu85zuXLa8=
-X-Received: by 2002:ad4:5052:: with SMTP id m18-v6mr9766707qvq.164.1536945133672;
- Fri, 14 Sep 2018 10:12:13 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1536945146; x=1568481146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uwdILCVkbfsxrXAdNjSGJsrrcFbynueWGNHGkoo82EQ=;
+  b=QKJE5EBbNksh+10VtfPrbxryeHExgCAtmLqcQgsbKLrnCaWGQg++Akxp
+   eC0GxXNgWpXhz2Tfk98MpJdkOxCcdipXg848193ydMwN3Mr0zLmTjEk9i
+   5T5LRIEx1HJGV+V88SMVrIXb81tbSGC9ty61DJw1SObep7RszPhN1Ij+5
+   E=;
+X-IronPort-AV: E=Sophos;i="5.53,374,1531785600"; 
+   d="scan'208";a="630665092"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Sep 2018 17:12:23 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8EHCJNm126655
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Fri, 14 Sep 2018 17:12:23 GMT
+Received: from EX13D07UEB001.ant.amazon.com (10.43.60.203) by
+ EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Sep 2018 17:12:22 +0000
+Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
+ EX13D07UEB001.ant.amazon.com (10.43.60.203) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Sep 2018 17:12:22 +0000
+Received: from localhost (10.85.19.144) by mail-relay.amazon.com
+ (10.43.60.129) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Fri, 14 Sep 2018 17:12:22 +0000
+Date:   Fri, 14 Sep 2018 10:12:22 -0700
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Jan Beulich <jbeulich@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH 4.14 103/115] x86/xen: dont write ptes directly in 32-bit
+ PV guests
+Message-ID: <20180914171222.GA30580@u40b0340c692b58f6553c.ant.amazon.com>
+References: <20180913131823.327472833@linuxfoundation.org>
+ <20180913131829.701763608@linuxfoundation.org>
 MIME-Version: 1.0
-References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
-In-Reply-To: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 14 Sep 2018 10:12:00 -0700
-Message-ID: <CAHbLzkojdPxgrEiPLcJUX9c4muw8eupStJ_0xPnAuFM7g4V1jA@mail.gmail.com>
-Subject: Re: KSM not working in 4.9 Kernel
-To:     pintu.ping@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180913131829.701763608@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pintu,
+Hello,
 
-I recall there are some ksm test cases in LTP. Did you try them out?
-On Fri, Sep 14, 2018 at 7:28 AM Pintu Kumar <pintu.ping@gmail.com> wrote:
->
-> Hi All,
->
-> Board: Hikey620 ARM64
-> Kernel: 4.9.20
->
-> I am trying to verify KSM (Kernel Same Page Merging) functionality on
-> 4.9 Kernel using "mmap" and madvise user space test utility.
-> But to my observation, it seems KSM is not working for me.
-> CONFIG_KSM=y is enabled in kernel.
-> ksm_init is also called during boot up.
->   443 ?        SN     0:00 [ksmd]
->
-> ksmd thread is also running.
->
-> However, when I see the sysfs, no values are written.
-> ~ # grep -H '' /sys/kernel/mm/ksm/*
-> /sys/kernel/mm/ksm/pages_hashed:0
-> /sys/kernel/mm/ksm/pages_scanned:0
-> /sys/kernel/mm/ksm/pages_shared:0
-> /sys/kernel/mm/ksm/pages_sharing:0
-> /sys/kernel/mm/ksm/pages_to_scan:200
-> /sys/kernel/mm/ksm/pages_unshared:0
-> /sys/kernel/mm/ksm/pages_volatile:0
-> /sys/kernel/mm/ksm/run:1
-> /sys/kernel/mm/ksm/sleep_millisecs:1000
->
-> So, please let me know if I am doing any thing wrong.
->
-> This is the test utility:
-> int main(int argc, char *argv[])
-> {
->         int i, n, size;
->         char *buffer;
->         void *addr;
->
->         n = 100;
->         size = 100 * getpagesize();
->         for (i = 0; i < n; i++) {
->                 buffer = (char *)malloc(size);
->                 memset(buffer, 0xff, size);
->                 addr =  mmap(NULL, size,
->                            PROT_READ | PROT_EXEC | PROT_WRITE,
-> MAP_PRIVATE | MAP_ANONYMOUS,
->                            -1, 0);
->                 madvise(addr, size, MADV_MERGEABLE);
->                 sleep(1);
->         }
->         printf("Done....press ^C\n");
->
->         pause();
->
->         return 0;
-> }
->
->
->
-> Thanks,
-> Pintu
->
+On Thu, Sep 13, 2018 at 03:32:03PM +0200, Greg Kroah-Hartman wrote:
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Juergen Gross <jgross@suse.com>
+> 
+> commit f7c90c2aa4004808dff777ba6ae2c7294dd06851 upstream.
+> 
+> In some cases 32-bit PAE PV guests still write PTEs directly instead of
+> using hypercalls. This is especially bad when clearing a PTE as this is
+> done via 32-bit writes which will produce intermediate L1TF attackable
+> PTEs.
+> 
+> Change the code to use hypercalls instead.
+> 
+
+Good that we got this in. Should we also take this one:
+b2d7a075a1cc ("x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear")
+
+Which is under the line of the same issue?
+
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Reviewed-by: Jan Beulich <jbeulich@suse.com>
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  arch/x86/xen/mmu_pv.c |    7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> --- a/arch/x86/xen/mmu_pv.c
+> +++ b/arch/x86/xen/mmu_pv.c
+> @@ -425,14 +425,13 @@ static void xen_set_pud(pud_t *ptr, pud_
+>  static void xen_set_pte_atomic(pte_t *ptep, pte_t pte)
+>  {
+>  	trace_xen_mmu_set_pte_atomic(ptep, pte);
+> -	set_64bit((u64 *)ptep, native_pte_val(pte));
+> +	__xen_set_pte(ptep, pte);
+>  }
+>  
+>  static void xen_pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
+>  {
+>  	trace_xen_mmu_pte_clear(mm, addr, ptep);
+> -	if (!xen_batched_set_pte(ptep, native_make_pte(0)))
+> -		native_pte_clear(mm, addr, ptep);
+> +	__xen_set_pte(ptep, native_make_pte(0));
+>  }
+>  
+>  static void xen_pmd_clear(pmd_t *pmdp)
+> @@ -1543,7 +1542,7 @@ static void __init xen_set_pte_init(pte_
+>  		pte = __pte_ma(((pte_val_ma(*ptep) & _PAGE_RW) | ~_PAGE_RW) &
+>  			       pte_val_ma(pte));
+>  #endif
+> -	native_set_pte(ptep, pte);
+> +	__xen_set_pte(ptep, pte);
+>  }
+>  
+>  /* Early in boot, while setting up the initial pagetable, assume
+> 
+> 
+> 
+
+-- 
+All the best,
+Eduardo Valentin
