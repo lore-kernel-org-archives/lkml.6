@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CDFFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3FAC04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3952620853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3952620853
+	by mail.kernel.org (Postfix) with ESMTP id 9B5AE20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 03:11:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5AE20853
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbeINIXy (ORCPT
+        id S1728551AbeINIX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 04:23:54 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20433 "EHLO mga09.intel.com"
+        Fri, 14 Sep 2018 04:23:58 -0400
+Received: from mga14.intel.com ([192.55.52.115]:22666 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728139AbeINIXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 04:23:54 -0400
+        id S1728513AbeINIX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 04:23:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 20:11:30 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2018 20:11:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,371,1531810800"; 
-   d="scan'208";a="232778779"
+   d="scan'208";a="73107571"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga004.jf.intel.com with ESMTP; 13 Sep 2018 20:11:13 -0700
+  by orsmga008.jf.intel.com with ESMTP; 13 Sep 2018 20:11:13 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 850FE3001F2; Thu, 13 Sep 2018 20:11:13 -0700 (PDT)
+        id A30D5301A84; Thu, 13 Sep 2018 20:11:13 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, kim.phillips@arm.com,
         linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v4 1/8] perf tools: Report itrace options in help
-Date:   Thu, 13 Sep 2018 20:10:31 -0700
-Message-Id: <20180914031038.4160-2-andi@firstfloor.org>
+Subject: [PATCH v4 5/8] perf, tools, script: Print DSO for callindent
+Date:   Thu, 13 Sep 2018 20:10:35 -0700
+Message-Id: <20180914031038.4160-6-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180914031038.4160-1-andi@firstfloor.org>
 References: <20180914031038.4160-1-andi@firstfloor.org>
@@ -50,96 +50,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-I often forget all the options that --itrace accepts. Instead of burying
-them in the man page only report them in the normal command line help
-too to make them easier accessible.
+Now that we don't need to print the IP/ADDR for callindent the DSO
+is also not printed. It's useful for some cases, so add an own DSO
+printout for callindent for the case when IP/ADDR is not enabled.
 
-v2: Align
+Before:
+
+% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff,-addr
+         swapper     0 [000]  3377.917072:          1   branches: pt_config
+         swapper     0 [000]  3377.917072:          1   branches:     pt_config
+         swapper     0 [000]  3377.917072:          1   branches:     pt_event_add
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_enable
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_void
+         swapper     0 [000]  3377.917072:          1   branches:     event_sched_in.isra.107
+         swapper     0 [000]  3377.917072:          1   branches:     __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_int
+         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
+
+After:
+
+         swapper     0 [000]  3377.917072:          1   branches: ([unknown])   pt_config
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_config
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_event_add
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_enable
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_void
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_sched_in.isra.107
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_int
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           perf_pmu_nop_txn
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           event_sched_in.isra.107
+
+(in the kernel case of course it's not very useful, but it's important
+with user programs where symbols are not unique)
+
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/builtin-inject.c |  3 ++-
- tools/perf/builtin-report.c |  2 +-
- tools/perf/builtin-script.c |  2 +-
- tools/perf/util/auxtrace.h  | 19 +++++++++++++++++++
- 4 files changed, 23 insertions(+), 3 deletions(-)
+ tools/perf/builtin-script.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index a3b346359ba0..b649a0511ed8 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -803,7 +803,8 @@ int cmd_inject(int argc, const char **argv)
- 			   "kallsyms pathname"),
- 		OPT_BOOLEAN('f', "force", &data.force, "don't complain, do it"),
- 		OPT_CALLBACK_OPTARG(0, "itrace", &inject.itrace_synth_opts,
--				    NULL, "opts", "Instruction Tracing options",
-+				    NULL, "opts", "Instruction Tracing options\n"
-+				    ITRACE_HELP,
- 				    itrace_parse_synth_opts),
- 		OPT_BOOLEAN(0, "strip", &inject.strip,
- 			    "strip non-synthesized events (use with --itrace)"),
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 02f7a3c27761..d48ea050e95e 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1105,7 +1105,7 @@ int cmd_report(int argc, const char **argv)
- 	OPT_CALLBACK(0, "percentage", NULL, "relative|absolute",
- 		     "how to display percentage of filtered entries", parse_filter_percentage),
- 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
--			    "Instruction Tracing options",
-+			    "Instruction Tracing options\n" ITRACE_HELP,
- 			    itrace_parse_synth_opts),
- 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
- 			"Show full source file name path for source lines"),
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 568ddfac3213..910e0f1f2876 100644
+index d7d454d10074..812269ee9d33 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -3193,7 +3193,7 @@ int cmd_script(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "ns", &nanosecs,
- 		    "Use 9 decimal places when displaying time"),
- 	OPT_CALLBACK_OPTARG(0, "itrace", &itrace_synth_opts, NULL, "opts",
--			    "Instruction Tracing options",
-+			    "Instruction Tracing options\n" ITRACE_HELP,
- 			    itrace_parse_synth_opts),
- 	OPT_BOOLEAN(0, "full-source-path", &srcline_full_filename,
- 			"Show full source file name path for source lines"),
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index e731f55da072..041ee64a63bc 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -576,6 +576,23 @@ static inline void auxtrace__free(struct perf_session *session)
- 	return session->auxtrace->free(session);
+@@ -1116,6 +1116,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ 	const char *name = NULL;
+ 	static int spacing;
+ 	int len = 0;
++	int dlen = 0;
+ 	u64 ip = 0;
+ 
+ 	/*
+@@ -1142,6 +1143,12 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ 			ip = sample->ip;
+ 	}
+ 
++	if (PRINT_FIELD(DSO) && !(PRINT_FIELD(IP) || PRINT_FIELD(ADDR))) {
++		dlen += fprintf(fp, "(");
++		dlen += map__fprintf_dsoname(al->map, fp);
++		dlen += fprintf(fp, ")\t");
++	}
++
+ 	if (name)
+ 		len = fprintf(fp, "%*s%s", (int)depth * 4, "", name);
+ 	else if (ip)
+@@ -1160,7 +1167,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ 	if (len < spacing)
+ 		len += fprintf(fp, "%*s", spacing - len, "");
+ 
+-	return len;
++	return len + dlen;
  }
  
-+#define ITRACE_HELP \
-+"				i:	    		synthesize instructions events\n"		\
-+"				b:	    		synthesize branches events\n"		\
-+"				c:	    		synthesize branches events (calls only)\n"	\
-+"				r:	    		synthesize branches events (returns only)\n" \
-+"				x:	    		synthesize transactions events\n"		\
-+"				w:	    		synthesize ptwrite events\n"		\
-+"				p:	    		synthesize power events\n"			\
-+"				e:	    		synthesize error events\n"			\
-+"				d:	    		create a debug log\n"			\
-+"				g[len]:     		synthesize a call chain (use with i or x)\n" \
-+"				l[len]:     		synthesize last branch entries (use with i or x)\n" \
-+"				sNUMBER:    		skip initial number of events\n"		\
-+"				PERIOD[ns|us|ms|i|t]:   specify period to sample stream\n" \
-+"				concatenate multiple options. Default is ibxwpe or cewp\n"
-+
-+
- #else
- 
- static inline struct auxtrace_record *
-@@ -716,6 +733,8 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
- 				   struct perf_evlist *evlist, int idx,
- 				   bool per_cpu);
- 
-+#define ITRACE_HELP ""
-+
- #endif
- 
- #endif
+ static int perf_sample__fprintf_insn(struct perf_sample *sample,
 -- 
 2.17.1
 
