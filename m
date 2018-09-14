@@ -2,85 +2,127 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A609CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C75ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4A020882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:17:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4A020882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D3F620882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:19:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D3F620882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbeINUcj (ORCPT
+        id S1728084AbeINUd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 16:32:39 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47106 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbeINUcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 16:32:39 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C4D986C6111FB;
-        Fri, 14 Sep 2018 23:17:38 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Fri, 14 Sep 2018 23:17:35 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <sebastian.hesselbarth@gmail.com>
-CC:     <gregory.clement@bootlin.com>, <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm: common: use match_string() helper to simplify the code
-Date:   Fri, 14 Sep 2018 23:05:19 +0800
-Message-ID: <1536937519-31611-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Fri, 14 Sep 2018 16:33:56 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35632 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINUdz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 16:33:55 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1g0pry-0008Jg-Mv; Fri, 14 Sep 2018 15:18:54 +0000
+Date:   Fri, 14 Sep 2018 16:18:54 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/50] tty_ioctl(): start taking TIOC[SG]SERIAL into
+ separate methods
+Message-ID: <20180914151854.GA19965@ZenIV.linux.org.uk>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-5-viro@ZenIV.linux.org.uk>
+ <20180914132216.GC1362@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914132216.GC1362@localhost>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-match_string() returns the index of an array for a matching string,
-which can be used instead of open coded implementation.
+On Fri, Sep 14, 2018 at 03:22:16PM +0200, Johan Hovold wrote:
+> On Thu, Sep 13, 2018 at 03:40:04AM +0100, Al Viro wrote:
+> > From: Al Viro <viro@zeniv.linux.org.uk>
+> > 
+> > ->set_serial() and ->get_serial() resp., both taking tty and
+> > a kernel pointer to serial_struct.
+> > 
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> >  drivers/tty/tty_io.c       | 36 ++++++++++++++++++++++++++++++------
+> >  include/linux/tty_driver.h |  3 +++
+> >  2 files changed, 33 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> > index 2b34ccf269e0..91d73732e11c 100644
+> > --- a/drivers/tty/tty_io.c
+> > +++ b/drivers/tty/tty_io.c
+> > @@ -97,6 +97,7 @@
+> >  #include <linux/seq_file.h>
+> >  #include <linux/serial.h>
+> >  #include <linux/ratelimit.h>
+> > +#include <linux/compat.h>
+> 
+> Looks like you don't need this (just yet anyway).
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- arch/arm/plat-orion/common.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Actually, that should've been added several commits earlier ;-)
 
-diff --git a/arch/arm/plat-orion/common.c b/arch/arm/plat-orion/common.c
-index a2399fd..d705ffa 100644
---- a/arch/arm/plat-orion/common.c
-+++ b/arch/arm/plat-orion/common.c
-@@ -479,17 +479,14 @@ void __init orion_ge11_init(struct mv643xx_eth_platform_data *eth_data,
- 
- void __init orion_ge00_switch_init(struct dsa_chip_data *d)
- {
--	unsigned int i;
-+	int index;
- 
- 	if (!IS_BUILTIN(CONFIG_PHYLIB))
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(d->port_names); i++) {
--		if (!strcmp(d->port_names[i], "cpu")) {
--			d->netdev[i] = &orion_ge00.dev;
--			break;
--		}
--	}
-+	index = match_string(d->port_names, ARRAY_SIZE(d->port_names), "cpu");
-+	if (index >= 0)
-+		d->netdev[index] = &orion_ge00.dev;
- 
- 	orion_ge00_switch_board_info.mdio_addr = d->sw_addr;
- 	orion_ge00_switch_board_info.platform_data = d;
--- 
-1.7.12.4
+> >  #include <linux/uaccess.h>
+> >  
+> > @@ -2455,22 +2456,40 @@ static int tty_tiocgicount(struct tty_struct *tty, void __user *arg)
+> >  	return 0;
+> >  }
+> 
+> [...]
+> 
+> > +static int tty_tiocgserial(struct tty_struct *tty, struct serial_struct __user *ss)
+> > +{
+> > +	struct serial_struct v;
+> > +	int err;
+> 
+> Missing newline.
 
+Umm...  Matter of taste, but since you work in that area more often than
+I do...  Note, BTW, that tty_tiocgicount() just a bit above that place also
+doesn't follow that style.  Anyway, I don't care either way - if you want
+an empty line in that, no problem.
+
+> > +	memset(&v, 0, sizeof(struct serial_struct));
+> > +
+> > +	if (!tty->ops->set_serial)
+> 
+> You want get_serial here.
+
+Nice catch.  Fixed.
+
+> > +		return -ENOIOCTLCMD;
+> > +	err = tty->ops->get_serial(tty, &v);
+> > +	if (!err && copy_to_user(ss, &v, sizeof(struct serial_struct)))
+> > +		err = -EFAULT;
+> > +	return err;
+> >  }
+> >  
+> >  /*
+> > @@ -2602,8 +2621,13 @@ long tty_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> >  		}
+> >  		break;
+> >  	case TIOCSSERIAL:
+> > -		tty_warn_deprecated_flags(p);
+> > -		break;
+> > +		retval = tty_tiocsserial(tty, p);
+> > +		if (retval != -ENOIOCTLCMD)
+> > +			return retval;
+> 
+> Missing break.
+
+*blink*
+Right you are... that's a bisect hazard (in the end of the series returns
+become unconditional anyway).  Fixed.
