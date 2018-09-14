@@ -2,247 +2,150 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A73ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93899ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE4C20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:44:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="c93/4Vsi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE4C20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 271AD20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 19:53:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271AD20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeIOBAa (ORCPT
+        id S1727807AbeIOBJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:00:30 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39916 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeIOBA3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:00:29 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h4-v6so8302708edi.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 12:44:33 -0700 (PDT)
+        Fri, 14 Sep 2018 21:09:05 -0400
+Received: from mail-eopbgr710121.outbound.protection.outlook.com ([40.107.71.121]:11626
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726891AbeIOBJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 21:09:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7z3Sysg1v6kRkLUOFqAezJoFrE+Oi5ekgzeYgH7c390=;
-        b=c93/4VsipWl1Ob3DFue5NsL9/Pc6md1sxiiIcZn+HriH26sHQnznc/RSA9JmcWP2gp
-         GHkNB1ae/+zhchsl3tPe5C/y6/S/HSwbZr1JiUFEvCpyC5zMAjUpgA80IXnR3sz96KSt
-         XN7xeZALlzbzLxWUebCPVdAdF0jqaJHDu11rs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7z3Sysg1v6kRkLUOFqAezJoFrE+Oi5ekgzeYgH7c390=;
-        b=Xq9QZU3L4GycVZBJhYRA4dSfIu0G2/qKHXWvRe/Sc0nGVKPcE0hdg9CrP6X8JTlA9t
-         FYhBPamnQ3B7u+QuNrtQg1nPGOvJv5G3SEeALEm6BUfT4/D3aJ0uhQPdrMzAnqz8w0xC
-         7Xy1C0Ajp+J/SDDh0zTbfJofh74ULW7aoTC42tvj91V0PAPsKkYN8YXrS2g6dtfLGMbr
-         Ylcdh+VZfwHywqc28lzQtdcDARo8m/ZOZFPd13+PA6benaXwmIQNq6vsoV8Te2ar4qYy
-         bZvFlUvjLHYhbdY5kuPILIohgE1cD/jZg6V+R/nPntYFz1rdAFIavHZFHLg8r1PkMqOX
-         oQcw==
-X-Gm-Message-State: APzg51BPwHB2SpcCdSrqaNgU5sWz/7N61eJ4hbXznqfIQyTgh3Wu4Dfz
-        g0On5QFihGUhT9JUU6Mz63IiGw==
-X-Google-Smtp-Source: ANB0VdaipMgiCrM5+uP75JlBB/rmZF5ayiU8uOvbxr8oY0tT/aS18joTK9C3tBB0lo917y940F7BUQ==
-X-Received: by 2002:a50:94c3:: with SMTP id t3-v6mr23181712eda.249.1536954272216;
-        Fri, 14 Sep 2018 12:44:32 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id w20-v6sm7881185edc.12.2018.09.14.12.44.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 12:44:31 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 21:44:23 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>, akiyks@gmail.com,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH RFC LKMM 1/7] tools/memory-model: Add extra ordering for
- locks and remove it for ordinary release/acquire
-Message-ID: <20180914194423.GA3264@andrea>
-References: <20180914143752.GA7467@andrea>
- <Pine.LNX.4.44L0.1809141210530.1482-100000@iolanthe.rowland.org>
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JTBOF57pRZN09jH/vRVo+eIE1dj7gUt6HsRqOr+Bv6Q=;
+ b=nxWidZhdD7dt0lbBMktVjQYz6DtFwNaiXNwP34dHibY0SPx5rnXNj/ZFSZ8zX20H/u0j6kiiIbSydWklL2NF8S9iJJbkveFLkd8WL9patvg4UpVyJxWR4oJGx6kp32FtMOjCc7x+t8JTYAy/2euZfrTlIrQTsXA7F7JlkEy6zzA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+Received: from localhost (63.83.14.10) by
+ BYAPR08MB4934.namprd08.prod.outlook.com (2603:10b6:a03:6a::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.16; Fri, 14 Sep 2018 19:53:03 +0000
+Date:   Fri, 14 Sep 2018 12:53:00 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mips@linux-mips.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mips: switch to NO_BOOTMEM
+Message-ID: <20180914195300.7wnmsph2qhpixm7s@pburton-laptop>
+References: <1536571398-29194-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1809141210530.1482-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1536571398-29194-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20180716
+X-Originating-IP: [63.83.14.10]
+X-ClientProxiedBy: DM5PR2001CA0016.namprd20.prod.outlook.com
+ (2603:10b6:4:16::26) To BYAPR08MB4934.namprd08.prod.outlook.com
+ (2603:10b6:a03:6a::15)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 193f22f9-f3fb-41e3-1024-08d61a7baf22
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4934;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;3:ubwlE5EsdXX7wcH8wxZIFsuF6dFiJQWYlAtnCR4bjzFq/JZ0YQuGvcFdhN19JhCtBUnx06oyW/pOxGfjld7GtS61dQ6zkG3YdqS7Yj755w8jSNdsjmwk7tvI+XYev3j8Mxl70u8wqSqOnIvVBrQxP7oYVZ7nAXvOdbzhJq2mEgijjm+tiUsMQ5wjYKxYv8TJtVtdnPmpCKDuzddJDJavwVdUAKeyIOqY/lzmeRw9j/b/ovWqMFI0Fn+BIsEtPv61;25:NUe29ecq6hZIm81EJwRgQ4CQP1zQqxZP/P7tXrsbcS7KCKR4WebRQWrrACvslnHESRQcgydYCqCfSeO/7tn4K3fT2lmt5lLN42kU367T9i62BsER5g33ICZMTXHAzDB95UKTHpcRT5PdNgmOcCuF4R40d/TCuIpOTxlNu5VVSsmKS3vdkiQB1+Y5ttNu0RI0m3lI3HRIBn1TvAb+CyWtsqlL9GAiE7ehPxW2HgWCDDkfsZsPrwsTE2Wwzh8cDM3ZazWSgzfTXT8y73EBclFq5uQfQTyfAwjmSSCLShzTwynoY7KjtQm5J6kCrioG2fkEmiYBWYqFpWQt3Aor3zrNFw==;31:0T13TmmYBmGDQ12raLakkteP9p+eU8fm7pcxw7eHF5D04r/84qVrsFc4euQQQ7SAsxlaDSpWjI2qa+87zc32Nuk+/k1QRxFKKdYW/rLVyEVm17KvlNMhzwLrCO1m7d28XMXp2gSFLb7EIMfgf2z/y3048I0EN2uK7KIWvWWBS3762dI5R8rR+GJ5Db/fiS6d4VtmflGNTZFhdQQWkqDEkiYMsswwykOVnmE33Pt1LeA=
+X-MS-TrafficTypeDiagnostic: BYAPR08MB4934:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;20:iFU3nTL4bAkxwuwgKPe2rOfUBAx2HZjGQES5YThiNGkAaOTifNQjEYj1ENYSQsKTYzp2fuYh4j2Zl9RIZw2f42S1Z7KC1CppjSJwZQcx3pORH7RvGKBq9Zf9YF2vpRPGT4ZX7U7UPQfF6sPB363HKuT56om763L14Y+Rsf/Ohkziy1vICj6REMX/C+p+KsNJE6/35qtpPGCkmWP9/jqFxskxhDQ8exEatz38M1DypQ4Yv4Ta2mZiQAEaC1iypezX;4:S7l8Vm4E4cWt6RkUdIg+KZjnYKin939hM7FXO7qzM/jT+WPOny69+vVOndNdD8U9DOAUIAr7rlOI3unYZtHW00hCup/poAS0d+wASfKZOmdgixvNcfVi4ZRGGh0LL1vahqDoC8b4/PGWvFYljthkW3eY8OGjx6qhtlpz4E61KdEufC6ROHcQit1oGmoeHTGn8kehLHqF4z5ru+ebfIyYyflxWqokeANb3BVtjupMWg1qrUDAsm1SSObzxVTF1KDglRQNO84HOpMa0XYx31aSSdBmjV+UEyYSSROmaVNUedZRFhn5+oRfYsk3HaxGUJ5P
+X-Microsoft-Antispam-PRVS: <BYAPR08MB4934616442D9E297481560BEC1190@BYAPR08MB4934.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(104084551191319);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699050);SRVR:BYAPR08MB4934;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4934;
+X-Forefront-PRVS: 07954CC105
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(346002)(39840400004)(136003)(396003)(376002)(366004)(189003)(199004)(6486002)(386003)(68736007)(66066001)(106356001)(11346002)(229853002)(33896004)(476003)(47776003)(316002)(16586007)(5660300001)(478600001)(50466002)(52116002)(76176011)(956004)(486006)(6496006)(97736004)(76506005)(6246003)(8676002)(25786009)(42882007)(44832011)(105586002)(16526019)(186003)(58126008)(446003)(23726003)(39060400002)(9686003)(305945005)(26005)(14444005)(81156014)(4326008)(7736002)(6116002)(6916009)(81166006)(2906002)(1076002)(53936002)(54906003)(8936002)(33716001)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4934;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR08MB4934;23:SSvnebWv0ejMjgbqb/4t1Pp72gg2aITQXR69iHGMb?=
+ =?us-ascii?Q?fdLub1AEFc/A7/EdIXTTHFrsSQQkC9P5RnifWMYIQuar1sRRk0CddYtzAl+0?=
+ =?us-ascii?Q?NqqqKAkO4oU3w2Sk6Np2x2/FVeoAtcwEO7fm2kUeGjyYkIjjBnrADnXRs0CF?=
+ =?us-ascii?Q?KLJX3xNJhyKX296XnPDG2tMk8Ekr8SzUcGjrJ+dH07/Eqc35TQ5v8toT2okr?=
+ =?us-ascii?Q?Os+BLr8gQ1vE82tzIbDV0KdqBUqXeiIBKiTCOiONaNE5Bfj1UUDFX9nnPSBI?=
+ =?us-ascii?Q?bIbJ68YNmjpQLOmSDKU8PcLzLX2T8wCtS31lqrR+2ul8s48Ra0ZQNmud5Xjz?=
+ =?us-ascii?Q?gs7Smhi+FyNFKwwWhZmZY90d6cOlcOPDAFyGih5lwNchBXcF/t/QKqOcjxoR?=
+ =?us-ascii?Q?eBF7pcfFh6xqvbdBuIp/kdzA+4/W+VWTadoPN9W4jo52pBa+rRBbYnNHzT7q?=
+ =?us-ascii?Q?T9P7+7/eMzd8KjJZz9mck4QYEL6Ms75CQzy7gHaluVpwnzHhWrSUR9dehhZH?=
+ =?us-ascii?Q?aojUtlggqPfY8DoVmLykhXo4T2BeUG3N9qEXFIrygKXausVCeZUZD3NplH3m?=
+ =?us-ascii?Q?Git0VioTdMYRxnutF3crsJfpvC9z54jPulPFIJQ6g8D+45+pB+9+PjjJHqpC?=
+ =?us-ascii?Q?hYU2N5etgbAMWCLvxgd06ZdakeyJODB4md/on3YcHy0gSr5wR+cwK5N7PLlO?=
+ =?us-ascii?Q?BS6nRgf/l/ypqrDOhPQv3SAcwTSXi4tRVfOH431G3uwu/pVt6h0328BxkjKY?=
+ =?us-ascii?Q?H17XF4BC3rHoOXkHrUXO2bk0XPRtAFMCo0gAbXmrul59W/Mh8iR4PizcXT4y?=
+ =?us-ascii?Q?Y/Gfik1vzC2YjL8HL9f0ejYX86p+5Bsp36jb6hKGqW6zcqLhe8CIVb3tIi3O?=
+ =?us-ascii?Q?hoLJ3JR26TakMAMTkqO61/uebTTfCZEv6h2LnP1UxPYzhokt5fbDMRs3pBi1?=
+ =?us-ascii?Q?q1np97nI4jY5uGzl7SQAMGfmFKrCP2Orn63Q+a1pz6yJGSokZH3+FOkCiVpb?=
+ =?us-ascii?Q?5x16Si/8C4YHwLwvmJpF4ap7V7h328i5G2GYF4aV0M1Y3mYjENkW+aaZjRL9?=
+ =?us-ascii?Q?OLqKWFfxLxRH+egsuQSklpzO2pG8yOi0TUBmO5wcf6WCGRYKnTmlt4E65SRL?=
+ =?us-ascii?Q?EKbOC8fhCUqy6Ys1T2GXCbvYUpixfmFen33J9pgU1MJRfjoUGwWQd3uX/JOn?=
+ =?us-ascii?Q?jVNKyiwg+WiWz8E7bV+AQohF5B5CkQLnwxspby9PNVSWo067YJNCb+8nPuKO?=
+ =?us-ascii?Q?P7Fn0wWESzfnnuusWojwcEPbJ8mqEsqv6R6AvnyT4ZHui70f2w4paQDt5yJn?=
+ =?us-ascii?Q?ocxVlcsx0mvpYWd6ABGjZqSnvuu8KAiF8AIQuyeRCEx?=
+X-Microsoft-Antispam-Message-Info: CEWGiZkBtJjiSy2szz38joCt1/QPBbPfEyU8ovU+SA/SfrmbaBR0JQE2ZctMlJ35P5L81g0bkg54GkRYM1pgGOmiogEkA2KZznFR3DsFs01fkwIgsQWMLC5Nn44A+v3kwPZcnSzV33AS1Dh6oC8a8p8+W7SBrjOtC8Shku/IzUKjc5AIy6sz0Yk/69J0XD66DE4C9ZX51rqW3fxe97XyDXfWtkT5GCbBvh6Xdi/LNUL347qWpnqqORXdHAqse4+QnyHx3HecUis6A75ntaE0Q9SUAEpCmfpYdomT5EUrD84yvqbcLDPIXNtRtyj9rdLnw9yYVwSfN/e1JBlLNif9x5kZz5ILpeeG2n7oPDu/mAU=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;6:01MnLsezWVYPYcChaCUivE9By314IJGQuSJQ4hUZjZ7wyFjm+xhK4hSxwnoU+i+01DqvTuE4Zq0QIT7FpXkYJCZZuRgoTF3INhy+2aNpyJV5Oiu48uWs/oP/gU80SYmkvZKAQOvXcqZzpPUsWgQDapVn6fEkaozYj50N8kG3A0RJj/K2NRkvazdvgFd13YzJN9MwYbdj43aUgZ6eGtrBPx/hvK2U4L/gbRS7Lru9s33p+zMHJClxWGuMb02zNLJLRTXS4pZQQCLFi8fTIH3sw6YQ2Hh9iQ1MOxkjOfOA4EEv9xTKkpWveKWy3W5hi24slL+84faGOMt083SKubkwqoWWhtSqwYXpv2NxLoil45lV3hqX52kiOKgidGHCBA7yNg5JgWVCaNKU86zxo/k6tun2vefI6Lv/+PZwiO73/VKFbniQyeAS3JuvgWDngVl6AhhMGpVXIqZ4mvDEbtXUSQ==;5:LWZLp2XZfAx/dFdZzJrkP3eE/bLLdEbY9Rtx0pAE6kic0V/cKacOnSXrgl1x47axGKgz5Cpj342H5YwIp7qBvHALJ1GRgOc4hBnlDHeZe9f7uksa4t1Me6rzVSOAoi6QyaTp2t31jyPytfYlL9orBPXZwFrqzG2Dfsnbc63381s=;7:XPysvpPJItubq3D+uwe5h7OZW7LYm3AevnEVal6DlH0R33DpiPqlVca25llot8DfHPk3bZFtXEOYfNmNiN03FrMkFUPIharbcabAAQfO5ySYzgovWs10zEPt1OeC/uN8aVPFATvYxu4AehDlAWxqgv2LyYjc0Vvrd/DpAFlfAOQA7KqjbyTlhaiYrotCqk44yvaHgk4lIU9pXAXzrp8AWhsN89lC4/5iytPyNYwQDUxCGqxEaSXHYeJ/pu10ZvIN
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2018 19:53:03.8686 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 193f22f9-f3fb-41e3-1024-08d61a7baf22
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4934
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The updated Changelog draft is below.
-> 
-> Alan.
-> 
-> --------------------------------------------------------------------------
-> More than one kernel developer has expressed the opinion that the LKMM
-> should enforce ordering of writes by locking.  In other words, given
-> the following code:
-> 
-> 	WRITE_ONCE(x, 1);
-> 	spin_unlock(&s):
-> 	spin_lock(&s);
-> 	WRITE_ONCE(y, 1);
-> 
-> the stores to x and y should be propagated in order to all other CPUs,
-> even though those other CPUs might not access the lock s.  In terms of
-> the memory model, this means expanding the cumul-fence relation.
-> 
-> Locks should also provide read-read (and read-write) ordering in a
-> similar way.  Given:
-> 
-> 	READ_ONCE(x);
-> 	spin_unlock(&s);
-> 	spin_lock(&s);
-> 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
-> 
-> the load of x should be executed before the load of (or store to) y.
-> The LKMM already provides this ordering, but it provides it even in
-> the case where the two accesses are separated by a release/acquire
-> pair of fences rather than unlock/lock.  This would prevent
-> architectures from using weakly ordered implementations of release and
-> acquire, which seems like an unnecessary restriction.  The patch
-> therefore removes the ordering requirement from the LKMM for that
-> case.
-> 
-> There are several arguments both for and against this change.  Let us
-> refer to these enhanced ordering properties by saying that the LKMM
-> would require locks to be RCtso (a bit of a misnomer, but analogous to
-> RCpc and RCsc) and it would require ordinary acquire/release only to
-> be RCpc.  (Note: In the following, the phrase "all supported
-> architectures" is meant not to include RISC-V.  Although RISC-V is
-> indeed supported by the kernel, the implementation is still somewhat
-> in a state of flux and therefore statements about it would be
-> premature.)
-> 
-> Pros:
-> 
-> 	The kernel already provides RCtso ordering for locks on all
-> 	supported architectures, even though this is not stated
-> 	explicitly anywhere.  Therefore the LKMM should formalize it.
-> 
-> 	In theory, guaranteeing RCtso ordering would reduce the need
-> 	for additional barrier-like constructs meant to increase the
-> 	ordering strength of locks.
-> 
-> 	Will Deacon and Peter Zijlstra are strongly in favor of
-> 	formalizing the RCtso requirement.  Linus Torvalds and Peter
-> 	would like to go even further, requiring locks to have RCsc
-> 	behavior (ordering preceding writes against later reads), but
-> 	they recognize that this would incur a noticeable performance
-> 	degradation on the POWER architecture.  Linus also points out
-> 	that people have made the mistake, in the past, of assuming
-> 	that locking has stronger ordering properties than is
-> 	currently guaranteed, and this change would reduce the
-> 	likelihood of such mistakes.
-> 
-> 	Not requiring ordinary acquire/release to be any stronger than
-> 	RCpc may prove advantageous for future architectures, allowing
-> 	them to implement smp_load_acquire() and smp_store_release()
-> 	with more efficient machine instructions than would be
-> 	possible if the operations had to be RCtso.  Will and Linus
-> 	approve this rationale, hypothetical though it is at the
-> 	moment (it may end up affecting the RISC-V implementation).
-> 	The same argument may or may not apply to RMW-acquire/release;
-> 	see also the second Con entry below.
-> 
-> 	Linus feels that locks should be easy for people to use
-> 	without worrying about memory consistency issues, since they
-> 	are so pervasive in the kernel, whereas acquire/release is
-> 	much more of an "experts only" tool.  Requiring locks to be
-> 	RCtso is a step in this direction.
-> 
-> Cons:
-> 
-> 	Andrea Parri and Luc Maranget think that locks should have the
-> 	same ordering properties as ordinary acquire/release (indeed,
-> 	Luc points out that the names "acquire" and "release" derive
-> 	from the usage of locks).  Andrea points out that having
-> 	different ordering properties for different forms of acquires
-> 	and releases is not only unnecessary, it would also be
-> 	confusing and unmaintainable.
-> 
-> 	Locks are constructed from lower-level primitives, typically
-> 	RMW-acquire (for locking) and ordinary release (for unlock).
-> 	It is illogical to require stronger ordering properties from
-> 	the high-level operations than from the low-level operations
-> 	they comprise.  Thus, this change would make
-> 
-> 		while (cmpxchg_acquire(&s, 0, 1) != 0)
-> 			cpu_relax();
-> 
-> 	an incorrect implementation of spin_lock(&s) as far as the
-> 	LKMM is concerned.  In theory this weakness can be ameliorated
-> 	by changing the LKMM even further, requiring
-> 	RMW-acquire/release also to be RCtso (which it already is on
-> 	all supported architectures).
-> 
-> 	As far as I know, nobody has singled out any examples of code
-> 	in the kernel that actually relies on locks being RCtso.
-> 	(People mumble about RCU and the scheduler, but nobody has
-> 	pointed to any actual code.  If there are any real cases,
-> 	their number is likely quite small.)  If RCtso ordering is not
-> 	needed, why require it?
-> 
-> 	A handful of locking constructs (qspinlocks, qrwlocks, and
-> 	mcs_spinlocks) are built on top of smp_cond_load_acquire()
-> 	instead of an RMW-acquire instruction.  It currently provides
-> 	only the ordinary acquire semantics, not the stronger ordering
-> 	this patch would require of locks.  In theory this could be
-> 	ameliorated by requiring smp_cond_load_acquire() in
-> 	combination with ordinary release also to be RCtso (which is
-> 	currently true on all supported architectures).
-> 
-> 	On future weakly ordered architectures, people may be able to
-> 	implement locks in a non-RCtso fashion with significant
-> 	performance improvement.  Meeting the RCtso requirement would
-> 	necessarily add run-time overhead.
-> 
-> Overall, the technical aspects of these arguments seem relatively
-> minor, and it appears mostly to boil down to a matter of opinion.
-> Since the opinions of senior kernel maintainers such as Linus,
-> Peter, and Will carry more weight than those of Luc and Andrea, this
-> patch changes the model in accordance with the maintainers' wishes.
-> 
-> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Hi Mike,
 
-Thank you for integrating the log.
-
-I remain more sensitive to those Cons (and skeptical about that
-po-unlock-rf-lock-po), but: (1) this doesn't make an objection,
-and (2) you wore me down. ;-)
-
-So unless new arguments are brought to light, feel free to add:
-
-Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-
-  Andrea
-
-
+On Mon, Sep 10, 2018 at 12:23:18PM +0300, Mike Rapoport wrote:
+> MIPS already has memblock support and all the memory is already registered
+> with it.
 > 
-> v.5: Incorporated feedback from Andrea regarding the updated Changelog.
+> This patch replaces bootmem memory reservations with memblock ones and
+> removes the bootmem initialization.
 > 
-> v.4: Added pros and cons discussion to the Changelog.
+> Since memblock allocates memory in top-down mode, we ensure that memblock
+> limit is max_low_pfn to prevent allocations from the high memory.
 > 
-> v.3: Rebased against the dev branch of Paul's linux-rcu tree.
-> Changed unlock-rf-lock-po to po-unlock-rf-lock-po, making it more
-> symmetrical and more in accordance with the use of fence.tso for
-> the release on RISC-V.
+> To have the exceptions base in the lower 512M of the physical memory, its
+> allocation in arch/mips/kernel/traps.c::traps_init() is using bottom-up
+> mode.
 > 
-> v.2: Restrict the ordering to lock operations, not general release
-> and acquire fences.
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+> v2:
+> * set memblock limit to max_low_pfn to avoid allocation attempts from high
+> memory
+> * use boottom-up mode for allocation of the exceptions base
 > 
+> Build tested with *_defconfig.
+> Boot tested with qemu-system-mips64el for 32r6el, 64r6el and fuloong2e
+> defconfigs.
+> Boot tested with qemu-system-mipsel for malta defconfig.
+> 
+>  arch/mips/Kconfig                      |  1 +
+>  arch/mips/kernel/setup.c               | 99 ++++++++--------------------------
+>  arch/mips/kernel/traps.c               |  3 ++
+>  arch/mips/loongson64/loongson-3/numa.c | 34 ++++++------
+>  arch/mips/sgi-ip27/ip27-memory.c       | 11 ++--
+>  5 files changed, 46 insertions(+), 102 deletions(-)
+
+Thanks - applied to mips-next for 4.20.
+
+Apologies for the delay, my son decided to be born a few weeks early &
+scupper my plans :)
+
+Paul
