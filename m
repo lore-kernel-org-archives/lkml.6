@@ -6,191 +6,144 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B39ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC74FECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4B320671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4B320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7270720671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:14:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7270720671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbeINT1H (ORCPT
+        id S1728082AbeINT2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:27:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44842 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727013AbeINT1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:27:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 84E21AE83;
-        Fri, 14 Sep 2018 14:12:23 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 16:12:16 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Brijesh Singh <brijesh.singh@amd.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v8 1/2] x86/mm: add .bss..decrypted section to hold
- shared variables
-Message-ID: <20180914141216.GA29898@zn.tnic>
-References: <1536875471-17391-1-git-send-email-brijesh.singh@amd.com>
- <1536875471-17391-2-git-send-email-brijesh.singh@amd.com>
- <20180914071056.GA4747@zn.tnic>
- <3517a0db-2f64-6d09-7100-dced40561d08@amd.com>
- <alpine.DEB.2.21.1809141414390.10480@nanos.tec.linutronix.de>
+        Fri, 14 Sep 2018 15:28:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58328 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbeINT2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:28:50 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE76930842AD;
+        Fri, 14 Sep 2018 14:14:08 +0000 (UTC)
+Received: from redhat.com (ovpn-125-82.rdu2.redhat.com [10.10.125.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DE1F96BFE7;
+        Fri, 14 Sep 2018 14:13:45 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 10:13:43 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Kenneth Lee <liguozhu@hisilicon.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-accelerators@lists.ozlabs.org" 
+        <linux-accelerators@lists.ozlabs.org>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180914141342.GB3826@redhat.com>
+References: <20180907165303.GA3519@redhat.com>
+ <20180910032809.GJ230707@Turing-Arch-b>
+ <20180910145423.GA3488@redhat.com>
+ <20180911024209.GK230707@Turing-Arch-b>
+ <20180911033358.GA4730@redhat.com>
+ <20180911064043.GA207969@Turing-Arch-b>
+ <20180911134013.GA3932@redhat.com>
+ <20180913083232.GB207969@Turing-Arch-b>
+ <20180913145149.GB3576@redhat.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.21.1809141414390.10480@nanos.tec.linutronix.de>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191303A7F@SHSMSX101.ccr.corp.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 14 Sep 2018 14:14:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 02:17:05PM +0200, Thomas Gleixner wrote:
-> > The sme_encrypt_kernel() does not have access to pmd (after pointer
-> > fixup is applied). You can extend the sme_encrypt_kernel() to pass an
-> > additional arguments but then we start getting in include hell. The pmd
-> > is defined as "pmdval_t". If we extend the sme_encrypt_kernel() thenÂ 
-> > asm/mem_encrypt.h need to include the header file which defines
-> > "pmdval_t". Adding the 'asm/pgtable_type.h' was causing all kind of
-> > compilation errors. I didn't spend much time on it. IMO, we really don't
-> > need to go in this path unless we see some value from doing this.
+On Fri, Sep 14, 2018 at 06:50:55AM +0000, Tian, Kevin wrote:
+> > From: Jerome Glisse
+> > Sent: Thursday, September 13, 2018 10:52 PM
+> >
+> [...]
+>  > AFAIK, on x86 and PPC at least, all PCIE devices are in the same group
+> > by default at boot or at least all devices behind the same bridge.
 > 
-> Keep it here then.
+> the group thing reflects physical hierarchy limitation, not changed
+> cross boot. Please note iommu group defines the minimal isolation
+> boundary - all devices within same group must be attached to the
+> same iommu domain or address space, because physically IOMMU
+> cannot differentiate DMAs out of those devices. devices behind
+> legacy PCI-X bridge is one example. other examples include devices
+> behind a PCIe switch port which doesn't support ACS thus cannot
+> route p2p transaction to IOMMU. If talking about typical PCIe 
+> endpoint (with upstreaming ports all supporting ACS), you'll get
+> one device per group.
+> 
+> One iommu group today is attached to only one iommu domain.
+> In the future one group may attach to multiple domains, as the
+> aux domain concept being discussed in another thread.
 
-*For what is worth*, a simple forward declaration works. I've taken the
-64-bit forward declaration of pmdval_t as SME is 64-bit only anyway.
+Thanks for the info.
 
-The below diff ontop passes the mandatory all*config smoke builds:
+> 
+> > 
+> > Maybe they are kernel option to avoid that and userspace init program
+> > can definitly re-arrange that base on sysadmin policy).
+> 
+> I don't think there is such option, as it may break isolation model
+> enabled by IOMMU.
+> 
+> [...]
+> > > > That is why i am being pedantic :) on making sure there is good reasons
+> > > > to do what you do inside VFIO. I do believe that we want a common
+> > frame-
+> > > > work like the one you are proposing but i do not believe it should be
+> > > > part of VFIO given the baggages it comes with and that are not relevant
+> > > > to the use cases for this kind of devices.
+> > >
+> 
+> The purpose of VFIO is clear - the kernel portal for granting generic 
+> device resource (mmio, irq, etc.) to user space. VFIO doesn't care
+> what exactly a resource is used for (queue, cmd reg, etc.). If really
+> pursuing VFIO path is necessary, maybe such common framework
+> should lay down in user space, which gets all granted resource from
+> kernel driver thru VFIO and then provides accelerator services to 
+> other processes?
 
----
- arch/x86/include/asm/mem_encrypt.h |  6 ++++--
- arch/x86/kernel/head64.c           | 18 +-----------------
- arch/x86/mm/mem_encrypt_identity.c | 18 +++++++++++++++++-
- 3 files changed, 22 insertions(+), 20 deletions(-)
+Except that many existing device driver falls under that description
+(ie exposing mmio, command queues, ...) and are not under VFIO.
 
-diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-index 616f8e637bc3..67c0e6cfdfb3 100644
---- a/arch/x86/include/asm/mem_encrypt.h
-+++ b/arch/x86/include/asm/mem_encrypt.h
-@@ -19,6 +19,8 @@
- 
- #include <asm/bootparam.h>
- 
-+typedef unsigned long pmdval_t;
-+
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- 
- extern u64 sme_me_mask;
-@@ -40,7 +42,7 @@ void __init sme_unmap_bootdata(char *real_mode_data);
- 
- void __init sme_early_init(void);
- 
--void __init sme_encrypt_kernel(struct boot_params *bp);
-+void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd);
- void __init sme_enable(struct boot_params *bp);
- 
- int __init early_set_memory_decrypted(unsigned long vaddr, unsigned long size);
-@@ -69,7 +71,7 @@ static inline void __init sme_unmap_bootdata(char *real_mode_data) { }
- 
- static inline void __init sme_early_init(void) { }
- 
--static inline void __init sme_encrypt_kernel(struct boot_params *bp) { }
-+static inline void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd) { }
- static inline void __init sme_enable(struct boot_params *bp) { }
- 
- static inline bool sme_active(void) { return false; }
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index c16af27eb23f..6f8e9b534e80 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -112,7 +112,6 @@ static bool __head check_la57_support(unsigned long physaddr)
- unsigned long __head __startup_64(unsigned long physaddr,
- 				  struct boot_params *bp)
- {
--	unsigned long vaddr, vaddr_end;
- 	unsigned long load_delta, *p;
- 	unsigned long pgtable_flags;
- 	pgdval_t *pgd;
-@@ -233,22 +232,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	*fixup_long(&phys_base, physaddr) += load_delta - sme_get_me_mask();
- 
- 	/* Encrypt the kernel and related (if SME is active) */
--	sme_encrypt_kernel(bp);
--
--	/*
--	 * Clear the memory encryption mask from the .bss..decrypted section.
--	 * The bss section will be memset to zero later in the initialization so
--	 * there is no need to zero it after changing the memory encryption
--	 * attribute.
--	 */
--	if (mem_encrypt_active()) {
--		vaddr = (unsigned long)__start_bss_decrypted;
--		vaddr_end = (unsigned long)__end_bss_decrypted;
--		for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
--			i = pmd_index(vaddr);
--			pmd[i] -= sme_get_me_mask();
--		}
--	}
-+	sme_encrypt_kernel(bp, pmd);
- 
- 	/*
- 	 * Return the SME encryption mask (if SME is active) to be used as a
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index a19ef1a416ff..9dbc145d10f8 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -267,15 +267,17 @@ static unsigned long __init sme_pgtable_calc(unsigned long len)
- 	return entries + tables;
- }
- 
--void __init sme_encrypt_kernel(struct boot_params *bp)
-+void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd)
- {
- 	unsigned long workarea_start, workarea_end, workarea_len;
- 	unsigned long execute_start, execute_end, execute_len;
- 	unsigned long kernel_start, kernel_end, kernel_len;
- 	unsigned long initrd_start, initrd_end, initrd_len;
- 	struct sme_populate_pgd_data ppd;
-+	unsigned long vaddr, vaddr_end;
- 	unsigned long pgtable_area_len;
- 	unsigned long decrypted_base;
-+	int i;
- 
- 	if (!sme_active())
- 		return;
-@@ -467,6 +469,20 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
- 
- 	/* Flush the TLB - no globals so cr3 is enough */
- 	native_write_cr3(__native_read_cr3());
-+
-+	/*
-+	 * Clear the memory encryption mask from the .bss..decrypted section.
-+	 * The bss section will be memset to zero later in the initialization so
-+	 * there is no need to zero it after changing the memory encryption
-+	 * attribute.
-+	 */
-+	vaddr = (unsigned long)__start_bss_decrypted;
-+	vaddr_end = (unsigned long)__end_bss_decrypted;
-+
-+	for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
-+		i = pmd_index(vaddr);
-+		pmd[i] -= sme_get_me_mask();
-+	}
- }
- 
- void __init sme_enable(struct boot_params *bp)
--- 
-2.17.0.582.gccdcbd54c
+Up to mdev VFIO was all about handling a full device to userspace AFAIK.
+With the introduction of mdev a host kernel driver can "slice" its
+device and share it through VFIO to userspace. Note that in that case
+it might never end over any mmio, irq, ... the host driver might just
+be handling over memory and would be polling from it to schedule on
+the real hardware.
 
-SUSE Linux GmbH, GF: Felix ImendÃ¶rffer, Jane Smithard, Graham Norton, HRB 21284 (AG NÃ¼rnberg)
--- 
+
+The question i am asking about warpdrive is wether being in VFIO is
+necessary ? as i do not see the requirement myself.
+
+Cheers,
+Jérôme
