@@ -2,89 +2,195 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA9DECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B39ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F3E20671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJyqu4kT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F3E20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D4B320671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:12:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4B320671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeINT0x (ORCPT
+        id S1728076AbeINT1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:26:53 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46654 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeINT0x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:26:53 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 203-v6so7627369ljj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ePQgkVZPViyhTeSFta7HvnkC/pww6M4sihjdB7v9eyA=;
-        b=XJyqu4kTpLtwYmTuoq51wKeWUGMbcSwGi1cYaBUr5pWH+UCk1NSOtp1uzjW9/givfs
-         ZoLF5wo+XzOq5o6Z3p/tw396zW72U7ijfDpZOVyPtvwqIYO3chRE1Ms1BvTxeThk+mnw
-         CIHiGJ5HOUX+pZlFNOtRLKPCjvepLZI6B+piah/ARZY4sGy4kFlGW6klMzmBE+6wl79C
-         dAKSDwM/7oHP4SxsGNGUs4FsUgC5B6vIrVNcr5NU32kVsy48UZ0SKhRXj967OLBudMLj
-         Q8kE3K58PprQ00NxmQwhO8IrSHdN8+y2h73t4iDIg/Ir6pFOFJs2mdSuFgLkr+W8qA38
-         KFew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ePQgkVZPViyhTeSFta7HvnkC/pww6M4sihjdB7v9eyA=;
-        b=jFbwDWfU6D7ifYrH/DrCZihK1v2JXyqqd+dOH9+qznG6JBrB2cE9JfoUlpbeIBbIkv
-         gs7QxKQRV3g8jaPmZii0MrSiER2HkcHKDfnR+Ig1T19c6ulUpXYQSpR+fehEySSN8Sva
-         pd/2t4n9gmPyfjDlFN53JxGEzaU65Nngy0PWgey1dj8yF2ITyCAZKVioxwwrHSn8sGSw
-         pDEQpDRZLqIKEog+Ove2Ix+11iuY+CYL0EWg2uEbcliKwYrVwGJQMxLqF09ghctUCJfs
-         hxNvsMCZGuaAzcmMCsMYwk+r8ltHonZImlzVIjOFu2NnvnGHhkbTwPpriit3fECKVR9S
-         LX8Q==
-X-Gm-Message-State: APzg51CJWfFsQNrXXBubrkH1ySxiVsuSqMhS9rrXNxL7uP1hgo32IgDG
-        rn1HGhHXCCfyqo29In3RPBc=
-X-Google-Smtp-Source: ANB0VdZBFqM1fRaJ7DSfZmICRreFsUU02f/ZVwxV5E9ko4soOUnJqcGwWRw2AMz5xHbLvXDOCI5Pxw==
-X-Received: by 2002:a2e:1c4:: with SMTP id f65-v6mr7953287lji.58.1536934330130;
-        Fri, 14 Sep 2018 07:12:10 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm1285470lff.7.2018.09.14.07.12.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 07:12:09 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g0opP-0005rn-TH; Fri, 14 Sep 2018 16:12:11 +0200
-Date:   Fri, 14 Sep 2018 16:12:11 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 31/50] ti_usb_3410_5052: switch to ->[sg]et_serial()
-Message-ID: <20180914141211.GS1362@localhost>
-References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
- <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
- <20180913024049.24567-31-viro@ZenIV.linux.org.uk>
+        Fri, 14 Sep 2018 15:27:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44842 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727013AbeINT1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:27:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 84E21AE83;
+        Fri, 14 Sep 2018 14:12:23 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 16:12:16 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Brijesh Singh <brijesh.singh@amd.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v8 1/2] x86/mm: add .bss..decrypted section to hold
+ shared variables
+Message-ID: <20180914141216.GA29898@zn.tnic>
+References: <1536875471-17391-1-git-send-email-brijesh.singh@amd.com>
+ <1536875471-17391-2-git-send-email-brijesh.singh@amd.com>
+ <20180914071056.GA4747@zn.tnic>
+ <3517a0db-2f64-6d09-7100-dced40561d08@amd.com>
+ <alpine.DEB.2.21.1809141414390.10480@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180913024049.24567-31-viro@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1809141414390.10480@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 03:40:30AM +0100, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
+On Fri, Sep 14, 2018 at 02:17:05PM +0200, Thomas Gleixner wrote:
+> > The sme_encrypt_kernel() does not have access to pmd (after pointer
+> > fixup is applied). You can extend the sme_encrypt_kernel() to pass an
+> > additional arguments but then we start getting in include hell. The pmd
+> > is defined as "pmdval_t". If we extend the sme_encrypt_kernel() then 
+> > asm/mem_encrypt.h need to include the header file which defines
+> > "pmdval_t". Adding the 'asm/pgtable_type.h' was causing all kind of
+> > compilation errors. I didn't spend much time on it. IMO, we really don't
+> > need to go in this path unless we see some value from doing this.
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Keep it here then.
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+*For what is worth*, a simple forward declaration works. I've taken the
+64-bit forward declaration of pmdval_t as SME is 64-bit only anyway.
+
+The below diff ontop passes the mandatory all*config smoke builds:
+
+---
+ arch/x86/include/asm/mem_encrypt.h |  6 ++++--
+ arch/x86/kernel/head64.c           | 18 +-----------------
+ arch/x86/mm/mem_encrypt_identity.c | 18 +++++++++++++++++-
+ 3 files changed, 22 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
+index 616f8e637bc3..67c0e6cfdfb3 100644
+--- a/arch/x86/include/asm/mem_encrypt.h
++++ b/arch/x86/include/asm/mem_encrypt.h
+@@ -19,6 +19,8 @@
+ 
+ #include <asm/bootparam.h>
+ 
++typedef unsigned long pmdval_t;
++
+ #ifdef CONFIG_AMD_MEM_ENCRYPT
+ 
+ extern u64 sme_me_mask;
+@@ -40,7 +42,7 @@ void __init sme_unmap_bootdata(char *real_mode_data);
+ 
+ void __init sme_early_init(void);
+ 
+-void __init sme_encrypt_kernel(struct boot_params *bp);
++void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd);
+ void __init sme_enable(struct boot_params *bp);
+ 
+ int __init early_set_memory_decrypted(unsigned long vaddr, unsigned long size);
+@@ -69,7 +71,7 @@ static inline void __init sme_unmap_bootdata(char *real_mode_data) { }
+ 
+ static inline void __init sme_early_init(void) { }
+ 
+-static inline void __init sme_encrypt_kernel(struct boot_params *bp) { }
++static inline void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd) { }
+ static inline void __init sme_enable(struct boot_params *bp) { }
+ 
+ static inline bool sme_active(void) { return false; }
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index c16af27eb23f..6f8e9b534e80 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -112,7 +112,6 @@ static bool __head check_la57_support(unsigned long physaddr)
+ unsigned long __head __startup_64(unsigned long physaddr,
+ 				  struct boot_params *bp)
+ {
+-	unsigned long vaddr, vaddr_end;
+ 	unsigned long load_delta, *p;
+ 	unsigned long pgtable_flags;
+ 	pgdval_t *pgd;
+@@ -233,22 +232,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	*fixup_long(&phys_base, physaddr) += load_delta - sme_get_me_mask();
+ 
+ 	/* Encrypt the kernel and related (if SME is active) */
+-	sme_encrypt_kernel(bp);
+-
+-	/*
+-	 * Clear the memory encryption mask from the .bss..decrypted section.
+-	 * The bss section will be memset to zero later in the initialization so
+-	 * there is no need to zero it after changing the memory encryption
+-	 * attribute.
+-	 */
+-	if (mem_encrypt_active()) {
+-		vaddr = (unsigned long)__start_bss_decrypted;
+-		vaddr_end = (unsigned long)__end_bss_decrypted;
+-		for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
+-			i = pmd_index(vaddr);
+-			pmd[i] -= sme_get_me_mask();
+-		}
+-	}
++	sme_encrypt_kernel(bp, pmd);
+ 
+ 	/*
+ 	 * Return the SME encryption mask (if SME is active) to be used as a
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index a19ef1a416ff..9dbc145d10f8 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -267,15 +267,17 @@ static unsigned long __init sme_pgtable_calc(unsigned long len)
+ 	return entries + tables;
+ }
+ 
+-void __init sme_encrypt_kernel(struct boot_params *bp)
++void __init sme_encrypt_kernel(struct boot_params *bp, pmdval_t *pmd)
+ {
+ 	unsigned long workarea_start, workarea_end, workarea_len;
+ 	unsigned long execute_start, execute_end, execute_len;
+ 	unsigned long kernel_start, kernel_end, kernel_len;
+ 	unsigned long initrd_start, initrd_end, initrd_len;
+ 	struct sme_populate_pgd_data ppd;
++	unsigned long vaddr, vaddr_end;
+ 	unsigned long pgtable_area_len;
+ 	unsigned long decrypted_base;
++	int i;
+ 
+ 	if (!sme_active())
+ 		return;
+@@ -467,6 +469,20 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
+ 
+ 	/* Flush the TLB - no globals so cr3 is enough */
+ 	native_write_cr3(__native_read_cr3());
++
++	/*
++	 * Clear the memory encryption mask from the .bss..decrypted section.
++	 * The bss section will be memset to zero later in the initialization so
++	 * there is no need to zero it after changing the memory encryption
++	 * attribute.
++	 */
++	vaddr = (unsigned long)__start_bss_decrypted;
++	vaddr_end = (unsigned long)__end_bss_decrypted;
++
++	for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
++		i = pmd_index(vaddr);
++		pmd[i] -= sme_get_me_mask();
++	}
+ }
+ 
+ void __init sme_enable(struct boot_params *bp)
+-- 
+2.17.0.582.gccdcbd54c
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
