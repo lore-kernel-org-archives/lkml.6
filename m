@@ -6,44 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB77FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2C7FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2867620833
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2867620833
+	by mail.kernel.org (Postfix) with ESMTP id A135C20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:38:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A135C20833
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeINWwq (ORCPT
+        id S1728218AbeINWxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:52:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49538 "EHLO mx1.redhat.com"
+        Fri, 14 Sep 2018 18:53:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44746 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbeINWwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:52:46 -0400
+        id S1727118AbeINWxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 18:53:37 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E6AAA307D974;
-        Fri, 14 Sep 2018 17:37:16 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AC59310E999;
+        Fri, 14 Sep 2018 17:38:08 +0000 (UTC)
 Received: from [10.36.116.58] (ovpn-116-58.ams2.redhat.com [10.36.116.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B0A486DAEE;
-        Fri, 14 Sep 2018 17:37:13 +0000 (UTC)
-Subject: Re: [PATCH v5 4/5] x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20180827164858.12496-1-vkuznets@redhat.com>
- <20180827164858.12496-5-vkuznets@redhat.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DF9156DAEE;
+        Fri, 14 Sep 2018 17:38:06 +0000 (UTC)
+Subject: Re: [PATCH]] kvm: selftests: use -pthread instead of -lpthread
+To:     Lei Yang <Lei.Yang@windriver.com>, shuahkh@osg.samsung.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1535526248-3759-1-git-send-email-Lei.Yang@windriver.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -81,105 +71,52 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <d49b69c6-0d2c-5438-b8a0-ef87bae02b0c@redhat.com>
-Date:   Fri, 14 Sep 2018 19:37:11 +0200
+Message-ID: <6955862a-e192-fbfd-3ff3-cac7d70f02d0@redhat.com>
+Date:   Fri, 14 Sep 2018 19:38:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180827164858.12496-5-vkuznets@redhat.com>
+In-Reply-To: <1535526248-3759-1-git-send-email-Lei.Yang@windriver.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Sep 2018 17:37:17 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Sep 2018 17:38:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/2018 18:48, Vitaly Kuznetsov wrote:
-> These structures are going to be used from KVM code so let's make
-> their names reflect their Hyper-V origin.
+On 29/08/2018 09:04, Lei Yang wrote:
+> I run into the following error
 > 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+> testing/selftests/kvm/dirty_log_test.c:285: undefined reference to `pthread_create'
+> testing/selftests/kvm/dirty_log_test.c:297: undefined reference to `pthread_join'
+> collect2: error: ld returned 1 exit status
+> 
+> my gcc version is gcc version 4.8.4
+> "-pthread" would work everywhere
+> 
+> Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+> ---
+>  tools/testing/selftests/kvm/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 03b0f55..48c970c 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -20,7 +20,7 @@ INSTALL_HDR_PATH = $(top_srcdir)/usr
+>  LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
+>  LINUX_TOOL_INCLUDE = $(top_srcdir)tools/include
+>  CFLAGS += -O2 -g -std=gnu99 -I$(LINUX_TOOL_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -I..
+> -LDFLAGS += -lpthread
+> +LDFLAGS += -pthread
+>  
+>  # After inclusion, $(OUTPUT) is defined and
+>  # $(TEST_GEN_PROGS) starts with $(OUTPUT)/
+> 
 
-KY, can you ack this patch?
-
-Thanks,
+Queued, thanks.
 
 Paolo
-
-> ---
->  arch/x86/hyperv/hv_apic.c          |  8 ++++----
->  arch/x86/include/asm/hyperv-tlfs.h | 16 +++++++++-------
->  2 files changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-> index 5b0f613428c2..2c43e3055948 100644
-> --- a/arch/x86/hyperv/hv_apic.c
-> +++ b/arch/x86/hyperv/hv_apic.c
-> @@ -95,8 +95,8 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
->   */
->  static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
->  {
-> -	struct ipi_arg_ex **arg;
-> -	struct ipi_arg_ex *ipi_arg;
-> +	struct hv_send_ipi_ex **arg;
-> +	struct hv_send_ipi_ex *ipi_arg;
->  	unsigned long flags;
->  	int nr_bank = 0;
->  	int ret = 1;
-> @@ -105,7 +105,7 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
->  		return false;
->  
->  	local_irq_save(flags);
-> -	arg = (struct ipi_arg_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
-> +	arg = (struct hv_send_ipi_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
->  
->  	ipi_arg = *arg;
->  	if (unlikely(!ipi_arg))
-> @@ -135,7 +135,7 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
->  static bool __send_ipi_mask(const struct cpumask *mask, int vector)
->  {
->  	int cur_cpu, vcpu;
-> -	struct ipi_arg_non_ex ipi_arg;
-> +	struct hv_send_ipi ipi_arg;
->  	int ret = 1;
->  
->  	trace_hyperv_send_ipi_mask(mask, vector);
-> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-> index e977b6b3a538..00e01d215f74 100644
-> --- a/arch/x86/include/asm/hyperv-tlfs.h
-> +++ b/arch/x86/include/asm/hyperv-tlfs.h
-> @@ -726,19 +726,21 @@ struct hv_enlightened_vmcs {
->  #define HV_STIMER_AUTOENABLE		(1ULL << 3)
->  #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
->  
-> -struct ipi_arg_non_ex {
-> -	u32 vector;
-> -	u32 reserved;
-> -	u64 cpu_mask;
-> -};
-> -
->  struct hv_vpset {
->  	u64 format;
->  	u64 valid_bank_mask;
->  	u64 bank_contents[];
->  };
->  
-> -struct ipi_arg_ex {
-> +/* HvCallSendSyntheticClusterIpi hypercall */
-> +struct hv_send_ipi {
-> +	u32 vector;
-> +	u32 reserved;
-> +	u64 cpu_mask;
-> +};
-> +
-> +/* HvCallSendSyntheticClusterIpiEx hypercall */
-> +struct hv_send_ipi_ex {
->  	u32 vector;
->  	u32 reserved;
->  	struct hv_vpset vp_set;
-> 
-
