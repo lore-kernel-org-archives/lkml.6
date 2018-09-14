@@ -6,141 +6,178 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1906BFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E84FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C772221477
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD04321477
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW/gpVCG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C772221477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wgw8hJSC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD04321477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbeINQHN (ORCPT
+        id S1728362AbeINQHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 14 Sep 2018 12:07:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48148 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:48122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728316AbeINQHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:07:13 -0400
+        id S1728313AbeINQHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 12:07:12 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 369EC21476;
-        Fri, 14 Sep 2018 10:53:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 561BD2146E;
+        Fri, 14 Sep 2018 10:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1536922395;
-        bh=XYO/rnIXB1znYnn/WvMLjiIA94RveBWbDPMdeshZ09Q=;
+        s=default; t=1536922394;
+        bh=CJSnm+wHspCAXTX6nmJb2RjOFk9BY29HLk5k6H680Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QW/gpVCGNXRn1rH5dzOxEGFrJvph2iY2OEbelz2o/04EJr5LX3Nguip0p/lcC30sz
-         gIE0nMOOHo+pnEKvVM4UyL0kVj08JUCJVxi9PqdFuPDQtf7S2TXiqaGIjGhMTg+8RW
-         sXeY8VjCUb2Oq2A9eZKf0bBryWcGmwOO0OLEg+EE=
+        b=wgw8hJSC2RlkYf6DkYKPDQ9R8E8SPVCxYf3VXm4bRQ+6oDWih4N2HK0Ua+N9S+7VI
+         Vp5R7CUe7VoOU57wEcB4MnrI7xhQeINgJIakM0ADW/UFZtGFrG0XjIWj2kAIgnnnBM
+         HmgZhEnVm4dB0/VD8t5X+eRdsujfI0o3EavWEiU8=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     viro@zeniv.linux.org.uk
 Cc:     ebiederm@xmission.com, berrange@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] exec: do unshare_files after de_thread
-Date:   Fri, 14 Sep 2018 06:53:10 -0400
-Message-Id: <20180914105310.6454-4-jlayton@kernel.org>
+Subject: [PATCH v3 2/3] exec: delay clone(CLONE_FILES) if task associated with current files_struct is exec'ing
+Date:   Fri, 14 Sep 2018 06:53:09 -0400
+Message-Id: <20180914105310.6454-3-jlayton@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180914105310.6454-1-jlayton@kernel.org>
 References: <20180914105310.6454-1-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-POSIX mandates that open fds and their associated file locks should be
-preserved across an execve. This works, unless the process is
-multithreaded at the time that execve is called.
+In a later patch, we're going to move the unshare_files call in
+__do_execve_file to later in the process, but this opens up a potential
+race with clone(CLONE_FILES). We could end up bumping the refcount on
+the files_struct after we've checked to see if it was shared. What we
+really want to do in that case is have the clone return -EAGAIN, much
+like the handling of the similar situation in copy_fs.
 
-In that case, we'll end up unsharing the files_struct but the locks will
-still have their fl_owner set to the address of the old one. Eventually,
-when the other threads die and the last reference to the old
-files_struct is put, any POSIX locks get torn down since it looks like
-a close occurred on them.
-
-The result is that all of your open files will be intact with none of
-the locks you held before execve. The simple answer to this is "use OFD
-locks", but this is a nasty surprise and it violates the spec.
-
-Fix this by doing unshare_files later during exec, after we've already
-killed off the other threads in the process. This helps ensure that we
-only unshare the files_struct during exec when it is truly shared with
-other processes.
-
-Note that because the unshare_files call is now done just after
-de_thread, we need a mechanism to pass the displaced files_struct back
-up to __do_execve_file. This is done via a new displaced_files field
-inside the linux_binprm.
+Add a new in_exec boolean to files_struct that is protected by the
+file_lock. Set it if the files_struct turns out not to be shared, and
+clear at the end of __do_execve_file. If it's set when we go to
+copy_process, then just return -EAGAIN.
 
 Cc: Eric W. Biederman <ebiederm@xmission.com>
-Reported-by: Daniel P. Berrangé <berrange@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/exec.c               | 11 ++++++-----
- include/linux/binfmts.h |  1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ fs/exec.c               | 14 ++++++++++++--
+ fs/file.c               |  1 +
+ include/linux/fdtable.h |  1 +
+ kernel/fork.c           | 21 ++++++++++++++-------
+ 4 files changed, 28 insertions(+), 9 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index c8a68481d7eb..b4a7e659d908 100644
+index e71a70d70158..c8a68481d7eb 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1262,6 +1262,10 @@ int flush_old_exec(struct linux_binprm * bprm)
- 	if (retval)
+@@ -1831,8 +1831,13 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	kfree(pathbuf);
+ 	if (filename)
+ 		putname(filename);
+-	if (displaced)
++	if (displaced) {
+ 		release_files_struct(displaced);
++	} else {
++		spin_lock(&current->files->file_lock);
++		current->files->in_exec = false;
++		spin_unlock(&current->files->file_lock);
++	}
+ 	return retval;
+ 
+ out:
+@@ -1850,8 +1855,13 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	kfree(pathbuf);
+ 
+ out_files:
+-	if (displaced)
++	if (displaced) {
+ 		reset_files_struct(displaced);
++	} else {
++		spin_lock(&current->files->file_lock);
++		current->files->in_exec = false;
++		spin_unlock(&current->files->file_lock);
++	}
+ out_ret:
+ 	if (filename)
+ 		putname(filename);
+diff --git a/fs/file.c b/fs/file.c
+index e35eeff4593c..535321846425 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -286,6 +286,7 @@ struct files_struct *dup_fd(struct files_struct *oldf, int *errorp)
+ 	spin_lock_init(&newf->file_lock);
+ 	newf->thread_count = 1;
+ 	newf->resize_in_progress = false;
++	newf->in_exec = false;
+ 	init_waitqueue_head(&newf->resize_wait);
+ 	newf->next_fd = 0;
+ 	new_fdt = &newf->fdtab;
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index 2cb02f438201..a09ba1b20693 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -51,6 +51,7 @@ struct files_struct {
+    */
+ 	atomic_t count;
+ 	bool resize_in_progress;
++	bool in_exec;
+ 	wait_queue_head_t resize_wait;
+ 
+ 	struct fdtable __rcu *fdt;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index c7eb63e4d5c1..a3786efb39f1 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1372,10 +1372,15 @@ static int copy_files(unsigned long clone_flags, struct task_struct *tsk)
  		goto out;
  
-+	retval = unshare_files(&bprm->displaced_files);
-+	if (retval)
-+		goto out;
-+
- 	/*
- 	 * Must be called _before_ exec_mmap() as bprm->mm is
- 	 * not visibile until then. This also enables the update
-@@ -1713,7 +1717,7 @@ static int __do_execve_file(int fd, struct filename *filename,
+ 	if (clone_flags & CLONE_FILES) {
+-		atomic_inc(&oldf->count);
+ 		spin_lock(&oldf->file_lock);
+-		oldf->thread_count++;
+-		spin_unlock(&oldf->file_lock);
++		if (oldf->in_exec) {
++			spin_unlock(&oldf->file_lock);
++			error = -EAGAIN;
++		} else {
++			oldf->thread_count++;
++			spin_unlock(&oldf->file_lock);
++			atomic_inc(&oldf->count);
++		}
+ 		goto out;
+ 	}
+ 
+@@ -2419,18 +2424,20 @@ static int unshare_fs(unsigned long unshare_flags, struct fs_struct **new_fsp)
+ static int unshare_fd(unsigned long unshare_flags, struct files_struct **new_fdp)
  {
- 	char *pathbuf = NULL;
- 	struct linux_binprm *bprm;
--	struct files_struct *displaced;
-+	struct files_struct *displaced = NULL;
- 	int retval;
+ 	struct files_struct *fd = current->files;
+-	int error, count;
++	int error;
  
- 	if (IS_ERR(filename))
-@@ -1735,10 +1739,6 @@ static int __do_execve_file(int fd, struct filename *filename,
- 	 * further execve() calls fail. */
- 	current->flags &= ~PF_NPROC_EXCEEDED;
+ 	if (!(unshare_flags & CLONE_FILES) || !fd)
+ 		return 0;
  
--	retval = unshare_files(&displaced);
--	if (retval)
--		goto out_ret;
--
- 	retval = -ENOMEM;
- 	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
- 	if (!bprm)
-@@ -1817,6 +1817,7 @@ static int __do_execve_file(int fd, struct filename *filename,
- 	would_dump(bprm, bprm->file);
+ 	spin_lock(&fd->file_lock);
+-	count = fd->thread_count;
+-	spin_unlock(&fd->file_lock);
+-	if (count > 1) {
++	if (fd->thread_count > 1) {
++		spin_unlock(&fd->file_lock);
+ 		*new_fdp = dup_fd(fd, &error);
+ 		if (!*new_fdp)
+ 			return error;
++	} else {
++		fd->in_exec = true;
++		spin_unlock(&fd->file_lock);
+ 	}
  
- 	retval = exec_binprm(bprm);
-+	displaced = bprm->displaced_files;
- 	if (retval < 0)
- 		goto out;
- 
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index c05f24fac4f6..d7ec384bb1b0 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -49,6 +49,7 @@ struct linux_binprm {
- 	unsigned int taso:1;
- #endif
- 	unsigned int recursion_depth; /* only for search_binary_handler() */
-+	struct files_struct * displaced_files;
- 	struct file * file;
- 	struct cred *cred;	/* new credentials */
- 	int unsafe;		/* how unsafe this exec is (mask of LSM_UNSAFE_*) */
+ 	return 0;
 -- 
 2.17.1
 
