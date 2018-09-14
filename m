@@ -2,129 +2,164 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD27ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF54FECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D8B20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:22:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ov119v2C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D8B20853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 889DC21476
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:26:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889DC21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeINRgh (ORCPT
+        id S1728046AbeINRkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:36:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45554 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbeINRgg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:36:36 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i26-v6so4224877pfo.12
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8BtCLlaPXVPAksidMXtNOr3AjkgxWdSxBK9sAuoGCQo=;
-        b=ov119v2C0qIkUU2oVEaMY9x+FDwUKXDUNShij/wBPWxjb5eLiUfawQ2rQCJq9WyQ/Z
-         d5HpekhUwP1WvVJIN7UAe6IN72/zTriinbhVob1zxdLfpiBZT02m0d1LcS0hweURYUsZ
-         OwpW77rJ6tq9isrqvzODsxp7uSvqV6Eqzn6jqZ4eGczd9s1SBEQwxTBReYyHsxamhXoL
-         dCqqv/CKD3tLp25Pi2EPgrrNJCpOH+wJ3PYYgeFXi8N1tcgMZmrlNthkBs5aECgfQm50
-         htFNA5EgZAF2O416Fhud4/OH1vZ4DNrGNFyByxu2T2Jw2T417hD2vtGXrhB8gmXmeJmu
-         osjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8BtCLlaPXVPAksidMXtNOr3AjkgxWdSxBK9sAuoGCQo=;
-        b=nvkEaUGBzPnz6D0n8h78bgvdI2fxLKS3c7mxP5+srdKV2m8TrAteDDU/yCsKRwDJ8k
-         G1+XtZ8ZiaoV0SuHAo66tnXWQyyE4TrKu2bkz6E734297sI0+nnK90Gf2NNMkZRuiX7a
-         oJ4DrykYZHweFD0M6uwd8Y1uVO6TDIz3Sg2pwlITTUq12njWB4Xvb6FSmIALEOXtaz4e
-         EA7dlbNmgE3QUzKsxdT0k0XipJflZ+dgZuQmB7QlMllfuW+wmlmxMKvwlbWkwv8DVGDH
-         a4aTRsrdXYe2SZrnDUMUYgtOjyAAhBQWfQQpmgVm2/22mt2OKH5J8djRtkFM1JjA3tTF
-         bLCw==
-X-Gm-Message-State: APzg51A06xkfPHy5xZhpTpwrjph4BHLuXDH7FPdgf4+YV4wEJ+N3fbFg
-        R3dfOmKrmEgtkc6D62ZF2j0=
-X-Google-Smtp-Source: ANB0VdY4ObPdqP6szKju2zQjW5/NdGo0GrydTsn5jIt6ifjDjDU2CSdqc/aVN7cf1FbWoXH0pP99xw==
-X-Received: by 2002:a63:6c89:: with SMTP id h131-v6mr11541023pgc.237.1536927741662;
-        Fri, 14 Sep 2018 05:22:21 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id w81-v6sm13910770pfk.92.2018.09.14.05.22.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 05:22:20 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Fri, 14 Sep 2018 21:22:17 +0900
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180914122217.GA518@tigerII.localdomain>
-References: <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
- <20180912065307.GA606@jagdpanzerIV>
- <20180912120548.4280f04a@vmware.local.home>
- <20180913071204.GA604@jagdpanzerIV>
- <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
- <20180913142802.GB517@tigerII.localdomain>
- <20180914065728.GA515@jagdpanzerIV>
- <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
- <20180914115028.GB20572@tigerII.localdomain>
- <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
+        Fri, 14 Sep 2018 13:40:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726966AbeINRkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 13:40:13 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 33C5A310E98C;
+        Fri, 14 Sep 2018 12:25:58 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A5C6101E5A5;
+        Fri, 14 Sep 2018 12:25:54 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 74CBA41A63; Fri, 14 Sep 2018 14:25:52 +0200 (CEST)
+Date:   Fri, 14 Sep 2018 14:25:52 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Kirti Wankhede <kwankhede@nvidia.com>,
+        intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] vfio: add edid api for display (vgpu) devices.
+Message-ID: <20180914122552.3xmepqo7azzmx7ky@sirius.home.kraxel.org>
+References: <20180913054745.6353-1-kraxel@redhat.com>
+ <20180913054745.6353-2-kraxel@redhat.com>
+ <20180913115139.02775316@t450s.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e855cbef-03ff-b4ac-3e06-d2f2f48cfb1f@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180913115139.02775316@t450s.home>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Sep 2018 12:25:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/14/18 21:03), Tetsuo Handa wrote:
-> > 80 bytes is quite short for OOM, agreed.
-> > 
-> >>   static char oom_print_buf[1024];
-> >>   DEFINE_PR_LINE_BUF(level, oom_print_buf);
-> > 
-> > Do I get it right that you suggest to drop the "size" param?
-> 
-> No. I just forgot to add params. ;-)
-> 
-> > Do OOM people agree on 1024 bytes stack usage?
-> 
-> I won't allocate oom_print_buf on the stack. Since its usage is serialized
-> by oom_lock mutex, we don't need to allocate from stack. Since memory
-> allocation request might happen when stack is already tight, we should not
-> try to allocate much from stack.
+  Hi,
 
-... by "OOM people" I meant "MM people".
-"MM people" is a subset of "OOM people".
+> Another possible implementation would be via a vfio region, we already
+> support device specific regions via capabilities with vfio_region_info,
+> so we could have an edid region which could handle both input and
+> output using a defined structure and protocol within the region.  With
+> an edid blob of up to 512 bytes now, that means the vendor driver would
+> need to buffer writes to that section of the region until some sort of
+> activation, possibly using another "register" within the field to
+> trigger the link state and only processing the edid blob on link down
+> to link up transition.
 
-OK, so I didn't notice the "static" part of the `oom_print_buf'.
-I need some rest, I guess.
+Hmm, using a virtual register space makes things more complicated for no
+good reason.  This is a configuration interface for qemu, not something
+we expose to the guest.  So, I'm not a fan ...
 
-The "SMP-safe" comment becomes a bit tricky when pr_line is used with a
-static buffer. Either we need to require synchronization - umm... and
-document it - or to provide some means of synchronization in pr_line().
-Let's think what pr_line API should do about it.
+New revision of the vfio.h patch attached below, how does that look
+like?  If it is ok I'll go continue with that next week (more verbose
+docs, update qemu code and test, ...)
 
-Any thoughts?
+cheers,
+  Gerd
 
-	-ss
+From 818f2ea4dd756d28908e58a32a2fdd0d197a28da Mon Sep 17 00:00:00 2001
+From: Gerd Hoffmann <kraxel@redhat.com>
+Date: Thu, 6 Sep 2018 16:17:17 +0200
+Subject: [PATCH] vfio: add edid api for display (vgpu) devices.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/uapi/linux/vfio.h | 48 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index 1aa7b82e81..901f279033 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -200,12 +200,25 @@ struct vfio_device_info {
+ #define VFIO_DEVICE_FLAGS_PLATFORM (1 << 2)	/* vfio-platform device */
+ #define VFIO_DEVICE_FLAGS_AMBA  (1 << 3)	/* vfio-amba device */
+ #define VFIO_DEVICE_FLAGS_CCW	(1 << 4)	/* vfio-ccw device */
++#define VFIO_DEVICE_FLAGS_CAPS	(1 << 5)	/* cap_offset present */
+ 	__u32	num_regions;	/* Max region index + 1 */
+ 	__u32	num_irqs;	/* Max IRQ index + 1 */
++	__u32   cap_offset;	/* Offset within info struct of first cap */
+ };
+ #define VFIO_DEVICE_GET_INFO		_IO(VFIO_TYPE, VFIO_BASE + 7)
+ 
+ /*
++ * FIXME: docs ...
++ */
++#define VFIO_DEVICE_INFO_CAP_EDID	1
++
++struct vfio_device_info_edid_cap {
++	struct vfio_info_cap_header header;
++	__u32   max_x;     /* Max display height (zero == no limit) */
++	__u32   max_y;     /* Max display height (zero == no limit) */
++};
++
++/*
+  * Vendor driver using Mediated device framework should provide device_api
+  * attribute in supported type attribute groups. Device API string should be one
+  * of the following corresponding to device flags in vfio_device_info structure.
+@@ -602,6 +615,41 @@ struct vfio_device_ioeventfd {
+ 
+ #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
+ 
++/**
++ * VFIO_DEVICE_SET_GFX_EDID - _IOW(VFIO_TYPE, VFIO_BASE + 17,
++ *                                 struct vfio_device_set_gfx_edid)
++ *
++ * Set display link state and edid blob (for UP state).
++ *
++ * For the edid blob spec look here:
++ * https://en.wikipedia.org/wiki/Extended_Display_Identification_Data
++ *
++ * The guest should be notified about edid changes, for example by
++ * setting the link status to down temporarely (emulate monitor
++ * hotplug).
++ *
++ * @link_state:
++ * VFIO_DEVICE_GFX_LINK_STATE_UP: Monitor is turned on.
++ * VFIO_DEVICE_GFX_LINK_STATE_DOWN: Monitor is turned off.
++ *
++ * @edid_size: Size of the edid data blob.
++ * @edid_blob: The actual edid data.
++ *
++ * Returns 0 on success, error code (such as -EINVAL) on failure.
++ */
++struct vfio_device_set_gfx_edid {
++	__u32 argsz;
++	__u32 flags;
++	/* in */
++	__u32 link_state;
++#define VFIO_DEVICE_GFX_LINK_STATE_UP    1
++#define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
++	__u32 edid_size;
++	__u8  edid_blob[512];
++};
++
++#define VFIO_DEVICE_SET_GFX_EDID _IO(VFIO_TYPE, VFIO_BASE + 17)
++
+ /* -------- API for Type1 VFIO IOMMU -------- */
+ 
+ /**
+-- 
+2.9.3
+
