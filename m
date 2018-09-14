@@ -2,137 +2,207 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0730BECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397CAECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A764120881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B0020881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:49:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1KzJmcj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A764120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="isbQX+fg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0B0020881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbeINSAK (ORCPT
+        id S1728170AbeINSDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:00:10 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36507 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbeINSAK (ORCPT
+        Fri, 14 Sep 2018 14:03:30 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38330 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbeINSD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:00:10 -0400
-Received: by mail-wm1-f68.google.com with SMTP id j192-v6so1821176wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:45:50 -0700 (PDT)
+        Fri, 14 Sep 2018 14:03:29 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d7-v6so2352723lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qu1ge5zglKzT1BPwpuJ8dQt4khDBZk9GWe+oy9i3388=;
-        b=U1KzJmcjK6DPrZjNhiVzdBxHwLPlvDVRjfjYyN0mCdAsrEUYLHeu6x97w0ZuMicqRX
-         7qDjHHPzPLH/QDc8DjZ+lfwO6R//GQtvzWr5Ea7NbZFfy4Ag62BUhWicqZ6+8DbLa+9w
-         sa8ByQUR0bxRnALSBU03FH9R925AL2kXHU8klUugoGq/+c6ziJaBy8S9fmfpVsP2KE/9
-         VyyS+WJ/odHJL49ZDNJLNVLH/HGjp6doLE2VvXORIhA4zdFncDYKBxWsMJqbBQ1Xp+gY
-         nNTGR7cqZiUxfrkGnXDwc0uFLASLAsRjHM64FpvjRuDjCeBFuy9TcxvrB51Qx+NScdIM
-         Kgcw==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NRwdzV7ic9h0M3xY0g2RbuWGK7ta0n3rgub2bBvDnk4=;
+        b=isbQX+fgWP8Z2OFGj/4V+yh2WgBKRjXa1XOBRHX42FXTiRT4koCe/OSZB77yBCFvvr
+         4GsGJy2Mvi9WItR9y4ag1mFHt8LxDm3IMZSp79xlKRthuYJr0vDBCMxrcKEGAwFqqKKN
+         sIqrzvgjx5Xs7oERw6evN1VSoUCmxIcfuTp3I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qu1ge5zglKzT1BPwpuJ8dQt4khDBZk9GWe+oy9i3388=;
-        b=UdXBWiivOqVgm4Axe4nn+ggNnYcKypxl90V8WEIpiAJ7AgHqdd65QnIPXhHoqQ75VE
-         3vy1EcHaMqEtTZKv3pCFVAwtjW4pjwZIrDgg8O5BOlj9JtDIFJ4hmRhnIpIgprraS3HV
-         oJ8kuSCGpW//iJ0Z2GnZ29a9uQ2J+OkVYd7R34y1SPAg30SmRjSKcD5i0nkd1H7ZvFzz
-         tCq/j6Ch6g/vHW3rHo7sSpWWhqnSmYQ24YBUQGScqiBbB+fO+Df2/L5An+vnh2gdGpsW
-         mfDke0+114Y0L6MTJr0o4u7YW8DqvhR5/U09pXYnz30Rw6qtLoBtH1vwvixMI7uX2Mne
-         XUcw==
-X-Gm-Message-State: APzg51BOqTNbtRrmnwg5I2StnnXZKsrsUKUOzIgZGd7odsPUsG6YVqtN
-        ia6W0a4j7br5/JMQTq2XaEk=
-X-Google-Smtp-Source: ANB0VdYsR8NWuKDR/MuqMEakHW18HJakdz+OoScEtL2rdaqNZ3MPkxGqszsG7D2ydMhj6msKvwexpQ==
-X-Received: by 2002:a1c:5411:: with SMTP id i17-v6mr2116108wmb.53.1536929149237;
-        Fri, 14 Sep 2018 05:45:49 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm2271698wmp.32.2018.09.14.05.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 05:45:48 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 14:45:46 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914124546.GB98534@gmail.com>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
- <20180914082307.GF24224@krava>
- <20180914094022.GB96351@gmail.com>
- <20180914111528.GH24124@hirez.programming.kicks-ass.net>
- <20180914114725.GB17042@krava>
- <20180914120129.GJ24124@hirez.programming.kicks-ass.net>
- <20180914121307.GA98534@gmail.com>
- <20180914121940.GA9737@krava>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NRwdzV7ic9h0M3xY0g2RbuWGK7ta0n3rgub2bBvDnk4=;
+        b=MFPnmhgYUHr3S/JOqaVLMWF2X7Qzv9pUz4tbXgSUTxcN2ylT2YJsVu/BQ/vNsL+pm1
+         Fa6Fx77QJWC53IKvrHiDKfATgeWaopTOjAA7G3jZpKG/dPzSqTF2UODvXJ/qbfi30umS
+         evnfv4iHzPBQWU3HrJfyblfABaRTaEBq/uNcfPPDFA+OzRYG9qIcC0styGdcSpjito3E
+         N4VV+nUYMertO8CuWmEMAUFeAQkMw7CDJl6MFbdDY/MyWb6JxGU92GXTJT0uIBp4eolA
+         IZRKzy79Jr79moIw/6ovqjRqfAMdKnlh/eeEhpBLiajGubH6hPBUdZ3fa/zC2XbfoAu/
+         frNQ==
+X-Gm-Message-State: APzg51B6YEGWVl41DBqP7oPdNKbdhAVJStrBttTS2AFaCPvOFGRzrK/B
+        lbWY+TDBeYpy74G4mOsRIvhTvvqk9Ln4gt07AHPQ+Q==
+X-Google-Smtp-Source: ANB0Vda6sbiuAaX4Gke2T6vfMExDetgjd20ByCwYZrdcqF1Zz7FmcDIjQG66BLzJFJYbHklmXsdlB+UdN2UeqhbBJZc=
+X-Received: by 2002:a19:2ad6:: with SMTP id q83-v6mr2812544lfq.74.1536929347066;
+ Fri, 14 Sep 2018 05:49:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914121940.GA9737@krava>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 05:49:06
+ -0700 (PDT)
+In-Reply-To: <20180913131745.261413581@linuxfoundation.org>
+References: <20180913131745.261413581@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 14 Sep 2018 18:19:06 +0530
+Message-ID: <CA+G9fYs7Q_rWeZ6Eqxs25VdosgSdwRfA+Xto_SrSOHYsW3LdMg@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/60] 4.4.156-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13 September 2018 at 19:00, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.4.156 release.
+> There are 60 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Sep 15 13:17:29 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.156-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-* Jiri Olsa <jolsa@redhat.com> wrote:
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64 and i386.
 
-> On Fri, Sep 14, 2018 at 02:13:07PM +0200, Ingo Molnar wrote:
-> > 
-> > * Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > On Fri, Sep 14, 2018 at 01:47:25PM +0200, Jiri Olsa wrote:
-> > > > On Fri, Sep 14, 2018 at 01:15:28PM +0200, Peter Zijlstra wrote:
-> > > > > On Fri, Sep 14, 2018 at 11:40:22AM +0200, Ingo Molnar wrote:
-> > > > > > In fact keeping the files separate has scalability advantages for 'perf report' and similar 
-> > > > > > parsing tools: they could read all the streams in a per-CPU fashion already, from the very 
-> > > > > > beginning.
-> > > > > 
-> > > > > Also writing to different files from different CPUs is good for record,
-> > > > > less contention on the inode state (which include pagecache).
-> > > > 
-> > > > maybe I should explain a little bit more on this
-> > > > 
-> > > > we write to different (per-cpu) files during the record,
-> > > > and at the end of the session, we take them and store
-> > > > them inside perf.data
-> > > 
-> > > How long does it take to combine that? If we generated a lot of data,
-> > > that could take a fair amount of time, no?
-> 
-> yep.. fair amount ;-) wasn't that bad in my tests,
-> but could be evil on some really big server
+Summary
+------------------------------------------------------------------------
 
-Also, adding any sort of 'global' processing to the end of a session sucks as a workflow 
-principle: perf record should ideally be as lightweight as ftrace. It should trace and that's 
-it - the processing should be done at the report phase. Shuffling hundreds of megs or gigs 
-around at the end of the session is really bad.
+kernel: 4.4.156-rc2
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 2052f80448e54f0f36a360bb5489f2818ae13026
+git describe: v4.4.155-61-g2052f80448e5
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.155-61-g2052f80448e5
 
-> > Agreed - plus at the report stage it would be advantageous to be able to *read* per-cpu files 
-> > as well.
-> > 
-> > If we do things smartly them report will create similar NUMA affinity as the record session 
-> > used.
-> 
-> ok, separate files it is
+No regressions (compared to build v4.4.155)
 
-Thanks!!
 
-	Ingo
+Ran 16889 total tests in the following environments and test suites.
+
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.156-rc2
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git branch: 4.4.156-rc2-hikey-20180913-283
+git commit: 8cbc538b759e57b63bc7bbb767bc7c3336634b3d
+git describe: 4.4.156-rc2-hikey-20180913-283
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.156-rc2-hikey-20180913-283
+
+
+No regressions (compared to build 4.4.156-rc1-hikey-20180913-282)
+
+
+Ran 2724 total tests in the following environments and test suites.
+
+Environments
+--------------
+- hi6220-hikey - arm64
+- qemu_arm64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
