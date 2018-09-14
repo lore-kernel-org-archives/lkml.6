@@ -2,216 +2,478 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12421ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7EEECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF8720882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:06:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bXvSam4b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF8720882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 7404620853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 21:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7404620853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeIOCXB (ORCPT
+        id S1728270AbeIOCYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 22:23:01 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46309 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbeIOCXB (ORCPT
+        Fri, 14 Sep 2018 22:24:33 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:45656 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728050AbeIOCYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 22:23:01 -0400
-Received: by mail-yb1-f194.google.com with SMTP id y20-v6so5361083ybi.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 14:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=riMNSXIG1BZM/WhIt3n4PyZuYhb5kLa4qQ0ikFke5JQ=;
-        b=bXvSam4biS+WEXmOPolrl8eQ322/h2H4irPEq7rtNfQkbtVaSEVLyFr9aaOeHRGvvz
-         zAKlHmzI1WGCWE7rX24PpMgwHDJqyzNe3jGBke3ok77DPk9DaMiKCHXviFoO/g8u/bca
-         FY5BQfZzNS5Tyt66DgdjUCbBOKDVohjFpQ8LxOxdzCC/2PQ4MMmud01DuTD7+1Nd1tN2
-         F4s2IwiYpF6WXz/0++2nufRVYjNsZuUrnDf7H/1hvfN9hgSFaoV6lWf6/GB/Y4KhdvlJ
-         tX10TA1N0XaH14q08eRY/6X7NRrbx5+PxjqL3KyhP6ezunNmYxOXBikMma5pcWIvUbg1
-         t+oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=riMNSXIG1BZM/WhIt3n4PyZuYhb5kLa4qQ0ikFke5JQ=;
-        b=MV632Bv4gBVs6iWY//7xRQFUdrLToET4b9vGPBt6Jg1Go0Jlz/IJbCMZ+fZbp15xKd
-         zltZAto90g0Yn+30SRji9WekhMEkN9lrpx2ke6Knx61+0en5Xf4WWgcTz4uy5GqmO6gc
-         sOOFUOP1pLDEvgqbJpD6IkV5jDnHbug1ePmSrwF4x5CJmZhno5Il40JmrViZMxtrWVH9
-         HeCpSlz+Grm7NHF2jiqAXtTrfVR9xpkXFzC0uO4AZzRlTuffzQHGMA/cyXG8DJ4QhN1p
-         FsU0bx7ez4dHJq1ghkD5+JoKZrDD2I0CEmbLzW4yucNtZz4g553Bb6MXJQ64PhvoereM
-         p3pA==
-X-Gm-Message-State: APzg51AtF62Ksuf6tZco4NqzGXBOoMZ7ra+B5EfzMT2QrFspUbyDFtlX
-        9Xnm3deawQ+QXxzp5U1zrJ9kHiZB3TytpCM/IleWCQ==
-X-Google-Smtp-Source: ANB0VdZ/aGNhl3r3rL4lOIUpjyldYM4gGbZg5oJ7tAyJgvjNZajuaUNee/F9lTYZF/fM/eIRY/VbusfFarQlmtT/lAY=
-X-Received: by 2002:a25:b810:: with SMTP id v16-v6mr6395033ybj.58.1536959209373;
- Fri, 14 Sep 2018 14:06:49 -0700 (PDT)
+        Fri, 14 Sep 2018 22:24:33 -0400
+Received: (qmail 6992 invoked by uid 2102); 14 Sep 2018 17:08:21 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Sep 2018 17:08:21 -0400
+Date:   Fri, 14 Sep 2018 17:08:21 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <mingo@kernel.org>,
+        <peterz@infradead.org>, <boqun.feng@gmail.com>,
+        <npiggin@gmail.com>, <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v5] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+In-Reply-To: <20180914143752.GA7467@andrea>
+Message-ID: <Pine.LNX.4.44L0.1809141706310.1482-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
-In-Reply-To: <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Fri, 14 Sep 2018 14:06:13 -0700
-Message-ID: <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        "Banik, Subrata" <subrata.banik@intel.com>, aamir.bohra@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
-> >
-> > The Icelake does not have a community-3, and the memory resources are
-> > laid out in the following order in the ACPI:
-> >
-> > resource-0: community-0 registers
-> > resource-1: community-1 registers
-> > resource-2: community-2 registers
-> > resource-3: community-4 registers
-> > resource-4: community-5 registers
-> >
-> > (EDS also describes the communities in the above order).
-> >
-> > Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
-> > the corresponding community registers by getting the resourse number right.
-> > Currently the resourse number is not correct for community 4 and 5, thus
-> > fix that.
-> >
->
-> Can you share link to the ACPI dump of the tables? (you may get one by
-> running `acpidump -o tables.dat`)
+More than one kernel developer has expressed the opinion that the LKMM
+should enforce ordering of writes by locking.  In other words, given
+the following code:
 
-I don't have that command on my system, but I took
-/sys/firmware/acpi/tables/DSDT from the system and disassembled it
-using Intel disassembler (iasl -d) and here is the relevant portion
-that describes the GPIO controller. The port IDs for communities can
-be seen in the below output (i.e. the PCRB()):
+	WRITE_ONCE(x, 1);
+	spin_unlock(&s):
+	spin_lock(&s);
+	WRITE_ONCE(y, 1);
 
-            Device (GPIO)
-            {
-                Name (_HID, "INT3455")  // _HID: Hardware ID
-                Name (_UID, Zero)  // _UID: Unique ID
-                Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
-                Name (RBUF, ResourceTemplate ()
-                {
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y06)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y07)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y08)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y09)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y0A)
-                    Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
-                    {
-                        0x0000000E,
-                    }
-                })
-                Method (_CRS, 0, NotSerialized)  // _CRS: Current
-Resource Settings
-                {
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._BAS,
-BAS0)  // _BAS: Base Address
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._LEN,
-LEN0)  // _LEN: Length
-                    BAS0 = PCRB (0x6E)
-                    LEN0 = 0x00010000
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._BAS,
-BAS1)  // _BAS: Base Address
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._LEN,
-LEN1)  // _LEN: Length
-                    BAS1 = PCRB (0x6D)
-                    LEN1 = 0x00010000
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._BAS,
-BAS2)  // _BAS: Base Address
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._LEN,
-LEN2)  // _LEN: Length
-                    BAS2 = PCRB (0x6C)
-                    LEN2 = 0x00010000
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._BAS,
-BAS4)  // _BAS: Base Address
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._LEN,
-LEN4)  // _LEN: Length
-                    BAS4 = PCRB (0x6A)
-                    LEN4 = 0x00010000
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._BAS,
-BAS5)  // _BAS: Base Address
-                    CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._LEN,
-LEN5)  // _LEN: Length
-                    BAS5 = PCRB (0x69)
-                    LEN5 = 0x00010000
-                    Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
-                }
+the stores to x and y should be propagated in order to all other CPUs,
+even though those other CPUs might not access the lock s.  In terms of
+the memory model, this means expanding the cumul-fence relation.
 
-                Method (_STA, 0, NotSerialized)  // _STA: Status
-                {
-                    Return (0x0F)
-                }
-            }
+Locks should also provide read-read (and read-write) ordering in a
+similar way.  Given:
 
-Please let me know if this helps, or if you need more info.
+	READ_ONCE(x);
+	spin_unlock(&s);
+	spin_lock(&s);
+	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
 
-Thanks & Best Regards,
+the load of x should be executed before the load of (or store to) y.
+The LKMM already provides this ordering, but it provides it even in
+the case where the two accesses are separated by a release/acquire
+pair of fences rather than unlock/lock.  This would prevent
+architectures from using weakly ordered implementations of release and
+acquire, which seems like an unnecessary restriction.  The patch
+therefore removes the ordering requirement from the LKMM for that
+case.
 
-Rajat
+There are several arguments both for and against this change.  Let us
+refer to these enhanced ordering properties by saying that the LKMM
+would require locks to be RCtso (a bit of a misnomer, but analogous to
+RCpc and RCsc) and it would require ordinary acquire/release only to
+be RCpc.  (Note: In the following, the phrase "all supported
+architectures" is meant not to include RISC-V.  Although RISC-V is
+indeed supported by the kernel, the implementation is still somewhat
+in a state of flux and therefore statements about it would be
+premature.)
 
->
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> > ---
-> >  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
-> > index 630b966ce081..5b4eaf7c90df 100644
-> > --- a/drivers/pinctrl/intel/pinctrl-icelake.c
-> > +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
-> > @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
-> >  static const struct intel_community icllp_communities[] = {
-> >         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
-> >         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
-> > -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
-> > -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
-> > +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
-> > +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
-> >  };
-> >
-> >  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
-> > --
-> > 2.19.0.397.gdd90340f6a-goog
-> >
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+Pros:
+
+	The kernel already provides RCtso ordering for locks on all
+	supported architectures, even though this is not stated
+	explicitly anywhere.  Therefore the LKMM should formalize it.
+
+	In theory, guaranteeing RCtso ordering would reduce the need
+	for additional barrier-like constructs meant to increase the
+	ordering strength of locks.
+
+	Will Deacon and Peter Zijlstra are strongly in favor of
+	formalizing the RCtso requirement.  Linus Torvalds and Will
+	would like to go even further, requiring locks to have RCsc
+	behavior (ordering preceding writes against later reads), but
+	they recognize that this would incur a noticeable performance
+	degradation on the POWER architecture.  Linus also points out
+	that people have made the mistake, in the past, of assuming
+	that locking has stronger ordering properties than is
+	currently guaranteed, and this change would reduce the
+	likelihood of such mistakes.
+
+	Not requiring ordinary acquire/release to be any stronger than
+	RCpc may prove advantageous for future architectures, allowing
+	them to implement smp_load_acquire() and smp_store_release()
+	with more efficient machine instructions than would be
+	possible if the operations had to be RCtso.  Will and Linus
+	approve this rationale, hypothetical though it is at the
+	moment (it may end up affecting the RISC-V implementation).
+	The same argument may or may not apply to RMW-acquire/release;
+	see also the second Con entry below.
+
+	Linus feels that locks should be easy for people to use
+	without worrying about memory consistency issues, since they
+	are so pervasive in the kernel, whereas acquire/release is
+	much more of an "experts only" tool.  Requiring locks to be
+	RCtso is a step in this direction.
+
+Cons:
+
+	Andrea Parri and Luc Maranget think that locks should have the
+	same ordering properties as ordinary acquire/release (indeed,
+	Luc points out that the names "acquire" and "release" derive
+	from the usage of locks).  Andrea points out that having
+	different ordering properties for different forms of acquires
+	and releases is not only unnecessary, it would also be
+	confusing and unmaintainable.
+
+	Locks are constructed from lower-level primitives, typically
+	RMW-acquire (for locking) and ordinary release (for unlock).
+	It is illogical to require stronger ordering properties from
+	the high-level operations than from the low-level operations
+	they comprise.  Thus, this change would make
+
+		while (cmpxchg_acquire(&s, 0, 1) != 0)
+			cpu_relax();
+
+	an incorrect implementation of spin_lock(&s) as far as the
+	LKMM is concerned.  In theory this weakness can be ameliorated
+	by changing the LKMM even further, requiring
+	RMW-acquire/release also to be RCtso (which it already is on
+	all supported architectures).
+
+	As far as I know, nobody has singled out any examples of code
+	in the kernel that actually relies on locks being RCtso.
+	(People mumble about RCU and the scheduler, but nobody has
+	pointed to any actual code.  If there are any real cases,
+	their number is likely quite small.)  If RCtso ordering is not
+	needed, why require it?
+
+	A handful of locking constructs (qspinlocks, qrwlocks, and
+	mcs_spinlocks) are built on top of smp_cond_load_acquire()
+	instead of an RMW-acquire instruction.  It currently provides
+	only the ordinary acquire semantics, not the stronger ordering
+	this patch would require of locks.  In theory this could be
+	ameliorated by requiring smp_cond_load_acquire() in
+	combination with ordinary release also to be RCtso (which is
+	currently true on all supported architectures).
+
+	On future weakly ordered architectures, people may be able to
+	implement locks in a non-RCtso fashion with significant
+	performance improvement.  Meeting the RCtso requirement would
+	necessarily add run-time overhead.
+
+Overall, the technical aspects of these arguments seem relatively
+minor, and it appears mostly to boil down to a matter of opinion.
+Since the opinions of senior kernel maintainers such as Linus,
+Peter, and Will carry more weight than those of Luc and Andrea, this
+patch changes the model in accordance with the maintainers' wishes.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reviewed-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+
+---
+
+v.5: Incorporated feedback from Andrea regarding the updated Changelog.
+
+v.4: Added pros and cons discussion to the Changelog.
+
+v.3: Rebased against the dev branch of Paul's linux-rcu tree.
+Changed unlock-rf-lock-po to po-unlock-rf-lock-po, making it more
+symmetrical and more in accordance with the use of fence.tso for
+the release on RISC-V.
+
+v.2: Restrict the ordering to lock operations, not general release
+and acquire fences.
+
+
+[as1871e]
+
+
+ tools/memory-model/Documentation/explanation.txt                           |  186 +++++++---
+ tools/memory-model/linux-kernel.cat                                        |    8 
+ tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus |    7 
+ 3 files changed, 150 insertions(+), 51 deletions(-)
+
+Index: usb-4.x/tools/memory-model/linux-kernel.cat
+===================================================================
+--- usb-4.x.orig/tools/memory-model/linux-kernel.cat
++++ usb-4.x/tools/memory-model/linux-kernel.cat
+@@ -38,7 +38,7 @@ let strong-fence = mb | gp
+ (* Release Acquire *)
+ let acq-po = [Acquire] ; po ; [M]
+ let po-rel = [M] ; po ; [Release]
+-let rfi-rel-acq = [Release] ; rfi ; [Acquire]
++let po-unlock-rf-lock-po = po ; [UL] ; rf ; [LKR] ; po
+ 
+ (**********************************)
+ (* Fundamental coherence ordering *)
+@@ -60,13 +60,13 @@ let dep = addr | data
+ let rwdep = (dep | ctrl) ; [W]
+ let overwrite = co | fr
+ let to-w = rwdep | (overwrite & int)
+-let to-r = addr | (dep ; rfi) | rfi-rel-acq
++let to-r = addr | (dep ; rfi)
+ let fence = strong-fence | wmb | po-rel | rmb | acq-po
+-let ppo = to-r | to-w | fence
++let ppo = to-r | to-w | fence | (po-unlock-rf-lock-po & int)
+ 
+ (* Propagation: Ordering from release operations and strong fences. *)
+ let A-cumul(r) = rfe? ; r
+-let cumul-fence = A-cumul(strong-fence | po-rel) | wmb
++let cumul-fence = A-cumul(strong-fence | po-rel) | wmb | po-unlock-rf-lock-po
+ let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+ 
+ (*
+Index: usb-4.x/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+===================================================================
+--- usb-4.x.orig/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
++++ usb-4.x/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
+@@ -1,11 +1,10 @@
+ C ISA2+pooncelock+pooncelock+pombonce
+ 
+ (*
+- * Result: Sometimes
++ * Result: Never
+  *
+- * This test shows that the ordering provided by a lock-protected S
+- * litmus test (P0() and P1()) are not visible to external process P2().
+- * This is likely to change soon.
++ * This test shows that write-write ordering provided by locks
++ * (in P0() and P1()) is visible to external process P2().
+  *)
+ 
+ {}
+Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+===================================================================
+--- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
++++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+@@ -28,7 +28,8 @@ Explanation of the Linux-Kernel Memory C
+   20. THE HAPPENS-BEFORE RELATION: hb
+   21. THE PROPAGATES-BEFORE RELATION: pb
+   22. RCU RELATIONS: rcu-link, gp, rscs, rcu-fence, and rb
+-  23. ODDS AND ENDS
++  23. LOCKING
++  24. ODDS AND ENDS
+ 
+ 
+ 
+@@ -1067,28 +1068,6 @@ allowing out-of-order writes like this t
+ violating the write-write coherence rule by requiring the CPU not to
+ send the W write to the memory subsystem at all!)
+ 
+-There is one last example of preserved program order in the LKMM: when
+-a load-acquire reads from an earlier store-release.  For example:
+-
+-	smp_store_release(&x, 123);
+-	r1 = smp_load_acquire(&x);
+-
+-If the smp_load_acquire() ends up obtaining the 123 value that was
+-stored by the smp_store_release(), the LKMM says that the load must be
+-executed after the store; the store cannot be forwarded to the load.
+-This requirement does not arise from the operational model, but it
+-yields correct predictions on all architectures supported by the Linux
+-kernel, although for differing reasons.
+-
+-On some architectures, including x86 and ARMv8, it is true that the
+-store cannot be forwarded to the load.  On others, including PowerPC
+-and ARMv7, smp_store_release() generates object code that starts with
+-a fence and smp_load_acquire() generates object code that ends with a
+-fence.  The upshot is that even though the store may be forwarded to
+-the load, it is still true that any instruction preceding the store
+-will be executed before the load or any following instructions, and
+-the store will be executed before any instruction following the load.
+-
+ 
+ AND THEN THERE WAS ALPHA
+ ------------------------
+@@ -1766,6 +1745,147 @@ before it does, and the critical section
+ grace period does and ends after it does.
+ 
+ 
++LOCKING
++-------
++
++The LKMM includes locking.  In fact, there is special code for locking
++in the formal model, added in order to make tools run faster.
++However, this special code is intended to be more or less equivalent
++to concepts we have already covered.  A spinlock_t variable is treated
++the same as an int, and spin_lock(&s) is treated almost the same as:
++
++	while (cmpxchg_acquire(&s, 0, 1) != 0)
++		cpu_relax();
++
++This waits until s is equal to 0 and then atomically sets it to 1,
++and the read part of the cmpxchg operation acts as an acquire fence.
++An alternate way to express the same thing would be:
++
++	r = xchg_acquire(&s, 1);
++
++along with a requirement that at the end, r = 0.  Similarly,
++spin_trylock(&s) is treated almost the same as:
++
++	return !cmpxchg_acquire(&s, 0, 1);
++
++which atomically sets s to 1 if it is currently equal to 0 and returns
++true if it succeeds (the read part of the cmpxchg operation acts as an
++acquire fence only if the operation is successful).  spin_unlock(&s)
++is treated almost the same as:
++
++	smp_store_release(&s, 0);
++
++The "almost" qualifiers above need some explanation.  In the LKMM, the
++store-release in a spin_unlock() and the load-acquire which forms the
++first half of the atomic rmw update in a spin_lock() or a successful
++spin_trylock() -- we can call these things lock-releases and
++lock-acquires -- have two properties beyond those of ordinary releases
++and acquires.
++
++First, when a lock-acquire reads from a lock-release, the LKMM
++requires that every instruction po-before the lock-release must
++execute before any instruction po-after the lock-acquire.  This would
++naturally hold if the release and acquire operations were on different
++CPUs, but the LKMM says it holds even when they are on the same CPU.
++For example:
++
++	int x, y;
++	spinlock_t s;
++
++	P0()
++	{
++		int r1, r2;
++
++		spin_lock(&s);
++		r1 = READ_ONCE(x);
++		spin_unlock(&s);
++		spin_lock(&s);
++		r2 = READ_ONCE(y);
++		spin_unlock(&s);
++	}
++
++	P1()
++	{
++		WRITE_ONCE(y, 1);
++		smp_wmb();
++		WRITE_ONCE(x, 1);
++	}
++
++Here the second spin_lock() reads from the first spin_unlock(), and
++therefore the load of x must execute before the load of y.  Thus we
++cannot have r1 = 1 and r2 = 0 at the end (this is an instance of the
++MP pattern).
++
++This requirement does not apply to ordinary release and acquire
++fences, only to lock-related operations.  For instance, suppose P0()
++in the example had been written as:
++
++	P0()
++	{
++		int r1, r2, r3;
++
++		r1 = READ_ONCE(x);
++		smp_store_release(&s, 1);
++		r3 = smp_load_acquire(&s);
++		r2 = READ_ONCE(y);
++	}
++
++Then the CPU would be allowed to forward the s = 1 value from the
++smp_store_release() to the smp_load_acquire(), executing the
++instructions in the following order:
++
++		r3 = smp_load_acquire(&s);	// Obtains r3 = 1
++		r2 = READ_ONCE(y);
++		r1 = READ_ONCE(x);
++		smp_store_release(&s, 1);	// Value is forwarded
++
++and thus it could load y before x, obtaining r2 = 0 and r1 = 1.
++
++Second, when a lock-acquire reads from a lock-release, and some other
++stores W and W' occur po-before the lock-release and po-after the
++lock-acquire respectively, the LKMM requires that W must propagate to
++each CPU before W' does.  For example, consider:
++
++	int x, y;
++	spinlock_t x;
++
++	P0()
++	{
++		spin_lock(&s);
++		WRITE_ONCE(x, 1);
++		spin_unlock(&s);
++	}
++
++	P1()
++	{
++		int r1;
++
++		spin_lock(&s);
++		r1 = READ_ONCE(x);
++		WRITE_ONCE(y, 1);
++		spin_unlock(&s);
++	}
++
++	P2()
++	{
++		int r2, r3;
++
++		r2 = READ_ONCE(y);
++		smp_rmb();
++		r3 = READ_ONCE(x);
++	}
++
++If r1 = 1 at the end then the spin_lock() in P1 must have read from
++the spin_unlock() in P0.  Hence the store to x must propagate to P2
++before the store to y does, so we cannot have r2 = 1 and r3 = 0.
++
++These two special requirements for lock-release and lock-acquire do
++not arise from the operational model.  Nevertheless, kernel developers
++have come to expect and rely on them because they do hold on all
++architectures supported by the Linux kernel, albeit for various
++differing reasons.
++
++
+ ODDS AND ENDS
+ -------------
+ 
+@@ -1831,26 +1951,6 @@ they behave as follows:
+ 	events and the events preceding them against all po-later
+ 	events.
+ 
+-The LKMM includes locking.  In fact, there is special code for locking
+-in the formal model, added in order to make tools run faster.
+-However, this special code is intended to be exactly equivalent to
+-concepts we have already covered.  A spinlock_t variable is treated
+-the same as an int, and spin_lock(&s) is treated the same as:
+-
+-	while (cmpxchg_acquire(&s, 0, 1) != 0)
+-		cpu_relax();
+-
+-which waits until s is equal to 0 and then atomically sets it to 1,
+-and where the read part of the atomic update is also an acquire fence.
+-An alternate way to express the same thing would be:
+-
+-	r = xchg_acquire(&s, 1);
+-
+-along with a requirement that at the end, r = 0.  spin_unlock(&s) is
+-treated the same as:
+-
+-	smp_store_release(&s, 0);
+-
+ Interestingly, RCU and locking each introduce the possibility of
+ deadlock.  When faced with code sequences such as:
+ 
+
