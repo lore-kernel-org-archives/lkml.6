@@ -2,141 +2,182 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59720ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165EDECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1639020881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:33:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MuDqghx0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1639020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F61120853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:37:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F61120853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeINPrO (ORCPT
+        id S1728056AbeINPvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:47:14 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53911 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbeINPrO (ORCPT
+        Fri, 14 Sep 2018 11:51:24 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52186 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbeINPvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:47:14 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b19-v6so1424526wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 03:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UQFRBcVxGnjSdeu6N94/HshPWKAGC1ok14ILiV35zX0=;
-        b=MuDqghx0afcYIZZssfvk45iFUCYB/BDdjBZCYlnXjuRUFjJruYasCKbNMqOvvvacY/
-         913DYZtZ7fvuXXTo3L46pyGZV+hfHfUn0/luVHAZJroixDRSbziV8tpUHQE1qAFezZLu
-         T2mwh24C5kqLI4pf8A06uTtFuN//PO+5+tBKgEId3o5vkXyFGdzIiAV0AF8JYvNYJqkl
-         dJDvq/TUp5d94kdpAUWEH9Lcm1Kt3SSOnmyqFsXzwbbwch5nSrD15PeEQa5Lfmmq8VFL
-         diWcYZ4yepT8Q8F1Vyj6uFGe+iGp+/UmMfbGouL+mcaLl2ICFXKZ0y4XJEz71f3kKaly
-         niVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UQFRBcVxGnjSdeu6N94/HshPWKAGC1ok14ILiV35zX0=;
-        b=k6mOhNVECPHeTQHmSpmXAVhuxuMYcLjTgOWEFN0H9nTjmr7MVp3yPmPc3rlTTRyH/i
-         hyZPa3iglDjQHk+19uPfHxbk4K44qT9zlPgZMmSogSBlUQNGsS+7y0eSho+1A03SZblT
-         t7NsDu7L4ku8D+uSsTBrVE+ndBwa9Fg8kguX+Z8PnsfbDShx4KEtllVAuiaeqs3L6/wc
-         Y/i337XVOq6qQ4ymorbvMdVR/jBqkRlIY7bvuspr6eQp2aPlzft/vH0/AsWoprXoQtV2
-         +btkiF5wkNavF8uTZ6Gltw9PE6hCwwjUBaekB8NUKbKsXvQuGxY+Y/02WKwVC4Pc5MMP
-         7UPA==
-X-Gm-Message-State: APzg51DWs2oFq+ZhxZnElCOhu2wmDZ5TTsMYBj9pfXGgs3HaGbQUcD9f
-        sHr8HNzZgz43sJVNPn329e/IyQ==
-X-Google-Smtp-Source: ANB0VdZbzK2lXVcAakPs/Rh8sNDvOsBV8cGti4MvKpqbMuoL2tCce7yB9AbI222PfeGjXYQJ9xCwaA==
-X-Received: by 2002:a1c:1eca:: with SMTP id e193-v6mr1591536wme.99.1536921200071;
-        Fri, 14 Sep 2018 03:33:20 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id r6-v6sm6376790wrt.92.2018.09.14.03.33.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Sep 2018 03:33:19 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net, jdmason@kudzu.us
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH 1/2] net: neterion: vxge: use linux/io-64-nonatomic-lo-hi.h
-Date:   Fri, 14 Sep 2018 10:33:09 +0000
-Message-Id: <1536921190-38619-2-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536921190-38619-1-git-send-email-clabbe@baylibre.com>
-References: <1536921190-38619-1-git-send-email-clabbe@baylibre.com>
+        Fri, 14 Sep 2018 11:51:24 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8EAbTmB084396;
+        Fri, 14 Sep 2018 19:37:29 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Fri, 14 Sep 2018 19:37:29 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8EAbOko084349
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 14 Sep 2018 19:37:29 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+References: <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
+ <20180620110759.GD444@jagdpanzerIV>
+ <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+ <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
+ <20180912065307.GA606@jagdpanzerIV>
+ <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
+ <20180913142802.GB517@tigerII.localdomain>
+ <20180914065728.GA515@jagdpanzerIV>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <49d22738-17ad-410a-be0a-d27d76ba9f37@i-love.sakura.ne.jp>
+Date:   Fri, 14 Sep 2018 19:37:21 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180914065728.GA515@jagdpanzerIV>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch replace the custom definition of writeq/read and use ones
-defined in linux/io-64-nonatomic-lo-hi.h.
+On 2018/09/14 15:57, Sergey Senozhatsky wrote:
+> On (09/13/18 23:28), Sergey Senozhatsky wrote:
+>> Not that I see any problems with pr_line_flush(). But can drop it, sure.
+>> pr_line() is a replacement for pr_cont() and as such it's not for multi-line
+>> buffering.
+> 
+> OK, attached.
+> Let me know if anything needs to improved (including broken English).
+> Will we keep in the printk tree or shall I send a formal patch to Andrew?
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/net/ethernet/neterion/vxge/vxge-config.c  |  1 +
- drivers/net/ethernet/neterion/vxge/vxge-config.h  | 20 --------------------
- drivers/net/ethernet/neterion/vxge/vxge-traffic.c |  1 +
- 3 files changed, 2 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 358ed61..2b422c5 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -13,6 +13,7 @@
-  ******************************************************************************/
- #include <linux/vmalloc.h>
- #include <linux/etherdevice.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/pci.h>
- #include <linux/pci_hotplug.h>
- #include <linux/slab.h>
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.h b/drivers/net/ethernet/neterion/vxge/vxge-config.h
-index d743a37..e678ba3 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.h
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.h
-@@ -2011,26 +2011,6 @@ enum vxge_hw_status vxge_hw_vpath_mtu_set(
- void
- vxge_hw_vpath_rx_doorbell_init(struct __vxge_hw_vpath_handle *vp);
- 
--#ifndef readq
--static inline u64 readq(void __iomem *addr)
--{
--	u64 ret = 0;
--	ret = readl(addr + 4);
--	ret <<= 32;
--	ret |= readl(addr);
--
--	return ret;
--}
--#endif
--
--#ifndef writeq
--static inline void writeq(u64 val, void __iomem *addr)
--{
--	writel((u32) (val), addr);
--	writel((u32) (val >> 32), (addr + 4));
--}
--#endif
--
- static inline void __vxge_hw_pio_mem_write32_upper(u32 val, void __iomem *addr)
- {
- 	writel(val, addr + 4);
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-traffic.c b/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
-index 0c3b5de..30e5cdc 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-traffic.c
-@@ -12,6 +12,7 @@
-  * Copyright(c) 2002-2010 Exar Corp.
-  ******************************************************************************/
- #include <linux/etherdevice.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/prefetch.h>
- 
- #include "vxge-traffic.h"
--- 
-2.7.4
+
+> @@ -20,6 +20,9 @@
+>   * Annotation for a "continued" line of log printout (only done after a
+>   * line that had no enclosing \n). Only to be used by core/arch code
+>   * during early bootup (a continued line is not SMP-safe otherwise).
+> + *
+> + * Please consider pr_line()/vpr_line() functions for SMP-safe continued
+> + * line printing.
+
+I think the advantage is not limited to SMP-safeness. Reducing the frequency of
+calling printk() will reduce overhead. Also, latency for netconsole will be
+reduced by sending a whole line in one printk().
+
+
+
+> +/**
+> + * DEFINE_PR_LINE - define a new pr_line variable
+> + * @lev:	printk() log level
+> + * @name:	variable name
+> + *
+> + * Defines a new pr_line varialbe, which would use an implicit
+
+s/varialbe/variable/ .
+
+> + * stack buffer of size __PR_LINE_BUF_SZ.
+> + */
+> +#define DEFINE_PR_LINE(lev, name)				\
+> +	char		__line_##name[__PR_LINE_BUF_SZ];	\
+> +	struct pr_line	name = {				\
+> +		.sb	= __SEQ_BUF_INITIALIZER(__line_##name,	\
+> +					__PR_LINE_BUF_SZ),	\
+> +		.level	= lev,					\
+> +	}
+
+Want a note that
+
+  static DEFINE_PR_LINE(lev, name);
+
+won't make "name" variable "static" ?
+
+
+
+> +/**
+> + * DEFINE_PR_LINE_BUF - define a new pr_line variable
+> + * @lev:	printk() log level
+> + * @name:	variable name
+> + * @buf:	external buffer
+> + * @sz:	external buffer size
+> + *
+> + * Defines a new pr_line variable, which would use an external
+> + * buffer for printk line.
+> + */
+> +#define DEFINE_PR_LINE_BUF(lev, name, buf, sz)			\
+> +	struct pr_line	name = {				\
+> +		.sb	= __SEQ_BUF_INITIALIZER(buf, (sz)),	\
+> +		.level	= lev,					\
+> +	}
+> +
+
+I would use this one for the OOM killer. 80 bytes is too short.
+
+  static char oom_print_buf[1024];
+  DEFINE_PR_LINE_BUF(level, oom_print_buf);
+
+
+
+> @@ -131,4 +187,8 @@ extern int
+>  seq_buf_bprintf(struct seq_buf *s, const char *fmt, const u32 *binary);
+>  #endif
+>  
+> +extern __printf(2, 0)
+> +int vpr_line(struct pr_line *pl, const char *fmt, va_list args);
+> +extern __printf(2, 3)
+> +int pr_line(struct pr_line *pl, const char *fmt, ...);
+
+Do we want to mark "asmlinkage" like printk() ?
+
+> @@ -324,3 +324,60 @@ int seq_buf_to_user(struct seq_buf *s, char __user *ubuf, int cnt)
+>  	s->readpos += cnt;
+>  	return cnt;
+>  }
+> +
+> +/**
+> + * vpr_line - Append data to the printk() line buffer
+> + * @pl: the pr_line descriptor
+
+s/descriptor/structure/ ?
+
+> + * @fmt: printf format string
+> + * @args: va_list of arguments from a printf() type function
+> + *
+> + * Writes a vnprintf() format into the printk() pr_line buffer.
+
+s/vnprintf/vprintf/ ?
 
