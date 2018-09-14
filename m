@@ -2,265 +2,119 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35279ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58084ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C371F21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C371F21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0AE1D20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:35:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ah5MuoBN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE1D20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbeIOBvP convert rfc822-to-8bit (ORCPT
+        id S1728219AbeIOBvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:51:15 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50763 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeIOBvO (ORCPT
+        Fri, 14 Sep 2018 21:51:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49774 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeIOBvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:51:14 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g0unt-00088n-HE; Fri, 14 Sep 2018 22:35:01 +0200
-Date:   Fri, 14 Sep 2018 22:35:01 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
-Message-ID: <20180914203501.qibhpmueosvkr74w@linutronix.de>
-References: <20180912133353.20595-1-bigeasy@linutronix.de>
- <20180912133353.20595-5-bigeasy@linutronix.de>
- <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
+        Fri, 14 Sep 2018 21:51:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VbBHMVEyJI1lGgMge03sxnARe40m8CUxZGs5+O/1YWA=; b=Ah5MuoBNmEA4BLkku0YZio3kn
+        DAVGqIPUQWoBI9uhXleLpEL6JkuzH97OKLlZXbNGHdqk5o+SDPGjpWQoJAFfHRttYrzyAPEoAsWg4
+        L25NruAhikuc+3fGwc9iwwe/EmHiqL+cXEdpbCSrk/yTN/7bz0FXKPzbA3i0mn+uB6XjA0Ut2v1Lu
+        vcYTE3a7uq8oB+aivhjrxeSKr7N7i8F0rR4UlMm2j+8b9R8itFBPrBV0SOwqHJAT0DeDJqekdQ+U3
+        o6Q7uecIHrRLCUbVhVQ3c9o5XPYsSI2T89+VEIErp/3qxvoaTtGKNTv1xQDldcGdQCkQ6ROOtQDMJ
+        9pBT4saZA==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g0uo1-00073o-GL; Fri, 14 Sep 2018 20:35:09 +0000
+Date:   Fri, 14 Sep 2018 13:35:06 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        qat-linux@intel.com, linux-crypto@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
+ generic_compat_ioctl_ptrarg
+Message-ID: <20180914203506.GE35251@wrath>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912151134.436719-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While most of a task's FPU state is only needed in user space,
-the protection keys need to be in place immediately after a
-context switch.
-
-The reason is that any accesses to userspace memory while running
-in kernel mode also need to abide by the memory permissions
-specified in the protection keys.
-
-The pkru info is put in its own cache line in the fpu struct because
-that cache line is accessed anyway at context switch time.
-Remove XFEATURE_MASK_PKRU from supported flags. This removes the PKRU
-state from XSAVE/XRESTORE and so decouples it from the FPU state.
-
-The initial state of pkru is updated in pkru_set_init_value() via
-fpu__clear() - it is no longer affected by fpstate_init().
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-[bigeasy: load PKRU state only if we also load FPU content]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-
-v1…v2: remove PKRU from xsave/srestore.
-
-On 2018-09-12 16:18:44 [+0200], Paolo Bonzini wrote:
-
-> I think you can go a step further and exclude PKRU state from
-> copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
-> means you don't need to call __fpregs_* functions in write_pkru.
-
-something like this then? It looks like kvm excludes PKRU from
-xsave/xrestore, too. This wouldn't be required then. This is (again)
-untested since I have no box with this PKRU feature. This only available
-on Intel's Xeon Scalable, right?
-
-> Thanks,
+On Wed, Sep 12, 2018 at 05:08:52PM +0200, Arnd Bergmann wrote:
+> The .ioctl and .compat_ioctl file operations have the same prototype so
+> they can both point to the same function, which works great almost all
+> the time when all the commands are compatible.
 > 
-> Paolo
+> One exception is the s390 architecture, where a compat pointer is only
+> 31 bit wide, and converting it into a 64-bit pointer requires calling
+> compat_ptr(). Most drivers here will ever run in s390, but since we now
+> have a generic helper for it, it's easy enough to use it consistently.
+> 
+> I double-checked all these drivers to ensure that all ioctl arguments
+> are used as pointers or are ignored, but are not interpreted as integer
+> values.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+...
+>  drivers/platform/x86/wmi.c                  | 2 +-
+...
+>  static void link_event_work(struct work_struct *work)
+> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+> index 04791ea5d97b..e4d0697e07d6 100644
+> --- a/drivers/platform/x86/wmi.c
+> +++ b/drivers/platform/x86/wmi.c
+> @@ -886,7 +886,7 @@ static const struct file_operations wmi_fops = {
+>  	.read		= wmi_char_read,
+>  	.open		= wmi_char_open,
+>  	.unlocked_ioctl	= wmi_ioctl,
+> -	.compat_ioctl	= wmi_ioctl,
+> +	.compat_ioctl	= generic_compat_ioctl_ptrarg,
+>  };
 
- arch/x86/include/asm/fpu/internal.h | 14 ++++++++++++--
- arch/x86/include/asm/fpu/types.h    |  7 +++++++
- arch/x86/include/asm/fpu/xstate.h   |  1 -
- arch/x86/include/asm/pgtable.h      |  7 +++++--
- arch/x86/include/asm/pkeys.h        |  2 +-
- arch/x86/kernel/fpu/core.c          |  2 +-
- arch/x86/kernel/fpu/xstate.c        |  4 ----
- arch/x86/mm/pkeys.c                 | 21 ++++-----------------
- include/linux/pkeys.h               |  2 +-
- 9 files changed, 31 insertions(+), 29 deletions(-)
+For platform/drivers/x86:
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 16c4077ffc945..903ee77b6d5b0 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -573,8 +573,18 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
- 	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
- 		       new_fpu->initialized;
- 
--	if (preload)
--		__fpregs_load_activate(new_fpu, cpu);
-+	if (!preload)
-+		return;
-+
-+	__fpregs_load_activate(new_fpu, cpu);
-+
-+#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-+	/* Protection keys need to be in place right at context switch time. */
-+	if (boot_cpu_has(X86_FEATURE_OSPKE)) {
-+		if (new_fpu->pkru != __read_pkru())
-+			__write_pkru(new_fpu->pkru);
-+	}
-+#endif
- }
- 
- /*
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index 202c53918ecfa..257b092bdaa4e 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -293,6 +293,13 @@ struct fpu {
- 	 */
- 	unsigned int			last_cpu;
- 
-+	/*
-+	 * Protection key bits. The protection key needs to be switched out
-+	 * immediately at context switch time, so it is in place for things
-+	 * like copy_to_user.
-+	 */
-+	unsigned int			pkru;
-+
- 	/*
- 	 * @initialized:
- 	 *
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index 48581988d78c7..abe8793fa50f9 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -29,7 +29,6 @@
- 				 XFEATURE_MASK_OPMASK | \
- 				 XFEATURE_MASK_ZMM_Hi256 | \
- 				 XFEATURE_MASK_Hi16_ZMM	 | \
--				 XFEATURE_MASK_PKRU | \
- 				 XFEATURE_MASK_BNDREGS | \
- 				 XFEATURE_MASK_BNDCSR)
- 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 690c0307afed0..d87bdfaf45e56 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -134,8 +134,11 @@ static inline u32 read_pkru(void)
- 
- static inline void write_pkru(u32 pkru)
- {
--	if (boot_cpu_has(X86_FEATURE_OSPKE))
--		__write_pkru(pkru);
-+	if (!boot_cpu_has(X86_FEATURE_OSPKE))
-+		return;
-+
-+	current->thread.fpu.pkru = pkru;
-+	__write_pkru(pkru);
- }
- 
- static inline int pte_young(pte_t pte)
-diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-index 19b137f1b3beb..b184f916319e5 100644
---- a/arch/x86/include/asm/pkeys.h
-+++ b/arch/x86/include/asm/pkeys.h
-@@ -119,7 +119,7 @@ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
- 		unsigned long init_val);
- extern int __arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
- 		unsigned long init_val);
--extern void copy_init_pkru_to_fpregs(void);
-+extern void pkru_set_init_value(void);
- 
- static inline int vma_pkey(struct vm_area_struct *vma)
- {
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 2ea85b32421a0..72cd2e2a07194 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -373,7 +373,7 @@ static inline void copy_init_fpstate_to_fpregs(void)
- 		copy_kernel_to_fregs(&init_fpstate.fsave);
- 
- 	if (boot_cpu_has(X86_FEATURE_OSPKE))
--		copy_init_pkru_to_fpregs();
-+		pkru_set_init_value();
- }
- 
- /*
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d36..11014d841b9f7 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -920,10 +920,6 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
- 	int pkey_shift = (pkey * PKRU_BITS_PER_PKEY);
- 	u32 new_pkru_bits = 0;
- 
--	/*
--	 * This check implies XSAVE support.  OSPKE only gets
--	 * set if we enable XSAVE and we enable PKU in XCR0.
--	 */
- 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
- 		return -EINVAL;
- 
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index 6e98e0a7c9231..2f9d95206c741 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -137,26 +137,13 @@ u32 init_pkru_value = PKRU_AD_KEY( 1) | PKRU_AD_KEY( 2) | PKRU_AD_KEY( 3) |
- 		      PKRU_AD_KEY(10) | PKRU_AD_KEY(11) | PKRU_AD_KEY(12) |
- 		      PKRU_AD_KEY(13) | PKRU_AD_KEY(14) | PKRU_AD_KEY(15);
- 
--/*
-- * Called from the FPU code when creating a fresh set of FPU
-- * registers.  This is called from a very specific context where
-- * we know the FPU regstiers are safe for use and we can use PKRU
-- * directly.
-- */
--void copy_init_pkru_to_fpregs(void)
-+void pkru_set_init_value(void)
- {
- 	u32 init_pkru_value_snapshot = READ_ONCE(init_pkru_value);
--	/*
--	 * Any write to PKRU takes it out of the XSAVE 'init
--	 * state' which increases context switch cost.  Avoid
--	 * writing 0 when PKRU was already 0.
--	 */
--	if (!init_pkru_value_snapshot && !read_pkru())
-+
-+	if (init_pkru_value_snapshot == read_pkru())
- 		return;
--	/*
--	 * Override the PKRU state that came from 'init_fpstate'
--	 * with the baseline from the process.
--	 */
-+
- 	write_pkru(init_pkru_value_snapshot);
- }
- 
-diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
-index 2955ba9760489..9a9efecc1388f 100644
---- a/include/linux/pkeys.h
-+++ b/include/linux/pkeys.h
-@@ -44,7 +44,7 @@ static inline bool arch_pkeys_enabled(void)
- 	return false;
- }
- 
--static inline void copy_init_pkru_to_fpregs(void)
-+static inline void pkru_set_init_value(void)
- {
- }
- 
+Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+
+As for a longer term solution, would it be possible to init fops in such
+a way that the compat_ioctl call defaults to generic_compat_ioctl_ptrarg
+so we don't have to duplicate this boilerplate for every ioctl fops
+structure?
+
 -- 
-2.19.0
-
+Darren Hart
+VMware Open Source Technology Center
