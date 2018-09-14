@@ -2,137 +2,118 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70C5ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942F1ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67FD320853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FFB2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:45:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sbwT+coS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FD320853
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="F8IzLuYR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FFB2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeINXBF (ORCPT
+        id S1728235AbeINXBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:01:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37584 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbeINXBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:01:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u12-v6so11398126wrr.4;
-        Fri, 14 Sep 2018 10:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=VXXx9HvWRIDEQarI3gEXwi4IGS4iD4IPQ5hP7GBn9wk=;
-        b=sbwT+coSpCG5fPfmqnDkLr9Hvz0UfYfPNqPUGynYAYA/O/oMPDg9ztk2i9SkIIjh9u
-         D5jTQG4YYpNNaiOReVzNyyMp4UzJlmBrs5mcE6ENo0n4tdpVZfU8xIwSV6LSDwy5dOAd
-         qpYlDNt898XwCwx9073PKAWZ4mUrqgDBdLRZM5Kocd+cllHFJazXVRpBmmO561TT9weC
-         uYUMY7ZqsAAJxeFfuMbhwbUJs/vsMV+wjMknUcAu0GnWmxyA8I3HH+LHHkm1tFJXmxdI
-         f99H8Z55xtiQ89MUy9Oe50XWr1LzqvOZ2lMH8i161YjNJN4Ow2+K7T+RexeZebP95UUe
-         7HKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=VXXx9HvWRIDEQarI3gEXwi4IGS4iD4IPQ5hP7GBn9wk=;
-        b=GBnLRmF3yX+h01cdC6tTUCxiR1gczTahpmjzxQZEQt4JgCOkQmkMQlfVGGg/d/ExVz
-         1keFe8TtPjatU+zpnI4+SrGAmDqxcs30SsBzktA7X7+3eUrkPp6tO8xl1GtlqeMF3+tb
-         wqg1p1x2UMHEll//zTbxccKlZX7aWg1FcVTyzvFfXS/pNqwc3qDNC3ZmRsy3bGwtPCHk
-         T3OY7Z7ZqR8SptPJT9xFsxmOzLtp2W7iuj2U/Z0mZMil+EB01EUx2lJfBmcRQCHePiBp
-         ziyWVllMJNYwAbbzMbBC9ryih2oBDd1WmCRiSwO/iZFEhbfZu/UJmDiAV6i2v0fpqsx/
-         An5A==
-X-Gm-Message-State: APzg51ApjKwCwjewCaKkHL5ec0459EYPB3fPUn4SKITu3AgjBbSOzq57
-        IkYamBzsJyqoGjKcbEAhL3w=
-X-Google-Smtp-Source: ANB0VdbU6qdK/UO7FV04jaf5n4Q5k+rp/IZl2h+Z9dDtKvLL/JMugEFQpDzdBi07c4YmplyFBQYFWA==
-X-Received: by 2002:a5d:5344:: with SMTP id t4-v6mr11194075wrv.257.1536947131798;
-        Fri, 14 Sep 2018 10:45:31 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id e133-v6sm4918754wma.33.2018.09.14.10.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 10:45:30 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 19:45:28 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Joseph =?iso-8859-1?Q?Myers=A0?= <joseph@codesourcery.com>,
-        David Howells <dhowells@redhat.com>, libc-alpha@sourceware.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RFC] making uapi/linux/elfcore.h useful again
-Message-ID: <20180914174528.GA35000@gmail.com>
-References: <20180914113929.953895-1-arnd@arndb.de>
+        Fri, 14 Sep 2018 19:01:21 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:35031 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727029AbeINXBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 19:01:20 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 97cec5e7;
+        Fri, 14 Sep 2018 17:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=F4od+g2uUE7skfneZs4SE6ivRPs=; b=F8IzLu
+        YRanBYzdzvA4+RvZwXGL/dhaC701TDg4jlekLIVD9va6ErM29UT6m08rGivcli0O
+        y7+RR7wnfflcG7+a6Y6vR96iTi3AD3yLmMUzeKG5kRJ62V7+qsXfl30Qhpp5zUv7
+        eAMjNqHWGW/PKukT2ZsPZ6KGOzR/666datYTf3N/0BqLex+rsgm7s7B0fMtLOysk
+        1A+r/KS1m6+akegXNrkA3sJVhdzDc/o8S46YpSabBJIicktbWiYHbjX2RM0ki7hC
+        a0w2T46iEMbpiSOTzcrFl7N4/lzSi1sJwEPsYbqqXI9s9NJODaThcbsjBUXiM3F/
+        kht1RLnqF/FGK1Ew==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5db300ab (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Fri, 14 Sep 2018 17:28:41 +0000 (UTC)
+Received: by mail-ot1-f52.google.com with SMTP id a19-v6so5369903otl.12;
+        Fri, 14 Sep 2018 10:45:45 -0700 (PDT)
+X-Gm-Message-State: APzg51Ae/uCXuU0cLnkYpWNaKDJaNSMKrRCwN0WKGtn4FGnsdH6nYSHn
+        dQQ9Upys2YHmh/drGAueUeRguum8OocA3u1OL8U=
+X-Google-Smtp-Source: ANB0VdbhSrbDhbgstQRKxi0EBgEHF2jHuGcomM5u0Lp6hIhzhJWiCSsy2yvXHlxvBMSaeV+Lsu3VMYUF5aIz5pUavmY=
+X-Received: by 2002:a9d:2dc8:: with SMTP id g66-v6mr4953890otb.311.1536947144119;
+ Fri, 14 Sep 2018 10:45:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180914113929.953895-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180914162240.7925-1-Jason@zx2c4.com> <20180914162240.7925-9-Jason@zx2c4.com>
+ <CAKv+Gu8BD=fLk3zm8tvRQ3H-yiePqzXOrKLEz1BLFSRRz2opOQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8BD=fLk3zm8tvRQ3H-yiePqzXOrKLEz1BLFSRRz2opOQ@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 14 Sep 2018 19:45:32 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rnzs5x3RTa3ZY0wYvScwssOumNL90YMTXyO4sv8Lwvgw@mail.gmail.com>
+Message-ID: <CAHmME9rnzs5x3RTa3ZY0wYvScwssOumNL90YMTXyO4sv8Lwvgw@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 08/20] zinc: Poly1305 ARM and ARM64 implementations
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Andy Polyakov <appro@openssl.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ard,
 
-* Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Sep 14, 2018 at 7:27 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> As I asked in response to v3, could we please have this as a separate
+> patch on top? The diff below is corrupted.
 
-> After finding a bug in glibc the question came up how linux/elfcore.h
-> is supposed to be used from user space. As far as I can tell, it's
-> not possible, as it references data types that are simply unavailable
-> there.
-> 
-> The #ifndef __KERNEL__ section in that header dates back to when the
-> file was introduced in linux-1.3.5, and presumably was meant to
-> provide the structures for the libc sys/procfs.h implementation.
-> However, this was never portable to architectures other than x86-32,
-> and has been broken on that architecture at a later point.
-> 
-> These are the steps that I needed to make it possible to include the
-> header file, e.g. for libc self-testing in order to make sure the
-> structures are compatible with its own:
-> 
-> - drop the #ifndef __KERNEL__ section that are obviously useless
->   and get in the way
-> 
-> - change the pid_t references to __kernel_pid_t
-> 
-> - Move required data from the private x86 asm/elf.h file into
->   a new uapi/asm/elf.h. Some other architectures already do that,
->   but most of them do not. Before applying the patch, we have
->   to do this for all architectures
-> 
-> - Change ELF_NGREG to an integer literal constant instead of
->   a sizeof operation based on a private type.
-> 
-> Cc: Joseph Myers <joseph@codesourcery.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: libc-alpha@sourceware.org
-> Link: https://patchwork.ozlabs.org/patch/969540/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/x86/include/asm/elf.h         | 24 +-----------------------
->  arch/x86/include/uapi/asm/elf.h    | 30 ++++++++++++++++++++++++++++++
->  arch/x86/include/uapi/asm/signal.h |  2 +-
->  include/uapi/linux/elf.h           |  1 +
->  include/uapi/linux/elfcore.h       | 26 +++++---------------------
->  5 files changed, 38 insertions(+), 45 deletions(-)
->  create mode 100644 arch/x86/include/uapi/asm/elf.h
+I had played with that originally, but thought it made things actually
+harder to review, whereas here you have the changes presented pretty
+straight forwardly, and I'd appreciate your review of them. If you and
+Eric both prefer I split this into two commits, with the first one
+just plopping down the CRYPTOGAMS code as is and the second one
+bringing it up to kernel-snuff, I can do that.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+> Also, both Andy and Eric have offered to get involved in upstreaming
+> these changes to OpenSSL, so there is no delta to begin with.
 
-I suspect this wants to go through -mm, or do you want to carry it?
+Yes, I think this is probably a good long-term plan, which we can act
+on sometime after Zinc is merged.
 
-Thanks,
+> I still don't like the GCC -includes, especially because these .h
+> files contain function and variable definitions so they are not
+> actually header files to begin with.
 
-	Ingo
+I very very strongly disagree with you here. I think doing it via
+-include is significantly cleaner than any of the alternatives, and
+allows the code to be cleanly expressed as conditionals that the
+optimizer trivially compiles out in the case of stub functions
+returning false and branch optimizes when the stub functions return
+true. It is extremely important that these compile together as one
+compilation unit. Yes, this is a different design than the crypto
+API's approach, but I believe the approach presented here poses
+significant improvements and is a lot cleaner.
+
+> Also, you mentioned in the commit log that you got rid of defines and
+> made the code more modular, but as far as I can tell, libzinc is still
+> a single monolithic binary that is essentially always builtin once we
+> move random.c to it.
+
+Yes, it's still monolithic, but it's now trivial to split up when the
+time comes to do that. If you and AndyL think that it should be split
+into multiple modules _now_, then I can go ahead and do that for v5.
+But if it's not essential, it seems simpler to keep it as is. I'll
+wait for word from you two on this.
+
+Jason
