@@ -2,99 +2,129 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED05ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D185AECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9381620881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9381620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EC9720881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC9720881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbeIOBwt (ORCPT
+        id S1728193AbeIOBx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:52:49 -0400
-Received: from mga05.intel.com ([192.55.52.43]:60388 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbeIOBvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:51:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 13:35:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
-   d="scan'208";a="263593790"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Sep 2018 13:35:44 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
-        "Tony Luck" <tony.luck@intel.com>
-Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "Xiaochen Shen" <xiaochen.shen@intel.com>,
-        "Chen Yu" <yu.c.chen@intel.com>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, "Fenghua Yu" <fenghua.yu@intel.com>
-Subject: [PATCH 0/9] x86/intel_rdt: MBA integration fixes
-Date:   Fri, 14 Sep 2018 13:32:00 -0700
-Message-Id: <1536957129-70380-1-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
+        Fri, 14 Sep 2018 21:53:56 -0400
+Received: from g2t2352.austin.hpe.com ([15.233.44.25]:29205 "EHLO
+        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbeIOBx4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 21:53:56 -0400
+Received: from G2W6311.americas.hpqcorp.net (g2w6311.austin.hp.com [16.197.64.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id 354DDB9;
+        Fri, 14 Sep 2018 20:37:50 +0000 (UTC)
+Received: from G9W8670.americas.hpqcorp.net (16.220.49.29) by
+ G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Sep 2018 20:37:50 +0000
+Received: from G1W8106.americas.hpqcorp.net (16.193.72.61) by
+ G9W8670.americas.hpqcorp.net (16.220.49.29) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 14 Sep 2018 20:37:49 +0000
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (15.241.52.13) by
+ G1W8106.americas.hpqcorp.net (16.193.72.61) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Fri, 14 Sep 2018 20:37:49 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
+ AT5PR8401MB0898.NAMPRD84.PROD.OUTLOOK.COM (10.169.6.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.15; Fri, 14 Sep 2018 20:37:48 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ac4f:ac06:14f9:d283]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ac4f:ac06:14f9:d283%2]) with mapi id 15.20.1143.014; Fri, 14 Sep 2018
+ 20:37:48 +0000
+From:   "Kani, Toshi" <toshi.kani@hpe.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH 3/5] x86: pgtable: Drop pXd_none() checks from
+ pXd_free_pYd_table()
+Thread-Topic: [PATCH 3/5] x86: pgtable: Drop pXd_none() checks from
+ pXd_free_pYd_table()
+Thread-Index: AQHUSoMTsCmedJ847kC065sH/qNN66TwQJAA
+Date:   Fri, 14 Sep 2018 20:37:48 +0000
+Message-ID: <dc8b03de1e3318e3dd577d80482260f99ab4e9a5.camel@hpe.com>
+References: <1536747974-25875-1-git-send-email-will.deacon@arm.com>
+         <1536747974-25875-4-git-send-email-will.deacon@arm.com>
+In-Reply-To: <1536747974-25875-4-git-send-email-will.deacon@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com; 
+x-originating-ip: [15.219.147.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0898;6:5T+UxHyEwcAHF09LT/H0bmRgsAeR5ryggm+iKPOvXMaFeSt7mg2DosgG28BBGPKcKmYa5rCzzu+dVV18CjYWSauadQeel2k+ehPMk1luuqNmXrd9LViBohQHm6oBmCYg6KhBhBP7VOHKPrNjjyew1c+wYS8vhocjepNNBy4UhCdYYnDZcxCHsYA0USpPHjUcp0SHEZhwfzvE/+Jdc21AzMioOeAOdmNTgS92dSvsdM8VcC3lBEcKVUrsyhGhBARHMu6tTao9UCBjWrt7yxzhzRhlIboK9kkjVeYH5N/gS4dmBBuvNJU4kr2SYzTuwPO9772eRd7Jhq+Al61vNBNIgxXnaoyieuzpFdn2iD5XoWDIn7XD/vTUjuYMR37R3JiwwMAg3/WQBfp/GZWePfgKXgwb5cza4Zp6kRLPh4KOIWhpGzP1x52W7gBYJr2g2shzBX7zUKzrcSwBtkZBJj1XXg==;5:eyYv9FXaGDm8HpiOvZKyi0bV7IsZhlLbJPYYF7qoYrI0NphzZWVxTjQx4co9G3/xC/OXw0/jUJCmGZWQLI/y+8ww+8Tzq6h5OQukiIp2C6ldIV6SLN+TaFSzyS5sXUcmqapGp9lGA0pMDkRLV/3KsTV51sR8W9cA1AQZZWerKDw=;7:IBONwmzFaDWeLyrrCxXUboVtkrumqMYvYn1izQHS8hjFiU63uMeeWPrLdrcBGpQlY2R6BorF7Cdt+hQGKCMrLgPZqoP9kyF/HEXEswwmwrVSbj2d2x8H5Or2uDeQ9pjStuGJDDTo1pkYLLmFVS8RLLRjBYtmHW6yZ0T/K/O9k5HTRmAdNI5j5hdgnwPsN7QqiBdBqh5BHjTMMM9YAqYQzfp23zdlOzxzAAwotnmVoXjY8Fn86Y2vd1up2LOHmdbp
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 72553b4b-7945-4a18-bebc-08d61a81eee3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0898;
+x-ms-traffictypediagnostic: AT5PR8401MB0898:
+x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
+x-microsoft-antispam-prvs: <AT5PR8401MB0898AACAB19D08943D4B07E482190@AT5PR8401MB0898.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(227479698468861)(180628864354917)(222181515654134);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:AT5PR8401MB0898;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0898;
+x-forefront-prvs: 07954CC105
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(136003)(346002)(199004)(189003)(57704003)(105586002)(316002)(68736007)(118296001)(2616005)(14454004)(446003)(97736004)(6116002)(11346002)(2906002)(25786009)(106356001)(3846002)(6436002)(6512007)(4326008)(6486002)(6246003)(53936002)(229853002)(478600001)(2900100001)(2501003)(486006)(5250100002)(8936002)(6506007)(66066001)(102836004)(36756003)(256004)(8676002)(81166006)(2201001)(81156014)(76176011)(7736002)(5660300001)(110136005)(86362001)(305945005)(476003)(99286004)(54906003)(186003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0898;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /pvEt+uGwMfjPHxgDPDwxM4aakvosS7g/EeSqJMgtiiyJN5QqfC6fv+664yHqfwZrzRwP7q2Af+IpwgY39miSPuKKWLGPtRp28HFZ6BtzDjikQ10Dy7jSaqa0Ui7lNcY6LEqwP++3mCwRFi0wwV03ZJQNXwiCUbyg0G01hapc7VkdrsqI6PX25quVfd/IHA2oWNexmMpm8jRT7BneT5M9YY8oGXgNJI/qkkzhbPloK28fK4/ExaHvP7NZBB3jRP01CY2N03LKw9yJ+VD1ZUXjSNIUuETadnzW4ku47Sbblf8u+B9FOwjMpY2SIYleujXYicLIamz36WvTpDCmlI51daCHaEqjbQW1OxPtpKCz/s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E1FA3F5CC3F7D74FA70DC541EA54D9DA@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72553b4b-7945-4a18-bebc-08d61a81eee3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2018 20:37:48.0249
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0898
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chen Yu reported an issue where reading the resctrl "size" file results in
-a divide-by-zero issue on a system with a MBA resource. Further
-investigation revealed more issues where the recent RDT features are not
-well integrated with the MBA resource handling.
-
-This series consists out of:
- - One helper function in support of fixes that need to know the number of
-   supported CLOSIDs on the system (the minimum of all CLOSIDs of all
-   resources).
- - The fix to the issue reported by Chen Yu  - now reading a resource
-   group's "size" file will show a MB resource's allocation as its size.
- - A fix from Xiaochen Shen to the MB parsing callback that was never
-   changed to accept a new parameter format.
- - Functions that iterate over the number of CLOSIDs need to take care
-   whether it is using a particular resource's supported CLOSIDs or the
-   number of CLOSIDs supported by the system. This was done incorrectly in
-   a few places and fixed here.
- - When a new resource group is created it is intended to be configured
-   with sane defaults. This new feature blindly assumed that the resource
-   group only consists out of cache resources - make this explicit to not
-   cause invalid register writes on a system with MBA resources.
- - The new "exclusive" mode assumes that all resources support a CBM, while
-   a MBA resource does not. Since the MBA resource allocations cannot be
-   done in a way to specify whether allocations can overlap or not the
-   "exclusive" mode of a resource group will only apply to the cache
-   resources within the group, if only a MBA resource is present then
-   "exclusive" mode will not be allowed.
-
-Reinette Chatre (8):
-  x86/intel_rdt: Fix size reporting of MBA resource
-  x86/intel_rdt: Global closid helper to support future fixes
-  x86/intel_rdt: Fix invalid mode warning when
-  x86/intel_rdt: Fix unchecked MSR access
-  x86/intel_rdt: Do not allow pseudo-locking of MBA resource
-  x86/intel_rdt: Fix incorrect loop end condition
-  x86/intel_rdt: Fix exclusive mode handling of MBA resource
-  x86/intel_rdt: Fix incorrect loop end condition
-
-Xiaochen Shen (1):
-  x86/intel_rdt: Fix MBA parsing callback
-
- arch/x86/kernel/cpu/intel_rdt.h             |  3 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 30 +++++++-----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 53 +++++++++++++++++----
- 3 files changed, 64 insertions(+), 22 deletions(-)
-
--- 
-2.19.0
-
+T24gV2VkLCAyMDE4LTA5LTEyIGF0IDExOjI2ICswMTAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
+Tm93IHRoYXQgdGhlIGNvcmUgY29kZSBjaGVja3MgdGhpcyBmb3IgdXMsIHdlIGRvbid0IG5lZWQg
+dG8gZG8gaXQgaW4gdGhlDQo+IGJhY2tlbmQuDQo+IA0KPiBDYzogQ2hpbnRhbiBQYW5keWEgPGNw
+YW5keWFAY29kZWF1cm9yYS5vcmc+DQo+IENjOiBUb3NoaSBLYW5pIDx0b3NoaS5rYW5pQGhwZS5j
+b20+DQo+IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4NCj4gQ2M6IE1p
+Y2hhbCBIb2NrbyA8bWhvY2tvQHN1c2UuY29tPg0KPiBDYzogQW5kcmV3IE1vcnRvbiA8YWtwbUBs
+aW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogV2lsbCBEZWFjb24gPHdpbGwu
+ZGVhY29uQGFybS5jb20+DQo+IC0tLQ0KPiAgYXJjaC94ODYvbW0vcGd0YWJsZS5jIHwgNiAtLS0t
+LS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2FyY2gveDg2L21tL3BndGFibGUuYyBiL2FyY2gveDg2L21tL3BndGFibGUuYw0KPiBpbmRleCBh
+ZTM5NDU1MmZiOTQuLmI0OTE5YzQ0YTE5NCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYvbW0vcGd0
+YWJsZS5jDQo+ICsrKyBiL2FyY2gveDg2L21tL3BndGFibGUuYw0KPiBAQCAtNzk2LDkgKzc5Niw2
+IEBAIGludCBwdWRfZnJlZV9wbWRfcGFnZShwdWRfdCAqcHVkLCB1bnNpZ25lZCBsb25nIGFkZHIp
+DQo+ICAJcHRlX3QgKnB0ZTsNCj4gIAlpbnQgaTsNCj4gIA0KPiAtCWlmIChwdWRfbm9uZSgqcHVk
+KSkNCj4gLQkJcmV0dXJuIDE7DQo+IC0NCg0KRG8gd2UgbmVlZCB0byByZW1vdmUgdGhpcyBzYWZl
+IGd1YXJkPyAgSSBmZWVsIGxpc3QgdGhpcyBpcyBzYW1lIGFzDQprZnJlZSgpIGFjY2VwdGluZyBO
+VUxMLg0KDQpUaGFua3MsDQotVG9zaGkNCg0KDQo+ICAJcG1kID0gKHBtZF90ICopcHVkX3BhZ2Vf
+dmFkZHIoKnB1ZCk7DQo+ICAJcG1kX3N2ID0gKHBtZF90ICopX19nZXRfZnJlZV9wYWdlKEdGUF9L
+RVJORUwpOw0KPiAgCWlmICghcG1kX3N2KQ0KPiBAQCAtODQwLDkgKzgzNyw2IEBAIGludCBwbWRf
+ZnJlZV9wdGVfcGFnZShwbWRfdCAqcG1kLCB1bnNpZ25lZCBsb25nIGFkZHIpDQo+ICB7DQo+ICAJ
+cHRlX3QgKnB0ZTsNCj4gIA0KPiAtCWlmIChwbWRfbm9uZSgqcG1kKSkNCj4gLQkJcmV0dXJuIDE7
+DQo+IC0NCj4gIAlwdGUgPSAocHRlX3QgKilwbWRfcGFnZV92YWRkcigqcG1kKTsNCj4gIAlwbWRf
+Y2xlYXIocG1kKTsNCj4gIA0K
