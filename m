@@ -2,200 +2,276 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41512C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB18C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C7520866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:56:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C7520866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id A56AE20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:57:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWUODz5t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56AE20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeINMJO (ORCPT
+        id S1727730AbeINMKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:09:14 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:44050 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726883AbeINMJO (ORCPT
+        Fri, 14 Sep 2018 08:10:38 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42128 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbeINMKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:09:14 -0400
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id 0i1KgQvfnrjlY0i1OgrXUn; Fri, 14 Sep 2018 08:56:08 +0200
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-To:     Eddie James <eajames@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
-        openbmc@lists.ozlabs.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mchehab@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
- <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
- <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <37fba44b-f7ef-c877-5533-986d21831f9f@xs4all.nl>
-Date:   Fri, 14 Sep 2018 08:56:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 14 Sep 2018 08:10:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so3924012pgp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 23:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1IuaYtbdSkVdT2fkhiUXKkbGR0yd7gehdZjtfOfY+Ts=;
+        b=QWUODz5t5eOTwExDTLoSav+1MrLWchzR5X2u5QudcRl21asUG3kxoavzmLrfsQ8nic
+         AKZ3h49SftiHu5M7CFhB97xz+0fyA01jtXsR0HkV8Ms0FHMQYRl1P41+wvwGTYsK08GC
+         M64GwsMmIGBRDRMJvlNpVhYXXaZ+Na73EqMsIj417hbD3uYP884JWz3FH8zXDYo/D1km
+         AHLh4u5rVzsY9QNS31EK+C+xjfh0WhdedsMhT9Y1G6d2u/7LzH0mDD7lkZxv5jl5ddBy
+         9P3FYrPXGMbU4Q6dYJ0fSU/UgNJUJaMPTxGw4+xwGr3FLl1friuIsRh1Lwxaq6MkJ8kk
+         au5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1IuaYtbdSkVdT2fkhiUXKkbGR0yd7gehdZjtfOfY+Ts=;
+        b=r63t+jId8l4EMCMz6eCvBhFiWfNlOjgjN4Un38swgn9/QGMlbbvLFLzzbaRUfHwDHF
+         P6ayPei/rgUGR7YXUqXzR/5QwtitsBXkBzP63LR1n9qVOdZQMNzHBbK9EY0nzXzg+RLO
+         MrSR+IXI+rX21pwKUQUzwvDCsxScHR9ZPQBptKr9EwbwwohhB3OOQJRPIXqPceSanRyn
+         CFJygxjS7OnhnQEIToV234NqlrMkB2kHWuFs6DpgNmdzzWP3604V1YYROUSLoalrz6Bu
+         bwwzD9gVt+gHxBrSbRCqxPSMvCYJ/nTc3lkdUnyOCUrt5ICefInUXMVXjucyzUlObKKb
+         qTww==
+X-Gm-Message-State: APzg51DU76YAHzB1fc3+tEmVqkTpKbMo3f14bXOWcWNYd1gyS193nNgi
+        rS16Wgt6mmPx1bqjQAzT4Cs=
+X-Google-Smtp-Source: ANB0VdZuQQw0wFgW7kdgMyWPHAf4bPiqRANIsZVEzSqMtlh0gLkcg/QcymOX8w6u2pQiAYwlYRm4lw==
+X-Received: by 2002:a63:1316:: with SMTP id i22-v6mr10166212pgl.86.1536908253719;
+        Thu, 13 Sep 2018 23:57:33 -0700 (PDT)
+Received: from localhost ([39.7.18.191])
+        by smtp.gmail.com with ESMTPSA id z11-v6sm8840579pfi.4.2018.09.13.23.57.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 23:57:32 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 15:57:28 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        kbuild test robot <fengguang.wu@intel.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20180914065728.GA515@jagdpanzerIV>
+References: <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
+ <20180620110759.GD444@jagdpanzerIV>
+ <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+ <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
+ <20180912065307.GA606@jagdpanzerIV>
+ <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913122625.6ieyexpcmlc5z2it@pathway.suse.cz>
+ <20180913142802.GB517@tigerII.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfGiP/tY4xX9paY7yTcEQFf0U2RebjNUfvReW7YDWH99RlPW8edcXXIt/0MHVAUnkcN96y83cGJ7ey/eGRBrK/JpqJ5pQ+O3/i1KNHLHSozKZUJvUFngD
- YZZR0+xO6CySk3EPnY5xuby+n7+/hCTSJPew37pKlgJ4aOSvExqEH1e2Eez28pRN3+M0EFZSyXicNEXcUZio3r9JpCFHhhX8h2Jzh//eozYpSON6iGCliD1C
- BSNlSxDTSh9xG3astIUk60hAb2OlY8+DhZZLWoXNu8iClV9O6EJpi/dIzLvbnrG50fBY3iWh982xSq8P2Kcy/Erd0wWBle1cW0YHIwMn7xtSbdJpNvp4rdv7
- J8vWoVgslaTxebDm+mNI2DRCW/HkYRklhUgY9WG4lvkYOv41e54Vpf+eWqzejolH+z5WRA7wXhfZbgIXvnAt2Rrb9EL9zPghBEWwBxF+lNCJFcaEicauF25g
- ZhoCxpuDPTVwTxVhSPnu/yvTNVq+sdt62I255aZrX1zgibhDgvkHWndcVvmdNfWNIrLnWAzE8uVC4ifI2aVwkbplwEbAcbR2rYXgcsPX/pzVP2o633EPU3Bd
- uvt7XsXaWMp5L+m2e6y4e2bt406MTDLFYmqzBgcBx0URaibyHZDHscbTYrWbBg3nobM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913142802.GB517@tigerII.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/13/2018 09:11 PM, Eddie James wrote:
-> 
-> 
-> On 09/03/2018 06:57 AM, Hans Verkuil wrote:
->> Hi Eddie,
->>
->> Thank you for your work on this. Interesting to see support for this SoC :-)
->>
->> On 08/29/2018 11:09 PM, Eddie James wrote:
->>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->>> can capture and compress video data from digital or analog sources. With
->>> the Aspeed chip acting as a service processor, the Video Engine can
->>> capture the host processor graphics output.
->>>
->>> This series adds a V4L2 driver for the VE, providing a read() interface
->>> only. The driver triggers the hardware to capture the host graphics output
->>> and compress it to JPEG format.
->>>
->>> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
->>> was significantly slower than the simple read() interface, so I have not
->>> included the streaming part.
->> Do you know why? It should be equal or faster, not slower.
-> 
-> Yes, it seems to be an issue with the timing of the video engine 
-> interrupts compared with how a normal v4l2 application queues buffers. 
-> With the simple read() application, the driver can swap between DMA 
-> buffers freely and get a frame ahead. With the streaming buffers, I 
-> found the driver ran through the queue quite quickly, but then, once 
-> userspace queues again, we had to wait for the next frame, as I couldn't 
-> get a frame ahead since no buffers were available during that time 
-> period. This could possibly be solved with more buffers but this gets to 
-> require a lot of memory, since each buffer is allocated for the full 
-> frame size even though we only fill a fraction of it with JPEG data...
+On (09/13/18 23:28), Sergey Senozhatsky wrote:
+> Not that I see any problems with pr_line_flush(). But can drop it, sure.
+> pr_line() is a replacement for pr_cont() and as such it's not for multi-line
+> buffering.
 
-For stream I/O you usually need 3 buffers: one is being DMAed, one is
-the next queued up frame for the DMA and the third is being processed
-in userspace. If userspace doesn't process buffers fast enough, then
-the driver will need to capture into the same buffer over and over again
-until userspace finally queues another buffer.
+OK, attached.
+Let me know if anything needs to improved (including broken English).
+Will we keep in the printk tree or shall I send a formal patch to Andrew?
 
-What I don't understand here is what the frame rate is. Is the capture
-framerate the same as the host processor graphics output? Or is it
-unrelated to that?
+===
 
-The problem with read() is that 1) it requires copying the video data, and
-2) you cannot use dmabuf for zero-copying pipelines. Whether or not 2 is
-needed depends on your hardware.
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: [PATCH] lib/seq_buf: add pr_line buffering API
 
-> 
->>
->> I reviewed about half of the driver, but then I stopped since there were too
->> many things missing.
->>
->> First of all, you need to test your driver with v4l2-compliance (available here:
->> https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
->> the versions from distros tend to be too old.
->>
->> Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
->> 'v4l2-compliance -s -d /dev/videoX' to test streaming.
->>
->> This utility checks if the driver follows the V4L2 API correctly, implements
->> all ioctls that it should and fills in all the fields that it should.
->>
->> Please add the output of 'v4l2-compliance -s' to future versions of this patch
->> series: I don't accept V4L2 drivers without a clean report of this utility.
-> 
-> Sure thing. Thanks for the guidance.
-> 
->>
->> If you have any questions, then mail me or (usually quicker) ask on the #v4l
->> freenode irc channel (I'm in the CET timezone).
->>
->> One thing that needs more explanation: from what I could tell from the driver
->> the VIDIOC_G_FMT ioctl returns the detected format instead of the current
->> format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
->> ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
->>
->> The normal sequence is that userspace queries the current timings with
->> VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
->> timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
->> change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
->> event.
-> 
-> OK I see. I ended up simplifying this part anyway since it's not 
-> possible to change the video size from the driver. I don't think there 
-> is a need for VIDIOC_QUERY_DV_TIMINGS now, but feel free to review.
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
+ include/linux/kern_levels.h |  3 ++
+ include/linux/seq_buf.h     | 60 +++++++++++++++++++++++++++++++++++++
+ lib/seq_buf.c               | 57 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 120 insertions(+)
 
-You are capturing the host graphics output, right? So you need to know
-the resolution, timings, etc. of that output? What if the host changes
-resolution? That's something you need to know, or am I missing something?
-
-This is obviously a somewhat different environment than what I am used to,
-so bear with me if I ask stupid questions...
-
-Regards,
-
-	Hans
-
-> 
-> Thanks again,
-> Eddie
-> 
->>
->> When the application receives this event it can take action, such as
->> increasing the size of the buffer for the jpeg data that it reads into.
->>
->> The reason for this sequence of events is that you can't just change the
->> format/resolution mid-stream without giving userspace the chance to
->> reconfigure.
->>
->> Regards,
->>
->> 	Hans
->>
->>> It's also possible to use an automatic mode for the VE such that
->>> re-triggering the HW every frame isn't necessary. However this wasn't
->>> reliable on the AST2400, and probably used more CPU anyway due to excessive
->>> interrupts. It was approximately 15% faster.
->>>
->>> The series also adds the necessary parent clock definitions to the Aspeed
->>> clock driver, with both a mux and clock divider.
->>>
->>> Eddie James (4):
->>>    clock: aspeed: Add VIDEO reset index definition
->>>    clock: aspeed: Setup video engine clocking
->>>    dt-bindings: media: Add Aspeed Video Engine binding documentation
->>>    media: platform: Add Aspeed Video Engine driver
->>>
->>>   .../devicetree/bindings/media/aspeed-video.txt     |   23 +
->>>   drivers/clk/clk-aspeed.c                           |   41 +-
->>>   drivers/media/platform/Kconfig                     |    8 +
->>>   drivers/media/platform/Makefile                    |    1 +
->>>   drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
->>>   include/dt-bindings/clock/aspeed-clock.h           |    1 +
->>>   6 files changed, 1379 insertions(+), 2 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->>>   create mode 100644 drivers/media/platform/aspeed-video.c
->>>
-> 
+diff --git a/include/linux/kern_levels.h b/include/linux/kern_levels.h
+index d237fe854ad9..9c281ac745b3 100644
+--- a/include/linux/kern_levels.h
++++ b/include/linux/kern_levels.h
+@@ -20,6 +20,9 @@
+  * Annotation for a "continued" line of log printout (only done after a
+  * line that had no enclosing \n). Only to be used by core/arch code
+  * during early bootup (a continued line is not SMP-safe otherwise).
++ *
++ * Please consider pr_line()/vpr_line() functions for SMP-safe continued
++ * line printing.
+  */
+ #define KERN_CONT	KERN_SOH "c"
+ 
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index aa5deb041c25..b33aeea14803 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -23,6 +23,62 @@ struct seq_buf {
+ 	loff_t			readpos;
+ };
+ 
++#define __SEQ_BUF_INITIALIZER(buf, length)			\
++{								\
++	.buffer			= (buf),			\
++	.size			= (length),			\
++	.len			= 0,				\
++	.readpos		= 0,				\
++}
++
++#ifdef CONFIG_PRINTK
++#define __PR_LINE_BUF_SZ	80
++#else
++#define __PR_LINE_BUF_SZ	0
++#endif
++
++/**
++ * pr_line - printk() line buffer structure
++ * @sb:	underlying seq buffer, which holds the data
++ * @level:	printk() log level (KERN_ERR, etc.)
++ */
++struct pr_line {
++	struct seq_buf		sb;
++	char			*level;
++};
++
++/**
++ * DEFINE_PR_LINE - define a new pr_line variable
++ * @lev:	printk() log level
++ * @name:	variable name
++ *
++ * Defines a new pr_line varialbe, which would use an implicit
++ * stack buffer of size __PR_LINE_BUF_SZ.
++ */
++#define DEFINE_PR_LINE(lev, name)				\
++	char		__line_##name[__PR_LINE_BUF_SZ];	\
++	struct pr_line	name = {				\
++		.sb	= __SEQ_BUF_INITIALIZER(__line_##name,	\
++					__PR_LINE_BUF_SZ),	\
++		.level	= lev,					\
++	}
++
++/**
++ * DEFINE_PR_LINE_BUF - define a new pr_line variable
++ * @lev:	printk() log level
++ * @name:	variable name
++ * @buf:	external buffer
++ * @sz:	external buffer size
++ *
++ * Defines a new pr_line variable, which would use an external
++ * buffer for printk line.
++ */
++#define DEFINE_PR_LINE_BUF(lev, name, buf, sz)			\
++	struct pr_line	name = {				\
++		.sb	= __SEQ_BUF_INITIALIZER(buf, (sz)),	\
++		.level	= lev,					\
++	}
++
+ static inline void seq_buf_clear(struct seq_buf *s)
+ {
+ 	s->len = 0;
+@@ -131,4 +187,8 @@ extern int
+ seq_buf_bprintf(struct seq_buf *s, const char *fmt, const u32 *binary);
+ #endif
+ 
++extern __printf(2, 0)
++int vpr_line(struct pr_line *pl, const char *fmt, va_list args);
++extern __printf(2, 3)
++int pr_line(struct pr_line *pl, const char *fmt, ...);
+ #endif /* _LINUX_SEQ_BUF_H */
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index 11f2ae0f9099..fada7623f168 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -324,3 +324,60 @@ int seq_buf_to_user(struct seq_buf *s, char __user *ubuf, int cnt)
+ 	s->readpos += cnt;
+ 	return cnt;
+ }
++
++/**
++ * vpr_line - Append data to the printk() line buffer
++ * @pl: the pr_line descriptor
++ * @fmt: printf format string
++ * @args: va_list of arguments from a printf() type function
++ *
++ * Writes a vnprintf() format into the printk() pr_line buffer.
++ * Terminating new-line symbol flushes (prints) the buffer.
++ *
++ * Unlike pr_cont() and printk(KERN_CONT), this function is SMP-safe
++ * and shall be used for continued line printing.
++ *
++ * Returns zero on success, -1 on overflow.
++ */
++int vpr_line(struct pr_line *pl, const char *fmt, va_list args)
++{
++	struct seq_buf *s = &pl->sb;
++	int ret, len;
++
++	ret = seq_buf_vprintf(s, fmt, args);
++
++	len = seq_buf_used(s);
++	if (len && s->buffer[len - 1] == '\n') {
++		printk("%s%.*s", pl->level ? : KERN_DEFAULT, len, s->buffer);
++		seq_buf_clear(s);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(vpr_line);
++
++/**
++ * pr_line - Append data to the printk() line buffer
++ * @pl: the pr_line descriptor
++ * @fmt: printf format string
++ *
++ * Writes a printf() format into the printk() pr_line buffer.
++ * Terminating new-line symbol flushes (prints) the buffer.
++ *
++ * Unlike pr_cont() and printk(KERN_CONT), this function is SMP-safe
++ * and shall be used for continued line printing.
++ *
++ * Returns zero on success, -1 on overflow.
++ */
++int pr_line(struct pr_line *pl, const char *fmt, ...)
++{
++	va_list ap;
++	int ret;
++
++	va_start(ap, fmt);
++	ret = vpr_line(pl, fmt, ap);
++	va_end(ap);
++
++	return ret;
++}
++EXPORT_SYMBOL(pr_line);
+-- 
+2.19.0
 
