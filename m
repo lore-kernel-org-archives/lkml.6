@@ -2,307 +2,124 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7C6FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9559CC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E5E20853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E5E20853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 41B6A20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:56:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B6A20853
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeINLHj (ORCPT
+        id S1727680AbeINLJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 07:07:39 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:52562 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbeINLHi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 07:07:38 -0400
-Received: from belgarion ([90.89.234.36])
-        by mwinf5d49 with ME
-        id bHuh1y00Y0nnJME03Huiy0; Fri, 14 Sep 2018 07:54:44 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Fri, 14 Sep 2018 07:54:44 +0200
-X-ME-IP: 90.89.234.36
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: dts: pxa: add mioa701 board description
-References: <20180830195941.6118-1-robert.jarzmik@free.fr>
-        <1535708786.8035.41.camel@ziswiler.com>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Fri, 14 Sep 2018 07:54:41 +0200
-In-Reply-To: <1535708786.8035.41.camel@ziswiler.com> (Marcel Ziswiler's
-        message of "Fri, 31 Aug 2018 11:46:26 +0200")
-Message-ID: <871s9w62u6.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        Fri, 14 Sep 2018 07:09:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39734 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726831AbeINLJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 07:09:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 50B61AD14;
+        Fri, 14 Sep 2018 05:56:39 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 07:56:37 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "prakash.sangappa" <prakash.sangappa@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dave.hansen@intel.com, nao.horiguchi@gmail.com,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        khandual@linux.vnet.ibm.com, steven.sistare@oracle.com
+Subject: Re: [PATCH V2 0/6] VA to numa node information
+Message-ID: <20180914055637.GH20287@dhcp22.suse.cz>
+References: <1536783844-4145-1-git-send-email-prakash.sangappa@oracle.com>
+ <20180913084011.GC20287@dhcp22.suse.cz>
+ <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <375951d0-f103-dec3-34d8-bbeb2f45f666@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marcel Ziswiler <marcel@ziswiler.com> writes:
+On Thu 13-09-18 15:32:25, prakash.sangappa wrote:
+> 
+> 
+> On 09/13/2018 01:40 AM, Michal Hocko wrote:
+> > On Wed 12-09-18 13:23:58, Prakash Sangappa wrote:
+> > > For analysis purpose it is useful to have numa node information
+> > > corresponding mapped virtual address ranges of a process. Currently,
+> > > the file /proc/<pid>/numa_maps provides list of numa nodes from where pages
+> > > are allocated per VMA of a process. This is not useful if an user needs to
+> > > determine which numa node the mapped pages are allocated from for a
+> > > particular address range. It would have helped if the numa node information
+> > > presented in /proc/<pid>/numa_maps was broken down by VA ranges showing the
+> > > exact numa node from where the pages have been allocated.
+> > > 
+> > > The format of /proc/<pid>/numa_maps file content is dependent on
+> > > /proc/<pid>/maps file content as mentioned in the manpage. i.e one line
+> > > entry for every VMA corresponding to entries in /proc/<pids>/maps file.
+> > > Therefore changing the output of /proc/<pid>/numa_maps may not be possible.
+> > > 
+> > > This patch set introduces the file /proc/<pid>/numa_vamaps which
+> > > will provide proper break down of VA ranges by numa node id from where the
+> > > mapped pages are allocated. For Address ranges not having any pages mapped,
+> > > a '-' is printed instead of numa node id.
+> > > 
+> > > Includes support to lseek, allowing seeking to a specific process Virtual
+> > > address(VA) starting from where the address range to numa node information
+> > > can to be read from this file.
+> > > 
+> > > The new file /proc/<pid>/numa_vamaps will be governed by ptrace access
+> > > mode PTRACE_MODE_READ_REALCREDS.
+> > > 
+> > > See following for previous discussion about this proposal
+> > > 
+> > > https://marc.info/?t=152524073400001&r=1&w=2
+> > It would be really great to give a short summary of the previous
+> > discussion. E.g. why do we need a proc interface in the first place when
+> > we already have an API to query for the information you are proposing to
+> > export [1]
+> > 
+> > [1] http://lkml.kernel.org/r/20180503085741.GD4535@dhcp22.suse.cz
+> 
+> The proc interface provides an efficient way to export address range
+> to numa node id mapping information compared to using the API.
 
-> Hi Robert
->>  arch/arm/boot/dts/Makefile    |   2 +
->>  arch/arm/boot/dts/mioa701.dts | 558 
->
-> Isn't that one supposed to be prefixed by pxa270-?
-Good point, for v4.
+Do you have any numbers?
 
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-...
->> +dtb-$(CONFIG_ARCH_PXA) += \
-> Wouldn't it rather make more sense to use CONFIG_MACH_PXA27X_DT
-> instead?
-No, I'll have all the devicetree files under one config, for the PXA
-architecture.
+> For example, for sparsely populated mappings, if a VMA has large portions
+> not have any physical pages mapped, the page walk done thru the /proc file
+> interface can skip over non existent PMDs / ptes. Whereas using the
+> API the application would have to scan the entire VMA in page size units.
 
->> +	model = "Mitac Mio A701 Board";
->> +	compatible = "marvell,pxa270";
->
-> Usually, there is also a compatible for the particular board e.g.
-> "mitac,mioa701", not? You might have to check on the vendor prefix
-> though.
-Ok.
+What prevents you from pre-filtering by reading /proc/$pid/maps to get
+ranges of interest?
 
->> +			pinctrl_usb_default: usb-default {
->> +				PMMUX(n-usb-detect, 13, gpio_in);
->> +				PMMUX_LPM_LOW(n-dplus-pullup, 22,
->> gpio_out);
->> +			};
->> +			pinctrl_power_default: power-default {
->> +				PMMUX_LPM_LOW(charge-enable, 9,
->> gpio_out);
->> +				PMMUX(charge-vdrop, 80, gpio_out);
->> +				PMMUX(ac-detect, 96, gpio_in);
->> +			};
->
-> I guess usually, one would add newlines in front and between those
-> pinctrls but its kind of a matter of taste.
-Ok, for this and all the following newlines.
->> +		ffuart: serial@40100000 {
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = <&pinctrl_ffuart_default>;
->> +			status = "okay";
->> +		};
->> +
->> +		btuart: serial@40200000 {
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = <&pinctrl_btuart_default>;
->> +			status = "okay";
->> +		};
->> +
->> +		stuart: serial@40700000 {
->> +			status = "okay";
->> +		};
->
-> I believe pxa2xx.dtsi calls them uart rather than serial so unless you
-> plan to change this we will have to stick to using uart instead.
-There was a patch submitted for that earlier, at Rob's demand, to change these
-names. That's another dependency on the pxa/dt tree.
->
-> I also don't think those serial port labels buy us anything, so I would
-> get rid of them.
-As there are already in the .dtsi files, they don't hurt do they ?
+> Also, VMAs having THP pages can have a mix of 4k pages and hugepages.
+> The page walks would be efficient in scanning and determining if it is
+> a THP huge page and step over it. Whereas using the API, the application
+> would not know what page size mapping is used for a given VA and so would
+> have to again scan the VMA in units of 4k page size.
 
->> +		pwri2c: i2c@40f000180 {
->
-> Uups, I guess that address is wrong, not? I will send a patch to fix it
-> in pxa27x.dtsi as well.
-Fixed here as well.
+Why does this matter for something that is for analysis purposes.
+Reading the file for the whole address space is far from a free
+operation. Is the page walk optimization really essential for usability?
+Moreover what prevents move_pages implementation to be clever for the
+page walk itself? In other words why would we want to add a new API
+rather than make the existing one faster for everybody.
+ 
+> If this sounds reasonable, I can add it to the commit / patch description.
 
->
->> +			status = "okay";
->> +
->> +			core_regulator@14 {
->> +				compatible = "maxim,max1586";
->> +				reg = <0x14>;
->> +				v3-gain = <1000000>;
->> +
->> +				regulators {
->> +					vcc_core: v3 {
->> +						regulator-name =
->> "vcc_core";
->> +						regulator-compatible 
->> = "Output_V3";
->> +						regulator-min-
->> microvolt = <1000000>;
->> +						regulator-max-
->> microvolt = <1705000>;
->> +						regulator-always-on;
->> +					};
->> +				};
->> +			};
->
-> Haven't seen core_regulator before. Just regulator would do unless it
-> would be a more complex pmic.
-Ok.
-
->
->
->> +				port {
->> +					mt9m111_1: endpoint {
->> +						bus-width = <8>;
->> +						remote-endpoint =
->> <&pxa_camera>;
->> +					};
->> +				};
->> +			};
->> +		};
->
-> Same with pxai2c1 and mt9m111.
-Ok for mt9m111, same answer as before for pxai2c1.
->> +		gpio-keys {
->> +			compatible = "gpio-keys";
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			autorepeat;
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = <&pinctrl_gpiokeys_default>;
->> +			status = "okay";
->> +
->> +			power-button {
->> +				label = "GPIO Key Power";
->> +				linux,code = <174>;
->> +				gpios = <&gpio 0 0>;
->> +				gpio-key,wakeup;
->
-> I believe that got deprecated in favour of just wakeup-source.
-Ok.
-
->> +		lcd-controller@40500000 {
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = <&pinctrl_lcd_default>;
->> +			status = "okay";
->
-> Missing newline.
->
->> +			port {
->> +				lcdc_out: endpoint {
->> +					remote-endpoint =
->> <&panel_in>;
->> +					bus-width = <16>;
->> +				};
->> +			};
->> +		};
->> +
->> +		ac97: sound@40500000 {
->> +			compatible = "marvell,pxa270-ac97";
->> +			reg = < 0x40500000 0x1000 >;
->> +			interrupts = <14>;
->> +			reset-gpios = <&gpio 95 GPIO_ACTIVE_HIGH>;
->> +			pinctrl-names = "default";
->> +			pinctrl-0 = < &pinctrl_ac97_default >;
->> +			clocks = <&clks CLK_AC97>, <&clks
->> CLK_AC97CONF>;
->> +			clock-names = "AC97CLK", "AC97CONFCLK";
->> +			dmas = <&pdma 8 0
->> +				&pdma 9 0
->> +				&pdma 10 0
->> +				&pdma 11 0
->> +				&pdma 12 0>;
->> +			dma-names = "pcm_pcm_mic_mono",
->> "pcm_pcm_aux_mono_in",
->> +				    "pcm_pcm_aux_mono_out",
->> "pcm_pcm_stereo_in",
->> +				    "pcm_pcm_stereo_out";
->> +
->
-> Spurious newline.
->
->> +			#sound-dai-cells = <0>;
->> +
->
-> Spurious newline.
->
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->
-> Missing newline.
->
->> +			wm9713: audio-codec@0 {
->> +				reg = <0>;
->> +				compatible = "ac97,574d,4c13";
->> +				clocks = <&wm9713_bitclk>;
->> +				clock-names = "ac97_clk";
->> +				#sound-dai-cells = <0>;
->> +
->> +				wm9713_bitclk: ac97_bitclk {
->> +					compatible = "fixed-clock";
->> +					#clock-cells = <0>;
->> +					clock-frequency =
->> <12285000>;
->> +					status = "okay";
->> +				};
->> +			};
->
-> While a few device trees seem to use audio-codec just codec would work
-> too.
-Ok.
-
->> +		};
->> +
->> +		pxa_pcm_audio: snd_soc_pxa_audio {
->> +			compatible = "mrvl,pxa-pcm-audio";
->> +			#sound-dai-cells = <0>;
->> +			status = "okay";
->> +		};
->
-> I believe node names should not contain underscores therefore suggest
-> chaning snd_soc_pxa_audio to snd-soc-pxa-audio.
-Ok.
->
->> +		lcd-controller@40500000 {
->> +			lcd-supply = <&lcd_vmmc>;
->> +		};
->> +
->> +		docg3: flash@0 {
->> +			compatible = "m-systems,diskonchip-g3";
->> +			reg = <0x0 0x2000>;
->> +		};
->> +
->
-> Spurious newline.
->
->> +	};
->> +
->> +	reg_vmmc: regulator@0 {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "vmmc";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +
->
-> Spurious newline.
->
->> +		gpio = <&gpio 91 GPIO_ACTIVE_HIGH>;
->> +		enable-active-high;
->> +	};
->
-> I guess that @0 is a legacy from when we used a fake regulator simple
-> bus and nowadays regulator-vmmc is more common.
-Ok.
-
-> Same for the @1 here and usually, for regulator labels the reg_ prefix
-> is used.
-Ok.
-
-Cheers.
-
+This all is absolutely _essential_ for any new API proposed. Remember that
+once we add a new user interface, we have to maintain it for ever. We
+used to be too relaxed when adding new proc files in the past and it
+backfired many times already.
 -- 
-Robert
+Michal Hocko
+SUSE Labs
