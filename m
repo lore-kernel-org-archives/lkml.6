@@ -2,173 +2,110 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E5ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886DFECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6392146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25F8A20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:51:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qBtin8CX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6392146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TIbDPUeQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25F8A20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeINPDN (ORCPT
+        id S1728023AbeINPF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 11:03:13 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:32946 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727730AbeINPDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 11:03:13 -0400
-Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8EC52CE;
-        Fri, 14 Sep 2018 11:49:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1536918568;
-        bh=scpBvkzq0DQHJDNSVM2/GkCp30rE90qcPvnOqt13UVs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBtin8CXtptIpUZHzswFJEpo+w8Cvt2EQU0cvGYGmQFsA9dLqcQKj3P/tqD1X5Yu9
-         2Jmg7EFLw6n6naJ9ojhxFxU7t3FR1PlDnyIzGCIHRVq7HPYP9eZHFvnbpF1fbHu6ZK
-         FLpaQIZHOx238i7ro59NtWSHQrB03PUPG2+SQeBI=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        sean@poorly.run, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        max.krummenacher@toradex.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] drm/bridge: use bus flags in bridge timings
-Date:   Fri, 14 Sep 2018 12:49:40 +0300
-Message-ID: <2015108.bT6A7b8iLH@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
-References: <20180905052113.21262-1-stefan@agner.ch> <CACRpkdbw0VjkHYcUpox+DorRG0oRdPARL4ShgPfV2eFaUF_w0g@mail.gmail.com> <b1cb586397a4cd444c33dd83d72fa544@agner.ch>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 14 Sep 2018 11:05:26 -0400
+Received: from m12-11.163.com ([220.181.12.11]:35729 "EHLO m12-11.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbeINPF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 11:05:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=7UBpilPnsKaTQPnAbt
+        va6+x1zvWlZWKjPW37uDKpvJI=; b=TIbDPUeQGrWWH4fatNMGyXT6RZQuCVf/zI
+        rLaWIyBnpO/6ZCrD7AUyoNmkWp2YEe041vqYwuPMYRqFeIv3DN183v5BfJKg+lyf
+        qqxSoiWuN7mu2fmS1arQ+pK/cu0KoWobArrNguyPvRiJankYHQK2sI42zWsBmxki
+        wavUNr4To=
+Received: from localhost.localdomain (unknown [117.136.0.171])
+        by smtp7 (Coremail) with SMTP id C8CowAAHhSqmhJtbfcAgAQ--.41883S4;
+        Fri, 14 Sep 2018 17:51:35 +0800 (CST)
+From:   Dongbo Cao <cdbdyx@163.com>
+To:     colyli@suse.de
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
+Subject: [PATCH] add label interface for cache device in sysfs
+Date:   Fri, 14 Sep 2018 17:51:20 +0800
+Message-Id: <20180914095120.2699-1-cdbdyx@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: C8CowAAHhSqmhJtbfcAgAQ--.41883S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7GrWDZrWxCw1fWryrWF43GFg_yoW8JrWfpF
+        W3W34rWw1kX347Jrn3CF17GaySg3ySya4kWrW2yay8Za4jq3WDC3yFgayY9ryktr45Ca93
+        Ar18tF45Wa1UWFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8Xo7UUUUU=
+X-Originating-IP: [117.136.0.171]
+X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiJQ-B3FUMM6ZMHgAAsp
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+label interface will be called by bcache tools in user space.
 
-On Thursday, 6 September 2018 23:25:56 EEST Stefan Agner wrote:
-> On 06.09.2018 04:07, Linus Walleij wrote:
-> > On Wed, Sep 5, 2018 at 8:32 PM Stefan Agner <stefan@agner.ch> wrote:
-> >> On 05.09.2018 00:44, Laurent Pinchart wrote:
-> >> 
-> >> Good point! I actually really don't like that we use the same flags here
-> >> but from a different perspective. Especially since the flags defines
-> >> document things differently:
-> >> 
-> >> /* drive data on pos. edge */
-> >> #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
-> >> /* drive data on neg. edge */
-> >> #define DRM_BUS_FLAG_PIXDATA_NEGEDGE    (1<<3)
-> > 
-> > Maybe a stupid comment from my side, but can't we just change the
-> > documentation to match the usecases?
-> > 
-> > /* Trigger pixel data latch on positive edge */
-> > #define DRM_BUS_FLAG_PIXDATA_POSEDGE    (1<<2)
-> > 
-> >> Using the opposite perspective would also need translation in crtc
-> >> drivers... So far no driver uses sampling_edge.
-> >> 
-> >> I would prefer if we always use the meaning as documented by the flags.
-> >> 
-> >> I guess we would need to convert DRM_BUS_FLAG_PIXDATA_POSEDGE ->
-> >> DRM_BUS_FLAG_PIXDATA_NEGEDGE.
-> >> 
-> >> Linus Walleij, you added sampling edge, any thoughts?
-> > 
-> > I just thought it was generally useful to have triggering edge encoded
-> > into the bridge as it makes it clear that this edge is something
-> > that is a delayed version of the driving edge which is subject to
-> > clock skew caused by the speed of electrons in silicon and
-> > copper and slew rate caused by parasitic capacitance.
-> 
-> Ok, I read a bit up on the history of bridge timing, especially:
-> https://www.spinics.net/lists/dri-devel/msg155618.html
-> 
-> IMHO, this got overengineered. For displays we do not need all that
-> setup/sample delay timing information, and much longer cables are in
-> use. So why is all that needed for bridges?
-> 
-> For Linus case, the THS8134(A/B) data sheet I found (revised March 2010)
-> clearly states:
-> Clock input. A rising edge on CLK latches RPr0-7, GY0-7, BPb0-7.
-> 
-> So we need to drive on negative edge, hence DRM_BUS_FLAG_PIXDATA_NEGEDGE
-> should be used, which makes the pl111 driver setting TIM2_IPC:
-> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0121d/index.h
-> tml
-> 
-> > DRM_BUS_FLAG_PIXDATA_POSEDGE is the right value for my use cases, but it
-> > doesn't match how the ADV7123 operates. Using DRM_BUS_FLAG_PIXDATA_NEGEDGE
-> > would match the hardware, but would break display for some modes,
-> > depending on the display clock frequency as the internal 8.5ns output
-> > delay applied to a falling clock edge would fall right into the 1.7ns
-> > setup + hold time window of the ADV7123 around the rising edge. I can't
-> > test this right now as I don't have local access to boards using the
-> > ADV7123, but from a quick calculation that ignores the PCB transmission
-> > delay modes with frequencies between 57MHz and 71MHz could break if the
-> > data was output on the falling edge of the clock.
-> 
-> If clocks vs. data signal are really that much off on R-Car DU, then
-> parallel displays must have the very same issue...
-> 
-> Are you sure that only the clock signal has an output delay? And that
-> this output delay is a fixed value, clock independent?
-> 
-> Typically, delays apply to all signals equally, and often are clock
-> frequency dependent...
-> 
-> Without really looking at the signals, I would not jump to conclusions
-> here! I am pretty sure that driving on negative edge works just as well.
+Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+---
+ drivers/md/bcache/sysfs.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-I've tested Linus' original patch and it broke display on R-Car, so, no, it 
-doesn't work :-)
-
-The R-Car display engine delays the clock internally (in some cases that delay 
-is even configurable, and that's not uncommon in display controllers). We 
-really need all this information, and I believe we need it for panels too, not 
-just for bridges. The fact that we managed to get away without adding it to 
-panels is likely due to the large number of panels out there, which makes it 
-less likely that the same panel gets used by different systems in mainline 
-with different clock delays. I expect that some panel drivers report the wrong 
-clock edge to make things work on the board they were tested with, and I 
-expect we'll eventually need to add the same information for panels too.
-
-So please don't remove this useful API, otherwise you'll break my board, and I 
-won't be happy.
-
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 225b15aa..e64c718f 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -950,6 +950,13 @@ SHOW(__bch_cache)
+ 		return ret;
+ 	}
+ 
++	if (attr == &sysfs_label) {
++		memcpy(buf, ca->sb.label, SB_LABEL_SIZE);
++		buf[SB_LABEL_SIZE + 1] = '\0';
++		strcat(buf, "\n");
++		return strlen(buf);
++	}
++
+ 	return 0;
+ }
+ SHOW_LOCKED(bch_cache)
+@@ -993,6 +1000,17 @@ STORE(__bch_cache)
+ 		atomic_set(&ca->io_errors, 0);
+ 	}
+ 
++	if (attr == &sysfs_label) {
++		if (size > SB_LABEL_SIZE)
++			return -EINVAL;
++		memcpy(ca->sb.label, buf, size);
++		if (size < SB_LABEL_SIZE)
++			ca->sb.label[size] = '\0';
++		if (size && ca->sb.label[size - 1] == '\n')
++			ca->sb.label[size - 1] = '\0';
++		bcache_write_super(ca->set);
++	}
++
+ 	return size;
+ }
+ STORE_LOCKED(bch_cache)
+@@ -1009,6 +1027,7 @@ static struct attribute *bch_cache_files[] = {
+ 	&sysfs_io_errors,
+ 	&sysfs_clear_stats,
+ 	&sysfs_cache_replacement_policy,
++	&sysfs_label,
+ 	NULL
+ };
+ KTYPE(bch_cache);
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.17.1
 
 
