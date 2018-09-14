@@ -2,235 +2,162 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524ECFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEB8FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0181020861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0181020861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B0D720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:28:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0D720861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbeINOl4 (ORCPT
+        id S1728322AbeINOm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:41:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39034 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728268AbeINOlz (ORCPT
+        Fri, 14 Sep 2018 10:42:29 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61920 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbeINOm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:41:55 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8E9O6X4089831
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:28:16 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mg7468as7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:28:16 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Fri, 14 Sep 2018 10:28:14 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Sep 2018 10:28:11 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8E9SA2x58917038
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Sep 2018 09:28:11 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04DED4203F;
-        Fri, 14 Sep 2018 12:28:01 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C4A542049;
-        Fri, 14 Sep 2018 12:27:59 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.116])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 14 Sep 2018 12:27:59 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 14 Sep 2018 12:28:08 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH v4 3/3] docs: core-api: add memory allocation guide
-Date:   Fri, 14 Sep 2018 12:27:58 +0300
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536917278-31191-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1536917278-31191-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18091409-0012-0000-0000-000002A8C425
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091409-0013-0000-0000-000020DD0E2D
-Message-Id: <1536917278-31191-4-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809140101
+        Fri, 14 Sep 2018 10:42:29 -0400
+Received: from 79.184.255.178.ipv4.supernova.orange.pl (79.184.255.178) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id e15f4b92dd6afbd5; Fri, 14 Sep 2018 11:28:48 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 04/26] PM / Domains: Add support for CPU devices to genpd
+Date:   Fri, 14 Sep 2018 11:26:08 +0200
+Message-ID: <3110675.RLi9TDTF77@aspire.rjw.lan>
+In-Reply-To: <CAPDyKFpatx81aMrbDtaeNPH=FXBYPCHsog3i=a0VN5=Q8if0=Q@mail.gmail.com>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org> <CAJZ5v0jah=aiYoV_b_p=-x+puO0sxeGRBCtJnQAD8xb8p1QGfg@mail.gmail.com> <CAPDyKFpatx81aMrbDtaeNPH=FXBYPCHsog3i=a0VN5=Q8if0=Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
----
- Documentation/core-api/index.rst             |   1 +
- Documentation/core-api/memory-allocation.rst | 122 +++++++++++++++++++++++++++
- 2 files changed, 123 insertions(+)
- create mode 100644 Documentation/core-api/memory-allocation.rst
+On Friday, August 24, 2018 8:47:21 AM CEST Ulf Hansson wrote:
+> On 6 August 2018 at 11:36, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Fri, Aug 3, 2018 at 1:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >> On 19 July 2018 at 12:25, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> >>> On Wednesday, June 20, 2018 7:22:04 PM CEST Ulf Hansson wrote:
+> >>>> To enable a device belonging to a CPU to be attached to a PM domain managed
+> >>>> by genpd, let's do a few changes to genpd as to make it convenient to
+> >>>> manage the specifics around CPUs.
+> >>>>
+> >>>> First, as to be able to quickly find out what CPUs that are attached to a
+> >>>> genpd, which typically becomes useful from a genpd governor as following
+> >>>> changes is about to show, let's add a cpumask 'cpus' to the struct
+> >>>> generic_pm_domain.
+> >>>>
+> >>>> At the point when a device that belongs to a CPU, is attached/detached to
+> >>>> its corresponding PM domain via genpd_add_device(), let's update the
+> >>>> cpumask in genpd->cpus. Moreover, propagate the update of the cpumask to
+> >>>> the master domains, which makes the genpd->cpus to contain a cpumask that
+> >>>> hierarchically reflect all CPUs for a genpd, including CPUs attached to
+> >>>> subdomains.
+> >>>>
+> >>>> Second, to unconditionally manage CPUs and the cpumask in genpd->cpus, is
+> >>>> unnecessary for cases when only non-CPU devices are parts of a genpd.
+> >>>> Let's avoid this by adding a new configuration bit, GENPD_FLAG_CPU_DOMAIN.
+> >>>> Clients must set the bit before they call pm_genpd_init(), as to instruct
+> >>>> genpd that it shall deal with CPUs and thus manage the cpumask in
+> >>>> genpd->cpus.
+> >>>>
+> >>>> Cc: Lina Iyer <ilina@codeaurora.org>
+> >>>> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> >>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >>>> ---
+> >>>>  drivers/base/power/domain.c | 69 ++++++++++++++++++++++++++++++++++++-
+> >>>>  include/linux/pm_domain.h   |  3 ++
+> >>>>  2 files changed, 71 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> >>>> index 21d298e1820b..6149ce0bfa7b 100644
+> >>>> --- a/drivers/base/power/domain.c
+> >>>> +++ b/drivers/base/power/domain.c
+> >>>> @@ -20,6 +20,7 @@
+> >>>>  #include <linux/sched.h>
+> >>>>  #include <linux/suspend.h>
+> >>>>  #include <linux/export.h>
+> >>>> +#include <linux/cpu.h>
+> >>>>
+> >>>>  #include "power.h"
+> >>>>
+> >>>> @@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
+> >>>>  #define genpd_is_irq_safe(genpd)     (genpd->flags & GENPD_FLAG_IRQ_SAFE)
+> >>>>  #define genpd_is_always_on(genpd)    (genpd->flags & GENPD_FLAG_ALWAYS_ON)
+> >>>>  #define genpd_is_active_wakeup(genpd)        (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
+> >>>> +#define genpd_is_cpu_domain(genpd)   (genpd->flags & GENPD_FLAG_CPU_DOMAIN)
+> >>>>
+> >>>>  static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
+> >>>>               const struct generic_pm_domain *genpd)
+> >>>> @@ -1377,6 +1379,62 @@ static void genpd_free_dev_data(struct device *dev,
+> >>>>       dev_pm_put_subsys_data(dev);
+> >>>>  }
+> >>>>
+> >>>> +static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
+> >>>> +                                int cpu, bool set, unsigned int depth)
+> >>>> +{
+> >>>> +     struct gpd_link *link;
+> >>>> +
+> >>>> +     if (!genpd_is_cpu_domain(genpd))
+> >>>> +             return;
+> >>>> +
+> >>>> +     list_for_each_entry(link, &genpd->slave_links, slave_node) {
+> >>>> +             struct generic_pm_domain *master = link->master;
+> >>>> +
+> >>>> +             genpd_lock_nested(master, depth + 1);
+> >>>> +             __genpd_update_cpumask(master, cpu, set, depth + 1);
+> >>>> +             genpd_unlock(master);
+> >>>> +     }
+> >>>> +
+> >>>> +     if (set)
+> >>>> +             cpumask_set_cpu(cpu, genpd->cpus);
+> >>>> +     else
+> >>>> +             cpumask_clear_cpu(cpu, genpd->cpus);
+> >>>> +}
+> >>>
+> >>> As noted elsewhere, there is a concern about the possible weight of this
+> >>> cpumask and I think that it would be good to explicitly put a limit on it.
+> >>
+> >> I have been digesting your comments on the series, but wonder if this
+> >> is still a relevant concern?
+> >
+> > Well, there are systems with very large cpumasks and it is sort of
+> > good to have that in mind when designing any code using them.
+> 
+> Right.
+> 
+> So, if I avoid allocating the cpumask for those genpd structures that
+> doesn't need it (those not having GENPD_FLAG_CPU_DOMAIN set), would
+> that be sufficient to deal with your concern?
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index 26b735c..165d7688 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -27,6 +27,7 @@ Core utilities
-    errseq
-    printk-formats
-    circular-buffers
-+   memory-allocation
-    mm-api
-    gfp_mask-from-fs-io
-    timekeeping
-diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
-new file mode 100644
-index 0000000..f8bb9aa
---- /dev/null
-+++ b/Documentation/core-api/memory-allocation.rst
-@@ -0,0 +1,122 @@
-+=======================
-+Memory Allocation Guide
-+=======================
-+
-+Linux provides a variety of APIs for memory allocation. You can
-+allocate small chunks using `kmalloc` or `kmem_cache_alloc` families,
-+large virtually contiguous areas using `vmalloc` and its derivatives,
-+or you can directly request pages from the page allocator with
-+`alloc_pages`. It is also possible to use more specialized allocators,
-+for instance `cma_alloc` or `zs_malloc`.
-+
-+Most of the memory allocation APIs use GFP flags to express how that
-+memory should be allocated. The GFP acronym stands for "get free
-+pages", the underlying memory allocation function.
-+
-+Diversity of the allocation APIs combined with the numerous GFP flags
-+makes the question "How should I allocate memory?" not that easy to
-+answer, although very likely you should use
-+
-+::
-+
-+  kzalloc(<size>, GFP_KERNEL);
-+
-+Of course there are cases when other allocation APIs and different GFP
-+flags must be used.
-+
-+Get Free Page flags
-+===================
-+
-+The GFP flags control the allocators behavior. They tell what memory
-+zones can be used, how hard the allocator should try to find free
-+memory, whether the memory can be accessed by the userspace etc. The
-+:ref:`Documentation/core-api/mm-api.rst <mm-api-gfp-flags>` provides
-+reference documentation for the GFP flags and their combinations and
-+here we briefly outline their recommended usage:
-+
-+  * Most of the time ``GFP_KERNEL`` is what you need. Memory for the
-+    kernel data structures, DMAable memory, inode cache, all these and
-+    many other allocations types can use ``GFP_KERNEL``. Note, that
-+    using ``GFP_KERNEL`` implies ``GFP_RECLAIM``, which means that
-+    direct reclaim may be triggered under memory pressure; the calling
-+    context must be allowed to sleep.
-+  * If the allocation is performed from an atomic context, e.g interrupt
-+    handler, use ``GFP_NOWAIT``. This flag prevents direct reclaim and
-+    IO or filesystem operations. Consequently, under memory pressure
-+    ``GFP_NOWAIT`` allocation is likely to fail. Allocations which
-+    have a reasonable fallback should be using ``GFP_NOWARN``.
-+  * If you think that accessing memory reserves is justified and the kernel
-+    will be stressed unless allocation succeeds, you may use ``GFP_ATOMIC``.
-+  * Untrusted allocations triggered from userspace should be a subject
-+    of kmem accounting and must have ``__GFP_ACCOUNT`` bit set. There
-+    is the handy ``GFP_KERNEL_ACCOUNT`` shortcut for ``GFP_KERNEL``
-+    allocations that should be accounted.
-+  * Userspace allocations should use either of the ``GFP_USER``,
-+    ``GFP_HIGHUSER`` or ``GFP_HIGHUSER_MOVABLE`` flags. The longer
-+    the flag name the less restrictive it is.
-+
-+    ``GFP_HIGHUSER_MOVABLE`` does not require that allocated memory
-+    will be directly accessible by the kernel and implies that the
-+    data is movable.
-+
-+    ``GFP_HIGHUSER`` means that the allocated memory is not movable,
-+    but it is not required to be directly accessible by the kernel. An
-+    example may be a hardware allocation that maps data directly into
-+    userspace but has no addressing limitations.
-+
-+    ``GFP_USER`` means that the allocated memory is not movable and it
-+    must be directly accessible by the kernel.
-+
-+You may notice that quite a few allocations in the existing code
-+specify ``GFP_NOIO`` or ``GFP_NOFS``. Historically, they were used to
-+prevent recursion deadlocks caused by direct memory reclaim calling
-+back into the FS or IO paths and blocking on already held
-+resources. Since 4.12 the preferred way to address this issue is to
-+use new scope APIs described in
-+:ref:`Documentation/core-api/gfp_mask-from-fs-io.rst <gfp_mask_from_fs_io>`.
-+
-+Other legacy GFP flags are ``GFP_DMA`` and ``GFP_DMA32``. They are
-+used to ensure that the allocated memory is accessible by hardware
-+with limited addressing capabilities. So unless you are writing a
-+driver for a device with such restrictions, avoid using these flags.
-+And even with hardware with restrictions it is preferable to use
-+`dma_alloc*` APIs.
-+
-+Selecting memory allocator
-+==========================
-+
-+The most straightforward way to allocate memory is to use a function
-+from the :c:func:`kmalloc` family. And, to be on the safe size it's
-+best to use routines that set memory to zero, like
-+:c:func:`kzalloc`. If you need to allocate memory for an array, there
-+are :c:func:`kmalloc_array` and :c:func:`kcalloc` helpers.
-+
-+The maximal size of a chunk that can be allocated with `kmalloc` is
-+limited. The actual limit depends on the hardware and the kernel
-+configuration, but it is a good practice to use `kmalloc` for objects
-+smaller than page size.
-+
-+For large allocations you can use :c:func:`vmalloc` and
-+:c:func:`vzalloc`, or directly request pages from the page
-+allocator. The memory allocated by `vmalloc` and related functions is
-+not physically contiguous.
-+
-+If you are not sure whether the allocation size is too large for
-+`kmalloc`, it is possible to use :c:func:`kvmalloc` and its
-+derivatives. It will try to allocate memory with `kmalloc` and if the
-+allocation fails it will be retried with `vmalloc`. There are
-+restrictions on which GFP flags can be used with `kvmalloc`; please
-+see :c:func:`kvmalloc_node` reference documentation. Note that
-+`kvmalloc` may return memory that is not physically contiguous.
-+
-+If you need to allocate many identical objects you can use the slab
-+cache allocator. The cache should be set up with
-+:c:func:`kmem_cache_create` before it can be used. Afterwards
-+:c:func:`kmem_cache_alloc` and its convenience wrappers can allocate
-+memory from that cache.
-+
-+When the allocated memory is no longer needed it must be freed. You
-+can use :c:func:`kvfree` for the memory allocated with `kmalloc`,
-+`vmalloc` and `kvmalloc`. The slab caches should be freed with
-+:c:func:`kmem_cache_free`. And don't forget to destroy the cache with
-+:c:func:`kmem_cache_destroy`.
--- 
-2.7.4
+Yes, it would, if I understand you correctly.
+
+Thanks,
+Rafael
 
