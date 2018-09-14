@@ -2,144 +2,135 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68BEFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C738FFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E4320861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8143A20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:12:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QKJE5EBb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E4320861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nhx1sfE2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8143A20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeINW1u (ORCPT
+        id S1728020AbeINW2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 18:27:50 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:46901 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeINW1u (ORCPT
+        Fri, 14 Sep 2018 18:28:15 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38254 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeINW2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 18:27:50 -0400
+        Fri, 14 Sep 2018 18:28:14 -0400
+Received: by mail-qt0-f196.google.com with SMTP id x7-v6so9380317qtk.5;
+        Fri, 14 Sep 2018 10:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1536945146; x=1568481146;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uwdILCVkbfsxrXAdNjSGJsrrcFbynueWGNHGkoo82EQ=;
-  b=QKJE5EBbNksh+10VtfPrbxryeHExgCAtmLqcQgsbKLrnCaWGQg++Akxp
-   eC0GxXNgWpXhz2Tfk98MpJdkOxCcdipXg848193ydMwN3Mr0zLmTjEk9i
-   5T5LRIEx1HJGV+V88SMVrIXb81tbSGC9ty61DJw1SObep7RszPhN1Ij+5
-   E=;
-X-IronPort-AV: E=Sophos;i="5.53,374,1531785600"; 
-   d="scan'208";a="630665092"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-81e76b79.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Sep 2018 17:12:23 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
-        by email-inbound-relay-2b-81e76b79.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8EHCJNm126655
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Fri, 14 Sep 2018 17:12:23 GMT
-Received: from EX13D07UEB001.ant.amazon.com (10.43.60.203) by
- EX13MTAUEB001.ant.amazon.com (10.43.60.96) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 14 Sep 2018 17:12:22 +0000
-Received: from EX13MTAUEB001.ant.amazon.com (10.43.60.96) by
- EX13D07UEB001.ant.amazon.com (10.43.60.203) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 14 Sep 2018 17:12:22 +0000
-Received: from localhost (10.85.19.144) by mail-relay.amazon.com
- (10.43.60.129) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Fri, 14 Sep 2018 17:12:22 +0000
-Date:   Fri, 14 Sep 2018 10:12:22 -0700
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Jan Beulich <jbeulich@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH 4.14 103/115] x86/xen: dont write ptes directly in 32-bit
- PV guests
-Message-ID: <20180914171222.GA30580@u40b0340c692b58f6553c.ant.amazon.com>
-References: <20180913131823.327472833@linuxfoundation.org>
- <20180913131829.701763608@linuxfoundation.org>
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=R3g2k36CVr9nMcrr8XW96ahHO5waeqenQFbG9f0CjCs=;
+        b=Nhx1sfE2lZdglIcdHNx7A05PybrQ6w/DCbK8LEuokQihQExagKCWvS7xiEGf7XR+qv
+         qBZISpXcgnr99yxqVVtPq1kqjAuBVt7Mw58yJ7EoMx6u09HaVE1ZMKnuaJkgoolpc/hJ
+         AjSii9KOc4xG0Oo7XiyzDW419uc4TR4dgZd6Xe6V1SHuEIc1D4p3SKuf2SFMU7cC+bGy
+         RuAXEHJtub+MKKLM7fpQouMf6JwVbFJ9YLViQgFsFEKmUuj6sk4e1n8famkti7HoMk6F
+         zW7TOvn/jLukniMuRY+GJ/ydWZp1zkHKXTa3E4Rq3jhLj/ZbRhaOZ4UQMR05uaN3SSXN
+         6+Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=R3g2k36CVr9nMcrr8XW96ahHO5waeqenQFbG9f0CjCs=;
+        b=Lp5Yk+lvu3YTtHRE+5kCgBhb233M04i3kkLnd3ZlNR3ELHg11tDKUvNf2oSW8spWM8
+         2k9mvAsL2zRZZfizQdOW5up8+XkymHI8H3YTmn9Kh3Klgz7HiyISDMCy5eky45awU5+P
+         +I+83zqY+hmyGD/gIeQoUNrezwsQJehUP6inbzW7hbRN1c5h1zShNjDHr6mq40UNJ+0A
+         gHb4S6tts8qqZDwj2avwi30OuYArGHCaKNTYxCnVJySspvNCdBM3i3RF59lz/+jG2zcR
+         nmqn1eN1SilM7QlFTLNa5ICSYeYzPezUjkty8wZUbGWnR8cCMcmUSkKk9E2/sENF86ID
+         ZE9w==
+X-Gm-Message-State: APzg51A45s1z+I08q9D79Jh8tSlBYSzJbS10GHY215Nu/QhLpvqlFVDR
+        0H42HE7PuWlCO5NxP7LaCZl/YZ2S9/6oLU3r3Y/E2HsSqBM=
+X-Google-Smtp-Source: ANB0VdbxXRyZ3F8U8gixUOhzon3AnDZ5YBLDDXYfjI1x+8rR7M39xTfy+VwKdyKaMkd/JuILCAMhYbj0PoVYevYzmzY=
+X-Received: by 2002:a0c:aed9:: with SMTP id n25-v6mr9669084qvd.10.1536945170621;
+ Fri, 14 Sep 2018 10:12:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180913131829.701763608@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 10:12:29
+ -0700 (PDT)
+In-Reply-To: <20180914104427.3900-1-harshitjain6751@gmail.com>
+References: <20180914104427.3900-1-harshitjain6751@gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Fri, 14 Sep 2018 19:12:29 +0200
+Message-ID: <CANiq72=xNMKJv3tT9+-jxEOx9033ytRrbUV+TQ6kVL7QY06jDA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: unifdef: fix stringop-truncation warning
+To:     Harshit Jain <harshitjain6751@gmail.com>
+Cc:     stable@vger.kernel.org, Harshit Jain <dev-harsh1998@hotmail.com>,
+        Tony Finch <dot@dotat.at>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Harshit,
 
-On Thu, Sep 13, 2018 at 03:32:03PM +0200, Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Juergen Gross <jgross@suse.com>
-> 
-> commit f7c90c2aa4004808dff777ba6ae2c7294dd06851 upstream.
-> 
-> In some cases 32-bit PAE PV guests still write PTEs directly instead of
-> using hypercalls. This is especially bad when clearing a PTE as this is
-> done via 32-bit writes which will produce intermediate L1TF attackable
-> PTEs.
-> 
-> Change the code to use hypercalls instead.
-> 
+On Fri, Sep 14, 2018 at 12:44 PM, Harshit Jain
+<harshitjain6751@gmail.com> wrote:
+> From: Harshit Jain <dev-harsh1998@hotmail.com>
+>
+> * This commit resolves the following warning when the mainline kernel is build with the android environment.
 
-Good that we got this in. Should we also take this one:
-b2d7a075a1cc ("x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear")
+Typo: built
 
-Which is under the line of the same issue?
+>
+> -> warning :-> https://gist.github.com/dev-harsh1998/757427b16a58f5498db3d87212a9651b
 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> Reviewed-by: Jan Beulich <jbeulich@suse.com>
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
+Try to avoid links to external pages (specially if they are only 2 lines :-).
+
+>
+> * This warning is persistant in all the currently maintained android kernel i.e 3.18, 4.4, 4.9, 4.14.
+
+Typos: persistent, kernels, i.e.
+
+>
+> Signed-off-by: Harshit Jain <dev-harsh1998@hotmail.com>
 > ---
->  arch/x86/xen/mmu_pv.c |    7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -425,14 +425,13 @@ static void xen_set_pud(pud_t *ptr, pud_
->  static void xen_set_pte_atomic(pte_t *ptep, pte_t pte)
->  {
->  	trace_xen_mmu_set_pte_atomic(ptep, pte);
-> -	set_64bit((u64 *)ptep, native_pte_val(pte));
-> +	__xen_set_pte(ptep, pte);
->  }
->  
->  static void xen_pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
->  {
->  	trace_xen_mmu_pte_clear(mm, addr, ptep);
-> -	if (!xen_batched_set_pte(ptep, native_make_pte(0)))
-> -		native_pte_clear(mm, addr, ptep);
-> +	__xen_set_pte(ptep, native_make_pte(0));
->  }
->  
->  static void xen_pmd_clear(pmd_t *pmdp)
-> @@ -1543,7 +1542,7 @@ static void __init xen_set_pte_init(pte_
->  		pte = __pte_ma(((pte_val_ma(*ptep) & _PAGE_RW) | ~_PAGE_RW) &
->  			       pte_val_ma(pte));
->  #endif
-> -	native_set_pte(ptep, pte);
-> +	__xen_set_pte(ptep, pte);
->  }
->  
->  /* Early in boot, while setting up the initial pagetable, assume
-> 
-> 
-> 
+>  scripts/unifdef.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/unifdef.c b/scripts/unifdef.c
+> index 7493c0ee51cc..4ce008eda362 100644
+> --- a/scripts/unifdef.c
+> +++ b/scripts/unifdef.c
+> @@ -395,8 +395,8 @@ usage(void)
+>   * When we have processed a group that starts off with a known-false
+>   * #if/#elif sequence (which has therefore been deleted) followed by a
+>   * #elif that we don't understand and therefore must keep, we edit the
+> - * latter into a #if to keep the nesting correct. We use strncpy() to
+> - * overwrite the 4 byte token "elif" with "if  " without a '\0' byte.
+> + * latter into a #if to keep the nesting correct. We use the memcpy()
+> + * from the string header overwrite the 4 byte token "elif" with "if  ".
+>   *
+>   * When we find a true #elif in a group, the following block will
+>   * always be kept and the rest of the sequence after the next #elif or
+> @@ -450,7 +450,7 @@ static void Idrop (void) { Fdrop();  ignoreon(); }
+>  static void Itrue (void) { Ftrue();  ignoreon(); }
+>  static void Ifalse(void) { Ffalse(); ignoreon(); }
+>  /* modify this line */
+> -static void Mpass (void) { strncpy(keyword, "if  ", 4); Pelif(); }
+> +static void Mpass (void) { memcpy(keyword, "if  ", 4); Pelif(); }
 
--- 
-All the best,
-Eduardo Valentin
+Seems like keyword shouldn't use __attribute__((nonstring)), so this
+looks right.
+
+Cheers,
+Miguel
+
+>  static void Mtrue (void) { keywordedit("else");  state(IS_TRUE_MIDDLE); }
+>  static void Melif (void) { keywordedit("endif"); state(IS_FALSE_TRAILER); }
+>  static void Melse (void) { keywordedit("endif"); state(IS_FALSE_ELSE); }
+> --
+> 2.18.0
+>
