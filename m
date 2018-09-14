@@ -2,134 +2,139 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B06E2ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052D5ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543C820853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A1B62146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 10:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dWz7EaR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543C820853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eJf4U3pG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1B62146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbeINQJq (ORCPT
+        id S1728318AbeINQNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:09:46 -0400
-Received: from m50-133.163.com ([123.125.50.133]:47625 "EHLO m50-133.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727839AbeINQJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:09:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=8KoSZbUYztV9OOS36K
-        mzY/EPI4k/1Ig+NKtcxAEHfEc=; b=dWz7EaR8euIc7w906JpO6hcOwVPToPu+45
-        n1HbSchXgBckkNY51iCXMEZJKoVCxpTyA/L6gO8DP7Qo+NUtn1AYai7Yrf37TYpc
-        binZdayp2+X/trA9YeT9SdkTqFjCcVeoKz+QDYny8zI/7pqiJ/3lSP379s115b4V
-        WMcGfg728=
-Received: from lx-virtual-machine.localdomain (unknown [159.226.94.148])
-        by smtp3 (Coremail) with SMTP id DdGowADHYCSok5tbIuQrAA--.12S3;
-        Fri, 14 Sep 2018 18:55:45 +0800 (CST)
-From:   My Name <18650033736@163.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Xin Lin <18650033736@163.com>
-Subject: [PATCH] kernel: prevent submission of creds with higher privileges inside container
-Date:   Fri, 14 Sep 2018 18:55:36 +0800
-Message-Id: <1536922536-5803-1-git-send-email-18650033736@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DdGowADHYCSok5tbIuQrAA--.12S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZrykCFy3ZF4DtF47tr47urg_yoW5XrW7pF
-        sFkr9xGws5J3W7tan7Wr4YvFWfAw4fAry2gas5Kw4Yvwn2ka48u34ku3W3GFnrurW7KayU
-        KFW5GrsIgrZ8Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UeUDXUUUUU=
-X-Originating-IP: [159.226.94.148]
-X-CM-SenderInfo: rprylkyqqtjlmtwbiqqrwthudrp/xtbBRx3BflO-8G7GFgAAsH
+        Fri, 14 Sep 2018 12:13:08 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34656 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727839AbeINQNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 12:13:08 -0400
+Received: from [192.168.0.23] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6F0D4CE;
+        Fri, 14 Sep 2018 12:59:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536922748;
+        bh=sDnNBZ5z0kr6y50Oh6gHismsPV5E4AEPyxrsk59xB1s=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eJf4U3pGjBSxjE3mPqCVIfEUgbKF1q45v1tWq4OhLcvUUq5bQK9RCtIJHWOHrqZfL
+         siTB3KYDc0+QXr1R6xh2zL/Fb/CU5KOxZ0ARAjE6veYDlxwWH09NyDWrtTkQF583UO
+         gZfZk2FQne4dDctrQ/iiIY+RNn5iJ+xoMlmY6QA4=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/6] media: vsp1: Correct the pitch on multiplanar formats
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180831144044.31713-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180831144044.31713-3-kieran.bingham+renesas@ideasonboard.com>
+ <4407219.HP1UPh24hA@avalon>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <8e97bc7f-57b9-e9fd-e304-9e8158530ca4@ideasonboard.com>
+Date:   Fri, 14 Sep 2018 11:59:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <4407219.HP1UPh24hA@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Lin <18650033736@163.com>
+Hi Laurent,
 
-Adversaries often attack the Linux kernel via using
-commit_creds(prepare_kernel_cred(0)) to submit ROOT
-credential for the purpose of privilege escalation.
-For processes inside the Linux container, the above
-approach also works, because the container and the
-host share the same Linux kernel. Therefore, we en-
-force a check in commit_creds() before updating the
-cred of the caller process. If the process is insi-
-de a container (judging from the Namespace ID) and
-try to submit credentials with higher privileges t-
-han current (judging from the uid, gid, and cap_bset
-in the new cred), we will stop the modification. We
-consider that if the namespace ID of the process is
-different from the init Namespace ID (enumed in /i-
-nclude/linux/proc_ns.h), the process is inside a c-
-ontainer. And if the uid/gid in the new cred is sm-
-aller or the cap_bset (capability bounding set) in
-the new cred is larger, it may be a privilege esca-
-lation operation.
+On 14/09/18 11:25, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 31 August 2018 17:40:40 EEST Kieran Bingham wrote:
+>> DRM pipelines now support tri-planar as well as packed formats with
+>> YCbCr, however the pitch calculation was not updated to support this.
+>>
+>> Correct this by adjusting the bytesperline accordingly when 3 planes are
+>> used.
+>>
+>> Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> I already have a similar patch from Matsuoka-san in my tree, please see 
+> https://patchwork.kernel.org/patch/10425565/. I'll update it with the fixes 
+> tag.
+> 
+>> ---
+>>  drivers/media/platform/vsp1/vsp1_drm.c | 10 ++++++++++
+>>  include/media/vsp1.h                   |  2 +-
+>>  2 files changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/vsp1/vsp1_drm.c
+>> b/drivers/media/platform/vsp1/vsp1_drm.c index b9c0f695d002..b9afd98f6867
+>> 100644
+>> --- a/drivers/media/platform/vsp1/vsp1_drm.c
+>> +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+>> @@ -814,6 +814,16 @@ int vsp1_du_atomic_update(struct device *dev, unsigned
+>> int pipe_index, rpf->format.num_planes = fmtinfo->planes;
+>>  	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+>>  	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
+>> +
+>> +	/*
+>> +	 * Packed YUV formats are subsampled, but the packing of two components
+>> +	 * into a single plane compensates for this leaving the bytesperline
+>> +	 * to be the correct value. For multiplanar formats we must adjust the
+>> +	 * pitch accordingly.
+>> +	 */
+>> +	if (fmtinfo->planes == 3)
+>> +		rpf->format.plane_fmt[1].bytesperline /= fmtinfo->hsub;
+>> +
+>>  	rpf->alpha = cfg->alpha;
+>>
+>>  	rpf->mem.addr[0] = cfg->mem[0];
+>> diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+>> index 3093b9cb9067..0ce19b595cc7 100644
+>> --- a/include/media/vsp1.h
+>> +++ b/include/media/vsp1.h
+>> @@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int
+>> pipe_index, /**
+>>   * struct vsp1_du_atomic_config - VSP atomic configuration parameters
+>>   * @pixelformat: plane pixel format (V4L2 4CC)
+>> - * @pitch: line pitch in bytes, for all planes
+>> + * @pitch: line pitch in bytes
+> 
+> Should I update the above-mentioned patch with this as well ? How about 
+> phrasing it as "line pitch in bytes for the first plane" ?
 
-Signed-off-by: Xin Lin <18650033736@163.com>
----
- kernel/cred.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Yes, your suggestion sounds fine.
 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf0365..b9a313d 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -19,6 +19,12 @@
- #include <linux/security.h>
- #include <linux/binfmts.h>
- #include <linux/cn_proc.h>
-+#include <linux/proc_ns.h>
-+#include <linux/ipc_namespace.h>
-+#include "../fs/mount.h"
-+#include <net/net_namespace.h>
-+#include <linux/capability.h>
-+#include <linux/cgroup.h>
- 
- #if 0
- #define kdebug(FMT, ...)						\
-@@ -33,6 +39,8 @@ do {									\
- } while (0)
- #endif
- 
-+bool flag = true;
-+static struct net *initnet;
- static struct kmem_cache *cred_jar;
- 
- /* init to 2 - one for init_task, one to ensure it is never freed */
-@@ -425,6 +433,22 @@ int commit_creds(struct cred *new)
- 	struct task_struct *task = current;
- 	const struct cred *old = task->real_cred;
- 
-+	if (flag) {
-+		initnet = get_net_ns_by_pid(1);
-+		flag = false;
-+	}
-+	if (task->nsproxy->uts_ns->ns.inum != PROC_UTS_INIT_INO ||
-+	task->nsproxy->ipc_ns->ns.inum != PROC_IPC_INIT_INO ||
-+	task->nsproxy->mnt_ns->ns.inum != 0xF0000000U ||
-+	task->nsproxy->pid_ns_for_children->ns.inum != PROC_PID_INIT_INO ||
-+	task->nsproxy->net_ns->ns.inum != initnet->ns.inum ||
-+	old->user_ns->ns.inum != PROC_USER_INIT_INO ||
-+	task->nsproxy->cgroup_ns->ns.inum != PROC_CGROUP_INIT_INO) {
-+		if (new->uid.val < old->uid.val || new->gid.val < old->gid.val
-+		|| new->cap_bset.cap[0] > old->cap_bset.cap[0])
-+			return 0;
-+	}
-+
- 	kdebug("commit_creds(%p{%d,%d})", new,
- 	       atomic_read(&new->usage),
- 	       read_cred_subscribers(new));
--- 
-2.7.4
+The patch at [0] looks good to me as a fix for this issue.
 
+for: "v4l: vsp1: Fix YCbCr planar formats pitch calculation" [0]
+With the fixes tag, and documentation updated:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+[0]  https://patchwork.kernel.org/patch/10425565
+
+> 
+>>   * @mem: DMA memory address for each plane of the frame buffer
+>>   * @src: source rectangle in the frame buffer (integer coordinates)
+>>   * @dst: destination rectangle on the display (integer coordinates)
+> 
 
