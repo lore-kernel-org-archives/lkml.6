@@ -2,325 +2,532 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06691FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A63DC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37D920861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37D920861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E612120861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 07:16:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E612120861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbeINM2N (ORCPT
+        id S1727885AbeINM31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 08:28:13 -0400
-Received: from mga07.intel.com ([134.134.136.100]:41753 "EHLO mga07.intel.com"
+        Fri, 14 Sep 2018 08:29:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59000 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbeINM2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 08:28:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 00:15:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,372,1531810800"; 
-   d="scan'208";a="90393647"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 14 Sep 2018 00:15:04 -0700
-Received: from [10.125.251.160] (abudanko-mobl.ccr.corp.intel.com [10.125.251.160])
-        by linux.intel.com (Postfix) with ESMTP id 72CF158053F;
-        Fri, 14 Sep 2018 00:15:02 -0700 (PDT)
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <f706445f-8bf6-8d8a-860e-51b9333c5947@linux.intel.com>
-Date:   Fri, 14 Sep 2018 10:15:01 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726527AbeINM31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 08:29:27 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E4DD530917AF;
+        Fri, 14 Sep 2018 07:16:18 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-128.nay.redhat.com [10.66.14.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A79CC18531;
+        Fri, 14 Sep 2018 07:16:13 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 15:16:11 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Henry Willard <henry.willard@oracle.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: mprotect: check page dirty when change ptes
+Message-ID: <20180914071610.GL10763@xz-x1>
+References: <20180912064921.31015-1-peterx@redhat.com>
+ <20180912130355.GA4009@redhat.com>
+ <20180912132438.GB4009@redhat.com>
+ <20180913073722.GF10763@xz-x1>
+ <20180913142328.GA3576@redhat.com>
+ <20180914004239.GA31077@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180914022910.GA15146@sejong>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180914004239.GA31077@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Sep 2018 07:16:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Namhyung,
+On Thu, Sep 13, 2018 at 08:42:39PM -0400, Jerome Glisse wrote:
+> On Thu, Sep 13, 2018 at 10:23:28AM -0400, Jerome Glisse wrote:
+> > On Thu, Sep 13, 2018 at 03:37:22PM +0800, Peter Xu wrote:
+> > > On Wed, Sep 12, 2018 at 09:24:39AM -0400, Jerome Glisse wrote:
+> > > > On Wed, Sep 12, 2018 at 09:03:55AM -0400, Jerome Glisse wrote:
+> > > > > On Wed, Sep 12, 2018 at 02:49:21PM +0800, Peter Xu wrote:
+> > > > > > Add an extra check on page dirty bit in change_pte_range() since there
+> > > > > > might be case where PTE dirty bit is unset but it's actually dirtied.
+> > > > > > One example is when a huge PMD is splitted after written: the dirty bit
+> > > > > > will be set on the compound page however we won't have the dirty bit set
+> > > > > > on each of the small page PTEs.
+> > > > > > 
+> > > > > > I noticed this when debugging with a customized kernel that implemented
+> > > > > > userfaultfd write-protect.  In that case, the dirty bit will be critical
+> > > > > > since that's required for userspace to handle the write protect page
+> > > > > > fault (otherwise it'll get a SIGBUS with a loop of page faults).
+> > > > > > However it should still be good even for upstream Linux to cover more
+> > > > > > scenarios where we shouldn't need to do extra page faults on the small
+> > > > > > pages if the previous huge page is already written, so the dirty bit
+> > > > > > optimization path underneath can cover more.
+> > > > > > 
+> > > > > 
+> > > > > So as said by Kirill NAK you are not looking at the right place for
+> > > > > your bug please first apply the below patch and read my analysis in
+> > > > > my last reply.
+> > > > 
+> > > > Just to be clear you are trying to fix a userspace bug that is hidden
+> > > > for non THP pages by a kernel space bug inside userfaultfd by making
+> > > > the kernel space bug of userfaultfd buggy for THP too.
+> > > > 
+> > > > 
+> > > > > 
+> > > > > Below patch fix userfaultfd bug. I am not posting it as it is on a
+> > > > > branch and i am not sure when Andrea plan to post. Andrea feel free
+> > > > > to squash that fix.
+> > > > > 
+> > > > > 
+> > > > > From 35cdb30afa86424c2b9f23c0982afa6731be961c Mon Sep 17 00:00:00 2001
+> > > > > From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+> > > > > Date: Wed, 12 Sep 2018 08:58:33 -0400
+> > > > > Subject: [PATCH] userfaultfd: do not set dirty accountable when changing
+> > > > >  protection
+> > > > > MIME-Version: 1.0
+> > > > > Content-Type: text/plain; charset=UTF-8
+> > > > > Content-Transfer-Encoding: 8bit
+> > > > > 
+> > > > > mwriteprotect_range() has nothing to do with the dirty accountable
+> > > > > optimization so do not set it as it opens a door for userspace to
+> > > > > unwrite protect pages in a range that is write protected ie the vma
+> > > > > !(vm_flags & VM_WRITE).
+> > > > > 
+> > > > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > > > > ---
+> > > > >  mm/userfaultfd.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > index a0379c5ffa7c..59db1ce48fa0 100644
+> > > > > --- a/mm/userfaultfd.c
+> > > > > +++ b/mm/userfaultfd.c
+> > > > > @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > > > >  		newprot = vm_get_page_prot(dst_vma->vm_flags);
+> > > > >  
+> > > > >  	change_protection(dst_vma, start, start + len, newprot,
+> > > > > -				!enable_wp, 0);
+> > > > > +				false, 0);
+> > > > >  
+> > > > >  	err = 0;
+> > > > >  out_unlock:
+> > > 
+> > > Hi, Jerome,
+> > > 
+> > > I tried your patch, unluckily it didn't work just like when not
+> > > applied:
+> > > 
+> > > Sep 13 15:16:52 px-ws kernel: FAULT_FLAG_ALLOW_RETRY missing 71
+> > > Sep 13 15:16:52 px-ws kernel: CPU: 5 PID: 1625 Comm: qemu-system-x86 Not tainted 4.19.0-rc2+ #31                                                                            
+> > > Sep 13 15:16:52 px-ws kernel: Hardware name: LENOVO ThinkCentre M8500t-N000/SHARKBAY, BIOS FBKTC6AUS 06/22/2016                                                             
+> > > Sep 13 15:16:52 px-ws kernel: Call Trace:
+> > > Sep 13 15:16:52 px-ws kernel:  dump_stack+0x5c/0x7b
+> > > Sep 13 15:16:52 px-ws kernel:  handle_userfault+0x4b5/0x780
+> > > Sep 13 15:16:52 px-ws kernel:  ? userfaultfd_ctx_put+0xb0/0xb0
+> > > Sep 13 15:16:52 px-ws kernel:  do_wp_page+0x1bd/0x5a0
+> > > Sep 13 15:16:52 px-ws kernel:  __handle_mm_fault+0x7f9/0x1250
+> > > Sep 13 15:16:52 px-ws kernel:  handle_mm_fault+0xfc/0x1f0
+> > > Sep 13 15:16:52 px-ws kernel:  __do_page_fault+0x255/0x520
+> > > Sep 13 15:16:52 px-ws kernel:  do_page_fault+0x32/0x110
+> > > Sep 13 15:16:52 px-ws kernel:  ? page_fault+0x8/0x30
+> > > Sep 13 15:16:52 px-ws kernel:  page_fault+0x1e/0x30
+> > > Sep 13 15:16:52 px-ws kernel: RIP: 0033:0x7f2a9d3254e0
+> > > Sep 13 15:16:52 px-ws kernel: Code: 73 01 c1 ef 07 48 81 e6 00 f0 ff ff 81 e7 e0 1f 00 00 49 8d bc 3e 40 57 00 00 48 3b 37 48 8b f3 0f 85 a4 01 00 00 48 03 77 10 <66> 89 06f
+> > > Sep 13 15:16:52 px-ws kernel: RSP: 002b:00007f2ab1aae390 EFLAGS: 00010202
+> > > Sep 13 15:16:52 px-ws kernel: RAX: 0000000000000246 RBX: 0000000000001ff2 RCX: 0000000000000031                                                                             
+> > > Sep 13 15:16:52 px-ws kernel: RDX: ffffffffffac9604 RSI: 00007f2a53e01ff2 RDI: 000055a98fa049c0                                                                             
+> > > Sep 13 15:16:52 px-ws kernel: RBP: 0000000000001ff4 R08: 0000000000000000 R09: 0000000000000002                                                                             
+> > > Sep 13 15:16:52 px-ws kernel: R10: 0000000000000000 R11: 00007f2a98201030 R12: 0000000000001ff2                                                                             
+> > > Sep 13 15:16:52 px-ws kernel: R13: 0000000000000000 R14: 000055a98f9ff260 R15: 00007f2ab1aaf700                                                                             
+> > > 
+> > > In case you'd like to try, here's the QEMU binary I'm testing:
+> > > 
+> > > https://github.com/xzpeter/qemu/tree/peter-userfault-wp-test
+> > > 
+> > > It write protects the whole system when received HMP command "info
+> > > status" (I hacked that command for simplicity; it's of course not used
+> > > for that...).
+> > > 
+> > > Would you please help me understand how your patch could resolve the
+> > > wp page fault from userspace if not with dirty_accountable set in the
+> > > uffd-wp world (sorry for asking a question that is related to a custom
+> > > tree, but finally it'll be targeted at upstream after all)? I asked
+> > > this question in my previous reply to you in v1 but you didn't
+> > > respond.  I'd be glad to test any of your further patches if you can
+> > > help solve the problem, but I'd also appreciate if you could explain
+> > > it a bit on how it work since again I didn't see why it could work:
+> > > again, if without that dirty_accountable set then IMO we will never
+> > > setup _PAGE_WRITE for page entries and IMHO that's needed for
+> > > resolving the page fault for uffd-wp tree.
+> > 
+> > I missed that reply and forgot about PAGE_COPY ... So below is
+> > what i believe a proper fix for your issue:
+> > 
+> 
+> Below is a slightly better one to avoid mkwrite on COW page but it is
+> still kind of ugly to do that in those function maybe adding a new helper
+> would be a better way dunno. Anyway untested but it is better than trying
+> to set pte dirty.
+> 
+> 
+> From 8333ac9de1c54fe858f6f22dd21a2e14eebccd0e Mon Sep 17 00:00:00 2001
+> From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+> Date: Thu, 13 Sep 2018 10:16:30 -0400
+> Subject: [PATCH] mm/mprotect: add a mkwrite paramater to change_protection()
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> The mkwrite parameter allow to change read only pte to write one which
+> is needed by userfaultfd to un-write-protect after a fault have been
+> handled.
+> 
+> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> ---
+>  include/linux/huge_mm.h |  2 +-
+>  include/linux/mm.h      |  3 +-
+>  mm/huge_memory.c        | 32 +++++++++++++++++++--
+>  mm/mempolicy.c          |  2 +-
+>  mm/mprotect.c           | 61 +++++++++++++++++++++++++++++------------
+>  mm/userfaultfd.c        |  2 +-
+>  6 files changed, 79 insertions(+), 23 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index a8a126259bc4..b51ff7f8e65c 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -45,7 +45,7 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>  			 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush);
+>  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>  			unsigned long addr, pgprot_t newprot,
+> -			int prot_numa);
+> +			int prot_numa, bool mkwrite);
+>  int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  			pmd_t *pmd, pfn_t pfn, bool write);
+>  int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 5d5c7fd07dc0..2bbf3e33bf9e 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1492,7 +1492,8 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+>  		bool need_rmap_locks);
+>  extern unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+>  			      unsigned long end, pgprot_t newprot,
+> -			      int dirty_accountable, int prot_numa);
+> +			      int dirty_accountable, int prot_numa,
+> +			      bool mkwrite);
+>  extern int mprotect_fixup(struct vm_area_struct *vma,
+>  			  struct vm_area_struct **pprev, unsigned long start,
+>  			  unsigned long end, unsigned long newflags);
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index abf621aba672..3038f4bd9cce 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1842,12 +1842,13 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>   *  - HPAGE_PMD_NR is protections changed and TLB flush necessary
+>   */
+>  int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+> -		unsigned long addr, pgprot_t newprot, int prot_numa)
+> +		unsigned long addr, pgprot_t newprot, int prot_numa,
+> +		bool mkwrite)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	spinlock_t *ptl;
+>  	pmd_t entry;
+> -	bool preserve_write;
+> +	bool preserve_write, do_mkwrite = false;
+>  	int ret;
+>  
+>  	ptl = __pmd_trans_huge_lock(pmd, vma);
+> @@ -1857,6 +1858,31 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>  	preserve_write = prot_numa && pmd_write(*pmd);
+>  	ret = 1;
+>  
+> +	if (mkwrite && pmd_present(*pmd) && !pmd_write(*pmd)) {
+> +		struct page *page = pmd_page(pmd);
+> +		pmd_t orig_pmd = READ_ONCE(pmd);
+> +
+> +		VM_BUG_ON_PAGE(!PageCompound(page) || !PageHead(page), page);
+> +		/*
+> +		 * We can only allow mkwrite if nobody else maps the huge page
+> +		 * or it's part.
+> +		 */
+> +		if (!trylock_page(page)) {
+> +			get_page(page);
+> +			spin_unlock(ptl);
+> +			lock_page(page);
+> +
+> +			ptl = __pmd_trans_huge_lock(pmd, vma);
+> +			if (!ptl)
+> +				return 0;
+> +		}
+> +		if (pmd_same(*pmd, orig_pmd) && reuse_swap_page(page, NULL)) {
+> +			do_mkwrite = true;
+> +		}
+> +		unlock_page(page);
+> +		put_page(page);
+> +	}
+> +
+>  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+>  	if (is_swap_pmd(*pmd)) {
+>  		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+> @@ -1925,6 +1951,8 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>  	entry = pmd_modify(entry, newprot);
+>  	if (preserve_write)
+>  		entry = pmd_mk_savedwrite(entry);
+> +	if (do_mkwrite)
+> +		entry = pmd_mkwrite(entry);
+>  	ret = HPAGE_PMD_NR;
+>  	set_pmd_at(mm, addr, pmd, entry);
+>  	BUG_ON(vma_is_anonymous(vma) && !preserve_write && pmd_write(entry));
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 4ce44d3ff03d..2d0ee09e6b26 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -579,7 +579,7 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
+>  {
+>  	int nr_updated;
+>  
+> -	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
+> +	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1, false);
+>  	if (nr_updated)
+>  		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
+>  
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 58b629bb70de..c43a29eebdaf 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -36,7 +36,7 @@
+>  
+>  static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+>  		unsigned long addr, unsigned long end, pgprot_t newprot,
+> -		int dirty_accountable, int prot_numa)
+> +		int dirty_accountable, int prot_numa, bool mkwrite)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	pte_t *pte, oldpte;
+> @@ -72,13 +72,15 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+>  		if (pte_present(oldpte)) {
+>  			pte_t ptent;
+>  			bool preserve_write = prot_numa && pte_write(oldpte);
+> +			bool do_mkwrite = false;
+>  
+>  			/*
+>  			 * Avoid trapping faults against the zero or KSM
+>  			 * pages. See similar comment in change_huge_pmd.
+>  			 */
+> -			if (prot_numa) {
+> +			if (prot_numa || mkwrite) {
+>  				struct page *page;
+> +				int tmp;
+>  
+>  				page = vm_normal_page(vma, addr, oldpte);
+>  				if (!page || PageKsm(page))
+> @@ -94,6 +96,26 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+>  				 */
+>  				if (target_node == page_to_nid(page))
+>  					continue;
+> +
+> +				if (mkwrite) {
+> +					if (!trylock_page(page)) {
+> +						pte_t orig_pte = READ_ONCE(pte);
+> +						get_page(page);
+> +						pte_unmap_unlock(pte, ptl);
+> +						lock_page(page);
+> +						pte = pte_offset_map_lock(vma->vm_mm, pmd,
+> +									  addr, &ptl);
+> +						if (!pte_same(*pte, orig_pte)) {
+> +							unlock_page(page);
+> +							put_page(page);
+> +							continue;
+> +						}
+> +					}
+> +					if (reuse_swap_page(vmf->page, &tmp))
+> +						do_mkwrite = true;
+> +					unlock_page(page);
+> +					put_page(page);
+> +				}
+>  			}
+>  
+>  			ptent = ptep_modify_prot_start(mm, addr, pte);
+> @@ -102,9 +124,9 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+>  				ptent = pte_mk_savedwrite(ptent);
+>  
+>  			/* Avoid taking write faults for known dirty pages */
+> -			if (dirty_accountable && pte_dirty(ptent) &&
+> -					(pte_soft_dirty(ptent) ||
+> -					 !(vma->vm_flags & VM_SOFTDIRTY))) {
+> +			if (do_mkwrite || (dirty_accountable &&
+> +			    pte_dirty(ptent) && (pte_soft_dirty(ptent) ||
+> +			    !(vma->vm_flags & VM_SOFTDIRTY)))) {
+>  				ptent = pte_mkwrite(ptent);
+>  			}
+>  			ptep_modify_prot_commit(mm, addr, pte, ptent);
+> @@ -150,7 +172,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+>  
+>  static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+>  		pud_t *pud, unsigned long addr, unsigned long end,
+> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> +		bool mkwrite)
+>  {
+>  	pmd_t *pmd;
+>  	struct mm_struct *mm = vma->vm_mm;
+> @@ -179,7 +202,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+>  				__split_huge_pmd(vma, pmd, addr, false, NULL);
+>  			} else {
+>  				int nr_ptes = change_huge_pmd(vma, pmd, addr,
+> -						newprot, prot_numa);
+> +						newprot, prot_numa, mkwrite);
+>  
+>  				if (nr_ptes) {
+>  					if (nr_ptes == HPAGE_PMD_NR) {
+> @@ -194,7 +217,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+>  			/* fall through, the trans huge pmd just split */
+>  		}
+>  		this_pages = change_pte_range(vma, pmd, addr, next, newprot,
+> -				 dirty_accountable, prot_numa);
+> +				 dirty_accountable, prot_numa, mkwrite);
+>  		pages += this_pages;
+>  next:
+>  		cond_resched();
+> @@ -210,7 +233,8 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+>  
+>  static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+>  		p4d_t *p4d, unsigned long addr, unsigned long end,
+> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> +		bool mkwrite)
+>  {
+>  	pud_t *pud;
+>  	unsigned long next;
+> @@ -222,7 +246,7 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+>  		if (pud_none_or_clear_bad(pud))
+>  			continue;
+>  		pages += change_pmd_range(vma, pud, addr, next, newprot,
+> -				 dirty_accountable, prot_numa);
+> +				 dirty_accountable, prot_numa, mkwrite);
+>  	} while (pud++, addr = next, addr != end);
+>  
+>  	return pages;
+> @@ -230,7 +254,8 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+>  
+>  static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+>  		pgd_t *pgd, unsigned long addr, unsigned long end,
+> -		pgprot_t newprot, int dirty_accountable, int prot_numa)
+> +		pgprot_t newprot, int dirty_accountable, int prot_numa,
+> +		bool mkwrite)
+>  {
+>  	p4d_t *p4d;
+>  	unsigned long next;
+> @@ -242,7 +267,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+>  		if (p4d_none_or_clear_bad(p4d))
+>  			continue;
+>  		pages += change_pud_range(vma, p4d, addr, next, newprot,
+> -				 dirty_accountable, prot_numa);
+> +				 dirty_accountable, prot_numa, mkwrite);
+>  	} while (p4d++, addr = next, addr != end);
+>  
+>  	return pages;
+> @@ -250,7 +275,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+>  
+>  static unsigned long change_protection_range(struct vm_area_struct *vma,
+>  		unsigned long addr, unsigned long end, pgprot_t newprot,
+> -		int dirty_accountable, int prot_numa)
+> +		int dirty_accountable, int prot_numa, mkwrite)
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	pgd_t *pgd;
+> @@ -267,7 +292,7 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+>  		if (pgd_none_or_clear_bad(pgd))
+>  			continue;
+>  		pages += change_p4d_range(vma, pgd, addr, next, newprot,
+> -				 dirty_accountable, prot_numa);
+> +				 dirty_accountable, prot_numa, mkwrite);
+>  	} while (pgd++, addr = next, addr != end);
+>  
+>  	/* Only flush the TLB if we actually modified any entries: */
+> @@ -280,14 +305,16 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+>  
+>  unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+>  		       unsigned long end, pgprot_t newprot,
+> -		       int dirty_accountable, int prot_numa)
+> +		       int dirty_accountable, int prot_numa, bool mkwrite)
+>  {
+>  	unsigned long pages;
+>  
+>  	if (is_vm_hugetlb_page(vma))
+>  		pages = hugetlb_change_protection(vma, start, end, newprot);
+>  	else
+> -		pages = change_protection_range(vma, start, end, newprot, dirty_accountable, prot_numa);
+> +		pages = change_protection_range(vma, start, end, newprot,
+> +						dirty_accountable,
+> +						prot_numa, mkwrite);
+>  
+>  	return pages;
+>  }
+> @@ -366,7 +393,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+>  	vma_set_page_prot(vma);
+>  
+>  	change_protection(vma, start, end, vma->vm_page_prot,
+> -			  dirty_accountable, 0);
+> +			  dirty_accountable, 0, false);
+>  
+>  	/*
+>  	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index a0379c5ffa7c..c745c5d87523 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+>  		newprot = vm_get_page_prot(dst_vma->vm_flags);
+>  
+>  	change_protection(dst_vma, start, start + len, newprot,
+> -				!enable_wp, 0);
+> +			  0, 0, !enable_wp);
+>  
+>  	err = 0;
+>  out_unlock:
 
-On 14.09.2018 5:29, Namhyung Kim wrote:
-> On Thu, Sep 13, 2018 at 07:10:35PM +0300, Alexey Budankov wrote:
->> Hi,
-> 
-> Hello,
-> 
->>
->> On 13.09.2018 15:54, Jiri Olsa wrote:
->>> hi,
->>> sending *RFC* for threads support in perf record command.
->>>
->>> In big picture this patchset adds perf record --threads
->>> option that allows to create threads in following modes:
->>>
->>> 1) single thread mode (current)
->>>
->>>   $ perf record ...
->>>   $ perf record --threads=1 ...
->>>
->>>   - all maps are read/stored under process thread
->>>
->>> 2) mode with specific (X) number of threads
->>>
->>>   $ perf record --threads=X ...
->>>
->>>   - maps are spread equaly among threads
->>>
->>> 3) mode that creates thread for every monitored memory map
->>>
->>>   $ perf record --threads ...
->>>
->>>   - which in perf record is equal to number of CPUs, and
->>>     it pins each thread to its map's cpu:
->>>
->>> 4) TODO - NUMA aware threads/maps separation
->>>    ...
->>>
->>> The perf.data stays as a single file.
-> 
-> I'm not sure we really need to keep it as a single file.  As it's a
-> kind of big changes, we might consider breaking compatibility and use
-> a directory structure.
-> 
-> 
->>>
->>> v2 changes:
->>>   - rebased to current Arnaldo's perf/core
->>>     (also based on few fixes from my perf/core, see the branch details below)
->>>
->>> This patchset contains lot of preparation changes to make
->>> threaded record possible:
->>>
->>>   - Namhyung's changes to create multiple data streams in
->>>     perf data file, which allows having each thread data
->>>     being stored in separate files and merged into single
->>>     perf data after
->>>
->>>   - Namhyung's changes to create track mmaps for auxiliary
->>>     events
->>>
->>>   - Namhyung's changes to search for threads/mmaps/comms
->>>     using the time. This is needed because we have now
->>>     multiple data streams which are processed separately,
->>>     but they all need access to complete auxiliary events
->>>     data (threads/mmaps/comms). That's also a reason why
->>>     the auxiliary events are stored into separate data
->>>     stream, which is processed before real data.
->>>
->>>   - the rest of the code that adds threads abstraction into
->>>     record command allows to create them and distribute maps
->>>     among them
->>>
->>>   - other preparational changes
->>>
->>> The threaded monitoring currently can't monitor backward maps
->>> and there are probably more limitations which I haven't spotted
->>> yet.
->>>
->>> So far I tested on laptop:
->>>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
->>>
->>> and a one bigger server:
->>>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
->>>
->>> I can see decrease in recorded LOST events, but both the benchmark
->>> and the monitoring must be carefully configured wrt:
->>>   - number of events (frequency)
->>>   - size of the memory maps
->>>   - size of events (callchains)
->>>   - final perf.data size
->>>
->>> It's also available in:
->>>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->>>   perf/record_threads
->>>
->>> thoughts? ;-) thanks
->>> jirka
->>
->> It is preferable to split into smaller pieces that bring 
->> some improvement proved by metrics numbers and ready for 
->> merging and upstream. Do we have more metrics than the 
->> data loss from trace AIO patches?
-> 
-> Well, this change is to enable parallel access of perf data so the
-> preparation works don't affect single thread processing (hopefully) or
-> make it even worse.  I'm not sure if could be split for performance
-> benefits.
-> 
-> 
->>
->> There is usage of Posix threading API but there is no 
->> its implementation in the patch series, to avoid dependency 
->> on externally coded designs in the core of the tool.
-> 
-> Do you mean it needs to implement its own threading?  I don't think
-> that's what Ingo wanted to.
+Hi, Jerome,
 
-Pthreads implementation is still a part of libc and even part of 
-other libpthread.so binary in case of glibc.
+The first version worked for me but the 2nd didn't.  Both will need to
+be fixed up by myself to at least pass the compilation so I'm not sure
+whether the 2nd patch didn't work because of my changes or your patch
+is broken.  Didn't spend more time to dig.
 
-I guess for Pthreads it is probably acceptable to reside separately 
-because as glibc as bionic provide reasonable implementation. 
+Anyway, thanks for these attempts and your help.  Let me know if you
+want me to test a 3rd version, or I'll just keep the 1st patch here in
+my local tree together with the rest of the work (I'd say that's far
+easier to understand than the previous oneliner) since it at least
+fixes the thing up.
 
-But which else libc libraries do Perf target? It is preferable to 
-clarify it in advance in order to provide complete implementation.
+Regards,
 
-Thanks,
-Alexey
-
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->>
->>>
->>>
->>> ---
->>> Jiri Olsa (30):
->>>       perf tools: Remove perf_tool from event_op2
->>>       perf tools: Remove perf_tool from event_op3
->>>       perf tools: Pass struct perf_mmap into auxtrace_mmap__read* functions
->>>       perf tools: Add struct perf_mmap arg into record__write
->>>       perf tools: Create separate mmap for dummy tracking event
->>>       perf tools: Make copyfile_offset global
->>>       perf tools: Add perf_data__create_index function
->>>       perf record: Add --index option for building index table
->>>       perf tools: Convert dead thread list into rbtree
->>>       perf tools: Add thread::exited flag
->>>       perf callchain: Maintain libunwind's address space in map_groups
->>>       perf tools: Rename perf_evlist__munmap_filtered to perf_mmap__put_filtered
->>>       tools lib fd array: Introduce fdarray__add_clone function
->>>       tools lib subcmd: Add OPT_INTEGER_OPTARG|_SET options
->>>       perf tools: Move __perf_session__process_events args into struct
->>>       perf ui progress: Fix index progress display
->>>       perf tools: Add threads debug variable
->>>       perf tools: Add perf_mmap__read_tail function
->>>       perf record: Introduce struct record_thread
->>>       perf record: Read record thread's mmaps
->>>       perf record: Move waking into struct record
->>>       perf record: Move samples into struct record_thread
->>>       perf record: Move bytes_written into struct record_thread
->>>       perf record: Add record_thread start/stop/process functions
->>>       perf record: Wait for all threads being started
->>>       perf record: Add --threads option
->>>       perf record: Add --thread-stats option support
->>>       perf record: Add maps to --thread-stats output
->>>       perf record: Spread maps for --threads option
->>>       perf record: Spread maps for --threads=X option
->>>
->>> Namhyung Kim (18):
->>>       perf tools: Use a software dummy event to track task/mmap events
->>>       perf tools: Extend perf_evlist__mmap_ex() to use track mmap
->>>       perf report: Skip dummy tracking event
->>>       perf tools: Add HEADER_DATA_INDEX feature
->>>       perf tools: Handle indexed data file properly
->>>       perf tools: Introduce thread__comm(_str)_by_time() helpers
->>>       perf tools: Add a test case for thread comm handling
->>>       perf tools: Use thread__comm_by_time() when adding hist entries
->>>       perf tools: Introduce machine__find*_thread_by_time()
->>>       perf tools: Add a test case for timed thread handling
->>>       perf tools: Maintain map groups list in a leader thread
->>>       perf tools: Introduce thread__find_symbol_by_time() and friends
->>>       perf callchain: Use thread__find_addr_location_by_time() and friends
->>>       perf tools: Add a test case for timed map groups handling
->>>       perf tools: Save timestamp of a map creation
->>>       perf tools: Introduce map_groups__{insert,find}_by_time()
->>>       perf tools: Use map_groups__find_addr_by_time()
->>>       perf tools: Add testcase for managing maps with time
->>>
->>>  tools/lib/api/fd/array.c                 |  17 +
->>>  tools/lib/api/fd/array.h                 |   1 +
->>>  tools/lib/subcmd/parse-options.c         |   2 +
->>>  tools/lib/subcmd/parse-options.h         |   9 +
->>>  tools/perf/Documentation/perf-record.txt |   4 +
->>>  tools/perf/Documentation/perf.txt        |   1 +
->>>  tools/perf/builtin-annotate.c            |   7 +-
->>>  tools/perf/builtin-inject.c              |  32 +-
->>>  tools/perf/builtin-record.c              | 899 +++++++++++++++++++++++++++++--
->>>  tools/perf/builtin-report.c              |  12 +-
->>>  tools/perf/builtin-script.c              |  38 +-
->>>  tools/perf/builtin-stat.c                |  23 +-
->>>  tools/perf/perf.c                        |   1 +
->>>  tools/perf/perf.h                        |   3 +
->>>  tools/perf/tests/Build                   |   4 +
->>>  tools/perf/tests/builtin-test.c          |  16 +
->>>  tools/perf/tests/dwarf-unwind.c          |   4 +-
->>>  tools/perf/tests/hists_common.c          |   2 +-
->>>  tools/perf/tests/hists_link.c            |   2 +-
->>>  tools/perf/tests/tests.h                 |   4 +
->>>  tools/perf/tests/thread-comm.c           |  48 ++
->>>  tools/perf/tests/thread-lookup-time.c    | 181 +++++++
->>>  tools/perf/tests/thread-map-time.c       |  90 ++++
->>>  tools/perf/tests/thread-mg-share.c       |   7 +-
->>>  tools/perf/tests/thread-mg-time.c        |  94 ++++
->>>  tools/perf/ui/browsers/hists.c           |  30 +-
->>>  tools/perf/ui/gtk/hists.c                |   3 +
->>>  tools/perf/util/auxtrace.c               |  30 +-
->>>  tools/perf/util/auxtrace.h               |  21 +-
->>>  tools/perf/util/data.c                   |  64 +++
->>>  tools/perf/util/data.h                   |   5 +
->>>  tools/perf/util/debug.c                  |   2 +
->>>  tools/perf/util/debug.h                  |   1 +
->>>  tools/perf/util/dso.c                    |   2 +-
->>>  tools/perf/util/event.c                  | 135 ++++-
->>>  tools/perf/util/evlist.c                 |  96 +++-
->>>  tools/perf/util/evlist.h                 |   7 +-
->>>  tools/perf/util/evsel.h                  |  15 +
->>>  tools/perf/util/header.c                 |  93 +++-
->>>  tools/perf/util/header.h                 |  18 +-
->>>  tools/perf/util/hist.c                   |   4 +-
->>>  tools/perf/util/intel-pt.c               |   2 +-
->>>  tools/perf/util/machine.c                | 293 ++++++++--
->>>  tools/perf/util/machine.h                |  22 +-
->>>  tools/perf/util/map.c                    |  79 ++-
->>>  tools/perf/util/map.h                    |  40 +-
->>>  tools/perf/util/mmap.c                   |   6 +-
->>>  tools/perf/util/mmap.h                   |  33 +-
->>>  tools/perf/util/session.c                | 178 +++---
->>>  tools/perf/util/session.h                |   5 +-
->>>  tools/perf/util/stat.c                   |   5 +-
->>>  tools/perf/util/stat.h                   |   5 +-
->>>  tools/perf/util/symbol-elf.c             |   2 +-
->>>  tools/perf/util/symbol.c                 |   4 +-
->>>  tools/perf/util/thread.c                 | 200 ++++++-
->>>  tools/perf/util/thread.h                 |  27 +-
->>>  tools/perf/util/tool.h                   |   7 +-
->>>  tools/perf/util/unwind-libdw.c           |   6 +-
->>>  tools/perf/util/unwind-libunwind-local.c |  39 +-
->>>  tools/perf/util/unwind-libunwind.c       |   9 +-
->>>  tools/perf/util/unwind.h                 |   7 +-
->>>  tools/perf/util/util.c                   |   2 +-
->>>  tools/perf/util/util.h                   |   2 +
->>>  63 files changed, 2608 insertions(+), 392 deletions(-)
->>>  create mode 100644 tools/perf/tests/thread-comm.c
->>>  create mode 100644 tools/perf/tests/thread-lookup-time.c
->>>  create mode 100644 tools/perf/tests/thread-map-time.c
->>>  create mode 100644 tools/perf/tests/thread-mg-time.c
->>>
-> 
+-- 
+Peter Xu
