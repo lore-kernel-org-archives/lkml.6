@@ -2,199 +2,515 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9BDC04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D395C04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286E62086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UR0rt7VF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286E62086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id E2C092086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 00:42:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C092086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbeINFu0 (ORCPT
+        id S1728246AbeINFyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 01:50:26 -0400
-Received: from mail-eopbgr10071.outbound.protection.outlook.com ([40.107.1.71]:51790
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726931AbeINFu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 01:50:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7tBg7/PrlGMTuiAOmdsRf5MOTt2BMjYgsNfUk0nnYgk=;
- b=UR0rt7VF3oa3LzOVg29GugAX5p2SMzmSv50ZaC39OP3qhDqhSY0E2NmTyatPhYcAcxiMLuqVRwp9F/tqvzjhhKUnqXCEqx1dWeCoDC4/DHuUxC9+EbYW+j2ZxVsoDQ4utRjij1Qxnht9rOZL735aEkrHo6GyjA0rlzKJMklmNzw=
-Received: from VI1PR04MB4558.eurprd04.prod.outlook.com (20.177.55.216) by
- VI1PR04MB4159.eurprd04.prod.outlook.com (52.133.15.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.15; Fri, 14 Sep 2018 00:38:23 +0000
-Received: from VI1PR04MB4558.eurprd04.prod.outlook.com
- ([fe80::806e:6caa:e774:689f]) by VI1PR04MB4558.eurprd04.prod.outlook.com
- ([fe80::806e:6caa:e774:689f%4]) with mapi id 15.20.1122.021; Fri, 14 Sep 2018
- 00:38:23 +0000
-From:   Jun Li <jun.li@nxp.com>
-To:     Guenter Roeck <linux@roeck-us.net>, Angus Ainslie <angus@akkea.ca>
-CC:     Peter Chen <hzpeterchen@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Fri, 14 Sep 2018 01:54:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49676 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726771AbeINFyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 01:54:39 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0FF6A5F73A;
+        Fri, 14 Sep 2018 00:42:45 +0000 (UTC)
+Received: from redhat.com (ovpn-116-71.phx2.redhat.com [10.3.116.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3E8955D9C8;
+        Fri, 14 Sep 2018 00:42:41 +0000 (UTC)
+Date:   Thu, 13 Sep 2018 20:42:39 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Peter Chen <peter.chen@nxp.com>
-Subject: RE: [PATCH v3] usb: typec: get the vbus source and charge values from
-  the devicetree
-Thread-Topic: [PATCH v3] usb: typec: get the vbus source and charge values
- from  the devicetree
-Thread-Index: AQHUS1JYxlnWFjVdqUGB7lFiUCPer6TueYIAgABnCwA=
-Date:   Fri, 14 Sep 2018 00:38:23 +0000
-Message-ID: <VI1PR04MB4558AD79C67A00CAF539476289190@VI1PR04MB4558.eurprd04.prod.outlook.com>
-References: <20180906192644.24587-1-angus@akkea.ca>
- <20180911145931.32441-1-angus@akkea.ca>
- <8A418EC6-62A4-4354-8928-7693696409D1@gmail.com>
- <9d7431e51aa069f288dd4bf39e9db9f1@www.akkea.ca>
- <20180912163259.GC3300@roeck-us.net>
- <CAL411-qmQ23=hfXX3s5Zo100rSASrByMWR70qLZ8cWqt9hPgSg@mail.gmail.com>
- <aa08abf87b945dc5c8268fab3cb55cbb@www.akkea.ca>
- <20180913173452.GA10115@roeck-us.net>
-In-Reply-To: <20180913173452.GA10115@roeck-us.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4159;6:9hnXS+DrLtIQI+Yp+mLkp6+e321Nhy5xSXHjjIzqtilFecT8VKqbAbRLcWB3VRPnWm+m1uQqW+NhQaDwsaa+ITO/G0L5UFA4nJre67WZITJADdfbpwE9ZdQeIfMS0E/MlDZOedcrOwXbASC0jzE5s/xIHV3LwKq4zR2R1Rmi/FvenezIwEhPUi95x+N11A3I+ri3jZxquYJaOCvyYr4m8IYhmdkb5Ns87rtSqaBWfqefQF2J6ZhmT8fi8l8M7+xhzCGv/YoWhzg0pRaq96AmEMRsqVI2wHy/6J5mKpOMaH6073gvZiZZ3RrPpfOWDMb2xXqMKsj8LfTGbZnrHHneGVxM2bDY6pkXI6yVWFkgl+DGZTaD+Zk8LYSh9x9c4I5iikvxsSfz2Gkp7yRrcM3jEyojA1vT+pKbhRyfxr6aANQaDcSAddXOHOlQStxa5TTgEb3Hvav6Tnti4STXW/c7/g==;5:okpXMnk9cvOtiM6sgXlrLt8cXxY0xdLB7pIi5iK8OZDdeDBUMvj7jmS5AsTcWzrDgm0I0wCWmGZTX11qYwvLajMedqMqurjrlK/oLYKbdw9CyL+/WlA3YiTFG/HwwR2Qf28sYkG8G0KTDk7wkzLZEdYTmDFvdcuYp1nIgXRgE+Y=;7:SjYE5gtjPqtavUqvMpnX6eFXiBfmucuFZgH5FJSJVEfg7lmdCnTQ9VIHMkREuxtIdksql8r3GQ3IW89sgO4oyTGA33Glg6/sQLjT3QkN/nIt3EJ94/gyX2OV6VTm1rXeiDNmooMeK8FouzKH7bM6H2H6Vzaybv3x9Ya84ONDHngHdU3r4wg+/SaC08M1Q7SFzEhXS2RA1xDGrMAWXIxX4R3Xai8MYiljya67p8pwV8/vQ4PAPQMtim1HC5I1PrYY
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 47ad2703-b189-40f8-8dfb-08d619da60bb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4159;
-x-ms-traffictypediagnostic: VI1PR04MB4159:
-x-microsoft-antispam-prvs: <VI1PR04MB4159BDB2FD0B44A1D9BE0C2589190@VI1PR04MB4159.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3002001)(3231344)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:VI1PR04MB4159;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4159;
-x-forefront-prvs: 07954CC105
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(366004)(45074003)(13464003)(199004)(189003)(2900100001)(44832011)(7696005)(102836004)(26005)(186003)(6346003)(53546011)(93886005)(76176011)(86362001)(5250100002)(4326008)(99286004)(6116002)(54906003)(3846002)(316002)(6506007)(476003)(446003)(106356001)(486006)(105586002)(5660300001)(25786009)(2906002)(11346002)(110136005)(478600001)(256004)(14454004)(68736007)(39060400002)(97736004)(53936002)(229853002)(74316002)(305945005)(7736002)(8936002)(8676002)(81156014)(33656002)(55016002)(9686003)(6246003)(81166006)(66066001)(6436002)(15583001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4159;H:VI1PR04MB4558.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
-x-microsoft-antispam-message-info: S01RK3k+RKX52bJFxT9QYcRD/LC3bXJUw40mNnslv6A3ke4MiqKZIuQVgjpkQ5Sw5jvZrUJfH7AhAbgUBOM6w1Iyipazvy/RSoG8qF4pvTAfnGobtG4DWnSURM1EY3zQ5oMWDRLkcZk+iUQFfcWnFYvTOTUEYLBDTQKSNsnjfJE1YPWJ5BY9DmV/2ocBX4CVv8j1sIJcEpriQu/+ufisp3no4N4WhoNT4NuHl3AyCD8fTLw9e345JW52GSOfXZ6wQrMTnDfDvZ/+szz4WdFycbSG22VgAR8A/ApMC2lNuqRerwDMPmaCFstfXzLpJNv5VxvPVBHGEjjXHoLVfdSRfb6Iu/ZF5GMJkST6tIrUxnw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Andi Kleen <ak@linux.intel.com>,
+        Henry Willard <henry.willard@oracle.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: mprotect: check page dirty when change ptes
+Message-ID: <20180914004239.GA31077@redhat.com>
+References: <20180912064921.31015-1-peterx@redhat.com>
+ <20180912130355.GA4009@redhat.com>
+ <20180912132438.GB4009@redhat.com>
+ <20180913073722.GF10763@xz-x1>
+ <20180913142328.GA3576@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47ad2703-b189-40f8-8dfb-08d619da60bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2018 00:38:23.4021
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4159
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180913142328.GA3576@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 14 Sep 2018 00:42:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR3VlbnRlciBSb2VjayA8
-Z3JvZWNrN0BnbWFpbC5jb20+IE9uIEJlaGFsZiBPZiBHdWVudGVyIFJvZWNrDQo+IFNlbnQ6IDIw
-MTjE6jnUwjE0yNUgMTozNQ0KPiBUbzogQW5ndXMgQWluc2xpZSA8YW5ndXNAYWtrZWEuY2E+DQo+
-IENjOiBQZXRlciBDaGVuIDxoenBldGVyY2hlbkBnbWFpbC5jb20+OyBIZWlra2kgS3JvZ2VydXMN
-Cj4gPGhlaWtraS5rcm9nZXJ1c0BsaW51eC5pbnRlbC5jb20+OyBHcmVnIEtyb2FoLUhhcnRtYW4N
-Cj4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgbGludXgtdXNiQHZnZXIua2VybmVsLm9y
-ZzsgbGttbA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IFBldGVyIENoZW4gPHBl
-dGVyLmNoZW5AbnhwLmNvbT47IEp1biBMaQ0KPiA8anVuLmxpQG54cC5jb20+DQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjNdIHVzYjogdHlwZWM6IGdldCB0aGUgdmJ1cyBzb3VyY2UgYW5kIGNoYXJn
-ZSB2YWx1ZXMgZnJvbSB0aGUNCj4gZGV2aWNldHJlZQ0KPiANCj4gT24gVGh1LCBTZXAgMTMsIDIw
-MTggYXQgMDU6MTA6MDlBTSAtMDYwMCwgQW5ndXMgQWluc2xpZSB3cm90ZToNCj4gPiA+DQo+ID4g
-PnN0YWdpbmc6IHR5cGVjOiBkb24ndCBkbyB2YnVzIHNvdXJjZSBkaXNhYmxlIGZvciBkZWFkIGJh
-dHRlcnkNCj4gPiA+DQo+ID4gPkluIFBUTjUxMTAgZGVzaWduLCBEaXNhYmxlU291cmNlVkJVUyBj
-b21tYW5kIGFsc28gZGlzYWJsZXMgdGhlIHNpbmsNCj4gPiA+ZW5hYmxlIHNpZ25hbCBiZWNhdXNl
-IHRoZSBFTl9TTksgY2FuIGJlIHVzZWQgdG8gc291cmNlIGhpZ2hlcg0KPiA+ID52b2x0YWdlLCBh
-bmQsIHRoZXJlIGlzIG9ubHkgb25lIFRDUEMgY29tbWFuZCB0byBkaXNhYmxlIHNvdXJjaW5nDQo+
-ID4gPnZvbHRhZ2Ugd2l0aG91dCB0ZWxsaW5nIHdoZXRoZXIgdG8gZGlzYWJsZSA1ViBvciB0aGUg
-aGlnaCB2b2x0YWdlLA0KPiA+ID5hbmQgdG8ga2VlcCB0aGUgZGVzaWduIHNpbXBsZSB0aGV5IGRl
-c2lnbmVkIHRoZSBQVE41MTEwIHRvIGRpc2FibGUNCj4gPiA+Ym90aC4gd2l0aCB0aGlzIGZhY3Qs
-IHdlIHVzZSB0aGUgZmxhZyBkcml2ZV92YnVzIHRvIGNoZWNrIGlmIHRoZQ0KPiA+ID5zb3VyY2Ug
-dmJ1cyBlbmFibGUgd2FzIGlzc3VlZCwgaWYgeWVzIHdlIHRoZW4gZG8gdmJ1cyBzb3VyY2UgZGlz
-YWJsZSwNCj4gPiA+aW4gZGVhZCBiYXR0ZXJ5IGNhc2UsIHdlIG5ldmVyIGRpZCB2YnVzIHNvdXJj
-ZSBlbmFibGUsIHNvIHdpbGwgbm90DQo+ID4gPmlzc3VlIHZidXMgc291cmNlIGRpc2FibGUgY29t
-bWFuZC4NCj4gPiA+DQo+ID4NCj4gPiBUaGFua3MgUGV0ZXIsIHRoaXMgc291bmRzIGxpa2UgdGhl
-IG1pc3NpbmcgcGllY2Ugb2YgaW5mb3JtYXRpb24gYW5kIEkNCj4gPiB0aGluayBzb21lIGZvcm0g
-b2YgdGhlIGNvZGUgYmVsb3cgd2lsbCBmaXggdGhhdC4NCj4gPg0KPiA+IFRoZXJlIGlzIHN0aWxs
-IHRoZSBpc3N1ZSB0aGF0IG15IGJvYXJkIHdpbGwgbmVlZCBzb21lIHdheSBvZg0KPiA+IGNvbnRy
-b2xsaW5nIHRoZSBpbml0aWFsIHN0YXRlIG9mIHZidXMtc2luay4NCj4gPg0KPiA+IEBHdWVudGVy
-OiB3b3VsZCBteSBpbml0aWFsIHBhdGNoIGJlIGFjY2VwdGFibGUgdG8gc2V0IHRoZSBkZWZhdWx0
-DQo+ID4gc3RhdGUgb2YgdmJ1cy1zb3VyY2UgYW5kIHZidXMtc2luay4gV291bGQgeW91IGxpa2Ug
-c29tZSBjb2RlIHRvIHNhbml0eQ0KPiA+IGNoZWNrIHRoYXQgYm90aCB3ZXJlIG5vdCBlbmFibGVk
-IGF0IHRoZSBzYW1lIHRpbWUgPw0KPiA+DQo+IFNlZW1zIHRvIG1lIHRoaXMgaXMgaW5kZWVkIGEg
-Y2hpcCBzcGVjaWZpYyBwcm9ibGVtLiBJIGRvbid0IHRoaW5rIGEgZml4IGJlbG9uZ3MgaW50byB0
-aGUgdGNwbQ0KPiBjb2RlLiBBcyBtZW50aW9uZWQgYmVmb3JlLCB0aGUgY3VycmVudCBzdGF0dXMg
-KGllIGRyaXZlX3ZidXMpIHNob3VsZCBiZSByZWFkYWJsZSBmcm9tIHRoZQ0KPiBjaGlwLiBJIGFt
-IG5vdCBzdXJlIHRob3VnaCBpZiB3ZSBzaG91bGQgYWRkIGENCj4gUFRONTExMCBzcGVjaWZpYyBx
-dWlyayB0byB0aGUgZHJpdmVyIHRvIGhhbmRsZSB0aGUgc2l0dWF0aW9uLiBJIGFtIGNvbmNlcm5l
-ZCB0aGF0IGZpeGluZyB0aGlzDQo+IGFzIHN1Z2dlc3RlZCBiZWxvdyBmb3IgUFRONTExMCBtYXkg
-Y2F1c2UgdHJvdWJsZSB3aXRoIG90aGVyIGNoaXBzLiBNYXliZSBub3QsIGJ1dCBJJ2QNCj4gcmF0
-aGVyIGJlIGNhdXRpb3VzLg0KDQpZZXMsIHRoaXMgaXMgYSBjaGlwIHNwZWNpZmljIHByb2JsZW0s
-IHRoZSByZWFzb24gRGlzYWJsZVNvdXJjZVZCVVMgY29tbWFuZCBhbHNvIGRpc2FibGVzDQp0aGUg
-c2luayBlbmFibGUgc2lnbmFsIGJlY2F1c2UgdGhlIEVOX1NOSyBvZiBQVE41MTEwIGNhbiBiZSB1
-c2VkIHRvIHNvdXJjZSBoaWdoZXIgdm9sdGFnZQ0KQW5kLCB0aGVyZSBpcyBvbmx5IG9uZSBUQ1BD
-IGNvbW1hbmQgdG8gZGlzYWJsZSBzb3VyY2luZyB2b2x0YWdlIHdpdGhvdXQgdGVsbGluZyB3aGV0
-aGVyIHRvDQpkaXNhYmxlIDVWIG9yIHRoZSBoaWdoIHZvbHRhZ2UsIGFuZCB0byBrZWVwIHRoZSBk
-ZXNpZ24gc2ltcGxlLCBUUE41MTEwIGlzIGRlc2lnbmVkIHRvIGRpc2FibGUNCmJvdGguDQoNClRo
-ZSBwYXRjaCBiZWxvdyBpcyB0byBub3QgaXNzdWUgYSB2YnVzIGRpc2FibGUgY29tbWFuZCBpZiBp
-dCB3YXMgbm90IGVuYWJsZWQsDQpmcm9tIG15IHBvaW50IHZpZXcgaXQgc2hvdWxkIGJlIE9LIGFu
-ZCBoYXMgdGhlIGJlbmVmaXQgdG8gc2F2ZSBvbmUgY29tbWFuZC4NCg0KTGkgSnVuDQo+IA0KPiBU
-aGFua3MsDQo+IEd1ZW50ZXINCj4gDQo+ID4gPkFja2VkLWJ5OiBQZXRlciBDaGVuIDxwZXRlci5j
-aGVuQG54cC5jb20+DQo+ID4gPlNpZ25lZC1vZmYtYnk6IExpIEp1biA8anVuLmxpQG54cC5jb20+
-DQo+ID4gPi0tLQ0KPiA+ID4gZHJpdmVycy9zdGFnaW5nL3R5cGVjL3RjcGNpLmMgfCA1ICsrLS0t
-DQo+ID4gPiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0K
-PiA+ID4NCj4gPiA+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+
-ID4gPmIvZHJpdmVycy9zdGFnaW5nL3R5cGVjL3RjcGNpLmMgaW5kZXggMmQ0ZmJiOGFhYzVlLi43
-MzUyMjA3MjI0YjUNCj4gPiA+MTAwNjQ0DQo+ID4gPi0tLSBhL2RyaXZlcnMvc3RhZ2luZy90eXBl
-Yy90Y3BjaS5jDQo+ID4gPisrKyBiL2RyaXZlcnMvc3RhZ2luZy90eXBlYy90Y3BjaS5jDQo+ID4g
-PkBAIC0zODEsOSArMzgxLDggQEAgc3RhdGljIGludCB0Y3BjaV9zZXRfdmJ1cyhzdHJ1Y3QgdGNw
-Y19kZXYgKnRjcGMsDQo+ID4gPmJvb2wgc291cmNlLCBib29sIHNpbmspDQo+ID4gPiAgc3RydWN0
-IHRjcGNpICp0Y3BjaSA9IHRjcGNfdG9fdGNwY2kodGNwYyk7DQo+ID4gPiAgaW50IHJldDsNCj4g
-PiA+DQo+ID4gPi0gLyogRGlzYWJsZSBib3RoIHNvdXJjZSBhbmQgc2luayBmaXJzdCBiZWZvcmUg
-ZW5hYmxpbmcgYW55dGhpbmcgKi8NCj4gPiA+LQ0KPiA+ID4tIGlmICghc291cmNlKSB7DQo+ID4g
-PisgLyogT25seSBkaXNhYmxlIHNvdXJjZSBpZiBpdCB3YXMgZW5hYmxlZCAqLyBpZiAoIXNvdXJj
-ZSAmJg0KPiA+ID4rIHRjcGNpLT5kcml2ZV92YnVzKSB7DQo+ID4gPiAgcmV0ID0gcmVnbWFwX3dy
-aXRlKHRjcGNpLT5yZWdtYXAsIFRDUENfQ09NTUFORCwNCj4gPiA+ICAgICBUQ1BDX0NNRF9ESVNB
-QkxFX1NSQ19WQlVTKTsNCj4gPiA+ICBpZiAocmV0IDwgMCkNCj4gPg0KPiA+IFRoZSB2ZXJzaW9u
-IG9mIHN0cnVjdCB0Y3BjaSBkb2Vzbid0IGhhdmUgYSBkcml2ZV92YnVzLiBXaGVyZSBzaG91bGQN
-Cj4gPiBkcml2ZV92YnVzIGdldCBzZXQgYW5kIGNsZWFyZWQgPw0KPiA+DQo+ID4gSXMgdGhpcyBh
-IG1vcmUgY29tcGxldGUgdmVyc2lvbiBvZiB3aGF0IHlvdSBpbnRlbmRlZCA/DQo+ID4NCj4gPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvdHlwZWMvdGNwY2kuYyBiL2RyaXZlcnMvdXNiL3R5cGVj
-L3RjcGNpLmMNCj4gPiBpbmRleCBhYzZiNDE4YjE1ZjEuLmQ2MTY4MTYzZGY3YiAxMDA2NDQNCj4g
-PiAtLS0gYS9kcml2ZXJzL3VzYi90eXBlYy90Y3BjaS5jDQo+ID4gKysrIGIvZHJpdmVycy91c2Iv
-dHlwZWMvdGNwY2kuYw0KPiA+IEBAIC0yOCw2ICsyOCw3IEBAIHN0cnVjdCB0Y3BjaSB7DQo+ID4g
-ICAgICAgICBzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7DQo+ID4NCj4gPiAgICAgICAgIGJvb2wgY29u
-dHJvbHNfdmJ1czsNCj4gPiArICAgICAgIGJvb2wgZHJpdmVfdmJ1czsNCj4gPg0KPiA+ICAgICAg
-ICAgc3RydWN0IHRjcGNfZGV2IHRjcGM7DQo+ID4gICAgICAgICBzdHJ1Y3QgdGNwY2lfZGF0YSAq
-ZGF0YTsNCj4gPiBAQCAtMjc3LDcgKzI3OCw5IEBAIHN0YXRpYyBpbnQgdGNwY2lfc2V0X3ZidXMo
-c3RydWN0IHRjcGNfZGV2ICp0Y3BjLA0KPiA+IGJvb2wgc291cmNlLCBib29sIHNpbmspDQo+ID4N
-Cj4gPiAgICAgICAgIC8qIERpc2FibGUgYm90aCBzb3VyY2UgYW5kIHNpbmsgZmlyc3QgYmVmb3Jl
-IGVuYWJsaW5nIGFueXRoaW5nDQo+ID4gKi8NCj4gPg0KPiA+IC0gICAgICAgaWYgKCFzb3VyY2Up
-IHsNCj4gPiArICAgICAgIGlmICghc291cmNlICYmIHRjcGNpLT5kcml2ZV92YnVzKSB7DQo+ID4g
-KyAgICAgICAgICAgICAgIHRjcGNpLT5kcml2ZV92YnVzID0gZmFsc2U7DQo+ID4gKw0KPiA+ICAg
-ICAgICAgICAgICAgICByZXQgPSByZWdtYXBfd3JpdGUodGNwY2ktPnJlZ21hcCwgVENQQ19DT01N
-QU5ELA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVENQQ19DTURfRElT
-QUJMRV9TUkNfVkJVUyk7DQo+ID4gICAgICAgICAgICAgICAgIGlmIChyZXQgPCAwKQ0KPiA+IEBA
-IC0yOTIsNiArMjk1LDggQEAgc3RhdGljIGludCB0Y3BjaV9zZXRfdmJ1cyhzdHJ1Y3QgdGNwY19k
-ZXYgKnRjcGMsDQo+ID4gYm9vbCBzb3VyY2UsIGJvb2wgc2luaykNCj4gPiAgICAgICAgIH0NCj4g
-Pg0KPiA+ICAgICAgICAgaWYgKHNvdXJjZSkgew0KPiA+ICsgICAgICAgICAgICAgICB0Y3BjaS0+
-ZHJpdmVfdmJ1cyA9IHRydWU7DQo+ID4gKw0KPiA+ICAgICAgICAgICAgICAgICByZXQgPSByZWdt
-YXBfd3JpdGUodGNwY2ktPnJlZ21hcCwgVENQQ19DT01NQU5ELA0KPiA+ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgVENQQ19DTURfU1JDX1ZCVVNfREVGQVVMVCk7DQo+ID4gICAg
-ICAgICAgICAgICAgIGlmIChyZXQgPCAwKQ0KPiA+IEBAIC01MDMsNiArNTA4LDcgQEAgc3RydWN0
-IHRjcGNpICp0Y3BjaV9yZWdpc3Rlcl9wb3J0KHN0cnVjdCBkZXZpY2UNCj4gPiAqZGV2LCBzdHJ1
-Y3QgdGNwY2lfZGF0YSAqZGF0YSkNCj4gPiAgICAgICAgIHRjcGNpLT5kZXYgPSBkZXY7DQo+ID4g
-ICAgICAgICB0Y3BjaS0+ZGF0YSA9IGRhdGE7DQo+ID4gICAgICAgICB0Y3BjaS0+cmVnbWFwID0g
-ZGF0YS0+cmVnbWFwOw0KPiA+ICsgICAgICAgdGNwY2ktPmRyaXZlX3ZidXMgPSBmYWxzZTsNCj4g
-Pg0KPiA+ICAgICAgICAgdGNwY2ktPnRjcGMuaW5pdCA9IHRjcGNpX2luaXQ7DQo+ID4gICAgICAg
-ICB0Y3BjaS0+dGNwYy5nZXRfdmJ1cyA9IHRjcGNpX2dldF92YnVzOw0KPiA+DQo+ID4NCj4gPg0K
+On Thu, Sep 13, 2018 at 10:23:28AM -0400, Jerome Glisse wrote:
+> On Thu, Sep 13, 2018 at 03:37:22PM +0800, Peter Xu wrote:
+> > On Wed, Sep 12, 2018 at 09:24:39AM -0400, Jerome Glisse wrote:
+> > > On Wed, Sep 12, 2018 at 09:03:55AM -0400, Jerome Glisse wrote:
+> > > > On Wed, Sep 12, 2018 at 02:49:21PM +0800, Peter Xu wrote:
+> > > > > Add an extra check on page dirty bit in change_pte_range() since there
+> > > > > might be case where PTE dirty bit is unset but it's actually dirtied.
+> > > > > One example is when a huge PMD is splitted after written: the dirty bit
+> > > > > will be set on the compound page however we won't have the dirty bit set
+> > > > > on each of the small page PTEs.
+> > > > > 
+> > > > > I noticed this when debugging with a customized kernel that implemented
+> > > > > userfaultfd write-protect.  In that case, the dirty bit will be critical
+> > > > > since that's required for userspace to handle the write protect page
+> > > > > fault (otherwise it'll get a SIGBUS with a loop of page faults).
+> > > > > However it should still be good even for upstream Linux to cover more
+> > > > > scenarios where we shouldn't need to do extra page faults on the small
+> > > > > pages if the previous huge page is already written, so the dirty bit
+> > > > > optimization path underneath can cover more.
+> > > > > 
+> > > > 
+> > > > So as said by Kirill NAK you are not looking at the right place for
+> > > > your bug please first apply the below patch and read my analysis in
+> > > > my last reply.
+> > > 
+> > > Just to be clear you are trying to fix a userspace bug that is hidden
+> > > for non THP pages by a kernel space bug inside userfaultfd by making
+> > > the kernel space bug of userfaultfd buggy for THP too.
+> > > 
+> > > 
+> > > > 
+> > > > Below patch fix userfaultfd bug. I am not posting it as it is on a
+> > > > branch and i am not sure when Andrea plan to post. Andrea feel free
+> > > > to squash that fix.
+> > > > 
+> > > > 
+> > > > From 35cdb30afa86424c2b9f23c0982afa6731be961c Mon Sep 17 00:00:00 2001
+> > > > From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+> > > > Date: Wed, 12 Sep 2018 08:58:33 -0400
+> > > > Subject: [PATCH] userfaultfd: do not set dirty accountable when changing
+> > > >  protection
+> > > > MIME-Version: 1.0
+> > > > Content-Type: text/plain; charset=UTF-8
+> > > > Content-Transfer-Encoding: 8bit
+> > > > 
+> > > > mwriteprotect_range() has nothing to do with the dirty accountable
+> > > > optimization so do not set it as it opens a door for userspace to
+> > > > unwrite protect pages in a range that is write protected ie the vma
+> > > > !(vm_flags & VM_WRITE).
+> > > > 
+> > > > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > > > ---
+> > > >  mm/userfaultfd.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > index a0379c5ffa7c..59db1ce48fa0 100644
+> > > > --- a/mm/userfaultfd.c
+> > > > +++ b/mm/userfaultfd.c
+> > > > @@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+> > > >  		newprot = vm_get_page_prot(dst_vma->vm_flags);
+> > > >  
+> > > >  	change_protection(dst_vma, start, start + len, newprot,
+> > > > -				!enable_wp, 0);
+> > > > +				false, 0);
+> > > >  
+> > > >  	err = 0;
+> > > >  out_unlock:
+> > 
+> > Hi, Jerome,
+> > 
+> > I tried your patch, unluckily it didn't work just like when not
+> > applied:
+> > 
+> > Sep 13 15:16:52 px-ws kernel: FAULT_FLAG_ALLOW_RETRY missing 71
+> > Sep 13 15:16:52 px-ws kernel: CPU: 5 PID: 1625 Comm: qemu-system-x86 Not tainted 4.19.0-rc2+ #31                                                                            
+> > Sep 13 15:16:52 px-ws kernel: Hardware name: LENOVO ThinkCentre M8500t-N000/SHARKBAY, BIOS FBKTC6AUS 06/22/2016                                                             
+> > Sep 13 15:16:52 px-ws kernel: Call Trace:
+> > Sep 13 15:16:52 px-ws kernel:  dump_stack+0x5c/0x7b
+> > Sep 13 15:16:52 px-ws kernel:  handle_userfault+0x4b5/0x780
+> > Sep 13 15:16:52 px-ws kernel:  ? userfaultfd_ctx_put+0xb0/0xb0
+> > Sep 13 15:16:52 px-ws kernel:  do_wp_page+0x1bd/0x5a0
+> > Sep 13 15:16:52 px-ws kernel:  __handle_mm_fault+0x7f9/0x1250
+> > Sep 13 15:16:52 px-ws kernel:  handle_mm_fault+0xfc/0x1f0
+> > Sep 13 15:16:52 px-ws kernel:  __do_page_fault+0x255/0x520
+> > Sep 13 15:16:52 px-ws kernel:  do_page_fault+0x32/0x110
+> > Sep 13 15:16:52 px-ws kernel:  ? page_fault+0x8/0x30
+> > Sep 13 15:16:52 px-ws kernel:  page_fault+0x1e/0x30
+> > Sep 13 15:16:52 px-ws kernel: RIP: 0033:0x7f2a9d3254e0
+> > Sep 13 15:16:52 px-ws kernel: Code: 73 01 c1 ef 07 48 81 e6 00 f0 ff ff 81 e7 e0 1f 00 00 49 8d bc 3e 40 57 00 00 48 3b 37 48 8b f3 0f 85 a4 01 00 00 48 03 77 10 <66> 89 06f
+> > Sep 13 15:16:52 px-ws kernel: RSP: 002b:00007f2ab1aae390 EFLAGS: 00010202
+> > Sep 13 15:16:52 px-ws kernel: RAX: 0000000000000246 RBX: 0000000000001ff2 RCX: 0000000000000031                                                                             
+> > Sep 13 15:16:52 px-ws kernel: RDX: ffffffffffac9604 RSI: 00007f2a53e01ff2 RDI: 000055a98fa049c0                                                                             
+> > Sep 13 15:16:52 px-ws kernel: RBP: 0000000000001ff4 R08: 0000000000000000 R09: 0000000000000002                                                                             
+> > Sep 13 15:16:52 px-ws kernel: R10: 0000000000000000 R11: 00007f2a98201030 R12: 0000000000001ff2                                                                             
+> > Sep 13 15:16:52 px-ws kernel: R13: 0000000000000000 R14: 000055a98f9ff260 R15: 00007f2ab1aaf700                                                                             
+> > 
+> > In case you'd like to try, here's the QEMU binary I'm testing:
+> > 
+> > https://github.com/xzpeter/qemu/tree/peter-userfault-wp-test
+> > 
+> > It write protects the whole system when received HMP command "info
+> > status" (I hacked that command for simplicity; it's of course not used
+> > for that...).
+> > 
+> > Would you please help me understand how your patch could resolve the
+> > wp page fault from userspace if not with dirty_accountable set in the
+> > uffd-wp world (sorry for asking a question that is related to a custom
+> > tree, but finally it'll be targeted at upstream after all)? I asked
+> > this question in my previous reply to you in v1 but you didn't
+> > respond.  I'd be glad to test any of your further patches if you can
+> > help solve the problem, but I'd also appreciate if you could explain
+> > it a bit on how it work since again I didn't see why it could work:
+> > again, if without that dirty_accountable set then IMO we will never
+> > setup _PAGE_WRITE for page entries and IMHO that's needed for
+> > resolving the page fault for uffd-wp tree.
+> 
+> I missed that reply and forgot about PAGE_COPY ... So below is
+> what i believe a proper fix for your issue:
+> 
+
+Below is a slightly better one to avoid mkwrite on COW page but it is
+still kind of ugly to do that in those function maybe adding a new helper
+would be a better way dunno. Anyway untested but it is better than trying
+to set pte dirty.
+
+
+From 8333ac9de1c54fe858f6f22dd21a2e14eebccd0e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Date: Thu, 13 Sep 2018 10:16:30 -0400
+Subject: [PATCH] mm/mprotect: add a mkwrite paramater to change_protection()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The mkwrite parameter allow to change read only pte to write one which
+is needed by userfaultfd to un-write-protect after a fault have been
+handled.
+
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+---
+ include/linux/huge_mm.h |  2 +-
+ include/linux/mm.h      |  3 +-
+ mm/huge_memory.c        | 32 +++++++++++++++++++--
+ mm/mempolicy.c          |  2 +-
+ mm/mprotect.c           | 61 +++++++++++++++++++++++++++++------------
+ mm/userfaultfd.c        |  2 +-
+ 6 files changed, 79 insertions(+), 23 deletions(-)
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index a8a126259bc4..b51ff7f8e65c 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -45,7 +45,7 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+ 			 pmd_t *old_pmd, pmd_t *new_pmd, bool *need_flush);
+ extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 			unsigned long addr, pgprot_t newprot,
+-			int prot_numa);
++			int prot_numa, bool mkwrite);
+ int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 			pmd_t *pmd, pfn_t pfn, bool write);
+ int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5d5c7fd07dc0..2bbf3e33bf9e 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1492,7 +1492,8 @@ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		bool need_rmap_locks);
+ extern unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+ 			      unsigned long end, pgprot_t newprot,
+-			      int dirty_accountable, int prot_numa);
++			      int dirty_accountable, int prot_numa,
++			      bool mkwrite);
+ extern int mprotect_fixup(struct vm_area_struct *vma,
+ 			  struct vm_area_struct **pprev, unsigned long start,
+ 			  unsigned long end, unsigned long newflags);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index abf621aba672..3038f4bd9cce 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1842,12 +1842,13 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+  *  - HPAGE_PMD_NR is protections changed and TLB flush necessary
+  */
+ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+-		unsigned long addr, pgprot_t newprot, int prot_numa)
++		unsigned long addr, pgprot_t newprot, int prot_numa,
++		bool mkwrite)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	spinlock_t *ptl;
+ 	pmd_t entry;
+-	bool preserve_write;
++	bool preserve_write, do_mkwrite = false;
+ 	int ret;
+ 
+ 	ptl = __pmd_trans_huge_lock(pmd, vma);
+@@ -1857,6 +1858,31 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 	preserve_write = prot_numa && pmd_write(*pmd);
+ 	ret = 1;
+ 
++	if (mkwrite && pmd_present(*pmd) && !pmd_write(*pmd)) {
++		struct page *page = pmd_page(pmd);
++		pmd_t orig_pmd = READ_ONCE(pmd);
++
++		VM_BUG_ON_PAGE(!PageCompound(page) || !PageHead(page), page);
++		/*
++		 * We can only allow mkwrite if nobody else maps the huge page
++		 * or it's part.
++		 */
++		if (!trylock_page(page)) {
++			get_page(page);
++			spin_unlock(ptl);
++			lock_page(page);
++
++			ptl = __pmd_trans_huge_lock(pmd, vma);
++			if (!ptl)
++				return 0;
++		}
++		if (pmd_same(*pmd, orig_pmd) && reuse_swap_page(page, NULL)) {
++			do_mkwrite = true;
++		}
++		unlock_page(page);
++		put_page(page);
++	}
++
+ #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+ 	if (is_swap_pmd(*pmd)) {
+ 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+@@ -1925,6 +1951,8 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 	entry = pmd_modify(entry, newprot);
+ 	if (preserve_write)
+ 		entry = pmd_mk_savedwrite(entry);
++	if (do_mkwrite)
++		entry = pmd_mkwrite(entry);
+ 	ret = HPAGE_PMD_NR;
+ 	set_pmd_at(mm, addr, pmd, entry);
+ 	BUG_ON(vma_is_anonymous(vma) && !preserve_write && pmd_write(entry));
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 4ce44d3ff03d..2d0ee09e6b26 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -579,7 +579,7 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
+ {
+ 	int nr_updated;
+ 
+-	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1);
++	nr_updated = change_protection(vma, addr, end, PAGE_NONE, 0, 1, false);
+ 	if (nr_updated)
+ 		count_vm_numa_events(NUMA_PTE_UPDATES, nr_updated);
+ 
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 58b629bb70de..c43a29eebdaf 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -36,7 +36,7 @@
+ 
+ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 		unsigned long addr, unsigned long end, pgprot_t newprot,
+-		int dirty_accountable, int prot_numa)
++		int dirty_accountable, int prot_numa, bool mkwrite)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	pte_t *pte, oldpte;
+@@ -72,13 +72,15 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 		if (pte_present(oldpte)) {
+ 			pte_t ptent;
+ 			bool preserve_write = prot_numa && pte_write(oldpte);
++			bool do_mkwrite = false;
+ 
+ 			/*
+ 			 * Avoid trapping faults against the zero or KSM
+ 			 * pages. See similar comment in change_huge_pmd.
+ 			 */
+-			if (prot_numa) {
++			if (prot_numa || mkwrite) {
+ 				struct page *page;
++				int tmp;
+ 
+ 				page = vm_normal_page(vma, addr, oldpte);
+ 				if (!page || PageKsm(page))
+@@ -94,6 +96,26 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 				 */
+ 				if (target_node == page_to_nid(page))
+ 					continue;
++
++				if (mkwrite) {
++					if (!trylock_page(page)) {
++						pte_t orig_pte = READ_ONCE(pte);
++						get_page(page);
++						pte_unmap_unlock(pte, ptl);
++						lock_page(page);
++						pte = pte_offset_map_lock(vma->vm_mm, pmd,
++									  addr, &ptl);
++						if (!pte_same(*pte, orig_pte)) {
++							unlock_page(page);
++							put_page(page);
++							continue;
++						}
++					}
++					if (reuse_swap_page(vmf->page, &tmp))
++						do_mkwrite = true;
++					unlock_page(page);
++					put_page(page);
++				}
+ 			}
+ 
+ 			ptent = ptep_modify_prot_start(mm, addr, pte);
+@@ -102,9 +124,9 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 				ptent = pte_mk_savedwrite(ptent);
+ 
+ 			/* Avoid taking write faults for known dirty pages */
+-			if (dirty_accountable && pte_dirty(ptent) &&
+-					(pte_soft_dirty(ptent) ||
+-					 !(vma->vm_flags & VM_SOFTDIRTY))) {
++			if (do_mkwrite || (dirty_accountable &&
++			    pte_dirty(ptent) && (pte_soft_dirty(ptent) ||
++			    !(vma->vm_flags & VM_SOFTDIRTY)))) {
+ 				ptent = pte_mkwrite(ptent);
+ 			}
+ 			ptep_modify_prot_commit(mm, addr, pte, ptent);
+@@ -150,7 +172,8 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 
+ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+ 		pud_t *pud, unsigned long addr, unsigned long end,
+-		pgprot_t newprot, int dirty_accountable, int prot_numa)
++		pgprot_t newprot, int dirty_accountable, int prot_numa,
++		bool mkwrite)
+ {
+ 	pmd_t *pmd;
+ 	struct mm_struct *mm = vma->vm_mm;
+@@ -179,7 +202,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+ 				__split_huge_pmd(vma, pmd, addr, false, NULL);
+ 			} else {
+ 				int nr_ptes = change_huge_pmd(vma, pmd, addr,
+-						newprot, prot_numa);
++						newprot, prot_numa, mkwrite);
+ 
+ 				if (nr_ptes) {
+ 					if (nr_ptes == HPAGE_PMD_NR) {
+@@ -194,7 +217,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+ 			/* fall through, the trans huge pmd just split */
+ 		}
+ 		this_pages = change_pte_range(vma, pmd, addr, next, newprot,
+-				 dirty_accountable, prot_numa);
++				 dirty_accountable, prot_numa, mkwrite);
+ 		pages += this_pages;
+ next:
+ 		cond_resched();
+@@ -210,7 +233,8 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
+ 
+ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+ 		p4d_t *p4d, unsigned long addr, unsigned long end,
+-		pgprot_t newprot, int dirty_accountable, int prot_numa)
++		pgprot_t newprot, int dirty_accountable, int prot_numa,
++		bool mkwrite)
+ {
+ 	pud_t *pud;
+ 	unsigned long next;
+@@ -222,7 +246,7 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+ 		if (pud_none_or_clear_bad(pud))
+ 			continue;
+ 		pages += change_pmd_range(vma, pud, addr, next, newprot,
+-				 dirty_accountable, prot_numa);
++				 dirty_accountable, prot_numa, mkwrite);
+ 	} while (pud++, addr = next, addr != end);
+ 
+ 	return pages;
+@@ -230,7 +254,8 @@ static inline unsigned long change_pud_range(struct vm_area_struct *vma,
+ 
+ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+ 		pgd_t *pgd, unsigned long addr, unsigned long end,
+-		pgprot_t newprot, int dirty_accountable, int prot_numa)
++		pgprot_t newprot, int dirty_accountable, int prot_numa,
++		bool mkwrite)
+ {
+ 	p4d_t *p4d;
+ 	unsigned long next;
+@@ -242,7 +267,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+ 		if (p4d_none_or_clear_bad(p4d))
+ 			continue;
+ 		pages += change_pud_range(vma, p4d, addr, next, newprot,
+-				 dirty_accountable, prot_numa);
++				 dirty_accountable, prot_numa, mkwrite);
+ 	} while (p4d++, addr = next, addr != end);
+ 
+ 	return pages;
+@@ -250,7 +275,7 @@ static inline unsigned long change_p4d_range(struct vm_area_struct *vma,
+ 
+ static unsigned long change_protection_range(struct vm_area_struct *vma,
+ 		unsigned long addr, unsigned long end, pgprot_t newprot,
+-		int dirty_accountable, int prot_numa)
++		int dirty_accountable, int prot_numa, mkwrite)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	pgd_t *pgd;
+@@ -267,7 +292,7 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+ 		if (pgd_none_or_clear_bad(pgd))
+ 			continue;
+ 		pages += change_p4d_range(vma, pgd, addr, next, newprot,
+-				 dirty_accountable, prot_numa);
++				 dirty_accountable, prot_numa, mkwrite);
+ 	} while (pgd++, addr = next, addr != end);
+ 
+ 	/* Only flush the TLB if we actually modified any entries: */
+@@ -280,14 +305,16 @@ static unsigned long change_protection_range(struct vm_area_struct *vma,
+ 
+ unsigned long change_protection(struct vm_area_struct *vma, unsigned long start,
+ 		       unsigned long end, pgprot_t newprot,
+-		       int dirty_accountable, int prot_numa)
++		       int dirty_accountable, int prot_numa, bool mkwrite)
+ {
+ 	unsigned long pages;
+ 
+ 	if (is_vm_hugetlb_page(vma))
+ 		pages = hugetlb_change_protection(vma, start, end, newprot);
+ 	else
+-		pages = change_protection_range(vma, start, end, newprot, dirty_accountable, prot_numa);
++		pages = change_protection_range(vma, start, end, newprot,
++						dirty_accountable,
++						prot_numa, mkwrite);
+ 
+ 	return pages;
+ }
+@@ -366,7 +393,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	vma_set_page_prot(vma);
+ 
+ 	change_protection(vma, start, end, vma->vm_page_prot,
+-			  dirty_accountable, 0);
++			  dirty_accountable, 0, false);
+ 
+ 	/*
+ 	 * Private VM_LOCKED VMA becoming writable: trigger COW to avoid major
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index a0379c5ffa7c..c745c5d87523 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -632,7 +632,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
+ 		newprot = vm_get_page_prot(dst_vma->vm_flags);
+ 
+ 	change_protection(dst_vma, start, start + len, newprot,
+-				!enable_wp, 0);
++			  0, 0, !enable_wp);
+ 
+ 	err = 0;
+ out_unlock:
+-- 
+2.17.1
+
