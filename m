@@ -2,1063 +2,1869 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D257BC070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C15FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEAA820866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:27:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dvp05IxK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEAA820866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EB64020866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:28:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB64020866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeINNlI (ORCPT
+        id S1728229AbeINNl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:41:08 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36736 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbeINNlH (ORCPT
+        Fri, 14 Sep 2018 09:41:29 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38557 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbeINNl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:41:07 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1-v6so4053850pgo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 01:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g9cxSXPDz9bn9iunr11uNW8aNahk/sJr1pW043hvPJY=;
-        b=Dvp05IxK5PaRIz3vksZOaVoTmLtwp2E6s9glf36JpNOdZhLyyZHa2hGRnffCYL2CMW
-         EC4i1Ah6z12jMqel77S4dqCSz/ypyb0WoyHdXY+hJamkpq+fUz5CayFpGpyJgohpUAq1
-         +YUMCG0G56FrCXjsPurbCMW87ZAASdLlzOJKg=
+        Fri, 14 Sep 2018 09:41:29 -0400
+Received: by mail-lf1-f68.google.com with SMTP id d7-v6so1728339lfa.5;
+        Fri, 14 Sep 2018 01:28:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=g9cxSXPDz9bn9iunr11uNW8aNahk/sJr1pW043hvPJY=;
-        b=WuDLUBRqnp4bkVAoaXLwM9g1W8zMXf3VQm6atM8lpldfLvJSbuj8cTgOdmW/PRsXHR
-         NOdi2cOqrVCe/H4eaPSzr4pUeC1Jz/63jd1+VTD+CS4Wbab7g4pPElh7N8EEua3ngL36
-         Tj87kjMNLaTQmCIL5a2OAnT/iN7PT36NLm2KMBwUCppFqvOBJ+T5AGDGeWn//GTd/WUm
-         hMseQABJXLnDo4puwBD8/KHC40mrJ2CD9Xc9cpLf5RrUm3Q1fUjwTgIyGVt0AqG/N9eD
-         lNI41JjDbwopM37yUwkakkX1ZJthMIBeA7Eq6+euGJ7GC6AKRLfi+bJCXTIoQSpwzth/
-         7pew==
-X-Gm-Message-State: APzg51D+kNKBypVgQSDM4YYzp+TiqamFOcKDysjWOrkzr/c42OKktmGW
-        95eOH590doLDac4BrVeONSMF9g==
-X-Google-Smtp-Source: ANB0VdZsrvkrG4XTjUGtNp9qZqetFJ/a7KsaQSRowL5nLCnHY5yAP6aZXLWCpzQSPUI9zkYqae36CA==
-X-Received: by 2002:a62:591a:: with SMTP id n26-v6mr11311758pfb.94.1536913662666;
-        Fri, 14 Sep 2018 01:27:42 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.60.83])
-        by smtp.gmail.com with ESMTPSA id q80-v6sm8919855pfd.15.2018.09.14.01.27.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Sep 2018 01:27:42 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     Thibaut Varene <T-Bone@parisc-linux.org>,
-        linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH 4/4] parisc: uapi header and system call table file generation
-Date:   Fri, 14 Sep 2018 13:56:43 +0530
-Message-Id: <1536913603-4584-5-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1536913603-4584-1-git-send-email-firoz.khan@linaro.org>
-References: <1536913603-4584-1-git-send-email-firoz.khan@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jp5hOy4VTDjeycKJK5uoi9O/dHJFzL8AUeAnhuQgTXI=;
+        b=t5xo/BzbLaYDjDHa9L5cyexxGsYvfIgpuA54vw0NW7E2yucvPU4ifZryYj19gtjTy9
+         t4pFT1V+hhs0g0Yvn8n7FQlPNBjn9B6v08xO8f8NQ1xHT308Bzw1kyKUo4p8puymkmNM
+         sZa9HrWSMDIJgx9YAhdwk69JtfVMLSSF6mSQCkngFYH6dHVr8/NgjIBel4TsZFz0D/gh
+         NL2vHEVeAgI+tgdLO1Gx1GagxsdSRwBuRHHELH2YhZYl1TwmZBWoB+k/oXjA2rVEWIUS
+         alZYj67gmwL84lK6T8mN4hpsNp00V1zdnKqphkJaMwDC2/ogH3TP/+FaHxvBRAZv9DO1
+         bkLA==
+X-Gm-Message-State: APzg51DkmjadiThdnE+AMz9EIqpihXn8Ly+X/EeFB1vPj5LeD2avfmmB
+        CAzLlpcA71aW2LkKSo4P8fBOo4CEMQY=
+X-Google-Smtp-Source: ANB0VdZW/d4aN9bQJzNudQ1U7HvGeIqpl+fl7tlmaidIMM6luMyJ0Cyl/lXCpSDEvrDB3JcyV8XM3A==
+X-Received: by 2002:a19:5517:: with SMTP id n23-v6mr5464621lfe.101.1536913679821;
+        Fri, 14 Sep 2018 01:27:59 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q19-v6sm1106943lje.29.2018.09.14.01.27.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 01:27:59 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 11:27:46 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power management
+ IC
+Message-ID: <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System call table generation script must be run to generate
-unistd_32/64.h and syscall_table_32/64/c32.h files. This patch
-will have changes which will invokes the script.
+BD71847 is reduced version of BD71837. DVS bucks 3 and 4 are
+removed as is LDO7. Voltage ranges of some regulators are
+expanded.
 
-This patch will generate unistd_32/64.h and syscall_table_
-32/64/c32.h files by the syscall table generation script
-invoked by arch/sparc/Makefile and the generated files against
-the removed files will be identical.
+Add initial support for BD71847 with BD71837 driver.
 
-The generated uapi header file will be included in uapi/asm/
-unistd_32/64.h and generated system call table support file will
-be included by arch/sparc/kernel/syscall_table_32/64.S file.
-
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- arch/parisc/Makefile                  |   4 +
- arch/parisc/include/asm/Kbuild        |   3 +
- arch/parisc/include/uapi/asm/Kbuild   |   2 +
- arch/parisc/include/uapi/asm/unistd.h | 370 +--------------------------
- arch/parisc/kernel/syscall.S          |  14 +-
- arch/parisc/kernel/syscall_table.S    | 459 ----------------------------------
- arch/parisc/kernel/syscall_table_32.S |  11 +
- arch/parisc/kernel/syscall_table_64.S |  19 ++
- 8 files changed, 47 insertions(+), 835 deletions(-)
- delete mode 100644 arch/parisc/kernel/syscall_table.S
- create mode 100644 arch/parisc/kernel/syscall_table_32.S
- create mode 100644 arch/parisc/kernel/syscall_table_64.S
+ drivers/mfd/rohm-bd718x7.c            |   70 +--
+ drivers/regulator/bd71837-regulator.c | 1055 +++++++++++++++++++++++----------
+ include/linux/mfd/rohm-bd718x7.h      |  271 ++++-----
+ 3 files changed, 879 insertions(+), 517 deletions(-)
 
-diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
-index 5ce0302..6b217da 100644
---- a/arch/parisc/Makefile
-+++ b/arch/parisc/Makefile
-@@ -159,6 +159,10 @@ endef
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index 75c8ec659547..ce5aa5cd3545 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -7,21 +7,16 @@
+ // Datasheet available from
+ // https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
  
- # we require gcc 3.3 or above to compile the kernel
- archprepare: checkbin
-+
-+archheaders:
-+	$(Q)$(MAKE) $(build)=arch/parisc/kernel/syscalls all
-+
- checkbin:
- 	@if test "$(cc-version)" -lt "0303"; then \
- 		echo -n "Sorry, GCC v3.3 or above is required to build " ; \
-diff --git a/arch/parisc/include/asm/Kbuild b/arch/parisc/include/asm/Kbuild
-index 2013d63..f67046d 100644
---- a/arch/parisc/include/asm/Kbuild
-+++ b/arch/parisc/include/asm/Kbuild
-@@ -23,3 +23,6 @@ generic-y += user.h
- generic-y += vga.h
- generic-y += word-at-a-time.h
- generic-y += xor.h
-+generated-y += syscall_table_32.h
-+generated-y += syscall_table_64.h
-+generated-y += syscall_table_c32.h
-\ No newline at end of file
-diff --git a/arch/parisc/include/uapi/asm/Kbuild b/arch/parisc/include/uapi/asm/Kbuild
-index 286ef5a..dc1823a 100644
---- a/arch/parisc/include/uapi/asm/Kbuild
-+++ b/arch/parisc/include/uapi/asm/Kbuild
-@@ -7,3 +7,5 @@ generic-y += kvm_para.h
- generic-y += param.h
- generic-y += poll.h
- generic-y += resource.h
-+generated-y += unistd_32.h
-+generated-y += unistd_64.h
-\ No newline at end of file
-diff --git a/arch/parisc/include/uapi/asm/unistd.h b/arch/parisc/include/uapi/asm/unistd.h
-index 7532817..5b7578e 100644
---- a/arch/parisc/include/uapi/asm/unistd.h
-+++ b/arch/parisc/include/uapi/asm/unistd.h
-@@ -2,371 +2,11 @@
- #ifndef _UAPI_ASM_PARISC_UNISTD_H_
- #define _UAPI_ASM_PARISC_UNISTD_H_
- 
++#include <linux/gpio_keys.h>
+ #include <linux/i2c.h>
+ #include <linux/input.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/rohm-bd718x7.h>
+ #include <linux/mfd/core.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/regmap.h>
+-
 -/*
-- * Linux system call numbers.
-- *
-- * Cary Coutant says that we should just use another syscall gateway
-- * page to avoid clashing with the HPUX space, and I think he's right:
-- * it will would keep a branch out of our syscall entry path, at the
-- * very least.  If we decide to change it later, we can ``just'' tweak
-- * the LINUX_GATEWAY_ADDR define at the bottom and make __NR_Linux be
-- * 1024 or something.  Oh, and recompile libc. =)
+- * gpio_keys.h requires definiton of bool. It is brought in
+- * by above includes. Keep this as last until gpio_keys.h gets fixed.
 - */
+-#include <linux/gpio_keys.h>
 -
--#define __NR_Linux                0
--#define __NR_restart_syscall      (__NR_Linux + 0)
--#define __NR_exit                 (__NR_Linux + 1)
--#define __NR_fork                 (__NR_Linux + 2)
--#define __NR_read                 (__NR_Linux + 3)
--#define __NR_write                (__NR_Linux + 4)
--#define __NR_open                 (__NR_Linux + 5)
--#define __NR_close                (__NR_Linux + 6)
--#define __NR_waitpid              (__NR_Linux + 7)
--#define __NR_creat                (__NR_Linux + 8)
--#define __NR_link                 (__NR_Linux + 9)
--#define __NR_unlink              (__NR_Linux + 10)
--#define __NR_execve              (__NR_Linux + 11)
--#define __NR_chdir               (__NR_Linux + 12)
--#define __NR_time                (__NR_Linux + 13)
--#define __NR_mknod               (__NR_Linux + 14)
--#define __NR_chmod               (__NR_Linux + 15)
--#define __NR_lchown              (__NR_Linux + 16)
--#define __NR_socket              (__NR_Linux + 17)
--#define __NR_stat                (__NR_Linux + 18)
--#define __NR_lseek               (__NR_Linux + 19)
--#define __NR_getpid              (__NR_Linux + 20)
--#define __NR_mount               (__NR_Linux + 21)
--#define __NR_bind                (__NR_Linux + 22)
--#define __NR_setuid              (__NR_Linux + 23)
--#define __NR_getuid              (__NR_Linux + 24)
--#define __NR_stime               (__NR_Linux + 25)
--#define __NR_ptrace              (__NR_Linux + 26)
--#define __NR_alarm               (__NR_Linux + 27)
--#define __NR_fstat               (__NR_Linux + 28)
--#define __NR_pause               (__NR_Linux + 29)
--#define __NR_utime               (__NR_Linux + 30)
--#define __NR_connect             (__NR_Linux + 31)
--#define __NR_listen              (__NR_Linux + 32)
--#define __NR_access              (__NR_Linux + 33)
--#define __NR_nice                (__NR_Linux + 34)
--#define __NR_accept              (__NR_Linux + 35)
--#define __NR_sync                (__NR_Linux + 36)
--#define __NR_kill                (__NR_Linux + 37)
--#define __NR_rename              (__NR_Linux + 38)
--#define __NR_mkdir               (__NR_Linux + 39)
--#define __NR_rmdir               (__NR_Linux + 40)
--#define __NR_dup                 (__NR_Linux + 41)
--#define __NR_pipe                (__NR_Linux + 42)
--#define __NR_times               (__NR_Linux + 43)
--#define __NR_getsockname         (__NR_Linux + 44)
--#define __NR_brk                 (__NR_Linux + 45)
--#define __NR_setgid              (__NR_Linux + 46)
--#define __NR_getgid              (__NR_Linux + 47)
--#define __NR_signal              (__NR_Linux + 48)
--#define __NR_geteuid             (__NR_Linux + 49)
--#define __NR_getegid             (__NR_Linux + 50)
--#define __NR_acct                (__NR_Linux + 51)
--#define __NR_umount2             (__NR_Linux + 52)
--#define __NR_getpeername         (__NR_Linux + 53)
--#define __NR_ioctl               (__NR_Linux + 54)
--#define __NR_fcntl               (__NR_Linux + 55)
--#define __NR_socketpair          (__NR_Linux + 56)
--#define __NR_setpgid             (__NR_Linux + 57)
--#define __NR_send                (__NR_Linux + 58)
--#define __NR_uname               (__NR_Linux + 59)
--#define __NR_umask               (__NR_Linux + 60)
--#define __NR_chroot              (__NR_Linux + 61)
--#define __NR_ustat               (__NR_Linux + 62)
--#define __NR_dup2                (__NR_Linux + 63)
--#define __NR_getppid             (__NR_Linux + 64)
--#define __NR_getpgrp             (__NR_Linux + 65)
--#define __NR_setsid              (__NR_Linux + 66)
--#define __NR_pivot_root          (__NR_Linux + 67)
--#define __NR_sgetmask            (__NR_Linux + 68)
--#define __NR_ssetmask            (__NR_Linux + 69)
--#define __NR_setreuid            (__NR_Linux + 70)
--#define __NR_setregid            (__NR_Linux + 71)
--#define __NR_mincore             (__NR_Linux + 72)
--#define __NR_sigpending          (__NR_Linux + 73)
--#define __NR_sethostname         (__NR_Linux + 74)
--#define __NR_setrlimit           (__NR_Linux + 75)
--#define __NR_getrlimit           (__NR_Linux + 76)
--#define __NR_getrusage           (__NR_Linux + 77)
--#define __NR_gettimeofday        (__NR_Linux + 78)
--#define __NR_settimeofday        (__NR_Linux + 79)
--#define __NR_getgroups           (__NR_Linux + 80)
--#define __NR_setgroups           (__NR_Linux + 81)
--#define __NR_sendto              (__NR_Linux + 82)
--#define __NR_symlink             (__NR_Linux + 83)
--#define __NR_lstat               (__NR_Linux + 84)
--#define __NR_readlink            (__NR_Linux + 85)
--#define __NR_uselib              (__NR_Linux + 86)
--#define __NR_swapon              (__NR_Linux + 87)
--#define __NR_reboot              (__NR_Linux + 88)
--#define __NR_mmap2               (__NR_Linux + 89)
--#define __NR_mmap                (__NR_Linux + 90)
--#define __NR_munmap              (__NR_Linux + 91)
--#define __NR_truncate            (__NR_Linux + 92)
--#define __NR_ftruncate           (__NR_Linux + 93)
--#define __NR_fchmod              (__NR_Linux + 94)
--#define __NR_fchown              (__NR_Linux + 95)
--#define __NR_getpriority         (__NR_Linux + 96)
--#define __NR_setpriority         (__NR_Linux + 97)
--#define __NR_recv                (__NR_Linux + 98)
--#define __NR_statfs              (__NR_Linux + 99)
--#define __NR_fstatfs            (__NR_Linux + 100)
--#define __NR_stat64             (__NR_Linux + 101)
--/* #define __NR_socketcall         (__NR_Linux + 102) */
--#define __NR_syslog             (__NR_Linux + 103)
--#define __NR_setitimer          (__NR_Linux + 104)
--#define __NR_getitimer          (__NR_Linux + 105)
--#define __NR_capget             (__NR_Linux + 106)
--#define __NR_capset             (__NR_Linux + 107)
--#define __NR_pread64            (__NR_Linux + 108)
--#define __NR_pwrite64           (__NR_Linux + 109)
--#define __NR_getcwd             (__NR_Linux + 110)
--#define __NR_vhangup            (__NR_Linux + 111)
--#define __NR_fstat64            (__NR_Linux + 112)
--#define __NR_vfork              (__NR_Linux + 113)
--#define __NR_wait4              (__NR_Linux + 114)
--#define __NR_swapoff            (__NR_Linux + 115)
--#define __NR_sysinfo            (__NR_Linux + 116)
--#define __NR_shutdown           (__NR_Linux + 117)
--#define __NR_fsync              (__NR_Linux + 118)
--#define __NR_madvise            (__NR_Linux + 119)
--#define __NR_clone              (__NR_Linux + 120)
--#define __NR_setdomainname      (__NR_Linux + 121)
--#define __NR_sendfile           (__NR_Linux + 122)
--#define __NR_recvfrom           (__NR_Linux + 123)
--#define __NR_adjtimex           (__NR_Linux + 124)
--#define __NR_mprotect           (__NR_Linux + 125)
--#define __NR_sigprocmask        (__NR_Linux + 126)
--#define __NR_create_module      (__NR_Linux + 127) /* not used */
--#define __NR_init_module        (__NR_Linux + 128)
--#define __NR_delete_module      (__NR_Linux + 129)
--#define __NR_get_kernel_syms    (__NR_Linux + 130) /* not used */
--#define __NR_quotactl           (__NR_Linux + 131)
--#define __NR_getpgid            (__NR_Linux + 132)
--#define __NR_fchdir             (__NR_Linux + 133)
--#define __NR_bdflush            (__NR_Linux + 134)
--#define __NR_sysfs              (__NR_Linux + 135)
--#define __NR_personality        (__NR_Linux + 136)
--#define __NR_afs_syscall        (__NR_Linux + 137) /* not used */
--#define __NR_setfsuid           (__NR_Linux + 138)
--#define __NR_setfsgid           (__NR_Linux + 139)
--#define __NR__llseek            (__NR_Linux + 140)
--#define __NR_getdents           (__NR_Linux + 141)
--#define __NR__newselect         (__NR_Linux + 142)
--#define __NR_flock              (__NR_Linux + 143)
--#define __NR_msync              (__NR_Linux + 144)
--#define __NR_readv              (__NR_Linux + 145)
--#define __NR_writev             (__NR_Linux + 146)
--#define __NR_getsid             (__NR_Linux + 147)
--#define __NR_fdatasync          (__NR_Linux + 148)
--#define __NR__sysctl            (__NR_Linux + 149)
--#define __NR_mlock              (__NR_Linux + 150)
--#define __NR_munlock            (__NR_Linux + 151)
--#define __NR_mlockall           (__NR_Linux + 152)
--#define __NR_munlockall         (__NR_Linux + 153)
--#define __NR_sched_setparam             (__NR_Linux + 154)
--#define __NR_sched_getparam             (__NR_Linux + 155)
--#define __NR_sched_setscheduler         (__NR_Linux + 156)
--#define __NR_sched_getscheduler         (__NR_Linux + 157)
--#define __NR_sched_yield                (__NR_Linux + 158)
--#define __NR_sched_get_priority_max     (__NR_Linux + 159)
--#define __NR_sched_get_priority_min     (__NR_Linux + 160)
--#define __NR_sched_rr_get_interval      (__NR_Linux + 161)
--#define __NR_nanosleep          (__NR_Linux + 162)
--#define __NR_mremap             (__NR_Linux + 163)
--#define __NR_setresuid          (__NR_Linux + 164)
--#define __NR_getresuid          (__NR_Linux + 165)
--#define __NR_sigaltstack        (__NR_Linux + 166)
--#define __NR_query_module       (__NR_Linux + 167) /* not used */
--#define __NR_poll               (__NR_Linux + 168)
--#define __NR_nfsservctl         (__NR_Linux + 169) /* not used */
--#define __NR_setresgid          (__NR_Linux + 170)
--#define __NR_getresgid          (__NR_Linux + 171)
--#define __NR_prctl              (__NR_Linux + 172)
--#define __NR_rt_sigreturn       (__NR_Linux + 173)
--#define __NR_rt_sigaction       (__NR_Linux + 174)
--#define __NR_rt_sigprocmask     (__NR_Linux + 175)
--#define __NR_rt_sigpending      (__NR_Linux + 176)
--#define __NR_rt_sigtimedwait    (__NR_Linux + 177)
--#define __NR_rt_sigqueueinfo    (__NR_Linux + 178)
--#define __NR_rt_sigsuspend      (__NR_Linux + 179)
--#define __NR_chown              (__NR_Linux + 180)
--#define __NR_setsockopt         (__NR_Linux + 181)
--#define __NR_getsockopt         (__NR_Linux + 182)
--#define __NR_sendmsg            (__NR_Linux + 183)
--#define __NR_recvmsg            (__NR_Linux + 184)
--#define __NR_semop              (__NR_Linux + 185)
--#define __NR_semget             (__NR_Linux + 186)
--#define __NR_semctl             (__NR_Linux + 187)
--#define __NR_msgsnd             (__NR_Linux + 188)
--#define __NR_msgrcv             (__NR_Linux + 189)
--#define __NR_msgget             (__NR_Linux + 190)
--#define __NR_msgctl             (__NR_Linux + 191)
--#define __NR_shmat              (__NR_Linux + 192)
--#define __NR_shmdt              (__NR_Linux + 193)
--#define __NR_shmget             (__NR_Linux + 194)
--#define __NR_shmctl             (__NR_Linux + 195)
--#define __NR_getpmsg            (__NR_Linux + 196) /* not used */
--#define __NR_putpmsg            (__NR_Linux + 197) /* not used */
--#define __NR_lstat64            (__NR_Linux + 198)
--#define __NR_truncate64         (__NR_Linux + 199)
--#define __NR_ftruncate64        (__NR_Linux + 200)
--#define __NR_getdents64         (__NR_Linux + 201)
--#define __NR_fcntl64            (__NR_Linux + 202)
--#define __NR_attrctl            (__NR_Linux + 203) /* not used */
--#define __NR_acl_get            (__NR_Linux + 204) /* not used */
--#define __NR_acl_set            (__NR_Linux + 205) /* not used */
--#define __NR_gettid             (__NR_Linux + 206)
--#define __NR_readahead          (__NR_Linux + 207)
--#define __NR_tkill              (__NR_Linux + 208)
--#define __NR_sendfile64         (__NR_Linux + 209)
--#define __NR_futex              (__NR_Linux + 210)
--#define __NR_sched_setaffinity  (__NR_Linux + 211)
--#define __NR_sched_getaffinity  (__NR_Linux + 212)
--#define __NR_set_thread_area    (__NR_Linux + 213) /* not used */
--#define __NR_get_thread_area    (__NR_Linux + 214) /* not used */
--#define __NR_io_setup           (__NR_Linux + 215)
--#define __NR_io_destroy         (__NR_Linux + 216)
--#define __NR_io_getevents       (__NR_Linux + 217)
--#define __NR_io_submit          (__NR_Linux + 218)
--#define __NR_io_cancel          (__NR_Linux + 219)
--#define __NR_alloc_hugepages    (__NR_Linux + 220) /* not used */
--#define __NR_free_hugepages     (__NR_Linux + 221) /* not used */
--#define __NR_exit_group         (__NR_Linux + 222)
--#define __NR_lookup_dcookie     (__NR_Linux + 223)
--#define __NR_epoll_create       (__NR_Linux + 224)
--#define __NR_epoll_ctl          (__NR_Linux + 225)
--#define __NR_epoll_wait         (__NR_Linux + 226)
--#define __NR_remap_file_pages   (__NR_Linux + 227)
--#define __NR_semtimedop         (__NR_Linux + 228)
--#define __NR_mq_open            (__NR_Linux + 229)
--#define __NR_mq_unlink          (__NR_Linux + 230)
--#define __NR_mq_timedsend       (__NR_Linux + 231)
--#define __NR_mq_timedreceive    (__NR_Linux + 232)
--#define __NR_mq_notify          (__NR_Linux + 233)
--#define __NR_mq_getsetattr      (__NR_Linux + 234)
--#define __NR_waitid		(__NR_Linux + 235)
--#define __NR_fadvise64_64	(__NR_Linux + 236)
--#define __NR_set_tid_address	(__NR_Linux + 237)
--#define __NR_setxattr		(__NR_Linux + 238)
--#define __NR_lsetxattr		(__NR_Linux + 239)
--#define __NR_fsetxattr		(__NR_Linux + 240)
--#define __NR_getxattr		(__NR_Linux + 241)
--#define __NR_lgetxattr		(__NR_Linux + 242)
--#define __NR_fgetxattr		(__NR_Linux + 243)
--#define __NR_listxattr		(__NR_Linux + 244)
--#define __NR_llistxattr		(__NR_Linux + 245)
--#define __NR_flistxattr		(__NR_Linux + 246)
--#define __NR_removexattr	(__NR_Linux + 247)
--#define __NR_lremovexattr	(__NR_Linux + 248)
--#define __NR_fremovexattr	(__NR_Linux + 249)
--#define __NR_timer_create	(__NR_Linux + 250)
--#define __NR_timer_settime	(__NR_Linux + 251)
--#define __NR_timer_gettime	(__NR_Linux + 252)
--#define __NR_timer_getoverrun	(__NR_Linux + 253)
--#define __NR_timer_delete	(__NR_Linux + 254)
--#define __NR_clock_settime	(__NR_Linux + 255)
--#define __NR_clock_gettime	(__NR_Linux + 256)
--#define __NR_clock_getres	(__NR_Linux + 257)
--#define __NR_clock_nanosleep	(__NR_Linux + 258)
--#define __NR_tgkill		(__NR_Linux + 259)
--#define __NR_mbind		(__NR_Linux + 260)
--#define __NR_get_mempolicy	(__NR_Linux + 261)
--#define __NR_set_mempolicy	(__NR_Linux + 262)
--#define __NR_vserver		(__NR_Linux + 263) /* not used */
--#define __NR_add_key		(__NR_Linux + 264)
--#define __NR_request_key	(__NR_Linux + 265)
--#define __NR_keyctl		(__NR_Linux + 266)
--#define __NR_ioprio_set		(__NR_Linux + 267)
--#define __NR_ioprio_get		(__NR_Linux + 268)
--#define __NR_inotify_init	(__NR_Linux + 269)
--#define __NR_inotify_add_watch	(__NR_Linux + 270)
--#define __NR_inotify_rm_watch	(__NR_Linux + 271)
--#define __NR_migrate_pages	(__NR_Linux + 272)
--#define __NR_pselect6		(__NR_Linux + 273)
--#define __NR_ppoll		(__NR_Linux + 274)
--#define __NR_openat		(__NR_Linux + 275)
--#define __NR_mkdirat		(__NR_Linux + 276)
--#define __NR_mknodat		(__NR_Linux + 277)
--#define __NR_fchownat		(__NR_Linux + 278)
--#define __NR_futimesat		(__NR_Linux + 279)
--#define __NR_fstatat64		(__NR_Linux + 280)
--#define __NR_unlinkat		(__NR_Linux + 281)
--#define __NR_renameat		(__NR_Linux + 282)
--#define __NR_linkat		(__NR_Linux + 283)
--#define __NR_symlinkat		(__NR_Linux + 284)
--#define __NR_readlinkat		(__NR_Linux + 285)
--#define __NR_fchmodat		(__NR_Linux + 286)
--#define __NR_faccessat		(__NR_Linux + 287)
--#define __NR_unshare		(__NR_Linux + 288)
--#define __NR_set_robust_list	(__NR_Linux + 289)
--#define __NR_get_robust_list	(__NR_Linux + 290)
--#define __NR_splice		(__NR_Linux + 291)
--#define __NR_sync_file_range	(__NR_Linux + 292)
--#define __NR_tee		(__NR_Linux + 293)
--#define __NR_vmsplice		(__NR_Linux + 294)
--#define __NR_move_pages		(__NR_Linux + 295)
--#define __NR_getcpu		(__NR_Linux + 296)
--#define __NR_epoll_pwait	(__NR_Linux + 297)
--#define __NR_statfs64		(__NR_Linux + 298)
--#define __NR_fstatfs64		(__NR_Linux + 299)
--#define __NR_kexec_load		(__NR_Linux + 300)
--#define __NR_utimensat		(__NR_Linux + 301)
--#define __NR_signalfd		(__NR_Linux + 302)
--#define __NR_timerfd		(__NR_Linux + 303) /* not used */
--#define __NR_eventfd		(__NR_Linux + 304)
--#define __NR_fallocate		(__NR_Linux + 305)
--#define __NR_timerfd_create	(__NR_Linux + 306)
--#define __NR_timerfd_settime	(__NR_Linux + 307)
--#define __NR_timerfd_gettime	(__NR_Linux + 308)
--#define __NR_signalfd4		(__NR_Linux + 309)
--#define __NR_eventfd2		(__NR_Linux + 310)
--#define __NR_epoll_create1	(__NR_Linux + 311)
--#define __NR_dup3		(__NR_Linux + 312)
--#define __NR_pipe2		(__NR_Linux + 313)
--#define __NR_inotify_init1	(__NR_Linux + 314)
--#define __NR_preadv		(__NR_Linux + 315)
--#define __NR_pwritev		(__NR_Linux + 316)
--#define __NR_rt_tgsigqueueinfo	(__NR_Linux + 317)
--#define __NR_perf_event_open	(__NR_Linux + 318)
--#define __NR_recvmmsg		(__NR_Linux + 319)
--#define __NR_accept4		(__NR_Linux + 320)
--#define __NR_prlimit64		(__NR_Linux + 321)
--#define __NR_fanotify_init	(__NR_Linux + 322)
--#define __NR_fanotify_mark	(__NR_Linux + 323)
--#define __NR_clock_adjtime	(__NR_Linux + 324)
--#define __NR_name_to_handle_at	(__NR_Linux + 325)
--#define __NR_open_by_handle_at	(__NR_Linux + 326)
--#define __NR_syncfs		(__NR_Linux + 327)
--#define __NR_setns		(__NR_Linux + 328)
--#define __NR_sendmmsg		(__NR_Linux + 329)
--#define __NR_process_vm_readv	(__NR_Linux + 330)
--#define __NR_process_vm_writev	(__NR_Linux + 331)
--#define __NR_kcmp		(__NR_Linux + 332)
--#define __NR_finit_module	(__NR_Linux + 333)
--#define __NR_sched_setattr	(__NR_Linux + 334)
--#define __NR_sched_getattr	(__NR_Linux + 335)
--#define __NR_utimes		(__NR_Linux + 336)
--#define __NR_renameat2		(__NR_Linux + 337)
--#define __NR_seccomp		(__NR_Linux + 338)
--#define __NR_getrandom		(__NR_Linux + 339)
--#define __NR_memfd_create	(__NR_Linux + 340)
--#define __NR_bpf		(__NR_Linux + 341)
--#define __NR_execveat		(__NR_Linux + 342)
--#define __NR_membarrier		(__NR_Linux + 343)
--#define __NR_userfaultfd	(__NR_Linux + 344)
--#define __NR_mlock2		(__NR_Linux + 345)
--#define __NR_copy_file_range	(__NR_Linux + 346)
--#define __NR_preadv2		(__NR_Linux + 347)
--#define __NR_pwritev2		(__NR_Linux + 348)
--#define __NR_statx		(__NR_Linux + 349)
--#define __NR_io_pgetevents	(__NR_Linux + 350)
--
--#define __NR_syscalls           (__NR_Linux + 351)
-+#ifdef CONFIG_64BIT
-+#include <asm/unistd_64.h>
-+#else
-+#include <asm/unistd_32.h>
-+#endif
+-static const u8 supported_revisions[] = { 0xA2 /* BD71837 */ };
++#include <linux/types.h>
  
- #define LINUX_GATEWAY_ADDR      0x100
+ static struct gpio_keys_button button = {
+ 	.code = KEY_POWER,
+@@ -41,8 +36,8 @@ static struct mfd_cell bd71837_mfd_cells[] = {
+ 		.platform_data = &bd718xx_powerkey_data,
+ 		.pdata_size = sizeof(bd718xx_powerkey_data),
+ 	},
+-	{ .name = "bd71837-clk", },
+-	{ .name = "bd71837-pmic", },
++	{ .name = "bd718xx-clk", },
++	{ .name = "bd718xx-pmic", },
+ };
  
-diff --git a/arch/parisc/kernel/syscall.S b/arch/parisc/kernel/syscall.S
-index f453997..ece76a5 100644
---- a/arch/parisc/kernel/syscall.S
-+++ b/arch/parisc/kernel/syscall.S
-@@ -923,20 +923,12 @@ ENTRY(lws_table)
- END(lws_table)
- 	/* End of lws table */
+ static const struct regmap_irq bd71837_irqs[] = {
+@@ -61,16 +56,16 @@ static struct regmap_irq_chip bd71837_irq_chip = {
+ 	.num_irqs = ARRAY_SIZE(bd71837_irqs),
+ 	.num_regs = 1,
+ 	.irq_reg_stride = 1,
+-	.status_base = BD71837_REG_IRQ,
+-	.mask_base = BD71837_REG_MIRQ,
+-	.ack_base = BD71837_REG_IRQ,
++	.status_base = BD718XX_REG_IRQ,
++	.mask_base = BD718XX_REG_MIRQ,
++	.ack_base = BD718XX_REG_IRQ,
+ 	.init_ack_masked = true,
+ 	.mask_invert = false,
+ };
  
--	.align 8
--ENTRY(sys_call_table)
--	.export sys_call_table,data
--#include "syscall_table.S"
--END(sys_call_table)
+ static const struct regmap_range pmic_status_range = {
+-	.range_min = BD71837_REG_IRQ,
+-	.range_max = BD71837_REG_POW_STATE,
++	.range_min = BD718XX_REG_IRQ,
++	.range_max = BD718XX_REG_POW_STATE,
+ };
+ 
+ static const struct regmap_access_table volatile_regs = {
+@@ -82,7 +77,7 @@ static const struct regmap_config bd71837_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.volatile_table = &volatile_regs,
+-	.max_register = BD71837_MAX_REGISTER - 1,
++	.max_register = BD718XX_MAX_REGISTER - 1,
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+ 
+@@ -90,8 +85,12 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+ 	struct bd71837 *bd71837;
+-	int ret, i;
+-	unsigned int val;
++	int ret;
++
++	if (!i2c->irq) {
++		dev_err(&i2c->dev, "No IRQ configured\n");
++		return -EINVAL;
++	}
+ 
+ 	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
+ 
+@@ -99,12 +98,8 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return -ENOMEM;
+ 
+ 	bd71837->chip_irq = i2c->irq;
 -
-+#include "syscall_table_32.S"
- #ifdef CONFIG_64BIT
--	.align 8
--ENTRY(sys_call_table64)
- #define SYSCALL_TABLE_64BIT
--#include "syscall_table.S"
--END(sys_call_table64)
-+#include "syscall_table_64.S"
- #endif
+-	if (!bd71837->chip_irq) {
+-		dev_err(&i2c->dev, "No IRQ configured\n");
+-		return -EINVAL;
+-	}
 -
-+	
- 	/*
- 		All light-weight-syscall atomic operations 
- 		will use this set of locks 
-diff --git a/arch/parisc/kernel/syscall_table.S b/arch/parisc/kernel/syscall_table.S
-deleted file mode 100644
-index fe3f2a4..0000000
---- a/arch/parisc/kernel/syscall_table.S
-+++ /dev/null
-@@ -1,459 +0,0 @@
--/*    System Call Table
-- *
-- *    Copyright (C) 1999-2004 Matthew Wilcox <willy at parisc-linux.org>
-- *    Copyright (C) 2000-2001 John Marvin <jsm at parisc-linux.org>
-- *    Copyright (C) 2000 Alan Modra <amodra at parisc-linux.org>
-- *    Copyright (C) 2000-2003 Paul Bame <bame at parisc-linux.org>
-- *    Copyright (C) 2000 Philipp Rumpf <prumpf with tux.org>
-- *    Copyright (C) 2000 Michael Ang <mang with subcarrier.org>
-- *    Copyright (C) 2000 David Huggins-Daines <dhd with pobox.org>
-- *    Copyright (C) 2000 Grant Grundler <grundler at parisc-linux.org>
-- *    Copyright (C) 2001 Richard Hirst <rhirst with parisc-linux.org>
-- *    Copyright (C) 2001-2002 Ryan Bradetich <rbrad at parisc-linux.org>
-- *    Copyright (C) 2001-2007 Helge Deller <deller at parisc-linux.org>
-- *    Copyright (C) 2000-2001 Thomas Bogendoerfer <tsbogend at parisc-linux.org>
-- *    Copyright (C) 2002 Randolph Chung <tausq with parisc-linux.org>
-- *    Copyright (C) 2005-2006 Kyle McMartin <kyle at parisc-linux.org>
-- *
-- *    This program is free software; you can redistribute it and/or modify
-- *    it under the terms of the GNU General Public License as published by
-- *    the Free Software Foundation; either version 2 of the License, or
-- *    (at your option) any later version.
-- *
-- *    This program is distributed in the hope that it will be useful,
-- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *    GNU General Public License for more details.
-- *
-- *    You should have received a copy of the GNU General Public License
-- *    along with this program; if not, write to the Free Software
-- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
++	bd71837->chip_type = (unsigned int)(uintptr_t)
++				of_device_get_match_data(&i2c->dev);
+ 	bd71837->dev = &i2c->dev;
+ 	dev_set_drvdata(&i2c->dev, bd71837);
+ 
+@@ -114,20 +109,6 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 		return PTR_ERR(bd71837->regmap);
+ 	}
+ 
+-	ret = regmap_read(bd71837->regmap, BD71837_REG_REV, &val);
+-	if (ret) {
+-		dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
+-		return ret;
+-	}
+-	for (i = 0; i < ARRAY_SIZE(supported_revisions); i++)
+-		if (supported_revisions[i] == val)
+-			break;
 -
--#if defined(CONFIG_64BIT) && !defined(SYSCALL_TABLE_64BIT)
--/* Use ENTRY_SAME for 32-bit syscalls which are the same on wide and
-- * narrow palinux.  Use ENTRY_DIFF for those where a 32-bit specific
-- * implementation is required on wide palinux.  Use ENTRY_COMP where
-- * the compatibility layer has a useful 32-bit implementation.
-- */
--#define ENTRY_SAME(_name_) .dword sys_##_name_
--#define ENTRY_DIFF(_name_) .dword sys32_##_name_
--#define ENTRY_UHOH(_name_) .dword sys32_##unimplemented
--#define ENTRY_OURS(_name_) .dword parisc_##_name_
--#define ENTRY_COMP(_name_) .dword compat_sys_##_name_
--#elif defined(CONFIG_64BIT) && defined(SYSCALL_TABLE_64BIT)
--#define ENTRY_SAME(_name_) .dword sys_##_name_
--#define ENTRY_DIFF(_name_) .dword sys_##_name_
--#define ENTRY_UHOH(_name_) .dword sys_##_name_
--#define ENTRY_OURS(_name_) .dword sys_##_name_
--#define ENTRY_COMP(_name_) .dword sys_##_name_
--#else
--#define ENTRY_SAME(_name_) .word sys_##_name_
--#define ENTRY_DIFF(_name_) .word sys_##_name_
--#define ENTRY_UHOH(_name_) .word sys_##_name_
--#define ENTRY_OURS(_name_) .word parisc_##_name_
--#define ENTRY_COMP(_name_) .word sys_##_name_
--#endif
+-	if (i == ARRAY_SIZE(supported_revisions)) {
+-		dev_err(&i2c->dev, "Unsupported chip revision\n");
+-		return -ENODEV;
+-	}
 -
--90:	ENTRY_SAME(restart_syscall)	/* 0 */
--91:	ENTRY_SAME(exit)
--	ENTRY_SAME(fork_wrapper)
--	ENTRY_SAME(read)
--	ENTRY_SAME(write)
--	ENTRY_COMP(open)		/* 5 */
--	ENTRY_SAME(close)
--	ENTRY_SAME(waitpid)
--	ENTRY_SAME(creat)
--	ENTRY_SAME(link)
--	ENTRY_SAME(unlink)		/* 10 */
--	ENTRY_COMP(execve)
--	ENTRY_SAME(chdir)
--	/* See comments in kernel/time.c!!! Maybe we don't need this? */
--	ENTRY_COMP(time)
--	ENTRY_SAME(mknod)
--	ENTRY_SAME(chmod)		/* 15 */
--	ENTRY_SAME(lchown)
--	ENTRY_SAME(socket)
--	/* struct stat is MAYBE identical wide and narrow ?? */
--	ENTRY_COMP(newstat)
--	ENTRY_COMP(lseek)
--	ENTRY_SAME(getpid)		/* 20 */
--	/* the 'void * data' parameter may need re-packing in wide */
--	ENTRY_COMP(mount)
--	/* concerned about struct sockaddr in wide/narrow */
--	/* ---> I think sockaddr is OK unless the compiler packs the struct */
--	/*      differently to align the char array */
--	ENTRY_SAME(bind)
--	ENTRY_SAME(setuid)
--	ENTRY_SAME(getuid)
--	ENTRY_COMP(stime)		/* 25 */
--	ENTRY_COMP(ptrace)
--	ENTRY_SAME(alarm)
--	/* see stat comment */
--	ENTRY_COMP(newfstat)
--	ENTRY_SAME(pause)
--	/* struct utimbuf uses time_t which might vary */
--	ENTRY_COMP(utime)		/* 30 */
--	/* struct sockaddr... */
--	ENTRY_SAME(connect)
--	ENTRY_SAME(listen)
--	ENTRY_SAME(access)
--	ENTRY_SAME(nice)
--	/* struct sockaddr... */
--	ENTRY_SAME(accept)		/* 35 */
--	ENTRY_SAME(sync)
--	ENTRY_SAME(kill)
--	ENTRY_SAME(rename)
--	ENTRY_SAME(mkdir)
--	ENTRY_SAME(rmdir)		/* 40 */
--	ENTRY_SAME(dup)
--	ENTRY_SAME(pipe)
--	ENTRY_COMP(times)
--	/* struct sockaddr... */
--	ENTRY_SAME(getsockname)
--	/* it seems possible brk() could return a >4G pointer... */
--	ENTRY_SAME(brk)			/* 45 */
--	ENTRY_SAME(setgid)
--	ENTRY_SAME(getgid)
--	ENTRY_SAME(signal)
--	ENTRY_SAME(geteuid)
--	ENTRY_SAME(getegid)		/* 50 */
--	ENTRY_SAME(acct)
--	ENTRY_SAME(umount)
--	/* struct sockaddr... */
--	ENTRY_SAME(getpeername)
--	ENTRY_COMP(ioctl)
--	ENTRY_COMP(fcntl)		/* 55 */
--	ENTRY_SAME(socketpair)
--	ENTRY_SAME(setpgid)
--	ENTRY_SAME(send)
--	ENTRY_SAME(newuname)
--	ENTRY_SAME(umask)		/* 60 */
--	ENTRY_SAME(chroot)
--	ENTRY_COMP(ustat)
--	ENTRY_SAME(dup2)
--	ENTRY_SAME(getppid)
--	ENTRY_SAME(getpgrp)		/* 65 */
--	ENTRY_SAME(setsid)
--	ENTRY_SAME(pivot_root)
--	/* I don't like this */
--	ENTRY_UHOH(sgetmask)
--	ENTRY_UHOH(ssetmask)
--	ENTRY_SAME(setreuid)		/* 70 */
--	ENTRY_SAME(setregid)
--	ENTRY_SAME(mincore)
--	ENTRY_COMP(sigpending)
--	ENTRY_SAME(sethostname)
--	/* Following 3 have linux-common-code structs containing longs -( */
--	ENTRY_COMP(setrlimit)		/* 75 */
--	ENTRY_COMP(getrlimit)
--	ENTRY_COMP(getrusage)
--	/* struct timeval and timezone are maybe?? consistent wide and narrow */
--	ENTRY_COMP(gettimeofday)
--	ENTRY_COMP(settimeofday)
--	ENTRY_SAME(getgroups)		/* 80 */
--	ENTRY_SAME(setgroups)
--	/* struct socketaddr... */
--	ENTRY_SAME(sendto)
--	ENTRY_SAME(symlink)
--	/* see stat comment */
--	ENTRY_COMP(newlstat)
--	ENTRY_SAME(readlink)		/* 85 */
--	ENTRY_SAME(ni_syscall)	/* was uselib */
--	ENTRY_SAME(swapon)
--	ENTRY_SAME(reboot)
--	ENTRY_SAME(mmap2)
--	ENTRY_SAME(mmap)		/* 90 */
--	ENTRY_SAME(munmap)
--	ENTRY_COMP(truncate)
--	ENTRY_COMP(ftruncate)
--	ENTRY_SAME(fchmod)
--	ENTRY_SAME(fchown)		/* 95 */
--	ENTRY_SAME(getpriority)
--	ENTRY_SAME(setpriority)
--	ENTRY_SAME(recv)
--	ENTRY_COMP(statfs)
--	ENTRY_COMP(fstatfs)		/* 100 */
--	ENTRY_SAME(stat64)
--	ENTRY_SAME(ni_syscall)	/* was socketcall */
--	ENTRY_SAME(syslog)
--	/* even though manpage says struct timeval contains longs, ours has
--	 * time_t and suseconds_t -- both of which are safe wide/narrow */
--	ENTRY_COMP(setitimer)
--	ENTRY_COMP(getitimer)		/* 105 */
--	ENTRY_SAME(capget)
--	ENTRY_SAME(capset)
--	ENTRY_OURS(pread64)
--	ENTRY_OURS(pwrite64)
--	ENTRY_SAME(getcwd)		/* 110 */
--	ENTRY_SAME(vhangup)
--	ENTRY_SAME(fstat64)
--	ENTRY_SAME(vfork_wrapper)
--	/* struct rusage contains longs... */
--	ENTRY_COMP(wait4)
--	ENTRY_SAME(swapoff)		/* 115 */
--	ENTRY_COMP(sysinfo)
--	ENTRY_SAME(shutdown)
--	ENTRY_SAME(fsync)
--	ENTRY_SAME(madvise)
--	ENTRY_SAME(clone_wrapper)	/* 120 */
--	ENTRY_SAME(setdomainname)
--	ENTRY_COMP(sendfile)
--	/* struct sockaddr... */
--	ENTRY_SAME(recvfrom)
--	/* struct timex contains longs */
--	ENTRY_COMP(adjtimex)
--	ENTRY_SAME(mprotect)		/* 125 */
--	/* old_sigset_t forced to 32 bits.  Beware glibc sigset_t */
--	ENTRY_COMP(sigprocmask)
--	ENTRY_SAME(ni_syscall)	/* create_module */
--	ENTRY_SAME(init_module)
--	ENTRY_SAME(delete_module)
--	ENTRY_SAME(ni_syscall)		/* 130: get_kernel_syms */
--	/* time_t inside struct dqblk */
--	ENTRY_SAME(quotactl)
--	ENTRY_SAME(getpgid)
--	ENTRY_SAME(fchdir)
--	ENTRY_SAME(bdflush)
--	ENTRY_SAME(sysfs)		/* 135 */
--	ENTRY_OURS(personality)
--	ENTRY_SAME(ni_syscall)	/* for afs_syscall */
--	ENTRY_SAME(setfsuid)
--	ENTRY_SAME(setfsgid)
--	/* I think this might work */
--	ENTRY_SAME(llseek)		/* 140 */
--	ENTRY_COMP(getdents)
--	/* it is POSSIBLE that select will be OK because even though fd_set
--	 * contains longs, the macros and sizes are clever. */
--	ENTRY_COMP(select)
--	ENTRY_SAME(flock)
--	ENTRY_SAME(msync)
--	/* struct iovec contains pointers */
--	ENTRY_COMP(readv)		/* 145 */
--	ENTRY_COMP(writev)
--	ENTRY_SAME(getsid)
--	ENTRY_SAME(fdatasync)
--	/* struct __sysctl_args is a mess */
--	ENTRY_COMP(sysctl)
--	ENTRY_SAME(mlock)		/* 150 */
--	ENTRY_SAME(munlock)
--	ENTRY_SAME(mlockall)
--	ENTRY_SAME(munlockall)
--	/* struct sched_param is ok for now */
--	ENTRY_SAME(sched_setparam)
--	ENTRY_SAME(sched_getparam)	/* 155 */
--	ENTRY_SAME(sched_setscheduler)
--	ENTRY_SAME(sched_getscheduler)
--	ENTRY_SAME(sched_yield)
--	ENTRY_SAME(sched_get_priority_max)
--	ENTRY_SAME(sched_get_priority_min)	/* 160 */
--	ENTRY_COMP(sched_rr_get_interval)
--	ENTRY_COMP(nanosleep)
--	ENTRY_SAME(mremap)
--	ENTRY_SAME(setresuid)
--	ENTRY_SAME(getresuid)		/* 165 */
--	ENTRY_COMP(sigaltstack)
--	ENTRY_SAME(ni_syscall)		/* query_module */
--	ENTRY_SAME(poll)
--	/* structs contain pointers and an in_addr... */
--	ENTRY_SAME(ni_syscall)		/* was nfsservctl */
--	ENTRY_SAME(setresgid)		/* 170 */
--	ENTRY_SAME(getresgid)
--	ENTRY_SAME(prctl)
--	/* signals need a careful review */
--	ENTRY_SAME(rt_sigreturn_wrapper)
--	ENTRY_COMP(rt_sigaction)
--	ENTRY_COMP(rt_sigprocmask)	/* 175 */
--	ENTRY_COMP(rt_sigpending)
--	ENTRY_COMP(rt_sigtimedwait)
--	/* even though the struct siginfo_t is different, it appears like
--	 * all the paths use values which should be same wide and narrow.
--	 * Also the struct is padded to 128 bytes which means we don't have
--	 * to worry about faulting trying to copy in a larger 64-bit
--	 * struct from a 32-bit user-space app.
+ 	ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
+ 				       bd71837->chip_irq, IRQF_ONESHOT, 0,
+ 				       &bd71837_irq_chip, &bd71837->irq_data);
+@@ -138,7 +119,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 
+ 	/* Configure short press to 10 milliseconds */
+ 	ret = regmap_update_bits(bd71837->regmap,
+-				 BD71837_REG_PWRONCONFIG0,
++				 BD718XX_REG_PWRONCONFIG0,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+ 	if (ret) {
+@@ -149,7 +130,7 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ 
+ 	/* Configure long press to 10 seconds */
+ 	ret = regmap_update_bits(bd71837->regmap,
+-				 BD71837_REG_PWRONCONFIG1,
++				 BD718XX_REG_PWRONCONFIG1,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_LONG_PRESS_10S);
+ 
+@@ -179,7 +160,14 @@ static int bd71837_i2c_probe(struct i2c_client *i2c,
+ }
+ 
+ static const struct of_device_id bd71837_of_match[] = {
+-	{ .compatible = "rohm,bd71837", },
++	{
++		.compatible = "rohm,bd71837",
++		.data = (void *)BD718XX_TYPE_BD71837,
++	},
++	{
++		.compatible = "rohm,bd71847",
++		.data = (void *)BD718XX_TYPE_BD71847,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bd71837_of_match);
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 4f4599acfebd..1dbba20ede3e 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -15,11 +15,11 @@
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/slab.h>
+ 
+-struct bd71837_pmic {
+-	struct regulator_desc descs[BD71837_REGULATOR_CNT];
++struct bd718xx_pmic {
++	struct bd718xx_regulator_data *rdata;
+ 	struct bd71837 *mfd;
+ 	struct platform_device *pdev;
+-	struct regulator_dev *rdev[BD71837_REGULATOR_CNT];
++	struct regulator_dev *rdev[BD718XX_REGULATOR_AMOUNT];
+ };
+ 
+ /*
+@@ -33,7 +33,7 @@ struct bd71837_pmic {
+ static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 					   int ramp_delay)
+ {
+-	struct bd71837_pmic *pmic = rdev_get_drvdata(rdev);
++	struct bd718xx_pmic *pmic = rdev_get_drvdata(rdev);
+ 	struct bd71837 *mfd = pmic->mfd;
+ 	int id = rdev->desc->id;
+ 	unsigned int ramp_value = BUCK_RAMPRATE_10P00MV;
+@@ -60,7 +60,7 @@ static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+ 			rdev->desc->name, ramp_delay);
+ 	}
+ 
+-	return regmap_update_bits(mfd->regmap, BD71837_REG_BUCK1_CTRL + id,
++	return regmap_update_bits(mfd->regmap, BD718XX_REG_BUCK1_CTRL + id,
+ 				  BUCK_RAMPRATE_MASK, ramp_value << 6);
+ }
+ 
+@@ -69,7 +69,7 @@ static int bd71837_buck1234_set_ramp_delay(struct regulator_dev *rdev,
+  * is changed. Hence we return -EBUSY for these if voltage is changed
+  * when BUCK/LDO is enabled.
+  */
+-static int bd71837_set_voltage_sel_restricted(struct regulator_dev *rdev,
++static int bd718xx_set_voltage_sel_restricted(struct regulator_dev *rdev,
+ 						    unsigned int sel)
+ {
+ 	if (regulator_is_enabled_regmap(rdev))
+@@ -78,45 +78,45 @@ static int bd71837_set_voltage_sel_restricted(struct regulator_dev *rdev,
+ 	return regulator_set_voltage_sel_regmap(rdev, sel);
+ }
+ 
+-static struct regulator_ops bd71837_ldo_regulator_ops = {
++static struct regulator_ops bd718xx_ldo_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_linear_range,
+-	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
++	.set_voltage_sel = bd718xx_set_voltage_sel_restricted,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ };
+ 
+-static struct regulator_ops bd71837_ldo_regulator_nolinear_ops = {
++static struct regulator_ops bd718xx_ldo_regulator_nolinear_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_table,
+-	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
++	.set_voltage_sel = bd718xx_set_voltage_sel_restricted,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ };
+ 
+-static struct regulator_ops bd71837_buck_regulator_ops = {
++static struct regulator_ops bd718xx_buck_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_linear_range,
+-	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
++	.set_voltage_sel = bd718xx_set_voltage_sel_restricted,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops bd71837_buck_regulator_nolinear_ops = {
++static struct regulator_ops bd718xx_buck_regulator_nolinear_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_table,
+-	.set_voltage_sel = bd71837_set_voltage_sel_restricted,
++	.set_voltage_sel = bd718xx_set_voltage_sel_restricted,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops bd71837_buck1234_regulator_ops = {
++static struct regulator_ops bd718xx_dvs_buck_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+@@ -128,24 +128,30 @@ static struct regulator_ops bd71837_buck1234_regulator_ops = {
+ };
+ 
+ /*
+- * BUCK1/2/3/4
++ * BD71837 BUCK1/2/3/4
++ * BD71847 BUCK1/2
+  * 0.70 to 1.30V (10mV step)
+  */
+-static const struct regulator_linear_range bd71837_buck1234_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_dvs_buck_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x3C, 10000),
+ 	REGULATOR_LINEAR_RANGE(1300000, 0x3D, 0x3F, 0),
+ };
+ 
+ /*
+- * BUCK5
+- * 0.9V to 1.35V ()
++ * BD71837 BUCK5
++ * BD71847 BUCK3
++ * 0.7V to 1.35V ()
+  */
+-static const struct regulator_linear_range bd71837_buck5_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_1st_nodvs_buck_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(700000, 0x00, 0x03, 100000),
+ 	REGULATOR_LINEAR_RANGE(1050000, 0x04, 0x05, 50000),
+ 	REGULATOR_LINEAR_RANGE(1200000, 0x06, 0x07, 150000),
+ };
+ 
++static const struct regulator_linear_range bd71847_buck4_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
++};
++
+ /*
+  * BUCK6
+  * 3.0V to 3.3V (step 100mV)
+@@ -155,7 +161,8 @@ static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
+ };
+ 
+ /*
+- * BUCK7
++ * BD71837 BUCK7
++ * BD71847 BUCK5
+  * 000 = 1.605V
+  * 001 = 1.695V
+  * 010 = 1.755V
+@@ -165,7 +172,7 @@ static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
+  * 110 = 1.95V
+  * 111 = 1.995V
+  */
+-static const unsigned int buck_7_volts[] = {
++static const unsigned int bd718xx_3rd_nodvs_buck_volts[] = {
+ 	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
+ };
+ 
+@@ -173,16 +180,15 @@ static const unsigned int buck_7_volts[] = {
+  * BUCK8
+  * 0.8V to 1.40V (step 10mV)
+  */
+-static const struct regulator_linear_range bd71837_buck8_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_4th_nodvs_buck_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(800000, 0x00, 0x3C, 10000),
+-	REGULATOR_LINEAR_RANGE(1400000, 0x3D, 0x3F, 0),
+ };
+ 
+ /*
+  * LDO1
+  * 3.0 to 3.3V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_ldo1_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(3000000, 0x00, 0x03, 100000),
+ };
+ 
+@@ -198,7 +204,7 @@ static const unsigned int ldo_2_volts[] = {
+  * LDO3
+  * 1.8 to 3.3V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo3_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_ldo3_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+ };
+ 
+@@ -206,16 +212,15 @@ static const struct regulator_linear_range bd71837_ldo3_voltage_ranges[] = {
+  * LDO4
+  * 0.9 to 1.8V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo4_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_ldo4_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
+-	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
+ };
+ 
+ /*
+- * LDO5
++ * LDO5 for BD71837
+  * 1.8 to 3.3V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo5_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_ldo5_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+ };
+ 
+@@ -223,330 +228,722 @@ static const struct regulator_linear_range bd71837_ldo5_voltage_ranges[] = {
+  * LDO6
+  * 0.9 to 1.8V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo6_voltage_ranges[] = {
++static const struct regulator_linear_range bd718xx_ldo6_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(900000, 0x00, 0x09, 100000),
+-	REGULATOR_LINEAR_RANGE(1800000, 0x0A, 0x0F, 0),
+ };
+ 
+ /*
+  * LDO7
+  * 1.8 to 3.3V (100mV step)
+  */
+-static const struct regulator_linear_range bd71837_ldo7_voltage_ranges[] = {
++static const struct regulator_linear_range bd71837_ldo7_volts[] = {
+ 	REGULATOR_LINEAR_RANGE(1800000, 0x00, 0x0F, 100000),
+ };
+ 
+-static const struct regulator_desc bd71837_regulators[] = {
++struct reg_init {
++	unsigned int reg;
++	unsigned int mask;
++	unsigned int val;
++};
++struct bd718xx_regulator_data {
++	struct regulator_desc desc;
++	const struct reg_init init;
++	const struct reg_init *additional_inits;
++	int additional_init_amnt;
++};
++
++/*
++ * There is a HW quirk in BD71837. The shutdown sequence timings for
++ * bucks/LDOs which are controlled via register interface are changed.
++ * At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
++ * beginning of shut-down sequence. As bucks 6 and 7 are parent
++ * supplies for LDO5 and LDO6 - this causes LDO5/6 voltage
++ * monitoring to errorneously detect under voltage and force PMIC to
++ * emergency state instead of poweroff. In order to avoid this we
++ * disable voltage monitoring for LDO5 and LDO6
++ */
++static const struct reg_init bd71837_ldo5_inits[] = {
++	{
++		.reg = BD718XX_REG_MVRFLTMASK2,
++		.mask = BD718XX_LDO5_VRMON80,
++		.val = BD718XX_LDO5_VRMON80,
++	},
++};
++
++static const struct reg_init bd71837_ldo6_inits[] = {
++	{
++		.reg = BD718XX_REG_MVRFLTMASK2,
++		.mask = BD718XX_LDO6_VRMON80,
++		.val = BD718XX_LDO6_VRMON80,
++	},
++};
++
++static const struct bd718xx_regulator_data bd71847_regulators[] = {
++	{
++		.desc = {
++			.name = "buck1",
++			.of_match = of_match_ptr("BUCK1"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK1,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD718XX_REG_BUCK1_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD718XX_REG_BUCK1_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_BUCK1_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
++	},
+ 	{
+-		.name = "buck1",
+-		.of_match = of_match_ptr("BUCK1"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK1,
+-		.ops = &bd71837_buck1234_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK1_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck1234_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK1_VOLT_RUN,
+-		.vsel_mask = BUCK1_RUN_MASK,
+-		.enable_reg = BD71837_REG_BUCK1_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck2",
++			.of_match = of_match_ptr("BUCK2"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK2,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD718XX_REG_BUCK2_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD718XX_REG_BUCK2_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_BUCK2_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck2",
+-		.of_match = of_match_ptr("BUCK2"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK2,
+-		.ops = &bd71837_buck1234_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK2_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck1234_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK2_VOLT_RUN,
+-		.vsel_mask = BUCK2_RUN_MASK,
+-		.enable_reg = BD71837_REG_BUCK2_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck3",
++			.of_match = of_match_ptr("BUCK3"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK3,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_1ST_NODVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_1st_nodvs_buck_volts,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd718xx_1st_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_1ST_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_1ST_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_1ST_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_1ST_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck3",
+-		.of_match = of_match_ptr("BUCK3"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK3,
+-		.ops = &bd71837_buck1234_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK3_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck1234_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK3_VOLT_RUN,
+-		.vsel_mask = BUCK3_RUN_MASK,
+-		.enable_reg = BD71837_REG_BUCK3_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck4",
++			.of_match = of_match_ptr("BUCK4"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK4,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD71847_BUCK4_VOLTAGE_NUM,
++			.linear_ranges = bd71847_buck4_voltage_ranges,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd71847_buck4_voltage_ranges),
++			.enable_reg = BD718XX_REG_2ND_NODVS_BUCK_CTRL,
++			.vsel_reg = BD718XX_REG_2ND_NODVS_BUCK_VOLT,
++			.vsel_mask = BD71847_BUCK4_MASK,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_2ND_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck4",
+-		.of_match = of_match_ptr("BUCK4"),
+-		.regulators_node = of_match_ptr("regulators"),
+-			.id = BD71837_BUCK4,
+-		.ops = &bd71837_buck1234_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK4_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck1234_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck1234_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK4_VOLT_RUN,
+-		.vsel_mask = BUCK4_RUN_MASK,
+-		.enable_reg = BD71837_REG_BUCK4_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck5",
++			.of_match = of_match_ptr("BUCK5"),
++				.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK5,
++			.ops = &bd718xx_buck_regulator_nolinear_ops,
++			.type = REGULATOR_VOLTAGE,
++			.volt_table = &bd718xx_3rd_nodvs_buck_volts[0],
++			.n_voltages = ARRAY_SIZE(bd718xx_3rd_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_3RD_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_3RD_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_3RD_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_3RD_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck5",
+-		.of_match = of_match_ptr("BUCK5"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK5,
+-		.ops = &bd71837_buck_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK5_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck5_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck5_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK5_VOLT,
+-		.vsel_mask = BUCK5_MASK,
+-		.enable_reg = BD71837_REG_BUCK5_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck6",
++			.of_match = of_match_ptr("BUCK6"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK6,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_4TH_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_4TH_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_4TH_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_4TH_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck6",
+-		.of_match = of_match_ptr("BUCK6"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK6,
+-		.ops = &bd71837_buck_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK6_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck6_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck6_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK6_VOLT,
+-		.vsel_mask = BUCK6_MASK,
+-		.enable_reg = BD71837_REG_BUCK6_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo1",
++			.of_match = of_match_ptr("LDO1"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO1,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO1_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo1_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo1_volts),
++			.vsel_reg = BD718XX_REG_LDO1_VOLT,
++			.vsel_mask = BD718XX_LDO1_MASK,
++			.enable_reg = BD718XX_REG_LDO1_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO1_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck7",
+-		.of_match = of_match_ptr("BUCK7"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK7,
+-		.ops = &bd71837_buck_regulator_nolinear_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.volt_table = &buck_7_volts[0],
+-		.n_voltages = ARRAY_SIZE(buck_7_volts),
+-		.vsel_reg = BD71837_REG_BUCK7_VOLT,
+-		.vsel_mask = BUCK7_MASK,
+-		.enable_reg = BD71837_REG_BUCK7_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo2",
++			.of_match = of_match_ptr("LDO2"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO2,
++			.ops = &bd718xx_ldo_regulator_nolinear_ops,
++			.type = REGULATOR_VOLTAGE,
++			.volt_table = &ldo_2_volts[0],
++			.vsel_reg = BD718XX_REG_LDO2_VOLT,
++			.vsel_mask = BD718XX_LDO2_MASK,
++			.n_voltages = ARRAY_SIZE(ldo_2_volts),
++			.enable_reg = BD718XX_REG_LDO2_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO2_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ 	{
+-		.name = "buck8",
+-		.of_match = of_match_ptr("BUCK8"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_BUCK8,
+-		.ops = &bd71837_buck_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_BUCK8_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_buck8_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_buck8_voltage_ranges),
+-		.vsel_reg = BD71837_REG_BUCK8_VOLT,
+-		.vsel_mask = BUCK8_MASK,
+-		.enable_reg = BD71837_REG_BUCK8_CTRL,
+-		.enable_mask = BD71837_BUCK_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo3",
++			.of_match = of_match_ptr("LDO3"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO3,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO3_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo3_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo3_volts),
++			.vsel_reg = BD718XX_REG_LDO3_VOLT,
++			.vsel_mask = BD718XX_LDO3_MASK,
++			.enable_reg = BD718XX_REG_LDO3_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO3_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo1",
+-		.of_match = of_match_ptr("LDO1"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO1,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO1_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo1_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo1_voltage_ranges),
+-		.vsel_reg = BD71837_REG_LDO1_VOLT,
+-		.vsel_mask = LDO1_MASK,
+-		.enable_reg = BD71837_REG_LDO1_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo4",
++			.of_match = of_match_ptr("LDO4"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO4,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO4_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo4_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo4_volts),
++			.vsel_reg = BD718XX_REG_LDO4_VOLT,
++			.vsel_mask = BD718XX_LDO4_MASK,
++			.enable_reg = BD718XX_REG_LDO4_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO4_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo2",
+-		.of_match = of_match_ptr("LDO2"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO2,
+-		.ops = &bd71837_ldo_regulator_nolinear_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.volt_table = &ldo_2_volts[0],
+-		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+-		.vsel_reg = BD71837_REG_LDO2_VOLT,
+-		.vsel_mask = LDO2_MASK,
+-		.enable_reg = BD71837_REG_LDO2_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo5",
++			.of_match = of_match_ptr("LDO5"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO5,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO5_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo5_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo5_volts),
++			.vsel_reg = BD718XX_REG_LDO5_VOLT,
++			.vsel_mask = BD71847_LDO5_MASK,
++			.enable_reg = BD718XX_REG_LDO5_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO5_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo3",
+-		.of_match = of_match_ptr("LDO3"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO3,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO3_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo3_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo3_voltage_ranges),
+-		.vsel_reg = BD71837_REG_LDO3_VOLT,
+-		.vsel_mask = LDO3_MASK,
+-		.enable_reg = BD71837_REG_LDO3_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "ldo6",
++			.of_match = of_match_ptr("LDO6"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO6,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO6_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo6_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo6_volts),
++			/* LDO6 is supplied by buck5 */
++			.supply_name = "buck5",
++			.vsel_reg = BD718XX_REG_LDO6_VOLT,
++			.vsel_mask = BD718XX_LDO6_MASK,
++			.enable_reg = BD718XX_REG_LDO6_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO6_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++	},
++};
++
++static const struct bd718xx_regulator_data bd71837_regulators[] = {
++	{
++		.desc = {
++			.name = "buck1",
++			.of_match = of_match_ptr("BUCK1"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK1,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD718XX_REG_BUCK1_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD718XX_REG_BUCK1_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_BUCK1_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "buck2",
++			.of_match = of_match_ptr("BUCK2"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK2,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD718XX_REG_BUCK2_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD718XX_REG_BUCK2_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_BUCK2_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "buck3",
++			.of_match = of_match_ptr("BUCK3"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK3,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD71837_REG_BUCK3_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD71837_REG_BUCK3_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD71837_REG_BUCK3_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "buck4",
++			.of_match = of_match_ptr("BUCK4"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK4,
++			.ops = &bd718xx_dvs_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_DVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_dvs_buck_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_dvs_buck_volts),
++			.vsel_reg = BD71837_REG_BUCK4_VOLT_RUN,
++			.vsel_mask = DVS_BUCK_RUN_MASK,
++			.enable_reg = BD71837_REG_BUCK4_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD71837_REG_BUCK4_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo4",
+-		.of_match = of_match_ptr("LDO4"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO4,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO4_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo4_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo4_voltage_ranges),
+-		.vsel_reg = BD71837_REG_LDO4_VOLT,
+-		.vsel_mask = LDO4_MASK,
+-		.enable_reg = BD71837_REG_LDO4_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck5",
++			.of_match = of_match_ptr("BUCK5"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK5,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_1ST_NODVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_1st_nodvs_buck_volts,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd718xx_1st_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_1ST_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_1ST_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_1ST_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_1ST_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo5",
+-		.of_match = of_match_ptr("LDO5"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO5,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO5_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo5_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo5_voltage_ranges),
+-		/* LDO5 is supplied by buck6 */
+-		.supply_name = "buck6",
+-		.vsel_reg = BD71837_REG_LDO5_VOLT,
+-		.vsel_mask = LDO5_MASK,
+-		.enable_reg = BD71837_REG_LDO5_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck6",
++			.of_match = of_match_ptr("BUCK6"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK6,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD71837_BUCK6_VOLTAGE_NUM,
++			.linear_ranges = bd71837_buck6_voltage_ranges,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd71837_buck6_voltage_ranges),
++			.vsel_reg = BD718XX_REG_2ND_NODVS_BUCK_VOLT,
++			.vsel_mask = BD71837_BUCK6_MASK,
++			.enable_reg = BD718XX_REG_2ND_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_2ND_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo6",
+-		.of_match = of_match_ptr("LDO6"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO6,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO6_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo6_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo6_voltage_ranges),
+-		/* LDO6 is supplied by buck7 */
+-		.supply_name = "buck7",
+-		.vsel_reg = BD71837_REG_LDO6_VOLT,
+-		.vsel_mask = LDO6_MASK,
+-		.enable_reg = BD71837_REG_LDO6_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck7",
++			.of_match = of_match_ptr("BUCK7"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK7,
++			.ops = &bd718xx_buck_regulator_nolinear_ops,
++			.type = REGULATOR_VOLTAGE,
++			.volt_table = &bd718xx_3rd_nodvs_buck_volts[0],
++			.n_voltages = ARRAY_SIZE(bd718xx_3rd_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_3RD_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_3RD_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_3RD_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_3RD_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
+ 	},
+ 	{
+-		.name = "ldo7",
+-		.of_match = of_match_ptr("LDO7"),
+-		.regulators_node = of_match_ptr("regulators"),
+-		.id = BD71837_LDO7,
+-		.ops = &bd71837_ldo_regulator_ops,
+-		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = BD71837_LDO7_VOLTAGE_NUM,
+-		.linear_ranges = bd71837_ldo7_voltage_ranges,
+-		.n_linear_ranges = ARRAY_SIZE(bd71837_ldo7_voltage_ranges),
+-		.vsel_reg = BD71837_REG_LDO7_VOLT,
+-		.vsel_mask = LDO7_MASK,
+-		.enable_reg = BD71837_REG_LDO7_VOLT,
+-		.enable_mask = BD71837_LDO_EN,
+-		.owner = THIS_MODULE,
++		.desc = {
++			.name = "buck8",
++			.of_match = of_match_ptr("BUCK8"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_BUCK8,
++			.ops = &bd718xx_buck_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_4th_nodvs_buck_volts,
++			.n_linear_ranges =
++				ARRAY_SIZE(bd718xx_4th_nodvs_buck_volts),
++			.vsel_reg = BD718XX_REG_4TH_NODVS_BUCK_VOLT,
++			.vsel_mask = BD718XX_4TH_NODVS_BUCK_MASK,
++			.enable_reg = BD718XX_REG_4TH_NODVS_BUCK_CTRL,
++			.enable_mask = BD718XX_BUCK_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_4TH_NODVS_BUCK_CTRL,
++			.mask = BD718XX_BUCK_SEL,
++			.val = BD718XX_BUCK_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "ldo1",
++			.of_match = of_match_ptr("LDO1"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO1,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO1_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo1_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo1_volts),
++			.vsel_reg = BD718XX_REG_LDO1_VOLT,
++			.vsel_mask = BD718XX_LDO1_MASK,
++			.enable_reg = BD718XX_REG_LDO1_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO1_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "ldo2",
++			.of_match = of_match_ptr("LDO2"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO2,
++			.ops = &bd718xx_ldo_regulator_nolinear_ops,
++			.type = REGULATOR_VOLTAGE,
++			.volt_table = &ldo_2_volts[0],
++			.vsel_reg = BD718XX_REG_LDO2_VOLT,
++			.vsel_mask = BD718XX_LDO2_MASK,
++			.n_voltages = ARRAY_SIZE(ldo_2_volts),
++			.enable_reg = BD718XX_REG_LDO2_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO2_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "ldo3",
++			.of_match = of_match_ptr("LDO3"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO3,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO3_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo3_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo3_volts),
++			.vsel_reg = BD718XX_REG_LDO3_VOLT,
++			.vsel_mask = BD718XX_LDO3_MASK,
++			.enable_reg = BD718XX_REG_LDO3_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO3_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "ldo4",
++			.of_match = of_match_ptr("LDO4"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO4,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO4_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo4_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo4_volts),
++			.vsel_reg = BD718XX_REG_LDO4_VOLT,
++			.vsel_mask = BD718XX_LDO4_MASK,
++			.enable_reg = BD718XX_REG_LDO4_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO4_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++	},
++	{
++		.desc = {
++			.name = "ldo5",
++			.of_match = of_match_ptr("LDO5"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO5,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO5_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo5_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo5_volts),
++			/* LDO5 is supplied by buck6 */
++			.supply_name = "buck6",
++			.vsel_reg = BD718XX_REG_LDO5_VOLT,
++			.vsel_mask = BD71837_LDO5_MASK,
++			.enable_reg = BD718XX_REG_LDO5_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO5_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++		.additional_inits = bd71837_ldo5_inits,
++		.additional_init_amnt = ARRAY_SIZE(bd71837_ldo5_inits),
++	},
++	{
++		.desc = {
++			.name = "ldo6",
++			.of_match = of_match_ptr("LDO6"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO6,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD718XX_LDO6_VOLTAGE_NUM,
++			.linear_ranges = bd718xx_ldo6_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd718xx_ldo6_volts),
++			/* LDO6 is supplied by buck7 */
++			.supply_name = "buck7",
++			.vsel_reg = BD718XX_REG_LDO6_VOLT,
++			.vsel_mask = BD718XX_LDO6_MASK,
++			.enable_reg = BD718XX_REG_LDO6_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD718XX_REG_LDO6_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
++		.additional_inits = bd71837_ldo6_inits,
++		.additional_init_amnt = ARRAY_SIZE(bd71837_ldo6_inits),
++	},
++	{
++		.desc = {
++			.name = "ldo7",
++			.of_match = of_match_ptr("LDO7"),
++			.regulators_node = of_match_ptr("regulators"),
++			.id = BD718XX_LDO7,
++			.ops = &bd718xx_ldo_regulator_ops,
++			.type = REGULATOR_VOLTAGE,
++			.n_voltages = BD71837_LDO7_VOLTAGE_NUM,
++			.linear_ranges = bd71837_ldo7_volts,
++			.n_linear_ranges = ARRAY_SIZE(bd71837_ldo7_volts),
++			.vsel_reg = BD71837_REG_LDO7_VOLT,
++			.vsel_mask = BD71837_LDO7_MASK,
++			.enable_reg = BD71837_REG_LDO7_VOLT,
++			.enable_mask = BD718XX_LDO_EN,
++			.owner = THIS_MODULE,
++		},
++		.init = {
++			.reg = BD71837_REG_LDO7_VOLT,
++			.mask = BD718XX_LDO_SEL,
++			.val = BD718XX_LDO_SEL,
++		},
+ 	},
+ };
+ 
+-struct reg_init {
+-	unsigned int reg;
+-	unsigned int mask;
++struct bd718xx_pmic_inits {
++	const struct bd718xx_regulator_data (*r_datas)[];
++	unsigned int r_amount;
+ };
+ 
+ static int bd71837_probe(struct platform_device *pdev)
+ {
+-	struct bd71837_pmic *pmic;
++	struct bd718xx_pmic *pmic;
+ 	struct regulator_config config = { 0 };
+-	struct reg_init pmic_regulator_inits[] = {
+-		{
+-			.reg = BD71837_REG_BUCK1_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK2_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK3_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK4_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK5_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK6_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK7_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_BUCK8_CTRL,
+-			.mask = BD71837_BUCK_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO1_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO2_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO3_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO4_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO5_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO6_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}, {
+-			.reg = BD71837_REG_LDO7_VOLT,
+-			.mask = BD71837_LDO_SEL,
+-		}
++	struct bd718xx_pmic_inits pmic_regulators[] = {
++		[BD718XX_TYPE_BD71837] = {
++			.r_datas = &bd71837_regulators,
++			.r_amount = ARRAY_SIZE(bd71837_regulators),
++		},
++		[BD718XX_TYPE_BD71847] = {
++			.r_datas = &bd71847_regulators,
++			.r_amount = ARRAY_SIZE(bd71847_regulators),
++		},
+ 	};
+ 
+-	int i, err;
++	int i, j, err;
+ 
+ 	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+ 	if (!pmic)
+ 		return -ENOMEM;
+ 
+-	memcpy(pmic->descs, bd71837_regulators, sizeof(pmic->descs));
+-
+ 	pmic->pdev = pdev;
+ 	pmic->mfd = dev_get_drvdata(pdev->dev.parent);
+ 
+@@ -555,44 +952,34 @@ static int bd71837_probe(struct platform_device *pdev)
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
++	if (pmic->mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
++	    !pmic_regulators[pmic->mfd->chip_type].r_datas) {
++		dev_err(&pdev->dev, "Unsupported chip type\n");
++		err = -EINVAL;
++		goto err;
++	}
++
+ 	platform_set_drvdata(pdev, pmic);
+ 
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
++	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+ 		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+ 		goto err;
+ 	} else {
+ 		dev_dbg(&pmic->pdev->dev, "Unlocked lock register 0x%x\n",
+-			BD71837_REG_REGLOCK);
+-	}
+-
+-	/*
+-	 * There is a HW quirk in BD71837. The shutdown sequence timings for
+-	 * bucks/LDOs which are controlled via register interface are changed.
+-	 * At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
+-	 * beginning of shut-down sequence. As bucks 6 and 7 are parent
+-	 * supplies for LDO5 and LDO6 - this causes LDO5/6 voltage
+-	 * monitoring to errorneously detect under voltage and force PMIC to
+-	 * emergency state instead of poweroff. In order to avoid this we
+-	 * disable voltage monitoring for LDO5 and LDO6
 -	 */
--	ENTRY_COMP(rt_sigqueueinfo)
--	ENTRY_COMP(rt_sigsuspend)
--	ENTRY_SAME(chown)		/* 180 */
--	/* setsockopt() used by iptables: SO_SET_REPLACE/SO_SET_ADD_COUNTERS */
--	ENTRY_COMP(setsockopt)
--	ENTRY_COMP(getsockopt)
--	ENTRY_COMP(sendmsg)
--	ENTRY_COMP(recvmsg)
--	ENTRY_SAME(semop)		/* 185 */
--	ENTRY_SAME(semget)
--	ENTRY_COMP(semctl)
--	ENTRY_COMP(msgsnd)
--	ENTRY_COMP(msgrcv)
--	ENTRY_SAME(msgget)		/* 190 */
--	ENTRY_COMP(msgctl)
--	ENTRY_COMP(shmat)
--	ENTRY_SAME(shmdt)
--	ENTRY_SAME(shmget)
--	ENTRY_COMP(shmctl)		/* 195 */
--	ENTRY_SAME(ni_syscall)		/* streams1 */
--	ENTRY_SAME(ni_syscall)		/* streams2 */
--	ENTRY_SAME(lstat64)
--	ENTRY_OURS(truncate64)
--	ENTRY_OURS(ftruncate64)		/* 200 */
--	ENTRY_SAME(getdents64)
--	ENTRY_COMP(fcntl64)
--	ENTRY_SAME(ni_syscall)	/* attrctl -- dead */
--	ENTRY_SAME(ni_syscall)	/* acl_get -- dead */
--	ENTRY_SAME(ni_syscall)		/* 205 (acl_set -- dead) */
--	ENTRY_SAME(gettid)
--	ENTRY_OURS(readahead)
--	ENTRY_SAME(tkill)
--	ENTRY_COMP(sendfile64)
--	ENTRY_COMP(futex)		/* 210 */
--	ENTRY_COMP(sched_setaffinity)
--	ENTRY_COMP(sched_getaffinity)
--	ENTRY_SAME(ni_syscall)	/* set_thread_area */
--	ENTRY_SAME(ni_syscall)	/* get_thread_area */
--	ENTRY_COMP(io_setup)		/* 215 */
--	ENTRY_SAME(io_destroy)
--	ENTRY_COMP(io_getevents)
--	ENTRY_COMP(io_submit)
--	ENTRY_SAME(io_cancel)
--	ENTRY_SAME(ni_syscall)		/* 220: was alloc_hugepages */
--	ENTRY_SAME(ni_syscall)		/* was free_hugepages */
--	ENTRY_SAME(exit_group)
--	ENTRY_COMP(lookup_dcookie)
--	ENTRY_SAME(epoll_create)
--	ENTRY_SAME(epoll_ctl)		/* 225 */
--	ENTRY_SAME(epoll_wait)
-- 	ENTRY_SAME(remap_file_pages)
--	ENTRY_COMP(semtimedop)
--	ENTRY_COMP(mq_open)
--	ENTRY_SAME(mq_unlink)		/* 230 */
--	ENTRY_COMP(mq_timedsend)
--	ENTRY_COMP(mq_timedreceive)
--	ENTRY_COMP(mq_notify)
--	ENTRY_COMP(mq_getsetattr)
--	ENTRY_COMP(waitid)		/* 235 */
--	ENTRY_OURS(fadvise64_64)
--	ENTRY_SAME(set_tid_address)
--	ENTRY_SAME(setxattr)
--	ENTRY_SAME(lsetxattr)
--	ENTRY_SAME(fsetxattr)		/* 240 */
--	ENTRY_SAME(getxattr)
--	ENTRY_SAME(lgetxattr)
--	ENTRY_SAME(fgetxattr)
--	ENTRY_SAME(listxattr)
--	ENTRY_SAME(llistxattr)		/* 245 */
--	ENTRY_SAME(flistxattr)
--	ENTRY_SAME(removexattr)
--	ENTRY_SAME(lremovexattr)
--	ENTRY_SAME(fremovexattr)
--	ENTRY_COMP(timer_create)	/* 250 */
--	ENTRY_COMP(timer_settime)
--	ENTRY_COMP(timer_gettime)
--	ENTRY_SAME(timer_getoverrun)
--	ENTRY_SAME(timer_delete)
--	ENTRY_COMP(clock_settime)	/* 255 */
--	ENTRY_COMP(clock_gettime)
--	ENTRY_COMP(clock_getres)
--	ENTRY_COMP(clock_nanosleep)
--	ENTRY_SAME(tgkill)
--	ENTRY_COMP(mbind)		/* 260 */
--	ENTRY_COMP(get_mempolicy)
--	ENTRY_COMP(set_mempolicy)
--	ENTRY_SAME(ni_syscall)	/* 263: reserved for vserver */
--	ENTRY_SAME(add_key)
--	ENTRY_SAME(request_key)		/* 265 */
--	ENTRY_COMP(keyctl)
--	ENTRY_SAME(ioprio_set)
--	ENTRY_SAME(ioprio_get)
--	ENTRY_SAME(inotify_init)
--	ENTRY_SAME(inotify_add_watch)	/* 270 */
--	ENTRY_SAME(inotify_rm_watch)
--	ENTRY_SAME(migrate_pages)
--	ENTRY_COMP(pselect6)
--	ENTRY_COMP(ppoll)
--	ENTRY_COMP(openat)		/* 275 */
--	ENTRY_SAME(mkdirat)
--	ENTRY_SAME(mknodat)
--	ENTRY_SAME(fchownat)
--	ENTRY_COMP(futimesat)
--	ENTRY_SAME(fstatat64)		/* 280 */
--	ENTRY_SAME(unlinkat)
--	ENTRY_SAME(renameat)
--	ENTRY_SAME(linkat)
--	ENTRY_SAME(symlinkat)
--	ENTRY_SAME(readlinkat)		/* 285 */
--	ENTRY_SAME(fchmodat)
--	ENTRY_SAME(faccessat)
--	ENTRY_SAME(unshare)
--	ENTRY_COMP(set_robust_list)
--	ENTRY_COMP(get_robust_list)	/* 290 */
--	ENTRY_SAME(splice)
--	ENTRY_OURS(sync_file_range)
--	ENTRY_SAME(tee)
--	ENTRY_COMP(vmsplice)
--	ENTRY_COMP(move_pages)		/* 295 */
--	ENTRY_SAME(getcpu)
--	ENTRY_COMP(epoll_pwait)
--	ENTRY_COMP(statfs64)
--	ENTRY_COMP(fstatfs64)
--	ENTRY_COMP(kexec_load)		/* 300 */
--	ENTRY_COMP(utimensat)
--	ENTRY_COMP(signalfd)
--	ENTRY_SAME(ni_syscall)		/* was timerfd */
--	ENTRY_SAME(eventfd)
--	ENTRY_OURS(fallocate)		/* 305 */
--	ENTRY_SAME(timerfd_create)
--	ENTRY_COMP(timerfd_settime)
--	ENTRY_COMP(timerfd_gettime)
--	ENTRY_COMP(signalfd4)
--	ENTRY_SAME(eventfd2)		/* 310 */
--	ENTRY_SAME(epoll_create1)
--	ENTRY_SAME(dup3)
--	ENTRY_SAME(pipe2)
--	ENTRY_SAME(inotify_init1)
--	ENTRY_COMP(preadv)		/* 315 */
--	ENTRY_COMP(pwritev)
--	ENTRY_COMP(rt_tgsigqueueinfo)
--	ENTRY_SAME(perf_event_open)
--	ENTRY_COMP(recvmmsg)
--	ENTRY_SAME(accept4)		/* 320 */
--	ENTRY_SAME(prlimit64)
--	ENTRY_SAME(fanotify_init)
--	ENTRY_DIFF(fanotify_mark)
--	ENTRY_COMP(clock_adjtime)
--	ENTRY_SAME(name_to_handle_at)	/* 325 */
--	ENTRY_COMP(open_by_handle_at)
--	ENTRY_SAME(syncfs)
--	ENTRY_SAME(setns)
--	ENTRY_COMP(sendmmsg)
--	ENTRY_COMP(process_vm_readv)	/* 330 */
--	ENTRY_COMP(process_vm_writev)
--	ENTRY_SAME(kcmp)
--	ENTRY_SAME(finit_module)
--	ENTRY_SAME(sched_setattr)
--	ENTRY_SAME(sched_getattr)	/* 335 */
--	ENTRY_COMP(utimes)
--	ENTRY_SAME(renameat2)
--	ENTRY_SAME(seccomp)
--	ENTRY_SAME(getrandom)
--	ENTRY_SAME(memfd_create)	/* 340 */
--	ENTRY_SAME(bpf)
--	ENTRY_COMP(execveat)
--	ENTRY_SAME(membarrier)
--	ENTRY_SAME(userfaultfd)
--	ENTRY_SAME(mlock2)		/* 345 */
--	ENTRY_SAME(copy_file_range)
--	ENTRY_COMP(preadv2)
--	ENTRY_COMP(pwritev2)
--	ENTRY_SAME(statx)
--	ENTRY_COMP(io_pgetevents)	/* 350 */
--
--
--.ifne (. - 90b) - (__NR_Linux_syscalls * (91b - 90b))
--.error "size of syscall table does not fit value of __NR_Linux_syscalls"
--.endif
--
--#undef ENTRY_SAME
--#undef ENTRY_DIFF
--#undef ENTRY_UHOH
--#undef ENTRY_COMP
--#undef ENTRY_OURS
-diff --git a/arch/parisc/kernel/syscall_table_32.S b/arch/parisc/kernel/syscall_table_32.S
-new file mode 100644
-index 0000000..6da0746
---- /dev/null
-+++ b/arch/parisc/kernel/syscall_table_32.S
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/linkage.h>
+-	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_MVRFLTMASK2,
+-				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80,
+-				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80);
+-	if (err) {
+-		dev_err(&pmic->pdev->dev,
+-			"Failed to disable voltage monitoring\n");
+-		goto err;
++			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
++	for (i = 0; i < pmic_regulators[pmic->mfd->chip_type].r_amount; i++) {
+ 
+-		struct regulator_desc *desc;
++		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
++		const struct bd718xx_regulator_data *r;
+ 
+-		desc = &pmic->descs[i];
++		r = &(*pmic_regulators[pmic->mfd->chip_type].r_datas)[i];
++		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+ 		config.driver_data = pmic;
+@@ -612,16 +999,26 @@ static int bd71837_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(pmic->mfd->regmap,
+-					 pmic_regulator_inits[i].reg,
+-					 pmic_regulator_inits[i].mask,
+-					 0xFFFFFFFF);
++		err = regmap_update_bits(pmic->mfd->regmap, r->init.reg,
++					 r->init.mask, r->init.val);
+ 		if (err) {
+ 			dev_err(&pmic->pdev->dev,
+ 				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+ 				desc->name);
+ 			goto err;
+ 		}
++		for (j = 0; j < r->additional_init_amnt; j++) {
++			err = regmap_update_bits(pmic->mfd->regmap,
++						 r->additional_inits[j].reg,
++						 r->additional_inits[j].mask,
++						 r->additional_inits[j].val);
++			if (err) {
++				dev_err(&pmic->pdev->dev,
++					"Buck (%s) initialization failed\n",
++					desc->name);
++				goto err;
++			}
++		}
+ 
+ 		pmic->rdev[i] = rdev;
+ 	}
+@@ -632,7 +1029,7 @@ static int bd71837_probe(struct platform_device *pdev)
+ 
+ static struct platform_driver bd71837_regulator = {
+ 	.driver = {
+-		.name = "bd71837-pmic",
++		.name = "bd718xx-pmic",
+ 	},
+ 	.probe = bd71837_probe,
+ };
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index e8338e5dc10b..625e3607e069 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -7,106 +7,125 @@
+ #include <linux/regmap.h>
+ 
+ enum {
+-	BD71837_BUCK1	=	0,
+-	BD71837_BUCK2,
+-	BD71837_BUCK3,
+-	BD71837_BUCK4,
+-	BD71837_BUCK5,
+-	BD71837_BUCK6,
+-	BD71837_BUCK7,
+-	BD71837_BUCK8,
+-	BD71837_LDO1,
+-	BD71837_LDO2,
+-	BD71837_LDO3,
+-	BD71837_LDO4,
+-	BD71837_LDO5,
+-	BD71837_LDO6,
+-	BD71837_LDO7,
+-	BD71837_REGULATOR_CNT,
++	BD718XX_TYPE_BD71837 = 0,
++	BD718XX_TYPE_BD71847,
++	BD718XX_TYPE_AMOUNT
+ };
+ 
+-#define BD71837_BUCK1_VOLTAGE_NUM	0x40
+-#define BD71837_BUCK2_VOLTAGE_NUM	0x40
+-#define BD71837_BUCK3_VOLTAGE_NUM	0x40
+-#define BD71837_BUCK4_VOLTAGE_NUM	0x40
++enum {
++	BD718XX_BUCK1 = 0,
++	BD718XX_BUCK2,
++	BD718XX_BUCK3,
++	BD718XX_BUCK4,
++	BD718XX_BUCK5,
++	BD718XX_BUCK6,
++	BD718XX_BUCK7,
++	BD718XX_BUCK8,
++	BD718XX_LDO1,
++	BD718XX_LDO2,
++	BD718XX_LDO3,
++	BD718XX_LDO4,
++	BD718XX_LDO5,
++	BD718XX_LDO6,
++	BD718XX_LDO7,
++	BD718XX_REGULATOR_AMOUNT,
++};
 +
-+	.align 8
-+ENTRY(sys_call_table)
-+	.export sys_call_table,data
-+#if !defined(CONFIG_64BIT)	
-+#define __SYSCALL(nr, entry, nargs) .word entry
-+#include <asm/syscall_table_32.h>
-+#endif
-+END(sys_call_table)
-diff --git a/arch/parisc/kernel/syscall_table_64.S b/arch/parisc/kernel/syscall_table_64.S
-new file mode 100644
-index 0000000..896033c
---- /dev/null
-+++ b/arch/parisc/kernel/syscall_table_64.S
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/linkage.h>
++/* Common voltage configurations
++ *
++ * Note, we support only one range of voltages for each buck/LDO until we
++ * get pickable ranges support. (See range selection bits for BUCK5 and
++ * LDO1. On BD71847 also the second no DVS buck and LDO5)
++ */
 +
-+	.align 8
-+ENTRY(sys_call_table64)
-+#if defined(CONFIG_64BIT) && defined(SYSCALL_TABLE_64BIT)
-+#define __SYSCALL(nr, entry, nargs) .dword entry
-+#include <asm/syscall_table_64.h>
-+#endif
-+END(sys_call_table64)
++#define BD718XX_DVS_BUCK_VOLTAGE_NUM		0x3D
++#define BD718XX_1ST_NODVS_BUCK_VOLTAGE_NUM	0x08
++#define BD71837_4TH_NODVS_BUCK_VOLTAGE_NUM	0x3D
 +
-+	.align 8
-+ENTRY(sys_call_tablec32)
-+//	.export sys_call_table,data
-+#if defined(CONFIG_64BIT) && !defined(SYSCALL_TABLE_64BIT)
-+#define __SYSCALL(nr, entry, nargs) .dword entry
-+#include <asm/syscall_table_c32.h>
-+#endif
-+END(sys_call_tablec32)
++#define BD718XX_LDO1_VOLTAGE_NUM	0x04
++#define BD718XX_LDO2_VOLTAGE_NUM	0x02
++#define BD718XX_LDO3_VOLTAGE_NUM	0x10
++#define BD718XX_LDO4_VOLTAGE_NUM	0x0A
++#define BD718XX_LDO5_VOLTAGE_NUM	0x10
++#define BD718XX_LDO6_VOLTAGE_NUM	0x0A
+ 
+-#define BD71837_BUCK5_VOLTAGE_NUM	0x08
++/* BD71837 specific voltage configurations */
+ #define BD71837_BUCK6_VOLTAGE_NUM	0x04
+ #define BD71837_BUCK7_VOLTAGE_NUM	0x08
+-#define BD71837_BUCK8_VOLTAGE_NUM	0x40
+-
+-#define BD71837_LDO1_VOLTAGE_NUM	0x04
+-#define BD71837_LDO2_VOLTAGE_NUM	0x02
+-#define BD71837_LDO3_VOLTAGE_NUM	0x10
+-#define BD71837_LDO4_VOLTAGE_NUM	0x10
+-#define BD71837_LDO5_VOLTAGE_NUM	0x10
+-#define BD71837_LDO6_VOLTAGE_NUM	0x10
+ #define BD71837_LDO7_VOLTAGE_NUM	0x10
+ 
++/* BD71847 specific voltage configurations */
++#define BD71847_BUCK4_VOLTAGE_NUM	0x04
++
++/* Registers specific to BD71837 */
+ enum {
+-	BD71837_REG_REV                = 0x00,
+-	BD71837_REG_SWRESET            = 0x01,
+-	BD71837_REG_I2C_DEV            = 0x02,
+-	BD71837_REG_PWRCTRL0           = 0x03,
+-	BD71837_REG_PWRCTRL1           = 0x04,
+-	BD71837_REG_BUCK1_CTRL         = 0x05,
+-	BD71837_REG_BUCK2_CTRL         = 0x06,
+-	BD71837_REG_BUCK3_CTRL         = 0x07,
+-	BD71837_REG_BUCK4_CTRL         = 0x08,
+-	BD71837_REG_BUCK5_CTRL         = 0x09,
+-	BD71837_REG_BUCK6_CTRL         = 0x0A,
+-	BD71837_REG_BUCK7_CTRL         = 0x0B,
+-	BD71837_REG_BUCK8_CTRL         = 0x0C,
+-	BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
+-	BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
+-	BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
+-	BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
+-	BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
+-	BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
+-	BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
+-	BD71837_REG_BUCK5_VOLT         = 0x14,
+-	BD71837_REG_BUCK6_VOLT         = 0x15,
+-	BD71837_REG_BUCK7_VOLT         = 0x16,
+-	BD71837_REG_BUCK8_VOLT         = 0x17,
+-	BD71837_REG_LDO1_VOLT          = 0x18,
+-	BD71837_REG_LDO2_VOLT          = 0x19,
+-	BD71837_REG_LDO3_VOLT          = 0x1A,
+-	BD71837_REG_LDO4_VOLT          = 0x1B,
+-	BD71837_REG_LDO5_VOLT          = 0x1C,
+-	BD71837_REG_LDO6_VOLT          = 0x1D,
+-	BD71837_REG_LDO7_VOLT          = 0x1E,
+-	BD71837_REG_TRANS_COND0        = 0x1F,
+-	BD71837_REG_TRANS_COND1        = 0x20,
+-	BD71837_REG_VRFAULTEN          = 0x21,
+-	BD718XX_REG_MVRFLTMASK0        = 0x22,
+-	BD718XX_REG_MVRFLTMASK1        = 0x23,
+-	BD718XX_REG_MVRFLTMASK2        = 0x24,
+-	BD71837_REG_RCVCFG             = 0x25,
+-	BD71837_REG_RCVNUM             = 0x26,
+-	BD71837_REG_PWRONCONFIG0       = 0x27,
+-	BD71837_REG_PWRONCONFIG1       = 0x28,
+-	BD71837_REG_RESETSRC           = 0x29,
+-	BD71837_REG_MIRQ               = 0x2A,
+-	BD71837_REG_IRQ                = 0x2B,
+-	BD71837_REG_IN_MON             = 0x2C,
+-	BD71837_REG_POW_STATE          = 0x2D,
+-	BD71837_REG_OUT32K             = 0x2E,
+-	BD71837_REG_REGLOCK            = 0x2F,
+-	BD71837_REG_OTPVER             = 0xFF,
+-	BD71837_MAX_REGISTER           = 0x100,
++	BD71837_REG_BUCK3_CTRL =	0x07,
++	BD71837_REG_BUCK4_CTRL =	0x08,
++	BD71837_REG_BUCK3_VOLT_RUN =	0x12,
++	BD71837_REG_BUCK4_VOLT_RUN =	0x13,
++	BD71837_REG_LDO7_VOLT =		0x1E,
++};
++
++/* Registers common for BD71837 and BD71847 */
++enum {
++	BD718XX_REG_REV =			0x00,
++	BD718XX_REG_SWRESET =			0x01,
++	BD718XX_REG_I2C_DEV =			0x02,
++	BD718XX_REG_PWRCTRL0 =			0x03,
++	BD718XX_REG_PWRCTRL1 =			0x04,
++	BD718XX_REG_BUCK1_CTRL =		0x05,
++	BD718XX_REG_BUCK2_CTRL =		0x06,
++	BD718XX_REG_1ST_NODVS_BUCK_CTRL =	0x09,
++	BD718XX_REG_2ND_NODVS_BUCK_CTRL =	0x0A,
++	BD718XX_REG_3RD_NODVS_BUCK_CTRL =	0x0B,
++	BD718XX_REG_4TH_NODVS_BUCK_CTRL =	0x0C,
++	BD718XX_REG_BUCK1_VOLT_RUN =		0x0D,
++	BD718XX_REG_BUCK1_VOLT_IDLE =		0x0E,
++	BD718XX_REG_BUCK1_VOLT_SUSP =		0x0F,
++	BD718XX_REG_BUCK2_VOLT_RUN =		0x10,
++	BD718XX_REG_BUCK2_VOLT_IDLE =		0x11,
++	BD718XX_REG_1ST_NODVS_BUCK_VOLT =	0x14,
++	BD718XX_REG_2ND_NODVS_BUCK_VOLT =	0x15,
++	BD718XX_REG_3RD_NODVS_BUCK_VOLT =	0x16,
++	BD718XX_REG_4TH_NODVS_BUCK_VOLT =	0x17,
++	BD718XX_REG_LDO1_VOLT =			0x18,
++	BD718XX_REG_LDO2_VOLT =			0x19,
++	BD718XX_REG_LDO3_VOLT =			0x1A,
++	BD718XX_REG_LDO4_VOLT =			0x1B,
++	BD718XX_REG_LDO5_VOLT =			0x1C,
++	BD718XX_REG_LDO6_VOLT =			0x1D,
++	BD718XX_REG_TRANS_COND0 =		0x1F,
++	BD718XX_REG_TRANS_COND1 =		0x20,
++	BD718XX_REG_VRFAULTEN =			0x21,
++	BD718XX_REG_MVRFLTMASK0 =		0x22,
++	BD718XX_REG_MVRFLTMASK1 =		0x23,
++	BD718XX_REG_MVRFLTMASK2 =		0x24,
++	BD718XX_REG_RCVCFG =			0x25,
++	BD718XX_REG_RCVNUM =			0x26,
++	BD718XX_REG_PWRONCONFIG0 =		0x27,
++	BD718XX_REG_PWRONCONFIG1 =		0x28,
++	BD718XX_REG_RESETSRC =			0x29,
++	BD718XX_REG_MIRQ =			0x2A,
++	BD718XX_REG_IRQ =			0x2B,
++	BD718XX_REG_IN_MON =			0x2C,
++	BD718XX_REG_POW_STATE =			0x2D,
++	BD718XX_REG_OUT32K =			0x2E,
++	BD718XX_REG_REGLOCK =			0x2F,
++	BD718XX_REG_OTPVER =			0xFF,
++	BD718XX_MAX_REGISTER =			0x100,
+ };
+ 
+ #define REGLOCK_PWRSEQ	0x1
+ #define REGLOCK_VREG	0x10
+ 
+ /* Generic BUCK control masks */
+-#define BD71837_BUCK_SEL	0x02
+-#define BD71837_BUCK_EN		0x01
+-#define BD71837_BUCK_RUN_ON	0x04
++#define BD718XX_BUCK_SEL	0x02
++#define BD718XX_BUCK_EN		0x01
++#define BD718XX_BUCK_RUN_ON	0x04
+ 
+ /* Generic LDO masks */
+-#define BD71837_LDO_SEL		0x80
+-#define BD71837_LDO_EN		0x40
++#define BD718XX_LDO_SEL		0x80
++#define BD718XX_LDO_EN		0x40
+ 
+ /* BD71837 BUCK ramp rate CTRL reg bits */
+ #define BUCK_RAMPRATE_MASK	0xC0
+@@ -115,49 +134,27 @@ enum {
+ #define BUCK_RAMPRATE_2P50MV	0x2
+ #define BUCK_RAMPRATE_1P25MV	0x3
+ 
+-/* BD71837_REG_BUCK1_VOLT_RUN bits */
+-#define BUCK1_RUN_MASK		0x3F
+-#define BUCK1_RUN_DEFAULT	0x14
+-
+-/* BD71837_REG_BUCK1_VOLT_SUSP bits */
+-#define BUCK1_SUSP_MASK		0x3F
+-#define BUCK1_SUSP_DEFAULT	0x14
++#define DVS_BUCK_RUN_MASK	0x3F
++#define DVS_BUCK_SUSP_MASK	0x3F
++#define DVS_BUCK_IDLE_MASK	0x3F
+ 
+-/* BD71837_REG_BUCK1_VOLT_IDLE bits */
+-#define BUCK1_IDLE_MASK		0x3F
+-#define BUCK1_IDLE_DEFAULT	0x14
++#define BD718XX_1ST_NODVS_BUCK_MASK	0x07
++#define BD71847_BUCK4_MASK		0x03
++#define BD71837_BUCK6_MASK		0x03
++#define BD718XX_3RD_NODVS_BUCK_MASK	0x07
++#define BD718XX_4TH_NODVS_BUCK_MASK	0x3F
+ 
+-/* BD71837_REG_BUCK2_VOLT_RUN bits */
+-#define BUCK2_RUN_MASK		0x3F
+-#define BUCK2_RUN_DEFAULT	0x1E
++#define BD718XX_LDO1_MASK		0x03
++#define BD718XX_LDO2_MASK		0x20
++#define BD718XX_LDO3_MASK		0x0F
++#define BD718XX_LDO4_MASK		0x0F
++#define BD718XX_LDO6_MASK		0x0F
+ 
+-/* BD71837_REG_BUCK2_VOLT_IDLE bits */
+-#define BUCK2_IDLE_MASK		0x3F
+-#define BUCK2_IDLE_DEFAULT	0x14
++#define BD71837_LDO5_MASK		0x0F
++#define BD71847_LDO5_MASK		0x0F
+ 
+-/* BD71837_REG_BUCK3_VOLT_RUN bits */
+-#define BUCK3_RUN_MASK		0x3F
+-#define BUCK3_RUN_DEFAULT	0x1E
++#define BD71837_LDO7_MASK		0x0F
+ 
+-/* BD71837_REG_BUCK4_VOLT_RUN bits */
+-#define BUCK4_RUN_MASK		0x3F
+-#define BUCK4_RUN_DEFAULT	0x1E
+-
+-/* BD71837_REG_BUCK5_VOLT bits */
+-#define BUCK5_MASK		0x07
+-#define BUCK5_DEFAULT		0x02
+-
+-/* BD71837_REG_BUCK6_VOLT bits */
+-#define BUCK6_MASK		0x03
+-#define BUCK6_DEFAULT		0x03
+-
+-/* BD71837_REG_BUCK7_VOLT bits */
+-#define BUCK7_MASK		0x07
+-#define BUCK7_DEFAULT		0x03
+-
+-/* BD71837_REG_BUCK8_VOLT bits */
+-#define BUCK8_MASK		0x3F
+-#define BUCK8_DEFAULT		0x1E
+ 
+ /* BD718XX Voltage monitoring masks */
+ #define BD718XX_BUCK1_VRMON80           0x1
+@@ -221,27 +218,6 @@ enum {
+ #define BD71837_INT_ON_REQ_MASK		0x2
+ #define BD71837_INT_STBY_REQ_MASK	0x1
+ 
+-/* BD71837_REG_LDO1_VOLT bits */
+-#define LDO1_MASK		0x03
+-
+-/* BD71837_REG_LDO1_VOLT bits */
+-#define LDO2_MASK		0x20
+-
+-/* BD71837_REG_LDO3_VOLT bits */
+-#define LDO3_MASK		0x0F
+-
+-/* BD71837_REG_LDO4_VOLT bits */
+-#define LDO4_MASK		0x0F
+-
+-/* BD71837_REG_LDO5_VOLT bits */
+-#define LDO5_MASK		0x0F
+-
+-/* BD71837_REG_LDO6_VOLT bits */
+-#define LDO6_MASK		0x0F
+-
+-/* BD71837_REG_LDO7_VOLT bits */
+-#define LDO7_MASK		0x0F
+-
+ /* Register write induced reset settings */
+ 
+ /*
+@@ -341,10 +317,11 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd71837_pmic;
+-struct bd71837_clk;
++struct bd718xx_pmic;
++struct bd718xx_clk;
+ 
+ struct bd71837 {
++	unsigned int chip_type;
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	unsigned long int id;
+@@ -352,8 +329,8 @@ struct bd71837 {
+ 	int chip_irq;
+ 	struct regmap_irq_chip_data *irq_data;
+ 
+-	struct bd71837_pmic *pmic;
+-	struct bd71837_clk *clk;
++	struct bd718xx_pmic *pmic;
++	struct bd718xx_clk *clk;
+ };
+ 
+ #endif /* __LINUX_MFD_BD71837_H__ */
 -- 
-1.9.1
+2.14.3
 
