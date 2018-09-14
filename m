@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A81CECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F31FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE8A320853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED57020853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nY85CEiW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8A320853
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mYC/Zh0u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED57020853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeINXI0 (ORCPT
+        id S1728493AbeINXIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:08:26 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:56342 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeINXIZ (ORCPT
+        Fri, 14 Sep 2018 19:08:31 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:46609 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeINXIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:08:25 -0400
-Received: by mail-pf1-f201.google.com with SMTP id a23-v6so4951147pfo.23
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:52:52 -0700 (PDT)
+        Fri, 14 Sep 2018 19:08:30 -0400
+Received: by mail-ua1-f74.google.com with SMTP id g12-v6so3093755ual.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=mwIMz8FNHqYXOj3Q67DF3CFhIjF6xKD9MSrMXBKndqg=;
-        b=nY85CEiW9Hjvt6I7lHjhegjUG6OPpd2CWSiY94pbC3CecUVtGdOcL7s1bUQl8skP9M
-         XCnOsEIxkyOB3d9kQoWpT2gIZBz/d59qrRwn1KfYVWu62l6+byx2sfGa/kAzt7GInjWh
-         q4zCFhhFUqBP5rmWyVUl2IMtIFKSMwN+CdILBpuUUM7HDK6uC4mUklTELnrJQczjPTET
-         olO/I6+OTIlbkuQxhjQ+F1tmzwENET/DoNY3X+mwRBRXRkKgRgT8wzLhXam3mScQcRVH
-         UC2Sk3cX2fDaATI65QTAYRCplphBm+4OHCAMBUfjXwcr4v7yPYKTd2mi26VeBsppod0t
-         Dw0Q==
+        bh=r0GmnibaRSZ4wFwzkIsbuCyBKEqgNS0mZ0XwSgt6Aa8=;
+        b=mYC/Zh0uRegj4vGYNsV8AvfhYiXSXpmqCFsTBrZetRnA+T/GMFKczsR5RmHotp/HQQ
+         FpEQ5HQiHIKlIunJMD4z1EpyVU3UMv5RBi1n8VTyk+u+tLxcwlqEfym/2HTs/WKDzR3m
+         LIsCY0LH309lcaMWZSR3JF3QzF7LhrKCY7M9z0ufO25nhoJcNk3QCwAaCxi0dpaZOQD5
+         SPNloNnj4V3IzNvvgvw88+GfmfAhPp9Rg+Es/HvY6Oa9Uc9DV3AeulrjMXh8f+QRCcJ1
+         xfn6GMqCH59AFNlCPLjHCacChwg884AUp2CmRMhkQqS3QiFHnMmU/3UWd7KnvE/NDjcc
+         MeIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=mwIMz8FNHqYXOj3Q67DF3CFhIjF6xKD9MSrMXBKndqg=;
-        b=JfChfYRBG5NYCL3LOsfHAJ4wAlw6FeAN3gcPAKtxLR5W0hMW5w8O2n87BPnGnPehOa
-         5E9OpHu0yk9rY2k/YmCeVgUkEE6X5NDAgl+aPInTwW6IHI73wBAjuYirfIuY2ISujWDB
-         3Bs4LiUDoKnNoOPje8NujWbyh3HNl7ZpNW2nQI5GeNMdAbl0UWdu9o3Q2L8hXb2H0LZR
-         uBwjDusgkkbxWNa6M5ebfyD8ThurFprCButtn5ZTDatuFprbd4ygRvfxvUpoe9o1eiv1
-         gIiVLgf+esHxEF2DaCpOEkajAIYIIJdrIGA7MRPeq6sH9szQJwcBQSvE1L4hyT8RJ5ra
-         vrvA==
-X-Gm-Message-State: APzg51CK614Zf3X9msGn6Q0bLoxZ97M+jJmgCmLGnjZYjTdocS+c4wyD
-        slsuhZBvgemdX8XF+AYACWQeBv9K
-X-Google-Smtp-Source: ANB0VdZIGDoECf+9qeg4g5TsjqofiLhNNALC+rM1XvFrVkmjJSJXAPMAx867RIdJe4mmM5BNO9Ty3/X3
-X-Received: by 2002:a63:64c2:: with SMTP id y185-v6mr653886pgb.140.1536947571981;
- Fri, 14 Sep 2018 10:52:51 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:51:16 -0700
+        bh=r0GmnibaRSZ4wFwzkIsbuCyBKEqgNS0mZ0XwSgt6Aa8=;
+        b=Ghfnz7aJQPMLePx8cVyE/5a0DgIAI9iqRcV6CTVxXB19hHxJlmI+MFAbpcouO0zY7d
+         1bGaf1vjd/P9LR5RyzKRatpiq9/fTxNSQb7dFnponAdURxmlO3Y/620A74uvFnJv6DoV
+         uuXzmjAVl02XGlf5dE9tsMiaDyFrdbfEtGd/Zb5o/ciynwgVkctbrf7FkE7oJliqsKY2
+         6eCwjiGrGsoAsz/6l3JHGQwNUWFRdFyfwBw9KX4cDO7cFM6adTIXPaorlW5zpb3xgey8
+         P/Ei1trEzEvosEcamPzrpPirclBbVdz4KHuYWSvNOalLGPM5yRK6jjjRUUFybYkHrdYS
+         vV+A==
+X-Gm-Message-State: APzg51BJ6+o+ElvUbYqELrYhRFDx2v/2sZwjAfWuqcSvPvQx0xaORRwW
+        YYcILBgu07n6Jpz3BseLRSu271M2
+X-Google-Smtp-Source: ANB0VdZzBP7tdZvrQK213ttlA/zFtrpobfC49sH0HVZ/Ann3dxGCVZ8gfrnSc4kLa+c0xucczxo5d0cy
+X-Received: by 2002:ab0:48d2:: with SMTP id y18-v6mr2896473uac.63.1536947576699;
+ Fri, 14 Sep 2018 10:52:56 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:51:17 -0700
 In-Reply-To: <20180914175122.21036-1-rkir@google.com>
-Message-Id: <20180914175122.21036-15-rkir@google.com>
+Message-Id: <20180914175122.21036-16-rkir@google.com>
 Mime-Version: 1.0
 References: <20180914175122.21036-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
-Subject: [PATCH 15/21] platform: goldfish: pipe: Rename the init function (add "v2")
+Subject: [PATCH 16/21] platform: goldfish: pipe: Call misc_deregister if init fails
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     tkjos@google.com, linux-kernel@vger.kernel.org,
@@ -74,62 +74,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-This is the v2 driver, in the next few patches v1 will be
-introduced.
+Undo effects of misc_register if driver's init fails after
+misc_register.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c    | 2 +-
- drivers/platform/goldfish/goldfish_pipe_v2.c | 6 +++---
- drivers/platform/goldfish/goldfish_pipe_v2.h | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe_v2.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 802bbf0d6d23..8a65cdfd6555 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -108,7 +108,7 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 	if (WARN_ON(version < PIPE_CURRENT_DEVICE_VERSION))
- 		return -EINVAL;
- 
--	return goldfish_pipe_device_init(pdev, base, irq);
-+	return goldfish_pipe_device_v2_init(pdev, base, irq);
- }
- 
- static int goldfish_pipe_remove(struct platform_device *pdev)
 diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.c b/drivers/platform/goldfish/goldfish_pipe_v2.c
-index 6a8641c7c36e..9fa5136be909 100644
+index 9fa5136be909..e3358c682562 100644
 --- a/drivers/platform/goldfish/goldfish_pipe_v2.c
 +++ b/drivers/platform/goldfish/goldfish_pipe_v2.c
-@@ -1121,9 +1121,9 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
- 	writel(lower_32_bits(paddr), portl);
- }
+@@ -1159,8 +1159,10 @@ int goldfish_pipe_device_v2_init(struct platform_device *pdev,
+ 	dev->pipes_capacity = INITIAL_PIPES_CAPACITY;
+ 	dev->pipes = kcalloc(dev->pipes_capacity, sizeof(*dev->pipes),
+ 			     GFP_KERNEL);
+-	if (!dev->pipes)
++	if (!dev->pipes) {
++		misc_deregister(&dev->miscdev);
+ 		return -ENOMEM;
++	}
  
--int goldfish_pipe_device_init(struct platform_device *pdev,
--			      char __iomem *base,
--			      int irq)
-+int goldfish_pipe_device_v2_init(struct platform_device *pdev,
-+				 char __iomem *base,
-+				 int irq)
- {
- 	struct goldfish_pipe_dev *dev;
- 	int err;
-diff --git a/drivers/platform/goldfish/goldfish_pipe_v2.h b/drivers/platform/goldfish/goldfish_pipe_v2.h
-index 679d863774a8..8be09ae6d3ec 100644
---- a/drivers/platform/goldfish/goldfish_pipe_v2.h
-+++ b/drivers/platform/goldfish/goldfish_pipe_v2.h
-@@ -17,8 +17,8 @@
- #define GOLDFISH_PIPE_V2_H
+ 	/*
+ 	 * We're going to pass two buffers, open_command_params and
+@@ -1173,6 +1175,7 @@ int goldfish_pipe_device_v2_init(struct platform_device *pdev,
+ 		__get_free_page(GFP_KERNEL);
+ 	if (!dev->buffers) {
+ 		kfree(dev->pipes);
++		misc_deregister(&dev->miscdev);
+ 		return -ENOMEM;
+ 	}
  
- /* The entry point to the pipe v2 driver */
--int goldfish_pipe_device_init(struct platform_device *pdev,
--			      char __iomem *base,
--			      int irq);
-+int goldfish_pipe_device_v2_init(struct platform_device *pdev,
-+				 char __iomem *base,
-+				 int irq);
- 
- #endif /* #define GOLDFISH_PIPE_V2_H */
 -- 
 2.19.0.397.gdd90340f6a-goog
 
