@@ -2,303 +2,160 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A910AC04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A014C04AB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DF920853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD2220853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:48:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhllAkEh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DF920853
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6QzEXE/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD2220853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbeINGyl (ORCPT
+        id S1728360AbeINHAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 02:54:41 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44211 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeINGyl (ORCPT
+        Fri, 14 Sep 2018 03:00:17 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39903 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeINHAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 02:54:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k21-v6so3491972pff.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:42:38 -0700 (PDT)
+        Fri, 14 Sep 2018 03:00:17 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w14-v6so3413228plp.6;
+        Thu, 13 Sep 2018 18:48:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=7PAzO3nigMG8SfZxMy7rc/+GZCRoUQ3+ioEfE7AR8BI=;
-        b=WhllAkEhgLF7oEgahqb1pAOx41KYamjFEjRn8uJLJe7b2ffL9RHojGMq+V8SeSfrXj
-         QZmVnSnPf/91i8xdJbvpRAaP7geG3XWpB2LjbL6xX5kJGs/M2bIGWQ/0MnGe1JH69aeu
-         bs6xVclh0/igwz5EWQIhnzWNftdKHbyJW0C6Tc4A8qgaVcjXD7HsUrH1924RcLJC1WUg
-         SWMep6dtmG8nu6PK1UiPfh+IBPpvfZqoptrxKTDlJH9lMF3vozx2uJoOC6IWp7WcAlXl
-         qHr+sPK7ZXwIXhJIS6tYvnCtWXixycIluzDyi6XT4h7R8rPTm+2Ku7P4R9CX020syq/n
-         X1Ow==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NVEVZoCzZdFFLU05M6zis4bp+Mod459xea44PwH48sA=;
+        b=C6QzEXE/NGDCLT8ieUnknOD4tT0a2rM8fZFIDdkK5N5yQnVADS9TQGcnO+rHC2ulcO
+         C83C54VA+kGd+IrD0riQp68cy094Fzh2ZSHSNzvZETMCKteO3yhQUC2eO9N2VBIufZtE
+         iQApKffZr4kW9tq4hKd22/n1abezpk85/Po1634pOERF/p4BGjQj4OQyM6LvEid4uF9p
+         uvrqNst1doGj2Yle4ysiq2vJGWMOTg18U2Bx2n75hl/RUPL5+yUmuPT5kJjToF93qves
+         EtKp3ARLzso9WF1RYuqGuS+XSqK3TUGPIslVrznm/50on9wMVkV/J9fdhVAz9TXAOQpk
+         q5QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7PAzO3nigMG8SfZxMy7rc/+GZCRoUQ3+ioEfE7AR8BI=;
-        b=ns6gs88QylYEISgsG3irbkkNULZzsYRl0w9pde5vtKwo6jVh9YH3PBQPaZYGiFS90c
-         VWnJ9XjbYQaaIXTL/Gw/LvZSClp7t7xbvj+DMvBR7XV0kzTFN13y8QqzrvQyl9+OuoP9
-         PdxPISrxjEMLp6QlakHtJKG5Fc1CLPKYsHsYuVX/dzDaVVfUZKuhHDYfjqJg6jxuSECn
-         Dqbd+heaI69CLNIRTPg+z2IWyS18d5qA6L+vsObj0ZDguka08tBPgEIMcce7+3bS1ppL
-         0Z6RQumNiorgTKVm5wiqo/zWyAX0aAss6VGTh5jl3yd0hNJ+lrAHToTqpR1fTdMJcZJ9
-         UgGQ==
-X-Gm-Message-State: APzg51C0K+u44WPXIPhgvaNQihF3nkvHmN8cBghDIH2gw2zdnmvhHOY7
-        ODP0/5B3JGTM48hUwQ5QfHk=
-X-Google-Smtp-Source: ANB0VdZw79swQFnFtsnjRL63BnVoj4aevrFDvEyCEossgabrYtxZEgQLdvPwqZAtedQBb9NB6qfvFg==
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr9329585pgp.334.1536889357914;
-        Thu, 13 Sep 2018 18:42:37 -0700 (PDT)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id i185-v6sm7551888pfg.89.2018.09.13.18.42.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Sep 2018 18:42:37 -0700 (PDT)
-Subject: Re: [PATCH v14 06/16] of/fdt: add helper functions for handling
- properties
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
-        james.morse@arm.com, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-References: <20180907080040.4967-1-takahiro.akashi@linaro.org>
- <a535515a-92f1-fc33-bdb9-6f5e0392cb11@gmail.com>
- <20180910023819.GA30795@linaro.org>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <59d0bc6f-ab71-eb21-d438-da3cd09aaa79@gmail.com>
-Date:   Thu, 13 Sep 2018 18:42:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NVEVZoCzZdFFLU05M6zis4bp+Mod459xea44PwH48sA=;
+        b=KKXx19aFhlB1pAtl3KhZntc3PIhXkJd8zjz33SghKUD3Ejo3wzLhUGadniafbaGmCw
+         glwuTCX0xkkZqnzw/qCZiJT/DcrHGYP+au5p4imlFCBqE8XhRJWVFEe/kbX+tyNGGcga
+         nxPEF54YIf38DP05/9fpSzWdQPk+m2gWRU/05jrY/yg27vE2g7xRNM+FZs8/t/gzZRkO
+         NA6jTtR0lN3Pr+5D3sm4UKKDYLP3PYd76jJiEjvXH0Q3kJz2MA9F6uzPk+95x0A9l18f
+         9jcqNKy3zY9XeLmPGi6dfCH0soUGmxFwx7FCB+IxKQL1rumzrhmckkQgp0Wp5Jr72meK
+         r/Kg==
+X-Gm-Message-State: APzg51Bt+xO3wXdKTb+LqnpWKI2w03qCx2/Taqj3VueV9xMDWuqxaz4i
+        Elhpx0Ofq8kpsK37APbsXLI=
+X-Google-Smtp-Source: ANB0VdadsACDSgytLHa3iytkVQeTxrrbhjB/kiui/yaF5YohbcjkbvvjHOzi7kF3UWugT2ZjKruMlg==
+X-Received: by 2002:a17:902:27a8:: with SMTP id d37-v6mr9646765plb.290.1536889693375;
+        Thu, 13 Sep 2018 18:48:13 -0700 (PDT)
+Received: from Eros (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id q80-v6sm7336889pfd.15.2018.09.13.18.48.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 18:48:12 -0700 (PDT)
+From:   Song Qiang <songqiang1304521@gmail.com>
+X-Google-Original-From: Song Qiang <songqiang.1304521@gmail.com>
+Date:   Fri, 14 Sep 2018 09:48:06 +0800
+To:     Matt Ranostay <matt.ranostay@konsulko.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: proximity: lidar-v2: replace i2c block access
+ method with the one already implemented.
+Message-ID: <20180914014806.GA25667@Eros>
+References: <20180913035145.28056-1-songqiang.1304521@gmail.com>
+ <CAJCx=gk3Md910hfD2ZiTRNj6mv1nf+r6p_0tYMu7uKiEp4ZvOw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180910023819.GA30795@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJCx=gk3Md910hfD2ZiTRNj6mv1nf+r6p_0tYMu7uKiEp4ZvOw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/09/18 19:38, AKASHI Takahiro wrote:
-> Frank,
+On Thu, Sep 13, 2018 at 02:43:35PM -0700, Matt Ranostay wrote:
+> On Wed, Sep 12, 2018 at 8:51 PM Song Qiang <songqiang1304521@gmail.com> wrote:
+> >
+> > This driver tries to access a block of data on a i2c bus and it tries
+> > to manually make a device command frame and a consecutively read frame,
+> > then uses i2c_transfer() to read data. But this has already been
+> > implemented in i2c_smbus_read_i2c_block_data().
+> > Sorry for not having this device by my hand, which is a little expansive
+> > for me, but I have another i2c device and tested with both i2c_transfer()
+> > and i2c_smbus_read_i2c_block_data() and they all ends the same.
+> > I'm not familiar with the SMBus, don't know if the lidar_smbus_xfer()
+> > function is the same as i2c_smbus_read_block_data()? The original code
+> > is commented with something I'm not sure, but I think if it's a standard
+> > SMBus, it should be able to use in here.
+> > Hoping for someone to explain.
+> >
 > 
-> Thank you for the comments. I will address all of them, but
-> have one question:
+> Yes actually there is a reason for this insanity!
 > 
-> On Fri, Sep 07, 2018 at 12:53:58PM -0700, Frank Rowand wrote:
->> On 09/07/18 01:00, AKASHI Takahiro wrote:
->>> These functions will be used later to handle kexec-specific properties
->>> in arm64's kexec_file implementation.
->>>
->>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
->>> Cc: Rob Herring <robh+dt@kernel.org>
->>> Cc: Frank Rowand <frowand.list@gmail.com>
->>> ---
->>>  drivers/of/fdt.c       | 62 ++++++++++++++++++++++++++++++++++++++++--
->>>  include/linux/of_fdt.h | 10 +++++--
->>>  2 files changed, 68 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
->>> index 800ad252cf9c..dc960cea1355 100644
->>> --- a/drivers/of/fdt.c
->>> +++ b/drivers/of/fdt.c
->>> @@ -25,6 +25,7 @@
->>>  #include <linux/debugfs.h>
->>>  #include <linux/serial_core.h>
->>>  #include <linux/sysfs.h>
->>> +#include <linux/types.h>
->>>  
->>>  #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
->>>  #include <asm/page.h>
->>> @@ -537,8 +538,8 @@ void *of_fdt_unflatten_tree(const unsigned long *blob,
->>>  EXPORT_SYMBOL_GPL(of_fdt_unflatten_tree);
->>>  
->>>  /* Everything below here references initial_boot_params directly. */
->>> -int __initdata dt_root_addr_cells;
->>> -int __initdata dt_root_size_cells;
->>> +int dt_root_addr_cells;
->>> +int dt_root_size_cells;
->>>  
->>>  void *initial_boot_params;
->>>  
->>> @@ -1323,3 +1324,60 @@ late_initcall(of_fdt_raw_init);
->>>  #endif
->>>  
->>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
->>> +
->>
->> Please add comment:
->>
->> /* helper functions for arm64 kexec */
->>
->>
->>> +bool of_fdt_cells_size_fitted(u64 base, u64 size)
->>
->> Please rename as of_fdt_range_valid()
->>
->>
->>> +{
->>> +	/* if *_cells >= 2, cells can hold 64-bit values anyway */
->>> +	if ((dt_root_addr_cells == 1) && (base > U32_MAX))
->>> +		return false;
->>> +
->>> +	if ((dt_root_size_cells == 1) && (size > U32_MAX))
->>> +		return false;
->>
->> Should also check that base + size does not wrap around.
+> It isn't actually SMBUS (note the lidar_smbus_xfer function below it)
+> and has a odd way to read registers via I2C.
+> Basically the I2C_M_STOP flags is the reason you can use the standard
+> i2c_smbus_read_i2c_block_data().
 > 
-> What is the upper limit here?
-> For instance, #address_cells = <1> and #size_cells = <1>,
-> and can 'base + size' be over U32_MAX?
-> Assuming 'not' is quite reasonable, but it seems to me
-> that devicetree spec doesn't exclude it, as least I couldn't
-> find any notes about such a case.
-> (In my understands, #address_cells only restricts a size in 'reg' property.)
-
-(See my other reply in this thread a few minutes ago -- the context of the
-ranges is essentially what is valid for the "reg" property of the "/memory"
-nodes.)
-
-The "Devicetree Specification" does not specify whether a memory range can
-wrap around.  For example, can a region of size 0x2000 that wraps around
-the highest 32 bit address be specified as:
-
-   / memory@0xfffff000 {
-        reg = <0xfffff000 0x2000>;
-     }
-
-or must it be specified as (option 1):
-
-   / memory@0xfffff000 {
-        reg = <0xfffff000 0x1000 0x0 0x1000>
-     }
-
-or (option 2):
-
-   / memory@0xfffff000 {
-        reg = <0xfffff000 0x1000>;
-     }
-     memory@0 {
-        reg = <0x0 0x1000>;
-     }
-
-
-I suggest you start a thread on the devicetree specification list asking
-that the spec be updated to state whether wrap around is allowed.
-
-
+> Page 6 in this datasheet
+> * http://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf
 > 
-> Thanks,
-> -Takahiro Akashi
-> 
->>
->>> +
->>> +	return true;
->>> +}
->>> +
->>> +size_t of_fdt_reg_cells_size(void)
->>
->> Please rename as of_fdt_root_range_size()
->>
->>
->>> +{
->>> +	return (dt_root_addr_cells + dt_root_size_cells) * sizeof(u32);
->>> +}
->>> +
->>> +#define FDT_ALIGN(x, a)	(((x) + (a) - 1) & ~((a) - 1))
->>> +#define FDT_TAGALIGN(x)	(FDT_ALIGN((x), FDT_TAGSIZE))
->>> +
->>> +int fdt_prop_len(const char *prop_name, int len)
->>
->> Please rename as fdt_len_added_prop()
->>
->>
->>> +{
->>> +	return (strlen(prop_name) + 1) +
->>> +		sizeof(struct fdt_property) +
->>> +		FDT_TAGALIGN(len);
->>> +}
->>> +
->>
->> Please add comment, something like:
->>
->> /* cells must be 1 or 2 */
->>
->>
->>> +static void fill_property(void *buf, u64 val64, int cells)
->>
->> Please rename as cpu64_to_fdt_cells()
->>
->> Thanks,
->>
->> Frank
->>
->>> +{
->>> +	__be32 val32;
->>> +
->>> +	while (cells) {
->>> +		val32 = cpu_to_fdt32((val64 >> (32 * (--cells))) & U32_MAX);
->>> +		memcpy(buf, &val32, sizeof(val32));
->>> +		buf += sizeof(val32);
->>> +	}
->>> +}
->>> +
->>> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
->>> +						u64 addr, u64 size)
->>> +{
->>> +	char buf[sizeof(__be32) * 2 * 2];
->>> +		/* assume dt_root_[addr|size]_cells <= 2 */
->>> +	void *prop;
->>> +	size_t buf_size;
->>> +
->>> +	buf_size = of_fdt_reg_cells_size();
->>> +	prop = buf;
->>> +
->>> +	fill_property(prop, addr, dt_root_addr_cells);
->>> +	prop += dt_root_addr_cells * sizeof(u32);
->>> +
->>> +	fill_property(prop, size, dt_root_size_cells);
->>> +
->>> +	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
->>> +}
->>> diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
->>> index b9cd9ebdf9b9..9615d6142578 100644
->>> --- a/include/linux/of_fdt.h
->>> +++ b/include/linux/of_fdt.h
->>> @@ -37,8 +37,8 @@ extern void *of_fdt_unflatten_tree(const unsigned long *blob,
->>>  				   struct device_node **mynodes);
->>>  
->>>  /* TBD: Temporary export of fdt globals - remove when code fully merged */
->>> -extern int __initdata dt_root_addr_cells;
->>> -extern int __initdata dt_root_size_cells;
->>> +extern int dt_root_addr_cells;
->>> +extern int dt_root_size_cells;
->>>  extern void *initial_boot_params;
->>>  
->>>  extern char __dtb_start[];
->>> @@ -108,5 +108,11 @@ static inline void unflatten_device_tree(void) {}
->>>  static inline void unflatten_and_copy_device_tree(void) {}
->>>  #endif /* CONFIG_OF_EARLY_FLATTREE */
->>>  
->>> +bool of_fdt_cells_size_fitted(u64 base, u64 size);
->>> +size_t of_fdt_reg_cells_size(void);
->>> +int fdt_prop_len(const char *prop_name, int len);
->>> +int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
->>> +						u64 addr, u64 size);
->>> +
->>>  #endif /* __ASSEMBLY__ */
->>>  #endif /* _LINUX_OF_FDT_H */
->>>
->>
-> 
+> > Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
+> > ---
+> >  .../iio/proximity/pulsedlight-lidar-lite-v2.c  | 18 +-----------------
+> >  1 file changed, 1 insertion(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> > index 47af54f14756..ca880ba8e820 100644
+> > --- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> > +++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+> > @@ -63,23 +63,7 @@ static const struct iio_chan_spec lidar_channels[] = {
+> >
+> >  static int lidar_i2c_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
+> >  {
+> > -       struct i2c_client *client = data->client;
+> > -       struct i2c_msg msg[2];
+> > -       int ret;
+> > -
+> > -       msg[0].addr = client->addr;
+> > -       msg[0].flags = client->flags | I2C_M_STOP;
+> > -       msg[0].len = 1;
+> > -       msg[0].buf  = (char *) &reg;
+> > -
+> > -       msg[1].addr = client->addr;
+> > -       msg[1].flags = client->flags | I2C_M_RD;
+> > -       msg[1].len = len;
+> > -       msg[1].buf = (char *) val;
+> > -
+> > -       ret = i2c_transfer(client->adapter, msg, 2);
+> > -
+> > -       return (ret == 2) ? 0 : -EIO;
+> > +       return i2c_smbus_read_i2c_block_data(data->client, reg, len, val);
+> >  }
+> >
+> >  static int lidar_smbus_xfer(struct lidar_data *data, u8 reg, u8 *val, int len)
+> > --
+> > 2.17.1
+> >
 
+Hi Matt,
+
+Thanks for the explanition, now I understand why we have to use
+lidar_smbus_xfer() here.
+So we can use the standard i2c_smbus_read_i2c_block_data() here?
+I'm thinking since you are the author it seems like you have the
+hardware, would you mind to test if it's working? I'd appriciate
+that.
+
+yours,
+Song Qiang
