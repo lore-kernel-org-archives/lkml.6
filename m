@@ -2,111 +2,105 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFEAFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E74AECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C06D52147A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kwvO6hHY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06D52147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 19EF121480
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 14:40:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19EF121480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbeINTzT (ORCPT
+        id S1728336AbeINTzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 15:55:19 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43422 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728250AbeINTzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 15:55:18 -0400
-Received: by mail-wr1-f66.google.com with SMTP id k5-v6so10870881wre.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 07:40:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LlD+NifSVaE3IfYdeYyWcCIMEiVmFR39vy4y8WN8rv8=;
-        b=kwvO6hHYoVK6Et8cqODz+uSJyw1JFE+9rpWKLTKOJIcAVd2k7gjQONwAH/NfmRbOaw
-         9BDngcuqhDI4WF49FltrihGy9WKTau6EXGhZ7ZAIQDrZAw5uJWWKQbeNH8RLcyxi2Zkt
-         rdmhEe07bXSLeeR0NTNfU5ukqdz4bmf0wZUKs8lMutBV15+L0778Kv7kABmE8s8YAwAp
-         +MtAXmf1dFcS48YThM6WcKUDHTrwuatE3Pw8VtqenpZuLRtHIgj/SFy3uXKYwYnBArC1
-         D+8NyRoXa/zy/dbdZZnhwNSX64TlFzJKsuWNmjuQX6oWWz2Ym4e1cEl3pyFdWcGJqo+B
-         m1PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=LlD+NifSVaE3IfYdeYyWcCIMEiVmFR39vy4y8WN8rv8=;
-        b=APl0bBGKA8ubB83+56JQ50BdwuUa6pPCLwacMUFCP9MgTygiv90sbz1lO6n9B3OoRu
-         PE/7h4p4jFFNXNLitUFdTQJSkvKTVhw8rNdqUHNxn2pjQ0+IzEKoiRn1cfSgVQzMotBP
-         lKIvZvZU/THzqIhsmHDGMqDJoZHYjaTrvVyBnNgJoLrgYIEBZOTJzFJN9GcsxXnw/JOI
-         1ARMZKpgZUwSgJzv4nnjGjMrYhH7heiwkxGqHuCGtaR0Pr9C/gtv4mAwk0TjLA81b8UY
-         xjw3ECawNf49OKe/0Y03OuHwZU696t3IXt8X94gL0VyBsXS7oXG7zw1akuGTpmyInQNp
-         LoYw==
-X-Gm-Message-State: APzg51AemDZ4ttbl1qeTk9y0jwCuZ28CmQXgSW5F1jayGZZweke3nrrC
-        T9kE2RTUtLXG8FPY7qJUUJAs7w==
-X-Google-Smtp-Source: ANB0VdZQu68ZpJmiUaYe1juj2SGgRn9JjIQ/XZgmIF8uHv3fD8J57t71s404Jw9gEreKHVsXuwxVeA==
-X-Received: by 2002:a5d:4605:: with SMTP id t5-v6mr9322475wrq.200.1536936029060;
+        Fri, 14 Sep 2018 15:55:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34508 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728250AbeINTzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 15:55:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F95880D;
+        Fri, 14 Sep 2018 07:40:31 -0700 (PDT)
+Received: from [10.4.12.111] (ostrya.emea.arm.com [10.4.12.111])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46BBF3F575;
         Fri, 14 Sep 2018 07:40:29 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v46-v6sm10313526wrc.63.2018.09.14.07.40.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 07:40:28 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 04/22] nvmem: remove a stray newline
-Date:   Fri, 14 Sep 2018 16:39:53 +0200
-Message-Id: <20180914144011.27614-5-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180914144011.27614-1-brgl@bgdev.pl>
-References: <20180914144011.27614-1-brgl@bgdev.pl>
+Subject: Re: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
+To:     "Tian, Kevin" <kevin.tian@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
+ <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
+ <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
+ <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
+ <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D191302ECE@SHSMSX101.ccr.corp.intel.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <64e4726e-929f-0e76-6dcc-45a750bde7e9@arm.com>
+Date:   Fri, 14 Sep 2018 15:40:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191302ECE@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> This example only needs to modify first-level translation, and works
+>> with SMMUv3. The kernel here could be the host, in which case
+>> second-level translation is disabled in the SMMU, or it could be the
+>> guest, in which case second-level mappings are created by QEMU and
+>> first-level translation is managed by assigning PASID tables to the guest.
+> 
+> the former yes applies to aux domain concept. The latter doesn't -
+> you have only one second-level per device. whole PASID table managed
+> by guest means you assign the whole device to guest, which is not the
+> concept of aux domain here.
 
-There are two empty lines between devm_nvmem_unregister() and
-__nvmem_device_get(). Remove one.
+Right, in the latter case, the host uses a "normal" domain to assign the
+whole PCI function to the guest. But the guest can still use auxiliary
+domains like in my example, to sub-assign the PCI function to different
+guest userspace applications.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/nvmem/core.c | 1 -
- 1 file changed, 1 deletion(-)
+>> So (2) would use iommu_sva_bind_device(), but (1) needs something else.
+>> Aren't auxiliary domains suitable for (1)? Why limit auxiliary domain to
+>> second-level or nested translation? It seems silly to use a different
+>> API for first-level, since the flow in userspace and VFIO is the same as
+>> your second-level case as far as MAP_DMA ioctl goes. The difference is
+>> that in your case the auxiliary domain supports an additional operation
+>> which binds first-level page tables. An auxiliary domain that only
+>> supports first-level wouldn't support this operation, but it can still
+>> implement iommu_map/unmap/etc.
+> 
+> Thanks for correcting me on this. You are right that aux domain shouldn't
+> impose such limitation on 2nd or nested only. We define aux domain
+> as a normal domain (aux takes effect only when attaching to a device),
+> thus it should support all capabilities possible on a normal domain.
+> 
+> btw I'm not sure whether you look at my comment to patch 8/10. I
+> explained the rationale why aux domain doesn't interfere with existing
+> default domain usage, and in a quick thinking above example might
+> not make difference. but need your confirm here. :-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b69005367908..b469f700c699 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -613,7 +613,6 @@ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
- }
- EXPORT_SYMBOL(devm_nvmem_unregister);
- 
--
- static struct nvmem_device *__nvmem_device_get(struct device_node *np,
- 					       struct nvmem_cell **cellp,
- 					       const char *cell_id)
--- 
-2.18.0
+Yes sorry, I didn't have time to answer, will do it now
 
+Thanks,
+Jean
