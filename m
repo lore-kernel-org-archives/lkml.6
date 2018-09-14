@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61281FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F46FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122FA20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122FA20861
+	by mail.kernel.org (Postfix) with ESMTP id 2E14B20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 11:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E14B20861
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbeINQkC (ORCPT
+        id S1728201AbeINQk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 12:40:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34940 "EHLO
+        Fri, 14 Sep 2018 12:40:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34954 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727726AbeINQkC (ORCPT
+        with ESMTP id S1727726AbeINQk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 12:40:02 -0400
+        Fri, 14 Sep 2018 12:40:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A12BC8A;
-        Fri, 14 Sep 2018 11:25:58 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 13:25:56 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB220C8A;
+        Fri, 14 Sep 2018 11:26:22 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 13:26:20 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Slaby <jslaby@suse.cz>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: [GIT PULL] Staging/IIO driver fixes for 4.19-rc4
-Message-ID: <20180914112556.GA27684@kroah.com>
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial fixes for 4.19-rc4
+Message-ID: <20180914112620.GA27809@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -43,77 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-4.19-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-4.19-rc4
 
-for you to fetch changes up to 65aac17423284634169489f298169c3e3f099cc7:
+for you to fetch changes up to 7f2bf7840b74a160f908db83bc8829f8de10629b:
 
-  staging: vboxvideo: Change address of scanout buffer on page-flip (2018-09-11 18:39:54 +0200)
+  tty: hvc: hvc_write() fix break condition (2018-09-10 18:04:31 +0200)
 
 ----------------------------------------------------------------
-Staging/IIO fixes for 4.19-rc4
+TTY fixes for 4.19-rc4
 
-Here are a few small staging and iio driver fixes for -rc4.
+Here are 3 small HVC tty driver fixes to resolve a reported regression
+from 4.19-rc1.
 
-Nothing major, just a few small bugfixes for some reported issues, and a
-MAINTAINERS file update for the fbtft drivers.  We also re-enable the
-building of the erofs filesystem as the patcheset that was causing it to
-break never got merged in the -rc1 cycle, so there's no reason it can't
-be turned back on for now.  The problem that was previously there is now
-being handled in that other tree at the moment, so it will not hit us
-again in the future.
-
-All of these patches have been in linux-next with no reported issues.
+All of these have been in linux-next for a while with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Ahmed S. Darwish (1):
-      staging: gasket: TODO: re-implement using UIO
+Nicholas Piggin (3):
+      tty: hvc: hvc_poll() fix read loop hang
+      tty: hvc: hvc_poll() fix read loop batching
+      tty: hvc: hvc_write() fix break condition
 
-Arnd Bergmann (1):
-      staging: wilc1000: revert "fix TODO to compile spi and sdio components in single module"
-
-Daniel Vetter (1):
-      staging/fbtft: Update TODO and mailing lists
-
-Gao Xiang (2):
-      Revert "staging: erofs: disable compiling temporarile"
-      staging: erofs: rename superblock flags (MS_xyz -> SB_xyz)
-
-Greg Kroah-Hartman (1):
-      Merge tag 'iio-fixes-4.19a' of git://git.kernel.org/.../jic23/iio into staging-linus
-
-Hans de Goede (2):
-      staging: vboxvideo: Fix IRQs no longer working
-      staging: vboxvideo: Change address of scanout buffer on page-flip
-
-Lorenzo Bianconi (1):
-      iio: imu: st_lsm6dsx: take into account ts samples in wm configuration
-
-Matt Ranostay (1):
-      Revert "iio: temperature: maxim_thermocouple: add MAX31856 part"
-
-Todd Poynor (1):
-      MAINTAINERS: Switch a maintainer for drivers/staging/gasket
-
- MAINTAINERS                                    |  4 +++-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 13 ++++++-------
- drivers/iio/temperature/maxim_thermocouple.c   |  1 -
- drivers/staging/erofs/Kconfig                  |  2 +-
- drivers/staging/erofs/super.c                  |  4 ++--
- drivers/staging/fbtft/TODO                     |  4 ++++
- drivers/staging/gasket/TODO                    | 13 +++++++++++++
- drivers/staging/vboxvideo/vbox_drv.c           |  7 +++++++
- drivers/staging/vboxvideo/vbox_mode.c          |  5 +++++
- drivers/staging/wilc1000/Makefile              |  3 +--
- drivers/staging/wilc1000/linux_wlan.c          |  6 ++++--
- drivers/staging/wilc1000/wilc_debugfs.c        |  7 +++++--
- drivers/staging/wilc1000/wilc_wlan.c           |  6 ++++++
- drivers/staging/wilc1000/wilc_wlan_if.h        |  2 --
- 14 files changed, 57 insertions(+), 20 deletions(-)
+ drivers/tty/hvc/hvc_console.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
