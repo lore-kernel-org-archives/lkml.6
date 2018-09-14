@@ -4,64 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A5AFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C48FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4472E20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B537620853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 17:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="soEZ+peM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4472E20882
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZArG+zUS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B537620853
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbeINXHq (ORCPT
+        id S1728334AbeINXHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 19:07:46 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:37983 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbeINXHp (ORCPT
+        Fri, 14 Sep 2018 19:07:51 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:46238 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeINXHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 19:07:45 -0400
-Received: by mail-pl1-f201.google.com with SMTP id g36-v6so4705227plb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:52:11 -0700 (PDT)
+        Fri, 14 Sep 2018 19:07:50 -0400
+Received: by mail-pf1-f201.google.com with SMTP id x85-v6so4993116pfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 10:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=I4L6Ovi9zaAj3AgpdwNR7S+NOiMCE8VjAjjAW/17UZY=;
-        b=soEZ+peMhT8jAsPHSbtG2LQxeGdaPT8uZUtUUetO3yfTDlaUWZEzejWXWkleHKBb+w
-         PXINfR2tLTMS5etjbTqq5E7tkeVSnqdvquyjgXRBa5F+wOLqA/grBIDdVtBo9l1pHs1/
-         JNOdZwgaqgPJkX20DeQKVd/kajRraSlPffknjvNA/DLIQ13D/U5scjPk6Dq4sE5xUSaN
-         RIZZYzEd8WFz/R/kwlmqIsIgs0QaZhTCgD9RkwwIN7B7Kv3NLDehiid6SaN5VA3LUfGk
-         oFapAC6rKQXC/yWCnokqamq+MrHPrNWTJHpH8flXVn4HFoM8MH0D1EFM4W92tN2jYBW0
-         DeYQ==
+        bh=KxOD7cpoHpP0etCc+j6bQ9uyj2TSRlPsUmZMd9SZNsI=;
+        b=ZArG+zUSP5KrLEv/WjuHwdgndosOm0xyQhT64flaIkrYUZJNGYKHmrRlAHNcAu7bqs
+         ERqKheRyshk5lq0X//3mjv8PDWD2Mvu+yBPC9b0UKJmQ9Ayiqjki8VXf5fWGnLIXFW9M
+         8tUkb06pcusdVIICxBDoTt3Ce1ejGG7x7Vss0BwfTpRX5/nYpKPa4l127Ws1yvUAn+GC
+         kskryMfodvd9C+Ib/wDKfiHIowz+mZIsez8GTy43CBHX6l9bccsT/xJeA3OVgBlYWeqU
+         aoDrQFamRHvExnCxXWPTvdaqTQzFY6uxrnnaI+sH+Y5/tByyNzeSGY0GE+4ZwasELpbf
+         rpvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=I4L6Ovi9zaAj3AgpdwNR7S+NOiMCE8VjAjjAW/17UZY=;
-        b=qa4T/LiqDZxbcczGwxZ4mpLyU7+LYbXCBHqawUi+O8rbX6ecuwdHPeLnOgd41E1loA
-         bivqJgm1Rfrp+CdOoi5FFyLV9XHVt/9hl9fAOZOny8ilRmIeoX7RL0LAVIUsZ4XgXOB0
-         xMYFpS/FxYSAFwpVzwFR6mBIbee57YS0VzoQUv2YxxJzLn/KCFTKF3sbcLgmGDtniSVs
-         5e8myScp099U32Ff8yPBy8GUrkA1EnA+dTSKxZRW0QPNC3svq7pzhVshdV66MThSQ1Wd
-         dIN+Ey50TUQXJ6xDxM9cKnEpP5sFDMA5Xn0vU/pdN/LhGdLDx+G1g2aezVKfA/wZmzJV
-         GUSA==
-X-Gm-Message-State: APzg51BzbJuJHHKiP1lRFpwXl6BoBG+Ki1pja1s03z3pHQQD2YiTQ+kQ
-        wGSem2octczjPjtUlnGEmw+PYINH
-X-Google-Smtp-Source: ANB0Vdb6QaBB8oWab5oF8zQ1/9cwn7PQHBv+XiAPzeb0m2bJsgxNJr3K90Z34jAjqJz36mDVxZefaJMl
-X-Received: by 2002:a65:6406:: with SMTP id a6-v6mr708329pgv.58.1536947531431;
- Fri, 14 Sep 2018 10:52:11 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 10:51:07 -0700
+        bh=KxOD7cpoHpP0etCc+j6bQ9uyj2TSRlPsUmZMd9SZNsI=;
+        b=Mz+9VuAVp2HOxGajFhnvSSgfrD7rxv1Hyo/aDdQ4/Y/3fLhLav3Dtf+A6szEfUIswN
+         Npl/rYWpmaAyjspx0HkfKf5ef4jK6YFZfgZAIRK9ye5JKEdnftb47HTSMiQNufWWvz2c
+         R6OPMzaizXnlvrBtuWuY3Kynfk4j5s3bwr6paAQ35uiPB7NPW/6vb1Rm/1AKkZM7UPez
+         byThzLRtbyMMC7iJ7Nhh8TTW9rcsF7fHxMXZktBiDr+ts6i6+myzU8sgPmCdHCpFTbHM
+         jMw66HiN5iXR6ozPKCqLsIePBlj/zM8rmzdc7Ry8joPbZkTvNrBihGbM2ihxxF6WVQI4
+         CDVA==
+X-Gm-Message-State: APzg51AXw/JHbq0WsaZrPniBNGBdW943vCnG4dQh6313qvalnh3S0I/T
+        CC4+yaoUEbOst/ZLQzyC16Riy1D/
+X-Google-Smtp-Source: ANB0Vdau15JopWM0EdRRZInEr/CbS+N472rlpu7Az7+jMFFSWSBNgYVylRZVT5keIBIvbs97TfObTYYp
+X-Received: by 2002:a63:8b42:: with SMTP id j63-v6mr675744pge.19.1536947536580;
+ Fri, 14 Sep 2018 10:52:16 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:51:08 -0700
 In-Reply-To: <20180914175122.21036-1-rkir@google.com>
-Message-Id: <20180914175122.21036-6-rkir@google.com>
+Message-Id: <20180914175122.21036-7-rkir@google.com>
 Mime-Version: 1.0
 References: <20180914175122.21036-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
-Subject: [PATCH 06/21] platform: goldfish: pipe: Add DMA support to goldfish pipe
+Subject: [PATCH 07/21] platform: goldfish: pipe: Remove the
+ goldfish_interrupt_tasklet global variable
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     tkjos@google.com, linux-kernel@vger.kernel.org,
@@ -74,526 +75,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-Goldfish DMA is an extension to the pipe device and is designed
-to facilitate high-speed RAM->RAM transfers from guest to host.
-
-See uapi/linux/goldfish/goldfish_dma.h for more details.
+This is a series of patches to remove mutable global variables
+to introduce another version of the pipe driver for the older
+host interface. I don't want to have two driver states where only
+one is used.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c     | 312 +++++++++++++++++-
- .../platform/goldfish/goldfish_pipe_qemu.h    |   2 +
- include/uapi/linux/goldfish/goldfish_dma.h    |  84 +++++
- 3 files changed, 396 insertions(+), 2 deletions(-)
- create mode 100644 include/uapi/linux/goldfish/goldfish_dma.h
+ drivers/platform/goldfish/goldfish_pipe.c | 24 +++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index fe01ef88ddfb..064a50a7f187 100644
+index 064a50a7f187..8a5ce7c01f11 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -63,21 +63,28 @@
- #include <linux/mm.h>
- #include <linux/acpi.h>
- #include <linux/bug.h>
-+#include <uapi/linux/goldfish/goldfish_dma.h>
- #include "goldfish_pipe_qemu.h"
- 
- /*
-  * Update this when something changes in the driver's behavior so the host
-  * can benefit from knowing it
-+ * Notes:
-+ *	version 2 was an intermediate release and isn't supported anymore.
-+ *	version 3 is goldfish_pipe_v2 without DMA support.
-+ *	version 4 (current) is goldfish_pipe_v2 with DMA support.
-  */
- enum {
--	PIPE_DRIVER_VERSION = 2,
-+	PIPE_DRIVER_VERSION = 4,
- 	PIPE_CURRENT_DEVICE_VERSION = 2
- };
- 
- enum {
- 	MAX_BUFFERS_PER_COMMAND = 336,
- 	MAX_SIGNALLED_PIPES = 64,
--	INITIAL_PIPES_CAPACITY = 64
-+	INITIAL_PIPES_CAPACITY = 64,
-+	DMA_REGION_MIN_SIZE = PAGE_SIZE,
-+	DMA_REGION_MAX_SIZE = 256 << 20
- };
- 
- struct goldfish_pipe_dev;
-@@ -100,6 +107,11 @@ struct goldfish_pipe_command {
- 			/* buffer sizes, guest -> host */
- 			u32 sizes[MAX_BUFFERS_PER_COMMAND];
- 		} rw_params;
-+		/* Parameters for PIPE_CMD_DMA_HOST_(UN)MAP */
-+		struct {
-+			u64 dma_paddr;
-+			u64 sz;
-+		} dma_maphost_params;
- 	};
- };
- 
-@@ -122,6 +134,24 @@ struct goldfish_pipe_dev_buffers {
- 		signalled_pipe_buffers[MAX_SIGNALLED_PIPES];
- };
- 
-+/*
-+ * The main data structure tracking state is
-+ * struct goldfish_dma_context, which is included
-+ * as an extra pointer field in struct goldfish_pipe.
-+ * Each such context is associated with possibly
-+ * one physical address and size describing the
-+ * allocated DMA region, and only one allocation
-+ * is allowed for each pipe fd. Further allocations
-+ * require more open()'s of pipe fd's.
-+ */
-+struct goldfish_dma_context {
-+	struct device *pdev_dev;	/* pointer to feed to dma_*_coherent */
-+	void *dma_vaddr;		/* kernel vaddr of dma region */
-+	size_t dma_size;		/* size of dma region */
-+	dma_addr_t phys_begin;		/* paddr of dma region */
-+	dma_addr_t phys_end;		/* paddr of dma region + dma_size */
-+};
-+
- /* This data type models a given pipe instance */
- struct goldfish_pipe {
- 	/* pipe ID - index into goldfish_pipe_dev::pipes array */
-@@ -162,6 +192,9 @@ struct goldfish_pipe {
- 
- 	/* A buffer of pages, too large to fit into a stack frame */
- 	struct page *pages[MAX_BUFFERS_PER_COMMAND];
-+
-+	/* Holds information about reserved DMA region for this pipe */
-+	struct goldfish_dma_context *dma;
- };
- 
- /* The global driver data. Holds a reference to the i/o page used to
-@@ -208,6 +241,9 @@ struct goldfish_pipe_dev {
- 	int irq;
+@@ -242,6 +242,9 @@ struct goldfish_pipe_dev {
  	int version;
  	unsigned char __iomem *base;
-+
-+	/* DMA info */
-+	size_t dma_alloc_total;
- };
  
- struct goldfish_pipe_dev goldfish_pipe_dev;
-@@ -739,6 +775,8 @@ static int goldfish_pipe_open(struct inode *inode, struct file *file)
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 	if (status < 0)
- 		goto err_cmd;
-+	pipe->dma = NULL;
++	/* an irq tasklet to run goldfish_interrupt_task */
++	struct tasklet_struct irq_tasklet;
 +
- 	/* All is done, save the pipe into the file's private data field */
- 	file->private_data = pipe;
- 	return 0;
-@@ -754,6 +792,40 @@ static int goldfish_pipe_open(struct inode *inode, struct file *file)
- 	return status;
+ 	/* DMA info */
+ 	size_t dma_alloc_total;
+ };
+@@ -618,14 +621,14 @@ static struct goldfish_pipe *signalled_pipes_pop_front(
+ 	return pipe;
  }
  
-+static void goldfish_pipe_dma_release_host(struct goldfish_pipe *pipe)
-+{
-+	struct goldfish_dma_context *dma = pipe->dma;
-+	struct device *pdev_dev;
-+
-+	if (!dma)
-+		return;
-+
-+	pdev_dev = pipe->dev->pdev_dev;
-+
-+	if (dma->dma_vaddr) {
-+		pipe->command_buffer->dma_maphost_params.dma_paddr =
-+			dma->phys_begin;
-+		pipe->command_buffer->dma_maphost_params.sz = dma->dma_size;
-+		goldfish_pipe_cmd(pipe, PIPE_CMD_DMA_HOST_UNMAP);
-+	}
-+}
-+
-+static void goldfish_pipe_dma_release_guest(struct goldfish_pipe *pipe)
-+{
-+	struct goldfish_dma_context *dma = pipe->dma;
-+
-+	if (!dma)
-+		return;
-+
-+	if (dma->dma_vaddr) {
-+		dma_free_coherent(dma->pdev_dev,
-+				  dma->dma_size,
-+				  dma->dma_vaddr,
-+				  dma->phys_begin);
-+		pipe->dev->dma_alloc_total -= dma->dma_size;
-+	}
-+}
-+
- static int goldfish_pipe_release(struct inode *inode, struct file *filp)
+-static void goldfish_interrupt_task(unsigned long unused)
++static void goldfish_interrupt_task(unsigned long dev_addr)
  {
- 	unsigned long flags;
-@@ -761,6 +833,7 @@ static int goldfish_pipe_release(struct inode *inode, struct file *filp)
- 	struct goldfish_pipe_dev *dev = pipe->dev;
+ 	/* Iterate over the signalled pipes and wake them one by one */
++	struct goldfish_pipe_dev *dev = (struct goldfish_pipe_dev *)dev_addr;
+ 	struct goldfish_pipe *pipe;
+ 	int wakes;
  
- 	/* The guest is closing the channel, so tell the emulator right now */
-+	goldfish_pipe_dma_release_host(pipe);
- 	goldfish_pipe_cmd(pipe, PIPE_CMD_CLOSE);
+-	while ((pipe = signalled_pipes_pop_front(&goldfish_pipe_dev, &wakes)) !=
+-			NULL) {
++	while ((pipe = signalled_pipes_pop_front(dev, &wakes)) != NULL) {
+ 		if (wakes & PIPE_WAKE_CLOSED) {
+ 			pipe->flags = 1 << BIT_CLOSED_ON_HOST;
+ 		} else {
+@@ -641,7 +644,6 @@ static void goldfish_interrupt_task(unsigned long unused)
+ 		wake_up_interruptible(&pipe->wake_queue);
+ 	}
+ }
+-static DECLARE_TASKLET(goldfish_interrupt_tasklet, goldfish_interrupt_task, 0);
  
- 	spin_lock_irqsave(&dev->lock, flags);
-@@ -769,11 +842,242 @@ static int goldfish_pipe_release(struct inode *inode, struct file *filp)
+ /*
+  * The general idea of the interrupt handling:
+@@ -684,7 +686,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
+ 
  	spin_unlock_irqrestore(&dev->lock, flags);
  
- 	filp->private_data = NULL;
-+
-+	/* Even if a fd is duped or involved in a forked process,
-+	 * open/release methods are called only once, ever.
-+	 * This makes goldfish_pipe_release a safe point
-+	 * to delete the DMA region.
-+	 */
-+	goldfish_pipe_dma_release_guest(pipe);
-+
-+	kfree(pipe->dma);
- 	free_page((unsigned long)pipe->command_buffer);
- 	kfree(pipe);
-+
- 	return 0;
+-	tasklet_schedule(&goldfish_interrupt_tasklet);
++	tasklet_schedule(&dev->irq_tasklet);
+ 	return IRQ_HANDLED;
  }
  
-+/* VMA open/close are for debugging purposes only.
-+ * One might think that fork() (and thus pure calls to open())
-+ * will require some sort of bookkeeping or refcounting
-+ * for dma contexts (incl. when to call dma_free_coherent),
-+ * but |vm_private_data| field and |vma_open/close| are only
-+ * for situations where the driver needs to interact with vma's
-+ * directly with its own per-VMA data structure (which does
-+ * need to be refcounted).
-+ *
-+ * Here, we just use the kernel's existing
-+ * VMA processing; we don't do anything on our own.
-+ * The only reason we would want to do so is if we had to do
-+ * special processing for the virtual (not physical) memory
-+ * already associated with DMA memory; it is much less related
-+ * to the task of knowing when to alloc/dealloc DMA memory.
-+ */
-+static void goldfish_dma_vma_open(struct vm_area_struct *vma)
-+{
-+	/* Not used */
-+}
+@@ -1108,9 +1110,14 @@ static void write_pa_addr(void *addr, void __iomem *portl, void __iomem *porth)
+ static int goldfish_pipe_device_init(struct platform_device *pdev)
+ {
+ 	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
+-	int err = devm_request_irq(&pdev->dev, dev->irq,
+-				goldfish_pipe_interrupt,
+-				IRQF_SHARED, "goldfish_pipe", dev);
++	int err;
 +
-+static void goldfish_dma_vma_close(struct vm_area_struct *vma)
-+{
-+	/* Not used */
-+}
++	tasklet_init(&dev->irq_tasklet, &goldfish_interrupt_task,
++		     (unsigned long)dev);
 +
-+static const struct vm_operations_struct goldfish_dma_vm_ops = {
-+	.open = goldfish_dma_vma_open,
-+	.close = goldfish_dma_vma_close,
-+};
-+
-+static bool is_page_size_multiple(unsigned long sz)
-+{
-+	return !(sz & (PAGE_SIZE - 1));
-+}
-+
-+static bool check_region_size_valid(size_t size)
-+{
-+	if (size < DMA_REGION_MIN_SIZE)
-+		return false;
-+
-+	if (size > DMA_REGION_MAX_SIZE)
-+		return false;
-+
-+	return is_page_size_multiple(size);
-+}
-+
-+static int goldfish_pipe_dma_alloc_locked(struct goldfish_pipe *pipe)
-+{
-+	struct goldfish_dma_context *dma = pipe->dma;
-+
-+	if (dma->dma_vaddr)
-+		return 0;
-+
-+	dma->phys_begin = 0;
-+	dma->dma_vaddr = dma_alloc_coherent(dma->pdev_dev,
-+					    dma->dma_size,
-+					    &dma->phys_begin,
-+					    GFP_KERNEL);
-+	if (!dma->dma_vaddr)
-+		return -ENOMEM;
-+	dma->phys_end = dma->phys_begin + dma->dma_size;
-+	pipe->dev->dma_alloc_total += dma->dma_size;
-+	pipe->command_buffer->dma_maphost_params.dma_paddr = dma->phys_begin;
-+	pipe->command_buffer->dma_maphost_params.sz = dma->dma_size;
-+	return goldfish_pipe_cmd_locked(pipe, PIPE_CMD_DMA_HOST_MAP);
-+}
-+
-+static int goldfish_dma_mmap_locked(struct goldfish_pipe *pipe,
-+				    struct vm_area_struct *vma)
-+{
-+	struct goldfish_dma_context *dma = pipe->dma;
-+	struct device *pdev_dev = pipe->dev->pdev_dev;
-+	size_t sz_requested = vma->vm_end - vma->vm_start;
-+	int status;
-+
-+	if (!check_region_size_valid(sz_requested)) {
-+		dev_err(pdev_dev, "%s: bad size (%zu) requested\n", __func__,
-+			sz_requested);
-+		return -EINVAL;
-+	}
-+
-+	/* Alloc phys region if not allocated already. */
-+	status = goldfish_pipe_dma_alloc_locked(pipe);
-+	if (status)
-+		return status;
-+
-+	status = remap_pfn_range(vma,
-+				 vma->vm_start,
-+				 dma->phys_begin >> PAGE_SHIFT,
-+				 sz_requested,
-+				 vma->vm_page_prot);
-+	if (status < 0) {
-+		dev_err(pdev_dev, "Cannot remap pfn range....\n");
-+		return -EAGAIN;
-+	}
-+	vma->vm_ops = &goldfish_dma_vm_ops;
-+	return 0;
-+}
-+
-+/* When we call mmap() on a pipe fd, we obtain a pointer into
-+ * the physically contiguous DMA region of the pipe device
-+ * (Goldfish DMA).
-+ */
-+static int goldfish_dma_mmap(struct file *filp, struct vm_area_struct *vma)
-+{
-+	struct goldfish_pipe *pipe =
-+		(struct goldfish_pipe *)(filp->private_data);
-+	int status;
-+
-+	if (mutex_lock_interruptible(&pipe->lock))
-+		return -ERESTARTSYS;
-+
-+	status = goldfish_dma_mmap_locked(pipe, vma);
-+	mutex_unlock(&pipe->lock);
-+	return status;
-+}
-+
-+static int goldfish_pipe_dma_create_region(struct goldfish_pipe *pipe,
-+					   size_t size)
-+{
-+	struct goldfish_dma_context *dma =
-+		kzalloc(sizeof(struct goldfish_dma_context), GFP_KERNEL);
-+	struct device *pdev_dev = pipe->dev->pdev_dev;
-+
-+	if (dma) {
-+		if (mutex_lock_interruptible(&pipe->lock)) {
-+			kfree(dma);
-+			return -ERESTARTSYS;
-+		}
-+
-+		if (pipe->dma) {
-+			mutex_unlock(&pipe->lock);
-+			kfree(dma);
-+			dev_err(pdev_dev, "The DMA region already allocated\n");
-+			return -EBUSY;
-+		}
-+
-+		dma->dma_size = size;
-+		dma->pdev_dev = pipe->dev->pdev_dev;
-+		pipe->dma = dma;
-+		mutex_unlock(&pipe->lock);
-+		return 0;
-+	}
-+
-+	dev_err(pdev_dev, "Could not allocate DMA context info!\n");
-+	return -ENOMEM;
-+}
-+
-+static long goldfish_dma_ioctl_getoff(struct goldfish_pipe *pipe,
-+				      unsigned long arg)
-+{
-+	struct device *pdev_dev = pipe->dev->pdev_dev;
-+	struct goldfish_dma_ioctl_info ioctl_data;
-+	struct goldfish_dma_context *dma;
-+
-+	BUILD_BUG_ON(FIELD_SIZEOF(struct goldfish_dma_ioctl_info, phys_begin) <
-+		FIELD_SIZEOF(struct goldfish_dma_context, phys_begin));
-+
-+	if (mutex_lock_interruptible(&pipe->lock)) {
-+		dev_err(pdev_dev, "DMA_GETOFF: the pipe is not locked\n");
-+		return -EACCES;
-+	}
-+
-+	dma = pipe->dma;
-+	if (dma) {
-+		ioctl_data.phys_begin = dma->phys_begin;
-+		ioctl_data.size = dma->dma_size;
-+	} else {
-+		ioctl_data.phys_begin = 0;
-+		ioctl_data.size = 0;
-+	}
-+
-+	if (copy_to_user((void __user *)arg, &ioctl_data,
-+			 sizeof(ioctl_data))) {
-+		mutex_unlock(&pipe->lock);
-+		return -EFAULT;
-+	}
-+
-+	mutex_unlock(&pipe->lock);
-+	return 0;
-+}
-+
-+static long goldfish_dma_ioctl_create_region(struct goldfish_pipe *pipe,
-+					     unsigned long arg)
-+{
-+	struct goldfish_dma_ioctl_info ioctl_data;
-+
-+	if (copy_from_user(&ioctl_data, (void __user *)arg, sizeof(ioctl_data)))
-+		return -EFAULT;
-+
-+	if (!check_region_size_valid(ioctl_data.size)) {
-+		dev_err(pipe->dev->pdev_dev,
-+			"DMA_CREATE_REGION: bad size (%lld) requested\n",
-+			ioctl_data.size);
-+		return -EINVAL;
-+	}
-+
-+	return goldfish_pipe_dma_create_region(pipe, ioctl_data.size);
-+}
-+
-+static long goldfish_dma_ioctl(struct file *file, unsigned int cmd,
-+			       unsigned long arg)
-+{
-+	struct goldfish_pipe *pipe =
-+		(struct goldfish_pipe *)(file->private_data);
-+
-+	switch (cmd) {
-+	case GOLDFISH_DMA_IOC_LOCK:
-+		return 0;
-+	case GOLDFISH_DMA_IOC_UNLOCK:
-+		wake_up_interruptible(&pipe->wake_queue);
-+		return 0;
-+	case GOLDFISH_DMA_IOC_GETOFF:
-+		return goldfish_dma_ioctl_getoff(pipe, arg);
-+	case GOLDFISH_DMA_IOC_CREATE_REGION:
-+		return goldfish_dma_ioctl_create_region(pipe, arg);
-+	}
-+	return -ENOTTY;
-+}
-+
- static const struct file_operations goldfish_pipe_fops = {
- 	.owner = THIS_MODULE,
- 	.read = goldfish_pipe_read,
-@@ -781,6 +1085,10 @@ static const struct file_operations goldfish_pipe_fops = {
- 	.poll = goldfish_pipe_poll,
- 	.open = goldfish_pipe_open,
- 	.release = goldfish_pipe_release,
-+	/* DMA-related operations */
-+	.mmap = goldfish_dma_mmap,
-+	.unlocked_ioctl = goldfish_dma_ioctl,
-+	.compat_ioctl = goldfish_dma_ioctl,
- };
- 
- static struct miscdevice goldfish_pipe_miscdev = {
-diff --git a/drivers/platform/goldfish/goldfish_pipe_qemu.h b/drivers/platform/goldfish/goldfish_pipe_qemu.h
-index b4d78c108afd..0ffc51dba54c 100644
---- a/drivers/platform/goldfish/goldfish_pipe_qemu.h
-+++ b/drivers/platform/goldfish/goldfish_pipe_qemu.h
-@@ -93,6 +93,8 @@ enum PipeCmdCode {
- 	 * parallel processing of pipe operations on the host.
- 	 */
- 	PIPE_CMD_WAKE_ON_DONE_IO,
-+	PIPE_CMD_DMA_HOST_MAP,
-+	PIPE_CMD_DMA_HOST_UNMAP,
- };
- 
- #endif /* GOLDFISH_PIPE_QEMU_H */
-diff --git a/include/uapi/linux/goldfish/goldfish_dma.h b/include/uapi/linux/goldfish/goldfish_dma.h
-new file mode 100644
-index 000000000000..a9019023a5bf
---- /dev/null
-+++ b/include/uapi/linux/goldfish/goldfish_dma.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Google, Inc.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#ifndef UAPI_GOLDFISH_DMA_H
-+#define UAPI_GOLDFISH_DMA_H
-+
-+#include <linux/types.h>
-+
-+/* GOLDFISH DMA
-+ *
-+ * Goldfish DMA is an extension to the pipe device
-+ * and is designed to facilitate high-speed RAM->RAM
-+ * transfers from guest to host.
-+ *
-+ * Interface (guest side):
-+ *
-+ * The guest user calls goldfish_dma_alloc (ioctls)
-+ * and then mmap() on a goldfish pipe fd,
-+ * which means that it wants high-speed access to
-+ * host-visible memory.
-+ *
-+ * The guest can then write into the pointer
-+ * returned by mmap(), and these writes
-+ * become immediately visible on the host without BQL
-+ * or otherweise context switching.
-+ *
-+ * dma_alloc_coherent() is used to obtain contiguous
-+ * physical memory regions, and we allocate and interact
-+ * with this region on both guest and host through
-+ * the following ioctls:
-+ *
-+ * - LOCK: lock the region for data access.
-+ * - UNLOCK: unlock the region. This may also be done from the host
-+ *   through the WAKE_ON_UNLOCK_DMA procedure.
-+ * - CREATE_REGION: initialize size info for a dma region.
-+ * - GETOFF: send physical address to guest drivers.
-+ * - (UN)MAPHOST: uses goldfish_pipe_cmd to tell the host to
-+ * (un)map to the guest physical address associated
-+ * with the current dma context. This makes the physically
-+ * contiguous memory (in)visible to the host.
-+ *
-+ * Guest userspace obtains a pointer to the DMA memory
-+ * through mmap(), which also lazily allocates the memory
-+ * with dma_alloc_coherent. (On last pipe close(), the region is freed).
-+ * The mmaped() region can handle very high bandwidth
-+ * transfers, and pipe operations can be used at the same
-+ * time to handle synchronization and command communication.
-+ */
-+
-+#define GOLDFISH_DMA_BUFFER_SIZE (32 * 1024 * 1024)
-+
-+struct goldfish_dma_ioctl_info {
-+	__u64 phys_begin;
-+	__u64 size;
-+};
-+
-+/* There is an ioctl associated with goldfish dma driver.
-+ * Make it conflict with ioctls that are not likely to be used
-+ * in the emulator.
-+ * 'G'	00-3F	drivers/misc/sgi-gru/grulib.h	conflict!
-+ * 'G'	00-0F	linux/gigaset_dev.h	conflict!
-+ */
-+#define GOLDFISH_DMA_IOC_MAGIC	'G'
-+#define GOLDFISH_DMA_IOC_OP(OP)	_IOWR(GOLDFISH_DMA_IOC_MAGIC, OP, \
-+				struct goldfish_dma_ioctl_info)
-+
-+#define GOLDFISH_DMA_IOC_LOCK		GOLDFISH_DMA_IOC_OP(0)
-+#define GOLDFISH_DMA_IOC_UNLOCK		GOLDFISH_DMA_IOC_OP(1)
-+#define GOLDFISH_DMA_IOC_GETOFF		GOLDFISH_DMA_IOC_OP(2)
-+#define GOLDFISH_DMA_IOC_CREATE_REGION	GOLDFISH_DMA_IOC_OP(3)
-+
-+#endif /* UAPI_GOLDFISH_DMA_H */
++	err = devm_request_irq(&pdev->dev, dev->irq,
++			       goldfish_pipe_interrupt,
++			       IRQF_SHARED, "goldfish_pipe", dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "unable to allocate IRQ for v2\n");
+ 		return err;
+@@ -1162,6 +1169,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
+ static void goldfish_pipe_device_deinit(struct platform_device *pdev)
+ {
+ 	misc_deregister(&goldfish_pipe_miscdev);
++	tasklet_kill(&goldfish_pipe_dev.irq_tasklet);
+ 	kfree(goldfish_pipe_dev.pipes);
+ 	free_page((unsigned long)goldfish_pipe_dev.buffers);
+ }
 -- 
 2.19.0.397.gdd90340f6a-goog
 
