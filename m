@@ -3,111 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B183EECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0B9FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D2C820861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2C820861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2660020861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:29:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2660020861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbeINVn4 (ORCPT
+        id S1728388AbeINVoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:43:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50220 "EHLO mail.bootlin.com"
+        Fri, 14 Sep 2018 17:44:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47392 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727749AbeINVnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:43:55 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 78D0520877; Fri, 14 Sep 2018 18:28:39 +0200 (CEST)
-Received: from qschulz (LFbn-1-10589-128.w90-89.abo.wanadoo.fr [90.89.181.128])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 20F5D207D4;
-        Fri, 14 Sep 2018 18:28:29 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 18:28:28 +0200
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        antoine.tenart@bootlin.com
-Subject: Re: [PATCH net-next 2/7] net: phy: mscc: add support for VSC8584 PHY
-Message-ID: <20180914162828.5e75ffh5sig4om3d@qschulz>
-References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
- <a61d9affd3f1ec9deb60c882cce1daf37fbe2427.1536916714.git-series.quentin.schulz@bootlin.com>
- <20180914131846.GG14865@lunn.ch>
- <20180914132930.fphdm3dm2incetbq@qschulz>
+        id S1726902AbeINVoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:44:13 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 742E4307CF58;
+        Fri, 14 Sep 2018 16:28:59 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-40.phx2.redhat.com [10.3.112.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5DBEE600C6;
+        Fri, 14 Sep 2018 16:28:47 +0000 (UTC)
+Date:   Fri, 14 Sep 2018 12:24:03 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        mlichvar@redhat.com, linux-audit@redhat.com,
+        john.stultz@linaro.org, tglx@linutronix.de
+Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time
+ adjustments
+Message-ID: <20180914162403.d2njtt2cp7slbcsw@madcap2.tricolour.ca>
+References: <20180824120001.20771-1-omosnace@redhat.com>
+ <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com>
+ <20180914151643.gwvm5te4nvion5ex@madcap2.tricolour.ca>
+ <2062051.Ftk13INWii@x2>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lrvuohlm2to6nryf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180914132930.fphdm3dm2incetbq@qschulz>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <2062051.Ftk13INWii@x2>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 14 Sep 2018 16:28:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-09-14 11:34, Steve Grubb wrote:
+> On Friday, September 14, 2018 11:16:43 AM EDT Richard Guy Briggs wrote:
+> > On 2018-09-13 23:18, Paul Moore wrote:
+> > > On Fri, Aug 24, 2018 at 8:00 AM Ondrej Mosnacek <omosnace@redhat.com> 
+> wrote:
+> > > > This patch adds two auxiliary record types that will be used to
+> > > > annotate
+> > > > the adjtimex SYSCALL records with the NTP/timekeeping values that have
+> > > > been changed.
+> > > > 
+> > > > Next, it adds two functions to the audit interface:
+> > > >  - audit_tk_injoffset(), which will be called whenever a timekeeping
+> > > >  
+> > > >    offset is injected by a syscall from userspace,
+> > > >  
+> > > >  - audit_ntp_adjust(), which will be called whenever an NTP internal
+> > > >  
+> > > >    variable is changed by a syscall from userspace.
+> > > > 
+> > > > Quick reference for the fields of the new records:
+> > > >     AUDIT_TIME_INJOFFSET
+> > > >     
+> > > >         sec - the 'seconds' part of the offset
+> > > >         nsec - the 'nanoseconds' part of the offset
+> > > >     
+> > > >     AUDIT_TIME_ADJNTPVAL
+> > > >     
+> > > >         op - which value was adjusted:
+> > > >             offset - corresponding to the time_offset variable
+> > > >             freq   - corresponding to the time_freq variable
+> > > >             status - corresponding to the time_status variable
+> > > >             adjust - corresponding to the time_adjust variable
+> > > >             tick   - corresponding to the tick_usec variable
+> > > >             tai    - corresponding to the timekeeping's TAI offset
+> > > 
+> > > I understand that reusing "op" is tempting, but the above aren't
+> > > really operations, they are state variables which are being changed.
+> > > Using the CONFIG_CHANGE record as a basis, I wonder if we are better
+> > > 
+> > > off with something like the following:
+> > >  type=TIME_CHANGE <var>=<value_new> old=<value_old>
+> > > 
+> > > ... you might need to preface the variable names with something like
+> > > "ntp_" or "offset_".  You'll notice I'm also suggesting we use a
+> > > single record type here; is there any reason why two records types are
+> > > required?
+> > 
+> > Why not do something like:
+> > 
+> > 	 type=TIME_CHANGE var=<var> new=<value_new> old=<value_old>
+> > 
+> > So that we don't pollute the field namespace *and* create 8 variants on
+> > the same record format?  This shouldn't be much of a concern with binary
+> > record formats, but we're stuck with the current parsing scheme for now.
+> 
+> Something like this or the other format is fine. Neither hurt parsing because 
+> these are not searchable fields. We only have issues when it involves a 
+> searchable field name.
 
---lrvuohlm2to6nryf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, fair enough.  Thanks Steve.
 
-Hi Andrew,
+> HTH...
+> 
+> -Steve
+> 
+> > > >         old - the old value
+> > > >         new - the new value
+> > > > 
+> > > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > > ---
+> > > > 
+> > > >  include/linux/audit.h      | 21 +++++++++++++++++++++
+> > > >  include/uapi/linux/audit.h |  2 ++
+> > > >  kernel/auditsc.c           | 15 +++++++++++++++
+> > > >  3 files changed, 38 insertions(+)
+> > > 
+> > > A reminder that we need tests for these new records and a RFE page on the
+> > > wiki:
+> > > 
+> > > * https://github.com/linux-audit/audit-testsuite
+> > > * https://github.com/linux-audit/audit-kernel/wiki
+> > 
+> > - RGB
 
-On Fri, Sep 14, 2018 at 03:29:30PM +0200, Quentin Schulz wrote:
-> Hi Andrew,
->=20
-> On Fri, Sep 14, 2018 at 03:18:46PM +0200, Andrew Lunn wrote:
-> > > Most of the init sequence of a PHY of the package is common to all PH=
-Ys
-> > > in the package, thus we use the SMI broadcast feature which enables us
-> > > to propagate a write in one register of one PHY to all PHYs in the
-> > > package.
-> >=20
-> > Hi Quinten
-> >=20
-> > Could you say a bit more about the broadcast. Does the SMI broadcast
-> > go to all PHY everywhere on an MDIO bus, or only all PHYs within one
-> > package? I'm just thinking about the case you need two of these
-> > packages to cover 8 switch ports.
-> >=20
->=20
-> Ah sorry, that wasn't very explicit. That's a feature on the PHY side so
-> my wildest guess is that it wouldn't impact any other PHY outside of
-> this package. Affecting any other PHY on the bus is counter-intuitive to
-> me but I'll ask the HW engineers for confirmation.
->=20
+- RGB
 
-Confirmed by HW engineers, it only impacts PHYs in the same package.
-
-Quentin
-
---lrvuohlm2to6nryf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlub4awACgkQhLiadT7g
-8aP1fg//V+Mup3knhZdlR5JAs/en28BkBQ1Tc76y+7zpzgqSMjAyP2gfg4vMoKz2
-3H1Y+jQcX0QopeLDwks0To8eyHwYcq//Wvlv6XSvl7W3/8qPYqIaTXlWZD+O4smK
-d0+MP8u5silgh5hS9NKDBKdKheXirH7gdCDLbXDhY2TMCDYYTfrx6Xi3dwRfdivc
-x+Zhhmp14p5qhyvEDE7IUSzMcqGo9tKKwR6VQPHtMCyJ3+Wfe4kmTm8nkTFwL1fF
-T2l1V1U7ROEQXhyUni61JEH33CZzp8WwOwOkaUjvBIOsur8K+xb7LboHYvh5b0ni
-szCdTBqtybkKxUT4FHLm2xWexBBDb5vWQYOQUxMxybe/xfsIsGLUX2MQt9g4PNMO
-MTWW7H662G9H0lsqcp4/e05eyIkroBX8Qt547NuQ3dr+RjPn1C9ZbwEPz4C/14+T
-GaXc+sncNluq2A+VaMGTx2ZjZOo/Y+coVdhm9nuup9kMibboAd10KqchPBvtBGS0
-4IqacfOHH+oNzAkoq30s6Ta4uixULZls6Exfzrn0yKLffxwOeD3fPisCwLGsW2zV
-DN1L0uubJWCkTFYuO5tilgZrl3HuF1f4cu/xhtl2kq0bMm3pgAVK/UXXQcqnZ/Rh
-bFNMfRwHSSMhAnDHKIXzmLgNf9iGE2skB/QyNuvZr9Nc+7VxlO4=
-=qNw+
------END PGP SIGNATURE-----
-
---lrvuohlm2to6nryf--
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
