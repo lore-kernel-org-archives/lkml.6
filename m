@@ -2,104 +2,132 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A34C04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8EBFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC09620861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:53:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC09620861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E07E20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 01:55:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8Iuyid4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E07E20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeINHFD (ORCPT
+        id S1728423AbeINHH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 03:05:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34238 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbeINHFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 03:05:03 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 30B6B83F4C;
-        Fri, 14 Sep 2018 01:52:57 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FD6760BE0;
-        Fri, 14 Sep 2018 01:52:42 +0000 (UTC)
-Date:   Fri, 14 Sep 2018 09:52:38 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Evan Green <evgreen@chromium.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        Janek Kotas <jank@cadence.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Li Wei <liwei213@huawei.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alex Lemberg <Alex.Lemberg@sandisk.com>
-Subject: Re: [PATCH RFC] scsi: ufs: Disable blk-mq for now
-Message-ID: <20180914015237.GC11059@ming.t460p>
-References: <20180913112848.7807-1-adrian.hunter@intel.com>
- <20180913120459.GA4965@ming.t460p>
- <e4d0c716-006a-72cb-0240-4ae5749b21b8@intel.com>
+        Fri, 14 Sep 2018 03:07:27 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33216 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeINHH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 03:07:26 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b30-v6so3442042pla.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 18:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=O4OKcV2sMFnGzGzL/9+Cpt1JG7IyKFHG/ze9KlVPzA0=;
+        b=d8Iuyid4O4UR0LnbyvNqzDW6kCvfrxb1hG0Q/YhEXX+4tkVd2hJP+894oZoMd1BLhH
+         9dI0ZdoI5Wbb0bep1m813xEuBOOrZA/YzCb+CUe7vkaxMyQW/Spsxq0ws1iE9iDFnWvs
+         28D62d2DMFbxniR0LFlTxq2idIWY2t4FIK3UWvDDalHwla3lHx2SG8N0TfJG6YwB/7nJ
+         4f9DP/OrH5cLnjMiVHEmQ3T7FdbN8Gd68n+2sR34T3KTQ0rhonC4xnKdSGTnmf/U8oaU
+         +/Wl4RlbPiLfY0bvcoCbjdK45QlGpNz6ymJKrQ7oNEFzhx0N/KVELxLq4GfsI1LVV1jV
+         zmRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=O4OKcV2sMFnGzGzL/9+Cpt1JG7IyKFHG/ze9KlVPzA0=;
+        b=A6JDAgVxzAxgtx4y492T8HfgPgEGKR1CL0bz1IYz49KOlim3AxGzM6A0G0qNJby5/c
+         SitUYkLGzwP4waiWW51A3ezrWsER/IPSQfkvueAI3kr3ZP/+tQqBBBz7uO9o5M6lGpky
+         qyVt7a+Pd7XMYC4/DAw7wGu6uttThCAYhZUhmyPCRpB58ZG1Lv7Jo0GheYQX5+qz4X72
+         B9cdKbomcdc14YGsBmBbORCMkpU4YROc728dErn0xg5+a/79kl335bjKa0Xa4ZlvkbCi
+         +iwhWCjKXU/ypzNCQwIKgto+ls6HgolXcToUX6D93fg6GpOHyHgbcHf3AdVP6Hl7aLEQ
+         CIZg==
+X-Gm-Message-State: APzg51AJ03v0OCMaI6Fx2rH42LOr/UwoSXsJ017nYUebo1XfT4OMyWBs
+        YnAEGVaeURj85BwqcI/99PA=
+X-Google-Smtp-Source: ANB0VdZ8Ji2mXxU3U2RUHKmTSspC4evHo0JnXRUH2+XQgNfCJ/uRG0JekAGmZ9zuTGL+4bJbcDu1Kw==
+X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr9516550plg.57.1536890121399;
+        Thu, 13 Sep 2018 18:55:21 -0700 (PDT)
+Received: from localhost ([39.7.18.191])
+        by smtp.gmail.com with ESMTPSA id b21-v6sm13608691pfm.97.2018.09.13.18.55.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Sep 2018 18:55:20 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 10:55:16 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        penguin-kernel@i-love.sakura.ne.jp,
+        kbuild test robot <fengguang.wu@intel.com>, pmladek@suse.com,
+        syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+Message-ID: <20180914015516.GA1108@jagdpanzerIV>
+References: <20180620091541.GB444@jagdpanzerIV>
+ <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
+ <20180620110759.GD444@jagdpanzerIV>
+ <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+ <CAG_fn=XuZo5yrZzVizP26iV6eFfJtAHUs4NsDFXFyvnaJkdSQw@mail.gmail.com>
+ <20180912065307.GA606@jagdpanzerIV>
+ <20180912120548.4280f04a@vmware.local.home>
+ <20180913071204.GA604@jagdpanzerIV>
+ <20180913211232.06e6ad64@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e4d0c716-006a-72cb-0240-4ae5749b21b8@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 14 Sep 2018 01:52:58 +0000 (UTC)
+In-Reply-To: <20180913211232.06e6ad64@vmware.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 03:15:39PM +0300, Adrian Hunter wrote:
-> On 13/09/18 15:05, Ming Lei wrote:
-> > On Thu, Sep 13, 2018 at 02:28:48PM +0300, Adrian Hunter wrote:
-> >> blk-mq does not support runtime pm, so disable blk-mq support for now.
-> > 
-> > So could you describe a bit what the issue you are trying to fix?
+On (09/13/18 21:12), Steven Rostedt wrote:
+> >  
+> > +#define __SEQ_BUF_INITIALIZER(buf, length) {				\
+> > +	.buffer			= (buf),				\
+> > +	.size			= (length),				\
+> > +	.len			= 0,					\
+> > +	.readpos		= 0, }
 > 
-> UFS is a low-power solution, so we must be able to runtime suspend.
+> Nit, but the end bracket '}' should be on it's own line. Even when
+> part of a macro.
+
+No prob, will change.
+
+I thought about putting it on its own line, but then checked
+include/linux/wait.h - __WAITQUEUE_INITIALIZER and
+__WAIT_QUEUE_HEAD_INITIALIZER.
+
+> > +#define DEFINE_PR_LINE(lev, name)					\
+> > +	char		__line[__PR_LINE_BUF_SZ];			\
 > 
-> > 
-> > This is host level runtime PM you are trying to address, and if blk-mq
-> > runtime isn't enabled, I guess the host won't be runtime suspended at all
-> > because some of its descendant are always active.
-> > 
-> > So seems we need to do nothing for preventing the host controller from
-> > entering runtime suspend.
+> To protect against name space collision could you use:
 > 
-> We don't want to prevent the host controller from runtime suspending, quite
-> the opposite.
+> 	char		__line_##name[__PR_LINE_BUF_SZ];
 
-OK, got it.
+Yes.
 
-However, in previous discussion, it is strongly objected to use
-per-driver/device .use_blk_mq switch, so not sure if this way can
-be accepted.
+> The rest looks fine to me.
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-BTW, I just posted the runtime PM enablement patches[1] for blk-mq,
-and I verified that it works fine and passed blktests & xfstest & my
-other sanity tests, could you try it on UFS?
+Thanks.
 
-[1] https://marc.info/?l=linux-block&m=153684095523409&w=2
+Just, to make sure, we are OK with seq_buf dependency and want
+anyone who wants to use pr_line to include linux/seq_buf.h?
 
-Thanks,
-Ming
+	-ss
