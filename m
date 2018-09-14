@@ -2,124 +2,86 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F3BFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BE8ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAE220882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTxdPcWp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAE220882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5F7AC20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 12:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7AC20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbeINR10 (ORCPT
+        id S1727999AbeINR32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 13:27:26 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53522 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbeINR10 (ORCPT
+        Fri, 14 Sep 2018 13:29:28 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:33714 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbeINR31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 13:27:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b19-v6so1718279wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 05:13:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PilsJ2yt8Dc/NO7/jP/6FxhAqs4vfIXRQyPe0pg/H+4=;
-        b=VTxdPcWpkJsDcyYYzddtsccrSpEvclILesA/VQ+D4aKkSOcXWSDqFFPrS6ZaVfVQhO
-         deCvY0H3mANoi2pnkGs6SRQ7ixfb3NcjMoZWaPbvXxc1g5lNc1yZ/xKiA9MCQsYGPR1r
-         uhdP13OpcvtFWeKNA35K9/vAE+uLL4WxB8TaWrU5/HrkehkpWRnfX0CRlUfx2lvOVEKR
-         ylJ0RjBeOqmTlKTFNpwM3W5OMtewKPUNYm1edi6RBiFZMk9AIo8NYI/Wc1LZSf0oYYEF
-         xM4FAucfwNSLgjVao6aaTjh9JbyaDWwvZ9OT+81wLNftCnyTQilJn5gmo7tm4Q0cLBtr
-         J/VA==
+        Fri, 14 Sep 2018 13:29:27 -0400
+Received: by mail-vs1-f65.google.com with SMTP id y12-v6so414713vsm.0;
+        Fri, 14 Sep 2018 05:15:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PilsJ2yt8Dc/NO7/jP/6FxhAqs4vfIXRQyPe0pg/H+4=;
-        b=jfCm3YbeddmkiqDSRCBsYC5rsb2iKQAlEWYavqkuqr5uKqrqEMLSfS1ia+sabV29e3
-         dDjyyocLjCqG3Cum/AzjI0QLnjxkWP0RTjTpGtBDYEZNnZzJhVKPQLcAYeGlVYdz6QuH
-         teSN9+ekz28rmZrUUJRRrwKSFg7dR/T6xlJmrflRYGIGnCSHAcSWmNlf35R82NDURMtK
-         GXDIJitJfWkurxSnLOzzO7niMAJwNsssDRGf+HWSYJrgBzPMiiI6s99JQtlPvzU8xOly
-         XWkPXFwwsWH4KhWMA5Cr5ht9sBUbjrP99x4KVAWFLKEmsaEBKQoQEQKZN0JVKOyAb80k
-         J3qw==
-X-Gm-Message-State: APzg51BgwvP+qBYwrssPGn0VG2bp1rLLNzqbVLShusNiwZwwq9mSfWcM
-        m5hgdq5uFXfZ1Y+QeA5lP6E=
-X-Google-Smtp-Source: ANB0VdaJeME89oZmNOo1AAvmCzxGvciDJEfA1NNndrb9ZxIXAkDgFCJqxcFiNGi3U+UpUjzf3zPFdg==
-X-Received: by 2002:a1c:1d87:: with SMTP id d129-v6mr2046233wmd.34.1536927190588;
-        Fri, 14 Sep 2018 05:13:10 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 204-v6sm3040991wmh.25.2018.09.14.05.13.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 05:13:09 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 14:13:07 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914121307.GA98534@gmail.com>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
- <20180914082307.GF24224@krava>
- <20180914094022.GB96351@gmail.com>
- <20180914111528.GH24124@hirez.programming.kicks-ass.net>
- <20180914114725.GB17042@krava>
- <20180914120129.GJ24124@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TnAporKSKQZKo9BuIVGiI3H1Ktz29aeUJJ/WYAPWURM=;
+        b=e0K5mgnQfC0Vu8xOPS5i81yBAF1Rvz9nvAwYSTPfwnB9g9p+Lmj8NojOHmvjt2AY62
+         TJeESEoX1ndtKVxjWoocHBwNHgxMokHXrGIEh7arbaeFFHIKvzNvVzS2hdhCRtFsczBI
+         xcAfk/mqoyrbPnUDQi1YyqVRW/M+d02KbP3u3v9OHs3wt2Shb3jYyT/HP8E5aWM1QMps
+         4feRpDo7S1ycsLsgTtFj2xcoIcheXnrCqfVrxp+7WtyCq16BiIhUq6Wo0QPKWJdElqPh
+         6GYpo3cnYSZmUDG4fLnXSpCwjjzP4IBv4+i03jYd1XOivRRnfb+sys+zFyOzvV7Lub4M
+         4uoQ==
+X-Gm-Message-State: APzg51B+ffDCRTAwP+7Id/0WzU/9+2+tWjc1sigTG2kXNzdK+sUArSGz
+        Jzmwsca9maYEVSE0hyCroLfzT878AOBQNomzp1o=
+X-Google-Smtp-Source: ANB0VdbU0e9s+tihQZa+5a+NhqeACj7QPK5Yu/v9tNu9Xv41MNSDtyRB2EqXFcCvQNJqS0rBWYaySkk0iUUS4ryf4as=
+X-Received: by 2002:a67:cd07:: with SMTP id u7-v6mr4161634vsl.78.1536927313577;
+ Fri, 14 Sep 2018 05:15:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914120129.GJ24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180913151716.6333-1-wsa+renesas@sang-engineering.com> <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180913151716.6333-2-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 14 Sep 2018 14:15:01 +0200
+Message-ID: <CAMuHMdV_xpj62BkqwoTAaaugM3BkDRQTC=E0cEDqKBg3sUYNBg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] ARM: dma-mapping: update comment about handling
+ dma_ops when detaching from IOMMU
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 13, 2018 at 5:18 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Update the comment because we don't set the pointer to NULL anymore.
+> Also use the correct pointer name 'dma_ops' instead of 'dma_map_ops'.
+>
+> Fixes: 1874619a7df4 ("ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+Nice catch!
 
-> On Fri, Sep 14, 2018 at 01:47:25PM +0200, Jiri Olsa wrote:
-> > On Fri, Sep 14, 2018 at 01:15:28PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Sep 14, 2018 at 11:40:22AM +0200, Ingo Molnar wrote:
-> > > > In fact keeping the files separate has scalability advantages for 'perf report' and similar 
-> > > > parsing tools: they could read all the streams in a per-CPU fashion already, from the very 
-> > > > beginning.
-> > > 
-> > > Also writing to different files from different CPUs is good for record,
-> > > less contention on the inode state (which include pagecache).
-> > 
-> > maybe I should explain a little bit more on this
-> > 
-> > we write to different (per-cpu) files during the record,
-> > and at the end of the session, we take them and store
-> > them inside perf.data
-> 
-> How long does it take to combine that? If we generated a lot of data,
-> that could take a fair amount of time, no?
-> 
-> I feel that record should not mysteriously 'hang' when it is done. It
-> used to do that at some point because of that stupid .debug crap, but
-> acme fixed that I think.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Agreed - plus at the report stage it would be advantageous to be able to *read* per-cpu files 
-as well.
+Gr{oetje,eeting}s,
 
-If we do things smartly them report will create similar NUMA affinity as the record session 
-used.
+                        Geert
 
-Thanks,
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	Ingo
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
