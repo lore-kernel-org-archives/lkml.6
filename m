@@ -2,118 +2,89 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D909ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63EDECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB7C2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:45:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB7C2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BC6220882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC6220882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeINVAP (ORCPT
+        id S1728090AbeINVDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:00:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeINVAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:00:15 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD37430832F2;
-        Fri, 14 Sep 2018 15:45:10 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01C3B67645;
-        Fri, 14 Sep 2018 15:45:07 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        devel@linuxdriverproject.org,
-        virtualization@lists.linux-foundation.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 02/11] x86/time: Implement clocksource_arch_init()
-References: <20180914125006.349747096@linutronix.de>
-        <20180914125118.293161327@linutronix.de>
-Date:   Fri, 14 Sep 2018 17:45:06 +0200
-In-Reply-To: <20180914125118.293161327@linutronix.de> (Thomas Gleixner's
-        message of "Fri, 14 Sep 2018 14:50:08 +0200")
-Message-ID: <87zhwk6q2l.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 14 Sep 2018 17:03:19 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:35602 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeINVDS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:03:18 -0400
+X-IronPort-AV: E=Sophos;i="5.53,373,1531810800"; 
+   d="scan'208";a="19979051"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Sep 2018 08:48:13 -0700
+Received: from tenerife.corp.atmel.com (10.10.76.4) by
+ chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
+ 14.3.352.0; Fri, 14 Sep 2018 08:48:13 -0700
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+To:     <netdev@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        <devicetree@vger.kernel.org>,
+        "Nicolas Ferre" <nicolas.ferre@microchip.com>
+Subject: [PATCH] net: macb: disable scatter-gather for macb on sama5d3
+Date:   Fri, 14 Sep 2018 17:48:10 +0200
+Message-ID: <20180914154811.12090-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 14 Sep 2018 15:45:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+Create a new configuration for the sama5d3-macb new compatibility string.
+This configuration disables scatter-gather because we experienced lock down
+of the macb interface of this particular SoC under very high load.
 
-> Runtime validate the VCLOCK_MODE in clocksource::archdata and disable
-> VCLOCK if invalid, which disables the VDSO but keeps the system running.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  arch/x86/Kconfig       |    1 +
->  arch/x86/kernel/time.c |   16 ++++++++++++++++
->  2 files changed, 17 insertions(+)
->
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -48,6 +48,7 @@ config X86
->  	select ACPI_SYSTEM_POWER_STATES_SUPPORT	if ACPI
->  	select ANON_INODES
->  	select ARCH_CLOCKSOURCE_DATA
-> +	select ARCH_CLOCKSOURCE_INIT
->  	select ARCH_DISCARD_MEMBLOCK
->  	select ARCH_HAS_ACPI_TABLE_UPGRADE	if ACPI
->  	select ARCH_HAS_DEBUG_VIRTUAL
-> --- a/arch/x86/kernel/time.c
-> +++ b/arch/x86/kernel/time.c
-> @@ -10,6 +10,7 @@
->   *
->   */
->
-> +#include <linux/clocksource.h>
->  #include <linux/clockchips.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> @@ -105,3 +106,18 @@ void __init time_init(void)
->  {
->  	late_time_init = x86_late_time_init;
->  }
-> +
-> +/*
-> + * Sanity check the vdso related archdata content.
-> + */
-> +void clocksource_arch_init(struct clocksource *cs)
-> +{
-> +	if (cs->archdata.vclock_mode == VCLOCK_NONE)
-> +		return;
-> +
-> +	if (cs->archdata.vclock_mode >= VCLOCK_MAX) {
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/net/ethernet/cadence/macb_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-It should be '>' as VCLOCK_MAX == VCLOCK_HVCLOCK == 3
-
-> +		pr_warn("clocksource %s registered with invalid vclock_mode %d. Disabling vclock.\n",
-> +			cs->name, cs->archdata.vclock_mode);
-> +		cs->archdata.vclock_mode = VCLOCK_NONE;
-> +	}
-> +}
-
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 16e4ef7d7185..f1a86b422617 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3837,6 +3837,13 @@ static const struct macb_config at91sam9260_config = {
+ 	.init = macb_init,
+ };
+ 
++static const struct macb_config sama5d3macb_config = {
++	.caps = MACB_CAPS_SG_DISABLED
++	      | MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
++	.clk_init = macb_clk_init,
++	.init = macb_init,
++};
++
+ static const struct macb_config pc302gem_config = {
+ 	.caps = MACB_CAPS_SG_DISABLED | MACB_CAPS_GIGABIT_MODE_AVAILABLE,
+ 	.dma_burst_length = 16,
+@@ -3904,6 +3911,7 @@ static const struct of_device_id macb_dt_ids[] = {
+ 	{ .compatible = "cdns,gem", .data = &pc302gem_config },
+ 	{ .compatible = "atmel,sama5d2-gem", .data = &sama5d2_config },
+ 	{ .compatible = "atmel,sama5d3-gem", .data = &sama5d3_config },
++	{ .compatible = "atmel,sama5d3-macb", .data = &sama5d3macb_config },
+ 	{ .compatible = "atmel,sama5d4-gem", .data = &sama5d4_config },
+ 	{ .compatible = "cdns,at91rm9200-emac", .data = &emac_config },
+ 	{ .compatible = "cdns,emac", .data = &emac_config },
 -- 
-  Vitaly
+2.15.1
+
