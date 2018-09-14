@@ -3,24 +3,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8ACECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E29ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF0E20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF0E20881
+	by mail.kernel.org (Postfix) with ESMTP id 1FEF020881
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEF020881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeIOBvy (ORCPT
+        id S1728411AbeIOBvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 14 Sep 2018 21:51:54 -0400
-Received: from mga05.intel.com ([192.55.52.43]:60388 "EHLO mga05.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:60391 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727716AbeIOBvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728358AbeIOBvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Sep 2018 21:51:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from fmsmga006.fm.intel.com ([10.253.24.20])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 13:35:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,374,1531810800"; 
-   d="scan'208";a="263593793"
+   d="scan'208";a="263593816"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga006.fm.intel.com with ESMTP; 14 Sep 2018 13:35:44 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -40,9 +40,9 @@ Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
         "Chen Yu" <yu.c.chen@intel.com>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, "Fenghua Yu" <fenghua.yu@intel.com>
-Subject: [PATCH 1/9] x86/intel_rdt: Fix MBA parsing callback
-Date:   Fri, 14 Sep 2018 13:32:01 -0700
-Message-Id: <1536957129-70380-2-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH 6/9] x86/intel_rdt: Do not allow pseudo-locking of MBA resource
+Date:   Fri, 14 Sep 2018 13:32:06 -0700
+Message-Id: <1536957129-70380-7-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1536957129-70380-1-git-send-email-fenghua.yu@intel.com>
 References: <1536957129-70380-1-git-send-email-fenghua.yu@intel.com>
@@ -51,116 +51,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaochen Shen <xiaochen.shen@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
 
-Each resource is associated with a parsing callback to parse the
-data provided from user space when writing schemata file.
+A system supporting pseudo-locking may have MBA as well as CAT
+resources of which only the CAT resources could support cache
+pseudo-locking. When the schemata to be pseudo-locked is provided it
+should be checked that that schemata does not attempt to pseudo-lock a
+MBA resource.
 
-Commit 9ab9aa15c309 ("x86/intel_rdt: Ensure requested schemata
-respects mode") changes the first parameter 'data' of parse_ctrlval()
-from string to a pointer to a structure. parse_ctrlval() could point
-to two functions parse_cbm() and parse_bw() and both of the
-functions should be changed to take the different type of parameter
-'data'. But the commit only changes parse_cbm(), not parse_bw().
-Thus, parse_bw() takes wrong 'data' parameter and causes failure
-of parsing MBA throttle value.
-
-To fix the issue, parse_bw() should handle its first parameter as
-right structure instead of a string.
-
-Fixes: 9ab9aa15c309 ("x86/intel_rdt: Ensure requested schemata respects mode")
-
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
+Fixes: e0bdfe8e3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h             |  2 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 24 ++++++++++-----------
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 4e588f36228f..8c30772e37ed 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -432,7 +432,7 @@ struct rdt_resource {
- };
- 
- int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d);
--int parse_bw(void *_buf, struct rdt_resource *r,  struct rdt_domain *d);
-+int parse_bw(void *_data, struct rdt_resource *r, struct rdt_domain *d);
- 
- extern struct mutex rdtgroup_mutex;
- 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index af358ca05160..d427c86e7cd0 100644
+index d427c86e7cd0..44b7a689d083 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -28,6 +28,11 @@
- #include <linux/slab.h>
- #include "intel_rdt.h"
- 
-+struct rdt_parse_data {
-+	struct rdtgroup		*rdtgrp;
-+	char			*buf;
-+};
-+
- /*
-  * Check whether MBA bandwidth percentage value is correct. The value is
-  * checked against the minimum and max bandwidth values specified by the
-@@ -64,19 +69,19 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
- 	return true;
- }
- 
--int parse_bw(void *_buf, struct rdt_resource *r, struct rdt_domain *d)
-+int parse_bw(void *_data, struct rdt_resource *r, struct rdt_domain *d)
- {
--	unsigned long data;
--	char *buf = _buf;
-+	struct rdt_parse_data *data = _data;
-+	unsigned long bw_val;
- 
- 	if (d->have_new_ctrl) {
- 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
- 		return -EINVAL;
- 	}
- 
--	if (!bw_validate(buf, &data, r))
-+	if (!bw_validate(data->buf, &bw_val, r))
- 		return -EINVAL;
--	d->new_ctrl = data;
-+	d->new_ctrl = bw_val;
- 	d->have_new_ctrl = true;
- 
- 	return 0;
-@@ -123,18 +128,13 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
- 	return true;
- }
- 
--struct rdt_cbm_parse_data {
--	struct rdtgroup		*rdtgrp;
--	char			*buf;
--};
--
- /*
-  * Read one cache bit mask (hex). Check that it is valid for the current
-  * resource type.
-  */
- int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
- {
--	struct rdt_cbm_parse_data *data = _data;
-+	struct rdt_parse_data *data = _data;
- 	struct rdtgroup *rdtgrp = data->rdtgrp;
- 	u32 cbm_val;
- 
-@@ -195,7 +195,7 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
- static int parse_line(char *line, struct rdt_resource *r,
- 		      struct rdtgroup *rdtgrp)
- {
--	struct rdt_cbm_parse_data data;
-+	struct rdt_parse_data data;
- 	char *dom = NULL, *id;
+@@ -200,6 +200,12 @@ static int parse_line(char *line, struct rdt_resource *r,
  	struct rdt_domain *d;
  	unsigned long dom_id;
+ 
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
++	    r->rid == RDT_RESOURCE_MBA) {
++		rdt_last_cmd_puts("Cannot pseudo-lock MBA resource\n");
++		return -EINVAL;
++	}
++
+ next:
+ 	if (!line || line[0] == '\0')
+ 		return 0;
 -- 
 2.19.0
 
