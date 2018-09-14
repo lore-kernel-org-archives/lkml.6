@@ -2,87 +2,84 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6281FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD5ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE9320671
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:10:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE9320671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id D4DE820671
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 15:10:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4DE820671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbeINUZM (ORCPT
+        id S1728169AbeINUZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 16:25:12 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35264 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbeINUZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 16:25:12 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1g0pjX-00088I-Dx; Fri, 14 Sep 2018 15:10:11 +0000
-Date:   Fri, 14 Sep 2018 16:10:11 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHES] tty ioctls cleanups, compat and not only
-Message-ID: <20180914151011.GZ19965@ZenIV.linux.org.uk>
-References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
- <CAK8P3a2LpC6sw5KQ_6kcXKNfgUXkjsxbFkD30kdMgQjurGgy9Q@mail.gmail.com>
- <20180913203145.GU19965@ZenIV.linux.org.uk>
- <CAK8P3a3LD58jnwP38OpnEWHMzAAfrqtfjHamWVU5PwaKoWyKjg@mail.gmail.com>
- <20180914022737.GX19965@ZenIV.linux.org.uk>
- <CAK8P3a0wN0uMZdj-mxXwbN9AnZjHzMU6_b01H5y+Vpdt+UoeAw@mail.gmail.com>
+        Fri, 14 Sep 2018 16:25:35 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12139 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726902AbeINUZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 16:25:34 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F24A0AA3C414C;
+        Fri, 14 Sep 2018 23:10:31 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 14 Sep 2018 23:10:32 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <bskeggs@redhat.com>, <airlied@linux.ie>
+CC:     <seanpaul@chromium.org>, <daniel.vetter@ffwll.ch>,
+        <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm: nouveau: use match_string() helper to simplify the code
+Date:   Fri, 14 Sep 2018 22:58:16 +0800
+Message-ID: <1536937096-31093-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0wN0uMZdj-mxXwbN9AnZjHzMU6_b01H5y+Vpdt+UoeAw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 10:21:53AM +0200, Arnd Bergmann wrote:
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded implementation.
 
-> This does sound very appealing, but there is a small downside:
-> The difference between ".compat_ioctl = NULL" and
-> ".compat_ioctl=native_ioctl" is now very subtle, and I wouldn't
-> necessarily expect casual readers to understand that.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-???
+diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+index 6a4ca13..053d794 100644
+--- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
++++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+@@ -641,17 +641,13 @@ static int nv17_tv_create_resources(struct drm_encoder *encoder,
+ 	struct dcb_output *dcb = nouveau_encoder(encoder)->dcb;
+ 	int num_tv_norms = dcb->tvconf.has_component_output ? NUM_TV_NORMS :
+ 							NUM_LD_TV_NORMS;
+-	int i;
++	int index;
+ 
+ 	if (nouveau_tv_norm) {
+-		for (i = 0; i < num_tv_norms; i++) {
+-			if (!strcmp(nv17_tv_norm_names[i], nouveau_tv_norm)) {
+-				tv_enc->tv_norm = i;
+-				break;
+-			}
+-		}
+-
+-		if (i == num_tv_norms)
++		index = match_string(nv17_tv_norm_names, num_tv_norms, nouveau_tv_norm);
++		if (index >= 0)
++			tv_enc->tv_norm = index;
++		else
+ 			NV_WARN(drm, "Invalid TV norm setting \"%s\"\n",
+ 				nouveau_tv_norm);
+ 	}
+-- 
+1.7.12.4
 
-One is "all non-generics take pointers to wordsize-neutral objects",
-another "all non-generics take integers".
-
-That solution certainly needs to be documented more than just in commit
-message, though; IMO the method descriptions next to declaration are the
-best place for that.  Will update...
-
-> If we go with my file_operations patch for generic_compat_ioctl_ptrarg
-> and add generic_compat_ioctl_intarg, we can do the same thing here
-> with ldisc_compat_ioctl_ptrarg/ldisc_compat_ioctl_intarg to make it
-> a little more consistent with fops and self-documenting.
-
-No, we can't - ldisc ->ioctl() (or ->compat_ioctl()) doesn't get ldisc
-in arguments.  Besides, indirect calls are costly these days...
-
-> +        if (retval == -ENOIOCTLCMD && _IOC_TYPE(cmd) == 'T') {
-> +                 retval = tty_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-> +                 WARN_ON_ONCE(retval != -ENOIOCTLCMD && retval != -ENOTTY);
-> +        }
-> 
-> Seeing that you list every single 'T' command in tty_compat_ioctl()
-> that we handle in the native case, that WARN_ON_ONCE should not
-> trigger for any input, but it would catch (and warn about) any of those
-> that might get added in the future to the native code path without the
-> compat entry.
-
-Anything adding new ioctls needs careful review anyway.  And blind bets upon
-that stuff taking compat pointer are, AFAICS, completely unfounded.
