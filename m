@@ -2,68 +2,70 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F230ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE770ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA49E2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA49E2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 51D8620853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:13:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VsJI7+kF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D8620853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIOBVo (ORCPT
+        id S1728037AbeIOB35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:21:44 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:36322 "EHLO mail.ispras.ru"
+        Fri, 14 Sep 2018 21:29:57 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:35152 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726891AbeIOBVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:21:44 -0400
-Received: from localhost.localdomain (unknown [85.140.178.24])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 6EAD9540093;
-        Fri, 14 Sep 2018 23:05:42 +0300 (MSK)
-From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] spi: pic32-sqi: remove unnecessary of_node_get()
-Date:   Fri, 14 Sep 2018 23:05:34 +0300
-Message-Id: <1536955534-22978-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        id S1726969AbeIOB35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 21:29:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=sX2EW7TxJ0QDOs2iybpUaA5xkbrtSZiryHKRaGxs3zk=;
+        b=VsJI7+kFxBrrPEXlAOgeIkR99t7pX1xaMLq6MZwr/7kHCXVpLV0kZDys2bAmqnQwXRecOq7vzTnOze6T9a+pNlp6IFdkzFhoTqxxNHeM6LNi901ZWj88KxWAW7SwOYKfwMdIFad8H4Jh21NqCRsPacmJQpKywq4BT3o+9+Axsp0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g0uTP-0007PB-DL; Fri, 14 Sep 2018 22:13:51 +0200
+Date:   Fri, 14 Sep 2018 22:13:51 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Qing Huang <qing.huang@oracle.com>
+Cc:     Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tariqt@mellanox.com, davem@davemloft.net
+Subject: Re: [PATCH] net/mlx4_core: print firmware version during driver
+ loading
+Message-ID: <20180914201351.GE3811@lunn.ch>
+References: <20180914002514.27571-1-qing.huang@oracle.com>
+ <20180914044314.GC5257@mtr-leonro.mtl.com>
+ <c580ad9d-b63d-743b-2278-1c4cf3553186@oracle.com>
+ <20180914181718.GD3811@lunn.ch>
+ <c332f10a-5ad0-53fd-5111-1964443b3092@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c332f10a-5ad0-53fd-5111-1964443b3092@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Almost all spi drivers assign spi master->dev.of_node from
-its parent platform device without additional refcounting.
-It seems of_node_get() in pic32_sqi_probe() is unnecessary
-and there is no corresponding of_node_put().
+> >$ sudo ethtool -i eth0
+> >driver: r8169
+> >version: 2.3LK-NAPI
+> >firmware-version: rtl8168g-2_0.0.1 02/06/13
+> >
+> >     Andrew
 
-Found by Linux Driver Verification project (linuxtesting.org)
+> Sure. You can also use ibstat or ibv_devinfo tool if they are installed. But
+> it's not very convenient in some cases.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
----
- drivers/spi/spi-pic32-sqi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is the standardised way to do this. It should work for any
+Ethernet driver, so long as it fills in the needed information.
+Anything else is non-standard, and so inconvenient by definition.
 
-diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
-index bd1c6b53283f..62e6bf1f50b1 100644
---- a/drivers/spi/spi-pic32-sqi.c
-+++ b/drivers/spi/spi-pic32-sqi.c
-@@ -656,7 +656,7 @@ static int pic32_sqi_probe(struct platform_device *pdev)
- 	master->max_speed_hz	= clk_get_rate(sqi->base_clk);
- 	master->dma_alignment	= 32;
- 	master->max_dma_len	= PESQI_BD_BUF_LEN_MAX;
--	master->dev.of_node	= of_node_get(pdev->dev.of_node);
-+	master->dev.of_node	= pdev->dev.of_node;
- 	master->mode_bits	= SPI_MODE_3 | SPI_MODE_0 | SPI_TX_DUAL |
- 				  SPI_RX_DUAL | SPI_TX_QUAD | SPI_RX_QUAD;
- 	master->flags		= SPI_MASTER_HALF_DUPLEX;
--- 
-2.7.4
-
+	Andrew
