@@ -2,255 +2,181 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33B4ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8722EECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB472083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 316CD2083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 20:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4UDViX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB472083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hur8Fj33"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316CD2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeIOBU1 (ORCPT
+        id S1728090AbeIOBVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 21:20:27 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36032 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeIOBU1 (ORCPT
+        Fri, 14 Sep 2018 21:21:12 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:38584 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeIOBVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 21:20:27 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x207-v6so8895553lff.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 13:04:26 -0700 (PDT)
+        Fri, 14 Sep 2018 21:21:12 -0400
+Received: by mail-yw1-f65.google.com with SMTP id n21-v6so3130703ywh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 13:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dlTQg9fsytfPzq/qZPTHJTgOY6GoYyuL3sGfWFlpG34=;
-        b=a4UDViX089mqEg8h+DWDEPpaYKGlNYm0wWN2zE6XaRrr98N3x/WyND/jHDpAgjMoi4
-         i9hVFUQEErIN1MfTyyk5kArnX9NcmMdfTqnBEKtimCDraog/vhe2AYhgbBCxNnmqArOt
-         VxOguAyj3RxabVgxAFghiYg2RoIsMSQQDj04lzSkFQxCHEa5ghSXys2TrWdhHHM9+Upj
-         OuWYcVdRWUUBaHCw2S5wXLOvD+KAdXishGiduwfJKSePwBz4vcetVV0cvQDB24cp12+y
-         kC7PhBK+Nmu7qhPR3ny1D7nJU7r+0op6enduLe9omufwioPIQjKuiurjJs42kvWRwAg+
-         5J3Q==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zBskjrVMgqPEtHZdixoZMRt82wo8eCH0rW4627hLC/s=;
+        b=hur8Fj33JRnrmzK4sOB4meOd3I6kV8UW4eKYVEWQuKg/rP1HEs95a9ofholYTwLZDW
+         S3zZIXLe4HqQG5uPLfHeo6t6TZ7lqlJ9XrncVkPoVaUvVR0AzGc9MKpsrQTySMyDT6q5
+         YKyPIrVWPShCZrcByC35jfIpAujXq9CQ256pw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dlTQg9fsytfPzq/qZPTHJTgOY6GoYyuL3sGfWFlpG34=;
-        b=LhMb4TJFGA0HbodmayVCTxt5ekrQ1eewGsWotjq+fkQzU+qBkhaAhxIx6T5zXpwsoX
-         cJ1MfoDRKPEBJs0aFy+iuOCJUtez21FO3iFMy6U/2DTAUQZXgLp9cKznBuXeXqH5Bz5y
-         FipB+r1qPleZp9kr51JVKcCeq46qXRcOgobjzDRDPbCOIA1UJ/5jz2UGww+cBvmhaI10
-         hAOPQVlLlWld6Hwb2Sb/t0sWrjrZ+omk5R5+lkxbh7AFaYL71axPyjjlBIwzeV74x11X
-         SX51z/O1B0ufk8fNn/blFgIkrfCBcEsCtZtpFciQzyH/9uVOSIijgnvrOj/x62RD9OBM
-         5wMw==
-X-Gm-Message-State: APzg51A4/DWKSlzPkLPSBNX6tv2rP8hh/ZmhZsRaTf85eP9cSc4uIN+p
-        d6dMqG4g8ZEbpOSr+BpDcjU=
-X-Google-Smtp-Source: ANB0VdbYWnhtZA8Egqk8zuFeeoajgylfqsoQEL+4yUeBeQmP0yBdOgVz8c/G16zSJAh78U6uAN5R5Q==
-X-Received: by 2002:a19:501a:: with SMTP id e26-v6mr2631058lfb.71.1536955465628;
-        Fri, 14 Sep 2018 13:04:25 -0700 (PDT)
-Received: from localhost.localdomain (staticline22297.toya.net.pl. [217.113.232.143])
-        by smtp.googlemail.com with ESMTPSA id n129-v6sm1458695lfb.3.2018.09.14.13.04.23
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zBskjrVMgqPEtHZdixoZMRt82wo8eCH0rW4627hLC/s=;
+        b=To4448KTENb2lKo5Z9+n8S/jgksusFjXe2t2ZfGvXznksm9eWA4s0cZPzFIV9v47m4
+         VV6orctuqh8uo6oJ1qYi01SYBg24kplXZqhio2KR8lvDa9FL11bOitx2xRUdTL1MKzGe
+         KTt4UAkZocVVK+m85Vtd4Qyks+hG8n+udzUSdtVwaXCHa0tjtlbUseUzAjHhtzk8Gpdc
+         UgOvIPPftBIz+b8T6Vb+aQHzNPvdy0/UbNg62RnmiRBPfWM0qLM1FIFgYM/62QFKaKeH
+         336mMclHU1H5XsPfY6v5PnBxFuVytietoOqZ6OAF0MmxmFAm9xoxF2KcfiCCHGhO5k1m
+         ih1g==
+X-Gm-Message-State: APzg51CSjElZWFnICOluKRmrzKji+HpMH8FXJ/dWoMM3t64VD/UuIMOI
+        XMhAko3S3sAHjw/APKDqxlep3rLpPFU=
+X-Google-Smtp-Source: ANB0VdaCLYoTg44Tk8IdBQmUjgA3aS20bEOTHDu+lacJVhpUy+kNH9tXEdgClocQUu2DApoR+ugqHw==
+X-Received: by 2002:a81:7484:: with SMTP id p126-v6mr6186703ywc.287.1536955511389;
+        Fri, 14 Sep 2018 13:05:11 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id w207-v6sm10598398yww.17.2018.09.14.13.05.08
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 13:04:24 -0700 (PDT)
-From:   =?UTF-8?q?Robert=20W=C4=99c=C5=82awski?= <r.weclawski@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     dan.carpenter@oracle.com,
-        =?UTF-8?q?Robert=20W=C4=99c=C5=82awski?= <r.weclawski@gmail.com>,
-        Michael Straube <straube.linux@gmail.com>,
-        Janani Sankara Babu <jananis37@gmail.com>,
-        =?UTF-8?q?Kacper=20Ko=C5=82odziej?= <kacper@kolodziej.it>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Santha Meena Ramamoorthy <santhameena13@gmail.com>,
-        Valentine Sinitsyn <valentine.sinitsyn@gmail.com>,
-        Aishwarya Pant <aishpant@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Mihaela Muraru <mihaela.muraru21@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8188eu: remove code that is valid only for 5 GHz
-Date:   Fri, 14 Sep 2018 22:04:05 +0200
-Message-Id: <20180914200411.19059-1-r.weclawski@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 14 Sep 2018 13:05:09 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id y20-v6so5286370ybi.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 13:05:08 -0700 (PDT)
+X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr6285244ybh.209.1536955508417;
+ Fri, 14 Sep 2018 13:05:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 13:05:07
+ -0700 (PDT)
+In-Reply-To: <2bc5e4f5-8429-6843-f255-8fab6dacf39b@schaufler-ca.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+ <99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com> <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+ <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+ <CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
+ <CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
+ <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
+ <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
+ <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
+ <CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
+ <d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com> <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+ <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com> <CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
+ <2bc5e4f5-8429-6843-f255-8fab6dacf39b@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 14 Sep 2018 13:05:07 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jL2LjPhLsx2bQJQdj4GraTDakYTqb3fqUbWGrOfUsW8=w@mail.gmail.com>
+Message-ID: <CAGXu5jL2LjPhLsx2bQJQdj4GraTDakYTqb3fqUbWGrOfUsW8=w@mail.gmail.com>
+Subject: Re: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove code that is used only for 5 GHz.
-This addresses the below TODO item:
+On Fri, Sep 14, 2018 at 8:57 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/13/2018 5:19 PM, Kees Cook wrote:
+>> We already have the minor LSMs that cannot change order.
+>
+> Are you saying that we don't have a mechanism to change
+> the order, or that they wouldn't work right in a different
+> order? Well, there's the capability module that has to be
+> first.
 
-- find and remove remaining code valid only for 5 GHz. Most of the obvious
-  ones have been removed, but things like channel > 14 still exist.
+I just meant their order is explicit in security.c.
 
-Signed-off-by: Robert Węcławski <r.weclawski@gmail.com>
----
-Changes in v2:
-- set pdev_network->NetworkTypeInUse to Ndis802_110FDM24 in default case
+>> They aren't
+>> part of security= parsing either.
+>
+> True, but there's no reason now that we couldn't change that.
+> Except for capability. Hmm.
 
- drivers/staging/rtl8188eu/core/rtw_ap.c       | 23 ++++++-----------
- drivers/staging/rtl8188eu/core/rtw_debug.c    | 25 +------------------
- drivers/staging/rtl8188eu/core/rtw_mlme.c     | 12 +--------
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 13 +---------
- 4 files changed, 10 insertions(+), 63 deletions(-)
+Right, we have at least one that MUST be first (and must not be disabled).
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ap.c b/drivers/staging/rtl8188eu/core/rtw_ap.c
-index e611eda11b5f..1c319c2ca86d 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ap.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ap.c
-@@ -337,8 +337,6 @@ void add_RATid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
- 	unsigned char sta_band = 0, raid, shortGIrate = false;
- 	unsigned int tx_ra_bitmap = 0;
- 	struct ht_priv	*psta_ht = NULL;
--	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
--	struct wlan_bssid_ex *pcur_network = (struct wlan_bssid_ex *)&pmlmepriv->cur_network.network;
- 
- 	if (psta)
- 		psta_ht = &psta->htpriv;
-@@ -363,20 +361,13 @@ void add_RATid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
- 		shortGIrate = psta_ht->sgi;
- 	}
- 
--	if (pcur_network->Configuration.DSConfig > 14) {
--		/*  5G band */
--		if (tx_ra_bitmap & 0xffff000)
--			sta_band |= WIRELESS_11_5N | WIRELESS_11A;
--		else
--			sta_band |= WIRELESS_11A;
--	} else {
--		if (tx_ra_bitmap & 0xffff000)
--			sta_band |= WIRELESS_11_24N | WIRELESS_11G | WIRELESS_11B;
--		else if (tx_ra_bitmap & 0xff0)
--			sta_band |= WIRELESS_11G | WIRELESS_11B;
--		else
--			sta_band |= WIRELESS_11B;
--	}
-+	if (tx_ra_bitmap & 0xffff000)
-+		sta_band |= WIRELESS_11_24N | WIRELESS_11G | WIRELESS_11B;
-+	else if (tx_ra_bitmap & 0xff0)
-+		sta_band |= WIRELESS_11G | WIRELESS_11B;
-+	else
-+		sta_band |= WIRELESS_11B;
-+
- 
- 	psta->wireless_mode = sta_band;
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_debug.c b/drivers/staging/rtl8188eu/core/rtw_debug.c
-index 67461fdf315c..6c2fe1a112ac 100644
---- a/drivers/staging/rtl8188eu/core/rtw_debug.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_debug.c
-@@ -153,13 +153,11 @@ int proc_get_best_channel(char *page, char **start,
- 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	int len = 0;
--	u32 i, best_channel_24G = 1, best_channel_5G = 36, index_24G = 0, index_5G = 0;
-+	u32 i, best_channel_24G = 1, index_24G = 0;
- 
- 	for (i = 0; pmlmeext->channel_set[i].ChannelNum != 0; i++) {
- 		if (pmlmeext->channel_set[i].ChannelNum == 1)
- 			index_24G = i;
--		if (pmlmeext->channel_set[i].ChannelNum == 36)
--			index_5G = i;
- 	}
- 
- 	for (i = 0; pmlmeext->channel_set[i].ChannelNum != 0; i++) {
-@@ -171,32 +169,11 @@ int proc_get_best_channel(char *page, char **start,
- 			}
- 		}
- 
--		/*  5G */
--		if (pmlmeext->channel_set[i].ChannelNum >= 36 &&
--		    pmlmeext->channel_set[i].ChannelNum < 140) {
--			/*  Find primary channel */
--			if (((pmlmeext->channel_set[i].ChannelNum - 36) % 8 == 0) &&
--			    (pmlmeext->channel_set[i].rx_count < pmlmeext->channel_set[index_5G].rx_count)) {
--				index_5G = i;
--				best_channel_5G = pmlmeext->channel_set[i].ChannelNum;
--			}
--		}
--
--		if (pmlmeext->channel_set[i].ChannelNum >= 149 &&
--		    pmlmeext->channel_set[i].ChannelNum < 165) {
--			/*  find primary channel */
--			if (((pmlmeext->channel_set[i].ChannelNum - 149) % 8 == 0) &&
--			    (pmlmeext->channel_set[i].rx_count < pmlmeext->channel_set[index_5G].rx_count)) {
--				index_5G = i;
--				best_channel_5G = pmlmeext->channel_set[i].ChannelNum;
--			}
--		}
- 		/*  debug */
- 		len += snprintf(page + len, count - len, "The rx cnt of channel %3d = %d\n",
- 					pmlmeext->channel_set[i].ChannelNum, pmlmeext->channel_set[i].rx_count);
- 	}
- 
--	len += snprintf(page + len, count - len, "best_channel_5G = %d\n", best_channel_5G);
- 	len += snprintf(page + len, count - len, "best_channel_24G = %d\n", best_channel_24G);
- 
- 	*eof = 1;
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index eca06f05c0c4..ef8a7dc4bd34 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -1819,18 +1819,8 @@ void rtw_update_registrypriv_dev_network(struct adapter *adapter)
- 	case WIRELESS_11BG_24N:
- 		pdev_network->NetworkTypeInUse = Ndis802_11OFDM24;
- 		break;
--	case WIRELESS_11A:
--	case WIRELESS_11A_5N:
--		pdev_network->NetworkTypeInUse = Ndis802_11OFDM5;
--		break;
--	case WIRELESS_11ABGN:
--		if (pregistrypriv->channel > 14)
--			pdev_network->NetworkTypeInUse = Ndis802_11OFDM5;
--		else
--			pdev_network->NetworkTypeInUse = Ndis802_11OFDM24;
--		break;
- 	default:
--		/*  TODO */
-+		pdev_network->NetworkTypeInUse = Ndis802_11OFDM24;
- 		break;
- 	}
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index 1115050077e4..213c8d670591 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -2401,10 +2401,7 @@ static void process_80211d(struct adapter *padapter, struct wlan_bssid_ex *bssid
- 			p++;
- 
- 			for (j = 0; j < noc; j++) {
--				if (fcn <= 14)
--					channel = fcn + j; /*  2.4 GHz */
--				else
--					channel = fcn + j*4; /*  5 GHz */
-+				channel = fcn + j;
- 
- 				chplan_ap.Channel[i++] = channel;
- 			}
-@@ -2481,14 +2478,6 @@ static void process_80211d(struct adapter *padapter, struct wlan_bssid_ex *bssid
- 				j++;
- 		}
- 
--		/*  keep original STA 5G channel plan */
--		while ((i < MAX_CHANNEL_NUM) && (chplan_sta[i].ChannelNum != 0)) {
--			chplan_new[k].ChannelNum = chplan_sta[i].ChannelNum;
--			chplan_new[k].ScanType = chplan_sta[i].ScanType;
--			i++;
--			k++;
--		}
--
- 		pmlmeext->update_channel_plan_by_ap_done = 1;
- 	}
- 
+>> Should "blob-sharing" LSMs be like major LSMs or minor LSMs?
+>
+> I like the idea of changing the minor modules to do the full
+> registration process. That would make them all the same.
+> Except for capability. In any case, the "blob-sharing" LSMs
+> need to do the full registration process to account for their
+> blobs sizes, and that brings the "major" behavior along with it.
+
+I agree. I'm working on some clean-ups that I'll send out soon, though
+I'm worried about some of the various boot-time options...
+
+>> If someone is booting with "security=selinux,tomoyo" and then SARA
+>> lands upstream, does that person have to explicitly add "sara" to
+>> their boot args, since they're doing a non-default list of LSMs?
+>
+> Yes. security= is explicit.
+>
+>> (I actually prefer the answer being "yes" here, FWIW, I just want to
+>> nail down the expectations.)
+>
+> For now let's leave the minor (capability, yama, loadpin) as they are,
+> and require all new modules of any flavor to use full registration.
+
+I would even be fine to convert yama and loadpin.
+
+> We could consider something like
+>
+> security=$lsm           # Stack with $lsm at priority 2 - Existing behavior
+> $lsm.stacked=N          # Add $lsm to the stack at priority N. Delete if N == 0
+>
+> It's OK to specify "selinux.stacked=2" and "sara.stacked=2". Which gets
+> called first is left up to the system to decide. Whatever the behavior is
+> gets documented. Capability will always be first and have priority 1.
+> It's OK to specify "smack.stacked=1".
+
+I'm less excited about this kind of stacking priority, but, whatever
+the case, I think my cleanups may help with whatever we decide.
+
+> The default stack is determined by CONFIG_SECURITY_$lsm_STACKED at
+> build time. CONFIG_SECURITY_$lsm_STACKED changes from a boolean to
+> an integer value to establish the default hook order.
+>
+> /sys/kernel/security/lsm reports the modules in hook call order.
+
+Didn't I send a patch to new-line terminate this list? I always get
+annoyed when I "cat" it. ;)
+
+> /sys/kernel/security/lsm-stack reports the list with the hook call priority
+>
+>         capability:1,yama:1,selinux:1,sara:5,landlack:17
+>
+> If stacking is not configured $lsm.stacked=0 is treated as security=none.
+> For other values of N $lsm.stacked=N is treated as security=$lsm.
+
+I feel like "order" is bad enough. Can we avoid adding "priority"?
+
+-Kees
+
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
