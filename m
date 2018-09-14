@@ -6,124 +6,215 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED62ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E2DFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B6E2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B6E2146E
+	by mail.kernel.org (Postfix) with ESMTP id 1AD6220853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:21:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD6220853
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeINSff (ORCPT
+        id S1728354AbeINSfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:35:35 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50031 "EHLO
+        Fri, 14 Sep 2018 14:35:54 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50018 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbeINSfd (ORCPT
+        with ESMTP id S1727013AbeINSfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Sep 2018 14:35:33 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g0o1v-0006pk-RJ; Fri, 14 Sep 2018 15:21:04 +0200
-Message-Id: <20180914131302.367192442@linutronix.de>
+        id 1g0o1u-0006pJ-EH; Fri, 14 Sep 2018 15:21:02 +0200
+Message-Id: <20180914131302.200606895@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 14 Sep 2018 15:09:26 +0200
+Date:   Fri, 14 Sep 2018 15:09:24 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [patch V2 09/10] x86/mm/cpa: Do the range check early
+Subject: [patch V2 07/10] x86/mm/cpa: Add sanity check for existing mappings
 References: <20180914130917.155416208@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-mm-cpa--Do-the-range-check-early.patch
+ filename=x86-mm-cpa--Add-sanity-check-for-existing-mappings.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid excessive 4k wise checks in the common case do a quick check first
-whether the requested new page protections conflict with a static
-protection area in the large page. If there is no conflict then the
-decision whether to preserve or to split the page can be made immediately.
+With the range check it is possible to do a quick verification that the
+current mapping is correct vs. the static protection areas.
 
-If the requested range covers the full large page, preserve it. Otherwise
-split it up. No point in doing a slow crawl in 4k steps.
-
-Before:
-
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  538
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages checked:               560642
- 4K pages set-checked:             7668
-
-After:
-
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  541
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages checked:                  514
- 4K pages set-checked:             7668
+In case a incorrect mapping is detected a warning is emitted and the large
+page is split up. If the large page is a 2M page, then the split code is
+forced to check the static protections for the PTE entries to fix up the
+incorrectness. For 1G pages this can't be done easily because that would
+require to either find the offending 2M areas before the split or
+afterwards. For now just warn about that case and revisit it when reported.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/mm/pageattr.c |   27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ arch/x86/mm/pageattr.c |   77 ++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 67 insertions(+), 10 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -850,10 +850,28 @@ static int __should_split_large_page(pte
- 	}
+@@ -37,12 +37,14 @@ struct cpa_data {
+ 	unsigned long	numpages;
+ 	int		flags;
+ 	unsigned long	pfn;
+-	unsigned	force_split : 1;
++	unsigned	force_split		: 1,
++			force_static_prot	: 1;
+ 	int		curpage;
+ 	struct page	**pages;
+ };
+ 
+ enum cpa_warn {
++	CPA_CONFLICT,
+ 	CPA_PROTECT,
+ 	CPA_DETECT,
+ };
+@@ -498,6 +500,7 @@ static inline void check_conflict(int wa
+ 				  unsigned long pfn, const char *txt)
+ {
+ 	static const char *lvltxt[] = {
++		[CPA_CONFLICT]	= "conflict",
+ 		[CPA_PROTECT]	= "protect",
+ 		[CPA_DETECT]	= "detect",
+ 	};
+@@ -739,7 +742,7 @@ static int __should_split_large_page(pte
+ 				     struct cpa_data *cpa)
+ {
+ 	unsigned long numpages, pmask, psize, lpaddr, addr, pfn, old_pfn;
+-	pgprot_t old_prot, new_prot, req_prot;
++	pgprot_t old_prot, new_prot, req_prot, chk_prot;
+ 	pte_t new_pte, old_pte, *tmp;
+ 	enum pg_level level;
+ 	int i;
+@@ -816,6 +819,23 @@ static int __should_split_large_page(pte
+ 	numpages = psize >> PAGE_SHIFT;
  
  	/*
--	 * Make sure that the requested pgprot does not violate the static
--	 * protections. Check the full large page whether one of the pages
--	 * in it results in a different pgprot than the first one of the
--	 * requested range. If yes, then the page needs to be split.
-+	 * Optimization: Check whether the requested pgprot is conflicting
-+	 * with a static protection requirement in the large page. If not,
-+	 * then checking whether the requested range is fully covering the
-+	 * large page can be done right here.
++	 * Sanity check that the existing mapping is correct versus the static
++	 * protections. static_protections() guards against !PRESENT, so no
++	 * extra conditional required here.
 +	 */
-+	new_prot = static_protections(req_prot, lpaddr, old_pfn, numpages,
-+				      CPA_DETECT);
++	chk_prot = static_protections(old_prot, lpaddr, old_pfn, numpages,
++				      CPA_CONFLICT);
 +
-+	if (pgprot_val(req_prot) == pgprot_val(new_prot)) {
-+		if (address != lpaddr || cpa->numpages != numpages)
-+			return 1;
-+		goto setlp;
++	if (WARN_ON_ONCE(pgprot_val(chk_prot) != pgprot_val(old_prot))) {
++		/*
++		 * Split the large page and tell the split code to
++		 * enforce static protections.
++		 */
++		cpa->force_static_prot = 1;
++		return 1;
 +	}
 +
 +	/*
-+	 * Slow path. The full large page check above established that the
-+	 * requested pgprot cannot be applied to the full large page due to
-+	 * conflicting requirements of static protection regions. It might
-+	 * turn out that the whole requested range is covered by the
-+	 * modified protection of the first 4k segment at @address. This
-+	 * might result in the ability to preserve the large page
-+	 * nevertheless.
- 	 */
+ 	 * Make sure that the requested pgprot does not violate the static
+ 	 * protections. Check the full large page whether one of the pages
+ 	 * in it results in a different pgprot than the first one of the
+@@ -824,8 +844,8 @@ static int __should_split_large_page(pte
  	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
  	pfn = old_pfn;
-@@ -878,6 +896,7 @@ static int __should_split_large_page(pte
- 	if (address != lpaddr || cpa->numpages != numpages)
- 		return 1;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1,
+-						       CPA_DETECT);
++		chk_prot = static_protections(req_prot, addr, pfn, 1,
++					      CPA_DETECT);
+ 		cpa_inc_4k_checked();
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -867,15 +887,50 @@ static int should_split_large_page(pte_t
+ 	return do_split;
+ }
  
-+setlp:
- 	/* All checks passed. Update the large page mapping. */
- 	new_pte = pfn_pte(old_pfn, new_prot);
- 	__set_pmd_pte(kpte, address, new_pte);
++static void split_set_pte(struct cpa_data *cpa, pte_t *pte, unsigned long pfn,
++			  pgprot_t ref_prot, unsigned long address,
++			  unsigned long size)
++{
++	unsigned int npg = PFN_DOWN(size);
++	pgprot_t prot;
++
++	/*
++	 * If try_preserve_large_page() discovered an inconsistent mapping,
++	 * remove the invalid protection in the split mapping.
++	 */
++	if (!cpa->force_static_prot)
++		goto set;
++
++	prot = static_protections(ref_prot, address, pfn, npg, CPA_PROTECT);
++
++	if (pgprot_val(prot) == pgprot_val(ref_prot))
++		goto set;
++
++	/*
++	 * If this is splitting a PMD, fix it up. PUD splits cannot be
++	 * fixed trivially as that would require to rescan the newly
++	 * installed PMD mappings after returning from split_large_page()
++	 * so an eventual further split can allocate the necessary PTE
++	 * pages. Warn for now and revisit it in case this actually
++	 * happens.
++	 */
++	if (size == PAGE_SIZE)
++		ref_prot = prot;
++	else
++		pr_warn_once("CPA: Cannot fixup static protections for PUD split\n");
++set:
++	set_pte(pte, pfn_pte(pfn, ref_prot));
++}
++
+ static int
+ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
+ 		   struct page *base)
+ {
++	unsigned long lpaddr, lpinc, ref_pfn, pfn, pfninc = 1;
+ 	pte_t *pbase = (pte_t *)page_address(base);
+-	unsigned long ref_pfn, pfn, pfninc = 1;
+ 	unsigned int i, level;
+-	pte_t *tmp;
+ 	pgprot_t ref_prot;
++	pte_t *tmp;
+ 
+ 	spin_lock(&pgd_lock);
+ 	/*
+@@ -898,15 +953,17 @@ static int
+ 		 * PAT bit to correct position.
+ 		 */
+ 		ref_prot = pgprot_large_2_4k(ref_prot);
+-
+ 		ref_pfn = pmd_pfn(*(pmd_t *)kpte);
++		lpaddr = address & PMD_MASK;
++		lpinc = PAGE_SIZE;
+ 		break;
+ 
+ 	case PG_LEVEL_1G:
+ 		ref_prot = pud_pgprot(*(pud_t *)kpte);
+ 		ref_pfn = pud_pfn(*(pud_t *)kpte);
+ 		pfninc = PMD_PAGE_SIZE >> PAGE_SHIFT;
+-
++		lpaddr = address & PUD_MASK;
++		lpinc = PMD_SIZE;
+ 		/*
+ 		 * Clear the PSE flags if the PRESENT flag is not set
+ 		 * otherwise pmd_present/pmd_huge will return true
+@@ -927,8 +984,8 @@ static int
+ 	 * Get the target pfn from the original entry:
+ 	 */
+ 	pfn = ref_pfn;
+-	for (i = 0; i < PTRS_PER_PTE; i++, pfn += pfninc)
+-		set_pte(&pbase[i], pfn_pte(pfn, ref_prot));
++	for (i = 0; i < PTRS_PER_PTE; i++, pfn += pfninc, lpaddr += lpinc)
++		split_set_pte(cpa, pbase + i, pfn, ref_prot, lpaddr, lpinc);
+ 
+ 	if (virt_addr_valid(address)) {
+ 		unsigned long pfn = PFN_DOWN(__pa(address));
 
 
