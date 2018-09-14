@@ -2,115 +2,133 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A005FC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83AAC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66AD20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F9E20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 06:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jeke6J8C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66AD20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gs7HqqLE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F9E20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbeINLZt (ORCPT
+        id S1727745AbeINL2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 07:25:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57330 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeINLZt (ORCPT
+        Fri, 14 Sep 2018 07:28:22 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45758 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbeINL2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 07:25:49 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8E6AY0r042607;
-        Fri, 14 Sep 2018 06:12:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=TK0qNECg94FvUnbVKuDZW72yLp8i2e5Y+EWzEKYUMCk=;
- b=jeke6J8C/NW18vyOuhsjKcYeAYisBt01zts+jlfPFKrpgWK9UG+pWpfOi9fWgEA7bn53
- xDb3DqFz93LOVYvPTKlEe5OyWZJeDFD9j/l4D/2oTzvuy9v1S5+b/4Ppo68KOVpytSBt
- 3o0GcWLvoaeZJ1jAet9J+JGjathPfmr4Xlq86fycP7PL2Os1jxfKOE01qe9eiK1j5gH5
- XQczRacYkvwdXVnxAQI9sUlLB2eml8O1efOdlEoW5We4TB3bWBEmOD7J6W9390yKtwkt
- lizckDops5sDa0JGzP3xMZiFqNfdmFbkdCFkIwrz3t58UyewcI37KJ3bts1yePh5epll 9g== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mc5utw4qq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 06:12:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8E6CgOl022134
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Sep 2018 06:12:42 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8E6CfZK028306;
-        Fri, 14 Sep 2018 06:12:41 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Sep 2018 23:12:40 -0700
-Date:   Fri, 14 Sep 2018 09:12:32 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Robert =?utf-8?B?V8SZY8WCYXdza2k=?= <r.weclawski@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        Kees Cook <keescook@chromium.org>,
-        Kacper =?utf-8?Q?Ko=C5=82odziej?= <kacper@kolodziej.it>,
-        Mihaela Muraru <mihaela.muraru21@gmail.com>,
-        Valentine Sinitsyn <valentine.sinitsyn@gmail.com>,
-        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Janani Sankara Babu <jananis37@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Santha Meena Ramamoorthy <santhameena13@gmail.com>
-Subject: Re: [PATCH] staging: rtl8188eu: remove code that is valid only for 5
- GHz
-Message-ID: <20180914061232.323jxklcp75ugtvr@mwanda>
-References: <20180913203246.4376-1-r.weclawski@gmail.com>
+        Fri, 14 Sep 2018 07:28:21 -0400
+Received: by mail-io1-f68.google.com with SMTP id e12-v6so5099585iok.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Sep 2018 23:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HSl75cAlxsdEKK1NOhLd3+rcWGnC7SHutCiO/fuC4B8=;
+        b=Gs7HqqLEzbQjhmrVodpsIHWgrL2+a/moKehA6pslD+fpWMqQ6KcIdnaIWRKXF5mnQN
+         zhb83ezwd8Rq+suOLIpdSFfxg1ieortqYPS5R+Go9mrcoyGk1lsvl+D/iP6WZTaywxga
+         90rEwDrptA8s3fhS+1oESjJ8aHX/D8gsD20zA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HSl75cAlxsdEKK1NOhLd3+rcWGnC7SHutCiO/fuC4B8=;
+        b=SDEu3EUCmpBqVWJarLSfW0RDxX5co6L3a2iDmfuGYNXpBvhkYSgAApI2hCxGUeedMW
+         0r02ewPOWVvydHv+MEp3n8P0N7mbSRo3xK4evD3uiz04jfr+UxYJYcNTNTEPL2ws6Ulv
+         2iQR/WQ8OraAYDvY9XI/IEG+LflaD/oglYZmcnZqDYVgvzB4ot27PO+0umWWXw4OyraW
+         JvvzbfPRZIFnhSqaOdbdBTnyAw1iaCi4+YUDxJZ8TkyfNLJ8DBJzxg5ndGDILL5/RBM0
+         yJwGqxV5BZW3++KQSgqWiz5ucmZ5D3xC8jBMq5LipdD172W8/e+qxdzLAoI4s9lCxlib
+         AAog==
+X-Gm-Message-State: APzg51BLAJ5AZ5SGLUARqUqa54hZgyInCpSbX2IxCi25Ii+/LBMzc+Oj
+        6xMiKX0WF9dedcVr7JPUy/vqM+hz2lg5gzg8wOtaaA==
+X-Google-Smtp-Source: ANB0VdY2l4waBjOfUrbZbqRyau4oIqVJ2CTC4D8kkxw1dKjVFq9j3kcfI7q6wn5J8MrAzc7A+6ooJ2zwCVZxkO1kzbc=
+X-Received: by 2002:a6b:ba86:: with SMTP id k128-v6mr8815094iof.170.1536905725278;
+ Thu, 13 Sep 2018 23:15:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180913203246.4376-1-r.weclawski@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9015 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=969
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809140066
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Thu, 13 Sep 2018 23:15:24
+ -0700 (PDT)
+In-Reply-To: <CAHmME9qjTyYpm_PsQ5_oZSfZBGa29zME1XHVak9F4Ued-qm67g@mail.gmail.com>
+References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-3-Jason@zx2c4.com>
+ <CAKv+Gu9nSeo4PFVrtjtqGQ32eqyxUp3xVCczZfu+dhFz5yLM0A@mail.gmail.com>
+ <CAHmME9rTEFLaYmzFrc719LW2DWS2Ua_vL6by1UXZ9uDvMpbhYw@mail.gmail.com>
+ <CAKv+Gu9RGo9rtGsmwMLZ_=-WSQ_h7har4agXP-2XOKupq-KYtA@mail.gmail.com>
+ <CALCETrU2qkLVaxC=cpU5iAeT5B7xGsR+m2ZWtLVK37jMMWtcAA@mail.gmail.com>
+ <CAKv+Gu8z1r7F_wbR6-e0Vbryqby7djDy2OR6JJURCsTo6ZMa2g@mail.gmail.com>
+ <CAHmME9pcODNc2m26DH1cQY6R+grxYW5dvFpNDpz_GiugM3qufw@mail.gmail.com>
+ <CAKv+Gu9GVbSETjp01tANMwJgA6O9aexhnH+47836KjZg+71q2A@mail.gmail.com> <CAHmME9qjTyYpm_PsQ5_oZSfZBGa29zME1XHVak9F4Ued-qm67g@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 14 Sep 2018 08:15:24 +0200
+Message-ID: <CAKv+Gu8zULznCmgz++LNNTwfTifaz5L92h=vvWb4yh5fHh-huQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 10:32:39PM +0200, Robert Węcławski wrote:
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> index eca06f05c0c4..b610443f2ac6 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> @@ -1819,16 +1819,6 @@ void rtw_update_registrypriv_dev_network(struct adapter *adapter)
->  	case WIRELESS_11BG_24N:
->  		pdev_network->NetworkTypeInUse = Ndis802_11OFDM24;
->  		break;
-> -	case WIRELESS_11A:
-> -	case WIRELESS_11A_5N:
-> -		pdev_network->NetworkTypeInUse = Ndis802_11OFDM5;
-> -		break;
-> -	case WIRELESS_11ABGN:
-> -		if (pregistrypriv->channel > 14)
-> -			pdev_network->NetworkTypeInUse = Ndis802_11OFDM5;
-> -		else
-> -			pdev_network->NetworkTypeInUse = Ndis802_11OFDM24;
-> -		break;
->  	default:
->  		/*  TODO */
->  		break;
+On 13 September 2018 at 17:58, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> On Thu, Sep 13, 2018 at 5:43 PM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+>> I'd prefer it if all the accelerated software implementations live in
+>> the same place. But I do strongly prefer arch code to live in
+>> arch/$arch
+>
+> Zinc follows the scheme of the raid6 code, as well as of most other
+> crypto libraries: code is grouped by cipher, making it easy for people
+> to work with and understand differing implementations. It also allows
+> us to trivially link these together at compile time rather than at
+> link time, which makes cipher selection much more efficient. It's
+> really much more maintainable this way.
+>
+>> I think AES-GCM is a useful example here. I really like the SIMD token
+>> abstraction a lot, but I would like to understand how this would work
+>> in Zinc if you have
+>> a) a generic implementation
+>> b) perhaps an arch specific scalar implementation
+>> c) a pure NEON implementation
+>> d) an implementation using AES instructions but not the PMULL instructions
+>> e) an implementation that uses AES and PMULL instructions.
+>
+> The same way that Zinc currently chooses between the five different
+> implementations for, say, x86_64 ChaCha20:
+>
+> - Generic C scalar
+> - SSSE3
+> - AVX2
+> - AVX512F
+> - AVX512VL
+>
+> We make a decision based on CPU capabilities, SIMD context, and input
+> length, and then choose the right function.
+>
 
-Are you sure about this chunk?  I would have thought that <= 14 was not
-5G.  (I try to avoid rhetorical questions and I don't know the answer
-here).
+OK, so given random.c's future dependency on Zinc (for ChaCha20), and
+the fact that Zinc is one monolithic piece of code, all versions of
+all algorithms will always be statically linked into the kernel
+proper. I'm not sure that is acceptable.
 
-regards,
-dan carpenter
+>> You know what? If you're up for it, let's not wait until Plumbers, but
+>> instead, let's collaborate off list to get this into shape.
+>
+> Sure, sounds good.
+>
 
+BTW you haven't answered my question yet about what happens when the
+WireGuard protocol version changes: will we need a flag day and switch
+all deployments over at the same time?
