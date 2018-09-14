@@ -2,419 +2,163 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C41C070C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0842FFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F1220866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:31:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F1220866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id A9C3620866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 08:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C3620866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbeINNpS (ORCPT
+        id S1728126AbeINNqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 09:45:18 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40919 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeINNpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 09:45:17 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x26-v6so7142386lfi.7;
-        Fri, 14 Sep 2018 01:31:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=05EA8QTt/58+Fvd/V7F9qvQUwtbuaOjF4e31NaPjYEA=;
-        b=Ax3pm9Rz72th6zfCJEu2gMDw6ZAxkpELaLKU3IBuJaSxVczpE+5UN4a93Cmpfm52rk
-         YXw0EGjwcyUhtKc/mhzezuLozi8kFBrgH51HddHi+TCVQPz4fG+ZwDEs6zw5EJ6jJmPP
-         ED1eSHIg7H5tupL1ZREjQ7oO6l6vhMThCPrMHcsxcl+1bYIvfZS4/Qxr9yyhHR0cU5TB
-         ztsDhJR4BBDr4F6o93WELDtdSANdzIUeV5SC7ZYVV2PyO0d6soYud+Ob+aHl3WGEYTm/
-         o5IMx4Y7F0L0xvUKU+8/ItOsprxIVCmrRVQVQZfL17rVwumrJuMcQssQliyEry3/4FOX
-         liJw==
-X-Gm-Message-State: APzg51AfmsHpGYcRhTvnGb00evGccSFuX0tvNr/W8fj/mU+TaY8Qpu12
-        mpMA9tQQT2LU5e0YCmzLANQ=
-X-Google-Smtp-Source: ANB0VdZ/Jub+3dkvvvgjpppDzTFpwl00WGq9iiymS5s4KPQ4RRcrmAQqaRDmkxKor+umHJCC3kpajA==
-X-Received: by 2002:a19:4a09:: with SMTP id x9-v6mr7786738lfa.80.1536913910501;
-        Fri, 14 Sep 2018 01:31:50 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id g133-v6sm1154377lfg.81.2018.09.14.01.31.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 01:31:50 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 11:31:36 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
-        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 4/7] regulator: Support regulators where voltage ranges
- are selectable
-Message-ID: <024e0bb1fc3d5a2f041a83c2445724548be4ce5f.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+        Fri, 14 Sep 2018 09:46:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57464 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726883AbeINNqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 09:46:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E2EEAAFA1;
+        Fri, 14 Sep 2018 08:32:35 +0000 (UTC)
+Subject: Re: [PATCH 1/6] xenbus: prepare data structures and parameter for
+ xenwatch multithreading
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     boris.ostrovsky@oracle.com, paul.durrant@citrix.com,
+        wei.liu2@citrix.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        srinivas.eeda@oracle.com
+References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
+ <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <23dc17b9-dc76-776b-74ef-d11f4b77552d@suse.com>
+Date:   Fri, 14 Sep 2018 10:32:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1536910456-13337-2-git-send-email-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For example ROHM BD71837 and ROHM BD71847 Power management ICs have
-regulators which provide multiple linear ranges. Ranges can be
-selected by individual non contagious bit in vsel register. Add
-regmap helper functions for selecting ranges.
+On 14/09/18 09:34, Dongli Zhang wrote:
+> This is the 1st patch of a (6-patch) patch set.
+> 
+> This patch set of six patches introduces xenwatch multithreading (or
+> multithreaded xenwatch, abbreviated as 'mtwatch') to dom0 kernel. In
+> addition to the existing single xenwatch thread, each domU has its own
+> kernel thread ([xen-mtwatch-<domid>]) to process its xenwatch event.
+> 
+> A kernel parameter 'xen_mtwatch' is introduced to control whether the
+> feature is enabled or not during dom0 kernel boot. The feature is disabled
+> by default if 'xen_mtwatch' is not set in grub. In addition, this patch
+> also introduces the data structures to maintain the status of each per-domU
+> xenwatch thread. The status of each xenwatch thread (except the default
+> one) is maintained by a mtwatch domain.
+> 
+> The feature is available only on dom0.
+> 
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  3 ++
+>  drivers/xen/xenbus/xenbus_xs.c                  | 31 ++++++++++++
+>  include/xen/xenbus.h                            | 65 +++++++++++++++++++++++++
+>  3 files changed, 99 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 64a3bf5..fc295ef 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4992,6 +4992,9 @@
+>  				the unplug protocol
+>  			never -- do not unplug even if version check succeeds
+>  
+> +	xen_mtwatch     [KNL,XEN]
+> +			Enables the multithreaded xenwatch (mtwatch).
+> +
+>  	xen_nopvspin	[X86,XEN]
+>  			Disables the ticketlock slowpath using Xen PV
+>  			optimizations.
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+> index 49a3874..3f137d2 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -95,6 +95,19 @@ static pid_t xenwatch_pid;
+>  static DEFINE_MUTEX(xenwatch_mutex);
+>  static DECLARE_WAIT_QUEUE_HEAD(watch_events_waitq);
+>  
+> +bool xen_mtwatch;
+> +EXPORT_SYMBOL_GPL(xen_mtwatch);
+> +
+> +struct mtwatch_info *mtwatch_info;
+> +
+> +static bool param_xen_mtwatch;
+> +static __init int xen_parse_mtwatch(char *arg)
+> +{
+> +	param_xen_mtwatch = true;
+> +	return 0;
+> +}
+> +early_param("xen_mtwatch", xen_parse_mtwatch);
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/core.c         |   5 +
- drivers/regulator/helpers.c      | 232 +++++++++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  20 +++-
- 3 files changed, 256 insertions(+), 1 deletion(-)
+Add a Kconfig item to set the default when building the kernel? We can
+start with default "off", but later we might want to enable this feature
+as the default.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 5f2218c67edf..b836a129288a 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2788,6 +2788,11 @@ static int regulator_map_voltage(struct regulator_dev *rdev, int min_uV,
- 	if (desc->ops->list_voltage == regulator_list_voltage_linear_range)
- 		return regulator_map_voltage_linear_range(rdev, min_uV, max_uV);
- 
-+	if (desc->ops->list_voltage ==
-+		regulator_list_voltage_pickable_linear_range)
-+		return regulator_map_voltage_pickable_linear_range(rdev,
-+							min_uV, max_uV);
-+
- 	return regulator_map_voltage_iterate(rdev, min_uV, max_uV);
- }
- 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index ef09021dc46e..5686a1335bd3 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -103,6 +103,128 @@ int regulator_disable_regmap(struct regulator_dev *rdev)
- }
- EXPORT_SYMBOL_GPL(regulator_disable_regmap);
- 
-+static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-+					     unsigned int rval)
-+{
-+	int i;
-+
-+	if (!rdev->desc->linear_range_selectors)
-+		return -EINVAL;
-+
-+	rval &= rdev->desc->vsel_range_mask;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		if (rdev->desc->linear_range_selectors[i] == rval)
-+			return i;
-+	}
-+	return -EINVAL;
-+}
-+
-+/**
-+ * regulator_get_voltage_sel_pickable_regmap - pickable range get_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their get_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-+{
-+	unsigned int r_val;
-+	int range;
-+	unsigned int val;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	if (!rdev->desc->linear_ranges)
-+		return -EINVAL;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-+	if (ret != 0)
-+		return ret;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_range_reg, &r_val);
-+	if (ret != 0)
-+		return ret;
-+
-+	val &= rdev->desc->vsel_mask;
-+	val >>= ffs(rdev->desc->vsel_mask) - 1;
-+
-+	range = regulator_range_selector_to_index(rdev, r_val);
-+	if (range < 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < range; i++)
-+		voltages_in_range += (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+
-+	return val + voltages_in_range;
-+}
-+EXPORT_SYMBOL_GPL(regulator_get_voltage_sel_pickable_regmap);
-+
-+/**
-+ * regulator_set_voltage_sel_pickable_regmap - pickable range set_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ * @sel: Selector to set
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their set_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+					      unsigned int sel)
-+{
-+	unsigned int range;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		voltages_in_range = (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+		if (sel < voltages_in_range)
-+			break;
-+		sel -= voltages_in_range;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	sel <<= ffs(rdev->desc->vsel_mask) - 1;
-+	sel += rdev->desc->linear_ranges[i].min_sel;
-+
-+	range = rdev->desc->linear_range_selectors[i];
-+
-+	if (rdev->desc->vsel_reg == rdev->desc->vsel_range_reg) {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_reg,
-+					 rdev->desc->vsel_range_mask |
-+					 rdev->desc->vsel_mask, sel | range);
-+	} else {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_range_reg,
-+					 rdev->desc->vsel_range_mask, range);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
-+				  rdev->desc->vsel_mask, sel);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	if (rdev->desc->apply_bit)
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->apply_reg,
-+					 rdev->desc->apply_bit,
-+					 rdev->desc->apply_bit);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_pickable_regmap);
-+
- /**
-  * regulator_get_voltage_sel_regmap - standard get_voltage_sel for regmap users
-  *
-@@ -337,6 +459,76 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
- 
-+/**
-+ * regulator_map_voltage_pickable_linear_range - map_voltage, pickable ranges
-+ *
-+ * @rdev: Regulator to operate on
-+ * @min_uV: Lower bound for voltage
-+ * @max_uV: Upper bound for voltage
-+ *
-+ * Drivers providing pickable linear_ranges in their descriptor can use
-+ * this as their map_voltage() callback.
-+ */
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						int min_uV, int max_uV)
-+{
-+	const struct regulator_linear_range *range;
-+	int ret = -EINVAL;
-+	int voltage, i;
-+	unsigned int selector = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		int linear_max_uV;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+		linear_max_uV = range->min_uV +
-+			(range->max_sel - range->min_sel) * range->uV_step;
-+
-+		if (!(min_uV <= linear_max_uV && max_uV >= range->min_uV)) {
-+			selector += (range->max_sel - range->min_sel + 1);
-+			continue;
-+		}
-+
-+		if (min_uV <= range->min_uV)
-+			min_uV = range->min_uV;
-+
-+		/* range->uV_step == 0 means fixed voltage range */
-+		if (range->uV_step == 0) {
-+			ret = 0;
-+		} else {
-+			ret = DIV_ROUND_UP(min_uV - range->min_uV,
-+					   range->uV_step);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		ret += selector;
-+
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * We may have overlapping voltage ranges. Hence we don't
-+		 * exit but retry until we have checked all ranges.
-+		 */
-+		if (voltage < min_uV || voltage > max_uV)
-+			selector += (range->max_sel - range->min_sel + 1);
-+		else
-+			break;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_map_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear - List voltages with simple calculation
-  *
-@@ -361,6 +553,46 @@ int regulator_list_voltage_linear(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_list_voltage_linear);
- 
-+/**
-+ * regulator_list_voltage_pickable_linear_range - pickable range list voltages
-+ *
-+ * @rdev: Regulator device
-+ * @selector: Selector to convert into a voltage
-+ *
-+ * list_voltage() operation, intended to be used by drivers utilizing pickable
-+ * ranges helpers.
-+ */
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						 unsigned int selector)
-+{
-+	const struct regulator_linear_range *range;
-+	int i;
-+	unsigned int all_sels = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		unsigned int sels_in_range;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+
-+		sels_in_range = range->max_sel - range->min_sel;
-+
-+		if (all_sels + sels_in_range >= selector) {
-+			selector -= all_sels;
-+			return range->min_uV + (range->uV_step * selector);
-+		}
-+
-+		all_sels += (sels_in_range + 1);
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear_range - List voltages for linear ranges
-  *
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 0fd8fbb74763..a9c030192147 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -271,9 +271,16 @@ enum regulator_type {
-  * @ramp_delay: Time to settle down after voltage change (unit: uV/us)
-  * @min_dropout_uV: The minimum dropout voltage this regulator can handle
-  * @linear_ranges: A constant table of possible voltage ranges.
-- * @n_linear_ranges: Number of entries in the @linear_ranges table.
-+ * @linear_range_selectors: A constant table of voltage range selectors.
-+ *			    If pickable ranges are used each range must
-+ *			    have corresponding selector here.
-+ * @n_linear_ranges: Number of entries in the @linear_ranges (and in
-+ *		     linear_range_selectors if used) table(s).
-  * @volt_table: Voltage mapping table (if table based mapping)
-  *
-+ * @vsel_range_reg: Register for range selector when using pickable ranges
-+ *		    and regulator_regmap_X_voltage_X_pickable functions.
-+ * @vsel_range_mask: Mask for register bitfield used for range selector
-  * @vsel_reg: Register for selector when using regulator_regmap_X_voltage_
-  * @vsel_mask: Mask for register bitfield used for selector
-  * @csel_reg: Register for TPS65218 LS3 current regulator
-@@ -338,10 +345,14 @@ struct regulator_desc {
- 	int min_dropout_uV;
- 
- 	const struct regulator_linear_range *linear_ranges;
-+	const unsigned int *linear_range_selectors;
-+
- 	int n_linear_ranges;
- 
- 	const unsigned int *volt_table;
- 
-+	unsigned int vsel_range_reg;
-+	unsigned int vsel_range_mask;
- 	unsigned int vsel_reg;
- 	unsigned int vsel_mask;
- 	unsigned int csel_reg;
-@@ -498,18 +509,25 @@ int regulator_mode_to_status(unsigned int);
- 
- int regulator_list_voltage_linear(struct regulator_dev *rdev,
- 				  unsigned int selector);
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						   unsigned int selector);
- int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
- 					unsigned int selector);
- int regulator_list_voltage_table(struct regulator_dev *rdev,
- 				  unsigned int selector);
- int regulator_map_voltage_linear(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						  int min_uV, int max_uV);
- int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 				       int min_uV, int max_uV);
- int regulator_map_voltage_iterate(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
- int regulator_map_voltage_ascend(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev);
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+						unsigned int sel);
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev);
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel);
- int regulator_is_enabled_regmap(struct regulator_dev *rdev);
--- 
-2.14.3
+> +
+>  static void xs_suspend_enter(void)
+>  {
+>  	spin_lock(&xs_state_lock);
+> @@ -929,6 +942,24 @@ int xs_init(void)
+>  	if (err)
+>  		return err;
+>  
+> +	if (xen_initial_domain() && param_xen_mtwatch) {
 
+Wouldn't it be better to drop the test for xen_initial_domain() and do
+this initialization only when a caller (backend) is requesting the
+multithread mode? This would avoid wasting memory in case it isn't going
+top be used and - more important - would support driver domains.
+
+
+Juergen
