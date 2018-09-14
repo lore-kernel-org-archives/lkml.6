@@ -2,159 +2,123 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEEAECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0EEFC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02EF420861
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D7C20882
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:33:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ddpBAPxM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02EF420861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSFiQbWu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D7C20882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeINOq3 (ORCPT
+        id S1728241AbeINOr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:46:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44852 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbeINOq3 (ORCPT
+        Fri, 14 Sep 2018 10:47:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36735 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbeINOr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:46:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BcAHQIzeGGRnVsD7g3gsfynUSoS0HwcCFco1ifaChNQ=; b=ddpBAPxMJV0h4xKdFO4ezwmW+
-        LeCjPZdwFzLQa98+H4p/39WWvZ/7PLPL5lPgKCsj8mjcmYDdViDmFK9aBFCFLVUC5MeXoYb+1huEs
-        JYSHoLKmeEOeNEDAXgBd7Nrm2xpI4oGx9xnIRvG07PjoD5V1eRZ/rJZXzXgdMj49qY9jq7Rz1p4Rs
-        N0ueroo6twWZ6Pz6j9XHmBmmpBeKUzpNIm4J9CfU/RXnXdZu2DtL0AIMJdiPaMmZ2NPhnQQSJU0pd
-        wXv+b1zaoxaHE4nHQUlUMeswZ0QUvWUGUoRbedWpbrCHhVZm3k4PpH3OxzGtGRT1uiUspXj4Xjjyg
-        GZKrxALIw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g0kSw-0006Ai-LR; Fri, 14 Sep 2018 09:32:42 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 51C35202C1A32; Fri, 14 Sep 2018 11:32:40 +0200 (CEST)
-Date:   Fri, 14 Sep 2018 11:32:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 06/16] sched/cpufreq: uclamp: add utilization clamping
- for FAIR tasks
-Message-ID: <20180914093240.GB24082@hirez.programming.kicks-ass.net>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-7-patrick.bellasi@arm.com>
+        Fri, 14 Sep 2018 10:47:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e1-v6so9787315wrt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 02:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vgPY5IANcUj7kHztUz4rANFIsGGk+GBnBK7dQVFnDn8=;
+        b=MSFiQbWuQLrZduUb6DPWIPUE7y+RN+2I0QlnkNnGqKCbkRik2otW9xGZeJIkUaXKmI
+         2BOSzpYl5yLTq9xZGUNnB7uXPl4BcBcLE6btWU/iSPXKwDuJ8p50N35Wz0dO5TOxo/Z4
+         Xwbv5P0nVwkwhsqUzO0s/1gBle0Xxw3GyB07ahiJPhzF2Ccl97UnCwj8qUtPROOc1wZk
+         Ai/6jNQ4d5dLYNuHesDolUyMjcPd3ELWdNiTsO1AIp2TBmyarCRAFDr0kP16O5AzB9ak
+         7gvMszPvduR6JtrIj63ywb+yoDDMfHndnPOM2mtZ93fJaPm0q91Cxu3GS3sfeOjg2GH6
+         Ww0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vgPY5IANcUj7kHztUz4rANFIsGGk+GBnBK7dQVFnDn8=;
+        b=mIGk1LiSFx3AUsWNtIKZjG2VocMMhZPMfjBDZcU5lHgyBioKK0am896EshqnKr88GR
+         JQJNcPec35ZkWsWuyStn+5OoClBdUb4iHx2RodLsG01DY6gAVNwo0WTV3Cs2jtUzpY3m
+         2rTSc/EUKTY6qmDYDtmK9sbWWFIQks7E6nn+aYJ/NcD+v7VugU7h//lKAfArOuiLgYPX
+         CMuicpfKe+38UjoOJj6mqmeSIRDez0C4nITlr//E7fEAqDHjnd1zvW0uEi1IqTZrJQ0T
+         q4M3hQotJ7UxQVYq480v2Z6m7HeqyXwiDUt/5oQ+uxT/Hkrj51WGFgVD7i1sdJeKBBl6
+         TaRg==
+X-Gm-Message-State: APzg51DT31Zdfe0xmGXjiAlbS9PJ8Vm5tgU1SUN3pKTW04Dsg5P5ji0D
+        j1/2IcKhDjS/BRw4fgN2K18=
+X-Google-Smtp-Source: ANB0VdbbGVQKC6qGQXAKLLzO9nQ2fbFXznX2fJWZVyLIytcd7NFFxNGAKNXHs/ziF32foAVBIqCmGQ==
+X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr1585623wmd.135.1536917627328;
+        Fri, 14 Sep 2018 02:33:47 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v2-v6sm1037398wme.36.2018.09.14.02.33.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 02:33:46 -0700 (PDT)
+Date:   Fri, 14 Sep 2018 11:33:44 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
+Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
+Message-ID: <20180914093344.GA96351@gmail.com>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+ <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+ <20180914022910.GA15146@sejong>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180828135324.21976-7-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180914022910.GA15146@sejong>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:53:14PM +0100, Patrick Bellasi wrote:
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 3fffad3bc8a8..949082555ee8 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -222,8 +222,13 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
->  	 * CFS tasks and we use the same metric to track the effective
->  	 * utilization (PELT windows are synchronized) we can directly add them
->  	 * to obtain the CPU's actual utilization.
-> +	 *
-> +	 * CFS utilization can be boosted or capped, depending on utilization
-> +	 * clamp constraints configured for currently RUNNABLE tasks.
->  	 */
->  	util = cpu_util_cfs(rq);
-> +	if (util)
-> +		util = uclamp_util(rq, util);
 
-Should that not be:
+* Namhyung Kim <namhyung@kernel.org> wrote:
 
-	util = clamp_util(rq, cpu_util_cfs(rq));
+> > > The perf.data stays as a single file.
+> 
+> I'm not sure we really need to keep it as a single file.  As it's a
+> kind of big changes, we might consider breaking compatibility and use
+> a directory structure.
 
-Because if !util might we not still want to enforce the min clamp?
+Agreed - and to make use of the highly scalable Linux VFS implementation we should
+attempt to use per CPU file resources as well.
 
->  	util += cpu_util_rt(rq);
->  
->  	/*
+Any cross-CPU contention should stick out like a sore thumb.
 
-> @@ -322,11 +328,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
->  		return;
->  	sg_cpu->iowait_boost_pending = true;
->  
-> +	/*
-> +	 * Boost FAIR tasks only up to the CPU clamped utilization.
-> +	 *
-> +	 * Since DL tasks have a much more advanced bandwidth control, it's
-> +	 * safe to assume that IO boost does not apply to those tasks.
-> +	 * Instead, since RT tasks are not utiliation clamped, we don't want
-> +	 * to apply clamping on IO boost while there is blocked RT
-> +	 * utilization.
-> +	 */
-> +	max_boost = sg_cpu->iowait_boost_max;
-> +	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
-> +		max_boost = uclamp_util(cpu_rq(sg_cpu->cpu), max_boost);
+> > There is usage of Posix threading API but there is no 
+> > its implementation in the patch series, to avoid dependency 
+> > on externally coded designs in the core of the tool.
+> 
+> Do you mean it needs to implement its own threading?  I don't think
+> that's what Ingo wanted to.
 
-OK I suppose.
+Yeah, I didn't mean that: every libc hoping to work on Linux implements a pthread API, plus the 
+pthread APIs we are using are really just narrow wrappers on top of system calls that were 
+written with libc pthread APIs in mind. So it's not a problem to rely on pthreads.h. (And if we 
+have trouble with any particular pthread detail we can single out specific functionality and 
+not use it or use our own implementation.)
 
-> +
->  	/* Double the boost at each request */
->  	if (sg_cpu->iowait_boost) {
->  		sg_cpu->iowait_boost <<= 1;
-> -		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
-> -			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
-> +		if (sg_cpu->iowait_boost > max_boost)
-> +			sg_cpu->iowait_boost = max_boost;
->  		return;
->  	}
->  
+The AIO library is another matter: it's a family of interfaces with complex libc specific 
+design choices that cannot be influenced.
 
+I.e. my suggestion was to keep using pthreads APIs like we do today, but not use the libc AIO 
+library. Not because there's any problem with glibc AIO: but because basic event flow is a core 
+competency of perf that we want to implement ourselves.
 
-> +static inline unsigned int uclamp_value(struct rq *rq, int clamp_id)
-> +{
-> +	struct uclamp_cpu *uc_cpu = &rq->uclamp;
-> +
-> +	if (uc_cpu->value[clamp_id] == UCLAMP_NOT_VALID)
-> +		return uclamp_none(clamp_id);
-> +
-> +	return uc_cpu->value[clamp_id];
-> +}
+Is this clearer?
 
-Would that not be more readable as:
+Thanks,
 
-static inline unsigned int uclamp_value(struct rq *rq, int clamp_id)
-{
-	unsigned int val = rq->uclamp.value[clamp_id];
-
-	if (unlikely(val == UCLAMP_NOT_VALID))
-		val = uclamp_none(clamp_id);
-
-	return val;
-}
-
-And how come NOT_VALID is possible? I thought the idea was to always
-have all things a valid value.
-
+	Ingo
