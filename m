@@ -2,130 +2,89 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68B7ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC6ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85129206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85129206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB04D206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 13:41:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbajFF3V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB04D206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbeINS4I (ORCPT
+        id S1728159AbeINS4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 14:56:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33668 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbeINS4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 14:56:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 454DA18A;
-        Fri, 14 Sep 2018 06:41:34 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75A6A3F703;
-        Fri, 14 Sep 2018 06:41:31 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 14:41:28 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 03/16] sched/core: uclamp: add CPU's clamp groups
- accounting
-Message-ID: <20180914134128.GP1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-4-patrick.bellasi@arm.com>
- <20180913191209.GY24082@hirez.programming.kicks-ass.net>
- <20180914090751.GN1413@e110439-lin>
- <20180914115217.GI24124@hirez.programming.kicks-ass.net>
+        Fri, 14 Sep 2018 14:56:31 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44995 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeINS4b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 14:56:31 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g24-v6so2669784lfb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 06:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WMztn85Lu3nqcB+t6sKjA0nAJj3QLnFa3HncxQff40s=;
+        b=IbajFF3ViXjr/bbfmJrSO8AFuITiUglENAxpM8Yl33HJPYLg0czLnQqM+wyWbtAV8v
+         aYQI3cOUPDulfovSJ0VShzCjUyKBEvGs7Ye5bl5XB3HJj3ZcnI3rFtoalOHDTIGwPIOu
+         DutCxYXXyoLORwqs/3Df6xDbiwVjRpemUYz7Dp163i7e4WhGj9F51JrE1HsW/BB7BqP9
+         z1pUcUadJGXGEsKjPSjzpFldCJutRaskWufgt0tD2geqrE1600ES226LUqxXrGhcE1vJ
+         cGJYLfTcZCZULQ7vbCY2jfzV/D0t0LdAXGFTvyMUwp63J1QActw6AI+KEjKG6yVc7vfz
+         /l6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WMztn85Lu3nqcB+t6sKjA0nAJj3QLnFa3HncxQff40s=;
+        b=b4k8oXQ24oQXH3NaODT9Rth9NvQ74C/ZLrVgMgGjX3CvvHIMezDB88xcYa1nuClN1Q
+         bsLfV0ESh6SPXbPIITmG0r3jqhg82r6OrDiGIbe2me02Q30yB8IGmIME3kPA8WCTA9IZ
+         bCxMEhyj3Fl5Rn2Zhu+Q8DRx6ieBwZceY3rnGbok0xdntFo3nGtY/GzedO52d73jgVO8
+         OZTDmSpmR2NnhGhqMicqMd+oc/LmCG90DPdF54HDUJEcN5O/Ked9ip/dkldu+1N+wgh7
+         nZlJmmtrpHcGz7VRkXg80hYPu5tj0AzoAXd039PbrdM2MKCRmy+itNFWdAfle7fFYgtP
+         haig==
+X-Gm-Message-State: APzg51DUj8agVq701pdgOcXfQR8baVMOm5zrVWH7Mx+vH6vuHzZ0oWTy
+        TeFmBDhyj6Si2FgJws8jg1+wjFA8
+X-Google-Smtp-Source: ANB0VdbDWKDNZwCU3KnwB8riKgQ9V6K60GrLgOmRZzjzI0M4jVH8D+6t4mnHoGuRI6bTBPeuwYis1Q==
+X-Received: by 2002:a19:d206:: with SMTP id j6-v6mr8811504lfg.31.1536932515597;
+        Fri, 14 Sep 2018 06:41:55 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id f129-v6sm1294663lff.37.2018.09.14.06.41.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 06:41:55 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g0oM9-0002gc-Bm; Fri, 14 Sep 2018 15:41:57 +0200
+Date:   Fri, 14 Sep 2018 15:41:57 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 19/50] ark3116: switch to ->get_serial()
+Message-ID: <20180914134157.GG1362@localhost>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-19-viro@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180914115217.GI24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180913024049.24567-19-viro@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-Sep 13:52, Peter Zijlstra wrote:
-> On Fri, Sep 14, 2018 at 10:07:51AM +0100, Patrick Bellasi wrote:
-> > On 13-Sep 21:12, Peter Zijlstra wrote:
-> > > On Tue, Aug 28, 2018 at 02:53:11PM +0100, Patrick Bellasi wrote:
-> > > > +static inline void uclamp_cpu_get_id(struct task_struct *p,
-> > > > +				     struct rq *rq, int clamp_id)
-> > > > +{
-> > > > +	struct uclamp_group *uc_grp;
-> > > > +	struct uclamp_cpu *uc_cpu;
-> > > > +	int clamp_value;
-> > > > +	int group_id;
-> > > > +
-> > > > +	/* Every task must reference a clamp group */
-> > > > +	group_id = p->uclamp[clamp_id].group_id;
-> > > 
-> > > > +}
-> > > > +
-> > > > +static inline void uclamp_cpu_put_id(struct task_struct *p,
-> > > > +				     struct rq *rq, int clamp_id)
-> > > > +{
-> > > > +	struct uclamp_group *uc_grp;
-> > > > +	struct uclamp_cpu *uc_cpu;
-> > > > +	unsigned int clamp_value;
-> > > > +	int group_id;
-> > > > +
-> > > > +	/* New tasks don't have a previous clamp group */
-> > > > +	group_id = p->uclamp[clamp_id].group_id;
-> > > > +	if (group_id == UCLAMP_NOT_VALID)
-> > > > +		return;
-> > > 
-> > > *confused*, so on enqueue they must have a group_id, but then on dequeue
-> > > they might no longer have?
-> > 
-> > Why not ?
+On Thu, Sep 13, 2018 at 03:40:18AM +0100, Al Viro wrote:
+> From: Al Viro <viro@zeniv.linux.org.uk>
 > 
-> That's what it says on the tin, right? enqueue: "every task must reference clamp
-> group" while on dequeue: "new tasks don't have a (previous) clamp group"
-> and we check for NOT_VALID.
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Oh, right... I've got confused me too since I was looking @enqueue.
-
-You right, @dequeue we always a group_id. The check @dequeue time was
-required only before v3 because of the way defaults (i.e. no clamps)
-was tracked. Will remove it in v5, thanks!
-
-BTW, my previous explanation was also incorrect, since the logic for
-init_task initialization is:
-
-   uc_se->group_id = UCLAMP_NOT_VALID;
-   uclamp_group_get(value)
-
-where the first assignment is required just to inform uclamp_group_get()
-that we don't need to uclamp_group_put() a previous (non existing at
-init time) clamp group.
-
-Thus, at the end of the two instructions above we end up with an
-init_task which has a !UCLAMP_NOT_VALID group id, which is then
-cloned by forked tasks.
-
-Cheers,
-Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Reviewed-by: Johan Hovold <johan@kernel.org>
