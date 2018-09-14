@@ -2,100 +2,90 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE91ECDFD0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8F5FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239F12083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:18:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239F12083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F2F42083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 16:19:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2F42083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeINVeB (ORCPT
+        id S1728204AbeINVeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 17:34:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36080 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeINVeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 17:34:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB0680D;
-        Fri, 14 Sep 2018 09:18:50 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BE5B83F557;
-        Fri, 14 Sep 2018 09:18:50 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5D6D21AE2F82; Fri, 14 Sep 2018 17:19:08 +0100 (BST)
-Date:   Fri, 14 Sep 2018 17:19:08 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com
-Subject: [GIT PULL] arm64: fixes for -rc4
-Message-ID: <20180914161908.GF6236@arm.com>
+        Fri, 14 Sep 2018 17:34:21 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:53211 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbeINVeV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Sep 2018 17:34:21 -0400
+X-IronPort-AV: E=Sophos;i="5.53,373,1531785600"; 
+   d="scan'208";a="79076475"
+Date:   Fri, 14 Sep 2018 18:18:41 +0200
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
+CC:     <drbd-user@lists.linbit.com>, Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <xen-devel@lists.xenproject.org>
+Subject: Re: [DRBD-user] [PATCH] xen-blkback: Switch to closed state after
+ releasing the backing device
+Message-ID: <20180914161841.zqenjczqgfkycdmm@mac.bytemobile.com>
+References: <20180907132828.GC11834@soda.linbit>
+ <20180907164500.GN26705@gavran.carpriv.carnet.hr>
+ <20180907171459.GO26705@gavran.carpriv.carnet.hr>
+ <20180908073432.GP26705@gavran.carpriv.carnet.hr>
+ <20180910124531.GA31737@soda.linbit>
+ <20180910132252.GE26705@gavran.carpriv.carnet.hr>
+ <20180910150058.suxehc3uheyho4qx@mac.bytemobile.com>
+ <20180910161831.GG26705@gavran.carpriv.carnet.hr>
+ <20180913150800.haswzd7t2xccbgvl@mac.bytemobile.com>
+ <20180914114951.GH2153@gavran.carpriv.carnet.hr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180914114951.GH2153@gavran.carpriv.carnet.hr>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Sep 14, 2018 at 01:49:51PM +0200, Valentin Vidic wrote:
+> On Thu, Sep 13, 2018 at 05:08:00PM +0200, Roger Pau Monné wrote:
+> > So I have the following patch which I think might solve your issues
+> > while keeping the reset logic working. Would you mind giving it a try
+> > with your use case and pvgrub?
+> 
+> Thanks for the patch.  It seems to be having some problems with pvgrub:
+> machines don't boot past pvgrub and they are using 100% CPU.  Also in
+> dom0 xenstored is usind 100% CPU - strace reports it is looping in this:
+> 
+> read(26, "\\\240\0\0", 4)               = 4
+> read(26, "\0\0\0\0L\0\0\0)\0\0\0\35\0\0\0+\\\232`\231\31\1&", 24) = 24
+> read(26, "/local/domain/0/backend/vbd/1/51712/state", 41) = 41
+> read(26, "\2\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1\0\0\0\1\0\0\0004", 29) = 29
+> read(26, "\0\330\0\0", 4)               = 4
+> read(26, "\0\0\0\0L\0\0\0)\0\0\0\35\0\0\0+\\JG\231\31\1&", 24) = 24
+> read(26, "/local/domain/0/backend/vbd/2/51712/state", 41) = 41
+> read(26, "\2\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\2\0\0\0\1\0\0\0004", 29) = 29
+> read(26, "\0\200\1\0", 4)               = 4
+> read(26, "\0\0\0\0L\0\0\0)\0\0\0\35\0\0\0+\\Z\373\231\31\1&", 24) = 24
+> read(26, "/local/domain/0/backend/vbd/5/51712/state", 41) = 41
+> read(26, "\2\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\5\0\0\0\1\0\0\0004", 29) = 29
+> read(12, "\321\1\0\0", 4)               = 4
+> write(12, "\321\1\0\0", 4)              = 4
 
-The trickle of arm64 fixes continues to come in. Nothing that's the end
-of the world, but we've got a fix for PCI IO port accesses, an accidental
-naked "asm goto" and a fix to the vmcoreinfo PT_NOTE merged this time
-around which we'd like to get sorted before it becomes ABI.
+I see the issue, blkfront in pvgrub is waiting for the backend to
+switch to Closed state before booting the OS kernel, so my fix is not
+going to work. I guess I will have to find a proper way to switch to
+Closed state.
 
-Details in the tag, but please pull.
-
-Thanks,
-
-Will
-
---->8
-
-The following changes since commit 11da3a7f84f19c26da6f86af878298694ede0804:
-
-  Linux 4.19-rc3 (2018-09-09 17:26:43 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 500dd232449e7c07500e713dc6970aa713f8e4f1:
-
-  asm-generic: io: Fix ioport_map() for !CONFIG_GENERIC_IOMAP && CONFIG_INDIRECT_PIO (2018-09-14 09:49:21 +0100)
-
-----------------------------------------------------------------
-arm64 fixes
-
-- Fix ioport_map() mapping the wrong physical address for some I/O BARs
-
-- Remove direct use of "asm goto", since some compilers don't like that
-
-- Ensure kimage_voffset is always present in vmcoreinfo PT_NOTE
-
-----------------------------------------------------------------
-Andrew Murray (1):
-      asm-generic: io: Fix ioport_map() for !CONFIG_GENERIC_IOMAP && CONFIG_INDIRECT_PIO
-
-James Morse (1):
-      arm64: kernel: arch_crash_save_vmcoreinfo() should depend on CONFIG_CRASH_CORE
-
-Miguel Ojeda (1):
-      arm64: jump_label.h: use asm_volatile_goto macro instead of "asm goto"
-
- arch/arm64/include/asm/jump_label.h |  4 ++--
- arch/arm64/kernel/Makefile          |  1 +
- arch/arm64/kernel/crash_core.c      | 19 +++++++++++++++++++
- arch/arm64/kernel/machine_kexec.c   | 11 -----------
- include/asm-generic/io.h            |  3 ++-
- 5 files changed, 24 insertions(+), 14 deletions(-)
- create mode 100644 arch/arm64/kernel/crash_core.c
+Thanks, Roger.
