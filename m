@@ -2,123 +2,174 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0EEFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35607ECDFD0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28D7C20882
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4CB220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 09:34:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSFiQbWu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D7C20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jf+lCZVn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CB220861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbeINOr2 (ORCPT
+        id S1728273AbeINOsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 10:47:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36735 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbeINOr2 (ORCPT
+        Fri, 14 Sep 2018 10:48:16 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60972 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbeINOsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 10:47:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id e1-v6so9787315wrt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 02:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vgPY5IANcUj7kHztUz4rANFIsGGk+GBnBK7dQVFnDn8=;
-        b=MSFiQbWuQLrZduUb6DPWIPUE7y+RN+2I0QlnkNnGqKCbkRik2otW9xGZeJIkUaXKmI
-         2BOSzpYl5yLTq9xZGUNnB7uXPl4BcBcLE6btWU/iSPXKwDuJ8p50N35Wz0dO5TOxo/Z4
-         Xwbv5P0nVwkwhsqUzO0s/1gBle0Xxw3GyB07ahiJPhzF2Ccl97UnCwj8qUtPROOc1wZk
-         Ai/6jNQ4d5dLYNuHesDolUyMjcPd3ELWdNiTsO1AIp2TBmyarCRAFDr0kP16O5AzB9ak
-         7gvMszPvduR6JtrIj63ywb+yoDDMfHndnPOM2mtZ93fJaPm0q91Cxu3GS3sfeOjg2GH6
-         Ww0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vgPY5IANcUj7kHztUz4rANFIsGGk+GBnBK7dQVFnDn8=;
-        b=mIGk1LiSFx3AUsWNtIKZjG2VocMMhZPMfjBDZcU5lHgyBioKK0am896EshqnKr88GR
-         JQJNcPec35ZkWsWuyStn+5OoClBdUb4iHx2RodLsG01DY6gAVNwo0WTV3Cs2jtUzpY3m
-         2rTSc/EUKTY6qmDYDtmK9sbWWFIQks7E6nn+aYJ/NcD+v7VugU7h//lKAfArOuiLgYPX
-         CMuicpfKe+38UjoOJj6mqmeSIRDez0C4nITlr//E7fEAqDHjnd1zvW0uEi1IqTZrJQ0T
-         q4M3hQotJ7UxQVYq480v2Z6m7HeqyXwiDUt/5oQ+uxT/Hkrj51WGFgVD7i1sdJeKBBl6
-         TaRg==
-X-Gm-Message-State: APzg51DT31Zdfe0xmGXjiAlbS9PJ8Vm5tgU1SUN3pKTW04Dsg5P5ji0D
-        j1/2IcKhDjS/BRw4fgN2K18=
-X-Google-Smtp-Source: ANB0VdbbGVQKC6qGQXAKLLzO9nQ2fbFXznX2fJWZVyLIytcd7NFFxNGAKNXHs/ziF32foAVBIqCmGQ==
-X-Received: by 2002:a1c:9550:: with SMTP id x77-v6mr1585623wmd.135.1536917627328;
-        Fri, 14 Sep 2018 02:33:47 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v2-v6sm1037398wme.36.2018.09.14.02.33.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Sep 2018 02:33:46 -0700 (PDT)
-Date:   Fri, 14 Sep 2018 11:33:44 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>, kernel-team@lge.com
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-Message-ID: <20180914093344.GA96351@gmail.com>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914022910.GA15146@sejong>
+        Fri, 14 Sep 2018 10:48:16 -0400
+Received: from avalon.localnet (unknown [IPv6:2a02:a03f:44f6:3500:d929:375b:d608:66c7])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A995ACE;
+        Fri, 14 Sep 2018 11:34:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1536917674;
+        bh=ekbC+Fmc9r/TdCMqKs69qWNQdUBTr3EVeUsUOf4idOY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Jf+lCZVn6BZ/b0soQ6LE58U7/HtBpd6WJV8j8BDVlL+l45yepzdpaRUEPHNgtj5E7
+         FCwsPNlxa6/5sujYQ3BJNqOuiVSJkG/rPrKnfDylNWpY/NICA3b5EU4ATQzHrs4C6c
+         rsz1gG9jEqUYUN1N4qx/QSsILNij2x4mmgH1HCWk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     linus.walleij@linaro.org, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        p.zabel@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, architt@codeaurora.org,
+        a.hajda@samsung.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, sean@poorly.run,
+        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/8] drm/bridge: simplify bridge timing info
+Date:   Fri, 14 Sep 2018 12:34:47 +0300
+Message-ID: <1573320.Q96Iu7qNKK@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180912183222.25414-4-stefan@agner.ch>
+References: <20180912183222.25414-1-stefan@agner.ch> <20180912183222.25414-4-stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914022910.GA15146@sejong>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stefan,
 
-* Namhyung Kim <namhyung@kernel.org> wrote:
-
-> > > The perf.data stays as a single file.
+On Wednesday, 12 September 2018 21:32:17 EEST Stefan Agner wrote:
+> Bridges are typically connected to a parallel display signal with
+> pixel clock, sync signals and data lines. Parallel display signals
+> are also used in lower-end embedded display panels. For parallel
+> display panels we currently do not specify setup/hold times. From
+> discussions on the mailing list it seems not convincing that this
+> is currently really required for bridges either.
 > 
-> I'm not sure we really need to keep it as a single file.  As it's a
-> kind of big changes, we might consider breaking compatibility and use
-> a directory structure.
+> Remove setup/hold timings again to better align timing information
+> of displays and briges.
 
-Agreed - and to make use of the highly scalable Linux VFS implementation we should
-attempt to use per CPU file resources as well.
+The setup and hold timings were the result of a long discussion with Linux 
+Walleij, who was confronted with a system that didn't work properly unless he 
+flipped the clock polarity. His initial patch contradicted the bridge 
+datasheet, and after investigating we found out that timings played a major 
+role.
 
-Any cross-CPU contention should stick out like a sore thumb.
+In a nutshell, given the setup and hold time requirements, the polarity on the 
+driving side depends on the pixel clock frequency. As the frequency increases, 
+when the half clock period reaches the setup time, you can't latch on the 
+opposite edge anymore or you will violate the setup time. The component 
+connected to the bridge thus needs to select a driving edge based on the 
+sampling edge of the bridge, on the bridge's setup time requirement, and on 
+the pixel clock frequency.
 
-> > There is usage of Posix threading API but there is no 
-> > its implementation in the patch series, to avoid dependency 
-> > on externally coded designs in the core of the tool.
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/gpu/drm/bridge/dumb-vga-dac.c | 17 +++++------------
+>  include/drm/drm_bridge.h              | 14 --------------
+>  2 files changed, 5 insertions(+), 26 deletions(-)
 > 
-> Do you mean it needs to implement its own threading?  I don't think
-> that's what Ingo wanted to.
+> diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> b/drivers/gpu/drm/bridge/dumb-vga-dac.c index d5aa0f931ef2..b2309ad228cf
+> 100644
+> --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> @@ -229,14 +229,14 @@ static int dumb_vga_remove(struct platform_device
+> *pdev) /*
+>   * We assume the ADV7123 DAC is the "default" for historical reasons
+>   * Information taken from the ADV7123 datasheet, revision D.
+> - * NOTE: the ADV7123EP seems to have other timings and need a new timings
+> - * set if used.
+>   */
+>  static const struct drm_bridge_timings default_dac_timings = {
+> -	/* Timing specifications, datasheet page 7 */
+> +	/*
+> +	 * From Timing diagram, datasheet page 7. The bridge samples
+> +	 * on pixel clocks positive edge, hence the display controller
+> +	 * should drive signals on the negative edge.
+> +	 */
+>  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_NEGEDGE,
+> -	.setup_time_ps = 500,
+> -	.hold_time_ps = 1500,
+>  };
+> 
+>  /*
+> @@ -246,10 +246,6 @@ static const struct drm_bridge_timings
+> default_dac_timings = { static const struct drm_bridge_timings
+> ti_ths8134_dac_timings = { /* From timing diagram, datasheet page 9 */
+>  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_NEGEDGE,
+> -	/* From datasheet, page 12 */
+> -	.setup_time_ps = 3000,
+> -	/* I guess this means latched input */
+> -	.hold_time_ps = 0,
+>  };
+> 
+>  /*
+> @@ -259,9 +255,6 @@ static const struct drm_bridge_timings
+> ti_ths8134_dac_timings = { static const struct drm_bridge_timings
+> ti_ths8135_dac_timings = { /* From timing diagram, datasheet page 14 */
+>  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_NEGEDGE,
+> -	/* From datasheet, page 16 */
+> -	.setup_time_ps = 2000,
+> -	.hold_time_ps = 500,
+>  };
+> 
+>  static const struct of_device_id dumb_vga_match[] = {
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 45e90f4b46c3..1a1d08350eaf 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -251,20 +251,6 @@ struct drm_bridge_timings {
+>  	 * &drm_display_info->bus_flags.
+>  	 */
+>  	u32 input_bus_flags;
+> -	/**
+> -	 * @setup_time_ps:
+> -	 *
+> -	 * Defines the time in picoseconds the input data lines must be
+> -	 * stable before the clock edge.
+> -	 */
+> -	u32 setup_time_ps;
+> -	/**
+> -	 * @hold_time_ps:
+> -	 *
+> -	 * Defines the time in picoseconds taken for the bridge to sample the
+> -	 * input signal after the clock edge.
+> -	 */
+> -	u32 hold_time_ps;
+>  };
+> 
+>  /**
 
-Yeah, I didn't mean that: every libc hoping to work on Linux implements a pthread API, plus the 
-pthread APIs we are using are really just narrow wrappers on top of system calls that were 
-written with libc pthread APIs in mind. So it's not a problem to rely on pthreads.h. (And if we 
-have trouble with any particular pthread detail we can single out specific functionality and 
-not use it or use our own implementation.)
 
-The AIO library is another matter: it's a family of interfaces with complex libc specific 
-design choices that cannot be influenced.
+-- 
+Regards,
 
-I.e. my suggestion was to keep using pthreads APIs like we do today, but not use the libc AIO 
-library. Not because there's any problem with glibc AIO: but because basic event flow is a core 
-competency of perf that we want to implement ourselves.
+Laurent Pinchart
 
-Is this clearer?
 
-Thanks,
 
-	Ingo
