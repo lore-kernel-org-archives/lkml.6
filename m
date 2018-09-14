@@ -2,99 +2,307 @@ Return-Path: <SRS0=Jh2l=L4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D1FFC6182
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7C6FC6182
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71DF320853
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71DF320853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 25E5E20853
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Sep 2018 05:54:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E5E20853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeINLHe (ORCPT
+        id S1727666AbeINLHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Sep 2018 07:07:34 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:37948 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726822AbeINLHe (ORCPT
+        Fri, 14 Sep 2018 07:07:39 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:52562 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727409AbeINLHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Sep 2018 07:07:34 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1g0h3t-00048m-7s; Fri, 14 Sep 2018 07:54:37 +0200
-Date:   Fri, 14 Sep 2018 07:54:37 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        David Miller <davem@davemloft.net>, linux@stwm.de,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, christophe.gouault@6wind.com
-Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
- tunnels
-Message-ID: <20180914055437.77pffp2jrbfnykbp@breakpoint.cc>
-References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
- <3448099.9yk84El3Sa@stwm.de>
- <20180913163848.ni5xc4gc4d6uusdn@breakpoint.cc>
- <20180913.102305.939671149040995911.davem@davemloft.net>
- <20180913210325.5usfj2rorvuvtyc7@breakpoint.cc>
- <20180914050651.GD23674@gauss3.secunet.de>
+        Fri, 14 Sep 2018 07:07:38 -0400
+Received: from belgarion ([90.89.234.36])
+        by mwinf5d49 with ME
+        id bHuh1y00Y0nnJME03Huiy0; Fri, 14 Sep 2018 07:54:44 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Fri, 14 Sep 2018 07:54:44 +0200
+X-ME-IP: 90.89.234.36
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ARM: dts: pxa: add mioa701 board description
+References: <20180830195941.6118-1-robert.jarzmik@free.fr>
+        <1535708786.8035.41.camel@ziswiler.com>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Fri, 14 Sep 2018 07:54:41 +0200
+In-Reply-To: <1535708786.8035.41.camel@ziswiler.com> (Marcel Ziswiler's
+        message of "Fri, 31 Aug 2018 11:46:26 +0200")
+Message-ID: <871s9w62u6.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914050651.GD23674@gauss3.secunet.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steffen Klassert <steffen.klassert@secunet.com> wrote:
-> On Thu, Sep 13, 2018 at 11:03:25PM +0200, Florian Westphal wrote:
-> > David Miller <davem@davemloft.net> wrote:
-> > > From: Florian Westphal <fw@strlen.de>
-> > > Date: Thu, 13 Sep 2018 18:38:48 +0200
-> > > 
-> > > > Wolfgang Walter <linux@stwm.de> wrote:
-> > > >> What I can say is that it depends mainly on number of policy rules and SA.
-> > > > 
-> > > > Thats already a good hint, I guess we're hitting long hash chains in
-> > > > xfrm_policy_lookup_bytype().
-> > > 
-> > > I don't really see how recent changes can influence that.
-> > 
-> > I don't think there is a recent change that did this.
-> > 
-> > Walter says < 4.14 is ok, so this is likely related to flow cache removal.
-> > 
-> > F.e. it looks like all prefixed policies end up in a linked list
-> > (net->xfrm.policy_inexact) and are not even in a hash table.
-> > 
-> > I am staring at b58555f1767c9f4e330fcf168e4e753d2d9196e0
-> > but can't figure out how to configure that away from the
-> > 'no hashing for prefixed policies' default or why we even have
-> > policy_inexact in first place :/
-> 
-> The hash threshold can be configured like this:
-> 
-> ip x p set hthresh4 0 0
-> 
-> This sets the hash threshold to local /0 and remote /0 netmasks.
-> With this configuration, all policies should go to the hashtable.
+Marcel Ziswiler <marcel@ziswiler.com> writes:
 
-Yes, but won't they all be hashed to same bucket?
+> Hi Robert
+>>  arch/arm/boot/dts/Makefile    |   2 +
+>>  arch/arm/boot/dts/mioa701.dts | 558 
+>
+> Isn't that one supposed to be prefixed by pxa270-?
+Good point, for v4.
 
-[ jhash(addr & 0, addr & 0) ] ?
+>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+...
+>> +dtb-$(CONFIG_ARCH_PXA) += \
+> Wouldn't it rather make more sense to use CONFIG_MACH_PXA27X_DT
+> instead?
+No, I'll have all the devicetree files under one config, for the PXA
+architecture.
 
-> Default hash thresholds are local /32 and remote /32 netmasks, so
-> all prefixed policies go to the inexact list.
+>> +	model = "Mitac Mio A701 Board";
+>> +	compatible = "marvell,pxa270";
+>
+> Usually, there is also a compatible for the particular board e.g.
+> "mitac,mioa701", not? You might have to check on the vendor prefix
+> though.
+Ok.
 
-Yes.
+>> +			pinctrl_usb_default: usb-default {
+>> +				PMMUX(n-usb-detect, 13, gpio_in);
+>> +				PMMUX_LPM_LOW(n-dplus-pullup, 22,
+>> gpio_out);
+>> +			};
+>> +			pinctrl_power_default: power-default {
+>> +				PMMUX_LPM_LOW(charge-enable, 9,
+>> gpio_out);
+>> +				PMMUX(charge-vdrop, 80, gpio_out);
+>> +				PMMUX(ac-detect, 96, gpio_in);
+>> +			};
+>
+> I guess usually, one would add newlines in front and between those
+> pinctrls but its kind of a matter of taste.
+Ok, for this and all the following newlines.
+>> +		ffuart: serial@40100000 {
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&pinctrl_ffuart_default>;
+>> +			status = "okay";
+>> +		};
+>> +
+>> +		btuart: serial@40200000 {
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&pinctrl_btuart_default>;
+>> +			status = "okay";
+>> +		};
+>> +
+>> +		stuart: serial@40700000 {
+>> +			status = "okay";
+>> +		};
+>
+> I believe pxa2xx.dtsi calls them uart rather than serial so unless you
+> plan to change this we will have to stick to using uart instead.
+There was a patch submitted for that earlier, at Rob's demand, to change these
+names. That's another dependency on the pxa/dt tree.
+>
+> I also don't think those serial port labels buy us anything, so I would
+> get rid of them.
+As there are already in the .dtsi files, they don't hurt do they ?
 
-Wolfgang, before having to work on getting perf into your router image
-can you perhaps share a bit of info about the policies you're using?
+>> +		pwri2c: i2c@40f000180 {
+>
+> Uups, I guess that address is wrong, not? I will send a patch to fix it
+> in pxa27x.dtsi as well.
+Fixed here as well.
 
-How many are there?  Are they prefixed or not ("10.1.2.1")?
+>
+>> +			status = "okay";
+>> +
+>> +			core_regulator@14 {
+>> +				compatible = "maxim,max1586";
+>> +				reg = <0x14>;
+>> +				v3-gain = <1000000>;
+>> +
+>> +				regulators {
+>> +					vcc_core: v3 {
+>> +						regulator-name =
+>> "vcc_core";
+>> +						regulator-compatible 
+>> = "Output_V3";
+>> +						regulator-min-
+>> microvolt = <1000000>;
+>> +						regulator-max-
+>> microvolt = <1705000>;
+>> +						regulator-always-on;
+>> +					};
+>> +				};
+>> +			};
+>
+> Haven't seen core_regulator before. Just regulator would do unless it
+> would be a more complex pmic.
+Ok.
+
+>
+>
+>> +				port {
+>> +					mt9m111_1: endpoint {
+>> +						bus-width = <8>;
+>> +						remote-endpoint =
+>> <&pxa_camera>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>
+> Same with pxai2c1 and mt9m111.
+Ok for mt9m111, same answer as before for pxai2c1.
+>> +		gpio-keys {
+>> +			compatible = "gpio-keys";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			autorepeat;
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&pinctrl_gpiokeys_default>;
+>> +			status = "okay";
+>> +
+>> +			power-button {
+>> +				label = "GPIO Key Power";
+>> +				linux,code = <174>;
+>> +				gpios = <&gpio 0 0>;
+>> +				gpio-key,wakeup;
+>
+> I believe that got deprecated in favour of just wakeup-source.
+Ok.
+
+>> +		lcd-controller@40500000 {
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = <&pinctrl_lcd_default>;
+>> +			status = "okay";
+>
+> Missing newline.
+>
+>> +			port {
+>> +				lcdc_out: endpoint {
+>> +					remote-endpoint =
+>> <&panel_in>;
+>> +					bus-width = <16>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		ac97: sound@40500000 {
+>> +			compatible = "marvell,pxa270-ac97";
+>> +			reg = < 0x40500000 0x1000 >;
+>> +			interrupts = <14>;
+>> +			reset-gpios = <&gpio 95 GPIO_ACTIVE_HIGH>;
+>> +			pinctrl-names = "default";
+>> +			pinctrl-0 = < &pinctrl_ac97_default >;
+>> +			clocks = <&clks CLK_AC97>, <&clks
+>> CLK_AC97CONF>;
+>> +			clock-names = "AC97CLK", "AC97CONFCLK";
+>> +			dmas = <&pdma 8 0
+>> +				&pdma 9 0
+>> +				&pdma 10 0
+>> +				&pdma 11 0
+>> +				&pdma 12 0>;
+>> +			dma-names = "pcm_pcm_mic_mono",
+>> "pcm_pcm_aux_mono_in",
+>> +				    "pcm_pcm_aux_mono_out",
+>> "pcm_pcm_stereo_in",
+>> +				    "pcm_pcm_stereo_out";
+>> +
+>
+> Spurious newline.
+>
+>> +			#sound-dai-cells = <0>;
+>> +
+>
+> Spurious newline.
+>
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>
+> Missing newline.
+>
+>> +			wm9713: audio-codec@0 {
+>> +				reg = <0>;
+>> +				compatible = "ac97,574d,4c13";
+>> +				clocks = <&wm9713_bitclk>;
+>> +				clock-names = "ac97_clk";
+>> +				#sound-dai-cells = <0>;
+>> +
+>> +				wm9713_bitclk: ac97_bitclk {
+>> +					compatible = "fixed-clock";
+>> +					#clock-cells = <0>;
+>> +					clock-frequency =
+>> <12285000>;
+>> +					status = "okay";
+>> +				};
+>> +			};
+>
+> While a few device trees seem to use audio-codec just codec would work
+> too.
+Ok.
+
+>> +		};
+>> +
+>> +		pxa_pcm_audio: snd_soc_pxa_audio {
+>> +			compatible = "mrvl,pxa-pcm-audio";
+>> +			#sound-dai-cells = <0>;
+>> +			status = "okay";
+>> +		};
+>
+> I believe node names should not contain underscores therefore suggest
+> chaning snd_soc_pxa_audio to snd-soc-pxa-audio.
+Ok.
+>
+>> +		lcd-controller@40500000 {
+>> +			lcd-supply = <&lcd_vmmc>;
+>> +		};
+>> +
+>> +		docg3: flash@0 {
+>> +			compatible = "m-systems,diskonchip-g3";
+>> +			reg = <0x0 0x2000>;
+>> +		};
+>> +
+>
+> Spurious newline.
+>
+>> +	};
+>> +
+>> +	reg_vmmc: regulator@0 {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "vmmc";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>
+> Spurious newline.
+>
+>> +		gpio = <&gpio 91 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +	};
+>
+> I guess that @0 is a legacy from when we used a fake regulator simple
+> bus and nowadays regulator-vmmc is more common.
+Ok.
+
+> Same for the @1 here and usually, for regulator labels the reg_ prefix
+> is used.
+Ok.
+
+Cheers.
+
+-- 
+Robert
