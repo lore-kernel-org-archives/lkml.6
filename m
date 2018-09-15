@@ -7,161 +7,116 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EBBECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5521ECE563
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157EF208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D983208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbIOi1rs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157EF208DD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5abTl/y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D983208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeIOI7M (ORCPT
+        id S1728023AbeIOI7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 04:59:12 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43049 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeIOI7M (ORCPT
+        Sat, 15 Sep 2018 04:59:23 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46626 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbeIOI7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 04:59:12 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f66-v6so5015505plb.10;
-        Fri, 14 Sep 2018 20:41:47 -0700 (PDT)
+        Sat, 15 Sep 2018 04:59:22 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b129-v6so5224107pga.13;
+        Fri, 14 Sep 2018 20:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=Vfr12jueS7IwKDDThU1niCwYcDuAznByJMLt5etNfo8=;
-        b=BbIOi1rsP7IkJO8zT51b63Bj7XlEqbe0cIes+kvODE+zIX20UYpQFkLp2yEHGIv6Dz
-         /ZfKIcWyCmvFJVOZdrg5r5VSDYkVL4p8ngpqNOnSyTXQIZx3Z4a02G4RqepR7C6ZxQWl
-         xKYjgoIXbu+WkIdAkopQXiE6poDKmDDb7vH07RwdJeimHKv6GI4ZN0BZogV/EwKANYvE
-         XXd3WHLMUGVXgmE21O/ktKzvOR3ppf0DYDWhvpY+1YMkxv6N37HQ+X5Bn3lgAh8hVUdF
-         Q80T0lBupYlKRP0rh5IFHAqfgTWuLuJjwNbCjbHEW/exx13vLONtZee11DMeD1y7Zk+e
-         rgvg==
+        bh=mFxUoShxz81AGHb0A/JO8jFUzCf4xUSa+8A9TpkwZgo=;
+        b=L5abTl/yOG3f/T5Ra/JReWIzkhQ//FiwZCMXkXUxLNt/CpJ3SS4SIpXgcjkQC0bZYh
+         568Zdk0gXTQ3tczaRgiImBLL6zKhW9DRQDQ+incGdcfB3SUwBVZ3l1LYOLOVG9hKxXlJ
+         bzsi2Hv84c+U7jQclSd81EkMLc960ALWDHt0/KshRrl00seSMRw6zwqT0/iHCgXXLy9f
+         LXQ6hZrZBpEHQ4JwRcSYySZYm/vL8CAdrm0x3NbL9nUk7/LVfoMnV8CWOiQtSOGP4xVh
+         qMAzSHKjwLBjHVloidF5l3C9LTPG/kX+QITg7RlgGCaKd4CkBOLgutvutwDFDE3wNY8K
+         msKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Vfr12jueS7IwKDDThU1niCwYcDuAznByJMLt5etNfo8=;
-        b=JYwnzGSzazyOABz8jiZjANiy6d0rabq/VYUzNuhuhJp16ZWHy90IfOxq0uRrEIxApw
-         Lk8ZNuWsxYPL/iiap068yI75u9EX9dXir7KT9deGQjKqOZKmyTTgY6fBrQFp3iohMvzj
-         QuHRsx+pIh7ISN7M5pdxnO/nJSF2sIpORDV5UyY2C3IJS/uCn9DkzvUJIiF9fyzA4V8s
-         n2YeJqmrqKsC8/KDhyrkID5QHM8+o0YmX6l9zY9BZkwHJGGV2Fcr0TA8BKF2Qydzmqg/
-         yMKavgp0tbD+lju9ho40mqqp+h5YTo4LrfMzLwtxaSNKBKeKBpUeWzCDJEWm6vqthqeB
-         3YNw==
-X-Gm-Message-State: APzg51BWIOewTUCUkOsEx442lO+zxlPYPqN6zp0c4rNrK28kIPdLWnpB
-        BPEDw0DycHTbcfMTW4Petr6BY+ej
-X-Google-Smtp-Source: ANB0VdYOLIdIkdQ5qSqBMomfTHr6auumTw2xH3KBWUbA3WyjzhHLleMT5cEZcbYtY8NqKHuYF4QDsA==
-X-Received: by 2002:a17:902:8d8c:: with SMTP id v12-v6mr14559921plo.94.1536982907076;
-        Fri, 14 Sep 2018 20:41:47 -0700 (PDT)
+        bh=mFxUoShxz81AGHb0A/JO8jFUzCf4xUSa+8A9TpkwZgo=;
+        b=RedprmhodyXR/1oe8WR7tsUQpHOBGqIdxQKMMt9n8sbhB72HlOpH4LMByLyRdCuk0J
+         O2mRr3UZb9svsM68eXW2nqtgjWaN9AMc8ZOz+dYwBQ9xURh8dMeuLz+ZgcUH+sZtBeox
+         NipyILhxYU4OjT9aeqIWgaCggU/sWmAvbHD3jWPwiOxM9TwFifxaQDbGTuvxyBGOZy0A
+         13Z+DLgM2LDycbhqbFYYo2WHoiYQYe8CXvw4RqAEz5qhz1ieS6oSmNS8U0thcF4dKzyB
+         uNvRn5kIqefMf6dP4X3/j0+yYzRW6pGeLsAOrETbNv5mH760XUL4m2cDqXiTVIbj5HkW
+         mHMw==
+X-Gm-Message-State: APzg51Aqxa++P3NxnmP4jR638VCGCF9eTy1GzeBjTDqJI/2zKPO2thPg
+        2bIpbx4urLz26BUyDUoXd3k=
+X-Google-Smtp-Source: ANB0VdbEUAaHS0IUfi9P5rOaixbJn14jLvqsjpn+13twISQwdPCY0diWRq5qMJmj6X80nHUgAW/sSQ==
+X-Received: by 2002:a62:fc5:: with SMTP id 66-v6mr15169205pfp.237.1536982917160;
+        Fri, 14 Sep 2018 20:41:57 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
-        by smtp.gmail.com with ESMTPSA id y69-v6sm11949912pfd.36.2018.09.14.20.41.44
+        by smtp.gmail.com with ESMTPSA id n80-v6sm13134175pfb.95.2018.09.14.20.41.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 20:41:46 -0700 (PDT)
+        Fri, 14 Sep 2018 20:41:56 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
 To:     james.smart@broadcom.com, dick.kennedy@broadcom.com,
         jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] scsi: lpfc: Fix three sleep-in-atomic-context bugs in lpfc_prep_els_iocb()
-Date:   Sat, 15 Sep 2018 11:41:27 +0800
-Message-Id: <20180915034127.6597-1-baijiaju1990@gmail.com>
+Subject: [PATCH] scsi: lpfc: Fix a sleep-in-atomic-context bug in lpfc_unreg_rpi()
+Date:   Sat, 15 Sep 2018 11:41:50 +0800
+Message-Id: <20180915034150.6652-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.17 are:
+The driver may sleep in an interrupt handler.
+The function call path (from bottom to top) in Linux-4.17 is:
 
-[FUNC] kmalloc(GFP_KERNEL)
-drivers/scsi/lpfc/lpfc_els.c, 205: 
-	kmalloc in lpfc_prep_els_iocb
-drivers/scsi/lpfc/lpfc_els.c, 2010: 
-	lpfc_prep_els_iocb in lpfc_issue_els_plogi
-drivers/scsi/lpfc/lpfc_els.c, 4914: 
-	lpfc_issue_els_plogi in lpfc_els_disc_plogi
-drivers/scsi/lpfc/lpfc_els.c, 1486: 
-	lpfc_els_disc_plogi in lpfc_more_plogi
-drivers/scsi/lpfc/lpfc_els.c, 3123: 
-	lpfc_more_plogi in lpfc_cancel_retry_delay_tmo
-drivers/scsi/lpfc/lpfc_nportdisc.c, 279: 
-	lpfc_cancel_retry_delay_tmo in lpfc_els_abort
-drivers/scsi/lpfc/lpfc_nportdisc.c, 259: 
-	spin_lock_irq in lpfc_els_abort
+[FUNC] mempool_alloc(GFP_KERNEL)
+drivers/scsi/lpfc/lpfc_hbadisc.c, 4738:
+	 mempool_alloc in lpfc_unreg_rpi
+drivers/scsi/lpfc/lpfc_els.c, 2825: 
+	lpfc_unreg_rpi in lpfc_issue_els_logo
+drivers/scsi/lpfc/lpfc_els.c, 9488: 
+	lpfc_issue_els_logo in lpfc_sli_abts_recover_port
+drivers/scsi/lpfc/lpfc_sli.c, 9806: 
+	lpfc_sli_abts_recover_port in lpfc_sli_abts_err_handler
+drivers/scsi/lpfc/lpfc_sli.c, 9914: 
+	lpfc_sli_abts_err_handler in lpfc_sli_async_event_handler
+drivers/scsi/lpfc/lpfc_sli.c, 2755:
+	[FUNC_PTR]lpfc_sli_async_event_handler in lpfc_sli_process_unsol_iocb
+drivers/scsi/lpfc/lpfc_sli.c, 3359: 
+	lpfc_sli_process_unsol_iocb in lpfc_sli_handle_fast_ring_event
+drivers/scsi/lpfc/lpfc_sli.c, 12383: 
+	lpfc_sli_handle_fast_ring_event in lpfc_sli_fp_intr_handler 
+	(interrupt handler)
 
-[FUNC] kmalloc(GFP_KERNEL)
-drivers/scsi/lpfc/lpfc_els.c, 226: 
-	kmalloc in lpfc_prep_els_iocb
-drivers/scsi/lpfc/lpfc_els.c, 2010: 
-	lpfc_prep_els_iocb in lpfc_issue_els_plogi
-drivers/scsi/lpfc/lpfc_els.c, 4914: 
-	lpfc_issue_els_plogi in lpfc_els_disc_plogi
-drivers/scsi/lpfc/lpfc_els.c, 1486: 
-	lpfc_els_disc_plogi in lpfc_more_plogi
-drivers/scsi/lpfc/lpfc_els.c, 3123: 
-	lpfc_more_plogi in lpfc_cancel_retry_delay_tmo
-drivers/scsi/lpfc/lpfc_nportdisc.c, 279: 
-	lpfc_cancel_retry_delay_tmo in lpfc_els_abort
-drivers/scsi/lpfc/lpfc_nportdisc.c, 259: 
-	spin_lock_irq in lpfc_els_abort
+Note that [FUNC_PTR] means a function pointer call is used.
 
-[FUNC] kmalloc(GFP_KERNEL)
-drivers/scsi/lpfc/lpfc_els.c, 215: 
-	kmalloc in lpfc_prep_els_iocb
-drivers/scsi/lpfc/lpfc_els.c, 2010: 
-	lpfc_prep_els_iocb in lpfc_issue_els_plogi
-drivers/scsi/lpfc/lpfc_els.c, 4914: 
-	lpfc_issue_els_plogi in lpfc_els_disc_plogi
-drivers/scsi/lpfc/lpfc_els.c, 1486: 
-	lpfc_els_disc_plogi in lpfc_more_plogi
-drivers/scsi/lpfc/lpfc_els.c, 3123: 
-	lpfc_more_plogi in lpfc_cancel_retry_delay_tmo
-drivers/scsi/lpfc/lpfc_nportdisc.c, 279: 
-	lpfc_cancel_retry_delay_tmo in lpfc_els_abort
-drivers/scsi/lpfc/lpfc_nportdisc.c, 259: 
-	spin_lock_irq in lpfc_els_abort
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
-
-These bugs are found by my static analysis tool DSAC.
+This bug is found by my static analysis tool DSAC.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 4dda969e947c..e21b360eb764 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -202,7 +202,7 @@ lpfc_prep_els_iocb(struct lpfc_vport *vport, uint8_t expectRsp,
- 
- 	/* fill in BDEs for command */
- 	/* Allocate buffer for command payload */
--	pcmd = kmalloc(sizeof(struct lpfc_dmabuf), GFP_KERNEL);
-+	pcmd = kmalloc(sizeof(struct lpfc_dmabuf), GFP_ATOMIC);
- 	if (pcmd)
- 		pcmd->virt = lpfc_mbuf_alloc(phba, MEM_PRI, &pcmd->phys);
- 	if (!pcmd || !pcmd->virt)
-@@ -212,7 +212,7 @@ lpfc_prep_els_iocb(struct lpfc_vport *vport, uint8_t expectRsp,
- 
- 	/* Allocate buffer for response payload */
- 	if (expectRsp) {
--		prsp = kmalloc(sizeof(struct lpfc_dmabuf), GFP_KERNEL);
-+		prsp = kmalloc(sizeof(struct lpfc_dmabuf), GFP_ATOMIC);
- 		if (prsp)
- 			prsp->virt = lpfc_mbuf_alloc(phba, MEM_PRI,
- 						     &prsp->phys);
-@@ -223,7 +223,7 @@ lpfc_prep_els_iocb(struct lpfc_vport *vport, uint8_t expectRsp,
- 		prsp = NULL;
- 
- 	/* Allocate buffer for Buffer ptr list */
--	pbuflist = kmalloc(sizeof(struct lpfc_dmabuf), GFP_KERNEL);
-+	pbuflist = kmalloc(sizeof(struct lpfc_dmabuf), GFP_ATOMIC);
- 	if (pbuflist)
- 		pbuflist->virt = lpfc_mbuf_alloc(phba, MEM_PRI,
- 						 &pbuflist->phys);
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index eb71877f12f8..b10122e13d02 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -4730,7 +4730,7 @@ lpfc_unreg_rpi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
+ 					 "did x%x\n",
+ 					 ndlp->nlp_rpi, ndlp->nlp_flag,
+ 					 ndlp->nlp_DID);
+-		mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
++		mbox = mempool_alloc(phba->mbox_mem_pool, GFP_ATOMIC);
+ 		if (mbox) {
+ 			/* SLI4 ports require the physical rpi value. */
+ 			rpi = ndlp->nlp_rpi;
 -- 
 2.17.0
 
