@@ -2,137 +2,263 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3609ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2054ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656062086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8205C206B5
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:20:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="3NOLWjq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656062086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hd9U0oc7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8205C206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeIOSjY (ORCPT
+        id S1727952AbeIOSji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 14:39:24 -0400
-Received: from mail-co1nam03on0070.outbound.protection.outlook.com ([104.47.40.70]:18560
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727028AbeIOSjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 14:39:24 -0400
+        Sat, 15 Sep 2018 14:39:38 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55150 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbeIOSji (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 14:39:38 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c14-v6so4754733wmb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 06:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w1uBbKqS/LZE0U2XzVVFJWG06iQ8e/U6xVL5mEVt/gc=;
- b=3NOLWjq+/wgjhaf0I9Cp/eNa/QPigP0NEjFUZtcB13qhrXp7GYzplo6UE7UX0FMbX7MJMaiJBwXXPIyOiKuTKMvGYbSrq6BOOXUWkF7tyWHGngY86OMLXIpmXfFUHnIuH5fgxMN5963mNBPm1+67rtek78iX57BIIpuAS3LCM7U=
-Received: from BN3PR0201MB0993.namprd02.prod.outlook.com (10.161.207.14) by
- BN3PR0201MB0929.namprd02.prod.outlook.com (10.160.155.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.15; Sat, 15 Sep 2018 13:20:18 +0000
-Received: from BN3PR0201MB0993.namprd02.prod.outlook.com
- ([fe80::29f7:170b:ce40:9b2e]) by BN3PR0201MB0993.namprd02.prod.outlook.com
- ([fe80::29f7:170b:ce40:9b2e%7]) with mapi id 15.20.1143.017; Sat, 15 Sep 2018
- 13:20:18 +0000
-From:   Anurag Kumar Vulisha <anuragku@xilinx.com>
-To:     Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        "balbi@kernel.org" <balbi@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "v.anuragkumar@gmail.com" <v.anuragkumar@gmail.com>
-Subject: RE: [PATCH v4 4/8] usb: dwc3: implement stream transfer timeout
-Thread-Topic: [PATCH v4 4/8] usb: dwc3: implement stream transfer timeout
-Thread-Index: AQHUR4UWRB/re03360KpnUerBO1A9aTxXf+Q
-Date:   Sat, 15 Sep 2018 13:20:18 +0000
-Message-ID: <BN3PR0201MB0993B7CC13E3042415127FE0A7180@BN3PR0201MB0993.namprd02.prod.outlook.com>
-References: <1536418986-16609-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <1536418986-16609-5-git-send-email-anurag.kumar.vulisha@xilinx.com>
- <30102591E157244384E984126FC3CB4F544AECB6@us01wembx1.internal.synopsys.com>
-In-Reply-To: <30102591E157244384E984126FC3CB4F544AECB6@us01wembx1.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anuragku@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN3PR0201MB0929;6:C9niIoYApyJHbrkBbbJlbNYLUDXXE2JjIhAqIw++RruOEm2+9MuGVJVGm4r3ZFZY+um6J2j+qsi0+keOBrvbxxcrWqYV0GLzl9JGRjVx8eFpcimoVO0xQQuCFBeryqwa8ru2Oe+vQ8EeejD+CMi9ITBlWA1sY2i/mVKUtv4ijgEq4/XP5LE4rXYHSjVmGLE4ZOw8UmnhHoZW/L7YBRQntpCM1sdEp6VTLVPnl/EeFPt8hGGJagJNxyqnTPBJh3oYlOADeAY5qviRPjR1JDnx5qKiV1caGWlCAPzsKPn0njXJISCplQVkzGlkB9Q6TKSGXKO+WQbjFXAEdWx3mb56s/usHxugFITKWX2rfaLGeYm6ld6qBq+PxE31KFlVdgKSCZngznRWyfREhHcRLirySQKu3p/mCTFDokzuT+SwWkN8sl42pYmieh5updYcUjwyajQyLGw0Up6Q4WxWqK0t6g==;5:KUCJl3x8zDgeey2C5a/sf+Miy10ssfdMmVJxxltpvGedZuE6QNvMFSOgo3IwFFzY6rz9/VnNivAupb4fQPPnOg2vPhWQpoKPbGy6obkmWubChjfAq/RuVCvHQBft+kJnx4NdGEU2RyqHWRVVcU+urKO08uwpePXlcoJNpcmKMGU=;7:/OS07TBe1EzaLBBGmHY9kZdos7LDRijjaI4oU36m3idccJ+rkKLUGSzq+tG+J5e6pkOGlkcXtyYipI9dFXTuB0bo5goF5B1pChFIjw6S0DRYY3VFnXh48QDx6DYKLDH9s9/zH+06PrqJj4CjP9U4wug6XGWMvQuBD8ue5aaHKQE0z/HAllhjP89qtWOv5ED//k9UkmbNVexu3IrRDIECJcHj2O9WODnPRlZvpb1wOr9etV4Gsib5uq8m3saVuI5q
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: cafb4348-e138-4d9d-4a52-08d61b0dfb42
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0201MB0929;
-x-ms-traffictypediagnostic: BN3PR0201MB0929:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BN3PR0201MB0929396D61A4CF0B74F5214FA7180@BN3PR0201MB0929.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:BN3PR0201MB0929;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0201MB0929;
-x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(39850400004)(136003)(366004)(199004)(189003)(14454004)(3846002)(68736007)(2900100001)(6116002)(105586002)(33656002)(53936002)(106356001)(2906002)(5660300001)(6246003)(478600001)(25786009)(66066001)(39060400002)(7736002)(81166006)(74316002)(6436002)(4326008)(8936002)(55016002)(102836004)(305945005)(186003)(256004)(76176011)(97736004)(9686003)(81156014)(2201001)(316002)(486006)(86362001)(99286004)(5250100002)(26005)(54906003)(476003)(11346002)(7696005)(6506007)(14444005)(229853002)(110136005)(446003)(8676002)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0201MB0929;H:BN3PR0201MB0993.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: e2HiuVinM4yddi2IgZd5zcFmlBwdxBEdXNGklEBLuBVGgXu8FC6sHwBxgCz330L0hI9B+vLSlNYnyc6im+HWKQ7uS6bMltH5y6fDien7QY2Fu/1q6tBjGHkCJPYNosnDvzSTSxZtsLmZZ/uN3Qn3ZU+MR5pmSDJ5y7BaJoPht5SrOr6FnkoxchyzGpxHeUh4c5UuWv+zwtPtKT8K46gU1qqYWvxTStig+tHCN8V8QRVePiS0LFxVgv7r9FBAO0I6mliOcc8xkS61SRfQqqN/G3ZhxswjX0GqRwk8sQSiNSn2v3ZoJDrSvAjYT/2HxWodPNHJQVqX6bnm78hD8CAlXaonLJF8AXWqM83Ac5GXhTQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=TS8i43bcwpRa36NotChKmxqJUKcEQvUeQbp3fUgkKzQ=;
+        b=hd9U0oc7MG8RWRqR1P5kR/56ImgDEZ8mIdYzNcP8faEyBL4gMa4maMS+Hx3Rh3gQD7
+         pnKADyKbhmglsl6MIyYS2B+2w8rdM1YgGla0uRSu/LR8JLMSuKqVmt8x9Mh6PirKLiVA
+         nH6CT980dMlmRGpJ94cbc+uFLl7O9GetqdrJEHLkNt6GT0h9MfK19t9u4kjadFN7pvpn
+         Vhn2uGQej+pMa7tEtd8wRvDhMGx/A9wnuF0y1a31gD/KZfyytQAR+7wPNAKGK9mW+CBq
+         Ynav+YUz2gAaghgsVG5h6TQmcbXXRDJzqVwyUlrH+QvTRhs0oTVfCCOBNHF7RdbMTMGK
+         tu4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=TS8i43bcwpRa36NotChKmxqJUKcEQvUeQbp3fUgkKzQ=;
+        b=IvPW/gipaW9rWxMtWJhaPN21CQ+AEaPDwp5MoFM/uWKvNm1HnyjpQ20WWsQb9qSzMG
+         oyhXqALobfVs1wRfCOTTRW4CQptQHAUAS5rXFkjGMaVmD2HfEiSsK4kbOPmyCIn+LYW+
+         JI5Y00+5mJ9VX7mH8BosNmcv48cQoZGy7GREAds+yTdRp1H5QqQlxgagKEjfYoNqYphy
+         xKRPWW4nmKneOech4kyZnSNU4OsdE1LK3Buoscl0BP7DT7qsTAkVVvi2u9jvNqZi8HSE
+         95a5hpXTfLIR7aqYjZMXqz0hC/qS9dtlx3dXzziaeW1ozGNDNqpWO1iAUkmw19UiMGJt
+         quAQ==
+X-Gm-Message-State: APzg51BelQ9YFxyB7e1zfaOjjqfdKrZlPp4Ve6rc3Oq7FiBQyF8C9kxc
+        j15NirvzW8JBGKM713cBeed9trXZ
+X-Google-Smtp-Source: ANB0VdYLE026Zlg7GpI6ACKAFi7Prj2r7hB5nJ1+oh4P25NLWWqusdcto+BG5NkUvLkiHdEvlFunrg==
+X-Received: by 2002:a1c:1314:: with SMTP id 20-v6mr5660221wmt.55.1537017637213;
+        Sat, 15 Sep 2018 06:20:37 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 139-v6sm2705837wmp.4.2018.09.15.06.20.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 15 Sep 2018 06:20:36 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 15:20:34 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] scheduler fixes
+Message-ID: <20180915132034.GA126875@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cafb4348-e138-4d9d-4a52-08d61b0dfb42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 13:20:18.2213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0201MB0929
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thinh,
+Linus,
 
->>
->> @@ -2403,6 +2424,13 @@ static void
->dwc3_gadget_endpoint_transfer_in_progress(struct dwc3_ep *dep,
->>  			stop =3D true;
->>  	}
->>
->> +	/*
->> +	 * Delete the timer that was started in __dwc3_gadget_kick_transfer()
->> +	 * for stream capable endpoints.
->> +	 */
->> +	if (dep->stream_capable)
->> +		del_timer(&dep->stream_timeout_timer);
->> +
->>  	dwc3_gadget_ep_cleanup_completed_requests(dep, event, status);
->>
->>  	if (stop) {
->> @@ -2487,6 +2515,11 @@ static void dwc3_endpoint_interrupt(struct dwc3 *=
-dwc,
->>  		}
->>  		break;
->>  	case DWC3_DEPEVT_STREAMEVT:
->> +		if (event->status =3D=3D DEPEVT_STREAMEVT_FOUND)
->> +			del_timer(&dep->stream_timeout_timer);
->> +		else
->> +			dev_dbg(dwc->dev, "unable to find suitable stream");
->
->This debug message is already printed in the driver tracepoint. There's no=
- need to
->print it here. Also, I don't think Felipe will accept adding new dev_dbg()=
- after removing
->all of them and converting them to tracepoints.
->
+Please pull the latest sched-urgent-for-linus git tree from:
 
-I agree with you, thanks for correcting. Will remove the debug prints and r=
-esend the patches
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-Thanks,
-Anurag Kumar Vulisha
+   # HEAD: 882a78a9f39f5535b209b4aa0a1741e35b8c67fb sched/fair: Fix kernel-doc notation warning
+
+Misc fixes: various scheduler metrics corner case fixes, a sched_features deadlock fix, and a 
+topology fix for certain NUMA systems.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Jiada Wang (1):
+      sched/debug: Fix potential deadlock when writing to sched_features
+
+Randy Dunlap (1):
+      sched/fair: Fix kernel-doc notation warning
+
+Srikar Dronamraju (1):
+      sched/topology: Set correct NUMA topology type
+
+Steve Muckle (1):
+      sched/fair: Fix vruntime_normalized() for remote non-migration wakeup
+
+Vincent Guittot (3):
+      sched/pelt: Fix update_blocked_averages() for RT and DL classes
+      sched/fair: Fix scale_rt_capacity() for SMT
+      sched/fair: Fix load_balance redo for !imbalance
+
+
+ kernel/sched/debug.c    |  6 ++++--
+ kernel/sched/fair.c     | 26 +++++++++++++++++---------
+ kernel/sched/topology.c |  5 +----
+ 3 files changed, 22 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 60caf1fb94e0..6383aa6a60ca 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -89,12 +89,12 @@ struct static_key sched_feat_keys[__SCHED_FEAT_NR] = {
+ 
+ static void sched_feat_disable(int i)
+ {
+-	static_key_disable(&sched_feat_keys[i]);
++	static_key_disable_cpuslocked(&sched_feat_keys[i]);
+ }
+ 
+ static void sched_feat_enable(int i)
+ {
+-	static_key_enable(&sched_feat_keys[i]);
++	static_key_enable_cpuslocked(&sched_feat_keys[i]);
+ }
+ #else
+ static void sched_feat_disable(int i) { };
+@@ -146,9 +146,11 @@ sched_feat_write(struct file *filp, const char __user *ubuf,
+ 
+ 	/* Ensure the static_key remains in a consistent state */
+ 	inode = file_inode(filp);
++	cpus_read_lock();
+ 	inode_lock(inode);
+ 	ret = sched_feat_set(cmp);
+ 	inode_unlock(inode);
++	cpus_read_unlock();
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b39fb596f6c1..f808ddf2a868 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3362,6 +3362,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+  * attach_entity_load_avg - attach this entity to its cfs_rq load avg
+  * @cfs_rq: cfs_rq to attach to
+  * @se: sched_entity to attach
++ * @flags: migration hints
+  *
+  * Must call update_cfs_rq_load_avg() before this, since we rely on
+  * cfs_rq->avg.last_update_time being current.
+@@ -7263,6 +7264,7 @@ static void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct cfs_rq *cfs_rq, *pos;
++	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 	bool done = true;
+ 
+@@ -7299,8 +7301,10 @@ static void update_blocked_averages(int cpu)
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
+ 	}
+-	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+-	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
++
++	curr_class = rq->curr->sched_class;
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
++	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
+ 	update_irq_load_avg(rq, 0);
+ 	/* Don't need periodic decay once load/util_avg are null */
+ 	if (others_have_blocked(rq))
+@@ -7365,13 +7369,16 @@ static inline void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+ 	struct cfs_rq *cfs_rq = &rq->cfs;
++	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 
+ 	rq_lock_irqsave(rq, &rf);
+ 	update_rq_clock(rq);
+ 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
+-	update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+-	update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
++
++	curr_class = rq->curr->sched_class;
++	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
++	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
+ 	update_irq_load_avg(rq, 0);
+ #ifdef CONFIG_NO_HZ_COMMON
+ 	rq->last_blocked_load_update_tick = jiffies;
+@@ -7482,10 +7489,10 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
+ 	return load_idx;
+ }
+ 
+-static unsigned long scale_rt_capacity(int cpu)
++static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
++	unsigned long max = arch_scale_cpu_capacity(sd, cpu);
+ 	unsigned long used, free;
+ 	unsigned long irq;
+ 
+@@ -7507,7 +7514,7 @@ static unsigned long scale_rt_capacity(int cpu)
+ 
+ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ {
+-	unsigned long capacity = scale_rt_capacity(cpu);
++	unsigned long capacity = scale_rt_capacity(sd, cpu);
+ 	struct sched_group *sdg = sd->groups;
+ 
+ 	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(sd, cpu);
+@@ -8269,7 +8276,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ force_balance:
+ 	/* Looks like there is an imbalance. Compute it */
+ 	calculate_imbalance(env, &sds);
+-	return sds.busiest;
++	return env->imbalance ? sds.busiest : NULL;
+ 
+ out_balanced:
+ 	env->imbalance = 0;
+@@ -9638,7 +9645,8 @@ static inline bool vruntime_normalized(struct task_struct *p)
+ 	 * - A task which has been woken up by try_to_wake_up() and
+ 	 *   waiting for actually being woken up by sched_ttwu_pending().
+ 	 */
+-	if (!se->sum_exec_runtime || p->state == TASK_WAKING)
++	if (!se->sum_exec_runtime ||
++	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
+ 		return true;
+ 
+ 	return false;
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 56a0fed30c0a..505a41c42b96 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1295,7 +1295,7 @@ static void init_numa_topology_type(void)
+ 
+ 	n = sched_max_numa_distance;
+ 
+-	if (sched_domains_numa_levels <= 1) {
++	if (sched_domains_numa_levels <= 2) {
+ 		sched_numa_topology_type = NUMA_DIRECT;
+ 		return;
+ 	}
+@@ -1380,9 +1380,6 @@ void sched_init_numa(void)
+ 			break;
+ 	}
+ 
+-	if (!level)
+-		return;
+-
+ 	/*
+ 	 * 'level' contains the number of unique distances
+ 	 *
