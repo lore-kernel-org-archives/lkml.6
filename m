@@ -2,148 +2,452 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4057CECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 15:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57D3ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 16:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3871208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 15:34:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3871208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6770D208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 16:04:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6770D208DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbeIOUxs (ORCPT
+        id S1728007AbeIOVXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 16:53:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51864 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeIOUxs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 16:53:48 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g1CaW-0001PK-Jo; Sat, 15 Sep 2018 17:34:24 +0200
-Date:   Sat, 15 Sep 2018 17:34:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Rich Felker <dalias@libc.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: futex_cmpxchg_enabled breakage
-In-Reply-To: <20180830135527.GT1878@brightrain.aerifal.cx>
-Message-ID: <alpine.DEB.2.21.1809151726290.1650@nanos.tec.linutronix.de>
-References: <20180829222221.GA22017@brightrain.aerifal.cx> <alpine.DEB.2.21.1808301109220.1210@nanos.tec.linutronix.de> <20180830135527.GT1878@brightrain.aerifal.cx>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 15 Sep 2018 17:23:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35048 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727215AbeIOVXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 17:23:52 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A99A30820D4;
+        Sat, 15 Sep 2018 16:04:25 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CDD2910021B1;
+        Sat, 15 Sep 2018 16:04:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Sat, 15 Sep 2018 18:04:25 +0200 (CEST)
+Date:   Sat, 15 Sep 2018 18:04:23 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        berrange@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/3] exec: separate thread_count for files_struct
+Message-ID: <20180915160423.GA31461@redhat.com>
+References: <20180914105310.6454-1-jlayton@kernel.org>
+ <20180914105310.6454-2-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914105310.6454-2-jlayton@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 15 Sep 2018 16:04:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 Aug 2018, Rich Felker wrote:
-> On Thu, Aug 30, 2018 at 11:19:58AM +0200, Thomas Gleixner wrote:
-> > On Wed, 29 Aug 2018, Rich Felker wrote:
-> > 
-> > > I just spent a number of hours helping someone track down a bug that
-> > > looks like it's some kind of futex_cmpxchg_enabled detection error on
-> > > powerpc64 (still not sure of the root cause; set_robust_list producing
-> > > -ENOSYS), and a while back I hit the same problem on sh2 due to lack
-> > > of EFAULT on nommu, leading to commit 72cc564f16ca. I think the test
-> > > (introduced way back in commit a0c1e9073ef7) is fundamentally buggy;
-> > > if anything, it should be checking for !=-ENOSYS, not ==-EFAULT.
-> > 
-> > Errm? This does a futex_cmpxchg() on NULL which has to return EFAULT if
-> > it's available. There is nothing fundamentally buggy about it at all.
-> 
-> I'll let you know when if/when we finish figuring out how this
-> happened on powerpc64, but it's an arch that most certainly has a
-> working cmpxchg where these syscalls ended up returning -ENOSYS. This
-> is an error condition that should not be able to happen. At the very
-> very least all the archs that actually have a working cmpxchg
-> unconditionally should be updated with:
-> 
-> 	select HAVE_FUTEX_CMPXCHG if FUTEX
-> 
-> so that whatever caused this for powerpc64 doesn't happen again.
+On 09/14, Jeff Layton wrote:
+>
+> Currently, we have a single refcount variable inside the files_struct.
+> When we go to unshare the files_struct, we check this counter and if
+> it's elevated, then we allocate a new files_struct instead of just
+> repurposing the old one, under the assumption that that indicates that
+> it's shared between tasks.
+>
+> This is not necessarily the case, however. Each task associated with the
+> files_struct does get a long-held reference, but the refcount can be
+> elevated for other reasons as well, by callers of get_files_struct.
+>
+> This means that we can end up allocating a new files_struct if we just
+> happen to race with a call to get_files_struct. Fix this by adding a new
+> counter to track the number associated threads, and use that to
+> determine whether to allocate a new files_struct when unsharing.
 
-By doing that you paper over a non functional fixup which could cause other
-really hard to decode runtime failures. If that fails there is a bug
-somewhere else and that runtime check is not to blame at all for it.
+But who actually needs get_files_struct() ? All users except binder.c need
+struct file, not struct files_struct.
 
-> > > Presumably it could also fail to produce -EFAULT if mmap_min_addr is 0
-> > > and page 0 is mapped (a bad idea, but maybe someone does it...). And
-> > > of course other nommu archs are possibly still broken.
-> > 
-> > If NULL is mapped in the kernel then a lot of other things are broken. The
-> > futex thing is then the least of your worries.
-> 
-> For nommu NULL is always "mapped".
+See the (completely untested) patch below. It adds the new fget_task() helper
+and converts all other users to use it.
 
-Cool, so you can have a NULL pointer dereference without noticing it.
+As for binder.c, in this case we probably actually want to unshare ->files
+on exec so we can ignore it?
 
-> > The availibility of the interfaces which depend on futex_cmpxchg_enabled
-> > has been runtime detectable forever and it's documented that way. I have no
-> > idea why you think it's non-optional. If you made it unconditional in your
-> > lib, then it's hardly the kernels problem.
-> 
-> Modern glibc also defines:
-> 
-> #define __ASSUME_SET_ROBUST_LIST        1
-> 
-> It's then #undef'd for some archs (mips, m68k, sparc, arm), but not
-> all archs that lack HAVE_FUTEX_CMPXCHG, so glibc seems to be assuming
-> set_robust_list actually works on some where the kernel is treating
-> failure as a possibility.
+Oleg.
+---
 
-That's hardly a kernel issue, right?
+ fs/file.c            |  29 ++++++++++++-
+ fs/proc/fd.c         | 117 +++++++++++++++++++--------------------------------
+ include/linux/file.h |   3 ++
+ kernel/bpf/syscall.c |  23 +++-------
+ kernel/kcmp.c        |  20 ++-------
+ 5 files changed, 83 insertions(+), 109 deletions(-)
 
-> > > If there are no archs that support SMP but don't provide their own
-> > > asm/futex.h (as opposed to the asm-generic one that does -ENOSYS on
-> > > SMP), the detection code should just be removed, and the SMP case in
-> > > asm-generic/futex.h should be made into #error.
-> > 
-> > And why so? Just because?
-> 
-> To prevent inadvertent introduction of this issue on new archs (if the
-> porters don't realize asm-generic/futex.h doesn't actually work for
-> SMP).
-> 
-> > > If there are archs that support SMP but don't provide their own
-> > > working asm/futex.h, then asm-generic/futex.h's SMP case should be
-> > > enhanced to perform a stop-the-world IPI and then do the same thing as
-> > > the non-SMP case (disable preemption[/interrupts?], perform the
-> > > cmpxchg non-atomically).
-> > > 
-> > > Thoughts? Would a patch to do this be acceptable?
-> > 
-> > No. There is nothing at all in the world which requires that PI futexes and
-> > robust list are provided and even if you implement that hack in the kernel
-> > then the user space side still does not work because the user space part of
-> > those interfaces has a hard dependency on working cmpxchg as well.
-> 
-> Of course there's a working cmpxchg; this is a hard requirement for
-> userspace. You cannot implement pthread primitives without one. On
-> archs/ISA-levels that lack an insn it's already provided as a syscall,
-> a vdso/khelper, or trap-and-emulate. The problem I'm complaining about
-> here is that, despite already needing and having working ways to
-> achieve this, the kernel is not using them, and breaking functionality
-> that should work.
-
-I kinda agree for the nommu case, but for power64 you are barking up the
-wrong tree. If that check fails something very fundamentaly is broken and
-that breakage is _NOT_ in the futex code. This has to work independent of
-the futex code, really.
-
-Thanks,
-
-	tglx
-
+diff --git a/fs/file.c b/fs/file.c
+index 7ffd6e9..a685cc0 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -676,9 +676,9 @@ void do_close_on_exec(struct files_struct *files)
+ 	spin_unlock(&files->file_lock);
+ }
+ 
+-static struct file *__fget(unsigned int fd, fmode_t mask)
++static struct file *__fget_files(struct files_struct *files,
++				unsigned int fd, fmode_t mask)
+ {
+-	struct files_struct *files = current->files;
+ 	struct file *file;
+ 
+ 	rcu_read_lock();
+@@ -699,12 +699,37 @@ static struct file *__fget(unsigned int fd, fmode_t mask)
+ 	return file;
+ }
+ 
++static inline struct file *__fget(unsigned int fd, fmode_t mask)
++{
++	return __fget_files(current->files, fd, mask);
++}
++
+ struct file *fget(unsigned int fd)
+ {
+ 	return __fget(fd, FMODE_PATH);
+ }
+ EXPORT_SYMBOL(fget);
+ 
++struct file *fget_task(struct task_struct *task, unsigned int fd)
++{
++	struct files_struct *files;
++	struct file *file = ERR_PTR(-EBADF);
++
++	task_lock(task);
++	/*
++	 * __fget_files() checks max_fds itself but we want -EBADF
++	 * if fd is too big; and files_fdtable() needs rcu lock.
++	 */
++	rcu_read_lock();
++	files = task->files;
++	if (files && fd < files_fdtable(files)->max_fds)
++		file = __fget_files(files, fd, FMODE_PATH);
++	rcu_read_unlock();
++	task_unlock(task);
++
++	return file;
++}
++
+ struct file *fget_raw(unsigned int fd)
+ {
+ 	return __fget(fd, 0);
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index 81882a1..bb61890 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -19,54 +19,45 @@
+ 
+ static int seq_show(struct seq_file *m, void *v)
+ {
+-	struct files_struct *files = NULL;
++	struct task_struct *task = get_proc_task(m->private);
++	unsigned int fd = proc_fd(m->private);
+ 	int f_flags = 0, ret = -ENOENT;
+ 	struct file *file = NULL;
+-	struct task_struct *task;
+ 
+-	task = get_proc_task(m->private);
+ 	if (!task)
+-		return -ENOENT;
+-
+-	files = get_files_struct(task);
+-	put_task_struct(task);
+-
+-	if (files) {
+-		unsigned int fd = proc_fd(m->private);
+-
+-		spin_lock(&files->file_lock);
+-		file = fcheck_files(files, fd);
+-		if (file) {
+-			struct fdtable *fdt = files_fdtable(files);
++		return ret;
+ 
+-			f_flags = file->f_flags;
+-			if (close_on_exec(fd, fdt))
+-				f_flags |= O_CLOEXEC;
++	file = fget_task(task, fd);
++	if (IS_ERR_OR_NULL(file))
++		goto out;
+ 
+-			get_file(file);
+-			ret = 0;
+-		}
+-		spin_unlock(&files->file_lock);
+-		put_files_struct(files);
++	/* TODO: add another helper ? */
++	task_lock(task);
++	rcu_read_lock();
++	if (task->files) {
++		struct fdtable *fdt = files_fdtable(task->files);
++		if (fd < fdt->max_fds && close_on_exec(fd, fdt))
++			f_flags |= O_CLOEXEC;
+ 	}
+-
+-	if (ret)
+-		return ret;
++	rcu_read_unlock();
++	task_unlock(task);
+ 
+ 	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\n",
+ 		   (long long)file->f_pos, f_flags,
+ 		   real_mount(file->f_path.mnt)->mnt_id);
+ 
+-	show_fd_locks(m, file, files);
++	/* show_fd_locks() never dereferences file, NULL is fine too */
++	show_fd_locks(m, file, task->files);
+ 	if (seq_has_overflowed(m))
+ 		goto out;
+ 
+ 	if (file->f_op->show_fdinfo)
+ 		file->f_op->show_fdinfo(m, file);
+ 
+-out:
+ 	fput(file);
+-	return 0;
++out:
++	put_task_struct(task);
++	return ret;
+ }
+ 
+ static int seq_fdinfo_open(struct inode *inode, struct file *file)
+@@ -83,19 +74,14 @@ static const struct file_operations proc_fdinfo_file_operations = {
+ 
+ static bool tid_fd_mode(struct task_struct *task, unsigned fd, fmode_t *mode)
+ {
+-	struct files_struct *files = get_files_struct(task);
+-	struct file *file;
++	struct file *file = fget_task(task, fd);
+ 
+-	if (!files)
++	if (IS_ERR_OR_NULL(file))
+ 		return false;
+ 
+-	rcu_read_lock();
+-	file = fcheck_files(files, fd);
+-	if (file)
+-		*mode = file->f_mode;
+-	rcu_read_unlock();
+-	put_files_struct(files);
+-	return !!file;
++	*mode = file->f_mode;
++	fput(file);
++	return true;
+ }
+ 
+ static void tid_fd_update_inode(struct task_struct *task, struct inode *inode,
+@@ -146,31 +132,24 @@ static const struct dentry_operations tid_fd_dentry_operations = {
+ 
+ static int proc_fd_link(struct dentry *dentry, struct path *path)
+ {
+-	struct files_struct *files = NULL;
+-	struct task_struct *task;
++	struct task_struct *task = get_proc_task(d_inode(dentry));
++	unsigned int fd = proc_fd(d_inode(dentry));
++	struct file *fd_file;
+ 	int ret = -ENOENT;
+ 
+ 	task = get_proc_task(d_inode(dentry));
+-	if (task) {
+-		files = get_files_struct(task);
+-		put_task_struct(task);
+-	}
+-
+-	if (files) {
+-		unsigned int fd = proc_fd(d_inode(dentry));
+-		struct file *fd_file;
++	if (!task)
++		return ret;
+ 
+-		spin_lock(&files->file_lock);
+-		fd_file = fcheck_files(files, fd);
+-		if (fd_file) {
+-			*path = fd_file->f_path;
+-			path_get(&fd_file->f_path);
+-			ret = 0;
+-		}
+-		spin_unlock(&files->file_lock);
+-		put_files_struct(files);
++	fd_file = fget_task(task, fd);
++	if (!IS_ERR_OR_NULL(fd_file)) {
++		*path = fd_file->f_path;
++		path_get(&fd_file->f_path);
++		fput(fd_file);
++		ret = 0;
+ 	}
+ 
++	put_task_struct(task);
+ 	return ret;
+ }
+ 
+@@ -229,7 +208,6 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 			      instantiate_t instantiate)
+ {
+ 	struct task_struct *p = get_proc_task(file_inode(file));
+-	struct files_struct *files;
+ 	unsigned int fd;
+ 
+ 	if (!p)
+@@ -237,37 +215,30 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 
+ 	if (!dir_emit_dots(file, ctx))
+ 		goto out;
+-	files = get_files_struct(p);
+-	if (!files)
+-		goto out;
+ 
+-	rcu_read_lock();
+-	for (fd = ctx->pos - 2;
+-	     fd < files_fdtable(files)->max_fds;
+-	     fd++, ctx->pos++) {
++	for (fd = ctx->pos - 2;; fd++, ctx->pos++) {
+ 		struct file *f;
+ 		struct fd_data data;
+ 		char name[10 + 1];
+ 		unsigned int len;
+ 
+-		f = fcheck_files(files, fd);
++		f = fget_task(p, fd);
+ 		if (!f)
+ 			continue;
++		if (IS_ERR(f))
++			break;
++
+ 		data.mode = f->f_mode;
+-		rcu_read_unlock();
+ 		data.fd = fd;
++		fput(f);
+ 
+ 		len = snprintf(name, sizeof(name), "%u", fd);
+ 		if (!proc_fill_cache(file, ctx,
+ 				     name, len, instantiate, p,
+ 				     &data))
+-			goto out_fd_loop;
++			goto out;
+ 		cond_resched();
+-		rcu_read_lock();
+ 	}
+-	rcu_read_unlock();
+-out_fd_loop:
+-	put_files_struct(files);
+ out:
+ 	put_task_struct(p);
+ 	return 0;
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 6b2fb03..8b7abdb 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -43,6 +43,9 @@ static inline void fdput(struct fd fd)
+ 		fput(fd.file);
+ }
+ 
++struct task_struct;
++extern struct file *fget_task(struct task_struct *task, unsigned int fd);
++
+ extern struct file *fget(unsigned int fd);
+ extern struct file *fget_raw(unsigned int fd);
+ extern unsigned long __fdget(unsigned int fd);
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 8339d81..2cbf26d 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2260,7 +2260,6 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
+ 	pid_t pid = attr->task_fd_query.pid;
+ 	u32 fd = attr->task_fd_query.fd;
+ 	const struct perf_event *event;
+-	struct files_struct *files;
+ 	struct task_struct *task;
+ 	struct file *file;
+ 	int err;
+@@ -2278,24 +2277,13 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
+ 	if (!task)
+ 		return -ENOENT;
+ 
+-	files = get_files_struct(task);
+-	put_task_struct(task);
+-	if (!files)
+-		return -ENOENT;
+-
+-	err = 0;
+-	spin_lock(&files->file_lock);
+-	file = fcheck_files(files, fd);
+-	if (!file)
+-		err = -EBADF;
+-	else
+-		get_file(file);
+-	spin_unlock(&files->file_lock);
+-	put_files_struct(files);
+-
+-	if (err)
++	err = -EBADF;
++	file = fget_task(task, fd);
++	if (IS_ERR_OR_NULL(file))
+ 		goto out;
+ 
++	err = -ENOTSUPP;
++
+ 	if (file->f_op == &bpf_raw_tp_fops) {
+ 		struct bpf_raw_tracepoint *raw_tp = file->private_data;
+ 		struct bpf_raw_event_map *btp = raw_tp->btp;
+@@ -2324,7 +2312,6 @@ static int bpf_task_fd_query(const union bpf_attr *attr,
+ 		goto put_file;
+ 	}
+ 
+-	err = -ENOTSUPP;
+ put_file:
+ 	fput(file);
+ out:
+diff --git a/kernel/kcmp.c b/kernel/kcmp.c
+index a0e3d7a..067639e 100644
+--- a/kernel/kcmp.c
++++ b/kernel/kcmp.c
+@@ -107,7 +107,6 @@ static int kcmp_epoll_target(struct task_struct *task1,
+ {
+ 	struct file *filp, *filp_epoll, *filp_tgt;
+ 	struct kcmp_epoll_slot slot;
+-	struct files_struct *files;
+ 
+ 	if (copy_from_user(&slot, uslot, sizeof(slot)))
+ 		return -EFAULT;
+@@ -116,23 +115,12 @@ static int kcmp_epoll_target(struct task_struct *task1,
+ 	if (!filp)
+ 		return -EBADF;
+ 
+-	files = get_files_struct(task2);
+-	if (!files)
++	filp_epoll = fget_task(task2, slot.efd);
++	if (IS_ERR_OR_NULL(filp_epoll))
+ 		return -EBADF;
+ 
+-	spin_lock(&files->file_lock);
+-	filp_epoll = fcheck_files(files, slot.efd);
+-	if (filp_epoll)
+-		get_file(filp_epoll);
+-	else
+-		filp_tgt = ERR_PTR(-EBADF);
+-	spin_unlock(&files->file_lock);
+-	put_files_struct(files);
+-
+-	if (filp_epoll) {
+-		filp_tgt = get_epoll_tfile_raw_ptr(filp_epoll, slot.tfd, slot.toff);
+-		fput(filp_epoll);
+-	}
++	filp_tgt = get_epoll_tfile_raw_ptr(filp_epoll, slot.tfd, slot.toff);
++	fput(filp_epoll);
+ 
+ 	if (IS_ERR(filp_tgt))
+ 		return PTR_ERR(filp_tgt);
 
