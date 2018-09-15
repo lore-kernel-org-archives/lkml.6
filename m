@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B10EECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C0ECE563
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30A10206B5
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06757206B5
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="4cA8OOZ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A10206B5
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="m3MT0DHO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06757206B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeIOTt6 (ORCPT
+        id S1728176AbeIOTuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 15:49:58 -0400
-Received: from mail-bl2nam02on0065.outbound.protection.outlook.com ([104.47.38.65]:40320
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 15:50:01 -0400
+Received: from mail-sn1nam01on0057.outbound.protection.outlook.com ([104.47.32.57]:4224
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728084AbeIOTt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 15:49:57 -0400
+        id S1728089AbeIOTuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 15:50:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VWV8MPJ6lpw7G2tyYwuu+XWCPTqaGoVljnfE6oMMvW4=;
- b=4cA8OOZ347PeTZ6RPwqJiTlYEwNna/wYl+5NHR9ID4JIzcDUOVmL8B4rVli7MGvQBjNFd6XYXdbeBQ5ZnGgK2NWD7kqlCYgkyN4GQ6LHqUOiwlcmzjccBMiWN7oJ4sjvyea1y5P2qjnma7o6uHCJkJ7Dg1AWD3croACS6zwH3qg=
-Received: from BN6PR02CA0041.namprd02.prod.outlook.com (2603:10b6:404:5f::27)
- by BYAPR02MB4469.namprd02.prod.outlook.com (2603:10b6:a03:10::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.17; Sat, 15 Sep
+ bh=YR4ZtAMKW5HOR64i5BnkqO7WlwIfsS6Q8T3WMRxy9ws=;
+ b=m3MT0DHOKy68KjjfCTebrZ5Y+8n1a9XZxtsmFBz75/9zE5+k3M14zPP8J3GEOJaSLWze+h37xb4bTnv08sz0gxoOblFjHf2KEek/b6G10F8q/WKF3FE02OdwSQZIy7ES5ZOwV8EBED6IQI6E61zJBXf1aJfUQ+x2lLGAEl55AB0=
+Received: from MWHPR0201CA0064.namprd02.prod.outlook.com
+ (2603:10b6:301:73::41) by SN6PR02MB5120.namprd02.prod.outlook.com
+ (2603:10b6:805:68::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.14; Sat, 15 Sep
  2018 14:30:42 +0000
-Received: from BL2NAM02FT033.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::206) by BN6PR02CA0041.outlook.office365.com
- (2603:10b6:404:5f::27) with Microsoft SMTP Server (version=TLS1_2,
+Received: from SN1NAM02FT022.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by MWHPR0201CA0064.outlook.office365.com
+ (2603:10b6:301:73::41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
  Transport; Sat, 15 Sep 2018 14:30:41 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.83)
@@ -49,35 +49,35 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT033.mail.protection.outlook.com (10.152.77.163) with Microsoft SMTP
+ SN1NAM02FT022.mail.protection.outlook.com (10.152.72.148) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1164.13
  via Frontend Transport; Sat, 15 Sep 2018 14:30:41 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1g1Baq-0003U5-My; Sat, 15 Sep 2018 07:30:40 -0700
+        id 1g1Baq-0003U6-OO; Sat, 15 Sep 2018 07:30:40 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <anurag.kumar.vulisha@xilinx.com>)
-        id 1g1Bal-0004sf-JI; Sat, 15 Sep 2018 07:30:35 -0700
-Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8FEUOCQ024962;
-        Sat, 15 Sep 2018 07:30:25 -0700
+        id 1g1Bal-0004sf-Kx; Sat, 15 Sep 2018 07:30:35 -0700
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8FEUOGS031555;
+        Sat, 15 Sep 2018 07:30:24 -0700
 Received: from [172.23.64.8] (helo=xhdvnc108.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <anuragku@xilinx.com>)
-        id 1g1Baa-0004qO-Ln; Sat, 15 Sep 2018 07:30:24 -0700
+        id 1g1BaZ-0004qJ-Vc; Sat, 15 Sep 2018 07:30:24 -0700
 Received: by xhdvnc108.xilinx.com (Postfix, from userid 15427)
-        id 53A57604B6; Sat, 15 Sep 2018 20:00:24 +0530 (IST)
+        id 9C1F9604AD; Sat, 15 Sep 2018 20:00:23 +0530 (IST)
 From:   Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>
 CC:     <v.anuragkumar@gmail.com>, <linux-usb@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <Thinh.Nguyen@synopsys.com>,
         <apandey@xilinx.com>,
         Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: [PATCH v5 8/8] usb: dwc3: Check MISSED ISOC bit only for ISOC endpoints
-Date:   Sat, 15 Sep 2018 20:00:01 +0530
-Message-ID: <1537021801-23896-9-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Subject: [PATCH v5 7/8] usb: dwc3: Check for IOC/LST bit in both event->status and TRB->ctrl fields
+Date:   Sat, 15 Sep 2018 20:00:00 +0530
+Message-ID: <1537021801-23896-8-git-send-email-anurag.kumar.vulisha@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1537021801-23896-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
 References: <1537021801-23896-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
@@ -86,67 +86,74 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(136003)(39850400004)(396003)(376002)(346002)(2980300002)(438002)(189003)(199004)(6266002)(47776003)(217873002)(107886003)(14444005)(126002)(2616005)(48376002)(90966002)(476003)(103686004)(486006)(16586007)(39060400002)(446003)(50466002)(11346002)(316002)(478600001)(36386004)(42186006)(4326008)(186003)(8936002)(81166006)(26005)(81156014)(305945005)(50226002)(2906002)(76176011)(63266004)(51416003)(356003)(106466001)(8676002)(5660300001)(36756003)(6666003)(110136005)(106002)(54906003)(426003)(52956003)(336012)(107986001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4469;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT033;1:2zEqVzWYA2UGaNgO/fKO1KqjofhuW6gINACB7rU/UIQokdb02YrTh10cl5SDGA1trsOGcMTqQJmLf5KRkk+guKEkD4DMxlp5bSZtWW2cmmNIHQ7+DbLx/gDF+J0pbsWi
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(2980300002)(438002)(199004)(189003)(6666003)(81156014)(47776003)(305945005)(5660300001)(42186006)(106002)(336012)(16586007)(316002)(51416003)(356003)(8936002)(4326008)(103686004)(106466001)(81166006)(126002)(2616005)(110136005)(39060400002)(50226002)(54906003)(11346002)(8676002)(426003)(6266002)(446003)(76176011)(486006)(476003)(63266004)(107886003)(478600001)(186003)(48376002)(50466002)(36756003)(14444005)(36386004)(26005)(90966002)(2906002)(52956003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5120;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT022;1:wFHuneXmt4kNbpeteXPIzl9g5ubpRs9wRrSK+bZttOBvzioAWILD7RxdB19qmPQ2aHm3mtEbB5pgOp+9pfO0Ku2aHeOs2WQ+AQUWo4EOiv3TOh7e2AvX0H+YqctKdq29
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 67c7b455-cea8-4b1f-de6d-08d61b17d06e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4469;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;3:TFJv5qgPJAZdwMQ7z+OosLsVfac3mV5PYsSg6cDkL6H851Tqy7Ol2eb+puauKJB84EZ24KNjofd5AV5+n6cDhYPg9iATD0V/+IIBwCa6mISnjvjz6aSa7/B/VNVHWmRMf6bcnMZgrrgKr59KHLwp/qv8HHipQpVb3KUlXwqXiCKdvYEmAX1D5S/p7Nomgzm61BqnTseihPeymWciPxch6OYhmru7/CWzf9q7ZYzCGq4x6mwjTFntYB6aTpkQGfHhUYkWtAf8Ow+ozWmADanmM+TaMWjJfJp++osZdO35ANcqcHL5aZTE2CMkaWF/ifzyEz0xxchhMVcpPOtQ4GsQ8m1QKfGSl29evl8MVSjy88c=;25:1eVKV6b0pLliigx/NDiVkF0aolmQiqC3V/Hmmz6j10oUaMcYcx1/8Tj71o+IGBDdxKs15brfhLOA/d6dJBPZDd2TxsdVSTvzqSXhtzo2rr9+EbON2Mscn2b5Q1fbSrqbKWEDs8cg/qNB65wdOUEAcEW1LJAxSib3gwuZDCiXRotTPfQeRE8AqL0oE2mMCrYFcTThU75gulpZJZoLH/+D8urond889njJVKC6QDHvKSP0Q9d0OtGsn08fkobS2fFRSmoBHWqh5TPwiEi7TA3AjAJ1STyJCYlzTt3NY4ACwmiWlxXJWSEJo7YayhDmwMEo9uZ8gN3UfOUCOgnuaH/mMA==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4469:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;31:FEcxeWtTa+DMn0BmnhJJl146zk6JYGjmdEX35lebfHgrvIkfhoiKmQf3a6h4yagHuxbOu95j0J99ZqSUJi1oi2nFmfAC85rJmAMY0cP4mHBHqJPWHBgRpXujSdaFy6rMabqVDeC2JNvp0b8w5WNIOnv2yi0MrKUt2fNs/RwhLLnYUOZTUSr+Vyh8xXP1jlu0UXjYJyR9VT40K6E6fukI3Iihymz0jfw16IsZclFp258=;20:ha/ibPvMG+MNP9pdBY0Z84YDZj2ce/CQX5fzC2MRMFCGZhViGHP2TW1rQY20+dtvsmaoZE9UC0nphVKWOCL8ytstgs//zaeoxBlgdllDgqXqRg0l/sGQgymeEV1i38fTKDdXx2PyOvUv6lNu8rKO/PnMRbRlKsjdZ0mKQxt+zn3wMQtQRYYO7i8GcOUx4NneGb3S+pjRVbLFOkKV0ZVRBVq7zp+Koyk9avyKbSzMJ6Oyh/NR2/IFlfvZoHruSfGWldqm+K7kwA1kH5nez3XcpBzTEV+JV+CKt7KsDhlLF6yuhi00PDB8jbZA+lxpCDG8kNc9A2yvCGQY1npmuv8y5Kni8ni+d5GzidzLXdzliJiJp8jeYaiFlcFIMPTUZJblmlg/+NZ3PXN+OitnVcpmB/WHwKAHftJBaiJwgcw0aYodGBt2yXwt/M8dsq06TgqgXyBBj25+bmozx7Pp19NTsNyiDp0E7DyAHyubhkXXBZdFvYmCaUkcFqM3M/noGBF6
+X-MS-Office365-Filtering-Correlation-Id: 364d41ed-52c2-42df-e2a4-08d61b17d068
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB5120;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;3:+BYK2ntAaJV9YFnNeYOhF2rHK6SPDqaifBp8lZEpwckYquZiuH893jI5MDJnx00KS2yIezS7b9u3zo0286gTarVvKHq8uiWeVyreiy7rI+Ka3gsmCfeEhaTCIRtwlNOzl6lCOeL8bkCoVz6V8Jl655JgmxNsnjg4XvmcKHnMxl89VBaE/JEitjGcxFH7iIBrtuq2ayMa1yT+wHAlg67stdzMjitoTWUnwD6nGH0imzl57PDbLRoCA4zCBg40XraWNu6ebEpH8y/aOMKurMerbCWn4Z2uWT3xL4tiUQ7AkrSkFZZkVoFNdSLvVsOj3W87xcrb0R1l6Ikwh5KsXYx1cMcClLJxOVQK3SiTiWCUnus=;25:X6yMPBEWy8u03deucFsF8PYCarUO0ZpbqOfNNLwFpVzyAT6+GTlpws7pQ7u+8lKf6mdG85kF7fRcDf/0WWJ/iFaGHJP3sUGBN8Uj2RsAOFdsUX4hi2AaAY0ka/I8JL4p7L7P0qUgRoVlL1A39jHofckOlkmi4MZLevqqzQJKCsblKhzmRHy6KJDISpDuPUhDMzStp7fyts9JrnQ3f0h7qV7cYPKS1vGqse05XIuhgO1GSbgHjGOWBfzwglyKZ3UQeO990hLvqndff2B2BLTrPONqTklHR8O+H+0KxaG2uKwYngM6SA0HrNJorqp2frRHr1QndGURY8S5YovF6q/q5g==
+X-MS-TrafficTypeDiagnostic: SN6PR02MB5120:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;31:XV/3ET52kuGPXW6vipXaFIBpxazka1k9KTYBSmAs+mQIn1lt3IR6Vuu6O0xnkJnKwjcpsxiYwiMop007x27cjW5ThyBTdAHL5VYU6iaubHBW8dsoL12nJSbQI1ZN7QwrofRG1NwexPtBJKul0jMR0G8VNa20t2F5ZLs/pyCVWzUs3860aH9PTK/yXu1POJtptwiLjz5+fJD4IcfoyfLOO/pUu5coNs6yN0aMZv3FlFE=;20:B7dyp7MKH/3tJ4l2he0pPWiEKwArU6HY3+Tdrjc1SeZ0nRpHzvhi4DaKQ7zrN2Zj0mnHN7owlM3/GBdxkLlp9i1ovhvm0ntqNVXjP+wpuLTjnMplh1pCj2J7SmEC8LP1HbdOzUEcWUk00tuUXoJnph4YQ20Xl0S2liJwvzb/rwFo/3v4sBpSF7Z3h7qRzFE2yTKVC0/6Lj1RLRyqprMpCKZ1QpiI9iuo2HcaSOELxAxnruD0uGxUqMciuv7+34k9G/qu6yiBIkB60qrigrUk3QzI7EZmZGwZkBBIki2piEoFqCNvGxGazDI5yDJJIn+vBvX9+CUfYWud85t/XEekDUIPPpR7YM60u5ICk9CMIl2gbPFw77Sdf98rwktrFZvpPD4UkzAwdrh4Gn1Pu2B0rCssDrRTo+VOUqh5bBCqjNfCMUIR6KlmYg53qC0e6N9KMEePppQSUayb2XYnUSM9pPAtxeXGlWzIYp3JsW0hS9P5duvkBOi6vgiaUOBsWXcn
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB44695FC8970C2F4E01F00206A7180@BYAPR02MB4469.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <SN6PR02MB51201AD081B7386088B7935BA7180@SN6PR02MB5120.namprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93004095)(3231355)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699050);SRVR:BYAPR02MB4469;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4469;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;4:JndJ/dpo5NwWXpzOhuxNKYYHa60ukurkas9I7503V6tP4aJ+LoopSSnfH6Z7AeLiGyTgT/2RQoL2IuaI6oI+nt6b1Qj9mTE2eSayVihZzWGOdgeK3d/xnDfOjIo98upZzhFG67O3/ZEo0QH3xYUijxr8ffxtWlT5mXvAbywXRhxu1gaEt8vycm1mvwNPacX/Nz9NrGmFsAggzbD6VIwAvlm1brH8xPLtQGPUYlidVDdOtpZlhmyR0n46E3aT7NTTknBqFTeroqzRnF4NG1OufW/nWGpyigxSCtX/FdgnD9krQcOV/grRbjmpueYyjjAG
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699050);SRVR:SN6PR02MB5120;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB5120;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;4:ckrfPdxZ15e+k5b9idEct6DRK4VqpCnee2rJQpVYs0Rn6OQ1ufDa7iWRSbaL68WuBE8bt6IEXmBZR9MWPN/HnSXchnvyeLkZ0QGNLTQKK6CxqSVNUdarmSKqHCr9GJN1FSVmrjmyaTqeBdIBLTSPmz15mesC/+GwfOF0P2O5BTF9qTqoCmqTQsVrQVTLYMJ9mdFqn1wxoXUy6mrfiDyc96eOqxJdZPh3Ey8MyupKMgB9zxfMCivOznV+3JYz0EYvJrSCkgFbmR6tRX3WFIT8BfHSyDqMLUUFLFyV5RHONe4jAVNtTOUkZpnY+erDFh2e
 X-Forefront-PRVS: 0796EBEDE1
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4469;23:3pRJZaklEt0uZtrofVrll0+/quEUgP838GXnXyWy8?=
- =?us-ascii?Q?wDCm5pdl+Y1P/JOTHj58l70Uw2McIXmhWUmIFKstsuNksezBhX9IfiecnqDr?=
- =?us-ascii?Q?KalNwHoZFe5Q8xp4SJcTpsSg49QUZlxuBVPrrREgC+FVJ9B793qAJ91AaHsZ?=
- =?us-ascii?Q?4I9MrY7VAjR9rFvcaxdL8Ou8qBjqHyQwjO0qDaFhiBg5EjN9CbjxPW8AuYNs?=
- =?us-ascii?Q?LT9sLiPNAxQ25nJvVPCo4WpPP75tkGEs6gzRTjuxOWeHOdzZ1zCrutfi8B3i?=
- =?us-ascii?Q?7/Tpd0TsTe4z4OchS+X0n4yrwCjNNlOaa2aeqCnGFX8LzNFb/wAkb9LToifc?=
- =?us-ascii?Q?N+XRV2mJ80qMCtNJ9d3qYZhAANFK61qvwQHrWYSM59NtghLkYyOpqCeio60A?=
- =?us-ascii?Q?KYe3kXDivy1jVq+fmkA7cO+E2GWACpm3LOJ0+t3W6fxAHOZgL+oc85wdGvpx?=
- =?us-ascii?Q?TahulOgvs/2qSCbicEWTEKgR31STjwfYi2N7NtC8lgfA4t5EM+ZLBhTOOqqs?=
- =?us-ascii?Q?xJS8nR8sZPSUgVsHKo8v8VG2K+8cDzNu99XJxrbb4EK6JEfDsKYcZcm/ey9I?=
- =?us-ascii?Q?nj8LR/oZoAgHQnvfIJhZ9QI4wf00Zm6atoIc/Q7ej93SFoY8oF+iTL5C5KlA?=
- =?us-ascii?Q?5TwL1K8AVXSId9I5jOPgRPeEgUKhQuhqiC+sgzWePFrBZ26Ycrl5o1hFjOhZ?=
- =?us-ascii?Q?wfcLm9SwACvoGoPNGSG9qNJiMT8+4y82diDZ3SgrPBmjjVjYnv4LJdYEU99X?=
- =?us-ascii?Q?9IvJY2MlDXzCq90AR833Mc59/hQkX3pj+6bd8jQZEF9pfd1x/f5DXxd1IM0C?=
- =?us-ascii?Q?TXIRJehykZ/nATvU+no564Qbiv2ukr2hsN3WuLxKWd8thguw/BjWtHA0PWLs?=
- =?us-ascii?Q?NtHIJ1/bN3o5723ULo6cfG+AN2UBQev42QkQujxmCj7+3V05UYpGBy3mVI7F?=
- =?us-ascii?Q?6nUjcxw1u7bPfMAsuyfMjJ3/vZDQKM3AyJTwuYS2qoknedr8Pbeey9czKdR+?=
- =?us-ascii?Q?FMfn+5GPqPY2ORqi/T0y0wdfMK9u78nmD9P/tO7PyCcp5mfote89+qe6p5FF?=
- =?us-ascii?Q?1PVJ7O6mTKjNFI5lTPFxiF4Lw8bA0qUd4Ns0ZltzhZBoOOq+6WTOKvTlE7ab?=
- =?us-ascii?Q?OTZXwB6qZaW4xysd0fq5ukwdcetJMMpuWlzsAy+Y6o51O6sX0QYxWiErXFiQ?=
- =?us-ascii?Q?L604eMDdSmJefmfPka8h6DY4Lz+NV4EYPbajddLlcfmxJQd44T7jXaFSN8cc?=
- =?us-ascii?Q?niWHtgnYujpl8R45YefxiroLdyRqlFO1EMcoEExGIwA0bOEiLcoGNOxuWerM?=
- =?us-ascii?Q?u53XDuEc3xOC46Mib2YhJ4=3D?=
-X-Microsoft-Antispam-Message-Info: rTGeRr09XbiZcytHH5IEImNuB4RfRzfFsgcb+DDU40vOFX1AkczDM4n6m2aAAt0VQpSSZ4xv6mi5hagITCc1z2T5GF2smPc8AKzmsoHPAkqsvHP6bVDBrxIp86FTIJOgugbUGisOyhdIvsYAxAKg0f8D92jX2Y89s8+sfs2O4g6GaUPaLrOxM9x9YAZIoOod39I/A+oLbosKbhGq24leg7ZKTH/P7r8sGsdECnZj4AW7SFIATie9ZEhHiRAwPei5arMfhcNRVTVRywyyAh4v65C4a+R3dFriK2U7i2gdYtaB+FJX3CHeaTc94RE5tl9JtOhDRqiO4OVaO13NvqVev1Fdrwxtv73YVVLfhco1dWc=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4469;6:jVohrHmWxgqwyqGnj9Vo36V3mgT4B0dupuaqGhrOFjV1s9wyWRmeRUP7oV06IN/GkMepYmLfcOiQMm2zZ/1TfB8R0ISJci9jktV0t2jXvqo+kQd8CNZcRJkuDudvoSs1UhstTMLuxbQDAHbhYZni8NbkzUh/rT3BU91MPgR1DBxXKghUFwAp9rCW5GiQbhmFCYMxkHHhkgf3D/TaYNFXdBp2veDUlAEnl2a4VT9nK0lMmpa3fFDXoucC7I1BYx9ElZ/qXr9MSRD5GnkCvIE9ctdMWfZ1zoUU/w0C4XR6ID6Ab+MluAlyET6cvProIT6hx5DEd7oEQ625dcI5krtMCepunSaVm25eTCao6Edn2UByyeSOG0MlrazH3tMKx7y1KArxClZ8o1uPP+Vlvk1i3ybvGomy61Zqz4YlfLZx7Y/RYTiDOJYU5KyqNp2aKlrNIWV1NKAN48t+rhC5xJBNdw==;5:cvwg9utgHXCW5E8iNAl9y24mN5NeEZexF8kpaosV5AIzYHERJFrMNbSaQFqT+vMFeWqgsZs4l9wsRwHPMFr1OH/CVECG4kaSQdR0hRlBynoexR6tcwqfbZ4P+dhKgfDfzeP6QZpmAZ/kmdqsaxNGECKiBd8YSRiklH2/DrQq/aE=;7:8oljSxo5Os3GUr2e6DAN4kLK+SwI8shggoJUww8e/gvuH75wneFHgyglyU4d22pU+zYjwh1dYDmFwEhGC5y/qndxsg9VyQrSv0BH9zfW2bNpVvhcUVBxc59rIkWgqH2SGaoggyx2/lKCRzvW8DMDe/YKzluJ5fnQ5RaJfZBsyH3jwTcI0PMlS9003Wx1MpC4sqE6vaUo1qxToqooeg3M7s4VosVPPRvMlRYb/wW5ACj74Zpo83ORPA4jZYc+Qrq+
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB5120;23:ZRULma1fAvb4HengUYDiPyaXoPIAYDb57TToxXAmd?=
+ =?us-ascii?Q?va/x1h6iImbTdELTbzMgPzbHdn6gpvSh+D+PUUkm+SIHXGj6uyW7/n+Jv3b2?=
+ =?us-ascii?Q?EeEJrCkTntpxUT1Xb9LT89GNlv9QPHuKYtBTVaLeuWnIXdZmfLe1uPfCIpUR?=
+ =?us-ascii?Q?kaCyI+5yJO2BAqhJjBtbCOsUcN5iWZ1TFsx/vHNVwKRweo3s0Nr7zmEm+7cV?=
+ =?us-ascii?Q?gk4ZRBl2mZ+Y0dOlfm5eIgha/5H2sd4sbnC5pVV2jSPcSY+xCVNp7O8EFLDC?=
+ =?us-ascii?Q?oQmAN7FKP/4WlVZUC9U4L28cMXYnF8tbkMQE0t7d2j/Kvqh3HK8m1Pg5jyHJ?=
+ =?us-ascii?Q?uyfzf9MUCN1DStSRyWgXpsGJbqo05BCuu8UVsU9g60re0HWsmFrcoDAvWOP/?=
+ =?us-ascii?Q?Vqt93hdpt3Sr03baJdWULDE6KkQQrNeYuG3zlv10l/nzFBbbWzkrfnpuzBB2?=
+ =?us-ascii?Q?tynowIMANYU+y5R1ypXQYloJ/TDeaEirrI3Nh1hNNirCZUW12l5x20niaQ/P?=
+ =?us-ascii?Q?dv1nhpH7ZeK6YAA4OUrVeWWFCSTCwzT2ypBw2ISUYHVmP/fcPydps2FtSQXH?=
+ =?us-ascii?Q?gEWxza8dZKhk1WD/5UPEzDD8dXfQm71du+XWQxVq1N7fSV3u05NmnDPkZE+f?=
+ =?us-ascii?Q?hRi/xISDlIr4e6cCqB3+U/CkT12oa3b+xjZUtkT/OZYIzeCeBDO2uUh/q/z2?=
+ =?us-ascii?Q?nHoEqq0vDo0F/k06ycBbRQdf2FHPhpDrb+22IxypQZmQ/hyTuefHkaahpopB?=
+ =?us-ascii?Q?+nXtCIf3V9x/6B3n807XA9NTt4O/JQfKqNJygrH9Ap9bSlYa3fs4klgloksC?=
+ =?us-ascii?Q?RDKKF+nSTdc7t7b86xcuLE5yycVsFIj9aaL3uAYcnfOqzdr2P8EqTn20U753?=
+ =?us-ascii?Q?boTRDkvcaKSYHKV3CWRJyNmLhtdAvte3ln/aeQBbWIakJgcYgFJ5qs2cNLww?=
+ =?us-ascii?Q?eJCqOPubN+5tiDgeL2bpIOLOgjiQOFwOjJNiT01+hoUEjP5ROR3Vw0y0kPjq?=
+ =?us-ascii?Q?RuMCO/Bwxd4+yczB6yZefPBWmu1KUyWeHF5ob4v8IwjnX3ptIRrIvltQ1Slg?=
+ =?us-ascii?Q?hIlBCEcU5G8FQtFMV80FNWp9nhnW2fcXOxxtq9TC25qKPv5h+bCpluGwN7bd?=
+ =?us-ascii?Q?iftpZJLONo7d9IJCx4MjclIqPmrSaUcu216xsvQEfPXkiNgE3n1h6iZQycXH?=
+ =?us-ascii?Q?y9JUF5zdqbG5+h94v9n69PbkbHn9HS1KuLn?=
+X-Microsoft-Antispam-Message-Info: x8zgO/B9DdIy2smIo14dwxZOEDfBxIT4jRIHnkb/fZZ3sFofTnUxelbOPFAJK9IqEaC6fEAuaDqo3P5m/11aHbeWDWmp4o/UT3yfLWpB1HpxpXCyhJueLClOftVHUUNtHtfBuoZESy3iawDQXdmZsanSF4DjsQEqr4gyi9/V0FYXoRiHJdGkldVvvt9DvoDcp/4+VGV0MSiFw4fiMjns9UyjgqhtfHBE7mCkpCRKiXzGQLm8Avt48ku0UIKaA4uBz9D47qtxUruEdNFh727Uv0ifOGUoAaBrlgOChPucP+SIDHiBOA5uxpz40mqDorklTAZpgqwoUcI1LBeGQIf3bYnqeRQv41WbHgpOFSg2Dck=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5120;6:t5OeQu7qeIe/iNBjyEIDbD3kjmzVnnsPTPtPtYR+ph3Jzh2IxwxRniH6m4EBtb9drIWGt3+G9gh+sN54tl7A+ehWuxxFkTVTdlgcChO8PClv4b+JwWe85ajf9684MQg3Y/bNnTZ5qV6PkCq/tG74/5u5LVUN2HJFJq3t5yNyT1kcIcrYL7C9tXFYXKbBLZXJhRALX3Jncg2A3uaoGZl8xAnncfmlQCd4pKIENrsFCxmQdlAlQh1Xh+KEVS7pO3EV0wi8TIXAUGWB8+6bubBZEf6I0ukn2Nn8VvnhzG/wEUOBXlc6yHqmiqfShIgeRet6ZkFs7N5aLoMvQPtrERIglCBGbifYNMHbOEsoQ5Zyhb8HRNmbkTOOZAXyh9jHO9eUUSi2fQ3UXMyAt0boKNlB8x/36S3tLljyBGtnyFS/s4qyYpAqbiZNLikwHVN8qPhmsttZJdH2nuPpsan9WX0GPQ==;5:Td1/5vYADaNQhK2Z8qPHjIqb5mE1HtgxADUW8MNlG2Tlbci8W8pwvnMcIHi+0YVwGozWdZAmJdndllT5rwBTHi4MFyAgFW/aVPQ/THjqMRdLO5ZwBjgCjQpkkISWdM9FezSkAouWvegzaKsFq+HZ30xoNW6nlZfaoWsJwQkeUCw=;7:HeVFk2Eqkm3Oi/YWVS0d9CoY2BDI5anBzynNNjekD7LFUoAemD9KvsrYJXssYBizPcuvr8Y2f+Duc1tpdkGAmjIB+FkkAdac9QO1wLXLihxSGgR4BQdyqSUGtN+N9izmUgBrOxtL8ytRIKzMC/xC00+IkMOCnPtUpGAGwEcQ6nfOKZC/hWWvuTS2GqRd0mtpPC6UN4fHyMo6vBkUR45hu0Jix3qJ9oB86t8PBkW/x0iPwH1eVrdDM+itf7EXUEsq
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2018 14:30:41.2909
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2018 14:30:41.1423
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67c7b455-cea8-4b1f-de6d-08d61b17d06e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 364d41ed-52c2-42df-e2a4-08d61b17d068
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4469
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When streaming is enabled on BULK endpoints and LST bit is set
-observed MISSED ISOC bit set in event->status for BULK ep. Since
-this bit is only valid for isocronous endpoints, changed the code
-to check for isocrnous endpoints when MISSED ISOC bit is set.
+The present code in dwc3_gadget_ep_reclaim_completed_trb() will check
+for IOC/LST bit in the event->status and returns if IOC/LST bit is
+set. This logic doesn't work if multiple TRBs are queued per
+request and the IOC/LST bit is set on the last TRB of that request.
+Consider an example where a queued request has multiple queued TRBs
+and IOC/LST bit is set only for the last TRB. In this case, the Core
+generates XferComplete/XferInProgress events only for the last TRB
+(since IOC/LST are set only for the last TRB). As per the logic in
+dwc3_gadget_ep_reclaim_completed_trb() event->status is checked for
+IOC/LST bit and returns on the first TRB. This makes the remaining
+TRBs left unhandled.
+To aviod this, changed the code to check for IOC/LST bits in both
+event->status & TRB->ctrl. This patch does the same.
 
 Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
 Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
@@ -163,23 +170,27 @@ Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
  Changes in v2:
 	1. None
 ---
- drivers/usb/dwc3/gadget.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/gadget.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 872c956..0b6d859 100644
+index 1cb7df9..872c956 100644
 --- a/drivers/usb/dwc3/gadget.c
 +++ b/drivers/usb/dwc3/gadget.c
-@@ -2422,7 +2422,8 @@ static void dwc3_gadget_endpoint_transfer_in_progress(struct dwc3_ep *dep,
- 	if (event->status & DEPEVT_STATUS_BUSERR)
- 		status = -ECONNRESET;
+@@ -2299,7 +2299,12 @@ static int dwc3_gadget_ep_reclaim_completed_trb(struct dwc3_ep *dep,
+ 	if (event->status & DEPEVT_STATUS_SHORT && !chain)
+ 		return 1;
  
--	if (event->status & DEPEVT_STATUS_MISSED_ISOC) {
-+	if ((event->status & DEPEVT_STATUS_MISSED_ISOC) &&
-+	    usb_endpoint_xfer_isoc(dep->endpoint.desc)) {
- 		status = -EXDEV;
+-	if (event->status & (DEPEVT_STATUS_IOC | DEPEVT_STATUS_LST))
++	if ((event->status & DEPEVT_STATUS_IOC) &&
++	    (trb->ctrl & DWC3_TRB_CTRL_IOC))
++		return 1;
++
++	if ((event->status & DEPEVT_STATUS_LST) &&
++	    (trb->ctrl & DWC3_TRB_CTRL_LST))
+ 		return 1;
  
- 		if (list_empty(&dep->started_list))
+ 	return 0;
 -- 
 2.1.1
 
