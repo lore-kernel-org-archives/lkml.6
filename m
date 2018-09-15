@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4419ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4C4ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D58521477
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1F1721477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="GcCbs30M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D58521477
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="AQqcEAFX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F1721477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbeIOGsc (ORCPT
+        id S1728873AbeIOHEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:48:32 -0400
+        Sat, 15 Sep 2018 03:04:53 -0400
 Received: from mail-sn1nam02on0100.outbound.protection.outlook.com ([104.47.36.100]:36480
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728584AbeIOGsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:48:30 -0400
+        id S1728717AbeIOGsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:48:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sxwcuhKbju/qE3cveJyQU7IY+FBZDdzpP7AdAPi2lkQ=;
- b=GcCbs30M1nt3dIPChraclj51qONamDjmVTYbxG/W+wuZPGrUHLnd3sxyvQdlfZ0ub3hTq5Hi2Z2G8uh9F1ZTIMSDpR/tULSZDnSaDyCQsiryU2xB5yKVaxDdBG9BHmgNtmhNu6b6pparuqMrvTkJ9YBD7M+1QMyirjPBaJrsYHY=
+ bh=hNE79+Qa99z9sjLnrEGpzJMbu6BFZOqWvQDKIh1Mzxo=;
+ b=AQqcEAFXa1mgIZt7px5oSKHkofYJyWULV8ljQmYXBnfZUGTQLUXxweNq16PHDMzFdJ+OcgrvmHXlHNw6DQoCIR7gnxITP7/LXKSl4dg11toNjyOUhwWnA21pwAgqD1BdcqFuFaZi78d6xAqWstooznRTncghJw6WidVviSd8ZgI=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.11; Sat, 15 Sep 2018 01:31:30 +0000
+ 15.20.1164.11; Sat, 15 Sep 2018 01:31:31 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:31:30 +0000
+ 01:31:31 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 62/92] mfd: 88pm860x-i2c: switch to
+Subject: [PATCH AUTOSEL 4.18 63/92] input: rohm_bu21023: switch to
  i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Topic: [PATCH AUTOSEL 4.18 62/92] mfd: 88pm860x-i2c: switch to
+Thread-Topic: [PATCH AUTOSEL 4.18 63/92] input: rohm_bu21023: switch to
  i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Index: AQHUTJOxwUZSVuSqoEKZm23e7UkLqg==
-Date:   Sat, 15 Sep 2018 01:30:32 +0000
-Message-ID: <20180915012944.179481-61-alexander.levin@microsoft.com>
+Thread-Index: AQHUTJOyqFWtdnL3Eki7YLWkAjprTQ==
+Date:   Sat, 15 Sep 2018 01:30:33 +0000
+Message-ID: <20180915012944.179481-62-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,13 +59,13 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:c2MjmMnqrVo992cWSzFRKbR4b/ntLW34rEbNrWIXhQy8Z+ihTrrmf47m78BYf7a7Xv0Gd9iuwynWoD6veNLLtwI0aNgQnT4vebo5H9lwnB2BaxzEc11EW6pNoCMKmdmq56pyRwKDIB1Q5s65/hI9izFTVPlS+EdBykSZ9u8necHMcHdQeJBoG3r2MOXP+cqSOr/nqPsN8BSYK8hXWBgOSW6KKIior3zaelLypLcbOIcsNmmq5Whi5/OtT6EP5gsrRMEF/MRw+KrD8BCiPkSGyuG45sWGP3YjKTpIAbOdOSEKSJemXUbDvr8JlboHVFPIUWVk5O2jTt1aY7w6SusXch+Yb3FuLVAdbFcDTwfCHxCTLO1V3EvqSfDY8RR9O1JxqtUiC7GA0NgIOxm1npjHHgWZwUwFTocLAT1PaQzfJpzQtMbdF8Hal/0RVdhN87/0ZsOfWAL9VKKkEgfiIr/fXA==;5:KrZgqUVxRubGCpwXJcShLpAP9s13JgsnsWpYriJXQdS157yFPYk3nXP0cN4Ks2TR9yQYFfEaoe0nNC6Yf3V1K/gwL10b7q2NtYfQ+G45YsR9391lbvZbXK7AMn2RWwfms0eyQdimiQqCa0nNMrJ68uPgRT3jug+g3axgVJSdR1c=;7:npRbCzGONzgXz4o7GKA9okoHkPGBOSCMB8vQsxAUqcyfqKvUYMv3Q8FWzKu9DHYKuPi1jE+HmJunczlwh7W9Cc5v2qvOCI80BYLkTeDnRhBGFV+cudFGcOENcMGt1X7X2SZkq+fCX5MYV/PT77+4jg51dlOQqYaMHDvrnJXYxkvLGcsprNKWxrZFvizVaY/ZC0m+H2ReXi/T7XMeHHwCw8N/8ywyp7Ka2y8qUJMDvPQYrm+p8RIoLY/eP8w1YDsD
-x-ms-office365-filtering-correlation-id: d0d6e8ca-740d-4336-4356-08d61aaaf6c7
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:q9mF+WcLLpXQsYSzAw8880jx2PptFacf2CfV97Tlf+CW4XnSvvAERZMDgUT2Zxz599y6DuNC7LK54mlRs0gXW7OR8rGBlo4HYwKMafeFYOh5cffplJbCf4SNPzDwzPb9fdwZuFLaH4q9FjD3uAMqhH/spZAqRophvk1vDTC04dCwwvoP83h1YUXZywRVQWcB3qw5gV039708fVioQBQYZs20E8igNw0PO3jJMiKDVFYbktL7SyXGW4pFNqDOHhxg6m4Utc/uEnD6kqTIp3prKBQ0CB+DnhUEuVvWoFHhPhexq/3r2htdBe02F4LOBcKvJqC+u6IUT0tf2r9WvKIHPLF9rgC6bRlZ4/9l26gW3SJZIGPuyH/sgRqJ50srcw8enC5xDT8oun65akctltWvDjG6cPSKvd6u7kJcCWhmBNYKQS28YHvmm7nuFHF9965WGNEf/CYWTTK6Kowo649l0Q==;5:LBXukx4mrrAbp567Dr+ydbrF+uHrvgQE6lazMzt64a/xjvAzHVHg8QZLBko8fHi93GKz8MaPvc2GdmBgKq8/6kFrzW9rvKM3/OEFDsJGc4sZa29vRxt/U+eSRoQ7gYPpejaL4gmiYGuyEM252+aJgercpUQWfcBtyycjRtFu2+U=;7:jO3Pp8TTtIIGLVdGeSuSKBniBnfAMKIqziaCGErZN37JoAACba4vehHjgN5/MvizEOvlT1AW/TgSfVQ64musjm2d+AwXXc88ddIqbgnz/HrZ+43AQIkVKHWsNaXA7uLfnqyke3R0zgnPsfpX9qFYkI38N60BKyw9wn6KOthUZMzkI6e0bnomyYPCvNhfNUaKN3vtnf1cggaU0QFjd1ua1M6wBiMA4YxsthgX8BGKpYgq6lRwslwqmSpXPHDsPAhU
+x-ms-office365-filtering-correlation-id: 6a3d6855-a007-430d-7ba8-08d61aaaf700
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
 x-ms-traffictypediagnostic: CY4PR21MB0741:
-x-microsoft-antispam-prvs: <CY4PR21MB0741761BBA7FA5388A6A02F2FB180@CY4PR21MB0741.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB07415CA46D9ABB4F5B70FC30FB180@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 0796EBEDE1
@@ -74,15 +74,15 @@ received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: Z7BSq4AmE/5X6RMIoTTuSkKh9uFBdR/Fxwt4KvIIrk81aepoTTKYq8EzJ/uQ3YCmoxFGTMNMfRgdgHWAWJUUFAqofd4OwuH87RQLSQAZQ3sN1YhdCxWMiFOcLbYMXiNblPoj45ZdSen45J5XmDB5B3WIoGyNP6Bp/e+jqNEo7G5SIqm7ZyqQsAebqU+DxHxqdGkbSYhxzuXBTm+pnpfIH68Ge97yK/qJqANEuxL0fukkoTq4pv2+ZK9Wc71giC4mQnl6xu42vHN9nMHJuq2xplNhBqq+9GTfngesw/LMQBk79XGrawm5H2HK1axK2gp5Vsi4NeJGQWTmXXs6CSDh0It6y9qTvin+7MWvLrHSouM=
+x-microsoft-antispam-message-info: vAaI7KHO3uSoz/h4aMCr8YSAu1ESdkvcahMENL+PjjwBn0RE+sdaicZlLCON1CT20Y0rNPdmmATPofYew56HCfi4EiHMYgl+mkDSJGJqXpqTmIYyVgZMHwcltMmEveWiWjRSws1Ujl+Jha2ewAsoQKNjZqrC9l5jpTIpjjMMjSkTdJIvuGwxS1KLVVIiwdAUqvzNrczybLErFZ/j7Ly3MGHSgG+5VIVWQqrifiiJyxO7qy1M6z/m/M8f3WUSdQRDpFhCAqKtDw3ZirYYgGuOCtXVomOGpbcXE+sBmt8AbPaAQBQMMD5vTdk211EOpqH+/A4oIubG8qHHlmaezNq2rckxJSmbM3NJyZ5QPrjpb2E=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0d6e8ca-740d-4336-4356-08d61aaaf6c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:32.7449
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a3d6855-a007-430d-7ba8-08d61aaaf700
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:33.4168
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,7 +94,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit 8c8f74f327a76604a499fad8c54c15e1c0ee8051 ]
+[ Upstream commit 193c2a07cfaacb9249ab0e3d34bce32490879355 ]
 
 Locking the root adapter for __i2c_transfer will deadlock if the
 device sits behind a mux-locked I2C mux. Switch to the finer-grained
@@ -102,52 +102,37 @@ i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
 sit behind a mux-locked mux, the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mfd/88pm860x-i2c.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/88pm860x-i2c.c b/drivers/mfd/88pm860x-i2c.c
-index 84e313107233..7b9052ea7413 100644
---- a/drivers/mfd/88pm860x-i2c.c
-+++ b/drivers/mfd/88pm860x-i2c.c
-@@ -146,14 +146,14 @@ int pm860x_page_reg_write(struct i2c_client *i2c, int=
- reg,
- 	unsigned char zero;
- 	int ret;
+diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touch=
+screen/rohm_bu21023.c
+index bda0500c9b57..714affdd742f 100644
+--- a/drivers/input/touchscreen/rohm_bu21023.c
++++ b/drivers/input/touchscreen/rohm_bu21023.c
+@@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *clien=
+t, u8 start, void *buf,
+ 	msg[1].len =3D len;
+ 	msg[1].buf =3D buf;
 =20
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xFA, 0, &zero);
- 	read_device(i2c, 0xFB, 0, &zero);
- 	read_device(i2c, 0xFF, 0, &zero);
- 	ret =3D write_device(i2c, reg, 1, &data);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
+-	i2c_lock_adapter(adap);
++	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
+=20
+ 	for (i =3D 0; i < 2; i++) {
+ 		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
+@@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *clien=
+t, u8 start, void *buf,
+ 		}
+ 	}
+=20
+-	i2c_unlock_adapter(adap);
++	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
+=20
  	return ret;
  }
- EXPORT_SYMBOL(pm860x_page_reg_write);
-@@ -164,14 +164,14 @@ int pm860x_page_bulk_read(struct i2c_client *i2c, int=
- reg,
- 	unsigned char zero =3D 0;
- 	int ret;
-=20
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xfa, 0, &zero);
- 	read_device(i2c, 0xfb, 0, &zero);
- 	read_device(i2c, 0xff, 0, &zero);
- 	ret =3D read_device(i2c, reg, count, buf);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	return ret;
- }
- EXPORT_SYMBOL(pm860x_page_bulk_read);
 --=20
 2.17.1
