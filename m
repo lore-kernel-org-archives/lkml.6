@@ -2,92 +2,103 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB260ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9E8ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B02F2083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:42:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B02F2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 629642083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:47:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WUKKcbX8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629642083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727994AbeIPACD (ORCPT
+        id S1727858AbeIPAHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 20:02:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52060 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbeIPACC (ORCPT
+        Sat, 15 Sep 2018 20:07:08 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38171 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727302AbeIPAHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 20:02:02 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g1FW6-0003xB-0A; Sat, 15 Sep 2018 20:42:02 +0200
-Date:   Sat, 15 Sep 2018 20:42:01 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>
-Subject: Re: [PATCH v2 4/5] pselect6: use __kernel_timespec
-In-Reply-To: <CABeXuvoOEW9+5BPiDN+2S1boyMSg+csvSAd4ue03TB+yEO6dLg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1809152039440.1650@nanos.tec.linutronix.de>
-References: <20180915050843.19183-1-deepa.kernel@gmail.com> <20180915050843.19183-5-deepa.kernel@gmail.com> <CAK8P3a2Kkm2ubg_MVN_BJL=s7qpUB1-np=9zVpcJ2U-aPAJswg@mail.gmail.com> <CABeXuvoOEW9+5BPiDN+2S1boyMSg+csvSAd4ue03TB+yEO6dLg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 15 Sep 2018 20:07:07 -0400
+Received: by mail-yw1-f68.google.com with SMTP id n21-v6so3954836ywh.5
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 11:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=g+NDoAAXw55BR8VZSDzGJclroVrIxU3gFRKI/mQux+4=;
+        b=WUKKcbX8K33tXJdWbs0us5Tm5vXgiX4nkh05iEfU45NOOAHkWbm6h9pb2Mpz8OavVX
+         gEjgCI3woSkY7AgnqrOggZBMV2cxZmwDbOYa/vN9UJk865mu5ywnPkExZxKTE0YKFhvm
+         Us0t44ppGdrcKhDN3Qo1lI2ygTy9nTGx//nIc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=g+NDoAAXw55BR8VZSDzGJclroVrIxU3gFRKI/mQux+4=;
+        b=Jr6bxkBm+CB0zhOt5frI3sp/WHhgoMECVPZ8NXmbvqRivGIjnMHqtLEP3lFdiHlBuX
+         sdmqP07tuU7qTDvhFYi4fpeR4QO9uiOvA9Q7tgr8sbfn3K3jW++O1DHVqIC/gcOwFW9e
+         PBSwB8kyiQQMhGlgqM7HZbNxlhUFInc/xKcqRINJeWOiYkC9U0FdThtz2rqgve8K21Os
+         suORfGoBgfMWrqjlkKy6iIV/dBGXqCAezPIftVXSGjKLC16f+dr47+BOg6GAywt4dvmR
+         RseiXaunFgI1UkZnKm6EvgKau0kciqynlIoQ9mcy/jycwvR497os6FN/5XFV1K2/0VBH
+         c4Zg==
+X-Gm-Message-State: APzg51BUUTpQiOx9qPfUXpaKov7V0/gCCijgggzvJUzEGxJ5G6+2B3Gk
+        DK6N6XRFQbYBgQbJEbOZqVcyNKW2oKk=
+X-Google-Smtp-Source: ANB0VdbGyqZD3PLdWLZvNUnW9OpEd4ANK+JBISvd3HK71QTdvmOpPmpj3BiHSR6lXTdI9cKZtxGJMA==
+X-Received: by 2002:a81:78d5:: with SMTP id t204-v6mr7848164ywc.340.1537037230743;
+        Sat, 15 Sep 2018 11:47:10 -0700 (PDT)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm7587907ywm.19.2018.09.15.11.47.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Sep 2018 11:47:09 -0700 (PDT)
+Received: by mail-yw1-f43.google.com with SMTP id p206-v6so3951022ywg.12
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 11:47:08 -0700 (PDT)
+X-Received: by 2002:a81:9fd6:: with SMTP id w205-v6mr7881864ywg.288.1537037228621;
+ Sat, 15 Sep 2018 11:47:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Sat, 15 Sep 2018 11:47:07
+ -0700 (PDT)
+In-Reply-To: <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1533358023-5801-1-git-send-email-yamada.masahiro@socionext.com> <1533358023-5801-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 15 Sep 2018 11:47:07 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK4aNuZ+RR4eC80yUQ2zxSoU9=ioaJBtt=VaX=_oZC=ew@mail.gmail.com>
+Message-ID: <CAGXu5jK4aNuZ+RR4eC80yUQ2zxSoU9=ioaJBtt=VaX=_oZC=ew@mail.gmail.com>
+Subject: Re: [PATCH 1/3] um: fix parallel building with O= option
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Sep 2018, Deepa Dinamani wrote:
+On Fri, Aug 3, 2018 at 9:47 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Randy Dunlap reports UML occasionally fails to build with -j<N> and
+> O=<builddir> options.
 
-> On Sat, Sep 15, 2018 at 8:28 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Sat, Sep 15, 2018 at 7:09 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> >
-> > > +#if defined(CONFIG_64BIT_TIME)
-> > > +
-> > > +COMPAT_SYSCALL_DEFINE6(pselect6_time64, int, n, compat_ulong_t __user *, inp,
-> > > +       compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
-> > > +       struct __kernel_timespec __user *, tsp, void __user *, sig)
-> >
-> > I got a link error here since compat_sys_pselect6_time64 and
-> > compat_sys_ppoll_time64 are only defined when CONFIG_64BIT_TIME
-> > is set.
-> >
-> > I did not think we would select this symbol on arm64, is that a mistake
-> > on my side, or should the #ifdef check be removed?
-> 
-> But, this is a compat syscall.
-> When we introduced this CONFIG_64BIT_TIME we planned to use it for
-> compat syscalls also is my understanding.
-> 
-> config 64BIT_TIME
->          def_bool ARCH_HAS_64BIT_TIME
->          help
->           This should be selected by all architectures that need to support
->            new system calls with a 64-bit time_t. This is relevant on all 32-bit
->            architectures, and 64-bit architectures as part of compat syscall
->            handling.
-> 
-> This means it should be set on 64 bit architechtures also right?
+With v4.19-rc2 I'm still seeing a failure (for any parallelism) under ARCH=um
 
-It's only set when 32bit compat mode is enabled on the 64bit kernel.
+$ make -j8 ARCH=um O=/tmp/foo
+...
+/home/kees/src/linux-build/um/Makefile:1185: *** Headers not
+exportable for the um architecture.  Stop.
 
-Thanks,
+Am I missing something?
 
-	tglx
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
