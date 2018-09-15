@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21283ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C822BECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD74921476
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E01208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:38:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IYLD/R+w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD74921476
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Otc7uTn0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E01208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730069AbeIOGzM (ORCPT
+        id S1730004AbeIOGzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 15 Sep 2018 02:55:12 -0400
-Received: from mail-dm3nam03on0128.outbound.protection.outlook.com ([104.47.41.128]:36672
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr730091.outbound.protection.outlook.com ([40.107.73.91]:18669
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729829AbeIOGwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729835AbeIOGwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 15 Sep 2018 02:52:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dPKlESEbbukYz3qXnqYFQ3IXnBVDSQaVKEOnIHLX1T8=;
- b=IYLD/R+wSEaQDjQ6RU9NWzpOdgqHt3ZqG7993VpRxCW0eRlbpbrzbfIwjA1CdUPNaELufho5pK33fB3iIkttOwPHTu2vxKLgupDABzndEyJa+Cl5j8gqwjTJT3xzg3q7Qp0GZXBsjKrTgr4wMl9Pko+FzslRQYNum+EjqDbmfmI=
+ bh=s1nriX5cy+lMJq3WoWgKyWRupivAM/Vrys0aAYZIDrg=;
+ b=Otc7uTn0upj9Ct6V4f4QO28XmFMUO6w8rMf+PHV+XVW0loGQpohbzPpSjnmLHlye39OLenMqqJM1jfbPoSRvc82CsEb76YvYQpUwp02KQ7qgSbdWGRzTrJd9dIlDedK6Fu42SzpNmAWU2hqJ00bQeEERraC+Wg78iiwtL5j87qk=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0181.namprd21.prod.outlook.com (10.173.193.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,19 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Paul Burton <paul.burton@mips.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 05/20] MIPS: loongson64: cs5536: Fix
- PCI_OHCI_INT_REG reads
-Thread-Topic: [PATCH AUTOSEL 4.4 05/20] MIPS: loongson64: cs5536: Fix
- PCI_OHCI_INT_REG reads
-Thread-Index: AQHUTJRWopjyAQHaSE2l6tVoJFSJBQ==
-Date:   Sat, 15 Sep 2018 01:35:08 +0000
-Message-ID: <20180915013502.180110-5-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 04/20] mtd: rawnand: sunxi: Add an U suffix to
+ NFC_PAGE_OP definition
+Thread-Topic: [PATCH AUTOSEL 4.4 04/20] mtd: rawnand: sunxi: Add an U suffix
+ to NFC_PAGE_OP definition
+Thread-Index: AQHUTJRV3m4teylj3E69tu0gFAhiDw==
+Date:   Sat, 15 Sep 2018 01:35:07 +0000
+Message-ID: <20180915013502.180110-4-alexander.levin@microsoft.com>
 References: <20180915013502.180110-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915013502.180110-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -63,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:v0yvgUrQ9F8wsreVM3rDxw3oc5q+hb0JkGkDcAprniRuNizjeruoVLBHWGzKxz2mmWGT9OlexGYEmj1SZEUCXH2+reN95Q2bNq4L/63vLHiN+jBSy4S93IFfWTfQFsT4fGttd2QKkGiiTDokqzynRP3a+WTUCA35WVN8FTN8wbsoJSKKUJriI2F6JHatTw061nI3VR1aFKMkdU5B3oyR3OzA3ezU2Bdi7r307HRUqsezuqLHz4nSNTad0HOzRhvQRPe23z98P6hwG4HmmbPv6CAWubqcBDGhLTtASBb9AlUCfwhwyRuUM0SyQpEqGP+nPs2l6xn6qmwx3KcZ+HggTrFAogbPHL7BWJVjZ9ZyuhsT32urb6uu2vNpel9j20VuSt+f9UlI18d6+QQbZhaf4c/o3ziDj1iOVjD19ncupDzz9ap9SFtaRw6BsBveEgWBv/J3Dq4GpDeLmdhzFwIdWw==;5:WfjafDTCzttU6/87c1QkVaUKdMHZnyiwNzSliBPRXUZgGqvk1XttodjqyKymSnGxhDj28QhC2s9orZlpPKYf/rqoto2SdiwuRagp1DHapDvWmOsoC4fKA01x8RLGqcVMjmGD2bNpnzicgY18loFU1IbGD9T4+Mu0FSszuPkud4A=;7:e4plMGT61gOO9Spgy1ISmWcJ5hjiPwpnL0Xfw2Y2zdYRZMGSWGpdheI6CdDf5yMcgCl68c/ko8it/G++HtAKySXib9Ap7chLQoBkgXlNxHn5kmGH4HgrGYIMA5/HDrNbFJxDUE/CbsUxu74fH3Jc5urM1HlyJGRF4+gxNIcxzPXrX89YqSZW3v+DtlbLLGCTLVeEuvcDWRDFlhrO791SddTCjyWyXinOFZzNQ+ZYbQXmKmPaYPI0WccBk+fDU5ko
-x-ms-office365-filtering-correlation-id: 676aa59f-bda7-4563-62d6-08d61aab7ea7
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:L89NotfONHrveNXHZfa7eAlAaPyBvlbde94u37jZVe2eFVBqihgvKL0qP9GxuqBxPUMqZQboipYtq8HAwuG2NI843S02lkO+YRDpOG+RF5Vs2dg9Nh3mvIaL6IHkJNu9Dq4rSYwyj1RRd4G7J415HxIoNFffX1GnegJpjQ8Q6M5fIvf8KTfOHDkD3pvW8mBifVWOGztZfjJVSTbL3ZyB663UR/Vv4jAwbcwa7V4kBAWgmp9c8tepZhkEEsQHeUuPQH7f6ZpF6crtPCzTA/Vwe8gbbDtDM4CFuG0hP+RVIcfh2/3H8Swe+AIHHBKNdcfTPu9WAX+KF4VJAO3ukIp8Ay3+d09jM522zTO2BPxC37G0OfI5dje3F/RPiAN3pvfHAwafHZrUITqwRNg6Fda6iMzHiKNRqN27opKaBNULRkBRUHNVdt3/68w20WV/pgRmtfkYI1OSSIl6gpSxlU/HPg==;5:tWFMCgRpcs+giVy6SRhY+lgbMTWuTeZmAQR9ACca1pcyIlELIZXxgyecRrRyw/mBbl9/Lm+4yHjIJcaByk2OBpLU4LvfKilhFuvcVl0RsZFQ5Wng8B1vOqYkOXlrCnGgcDD0Q5HP+UKkVI//lFID50bgNPBV9dXp75CSpjXMSHA=;7:wj5PdvbONYPIUH2vANzapz3u59cPwZsCOx0Ye/AdZ5ivyV2pUe4OH6cv9Stp3vdfNgG05yPgtnsI0ZE8y6krX4L2i8b+V5HgCSF5T5cAylK7ghLj5tgQB23W2ivN0mid6XFYyyVXXzwuD2IZXrXHiUCw8oKuggQY/gJs8AuB9VoFy5Qg9B81buVTqbghW8UGTyF27o5Acb4koBPR4XqlAL0y84UMS+wRzuN6GE9SZ1BZpJRwYD6KFfLOZuCNfNSp
+x-ms-office365-filtering-correlation-id: f6725777-415c-420a-b41c-08d61aab7e77
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0181;
 x-ms-traffictypediagnostic: CY4PR21MB0181:
-x-microsoft-antispam-prvs: <CY4PR21MB0181E2538C4F7C970371F719FB180@CY4PR21MB0181.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0181C61A0061767E4820BD88FB180@CY4PR21MB0181.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231354)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0181;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0181;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(136003)(376002)(396003)(189003)(199004)(66066001)(68736007)(6346003)(186003)(3846002)(26005)(1076002)(6116002)(25786009)(97736004)(110136005)(54906003)(6666003)(2906002)(72206003)(316002)(10290500003)(217873002)(476003)(102836004)(478600001)(22452003)(2900100001)(36756003)(256004)(14444005)(10090500001)(4326008)(2616005)(76176011)(14454004)(81166006)(11346002)(2501003)(81156014)(305945005)(5250100002)(6506007)(446003)(106356001)(105586002)(5660300001)(486006)(99286004)(7736002)(8936002)(6486002)(966005)(86612001)(6436002)(6512007)(53936002)(107886003)(8676002)(575784001)(86362001)(6306002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(136003)(376002)(396003)(189003)(199004)(66066001)(68736007)(6346003)(186003)(3846002)(26005)(1076002)(6116002)(25786009)(97736004)(110136005)(54906003)(6666003)(2906002)(72206003)(316002)(10290500003)(217873002)(476003)(102836004)(478600001)(22452003)(2900100001)(36756003)(256004)(14444005)(10090500001)(4326008)(2616005)(76176011)(14454004)(81166006)(11346002)(2501003)(81156014)(305945005)(5250100002)(6506007)(446003)(106356001)(105586002)(5660300001)(486006)(99286004)(7736002)(8936002)(6486002)(86612001)(6436002)(6512007)(53936002)(107886003)(8676002)(575784001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: CtiERJYqU/XFqPu13DEeVAj0VUAfijSHhEyv2UwrU3IvIlcdVdd7SiklKxWflLPI2ws/pXLUtEyoyHptKOx0SaZ9nstQ973widhbn4tSxCNmULsTSnO0G8BFx0gxTKF5HcQlMoVD8lA8TcCMxlJ/WVAzwO33qlqiGdr/grm+D3RzwPPUSkSOCvGu7z15oRi4pHm8uqtV7hbtFnbhm34/+7ML4voccdHExk3O6jvKMlFdYIoz/ar3Dq09p7h3OP12gk8mLG5I34dveHIyPtpUzb/CS2ujktNO6Ep5FN/ifYNbt6lhZeyH3Hj+fN/tRwuCgEWa3FrSAi5eoEHzqYQEU9JWVhujqdviRCarvA4h5U8=
+x-microsoft-antispam-message-info: 4uCouN5hGcPWWaojU5CVVg7ScL88NOMmjmQGOa7yoE/EXHyehK1pggcGbkylyaCq4S3vkCgZeTPex+mhPfhByjB2xkiFsHLfePlai/2ElHjAcjgBN0yzeqEHeBkggbuDPxTsoRh/4Yc+LY0O1YEg6L1wbZAj+2pnzr7yUPysvJLsLofy9jQC29LfqdDwzefYx7vIE+QFWi9oWMuC0syNPW3Ng05+6TOFHOHqmBrxL8LrSYiTTpOkt/PdmKp0DlPMBeGXgu65R/JFWMa4EGP4gNfAq76B1l2Z06CU+WrEGC8x/n5UMBXPPwt9BCbDndwpRkdo26ZLocdcb25uyXUFMBnAY90e5XDlaC7LIzBA2rw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 676aa59f-bda7-4563-62d6-08d61aab7ea7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:35:08.5510
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6725777-415c-420a-b41c-08d61aab7e77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:35:07.9104
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -96,51 +93,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-[ Upstream commit cd87668d601f622e0ebcfea4f78d116d5f572f4d ]
+[ Upstream commit cf3e3fd2e94f4648f17fbd5e0e26409d5d1face9 ]
 
-The PCI_OHCI_INT_REG case in pci_ohci_read_reg() contains the following
-if statement:
+Fixes the "warning: large integer implicitly truncated to unsigned type
+[-Woverflow]" warning when compiled for x86.
 
-  if ((lo & 0x00000f00) =3D=3D CS5536_USB_INTR)
+This is needed in order to allow compiling this driver when
+COMPILE_TEST=3Dy.
 
-CS5536_USB_INTR expands to the constant 11, which gives us the following
-condition which can never evaluate true:
-
-  if ((lo & 0xf00) =3D=3D 11)
-
-At least when using GCC 8.1.0 this falls foul of the tautoligcal-compare
-warning, and since the code is built with the -Werror flag the build
-fails.
-
-Fix this by shifting lo right by 8 bits in order to match the
-corresponding PCI_OHCI_INT_REG case in pci_ohci_write_reg().
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19861/
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/mips/loongson64/common/cs5536/cs5536_ohci.c | 2 +-
+ drivers/mtd/nand/sunxi_nand.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/loongson64/common/cs5536/cs5536_ohci.c b/arch/mips/l=
-oongson64/common/cs5536/cs5536_ohci.c
-index f7c905e50dc4..92dc6bafc127 100644
---- a/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
-+++ b/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
-@@ -138,7 +138,7 @@ u32 pci_ohci_read_reg(int reg)
- 		break;
- 	case PCI_OHCI_INT_REG:
- 		_rdmsr(DIVIL_MSR_REG(PIC_YSEL_LOW), &hi, &lo);
--		if ((lo & 0x00000f00) =3D=3D CS5536_USB_INTR)
-+		if (((lo >> PIC_YSEL_LOW_USB_SHIFT) & 0xf) =3D=3D CS5536_USB_INTR)
- 			conf_data =3D 1;
- 		break;
- 	default:
+diff --git a/drivers/mtd/nand/sunxi_nand.c b/drivers/mtd/nand/sunxi_nand.c
+index 3bb9b34d9e77..db914f2f1054 100644
+--- a/drivers/mtd/nand/sunxi_nand.c
++++ b/drivers/mtd/nand/sunxi_nand.c
+@@ -126,7 +126,7 @@
+ #define NFC_CMD_TYPE_MSK	GENMASK(31, 30)
+ #define NFC_NORMAL_OP		(0 << 30)
+ #define NFC_ECC_OP		(1 << 30)
+-#define NFC_PAGE_OP		(2 << 30)
++#define NFC_PAGE_OP		(2U << 30)
+=20
+ /* define bit use in NFC_RCMD_SET */
+ #define NFC_READ_CMD_MSK	GENMASK(7, 0)
 --=20
 2.17.1
