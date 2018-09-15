@@ -2,705 +2,669 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA38ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 10:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EA8ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92AA72083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 10:59:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AA72083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 4BCCC2083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:02:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCCC2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbeIOQRx (ORCPT
+        id S1727167AbeIOQVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 12:17:53 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:11050 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbeIOQRx (ORCPT
+        Sat, 15 Sep 2018 12:21:11 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:22950 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeIOQVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 12:17:53 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8FAxDMA043127;
-        Sat, 15 Sep 2018 19:59:13 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Sat, 15 Sep 2018 19:59:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8FAx6qA043105
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 15 Sep 2018 19:59:13 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Ming Lei <ming.lei@redhat.com>,
-        syzbot 
-        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-Subject: [PATCH v3 (resend)] block/loop: Serialize ioctl operations.
-Date:   Sat, 15 Sep 2018 19:58:56 +0900
-Message-Id: <1537009136-4839-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 15 Sep 2018 12:21:10 -0400
+Received: from belgarion.home ([90.89.234.36])
+        by mwinf5d27 with ME
+        id bn2P1y00m0nnJME03n2TeM; Sat, 15 Sep 2018 13:02:29 +0200
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 15 Sep 2018 13:02:29 +0200
+X-ME-IP: 90.89.234.36
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH v4] ARM: dts: pxa: add mioa701 board description
+Date:   Sat, 15 Sep 2018 13:02:06 +0200
+Message-Id: <20180915110206.23110-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot is reporting NULL pointer dereference [1] which is caused by
-race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
-ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
-loop devices without holding corresponding locks.
+Add device-tree description of the Mitac MIO A701 board.
+This is aimed at replacing mioa701.c board file, and once stabilized,
+the leftover, such as the suspend resume mechanics will rely on a new
+IPL, and not the legacy Windows CE one.
 
-syzbot is also reporting circular locking dependency between bdev->bd_mutex
-and lo->lo_ctl_mutex [2] which is caused by calling blkdev_reread_part()
-with lock held.
-
-Since ioctl() request on loop devices is not frequent operation, we don't
-need fine grained locking. Let's use global lock and simplify the locking
-order.
-
-Strategy is that the global lock is held upon entry of ioctl() request,
-and release it before either starting operations which might deadlock or
-leaving ioctl() request. After the global lock is released, current thread
-no longer uses "struct loop_device" memory because it might be modified
-by next ioctl() request which was waiting for current ioctl() request.
-
-In order to enforce this strategy, this patch inversed
-loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
-I don't know whether it breaks something, but I don't have testcases.
-
-Since this patch serializes using global lock, race bugs should no longer
-exist. Thus, it will be easy to test whether this patch broke something.
-
-[1] https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
-[2] https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 ---
- drivers/block/loop.c | 231 ++++++++++++++++++++++++++++-----------------------
- drivers/block/loop.h |   1 -
- 2 files changed, 128 insertions(+), 104 deletions(-)
+Since v1: fix lcd_supply and lcd_backlight
+          These were depending on my internal tree changes, fit it.
+Since v2: take into account Rob's comments
+Since v3: take into account Marcel's comments
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index ea9debf..a7058ec 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -83,11 +83,50 @@
- #include <linux/uaccess.h>
- 
- static DEFINE_IDR(loop_index_idr);
--static DEFINE_MUTEX(loop_index_mutex);
-+static DEFINE_MUTEX(loop_mutex);
-+static void *loop_mutex_owner; /* == __mutex_owner(&loop_mutex) */
- 
- static int max_part;
- static int part_shift;
- 
+This patch deserves some special "love review". As it will probably
+serve for a more broad pxa conversion to devicetree of the other boards,
+and because it touches almost all domains for a pxa platform (camera,
+video, audio, i2c, ...), it should be as clean as possible so that
+mistakes are not carried on ...
+
+Therefore I expect the review of this one to be long (ie. it won't land
+for v4.19), until it looks good enough.
+---
+ arch/arm/boot/dts/Makefile    |   2 +
+ arch/arm/boot/dts/mioa701.dts | 570 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 572 insertions(+)
+ create mode 100644 arch/arm/boot/dts/mioa701.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b5bd3de87c33..8809f4e2244d 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -775,6 +775,8 @@ dtb-$(CONFIG_ARCH_PRIMA2) += \
+ dtb-$(CONFIG_ARCH_OXNAS) += \
+ 	ox810se-wd-mbwe.dtb \
+ 	ox820-cloudengines-pogoplug-series-3.dtb
++dtb-$(CONFIG_ARCH_PXA) += \
++	mioa701.dtb
+ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-apq8060-dragonboard.dtb \
+ 	qcom-apq8064-arrow-sd-600eval.dtb \
+diff --git a/arch/arm/boot/dts/mioa701.dts b/arch/arm/boot/dts/mioa701.dts
+new file mode 100644
+index 000000000000..9e368361d498
+--- /dev/null
++++ b/arch/arm/boot/dts/mioa701.dts
+@@ -0,0 +1,570 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * lock_loop - Lock loop_mutex.
-+ */
-+static void lock_loop(void)
-+{
-+	mutex_lock(&loop_mutex);
-+	loop_mutex_owner = current;
-+}
-+
-+/*
-+ * lock_loop_killable - Lock loop_mutex unless killed.
-+ */
-+static int lock_loop_killable(void)
-+{
-+	int err = mutex_lock_killable(&loop_mutex);
-+
-+	if (err)
-+		return err;
-+	loop_mutex_owner = current;
-+	return 0;
-+}
-+
-+/*
-+ * unlock_loop - Unlock loop_mutex as needed.
++ *  Copyright (C) 2018 Robert Jarzmik <robert.jarzmik@free.fr>
 + *
-+ * Explicitly call this function before calling fput() or blkdev_reread_part()
-+ * in order to avoid circular lock dependency. After this function is called,
-+ * current thread is no longer allowed to access "struct loop_device" memory,
-+ * for another thread would access that memory as soon as loop_mutex is held.
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License version 2 as
++ *  publishhed by the Free Software Foundation.
 + */
-+static void unlock_loop(void)
-+{
-+	if (loop_mutex_owner == current) {
-+		loop_mutex_owner = NULL;
-+		mutex_unlock(&loop_mutex);
-+	}
-+}
 +
- static int transfer_xor(struct loop_device *lo, int cmd,
- 			struct page *raw_page, unsigned raw_off,
- 			struct page *loop_page, unsigned loop_off,
-@@ -630,7 +669,12 @@ static void loop_reread_partitions(struct loop_device *lo,
- 				   struct block_device *bdev)
- {
- 	int rc;
-+	/* Save variables which might change after unlock_loop() is called. */
-+	char filename[sizeof(lo->lo_file_name)];
-+	const int num = lo->lo_number;
- 
-+	memmove(filename, lo->lo_file_name, sizeof(filename));
-+	unlock_loop();
- 	/*
- 	 * bd_mutex has been held already in release path, so don't
- 	 * acquire it if this function is called in such case.
-@@ -645,7 +689,7 @@ static void loop_reread_partitions(struct loop_device *lo,
- 		rc = blkdev_reread_part(bdev);
- 	if (rc)
- 		pr_warn("%s: partition scan of loop%d (%s) failed (rc=%d)\n",
--			__func__, lo->lo_number, lo->lo_file_name, rc);
-+			__func__, num, filename, rc);
- }
- 
- static inline int is_loop_device(struct file *file)
-@@ -692,6 +736,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 	struct file	*file, *old_file;
- 	int		error;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	error = -ENXIO;
- 	if (lo->lo_state != Lo_bound)
- 		goto out;
-@@ -728,12 +773,14 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 	loop_update_dio(lo);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
--	fput(old_file);
- 	if (lo->lo_flags & LO_FLAGS_PARTSCAN)
--		loop_reread_partitions(lo, bdev);
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-+	unlock_loop();
-+	fput(old_file);
- 	return 0;
- 
-  out_putf:
-+	unlock_loop();
- 	fput(file);
-  out:
- 	return error;
-@@ -911,6 +958,7 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	int		error;
- 	loff_t		size;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	/* This is safe, since we have a reference from open(). */
- 	__module_get(THIS_MODULE);
- 
-@@ -969,19 +1017,21 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	set_blocksize(bdev, S_ISBLK(inode->i_mode) ?
- 		      block_size(inode->i_bdev) : PAGE_SIZE);
- 
-+	/*
-+	 * Grab the block_device to prevent its destruction after we
-+	 * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
-+	 */
-+	bdgrab(bdev);
++/dts-v1/;
++#include "pxa27x.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/gpio-keys.h>
++#include <dt-bindings/clock/pxa-clock.h>
 +
- 	lo->lo_state = Lo_bound;
- 	if (part_shift)
- 		lo->lo_flags |= LO_FLAGS_PARTSCAN;
- 	if (lo->lo_flags & LO_FLAGS_PARTSCAN)
--		loop_reread_partitions(lo, bdev);
--
--	/* Grab the block_device to prevent its destruction after we
--	 * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
--	 */
--	bdgrab(bdev);
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
- 	return 0;
- 
-  out_putf:
-+	unlock_loop();
- 	fput(file);
-  out:
- 	/* This is safe: open() is still holding a reference. */
-@@ -1031,7 +1081,9 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct file *filp = lo->lo_backing_file;
- 	gfp_t gfp = lo->old_gfp_mask;
- 	struct block_device *bdev = lo->lo_device;
-+	bool reread;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
-@@ -1047,7 +1099,6 @@ static int loop_clr_fd(struct loop_device *lo)
- 	 */
- 	if (atomic_read(&lo->lo_refcnt) > 1) {
- 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		mutex_unlock(&lo->lo_ctl_mutex);
- 		return 0;
- 	}
- 
-@@ -1093,20 +1144,14 @@ static int loop_clr_fd(struct loop_device *lo)
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
--
--	if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev)
--		loop_reread_partitions(lo, bdev);
-+	reread = (lo->lo_flags & LO_FLAGS_PARTSCAN) && bdev;
- 	lo->lo_flags = 0;
- 	if (!part_shift)
- 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	loop_unprepare_queue(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
--	/*
--	 * Need not hold lo_ctl_mutex to fput backing file.
--	 * Calling fput holding lo_ctl_mutex triggers a circular
--	 * lock dependency possibility warning as fput can take
--	 * bd_mutex which is usually taken before lo_ctl_mutex.
--	 */
-+	if (reread)
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-+	unlock_loop();
- 	fput(filp);
- 	return 0;
- }
-@@ -1196,7 +1241,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 	     !(lo->lo_flags & LO_FLAGS_PARTSCAN)) {
- 		lo->lo_flags |= LO_FLAGS_PARTSCAN;
- 		lo->lo_disk->flags &= ~GENHD_FL_NO_PART_SCAN;
--		loop_reread_partitions(lo, lo->lo_device);
-+		loop_reread_partitions(lo, lo->lo_device); /* calls unlock_loop() */
- 	}
- 
- 	return err;
-@@ -1205,14 +1250,13 @@ static int loop_clr_fd(struct loop_device *lo)
- static int
- loop_get_status(struct loop_device *lo, struct loop_info64 *info)
- {
--	struct file *file;
-+	struct path path;
- 	struct kstat stat;
- 	int ret;
- 
--	if (lo->lo_state != Lo_bound) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
-+	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
--	}
- 
- 	memset(info, 0, sizeof(*info));
- 	info->lo_number = lo->lo_number;
-@@ -1229,17 +1273,17 @@ static int loop_clr_fd(struct loop_device *lo)
- 		       lo->lo_encrypt_key_size);
- 	}
- 
--	/* Drop lo_ctl_mutex while we call into the filesystem. */
--	file = get_file(lo->lo_backing_file);
--	mutex_unlock(&lo->lo_ctl_mutex);
--	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
--			  AT_STATX_SYNC_AS_STAT);
-+	/* Drop loop_mutex while we call into the filesystem. */
-+	path = lo->lo_backing_file->f_path;
-+	path_get(&path);
-+	unlock_loop();
-+	ret = vfs_getattr(&path, &stat, STATX_INO, AT_STATX_SYNC_AS_STAT);
- 	if (!ret) {
- 		info->lo_device = huge_encode_dev(stat.dev);
- 		info->lo_inode = stat.ino;
- 		info->lo_rdevice = huge_encode_dev(stat.rdev);
- 	}
--	fput(file);
-+	path_put(&path);
- 	return ret;
- }
- 
-@@ -1301,6 +1345,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info info;
- 	struct loop_info64 info64;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (copy_from_user(&info, arg, sizeof (struct loop_info)))
- 		return -EFAULT;
- 	loop_info64_from_old(&info, &info64);
-@@ -1312,6 +1357,7 @@ static int loop_clr_fd(struct loop_device *lo)
- {
- 	struct loop_info64 info64;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (copy_from_user(&info64, arg, sizeof (struct loop_info64)))
- 		return -EFAULT;
- 	return loop_set_status(lo, &info64);
-@@ -1323,10 +1369,8 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_old(&info64, &info);
-@@ -1341,10 +1385,8 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
- 		err = -EFAULT;
-@@ -1354,6 +1396,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 
- static int loop_set_capacity(struct loop_device *lo)
- {
-+	lockdep_assert_held(&loop_mutex);
- 	if (unlikely(lo->lo_state != Lo_bound))
- 		return -ENXIO;
- 
-@@ -1363,6 +1406,8 @@ static int loop_set_capacity(struct loop_device *lo)
- static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- {
- 	int error = -ENXIO;
++/ {
++	model = "Mitac Mio A701 Board";
++	compatible = "mitac,mioa701", "marvell,pxa270";
 +
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		goto out;
- 
-@@ -1376,6 +1421,7 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- 
- static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- {
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
-@@ -1398,12 +1444,10 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 	unsigned int cmd, unsigned long arg)
- {
- 	struct loop_device *lo = bdev->bd_disk->private_data;
--	int err;
-+	int err = lock_loop_killable();
- 
--	err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
- 	if (err)
--		goto out_unlocked;
--
-+		return err;
- 	switch (cmd) {
- 	case LOOP_SET_FD:
- 		err = loop_set_fd(lo, mode, bdev, arg);
-@@ -1412,10 +1456,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		err = loop_change_fd(lo, bdev, arg);
- 		break;
- 	case LOOP_CLR_FD:
--		/* loop_clr_fd would have unlocked lo_ctl_mutex on success */
- 		err = loop_clr_fd(lo);
--		if (!err)
--			goto out_unlocked;
- 		break;
- 	case LOOP_SET_STATUS:
- 		err = -EPERM;
-@@ -1425,8 +1466,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		break;
- 	case LOOP_GET_STATUS:
- 		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
--		/* loop_get_status() unlocks lo_ctl_mutex */
--		goto out_unlocked;
-+		break;
- 	case LOOP_SET_STATUS64:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1435,8 +1475,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		break;
- 	case LOOP_GET_STATUS64:
- 		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
--		/* loop_get_status() unlocks lo_ctl_mutex */
--		goto out_unlocked;
-+		break;
- 	case LOOP_SET_CAPACITY:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1455,9 +1494,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 	default:
- 		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
- 	}
--	mutex_unlock(&lo->lo_ctl_mutex);
--
--out_unlocked:
-+	unlock_loop();
- 	return err;
- }
- 
-@@ -1558,6 +1595,7 @@ struct compat_loop_info {
- 	struct loop_info64 info64;
- 	int ret;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	ret = loop_info64_from_compat(arg, &info64);
- 	if (ret < 0)
- 		return ret;
-@@ -1571,10 +1609,9 @@ struct compat_loop_info {
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_compat(&info64, arg);
-@@ -1589,20 +1626,16 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 
- 	switch(cmd) {
- 	case LOOP_SET_STATUS:
--		err = mutex_lock_killable(&lo->lo_ctl_mutex);
--		if (!err) {
-+		err = lock_loop_killable();
-+		if (!err)
- 			err = loop_set_status_compat(lo,
- 						     (const struct compat_loop_info __user *)arg);
--			mutex_unlock(&lo->lo_ctl_mutex);
--		}
- 		break;
- 	case LOOP_GET_STATUS:
--		err = mutex_lock_killable(&lo->lo_ctl_mutex);
--		if (!err) {
-+		err = lock_loop_killable();
-+		if (!err)
- 			err = loop_get_status_compat(lo,
- 						     (struct compat_loop_info __user *)arg);
--			/* loop_get_status() unlocks lo_ctl_mutex */
--		}
- 		break;
- 	case LOOP_SET_CAPACITY:
- 	case LOOP_CLR_FD:
-@@ -1619,6 +1652,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 		err = -ENOIOCTLCMD;
- 		break;
- 	}
-+	unlock_loop();
- 	return err;
- }
- #endif
-@@ -1626,37 +1660,30 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- static int lo_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err = 0;
-+	int err = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	if (err)
-+		return err;
- 	lo = bdev->bd_disk->private_data;
--	if (!lo) {
-+	if (!lo)
- 		err = -ENXIO;
--		goto out;
--	}
--
--	atomic_inc(&lo->lo_refcnt);
--out:
--	mutex_unlock(&loop_index_mutex);
-+	else
-+		atomic_inc(&lo->lo_refcnt);
-+	unlock_loop();
- 	return err;
- }
- 
- static void __lo_release(struct loop_device *lo)
- {
--	int err;
--
- 	if (atomic_dec_return(&lo->lo_refcnt))
- 		return;
--
--	mutex_lock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		err = loop_clr_fd(lo);
--		if (!err)
--			return;
-+		loop_clr_fd(lo);
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1665,15 +1692,13 @@ static void __lo_release(struct loop_device *lo)
- 		blk_mq_freeze_queue(lo->lo_queue);
- 		blk_mq_unfreeze_queue(lo->lo_queue);
- 	}
--
--	mutex_unlock(&lo->lo_ctl_mutex);
- }
- 
- static void lo_release(struct gendisk *disk, fmode_t mode)
- {
--	mutex_lock(&loop_index_mutex);
-+	lock_loop();
- 	__lo_release(disk->private_data);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- }
- 
- static const struct block_device_operations lo_fops = {
-@@ -1712,10 +1737,8 @@ static int unregister_transfer_cb(int id, void *ptr, void *data)
- 	struct loop_device *lo = ptr;
- 	struct loop_func_table *xfer = data;
- 
--	mutex_lock(&lo->lo_ctl_mutex);
- 	if (lo->lo_encryption == xfer)
- 		loop_release_xfer(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
- 	return 0;
- }
- 
-@@ -1727,8 +1750,14 @@ int loop_unregister_transfer(int number)
- 	if (n == 0 || n >= MAX_LO_CRYPT || (xfer = xfer_funcs[n]) == NULL)
- 		return -EINVAL;
- 
-+	/*
-+	 * cleanup_cryptoloop() cannot handle errors because it is called
-+	 * from module_exit(). Thus, don't give up upon SIGKILL here.
-+	 */
-+	lock_loop();
- 	xfer_funcs[n] = NULL;
- 	idr_for_each(&loop_index_idr, &unregister_transfer_cb, xfer);
-+	unlock_loop();
- 	return 0;
- }
- 
-@@ -1896,7 +1925,6 @@ static int loop_add(struct loop_device **l, int i)
- 	if (!part_shift)
- 		disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	disk->flags |= GENHD_FL_EXT_DEVT;
--	mutex_init(&lo->lo_ctl_mutex);
- 	atomic_set(&lo->lo_refcnt, 0);
- 	lo->lo_number		= i;
- 	spin_lock_init(&lo->lo_lock);
-@@ -1972,20 +2000,19 @@ static int loop_lookup(struct loop_device **l, int i)
- static struct kobject *loop_probe(dev_t dev, int *part, void *data)
- {
- 	struct loop_device *lo;
--	struct kobject *kobj;
--	int err;
-+	struct kobject *kobj = NULL;
-+	int err = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	*part = 0;
-+	if (err)
-+		return NULL;
- 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
- 	if (err < 0)
- 		err = loop_add(&lo, MINOR(dev) >> part_shift);
--	if (err < 0)
--		kobj = NULL;
--	else
-+	if (err >= 0)
- 		kobj = get_disk_and_module(lo->lo_disk);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
--	*part = 0;
- 	return kobj;
- }
- 
-@@ -1993,9 +2020,11 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 			       unsigned long parm)
- {
- 	struct loop_device *lo;
--	int ret = -ENOSYS;
-+	int ret = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	if (ret)
-+		return ret;
-+	ret = -ENOSYS;
- 	switch (cmd) {
- 	case LOOP_CTL_ADD:
- 		ret = loop_lookup(&lo, parm);
-@@ -2009,21 +2038,17 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		ret = mutex_lock_killable(&lo->lo_ctl_mutex);
- 		if (ret)
- 			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&lo->lo_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
-@@ -2033,7 +2058,7 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 		ret = loop_add(&lo, -1);
- 	}
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
- 	return ret;
- }
-@@ -2117,10 +2142,10 @@ static int __init loop_init(void)
- 				  THIS_MODULE, loop_probe, NULL, NULL);
- 
- 	/* pre-create number of devices given by config or max_loop */
--	mutex_lock(&loop_index_mutex);
-+	lock_loop();
- 	for (i = 0; i < nr; i++)
- 		loop_add(&lo, i);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
- 	printk(KERN_INFO "loop: module loaded\n");
- 	return 0;
-diff --git a/drivers/block/loop.h b/drivers/block/loop.h
-index 4d42c7a..af75a5e 100644
---- a/drivers/block/loop.h
-+++ b/drivers/block/loop.h
-@@ -54,7 +54,6 @@ struct loop_device {
- 
- 	spinlock_t		lo_lock;
- 	int			lo_state;
--	struct mutex		lo_ctl_mutex;
- 	struct kthread_worker	worker;
- 	struct task_struct	*worker_task;
- 	bool			use_dio;
++	chosen {
++		bootargs = "mtdparts=docg3.0:256k@3456k(barebox)ro,256k(barebox-logo),128k(barebox-env),4M(kernel),-(root) ubi.mtd=4 rootfstype=ubifs root=ubi0:linux_root ro";
++	};
++
++	memory {
++		reg = <0xa0000000 0x04000000>;
++
++		reserved-memory {
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			pstore_region:region@a2000000 {
++				compatible = "linux,contiguous-memory-region";
++				reg = <0xa2000000 0x100000>;
++			};
++		};
++	};
++
++	cpus {
++		cpu {
++			cpu-supply = <&vcc_core>;
++		};
++	};
++
++	pxabus {
++		pinctrl: pinctrl@40e00000 {
++			status = "okay";
++
++			pinctrl_ac97_default: ac97-default {
++				PMMUX(hpjack-detect, 12, gpio_in);
++				PMMUX(ac97-bitclk, 28, AC97_BITCLK);
++				PMMUX(ac97-sdata-in-0, 29, AC97_SDATA_IN_0);
++				PMMUX(ac97-sdata-out, 30, AC97_SDATA_OUT);
++				PMMUX(ac97-sync, 31, AC97_SYNC);
++				PMMUX(ac97-sysclk, 89, AC97_SYSCLK);
++			};
++
++			pinctrl_btuart_default: btuart-default {
++				PMMUX(btuart-nactivity, 14, gpio_in);
++				PMMUX(btuart-rxd, 42, BTRXD);
++				PMMUX(btuart-txd, 43, BTTXD);
++				PMMUX(btuart-cts, 44, BTCTS);
++				PMMUX(btuart-rts, 45, BTRTS);
++				PMMUX_LPM_LOW(bt-on, 83, gpio_out);
++				PMMUX_LPM_HIGH(bt-unknown, 77, gpio_out);
++				PMMUX_LPM_HIGH(bt-nreset, 86, gpio_out);
++			};
++
++			pinctrl_ffuart_default: ffuart-default {
++				PMMUX(ffuart-rxd, 34, FFRXD);
++				PMMUX(ffuart-cts, 35, FFCTS);
++				PMMUX(ffuart-dcd, 36, FFDCD);
++				PMMUX(ffuart-dsr, 37, FFDSR);
++				PMMUX(ffuart-txd, 39, FFTXD);
++				PMMUX(ffuart-dtr, 40, FFDTR);
++				PMMUX(ffuart-rts, 41, FFRTS);
++				PMMUX_LPM_LOW(gsm-reset, 24, gpio_out);
++				PMMUX(gsm-is-on, 25, gpio_in);
++				PMMUX_LPM_HIGH(gsm-nset-on, 88, gpio_out);
++				PMMUX_LPM_HIGH(gsm-nset-off, 90, gpio_out);
++				PMMUX(gsm-event-available, 113, gpio_in);
++				PMMUX_LPM_HIGH(gsm-dte-state, 114, gpio_out);
++			};
++
++			pinctrl_gpiokeys_default: gpiokeys-default {
++				PMMUX(key-power, 0, gpio_in);
++				PMMUX(key-volume_up, 93, gpio_in);
++				PMMUX(key-volume_down, 94, gpio_in);
++			};
++
++			pinctrl_keypad_default: keypad-default {
++				PMMUX(keypad-mkin0, 100, KP_MKIN<0>);
++				PMMUX(keypad-mkin1, 101, KP_MKIN<1>);
++				PMMUX(keypad-mkin2, 102, KP_MKIN<2>);
++				PMMUX(keypad-mkout0, 103, KP_MKOUT<0>);
++				PMMUX(keypad-mkout1, 104, KP_MKOUT<1>);
++				PMMUX(keypad-mkout2, 105, KP_MKOUT<2>);
++			};
++
++			pinctrl_i2c_default: i2c-default {
++				PMMUX(i2c-scl, 117, SCL);
++				PMMUX(i2c-sda, 118, SDA);
++			};
++
++			pinctrl_lcd_default: lcd-default {
++				PMMUX(ldd0, 58, LDD<0>);
++				PMMUX(ldd1, 59, LDD<1>);
++				PMMUX(ldd2, 60, LDD<2>);
++				PMMUX(ldd3, 61, LDD<3>);
++				PMMUX(ldd4, 62, LDD<4>);
++				PMMUX(ldd5, 63, LDD<5>);
++				PMMUX(ldd6, 64, LDD<6>);
++				PMMUX(ldd7, 65, LDD<7>);
++				PMMUX(ldd8, 66, LDD<8>);
++				PMMUX(ldd9, 67, LDD<9>);
++				PMMUX(ldd10, 68, LDD<10>);
++				PMMUX(ldd11, 69, LDD<11>);
++				PMMUX(ldd12, 70, LDD<12>);
++				PMMUX(ldd13, 71, LDD<13>);
++				PMMUX(ldd14, 72, LDD<14>);
++				PMMUX(ldd16, 73, LDD<15>);
++				PMMUX(lcd-fclk, 74, L_FCLK_RD);
++				PMMUX(lcd-lclk, 75, L_LCLK_A0);
++				PMMUX(lcd-pclk, 76, L_PCLK_WR);
++				PMMUX(lcd-power, 87, gpio_out);
++			};
++
++			pinctrl_leds_default: leds-default {
++				PMMUX_LPM_HIGH(led-charging, 10, gpio_out);
++				PMMUX_LPM_HIGH(led-vibra, 82, gpio_out);
++				PMMUX_LPM_HIGH(led-blue, 97, gpio_out);
++				PMMUX_LPM_HIGH(led-orange, 98, gpio_out);
++				PMMUX_LPM_HIGH(led-keyboard, 115, gpio_out);
++			};
++
++			pinctrl_pwm0_default: pwm0-defaut {
++				PMMUX(pwm0, 16, PWM_OUT<0>);
++			};
++
++			pinctrl_qci_default: qci-defaut {
++				PMMUX(cif-dd6, 17, CIF_DD<6>);
++				PMMUX(cif-dd3, 50, CIF_DD<3>);
++				PMMUX(cif-dd2, 51, CIF_DD<2>);
++				PMMUX(cif-dd4, 52, CIF_DD<4>);
++				PMMUX(cif-mclk, 53, CIF_MCLK);
++				PMMUX(cif-pclk, 54, CIF_PCLK);
++				PMMUX_LPM_HIGH(mt9m111-nOE, 56, gpio_out);
++				PMMUX(cif-dd1, 55, CIF_DD<1>);
++				PMMUX(cif-dd0, 81, CIF_DD<0>);
++				PMMUX(cif-dd5, 48, CIF_DD<5>);
++				PMMUX(cif-fv, 84, CIF_FV);
++				PMMUX(cif-lv, 85, CIF_LV);
++				PMMUX(cif-dd7, 108, CIF_DD<7>);
++			};
++
++			pinctrl_mmc_default: mmc-default {
++				PMMUX(sd-insert, 15, gpio_in);
++				PMMUX(mmclk, 32, MMCLK);
++				PMMUX(sd-ro, 78, gpio_in);
++				PMMUX_LPM_LOW(sd-enable, 91, gpio_out);
++				PMMUX(mmdat0, 92, MMDAT<0>);
++				PMMUX(mmdat1, 109, MMDAT<1>);
++				PMMUX(mmdat2, 110, MMDAT<2>);
++				PMMUX(mmdat3, 111, MMDAT<3>);
++				PMMUX(mmcmd, 112, MMCMD);
++			};
++
++			pinctrl_stuart_default: stuart-default {
++				PMMUX_LPM_LOW(gps-unknown1, 23, gpio_out);
++				PMMUX_LPM_LOW(gps-on, 26, gpio_out);
++				PMMUX_LPM_LOW(gps-nreset, 27, gpio_out);
++				PMMUX(stuart-rxd, 46, STRXD);
++				PMMUX(stuart-txd, 47, STTXD);
++				PMMUX_LPM_LOW(gps-unknown2, 106, gpio_out);
++				PMMUX_LPM_LOW(gps-unknown3, 107, gpio_out);
++			};
++
++			pinctrl_usb_default: usb-default {
++				PMMUX(n-usb-detect, 13, gpio_in);
++				PMMUX_LPM_LOW(n-dplus-pullup, 22, gpio_out);
++			};
++
++			pinctrl_power_default: power-default {
++				PMMUX_LPM_LOW(charge-enable, 9, gpio_out);
++				PMMUX(charge-vdrop, 80, gpio_out);
++				PMMUX(ac-detect, 96, gpio_in);
++			};
++		};
++
++		pwm0: pwm@40b00000 {
++		      status = "okay";
++		};
++
++		gpio: gpio@40e00000 {
++			status = "okay";
++		};
++
++		ffuart: serial@40100000 {
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_ffuart_default>;
++			status = "okay";
++		};
++
++		btuart: serial@40200000 {
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_btuart_default>;
++			status = "okay";
++		};
++
++		stuart: serial@40700000 {
++			status = "okay";
++		};
++
++		usb2phy: gpio-vbus@13 {
++			compatible = "usb-nop-xceiv";
++			#phy-cells = <1>;
++			vbus-detect-gpio = <&gpio 13 GPIO_ACTIVE_LOW>;
++			wakeup;
++		};
++
++		pxa27x_udc: udc@40600000 {
++			status = "okay";
++			gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
++			phys = <&usb2phy>;
++			phys-names = "usb2phy";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_usb_default>;
++		};
++
++		pwri2c: i2c@40f00180 {
++			status = "okay";
++
++			regulator@14 {
++				compatible = "maxim,max1586";
++				reg = <0x14>;
++				v3-gain = <1000000>;
++
++				regulators {
++					vcc_core: v3 {
++						regulator-name = "vcc_core";
++						regulator-compatible = "Output_V3";
++						regulator-min-microvolt = <1000000>;
++						regulator-max-microvolt = <1705000>;
++						regulator-always-on;
++					};
++				};
++			};
++		};
++
++		pxai2c1: i2c@40301680 {
++			mrvl,i2c-fast-mode;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_i2c_default>;
++			status = "okay";
++
++			camera@5d {
++				compatible = "micron,mt9m111";
++				reg = <0x5d>;
++				gpios = <&gpio 56 GPIO_ACTIVE_HIGH>;
++				remote = <&pxa_camera>;
++
++				port {
++					mt9m111_1: endpoint {
++						bus-width = <8>;
++						remote-endpoint = <&pxa_camera>;
++					};
++				};
++			};
++		};
++
++		keypad: keypad@41500000 {
++			status = "okay";
++			keypad,num-rows = <3>;
++			keypad,num-columns = <3>;
++			linux,keymap = <
++				0x00000067	/* KEY_UP */
++				0x0001006a	/* KEY_RIGHT */
++				0x000200e2	/* KEY_MEDIA */
++				0x0100006c	/* KEY_DOWN */
++				0x0101001c	/* KEY_ENTER */
++				0x010200da	/* KEY_CONNECT */
++				0x02000069	/* KEY_LEFT */
++				0x020100a9	/* KEY_PHONE */
++				0x020200d4>;	/* KEY_CAMERA */
++			marvell,debounce-interval = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_keypad_default>;
++		};
++
++		gpio-keys {
++			compatible = "gpio-keys";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			autorepeat;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_gpiokeys_default>;
++			status = "okay";
++
++			power-button {
++				label = "GPIO Key Power";
++				linux,code = <174>;
++				gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
++				wakeup-source;
++				wakeup-event-action = <EV_ACT_ASSERTED>;
++			};
++
++			hp-jack-detect {
++				label = "HP jack detect";
++				linux,code = <211>;
++				gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
++			};
++
++			volume-up {
++				label = "Volume Up Key";
++				linux,code = <115>;
++				gpios = <&gpio 93 GPIO_ACTIVE_HIGH>;
++			};
++
++			volume-down {
++				label = "Volume Down Key";
++				linux,code = <114>;
++				gpios = <&gpio 94 GPIO_ACTIVE_HIGH>;
++			};
++		};
++
++		mmc0: mmc@41100000 {
++			vmmc-supply = <&reg_vmmc>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_mmc_default>;
++			bus-width = <4>;
++			cd-gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
++			wp-gpios = <&gpio 78 GPIO_ACTIVE_HIGH>;
++			status = "okay";
++		};
++
++		pxa_camera: imaging@50000000 {
++			status = "okay";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_qci_default>;
++
++			port {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				/* Parallel bus endpoint */
++				qci: endpoint@0 {
++					reg = <0>;
++					remote-endpoint = <&mt9m111_1>;
++					bus-width = <8>;
++					hsync-active = <0>;
++					vsync-active = <0>;
++					pclk-sample = <1>;
++				};
++			};
++		};
++
++		rtc@40900000 {
++			status = "okay";
++		};
++
++		lcd-controller@40500000 {
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_lcd_default>;
++			status = "okay";
++
++			port {
++				lcdc_out: endpoint {
++					remote-endpoint = <&panel_in>;
++					bus-width = <16>;
++				};
++			};
++		};
++
++		ac97: sound@40500000 {
++			compatible = "marvell,pxa270-ac97";
++			reg = < 0x40500000 0x1000 >;
++			interrupts = <14>;
++			reset-gpios = <&gpio 95 GPIO_ACTIVE_HIGH>;
++			pinctrl-names = "default";
++			pinctrl-0 = < &pinctrl_ac97_default >;
++			clocks = <&clks CLK_AC97>, <&clks CLK_AC97CONF>;
++			clock-names = "AC97CLK", "AC97CONFCLK";
++			dmas = <&pdma 8 0
++				&pdma 9 0
++				&pdma 10 0
++				&pdma 11 0
++				&pdma 12 0>;
++			dma-names = "pcm_pcm_mic_mono", "pcm_pcm_aux_mono_in",
++				    "pcm_pcm_aux_mono_out", "pcm_pcm_stereo_in",
++				    "pcm_pcm_stereo_out";
++			#sound-dai-cells = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			wm9713: codec@0 {
++				reg = <0>;
++				compatible = "ac97,574d,4c13";
++				clocks = <&wm9713_bitclk>;
++				clock-names = "ac97_clk";
++				#sound-dai-cells = <0>;
++
++				wm9713_bitclk: ac97_bitclk {
++					compatible = "fixed-clock";
++					#clock-cells = <0>;
++					clock-frequency = <12285000>;
++					status = "okay";
++				};
++			};
++		};
++
++		pxa_pcm_audio: snd-soc-pxa-audio {
++			compatible = "mrvl,pxa-pcm-audio";
++			#sound-dai-cells = <0>;
++			status = "okay";
++		};
++
++		lcd-controller@40500000 {
++			lcd-supply = <&reg_lcd_vmmc>;
++		};
++
++		docg3: flash@0 {
++			compatible = "m-systems,diskonchip-g3";
++			reg = <0x0 0x2000>;
++		};
++
++	};
++
++	reg_vmmc: regulator-vmcc {
++		compatible = "regulator-fixed";
++		regulator-name = "vmmc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio 91 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	reg_lcd_vmmc: regulator-lcd-supply {
++		compatible = "regulator-fixed";
++		regulator-name = "lcd-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		gpio = <&gpio 87 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
++	lcd_backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&pwm0 4096000>;
++		pwm-names = "backlight";
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_pwm0_default>;
++	};
++
++	panel {
++		compatible = "toshiba,ltm0305a776";
++		lcd-type = "color-tft";
++		backlight = <&lcd_backlight>;
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&lcdc_out>;
++			};
++		};
++
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: 240p {
++				/* 240x320p24 */
++				clock-frequency = <4545000>;
++				hactive = <240>;
++				vactive = <320>;
++				hfront-porch = <4>;
++				hback-porch = <6>;
++				hsync-len = <4>;
++				vback-porch = <5>;
++				vfront-porch = <3>;
++				vsync-len = <2>;
++			};
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_leds_default>;
++
++		charger-led {
++			label = "mioa701:charging";
++			gpios = <&gpio 10 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		vibrator {
++			label = "mioa701:vibra";
++			gpios = <&gpio 82 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		bluetooth-led {
++			label = "mioa701:blue";
++			gpios = <&gpio 97 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		orange-led {
++			label = "mioa701:orange";
++			gpios = <&gpio 98 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++
++		keyboard-led {
++			label = "mioa701:keyboard";
++			gpios = <&gpio 115 GPIO_ACTIVE_LOW>;
++			default-state = "off";
++		};
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "MioA701";
++		simple-audio-card,widgets =
++		"Speaker", "Front Speaker",
++		"Speaker", "Rear Speaker",
++		"Microphone", "Headset",
++		"Microphone", "GSM Line Out",
++		"Line", "GSM Line In",
++		"Microphone", "Headset Mic",
++		"Microphone", "Front Mic";
++		simple-audio-card,routing =
++			/* Call Mic */
++			"Mic Bias", "Front Mic",
++			"MIC1", "Mic Bias",
++			/* Headset Mic */
++			"LINEL", "Headset Mic",
++			"LINER", "Headset Mic",
++			/* GSM Module */
++			"MONOIN", "GSM Line Out",
++			"PCBEEP", "GSM Line Out",
++			"GSM Line In", "MONO",
++			/* headphone connected to HPL, HPR */
++			"Headset", "HPL",
++			"Headset", "HPR",
++			/* front speaker connected to HPL, OUT3 */
++			"Front Speaker", "HPL",
++			"Front Speaker", "OUT3",
++			/* rear speaker connected to SPKL, SPKR */
++			"Rear Speaker", "SPKL",
++			"Rear Speaker", "SPKR";
++
++		simple-audio-card,cpu {
++			sound-dai = <&ac97>;
++		};
++
++		simple-audio-card,codec {
++			sound-dai = <&wm9713>;
++		};
++
++		simple-audio-card,plat {
++			sound-dai = <&pxa_pcm_audio>;
++		};
++	};
++
++	ac_charger: charger {
++		compatible = "gpio-charger";
++		charger-type = "usb-aca";
++		gpios = <&gpio 96 GPIO_ACTIVE_HIGH>;
++	};
++};
 -- 
-1.8.3.1
+2.11.0
 
