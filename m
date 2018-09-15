@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCB9ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B939CECE563
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0555D2083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0555D2083A
+	by mail.kernel.org (Postfix) with ESMTP id 4B7BD2083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7BD2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeIPAML (ORCPT
+        id S1728037AbeIPAMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 20:12:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38645 "EHLO
+        Sat, 15 Sep 2018 20:12:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56519 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbeIPAML (ORCPT
+        with ESMTP id S1727291AbeIPAMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 20:12:11 -0400
+        Sat, 15 Sep 2018 20:12:35 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8FIpqeo3924490
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8FIqRDc3924537
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 15 Sep 2018 11:51:52 -0700
+        Sat, 15 Sep 2018 11:52:27 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8FIppVh3924485;
-        Sat, 15 Sep 2018 11:51:51 -0700
-Date:   Sat, 15 Sep 2018 11:51:51 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8FIqQhM3924533;
+        Sat, 15 Sep 2018 11:52:26 -0700
+Date:   Sat, 15 Sep 2018 11:52:26 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Brijesh Singh <tipbot@zytor.com>
-Message-ID: <tip-b3f0907c71e006e12fde74ea9a745b6096b6f90f@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, sean.j.christopherson@intel.com,
-        linux-kernel@vger.kernel.org, bp@suse.de, rkrcmar@redhat.com,
-        pbonzini@redhat.com, tglx@linutronix.de, thomas.lendacky@amd.com,
-        brijesh.singh@amd.com
-Reply-To: thomas.lendacky@amd.com, tglx@linutronix.de,
-          brijesh.singh@amd.com, rkrcmar@redhat.com, bp@suse.de,
+Message-ID: <tip-6a1cac56f41f9ea94e440dfcc1cac44b41a1b194@git.kernel.org>
+Cc:     sean.j.christopherson@intel.com, thomas.lendacky@amd.com,
+        rkrcmar@redhat.com, bp@suse.de, brijesh.singh@amd.com,
+        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, pbonzini@redhat.com
+Reply-To: hpa@zytor.com, mingo@kernel.org, brijesh.singh@amd.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
           pbonzini@redhat.com, sean.j.christopherson@intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <1536932759-12905-2-git-send-email-brijesh.singh@amd.com>
-References: <1536932759-12905-2-git-send-email-brijesh.singh@amd.com>
+          rkrcmar@redhat.com, thomas.lendacky@amd.com, bp@suse.de
+In-Reply-To: <1536932759-12905-3-git-send-email-brijesh.singh@amd.com>
+References: <1536932759-12905-3-git-send-email-brijesh.singh@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Add .bss..decrypted section to hold shared
+Subject: [tip:x86/urgent] x86/kvm: Use __bss_decrypted attribute in shared
  variables
-Git-Commit-ID: b3f0907c71e006e12fde74ea9a745b6096b6f90f
+Git-Commit-ID: 6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,36 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b3f0907c71e006e12fde74ea9a745b6096b6f90f
-Gitweb:     https://git.kernel.org/tip/b3f0907c71e006e12fde74ea9a745b6096b6f90f
+Commit-ID:  6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
+Gitweb:     https://git.kernel.org/tip/6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
 Author:     Brijesh Singh <brijesh.singh@amd.com>
-AuthorDate: Fri, 14 Sep 2018 08:45:58 -0500
+AuthorDate: Fri, 14 Sep 2018 08:45:59 -0500
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 15 Sep 2018 20:48:45 +0200
+CommitDate: Sat, 15 Sep 2018 20:48:46 +0200
 
-x86/mm: Add .bss..decrypted section to hold shared variables
+x86/kvm: Use __bss_decrypted attribute in shared variables
 
-kvmclock defines few static variables which are shared with the
-hypervisor during the kvmclock initialization.
+The recent removal of the memblock dependency from kvmclock caused a SEV
+guest regression because the wall_clock and hv_clock_boot variables are
+no longer mapped decrypted when SEV is active.
 
-When SEV is active, memory is encrypted with a guest-specific key, and
-if the guest OS wants to share the memory region with the hypervisor
-then it must clear the C-bit before sharing it.
+Use the __bss_decrypted attribute to put the static wall_clock and
+hv_clock_boot in the .bss..decrypted section so that they are mapped
+decrypted during boot.
 
-Currently, we use kernel_physical_mapping_init() to split large pages
-before clearing the C-bit on shared pages. But it fails when called from
-the kvmclock initialization (mainly because the memblock allocator is
-not ready that early during boot).
+In the preparatory stage of CPU hotplug, the per-cpu pvclock data pointer
+assigns either an element of the static array or dynamically allocated
+memory for the pvclock data pointer. The static array are now mapped
+decrypted but the dynamically allocated memory is not mapped decrypted.
+However, when SEV is active this memory range must be mapped decrypted.
 
-Add a __bss_decrypted section attribute which can be used when defining
-such shared variable. The so-defined variables will be placed in the
-.bss..decrypted section. This section will be mapped with C=0 early
-during boot.
+Add a function which is called after the page allocator is up, and
+allocate memory for the pvclock data pointers for the all possible cpus.
+Map this memory range as decrypted when SEV is active.
 
-The .bss..decrypted section has a big chunk of memory that may be unused
-when memory encryption is not active, free it when memory encryption is
-not active.
-
+Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -99,183 +97,104 @@ Cc: Borislav Petkov <bp@suse.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Radim Krčmář<rkrcmar@redhat.com>
+Cc: "Radim Krčmář" <rkrcmar@redhat.com>
 Cc: kvm@vger.kernel.org
-Link: https://lkml.kernel.org/r/1536932759-12905-2-git-send-email-brijesh.singh@amd.com
+Link: https://lkml.kernel.org/r/1536932759-12905-3-git-send-email-brijesh.singh@amd.com
 
 ---
- arch/x86/include/asm/mem_encrypt.h |  7 +++++++
- arch/x86/kernel/head64.c           | 16 ++++++++++++++++
- arch/x86/kernel/vmlinux.lds.S      | 19 +++++++++++++++++++
- arch/x86/mm/init.c                 |  4 ++++
- arch/x86/mm/mem_encrypt.c          | 24 ++++++++++++++++++++++++
- 5 files changed, 70 insertions(+)
+ arch/x86/kernel/kvmclock.c | 52 +++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
-index c0643831706e..616f8e637bc3 100644
---- a/arch/x86/include/asm/mem_encrypt.h
-+++ b/arch/x86/include/asm/mem_encrypt.h
-@@ -48,10 +48,13 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size);
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index 1e6764648af3..013fe3d21dbb 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -28,6 +28,7 @@
+ #include <linux/sched/clock.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <linux/set_memory.h>
  
- /* Architecture __weak replacement functions */
- void __init mem_encrypt_init(void);
-+void __init mem_encrypt_free_decrypted_mem(void);
+ #include <asm/hypervisor.h>
+ #include <asm/mem_encrypt.h>
+@@ -61,9 +62,10 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
+ 	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
  
- bool sme_active(void);
- bool sev_active(void);
+ static struct pvclock_vsyscall_time_info
+-			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
+-static struct pvclock_wall_clock wall_clock;
++			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __bss_decrypted __aligned(PAGE_SIZE);
++static struct pvclock_wall_clock wall_clock __bss_decrypted;
+ static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
++static struct pvclock_vsyscall_time_info *hvclock_mem;
  
-+#define __bss_decrypted __attribute__((__section__(".bss..decrypted")))
-+
- #else	/* !CONFIG_AMD_MEM_ENCRYPT */
- 
- #define sme_me_mask	0ULL
-@@ -77,6 +80,8 @@ early_set_memory_decrypted(unsigned long vaddr, unsigned long size) { return 0;
- static inline int __init
- early_set_memory_encrypted(unsigned long vaddr, unsigned long size) { return 0; }
- 
-+#define __bss_decrypted
-+
- #endif	/* CONFIG_AMD_MEM_ENCRYPT */
- 
- /*
-@@ -88,6 +93,8 @@ early_set_memory_encrypted(unsigned long vaddr, unsigned long size) { return 0;
- #define __sme_pa(x)		(__pa(x) | sme_me_mask)
- #define __sme_pa_nodebug(x)	(__pa_nodebug(x) | sme_me_mask)
- 
-+extern char __start_bss_decrypted[], __end_bss_decrypted[], __start_bss_decrypted_unused[];
-+
- #endif	/* __ASSEMBLY__ */
- 
- #endif	/* __X86_MEM_ENCRYPT_H__ */
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 8047379e575a..c16af27eb23f 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -112,6 +112,7 @@ static bool __head check_la57_support(unsigned long physaddr)
- unsigned long __head __startup_64(unsigned long physaddr,
- 				  struct boot_params *bp)
+ static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
  {
-+	unsigned long vaddr, vaddr_end;
- 	unsigned long load_delta, *p;
- 	unsigned long pgtable_flags;
- 	pgdval_t *pgd;
-@@ -234,6 +235,21 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	/* Encrypt the kernel and related (if SME is active) */
- 	sme_encrypt_kernel(bp);
- 
-+	/*
-+	 * Clear the memory encryption mask from the .bss..decrypted section.
-+	 * The bss section will be memset to zero later in the initialization so
-+	 * there is no need to zero it after changing the memory encryption
-+	 * attribute.
-+	 */
-+	if (mem_encrypt_active()) {
-+		vaddr = (unsigned long)__start_bss_decrypted;
-+		vaddr_end = (unsigned long)__end_bss_decrypted;
-+		for (; vaddr < vaddr_end; vaddr += PMD_SIZE) {
-+			i = pmd_index(vaddr);
-+			pmd[i] -= sme_get_me_mask();
-+		}
-+	}
-+
- 	/*
- 	 * Return the SME encryption mask (if SME is active) to be used as a
- 	 * modifier for the initial pgdir entry programmed into CR3.
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 8bde0a419f86..5dd3317d761f 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -65,6 +65,23 @@ jiffies_64 = jiffies;
- #define ALIGN_ENTRY_TEXT_BEGIN	. = ALIGN(PMD_SIZE);
- #define ALIGN_ENTRY_TEXT_END	. = ALIGN(PMD_SIZE);
- 
-+/*
-+ * This section contains data which will be mapped as decrypted. Memory
-+ * encryption operates on a page basis. Make this section PMD-aligned
-+ * to avoid splitting the pages while mapping the section early.
-+ *
-+ * Note: We use a separate section so that only this section gets
-+ * decrypted to avoid exposing more than we wish.
-+ */
-+#define BSS_DECRYPTED						\
-+	. = ALIGN(PMD_SIZE);					\
-+	__start_bss_decrypted = .;				\
-+	*(.bss..decrypted);					\
-+	. = ALIGN(PAGE_SIZE);					\
-+	__start_bss_decrypted_unused = .;			\
-+	. = ALIGN(PMD_SIZE);					\
-+	__end_bss_decrypted = .;				\
-+
- #else
- 
- #define X86_ALIGN_RODATA_BEGIN
-@@ -74,6 +91,7 @@ jiffies_64 = jiffies;
- 
- #define ALIGN_ENTRY_TEXT_BEGIN
- #define ALIGN_ENTRY_TEXT_END
-+#define BSS_DECRYPTED
- 
- #endif
- 
-@@ -355,6 +373,7 @@ SECTIONS
- 		__bss_start = .;
- 		*(.bss..page_aligned)
- 		*(.bss)
-+		BSS_DECRYPTED
- 		. = ALIGN(PAGE_SIZE);
- 		__bss_stop = .;
- 	}
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 7a8fc26c1115..faca978ebf9d 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -815,10 +815,14 @@ void free_kernel_image_pages(void *begin, void *end)
- 		set_memory_np_noalias(begin_ul, len_pages);
+@@ -236,6 +238,45 @@ static void kvm_shutdown(void)
+ 	native_machine_shutdown();
  }
  
-+void __weak mem_encrypt_free_decrypted_mem(void) { }
-+
- void __ref free_initmem(void)
- {
- 	e820__reallocate_tables();
- 
-+	mem_encrypt_free_decrypted_mem();
-+
- 	free_kernel_image_pages(&__init_begin, &__init_end);
- }
- 
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index b2de398d1fd3..006f373f54ab 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -348,6 +348,30 @@ bool sev_active(void)
- EXPORT_SYMBOL(sev_active);
- 
- /* Architecture __weak replacement functions */
-+void __init mem_encrypt_free_decrypted_mem(void)
++static void __init kvmclock_init_mem(void)
 +{
-+	unsigned long vaddr, vaddr_end, npages;
++	unsigned long ncpus;
++	unsigned int order;
++	struct page *p;
 +	int r;
 +
-+	vaddr = (unsigned long)__start_bss_decrypted_unused;
-+	vaddr_end = (unsigned long)__end_bss_decrypted;
-+	npages = (vaddr_end - vaddr) >> PAGE_SHIFT;
++	if (HVC_BOOT_ARRAY_SIZE >= num_possible_cpus())
++		return;
++
++	ncpus = num_possible_cpus() - HVC_BOOT_ARRAY_SIZE;
++	order = get_order(ncpus * sizeof(*hvclock_mem));
++
++	p = alloc_pages(GFP_KERNEL, order);
++	if (!p) {
++		pr_warn("%s: failed to alloc %d pages", __func__, (1U << order));
++		return;
++	}
++
++	hvclock_mem = page_address(p);
 +
 +	/*
-+	 * The unused memory range was mapped decrypted, change the encryption
-+	 * attribute from decrypted to encrypted before freeing it.
++	 * hvclock is shared between the guest and the hypervisor, must
++	 * be mapped decrypted.
 +	 */
-+	if (mem_encrypt_active()) {
-+		r = set_memory_encrypted(vaddr, npages);
++	if (sev_active()) {
++		r = set_memory_decrypted((unsigned long) hvclock_mem,
++					 1UL << order);
 +		if (r) {
-+			pr_warn("failed to free unused decrypted pages\n");
++			__free_pages(p, order);
++			hvclock_mem = NULL;
++			pr_warn("kvmclock: set_memory_decrypted() failed. Disabling\n");
 +			return;
 +		}
 +	}
 +
-+	free_init_pages("unused decrypted", vaddr, vaddr_end);
++	memset(hvclock_mem, 0, PAGE_SIZE << order);
 +}
 +
- void __init mem_encrypt_init(void)
+ static int __init kvm_setup_vsyscall_timeinfo(void)
  {
- 	if (!sme_me_mask)
+ #ifdef CONFIG_X86_64
+@@ -250,6 +291,9 @@ static int __init kvm_setup_vsyscall_timeinfo(void)
+ 
+ 	kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
+ #endif
++
++	kvmclock_init_mem();
++
+ 	return 0;
+ }
+ early_initcall(kvm_setup_vsyscall_timeinfo);
+@@ -269,8 +313,10 @@ static int kvmclock_setup_percpu(unsigned int cpu)
+ 	/* Use the static page for the first CPUs, allocate otherwise */
+ 	if (cpu < HVC_BOOT_ARRAY_SIZE)
+ 		p = &hv_clock_boot[cpu];
++	else if (hvclock_mem)
++		p = hvclock_mem + cpu - HVC_BOOT_ARRAY_SIZE;
+ 	else
+-		p = kzalloc(sizeof(*p), GFP_KERNEL);
++		return -ENOMEM;
+ 
+ 	per_cpu(hv_clock_per_cpu, cpu) = p;
+ 	return p ? 0 : -ENOMEM;
