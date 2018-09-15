@@ -2,77 +2,111 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E050FECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB6EECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B015208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B015208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5A99121477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXM1mDnx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A99121477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeIOWrx (ORCPT
+        id S1727611AbeIOXCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 18:47:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51974 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbeIOWrx (ORCPT
+        Sat, 15 Sep 2018 19:02:17 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37985 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeIOXCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 18:47:53 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g1EMW-00039t-D4; Sat, 15 Sep 2018 19:28:04 +0200
-Date:   Sat, 15 Sep 2018 19:28:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Feng Tang <feng.tang@intel.com>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ingo Molnar <mingo@elte.hu>,
-        "H . Peter Anvin" <hpa@linux.intel.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
- NO_BOOTMEM
-In-Reply-To: <20180915164731.3zrdxijuwkgdi25p@shbuild888>
-Message-ID: <alpine.DEB.2.21.1809151923270.1650@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1808301523510.1210@nanos.tec.linutronix.de> <20180831061519.3zbxsjs4rd6mmsuo@shbuild888> <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de> <20180831133659.pkmscqpudjnkujbg@shbuild888> <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
- <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de> <20180910093938.ka732apzy3d3a5ip@shbuild888> <alpine.DEB.2.21.1809101147500.1402@nanos.tec.linutronix.de> <20180911061413.redy4oxia3hqifkh@shbuild888> <alpine.DEB.2.21.1809151226130.1650@nanos.tec.linutronix.de>
- <20180915164731.3zrdxijuwkgdi25p@shbuild888>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sat, 15 Sep 2018 19:02:16 -0400
+Received: by mail-it0-f65.google.com with SMTP id p129-v6so6344359ite.3;
+        Sat, 15 Sep 2018 10:42:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
+        b=RXM1mDnxaiIy+aT7bbXrL9pt6LYvkvXpBQuFDVq7w13H6+UB0ZjwMGN3IJU/xLf3+x
+         Qlhh1SV4/GiPd9i5KAb1FYdQm4v24pESqg2U3pjDTEJfy5bR7VgVYNZhCIwNYL59olo0
+         Y05DP5zZzw4/nnnnwET8Y9I93YgO+PpbRRSSyLqQ2EhFdn1CFYE+wlkDrZwe7vy1RjpU
+         MmysZyW/5KksuNVxnzs+enwW8fPDp0ouu/x4X2tNsd0A7uYTffAsYrrQUDojfdAAHv1O
+         jlbfgBMpbf4wK6Yle4Hx6zAJV9VomDzpoGzkOBs4uUvF2inXvV3rx/kNVTEekuc5C75n
+         yUtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
+        b=PGFln0joYGHP4pgTzB28714QMfarEMI9+sZ0BYtbilheoa1OhRvtj92QGm4RdVuySb
+         d+KBLF2BsBiYi+0pIhs/dHPSz8iTk2Q3KlpJa6nBUxjzYwlracQuG+PB3a/9GjPp6GmW
+         DflQ7Ofh5VXhgIDg205BQSWN/GJNBHlzKrfr2N1LW+/0Kg7JSB17VP0jYZY5iuKhEVjE
+         qxuOUPgL004R3bkd02G0WPf7+vQ/Z5bToKjWjrM4KbXFCnZ1mLisARTYaT0O+4vvZLiZ
+         zuh/tt6MEpO1VlsDLdTq1pKHuD1RZM3zyMrLBcqRgOAs9ExYqs3FKFECfv5K9JcF38hB
+         DOiA==
+X-Gm-Message-State: APzg51BDzMSNixsXYraRlqnkkK6U26quoWkoTWi+rLdqJxTQpfU884u3
+        fcT9d5w02GB6nJnYciyMNA==
+X-Google-Smtp-Source: ANB0VdbBxoaLx5rM8bcsV2Iy8Mu12EygbW8N0jYq4Mfsnf4eP652rYd6yeD8PEie2iXC+f+xWfwcvQ==
+X-Received: by 2002:a24:fd04:: with SMTP id m4-v6mr7392851ith.28.1537033351004;
+        Sat, 15 Sep 2018 10:42:31 -0700 (PDT)
+Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
+        by smtp.gmail.com with ESMTPSA id t187-v6sm1150250ita.28.2018.09.15.10.42.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Sep 2018 10:42:30 -0700 (PDT)
+From:   ryang <decatf@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ryang <decatf@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: iio: light: bh1750: Add device tree binding documentation
+Date:   Sat, 15 Sep 2018 13:42:13 -0400
+Message-Id: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Sep 2018, Feng Tang wrote:
-> I have tried to change some header files incluing fixmap.h/apicdef.h/
-> vsyscall.h, and most of the .c files compile fine now, but I can not
-> use the "__end_of_permanent_fixed_addresses" in head_64.S as it is a 
-> enum type, and could not be recognized by assembly code.
+Document device tree bindings for ROHM BH1750 ambient light sensor driver.
 
-Hrmm. I did not think about the enum. So we have two possibilities:
+Signed-off-by: ryang <decatf@gmail.com>
+---
+ .../devicetree/bindings/iio/light/bh1750.txt   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/bh1750.txt
 
-1) Have some preprocessing which provides the info for the assembler
-
-2) Use a constant for the number of PMDs which is defined in a header and
-   then compile time checked against the size of the fixmap in a C-file.
-
-#1 would be preferred, but for a quick fix #2 is okay as well.
-
-Thanks,
-
-	tglx
-
+diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.txt b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+new file mode 100644
+index 000000000000..468350cc7af6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+@@ -0,0 +1,18 @@
++ROHM BH1750 - ALS, Ambient light sensor
++
++Required properties:
++
++- compatible: Must be one of:
++    "rohm,bh1710"
++    "rohm,bh1715"
++    "rohm,bh1721"
++    "rohm,bh1750"
++    "rohm,bh1751"
++- reg: the I2C address of the sensor
++
++Example:
++
++bh1750@23 {
++	compatible = "rohm,bh1750";
++	reg = <0x23>;
++};
+-- 
+2.17.1
 
