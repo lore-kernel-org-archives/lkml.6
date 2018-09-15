@@ -2,122 +2,148 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3C9ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 19:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A03ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 20:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238C3208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 19:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73FC621477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 20:00:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="fhOquIgq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238C3208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwbmRny8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73FC621477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeIPBSe (ORCPT
+        id S1728020AbeIPBUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 21:18:34 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38840 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727549AbeIPBSd (ORCPT
+        Sat, 15 Sep 2018 21:20:52 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37566 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727549AbeIPBUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 21:18:33 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u11-v6so5656014plq.5
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 12:58:24 -0700 (PDT)
+        Sat, 15 Sep 2018 21:20:52 -0400
+Received: by mail-lf1-f68.google.com with SMTP id t140-v6so4683103lff.4;
+        Sat, 15 Sep 2018 13:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Hz1gf38z/x7qPN6bSE11FNVRsPuUS609D7FsSWqoOTI=;
-        b=fhOquIgqyIx6Cmkc6QKltR0TvUMQZiiLxU+vSNzU84e7hcyuLgPo/yWeqMGJ7Eh7zc
-         U4LtSM+C4aQWEMKXh8Ljehl6RqaC9HbkUtXggfuDY5Wpad3TjdlXKss0SxUSuKtLlgDe
-         cSd/32nkwjNdiOfWdMDVWdaKuZ7Nf6ATkG510iAjsp7vCPkGRAQxtt8Q0hqXKjILB8dP
-         4JyqxwfVhPZnibtZG4MGjjuoBDMuD32NsOmqBMIW2StJnrj6ziGut90rikHQNDK7bXMv
-         a2TnGbwfCyRi78uunE3Zf5XbvVIilIqB4hh/vyuDotvqBDxaPUtUkSCvLTA9NNfZcpHN
-         LcPw==
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GvGclNcw+eYmdMZ9yAzYUL73NmsnJf00Z1fgB2kN0WE=;
+        b=ZwbmRny8zmRBcvyGfYFQ4fg5g00e0ow2BFPfmksYuCBfZ7AjxSv3n4k46jJ8wfGDcI
+         PcWZuhufrkVZYyOr4s/fIprCgOyGV3uYwz+gDmbpKa+llIPkBTCBJIKOplb2HOh4CRiz
+         WFi57rjOJ3iVgKPuAMP2nRWmr4LuWygacXqVrtKuBrR+w6ee9HCBkYArB0+ovbkRMqRh
+         aBStOt/RlU4STDMcmyZsKNWRlqVEK6Ap7kihtA9FuArd/3EKFNABk0Iv953oZwR+etgl
+         CabLYaEjzp9wSOguhKZRzCvuhShkjUIZx/r6puoI94Gjoj52VayPRMaH69DErGCwN/FM
+         SzOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Hz1gf38z/x7qPN6bSE11FNVRsPuUS609D7FsSWqoOTI=;
-        b=tkc0Ngltu/lBbAg2iu8hXvxgvkc+SPR+g48XCBRr3Uutv/QsjFo/z43KVICuTQHBDj
-         jzvGnh8XrSEXqr7fXEwvYw3VzyiKM2aNp9ZbS7hdkle5jsMRJdjcPe4FESpoL+xY8o5n
-         kI2EZxwVSyLkEDCs4wc6PRY1FkblPf63FFGI9bmSduE320Ra12pFXQa901/3JFIz+fVn
-         0rAd7G3yFkPCd8kpVHICwA/C9E2f4pwFc7X9es3WkaIDxsBEf+4I5Fkl3EPpZ10VfId1
-         Y8ItUNYY6tEgsVdR8FTp1toCF03iPdpE6LnB9EqCRAXCtWIsvFdNzD59fodpCVz6DH/I
-         5KfQ==
-X-Gm-Message-State: APzg51BpYtoNGkmmngdyeFm3zxFyMcq6bG+WWCl5HwBwKPsuLyra4e/Q
-        1i3X40B3ix2IZ/U6MDSJXA3FBA==
-X-Google-Smtp-Source: ANB0VdZuaPWCwx31g8czGuvznmUSTp3UeJrQrvfj0gWV04H29+YlBL3VkwEzF3G7962NO4q9K9q8tg==
-X-Received: by 2002:a17:902:8e86:: with SMTP id bg6-v6mr18009258plb.108.1537041504411;
-        Sat, 15 Sep 2018 12:58:24 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:e00c:94b8:58e8:8ffb? ([2601:646:c200:7429:e00c:94b8:58e8:8ffb])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm15420019pgn.94.2018.09.15.12.58.22
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GvGclNcw+eYmdMZ9yAzYUL73NmsnJf00Z1fgB2kN0WE=;
+        b=E0tzayoNTp9gAesjmFv6OK7pVKLvMA6vH5dUCvjtUEhmTs8QmTBf+7AP4xX6MNC4xW
+         7ofOh3Nt8W4koBWT04K1FqvefMFRIIfQ02yUP0p2AohUysmxJ3S0n6rxpjvj+gkjmGEI
+         1Enxp4fGVzcAT498ae9J4uKff4FL+nVg8NxH0F0seX5dwvok7T52TiZP9dPk4sb2hTbz
+         xyiPXZ6KQD3KCIbjXerGx5VyxyaZjaB4Yf3v6XkKWbjfOTUKOU8fxUbeq1OqQ07Hhiyh
+         HCESuHwlBXNlFT8EBWXBJGOO9+aFdkIGFXdEj1b5k5SC7UGg7itvQ2O1ao8O1KJ8rscl
+         B35A==
+X-Gm-Message-State: APzg51BpiKUeD9xYgrNeKYlExrpnxYRVITol5trm+SS6HQW4R56HkTgE
+        uhz4RTc9Xbdm3lLpgZGdh+mQvigp
+X-Google-Smtp-Source: ANB0VdZISayKoZFBmLGfN1ZJxCfGaXAzOK/C2IkjTf3GOmDZofDfAHvw8PeOvt6Yndj16LtDp1vXTQ==
+X-Received: by 2002:a19:8f8c:: with SMTP id s12-v6mr12085941lfk.83.1537041640936;
+        Sat, 15 Sep 2018 13:00:40 -0700 (PDT)
+Received: from [192.168.1.18] (bku9.neoplus.adsl.tpnet.pl. [83.28.188.9])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm1920380ljc.50.2018.09.15.13.00.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 12:58:22 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <CAHmME9rMg_2eHBnfP6j9Y3O7-At90HF=ToTWeFL_Qc4nGURORg@mail.gmail.com>
-Date:   Sat, 15 Sep 2018 12:58:21 -0700
-Cc:     kevin@guarana.org, Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <61B4DFD6-9BB5-4B81-BD0E-ACF112EA8AF7@amacapital.net>
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-2-Jason@zx2c4.com> <20180912061433.GA8484@ip-172-31-15-78> <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com> <20180913050301.GA26367@ip-172-31-15-78> <CAHmME9rMg_2eHBnfP6j9Y3O7-At90HF=ToTWeFL_Qc4nGURORg@mail.gmail.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+        Sat, 15 Sep 2018 13:00:40 -0700 (PDT)
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lee.jones@linaro.org, linux-omap@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
+ <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com> <20180912214938.GA30654@amd>
+ <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com> <20180914081822.GA21830@amd>
+ <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com> <20180914214220.GA2081@amd>
+Message-ID: <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
+Date:   Sat, 15 Sep 2018 22:00:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180914214220.GA2081@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pavel.
 
-> On Sep 13, 2018, at 6:52 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->=20
->> On Thu, Sep 13, 2018 at 7:03 AM Kevin Easton <kevin@guarana.org> wrote:
->> Yes.  It's also how most get/put APIs already work in the kernel, eg
->> kref_get/put (mostly because they tend to be 'getting/putting' an
->> already-initialized object, though).
->=20
-> Right; in this case the object wouldn't be initialized yet, which
-> might defeat the purpose, since one advantage of the & way you
-> mentioned is _put modifies the context.
->=20
-> Andy - any opinions on this? The tl;dr is:
->=20
-> 1) what we have now:
->=20
-> simd_context_t simd_context =3D simd_get();
-> for (item in items) {
->    do_something(item);
->    simd_context =3D simd_relax(simd_context);
-> }
-> simd_put();
->=20
-> 2) what kevin is proposing:
->=20
-> simd_context_t simd_context;
->=20
-> simd_get(&simd_context);
-> for (item in items) {
->    do_something(item);
->    simd_relax(&simd_context);
-> }
-> simd_put(&simd_context);
->=20
-> I can see pros and cons of each approach.
+On 09/14/2018 11:42 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>> You may want to learn more about device tree and/or talk to the device
+>>> tree maintainers. This is an old article. https://lwn.net/Articles/561462/
+>>
+>> The article title is "Device trees as ABI". A device tree is defined
+>> in the "*.dts" file that is then compiled to a dtb blob, which
+>> constitutes the ABI. And this ABI should be kept backwards compatible.
+>>
+>> What is discussed here is a documentation of bindings, i.e. according
+>> to ePAPR: "requirements for how specific types and classes of devices
+>> are represented in the device tree".
+>>
+>> >From the bindings documented in the
+>> Documentation/devicetree/bindings/mfd/ti-lmu.txt only
+>> ti,lm3532-backlight is used in the mainline dts file
+>> (arch/arm/boot/dts/omap4-droid4-xt894.dts).
+>>
+>> Having the above it seems that there is no risk of breaking any
+>> users.
+> 
+> DTBs and bindings are supposed to be portable between operating
+> systems. You are right there are no _mainline_ _Linux_ users.
 
-I have no strong opinion, except that, if you paint the bikeshed =E2=80=9Cpa=
-ss by value=E2=80=9D, then simd_get and simd_relax should probably have warn=
-_unused_result set.=
+No mainline users means no users we should care of.
+Other people also don't care - see patch [0].
+
+>>> NAK on this patch. I see that this binding has problems, but
+>>> introducing different binding for subset of devices is _not_ a fix.
+>>>
+>>>>> What about the multi function devices? They should have same binding.
+>>>>
+>>>> The MFD devices defined are not in contention here only the SFD.
+>>>
+>>> I'd like to see common solutions for SFD and MFD, as the hardware is
+>>> similar, and that includes the code. Having code that is easier to
+>>> maintain is important, and having many drivers are harder to maintain
+>>> than one driver.
+>>>
+>>> Milo's code looks better than yours in that regard. I disagree about
+>>> Milo's code being "nightmare" to modify, and care about "easy to
+>>> maintain" more than "binary size".
+>>
+>> Easy to maintain will be a dedicated LED class driver.
+> 
+> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
+> parts? We'll need complex driver anyway, and I'd really like to have
+> just one.
+
+In the LED subsystem we can wrap common functionalities
+into a library object. MFD driver will be able to reuse it then.
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/commit/?h=droid4-pending-v4.19&id=d774c7e447ac911e73a1b3c775e6d89f0422218c
+
+-- 
+Best regards,
+Jacek Anaszewski
