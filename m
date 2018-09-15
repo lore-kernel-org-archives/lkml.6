@@ -2,123 +2,151 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC8AECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD456ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83982083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A4A21477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="G9mPef2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83982083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbwoTc1x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A4A21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeIOOGq (ORCPT
+        id S1727218AbeIOOI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 10:06:46 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:59829 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbeIOOGp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 10:06:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1537001312; x=1568537312;
-  h=subject:from:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=vw2DB2zcnP+gDwbbRzEWSKdSYbouUlMjD2mwAmdwVR0=;
-  b=G9mPef2XqBX2WhcoRskvvJ7cMhOSAo/YzHknKwDWj7iVXlg5uKX1XPJm
-   dTT7g+GiSQStDuRiPsEbvFDyj9bw8P7wwYGXf1vS8aeGmJv/zjHSv0Q8l
-   kxeLFfAfHE1ycPM+kN8w7IoQPZnuo4XAg/KIznuUsr3Yd/H/DlnRp+qzW
-   E=;
-X-IronPort-AV: E=Sophos;i="5.53,376,1531785600"; 
-   d="scan'208";a="362530902"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Sep 2018 08:48:31 +0000
-Received: from u7588a65da6b65f.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w8F8mO9K110025
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
-        Sat, 15 Sep 2018 08:48:28 GMT
-Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
-        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w8F8mLNn027075;
-        Sat, 15 Sep 2018 10:48:21 +0200
-Subject: Task group cleanups and optimizations (was: Re: [RFC 00/60]
- Coscheduling for Linux)
-From:   "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
-Openpgp: preference=signencrypt
-Message-ID: <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
-Date:   Sat, 15 Sep 2018 10:48:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 15 Sep 2018 10:08:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726903AbeIOOI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 10:08:27 -0400
+Received: from localhost (unknown [213.57.183.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3226B2083A;
+        Sat, 15 Sep 2018 08:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537001414;
+        bh=msys6+725WWbJQVQ+C2ujHae62x8k4yLaXbrSVZangE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CbwoTc1x+N5dTOJOWHye8pf7dgHd4Xw6dY219Rt1SlDUsor8slRtWk8yhb9caCixu
+         dzgOfJhO+gX28hwr1sSkD4FQmXXKAVEq0GH5JHzjSNKcjxWnzX7x/30JqduC+TqniK
+         tmLsd7hxkz/4eM4JCNwqbPm4bXP6dedtNgOPCGII=
+Date:   Sat, 15 Sep 2018 11:50:09 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Qing Huang <qing.huang@oracle.com>
+Cc:     David Miller <davem@davemloft.net>, andrew@lunn.ch,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tariqt@mellanox.com
+Subject: Re: [PATCH] net/mlx4_core: print firmware version during driver
+ loading
+Message-ID: <20180915085009.GD5257@mtr-leonro.mtl.com>
+References: <c580ad9d-b63d-743b-2278-1c4cf3553186@oracle.com>
+ <20180914181718.GD3811@lunn.ch>
+ <c332f10a-5ad0-53fd-5111-1964443b3092@oracle.com>
+ <20180914.141406.2211638662965115243.davem@davemloft.net>
+ <1d4fe3c6-13aa-12a4-8da4-a83374b89fbf@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LiQwW4YX+w4axhAx"
+Content-Disposition: inline
+In-Reply-To: <1d4fe3c6-13aa-12a4-8da4-a83374b89fbf@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/14/2018 06:25 PM, Jan H. Schönherr wrote:
-> On 09/14/2018 01:12 PM, Peter Zijlstra wrote:
->>
->> There are known scalability problems with the existing cgroup muck; you
->> just made things a ton worse. The existing cgroup overhead is
->> significant, you also made that many times worse.
->>
->> The cgroup stuff needs cleanups and optimization, not this.
 
-[...]
+--LiQwW4YX+w4axhAx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> With respect to the need of cleanups and optimizations: I agree, that
-> task groups are a bit messy. For example, here's my current wish list
-> off the top of my head:
-> 
-> a) lazy scheduler operations; for example: when dequeuing a task, don't bother
->    walking up the task group hierarchy to dequeue all the SEs -- do it lazily
->    when encountering an empty CFS RQ during picking when we hold the lock anyway.
-> 
-> b) ability to move CFS RQs between CPUs: someone changed the affinity of
->    a cpuset? No problem, just attach the runqueue with all the tasks elsewhere.
->    No need to touch each and every task.
-> 
-> c) light-weight task groups: don't allocate a runqueue for every CPU in the
->    system, when it is known that tasks in the task group will only ever run
->    on at most two CPUs, or so. (And while there is of course a use case for
->    VMs in this, another class of use cases are auxiliary tasks, see eg, [1-5].)
-> 
-> Is this the level of optimizations, you're thinking about? Or do you want
-> to throw away the whole nested CFS RQ experience in the code?
+On Fri, Sep 14, 2018 at 03:36:46PM -0700, Qing Huang wrote:
+>
+>
+> On 9/14/2018 2:14 PM, David Miller wrote:
+> > From: Qing Huang<qing.huang@oracle.com>
+> > Date: Fri, 14 Sep 2018 11:33:40 -0700
+> >
+> > > On 9/14/2018 11:17 AM, Andrew Lunn wrote:
+> > > > On Fri, Sep 14, 2018 at 10:15:48AM -0700, Qing Huang wrote:
+> > > > > The FW version is actually a very crucial piece of information and
+> > > > > only
+> > > > > printed once here
+> > > > > when the driver is loaded. People tend to get confused when switching
+> > > > > multiple FW files
+> > > > > back and forth without running separate utility tools, especially at
+> > > > > customer sites.
+> > > > > IMHO, this information is very useful and only takes up very little
+> > > > > log file
+> > > > > space. :-)
+> > > > Why not use ethtool -i ?
+> > > >
+> > > > $ sudo ethtool -i eth0
+> > > > driver: r8169
+> > > > version: 2.3LK-NAPI
+> > > > firmware-version: rtl8168g-2_0.0.1 02/06/13
+> > > >
+> > > >       Andrew
+> > > Sure. You can also use ibstat or ibv_devinfo tool if they are
+> > > installed. But it's not very
+> > > convenient in some cases.
+> > >
+> > > E.g.
+> > > A customer upgrades FW on HCAs and encounters issues. During triage,
+> > > it's much easier
+> > > to study customer uploaded log files when remotely testing different
+> > > FW files.
+> > Not a valid argument.  You can print the ethtool output from initramfs
+> > if necessary for triage.
+> >
+> > I still stand by the fact that ethtool is the only fully reliable way
+> > to obtain this information, the kernel log is not.
+>
+> This is more for Infiniband mode which depends more on features and
+> functionalities
 
-I guess, it would be possible to flatten the task group hierarchy, that is usually
-created when nesting cgroups. That is, enqueue task group SEs always within the
-root task group.
+For pure infiniband devices you have rdmatool, part of iproute2.
+[leonro@server-14-015 ~]$ rdma dev
+1: mlx5_0: node_type ca fw 3.8.9999 node_guid 5254:00c0:fe12:3455 sys_image_guid 5254:00c0:fe12:3455
 
-That should take away much of the (runtime-)overhead, no?
+> provided in firmware and get much more frequent FW bug fixes than typical
+> Ethernet
+> devices. This is not meant to replace other ways of getting the information,
+> more like
+> an enhancement for checking log history.
+>
+> This can provide valuable information when tracing through system log
+> history to
+> discover what happened with a specific HCA drv ver and fw ver combination in
+> the past.
+>
+> Regards,
+> Qing
 
-The calculation of shares would need to be a different kind of complex than it is
-now. But that might be manageable.
+--LiQwW4YX+w4axhAx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-CFS bandwidth control would also need to change significantly as we would now
-have to dequeue/enqueue nested cgroups below a throttled/unthrottled hierarchy.
-Unless *those* task groups don't participate in this flattening.
+-----BEGIN PGP SIGNATURE-----
 
-(And probably lots of other stuff, I didn't think about right now.)
+iQIcBAEBAgAGBQJbnMfBAAoJEORje4g2clins2MP/2ahQ8mb69Zi6lmm5NOnF6Jp
+pRNzlNSTPzRZ9Fp2MXZYMU1tGny0099pN0kkUalecGjUjyIL5W3VU1kTKyhZJo9B
+7mi/e1uTXVkT3dEyqsPhXdaig0C7EWv+pQRz6he2oc3QBhc1uUri7jKofjLG7K+q
+o6/j7F2nZ0mIK4AzoQZJErFv4bZ7hXzcx48vNRg4jV6LLgKP//9C5KyNrjZ/GyUf
+YDp3DOQzhbu4EHxQqm7bb08XHKj24SJ0AAaGKIJEcXY1iTrZqmg3LYSOpS0aGLy0
+RV7q6uuKbbm7RiHqF+htAAobgoGqYorAep9ePvl2lvAzwnJh39Fcv25Hbrqly5EG
+fXsCk4SvNROH8RwqLwOQ1j4is08omwVN0LeKGS3y0auIJkdjiTJh6VZMb2/+WKG+
+BaL9mzQnl32Spl/uOQPepf4YSwWVHqpzATamZpm/FVsDp4g0dhkzJmTLvErhEfxu
+b27VRmImB3mnGRhnQ/csRIy4aYlYXr811xbYs+QIFBMnU7Gj8587fAhA7Tpbe03u
+7AusoUmICk5Z+CMaVWjLXsDY3BlwxRuSIzKrSWOy3eYEsNvgcn2750IoSrFF8ytD
+//P2h9BKzUMMwnwlxV6FYne4mTYLLhiD3vAk+eI/Xdsv6TLYr67/e8CL24na83Z+
+1nQgA1BF0TXoZBpShiR0
+=dvjv
+-----END PGP SIGNATURE-----
 
-Regards
-Jan
-
+--LiQwW4YX+w4axhAx--
