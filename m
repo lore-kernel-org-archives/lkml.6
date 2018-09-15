@@ -2,82 +2,106 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12714ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130EDECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5709F20881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5709F20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id AC97F208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:22:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC97F208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeIOMvu convert rfc822-to-8bit (ORCPT
+        id S1726923AbeIONkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 08:51:50 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:39830 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725767AbeIOMvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 08:51:50 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 3B76348E9C276B087095;
-        Sat, 15 Sep 2018 15:33:46 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w8F7XdNL070869;
-        Sat, 15 Sep 2018 15:33:39 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018091515341302-9089513 ;
-          Sat, 15 Sep 2018 15:34:13 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  amdgpu/dcn10 : fix compile warning
-Date:   Sat, 15 Sep 2018 23:46:57 +0800
-Message-Id: <1537026417-3798-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 15 Sep 2018 09:40:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47995 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbeIONkx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 09:40:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8F8LpKT3752058
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 15 Sep 2018 01:21:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8F8LpFU3752055;
+        Sat, 15 Sep 2018 01:21:51 -0700
+Date:   Sat, 15 Sep 2018 01:21:51 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Randy Dunlap <tipbot@zytor.com>
+Message-ID: <tip-002b87d2aace62b4f3841c3aa43309d2380092be@git.kernel.org>
+Cc:     jikos@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        rdunlap@infradead.org, tglx@linutronix.de, hch@lst.de,
+        hpa@zytor.com
+Reply-To: hch@lst.de, hpa@zytor.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+          mingo@kernel.org, jikos@kernel.org
+In-Reply-To: <be39ac12-44c2-4715-247f-4dcc3c525b8b@infradead.org>
+References: <be39ac12-44c2-4715-247f-4dcc3c525b8b@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/APM: Fix build warning when PROC_FS is not
+ enabled
+Git-Commit-ID: 002b87d2aace62b4f3841c3aa43309d2380092be
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-09-15 15:34:13,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-09-15 15:33:20
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn w8F7XdNL070869
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:
-    In function ‘dcn10_update_mpcc’:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9:
-    warning: missing braces around initializer [-Wmissing-braces]
+Commit-ID:  002b87d2aace62b4f3841c3aa43309d2380092be
+Gitweb:     https://git.kernel.org/tip/002b87d2aace62b4f3841c3aa43309d2380092be
+Author:     Randy Dunlap <rdunlap@infradead.org>
+AuthorDate: Fri, 14 Sep 2018 15:10:29 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 15 Sep 2018 10:16:25 +0200
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+x86/APM: Fix build warning when PROC_FS is not enabled
+
+Fix build warning in apm_32.c when CONFIG_PROC_FS is not enabled:
+
+../arch/x86/kernel/apm_32.c:1643:12: warning: 'proc_apm_show' defined but not used [-Wunused-function]
+ static int proc_apm_show(struct seq_file *m, void *v)
+
+Fixes: 3f3942aca6da ("proc: introduce proc_create_single{,_data}")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Jiri Kosina <jikos@kernel.org>
+Link: https://lkml.kernel.org/r/be39ac12-44c2-4715-247f-4dcc3c525b8b@infradead.org
+
+
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/apm_32.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index cfcc54f..a06a035 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1900,7 +1900,7 @@ static void update_dpp(struct dpp *dpp, struct dc_plane_state *plane_state)
- static void dcn10_update_mpcc(struct dc *dc, struct pipe_ctx *pipe_ctx)
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index ec00d1ff5098..f7151cd03cb0 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -1640,6 +1640,7 @@ static int do_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ static int proc_apm_show(struct seq_file *m, void *v)
  {
- 	struct hubp *hubp = pipe_ctx->plane_res.hubp;
--	struct mpcc_blnd_cfg blnd_cfg = {0};
-+	struct mpcc_blnd_cfg blnd_cfg = { {0} };
- 	bool per_pixel_alpha = pipe_ctx->plane_state->per_pixel_alpha && pipe_ctx->bottom_pipe;
- 	int mpcc_id;
- 	struct mpcc *new_mpcc;
--- 
-1.8.3.1
-
+ 	unsigned short	bx;
+@@ -1719,6 +1720,7 @@ static int proc_apm_show(struct seq_file *m, void *v)
+ 		   units);
+ 	return 0;
+ }
++#endif
+ 
+ static int apm(void *unused)
+ {
