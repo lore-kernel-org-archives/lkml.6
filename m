@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3ACECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C41ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891F8208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 837B3208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="dfc1QsDf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891F8208DD
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ccemJZn4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837B3208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbeIOGrp (ORCPT
+        id S1728494AbeIOGrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:47:45 -0400
+        Sat, 15 Sep 2018 02:47:48 -0400
 Received: from mail-cys01nam02on0090.outbound.protection.outlook.com ([104.47.37.90]:32953
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728409AbeIOGro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:47:44 -0400
+        id S1728297AbeIOGrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:47:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RNZxhYweF0L1WQiYcSvgZTJLQ/kel4YdJ1Q86jPlxo0=;
- b=dfc1QsDf+8rMKayTcFACle6PER7unKHIfphWETEWE6DUSoD2WQkbMZAzzXgsGDQ5yMAj11vftnVmXdPBAT3JZ4yqah6OmFVw3yKxfot2ZYkdiO9L2Ht0O27aRLbH+AtJgIo+vGvP9r5ulEt6wTZCCEaR+qMGGKHF4XSqyrhEf+8=
+ bh=Vrr+ZIP+nDA0+yEKENwXqVDp8FgLjQU3MiVdW67bO8A=;
+ b=ccemJZn4+IDNYUfZtg0DqZ555quEgcAsit6NeDdmrKMtXcHcl8q8bcoyrdF8JEr7tU+VLLAnqnlXlR5UwaydnsEFYHnPkBJ6plg1A0GzwihAOTG5yQR+XqIzEaMQ9LsFWpJn08ReJokzouyU+0twTQAZkSzCgNW7PyLDI0sk26c=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,17 +42,14 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
-        Jan Luebbe <jlu@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+CC:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 32/92] gpu: ipu-v3: csi: pass back
- mbus_code_to_bus_cfg error codes
-Thread-Topic: [PATCH AUTOSEL 4.18 32/92] gpu: ipu-v3: csi: pass back
- mbus_code_to_bus_cfg error codes
-Thread-Index: AQHUTJOls+C2jMto30OaAvgZAikA4g==
-Date:   Sat, 15 Sep 2018 01:30:12 +0000
-Message-ID: <20180915012944.179481-32-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 33/92] ASoC: hdmi-codec: fix routing
+Thread-Topic: [PATCH AUTOSEL 4.18 33/92] ASoC: hdmi-codec: fix routing
+Thread-Index: AQHUTJOmihUV/zk0Z0SlHE+ZCr1eVA==
+Date:   Sat, 15 Sep 2018 01:30:13 +0000
+Message-ID: <20180915012944.179481-33-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +58,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:KPGKOoZ7PkD9PEJXaY3JuF/p5wa9p2vkKqVHf40dxS26L5r3PuGH22nm+cQSeTEoIz9CId6u4X4bAwu8ifXVBJSXEAqSARy1dlu9hV1p8mZOL34Cqrk/aPZA3ZUSzrTFFESMn/8lI/EFaZAt0GZQSHiOX9l3maqmlyimtNleRfqTQyYDwqLvOQdlxOmygH7AUYUU0oCx3MkGoZMKzY9zfLrqKE2yMAHlQYDZpTXTuIJ8jTB7dkVqBZS8NZ+N0+aPgJ2VGvmGknqgPFxmG9sSLIor7RW3CdwMgKKlaVqpS/A207QmrwHS5GYntA1YCZWze+KbKZzovmIhht2PFaZpa1sL99Y8oKDXP0Du9hFu57YaebO5EWBMRDdKRfJ8eVcSMtSDdC5TyWhchLnFDao59bSwPAY8uDeEvFeVgfvdumg+W99e+15sPwGzm597FlBIui0QbKVpz0YMtrIwWUmtQQ==;5:cQG6t9grvlUxT5Eg41T25jcAIDQ0T0dgkw+CESclT8Aeu7EctVorv4jqv0sol7batcAhq35vwIPpAnfqo0NBdfrlDtJwf//1X18f7xHn23DkaZoiQShBCkZGblnZY+KIi9bSso8PZoW8UKUMzPzkgRnivRDHmIx1n5w57mEE+RU=;7:3NCJyRU+Aw6GZoVLPQ5efRN1/1+UGDZyoAl25ReBCN9Xsod0f+WXH/0qvkX3ZH3qZsiR3pQyAN/W1iIQuJge5z249VJn4KswSomfcQB6u34Fx34RbPZqFac5Xqx4zdsqosd1dO7qxzZMVpwSaCJ7EepuGqbywEV7KdLRTxiZK3foPNEzPw+UuWICOu+ysmWzDwBXAxtNt5kK9QrQGkdT6g4eSmIgtO4qXvolQwP3Ffmq15CLVqoXrPCuxpAy51nC
-x-ms-office365-filtering-correlation-id: 8d337697-acc1-465a-99c6-08d61aaada1c
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:7i857mSKJ5fJ6uUTuuqZu0mHRmJWMLvvMS+LQbL07w1+Mwvp+BFYuWsZM/pqXdhM32BoEkwyS/DuyyNVYqkNpJ9UVfmeg9KXKWfrrqpG63s6/JXMZobhHjqFkFKqtFqGY1tW9KjOw6mt4KVa72jusN0qLYGFLMZM/ob5OgyrBgKDabj1yy85FKzso9rA16IrEsamhCDh/jFwsbgPCA4MguNiHXG5ebAf8G1t9o/exEFKPa4RxuQoxlicmLcaKI4HXcClrW7TW0AqTd4CEo8PfCuEoQ6OnF+pNCXvoBfgD8U1pBUYaWMjkYNDY+sLUz4SIL1pcMvNa+Hb3U0LwftEaZFa3AV/eSrleSaln4668QlIABBxhqFnGFC7POkY7oq6JF44p7VbzLsAGOdu8cOrixnLpFwKsJzLplsHYIetBKALmdmFI03Np+ffFyZ5FXo+bA1Rb1bqHFE6na1JADplqQ==;5:5GfihAWVtdnt9tAEUo/K1vjfd6dIyifm40o0lnANMbbIQZyfGDsHM4ILen95vsRRhu2ofkXfbPgYYZFnrrrW6SwGTe6oQztZ6dXF4wlDLeYYhGQ1g20//Jf+hyK+bGVah0LDKIxwdIGq39K/6aIr47CDqxc9b7TwszsZkBrw280=;7:iJN4dMEio1oHoU+7GRaakvEZsJZ+cBxyAYIYc/4Y1/R6z+beGF/rKIzcOiXLTLoxep3Ufx1pyRnYRb4t6fn18WS4SX1OMwNU7l9eh2T6PRbDwrpIEfCyE/A68heIUYmOmvO4WbzvdWKIk3SkrSP88RBopCGdy+Jp9fgX/2SRdINdAVu0STYSYEqlC3/8JeTw3TEtW3awlEwNuwqy/Hp7g395s3PT2Qk7EULJHA/ChhT76WrHEtBKgzIso3O8L7z4
+x-ms-office365-filtering-correlation-id: 8f63fdd9-661e-419f-0d73-08d61aaada51
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
 x-ms-traffictypediagnostic: CY4PR21MB0741:
-x-microsoft-antispam-prvs: <CY4PR21MB0741DF663D8490FE83A762CBFB180@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0741D0B3CEA73FB3774728EDFB180@CY4PR21MB0741.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(186003)(106356001)(25786009)(6346003)(6486002)(6436002)(476003)(102836004)(11346002)(5660300001)(2616005)(26005)(217873002)(105586002)(486006)(446003)(4326008)(53936002)(5250100002)(14454004)(10090500001)(14444005)(2900100001)(256004)(6666003)(2501003)(10290500003)(6512007)(22452003)(72206003)(8676002)(478600001)(110136005)(97736004)(68736007)(66066001)(81156014)(81166006)(2906002)(99286004)(86362001)(86612001)(575784001)(6506007)(76176011)(8936002)(6116002)(3846002)(1076002)(54906003)(305945005)(36756003)(7736002)(316002)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(186003)(106356001)(25786009)(6346003)(6486002)(6436002)(476003)(102836004)(11346002)(5660300001)(2616005)(26005)(217873002)(105586002)(486006)(446003)(4326008)(53936002)(5250100002)(14454004)(10090500001)(2900100001)(256004)(6666003)(2501003)(10290500003)(6512007)(22452003)(72206003)(8676002)(478600001)(110136005)(97736004)(68736007)(66066001)(81156014)(81166006)(2906002)(99286004)(86362001)(86612001)(6506007)(76176011)(8936002)(6116002)(3846002)(1076002)(54906003)(305945005)(36756003)(7736002)(316002)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: mqaprsu9FMWwBMsbvOfq1phaK3Iuu+RI+JERVOnoEpQcevpuNAmA5BJZlBOIsFXnlopMshtsPw6wSOy+E8QoB+AryqHqD5b99gbM0HM3rhX8+t5lotVW4H83XTsqjW1uM0I6cJzKd8bRnMi8Y6IsZFMwIADoFTTyfEcvs+yvyJf/cVsApKt8eCYJVZ1jCFKKTKIOhZduNHl7ls8+hqw8KDu263KGO3D6Nxd4TUeYD2AM4zSVQuZdy3VfbFHOH7FOtsDdDfFhyT9+ki+t946uInwNj8NhY2cBzUtyMHBF5natBojfwd6kZjBI511qNfJ3hfTNI50yFqRu1FralB4xFQ2RKMy6UStCt/cNeO8izyc=
+x-microsoft-antispam-message-info: c/gKJhGY74v65EYIuMt8JIsfgSCK4NCHTLioJBJpV83VMZe+2YqRn8rsAEmhXYqtzaU981ReI3cmDvzecsZ/uFuS8Rel+Tn0wZVs0RR3KuuXNcpiaj/IpADQ5Y1kcgG8ZL3yYVK3V+FrBk1W5Cy6ezGM5yeM75lk/8aN9pEFXd4V3sD8qnv4JBuBW+FBWghj/opCMXMpRX0JcRgmhhx1nsxZl9klrm7QMHdV+fQ8tOKeEU5z2H3X0NF86DgcZwKd+vNHDp8WBrA+9SdXH/Uf86GXL1k8bn084ru//5JNRt6h40m7CJEquLNLUL7RMKbHhdSjUZsOEDZL8EgLflulg7X2w1J59bg0WyhxP9lQ+tk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d337697-acc1-465a-99c6-08d61aaada1c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:12.6200
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f63fdd9-661e-419f-0d73-08d61aaada51
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:13.2294
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,86 +91,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit d36d0e6309dd8137cf438cbb680e72eb63c81425 ]
+[ Upstream commit d30e23d69981a4b665f5ce8711335df986576389 ]
 
-mbus_code_to_bus_cfg() can fail on unknown mbus codes; pass back the
-error to the caller.
+Commit 943fa0228252 ("ASoC: hdmi-codec: Use different name for playback
+streams") broke hdmi-codec's routing between it's output "TX" widget
+and the S/PDIF or I2S streams by renaming the streams.
 
-Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-[p.zabel@pengutronix.de - renamed rc to ret for consistency]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Whether an error occurs or not is dependent on whether there is another
+widget called "Playback" registered by some other component - if there
+is, that widget will be (incorrectly) bound to the HDMI codec's "TX"
+output widget.  If we end up connecting "TX" incorrectly, it can result
+in components not being started, causing no audio output.
+
+Since the I2S and S/PDIF streams now have different names, we can't
+use a static route at component level to describe the relationship, so
+arrange to dynamically create the route when the DAI driver is probed.
+
+Fixes: 943fa0228252 ("ASoC: hdmi-codec: Use different name for playback str=
+eams")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpu/ipu-v3/ipu-csi.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ sound/soc/codecs/hdmi-codec.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
-index 5450a2db1219..2beadb3f79c2 100644
---- a/drivers/gpu/ipu-v3/ipu-csi.c
-+++ b/drivers/gpu/ipu-v3/ipu-csi.c
-@@ -318,13 +318,17 @@ static int mbus_code_to_bus_cfg(struct ipu_csi_bus_co=
-nfig *cfg, u32 mbus_code)
- /*
-  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
-  */
--static void fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
-+static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
- 				 struct v4l2_mbus_config *mbus_cfg,
- 				 struct v4l2_mbus_framefmt *mbus_fmt)
- {
-+	int ret;
-+
- 	memset(csicfg, 0, sizeof(*csicfg));
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index 38e4a8515709..d00734d31e04 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -291,10 +291,6 @@ static const struct snd_soc_dapm_widget hdmi_widgets[]=
+ =3D {
+ 	SND_SOC_DAPM_OUTPUT("TX"),
+ };
 =20
--	mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	ret =3D mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
-=20
- 	switch (mbus_cfg->type) {
- 	case V4L2_MBUS_PARALLEL:
-@@ -356,6 +360,8 @@ static void fill_csi_bus_cfg(struct ipu_csi_bus_config =
-*csicfg,
- 		/* will never get here, keep compiler quiet */
- 		break;
- 	}
-+
-+	return 0;
+-static const struct snd_soc_dapm_route hdmi_routes[] =3D {
+-	{ "TX", NULL, "Playback" },
+-};
+-
+ enum {
+ 	DAI_ID_I2S =3D 0,
+ 	DAI_ID_SPDIF,
+@@ -689,9 +685,23 @@ static int hdmi_codec_pcm_new(struct snd_soc_pcm_runti=
+me *rtd,
+ 	return snd_ctl_add(rtd->card->snd_card, kctl);
  }
 =20
- int ipu_csi_init_interface(struct ipu_csi *csi,
-@@ -365,8 +371,11 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 width, height, data =3D 0;
-+	int ret;
-=20
--	fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	ret =3D fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	if (ret < 0)
-+		return ret;
-=20
- 	/* set default sensor frame width and height */
- 	width =3D mbus_fmt->width;
-@@ -587,11 +596,14 @@ int ipu_csi_set_mipi_datatype(struct ipu_csi *csi, u3=
-2 vc,
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 temp;
-+	int ret;
-=20
- 	if (vc > 3)
- 		return -EINVAL;
-=20
--	mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	ret =3D mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
-=20
- 	spin_lock_irqsave(&csi->lock, flags);
-=20
++static int hdmi_dai_probe(struct snd_soc_dai *dai)
++{
++	struct snd_soc_dapm_context *dapm;
++	struct snd_soc_dapm_route route =3D {
++		.sink =3D "TX",
++		.source =3D dai->driver->playback.stream_name,
++	};
++
++	dapm =3D snd_soc_component_get_dapm(dai->component);
++
++	return snd_soc_dapm_add_routes(dapm, &route, 1);
++}
++
+ static const struct snd_soc_dai_driver hdmi_i2s_dai =3D {
+ 	.name =3D "i2s-hifi",
+ 	.id =3D DAI_ID_I2S,
++	.probe =3D hdmi_dai_probe,
+ 	.playback =3D {
+ 		.stream_name =3D "I2S Playback",
+ 		.channels_min =3D 2,
+@@ -707,6 +717,7 @@ static const struct snd_soc_dai_driver hdmi_i2s_dai =3D=
+ {
+ static const struct snd_soc_dai_driver hdmi_spdif_dai =3D {
+ 	.name =3D "spdif-hifi",
+ 	.id =3D DAI_ID_SPDIF,
++	.probe =3D hdmi_dai_probe,
+ 	.playback =3D {
+ 		.stream_name =3D "SPDIF Playback",
+ 		.channels_min =3D 2,
+@@ -733,8 +744,6 @@ static int hdmi_of_xlate_dai_id(struct snd_soc_componen=
+t *component,
+ static const struct snd_soc_component_driver hdmi_driver =3D {
+ 	.dapm_widgets		=3D hdmi_widgets,
+ 	.num_dapm_widgets	=3D ARRAY_SIZE(hdmi_widgets),
+-	.dapm_routes		=3D hdmi_routes,
+-	.num_dapm_routes	=3D ARRAY_SIZE(hdmi_routes),
+ 	.of_xlate_dai_id	=3D hdmi_of_xlate_dai_id,
+ 	.idle_bias_on		=3D 1,
+ 	.use_pmdown_time	=3D 1,
 --=20
 2.17.1
