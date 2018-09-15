@@ -7,65 +7,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46489ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85824ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF0762083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030FB20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:59:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azwHXwmb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0762083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKAhUjdV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030FB20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeIOOIu (ORCPT
+        id S1726998AbeIOOR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 10:08:50 -0400
-Received: from mail-pl1-f179.google.com ([209.85.214.179]:44691 "EHLO
+        Sat, 15 Sep 2018 10:17:26 -0400
+Received: from mail-pl1-f179.google.com ([209.85.214.179]:33665 "EHLO
         mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbeIOOIt (ORCPT
+        with ESMTP id S1726432AbeIOORZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 10:08:49 -0400
-Received: by mail-pl1-f179.google.com with SMTP id ba4-v6so5225501plb.11
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
+        Sat, 15 Sep 2018 10:17:25 -0400
+Received: by mail-pl1-f179.google.com with SMTP id b97-v6so26338plb.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 01:59:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
          :content-transfer-encoding:content-language;
-        bh=QBcWNMZ/g0U+WnI0vV1BLmIFs8dPS5KKo3z3gYe1fcg=;
-        b=azwHXwmbIdPNLt5GMkMAJwQqFf+NljuXhzs+EyTCxtbiV4W6+l88yLkHZErLcmFLe1
-         xoyii6TL4d/GCJWSqFh5MkGpSdPCvTEqkuLUvxYOWDND/BoTv28rc4AB2G4cUuOsUVRx
-         0SM3BK6YhtKZe53K8Ssd/E6u7wDufcKfI4nfkzX1zxbU1SnMzwJEtA91cOJVfnS8V9Rd
-         wl+f/fd2LAuEv/CeIayxoRpKlaDyie9swYao0giA2W2QpIxV9CfRjsCER2xkH5ueyYae
-         s6TofPZnXaJ+oCmMhVYirJCZfeC65zWiLi0f0l/zePGrJBcUK4NryU3RxUGrhGfaatOD
-         TZbQ==
+        bh=VEHzPpsRRc8ZC2LZdoCpv+oE9t1b7YKq2VXXN0rUd64=;
+        b=hKAhUjdV8QdtkbodwHt4vbAlx0IZqyFWnrlE/XkoMEpyOtgunvj9fYivQSJngKuR9s
+         uWI/rUk8XgnoDbh7cMfFcIX8V32Fbj3hB9hv4nd+NLEHlWIBrzotibG5jf0+XIELfeFQ
+         LKqoVTmPrpKU71j/HvYrGUqF6Xm2Ov9OyjZOJdn/9iYi49Qag5oNJ8otA+HOR4okQb47
+         a2hzLtScUJFqvlLnjqhMbmEd6yPxLOXNjB/1/T3fAXJ//E03DHAhFuZ485rCI/icO8kd
+         LDsYniwgyyqk1gg+g5Qjdo52BI2LR550679G2OOo4oX1P52ibJlU75JZOrmKPfD7Iisc
+         8iGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
          :mime-version:content-transfer-encoding:content-language;
-        bh=QBcWNMZ/g0U+WnI0vV1BLmIFs8dPS5KKo3z3gYe1fcg=;
-        b=ORarOS5Vprim7+wmSLQkHKhFR07anUtlBAgZ0H3leNaG8fd5S9L7PtJ2w5CXqEcHeo
-         T7VmivUcUQRy6xAL861VKjWhAcvUx9lM548E5U7ggK2wXaLw2BUPm/CGtQ4yKjEYJAsk
-         Zlw8ILJoxRDBkpfIsruj31FyNLsoSQDl028kt6nSMUoqGlMaS3SZ5YNxUxyquZ9+LUrb
-         h/l+6uhGmpUUNRN4jFFu1cSOY/K/lEdUzr8KF7zqIGkow2yvQdMxg9Jct69O39Elu+rr
-         7brgb0w/6ACxPN+D+YrRwUixVuoaB+jxo0M7cYzhiYoe1FI0Sp/76JpO+ZO6RmAZANsd
-         spWA==
-X-Gm-Message-State: APzg51BqPu3JY3vsoHjVanPy/dJNfEq+diTxbAtNDrUJEdWQ86jXlXUH
-        OnPUuqi46MGzOWDdHUJ6rqeGpqZm
-X-Google-Smtp-Source: ANB0VdbvAH3vatXveLCinbc/GAuo0SL9gtNZ3ku1L1aqbyQIv9VugRVCrx/d9W0hnSJjjxgkp85gug==
-X-Received: by 2002:a17:902:b60b:: with SMTP id b11-v6mr15296369pls.301.1537001436627;
-        Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
+        bh=VEHzPpsRRc8ZC2LZdoCpv+oE9t1b7YKq2VXXN0rUd64=;
+        b=cDrlzFU5UA+Les049fLwA+B3m0NHCjchHd0pPRtk3xHMQjPzgF9hJUJ/MvzJaxdrum
+         6mKOGLi3JFQ4UyKDeOct3fqsvP0eArYkxBbBhDGKFmSlI2DGuubInsXNv4pMzZd0VaCd
+         Eu0WZRAUNRY4/5Cjd5Sklvc6tw1UKA+d+T28GXdYv70m+b1ej+DuGdfGnPPijMxK5hk9
+         342wTM88NXdTFw8nqGaCoBOCux2ef8JMPzUZ5/9shT/TUH6DBw4e1nVvgmM5Mz6CcPK8
+         SCy3F1s7sRG5IBwcsolDp4XMbckNvaj3qlt5HbGMWkIt2ElgHyghyNZdbSTaq4A4eoPK
+         gVAg==
+X-Gm-Message-State: APzg51BcNaQ3Ez+1SWhgygjh60E1pkiaC+aLY2c6o+/wyTScNdP+yLkA
+        uWzVt0hFZXtJrDdGb/SXryQkIozT
+X-Google-Smtp-Source: ANB0VdbaVfVWTRtW4zsESwzK+lMikPi7ug5izkQVYpxjVJs2WMV22oBu+EGBHGoO1c3P8dsZD+hjhw==
+X-Received: by 2002:a17:902:ac97:: with SMTP id h23-v6mr11677386plr.174.1537001951089;
+        Sat, 15 Sep 2018 01:59:11 -0700 (PDT)
 Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.58? ([2402:f000:1:1501:200:5efe:a66f:473a])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm11130390pff.8.2018.09.15.01.50.35
+        by smtp.gmail.com with ESMTPSA id d19-v6sm16954136pgi.50.2018.09.15.01.59.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
-To:     lee.jones@linaro.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Sat, 15 Sep 2018 01:59:10 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] mfd: ezx-pcap: Possible sleep-in-atomic-context bugs in
- pcap_adc_irq()
-Message-ID: <f83a444a-1943-6c8c-5cd4-88e2acb17fa6@gmail.com>
-Date:   Sat, 15 Sep 2018 16:50:31 +0800
+Subject: [BUG] gpu: drm: amdgpu: Possible sleep-in-atomic-context bugs in
+ amdgpu_uvd_ring_begin_use()
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <f09853dc-591c-05d3-9f56-63e4b338c585@gmail.com>
+Date:   Sat, 15 Sep 2018 16:59:04 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.0
 MIME-Version: 1.0
@@ -77,30 +79,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep in an interrupt handler.
+The driver may sleep with holding a spinlock.
 The function call paths (from bottom to top) in Linux-4.17 are:
 
 [FUNC] mutex_lock_nested
-drivers/mfd/ezx-pcap.c, 272:
-     mutex_lock_nested in pcap_adc_irq (interrupt handler)
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
+     mutex_lock_nested in amdgpu_dpm_enable_uvd
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
+     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
+drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
+     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
+drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
+     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
+drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
+     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
+drivers/gpu/drm/amd/amdgpu/vi.c, 207:
+     amdgpu_mm_wreg in vi_gc_cac_rreg
+drivers/gpu/drm/amd/amdgpu/vi.c, 206:
+     _raw_spin_lock_irqsave in vi_gc_cac_rreg
 
 [FUNC] mutex_lock_nested
-drivers/mfd/ezx-pcap.c, 100:
-     mutex_lock_nested in ezx_pcap_read
-drivers/mfd/ezx-pcap.c, 281:
-     ezx_pcap_read in pcap_adc_irq (interrupt handler)
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
+     mutex_lock_nested in amdgpu_dpm_enable_uvd
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
+     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
+drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
+     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
+drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
+     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
+drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
+     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
+drivers/gpu/drm/amd/amdgpu/soc15.c, 106:
+     amdgpu_mm_wreg in soc15_pcie_rreg
+drivers/gpu/drm/amd/amdgpu/soc15.c, 105:
+     _raw_spin_lock_irqsave in soc15_pcie_rreg
 
 [FUNC] mutex_lock_nested
-drivers/mfd/ezx-pcap.c, 85:
-     mutex_lock_nested in ezx_pcap_write
-drivers/mfd/ezx-pcap.c, 285:
-     ezx_pcap_write in pcap_adc_irq (interrupt handler)
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
+     mutex_lock_nested in amdgpu_dpm_enable_uvd
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
+     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
+drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
+     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
+drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
+     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
+drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
+     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
+drivers/gpu/drm/amd/amdgpu/cik.c, 139:
+     amdgpu_mm_wreg in cik_uvd_ctx_wreg
+drivers/gpu/drm/amd/amdgpu/cik.c, 138:
+     _raw_spin_lock_irqsave in cik_uvd_ctx_wreg
 
 [FUNC] mutex_lock_nested
-drivers/mfd/ezx-pcap.c, 244:
-     mutex_lock_nested in pcap_adc_trigger
-drivers/mfd/ezx-pcap.c, 299:
-     pcap_adc_trigger in pcap_adc_irq (interrupt handler)
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
+     mutex_lock_nested in amdgpu_dpm_enable_uvd
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
+     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
+drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
+     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
+drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
+     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
+drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
+     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
+drivers/gpu/drm/amd/amdgpu/dce_v6_0.c, 126:
+     amdgpu_mm_wreg in dce_v6_0_audio_endpt_rreg
+drivers/gpu/drm/amd/amdgpu/dce_v6_0.c, 125:
+     _raw_spin_lock_irqsave in dce_v6_0_audio_endpt_rreg
+
+Note that [FUNC_PTR] means a function pointer call is used.
 
 These bugs are found by my static analysis tool DSAC.
 
