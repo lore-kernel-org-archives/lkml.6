@@ -2,212 +2,127 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D165EECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E77ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A81020882
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A81020882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 43B5820866
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:49:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyKR+JIq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B5820866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbeIOHyW convert rfc822-to-8bit (ORCPT
+        id S1727091AbeIOIGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 03:54:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:26758 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbeIOHyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 03:54:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Sep 2018 19:37:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,375,1531810800"; 
-   d="scan'208";a="74436309"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga006.jf.intel.com with ESMTP; 14 Sep 2018 19:37:00 -0700
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 14 Sep 2018 19:37:00 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.205]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.226]) with mapi id 14.03.0319.002;
- Sat, 15 Sep 2018 10:36:58 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Kirti Wankhede" <kwankhede@nvidia.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: RE: [RFC PATCH v2 08/10] vfio/type1: Add domain at(de)taching group
-        helpers
-Thread-Topic: [RFC PATCH v2 08/10] vfio/type1: Add domain at(de)taching
- group  helpers
-Thread-Index: AQHUTDmz2DK6gLUaCEuyWwJujHYhpaTwnb8A
-Date:   Sat, 15 Sep 2018 02:36:57 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191305A74@SHSMSX101.ccr.corp.intel.com>
-References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
-        <20180830040922.30426-9-baolu.lu@linux.intel.com>
-        <c5124ac1-65fe-7f89-265c-bef229bc5ce9@arm.com>
-        <a97c8f75-ff49-5b87-198f-d3c8950d4e90@linux.intel.com>
-        <04f5dc9d-71b1-37ec-402b-fae5f9e08664@arm.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D191300D35@SHSMSX101.ccr.corp.intel.com>
- <c285871d-2ea0-5878-c7ac-ffa4ba8256ee@arm.com>
-In-Reply-To: <c285871d-2ea0-5878-c7ac-ffa4ba8256ee@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjc3OTFlOTItOGRmMC00NTFkLWE2YjYtNWJjZTg0MDc5YzIxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNzJqWDFOOEVDanFaUllCZkdzbnJUd092RWlCN2srTU4rUUtaME5vVitIYmdwUnFZQmVmNnd2T2NNWkpOd1dqeCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Sat, 15 Sep 2018 04:06:52 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36003 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIOIGw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 04:06:52 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b11-v6so5105060pfo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 19:49:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mjALWib+L4hxdbK0MhaulUQlIsQhFr2agUDXPHnudZE=;
+        b=kyKR+JIqZu6wDANcAM15G4QAf+ucyiDMqGIEHccSJcDK+XkctjcoVtxwxItJsV3Ixk
+         Iz/9VdCJyi7ZvNRrMu7UWbDUhVTymBKsYo8UBa4i1615PxBuMz++GrkrZz9yLxdvz+0t
+         SFCpkBHdTNnpRDW6IemgVu+YNgC2a+oQvMMXaUtdJ6pyMCnWwOp9OrMplRrrUQpXhfPx
+         hBxLZlh4oypFMnaYOGQXPpR1mpCyLiyPa3/biVKSlB2q3YHyNS1HqgYv8u9CQBcLA/Ir
+         e9OYtfRsq44JPMSQlC8jozd2weiCFvdHYu0OT/r/L0HOwqt6jWAbUfo5ETnkqlNXHA84
+         lPJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mjALWib+L4hxdbK0MhaulUQlIsQhFr2agUDXPHnudZE=;
+        b=DAc2KvZW5r7D4MUpdEOJaYxRjUGteMnIaNsXLNA+3Cv+cG/avhOjegEYW9YT6vd6Lj
+         KaiCbhrN7hgOmGzKYH5wWOUT4Y4OqT9sYefL5xmda6Tp3HPZS4wWn1bBZX8hJyaQk5b9
+         tp/X6Yokfhhv5HN6/plVkV7b8tYRVi9AeYgtcxJL9+Zh+nJQpmgHVT8CKX0slcYtbpTu
+         YwNXMzQfYSS7CIXDBIUx2EncmBu+FVYvtysyyluLDb1pdC2dMMcM2KbL24pdMx56r7fm
+         +AUkzhg1YNc2d2XBj00Ml7tkuSCaVJ3VbLE/GYh97uMuxRfOBrSGI8bYWokbn37HNP3Y
+         Gt2Q==
+X-Gm-Message-State: APzg51AY8BMQIp/vSTdoXGH72Q32o3lefr98jTihBh+ij12vKBbsW18G
+        wla3Js1uP/EH7nb/MKaGdCA=
+X-Google-Smtp-Source: ANB0VdZC9fLn3d1HphQSjygfkZ8DC4I/RIEFvgjaH8AXUvfcCXxZUDhaMbtoQdrXe0N4WSOgYefrIA==
+X-Received: by 2002:a65:6109:: with SMTP id z9-v6mr14353914pgu.243.1536979776691;
+        Fri, 14 Sep 2018 19:49:36 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
+        by smtp.gmail.com with ESMTPSA id d22-v6sm18839721pfm.48.2018.09.14.19.49.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 19:49:36 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org, tavery321@gmail.com,
+        natechancellor@gmail.com, julia.lawall@lip6.fr,
+        florian.harbecke@fau.de, keescook@chromium.org, joe@perches.com,
+        aastha.gupta4104@gmail.com, georgiana.chelu93@gmail.com,
+        aishpant@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/2] staging: rtl8723bs: Fix a sleep-in-atomic-context bug in issue_deauth_ex()
+Date:   Sat, 15 Sep 2018 10:49:28 +0800
+Message-Id: <20180915024928.30953-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Jean-Philippe Brucker
-> Sent: Friday, September 14, 2018 10:46 PM
-> 
-> On 13/09/2018 01:35, Tian, Kevin wrote:
-> >>> Let's consider it from the API point of view.
-> >>>
-> >>> We have iommu_a(de)ttach_device() APIs to attach or detach a domain
-> >>> to/from a device. We should avoid applying a limitation of "these are
-> >>> only for single domain case, for multiple domains, use another API".
-> >>
-> >> That's an idealized view of the API, the actual semantics aren't as
-> >> simple. For IOMMU drivers that implement IOMMU_DOMAIN_DMA in
-> their
-> >> domain_alloc operation (Arm SMMU, AMD IOMMU, ...), attach_dev
-> >> attaches
-> >> an unmanaged domain, detach_dev reattaches the default DMA domain,
-> >> and
-> >> the detach_dev IOMMU op is not called. We can't change that now, so
-> it's
-> >> difficult to add more functionality to attach_dev and detach_dev.
-> >>
-> >
-> > Now we have four possible usages on a(de)ttach_device:
-> >
-> > 1) Normal DMA API path i.e. IOMMU_DOMAIN_DMA, for DMA
-> operations
-> > in host/parent device driver;
-> >
-> > 2) VFIO passthru path, when the physical device is assigned to user space
-> > or guest driver
-> >
-> > 3) mdev passthru path 1, when mdev is assigned to user space or guest
-> > driver. Here mdev is a wrap on random PCI device
-> >
-> > 4) mdev passthru path 2, when mdev is assigned to user space or guest
-> > driver. Here mdev is in a smaller granularity (e.g. tagged by PASID) as
-> > supported by vt-d scalable mode
-> >
-> > 1) and 2) are existing usages. What you described (unmanaged vs. default)
-> > falls into this category.
-> >
-> > 3) is actually same as 2) in IOMMU layer. sort of passing through DMA
-> > capability to guest. Though there is still a parent driver, the parent driver
-> > itself should not do DMA - i.e. unmanaged in host side.
-> >
-> > 4) is a new code path introduced in IOMMU layer, which is what
-> > vfio_a(de)tach_aux_domain is trying to address. In this case parent
-> device
-> > can still have its own DMA capability, using existing code path 1) (thus
-> > default domain still applies). and the parent device can have multiple
-> > aux domains (and associated structures), using code path 4).
-> 
-> We still have the problem that detach() doesn't propagate to the IOMMU
-> driver. Here's the current flow, without mdev:
-> 
-> 1) At boot, the PF's (parent device) driver is probed, and the IOMMU
-> core sets up a default DMA domain, to be used by dma_alloc by the PF's
-> driver.
-> -> iommu.c calls default_domain->ops->attach_dev(default_domain, dev)
-> 
-> 2) or 3) Later userspace wants to control the PF, replaces the PF's
-> driver with vfio-pci. When userspace creates a container, VFIO allocates
-> a new IOMMU domain, and calls iommu_attach_group.
-> -> iommu.c calls domain->ops->attach_dev(domain, dev)
-> This detaches the PF from the default domain, and attaches it to the new
-> domain.
-> 
-> 1) When the container is closed, VFIO calls iommu_detach_group. This
-> detaches the PF from its current domain, and attaches it back to the
-> default domain.
-> -> iommu.c calls default_domain->ops->attach_dev(default_domain, dev)
-> 
-> -----
-> Now with mdev, we still attach the DMA domain in 1). Then:
-> 
-> 4) Userspace opens an mdev and creates a container. VFIO enables aux
-> domain for the device. VFIO allocates a new IOMMU domain, and calls
-> iommu_attach_device(domain1, parent_dev).
-> -> iommu.c calls domain->ops->attach_dev(domain1, dev)
-> Because the device is in "aux domain" state, the IOMMU driver does not
-> detach from the default domain, but instead allocates a PASID and
-> attaches the aux domain. (Side note: for SMMU we couldn't detach from
-> the default domain, because we need it for MSI mappings.)
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.17 are:
 
-same for vtd. We don't require parent driver to detach its domain in 1).
-Parent driver can have its own DMA capability when aux domain is
-enabled in parallel
+[FUNC] msleep
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c, 3805: 
+	msleep in issue_deauth_ex
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c, 6336: 
+	issue_deauth_ex in disconnect_hdl
+drivers/staging/rtl8723bs/core/rtw_cmd.c, 963: 
+	disconnect_hdl in rtw_disassoc_cmd
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 506: 
+	rtw_disassoc_cmd in rtw_set_802_11_disassociate
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 501: 
+	spin_lock_bh in rtw_set_802_11_disassociate
 
-> 
-> 4) Userspace opens another mdev.
-> -> iommu.c calls domain->ops->attach_dev(domain2, dev)
+[FUNC] msleep
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c, 3805: 
+	msleep in issue_deauth_ex
+drivers/staging/rtl8723bs/core/rtw_mlme_ext.c, 6336: 
+	issue_deauth_ex in disconnect_hdl
+drivers/staging/rtl8723bs/core/rtw_cmd.c, 963: 
+	disconnect_hdl in rtw_disassoc_cmd
+drivers/staging/rtl8723bs/core/rtw_mlme.c, 2256: 
+	rtw_disassoc_cmd in rtw_select_and_join_from_scanned_queue
+drivers/staging/rtl8723bs/core/rtw_mlme.c, 2204: 
+	spin_lock_bh in rtw_select_and_join_from_scanned_queue
 
-another mdev in same VFIO container or different? I assume the
-latter since you mentioned a new domain2.
+To fix this bug, msleep() is replaced with mdelay().
 
-> 
-> 1)? When the container is closed, VFIO calls
-> iommu_detach_device(domain2, parent_dev)
-> -> iommu.c calls default_domain->ops->attach_dev(default_domain, dev)
-> Given that auxiliary domains are attached, the IOMMU driver could deduce
-> that this actually means "detach an auxiliary domain". But which one?
+This bug is found by my static analysis tool DSAC.
 
-I didn't get this one. There is no need to stick to 1) behavior for
-4), i.e. below is expected:
-	domain2->ops->detach_dev(domain2, dev)
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-why cannot ARM implement a detach_dev for aux_domain too? My
-feeling is that default domain twist is only for switch between 1/2/3
-in concept. 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index 0952d15f6d40..bf055935ef65 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -3796,7 +3796,7 @@ int issue_deauth_ex(struct adapter *padapter, u8 *da, unsigned short reason, int
+ 			break;
+ 
+ 		if (i < try_cnt && wait_ms > 0 && ret == _FAIL)
+-			msleep(wait_ms);
++			mdelay(wait_ms);
+ 
+ 	} while ((i < try_cnt) && ((ret == _FAIL) || (wait_ms == 0)));
+ 
+-- 
+2.17.0
 
-> 
-> So the proposed interface doesn't seem to work as is. If we want to use
-> iommu_attach/detach_device for auxiliary domains, the existing behavior
-> of iommu.c, and IOMMU drivers that rely on it, have to change. Any
-> change I can think of right now seems more daunting than introducing a
-> different path for auxiliary domains, like iommu_attach_aux_domain for
-> example.
-> 
-
-introducing *aux* specific API will cause different VFIO code path to
-handle RID-based and PASID-based mdev, since RID-based still needs
-to use normal attach_domain that way. well, this argument is not very strong
-in itself, if indeed proposed way doesn't work for ARM. But let's see
-whether it is the case with more understanding of your actual concern.
-
-Thanks
-Kevin
