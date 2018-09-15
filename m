@@ -2,129 +2,120 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABE0ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA6EECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B9CA208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68909208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:56:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFMvBil3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9CA208DD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLGnyrAy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68909208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeIOIHI (ORCPT
+        id S1727852AbeIOINr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 04:07:08 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39711 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIOIHI (ORCPT
+        Sat, 15 Sep 2018 04:13:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45128 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIOINr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 04:07:08 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w14-v6so4970967plp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 19:49:53 -0700 (PDT)
+        Sat, 15 Sep 2018 04:13:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x26-v6so5191366pge.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 19:56:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=LySzGqsz2vpW9BQwmzvVPe0wjlWKCkMEOQaPki73R8Q=;
-        b=GFMvBil3J+pBosEiTTv55QhpL/IyPXIjx1NrgIg+UJZcBLpsS+wYsqTSDeLlY98fu2
-         pC0/JZAKBvgjdeo5L61RGDsH21WeV2q8fg8WfVHrAJnNjdSCu9bX8VZd+HeZpIADzcwd
-         Vz2oMkx8UORlHpeFxukG0ZhzuPvIICJT2NprN0dMXrMuh9EICHXj9g7PKa+r0A/mStQz
-         eHiX4VI5MfVAoG5avtNUagM+tOGniD0f6tmfCuw2tXokTcSuEYOhUhr4Ig264M/Vc3CB
-         +kZb9m9c2k0PAS2b0aJZXu2csO39Xnbppz0Vt5Kx8kYdg81szsBv5OBvKuO9zspeu9rB
-         vhsg==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=UpuPYCfifF3M0rKb90jvnx5R/6vzxQw616ktKBqjF0Q=;
+        b=VLGnyrAykq7EsgM9csP4n7d2NhE4SIs/UcRnJfT7YxYhMtjuU6bvYvd76SUQNx0jp9
+         1tFbdY2ELB6g8LJwZp2fmeq8f+RDv8WVHyt3oyajqxp9TKzy69vguP+vHTEqk2Z6Zw22
+         vdju+TXofq27YfJsaVtxw09/TBdxpksNS4Lfd7V2EkQVoblV3VTr3Si2UpmApCZJ8A1E
+         T/06/uDPjbImKlhNXCfUaR6m5M8tTb3jjzPNYftpWY6AdyRTPP0mYT2eFSord8SIRadn
+         h9epZssfFbLMPdKbFXSIewQv4c655bDa70AmvLnrDpBKn4dUJdNdpAV1+tlrox0Uaj5v
+         YoiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LySzGqsz2vpW9BQwmzvVPe0wjlWKCkMEOQaPki73R8Q=;
-        b=AXiAGxVBcaONLd8+qWeTJ94KYa42+w1HCC6+KLW6SL5NddcTMzRUN9DCa10F2bDA4e
-         ijY0iEY28Yf3MwEFS04BiU+ZjwMyDF1jNXsgG7rk6hvqinjgZ56W58Sm6TRdF+siG5UF
-         hzPTorWHhL5kVMfwYgRE17YzAkAtnAeRVxIgxhdJJ/hi/8Q7VmU6Ef7whsgxxVYMvjII
-         2iIZx4KVMcerjE755f9Sew4n7Hia4dhkueYGGUN2Yeb+u3x9AV/endPm7DdcgsIIGBiP
-         vDwD9rGEYuLouH4lCRIgjiJYmuvtLn/rhtVoA6xAGut523CVP36UnsorTgr5Y0CPXhRf
-         XRwA==
-X-Gm-Message-State: APzg51DyFxJSOWKYq9UZxkKtHASaylXBIfXAx7flX+xfcpjH8oX4m9HH
-        kg1rlgToO8ZSbox8JzbmoO8=
-X-Google-Smtp-Source: ANB0VdYfQSYfvRz4LFrYmsKPAo2COc43TU/1JEY7D9L94O9fMwr7p0e1sFtavpcHi5QFy1L9VMZNwA==
-X-Received: by 2002:a17:902:8ec8:: with SMTP id x8-v6mr14787013plo.308.1536979793119;
-        Fri, 14 Sep 2018 19:49:53 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm14356454pfc.178.2018.09.14.19.49.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 19:49:52 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     gregkh@linuxfoundation.org, julia.lawall@lip6.fr,
-        aastha.gupta4104@gmail.com, aishpant@gmail.com,
-        florian.harbecke@fau.de, quytelda@tamalin.org,
-        shreeya.patel23498@gmail.com, tavery321@gmail.com,
-        georgiana.chelu93@gmail.com, joe@perches.com,
-        keescook@chromium.org, natechancellor@gmail.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/2] staging: rtl8723bs: Fix two sleep-in-atomic-context bugs in _rtw_pwr_wakeup()
-Date:   Sat, 15 Sep 2018 10:49:44 +0800
-Message-Id: <20180915024944.32553-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=UpuPYCfifF3M0rKb90jvnx5R/6vzxQw616ktKBqjF0Q=;
+        b=lWkhk4qHjnh0M1mA8r99dDqlRNupNHaSaN64SjXkx3Ab3gQUn35cPYLwKLm1dyKnxl
+         tqqGsgbf9QcxVqCiHlj68Xm/FfCBciw2BauQ8MbwtTlWPeG2IfpjdlMvSUZL74mbGEH0
+         hHMRguzeZutmftKRsXeE1InLFZT7NWwbjYWQCIe54nswNFBiC4L4zf+KohKF3pkj7W9F
+         WAYX/vAdj4kP44PpSdnHRkQUzc4x9ErlP3/uKUT/rVfeeytec5gB9PshtWc22Rh3TZMU
+         tQ7XfEk/4k4CzPqzF7+gye17ygAIFQAo0S/RkTBoQadEn2/fXFaSY6sEelxy7jMTcvXD
+         rRCA==
+X-Gm-Message-State: APzg51DMh+0BTlT2+84BBwU+nPw3Q3f+DTLcxli+d4xlD7ymEySr54+t
+        nGiiU0SaGBh0gBmmyWy6j0o4jRz2KfLCzg==
+X-Google-Smtp-Source: ANB0Vda28LmZNUNW2tC4GzeXb3ywqE689dUyQ/vjutQB1qypnizZ9DDiJA23eDTln2pNKt8ZVEH1oA==
+X-Received: by 2002:a63:c114:: with SMTP id w20-v6mr13679539pgf.234.1536980189300;
+        Fri, 14 Sep 2018 19:56:29 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id i26-v6sm9965802pfo.107.2018.09.14.19.56.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Sep 2018 19:56:28 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 08:26:22 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
+        devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v7 0/1] staging: mt7621-mmc: Fix debug macros and their usages
+Message-ID: <cover.1536978715.git.nishadkamdar@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.17 are:
+This patch fixes the the debug macro IRQ_MSG().
+It deletes IRQ_MSG() and all its users as currently it is a no-op.
 
-[FUNC] msleep
-drivers/staging/rtl8723bs/core/rtw_pwrctrl.c, 1243: 
-	msleep in _rtw_pwr_wakeup
-drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 510: 
-	_rtw_pwr_wakeup in rtw_set_802_11_disassociate
-drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 501: 
-	spin_lock_bh in rtw_set_802_11_disassociate
+Changes in v7:
+  - Delete IRQ_MSG() macro and its users.
+  - Patchset reduced to 1 patch as the patches fixing N_MSG() and ERR_MSG()
+    have been accepted.
 
-[FUNC] msleep
-drivers/staging/rtl8723bs/core/rtw_pwrctrl.c, 1255: 
-	msleep in _rtw_pwr_wakeup
-drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 510: 
-	_rtw_pwr_wakeup in rtw_set_802_11_disassociate
-drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 501: 
-	spin_lock_bh in rtw_set_802_11_disassociate
+Changes in v6:
+  - Delete N_MSG() macro and its users as it is a no-op.
+  - Patchset reduced to 3 patches as the INIT_MSG patch is accepted.
 
-To fix these bugs, msleep() is replaced with mdelay().
+Changes in v5:
+  - Remove commented code for N_MSG().
+  - Remove commented ERR_MSG() usages.
+ 
+Changes in v4:
+  - Create multiple patches, one for each type of macro being
+    deleted/changed.
 
-These bugs are found by my static analysis tool DSAC.
+Changes in v3:
+  - Replace usages of ERR_MSG and IRQ_MSG with dev_err() in code itself.
+  - Remove all INIT_MSG usages.
+  - Drop ERR_MSG, INIT_MSG and IRQ_MSG from dbg.h.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v2:
+  - Replace printk with dev_<level>.
+  - Remove __func__, __LINE__, current->comm, current->pid from arguments.
+  - Remove the do {} while(0) loop from these macros.
+  - Modify commit message to include other changes.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-index 110bbe340b78..59a667753266 100644
---- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
-@@ -1232,7 +1232,7 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_deffer_ms, const char *cal
- 	if (pwrpriv->ps_processing) {
- 		DBG_871X("%s wait ps_processing...\n", __func__);
- 		while (pwrpriv->ps_processing && jiffies_to_msecs(jiffies - start) <= 3000)
--			msleep(10);
-+			mdelay(10);
- 		if (pwrpriv->ps_processing)
- 			DBG_871X("%s wait ps_processing timeout\n", __func__);
- 		else
-@@ -1244,7 +1244,7 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_deffer_ms, const char *cal
- 		while (pwrpriv->bInSuspend
- 			&& jiffies_to_msecs(jiffies - start) <= 3000
- 		) {
--			msleep(10);
-+			mdelay(10);
- 		}
- 		if (pwrpriv->bInSuspend)
- 			DBG_871X("%s wait bInSuspend timeout\n", __func__);
+Nishad Kamdar (1):
+  staging: mt7621-mmc: Delete IRQ_MSG() and its users
+
+ drivers/staging/mt7621-mmc/dbg.h | 12 ------------
+ drivers/staging/mt7621-mmc/sd.c  | 19 -------------------
+ 2 files changed, 31 deletions(-)
+
 -- 
-2.17.0
+2.17.1
 
