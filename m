@@ -2,123 +2,206 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27266ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4398ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9B720881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:46:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9B720881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7351F21480
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:53:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="NW/5yOnD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7351F21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=riseup.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeIOMEq (ORCPT
+        id S1727274AbeIOMLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 08:04:46 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41534 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726619AbeIOMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 08:04:46 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B86D735D5A00A;
-        Sat, 15 Sep 2018 14:46:45 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Sat, 15 Sep 2018
- 14:46:43 +0800
-Message-ID: <5B9CAAD2.70501@huawei.com>
-Date:   Sat, 15 Sep 2018 14:46:42 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Sat, 15 Sep 2018 08:11:16 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:43910 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726162AbeIOMLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 08:11:16 -0400
+Received: from piha.riseup.net (piha-pn.riseup.net [10.0.1.163])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id A61921A08BC;
+        Fri, 14 Sep 2018 23:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1536994400; bh=PVdiXqRqocSLu/swWGYVjxZD0IniWMKOg3UAnQ0GmVU=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=NW/5yOnDiR7fWRPcg7DTfQqXjuqHhf+6kO5PJywfKiT4nKtKamF+Vy2itGKmEn9KJ
+         f6YydLXLQb6i9+AepBW3/3XgfXA8RO+GSVbOq+ZsDre3J4R7tY/68G0F33z83Wq0xh
+         MbbasOJTvT+A2Wt8uJmAWndf1VOBQIabB9Xrc0oE=
+X-Riseup-User-ID: 532DD3976D3B0622680193F80FE159F04DE97B096E103C1999FE3DFF7F68703D
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by piha.riseup.net with ESMTPSA id D7AF14D8A0;
+        Fri, 14 Sep 2018 23:53:18 -0700 (PDT)
+From:   Francisco Jerez <currojerez@riseup.net>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Eero Tamminen <eero.t.tamminen@intel.com>, lenb@kernel.org,
+        viresh.kumar@linaro.org, mgorman@techsingularity.net,
+        ggherdovich@suse.cz, peterz@infradead.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
+In-Reply-To: <2646540.WJ9HbOajLd@aspire.rjw.lan>
+References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com> <23293649.J1qzPCXian@aspire.rjw.lan> <87in3c7x9o.fsf@riseup.net> <2646540.WJ9HbOajLd@aspire.rjw.lan>
+Date:   Fri, 14 Sep 2018 23:34:05 -0700
+Message-ID: <87pnxf6zhe.fsf@riseup.net>
 MIME-Version: 1.0
-To:     kbuild test robot <lkp@intel.com>
-CC:     <kbuild-all@01.org>, <jason@lakedaemon.net>, <andrew@lunn.ch>,
-        <sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
-        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm: common: use match_string() helper to simplify the
- code
-References: <1536937519-31611-1-git-send-email-zhongjiang@huawei.com> <201809150710.kyiQ0EXh%fengguang.wu@intel.com>
-In-Reply-To: <201809150710.kyiQ0EXh%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="==-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/15 7:52, kbuild test robot wrote:
-> Hi zhong,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on arm-soc/for-next]
-> [also build test ERROR on v4.19-rc3 next-20180913]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/zhong-jiang/arm-common-use-match_string-helper-to-simplify-the-code/20180915-035510
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git for-next
-> config: arm-multi_v5_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=arm 
->
-> All errors (new ones prefixed by >>):
->
->    arch/arm/plat-orion/common.c: In function 'orion_ge00_switch_init':
->>> arch/arm/plat-orion/common.c:487:23: error: passing argument 1 of 'match_string' from incompatible pointer type [-Werror=incompatible-pointer-types]
->      index = match_string(d->port_names, ARRAY_SIZE(d->port_names), "cpu");
->                           ^
->    In file included from include/linux/bitmap.h:9:0,
->                     from include/linux/cpumask.h:12,
->                     from include/linux/rcupdate.h:44,
->                     from include/linux/radix-tree.h:28,
->                     from include/linux/idr.h:15,
->                     from include/linux/kernfs.h:14,
->                     from include/linux/sysfs.h:16,
->                     from include/linux/kobject.h:20,
->                     from include/linux/device.h:16,
->                     from include/linux/platform_device.h:14,
->                     from arch/arm/plat-orion/common.c:13:
->    include/linux/string.h:184:5: note: expected 'const char * const*' but argument is of type 'char **'
->     int match_string(const char * const *array, size_t n, const char *string);
->         ^~~~~~~~~~~~
->    cc1: some warnings being treated as errors
-I am sorry for that. :-[    Will repost in v2.
+--==-=-=
+Content-Type: multipart/mixed; boundary="=-=-="
 
-Thanks,
-zhong jiang
-> vim +/match_string +487 arch/arm/plat-orion/common.c
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+"Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+
+> On Tuesday, September 11, 2018 7:35:15 PM CEST Francisco Jerez wrote:
+>>
+>> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+>>=20
+>> > On Thursday, September 6, 2018 6:20:08 AM CEST Francisco Jerez wrote:
+>> >
+>> >> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
+>> >>=3D20
+>> >> > [...]
+>> >> >
+>> >> >> > >=3D3D20
+>> >> >> > > This patch causes a number of statistically significant
+>> >> >> > > regressions
+>> >> >> > > (with significance of 1%) on the two systems I've tested it
+>> >> >> > > on.  On
+>> >> >> > > my
+>> >> >> >=3D3D20
+>> >> >> > Sure. These patches are targeted to Atom clients where some of
+>> >> >> > these
+>> >> >> > server like workload may have some minor regression on few watts
+>> >> >> > TDP
+>> >> >> > parts.
+>> >> >>=3D3D20
+>> >> >> Neither the 36% regression of fs-mark, the 21% regression of sqlit=
+e,
+>> >> >> nor
+>> >> >> the 10% regression of warsaw qualify as small.  And most of the te=
+st
+>> >> >> cases on the list of regressions aren't exclusively server-like, if
+>> >> >> at
+>> >> >> all.  Warsaw, gtkperf, jxrendermark and lightsmark are all graphics
+>> >> >> benchmarks -- Latency is as important if not more for interactive
+>> >> >> workloads than it is for server workloads.  In the case of a confl=
+ict
+>> >> >> like the one we're dealing with right now between optimizing for
+>> >> >> throughput (e.g. for the maximum number of requests per second) and
+>> >> >> optimizing for latency (e.g. for the minimum request duration), you
+>> >> >> are
+>> >> >> more likely to be concerned about the former than about the latter=
+ in
+>> >> >> a
+>> >> >> server setup.
+>> >> >
+>> >> > Eero,
+>> >> > Please add your test results here.
+>> >> >
+>> >> > No matter which algorithm you do, there will be variations. So you =
+have
+>> >> > to look at the platforms which you are targeting. For this platform=
+=3D3D=3D
+>> 20
+>> >> > number one item is use of less turbo and hope you know why?
+>> >>=3D20
+>> >> Unfortunately the current controller uses turbo frequently on Atoms f=
+or
+>> >> TDP-limited graphics workloads regardless of IOWAIT boosting.  IOWAIT
+>> >> boosting simply exacerbated the pre-existing energy efficiency proble=
+m.
+>> >
+>> > My current understanding of the issue at hand is that using IOWAIT boo=
+sti=3D
+>> ng
+>> > on Atoms is a regression relative to the previous behavior.
+>>=20
+>> Not universally.  IOWAIT boosting helps under roughly the same
+>> conditions on Atom as it does on big core, so applying this patch will
+>> necessarily cause regressions too (see my reply from Sep. 3 for some
+>> numbers), and won't completely restore the previous behavior since it
+>> simply decreases the degree of IOWAIT boosting applied without being
+>> able to avoid it (c.f. the series I'm working on that does something
+>> similar to IOWAIT boosting when it's able to determine it's actually
+>> CPU-bound, which prevents energy inefficient behavior for non-CPU-bound
+>> workloads that don't benefit from a higher CPU clock frequency anyway).
 >
->    479	
->    480	void __init orion_ge00_switch_init(struct dsa_chip_data *d)
->    481	{
->    482		int index;
->    483	
->    484		if (!IS_BUILTIN(CONFIG_PHYLIB))
->    485			return;
->    486	
->  > 487		index = match_string(d->port_names, ARRAY_SIZE(d->port_names), "cpu");
->    488		if (index >= 0)
->    489			d->netdev[index] = &orion_ge00.dev;
->    490	
->    491		orion_ge00_switch_board_info.mdio_addr = d->sw_addr;
->    492		orion_ge00_switch_board_info.platform_data = d;
->    493	
->    494		mdiobus_register_board_info(&orion_ge00_switch_board_info, 1);
->    495	}
->    496	#endif
->    497	
+> Well, OK.  That doesn't seem to be a clear-cut regression situation, then,
+> since getting back is not desirable, apparently.
 >
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> Or would it restore the previous behavior if we didn't do any IOWAIT
+> boosting on Atoms at all?
+>
+>> > That is what Srinivas is trying to address here AFAICS.
+>> >
+>> > Now, you seem to be saying that the overall behavior is suboptimal and=
+ the
+>> > IOWAIT boosting doesn't matter that much,
+>>=20
+>> I was just saying that IOWAIT boosting is less than half of the energy
+>> efficiency problem, and this patch only partially addresses that half of
+>> the problem.
+>
+> Well, fair enough, but there are two things to consider here, the general
+> energy-efficiency problem and the difference made by IOWAIT boosting.
+>
+> If the general energy-efficiency problem had existed for a relatively long
+> time, but it has got worse recently due to the IOWAIT boosting, it still
+> may be desirable to get the IOWAIT boosting out of the picture first
+> and then get to the general problem.
+>
+
+IMHO what is needed in order to address the IOWAIT boosting energy
+efficiency problem is roughly the same we need in order to address the
+other energy efficiency problem: A mechanism along the lines of [1]
+allowing us to determine whether the workload is IO-bound or not.  In
+the former case IOWAIT boosting won't be able to improve the performance
+of the workload since the limiting factor is the IO throughput, so it
+will only increase the energy usage, potentially exacerbating the
+bottleneck if the IO device is an integrated GPU.  In the latter case
+where the CPU and IO devices being waited on are both underutilized it
+makes sense to optimize for low latency more aggressively (certainly
+more aggressively than this patch does) which will increase the
+utilization of the IO devices until at least one IO device becomes a
+bottleneck, at which point the throughput of the system becomes roughly
+independent of the CPU frequency and we're back to the former case.
+
+[1] https://patchwork.kernel.org/patch/10312259/
+
+> I'm not sure if that is the case as my experience with Atoms is limited
+> anyway, so please advise.
+>
+> Thanks,
+> Rafael
 
 
+--=-=-=--
+
+--==-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEAREIAB0WIQST8OekYz69PM20/4aDmTidfVK/WwUCW5yn3QAKCRCDmTidfVK/
+W8JQAP9QOzAynzXxSx+E7LfkWRSa0LOgkCNjBYQxupDQ7duPMgEAjq3orHG3kT4X
+O6vNilCDEFcoKxl7jykxOqazvTp5E3Y=
+=kUFE
+-----END PGP SIGNATURE-----
+--==-=-=--
