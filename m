@@ -2,212 +2,136 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDB0ECE560
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377A3C4161C
 	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 12:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B0521477
+	by mail.kernel.org (Postfix) with ESMTP id E3F7421479
 	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 12:58:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhNsNoPM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B0521477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F7421479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeIOSPH (ORCPT
+        id S1727747AbeIOSRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 14:15:07 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54470 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeIOSPH (ORCPT
+        Sat, 15 Sep 2018 14:17:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44956 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726969AbeIOSRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 14:15:07 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c14-v6so4712463wmb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 05:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=9NUWOubg/5F0jfoH+UrRA7UQ2UsjLOrTdGm27KLq3e0=;
-        b=BhNsNoPMdsMW3tbyRES0W+XCnNKazSAIZqCz8UuAxFQvbi9ZkiMkhLRa4qN9q6ZRFD
-         GjqhsE8TH+leFASw/A1UDJyfAuVDKbrpYP8L38Tc720uLzxKtnzVlBh5gd3iZ2agtQMV
-         vOmLOuA4WTK0mznd8vyxgXzziOZQCGBJ9jhrGwpmHJkBr+oPnQXqIH1WrUFq45+cY1zM
-         HkQHL5Tnf9hOnG5ZrFjIdxgQNf9OIiDl8bqM1Qh6EIojTH5HJHYs+CR49Szg5Ky5B47U
-         a/ltpIfDSrdCM8RNsl8AsL7FnVg8M/f5fmsk2Y8x3ZCXB36HfDj65WaizV/v8xoR0O0M
-         CWcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=9NUWOubg/5F0jfoH+UrRA7UQ2UsjLOrTdGm27KLq3e0=;
-        b=Mr3Oatwz9kRozbYXiKFlqZ0yxkt0lQyFMBcKAne9RDiDbFUXe6dqeH87pI8R0ItEI2
-         f2Tqb0rHEoDwqGdbn5CkLA8Fxh+QCUd0dei6nATEpHd/9w5WhAuMqIMY/awDKNNu6Oja
-         L6TnQmqMw9lGqrCp4brgZWgtseZZ66PGH68rCRFCxhyv9LdnJSMGabkfeeTmokbnkiJ9
-         f0iu7SBiF23xu78fD9+KvtgKpOR/EKTk0eQOFWKGbvCO00jpo3QKji9tdlryVPtocmkt
-         Gzrg9dE0V8W50ITtPG9xWn58IxkSD+KlZL0bJEWIMsfe5BBLtyHIZdlO/KCbBk7p84mK
-         o43Q==
-X-Gm-Message-State: APzg51B4tVDCIfjrqxINrZJDfnCWDGfvz30OVBHXUj/FH9wxx5kgKSxq
-        q/opO4riynYgrwFcKA5med8=
-X-Google-Smtp-Source: ANB0VdZ9kWBkODGWCORIXRy50Fq2fvHHckDrYiFlzdFxKGDjmMoHKU/dU7+tD/nFvQ2A3ZRNOY6H+Q==
-X-Received: by 2002:a1c:2e11:: with SMTP id u17-v6mr5257814wmu.102.1537016170415;
-        Sat, 15 Sep 2018 05:56:10 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j11-v6sm8219011wrr.37.2018.09.15.05.56.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Sep 2018 05:56:09 -0700 (PDT)
-Date:   Sat, 15 Sep 2018 14:56:07 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "Paul E. McKenney" <paulmck@us.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] locking fixes
-Message-ID: <20180915125607.GA60178@gmail.com>
+        Sat, 15 Sep 2018 14:17:12 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8FCrRjO002883
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 08:58:16 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mgx8bxsg8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 08:58:16 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Sat, 15 Sep 2018 13:58:14 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 15 Sep 2018 13:58:11 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8FCwAGD65994972
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 15 Sep 2018 12:58:10 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11C7942047;
+        Sat, 15 Sep 2018 15:58:00 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B6D242041;
+        Sat, 15 Sep 2018 15:57:59 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.116])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sat, 15 Sep 2018 15:57:58 +0100 (BST)
+Date:   Sat, 15 Sep 2018 15:58:07 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-mips@linux-mips.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mips: switch to NO_BOOTMEM
+References: <1536571398-29194-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180914195300.7wnmsph2qhpixm7s@pburton-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180914195300.7wnmsph2qhpixm7s@pburton-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18091512-4275-0000-0000-000002BAB631
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091512-4276-0000-0000-000037C3F676
+Message-Id: <20180915125806.GH15191@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=612 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809150142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, Sep 14, 2018 at 12:53:00PM -0700, Paul Burton wrote:
+> Hi Mike,
+> 
+> On Mon, Sep 10, 2018 at 12:23:18PM +0300, Mike Rapoport wrote:
+> > MIPS already has memblock support and all the memory is already registered
+> > with it.
+> > 
+> > This patch replaces bootmem memory reservations with memblock ones and
+> > removes the bootmem initialization.
+> > 
+> > Since memblock allocates memory in top-down mode, we ensure that memblock
+> > limit is max_low_pfn to prevent allocations from the high memory.
+> > 
+> > To have the exceptions base in the lower 512M of the physical memory, its
+> > allocation in arch/mips/kernel/traps.c::traps_init() is using bottom-up
+> > mode.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > ---
+> > v2:
+> > * set memblock limit to max_low_pfn to avoid allocation attempts from high
+> > memory
+> > * use boottom-up mode for allocation of the exceptions base
+> > 
+> > Build tested with *_defconfig.
+> > Boot tested with qemu-system-mips64el for 32r6el, 64r6el and fuloong2e
+> > defconfigs.
+> > Boot tested with qemu-system-mipsel for malta defconfig.
+> > 
+> >  arch/mips/Kconfig                      |  1 +
+> >  arch/mips/kernel/setup.c               | 99 ++++++++--------------------------
+> >  arch/mips/kernel/traps.c               |  3 ++
+> >  arch/mips/loongson64/loongson-3/numa.c | 34 ++++++------
+> >  arch/mips/sgi-ip27/ip27-memory.c       | 11 ++--
+> >  5 files changed, 46 insertions(+), 102 deletions(-)
+> 
+> Thanks - applied to mips-next for 4.20.
+> 
+> Apologies for the delay, my son decided to be born a few weeks early &
+> scupper my plans :)
 
-Please pull the latest locking-urgent-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-urgent-for-linus
-
-   # HEAD: 0b405c65ad459f5f4d3db1672246172bd19d946d locking/ww_mutex: Fix spelling mistake "cylic" -> "cyclic"
-
-Misc fixes: liblockdep fixes and ww_mutex fixes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Ben Hutchings (1):
-      locking/lockdep: Delete unnecessary #include
-
-Borislav Petkov (1):
-      jump_label: Fix typo in warning message
-
-Colin Ian King (1):
-      locking/ww_mutex: Fix spelling mistake "cylic" -> "cyclic"
-
-Sasha Levin (3):
-      tools/lib/lockdep: Update Sasha Levin email to MSFT
-      tools/lib/lockdep: Add empty nmi.h
-      tools/lib/lockdep: Add dummy task_struct state member
-
-Thomas Hellstrom (1):
-      locking/mutex: Fix mutex debug call and ww_mutex documentation
-
-
- MAINTAINERS                    | 2 +-
- kernel/jump_label.c            | 2 +-
- kernel/locking/lockdep.c       | 1 -
- kernel/locking/mutex.c         | 3 +--
- kernel/locking/test-ww_mutex.c | 2 +-
- tools/include/linux/lockdep.h  | 3 +++
- tools/include/linux/nmi.h      | 0
- 7 files changed, 7 insertions(+), 6 deletions(-)
- create mode 100644 tools/include/linux/nmi.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d870cb57c887..f999786cfa90 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8300,7 +8300,7 @@ F:	include/linux/libata.h
- F:	Documentation/devicetree/bindings/ata/
+Congratulations! :)
  
- LIBLOCKDEP
--M:	Sasha Levin <alexander.levin@verizon.com>
-+M:	Sasha Levin <alexander.levin@microsoft.com>
- S:	Maintained
- F:	tools/lib/lockdep/
- 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 01ebdf1f9f40..2e62503bea0d 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -678,7 +678,7 @@ jump_label_module_notify(struct notifier_block *self, unsigned long val,
- 	case MODULE_STATE_COMING:
- 		ret = jump_label_add_module(mod);
- 		if (ret) {
--			WARN(1, "Failed to allocatote memory: jump_label may not work properly.\n");
-+			WARN(1, "Failed to allocate memory: jump_label may not work properly.\n");
- 			jump_label_del_module(mod);
- 		}
- 		break;
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index e406c5fdb41e..dd13f865ad40 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -55,7 +55,6 @@
- 
- #include "lockdep_internals.h"
- 
--#include <trace/events/preemptirq.h>
- #define CREATE_TRACE_POINTS
- #include <trace/events/lock.h>
- 
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index 1a81a1257b3f..3f8a35104285 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -389,7 +389,7 @@ static bool __ww_mutex_wound(struct mutex *lock,
- 		/*
- 		 * wake_up_process() paired with set_current_state()
- 		 * inserts sufficient barriers to make sure @owner either sees
--		 * it's wounded in __ww_mutex_lock_check_stamp() or has a
-+		 * it's wounded in __ww_mutex_check_kill() or has a
- 		 * wakeup pending to re-read the wounded state.
- 		 */
- 		if (owner != current)
-@@ -946,7 +946,6 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 	}
- 
- 	debug_mutex_lock_common(lock, &waiter);
--	debug_mutex_add_waiter(lock, &waiter, current);
- 
- 	lock_contended(&lock->dep_map, ip);
- 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 5b915b370d5a..0be047dbd897 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
- 		if (!cycle->result)
- 			continue;
- 
--		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
-+		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
- 		       n, nthreads, cycle->result);
- 		ret = -EINVAL;
- 		break;
-diff --git a/tools/include/linux/lockdep.h b/tools/include/linux/lockdep.h
-index 6b0c36a58fcb..e56997288f2b 100644
---- a/tools/include/linux/lockdep.h
-+++ b/tools/include/linux/lockdep.h
-@@ -30,9 +30,12 @@ struct task_struct {
- 	struct held_lock held_locks[MAX_LOCK_DEPTH];
- 	gfp_t lockdep_reclaim_gfp;
- 	int pid;
-+	int state;
- 	char comm[17];
- };
- 
-+#define TASK_RUNNING 0
-+
- extern struct task_struct *__curr(void);
- 
- #define current (__curr())
-diff --git a/tools/include/linux/nmi.h b/tools/include/linux/nmi.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
+> Paul
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
