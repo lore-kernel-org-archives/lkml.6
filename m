@@ -2,95 +2,153 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDDDECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72126ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12A4E2086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:35:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A4E2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F38F208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:37:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBxbTGu3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F38F208DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeIOQyU (ORCPT
+        id S1727749AbeIOQ4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 12:54:20 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:42620 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbeIOQyT (ORCPT
+        Sat, 15 Sep 2018 12:56:20 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53357 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbeIOQ4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 12:54:19 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42C9LH3bpCz1qyB5;
-        Sat, 15 Sep 2018 13:35:34 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42C9LG2kztz1r44b;
-        Sat, 15 Sep 2018 13:35:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 2bttgbS2fgHg; Sat, 15 Sep 2018 13:35:33 +0200 (CEST)
-X-Auth-Info: CcscN6uyh/I0aPtjF9eNTVrXVw/tDpbsLJ68P5gDbfPBKDNWrXQbRdLOrxB+3ghQ
-Received: from igel.home (ppp-188-174-156-144.dynamic.mnet-online.de [188.174.156.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sat, 15 Sep 2018 13:35:33 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id F1EA92C0C8B; Sat, 15 Sep 2018 13:35:32 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <ubraun@linux.ibm.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH net-next] net/smc: cast sizeof to int for comparison
-References: <20180915100036.20100-1-yuehaibing@huawei.com>
-X-Yow:  DIDI...  is that a MARTIAN name, or, are we in ISRAEL?
-Date:   Sat, 15 Sep 2018 13:35:32 +0200
-In-Reply-To: <20180915100036.20100-1-yuehaibing@huawei.com> (YueHaibing's
-        message of "Sat, 15 Sep 2018 18:00:36 +0800")
-Message-ID: <87zhwj6liz.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 15 Sep 2018 12:56:20 -0400
+Received: by mail-wm1-f67.google.com with SMTP id b19-v6so4584563wme.3;
+        Sat, 15 Sep 2018 04:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p6PHgxloUaPnNE9aKYzPMS9kzren52vC0YmGoQXbTQo=;
+        b=XBxbTGu3Z1oKWajPRqMW/Gj6ZOIqS/u9eaebZ/TvoLMlZbzLhGvIfLNGKaxBVuUNq4
+         BYRvwKWDm+nb5r8pAfrM1SzXOh+ZVJ+3R1qHN4dHaresdGV35sfJzNriJXdFXvNtASsU
+         9VmQOPnBTRSRgc4WHZ+MyjU1o80Gi34iNDkuT8SageDI25zApjdpaC05vg2FAIjKMAEy
+         PBLVYukRjnFdK7IzchR5cZJ/X6Omo9s0YIvWkZbE5KWKTWkfCb4kAtJ1lTuqK5FhEojS
+         xJYNSZNqbcSIF4rLcbm1VYD8rBvTxv+DIZBUFLmdaIxyk5LMxzYaKrka+6qVwY/p3xwi
+         1V+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p6PHgxloUaPnNE9aKYzPMS9kzren52vC0YmGoQXbTQo=;
+        b=N+uZVbf+WpIsSRoSkWauXU6/ZhsSeC7Rwob0U8gFSAPieVpD3MvvMUeYrL2dFtcHMb
+         a6YW8aQA4ao0dp6yl8kMS0iwTbs2wvytLb6L6ruq75kqh/Xr9lpLV2OXvE+26PgsAhkv
+         YAW2YywW/dZshb2r5pxtOdousZvOkIHXnKBX7r3xc0CLEvX/fCwVnsHKZkigk03T+Bwr
+         GiITe11zIq2pFYojGpjZzTSPUQNPUH7cxkHnJVtfbOBjxvTHv+P09auLSwnRFmL598aO
+         YU6e4vNqZDvejDqkCKwO2Zibtjnhc7CkWrZVkx6T3gqcXOirKsaG1W90uOSFRdEC482Q
+         n7hw==
+X-Gm-Message-State: APzg51D4tACNM98+l5RTLGZVeIuZfRFIMgiozW6RvEhoKECPwdmQJqFt
+        +W1PVIoiRxhQTitGUduBt9w=
+X-Google-Smtp-Source: ANB0VdZoLLFP4V27zS57bZ7Q9bRzvpVQGJYcrMz7ZEUtOzUEmt22WBMwIlfLEAQy8hUw1MCshs/5cg==
+X-Received: by 2002:a1c:ee97:: with SMTP id j23-v6mr5542834wmi.66.1537011457374;
+        Sat, 15 Sep 2018 04:37:37 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id m68-v6sm3152024wmb.10.2018.09.15.04.37.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 15 Sep 2018 04:37:36 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 13:37:33 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Joseph =?iso-8859-1?Q?Myers=A0?= <joseph@codesourcery.com>,
+        David Howells <dhowells@redhat.com>, libc-alpha@sourceware.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [RFC] making uapi/linux/elfcore.h useful again
+Message-ID: <20180915113733.GA35411@gmail.com>
+References: <20180914113929.953895-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914113929.953895-1-arnd@arndb.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sep 15 2018, YueHaibing <yuehaibing@huawei.com> wrote:
 
-> Comparing an int to a size, which is unsigned, causes the int to become
-> unsigned, giving the wrong result. kernel_sendmsg can return a negative
-> error code.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  net/smc/smc_clc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/smc/smc_clc.c b/net/smc/smc_clc.c
-> index 83aba9a..fd0f5ce 100644
-> --- a/net/smc/smc_clc.c
-> +++ b/net/smc/smc_clc.c
-> @@ -446,7 +446,7 @@ int smc_clc_send_proposal(struct smc_sock *smc, int smc_type,
->  	vec[i++].iov_len = sizeof(trl);
->  	/* due to the few bytes needed for clc-handshake this cannot block */
->  	len = kernel_sendmsg(smc->clcsock, &msg, vec, i, plen);
-> -	if (len < sizeof(pclc)) {
-> +	if (len < (int)sizeof(pclc)) {
->  		if (len >= 0) {
->  			reason_code = -ENETUNREACH;
->  			smc->sk.sk_err = -reason_code;
+* Arnd Bergmann <arnd@arndb.de> wrote:
 
-It would perhaps be better to handle len < 0 first.
+> diff --git a/arch/x86/include/uapi/asm/elf.h b/arch/x86/include/uapi/asm/elf.h
+> new file mode 100644
+> index 000000000000..a640e1224939
+> --- /dev/null
+> +++ b/arch/x86/include/uapi/asm/elf.h
+> @@ -0,0 +1,30 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_ASM_X86_ELF_H
+> +#define _UAPI_ASM_X86_ELF_H
+> +
+> +#ifdef __i386__
+> +
+> +/*
+> + * These are used to set parameters in the core dumps.
+> + */
+> +#define ELF_CLASS	ELFCLASS32
+> +#define ELF_DATA	ELFDATA2LSB
+> +#define ELF_ARCH	EM_386
+> +#define ELF_NGREG	17
+> +
+> +#else
+> +
+> +/*
+> + * These are used to set parameters in the core dumps.
+> + */
+> +#define ELF_CLASS	ELFCLASS64
+> +#define ELF_DATA	ELFDATA2LSB
+> +#define ELF_ARCH	EM_X86_64
+> +#define ELF_NGREG	27
+> +
+> +#endif /* __i386__ */
+> +
+> +typedef unsigned long elf_greg_t;
+> +typedef elf_greg_t elf_gregset_t[ELF_NGREG];
+> +
+> +#endif
 
-Andreas.
+On a second thought, maybe deduplicate the comments? Something like:
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+/*
+ * These are used to set parameters in core dumps:
+ */
+#ifdef __i386__
+# define ELF_CLASS	ELFCLASS32
+# define ELF_DATA	ELFDATA2LSB
+# define ELF_ARCH	EM_386
+# define ELF_NGREG	17
+#else
+# define ELF_CLASS	ELFCLASS64
+# define ELF_DATA	ELFDATA2LSB
+# define ELF_ARCH	EM_X86_64
+# define ELF_NGREG	27
+#endif
+
+Note:
+
+ - I fixed a typo in the comment.
+ - Aligned the blocks vertically for better visibility.
+ - The closing #endif comment became unnecessary as well, due to the much more obvious 
+   structure when written this way.
+
+The type changes/cleanups look good otherwise: it's quite probable that it was never directly 
+included in any user-space library in any sane fashion before, so it's not really an UAPI that 
+was relied on, as long as it doesn't break the build anywhere.
+
+Thanks,
+
+	Ingo
