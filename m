@@ -2,145 +2,129 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913F6C4161C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABE0ECE561
 	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E2B21476
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B9CA208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 02:55:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQbmcQ9n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E2B21476
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFMvBil3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9CA208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeIOIMn (ORCPT
+        id S1727774AbeIOIHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 04:12:43 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42513 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIOIMn (ORCPT
+        Sat, 15 Sep 2018 04:07:08 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39711 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIOIHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 04:12:43 -0400
-Received: by mail-vs1-f67.google.com with SMTP id s188-v6so1123227vss.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 19:55:25 -0700 (PDT)
+        Sat, 15 Sep 2018 04:07:08 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w14-v6so4970967plp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 19:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jcSchzlr5ZtGAg/8Q66D0g7+KhyEozXOxTtB4XaXNcc=;
-        b=sQbmcQ9nKQrUdC685regrvFVCyBG2xb5erfPoGh0/3qrD0YEpvq7SY8FwORTWGCILc
-         RpBpHy1LONrcmGbLgMTAfKfOKDof1TUmQqsyCslAi82g4JceIXTDotWO9TiwGVVoOD3L
-         Me57LOWEvS5L4k49oGVwXDrvRg3qxc7OFrY1g1+RhPI1mS7wnJco8zpsfsjQmGncmxZg
-         SyRLTuyBcqPXZle5b+YzePfNdTwcIDr9yn4rT1Bk6Sf6lVHRkFQdpcZ2yj6W/kFpuH2K
-         uBPa2+vk4EwJOvxrTIY5QQBCy45HXHTv9A2+vDC+hPPo94ZtoqKeVHUydhPQ3akM7pC8
-         5xGQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=LySzGqsz2vpW9BQwmzvVPe0wjlWKCkMEOQaPki73R8Q=;
+        b=GFMvBil3J+pBosEiTTv55QhpL/IyPXIjx1NrgIg+UJZcBLpsS+wYsqTSDeLlY98fu2
+         pC0/JZAKBvgjdeo5L61RGDsH21WeV2q8fg8WfVHrAJnNjdSCu9bX8VZd+HeZpIADzcwd
+         Vz2oMkx8UORlHpeFxukG0ZhzuPvIICJT2NprN0dMXrMuh9EICHXj9g7PKa+r0A/mStQz
+         eHiX4VI5MfVAoG5avtNUagM+tOGniD0f6tmfCuw2tXokTcSuEYOhUhr4Ig264M/Vc3CB
+         +kZb9m9c2k0PAS2b0aJZXu2csO39Xnbppz0Vt5Kx8kYdg81szsBv5OBvKuO9zspeu9rB
+         vhsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jcSchzlr5ZtGAg/8Q66D0g7+KhyEozXOxTtB4XaXNcc=;
-        b=O9U92fMTTdjtWS09PNSM/pb3met7aMYX3SrwC4swN5n+nosi5GEEQeLV+v+8QwblV4
-         0RumkaEE4bAQjknU8f7orcxPdoI3f7sj5qops4yBoaksLBuJVmwb10epM/mZodXmBSQ/
-         3pfLohDBDAqPi+DNMrlipwZzxdBW5+pJDeIKl/DfEcMW5jISqp8FNmmv5URppaUXv9Oa
-         Y1Ex/qgP2eXdl6md4YUiccPEYlc0y+B+rfVeySQMkxtLHWEpcB9aZ3pYDWXtoBHUNVsX
-         KROtS+Uas39Bv13fpmAUEuXpFnYc83XGycixpZD3ncOV6jl/A1Zd7CKICNWXslf5bdfm
-         Eh6Q==
-X-Gm-Message-State: APzg51DWKteJBWr4zHNsPoDH3hDaG92q6ZG+0685aqo8NYiOhvFOdfDd
-        FPReza9FgUy6GbblMOTarnq0505B4DBnmr91yMo=
-X-Google-Smtp-Source: ANB0VdbsegDGhkTslzRDZ543U2uwCBBml982LIM5v5C3/PtqI5HOJfY7P4O41MdX4J4dGLhgciWh+qzAqcQ1+syA8bY=
-X-Received: by 2002:a67:850f:: with SMTP id h15-v6mr4795064vsd.26.1536980125226;
- Fri, 14 Sep 2018 19:55:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
- <CAHbLzkojdPxgrEiPLcJUX9c4muw8eupStJ_0xPnAuFM7g4V1jA@mail.gmail.com>
-In-Reply-To: <CAHbLzkojdPxgrEiPLcJUX9c4muw8eupStJ_0xPnAuFM7g4V1jA@mail.gmail.com>
-From:   Pintu Kumar <pintu.ping@gmail.com>
-Date:   Sat, 15 Sep 2018 08:25:13 +0530
-Message-ID: <CAOuPNLgYYhrTf2EPG9C3K6Tqr4OqCehMKhyfFzh9Jz8ryZZbUA@mail.gmail.com>
-Subject: Re: KSM not working in 4.9 Kernel
-To:     shy828301@gmail.com
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LySzGqsz2vpW9BQwmzvVPe0wjlWKCkMEOQaPki73R8Q=;
+        b=AXiAGxVBcaONLd8+qWeTJ94KYa42+w1HCC6+KLW6SL5NddcTMzRUN9DCa10F2bDA4e
+         ijY0iEY28Yf3MwEFS04BiU+ZjwMyDF1jNXsgG7rk6hvqinjgZ56W58Sm6TRdF+siG5UF
+         hzPTorWHhL5kVMfwYgRE17YzAkAtnAeRVxIgxhdJJ/hi/8Q7VmU6Ef7whsgxxVYMvjII
+         2iIZx4KVMcerjE755f9Sew4n7Hia4dhkueYGGUN2Yeb+u3x9AV/endPm7DdcgsIIGBiP
+         vDwD9rGEYuLouH4lCRIgjiJYmuvtLn/rhtVoA6xAGut523CVP36UnsorTgr5Y0CPXhRf
+         XRwA==
+X-Gm-Message-State: APzg51DyFxJSOWKYq9UZxkKtHASaylXBIfXAx7flX+xfcpjH8oX4m9HH
+        kg1rlgToO8ZSbox8JzbmoO8=
+X-Google-Smtp-Source: ANB0VdYfQSYfvRz4LFrYmsKPAo2COc43TU/1JEY7D9L94O9fMwr7p0e1sFtavpcHi5QFy1L9VMZNwA==
+X-Received: by 2002:a17:902:8ec8:: with SMTP id x8-v6mr14787013plo.308.1536979793119;
+        Fri, 14 Sep 2018 19:49:53 -0700 (PDT)
+Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
+        by smtp.gmail.com with ESMTPSA id b14-v6sm14356454pfc.178.2018.09.14.19.49.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Sep 2018 19:49:52 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org, julia.lawall@lip6.fr,
+        aastha.gupta4104@gmail.com, aishpant@gmail.com,
+        florian.harbecke@fau.de, quytelda@tamalin.org,
+        shreeya.patel23498@gmail.com, tavery321@gmail.com,
+        georgiana.chelu93@gmail.com, joe@perches.com,
+        keescook@chromium.org, natechancellor@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 2/2] staging: rtl8723bs: Fix two sleep-in-atomic-context bugs in _rtw_pwr_wakeup()
+Date:   Sat, 15 Sep 2018 10:49:44 +0800
+Message-Id: <20180915024944.32553-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2018, 10:42 pm Yang Shi, <shy828301@gmail.com> wrote:
->
-> Hi Pintu,
->
-> I recall there are some ksm test cases in LTP. Did you try them out?
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.17 are:
 
-No. I haven't seen the LTP test. I will check out now.
-But I wonder what is the problem with my test?
+[FUNC] msleep
+drivers/staging/rtl8723bs/core/rtw_pwrctrl.c, 1243: 
+	msleep in _rtw_pwr_wakeup
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 510: 
+	_rtw_pwr_wakeup in rtw_set_802_11_disassociate
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 501: 
+	spin_lock_bh in rtw_set_802_11_disassociate
 
+[FUNC] msleep
+drivers/staging/rtl8723bs/core/rtw_pwrctrl.c, 1255: 
+	msleep in _rtw_pwr_wakeup
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 510: 
+	_rtw_pwr_wakeup in rtw_set_802_11_disassociate
+drivers/staging/rtl8723bs/core/rtw_ioctl_set.c, 501: 
+	spin_lock_bh in rtw_set_802_11_disassociate
 
-> On Fri, Sep 14, 2018 at 7:28 AM Pintu Kumar <pintu.ping@gmail.com> wrote:
-> >
-> > Hi All,
-> >
-> > Board: Hikey620 ARM64
-> > Kernel: 4.9.20
-> >
-> > I am trying to verify KSM (Kernel Same Page Merging) functionality on
-> > 4.9 Kernel using "mmap" and madvise user space test utility.
-> > But to my observation, it seems KSM is not working for me.
-> > CONFIG_KSM=y is enabled in kernel.
-> > ksm_init is also called during boot up.
-> >   443 ?        SN     0:00 [ksmd]
-> >
-> > ksmd thread is also running.
-> >
-> > However, when I see the sysfs, no values are written.
-> > ~ # grep -H '' /sys/kernel/mm/ksm/*
-> > /sys/kernel/mm/ksm/pages_hashed:0
-> > /sys/kernel/mm/ksm/pages_scanned:0
-> > /sys/kernel/mm/ksm/pages_shared:0
-> > /sys/kernel/mm/ksm/pages_sharing:0
-> > /sys/kernel/mm/ksm/pages_to_scan:200
-> > /sys/kernel/mm/ksm/pages_unshared:0
-> > /sys/kernel/mm/ksm/pages_volatile:0
-> > /sys/kernel/mm/ksm/run:1
-> > /sys/kernel/mm/ksm/sleep_millisecs:1000
-> >
-> > So, please let me know if I am doing any thing wrong.
-> >
-> > This is the test utility:
-> > int main(int argc, char *argv[])
-> > {
-> >         int i, n, size;
-> >         char *buffer;
-> >         void *addr;
-> >
-> >         n = 100;
-> >         size = 100 * getpagesize();
-> >         for (i = 0; i < n; i++) {
-> >                 buffer = (char *)malloc(size);
-> >                 memset(buffer, 0xff, size);
-> >                 addr =  mmap(NULL, size,
-> >                            PROT_READ | PROT_EXEC | PROT_WRITE,
-> > MAP_PRIVATE | MAP_ANONYMOUS,
-> >                            -1, 0);
-> >                 madvise(addr, size, MADV_MERGEABLE);
-> >                 sleep(1);
-> >         }
-> >         printf("Done....press ^C\n");
-> >
-> >         pause();
-> >
-> >         return 0;
-> > }
-> >
-> >
-> >
-> > Thanks,
-> > Pintu
-> >
+To fix these bugs, msleep() is replaced with mdelay().
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index 110bbe340b78..59a667753266 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -1232,7 +1232,7 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_deffer_ms, const char *cal
+ 	if (pwrpriv->ps_processing) {
+ 		DBG_871X("%s wait ps_processing...\n", __func__);
+ 		while (pwrpriv->ps_processing && jiffies_to_msecs(jiffies - start) <= 3000)
+-			msleep(10);
++			mdelay(10);
+ 		if (pwrpriv->ps_processing)
+ 			DBG_871X("%s wait ps_processing timeout\n", __func__);
+ 		else
+@@ -1244,7 +1244,7 @@ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_deffer_ms, const char *cal
+ 		while (pwrpriv->bInSuspend
+ 			&& jiffies_to_msecs(jiffies - start) <= 3000
+ 		) {
+-			msleep(10);
++			mdelay(10);
+ 		}
+ 		if (pwrpriv->bInSuspend)
+ 			DBG_871X("%s wait bInSuspend timeout\n", __func__);
+-- 
+2.17.0
+
