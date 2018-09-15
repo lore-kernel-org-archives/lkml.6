@@ -2,116 +2,123 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C8EECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27266ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66C420881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElvWEd1a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66C420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CC9B720881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9B720881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeIOMBr (ORCPT
+        id S1727473AbeIOMEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 08:01:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37294 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeIOMBr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 08:01:47 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u12-v6so12461106wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 23:43:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=54VwC8o66TdBolbtspXxKQw4dyZqvDGx+dB1c4OXNGk=;
-        b=ElvWEd1aJeFb1DxsT/OEwAOf1CkROPITq9Ui6v1ErWgWWJ/j9rOTeVPtncruO4Bac4
-         L9wukmrLynNdGtLQRfjqtYEaOVLu+LbzXLOmVH0/EBseCveP94ySpv94+t4yaUxWItUc
-         ath+MGO4Lk7Mkx5BIWxzHJcTuHYmINJVlV+AgzDIVOgrg0AYAe9vyRooewDUXXaCRbIz
-         BkubAS5YO5fPwH8Wk9p/b9p4NMFsiPulITJPSRndhj2xcu0sQdbsKr9mCqhT81gNi8fn
-         G2noh8fJ8e5gfB0Q6CKOkwzZkirwr3JCb2uZmady86MA4rl32f2iOGN9McJabq0UPuHq
-         sGtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=54VwC8o66TdBolbtspXxKQw4dyZqvDGx+dB1c4OXNGk=;
-        b=XHIPxjnj5+VfdmxJxrQ4r6WLEKNLR0TdV5yllQpqwBIRptgMrrUSHBk4WzAcaB57Z4
-         khpdDynwHviL2zCITPrf5ccZNdKbB+gGrNzmWFhAw9+X9ie0EY8xuzB4aVEhb3H2xIpf
-         JyoDzQ5+GMq6WOdWTQ9VcwClNPaj7/2cp4jKiZIvBxp/AvCQ+LgUpN+yoF5Gw3+MxVM0
-         qlTPnP5ZPCfp9+2qNQbpA7kS8PejsoBhHzxxaFWlcCX36FbIGYNC92DKxlQm917yaUFP
-         qxY4O4+dGgHJfaXiQiae19KyY4vc2drbwty4SEXRItDokZCsn2AuQk40z/taiEf8dXQY
-         p5nQ==
-X-Gm-Message-State: APzg51B8SV8Ftu8fWniZcpm7KavcRSCHTylnn1OJRzMyWcAJdePROQNI
-        /GIl3CkJPBKekAbwe3fZa9w=
-X-Google-Smtp-Source: ANB0VdYCePw5EgA1EfMyOTcGnONCVSjZQ+GNiCE3F60XcyeD4b/DBXXATTCzyD1HEV1MujdgRuOg6w==
-X-Received: by 2002:a05:6000:1291:: with SMTP id f17mr12230980wrx.215.1536993832593;
-        Fri, 14 Sep 2018 23:43:52 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id t9-v6sm2131042wmf.1.2018.09.14.23.43.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 23:43:51 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] misc: echo: Remove unnecessary parentheses and simplify check for zero
-Date:   Fri, 14 Sep 2018 23:43:37 -0700
-Message-Id: <20180915064337.845-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Sat, 15 Sep 2018 08:04:46 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41534 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726619AbeIOMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 08:04:46 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B86D735D5A00A;
+        Sat, 15 Sep 2018 14:46:45 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Sat, 15 Sep 2018
+ 14:46:43 +0800
+Message-ID: <5B9CAAD2.70501@huawei.com>
+Date:   Sat, 15 Sep 2018 14:46:42 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+MIME-Version: 1.0
+To:     kbuild test robot <lkp@intel.com>
+CC:     <kbuild-all@01.org>, <jason@lakedaemon.net>, <andrew@lunn.ch>,
+        <sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: common: use match_string() helper to simplify the
+ code
+References: <1536937519-31611-1-git-send-email-zhongjiang@huawei.com> <201809150710.kyiQ0EXh%fengguang.wu@intel.com>
+In-Reply-To: <201809150710.kyiQ0EXh%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+On 2018/9/15 7:52, kbuild test robot wrote:
+> Hi zhong,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on arm-soc/for-next]
+> [also build test ERROR on v4.19-rc3 next-20180913]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/zhong-jiang/arm-common-use-match_string-helper-to-simplify-the-code/20180915-035510
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git for-next
+> config: arm-multi_v5_defconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=arm 
+>
+> All errors (new ones prefixed by >>):
+>
+>    arch/arm/plat-orion/common.c: In function 'orion_ge00_switch_init':
+>>> arch/arm/plat-orion/common.c:487:23: error: passing argument 1 of 'match_string' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      index = match_string(d->port_names, ARRAY_SIZE(d->port_names), "cpu");
+>                           ^
+>    In file included from include/linux/bitmap.h:9:0,
+>                     from include/linux/cpumask.h:12,
+>                     from include/linux/rcupdate.h:44,
+>                     from include/linux/radix-tree.h:28,
+>                     from include/linux/idr.h:15,
+>                     from include/linux/kernfs.h:14,
+>                     from include/linux/sysfs.h:16,
+>                     from include/linux/kobject.h:20,
+>                     from include/linux/device.h:16,
+>                     from include/linux/platform_device.h:14,
+>                     from arch/arm/plat-orion/common.c:13:
+>    include/linux/string.h:184:5: note: expected 'const char * const*' but argument is of type 'char **'
+>     int match_string(const char * const *array, size_t n, const char *string);
+>         ^~~~~~~~~~~~
+>    cc1: some warnings being treated as errors
+I am sorry for that. :-[    Will repost in v2.
 
-drivers/misc/echo/echo.c:384:27: warning: equality comparison with
-extraneous parentheses [-Wparentheses-equality]
-        if ((ec->nonupdate_dwell == 0)) {
-             ~~~~~~~~~~~~~~~~~~~~^~~~
-drivers/misc/echo/echo.c:384:27: note: remove extraneous parentheses
-around the comparison to silence this warning
-        if ((ec->nonupdate_dwell == 0)) {
-            ~                    ^   ~
-drivers/misc/echo/echo.c:384:27: note: use '=' to turn this equality
-comparison into an assignment
-        if ((ec->nonupdate_dwell == 0)) {
-                                 ^~
-                                 =
-1 warning generated.
+Thanks,
+zhong jiang
+> vim +/match_string +487 arch/arm/plat-orion/common.c
+>
+>    479	
+>    480	void __init orion_ge00_switch_init(struct dsa_chip_data *d)
+>    481	{
+>    482		int index;
+>    483	
+>    484		if (!IS_BUILTIN(CONFIG_PHYLIB))
+>    485			return;
+>    486	
+>  > 487		index = match_string(d->port_names, ARRAY_SIZE(d->port_names), "cpu");
+>    488		if (index >= 0)
+>    489			d->netdev[index] = &orion_ge00.dev;
+>    490	
+>    491		orion_ge00_switch_board_info.mdio_addr = d->sw_addr;
+>    492		orion_ge00_switch_board_info.platform_data = d;
+>    493	
+>    494		mdiobus_register_board_info(&orion_ge00_switch_board_info, 1);
+>    495	}
+>    496	#endif
+>    497	
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Remove them and while we're at it, simplify the zero check as '!var' is
-used more than 'var == 0'.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/misc/echo/echo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/echo/echo.c b/drivers/misc/echo/echo.c
-index 8a5adc0d2e88..3ebe5d75ad6a 100644
---- a/drivers/misc/echo/echo.c
-+++ b/drivers/misc/echo/echo.c
-@@ -381,7 +381,7 @@ int16_t oslec_update(struct oslec_state *ec, int16_t tx, int16_t rx)
- 	 */
- 	ec->factor = 0;
- 	ec->shift = 0;
--	if ((ec->nonupdate_dwell == 0)) {
-+	if (!ec->nonupdate_dwell) {
- 		int p, logp, shift;
- 
- 		/* Determine:
--- 
-2.18.0
 
