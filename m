@@ -7,145 +7,141 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F57CECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7948EECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD82208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:40:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 274C0208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:40:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="j8xUd5QF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD82208DD
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="f4sZ3kEQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274C0208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729881AbeIOG47 (ORCPT
+        id S1729899AbeIOG5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:56:59 -0400
-Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:13056
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 02:57:09 -0400
+Received: from mail-by2nam03on0092.outbound.protection.outlook.com ([104.47.42.92]:52376
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728819AbeIOGvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:51:41 -0400
+        id S1726177AbeIOG5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:57:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yhJHpJJAHcS/A6qf7rgHUpJY6PV+dyBKmD3pzzcIX0c=;
- b=j8xUd5QFmhhexS6cHMGOty1v0TENnOt/8+VUCWA+fWIu1TK6dQeMyX4wc3Jqopw7me4GUSYqWkGC/+QsTAbGzwqMOtZB8mZ9bJ+OkjbX39bobc2Fpo8eyneYDfhngiG9i7DFVprnR7oGRwB2uQpJco7T5RAkr48ryVeZ3+D4kmg=
+ bh=ACCxMO5nccboY96dBfX0lUNQzdl3Vg6khEa8IMq2pNo=;
+ b=f4sZ3kEQ9681n6slWdQTqvTYDD0vPq3fEI/7ydpr2IPq1OfY4fj3Mj9QtAeFc+HxFQFTK33uoU4yhgqhPSBpBtEQegPVm76PnZD2utg75RZYhsCqVTZ/wgvZdKVvONHtMYG6wnJX+AxPX7dSPeAlTqWyQriaZOaoqXIR+yLyrIw=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0823.namprd21.prod.outlook.com (10.173.192.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.9; Sat, 15 Sep 2018 01:34:37 +0000
+ CY4PR21MB0757.namprd21.prod.outlook.com (10.173.192.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1164.6; Sat, 15 Sep 2018 01:40:06 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:34:37 +0000
+ 01:40:06 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 18/34] coresight: Handle errors in finding
- input/output ports
-Thread-Topic: [PATCH AUTOSEL 4.9 18/34] coresight: Handle errors in finding
- input/output ports
-Thread-Index: AQHUTJRD2BowUGIYCk+h32JwXMcStg==
-Date:   Sat, 15 Sep 2018 01:34:36 +0000
-Message-ID: <20180915013422.180023-18-alexander.levin@microsoft.com>
-References: <20180915013422.180023-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180915013422.180023-1-alexander.levin@microsoft.com>
+Subject: Re: [PATCH AUTOSEL 4.18 51/92] tools/testing/nvdimm: Fix support for
+ emulating controller temperature
+Thread-Topic: [PATCH AUTOSEL 4.18 51/92] tools/testing/nvdimm: Fix support for
+ emulating controller temperature
+Thread-Index: AQHUTJOtWQsfJbJRN0uisMsAICSYr6Twj2aAgAABgIA=
+Date:   Sat, 15 Sep 2018 01:40:06 +0000
+Message-ID: <20180915014005.GI3821@sasha-vm>
+References: <20180915012944.179481-1-alexander.levin@microsoft.com>
+ <20180915012944.179481-50-alexander.levin@microsoft.com>
+ <CAPcyv4jbHivBtLMD0uQ6TMMhObPQ_5287Lirus=RRD5O2GjB2w@mail.gmail.com>
+In-Reply-To: <CAPcyv4jbHivBtLMD0uQ6TMMhObPQ_5287Lirus=RRD5O2GjB2w@mail.gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0823;6:FxUWeeJ+ij/d7bU1mhc2eR9DWP+pleRJnQ3QHR7MswJXy9HI05qBM2n+Tw3sC6mXUvbr6E0Tb2Nlldwb7YoLplIE4S8nJAoLS+mQVb1jM9l9Wpwjdh9ymO+WCoPH5J9LxuaKe7QplTT4vCe2BL8WxPHHJAbzjUN06CHC3E90cK82+ipfNUDftqTf5mYwMd3Cf+wUMFayTtZ1YDkkiYn/wb35bdRylpFbBVFz8HIxrC2/+TGZR5xD54g7hyCiqDJmrKSlpKVqk1h4QhP/NZiD9z5i53lzrlxknjOKiTcgSPNMhNr4or60pS0vUJyXRTfBJzb9SI5tdrFmdeb6UCw4oIqy4LKnP4GDcLKE910+K2x2IKmTtn/CjWhpH78H1PGVXVEFD3q7JNk8Ujbr1KKUdEabLi/akU8YJbeIbQfwsGRjarFYdUiHurv/tr2+1ijhakkw62DcB36GBYzGBDf9gw==;5:8bAnIiONtPZ5k2LkYXxhSoBw60iIFLv7ovdaa+okkQKtDrAPCEDX1Mccj1UoS0bkayMNO6Ex0rBRdSZu0keaCoi1CdZ5Ycxq9HhwZaqjsCsSJSECfOv9lsTmrQWyvi1+by5ieUI5oN1IksmC/yUSy8vSSMcb/BmzIsvczGSYYA0=;7:PsAN5aq2nOq+MGhomShWdwSOleCQSHUzTXr+dI3gmsYBLbUPdUqxGmubwTBHUMpuc0Egl2iuT7rep7OyJQa9/3waj9/5RY40Y2d/rNGlB7AwdTtwiA6KjphJOGHpG9AWsjFu4ppneGNDU9uHk4jMVB9WGYrAh1RREqBczT1UurBLPpUvekLNg4uQPufyyQjI/4yQc3NpSMkUVzuaOscDDBGpzddx04wgm/HsrDWO/DDD8oTuqLDhpOmb88WUyKjz
-x-ms-office365-filtering-correlation-id: 1f72c73b-22bd-42d9-635f-08d61aab65e6
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0757;6:CwrMDhkM8PzWRkhc0mNrMhBflPS+vuLzZ6chx2+Psx3TM9O17/l2BbRDPPP6jEPMIBKkDptSBhNR75KFq+4NiEWegZhpiqU7uqoHVAKjGU64nFzZjW/o0sJgP0MGITv3VCratohDWvHpbcC+BzGnQJZ4tUp09/vaP6ITBD6GCrZDqW3gWC3ZUd3G8bYi4thnk2CQmIxWUVrpnEb65LCc1xmCAY5ay4KTENgg2VeUWjJLZNzCOKeLchcOaCRZrfYsa8DI5Y/hHYoCYkH6gQecJ6NCWM37NJLx6j8sLGL8CLdF9J2gKDyTgI35VnaG1NyUBNbCxSZY/iuGdIsK/6saPO3qHFzbcB47jItiwpA5G/Tf4r7HTgWeqVIVuuGaHpxC9oXju6vX0ZxpGFc1bwgGfQN7QzuV9dvSfWhf/ATAVD2J7xP2ZT58p9bJKKqQ7vE8V5XvLSXqLo6eIfxOTwx4Mg==;5:7lX7DJjE4iWo60uivj+Mssj6enAv6ao/zXDzxVJE9E1yxvO1QpyzI3+/J9vn3T96aYiuoeXjGdJjmsJ3gFkWoF79vqdSyvZPT/52Lq3rZeg33VYmCJa54YrIeUJBnEqv9DPbntK31XVaeH3T2SMchRJxOzC6S6IxGM+Fqi0maao=;7:+x7Gws0zkjxBUMgUJMqJ+c9pJ8hVgYm5qmwN/U2pHMMfxen0lgVt7DrYz+06A7cqYSRUoIGGDZDxKxv6fUhRtDoW/gY2PDolfZSBx52tL8kEAOkstQQg5DYkryCqY+VzWllc7D8CXtoQtdsEN9UVrcJdMMEGwNDjjNi4Rpv1F6rdjL+sr8x++HfOjt4HvG/aNSctl7aGHNpPCAOumh3nTTg4BU6v8OCxmojNAZI9w7EXZ8/vNElLhvFHQqdViKbq
+x-ms-office365-filtering-correlation-id: 853a73e8-de1c-4f59-97e5-08d61aac2a60
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0823;
-x-ms-traffictypediagnostic: CY4PR21MB0823:
-x-microsoft-antispam-prvs: <CY4PR21MB08239302F7633847FCCC12FCFB180@CY4PR21MB0823.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0757;
+x-ms-traffictypediagnostic: CY4PR21MB0757:
+x-microsoft-antispam-prvs: <CY4PR21MB0757FF50AA21AA3A0505F097FB180@CY4PR21MB0757.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0823;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0823;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231354)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0757;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0757;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(39860400002)(366004)(189003)(199004)(53936002)(14454004)(2900100001)(3846002)(6116002)(256004)(10290500003)(81166006)(81156014)(217873002)(76176011)(72206003)(478600001)(8936002)(25786009)(8676002)(86362001)(66066001)(6512007)(86612001)(7736002)(305945005)(97736004)(11346002)(5660300001)(5250100002)(102836004)(54906003)(2616005)(446003)(6436002)(6506007)(476003)(186003)(110136005)(2501003)(2906002)(105586002)(22452003)(10090500001)(36756003)(4326008)(68736007)(26005)(107886003)(6486002)(486006)(106356001)(1076002)(6346003)(316002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0823;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(136003)(366004)(376002)(39860400002)(346002)(199004)(189003)(6116002)(8936002)(22452003)(10090500001)(99286004)(54906003)(316002)(476003)(256004)(14444005)(3846002)(486006)(97736004)(186003)(229853002)(2900100001)(446003)(11346002)(81166006)(76176011)(5660300001)(217873002)(2906002)(33896004)(6916009)(81156014)(26005)(53936002)(6346003)(7736002)(478600001)(8676002)(6506007)(102836004)(6512007)(9686003)(105586002)(305945005)(66066001)(10290500003)(106356001)(575784001)(86362001)(6486002)(6436002)(5250100002)(25786009)(14454004)(4326008)(86612001)(6246003)(33656002)(1076002)(72206003)(68736007)(33716001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0757;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: ZNTgOZskYZG2VQlkb8lst2qbqzVtOyUtkzkjREzoGFb8kt2LJ0dT7TrOoKWAWxlugxCxHXI5q3SOPC4NlqUfU5l8Ja6Ccbcx6bUQU8/HTa5yy3f8Z3pfYrKKzY7If8xtJaCsC3Zt9RYA0EY6gavstGxlSvQjl+PT4k7h5CLF38SrSRV+D9YyDgfIcFfdNNqJ8jfZBVI7bbZOYCnOL5I4pYn+lTjao1vYpM4Pgc9wN1mJLGhXyRXRWRh+Armyy4pwYysHSbmdQV6EU8LMCpSnyyiof/PAw1ygoW6nSRtgJ28o7wgzVWtinVjbRWUfICSxvwAZBWkCN/1kRJD2pOLvQWexwvxMO13LKOvEnS1k7YA=
+x-microsoft-antispam-message-info: I/NodvdIb01HQoIB1nEih8ZM3hIQCuXrteuiX+/lNhsgZ5ZpgF5+QabSuLY+4y+B//uBjUDWO2tevhWiiWXt+NSk5hmeunjeUy6I6p4AGPJjXRFj4JRFwQ5Q5rCjp//erPSisJR4vHFc4CHm8YQ0Pw7ZH+J9M5Tow9unEOazeXI+b5HsCDQVehCYl5QMCw+O4cheMjyYcIpZ6ggQOJ16+0SmviU+jLuCpqYjCZqxpPOQJpU25z49co8yuBMZyX1RKBfILaI6sYMIQ9DcCfr17rv8LERYbHJVXb8ts66iPjAJHD4d0BLF83de/EUWMSy+s808aD2gnOn+3hGZ8ywVwxCHDgD9zVOuwDT8M9wqXQA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17D49E1094AE184D8CC4075624ED790C@namprd21.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f72c73b-22bd-42d9-635f-08d61aab65e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:34:36.9893
+X-MS-Exchange-CrossTenant-Network-Message-Id: 853a73e8-de1c-4f59-97e5-08d61aac2a60
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:40:06.5768
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0823
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0757
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Fri, Sep 14, 2018 at 06:34:43PM -0700, Dan Williams wrote:
+>On Fri, Sep 14, 2018 at 6:30 PM, Sasha Levin
+><Alexander.Levin@microsoft.com> wrote:
+>> From: Dan Williams <dan.j.williams@intel.com>
+>>
+>> [ Upstream commit e5d772fbe7685aae0dff99f3b54158a0ec32155e ]
+>>
+>> In addition to populating the value the payload also needs to set the
+>> "controller temperature valid" flag.
+>>
+>> Fixes: cdd77d3e1930 ("nfit, libnvdimm: deprecate the generic SMART ioctl=
+")
+>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+>> ---
+>>  tools/testing/nvdimm/test/nfit.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/tes=
+t/nfit.c
+>> index e2926f72a821..94c3bdf82ff7 100644
+>> --- a/tools/testing/nvdimm/test/nfit.c
+>> +++ b/tools/testing/nvdimm/test/nfit.c
+>> @@ -1308,7 +1308,8 @@ static void smart_init(struct nfit_test *t)
+>>                         | ND_INTEL_SMART_ALARM_VALID
+>>                         | ND_INTEL_SMART_USED_VALID
+>>                         | ND_INTEL_SMART_SHUTDOWN_VALID
+>> -                       | ND_INTEL_SMART_MTEMP_VALID,
+>> +                       | ND_INTEL_SMART_MTEMP_VALID
+>> +                       | ND_INTEL_SMART_CTEMP_VALID,
+>>                 .health =3D ND_INTEL_SMART_NON_CRITICAL_HEALTH,
+>>                 .media_temperature =3D 23 * 16,
+>>                 .ctrl_temperature =3D 25 * 16,
+>
+>Does no harm, but also does no benefit since this is just unit test
+>infrastructure. You may want to blacklist this directory for stable
+>checking in the future.
 
-[ Upstream commit fe470f5f7f684ed15bc49b6183a64237547910ff ]
+We backport selftests back to stable trees. People run selftests on
+stable kernels as well, so it's both important to make sure that a
+backport didn't brake anything, and to locate possible missing stable
+patches.
 
-If we fail to find the input / output port for a LINK component
-while enabling a path, we should fail gracefully rather than
-assuming port "0".
+It is also the case that backporting selftests can't "break" the kernel.
+They are disconnected from the kernel's build process so we can be less
+conservative about backporting them.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/hwtracing/coresight/coresight.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/co=
-resight/coresight.c
-index 4383324ec01c..398e44a9ec45 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -107,7 +107,7 @@ static int coresight_find_link_inport(struct coresight_=
-device *csdev,
- 	dev_err(&csdev->dev, "couldn't find inport, parent: %s, child: %s\n",
- 		dev_name(&parent->dev), dev_name(&csdev->dev));
-=20
--	return 0;
-+	return -ENODEV;
- }
-=20
- static int coresight_find_link_outport(struct coresight_device *csdev,
-@@ -125,7 +125,7 @@ static int coresight_find_link_outport(struct coresight=
-_device *csdev,
- 	dev_err(&csdev->dev, "couldn't find outport, parent: %s, child: %s\n",
- 		dev_name(&csdev->dev), dev_name(&child->dev));
-=20
--	return 0;
-+	return -ENODEV;
- }
-=20
- static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
-@@ -178,6 +178,9 @@ static int coresight_enable_link(struct coresight_devic=
-e *csdev,
- 	else
- 		refport =3D 0;
-=20
-+	if (refport < 0)
-+		return refport;
-+
- 	if (atomic_inc_return(&csdev->refcnt[refport]) =3D=3D 1) {
- 		if (link_ops(csdev)->enable) {
- 			ret =3D link_ops(csdev)->enable(csdev, inport, outport);
---=20
-2.17.1
+--
+Thanks,
+Sasha=
