@@ -2,189 +2,189 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EDEECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6BBECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EEC208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:35:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fj1opwCk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27EEC208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 765A220866
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765A220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeIOTyi (ORCPT
+        id S1727690AbeIOUOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 15:54:38 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36532 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeIOTyh (ORCPT
+        Sat, 15 Sep 2018 16:14:49 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52407 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727028AbeIOUOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 15:54:37 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x207-v6so10167191lff.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 07:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YhePIp9Ho7oAemH9C7Q79VOpJansucSF/dMXxL/tjrg=;
-        b=fj1opwCkMWaUJFhbh6b/kBqFhf7+W7izrqy0No95tSkD1dXP48eoS9OQyt5Q3nVixb
-         M/MJoRz1NOkknszFStQSUlQwAntolOiRq5i9EzcD8EcuRt25pKxL/d7I5Eb9x/ikO+Vw
-         3mnuoKUqGV6lWmR9O52YpBo77L+PQyIKLvIlg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YhePIp9Ho7oAemH9C7Q79VOpJansucSF/dMXxL/tjrg=;
-        b=ZCfPfyIgOnb8GUx0Ja9PMNpJWGGXZaQkF/oCfeRnbgozVQeGL+PxewVuKM+/LawZQM
-         8NGfbd0qTHeigRH5yKMfWUuwnLDM6CcMOsSLj+L0l+U7g8cEitVkVAOFTywrVWVxBWjk
-         kk0Uc5adfEcJ2Gyp0cc7Z3ahlswlYnwgMeLtb7QNuTsIDS0y4KJq3KBwKqJlLmvXBSHs
-         RNTUiFzbaSpKAF60E6LY7OtS5wjTLeMGZ1yTlUbxAJSp/T/qTMakeYEOCQ80rV/06929
-         WJ0vEgSnti+ayiXy7yCFu8Hv/gkEpMdGtDA3Lbo98esuiJGlPsZKBDdSpEOGkNVGnIml
-         uRVw==
-X-Gm-Message-State: APzg51C8wLE+9Ymk5Pf12Otx9U/enoX3K1md6YJMkT4dyGOamuJegZOF
-        sJ1rOzI/cNtwg+tTb0HXD77I9JEUeoheYXJaSdWSQA==
-X-Google-Smtp-Source: ANB0VdbyTdp5Vd32Id1kQ5PYVkjVsJl7d/dScZOJjuJIaLyHljXCrdMP0ig48YwaaAdaLnsPvsSgRNc28zwL4BSoF+8=
-X-Received: by 2002:a19:7706:: with SMTP id s6-v6mr10928447lfc.84.1537022124112;
- Sat, 15 Sep 2018 07:35:24 -0700 (PDT)
+        Sat, 15 Sep 2018 16:14:49 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438338|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01534;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.CrEQRz2_1537023313;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CrEQRz2_1537023313)
+          by smtp.aliyun-inc.com(10.147.42.197);
+          Sat, 15 Sep 2018 22:55:14 +0800
+Date:   Sat, 15 Sep 2018 22:55:13 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V3 11/27] csky: Atomic operations
+Message-ID: <20180915145512.GA18355@guoren-Inspiron-7460>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+ <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536757532.git.ren_guo@c-sky.com>
+ <20180912155514.GV24082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <1532001606-6689-1-git-send-email-vincent.guittot@linaro.org>
- <tip-2e62c4743adc4c7bfcbc1f45118fc7bec58cf30a@git.kernel.org>
- <20180915114657.GA63704@gmail.com> <CAKfTPtD-vAw9=aDS83eEB56JOPV74R-oG1LAKKPXkDfxPDt1vw@mail.gmail.com>
- <20180915122956.GA12378@gmail.com>
-In-Reply-To: <20180915122956.GA12378@gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Sat, 15 Sep 2018 16:35:11 +0200
-Message-ID: <CAKfTPtCSJLRjmLDHAOTBjOPg8HQyGhmwsk71bNSnz0tOqbwkyw@mail.gmail.com>
-Subject: Re: [tip:sched/core] sched/fair: Remove #ifdefs from scale_rt_capacity()
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-tip-commits@vger.kernel.org, douly.fnst@cn.fujitsu.com,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180912155514.GV24082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Sep 2018 at 14:30, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Vincent Guittot <vincent.guittot@linaro.org> wrote:
->
-> > Hi Ingo,
-> >
-> > On Sat, 15 Sep 2018 at 13:47, Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >
-> > > * tip-bot for Vincent Guittot <tipbot@zytor.com> wrote:
-> > >
-> > > > Commit-ID:  2e62c4743adc4c7bfcbc1f45118fc7bec58cf30a
-> > > > Gitweb:     https://git.kernel.org/tip/2e62c4743adc4c7bfcbc1f45118fc7bec58cf30a
-> > > > Author:     Vincent Guittot <vincent.guittot@linaro.org>
-> > > > AuthorDate: Thu, 19 Jul 2018 14:00:06 +0200
-> > > > Committer:  Ingo Molnar <mingo@kernel.org>
-> > > > CommitDate: Wed, 25 Jul 2018 11:41:05 +0200
-> > > >
-> > > > sched/fair: Remove #ifdefs from scale_rt_capacity()
-> > > >
-> > > > Reuse cpu_util_irq() that has been defined for schedutil and set irq util
-> > > > to 0 when !CONFIG_IRQ_TIME_ACCOUNTING.
-> > > >
-> > > > But the compiler is not able to optimize the sequence (at least with
-> > > > aarch64 GCC 7.2.1):
-> > > >
-> > > >       free *= (max - irq);
-> > > >       free /= max;
-> > > >
-> > > > when irq is fixed to 0
-> > > >
-> > > > Add a new inline function scale_irq_capacity() that will scale utilization
-> > > > when irq is accounted. Reuse this funciton in schedutil which applies
-> > > > similar formula.
-> > > >
-> > > > Suggested-by: Ingo Molnar <mingo@redhat.com>
-> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > > Cc: rjw@rjwysocki.net
-> > > > Link: http://lkml.kernel.org/r/1532001606-6689-1-git-send-email-vincent.guittot@linaro.org
-> > > > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > > > ---
-> > > >  kernel/sched/core.c              |  2 +-
-> > > >  kernel/sched/cpufreq_schedutil.c |  3 +--
-> > > >  kernel/sched/fair.c              | 13 +++----------
-> > > >  kernel/sched/sched.h             | 20 ++++++++++++++++++--
-> > > >  4 files changed, 23 insertions(+), 15 deletions(-)
-> > >
-> > > This commit introduced a build warning in the SMP=n case, could we please fix that? (Probably
-> > > the best to maintain variant would be to mark it as __maybe_unused.)
-> >
-> > Dou sent a fix for this warning
-> > https://lkml.org/lkml/2018/8/10/22
-> > This one remove one HAVE_SCHED_AVG_IRQ which is at the opposite of
-> > what yyou propose below
->
-> Yeah, that's a bad patch because it moves one step back, beyond also having an obvious typo in
-> the title and overall atrocious spelling that shows that not much thought must have gone into
-> the patch - yet you acked it, which makes me unhappy as a maintainer: please don't ack
-> obviously triple-flawed patches!
+Thx for the review, that's very helpful.
 
-sorry about that
+On Wed, Sep 12, 2018 at 05:55:14PM +0200, Peter Zijlstra wrote:
+> On Wed, Sep 12, 2018 at 09:24:45PM +0800, Guo Ren wrote:
+> 
+> > +#define ATOMIC_OP(op, c_op)						\
+> > +static inline void atomic_##op(int i, atomic_t *v)			\
+> > +{									\
+> > +	unsigned long tmp;						\
+> > +									\
+> > +	smp_mb();							\
+> > +	asm volatile (							\
+> > +	"1:	ldex.w		%0, (%2) \n"				\
+> > +	"	" #op "		%0, %1   \n"				\
+> > +	"	stex.w		%0, (%2) \n"				\
+> > +	"	bez		%0, 1b   \n"				\
+> > +		: "=&r" (tmp)						\
+> > +		: "r" (i), "r"(&v->counter)				\
+> > +		: "memory");						\
+> > +	smp_mb();							\
+> > +}
+> 
+> ATOMIC_OP doesn't need to imply any smp_mb()'s what so ever.
+Ok.
 
->
-> > and Miguel also made a proposal:
-> > https://lkml.org/lkml/2018/9/8/215
-> > based on __maybe_unused
->
-> That solution is probably better, but:
->
-> > >
-> > > Also, while at it, there's a number of other places that use this pattern:
-> > >
-> > > > -#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> > > > +#ifdef HAVE_SCHED_AVG_IRQ
-> > >
-> > > Could we convert those to HAVE_SCHED_AVG_IRQ as well?
-> >
-> > I'm not sure that we can convert all to HAVE_SCHED_AVG_IRQ
-> >
-> > >
-> > > dagon:~/tip> git grep 'defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)' kernel/sched/
-> > > kernel/sched/core.c:#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> >
-> > we can't replace one because the variables can be used when
-> > HAVE_SCHED_AVG_IRQ is undefined
->
-> Well, firstly, why is HAVE_SCHED_AVG_IRQ defined in a header and not in the Kconfig space as I
-> originally suggested?
->
-> Secondly, HAVE_SCHED_AVG_IRQ is defined poorly AFAICS, it should be 0/1 so it can be used as a
-> replacement pattern in #if sequences - not in #ifdef sequences as your patch did.
->
-> I.e. this needs to be sorted out and done properly, the concerns you voice are simply a side
-> effect of this having been done badly.
+> > +#define ATOMIC_OP_RETURN(op, c_op)					\
+> > +static inline int atomic_##op##_return(int i, atomic_t *v)		\
+> > +{									\
+> > +	unsigned long tmp, ret;						\
+> > +									\
+> > +	smp_mb();							\
+> > +	asm volatile (							\
+> > +	"1:	ldex.w		%0, (%3) \n"				\
+> > +	"	" #op "		%0, %2   \n"				\
+> > +	"	mov		%1, %0   \n"				\
+> > +	"	stex.w		%0, (%3) \n"				\
+> > +	"	bez		%0, 1b   \n"				\
+> > +		: "=&r" (tmp), "=&r" (ret)				\
+> > +		: "r" (i), "r"(&v->counter)				\
+> > +		: "memory");						\
+> > +	smp_mb();							\
+> > +									\
+> > +	return ret;							\
+> > +}
+> > +
+> > +#define ATOMIC_FETCH_OP(op, c_op)					\
+> > +static inline int atomic_fetch_##op(int i, atomic_t *v)			\
+> > +{									\
+> > +	unsigned long tmp, ret;						\
+> > +									\
+> > +	smp_mb();							\
+> > +	asm volatile (							\
+> > +	"1:	ldex.w		%0, (%3) \n"				\
+> > +	"	mov		%1, %0   \n"				\
+> > +	"	" #op "		%0, %2   \n"				\
+> > +	"	stex.w		%0, (%3) \n"				\
+> > +	"	bez		%0, 1b   \n"				\
+> > +		: "=&r" (tmp), "=&r" (ret)				\
+> > +		: "r" (i), "r"(&v->counter)				\
+> > +		: "memory");						\
+> > +	smp_mb();							\
+> > +									\
+> > +	return ret;							\
+> > +}
+> 
+> For these you could generate _relaxed variants and not provide smp_mb()
+> inside them.
+Ok, but I'll modify it in next commit.
+ 
+> > +#else /* CONFIG_CPU_HAS_LDSTEX */
+> > +
+> > +#include <linux/irqflags.h>
+> > +
+> 
+> > +#define ATOMIC_OP(op, c_op)						\
+> > +static inline void atomic_##op(int i, atomic_t *v)			\
+> > +{									\
+> > +	unsigned long tmp, flags;					\
+> > +									\
+> > +	raw_local_irq_save(flags);					\
+> > +									\
+> > +	asm volatile (							\
+> > +	"	ldw		%0, (%2) \n"				\
+> > +	"	" #op "		%0, %1   \n"				\
+> > +	"	stw		%0, (%2) \n"				\
+> > +		: "=&r" (tmp)						\
+> > +		: "r" (i), "r"(&v->counter)				\
+> > +		: "memory");						\
+> > +									\
+> > +	raw_local_irq_restore(flags);					\
+> > +}
+> 
+> Is this really 'better' than the generic UP fallback implementation?
+There is a lock irq instruction "idly4" with out irq_save. eg:
+	asm volatile (							\
+	"	idly4			 \n"				\
+	"	ldw		%0, (%2) \n"				\
+	"	" #op "		%0, %1   \n"				\
+	"	stw		%0, (%2) \n"				\
+I'll change to that after full tested.
 
+> > +static inline void arch_spin_lock(arch_spinlock_t *lock)
+> > +{
+> > +	arch_spinlock_t lockval;
+> > +	u32 ticket_next = 1 << TICKET_NEXT;
+> > +	u32 *p = &lock->lock;
+> > +	u32 tmp;
+> > +
+> > +	smp_mb();
+> 
+> spin_lock() doesn't need smp_mb() before.
+read_lock and write_lock also needn't smp_mb() before, isn't it?
 
-Ok. I'm going to prepare a patchset to fix all these points.
+> > +
+> > +static inline void arch_spin_unlock(arch_spinlock_t *lock)
+> > +{
+> > +	smp_mb();
+> > +	lock->tickets.owner++;
+> > +	smp_mb();
+> 
+> spin_unlock() doesn't need smp_mb() after.
+read_unlock and write_unlock also needn't smp_mb() after, isn't it?
 
-Regards,
-Vincent
+> > +#else /* CONFIG_QUEUED_RWLOCKS */
+> > +
+> > +/*
+> > + * Test-and-set spin-locking.
+> > + */
+> 
+> Why retain that?
+> 
+> same comments; it has far too many smp_mb()s in.
+I'm not sure about queued_rwlocks and just for 2-cores-smp test-and-set is
+faster and simpler, isn't it?
 
->
-> Thanks,
->
->         Ingo
+Best Regards
+ Guo Ren
