@@ -2,199 +2,123 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B939CECE563
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E527ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 19:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7BD2083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:52:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7BD2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E593208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 19:04:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z08rjGbT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E593208DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeIPAMf (ORCPT
+        id S1727762AbeIPAY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 20:12:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56519 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbeIPAMf (ORCPT
+        Sat, 15 Sep 2018 20:24:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38591 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbeIPAY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 20:12:35 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8FIqRDc3924537
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 15 Sep 2018 11:52:27 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8FIqQhM3924533;
-        Sat, 15 Sep 2018 11:52:26 -0700
-Date:   Sat, 15 Sep 2018 11:52:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Brijesh Singh <tipbot@zytor.com>
-Message-ID: <tip-6a1cac56f41f9ea94e440dfcc1cac44b41a1b194@git.kernel.org>
-Cc:     sean.j.christopherson@intel.com, thomas.lendacky@amd.com,
-        rkrcmar@redhat.com, bp@suse.de, brijesh.singh@amd.com,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, pbonzini@redhat.com
-Reply-To: hpa@zytor.com, mingo@kernel.org, brijesh.singh@amd.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          pbonzini@redhat.com, sean.j.christopherson@intel.com,
-          rkrcmar@redhat.com, thomas.lendacky@amd.com, bp@suse.de
-In-Reply-To: <1536932759-12905-3-git-send-email-brijesh.singh@amd.com>
-References: <1536932759-12905-3-git-send-email-brijesh.singh@amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/kvm: Use __bss_decrypted attribute in shared
- variables
-Git-Commit-ID: 6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 15 Sep 2018 20:24:26 -0400
+Received: by mail-io1-f67.google.com with SMTP id y3-v6so8536177ioc.5;
+        Sat, 15 Sep 2018 12:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0j8KMasfVu627z7xA+dcCLDd9YgQc//1YMbQpger1YM=;
+        b=Z08rjGbTHAroGa5KNmUao6YqAgX1UIklTs+WfbAP0x8PB/LgS4DwJPeHRT4BNgQnTQ
+         V0PbMt0/8MIbQ29VRrtkujR88qIjNfQ7+MIBH55QkeQIEy+pNI2m25wBaM7eP3YpRSxs
+         HMb5HQm0u/ClVAgimUaKEyIq2wnPNV7e7wUVZGs8yopLQQ2OuEMci84MeYvrV4zeliaC
+         HpfrpEGSjbG1K5NL7c/Gw6YdlIOgnOb4D2Y+rOAd4YDwh2aKDm3VG7MGifwpzhVYhQsE
+         VhsYsFWkGyS0JEUNXHXAS4gnS66YUkO9jtbPBdsrjAX7FEhss7t7BVHKduOD4yiVsD1U
+         J8bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0j8KMasfVu627z7xA+dcCLDd9YgQc//1YMbQpger1YM=;
+        b=TNQ068LVk+fwFoUoQyikNx8UDQd/SthjM1NoBFRSxa2rrxF14phNbWsoPqS5pF0SXO
+         ulshTTQBiuiY9bkeNEgtcReGF5m2cFfVmYGmXWj+VRm+kcL+T/+xS/ckJ1fnP+bo1fb/
+         VlrjdkH5GyEBy4BqJ0773EcahcAEOnTvNKGabSzeSNb3J+nzezttYW0YihuqPM9a3623
+         mLMsx+DCYi36bq/+KyJUgVDy6v6iyBQGSIdUQuhHtCIjVxDh+Iu1/7FfpOBt3+GAmI2n
+         wHtx05+EOaCqrROwDnP1KO4/mMTzhtxcjlSdalQ5IZCE8UfbTPcHpJ6l/LPx3TvXnpj0
+         MM+Q==
+X-Gm-Message-State: APzg51CPPHTyxGgpjmayAnpjrWzQOl7x51OAUzbZGF3OOcia/9D9iMBL
+        dnLG3fF6hMgzQUwv8lze41emQHBz/NZ+65zQD9Y=
+X-Google-Smtp-Source: ANB0VdaEyD9rluwX0NfvE2ShNCNOqlJ1PnKfZS9FDWxzUeGvRpLAr+D+rZVlUXaDrOP2TFCHhXDUjW2Om9skgIUGqfc=
+X-Received: by 2002:a6b:e05:: with SMTP id 5-v6mr14646750ioo.141.1537038265712;
+ Sat, 15 Sep 2018 12:04:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180915050843.19183-1-deepa.kernel@gmail.com>
+ <20180915050843.19183-5-deepa.kernel@gmail.com> <CAK8P3a2Kkm2ubg_MVN_BJL=s7qpUB1-np=9zVpcJ2U-aPAJswg@mail.gmail.com>
+ <CABeXuvoOEW9+5BPiDN+2S1boyMSg+csvSAd4ue03TB+yEO6dLg@mail.gmail.com> <alpine.DEB.2.21.1809152039440.1650@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809152039440.1650@nanos.tec.linutronix.de>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sat, 15 Sep 2018 12:04:11 -0700
+Message-ID: <CABeXuvrU_B0gFhdHiYvEAUgDMso_94=M8iPJj+w7N1LnGMrKAw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] pselect6: use __kernel_timespec
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
-Gitweb:     https://git.kernel.org/tip/6a1cac56f41f9ea94e440dfcc1cac44b41a1b194
-Author:     Brijesh Singh <brijesh.singh@amd.com>
-AuthorDate: Fri, 14 Sep 2018 08:45:59 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 15 Sep 2018 20:48:46 +0200
+On Sat, Sep 15, 2018 at 11:42 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Sat, 15 Sep 2018, Deepa Dinamani wrote:
+>
+> > On Sat, Sep 15, 2018 at 8:28 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Sat, Sep 15, 2018 at 7:09 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > >
+> > > > +#if defined(CONFIG_64BIT_TIME)
+> > > > +
+> > > > +COMPAT_SYSCALL_DEFINE6(pselect6_time64, int, n, compat_ulong_t __user *, inp,
+> > > > +       compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
+> > > > +       struct __kernel_timespec __user *, tsp, void __user *, sig)
+> > >
+> > > I got a link error here since compat_sys_pselect6_time64 and
+> > > compat_sys_ppoll_time64 are only defined when CONFIG_64BIT_TIME
+> > > is set.
+> > >
+> > > I did not think we would select this symbol on arm64, is that a mistake
+> > > on my side, or should the #ifdef check be removed?
+> >
+> > But, this is a compat syscall.
+> > When we introduced this CONFIG_64BIT_TIME we planned to use it for
+> > compat syscalls also is my understanding.
+> >
+> > config 64BIT_TIME
+> >          def_bool ARCH_HAS_64BIT_TIME
+> >          help
+> >           This should be selected by all architectures that need to support
+> >            new system calls with a 64-bit time_t. This is relevant on all 32-bit
+> >            architectures, and 64-bit architectures as part of compat syscall
+> >            handling.
+> >
+> > This means it should be set on 64 bit architechtures also right?
+>
+> It's only set when 32bit compat mode is enabled on the 64bit kernel.
 
-x86/kvm: Use __bss_decrypted attribute in shared variables
+Ok, then we could delete the #ifdef like Arnd suggested. So this will
+be defined for all architectures that enable CONFIG_COMPAT
+unconditionally.
+I will post an updated version.
 
-The recent removal of the memblock dependency from kvmclock caused a SEV
-guest regression because the wall_clock and hv_clock_boot variables are
-no longer mapped decrypted when SEV is active.
-
-Use the __bss_decrypted attribute to put the static wall_clock and
-hv_clock_boot in the .bss..decrypted section so that they are mapped
-decrypted during boot.
-
-In the preparatory stage of CPU hotplug, the per-cpu pvclock data pointer
-assigns either an element of the static array or dynamically allocated
-memory for the pvclock data pointer. The static array are now mapped
-decrypted but the dynamically allocated memory is not mapped decrypted.
-However, when SEV is active this memory range must be mapped decrypted.
-
-Add a function which is called after the page allocator is up, and
-allocate memory for the pvclock data pointers for the all possible cpus.
-Map this memory range as decrypted when SEV is active.
-
-Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org
-Link: https://lkml.kernel.org/r/1536932759-12905-3-git-send-email-brijesh.singh@amd.com
-
----
- arch/x86/kernel/kvmclock.c | 52 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 1e6764648af3..013fe3d21dbb 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -28,6 +28,7 @@
- #include <linux/sched/clock.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
-+#include <linux/set_memory.h>
- 
- #include <asm/hypervisor.h>
- #include <asm/mem_encrypt.h>
-@@ -61,9 +62,10 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
- 	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
- 
- static struct pvclock_vsyscall_time_info
--			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
--static struct pvclock_wall_clock wall_clock;
-+			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __bss_decrypted __aligned(PAGE_SIZE);
-+static struct pvclock_wall_clock wall_clock __bss_decrypted;
- static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
-+static struct pvclock_vsyscall_time_info *hvclock_mem;
- 
- static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
- {
-@@ -236,6 +238,45 @@ static void kvm_shutdown(void)
- 	native_machine_shutdown();
- }
- 
-+static void __init kvmclock_init_mem(void)
-+{
-+	unsigned long ncpus;
-+	unsigned int order;
-+	struct page *p;
-+	int r;
-+
-+	if (HVC_BOOT_ARRAY_SIZE >= num_possible_cpus())
-+		return;
-+
-+	ncpus = num_possible_cpus() - HVC_BOOT_ARRAY_SIZE;
-+	order = get_order(ncpus * sizeof(*hvclock_mem));
-+
-+	p = alloc_pages(GFP_KERNEL, order);
-+	if (!p) {
-+		pr_warn("%s: failed to alloc %d pages", __func__, (1U << order));
-+		return;
-+	}
-+
-+	hvclock_mem = page_address(p);
-+
-+	/*
-+	 * hvclock is shared between the guest and the hypervisor, must
-+	 * be mapped decrypted.
-+	 */
-+	if (sev_active()) {
-+		r = set_memory_decrypted((unsigned long) hvclock_mem,
-+					 1UL << order);
-+		if (r) {
-+			__free_pages(p, order);
-+			hvclock_mem = NULL;
-+			pr_warn("kvmclock: set_memory_decrypted() failed. Disabling\n");
-+			return;
-+		}
-+	}
-+
-+	memset(hvclock_mem, 0, PAGE_SIZE << order);
-+}
-+
- static int __init kvm_setup_vsyscall_timeinfo(void)
- {
- #ifdef CONFIG_X86_64
-@@ -250,6 +291,9 @@ static int __init kvm_setup_vsyscall_timeinfo(void)
- 
- 	kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
- #endif
-+
-+	kvmclock_init_mem();
-+
- 	return 0;
- }
- early_initcall(kvm_setup_vsyscall_timeinfo);
-@@ -269,8 +313,10 @@ static int kvmclock_setup_percpu(unsigned int cpu)
- 	/* Use the static page for the first CPUs, allocate otherwise */
- 	if (cpu < HVC_BOOT_ARRAY_SIZE)
- 		p = &hv_clock_boot[cpu];
-+	else if (hvclock_mem)
-+		p = hvclock_mem + cpu - HVC_BOOT_ARRAY_SIZE;
- 	else
--		p = kzalloc(sizeof(*p), GFP_KERNEL);
-+		return -ENOMEM;
- 
- 	per_cpu(hv_clock_per_cpu, cpu) = p;
- 	return p ? 0 : -ENOMEM;
+Thanks,
+Deepa
