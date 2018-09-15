@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BF2ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB1AECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C908A20882
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB673208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/c9Q+yl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C908A20882
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxHughbX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB673208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeIOIal (ORCPT
+        id S1727226AbeIOI6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 04:30:41 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37718 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIOIal (ORCPT
+        Sat, 15 Sep 2018 04:58:50 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41020 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIOI6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 04:30:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h69-v6so5115991pfd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
+        Sat, 15 Sep 2018 04:58:49 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b12-v6so5012239plr.8;
+        Fri, 14 Sep 2018 20:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=251ZpBy3wzqgLLP+TQhmWnziNpr/7ye8/RmMWmT3hz8=;
-        b=Q/c9Q+ylmTgzzdJMN2DSSQgCtlNGgSKg7pSRWY8oiRJVF4uR8qcXtUbcG9bcc6aYP7
-         DM0MvdJmijvu0uoiGsNtCquBc3gLHb+x09KlAiOPcB2I9QTm0fmTT12dd/s2lBomV8I2
-         6thk52pJJy6dmPPA8zrjVF7r6sTr4aRYzf7e7xOXWnZnmeHxLHf0UAirE8Y4bcyW2Rmf
-         /zx8Otukla+UBazc79/Nl5pZYkwNpb9cF8QIKsvncJhYbnMWltTAk4vCEOqqh7WCySJ1
-         h6mFSLpVw2QrFwgaAR3jkLICZRFUA/F1rlxgGIG2mMUtgTpkYwNmnT9VmPdv4NuCvC79
-         1ikw==
+        bh=PG75NBZAQXGS57U08M9CJ+QkfhHgTs56HWq6D4D4LPc=;
+        b=BxHughbXL95eAczzkLTIcO9wzR1muAkVmo0FYrnK20TOy/K+kXlLpZMRdAufU1JSIM
+         8QDCUB5DpxAjI4XtlTzoDoea4MsADud/zVNbYR+02jjgomHrup3Xt1z8H9PfTFzhwt0D
+         tHOl4Ij7YJ+SyPwpx/N5NMQUEsHnstuuAYOT1xcreTjz7Epmuk6RXUo//OdnFu3BTQ5m
+         6Kr7zdVCSW8xKF/02odEf6WvUZzssASJbMzZzSNGPHDlZeosUhs0eJE79kuExCyEDzQM
+         1uIy3rrEwW2EkGOaw4k+bScMqyDxAvfa/nxR1H4aK+QmOX679bH07+NJxsFMULZzAF+h
+         e36A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=251ZpBy3wzqgLLP+TQhmWnziNpr/7ye8/RmMWmT3hz8=;
-        b=V7l2ukKWJ9QNNboWcyuw/zPbCBPDaaf4dCIIlTpsnnTuH//SfbXv8sQ/3tUtc5G7Xf
-         VlXzkBMlIe2sXk0kwJIgADp67D2dv9FLZOosSoZBRIEvaW8cAJJdbKbgpM8s93CwjoJW
-         ogE1QOISf6BWMuENdxeXJYUI5IJ6TJzZxMT8MEpQTGoaMYoab8ZIPOjzNdiVllsPiDdi
-         pAJX0cVcZSczBXY276qQrkFGLKmhBlpyJ9qphrclksWiMu57WALbYh0h6NUT+phD3LtV
-         2pK+rif0xwq+cQCfajRTO7VrBN0BXfN7vo88idenLDvjU1Rta/giHoa6OPm1OvlzKeU5
-         4IMQ==
-X-Gm-Message-State: APzg51BDgd7dThd9OQUWjpbfX5eCvG+tSCp5QnlLskrL0a5Y3ZyvB3/U
-        Z1/yCdaaNpzaY5GZr0ymzeg=
-X-Google-Smtp-Source: ANB0VdYVq2GCTvmhFcr+yEWIR1NNFL/f9bHCCWchsgPnj7H/ZQ2XygrrisQXAP9/J4S5bmOY08mwhQ==
-X-Received: by 2002:a63:4283:: with SMTP id p125-v6mr14249003pga.142.1536981200600;
-        Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
+        bh=PG75NBZAQXGS57U08M9CJ+QkfhHgTs56HWq6D4D4LPc=;
+        b=HMvwMoOoO2dZkhGLaHdR05JypOPXQp5i9IbEzitLJjV/f2j/t7y1Xo+EQuK2dGhgNV
+         ky09N+s/10MauqP/ZxAieWqMGJ33GtXYxfp4LOP9uBGWqDTj/x6St4h63C8Lr6HZ1pmR
+         vMAcvDI6gjacWw1jNzdiEwu9McSzAu04jpDeMPQFj35bFW+HCBJcsno9aI029TVKLeTv
+         D/qpmjuXNoPTR+MNqlmK8BbxvxgMdu3f91YZeld/6jaZTSBOHWZbFJFxzA6PVFGxhVER
+         SzcepAA0lqN4IJiHgfqpjqPX7xQtFMkeNKoS5lnyDGZiMwzetggUbj6KO29l7GpCgIlV
+         kP4g==
+X-Gm-Message-State: APzg51BpnBTr8bVvfWhiOAUbO8S+GpUXuGRRFx4AjgJA0MVqgLdOWuCW
+        SrQ6qc1FbhX6WnvtztArMhY=
+X-Google-Smtp-Source: ANB0VdYt6CfqaA6+RMXnGNEery6f3O6wVUgDPtVr6qk+3UzyHM6pdHf5xqxOClUgNbdQwZ9w4mRk8w==
+X-Received: by 2002:a17:902:900a:: with SMTP id a10-v6mr14801298plp.143.1536982884556;
+        Fri, 14 Sep 2018 20:41:24 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
-        by smtp.gmail.com with ESMTPSA id y18-v6sm9849594pfl.90.2018.09.14.20.13.17
+        by smtp.gmail.com with ESMTPSA id c8-v6sm10255767pfb.147.2018.09.14.20.41.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
+        Fri, 14 Sep 2018 20:41:23 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     lidza.louina@gmail.com, markh@compro.net,
-        gregkh@linuxfoundation.org
-Cc:     driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] staging: dgnc: Fix a sleep-in-atomic-context bug in cls_assert_modem_signals()
-Date:   Sat, 15 Sep 2018 11:13:03 +0800
-Message-Id: <20180915031303.5302-1-baijiaju1990@gmail.com>
+To:     james.smart@broadcom.com, dick.kennedy@broadcom.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] scsi: lpfc: Fix three sleep-in-atomic-context bugs in lpfc_sli4_nvmet_alloc()
+Date:   Sat, 15 Sep 2018 11:41:15 +0800
+Message-Id: <20180915034115.6543-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -72,38 +72,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The driver may sleep with holding a spinlock.
-The function call path (from bottom to top) in Linux-4.17 is:
+The function call paths (from bottom to top) in Linux-4.17 are:
 
-[FUNC] usleep_range
-drivers/staging/dgnc/dgnc_cls.c, 391: 
-	usleep_range in cls_assert_modem_signals
-drivers/staging/dgnc/dgnc_cls.c, 449: 
-	cls_assert_modem_signals in cls_copy_data_from_queue_to_uart
-drivers/staging/dgnc/dgnc_cls.c, 406: 
-	_raw_spin_lock_irqsave in cls_copy_data_from_queue_to_uart
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/scsi/lpfc/lpfc_mem.c, 633: 
+	kzalloc in lpfc_sli4_nvmet_alloc
+drivers/scsi/lpfc/lpfc_sli.c, 6729: 
+	[FUNC_PTR]lpfc_sli4_nvmet_alloc in lpfc_post_rq_buffer
+drivers/scsi/lpfc/lpfc_sli.c, 6723: 
+	_raw_spin_lock_irqsave in lpfc_post_rq_buffer
 
-To fix this bug, usleep_range() is replaced with udelay().
+[FUNC] dma_pool_alloc(GFP_KERNEL)
+drivers/scsi/lpfc/lpfc_mem.c, 637: 
+	dma_pool_alloc in lpfc_sli4_nvmet_alloc
+drivers/scsi/lpfc/lpfc_sli.c, 6729: 
+	[FUNC_PTR]lpfc_sli4_nvmet_alloc in lpfc_post_rq_buffer
+drivers/scsi/lpfc/lpfc_sli.c, 6723: 
+	_raw_spin_lock_irqsave in lpfc_post_rq_buffer
 
-This bug is found by my static analysis tool DSAC.
+[FUNC] dma_pool_alloc(GFP_KERNEL)
+drivers/scsi/lpfc/lpfc_mem.c, 643: 
+	dma_pool_alloc in lpfc_sli4_nvmet_alloc
+drivers/scsi/lpfc/lpfc_sli.c, 6729: 
+	[FUNC_PTR]lpfc_sli4_nvmet_alloc in lpfc_post_rq_buffer
+drivers/scsi/lpfc/lpfc_sli.c, 6723: 
+	_raw_spin_lock_irqsave in lpfc_post_rq_buffer
+
+Note that [FUNC_PTR] means a function pointer call is used.
+
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+
+These bugs are found by my static analysis tool DSAC.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/staging/dgnc/dgnc_cls.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/lpfc/lpfc_mem.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
-index 7e6cbfe4e4ee..a1e98ee7f9e0 100644
---- a/drivers/staging/dgnc/dgnc_cls.c
-+++ b/drivers/staging/dgnc/dgnc_cls.c
-@@ -388,7 +388,7 @@ static void cls_assert_modem_signals(struct channel_t *ch)
- 	writeb(out, &ch->ch_cls_uart->mcr);
+diff --git a/drivers/scsi/lpfc/lpfc_mem.c b/drivers/scsi/lpfc/lpfc_mem.c
+index 9c22a2c93462..20359e5d0016 100644
+--- a/drivers/scsi/lpfc/lpfc_mem.c
++++ b/drivers/scsi/lpfc/lpfc_mem.c
+@@ -631,18 +631,18 @@ lpfc_sli4_nvmet_alloc(struct lpfc_hba *phba)
+ {
+ 	struct rqb_dmabuf *dma_buf;
  
- 	/* Give time for the UART to actually drop the signals */
--	usleep_range(10, 20);
-+	udelay(20);
- }
+-	dma_buf = kzalloc(sizeof(struct rqb_dmabuf), GFP_KERNEL);
++	dma_buf = kzalloc(sizeof(struct rqb_dmabuf), GFP_ATOMIC);
+ 	if (!dma_buf)
+ 		return NULL;
  
- static void cls_copy_data_from_queue_to_uart(struct channel_t *ch)
+-	dma_buf->hbuf.virt = dma_pool_alloc(phba->lpfc_hrb_pool, GFP_KERNEL,
++	dma_buf->hbuf.virt = dma_pool_alloc(phba->lpfc_hrb_pool, GFP_ATOMIC,
+ 					    &dma_buf->hbuf.phys);
+ 	if (!dma_buf->hbuf.virt) {
+ 		kfree(dma_buf);
+ 		return NULL;
+ 	}
+ 	dma_buf->dbuf.virt = dma_pool_alloc(phba->lpfc_nvmet_drb_pool,
+-					    GFP_KERNEL, &dma_buf->dbuf.phys);
++					    GFP_ATOMIC, &dma_buf->dbuf.phys);
+ 	if (!dma_buf->dbuf.virt) {
+ 		dma_pool_free(phba->lpfc_hrb_pool, dma_buf->hbuf.virt,
+ 			      dma_buf->hbuf.phys);
 -- 
 2.17.0
 
