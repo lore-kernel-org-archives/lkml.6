@@ -2,154 +2,203 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85824ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EBDECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 09:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 030FB20881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:59:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKAhUjdV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030FB20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 06DEA20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 09:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06DEA20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbeIOOR0 (ORCPT
+        id S1727028AbeIOOWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 10:17:26 -0400
-Received: from mail-pl1-f179.google.com ([209.85.214.179]:33665 "EHLO
-        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbeIOORZ (ORCPT
+        Sat, 15 Sep 2018 10:22:47 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:36382 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeIOOWr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 10:17:25 -0400
-Received: by mail-pl1-f179.google.com with SMTP id b97-v6so26338plb.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 01:59:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=VEHzPpsRRc8ZC2LZdoCpv+oE9t1b7YKq2VXXN0rUd64=;
-        b=hKAhUjdV8QdtkbodwHt4vbAlx0IZqyFWnrlE/XkoMEpyOtgunvj9fYivQSJngKuR9s
-         uWI/rUk8XgnoDbh7cMfFcIX8V32Fbj3hB9hv4nd+NLEHlWIBrzotibG5jf0+XIELfeFQ
-         LKqoVTmPrpKU71j/HvYrGUqF6Xm2Ov9OyjZOJdn/9iYi49Qag5oNJ8otA+HOR4okQb47
-         a2hzLtScUJFqvlLnjqhMbmEd6yPxLOXNjB/1/T3fAXJ//E03DHAhFuZ485rCI/icO8kd
-         LDsYniwgyyqk1gg+g5Qjdo52BI2LR550679G2OOo4oX1P52ibJlU75JZOrmKPfD7Iisc
-         8iGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=VEHzPpsRRc8ZC2LZdoCpv+oE9t1b7YKq2VXXN0rUd64=;
-        b=cDrlzFU5UA+Les049fLwA+B3m0NHCjchHd0pPRtk3xHMQjPzgF9hJUJ/MvzJaxdrum
-         6mKOGLi3JFQ4UyKDeOct3fqsvP0eArYkxBbBhDGKFmSlI2DGuubInsXNv4pMzZd0VaCd
-         Eu0WZRAUNRY4/5Cjd5Sklvc6tw1UKA+d+T28GXdYv70m+b1ej+DuGdfGnPPijMxK5hk9
-         342wTM88NXdTFw8nqGaCoBOCux2ef8JMPzUZ5/9shT/TUH6DBw4e1nVvgmM5Mz6CcPK8
-         SCy3F1s7sRG5IBwcsolDp4XMbckNvaj3qlt5HbGMWkIt2ElgHyghyNZdbSTaq4A4eoPK
-         gVAg==
-X-Gm-Message-State: APzg51BcNaQ3Ez+1SWhgygjh60E1pkiaC+aLY2c6o+/wyTScNdP+yLkA
-        uWzVt0hFZXtJrDdGb/SXryQkIozT
-X-Google-Smtp-Source: ANB0VdbaVfVWTRtW4zsESwzK+lMikPi7ug5izkQVYpxjVJs2WMV22oBu+EGBHGoO1c3P8dsZD+hjhw==
-X-Received: by 2002:a17:902:ac97:: with SMTP id h23-v6mr11677386plr.174.1537001951089;
-        Sat, 15 Sep 2018 01:59:11 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.58? ([2402:f000:1:1501:200:5efe:a66f:473a])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm16954136pgi.50.2018.09.15.01.59.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 01:59:10 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] gpu: drm: amdgpu: Possible sleep-in-atomic-context bugs in
- amdgpu_uvd_ring_begin_use()
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <f09853dc-591c-05d3-9f56-63e4b338c585@gmail.com>
-Date:   Sat, 15 Sep 2018 16:59:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 15 Sep 2018 10:22:47 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g16Ut-00020L-Cr from Akash_Gajjar@mentor.com ; Sat, 15 Sep 2018 02:04:11 -0700
+Received: from [172.30.152.247] (137.202.0.90) by
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Sat, 15 Sep 2018 10:04:00 +0100
+Subject: Re: [PATCH] arm64: dts: rockchip: add initial dts support for
+ Rockpro64 board
+To:     Heiko Stuebner <heiko@sntech.de>
+CC:     <deepak_das@mentor.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Levin Du <djw@t-chip.com.cn>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <Akash_Gajjar@mentor.com>
+ <1536926957-12432-1-git-send-email-Akash_Gajjar@mentor.com>
+ <5171978.eGO5IDoIUo@phil>
+From:   agajjar <Akash_Gajjar@mentor.com>
+Message-ID: <bdb645c3-d9b7-03e8-7dcf-7d5bda91c4c8@mentor.com>
+Date:   Sat, 15 Sep 2018 14:33:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5171978.eGO5IDoIUo@phil>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.17 are:
+Hi Heiko,
 
-[FUNC] mutex_lock_nested
-drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
-     mutex_lock_nested in amdgpu_dpm_enable_uvd
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
-     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
-drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
-     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
-drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
-     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
-drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
-     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
-drivers/gpu/drm/amd/amdgpu/vi.c, 207:
-     amdgpu_mm_wreg in vi_gc_cac_rreg
-drivers/gpu/drm/amd/amdgpu/vi.c, 206:
-     _raw_spin_lock_irqsave in vi_gc_cac_rreg
+On 9/14/2018 11:23 PM, Heiko Stuebner wrote:
+> Hi Akash,
+>
+> Am Freitag, 14. September 2018, 14:09:09 CEST schrieb Akash Gajjar:
+>> Rockpro64 board is a rockchip RK3399 based board from pine64.org.
+>> This commit adds initial device tree support for Rockpro64 board.
+>>
+>> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+> generally the patch looks great already. Hopefully we will get an Ack
+> from the dt-maintaintainers for the binding and I noticed two small
+> issues I'll describe below.
+>
+>
+>> ---
+>>   Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+>>   arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>>   arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts  | 770 +++++++++++++++++++++
+>>   3 files changed, 775 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+>> index acfd3c7..ac95183 100644
+>> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
+>> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
+>> @@ -160,6 +160,10 @@ Rockchip platforms device tree bindings
+>>       Required root node properties:
+>>       - compatible = "pine64,rock64", "rockchip,rk3328";
+>>   
+>> +- Pine64 RockPro64 board:
+>> +    Required root node properties:
+>> +    - compatible = "pine64,rockpro64", "rockchip,rk3399";
+>> +
+>>   - Rockchip PX3 Evaluation board:
+>>       Required root node properties:
+>>         - compatible = "rockchip,px3-evb", "rockchip,px3", "rockchip,rk3188";
+>> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+>> index b0092d9..03d523a 100644
+>> --- a/arch/arm64/boot/dts/rockchip/Makefile
+>> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+>> @@ -14,5 +14,6 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
+>> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>> new file mode 100644
+>> index 0000000..9e2d4d9
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+>> @@ -0,0 +1,770 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
+> Rockchip copyright from 2017? Where is the original
+> dts coming from?
 
-[FUNC] mutex_lock_nested
-drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
-     mutex_lock_nested in amdgpu_dpm_enable_uvd
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
-     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
-drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
-     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
-drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
-     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
-drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
-     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
-drivers/gpu/drm/amd/amdgpu/soc15.c, 106:
-     amdgpu_mm_wreg in soc15_pcie_rreg
-drivers/gpu/drm/amd/amdgpu/soc15.c, 105:
-     _raw_spin_lock_irqsave in soc15_pcie_rreg
+Rockpro64 board is similar to firefly rk-3399 board. DTS is taken from 
+firefly board and it is booting fine with minimal changes.
 
-[FUNC] mutex_lock_nested
-drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
-     mutex_lock_nested in amdgpu_dpm_enable_uvd
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
-     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
-drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
-     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
-drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
-     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
-drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
-     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
-drivers/gpu/drm/amd/amdgpu/cik.c, 139:
-     amdgpu_mm_wreg in cik_uvd_ctx_wreg
-drivers/gpu/drm/amd/amdgpu/cik.c, 138:
-     _raw_spin_lock_irqsave in cik_uvd_ctx_wreg
+Should I continue with the rockchip rights or update with the mine copy 
+rights?
 
-[FUNC] mutex_lock_nested
-drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c, 1477:
-     mutex_lock_nested in amdgpu_dpm_enable_uvd
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c, 1154:
-     amdgpu_dpm_enable_uvd in amdgpu_uvd_ring_begin_use
-drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c, 80:
-     [FUNC_PTR]amdgpu_uvd_ring_begin_use in amdgpu_ring_alloc
-drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c, 199:
-     amdgpu_ring_alloc in amdgpu_virt_kiq_wreg
-drivers/gpu/drm/amd/amdgpu/amdgpu_device.c, 207:
-     amdgpu_virt_kiq_wreg in amdgpu_mm_wreg
-drivers/gpu/drm/amd/amdgpu/dce_v6_0.c, 126:
-     amdgpu_mm_wreg in dce_v6_0_audio_endpt_rreg
-drivers/gpu/drm/amd/amdgpu/dce_v6_0.c, 125:
-     _raw_spin_lock_irqsave in dce_v6_0_audio_endpt_rreg
+>> + */
+>> +
+>> +/dts-v1/;
+>> +#include <dt-bindings/input/linux-event-codes.h>
+>> +#include <dt-bindings/pwm/pwm.h>
+>> +#include "rk3399.dtsi"
+>> +#include "rk3399-opp.dtsi"
+>> +
+>> +/ {
+>> +	model = "Pine64 RockPro64";
+>> +	compatible = "pine64,rockpro64", "rockchip,rk3399";
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial2:1500000n8";
+>> +	};
+>> +
+>> +	backlight: backlight {
+>> +		compatible = "pwm-backlight";
+>> +		enable-gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>;
+>> +		pwms = <&pwm0 0 25000 0>;
+>> +		brightness-levels = <
+>> +			  0   1   2   3   4   5   6   7
+>> +			  8   9  10  11  12  13  14  15
+>> +			 16  17  18  19  20  21  22  23
+>> +			 24  25  26  27  28  29  30  31
+>> +			 32  33  34  35  36  37  38  39
+>> +			 40  41  42  43  44  45  46  47
+>> +			 48  49  50  51  52  53  54  55
+>> +			 56  57  58  59  60  61  62  63
+>> +			 64  65  66  67  68  69  70  71
+>> +			 72  73  74  75  76  77  78  79
+>> +			 80  81  82  83  84  85  86  87
+>> +			 88  89  90  91  92  93  94  95
+>> +			 96  97  98  99 100 101 102 103
+>> +			104 105 106 107 108 109 110 111
+>> +			112 113 114 115 116 117 118 119
+>> +			120 121 122 123 124 125 126 127
+>> +			128 129 130 131 132 133 134 135
+>> +			136 137 138 139 140 141 142 143
+>> +			144 145 146 147 148 149 150 151
+>> +			152 153 154 155 156 157 158 159
+>> +			160 161 162 163 164 165 166 167
+>> +			168 169 170 171 172 173 174 175
+>> +			176 177 178 179 180 181 182 183
+>> +			184 185 186 187 188 189 190 191
+>> +			192 193 194 195 196 197 198 199
+>> +			200 201 202 203 204 205 206 207
+>> +			208 209 210 211 212 213 214 215
+>> +			216 217 218 219 220 221 222 223
+>> +			224 225 226 227 228 229 230 231
+>> +			232 233 234 235 236 237 238 239
+>> +			240 241 242 243 244 245 246 247
+>> +			248 249 250 251 252 253 254 255>;
+>> +		default-brightness-level = <200>;
+> with recent additions to the pwm-backlight we shouldn't need the
+> long brightness-levels table and default-brightness-level anymore.
+some device support is also needs to be added in this dts. In upcoming 
+patch-sets I will update those changes.
+>
+>
+> Heiko
+>
+warm Regards,
 
-Note that [FUNC_PTR] means a function pointer call is used.
+Akash Gajjar
 
-These bugs are found by my static analysis tool DSAC.
-
-
-Best wishes,
-Jia-Ju Bai
