@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ABEECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8CCECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BAF821476
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4606F21476
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="A6S2rl6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BAF821476
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NM8pRAc9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4606F21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbeIOG4M (ORCPT
+        id S1730054AbeIOG4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:56:12 -0400
-Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:13056
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 02:56:11 -0400
+Received: from mail-cys01nam02on0117.outbound.protection.outlook.com ([104.47.37.117]:43118
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729730AbeIOGvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729717AbeIOGvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 15 Sep 2018 02:51:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xYEsRPe3k0j8G4x048k21dH1jPqw+x9aLES72+XWtAM=;
- b=A6S2rl6lXFJC2ZhZvfBckPxm4I94V9NLPuWUzVOhZCKFSjG2ErkPLaGqwtS3eVK/I50eDzn37bJXx601RxuOyhwnQ6rOo1MffCY38YjxCrnduVT2I2xy7tlJOKty2shVhk7t0Mb3irsryzc1GTTn9VqoFKuNto5GfTroY4JCkjw=
+ bh=6yI38rApRBORXpFNRHatC7JBHb1fvcSrXFIL6Yu1/EI=;
+ b=NM8pRAc9Hij+sZ3gRBJU7CNyRRvXNGwh3v6wCKvY0JfkQLmsoMOFCoMjMUZVXMy7VzWLhD18yPqhg8SQnt7N12ELx8V7+c7F7SlbrxGKzsBjLvz6ob2a2a3S+6WYwNL9o85aiY57GlV6PPqYQMr62v8b4INxdaiq+kATgsZAQ2E=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0823.namprd21.prod.outlook.com (10.173.192.9) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.9; Sat, 15 Sep 2018 01:34:40 +0000
+ 15.20.1164.9; Sat, 15 Sep 2018 01:34:38 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:34:40 +0000
+ 01:34:38 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 23/34] input: rohm_bu21023: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Topic: [PATCH AUTOSEL 4.9 23/34] input: rohm_bu21023: switch to
- i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Thread-Index: AQHUTJRFBQ+GW1/MqEGm0sOo7vI/VA==
-Date:   Sat, 15 Sep 2018 01:34:40 +0000
-Message-ID: <20180915013422.180023-23-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 21/34] gpiolib: Mark gpio_suffixes array with
+ __maybe_unused
+Thread-Topic: [PATCH AUTOSEL 4.9 21/34] gpiolib: Mark gpio_suffixes array with
+ __maybe_unused
+Thread-Index: AQHUTJREB67IwLwSJ0aIx+O68QYpQw==
+Date:   Sat, 15 Sep 2018 01:34:38 +0000
+Message-ID: <20180915013422.180023-21-alexander.levin@microsoft.com>
 References: <20180915013422.180023-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915013422.180023-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,30 +60,31 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0823;6:xXi94s+qKo9yCxzjxw4JwkadQ6kbPRavBxR2LMcubApAYIFMtXlK/E7zoWRQ0hMzAHoBbAOGv/PtkzLVeBKl9gaCMBqNvQD20CDXDjJYhB2OX4aPamnAyuumwM4IwQ0Juc63J8GevL6OhGNfessqd06pDGFFn324Zlvrf6U9PdotjTojdQQFFlXtaGCYMuzWbhRlud/F0OOvPSOJuu7nGDKysqLWabeFwMMaxWsfpxSZP/LDiVHNIgO14G8HV6yzA5/1lZ9OSsiArafva/XbBbmgBTaoK2NDb/DrMc5+OAttXZ4O1xXBVVXDZGXqCRPJoHmIuWaIWsP3nU4y4Zmrp/ouOJrxixXcgO9Ulva/Oc6GBQAts0XUUu9YHOJMHwLKb8gWlfV2t//8RNJWptBMtxbaN1YfghyXtwZ0jSTjYBjxlwzI4aKRtzWZ725ExIcDQgjdh81fGmHRWapDsfvCiQ==;5:Y+xJh2JsF51hWkHiZBRZZ1wQBNv4C8wxJy0tosqDSyYQLjwUS7WjlEbnRRb2WnWUOqFEigu3fkOLCfNbFAWnDHBygyt1tR4zdDanthzBOyhKPffWLj/1RT5u/2+/1pVbbKLzH2tRC4NfhHJWs2erm+AwaebR7YIxMvU8OlXjkc8=;7:Mhq/Yo/KSEeiKsEg2G/5unE2RkMi/LgMo/G5tfEfPlgusWrWtwojj3ZuOUuzZi2ShjIMvqOAabeWTu6t52omDcIGSRxJXGCz9WOjFOO0IhSruqJJT9xLsC0UxpdrdGvm+s83reytbcSLT8O0IZX5WgtP9xtquhwmHOQvHScV7rLZZNbFqlMmTjabGKqnqP8DcELHPNSxuwszh9TA4GmaQoqcMEs4X9O7lXuCWvnJNxNX8jbAr+m7QrQ/d7X8pLRY
-x-ms-office365-filtering-correlation-id: 530fd270-47be-4c31-ac6e-08d61aab67b9
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0823;6:M4yIsulF37gSxpF/aqYBxbLbJlPTyxDXDdoG5c6PenGLLrdkR4LOL+frHGmfhipkfjcK8wqjYNNO0lIco2RZUwxfl3YirSaGm2g7hwrBmh+RqwN1YpO4xYXNyamCHrGNAxt0ggCupPeHV6i+NseDkXHldnXWSIyJM7gZl9n35xZVNwShZXmkptZ8HFFQAPZ4es92q/1T+1CO3grV7ia2zwYebk7RvrGCsHYwO8wNVbwHS3mB+bpIX5iH8gFBTejaNISnYA5hNU5+2PfOauQRMXawUEdmsKP4of1yViTD4E82zv2JYDXlzpvY9HO1umF3vYRJLneVrFX4h4mtqePpkP/sy5naJo2KBMSxEnNZB96QavuIZGhUiyur0HENd3wC+Yjm385kqwxZBlkzcF949ukfhrmXwcojlxZHQdxppwsF3E2cYBnHULzsGS5p3taKhrE4dqPgbXatnDTQvJZL/Q==;5:y7lOzwyxUDS/211hp87KaXjh89JA9KHofhxf7pnXV0/NmoorJYnAGtrXZCRQWUB/5MB0+yTTD1RRDC2Ze0IMZV1FHvbIRdxmhiVbKPPnYeznK1cyzEUSX2IwasAJ5owAMWJcpnXTADMxZnNvECp8sw/qXp1DLful7pbtAa8MSfY=;7:TUUNTT45ODxFfI2o9XL4RnHooqEDbGXE4mrbLeKAEc8Uf1KYitSV4hMreEqK6TsJOYDSF02ndClHRq66x7qcToLk/bT9Qmj3C0w6MmChQ6tPSKU6hiSXVmmWS3+YQVm9vQz5rjS/8syusLoo/3bKQKHZg1RRI55B6SzPFrC83geI5XryUA66UCJcfA6+zISKLwCFuC/mkLi6Nrij7rXmdyeaIJnf+20j6pyO/iD1VVE76tNNmRy2ODTxppZWMMLi
+x-ms-office365-filtering-correlation-id: 8ed21e8e-674b-4939-7b33-08d61aab6704
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0823;
 x-ms-traffictypediagnostic: CY4PR21MB0823:
-x-microsoft-antispam-prvs: <CY4PR21MB082371EA630598699AA33528FB180@CY4PR21MB0823.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-microsoft-antispam-prvs: <CY4PR21MB08234651E124795732E785C0FB180@CY4PR21MB0823.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(228905959029699);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0823;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0823;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(39860400002)(366004)(189003)(199004)(53936002)(14454004)(2900100001)(3846002)(6116002)(14444005)(256004)(10290500003)(15760500003)(81166006)(81156014)(217873002)(76176011)(72206003)(478600001)(8936002)(25786009)(8676002)(86362001)(66066001)(6512007)(86612001)(575784001)(7736002)(305945005)(97736004)(11346002)(5660300001)(5250100002)(102836004)(54906003)(2616005)(446003)(6436002)(6506007)(476003)(186003)(110136005)(2501003)(2906002)(105586002)(22452003)(10090500001)(36756003)(4326008)(68736007)(26005)(107886003)(6486002)(486006)(106356001)(1076002)(6346003)(316002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0823;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(39860400002)(366004)(189003)(199004)(53936002)(14454004)(2900100001)(3846002)(6116002)(14444005)(256004)(10290500003)(81166006)(81156014)(217873002)(76176011)(72206003)(478600001)(8936002)(25786009)(8676002)(86362001)(66066001)(6512007)(86612001)(575784001)(7736002)(305945005)(97736004)(11346002)(5660300001)(5250100002)(102836004)(54906003)(2616005)(446003)(6436002)(6506007)(476003)(186003)(110136005)(2501003)(2906002)(105586002)(22452003)(10090500001)(36756003)(4326008)(68736007)(26005)(107886003)(6486002)(486006)(106356001)(1076002)(6346003)(316002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0823;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: 2W63aHsrXfJusTLCHWuDugRnUImnVZEyiFeLlSSCsmZXYaNz5EYaBibmUf1qFp4o2hUUqUuBeh7rp6NEX74Ll1Hgo2nOJ+D67oxu0gQiHidighKBPoWW0M5auYgXCaSWMnGDEK5QFJ/p9H8vatCjDIqiSvkvKAECW9DtsEndAegWP0YJJyTRJOBjxVcq3ZHNj7jWlCS6lA7GmWYL5a07t1Jwun8fQDWeF6Yac6+2ajZQv9zQIn56YAok/QiT+BfPhJ0nQ9sY4GIAA2K0VPpugcKF4EHwj+0hKDoScvUYr3n4MXKYobVbCvinhHBzbVjXwUndi9qu4ULKQGzctfhM0LPMZt6wXlB6Y7nEI4Da9m4=
+x-microsoft-antispam-message-info: Zu8vzuZHdsxXTJ6cJSeTyHxh+n/hChGdIQl5Xp7Ytbmg2vv84J7jXSOsaBiRDdYdEMSAhfpDsEtCRDkGtavqob5oWdXXwyMmLiRsOe+Qqys2ONzJgGinya5O4uU7EhRpjPXXwPY29yV6IAvqLr9bs+Ay/pXV9UG8DU7un4NrYxdCJPEH1amGi25tmVWsCuZvLI6ZjmPxzHiKgzeosu3CQ+FhAo0H3siNdl4WyDDGC7x5nZIuV0lnBsCWVnApbdZaURM1RKa5sTKIT+W3bJ4z2f+ozhxfauVuukPEN/GLh2l8/I6sUk0YP8A7w5DPBwfzr01uRfd7Sb2yzSje5WAHImvipmIXyLx1Ey026ROd5qw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2102C2EB05F36A478A210FA8604E1CD8@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 530fd270-47be-4c31-ac6e-08d61aab67b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:34:40.0517
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ed21e8e-674b-4939-7b33-08d61aab6704
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:34:38.8799
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -92,47 +94,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
-
-[ Upstream commit 193c2a07cfaacb9249ab0e3d34bce32490879355 ]
-
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-sit behind a mux-locked mux, the two locking variants are equivalent.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touch=
-screen/rohm_bu21023.c
-index 611156a2ef80..be29984c0e4c 100644
---- a/drivers/input/touchscreen/rohm_bu21023.c
-+++ b/drivers/input/touchscreen/rohm_bu21023.c
-@@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *clien=
-t, u8 start, void *buf,
- 	msg[1].len =3D len;
- 	msg[1].buf =3D buf;
-=20
--	i2c_lock_adapter(adap);
-+	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
-=20
- 	for (i =3D 0; i < 2; i++) {
- 		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
-@@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *clien=
-t, u8 start, void *buf,
- 		}
- 	}
-=20
--	i2c_unlock_adapter(adap);
-+	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
-=20
- 	return ret;
- }
---=20
-2.17.1
+RnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+
+DQoNClsgVXBzdHJlYW0gY29tbWl0IGIyM2VjNTk5MjZmYWYwNWIwYzQzNjgwZDA1NjcxYzQ4NGU4
+MTBhYzQgXQ0KDQpTaW5jZSB3ZSBwdXQgc3RhdGljIHZhcmlhYmxlIHRvIGEgaGVhZGVyIGZpbGUg
+aXQncyBjb3BpZWQgdG8gZWFjaCBtb2R1bGUNCnRoYXQgaW5jbHVkZXMgdGhlIGhlYWRlci4gQnV0
+IG5vdCBhbGwgb2YgdGhlbSBhcmUgYWN0dWFsbHkgdXNlZCBpdC4NCg0KTWFyayBncGlvX3N1ZmZp
+eGVzIGFycmF5IHdpdGggX19tYXliZV91bnVzZWQgdG8gaGlkZSBhIGNvbXBpbGVyIHdhcm5pbmc6
+DQoNCkluIGZpbGUgaW5jbHVkZWQgZnJvbQ0KZHJpdmVycy9ncGlvL2dwaW9saWItbGVnYWN5LmM6
+NjowOg0KZHJpdmVycy9ncGlvL2dwaW9saWIuaDo5NToyNzogd2FybmluZzog4oCYZ3Bpb19zdWZm
+aXhlc+KAmSBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtY29uc3QtdmFyaWFibGU9XQ0K
+IHN0YXRpYyBjb25zdCBjaGFyICogY29uc3QgZ3Bpb19zdWZmaXhlc1tdID0geyAiZ3Bpb3MiLCAi
+Z3BpbyIgfTsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgIF5+fn5+fn5+fn5+fn4NCkluIGZp
+bGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL2dwaW8vZ3Bpb2xpYi1kZXZwcm9wLmM6MTc6MDoNCmRy
+aXZlcnMvZ3Bpby9ncGlvbGliLmg6OTU6Mjc6IHdhcm5pbmc6IOKAmGdwaW9fc3VmZml4ZXPigJkg
+ZGVmaW5lZCBidXQgbm90IHVzZWQgWy1XdW51c2VkLWNvbnN0LXZhcmlhYmxlPV0NCiBzdGF0aWMg
+Y29uc3QgY2hhciAqIGNvbnN0IGdwaW9fc3VmZml4ZXNbXSA9IHsgImdwaW9zIiwgImdwaW8iIH07
+DQogICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+DQoNClNpZ25lZC1vZmYt
+Ynk6IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPg0K
+U2lnbmVkLW9mZi1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0K
+U2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29t
+Pg0KLS0tDQogZHJpdmVycy9ncGlvL2dwaW9saWIuaCB8IDIgKy0NCiAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3Bp
+by9ncGlvbGliLmggYi9kcml2ZXJzL2dwaW8vZ3Bpb2xpYi5oDQppbmRleCAzNDZmYmRhMzkyMjAu
+LjZjNGQ3Mjg3MjMwOSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3Bpby9ncGlvbGliLmgNCisrKyBi
+L2RyaXZlcnMvZ3Bpby9ncGlvbGliLmgNCkBAIC04NSw3ICs4NSw3IEBAIHN0cnVjdCBhY3BpX2dw
+aW9faW5mbyB7DQogfTsNCiANCiAvKiBncGlvIHN1ZmZpeGVzIHVzZWQgZm9yIEFDUEkgYW5kIGRl
+dmljZSB0cmVlIGxvb2t1cCAqLw0KLXN0YXRpYyBjb25zdCBjaGFyICogY29uc3QgZ3Bpb19zdWZm
+aXhlc1tdID0geyAiZ3Bpb3MiLCAiZ3BpbyIgfTsNCitzdGF0aWMgX19tYXliZV91bnVzZWQgY29u
+c3QgY2hhciAqIGNvbnN0IGdwaW9fc3VmZml4ZXNbXSA9IHsgImdwaW9zIiwgImdwaW8iIH07DQog
+DQogI2lmZGVmIENPTkZJR19PRl9HUElPDQogc3RydWN0IGdwaW9fZGVzYyAqb2ZfZmluZF9ncGlv
+KHN0cnVjdCBkZXZpY2UgKmRldiwNCi0tIA0KMi4xNy4xDQo=
