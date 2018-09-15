@@ -7,56 +7,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB6EECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEE4ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A99121477
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99BD20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXM1mDnx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A99121477
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgLPgBKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99BD20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeIOXCR (ORCPT
+        id S1727805AbeIOXCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 19:02:17 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37985 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeIOXCQ (ORCPT
+        Sat, 15 Sep 2018 19:02:20 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37034 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727690AbeIOXCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 19:02:16 -0400
-Received: by mail-it0-f65.google.com with SMTP id p129-v6so6344359ite.3;
-        Sat, 15 Sep 2018 10:42:31 -0700 (PDT)
+        Sat, 15 Sep 2018 19:02:20 -0400
+Received: by mail-io1-f65.google.com with SMTP id v14-v6so8473965iob.4;
+        Sat, 15 Sep 2018 10:42:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
-        b=RXM1mDnxaiIy+aT7bbXrL9pt6LYvkvXpBQuFDVq7w13H6+UB0ZjwMGN3IJU/xLf3+x
-         Qlhh1SV4/GiPd9i5KAb1FYdQm4v24pESqg2U3pjDTEJfy5bR7VgVYNZhCIwNYL59olo0
-         Y05DP5zZzw4/nnnnwET8Y9I93YgO+PpbRRSSyLqQ2EhFdn1CFYE+wlkDrZwe7vy1RjpU
-         MmysZyW/5KksuNVxnzs+enwW8fPDp0ouu/x4X2tNsd0A7uYTffAsYrrQUDojfdAAHv1O
-         jlbfgBMpbf4wK6Yle4Hx6zAJV9VomDzpoGzkOBs4uUvF2inXvV3rx/kNVTEekuc5C75n
-         yUtA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=l4VD3BspkK8BubwQU6AvhOg5G3OK97wGcnQLkeUe9yw=;
+        b=EgLPgBKItRo5xcpExBw/L9+fp84DTPAJ8vz0RMxWn8ll5qPaGHl99k0QQ5IYiPF+5k
+         S2JdC5AnKtz3hqaXCRTNDjr5gAbFePKFJ07oU3JAzlP03ye5FqJkPMVLbwyu40IESGC9
+         +pBwuH54/YdgjM8rJls+osfxrtHNnZSMVSUMo8mE9YFKX237imzLKnGIuQxryWsIOzeM
+         6oHQzCiHNCkfzse+NDDlDap/GQwHbKdAC8/2d61VuS0BTCHulgrMdTeSn+S/2+zQhgxx
+         s7VBOTFSyCWg82uX103jImhtbryuo63J7L0WQw8Zl1kPAk19BXaxkAHcRa2CY13dQkWn
+         mZIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
-        b=PGFln0joYGHP4pgTzB28714QMfarEMI9+sZ0BYtbilheoa1OhRvtj92QGm4RdVuySb
-         d+KBLF2BsBiYi+0pIhs/dHPSz8iTk2Q3KlpJa6nBUxjzYwlracQuG+PB3a/9GjPp6GmW
-         DflQ7Ofh5VXhgIDg205BQSWN/GJNBHlzKrfr2N1LW+/0Kg7JSB17VP0jYZY5iuKhEVjE
-         qxuOUPgL004R3bkd02G0WPf7+vQ/Z5bToKjWjrM4KbXFCnZ1mLisARTYaT0O+4vvZLiZ
-         zuh/tt6MEpO1VlsDLdTq1pKHuD1RZM3zyMrLBcqRgOAs9ExYqs3FKFECfv5K9JcF38hB
-         DOiA==
-X-Gm-Message-State: APzg51BDzMSNixsXYraRlqnkkK6U26quoWkoTWi+rLdqJxTQpfU884u3
-        fcT9d5w02GB6nJnYciyMNA==
-X-Google-Smtp-Source: ANB0VdbBxoaLx5rM8bcsV2Iy8Mu12EygbW8N0jYq4Mfsnf4eP652rYd6yeD8PEie2iXC+f+xWfwcvQ==
-X-Received: by 2002:a24:fd04:: with SMTP id m4-v6mr7392851ith.28.1537033351004;
-        Sat, 15 Sep 2018 10:42:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=l4VD3BspkK8BubwQU6AvhOg5G3OK97wGcnQLkeUe9yw=;
+        b=J5KlmCcbhZNkrGiBe3YoG9o/Ir6jzrGoZyYpFWJEx/igClPr22oUAKJ4dE66rEtQLS
+         Y1DcyVysgW8AsBONfwhkBpeZtdqaJ0aCqNau7VnWliocsFZDrEThvOc967a9IpRDFjnH
+         nctKPB1r1k7N1b8ClJqdWuq/LFIGoX+0tWQ09cevA3b+cQxTOEe10eq0BKSizYe7v73h
+         TU2T/bKCv23AFrJOnnpG7ls+qCX8pHD4LuFGRGXHJC5f9pFBox38UaArffdcMW5SlFX0
+         elrf8B2pmYgYRR/LUZuhKwkspW7TsfJvwJ08xmdQ6Ye1+vtIA8Zxso34K58Eo2lI8Or9
+         9HzA==
+X-Gm-Message-State: APzg51Bxo+gUekqyNwUxsXiqLYFaZn2FqcdhtLW6SK2Cj/BfWZQuMnxH
+        nyDMrQGYMGYP+0nBHsvdog==
+X-Google-Smtp-Source: ANB0VdYaTs4fREPJyNayWVyJ+i9XJaenV/5m7VKl5+1+7F1fiEnW50Ba7XgX2Awl1lqtfFWFkbV8Lw==
+X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr14143374ioh.271.1537033354312;
+        Sat, 15 Sep 2018 10:42:34 -0700 (PDT)
 Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id t187-v6sm1150250ita.28.2018.09.15.10.42.29
+        by smtp.gmail.com with ESMTPSA id t187-v6sm1150250ita.28.2018.09.15.10.42.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 10:42:30 -0700 (PDT)
+        Sat, 15 Sep 2018 10:42:33 -0700 (PDT)
 From:   ryang <decatf@gmail.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
@@ -66,47 +68,50 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         ryang <decatf@gmail.com>
-Subject: [PATCH 1/2] dt-bindings: iio: light: bh1750: Add device tree binding documentation
-Date:   Sat, 15 Sep 2018 13:42:13 -0400
-Message-Id: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+Subject: [PATCH 2/2] iio: light: bh1750: Add device tree support
+Date:   Sat, 15 Sep 2018 13:42:14 -0400
+Message-Id: <387c145949692c0318f90d98426be95c82ea2e58.1537033044.git.decatf@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+References: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+In-Reply-To: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+References: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document device tree bindings for ROHM BH1750 ambient light sensor driver.
+Add device tree support for ROHM BH1750 series ambient light sensors.
 
 Signed-off-by: ryang <decatf@gmail.com>
 ---
- .../devicetree/bindings/iio/light/bh1750.txt   | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/light/bh1750.txt
+ drivers/iio/light/bh1750.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.txt b/Documentation/devicetree/bindings/iio/light/bh1750.txt
-new file mode 100644
-index 000000000000..468350cc7af6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/light/bh1750.txt
-@@ -0,0 +1,18 @@
-+ROHM BH1750 - ALS, Ambient light sensor
-+
-+Required properties:
-+
-+- compatible: Must be one of:
-+    "rohm,bh1710"
-+    "rohm,bh1715"
-+    "rohm,bh1721"
-+    "rohm,bh1750"
-+    "rohm,bh1751"
-+- reg: the I2C address of the sensor
-+
-+Example:
-+
-+bh1750@23 {
-+	compatible = "rohm,bh1750";
-+	reg = <0x23>;
+diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
+index a814828e69f5..50b599abb383 100644
+--- a/drivers/iio/light/bh1750.c
++++ b/drivers/iio/light/bh1750.c
+@@ -315,9 +315,19 @@ static const struct i2c_device_id bh1750_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, bh1750_id);
+ 
++static const struct of_device_id bh1750_of_match[] = {
++	{ .compatible = "rohm,bh1710", },
++	{ .compatible = "rohm,bh1715", },
++	{ .compatible = "rohm,bh1721", },
++	{ .compatible = "rohm,bh1750", },
++	{ .compatible = "rohm,bh1751", },
++	{ }
 +};
++
+ static struct i2c_driver bh1750_driver = {
+ 	.driver = {
+ 		.name = "bh1750",
++		.of_match_table = of_match_ptr(bh1750_of_match),
+ 		.pm = BH1750_PM_OPS,
+ 	},
+ 	.probe = bh1750_probe,
 -- 
 2.17.1
 
