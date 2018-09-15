@@ -7,103 +7,132 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC55ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5342ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC9E208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7380520881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 06:37:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ufyoy9fO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC9E208DD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWyItxVC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7380520881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbeIOLeK (ORCPT
+        id S1727171AbeIOLyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 07:34:10 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53178 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeIOLeK (ORCPT
+        Sat, 15 Sep 2018 07:54:51 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38485 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeIOLyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 07:34:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y139-v6so4020429wmc.2;
-        Fri, 14 Sep 2018 23:16:20 -0700 (PDT)
+        Sat, 15 Sep 2018 07:54:50 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t25-v6so4035086wmi.3;
+        Fri, 14 Sep 2018 23:36:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=eMkoXq8QQfYmvUAadLG6OXr08ZagmHQHSlHiAbSDjFE=;
-        b=Ufyoy9fOif/6zVzb0ps3omj55Vpl0reSrCN8GTBTgMuYbiMGAt5eti2FgWR+tnKE3U
-         iUmzsiXcoz8C8wflNAUCFQk8brzcsVIVDgNke/poyYx4MhfUEJZrhQJR5//ebsjgiQ60
-         2keg5XmN63pqpef/6fghmdnM/vW+LIrAW1HHHSIHUSp0nXf7KE8qzKu/3Rzf/9ciaf9O
-         p6+0P0khLvyy927mojDLUu/6blCeEQhQDfxPyRbIk2da0EIgulGYkdp6txhR3cJuUKsC
-         6QM2s9zDp18g4RofX/64bBEoGL+gmys/ZgvwNfCgmfZ5fP5e7y9/QpXVGiVy7RPcyIf3
-         8DZQ==
+        bh=HkPIK++4IPoE0X3IrxwouzNzP6fuFdGXZQB7ulWfZqg=;
+        b=VWyItxVCEoISu2gLe1+bUEvIZypKm6xWFbPfthWcV0TvvWO5Kbox4S4YmSgIQ5jhdg
+         +oJHzji6bGWkvvygpk8t8ku/HeC4ACbBx3nKjr8u9TBnDW2Ijy172bPgJKJQbAxsCvkG
+         1bFjnWOSQVr9goawihCAnWt96VfhWYW6NDHjSNBqD3jmWPtJrSeQ21HXA6keeHhXVwa5
+         odA3DvrLeWiNaDPznEuD1WsKAnkEunNg+dem3ZzcmXrtMaTjEC+kxDN0CM59apDAxJs2
+         8El4uXu7yXZN/dzYeqyZi4BkJu1wlJoiFdZjV5Kmtq8EhLYwe0JzrstWkdGkWNKZOTl1
+         cyIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eMkoXq8QQfYmvUAadLG6OXr08ZagmHQHSlHiAbSDjFE=;
-        b=IUcnVQTATZMH7mfipeJ9ktqdSuiAvCNs/0hGVQ8Yfz589NWkT+vpkzxODgh63ll7cH
-         d+x5tCWm21yZyhwYBKa3FwgG4CkEFM/4Wvt2iTseN4JvMhL9t+8MPppcHSlJLPqmQ2EG
-         C8sIPesMrdLzeBvE+BOeJGSerNd14FCYxRCabLAFMG+KgMaHpRtf5RfOLrQLcyDguF1f
-         9donke1XZ6vartQ6ge3Ol01MkOVs3rYpGPuZqhxR6yas7Ytn3cQA++iIoTNxC5esBOO7
-         knxv0+q7+NyYejZgKXhU2R9tne4WmZ9IRj8C+MWbMezerkG9jTpwgblsYjIud16HNS9Z
-         UEtw==
-X-Gm-Message-State: APzg51Ai0aue3KWdUrm/HleWVV1ZVLetPPIj7/NqN7rH3dXZqeUEf5/3
-        hCiTiHx/9NiVK813ZlRB640=
-X-Google-Smtp-Source: ANB0VdZpEJFn2hMn6FZaVC/Ng90Ny7iRRBCdKmNoS66uK/LQIdQGjXHAXHElkjLrn0Gf6ZE2dtGiJA==
-X-Received: by 2002:a1c:1188:: with SMTP id 130-v6mr4649658wmr.138.1536992179675;
-        Fri, 14 Sep 2018 23:16:19 -0700 (PDT)
+        bh=HkPIK++4IPoE0X3IrxwouzNzP6fuFdGXZQB7ulWfZqg=;
+        b=KCTs2w005dUW0lJw62J7+WxMsXOmRmGyLirqaOHM8LGQizQ5JiBwXwpcKfBTx+TGGv
+         YoBIScvpMm3cNen/NlJN7yFwFis7tdmeS+4q/2/EVf6zM9rjDK8I/iboMpQSFzQsbH08
+         ZL515jCitLZYk/07XLEesi58VVPGpLls/VmK9JwuI0lIJdfI/bu5d/hJaH5VZzfyh2q6
+         TDBsOowc8xp5EEme+DpCE/pcrHCj5c1Zuo+ZgjQ6PKgrdJFnPoZwVabG802rlg8MsXt5
+         O9aOQNLo64emXlQS/UEqOC5dF3Hk6DInzBj/HIgRgA601iEXaTeDJEjfPOjJA/bw6L8Q
+         EWMA==
+X-Gm-Message-State: APzg51C3JTAfx/5gMfSbQuBkTMLv5hkeyrzYvXO9Zew9og/v2xGJOEyZ
+        nNSOhKAKoNLaS6NCpeZHxJs=
+X-Google-Smtp-Source: ANB0VdZ10Neyr8eF3AewxpF96HX2BwT67B9FAhokUeiiECRmyOtRVLF4KtxWB+65c/Me2mc/o3ayVw==
+X-Received: by 2002:a1c:eb03:: with SMTP id j3-v6mr4559519wmh.150.1536993416764;
+        Fri, 14 Sep 2018 23:36:56 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id t9-v6sm17635426wra.91.2018.09.14.23.16.18
+        by smtp.gmail.com with ESMTPSA id f18-v6sm8808991wru.51.2018.09.14.23.36.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 23:16:18 -0700 (PDT)
+        Fri, 14 Sep 2018 23:36:56 -0700 (PDT)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Nick Desaulniers <ndesaulniers@google.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] media: davinci: Fix implicit enum conversion warning
-Date:   Fri, 14 Sep 2018 23:16:15 -0700
-Message-Id: <20180915061615.25308-1-natechancellor@gmail.com>
+Subject: [PATCH] scsi: mptfusion: Remove unnecessary parentheses and simplify null checks
+Date:   Fri, 14 Sep 2018 23:36:45 -0700
+Message-Id: <20180915063645.31295-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+Clang warns when multiple pairs of parentheses are used for a single
+conditional statement.
 
-drivers/media/platform/davinci/vpbe_display.c:524:24: warning: implicit
-conversion from enumeration type 'enum osd_v_exp_ratio' to different
-enumeration type 'enum osd_h_exp_ratio' [-Wenum-conversion]
-                        layer_info->h_exp = V_EXP_6_OVER_5;
-                                          ~ ^~~~~~~~~~~~~~
-1 warning generated.
+drivers/message/fusion/mptbase.c:338:11: warning: equality comparison
+with extraneous parentheses [-Wparentheses-equality]
+        if ((ioc == NULL))
+             ~~~~^~~~~~~
+drivers/message/fusion/mptbase.c:338:11: note: remove extraneous
+parentheses around the comparison to silence this warning
+        if ((ioc == NULL))
+            ~    ^      ~
+drivers/message/fusion/mptbase.c:338:11: note: use '=' to turn this
+equality comparison into an assignment
+        if ((ioc == NULL))
+                 ^~
+                 =
+drivers/message/fusion/mptbase.c:342:12: warning: equality comparison
+with extraneous parentheses [-Wparentheses-equality]
+        if ((pdev == NULL))
+             ~~~~~^~~~~~~
+drivers/message/fusion/mptbase.c:342:12: note: remove extraneous
+parentheses around the comparison to silence this warning
+        if ((pdev == NULL))
+            ~     ^      ~
+drivers/message/fusion/mptbase.c:342:12: note: use '=' to turn this
+equality comparison into an assignment
+        if ((pdev == NULL))
+                  ^~
+                  =
+2 warnings generated.
 
-This appears to be a copy and paste error judging from the couple of
-lines directly above this statement and the way that height is handled
-in the if block above this one.
+Remove them and while we're at it, simplify the NULL checks as '!var' is
+used more than 'var == NULL'.
 
 Reported-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/media/platform/davinci/vpbe_display.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/message/fusion/mptbase.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/davinci/vpbe_display.c b/drivers/media/platform/davinci/vpbe_display.c
-index d6bf96ad474c..5c235898af7b 100644
---- a/drivers/media/platform/davinci/vpbe_display.c
-+++ b/drivers/media/platform/davinci/vpbe_display.c
-@@ -521,7 +521,7 @@ vpbe_disp_calculate_scale_factor(struct vpbe_display *disp_dev,
- 		else if (v_scale == 4)
- 			layer_info->v_zoom = ZOOM_X4;
- 		if (v_exp)
--			layer_info->h_exp = V_EXP_6_OVER_5;
-+			layer_info->v_exp = V_EXP_6_OVER_5;
- 	} else {
- 		/* no scaling, only cropping. Set display area to crop area */
- 		cfg->ysize = expected_ysize;
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index dc1e43a02599..ba551d8dfba4 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -335,11 +335,11 @@ static int mpt_remove_dead_ioc_func(void *arg)
+ 	MPT_ADAPTER *ioc = (MPT_ADAPTER *)arg;
+ 	struct pci_dev *pdev;
+ 
+-	if ((ioc == NULL))
++	if (!ioc)
+ 		return -1;
+ 
+ 	pdev = ioc->pcidev;
+-	if ((pdev == NULL))
++	if (!pdev)
+ 		return -1;
+ 
+ 	pci_stop_and_remove_bus_device_locked(pdev);
 -- 
 2.18.0
 
