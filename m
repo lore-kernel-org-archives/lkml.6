@@ -2,116 +2,250 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEE4ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2E6ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99BD20881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C80020881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:46:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgLPgBKI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99BD20881
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+UlGq9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C80020881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeIOXCU (ORCPT
+        id S1727749AbeIOXGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 19:02:20 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37034 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbeIOXCU (ORCPT
+        Sat, 15 Sep 2018 19:06:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42485 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbeIOXGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 19:02:20 -0400
-Received: by mail-io1-f65.google.com with SMTP id v14-v6so8473965iob.4;
-        Sat, 15 Sep 2018 10:42:34 -0700 (PDT)
+        Sat, 15 Sep 2018 19:06:32 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g23-v6so5563298plq.9;
+        Sat, 15 Sep 2018 10:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=l4VD3BspkK8BubwQU6AvhOg5G3OK97wGcnQLkeUe9yw=;
-        b=EgLPgBKItRo5xcpExBw/L9+fp84DTPAJ8vz0RMxWn8ll5qPaGHl99k0QQ5IYiPF+5k
-         S2JdC5AnKtz3hqaXCRTNDjr5gAbFePKFJ07oU3JAzlP03ye5FqJkPMVLbwyu40IESGC9
-         +pBwuH54/YdgjM8rJls+osfxrtHNnZSMVSUMo8mE9YFKX237imzLKnGIuQxryWsIOzeM
-         6oHQzCiHNCkfzse+NDDlDap/GQwHbKdAC8/2d61VuS0BTCHulgrMdTeSn+S/2+zQhgxx
-         s7VBOTFSyCWg82uX103jImhtbryuo63J7L0WQw8Zl1kPAk19BXaxkAHcRa2CY13dQkWn
-         mZIA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L/eeXoJ2tdf/zTRRrynwm9J5HH2dofi+d09wyXHyjXI=;
+        b=F+UlGq9bZyI7aIoGBt8G4BnvhbX+uUYo6f6/ZRbA0e2E7/7rrK3dhqmqZJJW9VYmkt
+         g4VOSrv5q02NMuSoha6eDfcOiOSdv/7HzTe31yz5nFYjMMk+XhNYOstRSg74blW6sVml
+         hVYGuVaVRpPXzQRj72Gi6J7NkYwniWP9VLIQ36RySkmlOLk1Z1olUILbJIWmboNGxQ4f
+         y0phLmg6Ozy1IJtIb2uVOv1mVo3vX6tAZZNEFxtkTBjaeCNru/dea0qR4ldZdewopfsf
+         esSan3Z4vqE75SyMwELHlswsjtjK7zepuqaqde69hu2YYAMQ4V0gNu80np+f/9Pjtrwu
+         oDug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=l4VD3BspkK8BubwQU6AvhOg5G3OK97wGcnQLkeUe9yw=;
-        b=J5KlmCcbhZNkrGiBe3YoG9o/Ir6jzrGoZyYpFWJEx/igClPr22oUAKJ4dE66rEtQLS
-         Y1DcyVysgW8AsBONfwhkBpeZtdqaJ0aCqNau7VnWliocsFZDrEThvOc967a9IpRDFjnH
-         nctKPB1r1k7N1b8ClJqdWuq/LFIGoX+0tWQ09cevA3b+cQxTOEe10eq0BKSizYe7v73h
-         TU2T/bKCv23AFrJOnnpG7ls+qCX8pHD4LuFGRGXHJC5f9pFBox38UaArffdcMW5SlFX0
-         elrf8B2pmYgYRR/LUZuhKwkspW7TsfJvwJ08xmdQ6Ye1+vtIA8Zxso34K58Eo2lI8Or9
-         9HzA==
-X-Gm-Message-State: APzg51Bxo+gUekqyNwUxsXiqLYFaZn2FqcdhtLW6SK2Cj/BfWZQuMnxH
-        nyDMrQGYMGYP+0nBHsvdog==
-X-Google-Smtp-Source: ANB0VdYaTs4fREPJyNayWVyJ+i9XJaenV/5m7VKl5+1+7F1fiEnW50Ba7XgX2Awl1lqtfFWFkbV8Lw==
-X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr14143374ioh.271.1537033354312;
-        Sat, 15 Sep 2018 10:42:34 -0700 (PDT)
-Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id t187-v6sm1150250ita.28.2018.09.15.10.42.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 10:42:33 -0700 (PDT)
-From:   ryang <decatf@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ryang <decatf@gmail.com>
-Subject: [PATCH 2/2] iio: light: bh1750: Add device tree support
-Date:   Sat, 15 Sep 2018 13:42:14 -0400
-Message-Id: <387c145949692c0318f90d98426be95c82ea2e58.1537033044.git.decatf@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
-References: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
-In-Reply-To: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
-References: <c414a26cdc176d9982f3c609fa39cf245ac939be.1537033044.git.decatf@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L/eeXoJ2tdf/zTRRrynwm9J5HH2dofi+d09wyXHyjXI=;
+        b=cdd2yQRp35f43rtvQb0DItRhHakzoUvdVsgi3dQucDrQSE5V4FfFs958ZoXuyGK9QG
+         jSyFIwHsAqgB3R6RZIarzzX57K1tIehMPjcmnqG1KUuQuF2Yy3g1gkT18ml7wFd73lQN
+         iW8jH8ADP3HW2jUOr3ogf7DTI2+8MB1TB80CiPKEGAQd73+3Yp9/tMZ+kpfR+tbGCy37
+         utK2HzaaKT7r4d1qjoxO5sA06dQTBgXW+WVExVjqcFOm/7DiyxyAZfi2iHyyS+BYqg7B
+         HEl+eu+FCe+++3cV2HsFZEQaSoBtvrC29If2aLtujbCUyAyhtbctB1HxQxIYHtNnHkNo
+         YGNQ==
+X-Gm-Message-State: APzg51AKMbMDFLCeecerm4L4VG0DAtP2gmyC+UTdLr5WNmTSLNKy6Rqf
+        ME/yNxQBmMkHJkEhhH7DN3U=
+X-Google-Smtp-Source: ANB0VdYqwqG+pKbzfu6W4pbiAxd8oBLBqOjuGuPEuP7UsmN2HqU7UmLJ4bCZAlMQ0eVShIsfa1LNIw==
+X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr17281940plg.57.1537033606126;
+        Sat, 15 Sep 2018 10:46:46 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm12653249pff.8.2018.09.15.10.46.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 15 Sep 2018 10:46:45 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 23:16:34 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     peda@axentia.se, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, Julia.Lawall@lip6.fr
+Subject: Re: [PATCH -next] iio: potentiometer: mcp4531: merge calls to
+ of_match_device and of_device_get_match_data
+Message-ID: <20180915174634.GA15225@himanshu-Vostro-3559>
+References: <20180915105430.24052-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180915105430.24052-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree support for ROHM BH1750 series ambient light sensors.
+On Sat, Sep 15, 2018 at 06:54:30PM +0800, YueHaibing wrote:
+> Drop call to of_match_device, which is subsumed by the subsequent
+> call to of_device_get_match_data.  The code becomes simpler, and a
+> temporary variable can be dropped.
+> 
+> Found by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Signed-off-by: ryang <decatf@gmail.com>
----
- drivers/iio/light/bh1750.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Already applied!
+https://lore.kernel.org/lkml/20180819201752.2280be76@archlinux/
 
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index a814828e69f5..50b599abb383 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -315,9 +315,19 @@ static const struct i2c_device_id bh1750_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, bh1750_id);
- 
-+static const struct of_device_id bh1750_of_match[] = {
-+	{ .compatible = "rohm,bh1710", },
-+	{ .compatible = "rohm,bh1715", },
-+	{ .compatible = "rohm,bh1721", },
-+	{ .compatible = "rohm,bh1750", },
-+	{ .compatible = "rohm,bh1751", },
-+	{ }
-+};
-+
- static struct i2c_driver bh1750_driver = {
- 	.driver = {
- 		.name = "bh1750",
-+		.of_match_table = of_match_ptr(bh1750_of_match),
- 		.pm = BH1750_PM_OPS,
- 	},
- 	.probe = bh1750_probe,
+Anyway, if you want to work on making similar changes, you may
+refer the following cocci script:
+
+I tested[1] the changes through 0-day and had few false positives
+and regressions. Therefore, check the results and compile test
+the changes before sending patches.
+
+
+Julia, and I had tried to make the confidence "High" but few 
+cases were difficult to resolve, and later neither of us had 
+time to look back at it again.
+
+Not all maintainers will acknowledge such a change, but IIRC
+Rob Herring gave a thumbs up on few cases on the dt-mailing list.
+
+
+[1] https://github.com/himanshujha199640/linux-next/commit/efb7ed923bd00c86fe0a4e67e2ddb636ff0e0ff4
+
+---------------------------------------------------------------------
+
+/// Use of_device_get_match_data() to get matched data in an OF driver
+//# of_device_get_match_data() returns const * and therefore the left
+//# argument of assignment should also be a const * for compatible
+//# types.
+///
+// Confidence: Moderate
+// Copyright: (C) 2018 Himanshu Jha, GPLv2.
+// Copyright: (C) 2018 Julia Lawall, INRIA/LIP6.  GPLv2.
+// Keywords: of_match_device, of_device_get_match_data
+
+virtual patch
+virtual context
+virtual org
+virtual report
+
+
+@r1 depends on patch && !context && !org && !report@
+expression x,y,z;
+identifier match;
+type T;
+statement S;
+@@
+
+- match = of_match_device(x, y);
+(
+- if(match==NULL) S
+- z = match->data;
++ z = of_device_get_match_data(y);
+|
+- if(match==NULL) S
+- z = (T *)match->data;
++ z = of_device_get_match_data(y);
+|
+- if(match==NULL) S
+- z = (T)match->data;
++ z = (T)of_device_get_match_data(y);
+|
+- if(match!= NULL)
+- z = match->data;
++ z = of_device_get_match_data(y);
+|
+- if(match!= NULL)
+- z = (T *)match->data;
++ z = of_device_get_match_data(y);
+|
+- if(match!= NULL)
+- z = (T)match->data;
++ z = (T)of_device_get_match_data(y);
+)
+... when != match
+
+@r2 depends on r1 && patch && !context && !org && !report@
+type T1;
+expression e;
+identifier r1.match;
+@@
+
+(
+- T1 match = e;
+|
+- T1 match;
+)
+
+// ----------------------------------------------------------------------------
+
+@r1_context depends on !patch && (context || org || report)@
+type T;
+identifier match;
+statement S;
+expression x, y, z;
+position j0, j1;
+@@
+
+*  match@j0 = of_match_device(x, y);
+(
+*  if(match==NULL) S
+*  z = match@j1->data;
+|
+*  if(match==NULL) S
+*  z = (T *)match@j1->data;
+|
+*  if(match==NULL) S
+*  z = (T)match@j1->data;
+|
+*  if(match!= NULL)
+*  z = match@j1->data;
+|
+*  if(match!= NULL)
+*  z = (T *)match@j1->data;
+|
+*  if(match!= NULL)
+*  z = (T)match@j1->data;
+)
+... when != match
+
+@r2_context depends on r1 && !patch && (context || org || report)@
+type T1;
+identifier r1_context.match;
+expression e;
+position j0;
+@@
+
+(
+*  T1 match@j0 = e;
+|
+*  T1 match@j0;
+)
+
+// ----------------------------------------------------------------------------
+
+@script:python r1_org depends on org@
+j0 << r1_context.j0;
+j1 << r1_context.j1;
+@@
+
+msg = "WARNING: opportunity for of_device_get_match_data."
+coccilib.org.print_todo(j0[0], msg)
+coccilib.org.print_link(j1[0], "")
+
+// ----------------------------------------------------------------------------
+
+@script:python r1_report depends on report@
+j0 << r1_context.j0;
+j1 << r1_context.j1;
+@@
+
+msg = "WARNING: opportunity for of_device_get_match_data around line %s." % (j1[0].line)
+coccilib.report.print_report(j0[0], msg)
+
+---------------------------------------------------------------------
+
+
+Thanks
 -- 
-2.17.1
-
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
