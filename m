@@ -2,250 +2,199 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2E6ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872AAECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C80020881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 17:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EC9208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+UlGq9b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C80020881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="aTaeepsa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21EC9208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeIOXGd (ORCPT
+        id S1727838AbeIOXZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 19:06:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42485 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbeIOXGc (ORCPT
+        Sat, 15 Sep 2018 19:25:03 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33053 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727209AbeIOXZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 19:06:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g23-v6so5563298plq.9;
-        Sat, 15 Sep 2018 10:46:46 -0700 (PDT)
+        Sat, 15 Sep 2018 19:25:03 -0400
+Received: by mail-it0-f66.google.com with SMTP id j198-v6so7467652ita.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 11:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L/eeXoJ2tdf/zTRRrynwm9J5HH2dofi+d09wyXHyjXI=;
-        b=F+UlGq9bZyI7aIoGBt8G4BnvhbX+uUYo6f6/ZRbA0e2E7/7rrK3dhqmqZJJW9VYmkt
-         g4VOSrv5q02NMuSoha6eDfcOiOSdv/7HzTe31yz5nFYjMMk+XhNYOstRSg74blW6sVml
-         hVYGuVaVRpPXzQRj72Gi6J7NkYwniWP9VLIQ36RySkmlOLk1Z1olUILbJIWmboNGxQ4f
-         y0phLmg6Ozy1IJtIb2uVOv1mVo3vX6tAZZNEFxtkTBjaeCNru/dea0qR4ldZdewopfsf
-         esSan3Z4vqE75SyMwELHlswsjtjK7zepuqaqde69hu2YYAMQ4V0gNu80np+f/9Pjtrwu
-         oDug==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=9FuFpEW6OluqKuthX4CBa7sv1x7Xc51tUAf4oFYFBUg=;
+        b=aTaeepsak/NP5fWbaVMz12ZOPIs3lSui1LS9oesTQ9+CFTkWJvFCcI40EOKTSjIssS
+         B/OLwq07oXEU/oZex6zBURgRiAKesOak27G8TpnYo41MjOOJvtDx+LRrW3nPJEzCBbet
+         sve969pZC3q29F8E4EENy6YL6mTitkYuX5Whx5ISUOQ6OWYF0oeeKLS7fFRjC6Xd9Z5w
+         +fGxkT4lrdG9Z/Ny4MM3FV82GEFYCvaan1BtcY0fU7wq68Bnp34dSz3RUOzgmVuZA1Km
+         NHA/aO6mGD0Zp1vuHmaPWfBM5xsFKYk81HGiBl/WnOkFue7FuckV+ECnFxgEfNp5VTTq
+         db6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L/eeXoJ2tdf/zTRRrynwm9J5HH2dofi+d09wyXHyjXI=;
-        b=cdd2yQRp35f43rtvQb0DItRhHakzoUvdVsgi3dQucDrQSE5V4FfFs958ZoXuyGK9QG
-         jSyFIwHsAqgB3R6RZIarzzX57K1tIehMPjcmnqG1KUuQuF2Yy3g1gkT18ml7wFd73lQN
-         iW8jH8ADP3HW2jUOr3ogf7DTI2+8MB1TB80CiPKEGAQd73+3Yp9/tMZ+kpfR+tbGCy37
-         utK2HzaaKT7r4d1qjoxO5sA06dQTBgXW+WVExVjqcFOm/7DiyxyAZfi2iHyyS+BYqg7B
-         HEl+eu+FCe+++3cV2HsFZEQaSoBtvrC29If2aLtujbCUyAyhtbctB1HxQxIYHtNnHkNo
-         YGNQ==
-X-Gm-Message-State: APzg51AKMbMDFLCeecerm4L4VG0DAtP2gmyC+UTdLr5WNmTSLNKy6Rqf
-        ME/yNxQBmMkHJkEhhH7DN3U=
-X-Google-Smtp-Source: ANB0VdYqwqG+pKbzfu6W4pbiAxd8oBLBqOjuGuPEuP7UsmN2HqU7UmLJ4bCZAlMQ0eVShIsfa1LNIw==
-X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr17281940plg.57.1537033606126;
-        Sat, 15 Sep 2018 10:46:46 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm12653249pff.8.2018.09.15.10.46.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Sep 2018 10:46:45 -0700 (PDT)
-Date:   Sat, 15 Sep 2018 23:16:34 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     peda@axentia.se, jic23@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, Julia.Lawall@lip6.fr
-Subject: Re: [PATCH -next] iio: potentiometer: mcp4531: merge calls to
- of_match_device and of_device_get_match_data
-Message-ID: <20180915174634.GA15225@himanshu-Vostro-3559>
-References: <20180915105430.24052-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180915105430.24052-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=9FuFpEW6OluqKuthX4CBa7sv1x7Xc51tUAf4oFYFBUg=;
+        b=Am7w5SIhimdo53D9gm8e2BipZ2t2wuUw4eZMvf+T1X6eolAkx8i6w3wy/IUShJWGc4
+         oGA0Vi5XfMJjyQzuZdUw5NSlyTHL/6r+aMx+YARoofDjhYPFaEPANnp6VZRir8vZR5qN
+         Pxs4lrt9mr/KotTM3ml9ybBrtWgQY+31pZzTB7dHzhhwUo3uBs2JWtabuBD13CMZTCeo
+         oNoZbVGUOpCqq3T08Sn4wk7VqmH/SKT+v+4+dz/t8sPCG8EE9grh8yVUu5kLFEzGWZ5Y
+         YWQ1Nbfhe6WTXFxatdZt+EkENUNFiUeonp0sbfkDOmpjBxwenYTaKZb0uIrbKUBMiJog
+         XBCg==
+X-Gm-Message-State: APzg51AJYpIk88TKEOUuSjn/ST6VEYog33s6H/HQ81a6bWbQDrGQ4tC0
+        conFTCpJnUy5F2aNJApLCWW0vA==
+X-Google-Smtp-Source: ANB0Vdb1ZGn0DdNfCFXxTDMKlAWYr8S1/asoY46w4kRMBMm74JLlNGrhdOrcIB2oQaYAGgxOtqOZiw==
+X-Received: by 2002:a02:c7d1:: with SMTP id s17-v6mr16199580jao.27.1537034712642;
+        Sat, 15 Sep 2018 11:05:12 -0700 (PDT)
+Received: from cabot-100.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm1077998ita.29.2018.09.15.11.05.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Sep 2018 11:05:11 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <22C71398-EFD7-4638-AAE4-CE7E30E95B7E@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_024CC7D5-5AFC-4E92-92E1-51525F7D4B85";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: metadata operation reordering regards to crash
+Date:   Sat, 15 Sep 2018 12:04:51 -0600
+In-Reply-To: <CAJDTihx2MEpdWdp6V6AsOD35Lh_6R=uFXBGtO8fL8s0o5C_t8Q@mail.gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>, cmumford@cmumford.com,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     =?utf-8?B?54Sm5pmT5Yas?= <milestonejxd@gmail.com>
+References: <CAJDTihzzLV3qwg0tGH_D4xAjCrgMy+oc4H9snpnMC_RC2q7nyw@mail.gmail.com>
+ <20180914222336.GD16550@dastard>
+ <CAJDTihx2MEpdWdp6V6AsOD35Lh_6R=uFXBGtO8fL8s0o5C_t8Q@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 06:54:30PM +0800, YueHaibing wrote:
-> Drop call to of_match_device, which is subsumed by the subsequent
-> call to of_device_get_match_data.  The code becomes simpler, and a
-> temporary variable can be dropped.
-> 
-> Found by coccinelle.
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Already applied!
-https://lore.kernel.org/lkml/20180819201752.2280be76@archlinux/
+--Apple-Mail=_024CC7D5-5AFC-4E92-92E1-51525F7D4B85
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Anyway, if you want to work on making similar changes, you may
-refer the following cocci script:
+On Sep 15, 2018, at 12:58 AM, =E7=84=A6=E6=99=93=E5=86=AC =
+<milestonejxd@gmail.com> wrote:
+>=20
+> On Sat, Sep 15, 2018 at 6:23 AM Dave Chinner <david@fromorbit.com> =
+wrote:
+>>=20
+>> On Fri, Sep 14, 2018 at 05:06:44PM +0800, =E7=84=A6=E6=99=93=E5=86=AC =
+wrote:
+>>> Hi, all,
+>>>=20
+>>> A probably bit of complex question:
+>>> Does nowadays practical filesystems, eg., extX, btfs, preserve =
+metadata
+>>> operation order through a crash/power failure?
+>>=20
+>> Yes.
+>>=20
+>> Behaviour is filesystem dependent, but we have tests in fstests that
+>> specifically exercise order preservation across filesystem failures.
+>>=20
+>>> What I know is modern filesystems ensure metadata consistency
+>>> after crash/power failure. Journal filesystems like extX do that by
+>>> write-ahead logging of metadata operations into transactions. Other
+>>> filesystems do that in various ways as btfs do that by COW.
+>>>=20
+>>> What I'm not so far clear is whether these filesystems preserve
+>>> metadata operation order after a crash.
+>>>=20
+>>> For example,
+>>> op 1.  rename(A, B)
+>>> op 2.  rename(C, D)
+>>>=20
+>>> As mentioned above,  metadata consistency is ensured after a crash.
+>>> Thus, B is either the original B(or not exists) or has been replaced =
+by A.
+>>> The same to D.
+>>>=20
+>>> Is it possible that, after a crash, D has been replaced by C but B =
+is still
+>>> the original file(or not exists)?
+>>=20
+>> Not for XFS, ext4, btrfs or f2fs. Other filesystems might be
+>> different.
+>=20
+> Thanks, Dave,
+>=20
+> I found this archive:
+> https://www.mail-archive.com/linux-btrfs@vger.kernel.org/msg31937.html
+>=20
+> It seems btrfs people thinks reordering could happen.
+>=20
+> It is a relatively old reply. Has the implement changed? Or is there
+> some new standard that requires reordering not happen?
 
-I tested[1] the changes through 0-day and had few false positives
-and regressions. Therefore, check the results and compile test
-the changes before sending patches.
+There is nothing in POSIX that requires any particular ordering.  =
+However,
+the sequence "A, B, C, sync C" on ext3/ext4 has "always" resulted in A, =
+B
+also being sync'd to disk (including parent directory creation, etc).
 
+For a while, ext4 with delayed allocation resulted in write A, rename =
+A->B
+causing "B" to potentially not have any data (commit =
+v2.6.29-5120-g8750c6d).
+While the applications are depending on non-POSIX behaviour, the =
+operation
+ordering behaviour has been around long that applications have grown to
+depend on it, and consider the filesystem to have a bug when it doesn't
+behave that way.
 
-Julia, and I had tried to make the confidence "High" but few 
-cases were difficult to resolve, and later neither of us had 
-time to look back at it again.
+If you want to write a robust application, you should fsync() the files =
+you
+care about (possibly with AIO so you get a notification on completion =
+rather
+than waiting).
 
-Not all maintainers will acknowledge such a change, but IIRC
-Rob Herring gave a thumbs up on few cases on the dt-mailing list.
-
-
-[1] https://github.com/himanshujha199640/linux-next/commit/efb7ed923bd00c86fe0a4e67e2ddb636ff0e0ff4
-
----------------------------------------------------------------------
-
-/// Use of_device_get_match_data() to get matched data in an OF driver
-//# of_device_get_match_data() returns const * and therefore the left
-//# argument of assignment should also be a const * for compatible
-//# types.
-///
-// Confidence: Moderate
-// Copyright: (C) 2018 Himanshu Jha, GPLv2.
-// Copyright: (C) 2018 Julia Lawall, INRIA/LIP6.  GPLv2.
-// Keywords: of_match_device, of_device_get_match_data
-
-virtual patch
-virtual context
-virtual org
-virtual report
-
-
-@r1 depends on patch && !context && !org && !report@
-expression x,y,z;
-identifier match;
-type T;
-statement S;
-@@
-
-- match = of_match_device(x, y);
-(
-- if(match==NULL) S
-- z = match->data;
-+ z = of_device_get_match_data(y);
-|
-- if(match==NULL) S
-- z = (T *)match->data;
-+ z = of_device_get_match_data(y);
-|
-- if(match==NULL) S
-- z = (T)match->data;
-+ z = (T)of_device_get_match_data(y);
-|
-- if(match!= NULL)
-- z = match->data;
-+ z = of_device_get_match_data(y);
-|
-- if(match!= NULL)
-- z = (T *)match->data;
-+ z = of_device_get_match_data(y);
-|
-- if(match!= NULL)
-- z = (T)match->data;
-+ z = (T)of_device_get_match_data(y);
-)
-... when != match
-
-@r2 depends on r1 && patch && !context && !org && !report@
-type T1;
-expression e;
-identifier r1.match;
-@@
-
-(
-- T1 match = e;
-|
-- T1 match;
-)
-
-// ----------------------------------------------------------------------------
-
-@r1_context depends on !patch && (context || org || report)@
-type T;
-identifier match;
-statement S;
-expression x, y, z;
-position j0, j1;
-@@
-
-*  match@j0 = of_match_device(x, y);
-(
-*  if(match==NULL) S
-*  z = match@j1->data;
-|
-*  if(match==NULL) S
-*  z = (T *)match@j1->data;
-|
-*  if(match==NULL) S
-*  z = (T)match@j1->data;
-|
-*  if(match!= NULL)
-*  z = match@j1->data;
-|
-*  if(match!= NULL)
-*  z = (T *)match@j1->data;
-|
-*  if(match!= NULL)
-*  z = (T)match@j1->data;
-)
-... when != match
-
-@r2_context depends on r1 && !patch && (context || org || report)@
-type T1;
-identifier r1_context.match;
-expression e;
-position j0;
-@@
-
-(
-*  T1 match@j0 = e;
-|
-*  T1 match@j0;
-)
-
-// ----------------------------------------------------------------------------
-
-@script:python r1_org depends on org@
-j0 << r1_context.j0;
-j1 << r1_context.j1;
-@@
-
-msg = "WARNING: opportunity for of_device_get_match_data."
-coccilib.org.print_todo(j0[0], msg)
-coccilib.org.print_link(j1[0], "")
-
-// ----------------------------------------------------------------------------
-
-@script:python r1_report depends on report@
-j0 << r1_context.j0;
-j1 << r1_context.j1;
-@@
-
-msg = "WARNING: opportunity for of_device_get_match_data around line %s." % (j1[0].line)
-coccilib.report.print_report(j0[0], msg)
-
----------------------------------------------------------------------
+Cheers, Andreas
 
 
-Thanks
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+
+
+
+
+--Apple-Mail=_024CC7D5-5AFC-4E92-92E1-51525F7D4B85
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAludScsACgkQcqXauRfM
+H+B51g//RtucN7xoWHw6x+k1YAOFJXpc5sYOBfCT4EktAn1NuTkNcSd8TIJ9Y1Ad
+EJvzQAt9K8PwuLcMCsD3hef1cG2D66UwCyw+HMCxftlxOJ32dh1ZNc3Vg3L1KUf2
+EkepyzDrApjsxnjTq7u4L1cykmhZs/hLPvN+XfJFqeyLSsBxUUU1raE+THfLH+sW
+8cmCIurnCRH7RgSq1wq0/mZbWTPoH6TDi3bTco7I5zPMAb2a1PIb8pqtUXuoPuzS
+jW2xQ4CqcCqLboaCbEplQBa75U/SMIUmNX+RoUxXpcIFnE5dOdUmGSq/Eq+708bo
+Oil6MBhhnspiijQOzLsbhp2Wg2kpDFpBeUjdU/vTHx3VArACUUjYwjjE8qJya5NY
+X2JTKjYLjra1As/09hU7ccbyWGb9JmPKd/+rUQRDFr8uhBi5+I0TRxjkTwqaVd/4
+DKhb5VZJNVead4KzvalAItckvrJEOqKHzM0tpjSujNCJvn834GhipQiFC/jnZWsu
+Lrupc0nmm+Gk35bvasGtnZXZ2ekovzpQEhGP2PIG2UiUIEelF48ex9D5f4vaOUVI
+OcAxjRsspU2BIccEOEIAXfSzp6Ct/3X/jtvAyX8rt4FwnTpCMR+QkBbX2FVJWG5V
+Bzsuw4Hj3FzXnd3/zyJu+k53Qxa1dSOwPu7J97KZWCAvzHbZCyM=
+=/EmR
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_024CC7D5-5AFC-4E92-92E1-51525F7D4B85--
