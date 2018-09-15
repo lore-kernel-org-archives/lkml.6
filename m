@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E37BECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E10ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0733721479
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2EC921477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IayfGcOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0733721479
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CkMEwtz2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EC921477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbeIOHHV (ORCPT
+        id S1728425AbeIOGrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 03:07:21 -0400
-Received: from mail-cys01nam02on0095.outbound.protection.outlook.com ([104.47.37.95]:24416
+        Sat, 15 Sep 2018 02:47:43 -0400
+Received: from mail-cys01nam02on0090.outbound.protection.outlook.com ([104.47.37.90]:32953
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728409AbeIOGrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:47:47 -0400
+        id S1726128AbeIOGrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:47:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VqlxyZw1arMqUXY3ZayJtA/gxVmQeEovj6+XSE3gFFY=;
- b=IayfGcOLj352WuQyGdJly3TEX1N3td5LtoxF4PwMgbOG5T4wXMpCx8nBam9lZAYxfW06j7xouKhxMGRClvNozOTaffTAQ7+0AM5hAo99mfT4Ls3aUv3wcBynQaLLLkd+g592XhE2jUWQr9CiynMWdchX8aw8GytmM7nudatT+Dc=
+ bh=XdgPDJoWpY6d8hjTicgdZ+2hyY06GuVl8k+HVgZNFho=;
+ b=CkMEwtz2h6pqNivhLdcY0D6rWfwEP3JY/WIxgfKfonj/mo8dLTNsh1aKCpY0gQwKvEI1OBd7Tq969kbBAscg2tjGHnnczifMmATVfa3dqFQt0dWw+coULINNvNIEcmxbqUOQPYrRi9xD9Lr+D+4WdacoBX3lLqQ6kgjf0i17Ik0=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0856.namprd21.prod.outlook.com (10.173.192.145) with Microsoft SMTP
+ CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.6; Sat, 15 Sep 2018 01:30:46 +0000
+ 15.20.1164.11; Sat, 15 Sep 2018 01:30:42 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:30:46 +0000
+ 01:30:42 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Stefan Agner <stefan@agner.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC:     Rick Farrington <ricardo.farrington@cavium.com>,
+        Felix Manlunas <felix.manlunas@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 40/92] mmc: sdhci: do not try to use 3.3V
- signaling if not supported
-Thread-Topic: [PATCH AUTOSEL 4.18 40/92] mmc: sdhci: do not try to use 3.3V
- signaling if not supported
-Thread-Index: AQHUTJOoI2C1yh4eYUa7el03TeDqFQ==
-Date:   Sat, 15 Sep 2018 01:30:17 +0000
-Message-ID: <20180915012944.179481-40-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 31/92] liquidio: fix hang when re-binding VF host
+ drv after running DPDK VF driver
+Thread-Topic: [PATCH AUTOSEL 4.18 31/92] liquidio: fix hang when re-binding VF
+ host drv after running DPDK VF driver
+Thread-Index: AQHUTJOlpMUaV0hK3UakjfuraClSTQ==
+Date:   Sat, 15 Sep 2018 01:30:11 +0000
+Message-ID: <20180915012944.179481-31-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,85 +61,91 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0856;6:kLwU5PYH1roROb9XPqvoq238eCJ9pAf4UU+t7afhPiYhkvETKP60PPByJ4l3wPDgIUSUGmjcyz2rBupkUlFfha+GFjYpKCnItm5ILSwVSO7VMIkksvETffyaKVQU1wj0AWU6v8xGqVDZv6Ng3f7XMkicE7gleJW4HOsqzzmQW+HEPZEnswi2puKcb4xtQgpqOlUucit+d3UdH4c65bMqhEhZ6i1CgWJfsTelQx3J3FMB27UwKZbu249xKdbGCGMxt9T8Y90hTo+R7C1OwX8ftxaxNoWSEY0dpQ/6p+RkdkpgjgCLAPt3wUbtS66jnPnb2TQ02prk9xIYfIiBBTW9TGlzeOT9NYHTouAMW0NoALEdBHpRuS2GntvJNTy8elZlTi6bzoLQow13nzRFEP/1P3eeFXegikleJAeyxtwTtP2xVP1IL4oT3X+c6xZVLgSxER5pPy0OXnasvMNsYcniEA==;5:xFerzojIl1wI/+4z1rWmaHeRsydLMAs5/gbDPEd3GiId5sM0633URZl3JBT7Ps1urKzVo2BQCbHEkx3wYLcrOZU695ZFwBwMORKWpKD+lMYmxbVVeaGxM920UuOfrtHEJKnzuKB26VNUnKiBQvZFzdKnwAgSaJojrmp13U3Tk6E=;7:TisiUUQ3eqZ+BLp6Dn0CDIDPcU4OWFDeZ+PqKzXbI5Q1ythAdnGQouvf6OlBwuub0A1YBjvtNC32Tksx18GvsAMuwY8407keIiCiYfEGqaAYSc6Zz5ub9g9Db2S8RESiM8MdDTswGr1IWErMjvPHKDHliw4ZgqBoyfQeTJwNGpI28e5k4os1tqSwrZzpKykG9JY8lPrQCuDGrutGWH4gXA3FEXg1zyDUfnf4s9+E/R8xhzZEYpZepF2bAHRAxM8r
-x-ms-office365-filtering-correlation-id: 4e88b0e3-4524-4933-7ab2-08d61aaadca7
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:LuZ6GO9G5TqdD9fO9vONG4hoETQCps9EiYPDNq+c+0wNWOV99pJWXTjvmRDt2sPODi6wOZTOCwWGsuSgEzgszhTOQQsoCZU1hhx6etC+8vOtMUGs8nOoEMaoKCktTgx7ZHkrQM/z6nlNO77DCnuVmJdUrRzsDJ63S3Bv+yrRixpya2CiUU4LRnlKQ5VYMjcl1661qtRSD5ixlpS5mQvkHc0Acm0cdrbxHHcYhy/3gE5m/29gZJcQx2tWQQVugldzepmiRuuG2jzywSxG+q+bUlXYa6wy3k4PNZVws4AyM9aUaa/DU+R+DkGo9QWufyCL46JAherB83IdQx/WwU50OWpKJDtoOdw/pAScBbsvceAOS6mZzci/EWHSCPHrGQl5CRUVmFLN2RjBq1kCht4J7j6sopTpveL6zdvOhH2Y4ARpkxXEy/8xOhUKXDGVg8dxwPeqGRhQ9OqkkygvVrVNSg==;5:0QOwtUZMmgsezaPCrBvHHwxN2uV52dRW9KHvOmno+k2ZIlm3Gpu6yAogi5Kwgv2+n4wQzXp3Sp8ratGVB5WrdMLSnQ4TSlGvxIIFjP3hrN9MQmHvD3PY7foCMclBcjhxXs+Qk+PY/Uuf+ocRxePMhJGmanTLZCHNV9CbmbSR/TA=;7:yi4qEmkVK8HzA8YbATM8YM9MCCFG1ImL/sQbiJK2U4ql7TiI501hJC0Ipb1NZM/Ufig0nV0bJ2hb7EyBt3rGI7mLuc7F43L7UC1zJHQzBOduOvaAyvTGNMnj0oLY7xmw9G5YPnF7b7QrSfkY30FTdAdYdWqKHSFaziNmMb+T2X3MeZ8nq5dy4lFFRNFRQlLI+Emz/ToLB3fKyTS8eOAzt+GC45gfZ/EiUQ47RrKURDajxTg8dAAMwxqR1pe/Dah1
+x-ms-office365-filtering-correlation-id: c26000a2-fb16-410c-d7e3-08d61aaad9d9
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0856;
-x-ms-traffictypediagnostic: CY4PR21MB0856:
-x-microsoft-antispam-prvs: <CY4PR21MB085635FA9452E0AD8DA11838FB180@CY4PR21MB0856.namprd21.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
+x-ms-traffictypediagnostic: CY4PR21MB0741:
+x-microsoft-antispam-prvs: <CY4PR21MB07414B6FEE8F26A33CC5B899FB180@CY4PR21MB0741.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0856;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0856;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(366004)(346002)(376002)(199004)(189003)(36756003)(6116002)(486006)(316002)(3846002)(8936002)(22452003)(446003)(11346002)(2906002)(476003)(2616005)(6512007)(107886003)(53936002)(54906003)(1076002)(110136005)(25786009)(102836004)(66066001)(4326008)(217873002)(99286004)(14444005)(76176011)(68736007)(575784001)(6666003)(86362001)(5660300001)(6346003)(8676002)(86612001)(256004)(186003)(81156014)(81166006)(6506007)(26005)(2900100001)(10290500003)(478600001)(7736002)(72206003)(305945005)(97736004)(10090500001)(14454004)(106356001)(105586002)(5250100002)(2501003)(6436002)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0856;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(186003)(106356001)(25786009)(6346003)(6486002)(6436002)(476003)(102836004)(11346002)(5660300001)(2616005)(26005)(217873002)(105586002)(486006)(446003)(4326008)(53936002)(5250100002)(14454004)(10090500001)(14444005)(2900100001)(256004)(6666003)(2501003)(10290500003)(6512007)(22452003)(72206003)(8676002)(478600001)(110136005)(97736004)(68736007)(66066001)(81156014)(81166006)(2906002)(99286004)(86362001)(86612001)(575784001)(6506007)(76176011)(8936002)(6116002)(3846002)(1076002)(54906003)(305945005)(36756003)(7736002)(316002)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: w0p/Bn5DW4gCq7jTR/GCORq6qchCtOtQhjeTRhMTT+aohXxIk3RT2EC7/E+38OsN/cTRpPtuSGbz5IYH/E1yb+qdDlX0ATPmJiAY7xxF6JzBRYYwg/ta4DddYnPGtTSdI25THvOkCFH9+Aw6Bw838AsKafQQ7VRH0+JpYfSmQCBrwSxwjcZfjM5EpVYhwGj6O/EBqO558z3MnqzIxYO5FBJsxRw9WcnY3euDWNEjBhilaKx6VSn7vUnCxkKjtlPNkrrnIQFsxkhWoNTbc5mBz66ymKkZr92ZdSJt7YltfKjPqpUgpPPRszulreX9qK9s5LEiteCANMtecIZ2K+DxtrSr0zOFgTxTX9HTqjy3800=
+x-microsoft-antispam-message-info: FrHJxRowtv31uVMk9O+wtHNhEvVUUmrpfmtIVudz0iSWVAR6dxyZ3Ko7yciyicqS6DI9ZSY8cmGDn8rV3uB2OpMXdaLOMYxhz14WywsUPxVAZUTNSxwRB3c0n2TQRLJs0e/SIp8igr+HRDtDhHjyLaAwdLtWocRbXlEiy5bKqSXjnGvY1hvbQGnL1FpzkoLbbDlszliwCWB44Wl5sYSmQcK4fMqcrqHUQaj37A2BMYft/BAZs0ig7RaMEgp6My4PgmbBh5fV5V6YiC15VPYR9hL4Bh/mNoE8ZSOWMQheUqxngU7OMihZf2UrgqHTied0Dq783WhW2Ld8AmPBN++tylYc4QsNH922SEMjQOuEvtk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e88b0e3-4524-4933-7ab2-08d61aaadca7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:17.4637
+X-MS-Exchange-CrossTenant-Network-Message-Id: c26000a2-fb16-410c-d7e3-08d61aaad9d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:11.9794
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0856
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Rick Farrington <ricardo.farrington@cavium.com>
 
-[ Upstream commit 1b5190c2e74c47ebe4bcecf7a072358ad9f1feaa ]
+[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
 
-For eMMC devices it is valid to only support 1.8V signaling. When
-vqmmc is set to a fixed 1.8V regulator the stack tries to set 3.3V
-initially and prints the following warning:
-   mmc1: Switching to 3.3V signalling voltage failed
+When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
+mode was disabled by reset, which was not true.  Since DPDK driver had
+set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
+not properly handling DROQ packets (i.e. it saw zero-length packets).
 
-Clear the MMC_SIGNAL_VOLTAGE_330 flag in case 3.3V is signaling is
-not available. This prevents the stack from even trying to use
-3.3V signaling and avoids the above warning.
+This represented an invalid hardware configuration which the driver could
+not handle.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/host/sdhci.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 3 +++
+ drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 1c828e0e9905..a7b5602ef6f7 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3734,14 +3734,21 @@ int sdhci_setup_host(struct sdhci_host *host)
- 	    mmc_gpio_get_cd(host->mmc) < 0)
- 		mmc->caps |=3D MMC_CAP_NEEDS_POLL;
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/driv=
+ers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+index 929d485a3a2f..e088dedc1747 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_output_regs(struct o=
+cteon_device *oct)
+ 	for (q_no =3D srn; q_no < ern; q_no++) {
+ 		reg_val =3D octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
 =20
--	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
- 	if (!IS_ERR(mmc->supply.vqmmc)) {
- 		ret =3D regulator_enable(mmc->supply.vqmmc);
++		/* clear IPTR */
++		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
 +
-+		/* If vqmmc provides no 1.8V signalling, then there's no UHS */
- 		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
- 						    1950000))
- 			host->caps1 &=3D ~(SDHCI_SUPPORT_SDR104 |
- 					 SDHCI_SUPPORT_SDR50 |
- 					 SDHCI_SUPPORT_DDR50);
+ 		/* set DPTR */
+ 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
+=20
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/driv=
+ers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+index 9338a0008378..1f8b7f651254 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_output_regs(struct o=
+cteon_device *oct)
+ 		reg_val =3D
+ 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
+=20
++		/* clear IPTR */
++		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
 +
-+		/* In eMMC case vqmmc might be a fixed 1.8V regulator */
-+		if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
-+						    3600000))
-+			host->flags &=3D ~SDHCI_SIGNALING_330;
-+
- 		if (ret) {
- 			pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
- 				mmc_hostname(mmc), ret);
+ 		/* set DPTR */
+ 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
+=20
 --=20
 2.17.1
