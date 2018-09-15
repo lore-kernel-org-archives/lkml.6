@@ -2,99 +2,110 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217B3ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 21:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF47ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 22:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B286220881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 21:34:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8MAUEOW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B286220881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 071C82147E
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 22:01:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071C82147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeIPCzV (ORCPT
+        id S1728169AbeIPDWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 22:55:21 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42199 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbeIPCzV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 22:55:21 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g23-v6so5690503plq.9;
-        Sat, 15 Sep 2018 14:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HU7kikOQ8N5r1SbH1w2kVP/GhptrxpVltOgdNsulNZ4=;
-        b=F8MAUEOWmk0gtiooscdj7tuzoC5qOc8ZBOuYS/ts+SFHjGT3GpXBICLq35eyDhDu1F
-         2t2Hu5fZWW6P7skqkrDorMWAQJsAwaU7Ls3DcKWFAwI5i0gZfFVdvcP3neXeoV5YIshI
-         /tSl3xkh3vfxK48S3rPel32Cd2bhT53Qul8vU7VxuTb9U8De4rlnkNHQokA0kWvbMGIG
-         7ywJ9tKr5fYj9teX+2p/Hrz92qQvgGqzaxSjAd/OJpnrjF7s95TTKJndE/VQtZZcWei7
-         Le0mmYOWV/1NTyernR9xDobMtcstP58ONpb7/+lXncu2V7uBqkQO6ZNkK+uD1NOY+Qz6
-         D3Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HU7kikOQ8N5r1SbH1w2kVP/GhptrxpVltOgdNsulNZ4=;
-        b=muP2rtda2gqZdTMcUjXBlVUyrb6Px3eHdKVt6UYdNhMUQ5D9CZPteQ8zhyoTCMkHA6
-         0x30hHIdMvsFyQjd513DNJXskttkHsqp8JjTSvE4RqzngE7LpwIt09KXvYXb+tOpJQSv
-         LXpNR/PacRQqFdohwsJMJn4gELm9EO9ltJ/+PoBdEOwpEeIUqwxEyrb4sHIPrE1Iq6OM
-         XdhfvPoa8yKGTIiDma0llFKdvgIJmlQt/Q9HBhMyJtXiroruCCXThsIfnnQwen7hiOyx
-         eipQ4qMOs4ZwRbjbAI5cYqFtwC597ujTfmtDrijqSwSPMMBP6L6/wzr2Wldhb1k9snSr
-         Wm1g==
-X-Gm-Message-State: APzg51AHyoNym3PAp2oCcagc+AJuzcolp1yoq+Uc+vLRImrhGzhL5dw9
-        bXgEpNcMDV2/nzUD2PpYVIg=
-X-Google-Smtp-Source: ANB0VdYil0cc8MUoaTaBG+UP2syj7eXTDfFXNYM9vMDaKv0YzmQEljIJVh9s+8xikmM9zL5cw2UNGg==
-X-Received: by 2002:a17:902:558f:: with SMTP id g15-v6mr18225518pli.38.1537047295280;
-        Sat, 15 Sep 2018 14:34:55 -0700 (PDT)
-Received: from [10.0.2.15] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id b64-v6sm13680474pfg.66.2018.09.15.14.34.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 14:34:54 -0700 (PDT)
-Subject: Re: [PATCH net-next 1/7] dt-bindings: net: vsc8531: add two
- additional LED modes for VSC8584
-To:     Quentin Schulz <quentin.schulz@bootlin.com>,
-        alexandre.belloni@bootlin.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, davem@davemloft.net, andrew@lunn.ch
-Cc:     allan.nielsen@microchip.com, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        antoine.tenart@bootlin.com
-References: <cover.b921b010b6d6bde1c11e69551ae38f3b2818645b.1536916714.git-series.quentin.schulz@bootlin.com>
- <f54f6cda7f505d99531e33626f8d4e6f1dc084ec.1536916714.git-series.quentin.schulz@bootlin.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <c1102b61-fc17-c55b-fe27-b85dcd8aeccb@gmail.com>
-Date:   Sat, 15 Sep 2018 14:34:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <f54f6cda7f505d99531e33626f8d4e6f1dc084ec.1536916714.git-series.quentin.schulz@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 15 Sep 2018 23:22:00 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35528 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727798AbeIPDV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 23:21:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Sep 2018 15:01:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,379,1531810800"; 
+   d="scan'208";a="70289156"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga007.fm.intel.com with ESMTP; 15 Sep 2018 15:01:29 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
+        "Tony Luck" <tony.luck@intel.com>
+Cc:     "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "Xiaochen Shen" <xiaochen.shen@intel.com>,
+        "Chen Yu" <yu.c.chen@intel.com>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, "Fenghua Yu" <fenghua.yu@intel.com>
+Subject: [PATCH V2 5/9] x86/intel_rdt: Fix unchecked MSR access
+Date:   Sat, 15 Sep 2018 14:58:23 -0700
+Message-Id: <1537048707-76280-6-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1537048707-76280-1-git-send-email-fenghua.yu@intel.com>
+References: <1537048707-76280-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Reinette Chatre <reinette.chatre@intel.com>
 
+When a new resource group is created, it is initialized with sane
+defaults that currently assume the resource being initialized is a CAT
+resource. This code path is also followed by a MBA resource that is not
+allocated the same as a CAT resource and as a result we encounter the
+following unchecked MSR access error:
 
-On 09/14/18 02:44, Quentin Schulz wrote:
-> The VSC8584 (and most likely other PHYs in the same generation) has two
-> additional LED modes that can be picked, so let's add them.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+unchecked MSR access error: WRMSR to 0xd51 (tried to write 0x0000
+000000000064) at rIP: 0xffffffffae059994 (native_write_msr+0x4/0x20)
+Call Trace:
+mba_wrmsr+0x41/0x80
+update_domains+0x125/0x130
+rdtgroup_mkdir+0x270/0x500
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Fix the above by ensuring the initial allocation is only attempted on a
+CAT resource.
+
+Fixes: 95f0b77ef ("x86/intel_rdt: Initialize new resource group with sane defaults")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index ea91750ba27f..74821bc457c0 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -2349,6 +2349,12 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 	u32 *ctrl;
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
++		/*
++		 * Only initialize default allocations for CBM cache
++		 * resources
++		 */
++		if (r->rid == RDT_RESOURCE_MBA)
++			continue;
+ 		list_for_each_entry(d, &r->domains, list) {
+ 			d->have_new_ctrl = false;
+ 			d->new_ctrl = r->cache.shareable_bits;
+@@ -2386,6 +2392,12 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 	}
+ 
+ 	for_each_alloc_enabled_rdt_resource(r) {
++		/*
++		 * Only initialize default allocations for CBM cache
++		 * resources
++		 */
++		if (r->rid == RDT_RESOURCE_MBA)
++			continue;
+ 		ret = update_domains(r, rdtgrp->closid);
+ 		if (ret < 0) {
+ 			rdt_last_cmd_puts("failed to initialize allocations\n");
 -- 
-Florian
+2.19.0
+
