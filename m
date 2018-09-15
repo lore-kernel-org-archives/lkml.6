@@ -2,130 +2,82 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03252ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12714ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8B620881
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:32:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fydtXztW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8B620881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5709F20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 07:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5709F20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbeIOMul (ORCPT
+        id S1727029AbeIOMvu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 08:50:41 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:38966 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeIOMul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 08:50:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mP32TR68+i+MS8dCnnMv1EiTvStTCuZNB51njvg4V0g=; b=fydtXztWghVRpXneas5lHCJm8
-        bWh50Km/DFHf95jE1uu+/LrZh9UXBYTHCflfRiVsmaD9ZPLMml+VyKCt51Tm88XPomShI5DwLPy43
-        aF9C68DxGMiZiChXNornVB5Cvi7VzN3axo5YgAeKGTW8hbEYhVASiiMMMiap5OZ9jK6Fo=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:60858)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g154C-0003c6-Qg; Sat, 15 Sep 2018 08:32:32 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g154A-00086o-71; Sat, 15 Sep 2018 08:32:30 +0100
-Date:   Sat, 15 Sep 2018 08:32:28 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: phy: sfp: Prevent NULL deference of socket_ops
-Message-ID: <20180915073228.GE30658@n2100.armlinux.org.uk>
-References: <20180914230132.23228-1-f.fainelli@gmail.com>
+        Sat, 15 Sep 2018 08:51:50 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:39830 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbeIOMvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 08:51:50 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 3B76348E9C276B087095;
+        Sat, 15 Sep 2018 15:33:46 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w8F7XdNL070869;
+        Sat, 15 Sep 2018 15:33:39 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018091515341302-9089513 ;
+          Sat, 15 Sep 2018 15:34:13 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH]  amdgpu/dcn10 : fix compile warning
+Date:   Sat, 15 Sep 2018 23:46:57 +0800
+Message-Id: <1537026417-3798-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914230132.23228-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-09-15 15:34:13,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-09-15 15:33:20
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse01.zte.com.cn w8F7XdNL070869
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 04:01:31PM -0700, Florian Fainelli wrote:
-> In case we have specified a SFP and an I2C phandle in the Device Tree,
-> but we somehow failed to look up the I2C adapter (e.g: the driver is not
-> enabled), we will leave dangling socket_ops, and the sfp_bus will still
-> have been registered. We can then observe NULL pointer dereferences
-> while doing ethtool -m:
-> 
-> [   20.218613] Unable to handle kernel NULL pointer dereference at virtual address 00000008
-> [   20.226977] pgd = (ptrval)
-> [   20.229785] [00000008] *pgd=7c400831, *pte=00000000, *ppte=00000000
-> [   20.236274] Internal error: Oops: 17 [#1] SMP ARM
-> [   20.241122] Modules linked in:
-> [   20.244278] CPU: 0 PID: 1480 Comm: ethtool Not tainted 4.19.0-rc3 #138
-> [   20.251013] Hardware name: Broadcom Northstar Plus SoC
-> [   20.256316] PC is at sfp_get_module_info+0x8/0x10
-> [   20.261172] LR is at dev_ethtool+0x218c/0x2afc
-> 
-> Specifically guard against that.
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:
+    In function ‘dcn10_update_mpcc’:
+drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:1903:9:
+    warning: missing braces around initializer [-Wmissing-braces]
 
-The other alternative to this would be to only set ndev->sfp_bus when
-the bus moves to registered state, which would probably be a saner
-alternative than to add an additional layer of tests.  IOW:
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/net/phy/sfp-bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/sfp-bus.c b/drivers/net/phy/sfp-bus.c
-index 48ca980f5c96..c4c2b5269216 100644
---- a/drivers/net/phy/sfp-bus.c
-+++ b/drivers/net/phy/sfp-bus.c
-@@ -362,6 +362,7 @@ static int sfp_register_bus(struct sfp_bus *bus)
- 	}
- 	if (bus->started)
- 		bus->socket_ops->start(bus->sfp);
-+	bus->netdev->sfp_bus = bus;
- 	bus->registered = true;
- 	return 0;
- }
-@@ -370,6 +371,7 @@ static void sfp_unregister_bus(struct sfp_bus *bus)
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+index cfcc54f..a06a035 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+@@ -1900,7 +1900,7 @@ static void update_dpp(struct dpp *dpp, struct dc_plane_state *plane_state)
+ static void dcn10_update_mpcc(struct dc *dc, struct pipe_ctx *pipe_ctx)
  {
- 	const struct sfp_upstream_ops *ops = bus->upstream_ops;
- 
-+	bus->netdev->sfp_bus = NULL;
- 	if (bus->registered) {
- 		if (bus->started)
- 			bus->socket_ops->stop(bus->sfp);
-@@ -451,7 +453,6 @@ static void sfp_upstream_clear(struct sfp_bus *bus)
- {
- 	bus->upstream_ops = NULL;
- 	bus->upstream = NULL;
--	bus->netdev->sfp_bus = NULL;
- 	bus->netdev = NULL;
- }
- 
-@@ -480,7 +481,6 @@ struct sfp_bus *sfp_register_upstream(struct fwnode_handle *fwnode,
- 		bus->upstream_ops = ops;
- 		bus->upstream = upstream;
- 		bus->netdev = ndev;
--		ndev->sfp_bus = bus;
- 
- 		if (bus->sfp) {
- 			ret = sfp_register_bus(bus);
-
+ 	struct hubp *hubp = pipe_ctx->plane_res.hubp;
+-	struct mpcc_blnd_cfg blnd_cfg = {0};
++	struct mpcc_blnd_cfg blnd_cfg = { {0} };
+ 	bool per_pixel_alpha = pipe_ctx->plane_state->per_pixel_alpha && pipe_ctx->bottom_pipe;
+ 	int mpcc_id;
+ 	struct mpcc *new_mpcc;
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+1.8.3.1
+
