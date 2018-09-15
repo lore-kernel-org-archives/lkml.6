@@ -2,151 +2,108 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD456ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46489ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A4A21477
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF0762083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 08:50:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbwoTc1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A4A21477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azwHXwmb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0762083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbeIOOI1 (ORCPT
+        id S1727506AbeIOOIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 10:08:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbeIOOI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 10:08:27 -0400
-Received: from localhost (unknown [213.57.183.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3226B2083A;
-        Sat, 15 Sep 2018 08:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537001414;
-        bh=msys6+725WWbJQVQ+C2ujHae62x8k4yLaXbrSVZangE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CbwoTc1x+N5dTOJOWHye8pf7dgHd4Xw6dY219Rt1SlDUsor8slRtWk8yhb9caCixu
-         dzgOfJhO+gX28hwr1sSkD4FQmXXKAVEq0GH5JHzjSNKcjxWnzX7x/30JqduC+TqniK
-         tmLsd7hxkz/4eM4JCNwqbPm4bXP6dedtNgOPCGII=
-Date:   Sat, 15 Sep 2018 11:50:09 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Qing Huang <qing.huang@oracle.com>
-Cc:     David Miller <davem@davemloft.net>, andrew@lunn.ch,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tariqt@mellanox.com
-Subject: Re: [PATCH] net/mlx4_core: print firmware version during driver
- loading
-Message-ID: <20180915085009.GD5257@mtr-leonro.mtl.com>
-References: <c580ad9d-b63d-743b-2278-1c4cf3553186@oracle.com>
- <20180914181718.GD3811@lunn.ch>
- <c332f10a-5ad0-53fd-5111-1964443b3092@oracle.com>
- <20180914.141406.2211638662965115243.davem@davemloft.net>
- <1d4fe3c6-13aa-12a4-8da4-a83374b89fbf@oracle.com>
+        Sat, 15 Sep 2018 10:08:50 -0400
+Received: from mail-pl1-f179.google.com ([209.85.214.179]:44691 "EHLO
+        mail-pl1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbeIOOIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 10:08:49 -0400
+Received: by mail-pl1-f179.google.com with SMTP id ba4-v6so5225501plb.11
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=QBcWNMZ/g0U+WnI0vV1BLmIFs8dPS5KKo3z3gYe1fcg=;
+        b=azwHXwmbIdPNLt5GMkMAJwQqFf+NljuXhzs+EyTCxtbiV4W6+l88yLkHZErLcmFLe1
+         xoyii6TL4d/GCJWSqFh5MkGpSdPCvTEqkuLUvxYOWDND/BoTv28rc4AB2G4cUuOsUVRx
+         0SM3BK6YhtKZe53K8Ssd/E6u7wDufcKfI4nfkzX1zxbU1SnMzwJEtA91cOJVfnS8V9Rd
+         wl+f/fd2LAuEv/CeIayxoRpKlaDyie9swYao0giA2W2QpIxV9CfRjsCER2xkH5ueyYae
+         s6TofPZnXaJ+oCmMhVYirJCZfeC65zWiLi0f0l/zePGrJBcUK4NryU3RxUGrhGfaatOD
+         TZbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=QBcWNMZ/g0U+WnI0vV1BLmIFs8dPS5KKo3z3gYe1fcg=;
+        b=ORarOS5Vprim7+wmSLQkHKhFR07anUtlBAgZ0H3leNaG8fd5S9L7PtJ2w5CXqEcHeo
+         T7VmivUcUQRy6xAL861VKjWhAcvUx9lM548E5U7ggK2wXaLw2BUPm/CGtQ4yKjEYJAsk
+         Zlw8ILJoxRDBkpfIsruj31FyNLsoSQDl028kt6nSMUoqGlMaS3SZ5YNxUxyquZ9+LUrb
+         h/l+6uhGmpUUNRN4jFFu1cSOY/K/lEdUzr8KF7zqIGkow2yvQdMxg9Jct69O39Elu+rr
+         7brgb0w/6ACxPN+D+YrRwUixVuoaB+jxo0M7cYzhiYoe1FI0Sp/76JpO+ZO6RmAZANsd
+         spWA==
+X-Gm-Message-State: APzg51BqPu3JY3vsoHjVanPy/dJNfEq+diTxbAtNDrUJEdWQ86jXlXUH
+        OnPUuqi46MGzOWDdHUJ6rqeGpqZm
+X-Google-Smtp-Source: ANB0VdbvAH3vatXveLCinbc/GAuo0SL9gtNZ3ku1L1aqbyQIv9VugRVCrx/d9W0hnSJjjxgkp85gug==
+X-Received: by 2002:a17:902:b60b:: with SMTP id b11-v6mr15296369pls.301.1537001436627;
+        Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.58? ([2402:f000:1:1501:200:5efe:a66f:473a])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm11130390pff.8.2018.09.15.01.50.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Sep 2018 01:50:36 -0700 (PDT)
+To:     lee.jones@linaro.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] mfd: ezx-pcap: Possible sleep-in-atomic-context bugs in
+ pcap_adc_irq()
+Message-ID: <f83a444a-1943-6c8c-5cd4-88e2acb17fa6@gmail.com>
+Date:   Sat, 15 Sep 2018 16:50:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LiQwW4YX+w4axhAx"
-Content-Disposition: inline
-In-Reply-To: <1d4fe3c6-13aa-12a4-8da4-a83374b89fbf@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The driver may sleep in an interrupt handler.
+The function call paths (from bottom to top) in Linux-4.17 are:
 
---LiQwW4YX+w4axhAx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[FUNC] mutex_lock_nested
+drivers/mfd/ezx-pcap.c, 272:
+     mutex_lock_nested in pcap_adc_irq (interrupt handler)
 
-On Fri, Sep 14, 2018 at 03:36:46PM -0700, Qing Huang wrote:
->
->
-> On 9/14/2018 2:14 PM, David Miller wrote:
-> > From: Qing Huang<qing.huang@oracle.com>
-> > Date: Fri, 14 Sep 2018 11:33:40 -0700
-> >
-> > > On 9/14/2018 11:17 AM, Andrew Lunn wrote:
-> > > > On Fri, Sep 14, 2018 at 10:15:48AM -0700, Qing Huang wrote:
-> > > > > The FW version is actually a very crucial piece of information and
-> > > > > only
-> > > > > printed once here
-> > > > > when the driver is loaded. People tend to get confused when switching
-> > > > > multiple FW files
-> > > > > back and forth without running separate utility tools, especially at
-> > > > > customer sites.
-> > > > > IMHO, this information is very useful and only takes up very little
-> > > > > log file
-> > > > > space. :-)
-> > > > Why not use ethtool -i ?
-> > > >
-> > > > $ sudo ethtool -i eth0
-> > > > driver: r8169
-> > > > version: 2.3LK-NAPI
-> > > > firmware-version: rtl8168g-2_0.0.1 02/06/13
-> > > >
-> > > >       Andrew
-> > > Sure. You can also use ibstat or ibv_devinfo tool if they are
-> > > installed. But it's not very
-> > > convenient in some cases.
-> > >
-> > > E.g.
-> > > A customer upgrades FW on HCAs and encounters issues. During triage,
-> > > it's much easier
-> > > to study customer uploaded log files when remotely testing different
-> > > FW files.
-> > Not a valid argument.  You can print the ethtool output from initramfs
-> > if necessary for triage.
-> >
-> > I still stand by the fact that ethtool is the only fully reliable way
-> > to obtain this information, the kernel log is not.
->
-> This is more for Infiniband mode which depends more on features and
-> functionalities
+[FUNC] mutex_lock_nested
+drivers/mfd/ezx-pcap.c, 100:
+     mutex_lock_nested in ezx_pcap_read
+drivers/mfd/ezx-pcap.c, 281:
+     ezx_pcap_read in pcap_adc_irq (interrupt handler)
 
-For pure infiniband devices you have rdmatool, part of iproute2.
-[leonro@server-14-015 ~]$ rdma dev
-1: mlx5_0: node_type ca fw 3.8.9999 node_guid 5254:00c0:fe12:3455 sys_image_guid 5254:00c0:fe12:3455
+[FUNC] mutex_lock_nested
+drivers/mfd/ezx-pcap.c, 85:
+     mutex_lock_nested in ezx_pcap_write
+drivers/mfd/ezx-pcap.c, 285:
+     ezx_pcap_write in pcap_adc_irq (interrupt handler)
 
-> provided in firmware and get much more frequent FW bug fixes than typical
-> Ethernet
-> devices. This is not meant to replace other ways of getting the information,
-> more like
-> an enhancement for checking log history.
->
-> This can provide valuable information when tracing through system log
-> history to
-> discover what happened with a specific HCA drv ver and fw ver combination in
-> the past.
->
-> Regards,
-> Qing
+[FUNC] mutex_lock_nested
+drivers/mfd/ezx-pcap.c, 244:
+     mutex_lock_nested in pcap_adc_trigger
+drivers/mfd/ezx-pcap.c, 299:
+     pcap_adc_trigger in pcap_adc_irq (interrupt handler)
 
---LiQwW4YX+w4axhAx
-Content-Type: application/pgp-signature; name="signature.asc"
+These bugs are found by my static analysis tool DSAC.
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJbnMfBAAoJEORje4g2clins2MP/2ahQ8mb69Zi6lmm5NOnF6Jp
-pRNzlNSTPzRZ9Fp2MXZYMU1tGny0099pN0kkUalecGjUjyIL5W3VU1kTKyhZJo9B
-7mi/e1uTXVkT3dEyqsPhXdaig0C7EWv+pQRz6he2oc3QBhc1uUri7jKofjLG7K+q
-o6/j7F2nZ0mIK4AzoQZJErFv4bZ7hXzcx48vNRg4jV6LLgKP//9C5KyNrjZ/GyUf
-YDp3DOQzhbu4EHxQqm7bb08XHKj24SJ0AAaGKIJEcXY1iTrZqmg3LYSOpS0aGLy0
-RV7q6uuKbbm7RiHqF+htAAobgoGqYorAep9ePvl2lvAzwnJh39Fcv25Hbrqly5EG
-fXsCk4SvNROH8RwqLwOQ1j4is08omwVN0LeKGS3y0auIJkdjiTJh6VZMb2/+WKG+
-BaL9mzQnl32Spl/uOQPepf4YSwWVHqpzATamZpm/FVsDp4g0dhkzJmTLvErhEfxu
-b27VRmImB3mnGRhnQ/csRIy4aYlYXr811xbYs+QIFBMnU7Gj8587fAhA7Tpbe03u
-7AusoUmICk5Z+CMaVWjLXsDY3BlwxRuSIzKrSWOy3eYEsNvgcn2750IoSrFF8ytD
-//P2h9BKzUMMwnwlxV6FYne4mTYLLhiD3vAk+eI/Xdsv6TLYr67/e8CL24na83Z+
-1nQgA1BF0TXoZBpShiR0
-=dvjv
------END PGP SIGNATURE-----
-
---LiQwW4YX+w4axhAx--
+Best wishes,
+Jia-Ju Bai
