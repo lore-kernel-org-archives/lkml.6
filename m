@@ -2,136 +2,173 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 377A3C4161C
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 12:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF39ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F7421479
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 12:58:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F7421479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 87204208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87204208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeIOSRM (ORCPT
+        id S1727218AbeIOSZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 14:17:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44956 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726969AbeIOSRM (ORCPT
+        Sat, 15 Sep 2018 14:25:51 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51741 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeIOSZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 14:17:12 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8FCrRjO002883
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 08:58:16 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mgx8bxsg8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 08:58:16 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Sat, 15 Sep 2018 13:58:14 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 15 Sep 2018 13:58:11 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8FCwAGD65994972
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 15 Sep 2018 12:58:10 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11C7942047;
-        Sat, 15 Sep 2018 15:58:00 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B6D242041;
-        Sat, 15 Sep 2018 15:57:59 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.116])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 15 Sep 2018 15:57:58 +0100 (BST)
-Date:   Sat, 15 Sep 2018 15:58:07 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Michal Hocko <mhocko@kernel.org>, linux-mips@linux-mips.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mips: switch to NO_BOOTMEM
-References: <1536571398-29194-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180914195300.7wnmsph2qhpixm7s@pburton-laptop>
+        Sat, 15 Sep 2018 14:25:51 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g1AHh-0007k3-Sq; Sat, 15 Sep 2018 15:06:50 +0200
+Date:   Sat, 15 Sep 2018 15:06:49 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+Subject: [patch V3 04/10] x86/mm/cpa: Add debug mechanism
+In-Reply-To: <20180914131301.941953185@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1809151504280.1650@nanos.tec.linutronix.de>
+References: <20180914130917.155416208@linutronix.de> <20180914131301.941953185@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914195300.7wnmsph2qhpixm7s@pburton-laptop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18091512-4275-0000-0000-000002BAB631
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091512-4276-0000-0000-000037C3F676
-Message-Id: <20180915125806.GH15191@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-15_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=612 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809150142
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 12:53:00PM -0700, Paul Burton wrote:
-> Hi Mike,
-> 
-> On Mon, Sep 10, 2018 at 12:23:18PM +0300, Mike Rapoport wrote:
-> > MIPS already has memblock support and all the memory is already registered
-> > with it.
-> > 
-> > This patch replaces bootmem memory reservations with memblock ones and
-> > removes the bootmem initialization.
-> > 
-> > Since memblock allocates memory in top-down mode, we ensure that memblock
-> > limit is max_low_pfn to prevent allocations from the high memory.
-> > 
-> > To have the exceptions base in the lower 512M of the physical memory, its
-> > allocation in arch/mips/kernel/traps.c::traps_init() is using bottom-up
-> > mode.
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> > ---
-> > v2:
-> > * set memblock limit to max_low_pfn to avoid allocation attempts from high
-> > memory
-> > * use boottom-up mode for allocation of the exceptions base
-> > 
-> > Build tested with *_defconfig.
-> > Boot tested with qemu-system-mips64el for 32r6el, 64r6el and fuloong2e
-> > defconfigs.
-> > Boot tested with qemu-system-mipsel for malta defconfig.
-> > 
-> >  arch/mips/Kconfig                      |  1 +
-> >  arch/mips/kernel/setup.c               | 99 ++++++++--------------------------
-> >  arch/mips/kernel/traps.c               |  3 ++
-> >  arch/mips/loongson64/loongson-3/numa.c | 34 ++++++------
-> >  arch/mips/sgi-ip27/ip27-memory.c       | 11 ++--
-> >  5 files changed, 46 insertions(+), 102 deletions(-)
-> 
-> Thanks - applied to mips-next for 4.20.
-> 
-> Apologies for the delay, my son decided to be born a few weeks early &
-> scupper my plans :)
+The whole static protection magic is silently fixing up anything which is
+handed in. That's just wrong. The offending call sites need to be fixed.
 
-Congratulations! :)
+Add a debug mechanism which emits a warning if a requested mapping needs to be
+fixed up. The DETECT debug mechanism is really not meant to be enabled except
+for developers, so limit the output hard to the protection fixups.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+
+V2 -> V3: Fix the print format for 32bit PAE
+
+ arch/x86/mm/pageattr.c |   61 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 52 insertions(+), 9 deletions(-)
+
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -42,6 +42,13 @@ struct cpa_data {
+ 	struct page	**pages;
+ };
  
-> Paul
-> 
-
--- 
-Sincerely yours,
-Mike.
-
++enum cpa_warn {
++	CPA_PROTECT,
++	CPA_DETECT,
++};
++
++static const int cpa_warn_level = CPA_PROTECT;
++
+ /*
+  * Serialize cpa() (for !DEBUG_PAGEALLOC which uses large identity mappings)
+  * using cpa_lock. So that we don't allow any other cpu, with stale large tlb
+@@ -392,6 +399,28 @@ static pgprotval_t protect_kernel_text_r
+ }
+ #endif
+ 
++static inline bool conflicts(pgprot_t prot, pgprotval_t val)
++{
++	return (pgprot_val(prot) & ~val) != pgprot_val(prot);
++}
++
++static inline void check_conflict(int warnlvl, pgprot_t prot, pgprotval_t val,
++				  unsigned long start, unsigned long end,
++				  unsigned long pfn, const char *txt)
++{
++	static const char *lvltxt[] = {
++		[CPA_PROTECT]	= "protect",
++		[CPA_DETECT]	= "detect",
++	};
++
++	if (warnlvl > cpa_warn_level || !conflicts(prot, val))
++		return;
++
++	pr_warn("CPA %8s %10s: 0x%016lx - 0x%016lx PFN %lx req %016llx prevent %016llx\n",
++		lvltxt[warnlvl], txt, start, end, pfn, (unsigned long long)pgprot_val(prot),
++		(unsigned long long)val);
++}
++
+ /*
+  * Certain areas of memory on x86 require very specific protection flags,
+  * for example the BIOS area or kernel text. Callers don't always get this
+@@ -399,19 +428,31 @@ static pgprotval_t protect_kernel_text_r
+  * checks and fixes these known static required protection bits.
+  */
+ static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
+-					  unsigned long pfn, unsigned long npg)
++					  unsigned long pfn, unsigned long npg,
++					  int warnlvl)
+ {
+-	pgprotval_t forbidden;
++	pgprotval_t forbidden, res;
+ 	unsigned long end;
+ 
+ 	/* Operate on the virtual address */
+ 	end = start + npg * PAGE_SIZE - 1;
+-	forbidden  = protect_kernel_text(start, end);
+-	forbidden |= protect_kernel_text_ro(start, end);
++
++	res = protect_kernel_text(start, end);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Text NX");
++	forbidden = res;
++
++	res = protect_kernel_text_ro(start, end);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Text RO");
++	forbidden |= res;
+ 
+ 	/* Check the PFN directly */
+-	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
+-	forbidden |= protect_rodata(pfn, pfn + npg - 1);
++	res = protect_pci_bios(pfn, pfn + npg - 1);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "PCIBIOS NX");
++	forbidden |= res;
++
++	res = protect_rodata(pfn, pfn + npg - 1);
++	check_conflict(warnlvl, prot, res, start, end, pfn, "Rodata RO");
++	forbidden |= res;
+ 
+ 	return __pgprot(pgprot_val(prot) & ~forbidden);
+ }
+@@ -683,10 +724,11 @@ static int __should_split_large_page(pte
+ 	 * in it results in a different pgprot than the first one of the
+ 	 * requested range. If yes, then the page needs to be split.
+ 	 */
+-	new_prot = static_protections(req_prot, address, pfn, 1);
++	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
+ 	pfn = old_pfn;
+ 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1,
++						       CPA_DETECT);
+ 
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			return 1;
+@@ -1296,7 +1338,8 @@ static int __change_page_attr(struct cpa
+ 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+ 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
+ 
+-		new_prot = static_protections(new_prot, address, pfn, 1);
++		new_prot = static_protections(new_prot, address, pfn, 1,
++					      CPA_PROTECT);
+ 
+ 		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
