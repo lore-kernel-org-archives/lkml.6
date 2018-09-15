@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7F2ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F0BECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C02A820866
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2BAE20866
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YiN9vRgE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02A820866
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="S62ZdZr3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2BAE20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeIOHCz (ORCPT
+        id S1729093AbeIOHC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 03:02:55 -0400
-Received: from mail-eopbgr730136.outbound.protection.outlook.com ([40.107.73.136]:54496
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 03:02:58 -0400
+Received: from mail-eopbgr720090.outbound.protection.outlook.com ([40.107.72.90]:59680
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728325AbeIOGsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728347AbeIOGsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 15 Sep 2018 02:48:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0GTpmL07HZ5qvfyx6Hk6XgvkOSRdUpR8KTFfLKgcIW0=;
- b=YiN9vRgE4kwOe31Y/T5XF3Tw3t4QjnxsfriBM0en7Rh7ywsUqviFe8I77O+NAOpHM/fOFxxoI/MYJpqAASOxJcukCZg6ZlNcIM7dfTutJCctfzq5qcZVF5loEoj+nzL8+X4XW4kShz+6s/T5isiGaVCjGRss1VRHZcOFx/r134w=
+ bh=bmkxO7SrMtzykzK+lGAH6syixSClMhDIZM7ElpmZfO4=;
+ b=S62ZdZr3t48KWVTH+I8WIYu3yj+NRTbkQW4qrwQwIr3iHkGDDJHDhQVmveaazErBmay7i+rg33ExD5lw+LiFJHYzTKu6fz74rFuvvRDUL+fKsg2/zRG4x49ZhJm5pI6yr3DRiRTclu8Vm11nFrYW8wk37KJ7L+y0gHprfDNlHKU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0470.namprd21.prod.outlook.com (10.172.121.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.12; Sat, 15 Sep 2018 01:31:37 +0000
+ 15.20.1164.12; Sat, 15 Sep 2018 01:31:38 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:31:37 +0000
+ 01:31:38 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+CC:     Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 78/92] arm64: perf: Disable PMU while processing
- counter overflows
-Thread-Topic: [PATCH AUTOSEL 4.18 78/92] arm64: perf: Disable PMU while
- processing counter overflows
-Thread-Index: AQHUTJO5J3H8StvKVke1H6EmYtuycA==
-Date:   Sat, 15 Sep 2018 01:30:45 +0000
-Message-ID: <20180915012944.179481-77-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 79/92] drm/amd/pp: Send khz clock values to DC
+ for smu7/8
+Thread-Topic: [PATCH AUTOSEL 4.18 79/92] drm/amd/pp: Send khz clock values to
+ DC for smu7/8
+Thread-Index: AQHUTJO5mx5HuZJru0SNhOZvzO7iuA==
+Date:   Sat, 15 Sep 2018 01:30:46 +0000
+Message-ID: <20180915012944.179481-78-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:++NQfwfX5MLFfUFsJKgP4j2qCCuviXx9QWmcYD0KwJBYrMgMgfVtyiG6Jz49BfrdQgCXHCLEd5KfHCDo6Ct0nIdE5XJf9JTQl0iFe15VvQWgZ28vye3rtwN6fDlsSF4Mv5X5rHM847uSKxbQJ2K1+p0Yi6AMo3FRPqE1LuqvuX1itHBCH/4Mt793Qr6C1+bFwsQikCFfHidbHz7EqPzEj2m1M7MmJ/a4odu0HCUqeKc70KoEWgps69xo+Hx7eKfQuYCaW4ssxZDA0sTb/oMh9+Y7wo4g1UJjqeHW7roMaUri8/AYQIQpIkpbmLEjz9HTTIfXprZbxi/SnB6H8sFLY+f4LqVcWJCrE0IH0vl6wY+4/+CTYQohFr0it8zarjKRY79YEFtdkPRTK2NWimmNSSLgww88IyzAU4EBDdTeDt/1zX3H5rKubdNtifyY1MJLSGvXDIIFCEFBeW43OvEaEg==;5:tlYomP/K5heT4rxFsKcn1PyrcZpK7pUNdy0JJBUBBhfgLd4UDQMLAZEqrl+JCEv8HR0ICA3sAEmcZEmwYeFAFitHirp6JX+SHwWFZYy9DsdTmE7ao53S8fcQcQsIUkhnl5giHWgb3N5rQTWSTxDPbhuRhojjmvs6cuCvcubhFjk=;7:bBi8k8iwGT368+x7EVKgRYtI2UsEWFSnIfKfTaha7WOiW37rwGuN+fhzu9CI9NyAmFsFISRxTc/V2AUv1diJ8YRitFripH5HSB7dRSwA5Xgki0u27MejAoYGFyw4nl4nKYWXfmOSLeaR+Qi5gZA2i3ipBWZZsty2NSBoUHtliLcDf4GRqLlZzi68yXgeTIIHxBmn4JD/T11jW+/L4Y8OoP9fucx1A2cnW/S5o/h8Fj7wQe/FuyAMlwVT9gQdSw3e
-x-ms-office365-filtering-correlation-id: aa6c7bd0-61ba-486d-e897-08d61aaafafc
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:jFgl3JIMKAqlNYVe5XDSg0XUpkRoY0e8M0ugWpm7spuUg1uSgRvxo3Ac/LHn9LP8OKvaSOWPxILhabFqLObUaLDU2CYHrW4jfrXEfs/7qGbmzDvXx1xvUyNv3HPXNzLzMK75FNFI1URxVSM5eoyDO7ZJdvAbOF13SL68flz1gKL86MF+F2mksUEw4rvQjVO2rb4GfPJQb6VMW7PkX0lc5pwlFkFU/nQ3gq3tAqfgOL//rhx6Agdx5/5aLZVvDtzakOr3sM3gbVcnqreIgsBslpjwrVGy507vKH2PpU2dknfo5OI5cSZzsaDUvRNuc8P2rIgrut/EofIGLGDKJgO158iSqIR2qSrrlfssyqCVUupzWDM4d4oUft1zw3KBsiK1FrYUH6eG8gkkVgKhuYxq1ThOfkV4WuTqnmBA/fpDL1H+tEqzzP7Nz78TOJyEIccKqQgUgrA2bR9Cr4n12ku9ag==;5:ssffKFiwvf8u/TavqRu/NqFJHSl0+uDxKt8Y0OOVrwhIEtNWA4d2l0NQ3TVlcv5PKBPR1zMNXdICRV3Y/9Rn71xPJVKx82Z5EYXkzzo+SrkpHxAgDr1EcVTzC7RH9L0t9y+v4OIclSoXzHjfXmwUjEvvxvOX29bqPCLe7+oXP8k=;7:gedesfZ5Iwj+f//piHHaS0KhxgO+0Z0uakwok2NpiHK40H28WER4FbDQoBjeM9gj6fN3LFqDIkYyZ0Wswjbt2/Tn8ioXorUzoKnLPZnGB3Z75A2uejkFKIVnvy3o6gOL2ZB3RQo4b8+PbAoqQV+Aw6DhXQ/hrwtq0EGZPjkIO/c5dg7JFhBiwhLVAYFrrK3O342dmckR7JDMujHPqvfdRXW5ysHIbm4v7zvSCWmJpgFiopzW/2T9dQGJyH9pgSro
+x-ms-office365-filtering-correlation-id: 279aa470-364f-428d-6f08-08d61aaafb44
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0470;
 x-ms-traffictypediagnostic: CY4PR21MB0470:
-x-microsoft-antispam-prvs: <CY4PR21MB0470ABB37457548AD3F4E294FB180@CY4PR21MB0470.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB047081CF02B68A61E008EE5BFB180@CY4PR21MB0470.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(767451399110);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0470;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0470;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(14444005)(6506007)(2501003)(2906002)(6486002)(6436002)(5250100002)(99286004)(486006)(14454004)(81156014)(26005)(81166006)(8936002)(6346003)(102836004)(8676002)(186003)(2616005)(476003)(446003)(10290500003)(11346002)(97736004)(478600001)(72206003)(10090500001)(6666003)(105586002)(217873002)(36756003)(106356001)(22452003)(316002)(256004)(5660300001)(54906003)(110136005)(3846002)(6116002)(25786009)(66066001)(107886003)(4326008)(86362001)(2900100001)(68736007)(6512007)(53936002)(86612001)(76176011)(1076002)(305945005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(6506007)(2501003)(2906002)(6486002)(6436002)(5250100002)(99286004)(486006)(14454004)(81156014)(26005)(81166006)(8936002)(6346003)(102836004)(8676002)(186003)(2616005)(476003)(446003)(10290500003)(11346002)(97736004)(478600001)(72206003)(10090500001)(6666003)(105586002)(217873002)(36756003)(106356001)(22452003)(316002)(256004)(5660300001)(54906003)(110136005)(3846002)(6116002)(25786009)(66066001)(107886003)(4326008)(86362001)(2900100001)(68736007)(6512007)(53936002)(86612001)(76176011)(1076002)(305945005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: HXYPoT0vHCrCqOLlGHneIAUZhe1TlaF/T1AS7/+M0WpgW9rOIZE52iEjpDX3fLTJ8u0ynT//AEvdrDgE559Zm2i/rl5JHbeqvylvFMhImeFIS7Topsg+1tMXoDqJBrjjEz/TwnzMXaS0qNgrAU9kVlIW12VeftMmUE1J6EvoyWt25e0a3K9LNBVlxlgYXOqOw0c3l3jneW+E1cuIWNGA0UC29/B19HSphrMPDkjbrnTNpfs85P2Ve2qH6eCXExiOHjU1yVaQJlvAgY6Ghp6toUp9lsZ1mux6T2llsOAnDIbXyNqbF0/dbB3I22XcTlJj6FxGxZgZhB4xwzU8NI8NhXUNBf9Lx4WjZ8kidsrYn+Y=
+x-microsoft-antispam-message-info: Hg4grVl/D5rENajkGYtaitPI3Tt+pAIJb+lKvzvuwaD2RvehVOUqbuGrwGfG1tN0SMOt5APOKRl7u4F3KJcgK3RXGv++j+9gu1ABzFDfZ/Tz3R2Zz39QDjeqWWFe+xpu7qABtKfkYUTKEPM1gFGQZEf5LFrXlTiCQFkAzEfGY9JTaHfHwp4HNGEC+f0rJ2ayWEl3owIsszQRmnFK/mBrERMxQPiGFgLWM/gMdAWut8o5L84a8kKD+yGbZyqcv2C3QlMM8/y0j7N2t3oqScUwUDWh/iSddqm4wRb5ppPKqjZoZ5vtHvAP3QinjFdNq04zJ8AvaMEYoWH5vbKK1JHvPX7RyVfu+kbXkGeD3Kl/J3Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa6c7bd0-61ba-486d-e897-08d61aaafafc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:45.1979
+X-MS-Exchange-CrossTenant-Network-Message-Id: 279aa470-364f-428d-6f08-08d61aaafb44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:46.2917
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,117 +93,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Harry Wentland <harry.wentland@amd.com>
 
-[ Upstream commit 3cce50dfec4a5b0414c974190940f47dd32c6dee ]
+[ Upstream commit c3cb424a086921f6bb0449b10d998352a756d6d5 ]
 
-The arm64 PMU updates the event counters and reprograms the
-counters in the overflow IRQ handler without disabling the
-PMU. This could potentially cause skews in for group counters,
-where the overflowed counters may potentially loose some event
-counts, while they are reprogrammed. To prevent this, disable
-the PMU while we process the counter overflows and enable it
-right back when we are done.
+The previous change wasn't covering smu 7 and 8 and therefore DC was
+seeing wrong clock values.
 
-This patch also moves the PMU stop/start routines to avoid a
-forward declaration.
+This fixes an issue where the pipes seem to hang with a 4k DP and 1080p
+HDMI display.
 
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: c3df50abc84b ("drm/amd/pp: Convert clock unit to KHz as defined")
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Cc:rex.zhu@amd.com
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm64/kernel/perf_event.c | 50 +++++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 8 ++++----
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.=
-c
-index 33147aacdafd..dd5b4fab114f 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -670,6 +670,28 @@ static void armv8pmu_disable_event(struct perf_event *=
-event)
- 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
- }
-=20
-+static void armv8pmu_start(struct arm_pmu *cpu_pmu)
-+{
-+	unsigned long flags;
-+	struct pmu_hw_events *events =3D this_cpu_ptr(cpu_pmu->hw_events);
-+
-+	raw_spin_lock_irqsave(&events->pmu_lock, flags);
-+	/* Enable all counters */
-+	armv8pmu_pmcr_write(armv8pmu_pmcr_read() | ARMV8_PMU_PMCR_E);
-+	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
-+}
-+
-+static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
-+{
-+	unsigned long flags;
-+	struct pmu_hw_events *events =3D this_cpu_ptr(cpu_pmu->hw_events);
-+
-+	raw_spin_lock_irqsave(&events->pmu_lock, flags);
-+	/* Disable all counters */
-+	armv8pmu_pmcr_write(armv8pmu_pmcr_read() & ~ARMV8_PMU_PMCR_E);
-+	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
-+}
-+
- static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
- {
- 	u32 pmovsr;
-@@ -694,6 +716,11 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu =
-*cpu_pmu)
- 	 */
- 	regs =3D get_irq_regs();
-=20
-+	/*
-+	 * Stop the PMU while processing the counter overflows
-+	 * to prevent skews in group events.
-+	 */
-+	armv8pmu_stop(cpu_pmu);
- 	for (idx =3D 0; idx < cpu_pmu->num_events; ++idx) {
- 		struct perf_event *event =3D cpuc->events[idx];
- 		struct hw_perf_event *hwc;
-@@ -718,6 +745,7 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *=
-cpu_pmu)
- 		if (perf_event_overflow(event, &data, regs))
- 			cpu_pmu->disable(event);
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu=
+/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index f8e866ceda02..77779adeef28 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -4555,12 +4555,12 @@ static int smu7_get_sclks(struct pp_hwmgr *hwmgr, s=
+truct amd_pp_clocks *clocks)
+ 			return -EINVAL;
+ 		dep_sclk_table =3D table_info->vdd_dep_on_sclk;
+ 		for (i =3D 0; i < dep_sclk_table->count; i++)
+-			clocks->clock[i] =3D dep_sclk_table->entries[i].clk;
++			clocks->clock[i] =3D dep_sclk_table->entries[i].clk * 10;
+ 		clocks->count =3D dep_sclk_table->count;
+ 	} else if (hwmgr->pp_table_version =3D=3D PP_TABLE_V0) {
+ 		sclk_table =3D hwmgr->dyn_state.vddc_dependency_on_sclk;
+ 		for (i =3D 0; i < sclk_table->count; i++)
+-			clocks->clock[i] =3D sclk_table->entries[i].clk;
++			clocks->clock[i] =3D sclk_table->entries[i].clk * 10;
+ 		clocks->count =3D sclk_table->count;
  	}
-+	armv8pmu_start(cpu_pmu);
 =20
- 	/*
- 	 * Handle the pending perf events.
-@@ -731,28 +759,6 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu =
-*cpu_pmu)
- 	return IRQ_HANDLED;
- }
-=20
--static void armv8pmu_start(struct arm_pmu *cpu_pmu)
--{
--	unsigned long flags;
--	struct pmu_hw_events *events =3D this_cpu_ptr(cpu_pmu->hw_events);
--
--	raw_spin_lock_irqsave(&events->pmu_lock, flags);
--	/* Enable all counters */
--	armv8pmu_pmcr_write(armv8pmu_pmcr_read() | ARMV8_PMU_PMCR_E);
--	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
--}
--
--static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
--{
--	unsigned long flags;
--	struct pmu_hw_events *events =3D this_cpu_ptr(cpu_pmu->hw_events);
--
--	raw_spin_lock_irqsave(&events->pmu_lock, flags);
--	/* Disable all counters */
--	armv8pmu_pmcr_write(armv8pmu_pmcr_read() & ~ARMV8_PMU_PMCR_E);
--	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
--}
--
- static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
- 				  struct perf_event *event)
- {
+@@ -4592,7 +4592,7 @@ static int smu7_get_mclks(struct pp_hwmgr *hwmgr, str=
+uct amd_pp_clocks *clocks)
+ 			return -EINVAL;
+ 		dep_mclk_table =3D table_info->vdd_dep_on_mclk;
+ 		for (i =3D 0; i < dep_mclk_table->count; i++) {
+-			clocks->clock[i] =3D dep_mclk_table->entries[i].clk;
++			clocks->clock[i] =3D dep_mclk_table->entries[i].clk * 10;
+ 			clocks->latency[i] =3D smu7_get_mem_latency(hwmgr,
+ 						dep_mclk_table->entries[i].clk);
+ 		}
+@@ -4600,7 +4600,7 @@ static int smu7_get_mclks(struct pp_hwmgr *hwmgr, str=
+uct amd_pp_clocks *clocks)
+ 	} else if (hwmgr->pp_table_version =3D=3D PP_TABLE_V0) {
+ 		mclk_table =3D hwmgr->dyn_state.vddc_dependency_on_mclk;
+ 		for (i =3D 0; i < mclk_table->count; i++)
+-			clocks->clock[i] =3D mclk_table->entries[i].clk;
++			clocks->clock[i] =3D mclk_table->entries[i].clk * 10;
+ 		clocks->count =3D mclk_table->count;
+ 	}
+ 	return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c b/drivers/gpu=
+/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+index 50690c72b2ea..288802f209dd 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+@@ -1604,17 +1604,17 @@ static int smu8_get_clock_by_type(struct pp_hwmgr *=
+hwmgr, enum amd_pp_clock_type
+ 	switch (type) {
+ 	case amd_pp_disp_clock:
+ 		for (i =3D 0; i < clocks->count; i++)
+-			clocks->clock[i] =3D data->sys_info.display_clock[i];
++			clocks->clock[i] =3D data->sys_info.display_clock[i] * 10;
+ 		break;
+ 	case amd_pp_sys_clock:
+ 		table =3D hwmgr->dyn_state.vddc_dependency_on_sclk;
+ 		for (i =3D 0; i < clocks->count; i++)
+-			clocks->clock[i] =3D table->entries[i].clk;
++			clocks->clock[i] =3D table->entries[i].clk * 10;
+ 		break;
+ 	case amd_pp_mem_clock:
+ 		clocks->count =3D SMU8_NUM_NBPMEMORYCLOCK;
+ 		for (i =3D 0; i < clocks->count; i++)
+-			clocks->clock[i] =3D data->sys_info.nbp_memory_clock[clocks->count - 1 =
+- i];
++			clocks->clock[i] =3D data->sys_info.nbp_memory_clock[clocks->count - 1 =
+- i] * 10;
+ 		break;
+ 	default:
+ 		return -1;
 --=20
 2.17.1
