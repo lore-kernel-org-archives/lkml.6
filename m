@@ -2,109 +2,136 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF73FECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA25EECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826BD208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9563A208DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:39:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="J8+YeT5U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826BD208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Dk5B7nj8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9563A208DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729916AbeIOG4Z (ORCPT
+        id S1729698AbeIOGvl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:56:25 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39660 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729689AbeIOGvn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:51:43 -0400
-Received: by mail-oi0-f67.google.com with SMTP id c190-v6so14441290oig.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 18:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tZXgHBQYHhBgVHRHL/h8xDhmBbiWwGy8Wgx4X0K6TY8=;
-        b=J8+YeT5U9wV9/JyPodmuYfQE1jpW3ka3uO+878to95Rl1JABePFoZ6xE0FjoeGZKBw
-         Se8tqkmwXYsSlD3rPnkF/yFaSgosUkH5EEKHFzxMFG1Zgw4/zuRP8euVhALruXMsBPHD
-         taAxaE2gpEUQ12EAm7aNLnsssTMr66ID1ZGU5V8d3RrqxKYsaVau40SVz4SPbv/QqHM6
-         9eTbyzIoEKTq4S+rXqsSYIVkOiEwppIyJTlwfKCNv5q6LP6jI2BPFx8btzE16vkOmjgY
-         W6dz+qIZCnwi8PLSDRTJ8Vn//5IXhjOKsuHsxD4Dnm8S51Oadqkcwx+/nclD1NDEyrlz
-         4KPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tZXgHBQYHhBgVHRHL/h8xDhmBbiWwGy8Wgx4X0K6TY8=;
-        b=rN6xyNA3x1MxS0ExN00BYChdsWnvKMcCzfb2zymLaiYxCX8vWWgkIUpzS3rqAZYbpV
-         rp98Jn7vD/ISbMpf4v7ERJ/R/7WX+p+D4Kl0hGXRp4l+vRWXFyJd1CdlnyABM3pqEl1Z
-         NQMK/2/gy3rmGF7P+iqxl3Pw98JUZoKEywJBrrKeCV17xJ9YWtokuz92Buvc7y41/adF
-         S4vup0sxY1ECvgkYgIq4WExn2gQV4PRJGGieA+jq726oTjNs6tmORderf0UsH6PH2Er+
-         vyG4t8g/jvAQ/17Nlz+z34KysfcylEIlkVRJUPaoxvsTQvQ129JyNLfoyiz4R/T2WXVc
-         n8DA==
-X-Gm-Message-State: APzg51BbxgHcPplMPC2FojQnzdFM9kRiFIphJEK2lCFr+dJXGR0gcQO2
-        hSWTn1ytBKltqzUal1Y22zRclNeqKuu7brmlerfxAA==
-X-Google-Smtp-Source: ANB0Vdaow6ykqahVNCtOwiGME7B5og/rauox1Lo1jOpfgXcgfeLolgxPobSmbNjz5FB/DPDA7tSGTvja4WF2N9ZxhcU=
-X-Received: by 2002:aca:4083:: with SMTP id n125-v6mr10678011oia.167.1536975284378;
- Fri, 14 Sep 2018 18:34:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4a:8e85:0:0:0:0:0 with HTTP; Fri, 14 Sep 2018 18:34:43
- -0700 (PDT)
-In-Reply-To: <20180915012944.179481-50-alexander.levin@microsoft.com>
-References: <20180915012944.179481-1-alexander.levin@microsoft.com> <20180915012944.179481-50-alexander.levin@microsoft.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 14 Sep 2018 18:34:43 -0700
-Message-ID: <CAPcyv4jbHivBtLMD0uQ6TMMhObPQ_5287Lirus=RRD5O2GjB2w@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.18 51/92] tools/testing/nvdimm: Fix support for
- emulating controller temperature
-To:     Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Sat, 15 Sep 2018 02:51:41 -0400
+Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:13056
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729654AbeIOGvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:51:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JuI35dqrTn8fmVlifC1iLxg5pp3LzKnfQ/s4b9+6GxY=;
+ b=Dk5B7nj8ekszfzzn7seJPGqqRvdWxNlMN6GOJ0NqccNz1DWjuct+BqzKvLsh5hLCFXzT12S28411eVNa7fuNFhmiHTU03xaaEufC7YgIf34Ew6rLMg4Et/fvpTJaJ+aS84a6VnlzyX07s68Trtew6nbPNGIpZoObin5Zi5ee+9A=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0823.namprd21.prod.outlook.com (10.173.192.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.9; Sat, 15 Sep 2018 01:34:36 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
+ 01:34:36 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+CC:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 17/34] parport: sunbpp: fix error return code
+Thread-Topic: [PATCH AUTOSEL 4.9 17/34] parport: sunbpp: fix error return code
+Thread-Index: AQHUTJRCqKTwBUAuHEOdSBlwlt2Nug==
+Date:   Sat, 15 Sep 2018 01:34:36 +0000
+Message-ID: <20180915013422.180023-17-alexander.levin@microsoft.com>
+References: <20180915013422.180023-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180915013422.180023-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0823;6:X7fkMmgylJdJYIi4w2jlLMz799DTbLl+uaqdSP8QhgSAUoEaA2VYXJzJkxp/LcjNRip4fWDZECZwI8p9vcgzy4/a9heBl0jhrjDG2/7NbfSlE+If2+ZXSfRGjDDY7idRRkIEAeAZEUWV/7tyxICOECR5BYmjst9Hh1BgIfGVhY8ifFyUUdI296W6AAW4WAA0vWjgNjDEeJTGzoLk8vDS0GBin/Eye8bDqzvuORcBXZLWAQsrS+MUcXZGuBsUJwOUxn8fMg2aftKcHkS0kFanMI6UE+3Z4dOx7cvHRs1NgSA+xlZSv+wCPIKOyR2zpsQjVG2jKUXlPXdKCWhhoh5YCu8jf0YuJd9jyJ979ZJ4Y8MgI19fWCSyjsPB7ZdTkIk61Fo+rAAxfSnu4lLFtb2Cxn5bWCVKZcbJglInCpikbq78SXDW5ZHu+STU24e8iFMnfoY9ASWw91zqe1Ma84UlZA==;5:a4y79mDXnuqVHhcMq0VUfTQ2CRQqyrOrSqsQQRPD/wqb/4/RPuA04une3IyLVs8n1kAFA/5rR7pWKH0D0Syvpp3U6iEuNIY3JiLLz+XA2e513I7NAojm3Y6PLQsbSMP4GmybKQN5JeueYysrxf208FmpP1bjY3Z7GsJvxIy96F0=;7:nF8uuL1gnfSFTg2vAhNNWSV+6yw5PvXccQCuYLhNQwjjNGD0+aEFN8u4ntbYXd6oFn0vu/IOqOdvZsynE7humVw+DHoxlgi9hSXf+SHhBKld/t+6O8vQk/OPj3csipjLZUS4BCKG1P7IJvjyjnaeMMO96PIZaFgnyNUz2bJajttbfR8vxHMgfD9c33MF2Z19CzNG3IZEnrFf8+phGeylDaitmc2QMVrmdaBMshE6pihYi7PT4ca0/LI0ZI1dOPfM
+x-ms-office365-filtering-correlation-id: 60ad1887-ce13-46c6-6878-08d61aab6589
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0823;
+x-ms-traffictypediagnostic: CY4PR21MB0823:
+x-microsoft-antispam-prvs: <CY4PR21MB0823A04B15303009C54A49AEFB180@CY4PR21MB0823.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0823;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0823;
+x-forefront-prvs: 0796EBEDE1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(39860400002)(366004)(189003)(199004)(53936002)(14454004)(2900100001)(3846002)(6116002)(14444005)(256004)(10290500003)(81166006)(81156014)(217873002)(76176011)(72206003)(478600001)(8936002)(25786009)(8676002)(86362001)(66066001)(6512007)(86612001)(7736002)(305945005)(97736004)(11346002)(5660300001)(5250100002)(102836004)(54906003)(2616005)(446003)(6436002)(6506007)(476003)(186003)(110136005)(2501003)(2906002)(105586002)(22452003)(10090500001)(36756003)(4326008)(68736007)(39060400002)(26005)(107886003)(6486002)(486006)(106356001)(1076002)(6346003)(316002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0823;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: roYC6+CoRGzhWUPYNBJ4LlFykbxpMGAcK/i8IeNmpJMjQD953lslewYKfvUwD13yIpfd5b7giQmWGCJ0zqAAcVvBPu15NlN9LZm6F2ssFMcPPS9r3pPAxEPazn7r0ImNdC3VmwQ1KMGC+UnR+UZKCByNS2zlKe0kH9qhYL2o21sPMT3SOWr357OARKVIOYCe4jvat5osXHnP9OlkKrbY0gNJpgogQbaoc6z+dUbBfenZs19S9CXCTh0anQMjt1cBPHJFVSRyQXWI8ZV30ILPJYMOtCOtNmSr2wUiHKemeetHl1SkVOQ5qFaHGl8114TAjr4ZlX/BnHtBuqYe9z9cG8EQ82xPnxQZ9DvofXgGKJI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60ad1887-ce13-46c6-6878-08d61aab6589
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:34:36.3643
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0823
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 6:30 PM, Sasha Levin
-<Alexander.Levin@microsoft.com> wrote:
-> From: Dan Williams <dan.j.williams@intel.com>
->
-> [ Upstream commit e5d772fbe7685aae0dff99f3b54158a0ec32155e ]
->
-> In addition to populating the value the payload also needs to set the
-> "controller temperature valid" flag.
->
-> Fixes: cdd77d3e1930 ("nfit, libnvdimm: deprecate the generic SMART ioctl")
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> ---
->  tools/testing/nvdimm/test/nfit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
-> index e2926f72a821..94c3bdf82ff7 100644
-> --- a/tools/testing/nvdimm/test/nfit.c
-> +++ b/tools/testing/nvdimm/test/nfit.c
-> @@ -1308,7 +1308,8 @@ static void smart_init(struct nfit_test *t)
->                         | ND_INTEL_SMART_ALARM_VALID
->                         | ND_INTEL_SMART_USED_VALID
->                         | ND_INTEL_SMART_SHUTDOWN_VALID
-> -                       | ND_INTEL_SMART_MTEMP_VALID,
-> +                       | ND_INTEL_SMART_MTEMP_VALID
-> +                       | ND_INTEL_SMART_CTEMP_VALID,
->                 .health = ND_INTEL_SMART_NON_CRITICAL_HEALTH,
->                 .media_temperature = 23 * 16,
->                 .ctrl_temperature = 25 * 16,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Does no harm, but also does no benefit since this is just unit test
-infrastructure. You may want to blacklist this directory for stable
-checking in the future.
+[ Upstream commit faa1a47388b33623e4d504c23569188907b039a0 ]
+
+Return an error code on failure.  Change leading spaces to tab on the
+first if.
+
+Problem found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/parport/parport_sunbpp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sun=
+bpp.c
+index 01cf1c1a841a..8de329546b82 100644
+--- a/drivers/parport/parport_sunbpp.c
++++ b/drivers/parport/parport_sunbpp.c
+@@ -286,12 +286,16 @@ static int bpp_probe(struct platform_device *op)
+=20
+ 	ops =3D kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
+ 		      GFP_KERNEL);
+-        if (!ops)
++	if (!ops) {
++		err =3D -ENOMEM;
+ 		goto out_unmap;
++	}
+=20
+ 	dprintk(("register_port\n"));
+-	if (!(p =3D parport_register_port((unsigned long)base, irq, dma, ops)))
++	if (!(p =3D parport_register_port((unsigned long)base, irq, dma, ops))) {
++		err =3D -ENOMEM;
+ 		goto out_free_ops;
++	}
+=20
+ 	p->size =3D size;
+ 	p->dev =3D &op->dev;
+--=20
+2.17.1
