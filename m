@@ -7,53 +7,57 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE25ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB422ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9A8208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 433AF21476
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="lQ1xzXMN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9A8208DD
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="HyCG+s3L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433AF21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbeIOGsu (ORCPT
+        id S1728936AbeIOGsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:48:50 -0400
-Received: from mail-eopbgr720090.outbound.protection.outlook.com ([40.107.72.90]:59680
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 02:48:52 -0400
+Received: from mail-eopbgr730136.outbound.protection.outlook.com ([40.107.73.136]:54496
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728325AbeIOGss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:48:48 -0400
+        id S1728900AbeIOGsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:48:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iBsfdmsKD1TXJVsfrLPwYt4mskohWYJG6/XhN+5qNm4=;
- b=lQ1xzXMNnzvOuJhl3MEO2ITu28NSIQyMEHO1bWR03I6sI9QpMIIBpi0ddm/RzmHCTlbB6C9PinGELIPM5bB6K41KvSziMUUNdBEzvkojv/0c+R11fQDWXUlqlt8rqsndUT3CKU5Z33BvkByQI/cjik3EI2OafK0a6vfBaMCX4ms=
+ bh=Sueif/pPx8V+tRejy0PNkPB8LXBoIiVBVjBFHwYOFz4=;
+ b=HyCG+s3LNBJ/VRq4TGGXbujF7gPAWHAPYeA+HT3AyPlTGN+UQamkVEo/DlZMIuLM925SQ1A9hGlwvTHBuo5s1LCQ56zbcssqmBcslBxIHqZQkSDWdX+IgFHqExiLuwyIqfetBxpl/9iD/ekPv6A6PdTEdM2hWlrv9VE34kFk3Gw=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0470.namprd21.prod.outlook.com (10.172.121.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.12; Sat, 15 Sep 2018 01:31:35 +0000
+ 15.20.1164.12; Sat, 15 Sep 2018 01:31:36 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:31:35 +0000
+ 01:31:36 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC:     John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 72/92] scsi: lpfc: Fix NVME Target crash in defer
- rcv logic
-Thread-Topic: [PATCH AUTOSEL 4.18 72/92] scsi: lpfc: Fix NVME Target crash in
- defer rcv logic
-Thread-Index: AQHUTJO2aIzChwerG0iolxgnFq7pYg==
-Date:   Sat, 15 Sep 2018 01:30:40 +0000
-Message-ID: <20180915012944.179481-71-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 75/92] selftest: timers: Tweak raw_skew to SKIP
+ when ADJ_OFFSET/other clock adjustments are in progress
+Thread-Topic: [PATCH AUTOSEL 4.18 75/92] selftest: timers: Tweak raw_skew to
+ SKIP when ADJ_OFFSET/other clock adjustments are in progress
+Thread-Index: AQHUTJO3P6hK+RWZ+kO9xo9VBMkWtg==
+Date:   Sat, 15 Sep 2018 01:30:42 +0000
+Message-ID: <20180915012944.179481-74-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -62,30 +66,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:B7o3gbLYTkDc2YEw2RxaypKorYWokDqNckLWFPFNBSnflRo61VwX/Stdgeb5plSmRWSSjlTkPoIg3QuO1M39kPqWIFI55OmkPi9blE5pZkm5B0BAMvCzWczTYNRWaXK+xm7dMGm1nnJG8QHc0gAMpi/iL8PG3jVd2u9bXm2K5PFFZl+P/4H2u59zr8yinQRc5fC9CyJ+aiRaeWaztEzGi9ELy59hw3aY7/YWFvji1tbznuKiQxz86/asW55uhZ6DsNM9jr+2DNw1nJo6f68Ffl8o8id8kFx1R1mW8TvieOQlQw0CA7mBiXBuFd8SD3i9qEPB/i6boG8ZgJEwdczmc13b0zbEJBhHSNySBaBV6kcojGnKxcyXE4VbfsDamR3b50zyIbQwO22Fu8gqVRoUkMCJFKL1SagHsgee248xvEPVEy7tpi5vYCw19NRmd+sKYgkirLpJhiOIkLb4svUy7A==;5:fKEC5gzAvZZZdiLBZZwjQWLNsCKT6GQQwKjCCH6B6nZFSKfWPLmVm7eY8QpiR7D8hq9sVW1yPqd48V/muVmaPxaPbk6LmUU6QSgoue+wJrA0VobBgjqAs3dWhZ5ULgXlTNA1d5oobC/NFRYCdfPh3JotPC8cRTZ2Wh2J1vPITgQ=;7:QuaL60YIVg2duQ2K0DZSn46s0Gt/E2RPyN2zBrOrexQhbWjLhDKXjLYV0aURHn/D4lIccTyLzm1Rhh/pC9t/ygkHZSXVEJ/ycojUjNNmntH1UjqhwKBg3+OzHM9hZ+hLNbWeYSNDowoVaoF6dqBaBRDq44XUzlQ5NkvkU4X6RJ6xelb3WKI6sA1HpxuVtSxHJYwknkPeWUeNAYHQPCbipipTCK+B0i+qayjZnntWNAhtugJhlRHJsGZKn5CQGVfZ
-x-ms-office365-filtering-correlation-id: 2f27ea34-4b7b-4c6e-994d-08d61aaaf967
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:Blt0cJj4yDHHnsaNDIbvvOBENm4zF/Rf084iiXbU6HjNZ3dCk+qfZttXbJpSWw1+TQluKA4OssdMmwW8wYEDrPe+YKCu8WTiA93soWzjOwWapctwlQCJ0ZdC9hAB+FaDcKtjzqzmm+RocIDjhT3Bd+lt+qI0ynF/fWQ/WusSMu2M1e2XQLe9+OS/N2ezx+ju8pl5DQMil8rsgSNFBaQx2qrjOfSKvGURKQZyUJZiuuIsA7xlDcEOA+zB/RPIXl5SC6sU98M53AvO8XvNa1vGcsMyHxkm4T8MXCA1K0DQpQ1U/GglMNN8PBPin7p2SNoijYh7dHuuaDYYkqlVRi9ivrEkGShJ5fYaNlDE8qU8JTu+eToFQKKVMKXwSPYb+qtRH5aRJw3+S/K4JIKeJetOYUf98e2/9k3Wivfq+FIG8Sj8bzqSV1Xng6yHABfDB1onaHFRiuYxD3vPR8fKsV+EUg==;5:z3tUMiT3jurZKUf8jC1yAh6PuIH5tpkJeYv58O611/pVPo3N6fIRTSD19X40eG1DMP9DfegRyZKrnDr1LVbsAZ2mRitKJ/NM2aUQYhXq1tPCQ54bQpkEN6Pb3SGksLeI6YBEW0rz1Qs6kvSOOE2RuSR7njeo24zZjFCq73VlM0w=;7:Wss3Q6kw+BbsM0Z9kniTqsqlZuNKzYwhVzNU6CkHYGu2OIDy0t/SdKW+ZM/tj0GY4EKAwKg1O49Ru95Z6a5CjpPh1cuFePTMFOuePdO6V/pRsS+/VFr+ZLLU0ASuWGA9c9vw7+Eoszr/F8SIlJTS/evtx4dYwE7ISHsjTGaeSap4AovGMBoOW5tYtWhIv8T6VC9sKb44K9bw3WZGGf05qqCZfyQkTlKpa6ueeEeukMtp33UXBTD74RwvfiWC5vAb
+x-ms-office365-filtering-correlation-id: 2c6aa5d2-094f-4162-b631-08d61aaafa47
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0470;
 x-ms-traffictypediagnostic: CY4PR21MB0470:
-x-microsoft-antispam-prvs: <CY4PR21MB0470D7AF22EB16D79CEEA08FFB180@CY4PR21MB0470.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(208715162771679)(28532068793085)(89211679590171)(85827821059158)(146099531331640);
+x-microsoft-antispam-prvs: <CY4PR21MB04709B213E91591F3EF2C8FBFB180@CY4PR21MB0470.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(85827821059158);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0470;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0470;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(14444005)(6506007)(2501003)(2906002)(6486002)(6436002)(5250100002)(99286004)(486006)(14454004)(81156014)(26005)(81166006)(8936002)(6346003)(102836004)(8676002)(186003)(2616005)(476003)(446003)(10290500003)(11346002)(97736004)(478600001)(72206003)(10090500001)(6666003)(105586002)(217873002)(36756003)(106356001)(22452003)(316002)(256004)(5660300001)(54906003)(110136005)(3846002)(6116002)(25786009)(66066001)(107886003)(4326008)(86362001)(2900100001)(39060400002)(68736007)(6512007)(53936002)(86612001)(76176011)(1076002)(305945005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(6506007)(2501003)(2906002)(6486002)(6436002)(5250100002)(99286004)(486006)(14454004)(81156014)(26005)(81166006)(8936002)(6346003)(102836004)(8676002)(186003)(2616005)(476003)(446003)(10290500003)(11346002)(97736004)(478600001)(72206003)(10090500001)(6666003)(105586002)(217873002)(36756003)(106356001)(22452003)(316002)(256004)(5660300001)(54906003)(110136005)(3846002)(6116002)(25786009)(66066001)(107886003)(4326008)(86362001)(2900100001)(39060400002)(7416002)(68736007)(6512007)(53936002)(86612001)(76176011)(1076002)(305945005)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: WS87ocd/Gr3LBBJD/LdfqDBpcBYH61aMsAqjBlAZmG0Bto0BU7b7lVAD/VDSfQNSSJQWLfPKT5CREZB5MgZV1iPXsDIg1pD5S3s65h5O8FrdVdxWC+3MCBJkdPN43ffkCDsuvLmDgGYTJPxup/Oyj5OtUpJszPNdIEDDuWT3rh5BhpXJuvfzH7lLPYAp+w7yA91DeXhsYE+QW5QZ4ysxdQgBdIGZ2WFiyqNagLICbAFJTBgGrGS/Z1Y0RPo3ssnYxTLdw60paMZ6FW+aBVN033HBo8nJ/Rg30iPAn5Jei0+OB8cmSzh5ql6oum+vpi0pG38CazLLujK8gWe1wlfYwq5DlflFK41gQwaJmlXaZxk=
+x-microsoft-antispam-message-info: epwlNa9Cxff4LPw20vkmRl42cqSa7W9xsTM20k0qrokI0DBvZ7wEjAUUEY47NPJVPVaewI49t1Ei3GogqklWupx5LK2ZHS7x5jBzzu6gDYgHu4dRiNfART0LG8K7anwHd3G5dV53Ybus2yzaIVqS62Nmp/8tILyKMql11Vw3IdcfGlBZ6CcDBDZ8+ofPr3jm1LZmU0ObSMbZU9UYO+7Q9JHmOObIkogawbbAl2Pywj+/B0q/sW+K0UNDvERJtQGYILHU0J9k78+OEVpUULSv1a3YNxxGVGFqnrrtAFZrPuw4R/s3xeXCNKWO6uw+CZgJyaBhrTq3WC0dLVSPWZ7Zy7c7aQyZLSWmyGCkElNRd5Y=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f27ea34-4b7b-4c6e-994d-08d61aaaf967
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:40.2136
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c6aa5d2-094f-4162-b631-08d61aaafa47
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:42.4480
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -95,62 +99,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: John Stultz <john.stultz@linaro.org>
 
-[ Upstream commit 6871e8144f935a1f08e7fc6269c894861ce494aa ]
+[ Upstream commit 1416270f4a1ae83ea84156ceba19a66a8f88be1f ]
 
-Kernel occasionally crashed with the following
-ops on NVME Target:
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
-  IP: [<ffffffffa042ee50>] lpfc_nvmet_defer_rcv+0x50/0x70 [lpfc]
+In the past we've warned when ADJ_OFFSET was in progress, usually
+caused by ntpd or some other time adjusting daemon running in non
+steady sate, which can cause the skew calculations to be
+incorrect.
 
-Callback routine was called for deferred rcv when it should be treated as a
-normal rcv.
+Thus, this patch checks to see if the clock was being adjusted
+when we fail so that we don't cause false negatives.
 
-Added code in callback routine to detect this condition and log a message,
-then bail.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Suggested-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+v2: Widened the checks to look for other clock adjustments that
+    could happen, as suggested by Miroslav
+v3: Fixed up commit message
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/lpfc/lpfc_nvmet.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ tools/testing/selftests/timers/raw_skew.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.=
-c
-index 7271c9d885dd..5e5ec3363b44 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -402,6 +402,7 @@ lpfc_nvmet_ctxbuf_post(struct lpfc_hba *phba, struct lp=
-fc_nvmet_ctxbuf *ctx_buf)
+diff --git a/tools/testing/selftests/timers/raw_skew.c b/tools/testing/self=
+tests/timers/raw_skew.c
+index ca6cd146aafe..dcf73c5dab6e 100644
+--- a/tools/testing/selftests/timers/raw_skew.c
++++ b/tools/testing/selftests/timers/raw_skew.c
+@@ -134,6 +134,11 @@ int main(int argv, char **argc)
+ 	printf(" %lld.%i(act)", ppm/1000, abs((int)(ppm%1000)));
 =20
- 		/* Process FCP command */
- 		if (rc =3D=3D 0) {
-+			ctxp->rqb_buffer =3D NULL;
- 			atomic_inc(&tgtp->rcv_fcp_cmd_out);
- 			nvmebuf->hrq->rqbp->rqb_free_buffer(phba, nvmebuf);
- 			return;
-@@ -1116,8 +1117,17 @@ lpfc_nvmet_defer_rcv(struct nvmet_fc_target_port *tg=
-tport,
- 	lpfc_nvmeio_data(phba, "NVMET DEFERRCV: xri x%x sz %d CPU %02x\n",
- 			 ctxp->oxid, ctxp->size, smp_processor_id());
-=20
-+	if (!nvmebuf) {
-+		lpfc_printf_log(phba, KERN_INFO, LOG_NVME_IOERR,
-+				"6425 Defer rcv: no buffer xri x%x: "
-+				"flg %x ste %x\n",
-+				ctxp->oxid, ctxp->flag, ctxp->state);
-+		return;
-+	}
-+
- 	tgtp =3D phba->targetport->private;
--	atomic_inc(&tgtp->rcv_fcp_cmd_defer);
-+	if (tgtp)
-+		atomic_inc(&tgtp->rcv_fcp_cmd_defer);
-=20
- 	/* Free the nvmebuf since a new buffer already replaced it */
- 	nvmebuf->hrq->rqbp->rqb_free_buffer(phba, nvmebuf);
+ 	if (llabs(eppm - ppm) > 1000) {
++		if (tx1.offset || tx2.offset ||
++		    tx1.freq !=3D tx2.freq || tx1.tick !=3D tx2.tick) {
++			printf("	[SKIP]\n");
++			return ksft_exit_skip("The clock was adjusted externally. Shutdown NTPd=
+ or other time sync daemons\n");
++		}
+ 		printf("	[FAILED]\n");
+ 		return ksft_exit_fail();
+ 	}
 --=20
 2.17.1
