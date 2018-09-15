@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB12ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D5CECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68AE221477
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0616521479
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:49:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EfjQsyKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68AE221477
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="I60jpBX6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0616521479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeIOGrt (ORCPT
+        id S1728817AbeIOHG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:47:49 -0400
-Received: from mail-eopbgr700137.outbound.protection.outlook.com ([40.107.70.137]:63424
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 03:06:56 -0400
+Received: from mail-cys01nam02on0090.outbound.protection.outlook.com ([104.47.37.90]:32953
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728462AbeIOGrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728496AbeIOGrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 15 Sep 2018 02:47:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BeWQWUeIEBBfRvoy+utdCvZzqYkbbUEINqvxdU9qvfM=;
- b=EfjQsyKR1rjCjD5Y7gW8dlGmuBEsvTSk38Vbpm4D0jk0Fg66mKrncNjBamkqjyRpNTSFjvdGIeRDWVzexpXELsrV6k8NnOLY2hLpGypXRhqq38u5Yp8zZnHCZ2oblWnXqkOt47tdiWqkJMHhUEwkTBz+nnakIvZ0R2oEupreySg=
+ bh=KwyX0WqQEoHkiKE1Lqf+6pYKlUS0lDzP+foFssEEiQM=;
+ b=I60jpBX6Ynzv7tUuCmibHaHOYgNj8NxFvcHGk/j2dTUo+KbzKUl6KAi8FKJASG46jRb8dYq4IXSYbH2/5sKdiyXm1I9VYeXl4zCEngGe1vO63whtHHq7q/qY3FbpdsjAMmdef6zMHBGQREmFHB16P2yEW1cM6NYlQ9tfJXrJl3k=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0856.namprd21.prod.outlook.com (10.173.192.145) with Microsoft SMTP
+ CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.6; Sat, 15 Sep 2018 01:30:47 +0000
+ 15.20.1164.11; Sat, 15 Sep 2018 01:30:43 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:30:47 +0000
+ 01:30:43 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>,
+CC:     Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 41/92] drm/nouveau: Fix runtime PM leak in
- drm_open()
-Thread-Topic: [PATCH AUTOSEL 4.18 41/92] drm/nouveau: Fix runtime PM leak in
- drm_open()
-Thread-Index: AQHUTJOpVLWFeT5HPEmc83dUnTNicQ==
-Date:   Sat, 15 Sep 2018 01:30:18 +0000
-Message-ID: <20180915012944.179481-41-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 35/92] serial: 8250: of: Correct
+ of_platform_serial_setup() error handling
+Thread-Topic: [PATCH AUTOSEL 4.18 35/92] serial: 8250: of: Correct
+ of_platform_serial_setup() error handling
+Thread-Index: AQHUTJOmI6R9mxZpIkGSNPAbEvcJEQ==
+Date:   Sat, 15 Sep 2018 01:30:14 +0000
+Message-ID: <20180915012944.179481-35-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,74 +60,67 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0856;6:h6v/c7TF/cin58S0m5sMmiRJb6Ov9MnI887aWTdMCKl8WazKW2MF8xSWsWZDlBLMrR1jOshvoHErYGQ2T9Qlfs59H1aBAV3f+w1vl/nq5a1XR+s1HSj5htXVOAzLrAb0VBXih1to2l+fQlX3S4jjHmoiT4gbqz7pU13az9wLno6OxulUs31TvQLToHvTs8gKJidEMDcYxZ+EgD4bC/doFU7FFBkiH1C+dOQ1bPVFy8QuaUshqGA7s1RwncLLeWsB8sc5ZFepuH39HWuhsAQiJaGfNcgGwAFwU7wh6e2EkG+TRYgh6k8QMpHfZOJE53lQIX6CU2auaiReI3toKDblVQJPtcglyFdEtwx/W9M0+zNqyxZufUaSZxj+oziRq+u2k+NUbPthKHWabdz7+xARs4VdqfP65v0jDO8Oose4vsCGU7gGs9dektFpOJ9IK0TXmCDVMeBCA+th9MjLtZFAUw==;5:pHI9zGq0JkeK/bmWLTY8pUXAl8qlZdavccGHbHD1v6T0SvBqLPB4RRK7r09aAUFs2Dt2fZkESkzpG6wnJ/SRgWlrHortzWMqAOiej4XlZqopQDuSkCtoJ+gLzyKKlGBsrsczpZd+pumtX/VGj7Mx5UGRDhHG4YmBjNi1usUvB1o=;7:isYcI2G67/C/9+1yQAE71DK7HcpAn9MuiLCDh0dGB//MPnkxRlwYXgksvJefkKw88jkT++uHwqGRQwsXQCeHKPRjkYY+bn4ukjUIk95jkLixSl+SFIxkyNlG/WWgAE3USD5D8/cJAEtzBJtG2AZ0UnbAMREUrGQ0SvzrVXnSbOYOnfe+xivEYEeQHRiEMeVaIuVbPltDtJAyIuN3vcZcZLsUzebo655kppTRMFf6S2s0QW01jdfvyvG4GHBPsphW
-x-ms-office365-filtering-correlation-id: 832c9ca7-44a1-4198-50b5-08d61aaadcde
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:6K7qKVg6PN+IDbDeHmf7f3B02UkgelELj1YIOhLc4VJj1/5QlEmlpsFIMu5ePzRJGaWD4DyKvuUmHgDKWB3gVcJNUr5qVVV9EpUqi00gn9eZ7tVwhZqF0yle0oo8BqOjXQcmV6q6smqvXU5KbOz0e1tmsvnTMVnySiXnuW+WxkTiz7pAhgOwfxucpfqsY/qJRvM7V54uZ5QZ5lTJurz9Ojy/nQc/69bSx00Hw5fqYbEz+bM/hMK4HNOgfDuq44FLFwd1RLVqnxQUEopNwB+V7bHaQkumyFfNJZyDNTVW/JtEzQ8vSfbY3Z3rIpep9GFjGLi1YaiaYCo+QgktOymgLQVsvDTTMhcznhb3GlexNOIZrsVPnMRQV36FLWIyeCNfpLN2woz40cUKIuSo4DJr9cGhCxhMr/YVJ7gV1uv2fCEZD004G0Y0cI9ygMUgVWOrEGgjQpBzrfw56I1NPxEqOg==;5:/q+le0v+rCJ/9pUWrb5lEGcdVA11dWWMU2LjOV9XVSEIX3mgTI8XENQcWmisvMM+HGiEe2GrgUiKHRoEpHZ/UEe125zqoV+2VUY7AF0/+lFpjaT7zS7Gs8Ac/uTBDMwn7/va6oo4ETp1F3grz/5FtU7T0Rgw/mPjz/Egw0+LKwg=;7:fdyNfVM1AC65MBqU3Mjmh1rFmYXOUS2FpyOorSVLHIJLVYUdJI2ClDdb1aWZcATvxxYgjw8KjSRhf3lxwubZPj7JrD2J0+n+6v8sWGuCV3Ah8MHcRXmh0Nclcq9DdPL34hq998JIOUQMQPUITB/PvRDU767/+R2fxII/19hX6ZRGhnfygD8rybolNTJ2JRswH35hHi67ubgDFzQOf85i8o250KH+TlSqWL9PRR00eLZV/5hpbe9tX9LuWht6MtyK
+x-ms-office365-filtering-correlation-id: d26ce31f-6c9d-4bf7-7cad-08d61aaadae2
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0856;
-x-ms-traffictypediagnostic: CY4PR21MB0856:
-x-microsoft-antispam-prvs: <CY4PR21MB08560D02F08C347F22615257FB180@CY4PR21MB0856.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
+x-ms-traffictypediagnostic: CY4PR21MB0741:
+x-microsoft-antispam-prvs: <CY4PR21MB0741A167D5C9BC1016652DB3FB180@CY4PR21MB0741.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(82608151540597)(109105607167333)(195916259791689);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0856;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0856;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(366004)(346002)(376002)(199004)(189003)(36756003)(6116002)(486006)(316002)(3846002)(8936002)(22452003)(446003)(11346002)(2906002)(476003)(2616005)(6512007)(107886003)(53936002)(54906003)(1076002)(110136005)(25786009)(102836004)(66066001)(4326008)(217873002)(99286004)(76176011)(68736007)(6666003)(86362001)(5660300001)(6346003)(8676002)(86612001)(256004)(186003)(81156014)(81166006)(6506007)(26005)(2900100001)(10290500003)(478600001)(7736002)(72206003)(305945005)(97736004)(10090500001)(14454004)(106356001)(105586002)(5250100002)(2501003)(6436002)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0856;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(186003)(106356001)(25786009)(6346003)(6486002)(6436002)(476003)(102836004)(11346002)(5660300001)(2616005)(26005)(217873002)(105586002)(486006)(446003)(4326008)(53936002)(5250100002)(14454004)(10090500001)(14444005)(2900100001)(256004)(6666003)(2501003)(10290500003)(6512007)(22452003)(72206003)(8676002)(478600001)(110136005)(97736004)(68736007)(66066001)(81156014)(81166006)(2906002)(99286004)(86362001)(86612001)(575784001)(6506007)(76176011)(8936002)(6116002)(3846002)(1076002)(54906003)(305945005)(36756003)(7736002)(316002)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: vOzvQ3UuwCFQ/sb0vdRlChBF60T6y8Mq/HNKVCJ4J7cFZTV3YtL98sIua65XsIx8ui4+2ojMBbitDYmcWghgSCKDwgEVt3ok74PP9ndsS+dfDG4/R0cVZV+Dx/wpj5aRpkmPUgl1e6w0VBdofQREMUVGbk6feGY4eoTsg9YokkC/xZhla52ePy9ppUpnp//nqqvDWrE6jrlgfwcYysHvxczL86Dh6DH66uDjTojLOfY6qe6dd1pmFc2ZCKdlVVK9o0mc/bd0pMZAsNNQvOtGtR9tVWE1pPDpZShuWR8gnxWKKez5fwVcDnFaB8JEIya8kZ0OIplb9li0J4iEwdA9UEKg5E9UEI/MMVpd8E+v94I=
+x-microsoft-antispam-message-info: PkU8LMgfFWPlZaY30GmhDrO1r3pj9ntYL1KOUsKdCK6rLH/rhCk1dCovJXUxAYl7RtH6IWg0+2z9OomaNtXBRlbi6LneNIDNw6SlFX2ww2L3wk6hXetQAutDinj9norG1ZIQPSB1p/IKi92pQS919QocNCcU9G04wFSIX81GzoqxRJqCp0k+BRC9WVaoU57zqpdta7uvGUhGsFEz0BWHa5Qf2cSlxtxAbxfJm4kT4+L4/z/qo55LGSLZH7tvV2/J/bHlva3+Qnm32x+HIDnIVmntFSrZnZIrMcR0j5+bkr86cW/S6Xqe1DNuDTPB1ZH4vzpCi0nSxEWOW9VmtEosvmZDyJRk6XT8sJB3uIlBFu0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 832c9ca7-44a1-4198-50b5-08d61aaadcde
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:18.0418
+X-MS-Exchange-CrossTenant-Network-Message-Id: d26ce31f-6c9d-4bf7-7cad-08d61aaadae2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:14.4169
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0856
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-[ Upstream commit 922a8c82fafdec99688bbaea6c5889f562a42cdc ]
+[ Upstream commit b29330d829042512fabb2bfa3bbfa32df1115594 ]
 
-Noticed this as I was skimming through, if we fail to allocate memory
-for cli we'll end up returning without dropping the runtime PM ref we
-got. Additionally, we'll even return the wrong return code! (ret most
-likely will =3D=3D 0 here, we want -ENOMEM).
+Don't dispose IRQ mapping before it has been created.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: aa9594740 ("serial: 8250_of: Add IO space support")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_drm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouvea=
-u/nouveau_drm.c
-index f5d3158f0378..c7ec86d6c3c9 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -908,8 +908,10 @@ nouveau_drm_open(struct drm_device *dev, struct drm_fi=
-le *fpriv)
- 	get_task_comm(tmpname, current);
- 	snprintf(name, sizeof(name), "%s[%d]", tmpname, pid_nr(fpriv->pid));
-=20
--	if (!(cli =3D kzalloc(sizeof(*cli), GFP_KERNEL)))
--		return ret;
-+	if (!(cli =3D kzalloc(sizeof(*cli), GFP_KERNEL))) {
-+		ret =3D -ENOMEM;
-+		goto done;
-+	}
-=20
- 	ret =3D nouveau_cli_init(drm, name, cli);
- 	if (ret)
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/82=
+50_of.c
+index bfb37f0be22f..863e86b9a424 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -124,7 +124,7 @@ static int of_platform_serial_setup(struct platform_dev=
+ice *ofdev,
+ 				dev_warn(&ofdev->dev, "unsupported reg-io-width (%d)\n",
+ 					 prop);
+ 				ret =3D -EINVAL;
+-				goto err_dispose;
++				goto err_unprepare;
+ 			}
+ 		}
+ 		port->flags |=3D UPF_IOREMAP;
 --=20
 2.17.1
