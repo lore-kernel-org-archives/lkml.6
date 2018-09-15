@@ -7,52 +7,56 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E10ECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A216DECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EC921477
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455D221477
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:50:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CkMEwtz2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EC921477
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IrBYGEwP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455D221477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbeIOGrn (ORCPT
+        id S1728630AbeIOHHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 02:47:43 -0400
-Received: from mail-cys01nam02on0090.outbound.protection.outlook.com ([104.47.37.90]:32953
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 03:07:43 -0400
+Received: from mail-sn1nam01on0101.outbound.protection.outlook.com ([104.47.32.101]:52800
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726128AbeIOGrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 02:47:42 -0400
+        id S1728292AbeIOGrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 02:47:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XdgPDJoWpY6d8hjTicgdZ+2hyY06GuVl8k+HVgZNFho=;
- b=CkMEwtz2h6pqNivhLdcY0D6rWfwEP3JY/WIxgfKfonj/mo8dLTNsh1aKCpY0gQwKvEI1OBd7Tq969kbBAscg2tjGHnnczifMmATVfa3dqFQt0dWw+coULINNvNIEcmxbqUOQPYrRi9xD9Lr+D+4WdacoBX3lLqQ6kgjf0i17Ik0=
+ bh=oWLHZwI8mNtdL6JdH1FqfkJHlEaL+4lAaHy9X2Y1roU=;
+ b=IrBYGEwPvl5B92d0MmK287Y71Odt7rJAMFEdQw+eZve9wHB7cK/8DkfM0uIRNCmidbBRb88shmganw3irW0qEAc7gHcbeKU3ZggigKQzAQNskCaA59nFx9NfF72nUPCY+PxKeT+ekkhKQE7WN6exFDbasqxpWpdCiO4JKePqdGY=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0741.namprd21.prod.outlook.com (10.173.189.7) with Microsoft SMTP
+ CY4PR21MB0824.namprd21.prod.outlook.com (10.173.192.10) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.11; Sat, 15 Sep 2018 01:30:42 +0000
+ 15.20.1164.11; Sat, 15 Sep 2018 01:30:06 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:30:42 +0000
+ 01:30:06 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Rick Farrington <ricardo.farrington@cavium.com>,
-        Felix Manlunas <felix.manlunas@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 31/92] liquidio: fix hang when re-binding VF host
- drv after running DPDK VF driver
-Thread-Topic: [PATCH AUTOSEL 4.18 31/92] liquidio: fix hang when re-binding VF
- host drv after running DPDK VF driver
-Thread-Index: AQHUTJOlpMUaV0hK3UakjfuraClSTQ==
-Date:   Sat, 15 Sep 2018 01:30:11 +0000
-Message-ID: <20180915012944.179481-31-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 24/92] efi/esrt: Only call efi_mem_reserve() for
+ boot services memory
+Thread-Topic: [PATCH AUTOSEL 4.18 24/92] efi/esrt: Only call efi_mem_reserve()
+ for boot services memory
+Thread-Index: AQHUTJOiPlKufay25UawfgkDazbCyA==
+Date:   Sat, 15 Sep 2018 01:30:06 +0000
+Message-ID: <20180915012944.179481-24-alexander.levin@microsoft.com>
 References: <20180915012944.179481-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915012944.179481-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,91 +65,94 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0741;6:LuZ6GO9G5TqdD9fO9vONG4hoETQCps9EiYPDNq+c+0wNWOV99pJWXTjvmRDt2sPODi6wOZTOCwWGsuSgEzgszhTOQQsoCZU1hhx6etC+8vOtMUGs8nOoEMaoKCktTgx7ZHkrQM/z6nlNO77DCnuVmJdUrRzsDJ63S3Bv+yrRixpya2CiUU4LRnlKQ5VYMjcl1661qtRSD5ixlpS5mQvkHc0Acm0cdrbxHHcYhy/3gE5m/29gZJcQx2tWQQVugldzepmiRuuG2jzywSxG+q+bUlXYa6wy3k4PNZVws4AyM9aUaa/DU+R+DkGo9QWufyCL46JAherB83IdQx/WwU50OWpKJDtoOdw/pAScBbsvceAOS6mZzci/EWHSCPHrGQl5CRUVmFLN2RjBq1kCht4J7j6sopTpveL6zdvOhH2Y4ARpkxXEy/8xOhUKXDGVg8dxwPeqGRhQ9OqkkygvVrVNSg==;5:0QOwtUZMmgsezaPCrBvHHwxN2uV52dRW9KHvOmno+k2ZIlm3Gpu6yAogi5Kwgv2+n4wQzXp3Sp8ratGVB5WrdMLSnQ4TSlGvxIIFjP3hrN9MQmHvD3PY7foCMclBcjhxXs+Qk+PY/Uuf+ocRxePMhJGmanTLZCHNV9CbmbSR/TA=;7:yi4qEmkVK8HzA8YbATM8YM9MCCFG1ImL/sQbiJK2U4ql7TiI501hJC0Ipb1NZM/Ufig0nV0bJ2hb7EyBt3rGI7mLuc7F43L7UC1zJHQzBOduOvaAyvTGNMnj0oLY7xmw9G5YPnF7b7QrSfkY30FTdAdYdWqKHSFaziNmMb+T2X3MeZ8nq5dy4lFFRNFRQlLI+Emz/ToLB3fKyTS8eOAzt+GC45gfZ/EiUQ47RrKURDajxTg8dAAMwxqR1pe/Dah1
-x-ms-office365-filtering-correlation-id: c26000a2-fb16-410c-d7e3-08d61aaad9d9
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0824;6:4/6SWXZLAOU7AITcTm0XX2Yh6OEYJ20WspfnUUXh6z2xfVkQpBNb7mmNoqFyh7KWnQ0KVUqR7Gp/01cqus46BtDHY4S9fPTZxxeivZKS0cAPmLZSAWsXBJE1E84WcOmWLLwFkddnuvixJgJAt4QN62pDL6WQpo5/Yezbfs243ZpXypKQnTZlBHLx/+6jt+/LsYiubKZecFRYnASyLG45O+vHMX9SiakqDjMAhh6R54dmCGnOxU6+ya2d/NMdVfxKoPMJCngUmYeryVO6BDNUgYMRfvkj1aAuyxhvGPempJuiEIitsPhPqEzPCwmTGIh2fJVTWKCylJEyvO0Gp4ZXYpioq+mGr/hh0CaFIbNYpX1wGj1XIYwmp4p11eYbv/TPR68fkw9+ORpkV5FPI3p2gl+v0sR069zkbTtE1PROg7SmKqYt/PPLKE7jHC+k6RC5rUQXhENt/tGTi+XfmqF33g==;5:HWIaufXssC8jr90B3yJWeFx2Y9P/L960W9o5V/JWj1ymfp0lmqDa3OCSU5DpCht/9bvFGXghT4HUPPSba2Mw583Kmmopt3Iez9zsAFC7SNOT1pMtKRP8puSS4tmhtMNFeTUG38mQPowDgc0uJcjknO476AbSAym/t3pvYuJke1k=;7:GYQNQhUtj/dQiZEvUAOBzcPDDQsG16sV35icNpgulHMrEJaT8NzHiCmjp0QzX5X2sKaOlZp0qyo8OGep2MUBzwLSNbUHvdR4sp/SdZPVK3weU9hEU2NLIynApXVFnyBlAnakKzRZE6YBDkcnrGGLaelBsl8/YhuZeGFjXNeUFX5rNdz9iE6GgM0DDKkA9D+gtBgVsPeMJAVXjJ3yZySJUvXayITtUm2bwKtvqgp5wLsI/dkTuHdQ3PFnvQzLu3p5
+x-ms-office365-filtering-correlation-id: 57a0ee48-266e-4ffe-4db1-08d61aaac4de
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0741;
-x-ms-traffictypediagnostic: CY4PR21MB0741:
-x-microsoft-antispam-prvs: <CY4PR21MB07414B6FEE8F26A33CC5B899FB180@CY4PR21MB0741.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0824;
+x-ms-traffictypediagnostic: CY4PR21MB0824:
+x-microsoft-antispam-prvs: <CY4PR21MB0824655BD20080F4B23029E9FB180@CY4PR21MB0824.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0741;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0741;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231353)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0824;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0824;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(186003)(106356001)(25786009)(6346003)(6486002)(6436002)(476003)(102836004)(11346002)(5660300001)(2616005)(26005)(217873002)(105586002)(486006)(446003)(4326008)(53936002)(5250100002)(14454004)(10090500001)(14444005)(2900100001)(256004)(6666003)(2501003)(10290500003)(6512007)(22452003)(72206003)(8676002)(478600001)(110136005)(97736004)(68736007)(66066001)(81156014)(81166006)(2906002)(99286004)(86362001)(86612001)(575784001)(6506007)(76176011)(8936002)(6116002)(3846002)(1076002)(54906003)(305945005)(36756003)(7736002)(316002)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0741;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(189003)(199004)(6506007)(1076002)(66066001)(22452003)(99286004)(102836004)(76176011)(2501003)(5250100002)(97736004)(54906003)(6116002)(186003)(3846002)(107886003)(25786009)(11346002)(6346003)(446003)(486006)(476003)(26005)(2616005)(5660300001)(10090500001)(86612001)(86362001)(36756003)(4326008)(575784001)(217873002)(316002)(68736007)(110136005)(8936002)(81156014)(8676002)(2906002)(6436002)(14444005)(256004)(72206003)(7736002)(53936002)(2900100001)(478600001)(6512007)(81166006)(10290500003)(105586002)(305945005)(106356001)(6486002)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0824;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: FrHJxRowtv31uVMk9O+wtHNhEvVUUmrpfmtIVudz0iSWVAR6dxyZ3Ko7yciyicqS6DI9ZSY8cmGDn8rV3uB2OpMXdaLOMYxhz14WywsUPxVAZUTNSxwRB3c0n2TQRLJs0e/SIp8igr+HRDtDhHjyLaAwdLtWocRbXlEiy5bKqSXjnGvY1hvbQGnL1FpzkoLbbDlszliwCWB44Wl5sYSmQcK4fMqcrqHUQaj37A2BMYft/BAZs0ig7RaMEgp6My4PgmbBh5fV5V6YiC15VPYR9hL4Bh/mNoE8ZSOWMQheUqxngU7OMihZf2UrgqHTied0Dq783WhW2Ld8AmPBN++tylYc4QsNH922SEMjQOuEvtk=
+x-microsoft-antispam-message-info: l1drnOuHrl9CPAOXp5LqVOpVzkX1IbYgHFGGYJHdW8S2Kj6CT4RQw1EOrPdCuo5OtSXXKhkgSLMn6PpgXfeaLd69O7vL8LFGzJeMaUVbk5TlM6/UO/pAixPh4vkvyktp//ncNdy7wqVjax9SbFhyzh4cDwo2ZC70Hhq+Y0qpOznJ4czVDT+5C1+sYqhyPoTxC0xkCoPsnE5sU4PoXEaiT1EKpwvk/o41YLvhSy0/4iLN2MLdNd401kzEF6ZJx+IcAHQM4BLAKgawean1Bm6bcULV0I39Iq3qMYLZbvcoOR4kcDIU7a0naiqL4q1ID97BrqzGPEU0o6rv9uPNnHi9KyU8maYFyJOM0kTru2xe0IA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c26000a2-fb16-410c-d7e3-08d61aaad9d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:11.9794
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57a0ee48-266e-4ffe-4db1-08d61aaac4de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:30:06.7763
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0741
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0824
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rick Farrington <ricardo.farrington@cavium.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
+[ Upstream commit 61f0d55569463a1af897117ff47d202b0ccb2e24 ]
 
-When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
-mode was disabled by reset, which was not true.  Since DPDK driver had
-set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
-not properly handling DROQ packets (i.e. it saw zero-length packets).
+The following commit:
 
-This represented an invalid hardware configuration which the driver could
-not handle.
+  7e1550b8f208 ("efi: Drop type and attribute checks in efi_mem_desc_lookup=
+()")
 
-Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
-Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+refactored the implementation of efi_mem_desc_lookup() so that the type
+check is moved to the callers, one of which is the x86 version of
+efi_arch_mem_reserve(), where we added a modified check that only takes
+EFI_BOOT_SERVICES_DATA regions into account.
+
+This is reasonable, since it is the only memory type that requires this,
+but doing so uncovered some unexpected behavior in the ESRT code, which
+permits the ESRT table to reside in other types of memory than what the
+UEFI spec mandates (i.e., EFI_BOOT_SERVICES_DATA), and unconditionally
+calls efi_mem_reserve() on the region in question. This may result in
+errors such as
+
+  esrt: Reserving ESRT space from 0x000000009c810318 to 0x000000009c810350.
+  efi: Failed to lookup EFI memory descriptor for 0x000000009c810318
+
+when the ESRT table is not in EFI_BOOT_SERVICES_DATA memory, but we try
+to reserve it nonetheless.
+
+So make the call to efi_mem_reserve() conditional on the memory type.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 3 +++
- drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/firmware/efi/esrt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/driv=
-ers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-index 929d485a3a2f..e088dedc1747 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_output_regs(struct o=
-cteon_device *oct)
- 	for (q_no =3D srn; q_no < ern; q_no++) {
- 		reg_val =3D octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
+diff --git a/drivers/firmware/efi/esrt.c b/drivers/firmware/efi/esrt.c
+index 1ab80e06e7c5..e5d80ebd72b6 100644
+--- a/drivers/firmware/efi/esrt.c
++++ b/drivers/firmware/efi/esrt.c
+@@ -326,7 +326,8 @@ void __init efi_esrt_init(void)
 =20
-+		/* clear IPTR */
-+		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
-+
- 		/* set DPTR */
- 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
+ 	end =3D esrt_data + size;
+ 	pr_info("Reserving ESRT space from %pa to %pa.\n", &esrt_data, &end);
+-	efi_mem_reserve(esrt_data, esrt_data_size);
++	if (md.type =3D=3D EFI_BOOT_SERVICES_DATA)
++		efi_mem_reserve(esrt_data, esrt_data_size);
 =20
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/driv=
-ers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-index 9338a0008378..1f8b7f651254 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_output_regs(struct o=
-cteon_device *oct)
- 		reg_val =3D
- 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
-=20
-+		/* clear IPTR */
-+		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
-+
- 		/* set DPTR */
- 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
-=20
+ 	pr_debug("esrt-init: loaded.\n");
+ }
 --=20
 2.17.1
