@@ -2,189 +2,99 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6BBECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E332BECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 15:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765A220866
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 14:55:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765A220866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 7690D20866
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 15:07:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7690D20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbeIOUOt (ORCPT
+        id S1727350AbeIOU0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 16:14:49 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52407 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727028AbeIOUOt (ORCPT
+        Sat, 15 Sep 2018 16:26:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51840 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeIOU0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 16:14:49 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07438338|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01534;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.CrEQRz2_1537023313;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CrEQRz2_1537023313)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Sat, 15 Sep 2018 22:55:14 +0800
-Date:   Sat, 15 Sep 2018 22:55:13 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
-        andrea.parri@amarulasolutions.com, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V3 11/27] csky: Atomic operations
-Message-ID: <20180915145512.GA18355@guoren-Inspiron-7460>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
- <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536757532.git.ren_guo@c-sky.com>
- <20180912155514.GV24082@hirez.programming.kicks-ass.net>
+        Sat, 15 Sep 2018 16:26:04 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g1C9i-00011J-VR; Sat, 15 Sep 2018 17:06:43 +0200
+Date:   Sat, 15 Sep 2018 17:06:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Rick Ratzel <rick.ratzel@ni.com>
+cc:     "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "udknight@gmail.com" <udknight@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Julia Cartwright <julia.cartwright@ni.com>
+Subject: Re: Ensuring wall_to_monotonic is not positive breaks use case
+In-Reply-To: <alpine.DEB.2.21.1809061605570.1570@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1809151651290.1650@nanos.tec.linutronix.de>
+References: <CY4PR04MB0296FED0A64321B49AA527C69B020@CY4PR04MB0296.namprd04.prod.outlook.com> <alpine.DEB.2.21.1809061605570.1570@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912155514.GV24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thx for the review, that's very helpful.
+On Thu, 6 Sep 2018, Thomas Gleixner wrote:
+> On Wed, 5 Sep 2018, Rick Ratzel wrote:
+> 
+> > We're looking for suggestions on how best to proceed with a new change
+> > that ideally both supports the use case described above, as well as
+> > addresses the symptoms brought up in the initial commit (negative boot
+> > time causes get_expiry() to overflow time_t, and show_stat() uses
+> > "unsigned long" to print negative btime).  Any thoughts on this would be
+> > greatly appreciated.
+> 
+> Those symptoms are just the tip of the iceberg. For sure it screws up
+> everything around boot time and a lot of things use boottime nowadays.
 
-On Wed, Sep 12, 2018 at 05:55:14PM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 12, 2018 at 09:24:45PM +0800, Guo Ren wrote:
-> 
-> > +#define ATOMIC_OP(op, c_op)						\
-> > +static inline void atomic_##op(int i, atomic_t *v)			\
-> > +{									\
-> > +	unsigned long tmp;						\
-> > +									\
-> > +	smp_mb();							\
-> > +	asm volatile (							\
-> > +	"1:	ldex.w		%0, (%2) \n"				\
-> > +	"	" #op "		%0, %1   \n"				\
-> > +	"	stex.w		%0, (%2) \n"				\
-> > +	"	bez		%0, 1b   \n"				\
-> > +		: "=&r" (tmp)						\
-> > +		: "r" (i), "r"(&v->counter)				\
-> > +		: "memory");						\
-> > +	smp_mb();							\
-> > +}
-> 
-> ATOMIC_OP doesn't need to imply any smp_mb()'s what so ever.
-Ok.
+I had a second look and actually it's not that bad. My brain snapped on
+boot time and we actually have two variants of boot time. One is the
+monotonic time since boot aka CLOCK_BOOTTIME and the other one is the wall
+clock time when the system was booted.
 
-> > +#define ATOMIC_OP_RETURN(op, c_op)					\
-> > +static inline int atomic_##op##_return(int i, atomic_t *v)		\
-> > +{									\
-> > +	unsigned long tmp, ret;						\
-> > +									\
-> > +	smp_mb();							\
-> > +	asm volatile (							\
-> > +	"1:	ldex.w		%0, (%3) \n"				\
-> > +	"	" #op "		%0, %2   \n"				\
-> > +	"	mov		%1, %0   \n"				\
-> > +	"	stex.w		%0, (%3) \n"				\
-> > +	"	bez		%0, 1b   \n"				\
-> > +		: "=&r" (tmp), "=&r" (ret)				\
-> > +		: "r" (i), "r"(&v->counter)				\
-> > +		: "memory");						\
-> > +	smp_mb();							\
-> > +									\
-> > +	return ret;							\
-> > +}
-> > +
-> > +#define ATOMIC_FETCH_OP(op, c_op)					\
-> > +static inline int atomic_fetch_##op(int i, atomic_t *v)			\
-> > +{									\
-> > +	unsigned long tmp, ret;						\
-> > +									\
-> > +	smp_mb();							\
-> > +	asm volatile (							\
-> > +	"1:	ldex.w		%0, (%3) \n"				\
-> > +	"	mov		%1, %0   \n"				\
-> > +	"	" #op "		%0, %2   \n"				\
-> > +	"	stex.w		%0, (%3) \n"				\
-> > +	"	bez		%0, 1b   \n"				\
-> > +		: "=&r" (tmp), "=&r" (ret)				\
-> > +		: "r" (i), "r"(&v->counter)				\
-> > +		: "memory");						\
-> > +	smp_mb();							\
-> > +									\
-> > +	return ret;							\
-> > +}
-> 
-> For these you could generate _relaxed variants and not provide smp_mb()
-> inside them.
-Ok, but I'll modify it in next commit.
- 
-> > +#else /* CONFIG_CPU_HAS_LDSTEX */
-> > +
-> > +#include <linux/irqflags.h>
-> > +
-> 
-> > +#define ATOMIC_OP(op, c_op)						\
-> > +static inline void atomic_##op(int i, atomic_t *v)			\
-> > +{									\
-> > +	unsigned long tmp, flags;					\
-> > +									\
-> > +	raw_local_irq_save(flags);					\
-> > +									\
-> > +	asm volatile (							\
-> > +	"	ldw		%0, (%2) \n"				\
-> > +	"	" #op "		%0, %1   \n"				\
-> > +	"	stw		%0, (%2) \n"				\
-> > +		: "=&r" (tmp)						\
-> > +		: "r" (i), "r"(&v->counter)				\
-> > +		: "memory");						\
-> > +									\
-> > +	raw_local_irq_restore(flags);					\
-> > +}
-> 
-> Is this really 'better' than the generic UP fallback implementation?
-There is a lock irq instruction "idly4" with out irq_save. eg:
-	asm volatile (							\
-	"	idly4			 \n"				\
-	"	ldw		%0, (%2) \n"				\
-	"	" #op "		%0, %1   \n"				\
-	"	stw		%0, (%2) \n"				\
-I'll change to that after full tested.
+> So reverting this is not really an option.
 
-> > +static inline void arch_spin_lock(arch_spinlock_t *lock)
-> > +{
-> > +	arch_spinlock_t lockval;
-> > +	u32 ticket_next = 1 << TICKET_NEXT;
-> > +	u32 *p = &lock->lock;
-> > +	u32 tmp;
-> > +
-> > +	smp_mb();
-> 
-> spin_lock() doesn't need smp_mb() before.
-read_lock and write_lock also needn't smp_mb() before, isn't it?
+Maybe we can :)
 
-> > +
-> > +static inline void arch_spin_unlock(arch_spinlock_t *lock)
-> > +{
-> > +	smp_mb();
-> > +	lock->tickets.owner++;
-> > +	smp_mb();
-> 
-> spin_unlock() doesn't need smp_mb() after.
-read_unlock and write_unlock also needn't smp_mb() after, isn't it?
+We have 3 users in tree:
 
-> > +#else /* CONFIG_QUEUED_RWLOCKS */
-> > +
-> > +/*
-> > + * Test-and-set spin-locking.
-> > + */
-> 
-> Why retain that?
-> 
-> same comments; it has far too many smp_mb()s in.
-I'm not sure about queued_rwlocks and just for 2-cores-smp test-and-set is
-faster and simpler, isn't it?
+1) /proc/stat btime
 
-Best Regards
- Guo Ren
+   It's trivial enough to clamp that value to 0, though it might be
+   surprising for some users as uptime will tell something different.
+
+2) sunrpc
+
+   I think that can be converted to actually use CLOCK_BOOTTIME. This needs
+   a bit of trickery to preserve the user space interfaces which are
+   CLOCK_REALTIME based, but it should be doable.
+
+3) x86/kvm
+
+   That's actually the trickiest part of all and I haven't yet fully
+   analyzed it, whether there is an issue that time can go negative.
+
+   Actually there shouldn't be one as this is about wall time and that
+   cannot go before the epoch. Needs some close inspection and while it
+   might be trivial to adapt the code in question, it could be tricky or
+   even impossible to fix it without breaking existing guests.
+
+Thanks,
+
+	tglx
+
