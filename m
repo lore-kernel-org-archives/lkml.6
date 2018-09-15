@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC01DECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784C5ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5931D20866
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 245EC20866
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 01:43:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="L5Il8Bcc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5931D20866
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="SGCIdBnm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 245EC20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbeIOHAN (ORCPT
+        id S1729563AbeIOHAU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 03:00:13 -0400
-Received: from mail-sn1nam02on0127.outbound.protection.outlook.com ([104.47.36.127]:18752
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Sat, 15 Sep 2018 03:00:20 -0400
+Received: from mail-co1nam03on0116.outbound.protection.outlook.com ([104.47.40.116]:27616
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729292AbeIOGtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729220AbeIOGtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 15 Sep 2018 02:49:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RZpZ5gtDBmopfP1x47odh10TVJkAhJfXSh5Sukqi5NA=;
- b=L5Il8BccX8nQfr7t1Vpaq9J93T4VxIw0pg5AGCGF83AnDgogVewGxoSeCJ9/lkMpEMZggEH7+4tehnu8xpg4RhTC6exQ4s5GRkUd3x9/jDWGv+VikDp1LxxKaKHZygxrPJts34AgUHuXK7CCK5Az2VoxuftA0fjmXcDL0gISu/4=
+ bh=hSia2YCL83nX8s/lLbNeW521uNtQSEe1K46C5GYfCZ8=;
+ b=SGCIdBnm7sQIrFW79QtaBD/nlKQ3pzIFU45/grTVXdDDSkL+NpTHjSNbkmfQrKz6Q+hpjnJkTftMT4Z82AdV/Ith39TKqorNGuWSsJBLwyBxSIfTkfrXSli8q5A97ScoD74hIn5ed7ooxndzU7+ednwpmR+0U8S5eHnzf2mUesU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.9; Sat, 15 Sep 2018 01:32:46 +0000
+ 15.20.1164.9; Sat, 15 Sep 2018 01:32:43 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::151:b6fe:32c8:cccd%9]) with mapi id 15.20.1164.008; Sat, 15 Sep 2018
- 01:32:46 +0000
+ 01:32:43 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+CC:     Rick Farrington <ricardo.farrington@cavium.com>,
+        Felix Manlunas <felix.manlunas@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 26/57] mmc: sdhci-of-esdhc: set proper dma mask
- for ls104x chips
-Thread-Topic: [PATCH AUTOSEL 4.14 26/57] mmc: sdhci-of-esdhc: set proper dma
- mask for ls104x chips
-Thread-Index: AQHUTJQBpG7o2Q5Elk6rnbBxOeENHQ==
-Date:   Sat, 15 Sep 2018 01:32:46 +0000
-Message-ID: <20180915013223.179909-26-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 22/57] liquidio: fix hang when re-binding VF host
+ drv after running DPDK VF driver
+Thread-Topic: [PATCH AUTOSEL 4.14 22/57] liquidio: fix hang when re-binding VF
+ host drv after running DPDK VF driver
+Thread-Index: AQHUTJP/3FlGfIacwEWXORTClreWPA==
+Date:   Sat, 15 Sep 2018 01:32:43 +0000
+Message-ID: <20180915013223.179909-22-alexander.levin@microsoft.com>
 References: <20180915013223.179909-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180915013223.179909-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +61,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:883MEv9+slyi3N9il/wu5QRA82BmtRXiM/H2ryeaHFuR4sifpOyeNnnCMzstOPxmPdcgVHOmGBa5TiojoqpMtzv2GltUsLqhVKvkwcPZF4JvBBJmKoo79YcJkNV8LsYqfk8qnb7fhVmc9a6NrPzoIRCj6wkUFFqdA5cUHuSigl34Bf42XAo61VSAIaKhKHTJU7sBUkaqGkpldV/k+0snckQ7+34ZyWORNiPTJ9Owf7kKlYPF4dmjpfJE0A6vbsZcJ1Iz+ENOqMKVqSrz+Y9Ks5reI/MufBfwDMiBWjvX6OhYbPURlZUewcJeBAEsYsmBOXry/wYU4ex8wwZWTIAFLU32PgouBH53p8/N8xZ4jYtb54VmSYnxHcg5LF1lK+HOg2tz+1l1l6PY9HM5wD0Na2LGqHt73HhGgD/bdneARlq5cOPq9prqnHxx1VpO15UE+3sekDtPzHolBP40kSMiTg==;5:DQ+tOJfiXCwf3XH0znPHCjXFhLRdJ+hE9VkWF+Tit1f+BCRv3vTRYBGbINZVs86t/Az7lozh74bKxlwI+9yYA1R1pUvUdV1udhT8MMXqghQZXzEzLFUhURGndKvpv1qcatAUNQab+v9pdKYNJDfPUNHe4E5/wh0w5joi9FiOafU=;7:HGJHTgNRls6qyQP2oVkhB4t/0quGwPo2uZO4EqnrUUMQ9NRudkVh8sIrdcJwyYU5mZEMDCJot7JGhvQW3+Kmiu+xTT2ECsgwyMfaI9095G8NLDUZLr3f7bnEfKusmE3xla28p9wfT3AmncOPDaSPMzBrq/BfBiCwuznStzoNme91vxCvklql6W61mucxNVT2mIG56OUc3mPTT/N5Nq6Hl6glE0VbcDt62U1tYfd+vGVG4VzUT0VEQYOSt0Xtt7Ra
-x-ms-office365-filtering-correlation-id: b10754e1-a1db-4dd3-2f19-08d61aab23d3
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:dSsoifHbINqVXDMKp5FZq4o/Ynm5xzv7YbSuUV84NKiIOudeTHwBTeRKdz7/RgEiGSX+nAb2r71NUApSDFqRW47og/GxGRIlHuZC3Nf871nuYj0HOip1H6AgNwmR9pK+APmWaGEVhsR9ZqhmUcD0UBiwhg6V/EFABpIXYJrF6QaS3Fm0QnGpoEZBVlaLSwJCb1REaMS32XZ8gzDoQjJhh6+hllJLp8a0zJjj7XfG6KPC5e39ekQDR/Ldt+FW+N9rUGDO1lDGNTU7qaZCIH+d92m2Um8uRCxAuCiE5XHmbmTYR3eHSDg/mK7qDpI/0oE91qzoPPLXJLgA+bUo/CM3nYyxR9/ivoMP8npUaXXq6trawx6NVkjYyBHGKdZ48VTTDqHFpwltUUiCPyGqXmIjMx8WXUWab+EnUqJna2+DU0ZJZ2QHKlT7lRUKUM1tOns/F/YBpcTbETv9uX8+qyFMiA==;5:KRyvVXNyYKCN/ptRhWfFDP0tBkRlxME8sNJ5MRtT+kYEDpQcZu2WywNtUiXJUjLUZl0o1BjYh/zAtRoizcjgFcaEMWMCggZmhCbeYjOpwtEEKrkQkwLX9s5rKgEWVkRmLashQIALgeeoF+eTFB14Eh4NWGk7BilK4rbzSWDj5pQ=;7:pOux/X7bXCcOtVvLEs2+Wi1geuA40JdPHHA4EK5Ao/iHaD2iiwik+8NirNrLYFtC0/449+WZ2hRAqon2DsgiiexHoUg+d6ZautWFyplq2r/dvQjlZXGLHF3MpDysguDqERiyZCq3l7CceKiIPiLRv3NSkX+ucI2KQOfTg+R6XgKFCi9SdyqhRCj2jDuMsjmM7aXB/tO0/ODQy6BVTwcBTQ7mp+EnX/ymV1ATOAlvw2SYHJmQacQLTnj+VUiVEupk
+x-ms-office365-filtering-correlation-id: 8cf08359-91da-4156-1eb1-08d61aab2239
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
 x-ms-traffictypediagnostic: CY4PR21MB0822:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0822F45C0ED3F641903F2A8EFB180@CY4PR21MB0822.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(185117386973197);
+x-microsoft-antispam-prvs: <CY4PR21MB08220C0DE7808A0287BE1958FB180@CY4PR21MB0822.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231353)(944501410)(52105095)(2018427008)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
 x-forefront-prvs: 0796EBEDE1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(1076002)(72206003)(6506007)(102836004)(478600001)(8936002)(10290500003)(2906002)(81166006)(81156014)(5660300001)(22452003)(2900100001)(8676002)(110136005)(54906003)(107886003)(99286004)(25786009)(4326008)(316002)(10090500001)(97736004)(305945005)(7736002)(6116002)(3846002)(256004)(66066001)(76176011)(217873002)(6436002)(14454004)(36756003)(476003)(86612001)(6512007)(26005)(5250100002)(53936002)(486006)(106356001)(11346002)(2616005)(6486002)(575784001)(86362001)(446003)(186003)(105586002)(2501003)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(1076002)(72206003)(6506007)(102836004)(478600001)(8936002)(10290500003)(2906002)(81166006)(81156014)(5660300001)(22452003)(2900100001)(8676002)(110136005)(54906003)(107886003)(99286004)(25786009)(4326008)(316002)(10090500001)(97736004)(305945005)(7736002)(6116002)(3846002)(256004)(14444005)(66066001)(76176011)(217873002)(6436002)(14454004)(36756003)(476003)(86612001)(6512007)(26005)(5250100002)(53936002)(486006)(106356001)(11346002)(2616005)(6486002)(575784001)(86362001)(446003)(186003)(105586002)(2501003)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: qonfLEFXQ6dBL8Ci2233w0qLbq6xB6WqpdL/PeIX0kI6g3PaiaQur0UzRAz2RIJqWPSLORbmbd2F0yeqp4nvwvAu324IpXdxmHEmbIFivnkO9l1P6hmn/EYwDkqO6fx4VfXlmCDJ7PR1Tjs8oHf8r2LWcPs+85ywR4pP7oLunxMZAipnW7w5/Y1cJPeG+BN6+7Dya1/fEPo8SJARk5CVzo7NwMOZxHBp2bnTcrgzdrXjE/jXW1UlnB/Wmw/KaFxtaKErC70s+Nx7hb2c4AYguc9sgu1wo4iDLnTkGFwdcXfpvFBTXAKac3s/Y6EZ8IDsimmYcSPhK0Q6GbvIxGTMHzDbQh/XkwG1nRWnXDXwqE0=
+x-microsoft-antispam-message-info: P8GGXWT9IxIbyWcgVXTCSZKPAOWp0UPmQUDnPxCvQ8XXMXAu8l6FebQ+9NUHYJPeRo1GvqfVWmIky/BgF6JGcbzM0OPoGHVN4bj/b454c3+xovQvf4ismol5c0Xc6FsRABb7rJMmS547vTVDFx4blOC6PGBorls/+/wuw2ljiMm8vxGhuiFNo2W2EW6JykQ98d63TRhps/UdLT4L0+cgoFItS6ypzPQ7NtnEY9MFQAUyb23iaXWpcWKTDGUNI6VRgaYFwgQkZL6o2l2vn74CCYtwLqozB1z9VCty3my9VEm3rTXTrcdpmHIixblgtW4dMP2hXt64FSqP1wwzbWMlRqMC7fyB7b1ekoQ+LOSZtZY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b10754e1-a1db-4dd3-2f19-08d61aab23d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:32:46.1338
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf08359-91da-4156-1eb1-08d61aab2239
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2018 01:32:43.4464
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,55 +94,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+From: Rick Farrington <ricardo.farrington@cavium.com>
 
-[ Upstream commit 5552d7ad596c3fea953f40fef74170ce0760c04d ]
+[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
 
-SDHCI controller in ls1043a and ls1046a generate 40-bit wide addresses
-when doing DMA. Make sure that the corresponding dma mask is correctly
-configured.
+When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
+mode was disabled by reset, which was not true.  Since DPDK driver had
+set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
+not properly handling DROQ packets (i.e. it saw zero-length packets).
 
-Context: when enabling smmu on these chips the following problem is
-encountered: the smmu input address size is 48 bits so the dma mappings
-for sdhci end up 48-bit wide. However, on these chips sdhci only use
-40-bits of that address size when doing dma.
-So you end up with a 48-bit address translation in smmu but the device
-generates transactions with clipped 40-bit addresses, thus smmu context
-faults are triggered. Setting up the correct dma mask fixes this
-situation.
+This represented an invalid hardware configuration which the driver could
+not handle.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mmc/host/sdhci-of-esdhc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 3 +++
+ drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-=
-esdhc.c
-index 4ffa6b173a21..8332f56e6c0d 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -22,6 +22,7 @@
- #include <linux/sys_soc.h>
- #include <linux/clk.h>
- #include <linux/ktime.h>
-+#include <linux/dma-mapping.h>
- #include <linux/mmc/host.h>
- #include "sdhci-pltfm.h"
- #include "sdhci-esdhc.h"
-@@ -427,6 +428,11 @@ static void esdhc_of_adma_workaround(struct sdhci_host=
- *host, u32 intmask)
- static int esdhc_of_enable_dma(struct sdhci_host *host)
- {
- 	u32 value;
-+	struct device *dev =3D mmc_dev(host->mmc);
-+
-+	if (of_device_is_compatible(dev->of_node, "fsl,ls1043a-esdhc") ||
-+	    of_device_is_compatible(dev->of_node, "fsl,ls1046a-esdhc"))
-+		dma_set_mask_and_coherent(dev, DMA_BIT_MASK(40));
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/driv=
+ers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+index e8b290473ee2..2e089b5ff8f3 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_output_regs(struct o=
+cteon_device *oct)
+ 	for (q_no =3D srn; q_no < ern; q_no++) {
+ 		reg_val =3D octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
 =20
- 	value =3D sdhci_readl(host, ESDHC_DMA_SYSCTL);
- 	value |=3D ESDHC_DMA_SNOOP;
++		/* clear IPTR */
++		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
++
+ 		/* set DPTR */
+ 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
+=20
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c b/driv=
+ers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+index 9338a0008378..1f8b7f651254 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_output_regs(struct o=
+cteon_device *oct)
+ 		reg_val =3D
+ 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
+=20
++		/* clear IPTR */
++		reg_val &=3D ~CN23XX_PKT_OUTPUT_CTL_IPTR;
++
+ 		/* set DPTR */
+ 		reg_val |=3D CN23XX_PKT_OUTPUT_CTL_DPTR;
+=20
 --=20
 2.17.1
