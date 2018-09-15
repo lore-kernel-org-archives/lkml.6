@@ -2,115 +2,154 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD35ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5030ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DCC52086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DCC52086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 738E02086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 13:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3ZRCnuz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738E02086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbeIOScU (ORCPT
+        id S1727806AbeIOSg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 14:32:20 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:6455 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727028AbeIOScT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 14:32:19 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 939F0FBD559DA;
-        Sat, 15 Sep 2018 21:13:19 +0800 (CST)
-Received: from DGGEMM507-MBS.china.huawei.com ([169.254.3.21]) by
- DGGEMM403-HUB.china.huawei.com ([10.3.20.211]) with mapi id 14.03.0399.000;
- Sat, 15 Sep 2018 21:13:16 +0800
-From:   Nixiaoming <nixiaoming@huawei.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-CC:     Eric Paris <eparis@parisplace.org>, Robert Love <rlove@rlove.org>,
-        "John McCutchan" <john@johnmccutchan.com>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: Is it possible to add pid and comm members to the event
- structure to increase the display of user and thread information?
-Thread-Topic: Is it possible to add pid and comm members to the event
- structure to increase the display of user and thread information?
-Thread-Index: AdRJmkzwtMeGnSbeRVCa8sLtVjSk6wABGdoAACuOoAAAM28tAAB2QDCA
-Date:   Sat, 15 Sep 2018 13:13:16 +0000
-Message-ID: <E490CD805F7529488761C40FD9D26EF12A7A9301@dggemm507-mbs.china.huawei.com>
-References: <E490CD805F7529488761C40FD9D26EF12A7A1814@dggemm507-mbs.china.huawei.com>
- <CAOQ4uxiQ_Kb9H9z5nCJL0XJGO_2Dn2Z3KtGv2WZHkt-e+vkZ=w@mail.gmail.com>
- <E490CD805F7529488761C40FD9D26EF12A7A5ADA@dggemm507-mbs.china.huawei.com>
- <CAOQ4uxjQK_PKAp2WMPewPZzVhE9WGHfuxyQBPcjyJ6xdJ_j7Dw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjQK_PKAp2WMPewPZzVhE9WGHfuxyQBPcjyJ6xdJ_j7Dw@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.57.88.168]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sat, 15 Sep 2018 14:36:58 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43743 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727109AbeIOSg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 14:36:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v66-v6so5629466pgb.10
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 06:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=yM0LivsYZLSLtnGOvLUn499gfGYDXlR38CBUVaDn0ko=;
+        b=Z3ZRCnuzzN8Fa8HkY8aZqye7AlY3Uwtzq96WoXePG8GK51clbmbVMAbR/9cpdzfq47
+         DT+97SOtAEdx+vCREvrSFv2PlJZ+Q358sdDdWq2maqEP2BQyuVO4wkfAqMMX3yBMvjMZ
+         NPqddgClU5+XLz3w/0H/pquEEI0kEtuDc/qNe3bRh+BDfCiaCbJWVPjQHuBuSwoFRn+n
+         7iJyfC1PX5zamc6k+ZijRO08dul0eIQiWddG00gGsoDPJKGyQnkDq6UOhzBjDNweUxZB
+         iYI1rfevoQ+j9MlceadnC/0T6y7Z34MjJBGl0JXE8cUTfLmaBJVnKP3Rx+NI0Jc/uBkx
+         AZeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=yM0LivsYZLSLtnGOvLUn499gfGYDXlR38CBUVaDn0ko=;
+        b=owatqVcqaHzyDpIPt3TEylNlSx6/aA3N7APkFkKX73mmbruqJnyWGy6FC1KudGs4JO
+         bImyvyw8zbjSgbRaFVxNwp3XItdVWnzqBL8fgXPHsj7ra5KPGPDQ2yQVk8tfKujSvHBl
+         6X+qhV7QtUZJk5nyjl8wU3noyMJEo1hCTyJISY58SdmOEAZlxz0uYO04Zzs1oqpjaCyB
+         r3Gvlp520SZPJaq+0SumA1V0F8RSQKfqYwn7W8ytLcDzMarR0aOh24RkkPjV4ctZxjn5
+         M/rChcAdPfWSChuo5YVGgwRRd9goFGOVRKDNBIX4fZFS4ALdM7DYsoqxr1LiuPBH/oBW
+         FQRA==
+X-Gm-Message-State: APzg51Bsu2XK8o9ePQ2xqQEdmXMWRssgLmO2454IIUeVYYn7lnDh+Z20
+        IqrJaLGxJw/EszXgiHvA9u4=
+X-Google-Smtp-Source: ANB0VdbCLRQ0/4mMbIAKUzedT70uf3mkJLLsh2z6arH9YEXMfMi6sPKJbFuwPBrl2Pam0uKeW7cb1g==
+X-Received: by 2002:a63:1f55:: with SMTP id q21-v6mr15844084pgm.88.1537017478974;
+        Sat, 15 Sep 2018 06:17:58 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id u184-v6sm22382353pgd.46.2018.09.15.06.17.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 15 Sep 2018 06:17:58 -0700 (PDT)
+Date:   Sat, 15 Sep 2018 18:47:51 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
+        devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] staging: mt7621-mmc: Remove do {} while (0) loop for single
+ statement macro
+Message-ID: <20180915131748.GA19661@nishad>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-b24gVGh1LCBTZXAgMTMsIDIwMTggYXQgODozMiBQTSBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxA
-Z21haWwuY29tPndyb3RlOg0KPk9uIFRodSwgU2VwIDEzLCAyMDE4IGF0IDI6MjUgUE0gTml4aWFv
-bWluZyA8bml4aWFvbWluZ0BodWF3ZWkuY29tPiB3cm90ZToNCj4+DQo+PiBPbiBUdWUsIFNlcCAx
-MSwgMjAxOCBhdCAxMToxMiBQTSBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPiB3
-cm90ZToNCj4+ID5PbiBUdWUsIFNlcCAxMSwgMjAxOCBhdCA5OjUxIEFNIE5peGlhb21pbmcgPG5p
-eGlhb21pbmdAaHVhd2VpLmNvbT4gd3JvdGU6DQo+PiA+Pg0KPj4gPj4gSW5vdGlmeSBhcGkgY2Fu
-bm90IGRpc3BsYXkgaW5mb3JtYXRpb24gYWJvdXQgdXNlcnMgYW5kIHByb2Nlc3Nlcy4NCj4+ID4+
-IFRoYXQgaXMsIHlvdSBjYW4gb25seSBrbm93IHRoYXQgdGhlIGZpbGUgZXZlbnQgaXMgZ2VuZXJh
-dGVkLCBidXQgeW91IGRvbid0IGtub3cgd2hvIHRyaWdnZXJlZCB0aGUgZXZlbnQsIHdoaWNoIGlz
-IG5vdCBjb25kdWNpdmUgdG8gZmF1bHQgbG9jYXRpb24uDQo+PiA+PiBJcyBpdCBwb3NzaWJsZSB0
-byBhZGQgcGlkIGFuZCBjb21tIG1lbWJlcnMgdG8gdGhlIGV2ZW50IHN0cnVjdHVyZSB0byBpbmNy
-ZWFzZSB0aGUgZGlzcGxheSBvZiB1c2VyIGFuZCB0aHJlYWQgaW5mb3JtYXRpb24/DQo+PiA+Pg0K
-Pj4gPg0KPj4gPiJJcyBpdCBwb3NzaWJsZT8iIGlzIG5vdCB0aGUgb25seSByZWxldmFudCBxdWVz
-dGlvbi4NCj4+ID5JIHN1cHBvc2UgeW91ciBwYXRjaCBjYW4gc29ydCBvZiB3b3JrcywgYnV0IGl0
-IGV4cG9zZXMgaW5mb3JtYXRpb24gdG8NCj4+ID5wb3RlbnRpYWxseSB1bnByaXZlbGVnZWQNCj4+
-ID5wcm9jZXNzZXMsIGV2ZW4gZXhwb3NlcyBwaWQgdmFsdWVzIG91dHNpZGUgb2YgdGhlIHByb2Nl
-c3MgcGlkIG5hbWVzcGFjZS4NCj4+ID4NCj4+ID5XaGlsZSB0aG9zZSBpc3N1ZXMgY291bGQgYmUg
-YWRkcmVzc2VkLCB5b3UgY2FuJ3QgY2hhbmdlIHRoZSBmb3JtYXQNCj4+ID5zdHJ1Y3QgaW5vdGlm
-eV9ldmVudA0KPj4gPndpdGhvdXQgYnJlYWtpbmcgZXhpc3RpbmcgYXBwbGljYXRpb25zLg0KPj4g
-Pg0KPj4gSW4gb3JkZXIgdG8gaW1wcm92ZSB0aGUgZmF1bHQgbG9jYXRpb24gY2FwYWJpbGl0eSwg
-Y2FuIHdlIG1ha2UgaW5jb21wYXRpYmxlIGludGVyZmFjZSBjaGFuZ2VzPw0KPg0KPk5vdCB1bmxl
-c3MgYXBwbGljYXRpb24vc3lzYWRtaW4vZGlzdHJvIG9wdHMtaW4gZm9yIHRoZSBpbmNvbXBhdGli
-bGUgY2hhbmdlLg0KPg0KPj4NCj4+ID5JIGd1ZXNzIHlvdSBhcmUgbm90IHVzaW5nIGZhbm90aWZ5
-IEFQSSwgd2hpY2ggYWxyZWFkeSBwcm92aWRlcyBwaWQNCj4+ID5pbmZvcm1hdGlvbiAoYWxiaWV0
-IHRnaWQpLA0KPj4gPmJlY2F1c2UgaXQgbGFja3Mgb3RoZXIgZnVuY3Rpb25hbGl0eSB0aGF0IHlv
-dSBuZWVkPyBXaGljaA0KPj4gPmZ1bmN0aW9uYWxpdHkgbWlnaHQgdGhhdCBiZT8NCj4+ID5JcyBp
-dCBkaXJlY3RvcnkgbW9kaWZpY2F0aW9uIGV2ZW50cz8NCj4+ID5JZiBzbyB0aGFuIHlvdSBtaWdo
-dCBiZSBpbnRlcmVzdGVkIGluIG15IGVmZm9ydCB0byBhZGQgc3VwcG9ydCBmb3INCj4+ID50aG9z
-ZSBldmVudHMgdG8gZmFub3RpZnk6DQo+PiA+aHR0cHM6Ly9naXRodWIuY29tL2FtaXI3M2lsL2Zz
-bm90aWZ5LXV0aWxzL3dpa2kvU3VwZXItYmxvY2stcm9vdC13YXRjaA0KPj4gPg0KPj4gVGhlIGZh
-bm90aWZ5IEFQSSBkb2VzIG5vdCBzdXBwb3J0IG1vbml0b3JpbmcgZmlsZSBkZWxldGlvbiBldmVu
-dHMNCj4NCj5ZZXMsIEkgYW0gd29ya2luZyB0b3dhcmQgdGhhdCBnb2FsLg0KPg0KPj4gVGhlIGZh
-bm90aWZ5IEFQSSBzdXBwb3J0cyB0Z2lkIGRpc3BsYXksDQo+PiBidXQgZm9yIG11bHRpLXRocmVh
-ZGVkIHByb2dyYW1zLA0KPj4gaXQgc3RpbGwgY2Fubm90IGFjY3VyYXRlbHkgaWRlbnRpZnkgd2hp
-Y2ggdGhyZWFkIHRyaWdnZXJlZCB0aGUgZXZlbnQuDQo+PiBDYW4gSSBtb2RpZnkgdGdpZCB0byBw
-aWQ/DQo+PiAtIGV2ZW50LT50Z2lkID0gZ2V0X3BpZCh0YXNrX3RnaWQoY3VycmVudCkpOw0KPj4g
-KyBldmVudC0+dGdpZCA9IGdldF9waWQodGFza19waWQoY3VycmVudCkpOw0KPj4NCj4NCj5TbyBp
-ZiB5b3Ugd291bGQgbGlrZSB0byBjaGFuZ2UgdGhhdCB5b3UgbmVlZCB0byBhZGQgYSBuZXcgZmxh
-ZyB0bw0KPmZhbm90aWZ5X2luaXQgKGUuZy4gRkFOX0VWRU5UX0lORk9fVElEKQ0KPm5ldyBhcHBs
-aWNhdGlvbnMgdGhhdCB3b3VsZCBvcHQtaW4gZm9yIHRoZSBmbGFnIHdpbGwgZ2V0IHRhc2tfcGlk
-KCkNCj53aGlsZSBleGlzdGluZyBhcHBsaWNhdGlvbiB3aWxsIGtlZXAgZ2V0dGluZyB0YXNrX3Rn
-aWQoKQ0KPm5ldyBhcHBsaWNhdGlvbnMgd2lsbCBnZXQgLUVJTlZBTCB3aGVuIHBhc3NpbmcgRkFO
-X0VWRU5UX0lORk9fVElEDQo+dG8gZmFub3RpZnlfaW5pdCgpIG9uIGFuIG9sZCBrZXJuZWwgYW5k
-IHRoZXkgY291bGQgdGhlbiBmYWxsIGJhY2sgdG8gZ2V0dGluZw0KPnRnaWQgaW4gZXZlbnRzIGFu
-ZCBiZSBhd2FyZSBvZiB0aGF0IGZhY3QuDQo+DQo+VGhhbmtzLA0KPkFtaXIuDQo+DQoNClRoYW5r
-IHlvdSBmb3IgeW91ciBndWlkYW5jZQ0KSSBhbSBtb2RpZnlpbmcgdGhlIGNvZGUgdGVzdCBsb2Nh
-bGx5LA0KVGhlIGtlcm5lbCBtb2RlIHNlbGVjdHMgd2hldGhlciB0byBkaXNwbGF5IHRoZSB0aHJl
-YWQgaWQgaW5mb3JtYXRpb24gDQphY2NvcmRpbmcgdG8gdGhlIEZBTl9FVkVOVF9JTkZPX1RJRCB0
-YWcgd2hlbiBmYW5vdGlmeV9hbGxvY19ldmVudCBpcyBjYWxsZWQgDQp0aGUgdXNlciBtb2RlIHRl
-c3QgcHJvZ3JhbSBhZGRzIEZBTl9FVkVOVF9JTkZPX1RJRCB0byB0aGUgZmFub3RpZnlfbWFya2Qg
-cGFyYW1ldGVyIG1hc2ssICANCm5vdywgaXQgY2FuIGFjY3VyYXRlbHkgZGlzcGxheSB3aGljaCB0
-aHJlYWQgdHJpZ2dlcmVkIHRoZSBldmVudC4NCg0KSSB3aWxsIHNlbmQgdGhlIHBhdGNoIGxhdGVy
-LCBwbGVhc2UgaGVscCBtZSB0byByZXZpZXcgaXQNCg0KdGhhbmtzDQo=
+This patch removes do {} while (0) loop for single statement macros.
+Issue found by checkpatch.
+
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/mt7621-mmc/sd.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index 7474f9ed7b5b..ec12a3a5a926 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -104,14 +104,10 @@ static int cd_active_low = 1;
+ /* gate means clock power down */
+ static int g_clk_gate = 0;
+ #define msdc_gate_clock(id) \
+-	do {					       \
+-		g_clk_gate &= ~(1 << ((id) + PERI_MSDC0_PDN));	\
+-	} while (0)
++	(g_clk_gate &= ~(1 << ((id) + PERI_MSDC0_PDN)))
+ /* not like power down register. 1 means clock on. */
+ #define msdc_ungate_clock(id) \
+-	do {					    \
+-		g_clk_gate |= 1 << ((id) + PERI_MSDC0_PDN);	\
+-	} while (0)
++	(g_clk_gate |= 1 << ((id) + PERI_MSDC0_PDN))
+ 
+ // do we need sync object or not
+ void msdc_clk_status(int *status)
+@@ -170,9 +166,7 @@ static void msdc_clr_fifo(struct msdc_host *host)
+ 	} while (0)
+ 
+ #define msdc_irq_restore(val) \
+-	do {					\
+-		sdr_set_bits(host->base + MSDC_INTEN, val);	\
+-	} while (0)
++	(sdr_set_bits(host->base + MSDC_INTEN, val))
+ 
+ /* clock source for host: global */
+ #if defined(CONFIG_SOC_MT7620)
+@@ -186,26 +180,18 @@ static u32 hclks[] = {50000000}; /* +/- by chhung */
+ //    always keep the VMC on.
+ //============================================
+ #define msdc_vcore_on(host) \
+-	do {								\
+-		(void)hwPowerOn(MT65XX_POWER_LDO_VMC, VOL_3300, "SD");	\
+-	} while (0)
++	((void)hwPowerOn(MT65XX_POWER_LDO_VMC, VOL_3300, "SD"))
+ #define msdc_vcore_off(host) \
+-	do {								\
+-		(void)hwPowerDown(MT65XX_POWER_LDO_VMC, "SD");		\
+-	} while (0)
++	((void)hwPowerDown(MT65XX_POWER_LDO_VMC, "SD"))
+ 
+ //====================================
+ // the vdd output for card: global
+ //   always keep the VMCH on.
+ //====================================
+ #define msdc_vdd_on(host) \
+-	do {								\
+-		(void)hwPowerOn(MT65XX_POWER_LDO_VMCH, VOL_3300, "SD"); \
+-	} while (0)
++	((void)hwPowerOn(MT65XX_POWER_LDO_VMCH, VOL_3300, "SD"))
+ #define msdc_vdd_off(host) \
+-	do {							\
+-		(void)hwPowerDown(MT65XX_POWER_LDO_VMCH, "SD"); \
+-	} while (0)
++	((void)hwPowerDown(MT65XX_POWER_LDO_VMCH, "SD"))
+ 
+ #define sdc_is_busy()          (readl(host->base + SDC_STS) & SDC_STS_SDCBUSY)
+ #define sdc_is_cmd_busy()      (readl(host->base + SDC_STS) & SDC_STS_CMDBUSY)
+-- 
+2.17.1
+
