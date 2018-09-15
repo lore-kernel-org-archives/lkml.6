@@ -2,153 +2,90 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72126ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94B0ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F38F208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:37:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBxbTGu3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F38F208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 324722083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 11:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324722083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeIOQ4U (ORCPT
+        id S1727691AbeIORC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 12:56:20 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53357 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeIOQ4U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 12:56:20 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b19-v6so4584563wme.3;
-        Sat, 15 Sep 2018 04:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p6PHgxloUaPnNE9aKYzPMS9kzren52vC0YmGoQXbTQo=;
-        b=XBxbTGu3Z1oKWajPRqMW/Gj6ZOIqS/u9eaebZ/TvoLMlZbzLhGvIfLNGKaxBVuUNq4
-         BYRvwKWDm+nb5r8pAfrM1SzXOh+ZVJ+3R1qHN4dHaresdGV35sfJzNriJXdFXvNtASsU
-         9VmQOPnBTRSRgc4WHZ+MyjU1o80Gi34iNDkuT8SageDI25zApjdpaC05vg2FAIjKMAEy
-         PBLVYukRjnFdK7IzchR5cZJ/X6Omo9s0YIvWkZbE5KWKTWkfCb4kAtJ1lTuqK5FhEojS
-         xJYNSZNqbcSIF4rLcbm1VYD8rBvTxv+DIZBUFLmdaIxyk5LMxzYaKrka+6qVwY/p3xwi
-         1V+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p6PHgxloUaPnNE9aKYzPMS9kzren52vC0YmGoQXbTQo=;
-        b=N+uZVbf+WpIsSRoSkWauXU6/ZhsSeC7Rwob0U8gFSAPieVpD3MvvMUeYrL2dFtcHMb
-         a6YW8aQA4ao0dp6yl8kMS0iwTbs2wvytLb6L6ruq75kqh/Xr9lpLV2OXvE+26PgsAhkv
-         YAW2YywW/dZshb2r5pxtOdousZvOkIHXnKBX7r3xc0CLEvX/fCwVnsHKZkigk03T+Bwr
-         GiITe11zIq2pFYojGpjZzTSPUQNPUH7cxkHnJVtfbOBjxvTHv+P09auLSwnRFmL598aO
-         YU6e4vNqZDvejDqkCKwO2Zibtjnhc7CkWrZVkx6T3gqcXOirKsaG1W90uOSFRdEC482Q
-         n7hw==
-X-Gm-Message-State: APzg51D4tACNM98+l5RTLGZVeIuZfRFIMgiozW6RvEhoKECPwdmQJqFt
-        +W1PVIoiRxhQTitGUduBt9w=
-X-Google-Smtp-Source: ANB0VdZoLLFP4V27zS57bZ7Q9bRzvpVQGJYcrMz7ZEUtOzUEmt22WBMwIlfLEAQy8hUw1MCshs/5cg==
-X-Received: by 2002:a1c:ee97:: with SMTP id j23-v6mr5542834wmi.66.1537011457374;
-        Sat, 15 Sep 2018 04:37:37 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm3152024wmb.10.2018.09.15.04.37.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Sep 2018 04:37:36 -0700 (PDT)
-Date:   Sat, 15 Sep 2018 13:37:33 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Joseph =?iso-8859-1?Q?Myers=A0?= <joseph@codesourcery.com>,
-        David Howells <dhowells@redhat.com>, libc-alpha@sourceware.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RFC] making uapi/linux/elfcore.h useful again
-Message-ID: <20180915113733.GA35411@gmail.com>
-References: <20180914113929.953895-1-arnd@arndb.de>
+        Sat, 15 Sep 2018 13:02:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34135 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbeIORC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 13:02:28 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 31BB220794; Sat, 15 Sep 2018 13:43:44 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 09844206A7;
+        Sat, 15 Sep 2018 13:43:44 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] rtc: isl1208: avoid possible sysfs race
+Date:   Sat, 15 Sep 2018 13:43:43 +0200
+Message-Id: <20180915114343.31935-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914113929.953895-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use rtc_add_group to add the common sysfs group to avoid a possible race
+condition.
 
-* Arnd Bergmann <arnd@arndb.de> wrote:
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-isl1208.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-> diff --git a/arch/x86/include/uapi/asm/elf.h b/arch/x86/include/uapi/asm/elf.h
-> new file mode 100644
-> index 000000000000..a640e1224939
-> --- /dev/null
-> +++ b/arch/x86/include/uapi/asm/elf.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_ASM_X86_ELF_H
-> +#define _UAPI_ASM_X86_ELF_H
-> +
-> +#ifdef __i386__
-> +
-> +/*
-> + * These are used to set parameters in the core dumps.
-> + */
-> +#define ELF_CLASS	ELFCLASS32
-> +#define ELF_DATA	ELFDATA2LSB
-> +#define ELF_ARCH	EM_386
-> +#define ELF_NGREG	17
-> +
-> +#else
-> +
-> +/*
-> + * These are used to set parameters in the core dumps.
-> + */
-> +#define ELF_CLASS	ELFCLASS64
-> +#define ELF_DATA	ELFDATA2LSB
-> +#define ELF_ARCH	EM_X86_64
-> +#define ELF_NGREG	27
-> +
-> +#endif /* __i386__ */
-> +
-> +typedef unsigned long elf_greg_t;
-> +typedef elf_greg_t elf_gregset_t[ELF_NGREG];
-> +
-> +#endif
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index ea18a8f4bce0..e1e9434c9972 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -804,7 +804,7 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		evdet_irq = of_irq_get_byname(np, "evdet");
+ 	}
+ 
+-	rc = sysfs_create_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
++	rc = rtc_add_group(rtc, &isl1208_rtc_sysfs_files);
+ 	if (rc)
+ 		return rc;
+ 
+@@ -821,14 +821,6 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	return rtc_register_device(rtc);
+ }
+ 
+-static int
+-isl1208_remove(struct i2c_client *client)
+-{
+-	sysfs_remove_group(&client->dev.kobj, &isl1208_rtc_sysfs_files);
+-
+-	return 0;
+-}
+-
+ static const struct i2c_device_id isl1208_id[] = {
+ 	{ "isl1208", TYPE_ISL1208 },
+ 	{ "isl1218", TYPE_ISL1218 },
+@@ -851,7 +843,6 @@ static struct i2c_driver isl1208_driver = {
+ 		.of_match_table = of_match_ptr(isl1208_of_match),
+ 	},
+ 	.probe = isl1208_probe,
+-	.remove = isl1208_remove,
+ 	.id_table = isl1208_id,
+ };
+ 
+-- 
+2.19.0
 
-On a second thought, maybe deduplicate the comments? Something like:
-
-/*
- * These are used to set parameters in core dumps:
- */
-#ifdef __i386__
-# define ELF_CLASS	ELFCLASS32
-# define ELF_DATA	ELFDATA2LSB
-# define ELF_ARCH	EM_386
-# define ELF_NGREG	17
-#else
-# define ELF_CLASS	ELFCLASS64
-# define ELF_DATA	ELFDATA2LSB
-# define ELF_ARCH	EM_X86_64
-# define ELF_NGREG	27
-#endif
-
-Note:
-
- - I fixed a typo in the comment.
- - Aligned the blocks vertically for better visibility.
- - The closing #endif comment became unnecessary as well, due to the much more obvious 
-   structure when written this way.
-
-The type changes/cleanups look good otherwise: it's quite probable that it was never directly 
-included in any user-space library in any sane fashion before, so it's not really an UAPI that 
-was relied on, as long as it doesn't break the build anywhere.
-
-Thanks,
-
-	Ingo
