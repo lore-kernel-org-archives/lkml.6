@@ -7,106 +7,103 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A382ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BF2ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6E9208DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C908A20882
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 03:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qZG7QAn/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6E9208DD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/c9Q+yl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C908A20882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeIOIWL (ORCPT
+        id S1727721AbeIOIal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 04:22:11 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44409 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeIOIWL (ORCPT
+        Sat, 15 Sep 2018 04:30:41 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37718 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeIOIal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 04:22:11 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ba4-v6so4985513plb.11;
-        Fri, 14 Sep 2018 20:04:52 -0700 (PDT)
+        Sat, 15 Sep 2018 04:30:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id h69-v6so5115991pfd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=8ziJA4qx94zca7h+UBhv0tAT4GL60Ekts6sL7jHf+Ns=;
-        b=qZG7QAn/2w/ZlUAhqwzkOYptgA39Ut/x1OdsMg1xxGGbg8170VSKPpb7ov8uBwcFa+
-         hVsNiMLUg1zwqkMeIMq31cjgidXq0kF7LuaUn3aeS8wS0jFuk6St+vuwRKtKGIffimTf
-         gJPH2wMLeLoONIr/MVauFfpYckgL6tQ6cTlVA3q3lzwpa3WUvSCntKWd02t6bBVXmagH
-         bGibjtxSzAr1JxgmknAenMrNjARTu6luu+AnTNxDbj5DB7Gl7zBV760tlmZ+GHHnng8w
-         lt5pW97bgeWtRqxvyfFPfOxI/uJSiBRQd8orqjKQY9VMEmEd9spfTRJeAnX+FF3wO1pD
-         k0Og==
+        bh=251ZpBy3wzqgLLP+TQhmWnziNpr/7ye8/RmMWmT3hz8=;
+        b=Q/c9Q+ylmTgzzdJMN2DSSQgCtlNGgSKg7pSRWY8oiRJVF4uR8qcXtUbcG9bcc6aYP7
+         DM0MvdJmijvu0uoiGsNtCquBc3gLHb+x09KlAiOPcB2I9QTm0fmTT12dd/s2lBomV8I2
+         6thk52pJJy6dmPPA8zrjVF7r6sTr4aRYzf7e7xOXWnZnmeHxLHf0UAirE8Y4bcyW2Rmf
+         /zx8Otukla+UBazc79/Nl5pZYkwNpb9cF8QIKsvncJhYbnMWltTAk4vCEOqqh7WCySJ1
+         h6mFSLpVw2QrFwgaAR3jkLICZRFUA/F1rlxgGIG2mMUtgTpkYwNmnT9VmPdv4NuCvC79
+         1ikw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8ziJA4qx94zca7h+UBhv0tAT4GL60Ekts6sL7jHf+Ns=;
-        b=X3Kz28wEPREy0JmITWxPy1NmUS6LwuChh8F4iuWEtrF93N1UikL/7qXyww1atB2UwB
-         pxisdL3v8/hfC+IYQwG+Kd0AeEDyoaT7GQjVA8G7l58p2CwL30CrPryuFgVq6LZgFqNy
-         VoCwY+8J06BUtT88HPSZQm5K6caZX+RXVKRPC9AX1po1cM/qEals5DnRxJ3N8TWUxNNn
-         4qSvOrbF8mlNzVBIEeBOx96MuOA2myF5dh1AKgGKW27T00VmohADJYsvoZ3LF/90aY4q
-         hRCga/HnuVxN1Wc8QZFC5fseRVBTeflwYbZpSSv12H+vqblaaXGeWt8pXtetutzWzZSC
-         G7gA==
-X-Gm-Message-State: APzg51DqhBbmUiqEgE2JJ3XloqhvziGfmPrtrHyNGssH+qiviysO70+z
-        eWA85YXbA3MKfgJ/wB87zeE=
-X-Google-Smtp-Source: ANB0VdZ0VJWgqg8+Ja4zw1lTRElNTKMjl2/JZ5CBuhDI4wtM/h7dlat/5V+HiSKVX2wXHmy6ApzUjg==
-X-Received: by 2002:a17:902:4401:: with SMTP id k1-v6mr14279713pld.97.1536980691861;
-        Fri, 14 Sep 2018 20:04:51 -0700 (PDT)
+        bh=251ZpBy3wzqgLLP+TQhmWnziNpr/7ye8/RmMWmT3hz8=;
+        b=V7l2ukKWJ9QNNboWcyuw/zPbCBPDaaf4dCIIlTpsnnTuH//SfbXv8sQ/3tUtc5G7Xf
+         VlXzkBMlIe2sXk0kwJIgADp67D2dv9FLZOosSoZBRIEvaW8cAJJdbKbgpM8s93CwjoJW
+         ogE1QOISf6BWMuENdxeXJYUI5IJ6TJzZxMT8MEpQTGoaMYoab8ZIPOjzNdiVllsPiDdi
+         pAJX0cVcZSczBXY276qQrkFGLKmhBlpyJ9qphrclksWiMu57WALbYh0h6NUT+phD3LtV
+         2pK+rif0xwq+cQCfajRTO7VrBN0BXfN7vo88idenLDvjU1Rta/giHoa6OPm1OvlzKeU5
+         4IMQ==
+X-Gm-Message-State: APzg51BDgd7dThd9OQUWjpbfX5eCvG+tSCp5QnlLskrL0a5Y3ZyvB3/U
+        Z1/yCdaaNpzaY5GZr0ymzeg=
+X-Google-Smtp-Source: ANB0VdYVq2GCTvmhFcr+yEWIR1NNFL/f9bHCCWchsgPnj7H/ZQ2XygrrisQXAP9/J4S5bmOY08mwhQ==
+X-Received: by 2002:a63:4283:: with SMTP id p125-v6mr14249003pga.142.1536981200600;
+        Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
 Received: from localhost.localdomain ([2402:f000:1:4414:947c:62c0:a59c:7c99])
-        by smtp.gmail.com with ESMTPSA id j191-v6sm12779101pfc.136.2018.09.14.20.04.49
+        by smtp.gmail.com with ESMTPSA id y18-v6sm9849594pfl.90.2018.09.14.20.13.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Sep 2018 20:04:51 -0700 (PDT)
+        Fri, 14 Sep 2018 20:13:20 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com, leoyang.li@nxp.com,
-        robert.jarzmik@free.fr
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] usb: gadget: udc: fotg210-udc: Fix a sleep-in-atomic-context bug in fotg210_get_status()
-Date:   Sat, 15 Sep 2018 11:04:40 +0800
-Message-Id: <20180915030440.17646-1-baijiaju1990@gmail.com>
+To:     lidza.louina@gmail.com, markh@compro.net,
+        gregkh@linuxfoundation.org
+Cc:     driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] staging: dgnc: Fix a sleep-in-atomic-context bug in cls_assert_modem_signals()
+Date:   Sat, 15 Sep 2018 11:13:03 +0800
+Message-Id: <20180915031303.5302-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep in an interrupt handler.
+The driver may sleep with holding a spinlock.
 The function call path (from bottom to top) in Linux-4.17 is:
 
-[FUNC] fotg210_ep_queue(GFP_KERNEL)
-drivers/usb/gadget/udc/fotg210-udc.c, 744: 
-	fotg210_ep_queue in fotg210_get_status
-drivers/usb/gadget/udc/fotg210-udc.c, 768: 
-	fotg210_get_status in fotg210_setup_packet
-drivers/usb/gadget/udc/fotg210-udc.c, 949: 
-	fotg210_setup_packet in fotg210_irq (interrupt handler)
+[FUNC] usleep_range
+drivers/staging/dgnc/dgnc_cls.c, 391: 
+	usleep_range in cls_assert_modem_signals
+drivers/staging/dgnc/dgnc_cls.c, 449: 
+	cls_assert_modem_signals in cls_copy_data_from_queue_to_uart
+drivers/staging/dgnc/dgnc_cls.c, 406: 
+	_raw_spin_lock_irqsave in cls_copy_data_from_queue_to_uart
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
-If possible, spin_unlock() and spin_lock() around fotg210_ep_queue() 
-can be also removed.
+To fix this bug, usleep_range() is replaced with udelay().
 
 This bug is found by my static analysis tool DSAC.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/usb/gadget/udc/fotg210-udc.c | 2 +-
+ drivers/staging/dgnc/dgnc_cls.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/fotg210-udc.c b/drivers/usb/gadget/udc/fotg210-udc.c
-index 53a48f561458..c51510803d1f 100644
---- a/drivers/usb/gadget/udc/fotg210-udc.c
-+++ b/drivers/usb/gadget/udc/fotg210-udc.c
-@@ -741,7 +741,7 @@ static void fotg210_get_status(struct fotg210_udc *fotg210,
- 	fotg210->ep0_req->length = 2;
+diff --git a/drivers/staging/dgnc/dgnc_cls.c b/drivers/staging/dgnc/dgnc_cls.c
+index 7e6cbfe4e4ee..a1e98ee7f9e0 100644
+--- a/drivers/staging/dgnc/dgnc_cls.c
++++ b/drivers/staging/dgnc/dgnc_cls.c
+@@ -388,7 +388,7 @@ static void cls_assert_modem_signals(struct channel_t *ch)
+ 	writeb(out, &ch->ch_cls_uart->mcr);
  
- 	spin_unlock(&fotg210->lock);
--	fotg210_ep_queue(fotg210->gadget.ep0, fotg210->ep0_req, GFP_KERNEL);
-+	fotg210_ep_queue(fotg210->gadget.ep0, fotg210->ep0_req, GFP_ATOMIC);
- 	spin_lock(&fotg210->lock);
+ 	/* Give time for the UART to actually drop the signals */
+-	usleep_range(10, 20);
++	udelay(20);
  }
  
+ static void cls_copy_data_from_queue_to_uart(struct channel_t *ch)
 -- 
 2.17.0
 
