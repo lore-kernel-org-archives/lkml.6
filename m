@@ -2,194 +2,111 @@ Return-Path: <SRS0=b4qJ=L5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D5BECE563
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CE6ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CAA2083A
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CAA2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id D32142083A
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Sep 2018 18:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32142083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeIPAHw (ORCPT
+        id S1727805AbeIPALN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Sep 2018 20:07:52 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:53258 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727302AbeIPAHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Sep 2018 20:07:52 -0400
-Received: from p54b26271.dip0.t-ipconnect.de ([84.178.98.113] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1g1FbR-0002Yw-Vn; Sat, 15 Sep 2018 20:47:34 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     agajjar <Akash_Gajjar@mentor.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     deepak_das@mentor.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Levin Du <djw@t-chip.com.cn>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shohei Maruyama <cheat.sc.linux@outlook.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: add initial dts support for Rockpro64 board
-Date:   Sat, 15 Sep 2018 20:47:33 +0200
-Message-ID: <2506786.bBPgq83TQz@phil>
-In-Reply-To: <bdb645c3-d9b7-03e8-7dcf-7d5bda91c4c8@mentor.com>
-References: <Akash_Gajjar@mentor.com> <5171978.eGO5IDoIUo@phil> <bdb645c3-d9b7-03e8-7dcf-7d5bda91c4c8@mentor.com>
+        Sat, 15 Sep 2018 20:11:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38234 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727302AbeIPALN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Sep 2018 20:11:13 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 844CDC97;
+        Sat, 15 Sep 2018 18:51:14 +0000 (UTC)
+Date:   Sat, 15 Sep 2018 20:51:11 +0200
+From:   gregkh <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 02/50] move compat handling of tty ioctls to
+ tty_compat_ioctl()
+Message-ID: <20180915185111.GC25288@kroah.com>
+References: <20180913023119.GQ19965@ZenIV.linux.org.uk>
+ <20180913024049.24567-1-viro@ZenIV.linux.org.uk>
+ <20180913024049.24567-2-viro@ZenIV.linux.org.uk>
+ <CAK8P3a1feqfJOTvQEC+tmdYToGzL0zmKLQmGzPe-UQry0AuW-g@mail.gmail.com>
+ <20180914181656.GB20521@kroah.com>
+ <CAK8P3a1T6e9tQPES3f-Lh=HLpy8RXBfmwh6in20XXkgGa8612Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1T6e9tQPES3f-Lh=HLpy8RXBfmwh6in20XXkgGa8612Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 15. September 2018, 11:03:57 CEST schrieb agajjar:
-> Hi Heiko,
-> 
-> On 9/14/2018 11:23 PM, Heiko Stuebner wrote:
-> > Hi Akash,
+On Fri, Sep 14, 2018 at 09:38:52PM +0200, Arnd Bergmann wrote:
+> On Fri, Sep 14, 2018 at 8:17 PM gregkh <gregkh@linuxfoundation.org> wrote:
 > >
-> > Am Freitag, 14. September 2018, 14:09:09 CEST schrieb Akash Gajjar:
-> >> Rockpro64 board is a rockchip RK3399 based board from pine64.org.
-> >> This commit adds initial device tree support for Rockpro64 board.
-> >>
-> >> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
-> > generally the patch looks great already. Hopefully we will get an Ack
-> > from the dt-maintaintainers for the binding and I noticed two small
-> > issues I'll describe below.
-> >
-> >
-> >> ---
-> >>   Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
-> >>   arch/arm64/boot/dts/rockchip/Makefile              |   1 +
-> >>   arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts  | 770 +++++++++++++++++++++
-> >>   3 files changed, 775 insertions(+)
-> >>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
-> >> index acfd3c7..ac95183 100644
-> >> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
-> >> @@ -160,6 +160,10 @@ Rockchip platforms device tree bindings
-> >>       Required root node properties:
-> >>       - compatible = "pine64,rock64", "rockchip,rk3328";
-> >>   
-> >> +- Pine64 RockPro64 board:
-> >> +    Required root node properties:
-> >> +    - compatible = "pine64,rockpro64", "rockchip,rk3399";
-> >> +
-> >>   - Rockchip PX3 Evaluation board:
-> >>       Required root node properties:
-> >>         - compatible = "rockchip,px3-evb", "rockchip,px3", "rockchip,rk3188";
-> >> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> >> index b0092d9..03d523a 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> >> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> >> @@ -14,5 +14,6 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
-> >>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
-> >>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
-> >>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
-> >> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
-> >>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
-> >>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >> new file mode 100644
-> >> index 0000000..9e2d4d9
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-> >> @@ -0,0 +1,770 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
-> > Rockchip copyright from 2017? Where is the original
-> > dts coming from?
+> > On Fri, Sep 14, 2018 at 05:15:52PM +0200, Arnd Bergmann wrote:
+> > > On Thu, Sep 13, 2018 at 4:40 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 > 
-> Rockpro64 board is similar to firefly rk-3399 board. DTS is taken from 
-> firefly board and it is booting fine with minimal changes.
+> > > +       case TCSETX:
+> > > +       case TCSETXF:
+> > > +       case TCSETXW:
+> > > +       case TIOCGETC:
+> > > +       case TIOCGETP:
+> > > +       case TIOCGPTPEER:
+> > > +       case TIOCSERCONFIG:
+> > > +       case TIOCSETC:
+> > > +       case TIOCSETN:
+> > > +       case TIOCSETP:
+> > > +       case TIOCVHANGUP:
+> > >
+> > > Should these all be added in a stable backport patch?
+> >
+> > Why?  What is being "fixed" here that anyone has noticed before that is
+> > causing problems in those old kernels?  If no one has complained about
+> > the lack of compat fixups, well...  :)
 > 
-> Should I continue with the rockchip rights or update with the mine copy 
-> rights?
+> Most of the individual ones don't matter:
+> 
+> TCSETX/TCSETXF/TCSETXW/TCGETX never did anything,
+> we don't care about them.
+> 
+> TIOCSERCONFIG has always been broken in compat mode,
+> not sure who calls it in practice. This is 'setserial autoconfig'.
+> 
+> TIOCGETC/TIOCGETP/TIOCSETC/TIOCSETN/TIOCSETP
+> are only defined on alpha, mips, powerpc and sparc to start
+> with. They seem to only be there for compatibility with some
+> Unix version for those architectures but were never part of
+> the normal Linux API or the compat set, so I guess they
+> also don't matter.
+> 
+> The two that I think we may care about are:
+> 
+> TIOCGPTPEER is a fairly recent regression from commit
+> 311fc65c9fb9 ("pty: Repair TIOCGPTPEER") in 4.14 after it was
+> added in 4.13.
+> 
+> TIOCVHANGUP was introduced to be used by systemd in
+> commit 3c95c985fa91 ("tty: add TIOCVHANGUP to allow clean tty
+> shutdown of all ttys").
+> https://raspberrypi.stackexchange.com/questions/54143
+> has a bug report noting a problem with Raspbian systemd
+> that was related to TIOCVHANGUP. I don't think it's the
+> missing compat line that caused it, but the same system
+> would try to run TIOCVHANGUP in compat mode on
+> Raspberry Pi3 when using a 64-bit kernel with raspbian,
+> so there are definitely callers.
 
-I guess, you could keep the old one and add a second line for 2018 and
-your copyright, as you also added changes to it.
+Ah, ok, that makes sense, I forgot about the new ioctls and didn't
+realize it was a regression.
 
-
-> >> + */
-> >> +
-> >> +/dts-v1/;
-> >> +#include <dt-bindings/input/linux-event-codes.h>
-> >> +#include <dt-bindings/pwm/pwm.h>
-> >> +#include "rk3399.dtsi"
-> >> +#include "rk3399-opp.dtsi"
-> >> +
-> >> +/ {
-> >> +	model = "Pine64 RockPro64";
-> >> +	compatible = "pine64,rockpro64", "rockchip,rk3399";
-> >> +
-> >> +	chosen {
-> >> +		stdout-path = "serial2:1500000n8";
-> >> +	};
-> >> +
-> >> +	backlight: backlight {
-> >> +		compatible = "pwm-backlight";
-> >> +		enable-gpios = <&gpio1 RK_PB5 GPIO_ACTIVE_HIGH>;
-> >> +		pwms = <&pwm0 0 25000 0>;
-> >> +		brightness-levels = <
-> >> +			  0   1   2   3   4   5   6   7
-> >> +			  8   9  10  11  12  13  14  15
-> >> +			 16  17  18  19  20  21  22  23
-> >> +			 24  25  26  27  28  29  30  31
-> >> +			 32  33  34  35  36  37  38  39
-> >> +			 40  41  42  43  44  45  46  47
-> >> +			 48  49  50  51  52  53  54  55
-> >> +			 56  57  58  59  60  61  62  63
-> >> +			 64  65  66  67  68  69  70  71
-> >> +			 72  73  74  75  76  77  78  79
-> >> +			 80  81  82  83  84  85  86  87
-> >> +			 88  89  90  91  92  93  94  95
-> >> +			 96  97  98  99 100 101 102 103
-> >> +			104 105 106 107 108 109 110 111
-> >> +			112 113 114 115 116 117 118 119
-> >> +			120 121 122 123 124 125 126 127
-> >> +			128 129 130 131 132 133 134 135
-> >> +			136 137 138 139 140 141 142 143
-> >> +			144 145 146 147 148 149 150 151
-> >> +			152 153 154 155 156 157 158 159
-> >> +			160 161 162 163 164 165 166 167
-> >> +			168 169 170 171 172 173 174 175
-> >> +			176 177 178 179 180 181 182 183
-> >> +			184 185 186 187 188 189 190 191
-> >> +			192 193 194 195 196 197 198 199
-> >> +			200 201 202 203 204 205 206 207
-> >> +			208 209 210 211 212 213 214 215
-> >> +			216 217 218 219 220 221 222 223
-> >> +			224 225 226 227 228 229 230 231
-> >> +			232 233 234 235 236 237 238 239
-> >> +			240 241 242 243 244 245 246 247
-> >> +			248 249 250 251 252 253 254 255>;
-> >> +		default-brightness-level = <200>;
-> > with recent additions to the pwm-backlight we shouldn't need the
-> > long brightness-levels table and default-brightness-level anymore.
-> some device support is also needs to be added in this dts. In upcoming 
-> patch-sets I will update those changes.
-
-cool, thanks.
-
-
-Heiko
-
-
+greg k-h
