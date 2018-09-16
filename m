@@ -2,106 +2,71 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FB6ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A9CECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2EC208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2EC208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 35A31208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:17:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A31208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbeIPSjn (ORCPT
+        id S1728397AbeIPSkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 14:39:43 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:57068 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727071AbeIPSjn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 14:39:43 -0400
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1g1Wuj-0006jn-00; Sun, 16 Sep 2018 13:16:37 +0000
-Date:   Sun, 16 Sep 2018 09:16:37 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-man@vger.kernel.org,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: Re: futex_cmpxchg_enabled breakage
-Message-ID: <20180916131637.GA17995@brightrain.aerifal.cx>
-References: <20180829222221.GA22017@brightrain.aerifal.cx>
- <87fty9hc2u.fsf@mid.deneb.enyo.de>
+        Sun, 16 Sep 2018 14:40:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12149 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727071AbeIPSkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 14:40:12 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id BA6141ADB9342;
+        Sun, 16 Sep 2018 21:17:09 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.399.0; Sun, 16 Sep 2018 21:17:07 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <mchehab@kernel.org>
+CC:     <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: coda: remove redundant null pointer check before of_node_put
+Date:   Sun, 16 Sep 2018 21:04:49 +0800
+Message-ID: <1537103089-63003-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87fty9hc2u.fsf@mid.deneb.enyo.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 02:16:25PM +0200, Florian Weimer wrote:
-> * Rich Felker:
-> 
-> > I just spent a number of hours helping someone track down a bug that
-> > looks like it's some kind of futex_cmpxchg_enabled detection error on
-> > powerpc64 (still not sure of the root cause; set_robust_list producing
-> > -ENOSYS), and a while back I hit the same problem on sh2 due to lack
-> > of EFAULT on nommu, leading to commit 72cc564f16ca. I think the test
-> > (introduced way back in commit a0c1e9073ef7) is fundamentally buggy;
-> > if anything, it should be checking for !=-ENOSYS, not ==-EFAULT.
-> > Presumably it could also fail to produce -EFAULT if mmap_min_addr is 0
-> > and page 0 is mapped (a bad idea, but maybe someone does it...). And
-> > of course other nommu archs are possibly still broken.
-> 
-> Maybe it was related to this (“Kernel 4.15 lost set_robust_list
-> support on POWER 9”):
-> 
-> <https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-February/168570.html>
+of_node_put has taken the null pinter check into account. So it is
+safe to remove the duplicated check before of_node_put.
 
-Thanks! This is really helpful; I'll pass it along.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/media/platform/coda/coda-common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> The Kconfig change you suggest was explicitly rejected as the fix.
+diff --git a/drivers/media/platform/coda/coda-common.c b/drivers/media/platform/coda/coda-common.c
+index 0bffa1e..6bff416 100644
+--- a/drivers/media/platform/coda/coda-common.c
++++ b/drivers/media/platform/coda/coda-common.c
+@@ -376,8 +376,7 @@ static struct vdoa_data *coda_get_vdoa_data(void)
+ 		vdoa_data = ERR_PTR(-EPROBE_DEFER);
+ 
+ out:
+-	if (vdoa_node)
+-		of_node_put(vdoa_node);
++	of_node_put(vdoa_node);
+ 
+ 	return vdoa_data;
+ }
+-- 
+1.7.12.4
 
-Even if it was rejected as a fix for this specific bug, I think it
-would be a good change for other reasons. If nothing else it reduces
-kernel code size and eliminates a few instructions in some (albeit
-long) hot paths.
-
-> I believe the expected userspace interface is that you probe support
-> with set_robust_list first, and then start using the relevant futex
-> interfaces only if that call succeeded.
-
-In order for it to work, set_robust_list needs to succeed for all
-threads, present and future, so there's an implicit contract needed
-here that, if it succeeds once, it needs to always succeed. This is
-satisfied by the kernel implementation. FWIW I adopted a fix using
-get_robust_list to probe just to avoid coupling the internals of
-setting up the list with the bland function
-pthread_mutexattr_setrobust which is unaware of any implementation
-details except the location of the attribute bit.
-
-Presumably a similar probing should happen in
-pthread_mutexattr_setprotocol for PI mutex support. Does glibc do
-this? musl still lacks PI mutex support so I'll save this as a note
-for when it's added.
-
-> If you do that, most parts of
-> a typical system will work as expected even if the kernel support is
-> not there, which is a bit surprising.  It definitely makes the root
-> cause harder to spot.
-
-I don't follow here. "most parts of a typical system will work as
-expected" seems to be the case whether you do or don't correctly
-probe. The only difference is whether a program that carefully checks
-for errors will see and report that pthread_mutexattr_setrobust
-failed.
-
-Rich
