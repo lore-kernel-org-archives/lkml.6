@@ -2,442 +2,191 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF79ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E185ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58238208DD
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:01:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7jA91z/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58238208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2685D208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2685D208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbeIPQY2 (ORCPT
+        id S1728200AbeIPQZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 12:24:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbeIPQY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 12:24:28 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D75B4208AE;
-        Sun, 16 Sep 2018 11:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537095714;
-        bh=SuZAs1iu1JerlXZy5LFapeCq9WTVEe2PAU+/5NfiC7c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=j7jA91z/pQK+wTSzrBQ1ON1ZGOkcbO0gf/VwK9EnBTr87NJJ6nZryWzh9cxlQ5br1
-         BswRdVjIh4vJeDYmDa8ne/HdtrcZ4pKsz8HWF6H/KuATFlyRyRUB8airdKN+BA1uzF
-         Kqy/k1u9KzcwHs6uapvz8uGIZhQgEGEPaQXJT0Mo=
-Date:   Sun, 16 Sep 2018 12:01:49 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Song Qiang <songqiang1304521@gmail.com>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        andriy.shevchenko@linux.intel.com, matt.ranostay@konsulko.com,
-        tglx@linutronix.de, ak@it-klinger.de, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        himanshujha199640@gmail.com,
-        Song Qiang <songqiang.1304521@gmail.com>
-Subject: Re: [PATCH v5] iio: proximity: Add driver support for ST's VL53L0X
- ToF ranging sensor.
-Message-ID: <20180916120149.0c68893f@archlinux>
-In-Reply-To: <20180915095752.8116-1-songqiang.1304521@gmail.com>
-References: <20180915095752.8116-1-songqiang.1304521@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Sep 2018 12:25:37 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:40798 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728100AbeIPQZh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 12:25:37 -0400
+Received: by mail-io1-f69.google.com with SMTP id p22-v6so14648125ioh.7
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 04:03:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Y22/O0w76yKTL5vOfBgmATjT+bB2RUyOBV1gMPdb3gc=;
+        b=eYQiY0nZ7+XPTGorYAApFPoVKkxmNPsZtJO+fvhv7QG1swyu53fLn+FkmA+jiapElR
+         WgprNLnvt/JVTaWHWieN9mW5A6tc35Hub6g/8DMXvJHx1+cGKCjy81qPlMZX5AuVDNKg
+         +qNXFJc+V8V/0sKo8sBuVhyDfeGD8miH5rTmDbjRDqq8N1bCb237S0YC5h2w+gO12mSW
+         7a2YIsB6DGbdIU3BT6WAyFqngOCqlDKZGe3JbfjaTNmjrssi2i6JPZ9jm/AdnN/J0u7o
+         vnJTmyr6jwombwC8Wn9qoScoi3oo2hPdN1Up3oYVT3a2mZ3EDQxk6d07jNElanTln48Y
+         RnpA==
+X-Gm-Message-State: APzg51DwwyUYUNA7r4pNaAeETzmLl6XL7+Usb4kj6b1ry9X1so+8Mxix
+        88RW9vlSMUc7eH+XbhyccD6Nph/pfihyYKV1CLGglZiBVvpI
+X-Google-Smtp-Source: ANB0VdZQBZQamuUUFEVhrihdZS+kP4e5uQHPYHGl9qBQdx2fPaewWNQrGhqkGanQCRzzF9zYDN13stYlcqQxGUpjvKRVfvtrDYRM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:f116:: with SMTP id e22-v6mr15686116iog.50.1537095783148;
+ Sun, 16 Sep 2018 04:03:03 -0700 (PDT)
+Date:   Sun, 16 Sep 2018 04:03:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002407700575fb00f4@google.com>
+Subject: KMSAN: uninit-value in ip_rcv_core
+From:   syzbot <syzbot+2e406a9ac75bb71d4b7a@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Sep 2018 17:57:52 +0800
-Song Qiang <songqiang1304521@gmail.com> wrote:
+Hello,
 
-> This driver was originally written by ST in 2016 as a misc input device
-> driver, and hasn't been maintained for a long time. I grabbed some code
-> from it's API and reformed it into an iio proximity device driver.
-> This version of driver uses i2c bus to talk to the sensor and
-> polling for measuring completes, so no irq line is needed.
-> This version of driver supports only one-shot mode, and it can be
-> tested with reading from
-> /sys/bus/iio/devices/iio:deviceX/in_distance_raw
-> 
-> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
-Hi Song,
+syzbot found the following crash on:
 
-My first comment was going to be don't use wild cards in a part name
-in a driver, but a quick sanity check confirmed that ST were actually
-crazy enough to end a part number with an X.  Ah well ;)
+HEAD commit:    42a037ca8d9d kmsan: update README.md to reference LLVM r34..
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=1089adea400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3431f03869413153
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e406a9ac75bb71d4b7a
+compiler:       clang version 8.0.0 (trunk 339414)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d6d421400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fdeb7a400000
 
-Otherwise a few minor things, mostly around naming.  There is some
-confusion around endian stuff as well
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2e406a9ac75bb71d4b7a@syzkaller.appspotmail.com
 
-Looks pretty good for a first go at upstreaming a driver!
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KMSAN: uninit-value in ip_rcv_core+0xabd/0x1160 net/ipv4/ip_input.c:464
+CPU: 1 PID: 4270 Comm: syz-executor158 Not tainted 4.19.0-rc1+ #42
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x14b/0x190 lib/dump_stack.c:113
+  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+  ip_rcv_core+0xabd/0x1160 net/ipv4/ip_input.c:464
+  ip_rcv+0xbb/0x6d0 net/ipv4/ip_input.c:521
+  __netif_receive_skb_one_core net/core/dev.c:4892 [inline]
+  __netif_receive_skb net/core/dev.c:5002 [inline]
+  process_backlog+0x752/0x10b0 net/core/dev.c:5808
+  napi_poll net/core/dev.c:6228 [inline]
+  net_rx_action+0x723/0x19d0 net/core/dev.c:6294
+  __do_softirq+0x562/0x948 kernel/softirq.c:292
+  do_softirq_own_stack+0x49/0x80 arch/x86/entry/entry_64.S:1055
+  </IRQ>
+  do_softirq kernel/softirq.c:336 [inline]
+  __local_bh_enable_ip+0x119/0x150 kernel/softirq.c:189
+  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
+  rcu_read_unlock_bh include/linux/rcupdate.h:723 [inline]
+  __dev_queue_xmit+0x35a8/0x3ab0 net/core/dev.c:3830
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3836
+  packet_snd net/packet/af_packet.c:2925 [inline]
+  packet_sendmsg+0x80ff/0x8c60 net/packet/af_packet.c:2950
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x441149
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffebf721a18 EFLAGS: 00000286 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441149
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 0000000000000100 R09: 0000000000000100
+R10: 0000000000000100 R11: 0000000000000286 R12: 00000000004020b0
+R13: 0000000000402140 R14: 0000000000000000 R15: 0000000000000000
 
-Are you planning on adding more features?  Seems like a capable little device
-and would be good to have fuller support in the long term if you have time
-to look at it!
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+  kmsan_internal_chain_origin+0x128/0x210 mm/kmsan/kmsan.c:573
+  __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:482
+  iptunnel_xmit+0xa3c/0xd50 net/ipv4/ip_tunnel_core.c:85
+  ip_tunnel_xmit+0x33e1/0x3750 net/ipv4/ip_tunnel.c:778
+  __gre_xmit net/ipv4/ip_gre.c:449 [inline]
+  ipgre_xmit+0xdcf/0xeb0 net/ipv4/ip_gre.c:703
+  __netdev_start_xmit include/linux/netdevice.h:4287 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4296 [inline]
+  xmit_one net/core/dev.c:3217 [inline]
+  dev_hard_start_xmit+0x5df/0xc20 net/core/dev.c:3233
+  __dev_queue_xmit+0x2f35/0x3ab0 net/core/dev.c:3803
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3836
+  packet_snd net/packet/af_packet.c:2925 [inline]
+  packet_sendmsg+0x80ff/0x8c60 net/packet/af_packet.c:2950
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-Jonathan
-
-> ---
-> Changes in v5:
-> 	- Correct some spell problems.
-> 	- Change tries-- to --tries to fix the count error.
-> 	- Add MODULE_DEVICE_TABLE().
-> 	- Add some comments.
-> 
-> Changes in v4:
-> 	- Add datasheet link, default i2c address and TODO list.
-> 	- Make capitalization of defines consistent.
-> 	- Replace i2c_transfer() with i2c_smbus_read_i2c_block_data().
-> 	- Remove IIO_CHAN_SOFT_TIMESTAMP() since no buffer/trigger
-> 	  support.
-> 	- Add information to MAINTAINERS.
-> 
-> Changes in v3:
-> 	- Recover ST's copyright.
-> 	- Clean up indio_dev member in vl53l0x_data struct since it's
-> 	  useless now.
-> 	- Replace __le16_to_cpu() with le16_to_cpu().
-> 	- Remove the iio_device_{claim|release}_direct_mode() since it's
-> 	  only needed when we use buffered mode.
-> 	- Clean up some coding style problems.
-> 
-> Changes in v2:
-> 	- Clean up the register table.
-> 	- Sort header files declarations.
-> 	- Replace some bit definations with GENMASK() and BIT().
-> 	- Clean up some code and comments that's useless for now.
-> 	- Change the order of some the definations of some variables to reversed
-> 	  xmas tree order.
-> 	- Using do...while() rather while and check.
-> 	- Replace pr_err() with dev_err().
-> 	- Remove device id declaration since we recommend to use DT.
-> 	- Remove .owner = THIS_MODULE.
-> 	- Replace probe() with probe_new() hook.
-> 	- Remove IIO_BUFFER and IIO_TRIGGERED_BUFFER dependences.
-> 	- Change the driver module name to vl53l0x-i2c.
-> 	- Align all the parameters if they are in the same function with open
-> 	  parentheses.
-> 	- Replace iio_device_register() with devm_iio_device_register
-> 	  for better resource management.
-> 	- Remove the vl53l0x_remove() since it's not needed.
-> 	- Remove dev_set_drvdata() since it's already setted above.
-> 
->  .../bindings/iio/proximity/vl53l0x.txt        |  12 ++
->  MAINTAINERS                                   |   7 +
->  drivers/iio/proximity/Kconfig                 |  11 ++
->  drivers/iio/proximity/Makefile                |   2 +
->  drivers/iio/proximity/vl53l0x-i2c.c           | 180 ++++++++++++++++++
->  5 files changed, 212 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
->  create mode 100644 drivers/iio/proximity/vl53l0x-i2c.c
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> new file mode 100644
-> index 000000000000..ab9a9539fec4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> @@ -0,0 +1,12 @@
-> +ST VL53L0X ToF ranging sensor
-> +
-> +Required properties:
-> +	- compatible: must be "st,vl53l0x-i2c"
-> +	- reg: i2c address where to find the device
-> +
-> +Example:
-> +
-> +vl53l0x@29 {
-> +	compatible = "st,vl53l0x-i2c";
-> +	reg = <0x29>;
-> +};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 967ce8cdd1cc..a35d80e63506 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13510,6 +13510,13 @@ L:	linux-i2c@vger.kernel.org
->  S:	Maintained
->  F:	drivers/i2c/busses/i2c-stm32*
->  
-> +ST VL53L0X ToF RANGER(I2C) IIO DRIVER
-> +M:	Song Qiang <songqiang.1304521@gmail.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/iio/proximity/vl53l0x-i2c.c
-> +F:	Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
-> +
->  STABLE BRANCH
->  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->  L:	stable@vger.kernel.org
-> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
-> index f726f9427602..5f421cbd37f3 100644
-> --- a/drivers/iio/proximity/Kconfig
-> +++ b/drivers/iio/proximity/Kconfig
-> @@ -79,4 +79,15 @@ config SRF08
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called srf08.
->  
-> +config VL53L0X_I2C
-> +	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
-> +	depends on I2C
-> +	help
-> +	  Say Y here to build a driver for STMicroelectronics VL53L0X
-> +	  ToF ranger sensors with i2c interface.
-> +	  This driver can be used to measure the distance of objects.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called vl53l0x-i2c.
-> +
->  endmenu
-> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
-> index 4f4ed45e87ef..dedfb5bf3475 100644
-> --- a/drivers/iio/proximity/Makefile
-> +++ b/drivers/iio/proximity/Makefile
-> @@ -10,3 +10,5 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
->  obj-$(CONFIG_SRF04)		+= srf04.o
->  obj-$(CONFIG_SRF08)		+= srf08.o
->  obj-$(CONFIG_SX9500)		+= sx9500.o
-> +obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
-> +
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> new file mode 100644
-> index 000000000000..4837cc2fff19
-> --- /dev/null
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -0,0 +1,180 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Support for ST VL53L0X FlightSense ToF Ranging Sensor on a i2c bus.
-> + *
-> + * Copyright (C) 2016 STMicroelectronics Imaging Division.
-> + * Copyright (C) 2018 Song Qiang <songqiang.1304521@gmail.com>
-> + *
-> + * Datasheet available at
-> + * <https://www.st.com/resource/en/datasheet/vl53l0x.pdf>
-> + *
-> + * Default 7-bit i2c slave address 0x29.
-> + *
-> + * TODO: FIFO buffer, continuous mode, interrupts, range selection,
-> + * sensor ID check.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/i2c.h>
-> +#include <linux/delay.h>
-> +
-> +#include <linux/iio/iio.h>
-> +
-> +#define VL53L0X_DRV_NAME				"vl53l0x-i2c"
-
-A quick google suggests this only has an i2c interface.  Hence I'd argue
-there is no point in having -i2c in the driver name.  Lots of other
-i2c only parts don't on the basis it doesn't add anything.  In fact
-the only time we tend to do this is if we have a driver that splits
-into a shared core and two or more bus specific drivers.
-
-> +
-> +#define VL_REG_SYSRANGE_START				0x00
-> +
-> +#define VL_REG_SYSRANGE_MODE_MASK			GENMASK(3, 0)
-> +#define VL_REG_SYSRANGE_MODE_SINGLESHOT			0x00
-> +#define VL_REG_SYSRANGE_MODE_START_STOP			BIT(0)
-> +#define VL_REG_SYSRANGE_MODE_BACKTOBACK			BIT(1)
-> +#define VL_REG_SYSRANGE_MODE_TIMED			BIT(2)
-> +#define VL_REG_SYSRANGE_MODE_HISTOGRAM			BIT(3)
-> +
-> +#define VL_REG_SYS_SEQUENCE_CFG				BIT(0)
-> +#define VL_REG_SYS_INTERMEASUREMENT_PERIOD		BIT(2)
-> +#define VL_REG_SYS_RANGE_CFG				0x09
-> +#define VL_REG_SYS_INT_GPIO_DISABLED			0x00
-> +#define VL_REG_SYS_INT_GPIO_LEVEL_LOW			BIT(0)
-> +#define VL_REG_SYS_INT_GPIO_LEVEL_HIGH			BIT(1)
-> +#define VL_REG_SYS_INT_GPIO_OUT_OF_WINDOW		0x03
-> +#define VL_REG_SYS_INT_GPIO_NEW_SAMPLE_READY		BIT(2)
-> +#define VL_REG_SYS_INT_CFG_GPIO				0x0A
-> +#define VL_REG_SYS_INT_CLEAR				0x0B
-> +#define VL_REG_GPIO_HV_MUX_ACTIVE_HIGH			0x84
-> +
-> +#define VL_REG_RESULT_INT_STATUS			0x13
-> +#define VL_REG_RESULT_RANGE_STATUS			0x14
-> +#define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
-> +
-> +/* Check contents of these registers to verify the device. */
-> +#define VL_REG_IDENTIFICATION_MODEL_ID			0xC0
-> +#define VL_REG_IDENTIFICATION_REVISION_ID		0xC2
-> +
-> +struct vl53l0x_data {
-> +	struct i2c_client *client;
-> +};
-> +
-> +static int vl53l0x_read_proximity(struct vl53l0x_data *data,
-> +				  const struct iio_chan_spec *chan,
-> +				  int *val)
-> +{
-> +	struct i2c_client *client = data->client;
-> +	unsigned int tries = 20;
-> +	u8 buffer[12];
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(client,
-> +		VL_REG_SYSRANGE_START, 1);
-
-Looks like the above would fit on one line.  Please do a quick check
-through the driver for other cases of this.
-
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	do {
-> +		ret = i2c_smbus_read_byte_data(client,
-> +			VL_REG_RESULT_RANGE_STATUS);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (ret & VL_REG_RESULT_RANGE_STATUS_COMPLETE)
-> +			break;
-> +
-> +		usleep_range(1000, 5000);
-> +	} while (--tries);
-> +	if (!tries)
-> +		return -ETIMEDOUT;
-> +
-> +	ret = i2c_smbus_read_i2c_block_data(client, VL_REG_RESULT_RANGE_STATUS,
-> +		12, buffer);
-> +	if (ret < 0)
-> +		return ret;
-> +	else if (ret != 12)
-> +		return -EREMOTEIO;
-> +
-> +	/* Values should be between 30~1200. */
-> +	*val = le16_to_cpu((buffer[10] << 8) + buffer[11]);
-This worries me as a conversion.  The shift and addition is
-unwinding the endianness already. You then do it again with le16_to_cpu
-
-As it's aligned you could have done
-*val = le16_to_cpu(*(le16 *)(&buffer[10]));  That's obviously
-a bit ugly though, mainly because we are handling the buffer as
-a u8.  Is there a reason to not directly handle it as an le16 array?
-
-I'm having trouble finding the relevant section of the manual to actually
-figure out what is in the first 10 bytes!
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+  kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:100
+  slab_post_alloc_hook mm/slab.h:446 [inline]
+  slab_alloc_node mm/slub.c:2719 [inline]
+  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4352
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:996 [inline]
+  alloc_skb_with_frags+0x1d0/0xac0 net/core/skbuff.c:5276
+  sock_alloc_send_pskb+0xb47/0x1170 net/core/sock.c:2082
+  packet_alloc_skb net/packet/af_packet.c:2779 [inline]
+  packet_snd net/packet/af_packet.c:2870 [inline]
+  packet_sendmsg+0x6599/0x8c60 net/packet/af_packet.c:2950
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+==================================================================
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct iio_chan_spec vl53l0x_channels[] = {
-> +	{
-> +		.type = IIO_DISTANCE,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-
-This is a time of flight sensor?  As such I would kind of assume it is possible
-to get to a real world distance?  Adding scale and offset to do this can
-of course be a follow up patch,  but it would be good to have!
-
-> +	},
-> +};
-> +
-> +static int vl53l0x_read_raw(struct iio_dev *indio_dev,
-> +			    const struct iio_chan_spec *chan,
-> +			    int *val, int *val2, long mask)
-> +{
-> +	struct vl53l0x_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	if (chan->type != IIO_DISTANCE) {
-> +		dev_err(&data->client->dev, "iio type error");
-
-This can't actually happen as there are no other channel types
-registered.   The if check is really a form of documentation rather
-than real protection.   As such I'd drop the dev_err print
-out as unnecessary noise.  A simple return -EINVAL is more than
-enough here.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = vl53l0x_read_proximity(data, chan, val);
-> +		if (ret < 0)
-> +			dev_err(&data->client->dev,
-> +				"raw value read error with %d", ret);
-
-If return is less than 0 you should be passing that on to userspace
-(so add a return ret in this if block.)
-
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		dev_err(&data->client->dev, "IIO_CHAN_* not recognized.");
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const struct iio_info vl53l0x_info = {
-> +	.read_raw = vl53l0x_read_raw,
-> +};
-> +
-> +static int vl53l0x_probe(struct i2c_client *client)
-> +{
-> +	struct vl53l0x_data *data;
-> +	struct iio_dev *indio_dev;
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data = iio_priv(indio_dev);
-> +	data->client = client;
-> +	i2c_set_clientdata(client, indio_dev);
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +		I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_BYTE_DATA))
-> +		return -EOPNOTSUPP;
-> +
-> +	indio_dev->dev.parent = &client->dev;
-> +	indio_dev->name = VL53L0X_DRV_NAME;
-> +	indio_dev->info = &vl53l0x_info;
-> +	indio_dev->channels = vl53l0x_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(vl53l0x_channels);
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +static const struct of_device_id st_vl53l0x_dt_match[] = {
-> +	{ .compatible = "st,vl53l0x-i2c", },
-
-Compatible shouldn't need the -i2c as it will only check for
-i2c devices if they are on an i2c bus anyway.
-
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, st_vl53l0x_dt_match);
-> +
-> +static struct i2c_driver vl53l0x_driver = {
-> +	.driver = {
-> +		.name = VL53L0X_DRV_NAME,
-> +		.of_match_table = st_vl53l0x_dt_match,
-> +	},
-> +	.probe_new = vl53l0x_probe,
-> +};
-> +module_i2c_driver(vl53l0x_driver);
-> +
-> +MODULE_AUTHOR("Song Qiang <songqiang.1304521@gmail.com>");
-> +MODULE_DESCRIPTION("ST vl53l0x ToF ranging sensor driver");
-> +MODULE_LICENSE("GPL v2");
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
