@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2D2ECE564
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13449ECE561
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B18214AB
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:12:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B18214AB
+	by mail.kernel.org (Postfix) with ESMTP id B1F6E208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F6E208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbeIPPfS convert rfc822-to-8bit (ORCPT
+        id S1728176AbeIPPhP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 11:35:18 -0400
-Received: from mga02.intel.com ([134.134.136.20]:18597 "EHLO mga02.intel.com"
+        Sun, 16 Sep 2018 11:37:15 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58837 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727666AbeIPPfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 11:35:17 -0400
+        id S1726722AbeIPPhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 11:37:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 03:12:51 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 03:14:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,381,1531810800"; 
-   d="scan'208";a="257665330"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by orsmga005.jf.intel.com with ESMTP; 16 Sep 2018 03:12:51 -0700
-Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sun, 16 Sep 2018 03:12:50 -0700
-Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
- fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Sun, 16 Sep 2018 03:12:50 -0700
+   d="scan'208";a="73627518"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga008.jf.intel.com with ESMTP; 16 Sep 2018 03:14:27 -0700
+Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 16 Sep 2018 03:14:26 -0700
+Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
+ FMSMSX152.amr.corp.intel.com (10.18.125.5) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 16 Sep 2018 03:14:26 -0700
 Received: from hasmsx111.ger.corp.intel.com ([169.254.5.163]) by
- hasmsx107.ger.corp.intel.com ([169.254.2.170]) with mapi id 14.03.0319.002;
- Sun, 16 Sep 2018 13:12:48 +0300
+ HASMSX112.ger.corp.intel.com ([169.254.11.230]) with mapi id 14.03.0319.002;
+ Sun, 16 Sep 2018 13:14:23 +0300
 From:   "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>,
+To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Johannes Berg <johannes@sipsolutions.net>
 CC:     Randy Dunlap <rdunlap@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -51,14 +52,15 @@ Subject: RE: [linuxwifi] [PATCH] fix iwlwifi on old cards in v4.19 was Re:
  4.19-rc[23] iwlwifi: BUG in swiotlb
 Thread-Topic: [linuxwifi] [PATCH] fix iwlwifi on old cards in v4.19 was Re:
  4.19-rc[23] iwlwifi: BUG in swiotlb
-Thread-Index: AQHUTaQhJ/10LR3YFkOF2mTRvf6JLaTysDXQ
-Date:   Sun, 16 Sep 2018 10:12:48 +0000
-Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB301336B20F4@HASMSX111.ger.corp.intel.com>
+Thread-Index: AQHUTaQhJ/10LR3YFkOF2mTRvf6JLaTysDXQgAAAeyA=
+Date:   Sun, 16 Sep 2018 10:14:22 +0000
+Message-ID: <0BA3FCBA62E2DC44AF3030971E174FB301336B2111@HASMSX111.ger.corp.intel.com>
 References: <0c5e53e5-2afa-8d38-0b48-272c670c4bc5@infradead.org>
  <1536651177.3224.106.camel@sipsolutions.net> <20180916093414.GA4299@amd>
  <20180916094142.GB4299@amd> <20180916095535.GA4245@amd>
  <20180916095935.GA4388@amd>
-In-Reply-To: <20180916095935.GA4388@amd>
+ <0BA3FCBA62E2DC44AF3030971E174FB301336B20F4@HASMSX111.ger.corp.intel.com>
+In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB301336B20F4@HASMSX111.ger.corp.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -78,13 +80,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 > 
+> >
+> >
+> > .max_tfd_queue_size was ommited for old cards, leading to oops in
+> swiotlb.
+> >
+> > Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> >
 > 
-> .max_tfd_queue_size was ommited for old cards, leading to oops in swiotlb.
-> 
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> I picked it up in our tree with minor commit message fixes.
+> I also added the Fixes tag for stable.
 > 
 
-I picked it up in our tree with minor commit message fixes.
-I also added the Fixes tag for stable.
-
-Thanks!
+Ah, of course... not needed... Sorry...
