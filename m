@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F4BECE561
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EE2ECE561
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67F292086B
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:38:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA832086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:38:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Q5MdjeQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67F292086B
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="zrh4Hx9H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA832086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeIPKAM (ORCPT
+        id S1727179AbeIPKAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 06:00:12 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38464 "EHLO
+        Sun, 16 Sep 2018 06:00:16 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38480 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725739AbeIPKAM (ORCPT
+        with ESMTP id S1725739AbeIPKAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 06:00:12 -0400
+        Sun, 16 Sep 2018 06:00:15 -0400
 Received: from trochilidae.hsd1.wa.comcast.net (unknown [IPv6:2601:602:8700:fb00:81ae:bc59:4e6c:42ca])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7AB0B5C00D5;
-        Sun, 16 Sep 2018 06:38:32 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id EFC6B5C2222;
+        Sun, 16 Sep 2018 06:38:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537072715;
+        t=1537072718;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=2lK0vZCW1aPI14wGfZXet/bAIJfwAIYj8AD9d3l2++o=;
-        b=Q5MdjeQeOo6w5q+qx9ejuyhu7/XhB6idKaUbXfhwybML96qPTzL2QEUCZXMqS+8FCgnr26
-        q6IUtr6SBG0DabFVe4Gw/E4pooixR78oVpwD1d8XGq2dmQSjZGw0MtIrEI0J/PJfiDVdHT
-        VG28O9hU0drjDCbuxliDHyYR054ux8g=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lA4pWBiapQwb05oCOx8c7PAm+j6USrDO0AnRCDFKdjo=;
+        b=zrh4Hx9Hr25DRjwB0zna5s84CAvsiwduWmtJ3iQRBg0nesurFQg2QIR/t3Olmw2/ZUcG5O
+        dUHBabNBOPzMgvswxo9IrzdefgdVDSplb9dY1/9QaDswe4guMVhjTVDMzHIkoFlNwNMxPr
+        ZMsjOzwfBi4G/GPHnxTinjTRAPCcxXY=
 From:   Stefan Agner <stefan@agner.ch>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
         ard.biesheuvel@linaro.org
 Cc:     linux@armlinux.org.uk, linux-crypto@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 1/2] cpufeature: avoid warning when compiling with clang
-Date:   Sat, 15 Sep 2018 21:38:24 -0700
-Message-Id: <20180916043825.23247-1-stefan@agner.ch>
+Subject: [PATCH 2/2] crypto: arm/crc32 - avoid warning when compiling with Clang
+Date:   Sat, 15 Sep 2018 21:38:25 -0700
+Message-Id: <20180916043825.23247-2-stefan@agner.ch>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180916043825.23247-1-stefan@agner.ch>
+References: <20180916043825.23247-1-stefan@agner.ch>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam: Yes
@@ -58,35 +61,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The table id (second) argument to MODULE_DEVICE_TABLE is often
 referenced otherwise. This is not the case for CPU features. This
-leads to warnings when building the kernel with Clang:
-  arch/arm/crypto/aes-ce-glue.c:450:1: warning: variable
-    'cpu_feature_match_AES' is not needed and will not be emitted
+leads to a warning when building the kernel with Clang:
+  arch/arm/crypto/crc32-ce-glue.c:239:33: warning: variable
+    'crc32_cpu_feature' is not needed and will not be emitted
     [-Wunneeded-internal-declaration]
-  module_cpu_feature_match(AES, aes_init);
-  ^
+  static const struct cpu_feature crc32_cpu_feature[] = {
+                                  ^
 
 Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
 ("modules: mark __inittest/__exittest as __maybe_unused").
 
-Fixes: 67bad2fdb754 ("cpu: add generic support for CPU feature based module autoloading")
+Fixes: 2a9faf8b7e43 ("crypto: arm/crc32 - enable module autoloading based on CPU feature bits")
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- include/linux/cpufeature.h | 2 +-
+ arch/arm/crypto/crc32-ce-glue.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/cpufeature.h b/include/linux/cpufeature.h
-index 986c06c88d81..84d3c81b5978 100644
---- a/include/linux/cpufeature.h
-+++ b/include/linux/cpufeature.h
-@@ -45,7 +45,7 @@
-  * 'asm/cpufeature.h' of your favorite architecture.
-  */
- #define module_cpu_feature_match(x, __initfunc)			\
--static struct cpu_feature const cpu_feature_match_ ## x[] =	\
-+static struct cpu_feature const __maybe_unused cpu_feature_match_ ## x[] = \
- 	{ { .feature = cpu_feature(x) }, { } };			\
- MODULE_DEVICE_TABLE(cpu, cpu_feature_match_ ## x);		\
- 								\
+diff --git a/arch/arm/crypto/crc32-ce-glue.c b/arch/arm/crypto/crc32-ce-glue.c
+index 96e62ec105d0..cd9e93b46c2d 100644
+--- a/arch/arm/crypto/crc32-ce-glue.c
++++ b/arch/arm/crypto/crc32-ce-glue.c
+@@ -236,7 +236,7 @@ static void __exit crc32_pmull_mod_exit(void)
+ 				  ARRAY_SIZE(crc32_pmull_algs));
+ }
+ 
+-static const struct cpu_feature crc32_cpu_feature[] = {
++static const struct cpu_feature __maybe_unused crc32_cpu_feature[] = {
+ 	{ cpu_feature(CRC32) }, { cpu_feature(PMULL) }, { }
+ };
+ MODULE_DEVICE_TABLE(cpu, crc32_cpu_feature);
 -- 
 2.19.0
 
