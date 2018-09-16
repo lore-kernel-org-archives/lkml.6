@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8787ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80362ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42E20208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E20208AE
+	by mail.kernel.org (Postfix) with ESMTP id 296DD2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296DD2087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbeIQAtP (ORCPT
+        id S1728522AbeIQAu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 20:49:15 -0400
-Received: from mga03.intel.com ([134.134.136.65]:38846 "EHLO mga03.intel.com"
+        Sun, 16 Sep 2018 20:50:59 -0400
+Received: from mga12.intel.com ([192.55.52.136]:41716 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728340AbeIQAtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 20:49:15 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1728340AbeIQAu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 20:50:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 12:25:18 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 12:27:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,382,1531810800"; 
-   d="scan'208";a="74770587"
+   d="scan'208";a="74770702"
 Received: from vbsuresh-mobl1.amr.corp.intel.com (HELO localhost) ([10.252.48.189])
-  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2018 12:25:12 -0700
-Date:   Sun, 16 Sep 2018 22:25:10 +0300
+  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2018 12:26:57 -0700
+Date:   Sun, 16 Sep 2018 22:26:56 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: Restore functionality to xen vtpm driver.
-Message-ID: <20180916192510.GF7473@linux.intel.com>
-References: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
+To:     Tadeusz Struk <tstruk@gmail.com>
+Cc:     Tadeusz Struk <tadeusz.struk@intel.com>, flihp@twobit.us,
+        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
+Message-ID: <20180916192656.GA9053@linux.intel.com>
+References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+ <20180916120349.GB5040@linux.intel.com>
+ <f86d6fe5-bafa-d392-5ed2-f5390b6b6e7e@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
+In-Reply-To: <f86d6fe5-bafa-d392-5ed2-f5390b6b6e7e@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,22 +54,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 05:25:51PM -0400, Boris Ostrovsky wrote:
-> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+On Sun, Sep 16, 2018 at 08:11:44AM -0700, Tadeusz Struk wrote:
+> On 9/16/18 5:03 AM, Jarkko Sakkinen wrote:
+> > I tried to test this but I get 404 from https://github.com/tstruk/tpm2-tss/tree/async
 > 
-> Functionality of the xen-tpmfront driver was lost secondary to
-> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-> ("xenbus_client: Extend interface to support multi-page ring").
-> 
-> In this commit a pointer to the shared page address was being
-> passed to the xenbus_grant_ring() function rather then the
-> address of the shared page itself.  This resulted in a situation
+> This has been already merged to tss upstream https://github.com/tpm2-software/tpm2-tss
+> To enable it you need to configure tss with --enable-tcti-device-async=yes
+> Thanks,
+> Tadeusz
 
-I'm sorry but I'm far from being expert with Xen and this sentence
-confuses me so maybe could open it up a bit.
-
-For me "shared page address" and "address of the shared page" are
-the same thing. What am I missing? I mean just different forms in
-english to describe the exact same thing...
+Thank you. Looking forward to try it out tomorrow.
 
 /Jarkko
