@@ -2,92 +2,76 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3382DECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 12:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D488AECE563
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 12:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA932087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 12:07:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA932087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E2632087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 12:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2632087B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deneb.enyo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbeIPRaK (ORCPT
+        id S1728251AbeIPRop convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 13:30:10 -0400
-Received: from mga02.intel.com ([134.134.136.20]:53593 "EHLO mga02.intel.com"
+        Sun, 16 Sep 2018 13:44:45 -0400
+Received: from albireo.enyo.de ([5.158.152.32]:53230 "EHLO albireo.enyo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728155AbeIPRaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 13:30:10 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 05:07:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,381,1531810800"; 
-   d="scan'208";a="263937747"
-Received: from wintersr-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.37.137])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2018 05:03:50 -0700
-Date:   Sun, 16 Sep 2018 15:03:49 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
-Message-ID: <20180916120349.GB5040@linux.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+        id S1726735AbeIPRoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 13:44:44 -0400
+X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Sep 2018 13:44:43 EDT
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1g1VyT-0007lT-HN; Sun, 16 Sep 2018 12:16:25 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.89)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1g1VyT-0006uT-AF; Sun, 16 Sep 2018 14:16:25 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-man@vger.kernel.org,
+        "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
+Subject: Re: futex_cmpxchg_enabled breakage
+References: <20180829222221.GA22017@brightrain.aerifal.cx>
+Date:   Sun, 16 Sep 2018 14:16:25 +0200
+In-Reply-To: <20180829222221.GA22017@brightrain.aerifal.cx> (Rich Felker's
+        message of "Wed, 29 Aug 2018 18:22:21 -0400")
+Message-ID: <87fty9hc2u.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:18:22AM -0700, Tadeusz Struk wrote:
-> The TCG SAPI specification [1] defines a set of functions, which allow
-> applications to use the TPM device in either blocking or non-blocking fashion.
-> Each command defined by the specification has a corresponding
-> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-> mode of operation. Currently the TPM driver supports only blocking calls,
-> which doesn't allow asynchronous IO operations.
-> This patch changes it and adds support for nonblocking write and a new poll
-> function to enable applications, which want to take advantage of this feature.
-> The new functionality can be tested using standard TPM tools implemented
-> in [2], together with modified TCTI from [3], and an example application
-> by Philip Tricca [4]. Here is a short description from Philip:
-> 
-> "The example application `glib-tss2-event` uses a glib main event loop
-> to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-> using a glib timer event to time the operation. A GSource object is
-> used to generate an event when the FD underlying the tss2 function
-> call has data ready. While the application waits for an event indicating
-> that the CreatePrimary operation is complete, it counts timer events
-> that occur every 100ms. Once the CreatePrimary operation completes the
-> number of timer events that occurred is used to make a rough calculation
-> of the elapsed time. This value is then printed to the console.
-> This takes ~300 lines of C code and requires no management or
-> synchronization of threads. The glib GMainContext is "just a poll()
-> loop" according to the glib documentation here:
-> 
-> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-> 
-> and so supporting 'poll' is the easiest way to integrate with glib /
-> gtk+. This is true of any other event system that relies on 'poll'
-> instead of worker threads."
-> 
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-> [2] https://github.com/tpm2-software/tpm2-tools
-> [3] https://github.com/tstruk/tpm2-tss/tree/async
-> [4] https://github.com/flihp/glib-tss2-async-example
+* Rich Felker:
 
-I tried to test this but I get 404 from https://github.com/tstruk/tpm2-tss/tree/async
+> I just spent a number of hours helping someone track down a bug that
+> looks like it's some kind of futex_cmpxchg_enabled detection error on
+> powerpc64 (still not sure of the root cause; set_robust_list producing
+> -ENOSYS), and a while back I hit the same problem on sh2 due to lack
+> of EFAULT on nommu, leading to commit 72cc564f16ca. I think the test
+> (introduced way back in commit a0c1e9073ef7) is fundamentally buggy;
+> if anything, it should be checking for !=-ENOSYS, not ==-EFAULT.
+> Presumably it could also fail to produce -EFAULT if mmap_min_addr is 0
+> and page 0 is mapped (a bad idea, but maybe someone does it...). And
+> of course other nommu archs are possibly still broken.
 
-/Jarkko
+Maybe it was related to this (“Kernel 4.15 lost set_robust_list
+support on POWER 9”):
+
+<https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-February/168570.html>
+
+The Kconfig change you suggest was explicitly rejected as the fix.
+
+I believe the expected userspace interface is that you probe support
+with set_robust_list first, and then start using the relevant futex
+interfaces only if that call succeeded.  If you do that, most parts of
+a typical system will work as expected even if the kernel support is
+not there, which is a bit surprising.  It definitely makes the root
+cause harder to spot.
