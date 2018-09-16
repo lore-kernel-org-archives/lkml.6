@@ -2,104 +2,84 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95372ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55349ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2C9208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:44:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qguBqUqR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2C9208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id D42C92087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42C92087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbeIPGF0 (ORCPT
+        id S1727182AbeIPG2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 02:05:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32768 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbeIPGF0 (ORCPT
+        Sun, 16 Sep 2018 02:28:47 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34123 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726198AbeIPG2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 02:05:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s7-v6so6043157pgc.0;
-        Sat, 15 Sep 2018 17:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fW7LpkI9EwN6Pv70lnbwLFJ5jne6EG9HvwQ/tTqqK78=;
-        b=qguBqUqRjp8XeAvHZFEXs0bXsuXEl6/XedDmCtpxDWD6pjDCsnW+ezf1oblwX3Yag7
-         qpp/aUm8HwguU3L7s8ROqBClk99pca3FHUpPHYzNpx9l5d0pFeVj/4XtyDKGb263P4gw
-         /FSYTeSYr0h4IMfJkndKgCK8Ew1pik7Xkw4NaP29geDqaU/49F+HXVVD0KOfi/DFA2iG
-         9xLd8z25Cbrx3jkn7SDxybvdYTlbYKT/T1/Pb55pH9IDM/zXMp5SqrXi3O9RWF+WUe/n
-         kupmYNV3P0l35I9mdk4TSA9sVrBmz1CwOdEnds/jt0Gs4m0Cb5PVU/W/tXXAmQlPR4S9
-         wMMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fW7LpkI9EwN6Pv70lnbwLFJ5jne6EG9HvwQ/tTqqK78=;
-        b=cBnV4q4lx2jy35NanNR996/9ur4QZnizFYe5liy7SXHMyEOfELePjH0tZ0SnTJ+jdy
-         dK3uGa9+lYJnJM8vSBCCnwTt71f39HaaJq38uAupN3syXmZSn0WS/psOWrPc0TWzGn4P
-         8LuFAs/IWRzrbPYcPyHp+J2rObmOIPSBIAiPOfPqrtPgZmZRH+C3TSUn/uRqFGvM3lry
-         +EtrTq4fQDqHiK4hGsOp4J2athv2T21Z00Cd2wUbrsu2BQWExnkVJYirBIhQjOAALXNu
-         HxAnSnK3QSja982BEeY9ClylEA97K4MNS6P8Tso9Gr5B9uLmEsDqi4q55gzWvdd/IgHk
-         c8EA==
-X-Gm-Message-State: APzg51CPVp/XVeKT4z/FCghasYcexytijFhBk1Q7KiOuiNgwqeHCY8b5
-        exMDLXxnziOaVHcAs9KEQ58=
-X-Google-Smtp-Source: ANB0Vdbuts4UMvYWY4TQhTJVFtjFVeFaXnPLOVTxHtKgvzF8IEE0+jP52yMq7U96B5Wh0Z3vFJg8xA==
-X-Received: by 2002:aa7:83cd:: with SMTP id j13-v6mr19181720pfn.236.1537058667132;
-        Sat, 15 Sep 2018 17:44:27 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm17248621pfg.21.2018.09.15.17.44.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 17:44:26 -0700 (PDT)
-Subject: Re: [PATCH] hwmon: scmi: Remove redundant pointer check
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-References: <20180916000506.28905-1-natechancellor@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <568ec241-baf8-7ccd-c0e3-7724a5eb90ae@roeck-us.net>
-Date:   Sat, 15 Sep 2018 17:44:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 16 Sep 2018 02:28:47 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08387672|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04463;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CrM-jDr_1537060050;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CrM-jDr_1537060050)
+          by smtp.aliyun-inc.com(10.147.43.95);
+          Sun, 16 Sep 2018 09:07:30 +0800
+Date:   Sun, 16 Sep 2018 09:07:30 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        DTML <devicetree@vger.kernel.org>,
+        andrea.parri@amarulasolutions.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH V4 00/27] C-SKY(csky) Linux Kernel Port
+Message-ID: <20180916010729.GA18279@guoren-Inspiron-7460>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+ <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180916000506.28905-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/15/2018 05:05 PM, Nathan Chancellor wrote:
-> Clang warns when the address of a pointer is used in a boolean context
-> as it will always return true.
+On Wed, Sep 12, 2018 at 04:30:36PM +0200, Arnd Bergmann wrote:
+> On Wed, Sep 12, 2018 at 3:25 PM Guo Ren <ren_guo@c-sky.com> wrote:
+> >
+> > This is the 3th version patchset to add the Linux kernel port for C-SKY(csky).
+> > Thanks to everyone who provided feedback on the previous version.
+> >
+> > This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
+> > CPU cores and the patches are based on linux-4.18.4
+> >
+> > There are two ABI versions with several CPU cores in this patchset:
+> >   ABIv1: ck610 (16-bit instruction, 32-bit data path, VIPT Cache ...)
+> >   ABIv2: ck807 ck810 ck860 (16/32-bit variable length instruction, PIPT Cache,
+> >          SMP ...)
+> >
+> > More information: http://en.c-sky.com
 > 
-> drivers/hwmon/scmi-hwmon.c:59:24: warning: address of array
-> 'sensor->name' will always evaluate to 'true'
-> [-Wpointer-bool-conversion]
->          if (sensor && sensor->name)
->                     ~~ ~~~~~~~~^~~~
-> 1 warning generated.
-> 
-> Remove the check as it isn't doing anything currently; if validation
-> of the contents of the data structure was intended by the original
-> author (since this line has been present from the first version of
-> this driver), it can be added in a follow-up patch.
-> 
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> This looks good to me overall. I think a good next step would be to get the port
+> included in linux-next, by preparing a git tree with all the patches and asking
+> Stephen Rothwell to include it there. Further comments on the architecture
+> port itself can be done on top of the existing patches. I would suggest you
+> base the git tree on an -rc release (either 4.19-rc1 or 4.19-rc3) and then never
+> rebase again.
+Another question:
+Could I add "Acked-by: Arnd Bergmann <arnd@arndb.de>" in all my comments?
 
-Applied to hwmon-next.
-
-Thanks,
-Guenter
+Best Regards
+ Guo Ren
