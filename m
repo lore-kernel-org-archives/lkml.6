@@ -2,128 +2,106 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19465ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D547ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95702087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3563B2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 01:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fGG2ziMb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95702087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Uu5b7hpI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3563B2087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeIPHKV (ORCPT
+        id S1728045AbeIPHSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 03:10:21 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:35413 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbeIPHKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 03:10:21 -0400
-Received: by mail-yb1-f194.google.com with SMTP id o63-v6so723974yba.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 18:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=7WV0jhMUC27fh3+VW50Y1h/lDTvtprDUDIBUaTd9iu8=;
-        b=fGG2ziMbUXw8yHyRuLEeFd1Hq+z4HXiPOCKzM+TRvX6P/hjXVVh4xcQVtEp95fJqzD
-         3RYJqiAhpU8XMIIWbqywfb7tXW+ky7r5DR4c4NyKRsn9AUrabSKAfe1B2Fp4AH/YQWRH
-         RVsY0lIKfQqaZAWixu+Td40ljdfXPPZ+hUxU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=7WV0jhMUC27fh3+VW50Y1h/lDTvtprDUDIBUaTd9iu8=;
-        b=BbMh1yT7h7U7r6R0t1FVns6WkwKJs3PB1/NcvuxBu3DnJIm2P5MMehe7DWcs0OTZ9o
-         ixK8i3qF5y1dIMly2jrcS5RX295oPnptc16dfLlD8Z6ukRvwBEGN2dlmsLowj+ej5OoH
-         czEWHyUCv4dpA68cygQ3wYgrhwX25bqqq0m26vl+VhqR3pPFQJLDpOOpDS4qnlOQacL1
-         vxM0B3JsmyUGBafnpxr23z+iL2AbheVyi4ZUKAbNXrrRFNl8x2tdtrRrlYguoPrAVNbK
-         cWd7GFHc+G54N/kgzzrxHZ/nFkUW7TtVj6ilHKV5RFNaBrkMZNwTedQURBh1oJw81lAj
-         rDBA==
-X-Gm-Message-State: APzg51DKQfiCQld3KP4r+cM5olO/tj2SlC0JGDOuJf4JymLlH/Xni2R8
-        mDhdyPejcdPrIb+SjWCsiBy8EwVwiNs=
-X-Google-Smtp-Source: ANB0VdY8K6uT9xNsEIao5KORlHAtGDvvMPoA3Xevumo6NEQYq7LvkHPBUsJY7b0MWPEwZJez0czWlg==
-X-Received: by 2002:a25:c186:: with SMTP id r128-v6mr7901146ybf.3.1537062551021;
-        Sat, 15 Sep 2018 18:49:11 -0700 (PDT)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id d70-v6sm8071298ywe.97.2018.09.15.18.49.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Sep 2018 18:49:08 -0700 (PDT)
-Received: by mail-yw1-f43.google.com with SMTP id z143-v6so4153697ywa.7
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 18:49:08 -0700 (PDT)
-X-Received: by 2002:a81:9b85:: with SMTP id s127-v6mr7854568ywg.47.1537062547816;
- Sat, 15 Sep 2018 18:49:07 -0700 (PDT)
+        Sun, 16 Sep 2018 03:18:04 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37038 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727010AbeIPHSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 03:18:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ZRZey9k/g86dmJcUvFgMQkjynu5uwjcPmQtdAA6OaKA=; b=Uu5b7hpIab68I6KW6yX7H7u6dP
+        Lmi72GRtod/WQJsyMwxlQkfoG9NolQd94iGBNkzj88EzMZ+BenNq7IOpU0dgFaGR7WykugXXGJCzg
+        Ncy0b09xf+x8/sBRF71mBueGw/Nqe5XscUxiWPsO5yQ6gtV1O8ezqcfkvVh4X9JxVcKo=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1g1MIp-0005m6-V5; Sun, 16 Sep 2018 01:56:48 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id A66DF7A585D; Sat, 15 Sep 2018 21:56:46 -0400 (EDT)
+Date:   Sat, 15 Sep 2018 21:56:46 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Toshi Kani <toshi.kani@hpe.com>
+Cc:     jack@suse.cz, dan.j.williams@intel.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] ext4, dax: set ext4_dax_aops for dax files
+Message-ID: <20180916015646.GE8652@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Toshi Kani <toshi.kani@hpe.com>, jack@suse.cz,
+        dan.j.williams@intel.com, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20180914145114.11122-1-toshi.kani@hpe.com>
+ <20180914145114.11122-3-toshi.kani@hpe.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Sat, 15 Sep 2018 18:49:07
- -0700 (PDT)
-In-Reply-To: <CAG48ez3aU5XtQxUzWE3N3f4JyCz0jFchC=CAnHTZkGZaryWFxQ@mail.gmail.com>
-References: <20180916003059.1046-1-keescook@chromium.org> <20180916003059.1046-8-keescook@chromium.org>
- <CAG48ez3aU5XtQxUzWE3N3f4JyCz0jFchC=CAnHTZkGZaryWFxQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 15 Sep 2018 18:49:07 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jK6wPLQRte4S3cnSgDZ7LoVugtTytK5iW5c_XYRq7HA5w@mail.gmail.com>
-Message-ID: <CAGXu5jK6wPLQRte4S3cnSgDZ7LoVugtTytK5iW5c_XYRq7HA5w@mail.gmail.com>
-Subject: Re: [PATCH 07/18] LSM: Add minor LSM initialization loop
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180914145114.11122-3-toshi.kani@hpe.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 6:27 PM, Jann Horn <jannh@google.com> wrote:
-> On Sun, Sep 16, 2018 at 3:11 AM Kees Cook <keescook@chromium.org> wrote:
->> Split initialization loop into two phases: "exclusive" LSMs and "minor"
->> LSMs.
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  include/linux/lsm_hooks.h | 6 ++++++
->>  security/security.c       | 8 +++++---
->>  2 files changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> index f8e618e2bdd2..ec3419b9b16f 100644
->> --- a/include/linux/lsm_hooks.h
->> +++ b/include/linux/lsm_hooks.h
->> @@ -2039,7 +2039,13 @@ extern char *lsm_names;
->>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
->>                                 char *lsm);
->>
->> +enum lsm_type {
->> +       LSM_TYPE_EXCLUSIVE = 0,
->> +       LSM_TYPE_MINOR,
->> +};
->
-> Is the intent of this explicit zero assignment that LSM_TYPE_EXCLUSIVE
-> should be the default? If so, perhaps a comment "/* default */", or
-> something like that, might be helpful.
+On Fri, Sep 14, 2018 at 08:51:13AM -0600, Toshi Kani wrote:
+> Sync syscall to DAX file needs to flush processor cache, but it
+> currently does not flush to existing DAX files.  This is because
+> 'ext4_da_aops' is set to address_space_operations of existing DAX
+> files, instead of 'ext4_dax_aops', since S_DAX flag is set after
+> ext4_set_aops() in the open path.
+> 
+>   New file
+>   --------
+>   lookup_open
+>     ext4_create
+>       __ext4_new_inode
+>         ext4_set_inode_flags   // Set S_DAX flag
+>       ext4_set_aops            // Set aops to ext4_dax_aops
+> 
+>   Existing file
+>   -------------
+>   lookup_open
+>     ext4_lookup
+>       ext4_iget
+>         ext4_set_aops          // Set aops to ext4_da_aops
+>         ext4_set_inode_flags   // Set S_DAX flag
+> 
+> Change ext4_iget() to initialize i_flags before ext4_set_aops().
+> 
+> Fixes: 5f0663bb4a64 ("ext4, dax: introduce ext4_dax_aops")
+> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: <stable@vger.kernel.org>
 
-You cut the patch quote off where I do exactly that:
+Thanks, applied.
 
->> +       enum lsm_type type;     /* Optional: default is LSM_TYPE_EXCLUSIVE */
-
-:)
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+					- Ted
