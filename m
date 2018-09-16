@@ -2,144 +2,109 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E86ECE563
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 18:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31783ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 18:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FC220883
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 18:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FC220883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id B5CA020883
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 18:49:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mUV+bvEQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CA020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbeIPXak (ORCPT
+        id S1728431AbeIQAN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 19:30:40 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:52721 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728230AbeIPXaj (ORCPT
+        Sun, 16 Sep 2018 20:13:27 -0400
+Received: from sonic305-9.consmr.mail.bf2.yahoo.com ([74.6.133.48]:37585 "EHLO
+        sonic305-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728333AbeIQAN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 19:30:39 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g1bRf-0005r5-33; Sun, 16 Sep 2018 12:06:55 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g1bRd-0002Jx-QX; Sun, 16 Sep 2018 12:06:54 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <87musyl3fa.fsf@xmission.com> <87lg81pbe2.fsf@xmission.com>
-Date:   Sun, 16 Sep 2018 20:06:45 +0200
-In-Reply-To: <87lg81pbe2.fsf@xmission.com> (Eric W. Biederman's message of
-        "Sun, 16 Sep 2018 20:04:05 +0200")
-Message-ID: <87y3c1nwp6.fsf_-_@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sun, 16 Sep 2018 20:13:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537123774; bh=9YjMw12tbw7YqaqKwra2X7Q3ePUiT7BpqQBbuwaaWhw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mUV+bvEQ2N2yRP1ek75tGSD50dRMStWiYyJ1zG+6VIDvAB+NwwjbIVOF8QTW60iOsVjYso1gsFoEoL9WoIMrjcXBZbD3iXrci7Bu60trkrEH6exMG4wDWRmKL+a3bjWD8FURvfetXXj3cJ/tuL0SAKmwyHRN+iELE8t5tohxD2bWI4urs+SXLSqxwpVdno7ht16F9fY9Lj1ERN6ZVNW9yFR2+5vrzPKEgCkdkLk3pIITXZrUMcVGjVNFnTipF0/qgpZXoQ+UnQitDZJrhxKSiqrgYW+3B+RHBAipd3KCZmw5uLiuNrX2FjQuw9w6Vg2XH9c3oCkgZ8C6/5Vy9zzjUQ==
+X-YMail-OSG: FjQFP7oVM1nqh8dzaOEvVhTFlh5nFxzQPHOupyD68lT9mPX5WFzxh1gByTlXmze
+ xbZdBjwVYiJFJ2pQN4PMEVsAai_5jZsAJpqKurLrioxwGGijypDBYVkQx1OeNW5cVjYpJL57YMMb
+ Qig4Tjusv8XT9_6znsqSrZTBO3SQNr2GU5YGH_DAufBkYtg8bCNvVDRCxMhrxqp6r.kVUFuPOqR3
+ avjCkdww7.kzPHw3zGSIMomdtZoEWO7knFvJI8fDH6UL_qSpPnVcO6wZ5CuVoOvA23jLYvE8NGzI
+ a5jbzXXZv7.K2Yqoxoo8mXFi_fKHSpW7yd_xmg410.94z0.PZ0rXU9KTxms98mP1pk2iKVLof2LB
+ 03JCtfv51VjdbfpsS3RfXaCzrOVfVAY4a31pJm8aaYTeO5ncilUymbqNuai09IiqaUI6nLvIGl_d
+ viKuqt_xiPM_4j58QPI5Xr6.cmv2WtitdkheM.EUNdAIrHu3pNGtRVDd9banz97rpJd8CEMmT24e
+ H6BPLFvFaUnbCEWcD0GZXIV1sdL4ZKWr_b9QG_IW.NZxi5pGY0FVvdyoKHtLwTd.sv3vBeNBKKrq
+ lDNbvOJ_EtVyJAlGzj0_R8bGqvGWhaTWzRs6ffwgtaobub5oTLIp72HlLHWSARdkhnXUfiu.9OLu
+ swHuO9azbeZZNolnL3IL79vh0LoLJQz_qpBOZeJG.6ccvrKh2tObPzI9vVF5glzLRc8AZjMm1CIg
+ Pj2h_UkBlealaCTT6JvgQYsllk4XVFHahHLxyviG5SZDTTm4tpyw64_bXTkCvlnmvzmf_Isz1r30
+ udMNZiSRZgm9rexiy0.opjZBglyc9sb.R7hb2Db5kIHIgk6qISkDQGxDfb1vBueBZAyLdZsTVZx0
+ jqwT6W8DQ8jzMtrUS3A60U2IkfcOPXyDXVWwC4dW6jU_BqwRSAUlXvahfidHTvRwCJyl55zLj4sJ
+ rD_PRflGn4DgVuMvVsHnTJ1m6oVgcqSQIk98uMAQEIenu__LsMtvMfPeKWZ8TucKhQYkOMhOeoyj
+ R8v_Hs03EcROQJJCWPQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Sun, 16 Sep 2018 18:49:34 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp426.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8264fe9faf49a75be875c1e190a9b9fd;
+          Sun, 16 Sep 2018 18:49:34 +0000 (UTC)
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+References: <20180916003059.1046-1-keescook@chromium.org>
+ <20180916003059.1046-17-keescook@chromium.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+Date:   Sun, 16 Sep 2018 11:49:31 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g1bRd-0002Jx-QX;;;mid=<87y3c1nwp6.fsf_-_@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19pozAdZ/GcZ8TOK6YNTFvPh9TcFvOnWVk=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 4/4] signal: Pair exports with their functions
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20180916003059.1046-17-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/15/2018 5:30 PM, Kees Cook wrote:
+> To prepare for having a third type of LSM ("shared blob"), this implements
+> dynamic handling of LSM ordering. The visible change here is that the
+> "security=" boot commandline is now a comma-separated ordered list of
+> all LSMs, not just the single "exclusive" LSM. This means that the
+> "minor" LSMs can now be disabled at boot time by omitting them from the
+> commandline. Additionally LSM ordering becomes entirely mutable for LSMs
+> with LSM_ORDER_MUTABLE ("capability" is not mutable and is always enabled
+> first).
 
-For readability and consistency with the other exports in
-kernel/signal.c pair the exports of signal sending functions with
-their functions, instead of having the exports in one big clump.
+Today if I have Yama enabled and use security=apparmor I get a
+module list of capability,yama,apparmor. With this change I would
+get a different result, capability,apparmor. I am personally OK with
+this, but I think others may see it as a violation of compatibility.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- kernel/signal.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+One solution is to leave security= as is, not affecting "minor"
+modules and only allowing specification of one major module, and adding
+another boot option security.stack= that overrides a security= option
+and that takes the list as you've implemented here.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 99e91163c9a3..e16278710b36 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -176,6 +176,7 @@ void recalc_sigpending(void)
- 		clear_thread_flag(TIF_SIGPENDING);
- 
- }
-+EXPORT_SYMBOL(recalc_sigpending);
- 
- void calculate_sigpending(void)
- {
-@@ -466,6 +467,7 @@ void flush_signals(struct task_struct *t)
- 	flush_sigqueue(&t->signal->shared_pending);
- 	spin_unlock_irqrestore(&t->sighand->siglock, flags);
- }
-+EXPORT_SYMBOL(flush_signals);
- 
- #ifdef CONFIG_POSIX_TIMERS
- static void __flush_itimer_signals(struct sigpending *pending)
-@@ -684,6 +686,7 @@ int dequeue_signal(struct task_struct *tsk, sigset_t *mask, siginfo_t *info)
- #endif
- 	return signr;
- }
-+EXPORT_SYMBOL_GPL(dequeue_signal);
- 
- /*
-  * Tell a process that it has a new active signal..
-@@ -1490,6 +1493,7 @@ int send_sig_info(int sig, struct siginfo *info, struct task_struct *p)
- 
- 	return do_send_sig_info(sig, info, p, PIDTYPE_PID);
- }
-+EXPORT_SYMBOL(send_sig_info);
- 
- #define __si_special(priv) \
- 	((priv) ? SEND_SIG_PRIV : SEND_SIG_NOINFO)
-@@ -1499,11 +1503,13 @@ send_sig(int sig, struct task_struct *p, int priv)
- {
- 	return send_sig_info(sig, __si_special(priv), p);
- }
-+EXPORT_SYMBOL(send_sig);
- 
- void force_sig(int sig, struct task_struct *p)
- {
- 	force_sig_info(sig, SEND_SIG_PRIV, p);
- }
-+EXPORT_SYMBOL(force_sig);
- 
- /*
-  * When things go south during signal handling, we
-@@ -2634,14 +2640,6 @@ void exit_signals(struct task_struct *tsk)
- 	}
- }
- 
--EXPORT_SYMBOL(recalc_sigpending);
--EXPORT_SYMBOL_GPL(dequeue_signal);
--EXPORT_SYMBOL(flush_signals);
--EXPORT_SYMBOL(force_sig);
--EXPORT_SYMBOL(send_sig);
--EXPORT_SYMBOL(send_sig_info);
--EXPORT_SYMBOL(sigprocmask);
--
- /*
-  * System call entry points.
-  */
-@@ -2735,6 +2733,7 @@ int sigprocmask(int how, sigset_t *set, sigset_t *oldset)
- 	__set_current_blocked(&newset);
- 	return 0;
- }
-+EXPORT_SYMBOL(sigprocmask);
- 
- /**
-  *  sys_rt_sigprocmask - change the list of currently blocked signals
--- 
-2.17.1
+An icky alternative would be to say that any security= specification
+with no commas in it retains the old behavior. So
+	security=apparmor
+	security=apparmor,
+would get you
+	capability,yama,apparmor
+	capability,apparmor
+respectively.
+
+Another option would be to require negation on the minor modules,
+such as
+	security=apparmor,-loadpin
+
+I can't honestly say which I like least or best.
+
+
 
