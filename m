@@ -2,146 +2,168 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 113ADECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383A0ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A118420883
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C349020883
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:25:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MX+3wk9j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A118420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BY1G30u1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C349020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeIPWic (ORCPT
+        id S1728327AbeIPWta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 18:38:32 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35953 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbeIPWib (ORCPT
+        Sun, 16 Sep 2018 18:49:30 -0400
+Received: from sonic306-9.consmr.mail.bf2.yahoo.com ([74.6.132.48]:45982 "EHLO
+        sonic306-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727808AbeIPWt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 18:38:31 -0400
-Received: by mail-vs1-f68.google.com with SMTP id z19-v6so2075650vso.3;
-        Sun, 16 Sep 2018 10:14:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i49dArdacxzzu8mTgtYAt2Lt9rDnQ/ZSCIiSJxCGWlo=;
-        b=MX+3wk9jI1x4BUh0L2xKi1sn519FzP5eNS8aWubNVh84+JJtcNrHX1eSLA9tinNuAb
-         Stx718y6D8SdsSbafhfwVcsmpmGkjdlIG7ua6P2iTcE5PWW6Nws5AYRsrST24cyH1Wy3
-         iviyJiC/2OTxBRsQdn7nSgZu0a8uoeclKFUHbUt+QHJX0t0v2ETwYdZvMNCSlccXXtHN
-         +rd2JKmaZLPwleZ8hqL6lGaE7L5fHaunKy76LQW4GihdeTwODTRBIOaOaQIeKlgUk2+D
-         j/ePl4kEjQ0wm3+mbZFmmeehaFqxiPWSiBupBwTNAuuRZBXToSQdWtyR7Unmh9qGuW0H
-         8Rmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i49dArdacxzzu8mTgtYAt2Lt9rDnQ/ZSCIiSJxCGWlo=;
-        b=B14QwpWrILGKMDoUDHCshm94qET5TDu83GiCqiDn7Q+VpuFckFWujr5VOSPs70Hdo8
-         VrRb+0wOrCLqis+zmCbeAGp9dFTnvUWn/pd70yxP1vawS3f+sZNvcw5d3dyVyFESR61X
-         xfG5OtdVHW+6X7woSsJtHlWm/XHtE7XJoDPPeAKMst8Qb9KoiyVBT4n4pUCgmezDCLBY
-         bXdOM6c+yboL+gPufiE4MkfcFT/HW2MCpjywQXb1Fln7yYqRVfCXsWVeaJRIprkBf5Xs
-         mwlgf1Zo3sckmbyoms1HSEnMmSInzCPMhjtahzLSgyCRne2VPI4G+iPQG7LY2q541+gz
-         EsDA==
-X-Gm-Message-State: APzg51DSGGl75R+u5u4FYUpHKFv2SOZ7jx+/lM7KiJ820VupCebEyVMO
-        h6HPr7pAw6sRSV3j+LMbfYk368SHdIwsOJa9I0k=
-X-Google-Smtp-Source: ANB0VdaNWPCNZm/8OJEVdBUDIVJeWRLX0lfbqdcl2kOFaf4015gsI3ohbtbFi1YYQ/i/krF/OK8r/yBWNmHzbgTc74Q=
-X-Received: by 2002:a67:4991:: with SMTP id d17-v6mr6917673vsg.41.1537118095964;
- Sun, 16 Sep 2018 10:14:55 -0700 (PDT)
+        Sun, 16 Sep 2018 18:49:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537118752; bh=gXXeJp858zQBIxvfGsMUig+5wkEY0vwOczoj7qU+dQw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=BY1G30u1rnTIdFrfqZ4YUCAzIZokobnq5yMunFY6pjXfc8v6xsexMtnfr06YB95IdBtpxtMtWNC3xX49uW5EWrrR36smeWY1HvhFF1Wr4HVLqUv/ympB+BqvhQneiSvFXLOGrr73qyzjVnNo9fgfDreDcmX+o9NpVIWzARjmCehheZDzNhpiFW4lRuvzdhs1i0FUJElCDB8wXOs44ahztS1CyvUrwo148Fpl3f21/G3FlJoKg2FDgNKBf/I88h5oi7lw9q8X11P1WB/c1zmeTMBOyzSAo4o1C2Y6cU0hJeITl41UZhRbbjaJ5qVT2nMQo3JT36jzbjxxSqboElLVtw==
+X-YMail-OSG: QNpW4gIVM1lAHnraKGQXD32Lst3D80GCGBY6CioMtuyjS5hEG1cfWJ0F49si7jI
+ .kz47cUTp07PwKlf_NhOOdJtuvJow6pUJjQObmJ.m9vTWy4BzbSAYBoLUlbXCozIkD6Hwi0kEHUK
+ XwIi9JpU.7fkXhqGpSaPQ6.A20SAE29e4cv52v_x6uWWj8FIKAObZixtnturUzUqJmdjQVQ0naoe
+ UHiOayH1eVdXesswdJbdnGzv.gtXB46nVgeuDI8J92Z3q.i8ie2DAKzgOLB4mR4rcHRcKeo22skP
+ 6i8t_5sHNTliAEjy7EZSmBXiS74JFvMnD6QMyBuScZss_YYM4HF4VFl5jl_EB3IsUNPojvDXchJP
+ S7eRj6NWrqkLP_mFpdCi.viENHJIb6mHOE679b9xQY7DpP4CleWMnLxAD16cTgkdHGZjQ7Pfrksf
+ Uwes088tNYalDVEqtZpO2eEmniRrxLIzkj_Lwajurv.RGvzfWajz2mXHcY9htolPfL67RMO1P3FM
+ DG4npfBACWM9XTjmMHCEiiiRYbNme6w9Uc3JsMU1b7v8gkRq3UOnBiJc8W4am8Gg3cnxK4ROTRyX
+ 62SUZ0J_Dzw1SP8eWv.L7MCH1MVeSFIp9JdNieW98McsL9ikn8skF9xc2_utlxCmEWu.S6SVQobK
+ 3vG1gZm2A_1S2a1OQq2SPh8grMylpjgEB12q4e7NvhcIT6P.EOi9iB2xlbZvKXRQXSae3HoFsgmO
+ oe9wawRgg66D.zeobDnQee0nHfqbILUiGFLq9JYUwfEuygyKn5khl96Lpx5G5.vLi53tmtPgK1BY
+ mieWdj1WuE81J...TKL64AyxCqmmY4HNT9qqIyfl7TKySrOmIWqMt.eIOBHmaEAmsuu4VoRcMoT4
+ KztuZPLYgSblBknu1.3t4X5ugduSEa24T1qnO3fDo984FL7NlxgFh6DbODAvZEHsjbTYfLGRv2uZ
+ VtmdaAXTlReh2W8mmcyDc72QZH2Y.s45KOrcmwK6YRu214hnVOeM7dxAQI7Uhm_Hr41ov1rfgQW4
+ I0ESakGmoJDZKq2IctL83tIIseV53N2CETP2iJyykJADbpk41QsqTN3q2NzM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sun, 16 Sep 2018 17:25:52 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp419.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 068bd768ccf880d5778dcd9284be01aa;
+          Sun, 16 Sep 2018 17:25:47 +0000 (UTC)
+Subject: Re: [PATCH v2 00/10] LSM: Module stacking in support of S.A.R.A and
+ Landlock
+To:     Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        James Morris <jmorris@namei.org>
+Cc:     mic@digikod.net, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@tycho.nsa.gov,
+        john.johansen@canonical.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov, linux-fsdevel@vger.kernel.org,
+        adobriyan@gmail.com, casey.schaufler@intel.com
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+ <alpine.LRH.2.21.1809130727310.19741@namei.org>
+ <CAJHCu1+Nja-XqfFKdxu2hDcUBzgvvjcf42yeGnUuVY3wsrZfSQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <3cd46663-e566-5ffc-32a4-00a90cd1346e@schaufler-ca.com>
+Date:   Sun, 16 Sep 2018 10:25:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com> <20180909191903.GA2344@ravnborg.org>
-In-Reply-To: <20180909191903.GA2344@ravnborg.org>
-From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date:   Sun, 16 Sep 2018 19:14:44 +0200
-Message-ID: <CAJHCu1++7sJv88Qg4wtx-AhfmQCbjy2psxuoePz2YViLNu-ahA@mail.gmail.com>
-Subject: Re: [PATCH v2] kconfig: add hardened defconfig helpers
-To:     sam@ravnborg.org
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        corbet@lwn.net, keescook@chromium.org, labbott@redhat.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        ebiederm@xmission.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJHCu1+Nja-XqfFKdxu2hDcUBzgvvjcf42yeGnUuVY3wsrZfSQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sam Ravnborg <sam@ravnborg.org> wrote:
+On 9/16/2018 9:54 AM, Salvatore Mesoraca wrote:
+> On Wed, 12 Sep 2018, James Morris <jmorris@namei.org> wrote:
+>> Adding the SARA and LandLock authors for review & comment.
+>>
+>> Salvatore & Mickaël: does this patchset meet your needs for merging to
+>> mainline?
+> Since the last time I submitted the patch to the ML, it grew a bit: now it needs
+> inode's blob stacking (which is already included for Landlock) and
+> kern_ipc_perm's
+> blob stacking.
+> The last one isn't implemented in this patchset, but it isn't
+> absolutely necessary.
+> I can merge a version of SARA that doesn't need it and than update it
+> when possible.
+> I can provide the same level of protection without using kern_ipc_perm
+> blob, I'm using it
+> just to minimize some potential side effects.
+
+Adding kern_ipc_perm is easy. As it looks like there will need to be
+a few revisions I will add it to the next set.
+
 >
-> Hi Salvatore.
+>> On Tue, 11 Sep 2018, Casey Schaufler wrote:
+>>
+>>> LSM: Module stacking in support of S.A.R.A and Landlock
+>>>
+>>> v2: Reduce the patchset to what is required to support
+>>>     the proposed S.A.R.A. and LandLock security modules
+>>>
+>>> The S.A.R.A. security module is intended to be used
+>>> in conjunction with other security modules. It requires
+>>> state to be maintained for the credential, which
+>>> in turn requires a mechanism for sharing the credential
+>>> security blob. The module also requires mechanism for
+>>> user space manipulation of the credential information,
+>>> hence an additional subdirectory in /proc/.../attr.
+>>>
+>>> The LandLock security module provides user configurable
+>>> policy in the secmark mechanism. It requires data in
+>>> the credential, file and inode security blobs. For this
+>>> to be used along side the existing "major" security
+>>> modules mechanism for sharing these blobs is provided.
+>>>
+>>> A side effect of providing sharing of the crendential
+>>> security blob is that the TOMOYO module can be used at
+>>> the same time as the other "major" modules.
+>>>
+>>> The mechanism for configuring which security modules are
+>>> enabled has to change when stacking in enabled. Any
+>>> module that uses just the security blobs that are shared
+>>> can be selected. Additionally, one other "major" module
+>>> can be selected.
+>>>
+>>> The security module stacking issues around networking and
+>>> IPC are not addressed here as they are beyond what is
+>>> required for TOMOYO, S.A.R.A and LandLock.
+>>>
+>>> git://github.com/cschaufler/lsm-stacking.git#stacking-4.19-rc2-saralock
+>>>
+>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>> ---
+>>>  Documentation/admin-guide/LSM/index.rst |  23 ++-
+>>>  fs/proc/base.c                          |  64 ++++++-
+>>>  fs/proc/internal.h                      |   1 +
+>>>  include/linux/lsm_hooks.h               |  20 ++-
+>>>  include/linux/security.h                |  15 +-
+>>>  kernel/cred.c                           |  13 --
+>>>  security/Kconfig                        |  92 ++++++++++
+>>>  security/apparmor/domain.c              |   2 +-
+>>>  security/apparmor/include/cred.h        |  24 ++-
+>>>  security/apparmor/include/file.h        |   9 +-
+>>>  security/apparmor/include/lib.h         |   4 +
+>>>  security/apparmor/lsm.c                 |  53 ++++--
+>>>  security/apparmor/task.c                |   6 +-
+>>>  security/security.c                     | 293 ++++++++++++++++++++++++++++++--
+>>>  security/selinux/hooks.c                | 215 ++++++++---------------
+>>>  security/selinux/include/objsec.h       |  37 +++-
+>>>  security/selinux/selinuxfs.c            |   5 +-
+>>>  security/selinux/xfrm.c                 |   4 +-
+>>>  security/smack/smack.h                  |  42 ++++-
+>>>  security/smack/smack_access.c           |   4 +-
+>>>  security/smack/smack_lsm.c              | 283 +++++++++++-------------------
+>>>  security/smack/smackfs.c                |  18 +-
+>>>  security/tomoyo/common.h                |  31 +++-
+>>>  security/tomoyo/domain.c                |   4 +-
+>>>  security/tomoyo/securityfs_if.c         |  15 +-
+>>>  security/tomoyo/tomoyo.c                |  57 +++++--
+>>>  26 files changed, 899 insertions(+), 435 deletions(-)
+>>>
+>> --
+>> James Morris
+>> <jmorris@namei.org>
 
-Hi Sam
-
-> On Sun, Sep 09, 2018 at 08:04:17PM +0200, Salvatore Mesoraca wrote:
-> > Adds 4 new defconfig helpers (hardenedlowconfig, hardenedmediumconfig,
-> > hardenedhighconfig, hardenedextremeconfig) to enable various hardening
-> > features.
-> > The list of config options to enable is based on KSPP's Recommended
-> > Settings and on kconfig-hardened-check, with some modifications.
-> > These options are divided into 4 levels (low, medium, high, extreme)
-> > based on their negative side effects, not on their usefulness.
-> > 'Low' level collects all those protections that have (almost) no
-> > negative side effects.
-> > 'Extreme' level collects those protections that may have so many
-> > negative side effects that most people wouldn't want to enable them.
-> > Every feature in each level is briefly documented in
-> > Documentation/security/hardenedconfig.rst, this file also contain a
-> > better explanation of what every level means.
-> > To prevent this file from drifting from what the various defconfigs
-> > actually do, it is used to dynamically generate the config fragments.
->
-> In the above you nicely describes what is done.
-> But there is nothing about the target group for this feature.
-> Who will benefit from this?
-
-Sometimes people ask about kernel hardening features, that's the
-reason why the KSPP's list and the kconfig-hardened-check script were
-written.
-Unfortunately, kernel features with security implications have often
-misleading names and descriptions and are scattered around the
-menuconfig.
-This patchset will help anyone who want to have an "hardened kernel"
-but isn't following kernel development closely enough to know about
-all the features.
-On one hand, this will provide an official and understandable list of
-hardening features inside the kernel doc, on the other hand it also
-provide a fast and easy way to enable those features all at once.
-
-> With respect to the actual implmentation we now
-> have two ways to handle config fragments.
-> Current solution is to save the config fragments in kernel/configs.
-> And the new solution is to parse the config fragments from an rst file.
-> The changelog fails to mentions why we need a new way to handle
-> the config fragments.
-
-The reason why I'm doing it like this is that I want both the config
-fragments and the doc in the kernel.
-Generating the fragments from the doc is the best way to make sure
-that they will always do what the doc says.
-
-> If we want to go the "parse from rst file" way - can it then
-> be abstracted in a way so this is the only way to handle
-> these in-kernel config fragments?
-> And then move the current config fragment to the new way.
->
-> It most be possible with a little careful design to make this
-> a general solution and not a hardening thing only.
-
-I don't know if maintainers of the other fragments care at all about
-having every single option documented in detail.
-For hardening features it makes sense, because people may want to just
-learn about them and enable them manually.
-I don't know if this is common or desirable for other config fragments.
-
-Thank you for you comment,
-
-Salvatore
