@@ -2,101 +2,101 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7B0ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5041ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42742208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:06:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42742208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4433521476
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:30:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYR/+jbq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4433521476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbeIPQ24 (ORCPT
+        id S1728193AbeIPQwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 12:28:56 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37963 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbeIPQ24 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 12:28:56 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 6DA9280753; Sun, 16 Sep 2018 13:06:20 +0200 (CEST)
-Date:   Sun, 16 Sep 2018 13:06:19 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linuxwifi <linuxwifi@intel.com>
-Subject: Re: [linuxwifi] [PATCH] fix iwlwifi on old cards in v4.19 was Re:
- 4.19-rc[23] iwlwifi: BUG in swiotlb
-Message-ID: <20180916110619.GB4854@amd>
-References: <0c5e53e5-2afa-8d38-0b48-272c670c4bc5@infradead.org>
- <1536651177.3224.106.camel@sipsolutions.net>
- <20180916093414.GA4299@amd>
- <20180916094142.GB4299@amd>
- <20180916095535.GA4245@amd>
- <20180916095935.GA4388@amd>
- <0BA3FCBA62E2DC44AF3030971E174FB301336B20F4@HASMSX111.ger.corp.intel.com>
- <0BA3FCBA62E2DC44AF3030971E174FB301336B2111@HASMSX111.ger.corp.intel.com>
+        Sun, 16 Sep 2018 12:52:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbeIPQwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 12:52:42 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71AC120867;
+        Sun, 16 Sep 2018 11:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537097404;
+        bh=5wwBxdHbMqJorPf5rINPEs/GVbT2A+SR61fz4HVjMak=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fYR/+jbqgBEwq7yXyiDx8ZS5DkXfw/Igm7F/wI3A2itsf66ANyiNSHwJWyf8wUk/M
+         /lkUfj8b/PuBuVCHLUfxW9j/zLnnqkm2aUhYVGrQ7bAmJSF19H1G2RdTPOmjt62sXx
+         3akUtmOx08EBTQlrvg90zrpJlIFV1hORDhCPXpSM=
+Date:   Sun, 16 Sep 2018 12:29:59 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     David Lechner <david@lechnology.com>
+Cc:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] spi: add new SPI_CS_WORD flag
+Message-ID: <20180916122959.271e4aba@archlinux>
+In-Reply-To: <20180913003920.30600-2-david@lechnology.com>
+References: <20180913003920.30600-1-david@lechnology.com>
+        <20180913003920.30600-2-david@lechnology.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="O5XBE6gyVG5Rl6Rj"
-Content-Disposition: inline
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB301336B2111@HASMSX111.ger.corp.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 12 Sep 2018 19:39:17 -0500
+David Lechner <david@lechnology.com> wrote:
 
---O5XBE6gyVG5Rl6Rj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> This adds a new SPI mode flag, SPI_CS_WORD, that is used to indicate
+> that a SPI device requires the chip select to be toggled after each
+> word that is transferred.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+Just a general patch ordering / combining comment.
 
-On Sun 2018-09-16 10:14:22, Grumbach, Emmanuel wrote:
-> >=20
-> > >
-> > >
-> > > .max_tfd_queue_size was ommited for old cards, leading to oops in
-> > swiotlb.
-> > >
-> > > Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> > >
-> >=20
-> > I picked it up in our tree with minor commit message fixes.
-> > I also added the Fixes tag for stable.
->=20
-> Ah, of course... not needed... Sorry...
+Seems odd to introduce a flag that a driver might use in a patch
+preceding any implementations!
 
-That was quick, thanks!
+I would have combined this with the next patch so the software fallback
+would be in place when the ability to turn it on is added.
 
-Ouch, and I should mention... I'm not sure 256 is right value to
-use. I just... guessed so based on the other files :-).
+Jonathan
+> ---
+>  include/linux/spi/spi.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index d698f9db3484..7bb36145e2ba 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -163,6 +163,7 @@ struct spi_device {
+>  #define	SPI_TX_QUAD	0x200			/* transmit with 4 wires */
+>  #define	SPI_RX_DUAL	0x400			/* receive with 2 wires */
+>  #define	SPI_RX_QUAD	0x800			/* receive with 4 wires */
+> +#define SPI_CS_WORD	0x1000			/* toggle cs after each word */
+>  	int			irq;
+>  	void			*controller_state;
+>  	void			*controller_data;
+> @@ -177,7 +178,6 @@ struct spi_device {
+>  	 * the controller talks to each chip, like:
+>  	 *  - memory packing (12 bit samples into low bits, others zeroed)
+>  	 *  - priority
+> -	 *  - drop chipselect after each word
+>  	 *  - chipselect delays
+>  	 *  - ...
+>  	 */
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---O5XBE6gyVG5Rl6Rj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlueOSsACgkQMOfwapXb+vL1CQCfSMumoGaeL/BS6wHn4G5EFRCl
-NtwAniA+eI4XammwM9qjoB05/d7+54+M
-=IfCT
------END PGP SIGNATURE-----
-
---O5XBE6gyVG5Rl6Rj--
