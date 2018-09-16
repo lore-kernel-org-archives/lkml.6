@@ -2,119 +2,106 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107C3ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FB6ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8F6208DD
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:05:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mf09V14G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8F6208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E2EC208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2EC208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbeIPS2q (ORCPT
+        id S1728370AbeIPSjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 14:28:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728306AbeIPS2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 14:28:46 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D49FD2087B;
-        Sun, 16 Sep 2018 13:05:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537103151;
-        bh=r94hoSbxDnL+A5BPaV3pXl3x1LD/wJ3Wax1VmZXEQHg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mf09V14GB+6iz6PrpAycXOFSG2uSYUxsSe2B1vHs3y34SZveSxnmJd1HiwXvJcTmx
-         HLobhz5KjwSf1szmVjRqIYKOY2GiovvbBTwadUbOczsS7u+rRp2KIuIXdwQi5MCQKG
-         HQgmeO+qcz0C5LouK18vn0H85NTPzUlZXLRs2fxk=
-Date:   Sun, 16 Sep 2018 14:05:46 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: iio: vadc: Fix documentation of
- 'reg'
-Message-ID: <20180916140546.264c4310@archlinux>
-In-Reply-To: <20180910160301.237538-2-mka@chromium.org>
-References: <20180910160301.237538-1-mka@chromium.org>
-        <20180910160301.237538-2-mka@chromium.org>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Sep 2018 14:39:43 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:57068 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbeIPSjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 14:39:43 -0400
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1g1Wuj-0006jn-00; Sun, 16 Sep 2018 13:16:37 +0000
+Date:   Sun, 16 Sep 2018 09:16:37 -0400
+From:   Rich Felker <dalias@libc.org>
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-man@vger.kernel.org,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Subject: Re: futex_cmpxchg_enabled breakage
+Message-ID: <20180916131637.GA17995@brightrain.aerifal.cx>
+References: <20180829222221.GA22017@brightrain.aerifal.cx>
+ <87fty9hc2u.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87fty9hc2u.fsf@mid.deneb.enyo.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Sep 2018 09:02:59 -0700
-Matthias Kaehlcke <mka@chromium.org> wrote:
-
-> The documentation of Qualcomm's SPMI PMIC voltage ADC claims that the
-> 'reg' property consists of two values, the SPMI address and the length
-> of the controller's registers. However the SPMI bus to which it is added
-> specifies "#size-cells = <0>;". Remove the controller register length
-> from the documentation of the field and the example.
+On Sun, Sep 16, 2018 at 02:16:25PM +0200, Florian Weimer wrote:
+> * Rich Felker:
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-I've already tidied this up and applied.  It should hit linux-next
-tomorrow.
-
-Jonathan
-> ---
-
-> Changes in v3:
-> - fixed separator in commit message
-> - removed duplicate 'Signed-off-by' tag
+> > I just spent a number of hours helping someone track down a bug that
+> > looks like it's some kind of futex_cmpxchg_enabled detection error on
+> > powerpc64 (still not sure of the root cause; set_robust_list producing
+> > -ENOSYS), and a while back I hit the same problem on sh2 due to lack
+> > of EFAULT on nommu, leading to commit 72cc564f16ca. I think the test
+> > (introduced way back in commit a0c1e9073ef7) is fundamentally buggy;
+> > if anything, it should be checking for !=-ENOSYS, not ==-EFAULT.
+> > Presumably it could also fail to produce -EFAULT if mmap_min_addr is 0
+> > and page 0 is mapped (a bad idea, but maybe someone does it...). And
+> > of course other nommu archs are possibly still broken.
 > 
-> Changes in v2:
-> - none
-> ---
->  Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Maybe it was related to this (“Kernel 4.15 lost set_robust_list
+> support on POWER 9”):
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> index 0fb46137f936..d0c188e5c922 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
-> @@ -13,7 +13,7 @@ VADC node:
->  - reg:
->      Usage: required
->      Value type: <prop-encoded-array>
-> -    Definition: VADC base address and length in the SPMI PMIC register map.
-> +    Definition: VADC base address in the SPMI PMIC register map.
->  
->  - #address-cells:
->      Usage: required
-> @@ -104,7 +104,7 @@ Example:
->  	/* VADC node */
->  	pmic_vadc: vadc@3100 {
->  		compatible = "qcom,spmi-vadc";
-> -		reg = <0x3100 0x100>;
-> +		reg = <0x3100>;
->  		interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
->  		#address-cells = <1>;
->  		#size-cells = <0>;
+> <https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-February/168570.html>
 
+Thanks! This is really helpful; I'll pass it along.
+
+> The Kconfig change you suggest was explicitly rejected as the fix.
+
+Even if it was rejected as a fix for this specific bug, I think it
+would be a good change for other reasons. If nothing else it reduces
+kernel code size and eliminates a few instructions in some (albeit
+long) hot paths.
+
+> I believe the expected userspace interface is that you probe support
+> with set_robust_list first, and then start using the relevant futex
+> interfaces only if that call succeeded.
+
+In order for it to work, set_robust_list needs to succeed for all
+threads, present and future, so there's an implicit contract needed
+here that, if it succeeds once, it needs to always succeed. This is
+satisfied by the kernel implementation. FWIW I adopted a fix using
+get_robust_list to probe just to avoid coupling the internals of
+setting up the list with the bland function
+pthread_mutexattr_setrobust which is unaware of any implementation
+details except the location of the attribute bit.
+
+Presumably a similar probing should happen in
+pthread_mutexattr_setprotocol for PI mutex support. Does glibc do
+this? musl still lacks PI mutex support so I'll save this as a note
+for when it's added.
+
+> If you do that, most parts of
+> a typical system will work as expected even if the kernel support is
+> not there, which is a bit surprising.  It definitely makes the root
+> cause harder to spot.
+
+I don't follow here. "most parts of a typical system will work as
+expected" seems to be the case whether you do or don't correctly
+probe. The only difference is whether a program that carefully checks
+for errors will see and report that pthread_mutexattr_setrobust
+failed.
+
+Rich
