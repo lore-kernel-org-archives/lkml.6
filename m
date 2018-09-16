@@ -6,57 +6,51 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA48ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF79ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2431A21476
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 10:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58238208DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 11:01:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgYlH2HJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2431A21476
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7jA91z/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58238208DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeIPP5f (ORCPT
+        id S1728179AbeIPQY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 11:57:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
+        Sun, 16 Sep 2018 12:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728092AbeIPP5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 11:57:35 -0400
+        id S1728100AbeIPQY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 12:24:28 -0400
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08C7B2087E;
-        Sun, 16 Sep 2018 10:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D75B4208AE;
+        Sun, 16 Sep 2018 11:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537094104;
-        bh=jlDIQGMa0MBHSJDO9/HzvEUzM5PJzxP7keLnVdL6z1Y=;
+        s=default; t=1537095714;
+        bh=SuZAs1iu1JerlXZy5LFapeCq9WTVEe2PAU+/5NfiC7c=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=CgYlH2HJIdAmek4mS5SRfULXCOX+JzWwA9s5zWY6LtqllVEslugnN19Apyydz1O9t
-         n3fgauKRCIFOteKUd3qF3RpPH5F81vLC97iXXwnXP3GmjMjJy/hwgGg2Fuo4HMst+i
-         6o/0dDTQ8IAumo7p4fNBFUFydqlplRFAkvQRNpkM=
-Date:   Sun, 16 Sep 2018 11:34:56 +0100
+        b=j7jA91z/pQK+wTSzrBQ1ON1ZGOkcbO0gf/VwK9EnBTr87NJJ6nZryWzh9cxlQ5br1
+         BswRdVjIh4vJeDYmDa8ne/HdtrcZ4pKsz8HWF6H/KuATFlyRyRUB8airdKN+BA1uzF
+         Kqy/k1u9KzcwHs6uapvz8uGIZhQgEGEPaQXJT0Mo=
+Date:   Sun, 16 Sep 2018 12:01:49 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <sudeep.holla@arm.com>,
-        <amit.kucheria@linaro.org>, <leoyang.li@nxp.com>,
-        <broonie@kernel.org>, <arnaud.pouliquen@st.com>,
-        <eugen.hristev@microchip.com>, <rdunlap@infradead.org>,
-        <geert@linux-m68k.org>, <ak@it-klinger.de>,
-        <freeman.liu@spreadtrum.com>, <lukas@wunner.de>,
-        <vilhelm.gray@gmail.com>, <gregkh@linuxfoundation.org>,
-        <kstewart@linuxfoundation.org>, <sgoud@xilinx.com>,
-        <anirudh@xilinx.com>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] iio: adc: Add Xilinx AMS driver
-Message-ID: <20180916113456.0ab90a56@archlinux>
-In-Reply-To: <1536909510-7166-4-git-send-email-manish.narani@xilinx.com>
-References: <1536909510-7166-1-git-send-email-manish.narani@xilinx.com>
-        <1536909510-7166-4-git-send-email-manish.narani@xilinx.com>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        andriy.shevchenko@linux.intel.com, matt.ranostay@konsulko.com,
+        tglx@linutronix.de, ak@it-klinger.de, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        himanshujha199640@gmail.com,
+        Song Qiang <songqiang.1304521@gmail.com>
+Subject: Re: [PATCH v5] iio: proximity: Add driver support for ST's VL53L0X
+ ToF ranging sensor.
+Message-ID: <20180916120149.0c68893f@archlinux>
+In-Reply-To: <20180915095752.8116-1-songqiang.1304521@gmail.com>
+References: <20180915095752.8116-1-songqiang.1304521@gmail.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -66,1437 +60,384 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Sep 2018 12:48:29 +0530
-Manish Narani <manish.narani@xilinx.com> wrote:
+On Sat, 15 Sep 2018 17:57:52 +0800
+Song Qiang <songqiang1304521@gmail.com> wrote:
 
-> The AMS includes an ADC as well as on-chip sensors that can be used to
-> sample external voltages and monitor on-die operating conditions, such
-> as temperature and supply voltage levels. The AMS has two SYSMON blocks.
-> PL-SYSMON block is capable of monitoring off chip voltage and
-> temperature.
-> PL-SYSMON block has DRP, JTAG and I2C interface to enable monitoring
-> from external master. Out of these interface currently only DRP is
-> supported.
-> Other block PS-SYSMON is memory mapped to PS.
-> The AMS can use internal channels to monitor voltage and temperature as
-> well as one primary and up to 16 auxiliary channels for measuring
-> external voltages.
-> The voltage and temperature monitoring channels also have event
-> capability which allows to generate an interrupt when their value falls
-> below or raises above a set threshold.
+> This driver was originally written by ST in 2016 as a misc input device
+> driver, and hasn't been maintained for a long time. I grabbed some code
+> from it's API and reformed it into an iio proximity device driver.
+> This version of driver uses i2c bus to talk to the sensor and
+> polling for measuring completes, so no irq line is needed.
+> This version of driver supports only one-shot mode, and it can be
+> tested with reading from
+> /sys/bus/iio/devices/iio:deviceX/in_distance_raw
 > 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-A few additional comments from me inline.
+> Signed-off-by: Song Qiang <songqiang.1304521@gmail.com>
+Hi Song,
 
-Thanks,
+My first comment was going to be don't use wild cards in a part name
+in a driver, but a quick sanity check confirmed that ST were actually
+crazy enough to end a part number with an X.  Ah well ;)
+
+Otherwise a few minor things, mostly around naming.  There is some
+confusion around endian stuff as well
+
+Looks pretty good for a first go at upstreaming a driver!
+
+Are you planning on adding more features?  Seems like a capable little device
+and would be good to have fuller support in the long term if you have time
+to look at it!
 
 Jonathan
 
 > ---
->  drivers/iio/adc/Kconfig      |   10 +
->  drivers/iio/adc/Makefile     |    1 +
->  drivers/iio/adc/xilinx-ams.c | 1337 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 1348 insertions(+)
->  create mode 100644 drivers/iio/adc/xilinx-ams.c
+> Changes in v5:
+> 	- Correct some spell problems.
+> 	- Change tries-- to --tries to fix the count error.
+> 	- Add MODULE_DEVICE_TABLE().
+> 	- Add some comments.
 > 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 4a75492..405ea00 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -941,4 +941,14 @@ config XILINX_XADC
->  	  The driver can also be build as a module. If so, the module will be called
->  	  xilinx-xadc.
->  
-> +config XILINX_AMS
-> +	tristate "Xilinx AMS driver"
-> +	depends on ARCH_ZYNQMP || COMPILE_TEST
-> +	depends on HAS_IOMEM
-> +	help
-> +	  Say yes here to have support for the Xilinx AMS.
+> Changes in v4:
+> 	- Add datasheet link, default i2c address and TODO list.
+> 	- Make capitalization of defines consistent.
+> 	- Replace i2c_transfer() with i2c_smbus_read_i2c_block_data().
+> 	- Remove IIO_CHAN_SOFT_TIMESTAMP() since no buffer/trigger
+> 	  support.
+> 	- Add information to MAINTAINERS.
+> 
+> Changes in v3:
+> 	- Recover ST's copyright.
+> 	- Clean up indio_dev member in vl53l0x_data struct since it's
+> 	  useless now.
+> 	- Replace __le16_to_cpu() with le16_to_cpu().
+> 	- Remove the iio_device_{claim|release}_direct_mode() since it's
+> 	  only needed when we use buffered mode.
+> 	- Clean up some coding style problems.
+> 
+> Changes in v2:
+> 	- Clean up the register table.
+> 	- Sort header files declarations.
+> 	- Replace some bit definations with GENMASK() and BIT().
+> 	- Clean up some code and comments that's useless for now.
+> 	- Change the order of some the definations of some variables to reversed
+> 	  xmas tree order.
+> 	- Using do...while() rather while and check.
+> 	- Replace pr_err() with dev_err().
+> 	- Remove device id declaration since we recommend to use DT.
+> 	- Remove .owner = THIS_MODULE.
+> 	- Replace probe() with probe_new() hook.
+> 	- Remove IIO_BUFFER and IIO_TRIGGERED_BUFFER dependences.
+> 	- Change the driver module name to vl53l0x-i2c.
+> 	- Align all the parameters if they are in the same function with open
+> 	  parentheses.
+> 	- Replace iio_device_register() with devm_iio_device_register
+> 	  for better resource management.
+> 	- Remove the vl53l0x_remove() since it's not needed.
+> 	- Remove dev_set_drvdata() since it's already setted above.
+> 
+>  .../bindings/iio/proximity/vl53l0x.txt        |  12 ++
+>  MAINTAINERS                                   |   7 +
+>  drivers/iio/proximity/Kconfig                 |  11 ++
+>  drivers/iio/proximity/Makefile                |   2 +
+>  drivers/iio/proximity/vl53l0x-i2c.c           | 180 ++++++++++++++++++
+>  5 files changed, 212 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+>  create mode 100644 drivers/iio/proximity/vl53l0x-i2c.c
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+> new file mode 100644
+> index 000000000000..ab9a9539fec4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+> @@ -0,0 +1,12 @@
+> +ST VL53L0X ToF ranging sensor
 > +
-> +	  The driver can also be build as a module. If so, the module will be called
-> +	  xilinx-ams.
+> +Required properties:
+> +	- compatible: must be "st,vl53l0x-i2c"
+> +	- reg: i2c address where to find the device
+> +
+> +Example:
+> +
+> +vl53l0x@29 {
+> +	compatible = "st,vl53l0x-i2c";
+> +	reg = <0x29>;
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 967ce8cdd1cc..a35d80e63506 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13510,6 +13510,13 @@ L:	linux-i2c@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/i2c/busses/i2c-stm32*
+>  
+> +ST VL53L0X ToF RANGER(I2C) IIO DRIVER
+> +M:	Song Qiang <songqiang.1304521@gmail.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/iio/proximity/vl53l0x-i2c.c
+> +F:	Documentation/devicetree/bindings/iio/proximity/vl53l0x.txt
+> +
+>  STABLE BRANCH
+>  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>  L:	stable@vger.kernel.org
+> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> index f726f9427602..5f421cbd37f3 100644
+> --- a/drivers/iio/proximity/Kconfig
+> +++ b/drivers/iio/proximity/Kconfig
+> @@ -79,4 +79,15 @@ config SRF08
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called srf08.
+>  
+> +config VL53L0X_I2C
+> +	tristate "STMicroelectronics VL53L0X ToF ranger sensor (I2C)"
+> +	depends on I2C
+> +	help
+> +	  Say Y here to build a driver for STMicroelectronics VL53L0X
+> +	  ToF ranger sensors with i2c interface.
+> +	  This driver can be used to measure the distance of objects.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called vl53l0x-i2c.
 > +
 >  endmenu
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 03db7b5..fbfcc45 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -85,4 +85,5 @@ obj-$(CONFIG_VF610_ADC) += vf610_adc.o
->  obj-$(CONFIG_VIPERBOARD_ADC) += viperboard_adc.o
->  xilinx-xadc-y := xilinx-xadc-core.o xilinx-xadc-events.o
->  obj-$(CONFIG_XILINX_XADC) += xilinx-xadc.o
-> +obj-$(CONFIG_XILINX_AMS) += xilinx-ams.o
->  obj-$(CONFIG_SD_ADC_MODULATOR) += sd_adc_modulator.o
-> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
+> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> index 4f4ed45e87ef..dedfb5bf3475 100644
+> --- a/drivers/iio/proximity/Makefile
+> +++ b/drivers/iio/proximity/Makefile
+> @@ -10,3 +10,5 @@ obj-$(CONFIG_RFD77402)		+= rfd77402.o
+>  obj-$(CONFIG_SRF04)		+= srf04.o
+>  obj-$(CONFIG_SRF08)		+= srf08.o
+>  obj-$(CONFIG_SX9500)		+= sx9500.o
+> +obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
+> +
+> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
 > new file mode 100644
-> index 0000000..c239a02
+> index 000000000000..4837cc2fff19
 > --- /dev/null
-> +++ b/drivers/iio/adc/xilinx-ams.c
-> @@ -0,0 +1,1337 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 > +/*
-> + * Xilinx AMS driver
+> + * Support for ST VL53L0X FlightSense ToF Ranging Sensor on a i2c bus.
 > + *
-> + *  Copyright (C) 2017-2018 Xilinx, Inc.
+> + * Copyright (C) 2016 STMicroelectronics Imaging Division.
+> + * Copyright (C) 2018 Song Qiang <songqiang.1304521@gmail.com>
 > + *
-> + *  Manish Narani <mnarani@xilinx.com>
-> + *  Rajnikant Bhojani <rajnikant.bhojani@xilinx.com>
+> + * Datasheet available at
+> + * <https://www.st.com/resource/en/datasheet/vl53l0x.pdf>
+> + *
+> + * Default 7-bit i2c slave address 0x29.
+> + *
+> + * TODO: FIFO buffer, continuous mode, interrupts, range selection,
+> + * sensor ID check.
 > + */
 > +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
 > +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+> +#include <linux/i2c.h>
+> +#include <linux/delay.h>
 > +
-> +#include <linux/iio/events.h>
 > +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
 > +
-> +static const unsigned int AMS_UNMASK_TIMEOUT_MS = 500;
+> +#define VL53L0X_DRV_NAME				"vl53l0x-i2c"
+
+A quick google suggests this only has an i2c interface.  Hence I'd argue
+there is no point in having -i2c in the driver name.  Lots of other
+i2c only parts don't on the basis it doesn't add anything.  In fact
+the only time we tend to do this is if we have a driver that splits
+into a shared core and two or more bus specific drivers.
+
 > +
-> +/* AMS registers definitions */
-> +#define AMS_ISR_0			0x010
-> +#define AMS_ISR_1			0x014
-> +#define AMS_IER_0			0x020
-> +#define AMS_IER_1			0x024
-> +#define AMS_IDR_0			0x028
-> +#define AMS_IDR_1			0x02c
-> +#define AMS_PS_CSTS			0x040
-> +#define AMS_PL_CSTS			0x044
+> +#define VL_REG_SYSRANGE_START				0x00
 > +
-> +#define AMS_VCC_PSPLL0			0x060
-> +#define AMS_VCC_PSPLL3			0x06C
-> +#define AMS_VCCINT			0x078
-> +#define AMS_VCCBRAM			0x07C
-> +#define AMS_VCCAUX			0x080
-> +#define AMS_PSDDRPLL			0x084
-> +#define AMS_PSINTFPDDR			0x09C
+> +#define VL_REG_SYSRANGE_MODE_MASK			GENMASK(3, 0)
+> +#define VL_REG_SYSRANGE_MODE_SINGLESHOT			0x00
+> +#define VL_REG_SYSRANGE_MODE_START_STOP			BIT(0)
+> +#define VL_REG_SYSRANGE_MODE_BACKTOBACK			BIT(1)
+> +#define VL_REG_SYSRANGE_MODE_TIMED			BIT(2)
+> +#define VL_REG_SYSRANGE_MODE_HISTOGRAM			BIT(3)
 > +
-> +#define AMS_VCC_PSPLL0_CH		48
-> +#define AMS_VCC_PSPLL3_CH		51
-> +#define AMS_VCCINT_CH			54
-> +#define AMS_VCCBRAM_CH			55
-> +#define AMS_VCCAUX_CH			56
-> +#define AMS_PSDDRPLL_CH			57
-> +#define AMS_PSINTFPDDR_CH		63
+> +#define VL_REG_SYS_SEQUENCE_CFG				BIT(0)
+> +#define VL_REG_SYS_INTERMEASUREMENT_PERIOD		BIT(2)
+> +#define VL_REG_SYS_RANGE_CFG				0x09
+> +#define VL_REG_SYS_INT_GPIO_DISABLED			0x00
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_LOW			BIT(0)
+> +#define VL_REG_SYS_INT_GPIO_LEVEL_HIGH			BIT(1)
+> +#define VL_REG_SYS_INT_GPIO_OUT_OF_WINDOW		0x03
+> +#define VL_REG_SYS_INT_GPIO_NEW_SAMPLE_READY		BIT(2)
+> +#define VL_REG_SYS_INT_CFG_GPIO				0x0A
+> +#define VL_REG_SYS_INT_CLEAR				0x0B
+> +#define VL_REG_GPIO_HV_MUX_ACTIVE_HIGH			0x84
 > +
-> +#define AMS_REG_CONFIG0			0x100
-> +#define AMS_REG_CONFIG1			0x104
-> +#define AMS_REG_CONFIG3			0x10C
-> +#define AMS_REG_SEQ_CH0			0x120
-> +#define AMS_REG_SEQ_CH1			0x124
-> +#define AMS_REG_SEQ_CH2			0x118
+> +#define VL_REG_RESULT_INT_STATUS			0x13
+> +#define VL_REG_RESULT_RANGE_STATUS			0x14
+> +#define VL_REG_RESULT_RANGE_STATUS_COMPLETE		BIT(0)
 > +
-> +#define AMS_TEMP			0x000
-> +#define AMS_SUPPLY1			0x004
-> +#define AMS_SUPPLY2			0x008
-> +#define AMS_VP_VN			0x00c
-> +#define AMS_VREFP			0x010
-> +#define AMS_VREFN			0x014
-> +#define AMS_SUPPLY3			0x018
-> +#define AMS_SUPPLY4			0x034
-> +#define AMS_SUPPLY5			0x038
-> +#define AMS_SUPPLY6			0x03c
-> +#define AMS_SUPPLY7			0x200
-> +#define AMS_SUPPLY8			0x204
-> +#define AMS_SUPPLY9			0x208
-> +#define AMS_SUPPLY10			0x20c
-> +#define AMS_VCCAMS			0x210
-> +#define AMS_TEMP_REMOTE			0x214
+> +/* Check contents of these registers to verify the device. */
+> +#define VL_REG_IDENTIFICATION_MODEL_ID			0xC0
+> +#define VL_REG_IDENTIFICATION_REVISION_ID		0xC2
 > +
-> +#define AMS_REG_VAUX(x)			(0x40 + (4*(x)))
-> +
-> +#define AMS_PS_RESET_VALUE		0xFFFFU
-> +#define AMS_PL_RESET_VALUE		0xFFFFU
-> +
-> +#define AMS_CONF0_CHANNEL_NUM_MASK	(0x3f << 0)
-> +
-> +#define AMS_CONF1_SEQ_MASK		(0xf << 12)
-> +#define AMS_CONF1_SEQ_DEFAULT		(0 << 12)
-> +#define AMS_CONF1_SEQ_CONTINUOUS	(2 << 12)
-> +#define AMS_CONF1_SEQ_SINGLE_CHANNEL	(3 << 12)
-> +
-> +#define AMS_REG_SEQ0_MASK		0xFFFF
-> +#define AMS_REG_SEQ2_MASK		0x3F
-> +#define AMS_REG_SEQ1_MASK		0xFFFF
-> +#define AMS_REG_SEQ2_MASK_SHIFT		16
-> +#define AMS_REG_SEQ1_MASK_SHIFT		22
-> +
-> +#define AMS_REGCFG1_ALARM_MASK		0xF0F
-> +#define AMS_REGCFG3_ALARM_MASK		0x3F
-> +
-> +#define AMS_ALARM_TEMP			0x140
-> +#define AMS_ALARM_SUPPLY1		0x144
-> +#define AMS_ALARM_SUPPLY2		0x148
-> +#define AMS_ALARM_SUPPLY3		0x160
-> +#define AMS_ALARM_SUPPLY4		0x164
-> +#define AMS_ALARM_SUPPLY5		0x168
-> +#define AMS_ALARM_SUPPLY6		0x16c
-> +#define AMS_ALARM_SUPPLY7		0x180
-> +#define AMS_ALARM_SUPPLY8		0x184
-> +#define AMS_ALARM_SUPPLY9		0x188
-> +#define AMS_ALARM_SUPPLY10		0x18c
-> +#define AMS_ALARM_VCCAMS		0x190
-> +#define AMS_ALARM_TEMP_REMOTE		0x194
-> +#define AMS_ALARM_THRESHOLD_OFF_10	0x10
-> +#define AMS_ALARM_THRESHOLD_OFF_20	0x20
-> +
-> +#define AMS_ALARM_THR_DIRECT_MASK	0x01
-> +#define AMS_ALARM_THR_MIN		0x0000
-> +#define AMS_ALARM_THR_MAX		0xffff
-> +
-> +#define AMS_NO_OF_ALARMS		32
-> +#define AMS_PL_ALARM_START		16
-> +#define AMS_ISR0_ALARM_MASK		0xFFFFFFFFU
-> +#define AMS_ISR1_ALARM_MASK		0xE000001FU
-> +#define AMS_ISR1_EOC_MASK		0x00000008U
-> +#define AMS_ISR1_INTR_MASK_SHIFT	32
-> +#define AMS_ISR0_ALARM_2_TO_0_MASK	0x07
-> +#define AMS_ISR0_ALARM_6_TO_3_MASK	0x78
-> +#define AMS_ISR0_ALARM_12_TO_7_MASK	0x3F
-> +#define AMS_CONF1_ALARM_2_TO_0_SHIFT	1
-> +#define AMS_CONF1_ALARM_6_TO_3_SHIFT	5
-> +#define AMS_CONF3_ALARM_12_TO_7_SHIFT	8
-> +
-> +#define AMS_PS_CSTS_PS_READY		0x08010000U
-> +#define AMS_PL_CSTS_ACCESS_MASK		0x00000001U
-> +
-> +#define AMS_PL_MAX_FIXED_CHANNEL	10
-> +#define AMS_PL_MAX_EXT_CHANNEL		20
-> +
-> +#define AMS_INIT_TIMEOUT		10000
-> +
-> +/*
-> + * Following scale and offset value is derived from
-> + * UG580 (v1.7) December 20, 2016
-> + */
-> +#define AMS_SUPPLY_SCALE_1VOLT		1000
-> +#define AMS_SUPPLY_SCALE_3VOLT		3000
-> +#define AMS_SUPPLY_SCALE_6VOLT		6000
-> +#define AMS_SUPPLY_SCALE_DIV_BIT	16
-> +
-> +#define AMS_TEMP_SCALE			509314
-> +#define AMS_TEMP_SCALE_DIV_BIT		16
-> +#define AMS_TEMP_OFFSET			-((280230L << 16) / 509314)
-> +
-> +enum ams_alarm_bit {
-> +	AMS_ALARM_BIT_TEMP,
-> +	AMS_ALARM_BIT_SUPPLY1,
-> +	AMS_ALARM_BIT_SUPPLY2,
-> +	AMS_ALARM_BIT_SUPPLY3,
-> +	AMS_ALARM_BIT_SUPPLY4,
-> +	AMS_ALARM_BIT_SUPPLY5,
-> +	AMS_ALARM_BIT_SUPPLY6,
-> +	AMS_ALARM_BIT_RESERVED,
-> +	AMS_ALARM_BIT_SUPPLY7,
-> +	AMS_ALARM_BIT_SUPPLY8,
-> +	AMS_ALARM_BIT_SUPPLY9,
-> +	AMS_ALARM_BIT_SUPPLY10,
-> +	AMS_ALARM_BIT_VCCAMS,
-> +	AMS_ALARM_BIT_TEMP_REMOTE
+> +struct vl53l0x_data {
+> +	struct i2c_client *client;
 > +};
 > +
-> +enum ams_seq {
-> +	AMS_SEQ_VCC_PSPLL,
-> +	AMS_SEQ_VCC_PSBATT,
-> +	AMS_SEQ_VCCINT,
-> +	AMS_SEQ_VCCBRAM,
-> +	AMS_SEQ_VCCAUX,
-> +	AMS_SEQ_PSDDRPLL,
-> +	AMS_SEQ_INTDDR
-> +};
-> +
-> +enum ams_ps_pl_seq {
-> +	AMS_SEQ_CALIB,
-> +	AMS_SEQ_RSVD_1,
-> +	AMS_SEQ_RSVD_2,
-> +	AMS_SEQ_TEST,
-> +	AMS_SEQ_RSVD_4,
-> +	AMS_SEQ_SUPPLY4,
-> +	AMS_SEQ_SUPPLY5,
-> +	AMS_SEQ_SUPPLY6,
-> +	AMS_SEQ_TEMP,
-> +	AMS_SEQ_SUPPLY2,
-> +	AMS_SEQ_SUPPLY1,
-> +	AMS_SEQ_VP_VN,
-> +	AMS_SEQ_VREFP,
-> +	AMS_SEQ_VREFN,
-> +	AMS_SEQ_SUPPLY3,
-> +	AMS_SEQ_CURRENT_MON,
-> +	AMS_SEQ_SUPPLY7,
-> +	AMS_SEQ_SUPPLY8,
-> +	AMS_SEQ_SUPPLY9,
-> +	AMS_SEQ_SUPPLY10,
-> +	AMS_SEQ_VCCAMS,
-> +	AMS_SEQ_TEMP_REMOTE,
-> +	AMS_SEQ_MAX
-> +};
-> +
-> +#define AMS_SEQ(x)          (AMS_SEQ_MAX + (x))
-> +#define AMS_VAUX_SEQ(x)     (AMS_SEQ_MAX + (x))
-> +
-> +#define PS_SEQ_MAX          AMS_SEQ_MAX
-> +#define PS_SEQ(x)           (x)
-> +#define PL_SEQ(x)           (PS_SEQ_MAX + x)
-> +
-> +#define AMS_CHAN_TEMP(_scan_index, _addr, _ext) { \
-> +	.type = IIO_TEMP, \
-> +	.indexed = 1, \
-> +	.address = (_addr), \
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
-> +		BIT(IIO_CHAN_INFO_SCALE) | \
-> +		BIT(IIO_CHAN_INFO_OFFSET), \
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
-> +	.event_spec = ams_temp_events, \
-> +	.num_event_specs = ARRAY_SIZE(ams_temp_events), \
-> +	.scan_index = (_scan_index), \
-> +	.scan_type = { \
-> +		.sign = 'u', \
-> +		.realbits = 12, \
-> +		.storagebits = 16, \
-> +		.shift = 4, \
-> +		.endianness = IIO_CPU, \
-> +	}, \
-> +	.extend_name = _ext, \
-> +}
-> +
-> +#define AMS_CHAN_VOLTAGE(_scan_index, _addr, _ext, _alarm) { \
-> +	.type = IIO_VOLTAGE, \
-> +	.indexed = 1, \
-> +	.address = (_addr), \
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
-> +		BIT(IIO_CHAN_INFO_SCALE), \
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
-> +	.event_spec = (_alarm) ? ams_voltage_events : NULL, \
-> +	.num_event_specs = (_alarm) ? ARRAY_SIZE(ams_voltage_events) : 0, \
-> +	.scan_index = (_scan_index), \
-> +	.scan_type = { \
-> +		.realbits = 10, \
-> +		.storagebits = 16, \
-> +		.shift = 6, \
-> +		.endianness = IIO_CPU, \
-> +	}, \
-> +	.extend_name = _ext, \
-> +}
-> +
-> +#define AMS_PS_CHAN_TEMP(_scan_index, _addr, _ext) \
-> +	AMS_CHAN_TEMP(PS_SEQ(_scan_index), _addr, _ext)
-> +#define AMS_PS_CHAN_VOLTAGE(_scan_index, _addr, _ext) \
-> +	AMS_CHAN_VOLTAGE(PS_SEQ(_scan_index), _addr, _ext, true)
-> +
-> +#define AMS_PL_CHAN_TEMP(_scan_index, _addr, _ext) \
-> +	AMS_CHAN_TEMP(PL_SEQ(_scan_index), _addr, _ext)
-> +#define AMS_PL_CHAN_VOLTAGE(_scan_index, _addr, _ext, _alarm) \
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(_scan_index), _addr, _ext, _alarm)
-> +#define AMS_PL_AUX_CHAN_VOLTAGE(_auxno, _ext) \
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_VAUX_SEQ(_auxno)), \
-> +			AMS_REG_VAUX(_auxno), _ext, false)
-> +#define AMS_CTRL_CHAN_VOLTAGE(_scan_index, _addr, _ext) \
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_VAUX_SEQ(AMS_SEQ(_scan_index))), \
-> +			_addr, _ext, false)
-> +
-> +struct ams {
-> +	void __iomem *base;
-> +	void __iomem *ps_base;
-> +	void __iomem *pl_base;
-> +	struct clk *clk;
-> +	struct device *dev;
-> +	struct mutex lock;
-> +	unsigned int alarm_mask;
-> +	unsigned int masked_alarm;
-> +	u64 intr_mask;
-> +	int irq;
-> +	struct delayed_work ams_unmask_work;
-> +};
-> +
-> +static inline void ams_ps_update_reg(struct ams *ams, unsigned int offset,
-> +				     u32 mask, u32 data)
+> +static int vl53l0x_read_proximity(struct vl53l0x_data *data,
+> +				  const struct iio_chan_spec *chan,
+> +				  int *val)
 > +{
-> +	u32 val;
-> +
-> +	val = readl(ams->ps_base + offset);
-> +	writel((val & ~mask) | (data & mask), ams->ps_base + offset);
-> +}
-> +
-> +static inline void ams_pl_update_reg(struct ams *ams, unsigned int offset,
-> +					 u32 mask, u32 data)
-> +{
-> +	u32 val;
-> +
-> +	val = readl(ams->pl_base + offset);
-> +	writel((val & ~mask) | (data & mask), ams->pl_base + offset);
-> +}
-> +
-> +static void ams_update_intrmask(struct ams *ams, u64 mask, u64 val)
-> +{
-> +	ams->intr_mask &= ~mask;
-> +	ams->intr_mask |= (val & mask);
-> +
-> +	writel(~(ams->intr_mask | ams->masked_alarm), ams->base + AMS_IER_0);
-> +	writel(~(ams->intr_mask >> AMS_ISR1_INTR_MASK_SHIFT),
-> +			ams->base + AMS_IER_1);
-> +	writel(ams->intr_mask | ams->masked_alarm, ams->base + AMS_IDR_0);
-> +	writel(ams->intr_mask >> AMS_ISR1_INTR_MASK_SHIFT,
-> +			ams->base + AMS_IDR_1);
-> +}
-> +
-> +static void ams_disable_all_alarms(struct ams *ams)
-> +{
-> +	/* disable PS module alarm */
-> +	if (ams->ps_base) {
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_REGCFG1_ALARM_MASK,
-> +				  AMS_REGCFG1_ALARM_MASK);
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG3, AMS_REGCFG3_ALARM_MASK,
-> +				  AMS_REGCFG3_ALARM_MASK);
-> +	}
-> +
-> +	/* disable PL module alarm */
-> +	if (ams->pl_base) {
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG1,
-> +				    AMS_REGCFG1_ALARM_MASK,
-> +				    AMS_REGCFG1_ALARM_MASK);
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG3,
-> +				    AMS_REGCFG3_ALARM_MASK,
-> +				    AMS_REGCFG3_ALARM_MASK);
-> +	}
-> +}
-> +
-> +static void iio_ams_update_alarm(struct ams *ams, unsigned long alarm_mask)
-> +{
-> +	u32 cfg;
-> +	unsigned long pl_alarm_mask;
-> +
-> +	if (ams->ps_base) {
-> +		/* Configuring PS alarm enable */
-> +		cfg = ~((alarm_mask & AMS_ISR0_ALARM_2_TO_0_MASK) <<
-> +			       AMS_CONF1_ALARM_2_TO_0_SHIFT);
-> +		cfg &= ~((alarm_mask & AMS_ISR0_ALARM_6_TO_3_MASK) <<
-> +				AMS_CONF1_ALARM_6_TO_3_SHIFT);
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_REGCFG1_ALARM_MASK,
-> +				  cfg);
-> +
-> +		cfg = ~((alarm_mask >> AMS_CONF3_ALARM_12_TO_7_SHIFT) &
-> +				AMS_ISR0_ALARM_12_TO_7_MASK);
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG3, AMS_REGCFG3_ALARM_MASK,
-> +				  cfg);
-> +	}
-> +
-> +	if (ams->pl_base) {
-> +		pl_alarm_mask = (alarm_mask >> AMS_PL_ALARM_START);
-> +		/* Configuring PL alarm enable */
-> +		cfg = ~((pl_alarm_mask & AMS_ISR0_ALARM_2_TO_0_MASK) <<
-> +			       AMS_CONF1_ALARM_2_TO_0_SHIFT);
-> +		cfg &= ~((pl_alarm_mask & AMS_ISR0_ALARM_6_TO_3_MASK) <<
-> +				AMS_CONF1_ALARM_6_TO_3_SHIFT);
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG1,
-> +				AMS_REGCFG1_ALARM_MASK, cfg);
-> +
-> +		cfg = ~((pl_alarm_mask >> AMS_CONF3_ALARM_12_TO_7_SHIFT) &
-> +				AMS_ISR0_ALARM_12_TO_7_MASK);
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG3,
-> +				AMS_REGCFG3_ALARM_MASK, cfg);
-> +	}
-> +
-> +	mutex_lock(&ams->lock);
-> +	ams_update_intrmask(ams, AMS_ISR0_ALARM_MASK, ~alarm_mask);
-> +	mutex_unlock(&ams->lock);
-> +}
-> +
-> +static void ams_enable_channel_sequence(struct ams *ams)
-> +{
-> +	int i;
-> +	unsigned long long scan_mask;
-> +	struct iio_dev *indio_dev = iio_priv_to_dev(ams);
-> +
-> +	/*
-> +	 * Enable channel sequence. First 22 bit of scan_mask represent
-> +	 * PS channels, and next remaining bit represents PL channels.
-> +	 */
-> +
-> +	/* Run calibration of PS & PL as part of the sequence */
-> +	scan_mask = 0x1 | BIT(PS_SEQ_MAX);
-> +	for (i = 0; i < indio_dev->num_channels; i++)
-> +		scan_mask |= BIT(indio_dev->channels[i].scan_index);
-> +
-> +	if (ams->ps_base) {
-> +		/* put sysmon in a soft reset to change the sequence */
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				  AMS_CONF1_SEQ_DEFAULT);
-> +
-> +		/* configure basic channels */
-> +		writel(scan_mask & AMS_REG_SEQ0_MASK,
-> +				ams->ps_base + AMS_REG_SEQ_CH0);
-> +		writel(AMS_REG_SEQ2_MASK &
-> +			(scan_mask >> AMS_REG_SEQ2_MASK_SHIFT),
-> +			ams->ps_base + AMS_REG_SEQ_CH2);
-> +
-> +		/* set continuous sequence mode */
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				  AMS_CONF1_SEQ_CONTINUOUS);
-> +	}
-> +
-> +	if (ams->pl_base) {
-> +		/* put sysmon in a soft reset to change the sequence */
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				    AMS_CONF1_SEQ_DEFAULT);
-> +
-> +		/* configure basic channels */
-> +		scan_mask = scan_mask >> PS_SEQ_MAX;
-> +		writel(scan_mask & AMS_REG_SEQ0_MASK,
-> +				ams->pl_base + AMS_REG_SEQ_CH0);
-> +		writel(AMS_REG_SEQ2_MASK &
-> +				(scan_mask >> AMS_REG_SEQ2_MASK_SHIFT),
-> +				ams->pl_base + AMS_REG_SEQ_CH2);
-> +		writel(AMS_REG_SEQ1_MASK &
-> +				(scan_mask >> AMS_REG_SEQ1_MASK_SHIFT),
-> +				ams->pl_base + AMS_REG_SEQ_CH1);
-> +
-> +		/* set continuous sequence mode */
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				AMS_CONF1_SEQ_CONTINUOUS);
-> +	}
-> +}
-> +
-> +static int iio_ams_init_device(struct ams *ams)
-> +{
-> +	u32 reg;
+> +	struct i2c_client *client = data->client;
+> +	unsigned int tries = 20;
+> +	u8 buffer[12];
 > +	int ret;
 > +
-> +	/* reset AMS */
-> +	if (ams->ps_base) {
-> +		writel(AMS_PS_RESET_VALUE, ams->ps_base + AMS_VP_VN);
+> +	ret = i2c_smbus_write_byte_data(client,
+> +		VL_REG_SYSRANGE_START, 1);
+
+Looks like the above would fit on one line.  Please do a quick check
+through the driver for other cases of this.
+
+> +	if (ret < 0)
+> +		return ret;
 > +
-> +		ret = readl_poll_timeout(ams->base + AMS_PS_CSTS, reg,
-> +					 (reg & AMS_PS_CSTS_PS_READY) ==
-> +					 AMS_PS_CSTS_PS_READY, 0,
-> +					 AMS_INIT_TIMEOUT);
-> +		if (ret)
+> +	do {
+> +		ret = i2c_smbus_read_byte_data(client,
+> +			VL_REG_RESULT_RANGE_STATUS);
+> +		if (ret < 0)
 > +			return ret;
 > +
-> +		/* put sysmon in a default state */
-> +		ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				  AMS_CONF1_SEQ_DEFAULT);
-> +	}
+> +		if (ret & VL_REG_RESULT_RANGE_STATUS_COMPLETE)
+> +			break;
 > +
-> +	if (ams->pl_base) {
-> +		writel(AMS_PL_RESET_VALUE, ams->pl_base + AMS_VP_VN);
+> +		usleep_range(1000, 5000);
+> +	} while (--tries);
+> +	if (!tries)
+> +		return -ETIMEDOUT;
 > +
-> +		ret = readl_poll_timeout(ams->base + AMS_PL_CSTS, reg,
-> +					 (reg & AMS_PL_CSTS_ACCESS_MASK) ==
-> +					 AMS_PL_CSTS_ACCESS_MASK, 0,
-> +					 AMS_INIT_TIMEOUT);
-> +		if (ret)
-> +			return ret;
+> +	ret = i2c_smbus_read_i2c_block_data(client, VL_REG_RESULT_RANGE_STATUS,
+> +		12, buffer);
+> +	if (ret < 0)
+> +		return ret;
+> +	else if (ret != 12)
+> +		return -EREMOTEIO;
 > +
-> +		/* put sysmon in a default state */
-> +		ams_pl_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +				    AMS_CONF1_SEQ_DEFAULT);
-> +	}
-> +
-> +	ams_disable_all_alarms(ams);
-> +
-> +	/* Disable interrupt */
-> +	ams_update_intrmask(ams, ~0, ~0);
-> +
-> +	/* Clear any pending interrupt */
-> +	writel(AMS_ISR0_ALARM_MASK, ams->base + AMS_ISR_0);
-> +	writel(AMS_ISR1_ALARM_MASK, ams->base + AMS_ISR_1);
+> +	/* Values should be between 30~1200. */
+> +	*val = le16_to_cpu((buffer[10] << 8) + buffer[11]);
+This worries me as a conversion.  The shift and addition is
+unwinding the endianness already. You then do it again with le16_to_cpu
+
+As it's aligned you could have done
+*val = le16_to_cpu(*(le16 *)(&buffer[10]));  That's obviously
+a bit ugly though, mainly because we are handling the buffer as
+a u8.  Is there a reason to not directly handle it as an le16 array?
+
+I'm having trouble finding the relevant section of the manual to actually
+figure out what is in the first 10 bytes!
+
+
+
 > +
 > +	return 0;
 > +}
 > +
-> +static int ams_enable_single_channel(struct ams *ams, unsigned int offset)
-> +{
-> +	u8 channel_num = 0;
+> +static const struct iio_chan_spec vl53l0x_channels[] = {
+> +	{
+> +		.type = IIO_DISTANCE,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+
+This is a time of flight sensor?  As such I would kind of assume it is possible
+to get to a real world distance?  Adding scale and offset to do this can
+of course be a follow up patch,  but it would be good to have!
+
+> +	},
+> +};
 > +
-> +	switch (offset) {
-> +	case AMS_VCC_PSPLL0:
-> +		channel_num = AMS_VCC_PSPLL0_CH;
-> +		break;
-> +	case AMS_VCC_PSPLL3:
-> +		channel_num = AMS_VCC_PSPLL3_CH;
-> +		break;
-> +	case AMS_VCCINT:
-> +		channel_num = AMS_VCCINT_CH;
-> +		break;
-> +	case AMS_VCCBRAM:
-> +		channel_num = AMS_VCCBRAM_CH;
-> +		break;
-> +	case AMS_VCCAUX:
-> +		channel_num = AMS_VCCAUX_CH;
-> +		break;
-> +	case AMS_PSDDRPLL:
-> +		channel_num = AMS_PSDDRPLL_CH;
-> +		break;
-> +	case AMS_PSINTFPDDR:
-> +		channel_num = AMS_PSINTFPDDR_CH;
-> +		break;
-> +	default:
+> +static int vl53l0x_read_raw(struct iio_dev *indio_dev,
+> +			    const struct iio_chan_spec *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct vl53l0x_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (chan->type != IIO_DISTANCE) {
+> +		dev_err(&data->client->dev, "iio type error");
+
+This can't actually happen as there are no other channel types
+registered.   The if check is really a form of documentation rather
+than real protection.   As such I'd drop the dev_err print
+out as unnecessary noise.  A simple return -EINVAL is more than
+enough here.
+
 > +		return -EINVAL;
 > +	}
-> +
-> +	/* set single channel, sequencer off mode */
-> +	ams_ps_update_reg(ams, AMS_REG_CONFIG1, AMS_CONF1_SEQ_MASK,
-> +			AMS_CONF1_SEQ_SINGLE_CHANNEL);
-> +
-> +	/* write the channel number */
-> +	ams_ps_update_reg(ams, AMS_REG_CONFIG0, AMS_CONF0_CHANNEL_NUM_MASK,
-> +			channel_num);
-> +	return 0;
-> +}
-> +
-> +static int ams_read_vcc_reg(struct ams *ams, unsigned int offset, u32 *data)
-> +{
-> +	u32 reg;
-> +	int ret;
-> +
-> +	ret = ams_enable_single_channel(ams, offset);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = readl_poll_timeout(ams->base + AMS_ISR_1, reg,
-> +				 (reg & AMS_ISR1_EOC_MASK) == AMS_ISR1_EOC_MASK,
-> +				 0, AMS_INIT_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*data = readl(ams->base + offset);
-> +	ams_enable_channel_sequence(ams);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ams_read_raw(struct iio_dev *indio_dev,
-> +			struct iio_chan_spec const *chan,
-> +			int *val, int *val2, long mask)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	int ret;
 > +
 > +	switch (mask) {
 > +	case IIO_CHAN_INFO_RAW:
-> +		mutex_lock(&ams->lock);
-> +		if (chan->scan_index >= (PS_SEQ_MAX * 3)) {
-> +			ret = ams_read_vcc_reg(ams, chan->address, val);
-> +			if (ret) {
-> +				mutex_unlock(&ams->lock);
-> +				return -EINVAL;
-> +			}
-> +		} else if (chan->scan_index >= PS_SEQ_MAX)
-> +			*val = readl(ams->pl_base + chan->address);
-> +		else
-> +			*val = readl(ams->ps_base + chan->address);
-> +		mutex_unlock(&ams->lock);
+> +		ret = vl53l0x_read_proximity(data, chan, val);
+> +		if (ret < 0)
+> +			dev_err(&data->client->dev,
+> +				"raw value read error with %d", ret);
+
+If return is less than 0 you should be passing that on to userspace
+(so add a return ret in this if block.)
+
 > +
 > +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		switch (chan->type) {
-> +		case IIO_VOLTAGE:
-> +			switch (chan->address) {
-> +			case AMS_SUPPLY1:
-> +			case AMS_SUPPLY2:
-> +			case AMS_SUPPLY3:
-> +			case AMS_SUPPLY4:
-> +				*val = AMS_SUPPLY_SCALE_3VOLT;
-> +				break;
-> +			case AMS_SUPPLY5:
-> +			case AMS_SUPPLY6:
-> +				if (chan->scan_index < PS_SEQ_MAX)
-> +					*val = AMS_SUPPLY_SCALE_6VOLT;
-> +				else
-> +					*val = AMS_SUPPLY_SCALE_3VOLT;
-> +				break;
-> +			case AMS_SUPPLY7:
-> +			case AMS_SUPPLY8:
-> +				*val = AMS_SUPPLY_SCALE_6VOLT;
-> +				break;
-> +			case AMS_SUPPLY9:
-> +			case AMS_SUPPLY10:
-> +				if (chan->scan_index < PS_SEQ_MAX)
-> +					*val = AMS_SUPPLY_SCALE_3VOLT;
-> +				else
-> +					*val = AMS_SUPPLY_SCALE_6VOLT;
-> +				break;
-> +			case AMS_VCC_PSPLL0:
-> +			case AMS_VCC_PSPLL3:
-> +			case AMS_VCCINT:
-> +			case AMS_VCCBRAM:
-> +			case AMS_VCCAUX:
-> +			case AMS_PSDDRPLL:
-> +			case AMS_PSINTFPDDR:
-> +				*val = AMS_SUPPLY_SCALE_3VOLT;
-> +				break;
-> +			default:
-> +				*val = AMS_SUPPLY_SCALE_1VOLT;
-> +				break;
-> +			}
-> +			*val2 = AMS_SUPPLY_SCALE_DIV_BIT;
-> +			return IIO_VAL_FRACTIONAL_LOG2;
-> +		case IIO_TEMP:
-> +			*val = AMS_TEMP_SCALE;
-> +			*val2 = AMS_TEMP_SCALE_DIV_BIT;
-> +			return IIO_VAL_FRACTIONAL_LOG2;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		/* Only the temperature channel has an offset */
-> +		*val = AMS_TEMP_OFFSET;
-> +		return IIO_VAL_INT;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ams_get_alarm_offset(int scan_index, enum iio_event_direction dir)
-> +{
-> +	int offset = 0;
-> +
-> +	if (scan_index >= PS_SEQ_MAX)
-> +		scan_index -= PS_SEQ_MAX;
-> +
-> +	if (dir == IIO_EV_DIR_FALLING) {
-> +		if (scan_index < AMS_SEQ_SUPPLY7)
-> +			offset = AMS_ALARM_THRESHOLD_OFF_10;
-> +		else
-> +			offset = AMS_ALARM_THRESHOLD_OFF_20;
-> +	}
-> +
-> +	switch (scan_index) {
-> +	case AMS_SEQ_TEMP:
-> +		return AMS_ALARM_TEMP + offset;
-> +	case AMS_SEQ_SUPPLY1:
-> +		return AMS_ALARM_SUPPLY1 + offset;
-> +	case AMS_SEQ_SUPPLY2:
-> +		return AMS_ALARM_SUPPLY2 + offset;
-> +	case AMS_SEQ_SUPPLY3:
-> +		return AMS_ALARM_SUPPLY3 + offset;
-> +	case AMS_SEQ_SUPPLY4:
-> +		return AMS_ALARM_SUPPLY4 + offset;
-> +	case AMS_SEQ_SUPPLY5:
-> +		return AMS_ALARM_SUPPLY5 + offset;
-> +	case AMS_SEQ_SUPPLY6:
-> +		return AMS_ALARM_SUPPLY6 + offset;
-> +	case AMS_SEQ_SUPPLY7:
-> +		return AMS_ALARM_SUPPLY7 + offset;
-> +	case AMS_SEQ_SUPPLY8:
-> +		return AMS_ALARM_SUPPLY8 + offset;
-> +	case AMS_SEQ_SUPPLY9:
-> +		return AMS_ALARM_SUPPLY9 + offset;
-> +	case AMS_SEQ_SUPPLY10:
-> +		return AMS_ALARM_SUPPLY10 + offset;
-> +	case AMS_SEQ_VCCAMS:
-> +		return AMS_ALARM_VCCAMS + offset;
-> +	case AMS_SEQ_TEMP_REMOTE:
-> +		return AMS_ALARM_TEMP_REMOTE + offset;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct iio_chan_spec *ams_event_to_channel(
-> +		struct iio_dev *indio_dev, u32 event)
-> +{
-> +	int scan_index = 0, i;
-> +
-> +	if (event >= AMS_PL_ALARM_START) {
-> +		event -= AMS_PL_ALARM_START;
-> +		scan_index = PS_SEQ_MAX;
-> +	}
-> +
-> +	switch (event) {
-> +	case AMS_ALARM_BIT_TEMP:
-> +		scan_index += AMS_SEQ_TEMP;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY1:
-> +		scan_index += AMS_SEQ_SUPPLY1;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY2:
-> +		scan_index += AMS_SEQ_SUPPLY2;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY3:
-> +		scan_index += AMS_SEQ_SUPPLY3;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY4:
-> +		scan_index += AMS_SEQ_SUPPLY4;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY5:
-> +		scan_index += AMS_SEQ_SUPPLY5;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY6:
-> +		scan_index += AMS_SEQ_SUPPLY6;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY7:
-> +		scan_index += AMS_SEQ_SUPPLY7;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY8:
-> +		scan_index += AMS_SEQ_SUPPLY8;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY9:
-> +		scan_index += AMS_SEQ_SUPPLY9;
-> +		break;
-> +	case AMS_ALARM_BIT_SUPPLY10:
-> +		scan_index += AMS_SEQ_SUPPLY10;
-> +		break;
-> +	case AMS_ALARM_BIT_VCCAMS:
-> +		scan_index += AMS_SEQ_VCCAMS;
-> +		break;
-> +	case AMS_ALARM_BIT_TEMP_REMOTE:
-> +		scan_index += AMS_SEQ_TEMP_REMOTE;
-> +		break;
-> +	}
-> +
-> +	for (i = 0; i < indio_dev->num_channels; i++)
-> +		if (indio_dev->channels[i].scan_index == scan_index)
-> +			break;
-> +
-> +	return &indio_dev->channels[i];
-> +}
-> +
-> +static int ams_get_alarm_mask(int scan_index)
-> +{
-> +	int bit = 0;
-> +
-> +	if (scan_index >= PS_SEQ_MAX) {
-> +		bit = AMS_PL_ALARM_START;
-> +		scan_index -= PS_SEQ_MAX;
-> +	}
-> +
-> +	switch (scan_index) {
-> +	case AMS_SEQ_TEMP:
-> +		return BIT(AMS_ALARM_BIT_TEMP + bit);
-> +	case AMS_SEQ_SUPPLY1:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY1 + bit);
-> +	case AMS_SEQ_SUPPLY2:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY2 + bit);
-> +	case AMS_SEQ_SUPPLY3:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY3 + bit);
-> +	case AMS_SEQ_SUPPLY4:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY4 + bit);
-> +	case AMS_SEQ_SUPPLY5:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY5 + bit);
-> +	case AMS_SEQ_SUPPLY6:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY6 + bit);
-> +	case AMS_SEQ_SUPPLY7:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY7 + bit);
-> +	case AMS_SEQ_SUPPLY8:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY8 + bit);
-> +	case AMS_SEQ_SUPPLY9:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY9 + bit);
-> +	case AMS_SEQ_SUPPLY10:
-> +		return BIT(AMS_ALARM_BIT_SUPPLY10 + bit);
-> +	case AMS_SEQ_VCCAMS:
-> +		return BIT(AMS_ALARM_BIT_VCCAMS + bit);
-> +	case AMS_SEQ_TEMP_REMOTE:
-> +		return BIT(AMS_ALARM_BIT_TEMP_REMOTE + bit);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ams_read_event_config(struct iio_dev *indio_dev,
-> +				 const struct iio_chan_spec *chan,
-> +				 enum iio_event_type type,
-> +				 enum iio_event_direction dir)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +
-> +	return (ams->alarm_mask & ams_get_alarm_mask(chan->scan_index)) ? 1 : 0;
-> +}
-> +
-> +static int ams_write_event_config(struct iio_dev *indio_dev,
-> +				  const struct iio_chan_spec *chan,
-> +				  enum iio_event_type type,
-> +				  enum iio_event_direction dir,
-> +				  int state)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	unsigned int alarm;
-> +
-> +	alarm = ams_get_alarm_mask(chan->scan_index);
-> +
-> +	mutex_lock(&ams->lock);
-> +
-> +	if (state)
-> +		ams->alarm_mask |= alarm;
-> +	else
-> +		ams->alarm_mask &= ~alarm;
-> +
-> +	iio_ams_update_alarm(ams, ams->alarm_mask);
-> +
-> +	mutex_unlock(&ams->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ams_read_event_value(struct iio_dev *indio_dev,
-> +				const struct iio_chan_spec *chan,
-> +				enum iio_event_type type,
-> +				enum iio_event_direction dir,
-> +				enum iio_event_info info, int *val, int *val2)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	unsigned int offset = ams_get_alarm_offset(chan->scan_index, dir);
-> +
-> +	mutex_lock(&ams->lock);
-> +
-> +	if (chan->scan_index >= PS_SEQ_MAX)
-> +		*val = readl(ams->pl_base + offset);
-> +	else
-> +		*val = readl(ams->ps_base + offset);
-> +
-> +	mutex_unlock(&ams->lock);
-> +
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static int ams_write_event_value(struct iio_dev *indio_dev,
-> +				 const struct iio_chan_spec *chan,
-> +				 enum iio_event_type type,
-> +				 enum iio_event_direction dir,
-> +				 enum iio_event_info info, int val, int val2)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	unsigned int offset;
-> +
-> +	mutex_lock(&ams->lock);
-> +
-> +	/* Set temperature channel threshold to direct threshold */
-> +	if (chan->type == IIO_TEMP) {
-> +		offset = ams_get_alarm_offset(chan->scan_index,
-> +					      IIO_EV_DIR_FALLING);
-> +
-> +		if (chan->scan_index >= PS_SEQ_MAX)
-> +			ams_pl_update_reg(ams, offset,
-> +					    AMS_ALARM_THR_DIRECT_MASK,
-> +					    AMS_ALARM_THR_DIRECT_MASK);
-> +		else
-> +			ams_ps_update_reg(ams, offset,
-> +					  AMS_ALARM_THR_DIRECT_MASK,
-> +					  AMS_ALARM_THR_DIRECT_MASK);
-> +	}
-> +
-> +	offset = ams_get_alarm_offset(chan->scan_index, dir);
-> +	if (chan->scan_index >= PS_SEQ_MAX)
-> +		writel(val, ams->pl_base + offset);
-> +	else
-> +		writel(val, ams->ps_base + offset);
-> +
-> +	mutex_unlock(&ams->lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void ams_handle_event(struct iio_dev *indio_dev, u32 event)
-> +{
-> +	const struct iio_chan_spec *chan;
-> +
-> +	chan = ams_event_to_channel(indio_dev, event);
-> +
-> +	if (chan->type == IIO_TEMP) {
-> +		/*
-> +		 * The temperature channel only supports over-temperature
-> +		 * events
-> +		 */
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(chan->type, chan->channel,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_RISING),
-> +			iio_get_time_ns(indio_dev));
-> +	} else {
-> +		/*
-> +		 * For other channels we don't know whether it is a upper or
-> +		 * lower threshold event. Userspace will have to check the
-> +		 * channel value if it wants to know.
-> +		 */
-> +		iio_push_event(indio_dev,
-> +			       IIO_UNMOD_EVENT_CODE(chan->type, chan->channel,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_EITHER),
-> +			iio_get_time_ns(indio_dev));
-> +	}
-> +}
-> +
-> +static void ams_handle_events(struct iio_dev *indio_dev, unsigned long events)
-> +{
-> +	unsigned int bit;
-> +
-> +	for_each_set_bit(bit, &events, AMS_NO_OF_ALARMS)
-> +		ams_handle_event(indio_dev, bit);
-> +}
-> +
-> +/**
-> + * ams_unmask_worker - ams alarm interrupt unmask worker
-> + * @work :		work to be done
-> + *
-> + * The ZynqMP threshold interrupts are level sensitive. Since we can't make the
-> + * threshold condition go way from within the interrupt handler, this means as
-> + * soon as a threshold condition is present we would enter the interrupt handler
-> + * again and again. To work around this we mask all active threshold interrupts
-> + * in the interrupt handler and start a timer. In this timer we poll the
-> + * interrupt status and only if the interrupt is inactive we unmask it again.
-> + */
-> +static void ams_unmask_worker(struct work_struct *work)
-> +{
-> +	struct ams *ams = container_of(work, struct ams, ams_unmask_work.work);
-> +	unsigned int status, unmask;
-> +
-> +	mutex_lock(&ams->lock);
-> +
-> +	status = readl(ams->base + AMS_ISR_0);
-> +
-> +	/* Clear those bits which are not active anymore */
-> +	unmask = (ams->masked_alarm ^ status) & ams->masked_alarm;
-> +
-> +	/* clear status of disabled alarm */
-> +	unmask |= ams->intr_mask;
-> +
-> +	ams->masked_alarm &= status;
-> +
-> +	/* Also clear those which are masked out anyway */
-> +	ams->masked_alarm &= ~ams->intr_mask;
-> +
-> +	/* Clear the interrupts before we unmask them */
-> +	writel(unmask, ams->base + AMS_ISR_0);
-> +
-> +	ams_update_intrmask(ams, 0, 0);
-> +
-> +	mutex_unlock(&ams->lock);
-> +
-> +	/* if still pending some alarm re-trigger the timer */
-> +	if (ams->masked_alarm)
-> +		schedule_delayed_work(&ams->ams_unmask_work,
-> +				      msecs_to_jiffies(AMS_UNMASK_TIMEOUT_MS));
-> +}
-> +
-> +static irqreturn_t ams_iio_irq(int irq, void *data)
-> +{
-> +	struct iio_dev *indio_dev = data;
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	irqreturn_t irq_status = IRQ_NONE;
-> +	u32 isr0;
-> +
-> +	isr0 = readl(ams->base + AMS_ISR_0);
-> +
-> +	/* only process alarms that are not masked */
-> +	isr0 &= ~((ams->intr_mask & AMS_ISR0_ALARM_MASK) | ams->masked_alarm);
-> +
-> +	if (isr0) {
-Flip the logic and this will cleaner.
-
-if (!isr0)
-	return IRQ_NONE;
-
-/* clear interrupt */
-...
-
-> +		/* clear interrupt */
-> +		writel(isr0, ams->base + AMS_ISR_0);
-> +
-> +		/* Once the alarm interrupt occurred, mask until get cleared */
-> +		ams->masked_alarm |= isr0;
-> +		ams_update_intrmask(ams, 0, 0);
-> +
-> +		ams_handle_events(indio_dev, isr0);
-> +
-> +		schedule_delayed_work(&ams->ams_unmask_work,
-> +				      msecs_to_jiffies(AMS_UNMASK_TIMEOUT_MS));
-> +		irq_status = IRQ_HANDLED;
-> +	}
-> +
-> +	return irq_status;
-> +}
-> +
-> +static const struct iio_event_spec ams_temp_events[] = {
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_RISING,
-> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-> +				BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +};
-> +
-> +static const struct iio_event_spec ams_voltage_events[] = {
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_RISING,
-> +		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_FALLING,
-> +		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_EITHER,
-> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-> +	},
-> +};
-> +
-> +static const struct iio_chan_spec ams_ps_channels[] = {
-> +	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "ps_temp"),
-> +	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP_REMOTE, AMS_TEMP_REMOTE, "remote_temp"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, "vccpsintlp"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, "vccpsintfp"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, "vccpsaux"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, "vccpsddr"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, "vccpsio3"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, "vccpsio0"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, "vccpsio1"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, "vccpsio2"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, "psmgtravcc"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, "psmgtravtt"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, "vccams"),
-> +};
-> +
-> +static const struct iio_chan_spec ams_pl_channels[] = {
-> +	AMS_PL_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "pl_temp"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, "vccint", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, "vccaux", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFP, AMS_VREFP, "vccvrefp", false),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFN, AMS_VREFN, "vccvrefn", false),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, "vccbram", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, "vccplintlp", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, "vccplintfp", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, "vccplaux", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, "vccams", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VP_VN, AMS_VP_VN, "vccvpvn", false),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, "vuser0", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, "vuser1", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, "vuser2", true),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, "vuser3", true),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(0, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(1, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(2, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(3, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(4, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(5, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(6, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(7, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(8, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(9, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(10, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(11, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(12, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(13, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(14, NULL),
-> +	AMS_PL_AUX_CHAN_VOLTAGE(15, NULL),
-> +};
-> +
-> +static const struct iio_chan_spec ams_ctrl_channels[] = {
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSPLL, AMS_VCC_PSPLL0, "vcc_pspll0"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSBATT, AMS_VCC_PSPLL3, "vcc_psbatt"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCINT, AMS_VCCINT, "vccint"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCBRAM, AMS_VCCBRAM, "vccbram"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCAUX, AMS_VCCAUX, "vccaux"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_PSDDRPLL, AMS_PSDDRPLL, "psddrpll"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_INTDDR, AMS_PSINTFPDDR, "psintfpddr"),
-> +};
-> +
-> +static int ams_init_module(struct iio_dev *indio_dev, struct device_node *np,
-> +			   struct iio_chan_spec *channels)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	struct device_node *chan_node, *child;
-> +	int ret, num_channels = 0;
-> +	unsigned int reg;
-> +
-> +	if (of_device_is_compatible(np, "xlnx,zynqmp-ams-ps")) {
-> +		ams->ps_base = of_iomap(np, 0);
-> +		if (!ams->ps_base)
-> +			return -ENXIO;
-> +
-> +		/* add PS channels to iio device channels */
-> +		memcpy(channels + num_channels, ams_ps_channels,
-> +		       sizeof(ams_ps_channels));
-> +		num_channels += ARRAY_SIZE(ams_ps_channels);
-> +	} else if (of_device_is_compatible(np, "xlnx,zynqmp-ams-pl")) {
-> +		ams->pl_base = of_iomap(np, 0);
-> +		if (!ams->pl_base)
-> +			return -ENXIO;
-> +
-> +		/* Copy only first 10 fix channels */
-> +		memcpy(channels + num_channels, ams_pl_channels,
-> +		       AMS_PL_MAX_FIXED_CHANNEL * sizeof(*channels));
-> +		num_channels += AMS_PL_MAX_FIXED_CHANNEL;
-> +
-> +		chan_node = of_get_child_by_name(np, "xlnx,ext-channels");
-> +		if (chan_node) {
-
-There is some very deep nesting in here. I haven't thought about it in detail
-but perhaps you can break some of this out into a a different function then
-call that here?
-
-
-> +			for_each_child_of_node(chan_node, child) {
-> +				ret = of_property_read_u32(child, "reg", &reg);
-> +				if (ret || reg > AMS_PL_MAX_EXT_CHANNEL)
-> +					continue;
-> +
-> +				memcpy(&channels[num_channels],
-> +				       &ams_pl_channels[reg +
-> +				       AMS_PL_MAX_FIXED_CHANNEL],
-> +				       sizeof(*channels));
-> +
-> +				if (of_property_read_bool(child,
-> +							  "xlnx,bipolar"))
-> +					channels[num_channels].scan_type.sign =
-> +						's';
-> +
-> +				num_channels++;
-> +			}
-> +		}
-> +		of_node_put(chan_node);
-> +	} else if (of_device_is_compatible(np, "xlnx,zynqmp-ams")) {
-> +		/* add AMS channels to iio device channels */
-> +		memcpy(channels + num_channels, ams_ctrl_channels,
-> +				sizeof(ams_ctrl_channels));
-> +		num_channels += ARRAY_SIZE(ams_ctrl_channels);
-> +	} else {
+> +	default:
+> +		dev_err(&data->client->dev, "IIO_CHAN_* not recognized.");
 > +		return -EINVAL;
 > +	}
-> +
-> +	return num_channels;
 > +}
 > +
-> +static int ams_parse_dt(struct iio_dev *indio_dev, struct platform_device *pdev)
-> +{
-> +	struct ams *ams = iio_priv(indio_dev);
-> +	struct iio_chan_spec *ams_channels, *dev_channels;
-> +	struct device_node *child_node = NULL, *np = pdev->dev.of_node;
-> +	int ret, vol_ch_cnt = 0, temp_ch_cnt = 0, i, rising_off, falling_off;
-> +	unsigned int num_channels = 0;
-> +
-> +	/* Initialize buffer for channel specification */
-> +	ams_channels = kzalloc(sizeof(ams_ps_channels) +
-> +			       sizeof(ams_pl_channels) +
-> +			       sizeof(ams_ctrl_channels), GFP_KERNEL);
-> +	if (!ams_channels)
-> +		return -ENOMEM;
-> +
-> +	if (of_device_is_available(np)) {
-> +		ret = ams_init_module(indio_dev, np, ams_channels);
-> +		if (ret < 0)
-> +			goto err;
-> +
-> +		num_channels += ret;
-> +	}
-> +
-> +	for_each_child_of_node(np, child_node) {
-> +		if (of_device_is_available(child_node)) {
-> +			ret = ams_init_module(indio_dev, child_node,
-> +					      ams_channels + num_channels);
-> +			if (ret < 0)
-> +				goto err;
-> +
-> +			num_channels += ret;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < num_channels; i++) {
-> +		if (ams_channels[i].type == IIO_VOLTAGE)
-> +			ams_channels[i].channel = vol_ch_cnt++;
-> +		else
-> +			ams_channels[i].channel = temp_ch_cnt++;
-> +
-> +		if (ams_channels[i].scan_index < (PS_SEQ_MAX * 3)) {
-> +			/* set threshold to max and min for each channel */
-> +			falling_off = ams_get_alarm_offset(
-> +					ams_channels[i].scan_index,
-> +					IIO_EV_DIR_FALLING);
-> +			rising_off = ams_get_alarm_offset(
-> +					ams_channels[i].scan_index,
-> +					IIO_EV_DIR_RISING);
-> +			if (ams_channels[i].scan_index >= PS_SEQ_MAX) {
-> +				writel(AMS_ALARM_THR_MIN,
-> +						ams->pl_base + falling_off);
-> +				writel(AMS_ALARM_THR_MAX,
-> +						ams->pl_base + rising_off);
-> +			} else {
-> +				writel(AMS_ALARM_THR_MIN,
-> +						ams->ps_base + falling_off);
-> +				writel(AMS_ALARM_THR_MAX,
-> +						ams->ps_base + rising_off);
-> +			}
-> +		}
-> +	}
-> +
-> +	dev_channels = devm_kzalloc(&pdev->dev, sizeof(*dev_channels) *
-> +				    num_channels, GFP_KERNEL);
-> +	if (!dev_channels) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	memcpy(dev_channels, ams_channels,
-> +	       sizeof(*ams_channels) * num_channels);
-> +	indio_dev->channels = dev_channels;
-> +	indio_dev->num_channels = num_channels;
-> +
-> +	ret = 0;
-> +err:
-> +	kfree(ams_channels);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct iio_info iio_pl_info = {
-> +	.read_raw = &ams_read_raw,
-> +	.read_event_config = &ams_read_event_config,
-> +	.write_event_config = &ams_write_event_config,
-> +	.read_event_value = &ams_read_event_value,
-> +	.write_event_value = &ams_write_event_value,
+> +static const struct iio_info vl53l0x_info = {
+> +	.read_raw = vl53l0x_read_raw,
 > +};
 > +
-> +static const struct of_device_id ams_of_match_table[] = {
-> +	{ .compatible = "xlnx,zynqmp-ams" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ams_of_match_table);
-> +
-> +static int ams_probe(struct platform_device *pdev)
+> +static int vl53l0x_probe(struct i2c_client *client)
 > +{
+> +	struct vl53l0x_data *data;
 > +	struct iio_dev *indio_dev;
-> +	struct ams *ams;
-> +	struct resource *res;
-> +	int ret;
 > +
-> +	if (!pdev->dev.of_node)
-> +		return -ENODEV;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*ams));
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
 > +	if (!indio_dev)
 > +		return -ENOMEM;
 > +
-> +	ams = iio_priv(indio_dev);
-> +	mutex_init(&ams->lock);
+> +	data = iio_priv(indio_dev);
+> +	data->client = client;
+> +	i2c_set_clientdata(client, indio_dev);
 > +
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->dev.of_node = pdev->dev.of_node;
-> +	indio_dev->name = "xilinx-ams";
+> +	if (!i2c_check_functionality(client->adapter,
+> +		I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_BYTE_DATA))
+> +		return -EOPNOTSUPP;
 > +
-> +	indio_dev->info = &iio_pl_info;
+> +	indio_dev->dev.parent = &client->dev;
+> +	indio_dev->name = VL53L0X_DRV_NAME;
+> +	indio_dev->info = &vl53l0x_info;
+> +	indio_dev->channels = vl53l0x_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(vl53l0x_channels);
 > +	indio_dev->modes = INDIO_DIRECT_MODE;
 > +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ams-base");
-> +	ams->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(ams->base))
-> +		return PTR_ERR(ams->base);
-> +
-> +	ams->clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(ams->clk))
-> +		return PTR_ERR(ams->clk);
-> +	clk_prepare_enable(ams->clk);
-> +
-> +	INIT_DELAYED_WORK(&ams->ams_unmask_work, ams_unmask_worker);
-> +
-> +	ret = iio_ams_init_device(ams);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to initialize AMS\n");
-> +		goto err_probe;
-> +	}
-> +
-> +	ret = ams_parse_dt(indio_dev, pdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failure in parsing DT\n");
-> +		goto err_probe;
-> +	}
-> +
-> +	ams_enable_channel_sequence(ams);
-> +
-> +	ams->irq = platform_get_irq_byname(pdev, "ams-irq");
-> +	ret = request_irq(ams->irq, &ams_iio_irq, 0, "ams-irq", indio_dev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to register interrupt\n");
-> +		goto err_probe;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret)
-> +		goto err_irq_free;
-> +
-> +	return 0;
-> +
-> +err_irq_free:
-> +	free_irq(ams->irq, indio_dev);
-> +
-> +err_probe:
-> +	cancel_delayed_work(&ams->ams_unmask_work);
-> +	clk_disable_unprepare(ams->clk);
-> +
-> +	return ret;
+> +	return devm_iio_device_register(&client->dev, indio_dev);
 > +}
 > +
-> +static int ams_remove(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct ams *ams = iio_priv(indio_dev);
-> +
-> +	cancel_delayed_work(&ams->ams_unmask_work);
-> +
-> +	free_irq(ams->irq, indio_dev);
-> +	/* Unregister the device */
+> +static const struct of_device_id st_vl53l0x_dt_match[] = {
+> +	{ .compatible = "st,vl53l0x-i2c", },
 
-I don't think this comment adds any information given the name
-of the function.
+Compatible shouldn't need the -i2c as it will only check for
+i2c devices if they are on an i2c bus anyway.
 
-> +	iio_device_unregister(indio_dev);
-
-This ordering worries me a bit.  You disable the irq before
-disabling the userspace and in kernel interfaces.  Immediately
-makes me think there is a potential race here...
-
-Also, the ordering here is not the reverse of that in probe which
-often indicates a problem and also makes it harder for a reviewer
-to be sure it is correct.
-
-
-> +	clk_disable_unprepare(ams->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused ams_suspend(struct device *dev)
-> +{
-> +	struct ams *ams = iio_priv(dev_get_drvdata(dev));
-> +
-> +	clk_disable_unprepare(ams->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused ams_resume(struct device *dev)
-> +{
-> +	struct ams *ams = iio_priv(dev_get_drvdata(dev));
-> +
-> +	clk_prepare_enable(ams->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(ams_pm_ops, ams_suspend, ams_resume);
-> +
-> +static struct platform_driver ams_driver = {
-> +	.probe = ams_probe,
-> +	.remove = ams_remove,
-> +	.driver = {
-> +		.name = "xilinx-ams",
-> +		.pm = &ams_pm_ops,
-> +		.of_match_table = ams_of_match_table,
-> +	},
+> +	{ }
 > +};
-> +module_platform_driver(ams_driver);
+> +MODULE_DEVICE_TABLE(of, st_vl53l0x_dt_match);
 > +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Xilinx, Inc.");
+> +static struct i2c_driver vl53l0x_driver = {
+> +	.driver = {
+> +		.name = VL53L0X_DRV_NAME,
+> +		.of_match_table = st_vl53l0x_dt_match,
+> +	},
+> +	.probe_new = vl53l0x_probe,
+> +};
+> +module_i2c_driver(vl53l0x_driver);
+> +
+> +MODULE_AUTHOR("Song Qiang <songqiang.1304521@gmail.com>");
+> +MODULE_DESCRIPTION("ST vl53l0x ToF ranging sensor driver");
+> +MODULE_LICENSE("GPL v2");
 
