@@ -2,171 +2,202 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999B6ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 14:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419FEECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 14:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A9C208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 14:10:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="al+vHY9U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A9C208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DE41E20883
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 14:31:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE41E20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbeIPTdq (ORCPT
+        id S1728226AbeIPTyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 15:33:46 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37409 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbeIPTdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 15:33:45 -0400
-Received: by mail-io1-f68.google.com with SMTP id v14-v6so9492869iob.4
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 07:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=AjGGWq5tS557RcNcS95QB4LLiVqGwuSHOSTUDvFij4Q=;
-        b=al+vHY9UtWNw94E+Pah251il8TO3T4OBwMNCtgVnSgYFOVMiOqU64zShV0ada+7kIC
-         bWVCWEMeOuv7X3aYZlm+PW126+OFoQnBhnPB5s7mKyL3QaXPCYPz10520J34Wc/vOfqq
-         TOCmwRcN39Y6+Y+Txlh7tfNCrxWZ8FZ7icwvY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AjGGWq5tS557RcNcS95QB4LLiVqGwuSHOSTUDvFij4Q=;
-        b=IApSHiE9Y+VDI33bge6ZbdIcJQg1VNJokBT/kTCzDORZd7J29mXuBEJM++tcgJbBJK
-         6jUPI/7V44WPCQ0yzsAl73AXv7ubAL86/WQmXrVlJCf1H2BU3TFf5LRT0O/Gla51zRkl
-         f7AM8Us3vbuIHNDI4T7sXqMl1pyg/7y+VvoihDhqHwsfJJnwxLjAsQppaHGhR1Irx4f7
-         pwaihy9j0BP5E/bC2TPiN5Zu7gkgN4NbiAcmO/yaioOo3ZmlRl9L1rSipkxxlj4qDj6J
-         IX/RLqc1bmBOF5NN4MFa80hVwMVzyNyS/ePcbSvqaclCtBZTaTVv+5KQ7fwpOVxfBKXZ
-         +I+A==
-X-Gm-Message-State: APzg51DoH0yS58BpZC26QuEaBsN/8ODqc3q/Y4z8VmK3BVkxrVpQxMTO
-        MRqp7zlVtJDZt8QCVfuzvyKaM7bnjkB2mw==
-X-Google-Smtp-Source: ANB0VdatYXZXDWsQpEzdMECDa0EUeet6tFFM4B2DMD/FkXDpmp0AiocIunNtqqk/c8fVO/LxACpCig==
-X-Received: by 2002:a6b:5505:: with SMTP id j5-v6mr17789795iob.106.1537107039217;
-        Sun, 16 Sep 2018 07:10:39 -0700 (PDT)
-Received: from [10.199.96.233] ([209.82.80.116])
-        by smtp.googlemail.com with ESMTPSA id w196-v6sm2168199itb.9.2018.09.16.07.10.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Sep 2018 07:10:38 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 3/3] nvmem: zynqmp: Added zynqmp nvmem firmware
- driver
-To:     Nava kishore Manne <nava.manne@xilinx.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, michal.simek@xilinx.com, rajanv@xilinx.com,
-        jollys@xilinx.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1536054754-3119-1-git-send-email-nava.manne@xilinx.com>
- <1536054754-3119-4-git-send-email-nava.manne@xilinx.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <d9cab203-9637-3233-4b44-96222ba3551c@linaro.org>
-Date:   Sun, 16 Sep 2018 15:10:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Sun, 16 Sep 2018 15:54:03 -0400
+Received: from mga11.intel.com ([192.55.52.93]:38763 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbeIPTyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 15:54:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 07:30:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,381,1531810800"; 
+   d="scan'208";a="83971591"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by orsmga003.jf.intel.com with ESMTP; 16 Sep 2018 07:30:51 -0700
+Date:   Sun, 16 Sep 2018 22:35:49 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ingo Molnar <mingo@elte.hu>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] x86, mm: Reserver some memory for bootmem allocator for
+ NO_BOOTMEM
+Message-ID: <20180916143549.zmnlcviyn67fbxwh@shbuild888>
+References: <alpine.DEB.2.21.1808311328260.2208@nanos.tec.linutronix.de>
+ <20180831133659.pkmscqpudjnkujbg@shbuild888>
+ <20180907081716.bxw3hmcl6w7gqvax@shbuild888>
+ <alpine.DEB.2.21.1809071250240.1402@nanos.tec.linutronix.de>
+ <20180910093938.ka732apzy3d3a5ip@shbuild888>
+ <alpine.DEB.2.21.1809101147500.1402@nanos.tec.linutronix.de>
+ <20180911061413.redy4oxia3hqifkh@shbuild888>
+ <alpine.DEB.2.21.1809151226130.1650@nanos.tec.linutronix.de>
+ <20180915164731.3zrdxijuwkgdi25p@shbuild888>
+ <alpine.DEB.2.21.1809151923270.1650@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <1536054754-3119-4-git-send-email-nava.manne@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809151923270.1650@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Few minor Nits...
-
-I remember asking about this in the last review!
-
-On 04/09/18 10:52, Nava kishore Manne wrote:
-> This patch adds zynqmp nvmem firmware driver to access the
-> SoC revision information from the hardware register.
+On Sat, Sep 15, 2018 at 07:28:03PM +0200, Thomas Gleixner wrote:
+> On Sun, 16 Sep 2018, Feng Tang wrote:
+> > I have tried to change some header files incluing fixmap.h/apicdef.h/
+> > vsyscall.h, and most of the .c files compile fine now, but I can not
+> > use the "__end_of_permanent_fixed_addresses" in head_64.S as it is a 
+> > enum type, and could not be recognized by assembly code.
 > 
-> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
-> ---
-> diff --git a/drivers/nvmem/zynqmp_nvmem.c b/drivers/nvmem/zynqmp_nvmem.c
-> new file mode 100644
-> index 0000000..e377900
-> --- /dev/null
-> +++ b/drivers/nvmem/zynqmp_nvmem.c
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2018 Xilinx, Inc.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/nvmem-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
-> +
-> +#define SILICON_REVISION_MASK 0xF
-> +
-> +static int zynqmp_nvmem_read(void *context, unsigned int offset,
-> +			     void *val, size_t bytes)
-> +{
-> +	int ret;
-> +	int idcode, version;
-> +	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-> +
-> +	if (!eemi_ops || !eemi_ops->get_chipid)
-> +		return -ENXIO;
-> +
-> +	ret = eemi_ops->get_chipid(&idcode, &version);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pr_debug("Read chipid val %x %x\n", idcode, version);
-> +	*(int *)val = version & SILICON_REVISION_MASK;
+> Hrmm. I did not think about the enum. So we have two possibilities:
+> 
+> 1) Have some preprocessing which provides the info for the assembler
+> 
+> 2) Use a constant for the number of PMDs which is defined in a header and
+>    then compile time checked against the size of the fixmap in a C-file.
 
-Use dev_dbg here.
-> +
-> +	return 0;
-> +}
-> +
-> +static struct nvmem_config econfig = {
-> +	.name = "zynqmp-nvmem",
-> +	.owner = THIS_MODULE,
-> +	.word_size = 1,
-> +	.size = 1,
-> +	.read_only = true,
-> +};
-> +
-> +static const struct of_device_id zynqmp_nvmem_match[] = {
-> +	{ .compatible = "xlnx,zynqmp-nvmem-fw", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, zynqmp_nvmem_match);
-> +
-> +static int zynqmp_nvmem_probe(struct platform_device *pdev)
-> +{
-> +	struct nvmem_device *nvmem;
-> +
-> +	econfig.dev = &pdev->dev;
-> +	econfig.reg_read = zynqmp_nvmem_read;
-> +
-> +	nvmem = nvmem_register(&econfig);
-You can use devm_ variant and remove the zynqmp_nvmem_remove() totally
+As there is no fixmap.c, I put the chck into __native_set_fixmap temply,
+please review, thanks
 
-> +	if (IS_ERR(nvmem))
-> +		return PTR_ERR(nvmem);
-> +
-> +	platform_set_drvdata(pdev, nvmem);
-> +
-> +	return 0;
-> +}
-> +
-> +static int zynqmp_nvmem_remove(struct platform_device *pdev)
-> +{
-> +	struct nvmem_device *nvmem = platform_get_drvdata(pdev);
-> +
-> +	return nvmem_unregister(nvmem);
-> +}
-> +
+- Feng
+
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index e203169931c7..ffaa0fa31044 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -14,6 +14,9 @@
+ #ifndef _ASM_X86_FIXMAP_H
+ #define _ASM_X86_FIXMAP_H
+ 
++/* Put here to be accessble for assembly code like head_64.S */
++#define FIXMAP_PMD_NUM	2
++
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ #include <asm/acpi.h>
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index f773d5e6c8cc..d6820d4c6e47 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -14,6 +14,7 @@
+ #include <asm/processor.h>
+ #include <linux/bitops.h>
+ #include <linux/threads.h>
++#include <asm/fixmap.h>
+ 
+ extern p4d_t level4_kernel_pgt[512];
+ extern p4d_t level4_ident_pgt[512];
+@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
+ extern pmd_t level2_kernel_pgt[512];
+ extern pmd_t level2_fixmap_pgt[512];
+ extern pmd_t level2_ident_pgt[512];
+-extern pte_t level1_fixmap_pgt[512];
++extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
+ extern pgd_t init_top_pgt[];
+ 
+ #define swapper_pg_dir init_top_pgt
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 15ebc2fc166e..985eaff70792 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -24,6 +24,7 @@
+ #include "../entry/calling.h"
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/fixmap.h>
+ 
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/asm-offsets.h>
+@@ -445,13 +446,19 @@ NEXT_PAGE(level2_kernel_pgt)
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+ 
+ NEXT_PAGE(level2_fixmap_pgt)
+-	.fill	506,8,0
+-	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+-	.fill	5,8,0
++	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
++	pgtno = 0
++	.rept (FIXMAP_PMD_NUM)
++	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map  + _PAGE_TABLE_NOENC
++	pgtno = pgtno + 1
++	.endr
++	/* 6 MB reserved space + a 2MB hole */
++	.fill	4,8,0
+ 
+ NEXT_PAGE(level1_fixmap_pgt)
++	.rept (FIXMAP_PMD_NUM)
+ 	.fill	512,8,0
++	.endr
+ 
+ #undef PMDS
+ 
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index e848a4811785..a927f5f39bee 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -637,6 +637,16 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
+ {
+ 	unsigned long address = __fix_to_virt(idx);
+ 
++#ifdef CONFIG_X86_64
++       /*
++        * In arch/x86/kernel/head_64.S, the static page table has
++	* been setup for fixmap. Add a sanity compiling check
++	* whether fixmap space has exceeded the capacity.
++        */
++       BUILD_BUG_ON((__end_of_permanent_fixed_addresses + 511)/512
++                       > FIXMAP_PMD_NUM);
++#endif
++
+ 	if (idx >= __end_of_fixed_addresses) {
+ 		BUG();
+ 		return;
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 45b700ac5fe7..b0aa2364a3c6 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1953,7 +1953,10 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
+ 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
+-	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
++
++	for (i = 0; i < FIXMAP_PMD_NUM; i++)
++		set_page_prot(level1_fixmap_pgt + i * 512,
++				PAGE_KERNEL_RO);
+ 
+ 	/* Pin down new L4 */
+ 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
+
+> 
+> #1 would be preferred, but for a quick fix #2 is okay as well.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
