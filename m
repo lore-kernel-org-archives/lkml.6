@@ -2,162 +2,162 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573FEECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 16:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 954D1ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B3B2083A
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 16:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B3B2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EF372087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:05:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkHvCaij"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF372087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbeIPWW6 convert rfc822-to-8bit (ORCPT
+        id S1728292AbeIPW3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 18:22:58 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:48165 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeIPWW5 (ORCPT
+        Sun, 16 Sep 2018 18:29:02 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45317 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeIPW3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 18:22:57 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g1aOL-0000Tn-14; Sun, 16 Sep 2018 10:59:25 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g1aOJ-0006XU-Sh; Sun, 16 Sep 2018 10:59:24 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, berrange@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180914105310.6454-1-jlayton@kernel.org>
-        <20180914105310.6454-4-jlayton@kernel.org>
-Date:   Sun, 16 Sep 2018 18:59:14 +0200
-In-Reply-To: <20180914105310.6454-4-jlayton@kernel.org> (Jeff Layton's message
-        of "Fri, 14 Sep 2018 06:53:10 -0400")
-Message-ID: <87tvmps7j1.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sun, 16 Sep 2018 18:29:02 -0400
+Received: by mail-vs1-f67.google.com with SMTP id x198-v6so2066730vsx.12
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 10:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uNNZt/yv18gqS8vBJLYjcGKjXaiGUN3ckinOpvTC4kA=;
+        b=EkHvCaijwbAcJorchx1GkyirtC9CCYfrdb7FUqqIGKdnSwR8ILALeW7pRJr9IVvQHn
+         aWqxthf00uzMSaidH00AxzaQk32X9gw0PqVaC8BbfTcZBSK3KM/EqhdXDQJ+6zkxml2M
+         qmrfu3pPl8lf+xALoyevlSLtD0Vn3KRRnICIYi6sHD27KBsbX2xuM1WOti9VaOdp3TIu
+         BVGaOxfSDZJ4A9Tisw5/1VQYQHuaDQgbKsXUzfQ+V++IdQDKEqzSlonJLIez26WrktQe
+         +N5OFKs5cvOPN29yrlj5+kq/maZHb6e9eFb67E/aZmvAbjVDWAzJJoO8dc6Dtvy5x0d3
+         wtdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uNNZt/yv18gqS8vBJLYjcGKjXaiGUN3ckinOpvTC4kA=;
+        b=JNr8LzUg29f4wc5VlbfMcjpPMi6BvC/T2/6xkg1sU0DF2ppdq8WaYP32VONTPcD80w
+         KPIvNRAnGn40V9QvHJ6EPE6enrYL4zM4fXnVMwhaXqHCJdJEvloq7TxTvScBe0POKwAq
+         eiqmRqoozq4cqD6kKqHufPjUzKpB/FC5bfOH+0hCh6540zbmIR093CX4nD+8LCpYBMhD
+         PnxaZ//t2j52y1SKxI/AT5FuPSdwUTg6eMpFOIYIiVCmBj2wKxUBjSnJZw11g07LYTcx
+         D6XVY1YUJX/lb4m74gNZjvodASZAIiu0GHKPcvdh8bmao+nLsSZw3erqmnpF5rEsz2FM
+         yP6A==
+X-Gm-Message-State: APzg51DvgKMycqZjWRYXgpyyj9pGmMVXAdJATUMsCyOg8ZrQskvLaHom
+        jCSZKvCaU2JL3tDPG4tGKiYMkitBCas9WoqsC3o=
+X-Google-Smtp-Source: ANB0VdZPudaKYvEGfcyitShYkMpQ/fDnYmiJ/tqbwMRvIrM7Ns/PBeAZWAwosnSqnMkRhcY4PbGb0UofrVIvoRxSjYw=
+X-Received: by 2002:a67:a89b:: with SMTP id h27-v6mr6784795vsi.18.1537117528870;
+ Sun, 16 Sep 2018 10:05:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1g1aOJ-0006XU-Sh;;;mid=<87tvmps7j1.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18dVpWqaiD3mw6+suQ7uEYXwKgKjq4geKo=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3 3/3] exec: do unshare_files after de_thread
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
+ <20180916153237.GC15699@rapoport-lnx>
+In-Reply-To: <20180916153237.GC15699@rapoport-lnx>
+From:   Pintu Kumar <pintu.ping@gmail.com>
+Date:   Sun, 16 Sep 2018 22:35:17 +0530
+Message-ID: <CAOuPNLj0HyC+yzwTpN-EWpzHTJ58u7pBfOja1MyweF4pbct1eQ@mail.gmail.com>
+Subject: Re: KSM not working in 4.9 Kernel
+To:     rppt@linux.vnet.ibm.com
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
-
-> POSIX mandates that open fds and their associated file locks should be
-> preserved across an execve. This works, unless the process is
-> multithreaded at the time that execve is called.
+On Sun, Sep 16, 2018 at 9:02 PM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 >
-> In that case, we'll end up unsharing the files_struct but the locks will
-> still have their fl_owner set to the address of the old one. Eventually,
-> when the other threads die and the last reference to the old
-> files_struct is put, any POSIX locks get torn down since it looks like
-> a close occurred on them.
+> On Fri, Sep 14, 2018 at 07:58:01PM +0530, Pintu Kumar wrote:
+> > Hi All,
+> >
+> > Board: Hikey620 ARM64
+> > Kernel: 4.9.20
+> >
+> > I am trying to verify KSM (Kernel Same Page Merging) functionality on
+> > 4.9 Kernel using "mmap" and madvise user space test utility.
+> > But to my observation, it seems KSM is not working for me.
+> > CONFIG_KSM=y is enabled in kernel.
+> > ksm_init is also called during boot up.
+> >   443 ?        SN     0:00 [ksmd]
+> >
+> > ksmd thread is also running.
+> >
+> > However, when I see the sysfs, no values are written.
+> > ~ # grep -H '' /sys/kernel/mm/ksm/*
+> > /sys/kernel/mm/ksm/pages_hashed:0
+> > /sys/kernel/mm/ksm/pages_scanned:0
+> > /sys/kernel/mm/ksm/pages_shared:0
+> > /sys/kernel/mm/ksm/pages_sharing:0
+> > /sys/kernel/mm/ksm/pages_to_scan:200
+> > /sys/kernel/mm/ksm/pages_unshared:0
+> > /sys/kernel/mm/ksm/pages_volatile:0
+> > /sys/kernel/mm/ksm/run:1
+> > /sys/kernel/mm/ksm/sleep_millisecs:1000
+> >
+> > So, please let me know if I am doing any thing wrong.
+> >
+> > This is the test utility:
+> > int main(int argc, char *argv[])
+> > {
+> >         int i, n, size;
+> >         char *buffer;
+> >         void *addr;
+> >
+> >         n = 100;
+> >         size = 100 * getpagesize();
+> >         for (i = 0; i < n; i++) {
+> >                 buffer = (char *)malloc(size);
+> >                 memset(buffer, 0xff, size);
+> >                 addr =  mmap(NULL, size,
+> >                            PROT_READ | PROT_EXEC | PROT_WRITE,
+> > MAP_PRIVATE | MAP_ANONYMOUS,
+> >                            -1, 0);
+> >                 madvise(addr, size, MADV_MERGEABLE);
 >
-> The result is that all of your open files will be intact with none of
-> the locks you held before execve. The simple answer to this is "use OFD
-> locks", but this is a nasty surprise and it violates the spec.
+> Just mmap'ing an area does not allocate any physical pages, so KSM has
+> nothing to merge.
 >
-> Fix this by doing unshare_files later during exec, after we've already
-> killed off the other threads in the process. This helps ensure that we
-> only unshare the files_struct during exec when it is truly shared with
-> other processes.
+> You need to memset(addr,...) after mmap().
 >
-> Note that because the unshare_files call is now done just after
-> de_thread, we need a mechanism to pass the displaced files_struct back
-> up to __do_execve_file. This is done via a new displaced_files field
-> inside the linux_binprm.
 
-Actually because unshare_files happens after de_thread (the point of no
-return) we don't need to do anything with displaced files.  A failing
-exec will clear brpm->mm, and search_binary_handler will convert any
-error into force_sigsegv.
+Yes, I am doing memset also.
+memset(addr, 0xff, size);
 
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Reported-by: Daniel P. Berrangé <berrange@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/exec.c               | 11 ++++++-----
->  include/linux/binfmts.h |  1 +
->  2 files changed, 7 insertions(+), 5 deletions(-)
+But still no effect.
+And I checked LTP test cases. It almost doing the same thing.
+
+I observed that [ksmd] thread is not waking up at all.
+I gave some print inside it, but I could never saw that prints coming.
+I could not find it running either in top command during the operation.
+Is there anything needs to be done, to wakw up ksmd?
+I already set: echo 1 > /sys/kernel/mm/ksm.
+
+
+
+> >                 sleep(1);
+> >         }
+> >         printf("Done....press ^C\n");
+> >
+> >         pause();
+> >
+> >         return 0;
+> > }
+> >
+> >
+> >
+> > Thanks,
+> > Pintu
+> >
 >
-> diff --git a/fs/exec.c b/fs/exec.c
-> index c8a68481d7eb..b4a7e659d908 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1262,6 +1262,10 @@ int flush_old_exec(struct linux_binprm * bprm)
->  	if (retval)
->  		goto out;
->  
-> +	retval = unshare_files(&bprm->displaced_files);
-> +	if (retval)
-> +		goto out;
-> +
-
-We can place this just above do_close_on_exec.  And simply modify
-unshare_files to instead of returning displaced simply put it.
-
-We gain nothing be returning displaced_files as we are already past
-the point of no return, and userspace will get an unblockable SIGSEGV
-and exit.
-
->  	/*
->  	 * Must be called _before_ exec_mmap() as bprm->mm is
->  	 * not visibile until then. This also enables the update
-> @@ -1713,7 +1717,7 @@ static int __do_execve_file(int fd, struct filename *filename,
->  {
->  	char *pathbuf = NULL;
->  	struct linux_binprm *bprm;
-> -	struct files_struct *displaced;
-> +	struct files_struct *displaced = NULL;
->  	int retval;
->  
->  	if (IS_ERR(filename))
-> @@ -1735,10 +1739,6 @@ static int __do_execve_file(int fd, struct filename *filename,
->  	 * further execve() calls fail. */
->  	current->flags &= ~PF_NPROC_EXCEEDED;
->  
-> -	retval = unshare_files(&displaced);
-> -	if (retval)
-> -		goto out_ret;
-> -
->  	retval = -ENOMEM;
->  	bprm = kzalloc(sizeof(*bprm), GFP_KERNEL);
->  	if (!bprm)
-> @@ -1817,6 +1817,7 @@ static int __do_execve_file(int fd, struct filename *filename,
->  	would_dump(bprm, bprm->file);
->  
->  	retval = exec_binprm(bprm);
-> +	displaced = bprm->displaced_files;
->  	if (retval < 0)
->  		goto out;
->  
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index c05f24fac4f6..d7ec384bb1b0 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -49,6 +49,7 @@ struct linux_binprm {
->  	unsigned int taso:1;
->  #endif
->  	unsigned int recursion_depth; /* only for search_binary_handler() */
-> +	struct files_struct * displaced_files;
->  	struct file * file;
->  	struct cred *cred;	/* new credentials */
->  	int unsafe;		/* how unsafe this exec is (mask of LSM_UNSAFE_*) */
+> --
+> Sincerely yours,
+> Mike.
+>
