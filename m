@@ -2,457 +2,193 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB26ECE561
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 07:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFC5ECE564
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 08:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377D020C0A
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 07:08:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nDmFIML+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k8VnpfWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377D020C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 01E6C208DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 08:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E6C208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeIPMaP (ORCPT
+        id S1727746AbeIPNcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 08:30:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60016 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbeIPMaP (ORCPT
+        Sun, 16 Sep 2018 09:32:02 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40108 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeIPNcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 08:30:15 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1A7FF60C54; Sun, 16 Sep 2018 07:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537081697;
-        bh=in5n47MBw0oCkbG18HVckYxDPTyatr/u3P6FJQj8T1Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nDmFIML+maKQfZuuAfXi3VQoNR/uEETdyg3pp8t2EOpaMWlxll7JaGdbq/QDTs567
-         HXXVv5NlksgxXxBlL1znv1HpabV2YX9dfTb/Cx5husLApaC9mYCxzK3PUMFsOAS7WF
-         3o7N/xpYQKXSMPXC8ySU5AtUI/DBnjpVEUhkUbls=
-Received: from [192.168.43.47] (unknown [27.59.62.91])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6617D606FA;
-        Sun, 16 Sep 2018 07:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537081693;
-        bh=in5n47MBw0oCkbG18HVckYxDPTyatr/u3P6FJQj8T1Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=k8VnpfWvz24p3twUiZrnOFnA25STKo75aEfj3FDwal4m3eAK9ooZX5pKNK+l3qaAD
-         MKxy3b+8OaujRLz+4pRHbUgkjXOz6sW84ZygdfdeCt5MHlDcZIbx8Ss78AETmwduoE
-         rOAhkmw/wPpyslfDSaKjWTfJvJ2eMcZg5YvsBrA8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6617D606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 2/6] pstore: Add event tracing support
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>, robh@kernel.org
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <141901b8-0a9a-2e7a-f7a4-cdefd157f4c6@codeaurora.org>
-Date:   Sun, 16 Sep 2018 12:37:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Sun, 16 Sep 2018 09:32:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n2-v6so14256224wrw.7;
+        Sun, 16 Sep 2018 01:09:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ukTHCHhpyrvTfZVGOetETVZAiCdu99vMaE7VJlEprMM=;
+        b=fvY6toyOd7gD6a962Ac4TEN+9M1aJT+ZTMi9bsIUFks1C1idouMaGbc1t1gqrxOlun
+         bONgSv2ReSdRKG7kKi4Y6Hgn+NFFA8OeuoDLotT1hrNhTyb0zsUyh/5PKtcP5oiqSNrh
+         8IVRoAJ2xXg4gKrkX3mfjUfJMfx1C2XfaE58DxUNhiMuq18cg4tOMQtbogdcMhiQG01w
+         ce9p6+to7TOUT2JUsY1tjlqBxjGzZ2+dmKNoxNNEi0m76nvJFHWsT+Pt0uI6Cd+10qJG
+         HTKmAz90gvPRSPq2WeKpFdS9g6vAoT6UFzv5FHFFLLlaI1V9amNZ7fhdmqoMl5eoV2G5
+         MH9A==
+X-Gm-Message-State: APzg51CQkNlCz1bfdrBIov971EDIJDtE/XZBD5Dgd4ry0YQiDyfMe/0H
+        s/XwiKv/G485GSxzKBpIYLIlDR+w
+X-Google-Smtp-Source: ANB0Vda/sixo77Me8ccYoN5SiJYpftbB3r6OEodS8FvhZ83IwVm9wBrwCSPkl0/T1yjvdxQH32FGew==
+X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr15246840wrm.21.1537085393464;
+        Sun, 16 Sep 2018 01:09:53 -0700 (PDT)
+Received: from ?IPv6:2a01:4240:2e27:ad85:aaaa::ee2? ([2a01:4240:2e27:ad85:aaaa::ee2])
+        by smtp.gmail.com with ESMTPSA id u7-v6sm5867259wmd.46.2018.09.16.01.09.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Sep 2018 01:09:52 -0700 (PDT)
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogUmU6IOetlOWkjTogUmU6IFtQQVRDSF0gdHR5OiBt?=
+ =?UTF-8?Q?ax3100:_Fix_oops_while_'cat/proc/tty/driver/ttyMAX'?=
+To:     chen.lin5@zte.com.cn
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+References: <201809151014546700030@zte.com.cn>
+From:   Jiri Slaby <jslaby@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <3fa25b44-d5e4-9b40-6a7d-e2ea4a35dca7@suse.cz>
+Date:   Sun, 16 Sep 2018 10:09:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201809151014546700030@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/9/2018 1:57 AM, Sai Prakash Ranjan wrote:
-> Currently pstore has function trace support which can be
-> used to get the function call chain with limited data.
-> Event tracing has extra data which is useful to debug wide
-> variety of issues and is heavily used across the kernel.
+On 09/15/2018, 04:14 AM, chen.lin5@zte.com.cn wrote:
+> yes, creation and destroy of the workqueue is not locked, I think
+> maybe there is some
 > 
-> Adding this support to pstore can be very helpful to debug
-> different subsystems since almost all of them have trace
-> events already available. And also it is useful to debug
-> unknown resets or crashes since we can get lot more info
-> from event tracing by viewing the last occurred events.
+> remainder work to do in destroy-wq, so I cannot sure if there is
+> any usage about lock destroy-wq.
 > 
-> High frequency tracepoints such as sched and irq has also
-> been tested. This implementation is similar to "tp_printk"
-> command line feature of ftrace by Steven.
 > 
-> For example, sample pstore output of tracing sched events
-> after reboot:
+> What you worried of the races is about this  ?  
 > 
->    # mount -t pstore pstore /sys/fs/pstore/
->    # tail /sys/fs/pstore/event-ramoops-0
->    sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_preempt next_pid=10 next_prio=120
->    sched_switch: prev_comm=rcu_preempt prev_pid=10 prev_prio=120 prev_state=R+ ==> next_comm=swapper/1 next_pid=0 next_prio=120
->    sched_waking: comm=rcu_sched pid=11 prio=120 target_cpu=002
->    sched_wakeup: comm=rcu_sched pid=11 prio=120 target_cpu=002
->    sched_switch: prev_comm=swapper/2 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=11 next_prio=120
->    sched_switch: prev_comm=rcu_sched prev_pid=11 prev_prio=120 prev_state=R+ ==> next_comm=swapper/2 next_pid=0 next_prio=120
->    sched_waking: comm=reboot pid=1867 prio=120 target_cpu=000
->    sched_wakeup: comm=reboot pid=1867 prio=120 target_cpu=000
->    sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=reboot next_pid=1867 next_prio=120
+>    --> when max3100_shutdown,  destroy_workqueue is doing, s->workqueue
+> is not NULL, at this moment, get_mctrl is executed, destroying wq is
+> queued again.
 > 
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> ---
->   fs/pstore/Kconfig          |  2 +-
->   fs/pstore/ftrace.c         | 55 ++++++++++++++++++++++++++++++++++++++
->   fs/pstore/inode.c          |  4 +++
->   fs/pstore/ram.c            | 44 +++++++++++++++++++++++++++---
->   include/linux/pstore.h     |  2 ++
->   include/linux/pstore_ram.h |  1 +
->   6 files changed, 104 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-> index 503086f7f7c1..6fe087b13a51 100644
-> --- a/fs/pstore/Kconfig
-> +++ b/fs/pstore/Kconfig
-> @@ -126,7 +126,7 @@ config PSTORE_PMSG
->   
->   config PSTORE_FTRACE
->   	bool "Persistent function tracer"
-> -	depends on PSTORE
-> +	depends on PSTORE && PSTORE!=m
->   	depends on FUNCTION_TRACER
->   	depends on DEBUG_FS
->   	help
-> diff --git a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
-> index 06aab07b6bb7..d47dc93ac098 100644
-> --- a/fs/pstore/ftrace.c
-> +++ b/fs/pstore/ftrace.c
-> @@ -24,6 +24,8 @@
->   #include <linux/debugfs.h>
->   #include <linux/err.h>
->   #include <linux/cache.h>
-> +#include <linux/slab.h>
-> +#include <linux/trace_events.h>
->   #include <asm/barrier.h>
->   #include "internal.h"
->   
-> @@ -62,6 +64,59 @@ static struct ftrace_ops pstore_ftrace_ops __read_mostly = {
->   	.func	= pstore_ftrace_call,
->   };
->   
-> +void notrace pstore_event_call(struct trace_event_buffer *fbuffer)
-> +{
-> +	struct trace_iterator *iter;
-> +	struct trace_seq *s;
-> +	struct trace_event_call *event_call;
-> +	struct pstore_record record;
-> +	struct trace_event *event;
-> +	struct seq_buf *seq;
-> +	unsigned long flags;
-> +
-> +	if (!psinfo)
-> +		return;
-> +
-> +	if (unlikely(oops_in_progress))
-> +		return;
-> +
-> +	pstore_record_init(&record, psinfo);
-> +	record.type = PSTORE_TYPE_EVENT;
-> +
-> +	iter = kmalloc(sizeof(*iter), GFP_KERNEL);
-> +	if (!iter)
-> +		return;
-> +
-> +	event_call = fbuffer->trace_file->event_call;
-> +	if (!event_call || !event_call->event.funcs ||
-> +	    !event_call->event.funcs->trace)
-> +		goto fail_event;
-> +
-> +	event = &fbuffer->trace_file->event_call->event;
-> +
-> +	spin_lock_irqsave(&psinfo->buf_lock, flags);
-> +
-> +	trace_seq_init(&iter->seq);
-> +	iter->ent = fbuffer->entry;
-> +	event_call->event.funcs->trace(iter, 0, event);
-> +	trace_seq_putc(&iter->seq, 0);
-> +
-> +	if (seq->size > psinfo->bufsize)
-> +		seq->size = psinfo->bufsize;
-> +
-> +	s = &iter->seq;
-> +	seq = &s->seq;
-> +
-> +	record.buf = (char *)(seq->buffer);
-> +	record.size = seq->len;
-> +	psinfo->write(&record);
-> +
-> +	spin_unlock_irqrestore(&psinfo->buf_lock, flags);
-> +
-> +fail_event:
-> +	kfree(iter);
-> +}
-> +
->   static DEFINE_MUTEX(pstore_ftrace_lock);
->   static bool pstore_ftrace_enabled;
->   
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 5fcb845b9fec..f099152abbbd 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -345,6 +345,10 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->   		scnprintf(name, sizeof(name), "console-%s-%llu",
->   			  record->psi->name, record->id);
->   		break;
-> +	case PSTORE_TYPE_EVENT:
-> +		scnprintf(name, sizeof(name), "event-%s-%llu",
-> +			  record->psi->name, record->id);
-> +		break;
->   	case PSTORE_TYPE_FTRACE:
->   		scnprintf(name, sizeof(name), "ftrace-%s-%llu",
->   			  record->psi->name, record->id);
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index bbd1e357c23d..f60d41c0309e 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -48,6 +48,10 @@ static ulong ramoops_console_size = MIN_MEM_SIZE;
->   module_param_named(console_size, ramoops_console_size, ulong, 0400);
->   MODULE_PARM_DESC(console_size, "size of kernel console log");
->   
-> +static ulong ramoops_event_size = MIN_MEM_SIZE;
-> +module_param_named(event_size, ramoops_event_size, ulong, 0400);
-> +MODULE_PARM_DESC(event_size, "size of event log");
-> +
->   static ulong ramoops_ftrace_size = MIN_MEM_SIZE;
->   module_param_named(ftrace_size, ramoops_ftrace_size, ulong, 0400);
->   MODULE_PARM_DESC(ftrace_size, "size of ftrace log");
-> @@ -86,6 +90,7 @@ MODULE_PARM_DESC(ramoops_ecc,
->   struct ramoops_context {
->   	struct persistent_ram_zone **dprzs;	/* Oops dump zones */
->   	struct persistent_ram_zone *cprz;	/* Console zone */
-> +	struct persistent_ram_zone *eprz;       /* Event zone */
->   	struct persistent_ram_zone **fprzs;	/* Ftrace zones */
->   	struct persistent_ram_zone *mprz;	/* PMSG zone */
->   	phys_addr_t phys_addr;
-> @@ -93,6 +98,7 @@ struct ramoops_context {
->   	unsigned int memtype;
->   	size_t record_size;
->   	size_t console_size;
-> +	size_t event_size;
->   	size_t ftrace_size;
->   	size_t pmsg_size;
->   	int dump_oops;
-> @@ -103,6 +109,7 @@ struct ramoops_context {
->   	/* _read_cnt need clear on ramoops_pstore_open */
->   	unsigned int dump_read_cnt;
->   	unsigned int console_read_cnt;
-> +	unsigned int event_read_cnt;
->   	unsigned int max_ftrace_cnt;
->   	unsigned int ftrace_read_cnt;
->   	unsigned int pmsg_read_cnt;
-> @@ -118,6 +125,7 @@ static int ramoops_pstore_open(struct pstore_info *psi)
->   
->   	cxt->dump_read_cnt = 0;
->   	cxt->console_read_cnt = 0;
-> +	cxt->event_read_cnt = 0;
->   	cxt->ftrace_read_cnt = 0;
->   	cxt->pmsg_read_cnt = 0;
->   	return 0;
-> @@ -277,6 +285,11 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->   					   1, &record->id, &record->type,
->   					   PSTORE_TYPE_CONSOLE, 0);
->   
-> +	if (!prz_ok(prz))
-> +		prz = ramoops_get_next_prz(&cxt->eprz, &cxt->event_read_cnt,
-> +					   1, &record->id, &record->type,
-> +					   PSTORE_TYPE_EVENT, 0);
-> +
->   	if (!prz_ok(prz))
->   		prz = ramoops_get_next_prz(&cxt->mprz, &cxt->pmsg_read_cnt,
->   					   1, &record->id, &record->type,
-> @@ -385,6 +398,11 @@ static int notrace ramoops_pstore_write(struct pstore_record *record)
->   			return -ENOMEM;
->   		persistent_ram_write(cxt->cprz, record->buf, record->size);
->   		return 0;
-> +	} else if (record->type == PSTORE_TYPE_EVENT) {
-> +		if (!cxt->eprz)
-> +			return -ENOMEM;
-> +		persistent_ram_write(cxt->eprz, record->buf, record->size);
-> +		return 0;
->   	} else if (record->type == PSTORE_TYPE_FTRACE) {
->   		int zonenum;
->   
-> @@ -475,6 +493,9 @@ static int ramoops_pstore_erase(struct pstore_record *record)
->   	case PSTORE_TYPE_CONSOLE:
->   		prz = cxt->cprz;
->   		break;
-> +	case PSTORE_TYPE_EVENT:
-> +		prz = cxt->eprz;
-> +		break;
->   	case PSTORE_TYPE_FTRACE:
->   		if (record->id >= cxt->max_ftrace_cnt)
->   			return -EINVAL;
-> @@ -699,6 +720,7 @@ static int ramoops_parse_dt(struct platform_device *pdev,
->   
->   	parse_size("record-size", pdata->record_size);
->   	parse_size("console-size", pdata->console_size);
-> +	parse_size("event-size", pdata->event_size);
->   	parse_size("ftrace-size", pdata->ftrace_size);
->   	parse_size("pmsg-size", pdata->pmsg_size);
->   	parse_size("ecc-size", pdata->ecc_info.ecc_size);
-> @@ -747,7 +769,8 @@ static int ramoops_probe(struct platform_device *pdev)
->   	}
->   
->   	if (!pdata->mem_size || (!pdata->record_size && !pdata->console_size &&
-> -			!pdata->ftrace_size && !pdata->pmsg_size)) {
-> +			!pdata->event_size && !pdata->ftrace_size &&
-> +			!pdata->pmsg_size)) {
->   		pr_err("The memory size and the record/console size must be "
->   			"non-zero\n");
->   		goto fail_out;
-> @@ -757,6 +780,8 @@ static int ramoops_probe(struct platform_device *pdev)
->   		pdata->record_size = rounddown_pow_of_two(pdata->record_size);
->   	if (pdata->console_size && !is_power_of_2(pdata->console_size))
->   		pdata->console_size = rounddown_pow_of_two(pdata->console_size);
-> +	if (pdata->event_size && !is_power_of_2(pdata->event_size))
-> +		pdata->event_size = rounddown_pow_of_two(pdata->event_size);
->   	if (pdata->ftrace_size && !is_power_of_2(pdata->ftrace_size))
->   		pdata->ftrace_size = rounddown_pow_of_two(pdata->ftrace_size);
->   	if (pdata->pmsg_size && !is_power_of_2(pdata->pmsg_size))
-> @@ -767,6 +792,7 @@ static int ramoops_probe(struct platform_device *pdev)
->   	cxt->memtype = pdata->mem_type;
->   	cxt->record_size = pdata->record_size;
->   	cxt->console_size = pdata->console_size;
-> +	cxt->event_size = pdata->event_size;
->   	cxt->ftrace_size = pdata->ftrace_size;
->   	cxt->pmsg_size = pdata->pmsg_size;
->   	cxt->dump_oops = pdata->dump_oops;
-> @@ -775,8 +801,8 @@ static int ramoops_probe(struct platform_device *pdev)
->   
->   	paddr = cxt->phys_addr;
->   
-> -	dump_mem_sz = cxt->size - cxt->console_size - cxt->ftrace_size
-> -			- cxt->pmsg_size;
-> +	dump_mem_sz = cxt->size - cxt->console_size - cxt->event_size
-> +			- cxt->ftrace_size - cxt->pmsg_size;
->   	err = ramoops_init_przs("dump", dev, cxt, &cxt->dprzs, &paddr,
->   				dump_mem_sz, cxt->record_size,
->   				&cxt->max_dump_cnt, 0, 0);
-> @@ -788,6 +814,11 @@ static int ramoops_probe(struct platform_device *pdev)
->   	if (err)
->   		goto fail_init_cprz;
->   
-> +	err = ramoops_init_prz("event", dev, cxt, &cxt->eprz, &paddr,
-> +			       cxt->event_size, 0);
-> +	if (err)
-> +		goto fail_init_eprz;
-> +
->   	cxt->max_ftrace_cnt = (cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU)
->   				? nr_cpu_ids
->   				: 1;
-> @@ -825,6 +856,8 @@ static int ramoops_probe(struct platform_device *pdev)
->   	cxt->pstore.flags = PSTORE_FLAGS_DMESG;
->   	if (cxt->console_size)
->   		cxt->pstore.flags |= PSTORE_FLAGS_CONSOLE;
-> +	if (cxt->event_size)
-> +		cxt->pstore.flags |= PSTORE_FLAGS_EVENT;
->   	if (cxt->ftrace_size)
->   		cxt->pstore.flags |= PSTORE_FLAGS_FTRACE;
->   	if (cxt->pmsg_size)
-> @@ -845,6 +878,7 @@ static int ramoops_probe(struct platform_device *pdev)
->   	record_size = pdata->record_size;
->   	dump_oops = pdata->dump_oops;
->   	ramoops_console_size = pdata->console_size;
-> +	ramoops_event_size = pdata->event_size;
->   	ramoops_pmsg_size = pdata->pmsg_size;
->   	ramoops_ftrace_size = pdata->ftrace_size;
->   
-> @@ -858,6 +892,8 @@ static int ramoops_probe(struct platform_device *pdev)
->   	kfree(cxt->pstore.buf);
->   fail_clear:
->   	cxt->pstore.bufsize = 0;
-> +	persistent_ram_free(cxt->eprz);
-> +fail_init_eprz:
->   	persistent_ram_free(cxt->mprz);
->   fail_init_mprz:
->   fail_init_fprz:
-> @@ -877,6 +913,7 @@ static int ramoops_remove(struct platform_device *pdev)
->   	kfree(cxt->pstore.buf);
->   	cxt->pstore.bufsize = 0;
->   
-> +	persistent_ram_free(cxt->eprz);
->   	persistent_ram_free(cxt->mprz);
->   	persistent_ram_free(cxt->cprz);
->   	ramoops_free_przs(cxt);
-> @@ -916,6 +953,7 @@ static void ramoops_register_dummy(void)
->   	dummy_data->mem_type = mem_type;
->   	dummy_data->record_size = record_size;
->   	dummy_data->console_size = ramoops_console_size;
-> +	dummy_data->event_size = ramoops_event_size;
->   	dummy_data->ftrace_size = ramoops_ftrace_size;
->   	dummy_data->pmsg_size = ramoops_pmsg_size;
->   	dummy_data->dump_oops = dump_oops;
-> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-> index a15bc4d48752..c31bb9567b4a 100644
-> --- a/include/linux/pstore.h
-> +++ b/include/linux/pstore.h
-> @@ -44,6 +44,7 @@ enum pstore_type_id {
->   	PSTORE_TYPE_PPC_COMMON	= 6,
->   	PSTORE_TYPE_PMSG	= 7,
->   	PSTORE_TYPE_PPC_OPAL	= 8,
-> +	PSTORE_TYPE_EVENT	= 9,
->   	PSTORE_TYPE_UNKNOWN	= 255
->   };
->   
-> @@ -193,6 +194,7 @@ struct pstore_info {
->   #define PSTORE_FLAGS_CONSOLE	(1 << 1)
->   #define PSTORE_FLAGS_FTRACE	(1 << 2)
->   #define PSTORE_FLAGS_PMSG	(1 << 3)
-> +#define PSTORE_FLAGS_EVENT	(1 << 4)
->   
->   extern int pstore_register(struct pstore_info *);
->   extern void pstore_unregister(struct pstore_info *);
-> diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
-> index e6d226464838..f01055c6cc40 100644
-> --- a/include/linux/pstore_ram.h
-> +++ b/include/linux/pstore_ram.h
-> @@ -95,6 +95,7 @@ struct ramoops_platform_data {
->   	unsigned int	mem_type;
->   	unsigned long	record_size;
->   	unsigned long	console_size;
-> +	unsigned long	event_size;
->   	unsigned long	ftrace_size;
->   	unsigned long	pmsg_size;
->   	int		dump_oops;
-> 
+> bu this cannot happen, becasue s->force_end_work = 1
+> before destroy_workqueue  , so max3100_dowork do nothing.
 
-Hi,
+Oh, so this relies on flush_workqueue or destroy_workqueue to be a
+barrier (so that the assignment to end_work is not reordered), correct?
 
-Anyone here?
+> static void max3100_shutdown(struct uart_port *port)
+> 
+> {
+> 
+> ...
+> 
+> s->force_end_work = 1;
+> 
+> 
+> if (s->poll_time > 0)
+> 
+> del_timer_sync(&s->timer);
+> 
+> 
+> if (s->workqueue) {
+> 
+> flush_workqueue(s->workqueue);
+> 
+> destroy_workqueue(s->workqueue);
+> 
+> s->workqueue = NULL;
+> 
+> }
+> 
+> 
+> 
+> static void max3100_dowork(struct max3100_port *s)
+> 
+> {
+> 
+> if (!s->force_end_work && !freezing(current) && !s->suspending)
+> 
+> queue_work(s->workqueue, &s->work);
+> 
+> }
+
+Also, on the first open:
+        s->force_end_work = 0;
+        s->parity = 0;
+        s->rts = 0;
+
+        sprintf(b, "max3100-%d", s->minor);
+        s->workqueue = create_freezable_workqueue(b);
+        if (!s->workqueue) {
+                dev_warn(&s->spi->dev, "cannot create workqueue\n");
+                return -EBUSY;
+        }
+
+Here, s->force_end_work is 0, s->workqueue is non-NULL, but s->work is
+garbage until:
+
+        INIT_WORK(&s->work, max3100_work);
+
+
+INIT_WORK should be in max3100_probe as far as I can see (or at least
+before create_freezable_workqueue), right? But those variable
+assignments also rely on some implicit barrier which is not there.
+
+thanks,
+-- 
+js
+suse labs
