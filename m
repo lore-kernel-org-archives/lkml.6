@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50009ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3754DECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09CA6208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5F33208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 00:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BjbEkjjc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09CA6208AE
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZnQPCYrr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F33208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbeIPFwO (ORCPT
+        id S1728344AbeIPFwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 01:52:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45076 "EHLO
+        Sun, 16 Sep 2018 01:52:22 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36464 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbeIPFwN (ORCPT
+        with ESMTP id S1728315AbeIPFwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 01:52:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i26-v6so5907531pfo.12
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 17:31:17 -0700 (PDT)
+        Sun, 16 Sep 2018 01:52:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b11-v6so5933690pfo.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Sep 2018 17:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Zqm+45y3CwqjDH3PNBS+oFC+JGgE2+c9aAZo0Gv2nRM=;
-        b=BjbEkjjcXDwOycmGy1HPB6giilzNOuG85J4iIgDv7cSYhIlikd3/HExfLREe96giP3
-         lSjbmNq0u3m245BlSen/nNc+1NIn3mRGw6Lj0whd3sneyMjShzhsR60WzsLaz84EfDu5
-         RSyKfCkB4aYFCz4Z2Rd32MV9bkJjNfMShhvp4=
+        bh=ZygDN+GKMdmfwM3rhwi50SUesxIf3Y1MGUgzBmc4P3E=;
+        b=ZnQPCYrrvnEUrw1AEs1QnIOLhqnKniP2gEILD8MCwlx0ZIUjOJUOsWj19vTjRUisJf
+         PcAPlkf1igpkEHCXtF3VUeLdQXPIy7id8V6CsjF9cm51Qv5C+xPHziYnSlPOAa4vfAMv
+         oT1Di4yXwwMVFyOOOxKPhHn04g/apqO1L/ers=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Zqm+45y3CwqjDH3PNBS+oFC+JGgE2+c9aAZo0Gv2nRM=;
-        b=SmPO4lbs25FsmCdIgWf8PGvLte18xZWPdFPryBeeqYkcX7pXmQ06gsBYNLs2FbSiLS
-         digPNXGeL7qXm2uWYKDPpU+orrDIV6Cj/3DEsG/qXVVHKoPFx04vwjN5mawD+xanhSbA
-         EljK7D/433/D6LhAZDMk3ZwlSfQorZVCxu9VW3wSJkvY3zrqpmXyUYT86pRmH3rdp+nU
-         4g6TymXPvvZHKnYSZQf+1kfZ0I0mlIPuwLnqebqIFREJTuTyY8lWH4Vr+agmgKBBfiE/
-         Fzqq0kYzhbFh5FBRG2OZR3YZFYCfsQ3xpNRuO53C2L4Fz+xp7RuULkDJdn/M8ATmXXm8
-         T+OQ==
-X-Gm-Message-State: APzg51B0ebuWRU8/B7PTOy9oDUoNHQ58j0IMaF4p7ALMmKEm+bzbWQrQ
-        xfxlG2KxD3j81As8OBT/1p9Wrg==
-X-Google-Smtp-Source: ANB0VdYZRUFUCBVifNyQyf+lFAYbSeDvSUMm38ouS+NA8SeI8e7eUA2f/puYmLvBMlns9ezIhVgqSw==
-X-Received: by 2002:a63:3f45:: with SMTP id m66-v6mr17636170pga.51.1537057877690;
-        Sat, 15 Sep 2018 17:31:17 -0700 (PDT)
+        bh=ZygDN+GKMdmfwM3rhwi50SUesxIf3Y1MGUgzBmc4P3E=;
+        b=PNb/SO/uEz+mbF2Q946pZPw8RhSSueNIfumfg8z/mCX5BqYOQ/mAk8UaiTLIn9p450
+         77lQD+aJeO/puj9W+CPPHx99Rm/9BUin8Yvre8aC4h5wpTT2hxlagrmHFeLm/GgsQzMK
+         0+QebjLjXkBVnsxUIgmb71tO47TGi3yiPpWyN+b3+H/aKCqj2DQC+jfVeLhxnP2oCBgT
+         EYlCoSAiyUfCCXyjQT1TiYXkxhM7wIcmGIuzPN2ZRVPZncldRk0/YRWGNz95nTrERIXB
+         wpfIdqH2qHSb4fi+iPQTQGZ9Ud/hre9O3zNQ0rRY9wwfnC/K56iasqU9URhh4pmU2kuV
+         2ycA==
+X-Gm-Message-State: APzg51D8DgJqTLNoLAG4grOcV2/iHQJX1qV4ukNat59tM4+zKOklPKLv
+        r/AZxJhMcLQzA83qK0zeAyJJMg==
+X-Google-Smtp-Source: ANB0VdbP3het6oYARDPqls52ntBFd/SJ5yaE0lenr89A9qW1H2Hnk7ngoTORUUUYY31z3ST8ER57/w==
+X-Received: by 2002:a62:c008:: with SMTP id x8-v6mr19211170pff.149.1537057878544;
+        Sat, 15 Sep 2018 17:31:18 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id h20-v6sm12346360pgg.3.2018.09.15.17.31.08
+        by smtp.gmail.com with ESMTPSA id s3-v6sm16246688pgj.84.2018.09.15.17.31.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Sat, 15 Sep 2018 17:31:14 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -66,9 +66,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>
-Subject: [PATCH 14/18] Yama: Initialize as LSM_TYPE_MINOR
-Date:   Sat, 15 Sep 2018 17:30:55 -0700
-Message-Id: <20180916003059.1046-15-keescook@chromium.org>
+Subject: [PATCH 15/18] capability: Initialize as LSM_TYPE_MINOR
+Date:   Sat, 15 Sep 2018 17:30:56 -0700
+Message-Id: <20180916003059.1046-16-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180916003059.1046-1-keescook@chromium.org>
 References: <20180916003059.1046-1-keescook@chromium.org>
@@ -77,63 +77,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts Yama to use the new LSM_TYPE_MINOR marking.
+This converts capabilities to use the new LSM_TYPE_MINOR marking, as well
+as the LSM_ORDER_FIRST position.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h | 5 -----
+ include/linux/lsm_hooks.h | 2 --
+ security/commoncap.c      | 9 ++++++++-
  security/security.c       | 1 -
- security/yama/yama_lsm.c  | 8 +++++++-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5e0ca4a05091..0564153130c8 100644
+index 0564153130c8..f2949744a5d3 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2102,10 +2102,5 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+@@ -2101,6 +2101,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
  #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
- extern void __init capability_add_hooks(void);
--#ifdef CONFIG_SECURITY_YAMA
--extern void __init yama_add_hooks(void);
--#else
--static inline void __init yama_add_hooks(void) { }
--#endif
- 
+-extern void __init capability_add_hooks(void);
+-
  #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 2e489d6a3ac8..44e7a9260f89 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1366,10 +1366,17 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+ };
+ 
+-void __init capability_add_hooks(void)
++static int __init capability_init(void)
+ {
+ 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+ 				"capability");
++	return 0;
+ }
+ 
++DEFINE_LSM(capability)
++	.order = LSM_ORDER_FIRST,
++	.type = LSM_TYPE_MINOR,
++	.init = capability_init,
++END_LSM;
++
+ #endif /* CONFIG_SECURITY */
 diff --git a/security/security.c b/security/security.c
-index 65d7ba1bc1ef..c6ca07fc0771 100644
+index c6ca07fc0771..67532326a0ce 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -125,7 +125,6 @@ int __init security_init(void)
+@@ -124,7 +124,6 @@ int __init security_init(void)
+ 	/*
  	 * Load minor LSMs, with the capability module always first.
  	 */
- 	capability_add_hooks();
--	yama_add_hooks();
+-	capability_add_hooks();
  	lsm_init(LSM_TYPE_MINOR);
  
  	/*
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index ffda91a4a1aa..e970917926d9 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -477,9 +477,15 @@ static void __init yama_init_sysctl(void)
- static inline void yama_init_sysctl(void) { }
- #endif /* CONFIG_SYSCTL */
- 
--void __init yama_add_hooks(void)
-+static int __init yama_init(void)
- {
- 	pr_info("Yama: becoming mindful.\n");
- 	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
- 	yama_init_sysctl();
-+	return 0;
- }
-+
-+DEFINE_LSM(yama)
-+	.type = LSM_TYPE_MINOR,
-+	.init = yama_init,
-+END_LSM;
 -- 
 2.17.1
 
