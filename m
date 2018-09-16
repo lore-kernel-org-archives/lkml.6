@@ -2,91 +2,279 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55629ECE561
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 09:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D5AECE561
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 09:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D219621476
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 09:36:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jbio0bqi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D219621476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C1FF7208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 09:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FF7208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeIPO7P (ORCPT
+        id S1728089AbeIPPAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 10:59:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbeIPO7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 10:59:15 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A0EF208AE;
-        Sun, 16 Sep 2018 09:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537090616;
-        bh=1NTm8ULzhEcwxCEAQ9yA2iQO1Nt+iCn3W0OVBJh5IpI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Jbio0bqiffAMBuxnyVl2Z6LLzZCIA22zIOvXrWgZgJYbPRtcu95oMcLq719GJSdiV
-         qJdX1RZCEu7czi2vKBNO3FzH2Rc/3MoT95P5dx9hpqlt54iElqCWtWw5S6ESQRw0eZ
-         qPZoEgvaktFoVliPTWNWbdK6noe8H7OpfM4URW7g=
-Date:   Sun, 16 Sep 2018 10:36:57 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     YueHaibing <yuehaibing@huawei.com>, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH -next] iio: potentiometer: mcp4018: merge calls to
- of_match_device and of_device_get_match_data
-Message-ID: <20180916103657.10cfb5ed@archlinux>
-In-Reply-To: <9f3c9f9a-6bb4-19ba-65ad-53f7edd2af20@axentia.se>
-References: <20180915105241.22584-1-yuehaibing@huawei.com>
-        <9f3c9f9a-6bb4-19ba-65ad-53f7edd2af20@axentia.se>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Sep 2018 11:00:08 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:49832 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727391AbeIPPAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 11:00:08 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437736|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.CrU2KQ6_1537090607;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CrU2KQ6_1537090607)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Sun, 16 Sep 2018 17:36:47 +0800
+Date:   Sun, 16 Sep 2018 17:36:46 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     tglx@linutronix.de, daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V5 1/2] clocksource: add C-SKY SMP timer
+Message-ID: <20180916093646.GA4305@guoren-Inspiron-7460>
+References: <dce7c1bc36ba39635b0ae5fd3d9b30172936727d.1537089130.git.ren_guo@c-sky.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dce7c1bc36ba39635b0ae5fd3d9b30172936727d.1537089130.git.ren_guo@c-sky.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Sep 2018 13:35:06 +0200
-Peter Rosin <peda@axentia.se> wrote:
+Sorry for duplicate patch-sets, for gx6605s-timer See PATCH V6.
 
-> On 2018-09-15 12:52, YueHaibing wrote:
-> > Drop call to of_match_device, which is subsumed by the subsequent
-> > call to of_device_get_match_data.  The code becomes simpler, and a
-> > temporary variable can be dropped.
-> > 
-> > Found by coccinelle.
-> > 
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>  
+On Sun, Sep 16, 2018 at 05:13:57PM +0800, Guo Ren wrote:
+> This timer is used by SMP system and use mfcr/mtcr instruction
+> to access the regs.
 > 
-> Acked-by: Peter Rosin <peda@axentia.se>
-Similar change already in place from Julia Lawall back in May but
-looks like that just missed the last set for the merge window
-after I managed to loose it and only picked up again when Peter
-pointed it out in August.
-
-However, something odd is going on as these are not currently in
-next.
-
-Ah, looks line staging-next was updated 2 days ago and last linux-next
-is just before that.  So I'm afraid you hit some very unfortunate
-timing or this would have been there when you were looking.
-
-Thanks,
-
-Jonathan
-
+> Changelog:
+>  - Support csky mp timer alpha version.
+>  - Just use low-counter with 32bit width as clocksource.
+>  - Coding convention with upstream feed-back.
 > 
-> Cheers,
-> Peter
-
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  drivers/clocksource/Kconfig        |   8 ++
+>  drivers/clocksource/Makefile       |   1 +
+>  drivers/clocksource/csky_mptimer.c | 178 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 187 insertions(+)
+>  create mode 100644 drivers/clocksource/csky_mptimer.c
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a11f4ba..51286be 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -609,6 +609,14 @@ config ATCPIT100_TIMER
+>  	help
+>  	  This option enables support for the Andestech ATCPIT100 timers.
+>  
+> +config CSKY_MPTIMER
+> +	bool "C-SKY Multi Processor Timer"
+> +	depends on CSKY
+> +	select TIMER_OF
+> +	help
+> +	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
+> +	  system.
+> +
+>  config RISCV_TIMER
+>  	bool "Timer for the RISC-V platform"
+>  	depends on RISCV
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index db51b24..848c676 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -79,3 +79,4 @@ obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
+>  obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+>  obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
+>  obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
+> +obj-$(CONFIG_CSKY_MPTIMER)		+= csky_mptimer.o
+> diff --git a/drivers/clocksource/csky_mptimer.c b/drivers/clocksource/csky_mptimer.c
+> new file mode 100644
+> index 0000000..da2b239
+> --- /dev/null
+> +++ b/drivers/clocksource/csky_mptimer.c
+> @@ -0,0 +1,178 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+> +
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/sched_clock.h>
+> +#include <linux/cpu.h>
+> +#include <asm/reg_ops.h>
+> +
+> +#include "timer-of.h"
+> +
+> +#define PTIM_CCVR	"cr<3, 14>"
+> +#define PTIM_CTLR	"cr<0, 14>"
+> +#define PTIM_LVR	"cr<6, 14>"
+> +#define PTIM_TSR	"cr<1, 14>"
+> +
+> +static int csky_mptimer_set_next_event(unsigned long delta, struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_LVR, delta);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_mptimer_shutdown(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_mptimer_oneshot(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_mptimer_oneshot_stopped(struct clock_event_device *ce)
+> +{
+> +	mtcr(PTIM_CTLR, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static DEFINE_PER_CPU(struct timer_of, csky_to) = {
+> +	.flags					= TIMER_OF_CLOCK,
+> +	.clkevt = {
+> +		.rating				= 300,
+> +		.features			= CLOCK_EVT_FEAT_PERCPU |
+> +						  CLOCK_EVT_FEAT_ONESHOT,
+> +		.set_state_shutdown		= csky_mptimer_shutdown,
+> +		.set_state_oneshot		= csky_mptimer_oneshot,
+> +		.set_state_oneshot_stopped	= csky_mptimer_oneshot_stopped,
+> +		.set_next_event			= csky_mptimer_set_next_event,
+> +	},
+> +	.of_irq = {
+> +		.flags				= IRQF_TIMER,
+> +		.percpu				= 1,
+> +	},
+> +};
+> +
+> +static irqreturn_t timer_interrupt(int irq, void *dev)
+> +{
+> +	struct timer_of *to = this_cpu_ptr(&csky_to);
+> +
+> +	mtcr(PTIM_TSR, 0);
+> +
+> +	to->clkevt.event_handler(&to->clkevt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +/*
+> + * clock event for percpu
+> + */
+> +static int csky_mptimer_starting_cpu(unsigned int cpu)
+> +{
+> +	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
+> +
+> +	to->clkevt.cpumask = cpumask_of(cpu);
+> +
+> +	clockevents_config_and_register(&to->clkevt, timer_of_rate(to), 2, ULONG_MAX);
+> +
+> +	enable_percpu_irq(timer_of_irq(to), 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int csky_mptimer_dying_cpu(unsigned int cpu)
+> +{
+> +	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
+> +
+> +	disable_percpu_irq(timer_of_irq(to));
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * clock source
+> + */
+> +static u64 sched_clock_read(void)
+> +{
+> +	return (u64) mfcr(PTIM_CCVR);
+> +}
+> +
+> +static u64 clksrc_read(struct clocksource *c)
+> +{
+> +	return (u64) mfcr(PTIM_CCVR);
+> +}
+> +
+> +struct clocksource csky_clocksource = {
+> +	.name	= "csky",
+> +	.rating	= 400,
+> +	.mask	= CLOCKSOURCE_MASK(32),
+> +	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
+> +	.read	= clksrc_read,
+> +};
+> +
+> +#define CPUHP_AP_CSKY_TIMER_STARTING CPUHP_AP_DUMMY_TIMER_STARTING
+> +
+> +static int __init csky_mptimer_init(struct device_node *np)
+> +{
+> +	int ret, cpu;
+> +	struct timer_of *to;
+> +	int rate = 0;
+> +	int irq	 = 0;
+> +
+> +	/*
+> +	 * Csky_mptimer is designed for C-SKY SMP multi-processors and
+> +	 * every core has it's own private irq and regs for clkevt and
+> +	 * clksrc.
+> +	 *
+> +	 * The regs is accessed by cpu instruction: mfcr/mtcr instead of
+> +	 * mmio map style. So we needn't mmio-address in dts, but we still
+> +	 * need to give clk and irq number.
+> +	 *
+> +	 * We use private irq for the mptimer and irq number is the same
+> +	 * for every core. So we use request_percpu_irq() in timer_of_init.
+> +	 */
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		to = per_cpu_ptr(&csky_to, cpu);
+> +
+> +		if (cpu == 0) {
+> +			to->flags	  |= TIMER_OF_IRQ;
+> +			to->of_irq.handler = timer_interrupt;
+> +
+> +			ret = timer_of_init(np, to);
+> +			if (ret)
+> +				return ret;
+> +
+> +			rate	= timer_of_rate(to);
+> +			irq	= to->of_irq.irq;
+> +		} else {
+> +			ret = timer_of_init(np, to);
+> +			if (ret)
+> +				return ret;
+> +
+> +			to->of_clk.rate	= rate;
+> +			to->of_irq.irq	= irq;
+> +		}
+> +	}
+> +
+> +	ret = cpuhp_setup_state(CPUHP_AP_CSKY_TIMER_STARTING,
+> +				"clockevents/csky/timer:starting",
+> +				csky_mptimer_starting_cpu,
+> +				csky_mptimer_dying_cpu);
+> +	if (ret) {
+> +		pr_err("%s: Failed to cpuhp_setup_state.\n", __func__);
+> +		return ret;
+> +	}
+> +
+> +	clocksource_register_hz(&csky_clocksource, rate);
+> +	sched_clock_register(sched_clock_read, 32, rate);
+> +
+> +	return 0;
+> +}
+> +TIMER_OF_DECLARE(csky_mptimer, "csky,mptimer", csky_mptimer_init);
+> -- 
+> 2.7.4
