@@ -2,194 +2,126 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A4CECE561
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 23:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6275BECE561
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 23:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DDA2087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 23:00:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ENvpZ6ku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DDA2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 97B032087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 23:11:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B032087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbeIQEZO (ORCPT
+        id S1727012AbeIQEgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 00:25:14 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:42539 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeIQEZN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 00:25:13 -0400
-Received: by mail-yb1-f196.google.com with SMTP id j8-v6so6999276ybg.9
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 16:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=aS0O6rTyLNJVS6Fpc6tBclz1LGf7y4px7eKsRWEUvts=;
-        b=ENvpZ6kuYbMorISfPLGjbGVxgnBx85J5t9u9UfptazBcjb2XA8tWl2c6SUewwtEhLe
-         nrGdcgCJUdAtzwcryzvQYi9f0c9eSVz4X6A9T0vnkLu+VaCEje2ghhAw3rcosISe3h9r
-         HJ6GmAuoCSKmO7nYAPYMO7zATQ3oR4Ib7xYhY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=aS0O6rTyLNJVS6Fpc6tBclz1LGf7y4px7eKsRWEUvts=;
-        b=VFnS05y7hAw+Pk8rgvjFguSsCwNQBMl+xbIqFp41DXeGjcZGLwETckjPOAOuhP7sJd
-         0lAAWH0uY5X34R7QketTwBm3QCYXsExxcdF5SM1rcfEh9+uKroqCUzEZpCd7JxlnzADX
-         6H6/0/N4xgFl8Jlpad6yhNIpahnjg3/xswmAZXOpHMvmQS0nZTlxf1fo1br/ADRn01xn
-         qi8pa9gIluSk1Jp42nM7mHqk4vknKb8FKvPvFun6P2JLGgbw1AsrqGBN0Fh/dcWtkT/h
-         Lmjz0xXNrGonKjfCQwVuDxShvOpIPxv89VdI9J394dQfWAl6ZI3Ar3TMhUa3p5Po5RQ2
-         x08w==
-X-Gm-Message-State: APzg51CPmRNsN+nco4mzUuMNdeJuTxkyCIBeH9iRXu3KNuJ6QR51MNij
-        VS7/UW/nCf9mRlUXr9WFX5u6BLl5txo=
-X-Google-Smtp-Source: ANB0VdZ9Xcik9OSdzRMqvVUSMisGPPJjc3LruGv7W0GSsfqrgm2TXomIytXTVUUMXSdiSYIXqVv4zA==
-X-Received: by 2002:a5b:c44:: with SMTP id d4-v6mr9573394ybr.381.1537138839664;
-        Sun, 16 Sep 2018 16:00:39 -0700 (PDT)
-Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
-        by smtp.gmail.com with ESMTPSA id p190-v6sm5506272ywg.95.2018.09.16.16.00.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Sep 2018 16:00:38 -0700 (PDT)
-Received: by mail-yw1-f51.google.com with SMTP id y134-v6so4756846ywg.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 16:00:38 -0700 (PDT)
-X-Received: by 2002:a81:4e01:: with SMTP id c1-v6mr9451125ywb.237.1537138837666;
- Sun, 16 Sep 2018 16:00:37 -0700 (PDT)
+        Mon, 17 Sep 2018 00:36:17 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:43596 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725764AbeIQEgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 00:36:17 -0400
+Received: from MUA
+        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1g1gCZ-0008Q0-EQ; Mon, 17 Sep 2018 01:11:39 +0200
+Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
+ under high system load
+To:     David Arendt <admin@prnet.org>
+Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
+        netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
+References: <d05d87f5-1458-f5ce-c644-566ff78e9fc1@prnet.org>
+ <4f54989b-9492-420e-374b-d8c9bddf0a7d@prnet.org>
+ <6c14f6d0-ea61-b8e6-57a2-940d32330ed2@maciej.szmigiero.name>
+ <236d01e8-865a-e5e8-7537-197657afb34b@prnet.org>
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <808c73db-078d-cbc5-e46d-5911d636348d@maciej.szmigiero.name>
+Date:   Mon, 17 Sep 2018 01:11:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Sun, 16 Sep 2018 16:00:36
- -0700 (PDT)
-In-Reply-To: <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
-References: <20180916003059.1046-1-keescook@chromium.org> <20180916003059.1046-17-keescook@chromium.org>
- <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 16 Sep 2018 16:00:36 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-Message-ID: <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <236d01e8-865a-e5e8-7537-197657afb34b@prnet.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 11:49 AM, Casey Schaufler
-<casey@schaufler-ca.com> wrote:
-> On 9/15/2018 5:30 PM, Kees Cook wrote:
->> To prepare for having a third type of LSM ("shared blob"), this implements
->> dynamic handling of LSM ordering. The visible change here is that the
->> "security=" boot commandline is now a comma-separated ordered list of
->> all LSMs, not just the single "exclusive" LSM. This means that the
->> "minor" LSMs can now be disabled at boot time by omitting them from the
->> commandline. Additionally LSM ordering becomes entirely mutable for LSMs
->> with LSM_ORDER_MUTABLE ("capability" is not mutable and is always enabled
->> first).
->
-> Today if I have Yama enabled and use security=apparmor I get a
-> module list of capability,yama,apparmor. With this change I would
-> get a different result, capability,apparmor. I am personally OK with
-> this, but I think others may see it as a violation of compatibility.
+On 16.09.2018 14:38, David Arendt wrote:
+> Hi,
+> 
+(..)
+> 
+> For information here the differences from ethtool between the working
+> driver from 4.17.14 and the patched one fom 4.18.8:
+> 
+> --- working.txt 2018-09-16 14:14:00.544376935 +0200
+> +++ patched.txt 2018-09-16 14:20:09.445660915 +0200
+> @@ -17 +17 @@
+> -0x40: Tx Configuration                        0x4f000f80
+> +0x40: Tx Configuration                        0x4f000f00
 
-Correct. That is the problem I had asked about earlier: it means
-people with existing security= for specifying the active major LSM
-will _disable_ all the minor LSMs after this change. It makes me
-uncomfortable.
+TXCFG_AUTO_FIFO was set by the working driver in TxConfig but the current
+driver version seems unable to do it.
 
-> One solution is to leave security= as is, not affecting "minor"
-> modules and only allowing specification of one major module, and adding
+Looking at your NIC model config code (guess it is XID 4c000800 or
+RTL_GIGA_MAC_VER_40) that bit should be set by rtl_hw_start_8168g(),
+that is called from rtl_hw_start_8168g_1(), that in turn is called
+from rtl_hw_start_8168().
 
-I would much prefer this, yes.
+However, after rtl_hw_start_8168() is called from rtl_hw_start()
+(as tp->hw_start(tp)) a call to rtl_set_tx_config_registers() is made
+which overwrites TxConfig completely, zeroing the aforementioned bit.
 
-A question remains: how do we map the existing "security=" selection
-of a "major" LSM against what will be next "exclusive" plus tomoyo,
-and in the extreme case, nothing?
+It looks like this was first introduced by commit
+4fd48c4ac0a0 ("r8169: move common initializations to tp->hw_start").
+I have added its author (Heiner Kallweit) to CC.
 
-Perhaps as part of deprecating "security=", we could just declare that
-it is selecting between SELinux, AppArmor, Smack, and Tomoyo only?
+@Heiner: could you have a look at this?
 
-> another boot option security.stack= that overrides a security= option
-> and that takes the list as you've implemented here.
-
-or "lsm.stack=" that overrides "security=" entirely?
-
-> An icky alternative would be to say that any security= specification
-> with no commas in it retains the old behavior. So
->         security=apparmor
->         security=apparmor,
-> would get you
->         capability,yama,apparmor
->         capability,apparmor
-> respectively.
->
-> Another option would be to require negation on the minor modules,
-> such as
->         security=apparmor,-loadpin
->
-> I can't honestly say which I like least or best.
-
-The trailing comma thing gets us some compatibility, but we still have
-to decide which things should be exclusive-via-"security=" since with
-blob-sharing it already becomes possible to do selinux + tomoyo.
-
-The -$lsm style may make it hard to sensibly order any unspecified
-LSMs. I guess it could just fall back to "follow builtin ordering of
-unspecified LSMs" (unless someone had, maybe, "-all").
-
-so, if builtin ordering after blob-sharing is
-capability,integrity,yama,loadpin,{selinux,apparmor,smack},tomoyo
-
-security=apparmor  is  capability,apparmor,integrity,yama,loadpin,tomoyo
-
-security=yama,smack,-all  is  capability,yama,smack
-
-security=loadpin,selinux,yama,-integrity  is
-capability,loadpin,selinux,yama,tomoyo
-
-
-Whatever we design, it needs to handle both the blob-sharing
-near-future, and have an eye towards "extreme stacking" in the
-some-day future. In both cases, the idea of a "major" LSM starts to
-get very very hazy.
-
-As for how we classify things, based on hooks...
-
-now:
-    always: capability
-    major: selinux,apparmor,smack,tomoyo
-    minor: yama,loadpin
-    init-only: integrity
-
-blob-sharing:
-    always: capability
-    exclusive: selinux,apparmor,smack
-    sharing: tomoyo,integrity,yama,loadpin
-
-extreme:
-    always: capability
-    sharing: selinux,apparmor,smack,tomoyo,integrity,yama,loadpin
-
-The most special are capability (unconditional, run first) and
-integrity (init-only, no security_add_hooks() call).
-
-Can we classify things as MAC and non-MAC for "major" vs "minor"? SARA
-and Landlock aren't MAC (and neither is integrity), or should we do
-the "-$lsm" thing instead?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Maciej
