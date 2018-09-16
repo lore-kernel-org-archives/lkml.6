@@ -4,160 +4,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 954D1ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113ADECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF372087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:05:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A118420883
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 17:15:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkHvCaij"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF372087E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MX+3wk9j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A118420883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeIPW3C (ORCPT
+        id S1728316AbeIPWic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 18:29:02 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:45317 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbeIPW3C (ORCPT
+        Sun, 16 Sep 2018 18:38:32 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35953 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbeIPWib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 18:29:02 -0400
-Received: by mail-vs1-f67.google.com with SMTP id x198-v6so2066730vsx.12
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 10:05:29 -0700 (PDT)
+        Sun, 16 Sep 2018 18:38:31 -0400
+Received: by mail-vs1-f68.google.com with SMTP id z19-v6so2075650vso.3;
+        Sun, 16 Sep 2018 10:14:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uNNZt/yv18gqS8vBJLYjcGKjXaiGUN3ckinOpvTC4kA=;
-        b=EkHvCaijwbAcJorchx1GkyirtC9CCYfrdb7FUqqIGKdnSwR8ILALeW7pRJr9IVvQHn
-         aWqxthf00uzMSaidH00AxzaQk32X9gw0PqVaC8BbfTcZBSK3KM/EqhdXDQJ+6zkxml2M
-         qmrfu3pPl8lf+xALoyevlSLtD0Vn3KRRnICIYi6sHD27KBsbX2xuM1WOti9VaOdp3TIu
-         BVGaOxfSDZJ4A9Tisw5/1VQYQHuaDQgbKsXUzfQ+V++IdQDKEqzSlonJLIez26WrktQe
-         +N5OFKs5cvOPN29yrlj5+kq/maZHb6e9eFb67E/aZmvAbjVDWAzJJoO8dc6Dtvy5x0d3
-         wtdQ==
+        bh=i49dArdacxzzu8mTgtYAt2Lt9rDnQ/ZSCIiSJxCGWlo=;
+        b=MX+3wk9jI1x4BUh0L2xKi1sn519FzP5eNS8aWubNVh84+JJtcNrHX1eSLA9tinNuAb
+         Stx718y6D8SdsSbafhfwVcsmpmGkjdlIG7ua6P2iTcE5PWW6Nws5AYRsrST24cyH1Wy3
+         iviyJiC/2OTxBRsQdn7nSgZu0a8uoeclKFUHbUt+QHJX0t0v2ETwYdZvMNCSlccXXtHN
+         +rd2JKmaZLPwleZ8hqL6lGaE7L5fHaunKy76LQW4GihdeTwODTRBIOaOaQIeKlgUk2+D
+         j/ePl4kEjQ0wm3+mbZFmmeehaFqxiPWSiBupBwTNAuuRZBXToSQdWtyR7Unmh9qGuW0H
+         8Rmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uNNZt/yv18gqS8vBJLYjcGKjXaiGUN3ckinOpvTC4kA=;
-        b=JNr8LzUg29f4wc5VlbfMcjpPMi6BvC/T2/6xkg1sU0DF2ppdq8WaYP32VONTPcD80w
-         KPIvNRAnGn40V9QvHJ6EPE6enrYL4zM4fXnVMwhaXqHCJdJEvloq7TxTvScBe0POKwAq
-         eiqmRqoozq4cqD6kKqHufPjUzKpB/FC5bfOH+0hCh6540zbmIR093CX4nD+8LCpYBMhD
-         PnxaZ//t2j52y1SKxI/AT5FuPSdwUTg6eMpFOIYIiVCmBj2wKxUBjSnJZw11g07LYTcx
-         D6XVY1YUJX/lb4m74gNZjvodASZAIiu0GHKPcvdh8bmao+nLsSZw3erqmnpF5rEsz2FM
-         yP6A==
-X-Gm-Message-State: APzg51DvgKMycqZjWRYXgpyyj9pGmMVXAdJATUMsCyOg8ZrQskvLaHom
-        jCSZKvCaU2JL3tDPG4tGKiYMkitBCas9WoqsC3o=
-X-Google-Smtp-Source: ANB0VdZPudaKYvEGfcyitShYkMpQ/fDnYmiJ/tqbwMRvIrM7Ns/PBeAZWAwosnSqnMkRhcY4PbGb0UofrVIvoRxSjYw=
-X-Received: by 2002:a67:a89b:: with SMTP id h27-v6mr6784795vsi.18.1537117528870;
- Sun, 16 Sep 2018 10:05:28 -0700 (PDT)
+        bh=i49dArdacxzzu8mTgtYAt2Lt9rDnQ/ZSCIiSJxCGWlo=;
+        b=B14QwpWrILGKMDoUDHCshm94qET5TDu83GiCqiDn7Q+VpuFckFWujr5VOSPs70Hdo8
+         VrRb+0wOrCLqis+zmCbeAGp9dFTnvUWn/pd70yxP1vawS3f+sZNvcw5d3dyVyFESR61X
+         xfG5OtdVHW+6X7woSsJtHlWm/XHtE7XJoDPPeAKMst8Qb9KoiyVBT4n4pUCgmezDCLBY
+         bXdOM6c+yboL+gPufiE4MkfcFT/HW2MCpjywQXb1Fln7yYqRVfCXsWVeaJRIprkBf5Xs
+         mwlgf1Zo3sckmbyoms1HSEnMmSInzCPMhjtahzLSgyCRne2VPI4G+iPQG7LY2q541+gz
+         EsDA==
+X-Gm-Message-State: APzg51DSGGl75R+u5u4FYUpHKFv2SOZ7jx+/lM7KiJ820VupCebEyVMO
+        h6HPr7pAw6sRSV3j+LMbfYk368SHdIwsOJa9I0k=
+X-Google-Smtp-Source: ANB0VdaNWPCNZm/8OJEVdBUDIVJeWRLX0lfbqdcl2kOFaf4015gsI3ohbtbFi1YYQ/i/krF/OK8r/yBWNmHzbgTc74Q=
+X-Received: by 2002:a67:4991:: with SMTP id d17-v6mr6917673vsg.41.1537118095964;
+ Sun, 16 Sep 2018 10:14:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
- <20180916153237.GC15699@rapoport-lnx>
-In-Reply-To: <20180916153237.GC15699@rapoport-lnx>
-From:   Pintu Kumar <pintu.ping@gmail.com>
-Date:   Sun, 16 Sep 2018 22:35:17 +0530
-Message-ID: <CAOuPNLj0HyC+yzwTpN-EWpzHTJ58u7pBfOja1MyweF4pbct1eQ@mail.gmail.com>
-Subject: Re: KSM not working in 4.9 Kernel
-To:     rppt@linux.vnet.ibm.com
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
+References: <1536516257-30871-1-git-send-email-s.mesoraca16@gmail.com> <20180909191903.GA2344@ravnborg.org>
+In-Reply-To: <20180909191903.GA2344@ravnborg.org>
+From:   Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date:   Sun, 16 Sep 2018 19:14:44 +0200
+Message-ID: <CAJHCu1++7sJv88Qg4wtx-AhfmQCbjy2psxuoePz2YViLNu-ahA@mail.gmail.com>
+Subject: Re: [PATCH v2] kconfig: add hardened defconfig helpers
+To:     sam@ravnborg.org
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        corbet@lwn.net, keescook@chromium.org, labbott@redhat.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        ebiederm@xmission.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 9:02 PM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+Sam Ravnborg <sam@ravnborg.org> wrote:
 >
-> On Fri, Sep 14, 2018 at 07:58:01PM +0530, Pintu Kumar wrote:
-> > Hi All,
-> >
-> > Board: Hikey620 ARM64
-> > Kernel: 4.9.20
-> >
-> > I am trying to verify KSM (Kernel Same Page Merging) functionality on
-> > 4.9 Kernel using "mmap" and madvise user space test utility.
-> > But to my observation, it seems KSM is not working for me.
-> > CONFIG_KSM=y is enabled in kernel.
-> > ksm_init is also called during boot up.
-> >   443 ?        SN     0:00 [ksmd]
-> >
-> > ksmd thread is also running.
-> >
-> > However, when I see the sysfs, no values are written.
-> > ~ # grep -H '' /sys/kernel/mm/ksm/*
-> > /sys/kernel/mm/ksm/pages_hashed:0
-> > /sys/kernel/mm/ksm/pages_scanned:0
-> > /sys/kernel/mm/ksm/pages_shared:0
-> > /sys/kernel/mm/ksm/pages_sharing:0
-> > /sys/kernel/mm/ksm/pages_to_scan:200
-> > /sys/kernel/mm/ksm/pages_unshared:0
-> > /sys/kernel/mm/ksm/pages_volatile:0
-> > /sys/kernel/mm/ksm/run:1
-> > /sys/kernel/mm/ksm/sleep_millisecs:1000
-> >
-> > So, please let me know if I am doing any thing wrong.
-> >
-> > This is the test utility:
-> > int main(int argc, char *argv[])
-> > {
-> >         int i, n, size;
-> >         char *buffer;
-> >         void *addr;
-> >
-> >         n = 100;
-> >         size = 100 * getpagesize();
-> >         for (i = 0; i < n; i++) {
-> >                 buffer = (char *)malloc(size);
-> >                 memset(buffer, 0xff, size);
-> >                 addr =  mmap(NULL, size,
-> >                            PROT_READ | PROT_EXEC | PROT_WRITE,
-> > MAP_PRIVATE | MAP_ANONYMOUS,
-> >                            -1, 0);
-> >                 madvise(addr, size, MADV_MERGEABLE);
+> Hi Salvatore.
+
+Hi Sam
+
+> On Sun, Sep 09, 2018 at 08:04:17PM +0200, Salvatore Mesoraca wrote:
+> > Adds 4 new defconfig helpers (hardenedlowconfig, hardenedmediumconfig,
+> > hardenedhighconfig, hardenedextremeconfig) to enable various hardening
+> > features.
+> > The list of config options to enable is based on KSPP's Recommended
+> > Settings and on kconfig-hardened-check, with some modifications.
+> > These options are divided into 4 levels (low, medium, high, extreme)
+> > based on their negative side effects, not on their usefulness.
+> > 'Low' level collects all those protections that have (almost) no
+> > negative side effects.
+> > 'Extreme' level collects those protections that may have so many
+> > negative side effects that most people wouldn't want to enable them.
+> > Every feature in each level is briefly documented in
+> > Documentation/security/hardenedconfig.rst, this file also contain a
+> > better explanation of what every level means.
+> > To prevent this file from drifting from what the various defconfigs
+> > actually do, it is used to dynamically generate the config fragments.
 >
-> Just mmap'ing an area does not allocate any physical pages, so KSM has
-> nothing to merge.
+> In the above you nicely describes what is done.
+> But there is nothing about the target group for this feature.
+> Who will benefit from this?
+
+Sometimes people ask about kernel hardening features, that's the
+reason why the KSPP's list and the kconfig-hardened-check script were
+written.
+Unfortunately, kernel features with security implications have often
+misleading names and descriptions and are scattered around the
+menuconfig.
+This patchset will help anyone who want to have an "hardened kernel"
+but isn't following kernel development closely enough to know about
+all the features.
+On one hand, this will provide an official and understandable list of
+hardening features inside the kernel doc, on the other hand it also
+provide a fast and easy way to enable those features all at once.
+
+> With respect to the actual implmentation we now
+> have two ways to handle config fragments.
+> Current solution is to save the config fragments in kernel/configs.
+> And the new solution is to parse the config fragments from an rst file.
+> The changelog fails to mentions why we need a new way to handle
+> the config fragments.
+
+The reason why I'm doing it like this is that I want both the config
+fragments and the doc in the kernel.
+Generating the fragments from the doc is the best way to make sure
+that they will always do what the doc says.
+
+> If we want to go the "parse from rst file" way - can it then
+> be abstracted in a way so this is the only way to handle
+> these in-kernel config fragments?
+> And then move the current config fragment to the new way.
 >
-> You need to memset(addr,...) after mmap().
->
+> It most be possible with a little careful design to make this
+> a general solution and not a hardening thing only.
 
-Yes, I am doing memset also.
-memset(addr, 0xff, size);
+I don't know if maintainers of the other fragments care at all about
+having every single option documented in detail.
+For hardening features it makes sense, because people may want to just
+learn about them and enable them manually.
+I don't know if this is common or desirable for other config fragments.
 
-But still no effect.
-And I checked LTP test cases. It almost doing the same thing.
+Thank you for you comment,
 
-I observed that [ksmd] thread is not waking up at all.
-I gave some print inside it, but I could never saw that prints coming.
-I could not find it running either in top command during the operation.
-Is there anything needs to be done, to wakw up ksmd?
-I already set: echo 1 > /sys/kernel/mm/ksm.
-
-
-
-> >                 sleep(1);
-> >         }
-> >         printf("Done....press ^C\n");
-> >
-> >         pause();
-> >
-> >         return 0;
-> > }
-> >
-> >
-> >
-> > Thanks,
-> > Pintu
-> >
->
-> --
-> Sincerely yours,
-> Mike.
->
+Salvatore
