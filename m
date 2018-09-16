@@ -2,137 +2,102 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ADCECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 15:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F78ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 15:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189C5206B8
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 15:15:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMcDdB3e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189C5206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD3C206B8
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 15:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD3C206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeIPUie (ORCPT
+        id S1728297AbeIPUkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 16:38:34 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34730 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbeIPUid (ORCPT
+        Sun, 16 Sep 2018 16:40:33 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49166 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726852AbeIPUkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 16:38:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g33-v6so14834717wrd.1;
-        Sun, 16 Sep 2018 08:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LZfQijIPZfgdgNQuqsuqEELqF8EHTRS+Co8vtfK6lw8=;
-        b=mMcDdB3eg30bIW5S0upN1pIjmIRnoobHHxM8pYqTaxC7+/HRUyZaC80wBWTLMeFPC7
-         WE7dknRSgUXuBUvs4E38uropSPQAS4wAOomrAk7uuQu9JnBBSc/zv/KBvhcPBJmsQxN4
-         jMVfhb677gikymz+ErIkdfQB+0hyAMPA75/xLD8zEMPCVuibT2a+ghjncUhPdQJrzo9u
-         LTyHfrottIjBmVCbL4Kcc4XGsB5o6vHMV7X+KyncNjIrMVznVT8qOmThTqGrtrAb576P
-         bhi/Liz0zCbkmdg2eUV4gmNU+igqNZFJq0r+/HTeB3HdlTQISm6OdP+Uvk4+wPn+kvus
-         q2xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LZfQijIPZfgdgNQuqsuqEELqF8EHTRS+Co8vtfK6lw8=;
-        b=DMk3KSYwjmTNZS5ebxRlBf8VY6VaZs0YVQYTPH+Sa4h//USp8XXtWGtP/C84Sw9Sef
-         s/xt50X2WJOb0xHcZ9qI8E7B4e+4K7hphfXkFY4TByhODGewNi0qb7U7eVQSahsk4mlA
-         s1ebZaIsHb1SHQZIVk53cYnK/hkhkiexif6/sch0S51A5oBzMtsVMQLatsHPnkmNpakX
-         5gkyQMbcRu6r98zCnz6nPqD822g30jGwUS9wFiNNfiYRP8t04UZ3hlcPp4Cbq8V1lAuK
-         GA7sAj4uweN0MkMmZJKXIalvp+rflzW1q9FfV8bxRc0Z5Xe4F2AGO85QzrUXdhQgsTk3
-         7/sQ==
-X-Gm-Message-State: APzg51DEI00niRZoFCqmZfqAKkJ367rbrG+mVcq5H4kUlO8o0wbJHM0G
-        06Hs5FDKvceZgF+8cIGjEFU=
-X-Google-Smtp-Source: ANB0Vdat1IAc+lL74h14KUsvYSKJwnd77xU5khy8F9kcZa3N0J1FQ2Is04Glco3ny+PlxKylfxSKTQ==
-X-Received: by 2002:adf:8567:: with SMTP id 94-v6mr16345547wrh.223.1537110915934;
-        Sun, 16 Sep 2018 08:15:15 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a6-v6sm4930662wmf.22.2018.09.16.08.15.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Sep 2018 08:15:15 -0700 (PDT)
-Date:   Sun, 16 Sep 2018 08:15:13 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] iio: adc: max9611: Avoid implicit enum conversion warning
-Message-ID: <20180916151513.GA10200@flashbox>
-References: <20180915052511.2243-1-natechancellor@gmail.com>
- <20180916105351.1bf859ee@archlinux>
+        Sun, 16 Sep 2018 16:40:32 -0400
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g1YnJ-0007dc-62; Sun, 16 Sep 2018 16:17:05 +0100
+Date:   Sun, 16 Sep 2018 16:17:05 +0100
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Message-ID: <20180916151704.GF4765@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eNMatiwYGLtwo1cJ"
 Content-Disposition: inline
-In-Reply-To: <20180916105351.1bf859ee@archlinux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH] perf Documentation: Fix out-of-tree asciidoctor man page
+ generation
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 10:53:51AM +0100, Jonathan Cameron wrote:
-> On Fri, 14 Sep 2018 22:25:11 -0700
-> Nathan Chancellor <natechancellor@gmail.com> wrote:
-> 
-> > Clang warns when an enumerated type is implicitly converted to another.
-> > 
-> > drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
-> > enumeration type 'enum max9611_conf_ids' to different enumeration type
-> > 'enum max9611_csa_gain' [-Wenum-conversion]
-> >                         *csa_gain = gain_selectors[i];
-> >                                   ~ ^~~~~~~~~~~~~~~~~
-> > 1 warning generated.
-> > 
-> > Change the type of the variable 'gain_selectors' to int so that Clang
-> > understands this is expected behavior.
-> > 
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> How does this interact with the patch that Stefan Agner sent for
-> the same issue last week?
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=b1ec0802503820ccbc894aadfd2a44da20232f5e
-> 
-> Thanks,
-> 
-> Jonathan
-> 
 
-Hi Jonathan,
+--eNMatiwYGLtwo1cJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the overlap. My patch is not necessary. I was working off
-of linux-next so I didn't catch this. I'll be better about checking
-maintainer trees before sending patches in the future.
+The dependency for the man page rule using asciidoctor incorrectly
+specifies a source file in $(OUTPUT).  When building out-of-tree, the
+source file is not found, resulting in a fall-back to the following
+rule which uses xmlto.
 
-Thanks for the quick response!
-Nathan
+Fixes: ffef80ecf89f ("perf Documentation: Support for asciidoctor")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/tools/perf/Documentation/Makefile
++++ b/tools/perf/Documentation/Makefile
+@@ -285,7 +285,7 @@ $(MAN_HTML): $(OUTPUT)%.html : %.txt
+ 	mv $@+ $@
+=20
+ ifdef USE_ASCIIDOCTOR
+-$(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : $(OUTPUT)%.txt
++$(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : %.txt
+ 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
+ 	$(ASCIIDOC) -b manpage -d manpage \
+ 		$(ASCIIDOC_EXTRA) -aperf_version=3D$(PERF_VERSION) -o $@+ $< && \
 
-> > ---
-> >  drivers/iio/adc/max9611.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-> > index 0538ff8c4ac1..3c358b16a8fa 100644
-> > --- a/drivers/iio/adc/max9611.c
-> > +++ b/drivers/iio/adc/max9611.c
-> > @@ -275,7 +275,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
-> >  				    u16 *adc_raw,
-> >  				    enum max9611_csa_gain *csa_gain)
-> >  {
-> > -	enum max9611_conf_ids gain_selectors[] = {
-> > +	int gain_selectors[] = {
-> >  		CONF_SENSE_1x,
-> >  		CONF_SENSE_4x,
-> >  		CONF_SENSE_8x
-> 
+--eNMatiwYGLtwo1cJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIVAwUBW55z8Oe/yOyVhhEJAQpJdBAAj1ue1pm4008VdtT2olOAY6WuLRweIbrq
+QUXc44rIMlP/8os7pC80Dgtn3byUY4j3PFFnwcJLFKn9WKymqFXM2jAPuQePcDCY
+rZjHIhhIV2qePLH7qE+9EsZ7LhlyJDnk/f1v4yqhAZtg/1W5JT5eZN8v1mEMjLlN
+y4Yid5YWV0z4vEd7AJUw51hSXGcxNGK4lASqneY8KLfS53q0feFIcD9YKAkWAFnD
+X1FWpAFmdLwwXbrdJc0s+yL7K8qw1jfkr/clqOpIWY0EY1apFRkJKi+hMpSdO9th
+wo1AqVhS3lM9WLs5UnaPfQDIatTixVKqbR+SpbEp2NJgtvJKodYP0MIm1+/JRl7d
+KLjqTafsdknt78hKq4hg73BC3z4+PiFHE+2Na7Zc/NaBxStUD9qbUMVskQAs0rmj
+la0O5wBqbi5ir5VEW4eie/huyXEvmijPQnrIFPeayi90TQVhuKjVPIvHs5ms20vd
+jKmq67Fc84aUvvX+Ver9cJQV4fLaorgKLUIbHX0R4Q9B39L64z7S5UKXEqT/sIFR
+VrlvSKjK90jDWUGVdxzp2h7LBmgfo4XsIHM4bgzWCvslHcCr5axNYOPPLAUHWeFh
+LLZws8hZESz/tZPUJKvGkL519sng9+ggEfZ3xWUoSOp+CnTOSPnq/+0WLRqMCqB2
+AEho7O2hjcM=
+=REKT
+-----END PGP SIGNATURE-----
+
+--eNMatiwYGLtwo1cJ--
