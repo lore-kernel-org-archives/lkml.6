@@ -2,71 +2,71 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A02ECE561
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAB9ECE561
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51282086B
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:34:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51282086B
+	by mail.kernel.org (Postfix) with ESMTP id 33A5A2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A5A2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeIPJ41 (ORCPT
+        id S1727107AbeIPJ4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 05:56:27 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:56508 "EHLO hermes.aosc.io"
+        Sun, 16 Sep 2018 05:56:46 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:56538 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbeIPJ41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 05:56:27 -0400
+        id S1725739AbeIPJ4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 05:56:46 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id D310A663B5;
-        Sun, 16 Sep 2018 04:34:48 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 7967342097;
+        Sun, 16 Sep 2018 04:35:08 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 0/4] Fix A64/R40 HDMI PHY device tree binding
-Date:   Sun, 16 Sep 2018 12:34:05 +0800
-Message-Id: <20180916043409.62374-1-icenowy@aosc.io>
+Subject: [PATCH v2 1/4] drm: sun4i: drop second PLL from A64 HDMI PHY
+Date:   Sun, 16 Sep 2018 12:34:06 +0800
+Message-Id: <20180916043409.62374-2-icenowy@aosc.io>
+In-Reply-To: <20180916043409.62374-1-icenowy@aosc.io>
+References: <20180916043409.62374-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When adding support for A64 HDMI PHY in 4.19, we assumed that the two
-PLL-VIDEOs can both feed the HDMI PHY clock. However experiments show
-that the mux bit discovered in R40 blob is not applicable on A64. This
-is not discovered, as normally with a single display pipeline only
-PLL-VIDEO0 will be used.
+The A64 HDMI PHY seems to be not able to use the second video PLL as
+clock parent in experiments.
 
-In this patchset the second PLL is dropped, and a binding specially for
-R40 HDMI PHY is added (which seems to have the mux).
+Drop the support for the second PLL from A64 HDMI PHY driver.
 
-PATCH 1 is dropping second PLL for A64 HDMI PHY, and PATCH 2 to 4
-are adding R40 HDMI PHY binding, as R40 behaves differently with A64
-with this.
+Fixes: b46e2c9f5f64 ("drm/sun4i: Add support for A64 HDMI PHY")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- none.
 
-This patchset targets v4.19 fixes tree, because the binding is
-introduced in v4.19, and if we don't fix it there a wrong binding will
-be left in a stable version released. A64 display pipeline support is
-not yet in v4.19, but R40 support is in it.
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Icenowy Zheng (4):
-  drm: sun4i: drop second PLL from A64 HDMI PHY
-  dt-bindings: sun4i-drm: add compatible for R40 HDMI PHY
-  drm/sun4i: add support for R40 HDMI PHY
-  ARM: sun8i: dts: drop A64 HDMI PHY fallback compatible from R40 DT
-
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt |  5 +++--
- arch/arm/boot/dts/sun8i-r40.dtsi                    |  3 +--
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c              | 13 ++++++++++++-
- 3 files changed, 16 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 82502b351aec..a564b5dfe082 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -398,7 +398,6 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+ 
+ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+ 	.has_phy_clk = true,
+-	.has_second_pll = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_h3,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
+ 	.phy_config = &sun8i_hdmi_phy_config_h3,
 -- 
 2.18.0
 
