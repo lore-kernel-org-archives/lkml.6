@@ -2,67 +2,64 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80362ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F29ECE563
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296DD2087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296DD2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D5FC32087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 19:27:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FC32087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbeIQAu7 (ORCPT
+        id S1728539AbeIQAvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 20:50:59 -0400
-Received: from mga12.intel.com ([192.55.52.136]:41716 "EHLO mga12.intel.com"
+        Sun, 16 Sep 2018 20:51:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:49838 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728340AbeIQAu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 20:50:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 12:27:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,382,1531810800"; 
-   d="scan'208";a="74770702"
-Received: from vbsuresh-mobl1.amr.corp.intel.com (HELO localhost) ([10.252.48.189])
-  by orsmga006.jf.intel.com with ESMTP; 16 Sep 2018 12:26:57 -0700
-Date:   Sun, 16 Sep 2018 22:26:56 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tstruk@gmail.com>
-Cc:     Tadeusz Struk <tadeusz.struk@intel.com>, flihp@twobit.us,
-        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
-Message-ID: <20180916192656.GA9053@linux.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
- <20180916120349.GB5040@linux.intel.com>
- <f86d6fe5-bafa-d392-5ed2-f5390b6b6e7e@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f86d6fe5-bafa-d392-5ed2-f5390b6b6e7e@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1728340AbeIQAvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 20:51:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA31B7A9;
+        Sun, 16 Sep 2018 12:27:15 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1CB73F703;
+        Sun, 16 Sep 2018 12:27:10 -0700 (PDT)
+Date:   Sun, 16 Sep 2018 20:27:01 +0100
+Message-ID: <86h8ipmeey.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V5 2/3] dt-bindings: interrupt-controller: C-SKY APB intc
+In-Reply-To: <162f7f98697cd9d806a1a843c6177bb943ea2b33.1537087118.git.ren_guo@c-sky.com>
+References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
+        <162f7f98697cd9d806a1a843c6177bb943ea2b33.1537087118.git.ren_guo@c-sky.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 08:11:44AM -0700, Tadeusz Struk wrote:
-> On 9/16/18 5:03 AM, Jarkko Sakkinen wrote:
-> > I tried to test this but I get 404 from https://github.com/tstruk/tpm2-tss/tree/async
+On Sun, 16 Sep 2018 09:50:03 +0100,
+Guo Ren <ren_guo@c-sky.com> wrote:
 > 
-> This has been already merged to tss upstream https://github.com/tpm2-software/tpm2-tss
-> To enable it you need to configure tss with --enable-tcti-device-async=yes
-> Thanks,
-> Tadeusz
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 
-Thank you. Looking forward to try it out tomorrow.
+Please write a commit message. Same thing for the following patch.
 
-/Jarkko
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
