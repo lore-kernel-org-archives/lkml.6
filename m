@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC60AECE564
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A726ECE563
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6628A208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6628A208AE
+	by mail.kernel.org (Postfix) with ESMTP id 5DDBE2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 04:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDBE2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbeIPJ4v (ORCPT
+        id S1727874AbeIPJ5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 05:56:51 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:56553 "EHLO hermes.aosc.io"
+        Sun, 16 Sep 2018 05:57:00 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:56574 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725739AbeIPJ4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 05:56:51 -0400
+        id S1725739AbeIPJ5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 05:57:00 -0400
 Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 7735966400;
-        Sun, 16 Sep 2018 04:35:13 +0000 (UTC)
+        by hermes.aosc.io (Postfix) with ESMTPSA id DC10F663FF;
+        Sun, 16 Sep 2018 04:35:22 +0000 (UTC)
 From:   Icenowy Zheng <icenowy@aosc.io>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 2/4] dt-bindings: sun4i-drm: add compatible for R40 HDMI PHY
-Date:   Sun, 16 Sep 2018 12:34:07 +0800
-Message-Id: <20180916043409.62374-3-icenowy@aosc.io>
+Subject: [PATCH v2 3/4] drm/sun4i: add support for R40 HDMI PHY
+Date:   Sun, 16 Sep 2018 12:34:08 +0800
+Message-Id: <20180916043409.62374-4-icenowy@aosc.io>
 In-Reply-To: <20180916043409.62374-1-icenowy@aosc.io>
 References: <20180916043409.62374-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -41,43 +41,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner R40 HDMI PHY is currently the only one that seems to be
-able to select between two PLL inputs.
+The R40 SoC has a HDMI PHY that is possible to mux two video PLLs.
 
-Add a compatible string for it, and the pll-1 clock input definition.
+Add support for it.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
 Changes in v2:
-- Rebased when removing original A64 binding patch.
+- none.
 
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f8773ecb7525..dcec1a6f8ee4 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -103,6 +103,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-hdmi-phy
-     * allwinner,sun8i-h3-hdmi-phy
-+    * allwinner,sun8i-r40-hdmi-phy
-     * allwinner,sun50i-a64-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-@@ -112,9 +113,9 @@ Required properties:
-   - resets: phandle to the reset controller driving the PHY
-   - reset-names: must be "phy"
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index a564b5dfe082..471993097ced 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -416,6 +416,14 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
+ 	.phy_config = &sun8i_hdmi_phy_config_h3,
+ };
  
--H3 and A64 HDMI PHY require additional clocks:
-+H3, A64 and R40 HDMI PHY require additional clocks:
-   - pll-0: parent of phy clock
--  - pll-1: second possible phy clock parent (A64 only)
-+  - pll-1: second possible phy clock parent (A64/R40 only)
++static const struct sun8i_hdmi_phy_variant sun8i_r40_hdmi_phy = {
++	.has_phy_clk = true,
++	.has_second_pll = true,
++	.phy_init = &sun8i_hdmi_phy_init_h3,
++	.phy_disable = &sun8i_hdmi_phy_disable_h3,
++	.phy_config = &sun8i_hdmi_phy_config_h3,
++};
++
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun50i-a64-hdmi-phy",
+@@ -429,6 +437,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+ 		.compatible = "allwinner,sun8i-h3-hdmi-phy",
+ 		.data = &sun8i_h3_hdmi_phy,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-r40-hdmi-phy",
++		.data = &sun8i_r40_hdmi_phy,
++	},
+ 	{ /* sentinel */ }
+ };
  
- TV Encoder
- ----------
 -- 
 2.18.0
 
