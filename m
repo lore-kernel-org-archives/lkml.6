@@ -2,259 +2,72 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C30ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931DEECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EED9208DD
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:34:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hy+i5zev"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EED9208DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 54FCA2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 13:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54FCA2087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeIPS5f (ORCPT
+        id S1728458AbeIPS6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 14:57:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728350AbeIPS5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 14:57:35 -0400
-Received: from localhost.localdomain (unknown [49.77.249.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FEF72087E;
-        Sun, 16 Sep 2018 13:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537104874;
-        bh=nSkTziFUw4Tu8fkX8WoHT9d5uPlWOszIxm9dHqDLZnc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hy+i5zev44GNZmk+RM4z6MjnGjoYBjb97wNYxRkPBhqwgc/N4KlPihGBLVcZPIfwj
-         4XnFNsq1NUEsWGgr/9vXF8hL2jEBAT3bshPUeO74XDjY8PqlbOdHxODS/SzVHdElC9
-         h/Nk3oPGpKOyfvgY4YHgXZ3mx/kUmYmNRrj0xVcM=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: allow out-place-update for direct IO in LFS mode
-Date:   Sun, 16 Sep 2018 21:34:07 +0800
-Message-Id: <20180916133407.26802-1-chao@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Sun, 16 Sep 2018 14:58:10 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12157 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728350AbeIPS6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Sep 2018 14:58:10 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 76D8ECBB19010;
+        Sun, 16 Sep 2018 21:34:48 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.399.0; Sun, 16 Sep 2018 21:34:49 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <andrew@lunn.ch>, <vivien.didelot@savoirfairelinux.com>,
+        <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: dsa: remove redundant null pointer check before of_node_put
+Date:   Sun, 16 Sep 2018 21:22:31 +0800
+Message-ID: <1537104151-64010-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+of_node_put has taken the null pointer check into account. So it is
+safe to remove the duplicated check before of_node_put.
 
-Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
-allow triggering any in-place-update writes, so we fallback direct
-write to buffered write, result in bad performance of large size
-write.
-
-This patch adds to support triggering out-place-update for direct IO
-to enhance its performance.
-
-Note that it needs to exclude direct read IO during direct write,
-since new data writing to new block address will no be valid until
-write finished.
-
-storage: zram
-
-time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
-
-Before:
-real	0m13.061s
-user	0m0.327s
-sys	0m12.486s
-
-After:
-real	0m6.448s
-user	0m0.228s
-sys	0m6.212s
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- fs/f2fs/data.c | 41 +++++++++++++++++++++++++++++++++--------
- fs/f2fs/f2fs.h | 39 +++++++++++++++++++++++++++++++++++----
- fs/f2fs/file.c |  3 ++-
- 3 files changed, 70 insertions(+), 13 deletions(-)
+ drivers/net/dsa/bcm_sf2.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 048f9cf1d589..9937dc2f384a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 
- 	dn->data_blkaddr = datablock_addr(dn->inode,
- 				dn->node_page, dn->ofs_in_node);
--	if (dn->data_blkaddr == NEW_ADDR)
-+	if (dn->data_blkaddr != NULL_ADDR)
- 		goto alloc;
- 
- 	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-@@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 
- 	if (direct_io) {
- 		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
--		flag = f2fs_force_buffered_io(inode, WRITE) ?
-+		flag = f2fs_force_buffered_io(inode, iocb, from) ?
- 					F2FS_GET_BLOCK_PRE_AIO :
- 					F2FS_GET_BLOCK_PRE_DIO;
- 		goto map_blocks;
-@@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		goto sync_out;
- 	}
- 
--	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
-+	if (is_valid_data_blkaddr(sbi, blkaddr)) {
-+		/* use out-place-update for driect IO under LFS mode */
-+		if (test_opt(sbi, LFS) && create &&
-+				flag == F2FS_GET_BLOCK_DEFAULT) {
-+			err = __allocate_data_block(&dn, map->m_seg_type);
-+			if (!err)
-+				set_inode_flag(inode, FI_APPEND_WRITE);
-+		}
-+	} else {
- 		if (create) {
- 			if (unlikely(f2fs_cp_error(sbi))) {
- 				err = -EIO;
-@@ -2491,36 +2499,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	size_t count = iov_iter_count(iter);
- 	loff_t offset = iocb->ki_pos;
- 	int rw = iov_iter_rw(iter);
- 	int err;
- 	enum rw_hint hint = iocb->ki_hint;
- 	int whint_mode = F2FS_OPTION(sbi).whint_mode;
-+	bool lock_read;
- 
- 	err = check_direct_IO(inode, iter, offset);
- 	if (err)
- 		return err < 0 ? err : 0;
- 
--	if (f2fs_force_buffered_io(inode, rw))
-+	if (f2fs_force_buffered_io(inode, iocb, iter))
- 		return 0;
- 
-+	lock_read = allow_outplace_dio(inode, iocb, iter);
-+
- 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
- 
- 	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
- 		iocb->ki_hint = WRITE_LIFE_NOT_SET;
- 
--	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
--		if (iocb->ki_flags & IOCB_NOWAIT) {
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
-+			iocb->ki_hint = hint;
-+			err = -EAGAIN;
-+			goto out;
-+		}
-+		if (lock_read && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
-+			up_read(&fi->i_gc_rwsem[rw]);
- 			iocb->ki_hint = hint;
- 			err = -EAGAIN;
- 			goto out;
- 		}
--		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-+	} else {
-+		down_read(&fi->i_gc_rwsem[rw]);
-+		if (lock_read)
-+			down_read(&fi->i_gc_rwsem[READ]);
- 	}
- 
- 	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
--	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
-+
-+	if (lock_read)
-+		up_read(&fi->i_gc_rwsem[READ]);
-+
-+	up_read(&fi->i_gc_rwsem[rw]);
- 
- 	if (rw == WRITE) {
- 		if (whint_mode == WHINT_MODE_OFF)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6f59ad180be7..a6dc9d581ee4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -8,6 +8,7 @@
- #ifndef _LINUX_F2FS_H
- #define _LINUX_F2FS_H
- 
-+#include <linux/uio.h>
- #include <linux/types.h>
- #include <linux/page-flags.h>
- #include <linux/buffer_head.h>
-@@ -3461,11 +3462,41 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
- #endif
- }
- 
--static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
-+static inline int block_unaligned_IO(struct inode *inode,
-+				struct kiocb *iocb, struct iov_iter *iter)
+diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
+index e0066ad..1fc27e1 100644
+--- a/drivers/net/dsa/bcm_sf2.c
++++ b/drivers/net/dsa/bcm_sf2.c
+@@ -465,8 +465,7 @@ static int bcm_sf2_mdio_register(struct dsa_switch *ds)
+ static void bcm_sf2_mdio_unregister(struct bcm_sf2_priv *priv)
  {
--	return (f2fs_post_read_required(inode) ||
--			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
--			F2FS_I_SB(inode)->s_ndevs);
-+	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-+	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-+	loff_t offset = iocb->ki_pos;
-+	unsigned long align = offset | iov_iter_alignment(iter);
-+
-+	return align & blocksize_mask;
-+}
-+
-+static inline int allow_outplace_dio(struct inode *inode,
-+				struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	int rw = iov_iter_rw(iter);
-+
-+	return (test_opt(sbi, LFS) && (rw == WRITE) &&
-+				!block_unaligned_IO(inode, iocb, iter));
-+}
-+
-+static inline bool f2fs_force_buffered_io(struct inode *inode,
-+				struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	int rw = iov_iter_rw(iter);
-+
-+	if (f2fs_post_read_required(inode))
-+		return true;
-+	if (sbi->s_ndevs)
-+		return true;
-+	if (test_opt(sbi, LFS) && (rw == WRITE) &&
-+				block_unaligned_IO(inode, iocb, iter))
-+		return true;
-+	return false;
+ 	mdiobus_unregister(priv->slave_mii_bus);
+-	if (priv->master_mii_dn)
+-		of_node_put(priv->master_mii_dn);
++	of_node_put(priv->master_mii_dn);
  }
  
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 428e7398bd89..70491631e040 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3018,7 +3018,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
- 						iov_iter_count(from)) ||
- 					f2fs_has_inline_data(inode) ||
--					f2fs_force_buffered_io(inode, WRITE)) {
-+					f2fs_force_buffered_io(inode,
-+							iocb, from)) {
- 						clear_inode_flag(inode,
- 								FI_NO_PREALLOC);
- 						inode_unlock(inode);
+ static u32 bcm_sf2_sw_get_phy_flags(struct dsa_switch *ds, int port)
 -- 
-2.18.0
+1.7.12.4
 
