@@ -2,179 +2,145 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0C5ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 21:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3AECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 21:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992A42086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 21:20:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="daS5wwZf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992A42086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id E503F2087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 21:57:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E503F2087B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeIQCol (ORCPT
+        id S1728400AbeIQDWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 22:44:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44238 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbeIQCol (ORCPT
+        Sun, 16 Sep 2018 23:22:06 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:37540 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728190AbeIQDWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 22:44:41 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8GLK3dX119363;
-        Sun, 16 Sep 2018 21:20:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ETwqVvGswvdT+adpxWr3sKjbjSiLWbb1+ZaN+EhkIeo=;
- b=daS5wwZf04llqQs4xtvd8gg9XE7cDGH632362iC4HcR+67DA4f1Orpk5tIaqfznC3iRM
- 7e4uu8UBJu0ogkwZKOXylmaOmv1ZZ7ULZQG7ZxJOaoYk2O5DQ27o5nPGuqFPrih9LPBT
- XjXZJzA/E1/IT4mB5wZbCQTUaGSiFWRdOb8qt2c47iH7D84+LoHTQBNzMCoryBfGupLX
- Q2R3t11umeEQPjhjjWXJ8RnnC5vWcPRTnto2QsEPuKyr2jV/N2qajNGAS+Ic4eDRlJSO
- oWXhZzOhJwjHL0OZCi0MnjUhEHfUSGQqf7TNqQXNp7pvaWM4YZKk8qtc8FyqDFhGbgxA jA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mgsgtb7u2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 16 Sep 2018 21:20:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8GLK9Pk000697
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 16 Sep 2018 21:20:09 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8GLK7en012201;
-        Sun, 16 Sep 2018 21:20:07 GMT
-Received: from nat-wireless-guest-reg-153-50.bu.edu (/204.8.153.50)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 16 Sep 2018 14:20:07 -0700
-Subject: Re: [PATCH 2/6] xenbus: implement the xenwatch multithreading
- framework
-To:     Dongli Zhang <dongli.zhang@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     jgross@suse.com, paul.durrant@citrix.com, wei.liu2@citrix.com,
-        konrad.wilk@oracle.com, roger.pau@citrix.com,
-        srinivas.eeda@oracle.com
-References: <1536910456-13337-1-git-send-email-dongli.zhang@oracle.com>
- <1536910456-13337-3-git-send-email-dongli.zhang@oracle.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <affabca4-0683-f088-7b25-d239ff882fa0@oracle.com>
-Date:   Sun, 16 Sep 2018 17:20:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 16 Sep 2018 23:22:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id 50EB718023C41;
+        Sun, 16 Sep 2018 23:57:42 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, koen.vandeputte@ncentric.com,
+        Richard Weinberger <richard@nod.at>, stable@vger.kernel.org
+Subject: [PATCH] Revert "ubifs: xattr: Don't operate on deleted inodes"
+Date:   Sun, 16 Sep 2018 23:57:35 +0200
+Message-Id: <20180916215735.31393-1-richard@nod.at>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <1536910456-13337-3-git-send-email-dongli.zhang@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9018 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809160229
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This reverts commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52.
+UBIFS wants to assert that xattr operations are only issued on files
+with positive link count. The said patch made this operations return
+-ENOENT for unlinked files such that the asserts will no longer trigger.
+This was wrong since xattr operations are perfectly fine on unlinked
+files.
+Instead the assertions need to be fixed/removed.
 
+Cc: <stable@vger.kernel.org>
+Fixes: 11a6fc3dc743 ("ubifs: xattr: Don't operate on deleted inodes")
+Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ fs/ubifs/xattr.c | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-On 9/14/18 3:34 AM, Dongli Zhang wrote:
->
-> +
-> +/* Running in the context of default xenwatch kthread. */
-> +void mtwatch_create_domain(domid_t domid)
-> +{
-> +	struct mtwatch_domain *domain;
-> +
-> +	if (!domid) {
-> +		pr_err("Default xenwatch thread is for dom0\n");
-> +		return;
-> +	}
-> +
-> +	spin_lock(&mtwatch_info->domain_lock);
-> +
-> +	domain = mtwatch_find_domain(domid);
-> +	if (domain) {
-> +		atomic_inc(&domain->refcnt);
-> +		spin_unlock(&mtwatch_info->domain_lock);
-> +		return;
-> +	}
-> +
-> +	domain = kzalloc(sizeof(*domain), GFP_ATOMIC);
-
-Is there a reason (besides this being done under spinlock) for using 
-GFP_ATOMIC? If domain_lock is the only reason I'd probably drop the lock 
-and do GFP_KERNEL.
-
-
-> +	if (!domain) {
-> +		spin_unlock(&mtwatch_info->domain_lock);
-> +		pr_err("Failed to allocate memory for mtwatch thread %d\n",
-> +		       domid);
-> +		return;
-
-This needs to return an error code, I think. Or do you want to fall back 
-to shared xenwatch thread?
-
-
-> +	}
-> +
-> +	domain->domid = domid;
-> +	atomic_set(&domain->refcnt, 1);
-> +	mutex_init(&domain->domain_mutex);
-> +	INIT_LIST_HEAD(&domain->purge_node);
-> +
-> +	init_waitqueue_head(&domain->events_wq);
-> +	spin_lock_init(&domain->events_lock);
-> +	INIT_LIST_HEAD(&domain->events);
-> +
-> +	list_add_tail_rcu(&domain->list_node, &mtwatch_info->domain_list);
-> +
-> +	hlist_add_head_rcu(&domain->hash_node,
-> +			   &mtwatch_info->domain_hash[MTWATCH_HASH(domid)]);
-> +
-> +	spin_unlock(&mtwatch_info->domain_lock);
-> +
-> +	domain->task = kthread_run(mtwatch_thread, domain,
-> +				   "xen-mtwatch-%d", domid);
-> +
-> +	if (!domain->task) {
-> +		pr_err("mtwatch kthread creation is failed\n");
-> +		domain->state = MTWATCH_DOMAIN_DOWN;
-
-
-Why not clean up right here?
-
-> +
-> +		return;
-> +	}
-> +
-> +	domain->state = MTWATCH_DOMAIN_UP;
-> +}
-> +
-
-
-> +
->   void unregister_xenbus_watch(struct xenbus_watch *watch)
->   {
->   	struct xs_watch_event *event, *tmp;
-> @@ -831,6 +1100,9 @@ void unregister_xenbus_watch(struct xenbus_watch *watch)
->   
->   	if (current->pid != xenwatch_pid)
->   		mutex_unlock(&xenwatch_mutex);
-> +
-> +	if (xen_mtwatch && watch->get_domid)
-> +		unregister_mtwatch(watch);
-
-
-I may not be understanding the logic flow here, but if we successfully 
-removed/unregistered/purged the watch from mtwatch lists, do we still 
-need to try removing it from watch_events list below?
-
-
--boris
+diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+index 61afdfee4b28..f5ad1ede7990 100644
+--- a/fs/ubifs/xattr.c
++++ b/fs/ubifs/xattr.c
+@@ -152,12 +152,6 @@ static int create_xattr(struct ubifs_info *c, struct=
+ inode *host,
+ 	ui->data_len =3D size;
+=20
+ 	mutex_lock(&host_ui->ui_mutex);
+-
+-	if (!host->i_nlink) {
+-		err =3D -ENOENT;
+-		goto out_noent;
+-	}
+-
+ 	host->i_ctime =3D current_time(host);
+ 	host_ui->xattr_cnt +=3D 1;
+ 	host_ui->xattr_size +=3D CALC_DENT_SIZE(fname_len(nm));
+@@ -190,7 +184,6 @@ static int create_xattr(struct ubifs_info *c, struct =
+inode *host,
+ 	host_ui->xattr_size -=3D CALC_XATTR_BYTES(size);
+ 	host_ui->xattr_names -=3D fname_len(nm);
+ 	host_ui->flags &=3D ~UBIFS_CRYPT_FL;
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ out_free:
+ 	make_bad_inode(inode);
+@@ -242,12 +235,6 @@ static int change_xattr(struct ubifs_info *c, struct=
+ inode *host,
+ 	mutex_unlock(&ui->ui_mutex);
+=20
+ 	mutex_lock(&host_ui->ui_mutex);
+-
+-	if (!host->i_nlink) {
+-		err =3D -ENOENT;
+-		goto out_noent;
+-	}
+-
+ 	host->i_ctime =3D current_time(host);
+ 	host_ui->xattr_size -=3D CALC_XATTR_BYTES(old_size);
+ 	host_ui->xattr_size +=3D CALC_XATTR_BYTES(size);
+@@ -269,7 +256,6 @@ static int change_xattr(struct ubifs_info *c, struct =
+inode *host,
+ out_cancel:
+ 	host_ui->xattr_size -=3D CALC_XATTR_BYTES(size);
+ 	host_ui->xattr_size +=3D CALC_XATTR_BYTES(old_size);
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ 	make_bad_inode(inode);
+ out_free:
+@@ -496,12 +482,6 @@ static int remove_xattr(struct ubifs_info *c, struct=
+ inode *host,
+ 		return err;
+=20
+ 	mutex_lock(&host_ui->ui_mutex);
+-
+-	if (!host->i_nlink) {
+-		err =3D -ENOENT;
+-		goto out_noent;
+-	}
+-
+ 	host->i_ctime =3D current_time(host);
+ 	host_ui->xattr_cnt -=3D 1;
+ 	host_ui->xattr_size -=3D CALC_DENT_SIZE(fname_len(nm));
+@@ -521,7 +501,6 @@ static int remove_xattr(struct ubifs_info *c, struct =
+inode *host,
+ 	host_ui->xattr_size +=3D CALC_DENT_SIZE(fname_len(nm));
+ 	host_ui->xattr_size +=3D CALC_XATTR_BYTES(ui->data_len);
+ 	host_ui->xattr_names +=3D fname_len(nm);
+-out_noent:
+ 	mutex_unlock(&host_ui->ui_mutex);
+ 	ubifs_release_budget(c, &req);
+ 	make_bad_inode(inode);
+@@ -561,9 +540,6 @@ static int ubifs_xattr_remove(struct inode *host, con=
+st char *name)
+=20
+ 	ubifs_assert(c, inode_is_locked(host));
+=20
+-	if (!host->i_nlink)
+-		return -ENOENT;
+-
+ 	if (fname_len(&nm) > UBIFS_MAX_NLEN)
+ 		return -ENAMETOOLONG;
+=20
+--=20
+2.19.0
 
