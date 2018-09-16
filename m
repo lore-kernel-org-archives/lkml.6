@@ -2,144 +2,125 @@ Return-Path: <SRS0=7f4r=L6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4459DECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 20:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FA7ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 20:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C889B2086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 20:43:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C889B2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 334622087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Sep 2018 20:48:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QxuPzYuF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 334622087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeIQCHk (ORCPT
+        id S1728441AbeIQCMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Sep 2018 22:07:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47308 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728218AbeIQCHj (ORCPT
+        Sun, 16 Sep 2018 22:12:15 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:59582 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbeIQCMP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Sep 2018 22:07:39 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B74D627DAB6
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4AF343C0C2B; Sun, 16 Sep 2018 22:43:23 +0200 (CEST)
-Date:   Sun, 16 Sep 2018 22:43:23 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 0/6] shutdown procedure verification for SAMA5D2
-Message-ID: <20180916204323.ysvt4axagxyx7hsc@earth.universe>
-References: <1535629811-13403-1-git-send-email-claudiu.beznea@microchip.com>
- <20180916104301.dcrm333ydo5kh5bj@earth.universe>
+        Sun, 16 Sep 2018 22:12:15 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id E4CBA10C122B;
+        Sun, 16 Sep 2018 13:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1537130883; bh=XjmeVeyG9wV6D3nGOQldhWLe9nny5Pcrq273tbDxsyk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QxuPzYuF4NFIpeuRJcErJuqG/t6l09vroZ6jgaEort2nhUQLhGVNrGQNzeMW6+8xn
+         snIsXTw0RUQmTVYuu7uFZJu1fiPfICp8PLCt3enXp8Y8ERWDFqKDRw12Uo7/k/i70C
+         1lm+q0wqDWjwBXqtDC9iPA73D6IpTrCkiKe8ZPFsS1/wULRbuRdRhcZTTlGwqdZU8V
+         dugIPto92WDA5qhkq6FC+6HXsUdTLrkmXSX4jHv3yD02iT4/dnhFLjLR8zxZeItSg/
+         Xigfe1irDZ/lgN12hLFTCDkYZ/QgpxN7IGMsploRio9jFjt5Hh+CuP/XVDWmh576tT
+         5Ezmo8Kgv24nw==
+Received: from abrodkin-7480l.internal.synopsys.com (unknown [10.225.15.87])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B80EB5ACD;
+        Sun, 16 Sep 2018 13:48:00 -0700 (PDT)
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH] ARC: Don't set CROSS_COMPILE in arch's Makefile
+Date:   Sun, 16 Sep 2018 23:47:57 +0300
+Message-Id: <20180916204757.31131-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wvwad2occsvd2eok"
-Content-Disposition: inline
-In-Reply-To: <20180916104301.dcrm333ydo5kh5bj@earth.universe>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There's not much sense in doing that because if user or
+his build-system didn't set CROSS_COMPILE we still may
+very well make incorrect guess.
 
---wvwad2occsvd2eok
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But as it turned out setting CROSS_COMPILE is not as harmless
+as one may think: with recent changes that implemented automatic
+discovery of __host__ gcc features unconditional setup of
+CROSS_COMPILE leads to failures on execution of "make xxx_defconfig"
+with absent cross-compiler, for more info see [1].
 
-Hi Nicolas,
+Set CROSS_COMPILE as well gets in the way if we want only to build
+.dtb's (again with absent cross-compiler which is not really needed
+for building .dtb's), see [2].
 
-On Sun, Sep 16, 2018 at 12:43:01PM +0200, Sebastian Reichel wrote:
-> Hi,
->=20
-> On Thu, Aug 30, 2018 at 02:50:05PM +0300, Claudiu Beznea wrote:
-> > Hi,
-> >=20
-> > Patch 1 from this series implement a fix for shutdown procedure
-> > for SAMA5D2.
-> >=20
-> > The rest of the patch are improvements as follows:
-> > patch 2 - use only one function for poweroff
-> > patches 3-6 - cosmetic improvements
-> >=20
-> > The patches are based on latest sys-reset/for-next [1].
-> >=20
-> > Thank you,
-> > Claudiu Beznea
-> >=20
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-sup=
-ply.git
->=20
-> Thanks, queued.
+Note, we had to change LIBGCC assignment type from ":=" to "="
+so that is is resolved on its usage, otherwise if it is resolved
+at declaration time with missing CROSS_COMPILE we're getting this
+error message from host GCC:
+------------------------->8-------------------------
+gcc: error: unrecognized command line option ‘-mmedium-calls’
+gcc: error: unrecognized command line option ‘-mno-sdata’; did you mean ‘-fno-stats’?
+------------------------->8-------------------------
 
-I merged this via a immutable branch, that you can pull into at91 or
-ignore:
+[1] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004308.html
+[2] http://lists.infradead.org/pipermail/linux-snps-arc/2018-September/004320.html
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Rob Herring <robh@kernel.org>
+---
+ arch/arc/Makefile | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+diff --git a/arch/arc/Makefile b/arch/arc/Makefile
+index 99cce77ab98f..5f6b67917dc2 100644
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -6,14 +6,6 @@
+ # published by the Free Software Foundation.
+ #
+ 
+-ifeq ($(CROSS_COMPILE),)
+-ifndef CONFIG_CPU_BIG_ENDIAN
+-CROSS_COMPILE := arc-linux-
+-else
+-CROSS_COMPILE := arceb-linux-
+-endif
+-endif
+-
+ KBUILD_DEFCONFIG := nsim_700_defconfig
+ 
+ cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+@@ -79,7 +71,7 @@ cflags-$(disable_small_data)		+= -mno-sdata -fcall-used-gp
+ cflags-$(CONFIG_CPU_BIG_ENDIAN)		+= -mbig-endian
+ ldflags-$(CONFIG_CPU_BIG_ENDIAN)	+= -EB
+ 
+-LIBGCC	:= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
++LIBGCC	= $(shell $(CC) $(cflags-y) --print-libgcc-file-name)
+ 
+ # Modules with short calls might break for calls into builtin-kernel
+ KBUILD_CFLAGS_MODULE	+= -mlong-calls -mno-millicode
+-- 
+2.17.1
 
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-su=
-pply.git tags/psy-at91-poweroff-immutable-for-v4.20-signed
-
-for you to fetch changes up to 9f1e44774be578fb92776add95f1fcaf8284d692:
-
-  power: reset: at91-poweroff: do not procede if at91_shdwc is allocated (2=
-018-09-16 12:32:17 +0200)
-
-----------------------------------------------------------------
-Immutable branch for mach-at91 and power-supply for v4.20
-
-Immutable branch between mach-at91 and power-supply for driver
-changes in at91-poweroff.
-
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-----------------------------------------------------------------
-Claudiu Beznea (6):
-      power: reset: at91-poweroff: switch to slow clock before shutdown
-      power: reset: at91-poweroff: use only one poweroff function
-      power: reset: at91-poweroff: make mpddrc_base part of struct shdwc
-      power: reset: at91-poweroff: make sclk part of struct shdwc
-      power: reset: at91-poweroff: rename at91_shdwc_base member of struct =
-shdwc
-      power: reset: at91-poweroff: do not procede if at91_shdwc is allocated
-
- arch/arm/mach-at91/pm_suspend.S          |   8 +++
- drivers/power/reset/at91-sama5d2_shdwc.c | 119 +++++++++++++++++++++------=
-----
- 2 files changed, 88 insertions(+), 39 deletions(-)
-
--- Sebastian
-
---wvwad2occsvd2eok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAluewGsACgkQ2O7X88g7
-+poy0Q/+IQkeg0hB5xLAtbJ2e6VsZwxmeHENsdY+CYifVhEBol5xIU/WpF/KzBF3
-YsvI2aXK2/d0Ej2k96NHOJ2wUrrwfW/9CJcxpIom4AW5k2GugBpYNtoz+Hf+zPPr
-dnQGyuYjAkm9/wyQGpA/wTz908rB6tla0PIbRJ/pz9fMsA9cz6+ygrAEePpCKWdW
-RhO5HQwaGhlSFQ1tF32WxTSD8myxhBrRqQ08bu4VKZxWxZkHjRSMROWygjgnnRAA
-35uJvHTpBPMrbWw3VBxBFWeQl2JyrB+s07moQuKHjhKlbAToWqdHLn5WzOsRhic5
-N1bdYzfCI0OfbfGckLgxHt76HxNzXMbKImS+cH1a2ppbWR21mIUYvv5tw+YUgQqz
-CWPfciJlyuqfJxwnNChae5+VV6s94WBgHyaBaFTv2iKoDL1PC8waozwFNWkoK70+
-/LuMXHIxbbnyMbZ/tz1agsDvBPqhS9H06K7yobK3gfbJA7ywiKit+7FEu86kv7zd
-izzlR1eXHQR18lzkAw+bbYlO7lKDuG/YiZE7w7RNosaAqUQJFjMkFrgPj3d47DeI
-4fuvzI60GAQwPnIMOBElEtE6jV19bO6tnSKWm7CIzxEmpUooHq0Z6CxLI7wBuizU
-2T0suKk4gDPqYfkZOuJP3cuzotwuTuxHmXEJfYCvBetBzUlUjXA=
-=3Ybp
------END PGP SIGNATURE-----
-
---wvwad2occsvd2eok--
