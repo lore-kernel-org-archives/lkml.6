@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D589ECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D1EECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C51E2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C51E2146F
+	by mail.kernel.org (Postfix) with ESMTP id A95E12146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95E12146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731824AbeIREiX (ORCPT
+        id S1731834AbeIREiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:38:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49994 "EHLO
+        Tue, 18 Sep 2018 00:38:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50012 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIREiV (ORCPT
+        with ESMTP id S1729124AbeIREiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:38:21 -0400
+        Tue, 18 Sep 2018 00:38:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51638C49;
-        Mon, 17 Sep 2018 23:08:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A109C7D;
+        Mon, 17 Sep 2018 23:08:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sudeep Holla <sudeep.holla@arm.com>, josh@joshtriplett.org,
-        peterz@infradead.org, jiangshanlai@gmail.com, dzickus@redhat.com,
-        brendan.jackman@arm.com, malat@debian.org, sramana@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH 4.18 036/158] cpu/hotplug: Prevent state corruption on error rollback
-Date:   Tue, 18 Sep 2018 00:41:06 +0200
-Message-Id: <20180917211712.781456466@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 045/158] misc: mic: SCIF Fix scif_get_new_port() error handling
+Date:   Tue, 18 Sep 2018 00:41:15 +0200
+Message-Id: <20180917211713.298376769@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -56,67 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 69fa6eb7d6a64801ea261025cce9723d9442d773 upstream.
+[ Upstream commit a39284ae9d2ad09975c8ae33f1bd0f05fbfbf6ee ]
 
-When a teardown callback fails, the CPU hotplug code brings the CPU back to
-the previous state. The previous state becomes the new target state. The
-rollback happens in undo_cpu_down() which increments the state
-unconditionally even if the state is already the same as the target.
+There are only 2 callers of scif_get_new_port() and both appear to get
+the error handling wrong.  Both treat zero returns as error, but it
+actually returns negative error codes and >= 0 on success.
 
-As a consequence the next CPU hotplug operation will start at the wrong
-state. This is easily to observe when __cpu_disable() fails.
-
-Prevent the unconditional undo by checking the state vs. target before
-incrementing state and fix up the consequently wrong conditional in the
-unplug code which handles the failure of the final CPU take down on the
-control CPU side.
-
-Fixes: 4dddfb5faa61 ("smp/hotplug: Rewrite AP state machine core")
-Reported-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-Cc: josh@joshtriplett.org
-Cc: peterz@infradead.org
-Cc: jiangshanlai@gmail.com
-Cc: dzickus@redhat.com
-Cc: brendan.jackman@arm.com
-Cc: malat@debian.org
-Cc: sramana@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1809051419580.1416@nanos.tec.linutronix.de
+Fixes: e9089f43c9a7 ("misc: mic: SCIF open close bind and listen APIs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/cpu.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/misc/mic/scif/scif_api.c |   20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -928,7 +928,8 @@ static int cpuhp_down_callbacks(unsigned
- 		ret = cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
- 		if (ret) {
- 			st->target = prev_state;
--			undo_cpu_down(cpu, st);
-+			if (st->state < prev_state)
-+				undo_cpu_down(cpu, st);
- 			break;
+--- a/drivers/misc/mic/scif/scif_api.c
++++ b/drivers/misc/mic/scif/scif_api.c
+@@ -370,11 +370,10 @@ int scif_bind(scif_epd_t epd, u16 pn)
+ 			goto scif_bind_exit;
  		}
+ 	} else {
+-		pn = scif_get_new_port();
+-		if (!pn) {
+-			ret = -ENOSPC;
++		ret = scif_get_new_port();
++		if (ret < 0)
+ 			goto scif_bind_exit;
+-		}
++		pn = ret;
  	}
-@@ -981,7 +982,7 @@ static int __ref _cpu_down(unsigned int
- 	 * to do the further cleanups.
- 	 */
- 	ret = cpuhp_down_callbacks(cpu, st, target);
--	if (ret && st->state > CPUHP_TEARDOWN_CPU && st->state < prev_state) {
-+	if (ret && st->state == CPUHP_TEARDOWN_CPU && st->state < prev_state) {
- 		cpuhp_reset_state(st, prev_state);
- 		__cpuhp_kick_ap(st);
- 	}
+ 
+ 	ep->state = SCIFEP_BOUND;
+@@ -648,13 +647,12 @@ int __scif_connect(scif_epd_t epd, struc
+ 			err = -EISCONN;
+ 		break;
+ 	case SCIFEP_UNBOUND:
+-		ep->port.port = scif_get_new_port();
+-		if (!ep->port.port) {
+-			err = -ENOSPC;
+-		} else {
+-			ep->port.node = scif_info.nodeid;
+-			ep->conn_async_state = ASYNC_CONN_IDLE;
+-		}
++		err = scif_get_new_port();
++		if (err < 0)
++			break;
++		ep->port.port = err;
++		ep->port.node = scif_info.nodeid;
++		ep->conn_async_state = ASYNC_CONN_IDLE;
+ 		/* Fall through */
+ 	case SCIFEP_BOUND:
+ 		/*
 
 
