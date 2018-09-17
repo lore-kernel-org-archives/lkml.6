@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41235ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83316ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0224E2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0224E2146F
+	by mail.kernel.org (Postfix) with ESMTP id 453B321502
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453B321502
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbeIRE20 (ORCPT
+        id S1728960AbeIRE2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:28:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47774 "EHLO
+        Tue, 18 Sep 2018 00:28:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeIRE20 (ORCPT
+        with ESMTP id S1727544AbeIRE2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:28:26 -0400
+        Tue, 18 Sep 2018 00:28:30 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D350EC77;
-        Mon, 17 Sep 2018 22:58:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 787D1C7D;
+        Mon, 17 Sep 2018 22:59:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 46/70] f2fs: try grabbing node page lock aggressively in sync scenario
-Date:   Tue, 18 Sep 2018 00:42:19 +0200
-Message-Id: <20180917211652.859764411@linuxfoundation.org>
+Subject: [PATCH 4.9 64/70] MIPS: WARN_ON invalid DMA cache maintenance, not BUG_ON
+Date:   Tue, 18 Sep 2018 00:42:37 +0200
+Message-Id: <20180917211654.131290799@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -52,38 +53,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Paul Burton <paul.burton@imgtec.com>
 
-[ Upstream commit 4b270a8cc5047682f0a3f3f9af3b498408dbd2bc ]
+[ Upstream commit d4da0e97baea8768b3d66ccef3967bebd50dfc3b ]
 
-In synchronous scenario, like in checkpoint(), we are going to flush
-dirty node pages to device synchronously, we can easily failed
-writebacking node page due to trylock_page() failure, especially in
-condition of intensive lock competition, which can cause long latency
-of checkpoint(). So let's use lock_page() in synchronous scenario to
-avoid this issue.
+If a driver causes DMA cache maintenance with a zero length then we
+currently BUG and kill the kernel. As this is a scenario that we may
+well be able to recover from, WARN & return in the condition instead.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Patchwork: https://patchwork.linux-mips.org/patch/14623/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/node.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/mips/mm/c-r4k.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1463,7 +1463,9 @@ next_step:
- 						!is_cold_node(page)))
- 				continue;
- lock_node:
--			if (!trylock_page(page))
-+			if (wbc->sync_mode == WB_SYNC_ALL)
-+				lock_page(page);
-+			else if (!trylock_page(page))
- 				continue;
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -835,7 +835,8 @@ static void r4k_flush_icache_user_range(
+ static void r4k_dma_cache_wback_inv(unsigned long addr, unsigned long size)
+ {
+ 	/* Catch bad driver code */
+-	BUG_ON(size == 0);
++	if (WARN_ON(size == 0))
++		return;
  
- 			if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
+ 	preempt_disable();
+ 	if (cpu_has_inclusive_pcaches) {
+@@ -871,7 +872,8 @@ static void r4k_dma_cache_wback_inv(unsi
+ static void r4k_dma_cache_inv(unsigned long addr, unsigned long size)
+ {
+ 	/* Catch bad driver code */
+-	BUG_ON(size == 0);
++	if (WARN_ON(size == 0))
++		return;
+ 
+ 	preempt_disable();
+ 	if (cpu_has_inclusive_pcaches) {
 
 
