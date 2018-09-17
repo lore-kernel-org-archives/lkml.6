@@ -2,193 +2,104 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 943E4ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1313ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B34320867
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:24:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ObynQNz6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B34320867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 83AC52146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:30:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83AC52146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbeIRDxi (ORCPT
+        id S1728590AbeIRD7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 23:53:38 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55484 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728202AbeIRDxh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:53:37 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HMEj6u143973;
-        Mon, 17 Sep 2018 22:24:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=xsbZxFDr8ugZqqiw69+K9VE++xOKYxN2B7HX1uAK4Rk=;
- b=ObynQNz6Pjv14V3QEAYOp9avj8u/kywO5/SpIYxoYq10VQaXZ4jvpJd9CEq8/oL5PYKW
- 2LWW0Ewh4mTevwdy3Sigw7fXWibBafBSnjliISpBoK7vMZnGCUY+CoEqKdasHhlnS5Ys
- /hSpOcB0Sonq7OtSphc+QoMCpziVJSdg33LHYC4zTO1T/A/ce20rxUetZIQj8iUrmZ3H
- N5pHCzaUxd4QZjADbNEZhGHshZJ2kd3LXMYb8nirb0ta/eG5//7A8bYpWETZVjOsmMMK
- YDeelcBA/YP2bFUTgqcoFJuYR5M4DAXJ+vdBD/vkmmq7fAaeSQqEzOJNl9QEpHTrUwyb tA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mgt1ph1yt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 22:24:01 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8HMO0uX031614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 22:24:00 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8HMNwx3026951;
-        Mon, 17 Sep 2018 22:23:59 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Sep 2018 15:23:58 -0700
-Subject: Re: [PATCH v2] tpm: Restore functionality to xen vtpm driver.
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>, stable@vger.kernel.org
-References: <20180913212551.2435-1-boris.ostrovsky@oracle.com>
- <20180916192510.GF7473@linux.intel.com>
- <b82c4603-1a60-16ec-14b6-81251e114b75@oracle.com>
- <20180917211900.GD6716@linux.intel.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <5d63093d-620d-80d5-1138-0332a210d61f@oracle.com>
-Date:   Mon, 17 Sep 2018 18:25:29 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180917211900.GD6716@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Sep 2018 23:59:25 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48229 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728202AbeIRD7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:59:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 15:30:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,387,1531810800"; 
+   d="scan'208";a="75093269"
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by orsmga006.jf.intel.com with ESMTP; 17 Sep 2018 15:29:19 -0700
+Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
+ ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 17 Sep 2018 15:29:19 -0700
+Received: from orsmsx151.amr.corp.intel.com ([169.254.7.211]) by
+ ORSMSX156.amr.corp.intel.com ([169.254.8.73]) with mapi id 14.03.0319.002;
+ Mon, 17 Sep 2018 15:29:19 -0700
+From:   "Walker, Benjamin" <benjamin.walker@intel.com>
+To:     "jgg@ziepe.ca" <jgg@ziepe.ca>
+CC:     "Howell, Seth" <seth.howell@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "monis@mellanox.com" <monis@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dledford@redhat.com" <dledford@redhat.com>
+Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Index: AQHUNB7X7okyqfuXp0e3kpEuk2f+WqTB4cuAgAAKaQCAATczAIAGhGQAgCvyAwCAAAhxAIAAFpgA
+Date:   Mon, 17 Sep 2018 22:29:18 +0000
+Message-ID: <0df4e4958250fd6cdb978005ace970c877269535.camel@intel.com>
+References: <20180814223303.83556-1-seth.howell@intel.com>
+         <20180815225021.GB31799@ziepe.ca>
+         <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
+         <20180816180126.GB10507@ziepe.ca>
+         <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
+         <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
+         <20180917210824.GF11367@ziepe.ca>
+In-Reply-To: <20180917210824.GF11367@ziepe.ca>
+Accept-Language: en-US
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809170221
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.18.124.203]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EC10D2F9C618D64C8BE902C1CBC3771D@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/18 5:19 PM, Jarkko Sakkinen wrote:
-> On Mon, Sep 17, 2018 at 09:54:37AM -0400, Boris Ostrovsky wrote:
->> On 9/16/18 3:25 PM, Jarkko Sakkinen wrote:
->>> On Thu, Sep 13, 2018 at 05:25:51PM -0400, Boris Ostrovsky wrote:
->>>> From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
->>>>
->>>> Functionality of the xen-tpmfront driver was lost secondary to
->>>> the introduction of xenbus multi-page support in commit ccc9d90a9a8b
->>>> ("xenbus_client: Extend interface to support multi-page ring").
->>>>
->>>> In this commit a pointer to the shared page address was being
->>>> passed to the xenbus_grant_ring() function rather then the
->>>> address of the shared page itself.  This resulted in a situation
->>> I'm sorry but I'm far from being expert with Xen and this sentence
->>> confuses me so maybe could open it up a bit.
->>>
->>> For me "shared page address" and "address of the shared page" are
->>> the same thing. What am I missing? I mean just different forms in
->>> english to describe the exact same thing...
->> xenbus_grant_ring() takes as an argument address of the ring shared
->> between two guests. What Greg was trying to describe was the fact that
->> existing code instead passes address of location where this address is
->> stored (i.e. somewhat similar to difference between pointer and pointer
->> to a pointer).
-> Just to understand this bug better why did not the wrong version
-> cause any undefined behavior? Sounds like a fatal bug. Does this
-> cause crashes?
-
-AFAIK, no, no crashes. I haven't tested this myself (and I believe
-relatively few people use this functionality, which explains why this
-has not been fixed for so long) but I don't think it will necessarily
-crash. It's just that the frontend driver will be reading from wrong
-location, causing TPM not to function properly.
-
-Or maybe the frontend is writing but then I believe the write would
-occur into tpm_private, and so will corrupt it. But the protocol will
-fail right after this anyway.
-
-
-
->
->> Would this be better:
->>
->> "In this commit pointer to location of the where the shared page address
->> is stored was being passed to the xenbus_grant_ring() function rather
->> then the
->> address of the shared page itself."
-> Yes, definitely!
-
-OK, I'll send it shortly.
-
-
-Thanks.
--boris
-
-
->
->> Or please suggest a better alternative, I'll be happy to amend the
->> commit message.
-> Thank you.
->
->> Thanks.
->> -boris
-> /Jarkko
-
+T24gTW9uLCAyMDE4LTA5LTE3IGF0IDE1OjA4IC0wNjAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
+DQo+IE9uIE1vbiwgU2VwIDE3LCAyMDE4IGF0IDA4OjM4OjE2UE0gKzAwMDAsIFdhbGtlciwgQmVu
+amFtaW4gd3JvdGU6DQo+ID4gV2UndmUgcmVjZW50bHkgcnVuIGludG8gdGhpcyBzYW1lIGlzc3Vl
+IG9uIGk0MGl3LCB3aGljaCBhcHBlYXJzIHRvIG1ha2UgdGhlDQo+ID4gc2FtZQ0KPiA+IG1pc3Rh
+a2Ugb2YgdXNpbmcgdGhlIGtlcm5lbCB2ZXJzaW9uIG9mIHRoZSBlbnVtIGluc3RlYWQgb2YgdGhl
+IHVzZXJzcGFjZQ0KPiA+IHZlcnNpb24uIA0KPiANCj4gQ29uZnVzZWQgYnkgdGhpcz8/IGk0MGl3
+X3Vwb3N0X3NlbmQgZG9lcyBub3QgaGFuZGxlIHRoZSBrZXJuZWwgbnVtYmVycw0KPiBhdCBhbGws
+IGFzIGZhciBhcyBJIGNhbiBzZWU/IEhvdyBkb2VzIGl0IGRldmVsb3AgYSBrZXJuZWwgZGVwZW5k
+ZW5jeT8/DQo+IA0KPiA+IFdoYXQncyB0aGUgY3VycmVudCBzdGF0dXMgaGVyZT8gQ2FuIGl0IGJl
+IG1lcmdlZD8gSSBqdXN0IGNoZWNrZWQgYW5kDQo+ID4gZG8gbm90IHNlZSBpdCBtZXJnZWQgdG8g
+TGludXggbWFzdGVyLg0KPiANCj4gT2ghIFRoaXMgYXBwYXJlbnRseSBnb3QgbG9zdCwgdGhhbmtz
+IGZvciBicmluZ2luZyBpdCB1cCBhZ2Fpbi4NCj4gDQo+ID4gUnVubmluZyBhIHVzZXItc3BhY2Ug
+TlZNZS1vRiB0YXJnZXQgd2l0aCBSRE1BIGFuZCBhIHJlY2VudCBMaW51eCBrZXJuZWwNCj4gPiBp
+bml0aWF0b3IgaXMgbm90IGN1cnJlbnRseSBwb3NzaWJsZSBvbiByeGUgb3IgaTQwaXcgYmVjYXVz
+ZSBpdCByZXF1aXJlcyBzZW5kDQo+ID4gd2l0aCBpbnZhbGlkYXRlIHN1cHBvcnQuDQo+IA0KPiBP
+a2F5LCBidXQgaTQwaXcgZG9lc24ndCBzZWVtIHRvIHN1cHBvcnQgc2VuZCB3aXRoIGludmFsaWRh
+dGUgYXQgYWxsIGluDQo+IHVzZXJzcGFjZT8NCj4gDQo+IGk0MGl3X3Vwb3N0X3NlbmQoKSBzd2l0
+aGNlcyBvbiBvcGNvZGUsIGRvZXNuJ3QgaGFuZGxlIFNFTkRfSU5WIGFuZA0KPiB0aGVuIGJsb3dz
+IHVwIGluIHRoZSBkZWZhdWx0IGNsYXVzZSAtIGhvdyBkb2VzIHRoaXMgcGF0Y2ggbWFrZSBhbnkN
+Cj4gZGlmZmVyZW5jZT8/Pw0KDQpJdCBhcHBlYXJzIEkndmUgcmVhZCB0aGUgZXJyb3IgbWVzc2Fn
+ZSBpbmNvcnJlY3RseSBhbmQgd2FzIGxvb2tpbmcgYXQgdGhlIGtlcm5lbA0KdmVyc2lvbiAoaTQw
+aXdfcG9zdF9zZW5kKSBhcyBvcHBvc2VkIHRvIHRoZSB1c2VyIHZlcnNpb24gKGk0MGl3X3Vwb3N0
+X3NlbmQpLg0KSW5kZWVkLCB0aGUgTklDIGRvZXMgbm90IHN1cHBvcnQgU0VORF9XVElIX0lOVkFM
+IGF0IGFsbCBpbiB0aGF0IGZ1bmN0aW9uLiBUaGUNCk5JQyBkb2VzIHN1cHBvcnQgU0VORF9XSVRI
+X0lOVkFMIGluIHRoZSBrZXJuZWwgaTQwaXdfcG9zdF9zZW5kLg0KDQpXaGF0IGlzIHRoZSBjb3Jy
+ZWN0IHdheSBmb3IgYSB1c2VyIHNwYWNlIGFwcGxpY2F0aW9uIHRvIGNoZWNrIHdoZXRoZXIgYSBO
+SUMNCnN1cHBvcnRzIFNFTkRfV0lUSF9JTlZBTD8gV2UgYXJlIGN1cnJlbnRseSBleGFtaW5pbmcg
+dGhlIGRldmljZV9jYXBfZmxhZ3MgaW4gdGhlDQpzdHJ1Y3R1cmUgcmV0dXJuZWQgYnkgaWJ2X3F1
+ZXJ5X2RldmljZS4gU3BlY2lmaWNhbGx5LCB3ZSdyZSBsb29raW5nIGF0DQpJQlZfREVWSUNFX01F
+TV9NR1RfRVhURU5TSU9OUy4gSG93ZXZlciwgZm9yIGk0MGl3LCB0aGF0IGZsYWcgaXMgc2V0LiBJ
+J20NCmNvbmNlcm5lZCB0aGF0IHRoZSBmZWF0dXJlIHN1cHBvcnQgZmxhZ3MgYXJlIGNvbW1vbiBi
+ZXR3ZWVuIHVzZXIgc3BhY2UgYW5kIHRoZQ0Ka2VybmVsLCBidXQgdGhlIGFjdHVhbCBzdXBwb3J0
+IGRpZmZlcnMgaW4gdGhpcyBjYXNlLg0KDQpUaGFua3MsDQpCZW4NCg0KPiANCj4gSmFzb24NCg0K
