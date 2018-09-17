@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E924ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EFFECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606D22088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606D22088F
+	by mail.kernel.org (Postfix) with ESMTP id E4DA72088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DA72088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeIRENK (ORCPT
+        id S1728705AbeIRENZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:13:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43108 "EHLO
+        Tue, 18 Sep 2018 00:13:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeIRENK (ORCPT
+        with ESMTP id S1728681AbeIRENZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:13:10 -0400
+        Tue, 18 Sep 2018 00:13:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 707DCCA4;
-        Mon, 17 Sep 2018 22:43:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C22DFC9D;
+        Mon, 17 Sep 2018 22:43:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 17/56] gpio: tegra: Move driver registration to subsys_init level
-Date:   Tue, 18 Sep 2018 00:41:50 +0200
-Message-Id: <20180917213828.671822835@linuxfoundation.org>
+Subject: [PATCH 4.4 18/56] scsi: target: fix __transport_register_session locking
+Date:   Tue, 18 Sep 2018 00:41:51 +0200
+Message-Id: <20180917213828.710262548@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -53,37 +54,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Mike Christie <mchristi@redhat.com>
 
-[ Upstream commit 40b25bce0adbe641a744d1291bc0e51fb7f3c3d8 ]
+[ Upstream commit 6a64f6e1591322beb8ce16e952a53582caf2a15c ]
 
-There is a bug in regards to deferred probing within the drivers core
-that causes GPIO-driver to suspend after its users. The bug appears if
-GPIO-driver probe is getting deferred, which happens after introducing
-dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
-property in device-tree. The bug in the drivers core is old (more than 4
-years now) and is well known, unfortunately there is no easy fix for it.
-The good news is that we can workaround the deferred probe issue by
-changing GPIO / PINCTRL drivers registration order and hence by moving
-PINCTRL driver registration to the arch_init level and GPIO to the
-subsys_init.
+When __transport_register_session is called from transport_register_session
+irqs will already have been disabled, so we do not want the unlock irq call
+to enable them until the higher level has done the final
+spin_unlock_irqrestore/ spin_unlock_irq.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This has __transport_register_session use the save/restore call.
+
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-tegra.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_transport.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -591,4 +591,4 @@ static int __init tegra_gpio_init(void)
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -306,6 +306,7 @@ void __transport_register_session(
  {
- 	return platform_driver_register(&tegra_gpio_driver);
- }
--postcore_initcall(tegra_gpio_init);
-+subsys_initcall(tegra_gpio_init);
+ 	const struct target_core_fabric_ops *tfo = se_tpg->se_tpg_tfo;
+ 	unsigned char buf[PR_REG_ISID_LEN];
++	unsigned long flags;
+ 
+ 	se_sess->se_tpg = se_tpg;
+ 	se_sess->fabric_sess_ptr = fabric_sess_ptr;
+@@ -342,7 +343,7 @@ void __transport_register_session(
+ 			se_sess->sess_bin_isid = get_unaligned_be64(&buf[0]);
+ 		}
+ 
+-		spin_lock_irq(&se_nacl->nacl_sess_lock);
++		spin_lock_irqsave(&se_nacl->nacl_sess_lock, flags);
+ 		/*
+ 		 * The se_nacl->nacl_sess pointer will be set to the
+ 		 * last active I_T Nexus for each struct se_node_acl.
+@@ -351,7 +352,7 @@ void __transport_register_session(
+ 
+ 		list_add_tail(&se_sess->sess_acl_list,
+ 			      &se_nacl->acl_sess_list);
+-		spin_unlock_irq(&se_nacl->nacl_sess_lock);
++		spin_unlock_irqrestore(&se_nacl->nacl_sess_lock, flags);
+ 	}
+ 	list_add_tail(&se_sess->sess_list, &se_tpg->tpg_sess_list);
+ 
 
 
