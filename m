@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2565ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E75EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63BFA2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63BFA2146F
+	by mail.kernel.org (Postfix) with ESMTP id F35C82146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35C82146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbeIRE3R (ORCPT
+        id S1729879AbeIRE3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47960 "EHLO
+        Tue, 18 Sep 2018 00:29:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47970 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIRE3Q (ORCPT
+        with ESMTP id S1727559AbeIRE3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:16 -0400
+        Tue, 18 Sep 2018 00:29:20 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AF43C03;
-        Mon, 17 Sep 2018 22:59:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7EEFC03;
+        Mon, 17 Sep 2018 22:59:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 44/70] gpio: ml-ioh: Fix buffer underwrite on probe error path
-Date:   Tue, 18 Sep 2018 00:42:17 +0200
-Message-Id: <20180917211652.748078853@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.14 001/126] i2c: xiic: Make the start and the byte count write atomic
+Date:   Tue, 18 Sep 2018 00:40:49 +0200
+Message-Id: <20180917211703.553503631@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
-References: <20180917211649.099135838@linuxfoundation.org>
+In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
+References: <20180917211703.481236999@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -48,45 +48,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
+commit ae7304c3ea28a3ba47a7a8312c76c654ef24967e upstream.
 
-If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
-to any element of chip_save array, so reverse iteration from pointer chip
-may become chip_save[-1] and gpiochip_remove() will operate with wrong
-memory.
+Disable interrupts while configuring the transfer and enable them back.
 
-The patch fix the error path of ioh_gpio_probe() to correctly bypass
-chip_save array.
+We have below as the programming sequence
+1. start and slave address
+2. byte count and stop
 
-Found by Linux Driver Verification project (linuxtesting.org).
+In some customer platform there was a lot of interrupts between 1 and 2
+and after slave address (around 7 clock cyles) if 2 is not executed
+then the transaction is nacked.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+To fix this case make the 2 writes atomic.
+
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+[wsa: added a newline for better readability]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpio/gpio-ml-ioh.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -495,9 +495,10 @@ err_irq_alloc_descs:
+---
+ drivers/i2c/busses/i2c-xiic.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -538,6 +538,7 @@ static void xiic_start_recv(struct xiic_
+ {
+ 	u8 rx_watermark;
+ 	struct i2c_msg *msg = i2c->rx_msg = i2c->tx_msg;
++	unsigned long flags;
  
- 	chip = chip_save;
- err_gpiochip_add:
-+	chip = chip_save;
- 	while (--i >= 0) {
--		chip--;
- 		gpiochip_remove(&chip->gpio);
-+		chip++;
- 	}
- 	kfree(chip_save);
+ 	/* Clear and enable Rx full interrupt. */
+ 	xiic_irq_clr_en(i2c, XIIC_INTR_RX_FULL_MASK | XIIC_INTR_TX_ERROR_MASK);
+@@ -553,6 +554,7 @@ static void xiic_start_recv(struct xiic_
+ 		rx_watermark = IIC_RX_FIFO_DEPTH;
+ 	xiic_setreg8(i2c, XIIC_RFD_REG_OFFSET, rx_watermark - 1);
  
++	local_irq_save(flags);
+ 	if (!(msg->flags & I2C_M_NOSTART))
+ 		/* write the address */
+ 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+@@ -563,6 +565,8 @@ static void xiic_start_recv(struct xiic_
+ 
+ 	xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+ 		msg->len | ((i2c->nmsgs == 1) ? XIIC_TX_DYN_STOP_MASK : 0));
++	local_irq_restore(flags);
++
+ 	if (i2c->nmsgs == 1)
+ 		/* very last, enable bus not busy as well */
+ 		xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
 
 
