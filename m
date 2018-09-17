@@ -2,154 +2,858 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61759ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5C7ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 040AB2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:48:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kYQvA61K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040AB2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 260002086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260002086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbeIQPPe (ORCPT
+        id S1728057AbeIQPP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 11:15:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeIQPPe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 11:15:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=06mVUdqy5UfXhscG7NiOdqeAwgjiipJLzpNlSMklW30=; b=kYQvA61KBF6Esh/CvIkqj1gwmu
-        I6kuDO2u3LidUZ0kR3s4W86LMyNxf+GHxVw1DSkDSu42kIAgDbwVQaCfjg0xz5JnAEYxNaBlzxlHG
-        tn/yAhSezxpUW0z8cFMpVnmy2AAxQJ2J3rfchmoa8jkbPggl1TR6gIvnRMj8Exnin1q7ldH+IJWdO
-        Qr2g4a3w/cMENnxMz5KCBCDz9WYrF8VukxllfTtksmkWeR44jVbn89ejzzg0vtHMYoSh0mUCTvmwQ
-        Q1PzTyvIJ/ZM5wpt8psNUnPm9zf7yeZTH/7aUglhUUjuSpGFFS3ySJxndPHNQfTS7aI09xyarwIOd
-        mN43U8Jw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1q98-0003hk-PI; Mon, 17 Sep 2018 09:48:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A3AF02058A20A; Mon, 17 Sep 2018 11:48:44 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 11:48:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: Task group cleanups and optimizations (was: Re: [RFC 00/60]
- Coscheduling for Linux)
-Message-ID: <20180917094844.GR24124@hirez.programming.kicks-ass.net>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
- <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
+        Mon, 17 Sep 2018 11:15:59 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12166 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725757AbeIQPP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 11:15:59 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6FBEEC5E5B1E;
+        Mon, 17 Sep 2018 17:49:18 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 17 Sep
+ 2018 17:49:10 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>
+CC:     Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Gao Xiang <gaoxiang25@huawei.com>,
+        Yann Collet <yann.collet.73@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [WIP] [RFC PATCH] lib/lz4: update LZ4 decompressor module
+Date:   Mon, 17 Sep 2018 17:49:05 +0800
+Message-ID: <1537177745-14491-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 10:48:20AM +0200, Jan H. Schönherr wrote:
-> On 09/14/2018 06:25 PM, Jan H. Schönherr wrote:
-> > On 09/14/2018 01:12 PM, Peter Zijlstra wrote:
-> >>
-> >> There are known scalability problems with the existing cgroup muck; you
-> >> just made things a ton worse. The existing cgroup overhead is
-> >> significant, you also made that many times worse.
-> >>
-> >> The cgroup stuff needs cleanups and optimization, not this.
-> 
-> [...]
-> 
-> > With respect to the need of cleanups and optimizations: I agree, that
-> > task groups are a bit messy. For example, here's my current wish list
-> > off the top of my head:
-> > 
-> > a) lazy scheduler operations; for example: when dequeuing a task, don't bother
-> >    walking up the task group hierarchy to dequeue all the SEs -- do it lazily
-> >    when encountering an empty CFS RQ during picking when we hold the lock anyway.
+This patch updates the LZ4 compression module based on LZ4
+LZ4 v1.8.3 in order for the erofs file system to use the newest
+LZ4_decompress_safe_partial() which can now decode exactly
+the nb of bytes requested [1] to take place of the open hacked
+code in the erofs file system itself.
 
-That sounds like it will wreck the runnable_weight accounting. Although,
-if, as you write below, we do away with the hierarchical runqueues, that
-isn't in fact needed anymore I think.
+Currently, apart from the erofs file system, no other users use
+LZ4_decompress_safe_partial, so no worry about the interface.
 
-Still, even without runnable_weight, I suspect we need the 'runnable'
-state, even for the other accounting.
+In addition, LZ4 v1.8.x boosts up decompression speed compared
+to the current code which is based on LZ4 v1.7.3, mainly due to
+shortcut optimization for the specific common LZ4-sequences [2].
 
-> > b) ability to move CFS RQs between CPUs: someone changed the affinity of
-> >    a cpuset? No problem, just attach the runqueue with all the tasks elsewhere.
-> >    No need to touch each and every task.
+lzbench testdata (tested in kirin710, 8 cores, 4 big cores
+at 2189Mhz, 2GB DDR RAM at 1622Mhz, with enwik8 testdata [3]):
 
-Can't do that, tasks might have individual constraints that are tighter
-than the cpuset. Also, changing affinities isn't really a hot path, so
-who cares.
+Compressor name         Compress. Decompress. Compr. size  Ratio Filename
+memcpy                   5004 MB/s  4924 MB/s   100000000 100.00 enwik8
+lz4hc 1.7.3 -9             12 MB/s   653 MB/s    42203253  42.20 enwik8
+lz4hc 1.8.0 -9             12 MB/s   908 MB/s    42203096  42.20 enwik8
+lz4hc 1.8.3 -9             11 MB/s   965 MB/s    42203094  42.20 enwik8
 
-> > c) light-weight task groups: don't allocate a runqueue for every CPU in the
-> >    system, when it is known that tasks in the task group will only ever run
-> >    on at most two CPUs, or so. (And while there is of course a use case for
-> >    VMs in this, another class of use cases are auxiliary tasks, see eg, [1-5].)
+[1] https://github.com/lz4/lz4/issues/566
+    https://github.com/lz4/lz4/commit/08d347b5b217b011ff7487130b79480d8cfdaeb8
 
-I have yet to go over your earlier email; but no. The scheduler is very
-much per-cpu. And as I mentioned earlier, CFS as is doesn't work right
-if you share the runqueue between multiple CPUs (and 'fixing' that is
-non trivial).
+[2] v1.8.1 perf: slightly faster compression and decompression speed
+    https://github.com/lz4/lz4/commit/a31b7058cb97e4393da55e78a77a1c6f0c9ae038
+    v1.8.2 perf: slightly faster HC compression and decompression speed
+    https://github.com/lz4/lz4/commit/45f8603aae389d34c689d3ff7427b314071ccd2c
+    https://github.com/lz4/lz4/commit/1a191b3f8d26b50a7c1d41590b529ec308d768cd
 
-> > Is this the level of optimizations, you're thinking about? Or do you want
-> > to throw away the whole nested CFS RQ experience in the code?
-> 
-> I guess, it would be possible to flatten the task group hierarchy, that is usually
-> created when nesting cgroups. That is, enqueue task group SEs always within the
-> root task group.
-> 
-> That should take away much of the (runtime-)overhead, no?
+[3] http://mattmahoney.net/dc/textdata.html
+    http://mattmahoney.net/dc/enwik8.zip
 
-Yes, Rik was going to look at trying this. Put all the tasks in the root
-rq and adjust the vtime calculations. Facebook is seeing significant
-overhead from cpu-cgroup and has to disable it because of that on at
-least part of their setup IIUC.
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Colin Ian King <colin.king@canonical.com> 
+Cc: Yann Collet <yann.collet.73@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+Tested-by: Guo Xuenan <guoxuenan@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ lib/lz4/lz4_decompress.c | 481 +++++++++++++++++++++++++++++++++--------------
+ lib/lz4/lz4defs.h        |   9 +-
+ 2 files changed, 349 insertions(+), 141 deletions(-)
 
-> The calculation of shares would need to be a different kind of complex than it is
-> now. But that might be manageable.
+diff --git a/lib/lz4/lz4_decompress.c b/lib/lz4/lz4_decompress.c
+index 141734d..0c9d3ad 100644
+--- a/lib/lz4/lz4_decompress.c
++++ b/lib/lz4/lz4_decompress.c
+@@ -43,30 +43,36 @@
+ /*-*****************************
+  *	Decompression functions
+  *******************************/
+-/* LZ4_decompress_generic() :
+- * This generic decompression function cover all use cases.
+- * It shall be instantiated several times, using different sets of directives
+- * Note that it is important this generic function is really inlined,
++
++#define DEBUGLOG(l, ...) {}	/* disabled */
++
++#ifndef assert
++#define assert(condition) ((void)0)
++#endif
++
++/*
++ * LZ4_decompress_generic() :
++ * This generic decompression function covers all use cases.
++ * It shall be instantiated several times, using different sets of directives.
++ * Note that it is important for performance that this function really get inlined,
+  * in order to remove useless branches during compilation optimization.
+  */
+ static FORCE_INLINE int LZ4_decompress_generic(
+-	 const char * const source,
+-	 char * const dest,
+-	 int inputSize,
++	 const char * const src,
++	 char * const dst,
++	 int srcSize,
+ 		/*
+ 		 * If endOnInput == endOnInputSize,
+-		 * this value is the max size of Output Buffer.
++		 * this value is `dstCapacity`
+ 		 */
+ 	 int outputSize,
+ 	 /* endOnOutputSize, endOnInputSize */
+-	 int endOnInput,
++	 endCondition_directive endOnInput,
+ 	 /* full, partial */
+-	 int partialDecoding,
+-	 /* only used if partialDecoding == partial */
+-	 int targetOutputSize,
++	 earlyEnd_directive partialDecoding,
+ 	 /* noDict, withPrefix64k, usingExtDict */
+-	 int dict,
+-	 /* == dest when no prefix */
++	 dict_directive dict,
++	 /* always <= dst, == dst when no prefix */
+ 	 const BYTE * const lowPrefix,
+ 	 /* only if dict == usingExtDict */
+ 	 const BYTE * const dictStart,
+@@ -74,35 +80,43 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 	 const size_t dictSize
+ 	 )
+ {
+-	/* Local Variables */
+-	const BYTE *ip = (const BYTE *) source;
+-	const BYTE * const iend = ip + inputSize;
++	const BYTE *ip = (const BYTE *) src;
++	const BYTE * const iend = ip + srcSize;
+ 
+-	BYTE *op = (BYTE *) dest;
++	BYTE *op = (BYTE *) dst;
+ 	BYTE * const oend = op + outputSize;
+ 	BYTE *cpy;
+-	BYTE *oexit = op + targetOutputSize;
+-	const BYTE * const lowLimit = lowPrefix - dictSize;
+ 
+ 	const BYTE * const dictEnd = (const BYTE *)dictStart + dictSize;
+-	static const unsigned int dec32table[] = { 0, 1, 2, 1, 4, 4, 4, 4 };
+-	static const int dec64table[] = { 0, 0, 0, -1, 0, 1, 2, 3 };
++	static const unsigned int inc32table[8] = {0, 1, 2, 1, 0, 4, 4, 4};
++	static const int dec64table[8] = {0, 0, 0, -1, -4, 1, 2, 3};
+ 
+ 	const int safeDecode = (endOnInput == endOnInputSize);
+ 	const int checkOffset = ((safeDecode) && (dictSize < (int)(64 * KB)));
+ 
++	/* Set up the "end" pointers for the shortcut. */
++	const BYTE *const shortiend = iend -
++		(endOnInput ? 14 : 8) /*maxLL*/ - 2 /*offset*/;
++	const BYTE *const shortoend = oend -
++		(endOnInput ? 14 : 8) /*maxLL*/ - 18 /*maxML*/;
++
++	DEBUGLOG(5, "%s (srcSize:%i, dstSize:%i)", __func__,
++		 srcSize, outputSize);
++
+ 	/* Special cases */
+-	/* targetOutputSize too high => decode everything */
+-	if ((partialDecoding) && (oexit > oend - MFLIMIT))
+-		oexit = oend - MFLIMIT;
++	assert(lowPrefix <= op);
++	assert(src != NULL);
+ 
+ 	/* Empty output buffer */
+ 	if ((endOnInput) && (unlikely(outputSize == 0)))
+-		return ((inputSize == 1) && (*ip == 0)) ? 0 : -1;
++		return ((srcSize == 1) && (*ip == 0)) ? 0 : -1;
+ 
+ 	if ((!endOnInput) && (unlikely(outputSize == 0)))
+ 		return (*ip == 0 ? 1 : -1);
+ 
++	if ((endOnInput) && unlikely(srcSize == 0))
++		return -1;
++
+ 	/* Main Loop : decode sequences */
+ 	while (1) {
+ 		size_t length;
+@@ -111,12 +125,74 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 		/* get literal length */
+ 		unsigned int const token = *ip++;
+-
+ 		length = token>>ML_BITS;
+ 
++		/* ip < iend before the increment */
++		assert(!endOnInput || ip <= iend);
++
++		/*
++		 * A two-stage shortcut for the most common case:
++		 * 1) If the literal length is 0..14, and there is enough
++		 * space, enter the shortcut and copy 16 bytes on behalf
++		 * of the literals (in the fast mode, only 8 bytes can be
++		 * safely copied this way).
++		 * 2) Further if the match length is 4..18, copy 18 bytes
++		 * in a similar manner; but we ensure that there's enough
++		 * space in the output for those 18 bytes earlier, upon
++		 * entering the shortcut (in other words, there is a
++		 * combined check for both stages).
++		 */
++		if ((endOnInput ? length != RUN_MASK : length <= 8)
++		   /*
++		    * strictly "less than" on input, to re-enter
++		    * the loop with at least one byte
++		    */
++		   && likely((endOnInput ? ip < shortiend : 1) &
++			     (op <= shortoend))) {
++			/* Copy the literals */
++			memcpy(op, ip, endOnInput ? 16 : 8);
++			op += length; ip += length;
++
++			/*
++			 * The second stage:
++			 * prepare for match copying, decode full info.
++			 * If it doesn't work out, the info won't be wasted.
++			 */
++			length = token & ML_MASK; /* match length */
++			offset = LZ4_readLE16(ip);
++			ip += 2;
++			match = op - offset;
++			assert(match <= op); /* check overflow */
++
++			/* Do not deal with overlapping matches. */
++			if ((length != ML_MASK) &&
++			    (offset >= 8) &&
++			    (dict == withPrefix64k || match >= lowPrefix)) {
++				/* Copy the match. */
++				memcpy(op + 0, match + 0, 8);
++				memcpy(op + 8, match + 8, 8);
++				memcpy(op + 16, match + 16, 2);
++				op += length + MINMATCH;
++				/* Both stages worked, load the next token. */
++				continue;
++			}
++
++			/*
++			 * The second stage didn't work out, but the info
++			 * is ready. Propel it right to the point of match
++			 * copying.
++			 */
++			goto _copy_match;
++		}
++
++		/* decode literal length */
+ 		if (length == RUN_MASK) {
+ 			unsigned int s;
+ 
++			if (unlikely(endOnInput ? ip >= iend - RUN_MASK : 0)) {
++				/* overflow detection */
++				goto _output_error;
++			}
+ 			do {
+ 				s = *ip++;
+ 				length += s;
+@@ -125,14 +201,14 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 				: 1) & (s == 255));
+ 
+ 			if ((safeDecode)
+-				&& unlikely(
+-					(size_t)(op + length) < (size_t)(op))) {
++			    && unlikely((uptrval)(op) +
++					length < (uptrval)(op))) {
+ 				/* overflow detection */
+ 				goto _output_error;
+ 			}
+ 			if ((safeDecode)
+-				&& unlikely(
+-					(size_t)(ip + length) < (size_t)(ip))) {
++			    && unlikely((uptrval)(ip) +
++					length < (uptrval)(ip))) {
+ 				/* overflow detection */
+ 				goto _output_error;
+ 			}
+@@ -140,16 +216,19 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 		/* copy literals */
+ 		cpy = op + length;
+-		if (((endOnInput) && ((cpy > (partialDecoding ? oexit : oend - MFLIMIT))
++		LZ4_STATIC_ASSERT(MFLIMIT >= WILDCOPYLENGTH);
++
++		if (((endOnInput) && ((cpy > oend - MFLIMIT)
+ 			|| (ip + length > iend - (2 + 1 + LASTLITERALS))))
+ 			|| ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH))) {
+ 			if (partialDecoding) {
+ 				if (cpy > oend) {
+ 					/*
+-					 * Error :
+-					 * write attempt beyond end of output buffer
++					 * Partial decoding :
++					 * stop in the middle of literal segment
+ 					 */
+-					goto _output_error;
++					cpy = oend;
++					length = oend - op;
+ 				}
+ 				if ((endOnInput)
+ 					&& (ip + length > iend)) {
+@@ -184,29 +263,43 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 			memcpy(op, ip, length);
+ 			ip += length;
+ 			op += length;
++
+ 			/* Necessarily EOF, due to parsing restrictions */
+-			break;
++			if (!partialDecoding || (cpy == oend))
++				break;
++		} else {
++			/* may overwrite up to WILDCOPYLENGTH beyond cpy */
++			LZ4_wildCopy(op, ip, cpy);
++			ip += length;
++			op = cpy;
+ 		}
+ 
+-		LZ4_wildCopy(op, ip, cpy);
+-		ip += length;
+-		op = cpy;
+-
+ 		/* get offset */
+ 		offset = LZ4_readLE16(ip);
+ 		ip += 2;
+ 		match = op - offset;
+ 
+-		if ((checkOffset) && (unlikely(match < lowLimit))) {
++		/* get matchlength */
++		length = token & ML_MASK;
++
++_copy_match:
++		if ((checkOffset) && (unlikely(match + dictSize < lowPrefix))) {
+ 			/* Error : offset outside buffers */
+ 			goto _output_error;
+ 		}
+ 
+ 		/* costs ~1%; silence an msan warning when offset == 0 */
+-		LZ4_write32(op, (U32)offset);
++		/*
++		 * note : when partialDecoding, there is no guarantee that
++		 * at least 4 bytes remain available in output buffer
++		 */
++		if (!partialDecoding) {
++			assert(oend > op);
++			assert(oend - op >= 4);
++
++			LZ4_write32(op, (U32)offset);
++		}
+ 
+-		/* get matchlength */
+-		length = token & ML_MASK;
+ 		if (length == ML_MASK) {
+ 			unsigned int s;
+ 
+@@ -221,7 +314,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 			if ((safeDecode)
+ 				&& unlikely(
+-					(size_t)(op + length) < (size_t)op)) {
++					(uptrval)(op) + length < (uptrval)op)) {
+ 				/* overflow detection */
+ 				goto _output_error;
+ 			}
+@@ -229,24 +322,26 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 		length += MINMATCH;
+ 
+-		/* check external dictionary */
++		/* match starting within external dictionary */
+ 		if ((dict == usingExtDict) && (match < lowPrefix)) {
+ 			if (unlikely(op + length > oend - LASTLITERALS)) {
+ 				/* doesn't respect parsing restriction */
+-				goto _output_error;
++				if (!partialDecoding)
++					goto _output_error;
++				length = min(length, (size_t)(oend - op));
+ 			}
+ 
+ 			if (length <= (size_t)(lowPrefix - match)) {
+ 				/*
+-				 * match can be copied as a single segment
+-				 * from external dictionary
++				 * match fits entirely within external
++				 * dictionary : just copy
+ 				 */
+ 				memmove(op, dictEnd - (lowPrefix - match),
+ 					length);
+ 				op += length;
+ 			} else {
+ 				/*
+-				 * match encompass external
++				 * match stretches into both external
+ 				 * dictionary and current block
+ 				 */
+ 				size_t const copySize = (size_t)(lowPrefix - match);
+@@ -254,7 +349,6 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 				memcpy(op, dictEnd - copySize, copySize);
+ 				op += copySize;
+-
+ 				if (restSize > (size_t)(op - lowPrefix)) {
+ 					/* overlap copy */
+ 					BYTE * const endOfMatch = op + restSize;
+@@ -267,23 +361,44 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 					op += restSize;
+ 				}
+ 			}
+-
+ 			continue;
+ 		}
+ 
+ 		/* copy match within block */
+ 		cpy = op + length;
+ 
+-		if (unlikely(offset < 8)) {
+-			const int dec64 = dec64table[offset];
++		/*
++		 * partialDecoding :
++		 * may not respect endBlock parsing restrictions
++		 */
++		assert(op <= oend);
++		if (partialDecoding &&
++		    (cpy > oend - MATCH_SAFEGUARD_DISTANCE)) {
++			size_t const mlen = min(length, (size_t)(oend - op));
++			const BYTE * const matchEnd = match + mlen;
++			BYTE * const copyEnd = op + mlen;
++
++			if (matchEnd > op) {
++				/* overlap copy */
++				while (op < copyEnd)
++					*op++ = *match++;
++			} else {
++				memcpy(op, match, mlen);
++			}
++			op = copyEnd;
++			if (op == oend)
++				break;
++			continue;
++		}
+ 
++		if (unlikely(offset < 8)) {
+ 			op[0] = match[0];
+ 			op[1] = match[1];
+ 			op[2] = match[2];
+ 			op[3] = match[3];
+-			match += dec32table[offset];
++			match += inc32table[offset];
+ 			memcpy(op + 4, match, 4);
+-			match -= dec64;
++			match -= dec64table[offset];
+ 		} else {
+ 			LZ4_copy8(op, match);
+ 			match += 8;
+@@ -291,7 +406,7 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 
+ 		op += 8;
+ 
+-		if (unlikely(cpy > oend - 12)) {
++		if (unlikely(cpy > oend - MATCH_SAFEGUARD_DISTANCE)) {
+ 			BYTE * const oCopyLimit = oend - (WILDCOPYLENGTH - 1);
+ 
+ 			if (cpy > oend - LASTLITERALS) {
+@@ -307,60 +422,139 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 				match += oCopyLimit - op;
+ 				op = oCopyLimit;
+ 			}
+-
+ 			while (op < cpy)
+ 				*op++ = *match++;
+ 		} else {
+ 			LZ4_copy8(op, match);
+-
+ 			if (length > 16)
+ 				LZ4_wildCopy(op + 8, match + 8, cpy);
+ 		}
+-
+-		op = cpy; /* correction */
++		op = cpy; /* wildcopy correction */
+ 	}
+ 
+ 	/* end of decoding */
+ 	if (endOnInput) {
+ 		/* Nb of output bytes decoded */
+-		return (int) (((char *)op) - dest);
++		return (int) (((char *)op) - dst);
+ 	} else {
+ 		/* Nb of input bytes read */
+-		return (int) (((const char *)ip) - source);
++		return (int) (((const char *)ip) - src);
+ 	}
+ 
+ 	/* Overflow error detected */
+ _output_error:
+-	return -1;
++	return (int) (-(((const char *)ip) - src)) - 1;
+ }
+ 
+ int LZ4_decompress_safe(const char *source, char *dest,
+ 	int compressedSize, int maxDecompressedSize)
+ {
+-	return LZ4_decompress_generic(source, dest, compressedSize,
+-		maxDecompressedSize, endOnInputSize, full, 0,
+-		noDict, (BYTE *)dest, NULL, 0);
++	return LZ4_decompress_generic(source, dest,
++				      compressedSize, maxDecompressedSize,
++				      endOnInputSize, decode_full_block,
++				      noDict, (BYTE *)dest, NULL, 0);
+ }
+ 
+-int LZ4_decompress_safe_partial(const char *source, char *dest,
+-	int compressedSize, int targetOutputSize, int maxDecompressedSize)
++int LZ4_decompress_safe_partial(const char *src, char *dst,
++	int compressedSize, int targetOutputSize, int dstCapacity)
+ {
+-	return LZ4_decompress_generic(source, dest, compressedSize,
+-		maxDecompressedSize, endOnInputSize, partial,
+-		targetOutputSize, noDict, (BYTE *)dest, NULL, 0);
++	dstCapacity = min(targetOutputSize, dstCapacity);
++	return LZ4_decompress_generic(src, dst, compressedSize, dstCapacity,
++				      endOnInputSize, partial_decode,
++				      noDict, (BYTE *)dst, NULL, 0);
+ }
+ 
+ int LZ4_decompress_fast(const char *source, char *dest, int originalSize)
+ {
+ 	return LZ4_decompress_generic(source, dest, 0, originalSize,
+-		endOnOutputSize, full, 0, withPrefix64k,
+-		(BYTE *)(dest - 64 * KB), NULL, 64 * KB);
++				      endOnOutputSize, decode_full_block,
++				      withPrefix64k,
++				      (BYTE *)dest - 64 * KB, NULL, 0);
++}
++
++/* ===== Instantiate a few more decoding cases, used more than once. ===== */
++
++int LZ4_decompress_safe_withPrefix64k(const char *source, char *dest,
++				      int compressedSize, int maxOutputSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      compressedSize, maxOutputSize,
++				      endOnInputSize, decode_full_block,
++				      withPrefix64k,
++				      (BYTE *)dest - 64 * KB, NULL, 0);
++}
++
++static int LZ4_decompress_safe_withSmallPrefix(const char *source, char *dest,
++					       int compressedSize,
++					       int maxOutputSize,
++					       size_t prefixSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      compressedSize, maxOutputSize,
++				      endOnInputSize, decode_full_block,
++				      noDict,
++				      (BYTE *)dest - prefixSize, NULL, 0);
++}
++
++int LZ4_decompress_safe_forceExtDict(const char *source, char *dest,
++				     int compressedSize, int maxOutputSize,
++				     const void *dictStart, size_t dictSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      compressedSize, maxOutputSize,
++				      endOnInputSize, decode_full_block,
++				      usingExtDict, (BYTE *)dest,
++				      (const BYTE *)dictStart, dictSize);
+ }
+ 
++static int LZ4_decompress_fast_extDict(const char *source, char *dest,
++				       int originalSize,
++				       const void *dictStart, size_t dictSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      0, originalSize,
++				      endOnOutputSize, decode_full_block,
++				      usingExtDict, (BYTE *)dest,
++				      (const BYTE *)dictStart, dictSize);
++}
++
++/*
++ * The "double dictionary" mode, for use with e.g. ring buffers: the first part
++ * of the dictionary is passed as prefix, and the second via dictStart + dictSize.
++ * These routines are used only once, in LZ4_decompress_*_continue().
++ */
++static FORCE_INLINE
++int LZ4_decompress_safe_doubleDict(const char *source, char *dest,
++				   int compressedSize, int maxOutputSize,
++				   size_t prefixSize,
++				   const void *dictStart, size_t dictSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      compressedSize, maxOutputSize,
++				      endOnInputSize, decode_full_block,
++				      usingExtDict, (BYTE *)dest - prefixSize,
++				      (const BYTE *)dictStart, dictSize);
++}
++
++static FORCE_INLINE
++int LZ4_decompress_fast_doubleDict(const char *source, char *dest,
++				   int originalSize, size_t prefixSize,
++				   const void *dictStart, size_t dictSize)
++{
++	return LZ4_decompress_generic(source, dest,
++				      0, originalSize,
++				      endOnOutputSize, decode_full_block,
++				      usingExtDict, (BYTE *)dest - prefixSize,
++				      (const BYTE *)dictStart, dictSize);
++}
++
++/* ===== streaming decompression functions ===== */
++
+ int LZ4_setStreamDecode(LZ4_streamDecode_t *LZ4_streamDecode,
+ 	const char *dictionary, int dictSize)
+ {
+-	LZ4_streamDecode_t_internal *lz4sd = (LZ4_streamDecode_t_internal *) LZ4_streamDecode;
++	LZ4_streamDecode_t_internal *lz4sd =
++		&LZ4_streamDecode->internal_donotuse;
+ 
+ 	lz4sd->prefixSize = (size_t) dictSize;
+ 	lz4sd->prefixEnd = (const BYTE *) dictionary + dictSize;
+@@ -382,35 +576,51 @@ int LZ4_setStreamDecode(LZ4_streamDecode_t *LZ4_streamDecode,
+ int LZ4_decompress_safe_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 	const char *source, char *dest, int compressedSize, int maxOutputSize)
+ {
+-	LZ4_streamDecode_t_internal *lz4sd = &LZ4_streamDecode->internal_donotuse;
++	LZ4_streamDecode_t_internal *lz4sd =
++		&LZ4_streamDecode->internal_donotuse;
+ 	int result;
+ 
+-	if (lz4sd->prefixEnd == (BYTE *)dest) {
+-		result = LZ4_decompress_generic(source, dest,
+-			compressedSize,
+-			maxOutputSize,
+-			endOnInputSize, full, 0,
+-			usingExtDict, lz4sd->prefixEnd - lz4sd->prefixSize,
+-			lz4sd->externalDict,
+-			lz4sd->extDictSize);
+-
++	if (lz4sd->prefixSize == 0) {
++		/* The first call, no dictionary yet. */
++		assert(lz4sd->extDictSize == 0);
++		result = LZ4_decompress_safe(source, dest,
++			compressedSize, maxOutputSize);
++		if (result <= 0)
++			return result;
++		lz4sd->prefixSize = result;
++		lz4sd->prefixEnd = (BYTE *)dest + result;
++	} else if (lz4sd->prefixEnd == (BYTE *)dest) {
++		/* They're rolling the current segment. */
++		if (lz4sd->prefixSize >= 64 * KB - 1)
++			result = LZ4_decompress_safe_withPrefix64k(source, dest,
++				compressedSize, maxOutputSize);
++		else if (lz4sd->extDictSize == 0)
++			result = LZ4_decompress_safe_withSmallPrefix(source,
++				dest, compressedSize, maxOutputSize,
++				lz4sd->prefixSize);
++		else
++			result = LZ4_decompress_safe_doubleDict(source, dest,
++				compressedSize, maxOutputSize,
++				lz4sd->prefixSize,
++				lz4sd->externalDict, lz4sd->extDictSize);
+ 		if (result <= 0)
+ 			return result;
+-
+ 		lz4sd->prefixSize += result;
+-		lz4sd->prefixEnd	+= result;
++		lz4sd->prefixEnd  += result;
+ 	} else {
++		/*
++		 * The buffer wraps around, or they're
++		 * switching to another buffer.
++		 */
+ 		lz4sd->extDictSize = lz4sd->prefixSize;
+ 		lz4sd->externalDict = lz4sd->prefixEnd - lz4sd->extDictSize;
+-		result = LZ4_decompress_generic(source, dest,
++		result = LZ4_decompress_safe_forceExtDict(source, dest,
+ 			compressedSize, maxOutputSize,
+-			endOnInputSize, full, 0,
+-			usingExtDict, (BYTE *)dest,
+ 			lz4sd->externalDict, lz4sd->extDictSize);
+ 		if (result <= 0)
+ 			return result;
+ 		lz4sd->prefixSize = result;
+-		lz4sd->prefixEnd	= (BYTE *)dest + result;
++		lz4sd->prefixEnd  = (BYTE *)dest + result;
+ 	}
+ 
+ 	return result;
+@@ -422,75 +632,66 @@ int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 	LZ4_streamDecode_t_internal *lz4sd = &LZ4_streamDecode->internal_donotuse;
+ 	int result;
+ 
+-	if (lz4sd->prefixEnd == (BYTE *)dest) {
+-		result = LZ4_decompress_generic(source, dest, 0, originalSize,
+-			endOnOutputSize, full, 0,
+-			usingExtDict,
+-			lz4sd->prefixEnd - lz4sd->prefixSize,
+-			lz4sd->externalDict, lz4sd->extDictSize);
+-
++	if (lz4sd->prefixSize == 0) {
++		assert(lz4sd->extDictSize == 0);
++		result = LZ4_decompress_fast(source, dest, originalSize);
++		if (result <= 0)
++			return result;
++		lz4sd->prefixSize = originalSize;
++		lz4sd->prefixEnd = (BYTE *)dest + originalSize;
++	} else if (lz4sd->prefixEnd == (BYTE *)dest) {
++		if (lz4sd->prefixSize >= 64 * KB - 1 ||
++		    lz4sd->extDictSize == 0)
++			result = LZ4_decompress_fast(source, dest,
++						     originalSize);
++		else
++			result = LZ4_decompress_fast_doubleDict(source, dest,
++				originalSize, lz4sd->prefixSize,
++				lz4sd->externalDict, lz4sd->extDictSize);
+ 		if (result <= 0)
+ 			return result;
+-
+ 		lz4sd->prefixSize += originalSize;
+-		lz4sd->prefixEnd	+= originalSize;
++		lz4sd->prefixEnd  += originalSize;
+ 	} else {
+ 		lz4sd->extDictSize = lz4sd->prefixSize;
+ 		lz4sd->externalDict = lz4sd->prefixEnd - lz4sd->extDictSize;
+-		result = LZ4_decompress_generic(source, dest, 0, originalSize,
+-			endOnOutputSize, full, 0,
+-			usingExtDict, (BYTE *)dest,
+-			lz4sd->externalDict, lz4sd->extDictSize);
++		result = LZ4_decompress_fast_extDict(source, dest,
++			originalSize, lz4sd->externalDict, lz4sd->extDictSize);
+ 		if (result <= 0)
+ 			return result;
+ 		lz4sd->prefixSize = originalSize;
+-		lz4sd->prefixEnd	= (BYTE *)dest + originalSize;
++		lz4sd->prefixEnd = (BYTE *)dest + originalSize;
+ 	}
+-
+ 	return result;
+ }
+ 
+-/*
+- * Advanced decoding functions :
+- * *_usingDict() :
+- * These decoding functions work the same as "_continue" ones,
+- * the dictionary must be explicitly provided within parameters
+- */
+-static FORCE_INLINE int LZ4_decompress_usingDict_generic(const char *source,
+-	char *dest, int compressedSize, int maxOutputSize, int safe,
+-	const char *dictStart, int dictSize)
++int LZ4_decompress_safe_usingDict(const char *source, char *dest,
++				  int compressedSize, int maxOutputSize,
++				  const char *dictStart, int dictSize)
+ {
+ 	if (dictSize == 0)
+-		return LZ4_decompress_generic(source, dest,
+-			compressedSize, maxOutputSize, safe, full, 0,
+-			noDict, (BYTE *)dest, NULL, 0);
+-	if (dictStart + dictSize == dest) {
+-		if (dictSize >= (int)(64 * KB - 1))
+-			return LZ4_decompress_generic(source, dest,
+-				compressedSize, maxOutputSize, safe, full, 0,
+-				withPrefix64k, (BYTE *)dest - 64 * KB, NULL, 0);
+-		return LZ4_decompress_generic(source, dest, compressedSize,
+-			maxOutputSize, safe, full, 0, noDict,
+-			(BYTE *)dest - dictSize, NULL, 0);
++		return LZ4_decompress_safe(source, dest,
++					   compressedSize, maxOutputSize);
++	if (dictStart+dictSize == dest) {
++		if (dictSize >= 64 * KB - 1)
++			return LZ4_decompress_safe_withPrefix64k(source, dest,
++				compressedSize, maxOutputSize);
++		return LZ4_decompress_safe_withSmallPrefix(source, dest,
++			compressedSize, maxOutputSize, dictSize);
+ 	}
+-	return LZ4_decompress_generic(source, dest, compressedSize,
+-		maxOutputSize, safe, full, 0, usingExtDict,
+-		(BYTE *)dest, (const BYTE *)dictStart, dictSize);
+-}
+-
+-int LZ4_decompress_safe_usingDict(const char *source, char *dest,
+-	int compressedSize, int maxOutputSize,
+-	const char *dictStart, int dictSize)
+-{
+-	return LZ4_decompress_usingDict_generic(source, dest,
+-		compressedSize, maxOutputSize, 1, dictStart, dictSize);
++	return LZ4_decompress_safe_forceExtDict(source, dest,
++		compressedSize, maxOutputSize, dictStart, dictSize);
+ }
+ 
+ int LZ4_decompress_fast_usingDict(const char *source, char *dest,
+-	int originalSize, const char *dictStart, int dictSize)
++				  int originalSize,
++				  const char *dictStart, int dictSize)
+ {
+-	return LZ4_decompress_usingDict_generic(source, dest, 0,
+-		originalSize, 0, dictStart, dictSize);
++	if (dictSize == 0 || dictStart + dictSize == dest)
++		return LZ4_decompress_fast(source, dest, originalSize);
++
++	return LZ4_decompress_fast_extDict(source, dest, originalSize,
++		dictStart, dictSize);
+ }
+ 
+ #ifndef STATIC
+diff --git a/lib/lz4/lz4defs.h b/lib/lz4/lz4defs.h
+index 00a0b58..1a7fa9d 100644
+--- a/lib/lz4/lz4defs.h
++++ b/lib/lz4/lz4defs.h
+@@ -75,6 +75,11 @@
+ #define WILDCOPYLENGTH 8
+ #define LASTLITERALS 5
+ #define MFLIMIT (WILDCOPYLENGTH + MINMATCH)
++/*
++ * ensure it's possible to write 2 x wildcopyLength
++ * without overflowing output buffer
++ */
++#define MATCH_SAFEGUARD_DISTANCE  ((2 * WILDCOPYLENGTH) - MINMATCH)
+ 
+ /* Increase this value ==> compression run slower on incompressible data */
+ #define LZ4_SKIPTRIGGER 6
+@@ -222,6 +227,8 @@ static FORCE_INLINE unsigned int LZ4_count(
+ typedef enum { noDictIssue = 0, dictSmall } dictIssue_directive;
+ 
+ typedef enum { endOnOutputSize = 0, endOnInputSize = 1 } endCondition_directive;
+-typedef enum { full = 0, partial = 1 } earlyEnd_directive;
++typedef enum { decode_full_block = 0, partial_decode = 1 } earlyEnd_directive;
++
++#define LZ4_STATIC_ASSERT(c)	BUILD_BUG_ON(!(c))
+ 
+ #endif
+-- 
+1.9.1
 
-That is the hope; indeed. We'll still need to create the hierarchy for
-accounting purposes, but it can be a smaller/simpler data structure.
-
-So the weight computation would be the normalized product of the parents
-etc.. and since PELT only updates the values on ~1ms scale, we can keep
-a cache of the product -- that is, we don't have to recompute that
-product and walk the hierarchy all the time either.
-
-> CFS bandwidth control would also need to change significantly as we would now
-> have to dequeue/enqueue nested cgroups below a throttled/unthrottled hierarchy.
-> Unless *those* task groups don't participate in this flattening.
-
-Right, so the whole bandwidth thing becomes a pain; the simplest
-solution is to detect the throttle at task-pick time, dequeue and try
-again. But that is indeed quite horrible.
-
-I'm not quite sure how this will play out.
-
-Anyway, if we pull off this flattening feat, then you can no longer use
-the hierarchy for this co-scheduling stuff.
-
-Now, let me go read your earlier email and reply to that (in parts).
