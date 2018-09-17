@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B309ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5C6ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57FD12146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FD12146F
+	by mail.kernel.org (Postfix) with ESMTP id D340D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D340D2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbeIRE3v (ORCPT
+        id S1730027AbeIRE3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48058 "EHLO
+        Tue, 18 Sep 2018 00:29:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIRE3u (ORCPT
+        with ESMTP id S1727559AbeIRE3w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:50 -0400
+        Tue, 18 Sep 2018 00:29:52 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8204FC77;
-        Mon, 17 Sep 2018 23:00:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA304C7D;
+        Mon, 17 Sep 2018 23:00:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>, prarit@redhat.com
-Subject: [PATCH 4.14 017/126] x86/microcode: Update the new microcode revision unconditionally
-Date:   Tue, 18 Sep 2018 00:41:05 +0200
-Message-Id: <20180917211705.818051135@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Subject: [PATCH 4.14 018/126] switchtec: Fix Spectre v1 vulnerability
+Date:   Tue, 18 Sep 2018 00:41:06 +0200
+Message-Id: <20180917211705.882751290@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,121 +53,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filippo Sironi <sironi@amazon.de>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 8da38ebaad23fe1b0c4a205438676f6356607cfc upstream.
+commit 46feb6b495f7628a6dbf36c4e6d80faf378372d4 upstream.
 
-Handle the case where microcode gets loaded on the BSP's hyperthread
-sibling first and the boot_cpu_data's microcode revision doesn't get
-updated because of early exit due to the siblings sharing a microcode
-engine.
+p.port can is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-For that, simply write the updated revision on all CPUs unconditionally.
+This issue was detected with the help of Smatch:
 
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: prarit@redhat.com
+  drivers/pci/switch/switchtec.c:912 ioctl_port_to_pff() warn: potential spectre issue 'pcfg->dsp_pff_inst_id' [r]
+
+Fix this by sanitizing p.port before using it to index
+pcfg->dsp_pff_inst_id
+
+Notice that given that speculation windows are large, the policy is to kill
+the speculation on the first load and not worry if it can be completed with
+a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Logan Gunthorpe <logang@deltatee.com>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1533050970-14385-1-git-send-email-sironi@amazon.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/amd.c   |   22 +++++++++++++---------
- arch/x86/kernel/cpu/microcode/intel.c |   13 ++++++++-----
- 2 files changed, 21 insertions(+), 14 deletions(-)
+ drivers/pci/switch/switchtec.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -504,6 +504,7 @@ static enum ucode_state apply_microcode_
- 	struct microcode_amd *mc_amd;
- 	struct ucode_cpu_info *uci;
- 	struct ucode_patch *p;
-+	enum ucode_state ret;
- 	u32 rev, dummy;
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -24,6 +24,8 @@
+ #include <linux/cdev.h>
+ #include <linux/wait.h>
  
- 	BUG_ON(raw_smp_processor_id() != cpu);
-@@ -521,9 +522,8 @@ static enum ucode_state apply_microcode_
- 
- 	/* need to apply patch? */
- 	if (rev >= mc_amd->hdr.patch_id) {
--		c->microcode = rev;
--		uci->cpu_sig.rev = rev;
--		return UCODE_OK;
-+		ret = UCODE_OK;
-+		goto out;
- 	}
- 
- 	if (__apply_microcode_amd(mc_amd)) {
-@@ -531,17 +531,21 @@ static enum ucode_state apply_microcode_
- 			cpu, mc_amd->hdr.patch_id);
- 		return UCODE_ERROR;
- 	}
--	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
--		mc_amd->hdr.patch_id);
- 
--	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
--	c->microcode = mc_amd->hdr.patch_id;
-+	rev = mc_amd->hdr.patch_id;
-+	ret = UCODE_UPDATED;
++#include <linux/nospec.h>
 +
-+	pr_info("CPU%d: new patch_level=0x%08x\n", cpu, rev);
-+
-+out:
-+	uci->cpu_sig.rev = rev;
-+	c->microcode	 = rev;
- 
- 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
- 	if (c->cpu_index == boot_cpu_data.cpu_index)
--		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
-+		boot_cpu_data.microcode = rev;
- 
--	return UCODE_UPDATED;
-+	return ret;
- }
- 
- static int install_equiv_cpu_table(const u8 *buf)
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -795,6 +795,7 @@ static enum ucode_state apply_microcode_
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct microcode_intel *mc;
-+	enum ucode_state ret;
- 	static int prev_rev;
- 	u32 rev;
- 
-@@ -817,9 +818,8 @@ static enum ucode_state apply_microcode_
- 	 */
- 	rev = intel_get_microcode_revision();
- 	if (rev >= mc->hdr.rev) {
--		uci->cpu_sig.rev = rev;
--		c->microcode = rev;
--		return UCODE_OK;
-+		ret = UCODE_OK;
-+		goto out;
+ MODULE_DESCRIPTION("Microsemi Switchtec(tm) PCIe Management Driver");
+ MODULE_VERSION("0.1");
+ MODULE_LICENSE("GPL");
+@@ -1173,6 +1175,8 @@ static int ioctl_port_to_pff(struct swit
+ 	default:
+ 		if (p.port > ARRAY_SIZE(pcfg->dsp_pff_inst_id))
+ 			return -EINVAL;
++		p.port = array_index_nospec(p.port,
++					ARRAY_SIZE(pcfg->dsp_pff_inst_id) + 1);
+ 		p.pff = ioread32(&pcfg->dsp_pff_inst_id[p.port - 1]);
+ 		break;
  	}
- 
- 	/*
-@@ -848,14 +848,17 @@ static enum ucode_state apply_microcode_
- 		prev_rev = rev;
- 	}
- 
-+	ret = UCODE_UPDATED;
-+
-+out:
- 	uci->cpu_sig.rev = rev;
--	c->microcode = rev;
-+	c->microcode	 = rev;
- 
- 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
- 	if (c->cpu_index == boot_cpu_data.cpu_index)
- 		boot_cpu_data.microcode = rev;
- 
--	return UCODE_UPDATED;
-+	return ret;
- }
- 
- static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
 
 
