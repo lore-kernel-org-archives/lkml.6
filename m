@@ -6,37 +6,42 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303DAECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5DEECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E9E2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E9E2146F
+	by mail.kernel.org (Postfix) with ESMTP id B52282146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52282146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730822AbeIREdy (ORCPT
+        id S1730831AbeIREd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49124 "EHLO
+        Tue, 18 Sep 2018 00:33:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdx (ORCPT
+        with ESMTP id S1727202AbeIREd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:53 -0400
+        Tue, 18 Sep 2018 00:33:57 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F904C77;
-        Mon, 17 Sep 2018 23:04:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1EF76C7D;
+        Mon, 17 Sep 2018 23:04:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 090/126] RDMA/cma: Do not ignore net namespace for unbound cm_id
-Date:   Tue, 18 Sep 2018 00:42:18 +0200
-Message-Id: <20180917211709.916694579@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <mkopec12@gmail.com>,
+        "N. W." <nw9165-3201@yahoo.com>,
+        Nicholas Stommel <nicholas.stommel@gmail.com>,
+        Tom Yan <tom.ty89@gmail.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.14 091/126] drm/i915: set DP Main Stream Attribute for color range on DDI platforms
+Date:   Tue, 18 Sep 2018 00:42:19 +0200
+Message-Id: <20180917211709.962066570@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -54,49 +59,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Jani Nikula <jani.nikula@intel.com>
 
-[ Upstream commit 643d213a9a034fa04f5575a40dfc8548e33ce04f ]
+commit 6209c285e7a5e68dbcdf8fd2456c6dd68433806b upstream.
 
-Currently if the cm_id is not bound to any netdevice, than for such cm_id,
-net namespace is ignored; which is incorrect.
+Since Haswell we have no color range indication either in the pipe or
+port registers for DP. Instead, there's a separate register for setting
+the DP Main Stream Attributes (MSA) directly. The MSA register
+definition makes no references to colorimetry, just a vague reference to
+the DP spec. The connection to the color range was lost.
 
-Regardless of cm_id bound to a netdevice or not, net namespace must
-match. When a cm_id is bound to a netdevice, in such case net namespace
-and netdevice both must match.
+Apparently we've failed to set the proper MSA bit for limited, or CEA,
+range ever since the first DDI platforms. We've started setting other
+MSA parameters since commit dae847991a43 ("drm/i915: add
+intel_ddi_set_pipe_settings").
 
-Fixes: 4c21b5bcef73 ("IB/cma: Add net_dev and private data checks to RDMA CM")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Without the crucial bit of information, the DP sink has no way of
+knowing the source is actually transmitting limited range RGB, leading
+to "washed out" colors. With the colorimetry information, compliant
+sinks should be able to handle the limited range properly. Native
+(i.e. non-LSPCON) HDMI was not affected because we do pass the color
+range via AVI infoframes.
+
+Though not the root cause, the problem was made worse for DDI platforms
+with commit 55bc60db5988 ("drm/i915: Add "Automatic" mode for the
+"Broadcast RGB" property"), which selects limited range RGB
+automatically based on the mode, as per the DP, HDMI and CEA specs.
+
+After all these years, the fix boils down to flipping one bit.
+
+[Per testing reports, this fixes DP sinks, but not the LSPCON. My
+ educated guess is that the LSPCON fails to turn the CEA range MSA into
+ AVI infoframes for HDMI.]
+
+Reported-by: Michał Kopeć <mkopec12@gmail.com>
+Reported-by: N. W. <nw9165-3201@yahoo.com>
+Reported-by: Nicholas Stommel <nicholas.stommel@gmail.com>
+Reported-by: Tom Yan <tom.ty89@gmail.com>
+Tested-by: Nicholas Stommel <nicholas.stommel@gmail.com>
+References: https://bugs.freedesktop.org/show_bug.cgi?id=100023
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107476
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=94921
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: <stable@vger.kernel.org> # v3.9+
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180814060001.18224-1-jani.nikula@intel.com
+(cherry picked from commit dc5977da99ea28094b8fa4e9bacbd29bedc41de5)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/cma.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/i915_reg.h  |    1 +
+ drivers/gpu/drm/i915/intel_ddi.c |    4 ++++
+ 2 files changed, 5 insertions(+)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -1459,9 +1459,16 @@ static bool cma_match_net_dev(const stru
- 		       (addr->src_addr.ss_family == AF_IB ||
- 			cma_protocol_roce_dev_port(id->device, port_num));
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -8462,6 +8462,7 @@ enum skl_power_gate {
+ #define  TRANS_MSA_10_BPC		(2<<5)
+ #define  TRANS_MSA_12_BPC		(3<<5)
+ #define  TRANS_MSA_16_BPC		(4<<5)
++#define  TRANS_MSA_CEA_RANGE		(1<<3)
  
--	return !addr->dev_addr.bound_dev_if ||
--	       (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
--		addr->dev_addr.bound_dev_if == net_dev->ifindex);
-+	/*
-+	 * Net namespaces must match, and if the listner is listening
-+	 * on a specific netdevice than netdevice must match as well.
-+	 */
-+	if (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
-+	    (!!addr->dev_addr.bound_dev_if ==
-+	     (addr->dev_addr.bound_dev_if == net_dev->ifindex)))
-+		return true;
-+	else
-+		return false;
- }
+ /* LCPLL Control */
+ #define LCPLL_CTL			_MMIO(0x130040)
+--- a/drivers/gpu/drm/i915/intel_ddi.c
++++ b/drivers/gpu/drm/i915/intel_ddi.c
+@@ -1396,6 +1396,10 @@ void intel_ddi_set_pipe_settings(const s
+ 		WARN_ON(transcoder_is_dsi(cpu_transcoder));
  
- static struct rdma_id_private *cma_find_listener(
+ 		temp = TRANS_MSA_SYNC_CLK;
++
++		if (crtc_state->limited_color_range)
++			temp |= TRANS_MSA_CEA_RANGE;
++
+ 		switch (crtc_state->pipe_bpp) {
+ 		case 18:
+ 			temp |= TRANS_MSA_6_BPC;
 
 
