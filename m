@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEC7ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4795BECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91822088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91822088F
+	by mail.kernel.org (Postfix) with ESMTP id 012EE2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012EE2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbeIREVx (ORCPT
+        id S1729399AbeIREV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45286 "EHLO
+        Tue, 18 Sep 2018 00:21:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45298 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVw (ORCPT
+        with ESMTP id S1726037AbeIREV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:52 -0400
+        Tue, 18 Sep 2018 00:21:58 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1A99CA0;
-        Mon, 17 Sep 2018 22:52:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E6BECAC;
+        Mon, 17 Sep 2018 22:52:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 53/56] mtd: ubi: wl: Fix error return code in ubi_wl_init()
-Date:   Tue, 18 Sep 2018 00:42:26 +0200
-Message-Id: <20180917213830.114318500@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+87c3c541582e56943277@syzkaller.appspotmail.com,
+        Ian Kent <raven@themaw.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.4 54/56] autofs: fix autofs_sbi() does not check super block type
+Date:   Tue, 18 Sep 2018 00:42:27 +0200
+Message-Id: <20180917213830.154376773@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -53,50 +55,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Ian Kent <raven@themaw.net>
 
-commit 7233982ade15eeac05c6f351e8d347406e6bcd2f upstream.
+commit 0633da48f0793aeba27f82d30605624416723a91 upstream.
 
-Fix to return error code -ENOMEM from the kmem_cache_alloc() error
-handling case instead of 0, as done elsewhere in this function.
+autofs_sbi() does not check the superblock magic number to verify it has
+been given an autofs super block.
 
-Fixes: f78e5623f45b ("ubi: fastmap: Erase outdated anchor PEBs during
-attach")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Backport Note: autofs4 has been renamed to autofs upstream. As a result
+the upstream patch does not apply cleanly onto 4.14.y.
+
+Link: http://lkml.kernel.org/r/153475422934.17131.7563724552005298277.stgit@pluto.themaw.net
+Reported-by: <syzbot+87c3c541582e56943277@syzkaller.appspotmail.com>
+Signed-off-by: Ian Kent <raven@themaw.net>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mtd/ubi/wl.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/autofs4/autofs_i.h |    4 +++-
+ fs/autofs4/inode.c    |    1 -
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1597,8 +1597,10 @@ int ubi_wl_init(struct ubi_device *ubi,
- 		cond_resched();
+--- a/fs/autofs4/autofs_i.h
++++ b/fs/autofs4/autofs_i.h
+@@ -18,6 +18,7 @@
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ #include <linux/list.h>
++#include <linux/magic.h>
  
- 		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--		if (!e)
-+		if (!e) {
-+			err = -ENOMEM;
- 			goto out_free;
-+		}
+ /* This is the range of ioctl() numbers we claim as ours */
+ #define AUTOFS_IOC_FIRST     AUTOFS_IOC_READY
+@@ -135,7 +136,8 @@ struct autofs_sb_info {
  
- 		e->pnum = aeb->pnum;
- 		e->ec = aeb->ec;
-@@ -1617,8 +1619,10 @@ int ubi_wl_init(struct ubi_device *ubi,
- 			cond_resched();
+ static inline struct autofs_sb_info *autofs4_sbi(struct super_block *sb)
+ {
+-	return (struct autofs_sb_info *)(sb->s_fs_info);
++	return sb->s_magic != AUTOFS_SUPER_MAGIC ?
++		NULL : (struct autofs_sb_info *)(sb->s_fs_info);
+ }
  
- 			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
--			if (!e)
-+			if (!e) {
-+				err = -ENOMEM;
- 				goto out_free;
-+			}
+ static inline struct autofs_info *autofs4_dentry_ino(struct dentry *dentry)
+--- a/fs/autofs4/inode.c
++++ b/fs/autofs4/inode.c
+@@ -18,7 +18,6 @@
+ #include <linux/pagemap.h>
+ #include <linux/parser.h>
+ #include <linux/bitops.h>
+-#include <linux/magic.h>
+ #include "autofs_i.h"
+ #include <linux/module.h>
  
- 			e->pnum = aeb->pnum;
- 			e->ec = aeb->ec;
 
 
