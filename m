@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD48ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BB1ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE3B214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE3B214AB
+	by mail.kernel.org (Postfix) with ESMTP id 174762146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174762146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732049AbeIREjh (ORCPT
+        id S1732062AbeIREjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:39:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50250 "EHLO
+        Tue, 18 Sep 2018 00:39:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50266 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREjg (ORCPT
+        with ESMTP id S1729160AbeIREjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:39:36 -0400
+        Tue, 18 Sep 2018 00:39:39 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0491DC49;
-        Mon, 17 Sep 2018 23:10:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57A78707;
+        Mon, 17 Sep 2018 23:10:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 064/158] scsi: target: fix __transport_register_session locking
-Date:   Tue, 18 Sep 2018 00:41:34 +0200
-Message-Id: <20180917211714.192393333@linuxfoundation.org>
+        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, prarit@redhat.com
+Subject: [PATCH 4.18 038/158] x86/microcode: Update the new microcode revision unconditionally
+Date:   Tue, 18 Sep 2018 00:41:08 +0200
+Message-Id: <20180917211712.903811251@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -54,54 +52,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Christie <mchristi@redhat.com>
+From: Filippo Sironi <sironi@amazon.de>
 
-[ Upstream commit 6a64f6e1591322beb8ce16e952a53582caf2a15c ]
+commit 8da38ebaad23fe1b0c4a205438676f6356607cfc upstream.
 
-When __transport_register_session is called from transport_register_session
-irqs will already have been disabled, so we do not want the unlock irq call
-to enable them until the higher level has done the final
-spin_unlock_irqrestore/ spin_unlock_irq.
+Handle the case where microcode gets loaded on the BSP's hyperthread
+sibling first and the boot_cpu_data's microcode revision doesn't get
+updated because of early exit due to the siblings sharing a microcode
+engine.
 
-This has __transport_register_session use the save/restore call.
+For that, simply write the updated revision on all CPUs unconditionally.
 
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: prarit@redhat.com
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1533050970-14385-1-git-send-email-sironi@amazon.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/target/target_core_transport.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -316,6 +316,7 @@ void __transport_register_session(
- {
- 	const struct target_core_fabric_ops *tfo = se_tpg->se_tpg_tfo;
- 	unsigned char buf[PR_REG_ISID_LEN];
-+	unsigned long flags;
+---
+ arch/x86/kernel/cpu/microcode/amd.c   |   22 +++++++++++++---------
+ arch/x86/kernel/cpu/microcode/intel.c |   13 ++++++++-----
+ 2 files changed, 21 insertions(+), 14 deletions(-)
+
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -504,6 +504,7 @@ static enum ucode_state apply_microcode_
+ 	struct microcode_amd *mc_amd;
+ 	struct ucode_cpu_info *uci;
+ 	struct ucode_patch *p;
++	enum ucode_state ret;
+ 	u32 rev, dummy;
  
- 	se_sess->se_tpg = se_tpg;
- 	se_sess->fabric_sess_ptr = fabric_sess_ptr;
-@@ -352,7 +353,7 @@ void __transport_register_session(
- 			se_sess->sess_bin_isid = get_unaligned_be64(&buf[0]);
- 		}
+ 	BUG_ON(raw_smp_processor_id() != cpu);
+@@ -521,9 +522,8 @@ static enum ucode_state apply_microcode_
  
--		spin_lock_irq(&se_nacl->nacl_sess_lock);
-+		spin_lock_irqsave(&se_nacl->nacl_sess_lock, flags);
- 		/*
- 		 * The se_nacl->nacl_sess pointer will be set to the
- 		 * last active I_T Nexus for each struct se_node_acl.
-@@ -361,7 +362,7 @@ void __transport_register_session(
- 
- 		list_add_tail(&se_sess->sess_acl_list,
- 			      &se_nacl->acl_sess_list);
--		spin_unlock_irq(&se_nacl->nacl_sess_lock);
-+		spin_unlock_irqrestore(&se_nacl->nacl_sess_lock, flags);
+ 	/* need to apply patch? */
+ 	if (rev >= mc_amd->hdr.patch_id) {
+-		c->microcode = rev;
+-		uci->cpu_sig.rev = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
  	}
- 	list_add_tail(&se_sess->sess_list, &se_tpg->tpg_sess_list);
  
+ 	if (__apply_microcode_amd(mc_amd)) {
+@@ -531,17 +531,21 @@ static enum ucode_state apply_microcode_
+ 			cpu, mc_amd->hdr.patch_id);
+ 		return UCODE_ERROR;
+ 	}
+-	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+-		mc_amd->hdr.patch_id);
+ 
+-	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+-	c->microcode = mc_amd->hdr.patch_id;
++	rev = mc_amd->hdr.patch_id;
++	ret = UCODE_UPDATED;
++
++	pr_info("CPU%d: new patch_level=0x%08x\n", cpu, rev);
++
++out:
++	uci->cpu_sig.rev = rev;
++	c->microcode	 = rev;
+ 
+ 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+ 	if (c->cpu_index == boot_cpu_data.cpu_index)
+-		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
++		boot_cpu_data.microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -795,6 +795,7 @@ static enum ucode_state apply_microcode_
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_intel *mc;
++	enum ucode_state ret;
+ 	static int prev_rev;
+ 	u32 rev;
+ 
+@@ -817,9 +818,8 @@ static enum ucode_state apply_microcode_
+ 	 */
+ 	rev = intel_get_microcode_revision();
+ 	if (rev >= mc->hdr.rev) {
+-		uci->cpu_sig.rev = rev;
+-		c->microcode = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -848,14 +848,17 @@ static enum ucode_state apply_microcode_
+ 		prev_rev = rev;
+ 	}
+ 
++	ret = UCODE_UPDATED;
++
++out:
+ 	uci->cpu_sig.rev = rev;
+-	c->microcode = rev;
++	c->microcode	 = rev;
+ 
+ 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+ 	if (c->cpu_index == boot_cpu_data.cpu_index)
+ 		boot_cpu_data.microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
 
 
