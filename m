@@ -2,244 +2,176 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2791FECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A82ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91F9214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:33:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91F9214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FB7F21508
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:38:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MjZ0rv7R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB7F21508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeIQQAL (ORCPT
+        id S1727672AbeIQQFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:00:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:56292 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbeIQQAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:00:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D2A418A;
-        Mon, 17 Sep 2018 03:33:24 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2BCE3F5BD;
-        Mon, 17 Sep 2018 03:33:21 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 11:33:18 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] PCI: imx: Initial imx7d pm support
-Message-ID: <20180917103318.GC7239@e107981-ln.cambridge.arm.com>
-References: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
+        Mon, 17 Sep 2018 12:05:02 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51197 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbeIQQFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 12:05:01 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s12-v6so8971744wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 03:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZPGMLI2qTVvw/Oi7gQAUjb67cNca3UheEryMKIJwUqk=;
+        b=MjZ0rv7RrL8rClScn4ON564sxVjh5TMWg2anX0BAr2HEUMFrB2/LBdbEYic5oTb94i
+         qXt9O1eIrQogGDNeN/DR/A5J1Loicu5DtmWsfnJnW9WmSgXRvQt6I7zg7pYSuEFI2bZY
+         JQS3dEOCw5WriyRvGVK3ELb+aJuK6ci8RRVWw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZPGMLI2qTVvw/Oi7gQAUjb67cNca3UheEryMKIJwUqk=;
+        b=o/V2ZjFUIdcKLteirSqoWRLF7v8cHg6Al10HpKWvjaEdJDoYTceAOJFWiNi4H1GlXP
+         DOjdH92WD2YlQtN40/F2C9rMiYaBnK1l5jGaw8cL6BvAIXBqXbetmQN6+Nr0E4FDjiRl
+         FCx43BD4oRBUbviAZNa8yoGNMPV8eePftcHfz7CE+GRWfU974rnkdxDbscIIy+Jzt2BS
+         4ocHZjA/mSatXHmgViuXSaF17utnbqlOWzXsTz4ahJe45SQ6qrUIyjYuvaQBEnPMOg6E
+         OGol+zMRc5rC0WHy//SM6eVIUCh3dGNJXsR8hEGaupSDfSz9ggDs7VZeproQNoMads/4
+         z7Uw==
+X-Gm-Message-State: APzg51AeERb5B2ATXfI8KhcmL68jWs9PGm647igBv4zbeRS4kodzWNcm
+        EaLJbReDpkdDzkUy5B5yaBtprJ/dg6jNAA==
+X-Google-Smtp-Source: ANB0VdbgK2eHe90NOsWkrJcGy09B0y/Zf/QjJzrDpd6r0cCBzAXBw6K6RG+CJWwWeN0RfVoe1m4KPg==
+X-Received: by 2002:a1c:a90:: with SMTP id 138-v6mr10259664wmk.98.1537180691782;
+        Mon, 17 Sep 2018 03:38:11 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id p89-v6sm34343880wrc.97.2018.09.17.03.38.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 03:38:10 -0700 (PDT)
+Subject: Re: [PATCH] interconnect: Fix a GCC compiler warning
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        zhong jiang <zhongjiang@huawei.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com>
+ <5B9F6B8B.7020100@huawei.com> <20180917085954.GA23740@kroah.com>
+ <5B9F7196.1070203@huawei.com> <20180917092429.GB25662@kroah.com>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <8c15512f-47f4-7895-c567-3241177077fb@linaro.org>
+Date:   Mon, 17 Sep 2018 03:38:06 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180917092429.GB25662@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 02:28:37PM +0300, Leonard Crestez wrote:
-> On imx7d the pcie-phy power domain is turned off in suspend and this can
-> make the system hang after resume when attempting any read from PCI.
-> 
-> Fix this by adding minimal suspend/resume code from the nxp internal
-> tree. This will prepare for powering down on suspend and reset the block
-> on resume.
-> 
-> Code is only for imx7d but a very similar sequence can be used for
-> other socs.
-> 
-> The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
-> patch adjusts the code to the upstream imx7d implemention using reset
-> controls and power domains.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
->  1 file changed, 92 insertions(+), 5 deletions(-)
+Hi Zhong and Greg,
 
-Applied to pci/dwc for v4.20, thanks.
+On 09/17/2018 02:24 AM, Greg KH wrote:
+> On Mon, Sep 17, 2018 at 05:19:18PM +0800, zhong jiang wrote:
+>> On 2018/9/17 16:59, Greg KH wrote:
+>>> On Mon, Sep 17, 2018 at 04:53:31PM +0800, zhong jiang wrote:
+>>>> +to Greg and Andrew.
+>>>>
+>>>> On 2018/9/16 22:31, zhong jiang wrote:
+>>>>> Fix the following compile warning:
+>>>>>
+>>>>> drivers/interconnect/core.c:26:23: warning: 'icc_debugfs_dir' defined but not used [-Wunused-variable]
+>>>>>  static struct dentry *icc_debugfs_dir;
+>>>>>
+>>>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>>>>> ---
+>>>>>  drivers/interconnect/core.c | 3 +++
+>>> This file is not in a released tree, where are you seeing it?
+>> I see it in linux-next.
 
-Lorenzo
+Yes, it has been recently pulled into linux-next for wider testing
+coverage. Thank you Zhong for reporting this.
 
-> Resending after RC1 as suggested here: https://lkml.org/lkml/2018/8/8/496
 > 
-> This was initially sent together with a dts fix, that was already
-> accepted by Shawn: https://lkml.org/lkml/2018/8/21/529
+> Then please contact the owner of the branch where it came from.  They
+> are the only ones that can handle such a patch, not anyone else.
 > 
-> Some dependencies in this area are complicated but as far as I know
-> including this patch without others should not break anything that was
-> not already broken. Since this is a patch for something that has never
-> worked before it should be treated as a feature not a bugfix.
+>>>>>  1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+>>>>> index 2740f1a..9ea9959 100644
+>>>>> --- a/drivers/interconnect/core.c
+>>>>> +++ b/drivers/interconnect/core.c
+>>>>> @@ -23,7 +23,10 @@
+>>>>>  static DEFINE_IDR(icc_idr);
+>>>>>  static LIST_HEAD(icc_provider_list);
+>>>>>  static DEFINE_MUTEX(icc_lock);
+>>>>> +
+>>>>> +#ifdef CONFIG_DEBUG_FS
+>>>>>  static struct dentry *icc_debugfs_dir;
+>>>>> +#endif
+>>> Why not move the variable to where it is used?  It should be able to go
+>>> under an existing #ifdef section, right?
+>> Because the variable need to be used in __init and __exit.  So it should be identified as
+>> a gloabl variable.  I fix it under the #ifdef condition.
 > 
-> I have a few other patches for imx pci but it's better to deal with them
-> separately. This initial patch adding suspend support is useful by
-> itself.
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 4a9a673b4777..65b6d1015723 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
->  
->  	dev_err(dev, "Speed change timeout\n");
->  	return -EINVAL;
->  }
->  
-> +static void imx6_pcie_ltssm_enable(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6Q:
-> +	case IMX6SX:
-> +	case IMX6QP:
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX6Q_GPR12_PCIE_CTL_2,
-> +				   IMX6Q_GPR12_PCIE_CTL_2);
-> +		break;
-> +	case IMX7D:
-> +		reset_control_deassert(imx6_pcie->apps_reset);
-> +		break;
-> +	}
-> +}
-> +
->  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  {
->  	struct dw_pcie *pci = imx6_pcie->pci;
->  	struct device *dev = pci->dev;
->  	u32 tmp;
-> @@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
->  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
->  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
->  
->  	/* Start LTSSM. */
-> -	if (imx6_pcie->variant == IMX7D)
-> -		reset_control_deassert(imx6_pcie->apps_reset);
-> -	else
-> -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
-> +	imx6_pcie_ltssm_enable(dev);
->  
->  	ret = imx6_pcie_wait_for_link(imx6_pcie);
->  	if (ret)
->  		goto err_reset_phy;
->  
-> @@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
->  
->  static const struct dw_pcie_ops dw_pcie_ops = {
->  	.link_up = imx6_pcie_link_up,
->  };
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static void imx6_pcie_ltssm_disable(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6SX:
-> +	case IMX6QP:
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
-> +		break;
-> +	case IMX7D:
-> +		reset_control_assert(imx6_pcie->apps_reset);
-> +		break;
-> +	default:
-> +		dev_err(dev, "ltssm_disable not supported\n");
-> +	}
-> +}
-> +
-> +static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
-> +{
-> +	clk_disable_unprepare(imx6_pcie->pcie);
-> +	clk_disable_unprepare(imx6_pcie->pcie_phy);
-> +	clk_disable_unprepare(imx6_pcie->pcie_bus);
-> +
-> +	if (imx6_pcie->variant == IMX7D) {
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
-> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> +	}
-> +}
-> +
-> +static int imx6_pcie_suspend_noirq(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	if (imx6_pcie->variant != IMX7D)
-> +		return 0;
-> +
-> +	imx6_pcie_clk_disable(imx6_pcie);
-> +	imx6_pcie_ltssm_disable(dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx6_pcie_resume_noirq(struct device *dev)
-> +{
-> +	int ret;
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +	struct pcie_port *pp = &imx6_pcie->pci->pp;
-> +
-> +	if (imx6_pcie->variant != IMX7D)
-> +		return 0;
-> +
-> +	imx6_pcie_assert_core_reset(imx6_pcie);
-> +	imx6_pcie_init_phy(imx6_pcie);
-> +	imx6_pcie_deassert_core_reset(imx6_pcie);
-> +	dw_pcie_setup_rc(pp);
-> +
-> +	ret = imx6_pcie_establish_link(imx6_pcie);
-> +	if (ret < 0)
-> +		dev_info(dev, "pcie link is down after resume.\n");
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
-> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
-> +				      imx6_pcie_resume_noirq)
-> +};
-> +
->  static int imx6_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct dw_pcie *pci;
->  	struct imx6_pcie *imx6_pcie;
-> @@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
->  static struct platform_driver imx6_pcie_driver = {
->  	.driver = {
->  		.name	= "imx6q-pcie",
->  		.of_match_table = imx6_pcie_of_match,
->  		.suppress_bind_attrs = true,
-> +		.pm = &imx6_pcie_pm_ops,
->  	},
->  	.probe    = imx6_pcie_probe,
->  	.shutdown = imx6_pcie_shutdown,
->  };
->  
-> -- 
-> 2.17.1
-> 
+> If the variable is being used this way, then the code is written
+> incorrectly, such an #ifdef should not be needed for any debugfs
+> calls/variables.
+
+Thanks for the comments. Will improve it.
+
+BR,
+Georgi
