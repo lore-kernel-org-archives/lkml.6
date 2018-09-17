@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B089DECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A679ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5F52146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5F52146F
+	by mail.kernel.org (Postfix) with ESMTP id 08D71214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D71214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbeIREfX (ORCPT
+        id S1731188AbeIREf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:35:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49392 "EHLO
+        Tue, 18 Sep 2018 00:35:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49402 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730202AbeIREfW (ORCPT
+        with ESMTP id S1730202AbeIREfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:35:22 -0400
+        Tue, 18 Sep 2018 00:35:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83314C49;
-        Mon, 17 Sep 2018 23:05:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D63F8C77;
+        Mon, 17 Sep 2018 23:05:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 115/126] net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
-Date:   Tue, 18 Sep 2018 00:42:43 +0200
-Message-Id: <20180917211711.524851913@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 083/126] f2fs: fix to wait on page writeback before updating page
+Date:   Tue, 18 Sep 2018 00:42:11 +0200
+Message-Id: <20180917211709.542339090@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -51,71 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-After working on IP defragmentation lately, I found that some large
-packets defeat CHECKSUM_COMPLETE optimization because of NIC adding
-zero paddings on the last (small) fragment.
+[ Upstream commit 6aead1617b3adf2b7e2c56f0f13e4e0ee42ebb4a ]
 
-While removing the padding with pskb_trim_rcsum(), we set skb->ip_summed
-to CHECKSUM_NONE, forcing a full csum validation, even if all prior
-fragments had CHECKSUM_COMPLETE set.
+In error path of f2fs_move_rehashed_dirents, inode page could be writeback
+state, so we should wait on inode page writeback before updating it.
 
-We can instead compute the checksum of the part we are trimming,
-usually smaller than the part we keep.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 88078d98d1bb085d72af8437707279e203524fa5)
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |    5 ++---
- net/core/skbuff.c      |   14 ++++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ fs/f2fs/inline.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3135,6 +3135,7 @@ static inline void *skb_push_rcsum(struc
- 	return skb->data;
- }
- 
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- /**
-  *	pskb_trim_rcsum - trim received skb and update checksum
-  *	@skb: buffer to trim
-@@ -3148,9 +3149,7 @@ static inline int pskb_trim_rcsum(struct
- {
- 	if (likely(len >= skb->len))
- 		return 0;
--	if (skb->ip_summed == CHECKSUM_COMPLETE)
--		skb->ip_summed = CHECKSUM_NONE;
--	return __pskb_trim(skb, len);
-+	return pskb_trim_rcsum_slow(skb, len);
- }
- 
- static inline int __skb_trim_rcsum(struct sk_buff *skb, unsigned int len)
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1839,6 +1839,20 @@ done:
- }
- EXPORT_SYMBOL(___pskb_trim);
- 
-+/* Note : use pskb_trim_rcsum() instead of calling this directly
-+ */
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
-+{
-+	if (skb->ip_summed == CHECKSUM_COMPLETE) {
-+		int delta = skb->len - len;
-+
-+		skb->csum = csum_sub(skb->csum,
-+				     skb_checksum(skb, len, delta, 0));
-+	}
-+	return __pskb_trim(skb, len);
-+}
-+EXPORT_SYMBOL(pskb_trim_rcsum_slow);
-+
- /**
-  *	__pskb_pull_tail - advance tail of skb header
-  *	@skb: buffer to reallocate
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -502,6 +502,7 @@ static int f2fs_move_rehashed_dirents(st
+ 	return 0;
+ recover:
+ 	lock_page(ipage);
++	f2fs_wait_on_page_writeback(ipage, NODE, true);
+ 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA(dir));
+ 	f2fs_i_depth_write(dir, 0);
+ 	f2fs_i_size_write(dir, MAX_INLINE_DATA(dir));
 
 
