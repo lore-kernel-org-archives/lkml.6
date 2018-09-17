@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAC2ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA48AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 116042146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116042146F
+	by mail.kernel.org (Postfix) with ESMTP id 575162146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575162146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbeIRE2l (ORCPT
+        id S1729756AbeIRE2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:28:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47824 "EHLO
+        Tue, 18 Sep 2018 00:28:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbeIRE2k (ORCPT
+        with ESMTP id S1727139AbeIRE2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:28:40 -0400
+        Tue, 18 Sep 2018 00:28:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 018CAC49;
-        Mon, 17 Sep 2018 22:59:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2BB54C77;
+        Mon, 17 Sep 2018 22:59:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.9 67/70] netfilter: x_tables: avoid stack-out-of-bounds read in xt_copy_counters_from_user
-Date:   Tue, 18 Sep 2018 00:42:40 +0200
-Message-Id: <20180917211654.343758767@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 68/70] mtd: ubi: wl: Fix error return code in ubi_wl_init()
+Date:   Tue, 18 Sep 2018 00:42:41 +0200
+Message-Id: <20180917211654.421563188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -54,49 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit e466af75c074e76107ae1cd5a2823e9c61894ffb upstream.
+commit 7233982ade15eeac05c6f351e8d347406e6bcd2f upstream.
 
-syzkaller reports an out of bound read in strlcpy(), triggered
-by xt_copy_counters_from_user()
+Fix to return error code -ENOMEM from the kmem_cache_alloc() error
+handling case instead of 0, as done elsewhere in this function.
 
-Fix this by using memcpy(), then forcing a zero byte at the last position
-of the destination, as Florian did for the non COMPAT code.
-
-Fixes: d7591f0c41ce ("netfilter: x_tables: introduce and use xt_copy_counters_from_user")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Willem de Bruijn <willemb@google.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Greg Hackmann <ghackmann@google.com>
+Fixes: f78e5623f45b ("ubi: fastmap: Erase outdated anchor PEBs during
+attach")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/ubi/wl.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -877,7 +877,7 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(&compat_tmp, user, sizeof(compat_tmp)) != 0)
- 			return ERR_PTR(-EFAULT);
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1615,8 +1615,10 @@ int ubi_wl_init(struct ubi_device *ubi,
+ 		cond_resched();
  
--		strlcpy(info->name, compat_tmp.name, sizeof(info->name));
-+		memcpy(info->name, compat_tmp.name, sizeof(info->name) - 1);
- 		info->num_counters = compat_tmp.num_counters;
- 		user += sizeof(compat_tmp);
- 	} else
-@@ -890,9 +890,9 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(info, user, sizeof(*info)) != 0)
- 			return ERR_PTR(-EFAULT);
+ 		e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
+-		if (!e)
++		if (!e) {
++			err = -ENOMEM;
+ 			goto out_free;
++		}
  
--		info->name[sizeof(info->name) - 1] = '\0';
- 		user += sizeof(*info);
- 	}
-+	info->name[sizeof(info->name) - 1] = '\0';
+ 		e->pnum = aeb->pnum;
+ 		e->ec = aeb->ec;
+@@ -1635,8 +1637,10 @@ int ubi_wl_init(struct ubi_device *ubi,
+ 			cond_resched();
  
- 	size = sizeof(struct xt_counters);
- 	size *= info->num_counters;
+ 			e = kmem_cache_alloc(ubi_wl_entry_slab, GFP_KERNEL);
+-			if (!e)
++			if (!e) {
++				err = -ENOMEM;
+ 				goto out_free;
++			}
+ 
+ 			e->pnum = aeb->pnum;
+ 			e->ec = aeb->ec;
 
 
