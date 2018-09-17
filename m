@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70313ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5656FECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3358D2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3358D2146D
+	by mail.kernel.org (Postfix) with ESMTP id 187702146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187702146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbeIREnn (ORCPT
+        id S1732938AbeIREnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:43:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51086 "EHLO
+        Tue, 18 Sep 2018 00:43:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbeIREnm (ORCPT
+        with ESMTP id S1728925AbeIREnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:43:42 -0400
+        Tue, 18 Sep 2018 00:43:45 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCCEFC49;
-        Mon, 17 Sep 2018 23:14:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E03A707;
+        Mon, 17 Sep 2018 23:14:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Koo <Anthony.Koo@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Michael Ira Krufky <mkrufky@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 136/158] drm/amd/display: Prevent PSR from being enabled if initialization fails
-Date:   Tue, 18 Sep 2018 00:42:46 +0200
-Message-Id: <20180917211717.439825379@linuxfoundation.org>
+Subject: [PATCH 4.18 137/158] media: em28xx: Fix dual transport stream operation
+Date:   Tue, 18 Sep 2018 00:42:47 +0200
+Message-Id: <20180917211717.481554245@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -54,122 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anthony Koo <Anthony.Koo@amd.com>
+From: Brad Love <brad@nextdimension.cc>
 
-[ Upstream commit 9907704174e0ad4ed02766fac4049971e583323d ]
+[ Upstream commit a7853c257a3ea0907467a1750ff45de4d9ba1915 ]
 
-[Why]
-PSR_SET command is sent to the microcontroller in order to initialize
-parameters needed for PSR feature, such as telling the microcontroller
-which pipe is driving the PSR supported panel. When this command is
-skipped or fails, the microcontroller may program the wrong thing if
-driver tries to enable PSR.
+Addresses the following, which introduced a regression itself:
 
-[How]
-If PSR_SET fails, do not set psr_enable flag to indicate the feature is
-not yet initialized.
+Commit 509f89652f83 ("media: em28xx: fix a regression with HVR-950")
 
-Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+The regression fix breaks dual transport stream support. Currently,
+when a tuner starts streaming it sets alt mode on the USB interface.
+The problem is, in a dual tuner model, both tuners share the same
+USB interface, so when the second tuner becomes active and sets alt
+mode on the interface it kills streaming on the other port.
+
+This patch addresses the regression by only setting alt mode
+on the USB interface during em28xx_start_streaming, if the
+device is not a dual tuner model. This allows all older and
+single tuner devices to explicitly set alt mode during stream
+startup. Testers report both isoc and bulk DualHD models work
+correctly with the alt mode set only once, in em28xx_dvb_init.
+
+Fixes: 509f89652f83 ("media: em28xx: fix a regression with HVR-950")
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Michael Ira Krufky <mkrufky@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_dmcu.c |   38 +++++++++++++++-----------
- drivers/gpu/drm/amd/display/dc/inc/hw/dmcu.h  |    2 -
- 2 files changed, 24 insertions(+), 16 deletions(-)
+ drivers/media/usb/em28xx/em28xx-dvb.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_dmcu.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_dmcu.c
-@@ -150,7 +150,7 @@ static void dce_dmcu_set_psr_enable(stru
+--- a/drivers/media/usb/em28xx/em28xx-dvb.c
++++ b/drivers/media/usb/em28xx/em28xx-dvb.c
+@@ -218,7 +218,9 @@ static int em28xx_start_streaming(struct
+ 		dvb_alt = dev->dvb_alt_isoc;
  	}
- }
  
--static void dce_dmcu_setup_psr(struct dmcu *dmcu,
-+static bool dce_dmcu_setup_psr(struct dmcu *dmcu,
- 		struct dc_link *link,
- 		struct psr_context *psr_context)
- {
-@@ -261,6 +261,8 @@ static void dce_dmcu_setup_psr(struct dm
- 
- 	/* notifyDMCUMsg */
- 	REG_UPDATE(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT, 1);
+-	usb_set_interface(udev, dev->ifnum, dvb_alt);
++	if (!dev->board.has_dual_ts)
++		usb_set_interface(udev, dev->ifnum, dvb_alt);
 +
-+	return true;
- }
- 
- static bool dce_is_dmcu_initialized(struct dmcu *dmcu)
-@@ -545,24 +547,25 @@ static void dcn10_dmcu_set_psr_enable(st
- 	 *  least a few frames. Should never hit the max retry assert below.
- 	 */
- 	if (wait == true) {
--	for (retryCount = 0; retryCount <= 1000; retryCount++) {
--		dcn10_get_dmcu_psr_state(dmcu, &psr_state);
--		if (enable) {
--			if (psr_state != 0)
--				break;
--		} else {
--			if (psr_state == 0)
--				break;
-+		for (retryCount = 0; retryCount <= 1000; retryCount++) {
-+			dcn10_get_dmcu_psr_state(dmcu, &psr_state);
-+			if (enable) {
-+				if (psr_state != 0)
-+					break;
-+			} else {
-+				if (psr_state == 0)
-+					break;
-+			}
-+			udelay(500);
- 		}
--		udelay(500);
--	}
- 
--	/* assert if max retry hit */
--	ASSERT(retryCount <= 1000);
-+		/* assert if max retry hit */
-+		if (retryCount >= 1000)
-+			ASSERT(0);
- 	}
- }
- 
--static void dcn10_dmcu_setup_psr(struct dmcu *dmcu,
-+static bool dcn10_dmcu_setup_psr(struct dmcu *dmcu,
- 		struct dc_link *link,
- 		struct psr_context *psr_context)
- {
-@@ -577,7 +580,7 @@ static void dcn10_dmcu_setup_psr(struct
- 
- 	/* If microcontroller is not running, do nothing */
- 	if (dmcu->dmcu_state != DMCU_RUNNING)
--		return;
-+		return false;
- 
- 	link->link_enc->funcs->psr_program_dp_dphy_fast_training(link->link_enc,
- 			psr_context->psrExitLinkTrainingRequired);
-@@ -677,6 +680,11 @@ static void dcn10_dmcu_setup_psr(struct
- 
- 	/* notifyDMCUMsg */
- 	REG_UPDATE(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT, 1);
-+
-+	/* waitDMCUReadyForCmd */
-+	REG_WAIT(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT, 0, 1, 10000);
-+
-+	return true;
- }
- 
- static void dcn10_psr_wait_loop(
---- a/drivers/gpu/drm/amd/display/dc/inc/hw/dmcu.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/hw/dmcu.h
-@@ -48,7 +48,7 @@ struct dmcu_funcs {
- 			const char *src,
- 			unsigned int bytes);
- 	void (*set_psr_enable)(struct dmcu *dmcu, bool enable, bool wait);
--	void (*setup_psr)(struct dmcu *dmcu,
-+	bool (*setup_psr)(struct dmcu *dmcu,
- 			struct dc_link *link,
- 			struct psr_context *psr_context);
- 	void (*get_psr_state)(struct dmcu *dmcu, uint32_t *psr_state);
+ 	rc = em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
+ 	if (rc < 0)
+ 		return rc;
 
 
