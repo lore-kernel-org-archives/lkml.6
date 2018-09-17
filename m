@@ -2,131 +2,151 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E002ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCD6ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D3B214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A830A20867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1f5pN6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D3B214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPCVp1+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A830A20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeIQXUA (ORCPT
+        id S1728290AbeIQXUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 19:20:00 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39533 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIQXT7 (ORCPT
+        Mon, 17 Sep 2018 19:20:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40384 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbeIQXUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:19:59 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j8-v6so7910163pff.6;
-        Mon, 17 Sep 2018 10:51:35 -0700 (PDT)
+        Mon, 17 Sep 2018 19:20:47 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l63-v6so8019844pga.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 10:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7QqwkFGeyW0W6EfnTCDKFYl8ETeKiFXHK0qEGjF3Dkw=;
-        b=E1f5pN6fjdUtryvFc4uRjUttLTNBDUEkJ/wOnarriH56crZ0M0MXvxowcR/mMlB8hL
-         j4NGeos6ZMOUMMnY8A/gWD1kOfttn6KUUbEOeW/VL8VIQ5JrIYOv4yrtMZZN1pf+Gc49
-         hEB20t3JWoYaBrl2nubqornrafR5SwF9tr43rpolNxVBePnllCphab1zCrQzLNDntDBL
-         ayMYfb1xGnokZv3+qgMpZGtSf1ETQcdAsXDwajUbY4R+hp0cTfLI2LJlrAH4lHtANvCW
-         des/7TzX9o6DeLg3PNGq3CsQUBLDxx+A48A46M/bvcjI+rKvC9HcqUuf0tGob/ntyeFY
-         tKeg==
+        bh=Z0n27Y0KZP4fcr2F3cJpINodKqAfHaS1XztjQGCdZxY=;
+        b=MPCVp1+1qtJ834SiNiyVZvKqOeErCicVYqf8eka4+V5oe5ih83zuSCNr8pE9JT+KpN
+         /VtYvEw3P6mOKn9V0Od1TvnwiqDspXKD3ry7n2J1cRH2q5tGa08XQweSqk20u6n3X8Oh
+         ZwyNOEtBuKDHWMRYYF/NPbEuDQ7rLwCoXap8c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7QqwkFGeyW0W6EfnTCDKFYl8ETeKiFXHK0qEGjF3Dkw=;
-        b=hlDAnLaseA7heW72Nr1ASeRGmLhaLwJac/KHa63FxPyMTvnOQ+NyDCAN/3ssPEz0wa
-         fUvrXYm9waiaynI/xD9NZKQ9gQ8U2jRCcVl7KM4YI8+rxatEzSkRxtnOpUUwUnblNHz+
-         1MagUbO59IEzF6d6JwjiNvtEPf1sNZRSJvLPzHzS7El6yTEVIzxoEFXp1YzWkDN7LsON
-         G6ne38ORvQ5w2LKJi5EjEKMsDdHF4YqDJnJzkSf46GahqUjVnRPpExKsCnG0HkZB5nOV
-         qUQ5w7oUmmLEtTXbCG4zBDoQkIWNuKmTfbR0/1LXxNdDGDcWYGAqZvYooYD/yOjNlvVj
-         hbdw==
-X-Gm-Message-State: APzg51Ahw18IOiNY6GGsf6JqJAeNZ9Mk/xG6dumq4j2f4USATQCu2zcv
-        DuBWZmMY9WHq9LNrT5RkE5U=
-X-Google-Smtp-Source: ANB0VdZKo6XryRSM7BoIxQEZYGC1NYGnd664fkZAHLkoPf6l/fgTjQEuPGWKje5DOEi9a0LskCiOFA==
-X-Received: by 2002:a63:555c:: with SMTP id f28-v6mr24782337pgm.37.1537206694665;
-        Mon, 17 Sep 2018 10:51:34 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm32665826pfc.81.2018.09.17.10.51.33
+        bh=Z0n27Y0KZP4fcr2F3cJpINodKqAfHaS1XztjQGCdZxY=;
+        b=bKnowRh+x5/yNoe/S9mFrpzB+z6YBy/7GFW1RyAfYaYBbgZ6cfcKR/ba0du3ZyjqAo
+         W/tXsfS7ufgIWngQypj2KBqisiJbBpVIgxdBjon/bjLgxlXpsFgqYAeJJVrkk+5E7CFV
+         aNCBj1YAF1+BrkvVNNQzFrphghkJN+cUvDfiBRiOBHfF6m/Cf7Ipc4TMtmjBu9PwEFnt
+         teEKqi0XKgHEPWnhXPUQNMTBeEsRkwN9PM/jXzHVltQIm9H7TXcKHzplS8ZA0fh8VNoi
+         /kX1NLHIkn/qhGNzsi7hENAHisxNONrPxme5CiFS85dwMVZ5sdv7ZrxGlif6tUtR1Ouz
+         lAUA==
+X-Gm-Message-State: APzg51C5JNUkCjoNQleF18tUHdG26tg7wg0w1XMfoQIH0Z/GxxcgPU6W
+        mrFFlzVcTChMmCgnQKjqK9i0tA==
+X-Google-Smtp-Source: ANB0VdYaEz23obCZ12b4vyuVMiGJG5M8HqTdLXAyipRvHdThjEQfVvQYOoAtCQF5VGJ+QzT8MvnFQw==
+X-Received: by 2002:a63:170b:: with SMTP id x11-v6mr23794197pgl.364.1537206742838;
+        Mon, 17 Sep 2018 10:52:22 -0700 (PDT)
+Received: from centauri ([209.121.128.187])
+        by smtp.gmail.com with ESMTPSA id e73-v6sm29183901pfb.153.2018.09.17.10.52.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 10:51:33 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 10:51:31 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     kishon@ti.com, lee.jones@linaro.org, daniel.thompson@linaro.org,
-        wsa@the-dreams.de, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH RESEND] phy: phy-twl4030-usb: fix denied runtime access
-Message-ID: <20180917175131.GA104770@dtor-ws>
-References: <20180917052254.12336-1-andreas@kemnade.info>
+        Mon, 17 Sep 2018 10:52:21 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 19:52:19 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: qcom-apq8064: use correct pci address for
+ address translation
+Message-ID: <20180917175219.GA4157@centauri>
+References: <20180509120135.25940-1-niklas.cassel@linaro.org>
+ <20180917112149.GE7239@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180917052254.12336-1-andreas@kemnade.info>
+In-Reply-To: <20180917112149.GE7239@e107981-ln.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
-
-On Mon, Sep 17, 2018 at 07:22:54AM +0200, Andreas Kemnade wrote:
-> When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
-> the counter will be incremented but the resume callback not called,
-> so enumeration and charging will not start properly.
-> To avoid that happen, wait and try again later.
+On Mon, Sep 17, 2018 at 12:21:49PM +0100, Lorenzo Pieralisi wrote:
+> On Wed, May 09, 2018 at 02:01:34PM +0200, Niklas Cassel wrote:
+> > For PCI, the second and third cell in ranges specifies the upper and
+> > lower target address for address translation. This target address will
+> > be used to program the internal address translation unit (iATU).
+> > 
+> > The current device tree configuration will program the iATU to translate
+> > CPU accesses to 0x08000000 to PCI address 0x0 (with TLP type MEM).
+> > The device tree configuration also specifies that CPU acesses to
+> > 0x0fe00000 will be translated to PCI address 0x0 (with TLP type I/O).
+> > 
+> > We cannot have both I/O space and memory space at PCI address 0x0.
+> > 
+> > The PCI code already uses the CPU address when assigning addresses to
+> > memory BARs, so for memory space the PCI address should be the same as
+> > the CPU address. This also matches how all other device trees using
+> > snps,dw-pcie are configured.
+> > 
+> > The existing configuration appears to work, even if it is incorrect.
+> > For some reason the iATU doesn't obey the existing configuration,
+> > and doesn't translate CPU accesses from 0x08000000 to PCI address 0x0.
+> > 
+> > The reason why the existing configuration works at all is probably
+> > because the default behavior, when there is no match, is to use the
+> > untranslated address. This happens to work for memory space, since
+> > it's a 1:1 mapping. However, instead of relying on this behavior,
+> > let's configure the iATU correctly.
+> > 
+> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > ---
+> >  arch/arm/boot/dts/qcom-apq8064.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Practically this happens when the device is woken up from suspend by
-> plugging in usb.
+> Hi Niklas,
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  drivers/phy/ti/phy-twl4030-usb.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> what's this patch status ? Please let me know if I have to keep
+> it in the PCI tree queue, I think, if ACKed, it should probably
+> go via the arm-soc tree.
+
+Hello Lorenzo,
+
+This patch has been merged and is included in v4.18.
+
+I CC:ed PCI just to get more eyes on it.
+
+
+Kind regards,
+Niklas
+
+
 > 
-> diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
-> index a44680d64f9b..1f3cf4e48383 100644
-> --- a/drivers/phy/ti/phy-twl4030-usb.c
-> +++ b/drivers/phy/ti/phy-twl4030-usb.c
-> @@ -552,6 +552,15 @@ static irqreturn_t twl4030_usb_irq(int irq, void *_twl)
->  
->  	status = twl4030_usb_linkstat(twl);
->  
-> +	/* we might get here too early when runtime is not ready yet
-> +	 * and we will get an EACCESS later, so try again later
-> +	 */
-
-How exactly can this happen? What disables (and later re-enables)
-runtime PM? How can we guarantee that the interrupt will be
-re-triggered?
-
-> +	if (!pm_runtime_enabled(twl->dev)) {
-> +		cancel_delayed_work(&twl->id_workaround_work);
-> +		schedule_delayed_work(&twl->id_workaround_work, HZ);
-> +		return IRQ_HANDLED;
-> +	}
-> +
->  	mutex_lock(&twl->lock);
->  	if (status >= 0 && status != twl->linkstat) {
->  		status_changed =
-> -- 
-> 2.11.0
+> Thanks,
+> Lorenzo
 > 
-
-Thanks.
-
--- 
-Dmitry
+> > diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> > index 5341a39c0392..148cf7e565f6 100644
+> > --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
+> > +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+> > @@ -1417,7 +1417,7 @@
+> >  			#address-cells = <3>;
+> >  			#size-cells = <2>;
+> >  			ranges = <0x81000000 0 0 0x0fe00000 0 0x00100000   /* I/O */
+> > -				  0x82000000 0 0 0x08000000 0 0x07e00000>; /* memory */
+> > +				  0x82000000 0 0x08000000 0x08000000 0 0x07e00000>; /* memory */
+> >  			interrupts = <GIC_SPI 238 IRQ_TYPE_NONE>;
+> >  			interrupt-names = "msi";
+> >  			#interrupt-cells = <1>;
+> > -- 
+> > 2.17.0
+> > 
