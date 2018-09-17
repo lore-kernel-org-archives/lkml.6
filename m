@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5C6ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFD0ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D340D2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D340D2146F
+	by mail.kernel.org (Postfix) with ESMTP id 7D5EE2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D5EE2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbeIRE3y (ORCPT
+        id S1729996AbeIRE34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48066 "EHLO
+        Tue, 18 Sep 2018 00:29:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIRE3w (ORCPT
+        with ESMTP id S1727559AbeIRE3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:52 -0400
+        Tue, 18 Sep 2018 00:29:55 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA304C7D;
-        Mon, 17 Sep 2018 23:00:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D20A4CB2;
+        Mon, 17 Sep 2018 23:00:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: [PATCH 4.14 018/126] switchtec: Fix Spectre v1 vulnerability
-Date:   Tue, 18 Sep 2018 00:41:06 +0200
-Message-Id: <20180917211705.882751290@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>
+Subject: [PATCH 4.14 019/126] crypto: aes-generic - fix aes-generic regression on powerpc
+Date:   Tue, 18 Sep 2018 00:41:07 +0200
+Message-Id: <20180917211705.936630964@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,55 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 46feb6b495f7628a6dbf36c4e6d80faf378372d4 upstream.
+commit 6e36719fbe90213fbba9f50093fa2d4d69b0e93c upstream.
 
-p.port can is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+My last bugfix added -Os on the command line, which unfortunately caused
+a build regression on powerpc in some configurations.
 
-This issue was detected with the help of Smatch:
+I've done some more analysis of the original problem and found slightly
+different workaround that avoids this regression and also results in
+better performance on gcc-7.0: -fcode-hoisting is an optimization step
+that got added in gcc-7 and that for all gcc-7 versions causes worse
+performance.
 
-  drivers/pci/switch/switchtec.c:912 ioctl_port_to_pff() warn: potential spectre issue 'pcfg->dsp_pff_inst_id' [r]
+This disables -fcode-hoisting on all compilers that understand the option.
+For gcc-7.1 and 7.2 I found the same performance as my previous patch
+(using -Os), in gcc-7.0 it was even better. On gcc-8 I could see no
+change in performance from this patch. In theory, code hoisting should
+not be able make things better for the AES cipher, so leaving it
+disabled for gcc-8 only serves to simplify the Makefile change.
 
-Fix this by sanitizing p.port before using it to index
-pcfg->dsp_pff_inst_id
-
-Notice that given that speculation windows are large, the policy is to kill
-the speculation on the first load and not worry if it can be completed with
-a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: stable@vger.kernel.org
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Link: https://www.mail-archive.com/linux-crypto@vger.kernel.org/msg30418.html
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83356
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83651
+Fixes: 148b974deea9 ("crypto: aes-generic - build with -Os on gcc-7+")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Horia Geanta <horia.geanta@nxp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/switch/switchtec.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -24,6 +24,8 @@
- #include <linux/cdev.h>
- #include <linux/wait.h>
- 
-+#include <linux/nospec.h>
-+
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) PCIe Management Driver");
- MODULE_VERSION("0.1");
- MODULE_LICENSE("GPL");
-@@ -1173,6 +1175,8 @@ static int ioctl_port_to_pff(struct swit
- 	default:
- 		if (p.port > ARRAY_SIZE(pcfg->dsp_pff_inst_id))
- 			return -EINVAL;
-+		p.port = array_index_nospec(p.port,
-+					ARRAY_SIZE(pcfg->dsp_pff_inst_id) + 1);
- 		p.pff = ioread32(&pcfg->dsp_pff_inst_id[p.port - 1]);
- 		break;
- 	}
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -98,7 +98,7 @@ obj-$(CONFIG_CRYPTO_TWOFISH_COMMON) += t
+ obj-$(CONFIG_CRYPTO_SERPENT) += serpent_generic.o
+ CFLAGS_serpent_generic.o := $(call cc-option,-fsched-pressure)  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79149
+ obj-$(CONFIG_CRYPTO_AES) += aes_generic.o
+-CFLAGS_aes_generic.o := $(call cc-ifversion, -ge, 0701, -Os) # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83356
++CFLAGS_aes_generic.o := $(call cc-option,-fno-code-hoisting) # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83356
+ obj-$(CONFIG_CRYPTO_AES_TI) += aes_ti.o
+ obj-$(CONFIG_CRYPTO_CAMELLIA) += camellia_generic.o
+ obj-$(CONFIG_CRYPTO_CAST_COMMON) += cast_common.o
 
 
