@@ -2,182 +2,160 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD060ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFC5ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82AE0214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AE0214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C42BE214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42BE214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbeIQRyf (ORCPT
+        id S1728563AbeIQRzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:54:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58338 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbeIQRyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:54:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1BC17A9;
-        Mon, 17 Sep 2018 05:27:28 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E385E3F703;
-        Mon, 17 Sep 2018 05:27:25 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 13:27:23 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180917122723.GS1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
+        Mon, 17 Sep 2018 13:55:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54660 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeIQRzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 13:55:17 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g1sdK-0003xX-N0; Mon, 17 Sep 2018 14:28:06 +0200
+Date:   Mon, 17 Sep 2018 14:28:01 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Multi-parent IRQ domains
+In-Reply-To: <20180917095222.GA27927@ulmo>
+Message-ID: <alpine.DEB.2.21.1809171358070.16580@nanos.tec.linutronix.de>
+References: <20180913155945.GA19903@ulmo> <alpine.DEB.2.21.1809141211200.1473@nanos.tec.linutronix.de> <20180917095222.GA27927@ulmo>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180914142813.GM24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-Sep 16:28, Peter Zijlstra wrote:
-> Just a quick reply because I have to run..
+On Mon, 17 Sep 2018, Thierry Reding wrote:
+> On Fri, Sep 14, 2018 at 12:31:18PM +0200, Thomas Gleixner wrote:
+> > Now, you need the PMC for both, the GPIOs and the RTC. What you can do here
+> > is to provide two irq domains in PMC. One which has GIC as its parent and
+> > one which has no parent. Surely they need to share some resources, but
+> > that should be a solvable problem.
 > 
-> On Fri, Sep 14, 2018 at 03:07:32PM +0100, Patrick Bellasi wrote:
-> > On 14-Sep 13:10, Peter Zijlstra wrote:
+> I think I have this working to some degree, finally. GPIO is still
+> proving difficult, but RTC seems to be working fine. I've currently
+> solved this by making the PMC an interrupt controller and then have
+> an interrupt-map property in its device tree node that lists those
+> wake events that we're interested in. It looks something like this:
 > 
-> > > I think the problem here is that the two are conflated in the very same
-> > > interface.
-> > > 
-> > > Would it make sense to move the available clamp values out to some sysfs
-> > > interface like thing and guard that with a capability, while keeping the
-> > > task interface unprivilidged?
-> > 
-> > You mean something like:
-> > 
-> >    $ cat /proc/sys/kernel/sched_uclamp_min_utils
-> >    0 10 20 ... 100
-> > 
-> > to notify users about the set of clamp values which are available ?
-> > 
-> > > Another thing that has me 'worried' about this interface is the direct
-> > > tie to CPU capacity (not that I have a better suggestion). But it does
-> > > raise the point of how userspace is going to discover the relevant
-> > > values of the platform.
-> > 
-> > This point worries me too, and that's what I think is addressed in a
-> > sane way in:
-> > 
-> >    [PATCH v4 13/16] sched/core: uclamp: use percentage clamp values
-> >    https://lore.kernel.org/lkml/20180828135324.21976-14-patrick.bellasi@arm.com/
-> > 
-> > IMHO percentages are a reasonably safe and generic API to expose to
-> > user-space. Don't you think this should address your concern above ?
+> 	pmc: pmc@c360000 {
+> 		compatible = "nvidia,tegra194-pmc";
+> 		reg = <0x0c360000 0x10000>,
+> 		      <0x0c370000 0x10000>,
+> 		      <0x0c380000 0x10000>,
+> 		      <0x0c390000 0x10000>,
+> 		      <0x0c3a0000 0x10000>;
+> 		reg-names = "pmc", "wake", "aotag", "scratch", "misc";
 > 
-> Not at all what I meant, and no, percentages don't help.
+> 		#interrupt-cells = <1>;
+> 		interrupt-controller;
 > 
-> The thing is, the values you'd want to use are for example the capacity
-> of the little CPUs. or the capacity of the most energy efficient OPP
-> (the knee).
+> 		interrupt-map = /*<29 &gpio_aon TEGRA194_AON_GPIO(EE, 4)
+> 					      IRQ_TYPE_LEVEL_HIGH>,*/
+> 				<73 &gic GIC_SPI 10
+> 					 IRQ_TYPE_LEVEL_HIGH>;
+> 	};
+> 
+> Note that I've commented out the GPIO wake event (this is for the power
+> button) because that currently crashes in the GPIO driver, probably
+> because I misunderstood how to properly implement this.
 
-I don't think so.
+I'm not a DT wizerd, but the GPIO cannot be linked there I think.
 
-On the knee topic, we had some thinking and on most platforms it seems
-to be a rather arbitrary decision.
+    RTC ---------------------------> [ PMC domain 1] -----> GIC
 
-On sane platforms, the Energy Efficiency (EE) is monotonically
-decreasing with frequency increase.  Maybe we can define a threshold
-for a "EE derivative ratio", but it will still be quite arbitrary.
-Moreover, it could be that in certain use-cases we want to push for
-higher energy efficiency (i.e. lower derivatives) then others.
+    Button --> [GPIO domain] ------> [ PMC domain 2]
 
-> Similarly for boosting, how are we 'easily' going to find the values
-> that correspond to the various available OPPs.
+The RTC is connected to PMC domain 1 and that allocates the GIC irq.
 
-In our experience with SchedTune on Android, we found that we
-generally focus on a small set of representative use-cases and then
-run an exploration, by tuning the percentage of boost, to identify the
-optimal trade-off between Performance and Energy.
-The value you get could be something which do not match exactly an OPP
-but still, since we (will) bias not only OPP selection but also tasks
-placement, it's the one which makes most sense.
+The button is conntected to the GPIO which connect to the PMC domain
+2. That PMC domain has no connection to anything. It ends there.
 
-Thus, the capacity of little CPUs, or the exact capacity of an OPP, is
-something we don't care to specify exactly, since:
+> When I use the above code on the PMC/GPIO domain, then I see crashes
+> because the GPIO controller doesn't implement things like the ->alloc()
+> callback for its IRQ domain. But perhaps this is what I misunderstand.
+> Are you saying that for the case of GPIO I can just *not* pass through
+> all other operations and just let them be NULL? So that the only
+> callback will be ->irq_set_wake()? What I don't quite understand is how
+> the IRQ code would know how to properly set up the GPIO interrupt in
+> that case.
 
- - schedutil will top the util request to the next frequency anyway
+Let's look at the PMC level first:
 
- - capacity by itself is a loosely defined metric, since it's usually
-   measured considering a specific kind of instructions mix, which
-   can be very different from the actual instruction mix (e.g. integer
-   vs floating point)
+  The PMC has a fixed number of interrupts which are avail
 
- - certain platforms don't even expose OPPs, but just "performance
-   levels"... which ultimately are a "percentage"
+  domain 1:
 
- - there are so many rounding errors around on utilization tracking
-   and it aggregation that being exact on an OPP if of "relative"
-   importance
+       That domain is used for interrupts which have a dedicated GIC
+       interrupt line, e.g. the RTC
 
-Do you see specific use-cases where an exact OPP capacity is much
-better then a percentage value ?
+       The interrupt domain needs at least:
 
-Of course there can be scenarios in which wa want to clamp to a
-specific OPP. But still, why should it be difficult for a platform
-integrator to express it as a close enough percentage value ?
+       alloc		= pmc_domain1_alloc
 
-> The EAS thing might have these around; but I forgot if/how they're
-> exposed to userspace (I'll have to soon look at the latest posting).
+       The interrupt chip has:
 
-The new "Energy Model Management" framework can certainly be use to
-get the list of OPPs for each frequency domain. IMO this could be
-used to identify the maximum number of clamp groups we can have.
-In this case, the discretization patch can translate a generic
-percentage clamp into the closest OPP capacity... 
+       irq_mask		= irq_chip_mask_parent
+       irq_unmask	= irq_chip_unmask_parent
+       irq_eoi		= irq_chip_eoi_parent
+       irq_set_affinity	= irq_chip_set_affinity_parent
+       irq_set_type	= irq_chip_set_type_parent
+       irq_set_wake	= pmc_set_wake
 
-... but to me that's an internal detail which I'm not convinced we
-don't need to expose to user-space.
+  domain 2:
 
-IMHO we should instead focus just on defining a usable and generic
-userspace interface. Then, platform specific tuning is something
-user-space can do, either offline or on-line.
+       That domain is used for interrupts which are not related to the GIC
+       directly, e.g. GPIO
 
-> But changing the clamp metric to something different than these values
-> is going to be pain.
+       The interrupt domain needs at least:
 
-Maybe I don't completely get what you mean here... are you saying that
-not using exact capacity values to defined clamps is difficult ?
-If that's the case why? Can you elaborate with an example ?
+       alloc		= pmc_domain2_alloc
+       
+       The interrupt chip has:
 
-Cheers,
-Patrick
+       irq_set_wake	= pmc_set_wake
 
--- 
-#include <best/regards.h>
 
-Patrick Bellasi
+Now the GPIO domain builds on top of PMC domain2
+
+    	i.e. the parent of the GPIO domain is PMC domain2, which means that
+    	it's part of a hierarchy and therefore needs an alloc function in
+    	the domain ops.
+
+	The GPIO irq chip gains one extra callback:
+
+       	irq_set_wake	= irq_chip_set_wake_parent,
+
+
+So, I don't know how GPIOs are mapped into the PMC when they are a wakeup
+source. It might be all of them have the ability so there is some 1:1
+relation ship or if the whole GPIO -> PMC connection can be built at run
+time, but that's just an implementation detail.
+
+Thanks,
+
+	tglx
+
