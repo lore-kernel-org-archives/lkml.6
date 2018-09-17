@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A47ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C05ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E4920685
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E4920685
+	by mail.kernel.org (Postfix) with ESMTP id DDE8D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE8D2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbeIREaM (ORCPT
+        id S1730069AbeIREaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:30:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48126 "EHLO
+        Tue, 18 Sep 2018 00:30:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIREaL (ORCPT
+        with ESMTP id S1727559AbeIREaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:30:11 -0400
+        Tue, 18 Sep 2018 00:30:14 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EADC3C03;
-        Mon, 17 Sep 2018 23:00:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D939C77;
+        Mon, 17 Sep 2018 23:00:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
+        stable@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 024/126] i2c: aspeed: Add an explicit type casting for *get_clk_reg_val
-Date:   Tue, 18 Sep 2018 00:41:12 +0200
-Message-Id: <20180917211706.347426187@linuxfoundation.org>
+Subject: [PATCH 4.14 025/126] Bluetooth: h5: Fix missing dependency on BT_HCIUART_SERDEV
+Date:   Tue, 18 Sep 2018 00:41:13 +0200
+Message-Id: <20180917211706.421495604@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,35 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+From: Johan Hedberg <johan.hedberg@intel.com>
 
-[ Upstream commit 5799c4b2f1dbc0166d9b1d94443deaafc6e7a070 ]
+[ Upstream commit 6c3711ec64fd23a9abc8aaf59a9429569a6282df ]
 
-This commit fixes this sparse warning:
-drivers/i2c/busses/i2c-aspeed.c:875:38: warning: incorrect type in assignment (different modifiers)
-drivers/i2c/busses/i2c-aspeed.c:875:38:    expected unsigned int ( *get_clk_reg_val )( ... )
-drivers/i2c/busses/i2c-aspeed.c:875:38:    got void const *const data
+This driver was recently updated to use serdev, so add the appropriate
+dependency. Without this one can get compiler warnings like this if
+CONFIG_SERIAL_DEV_BUS is not enabled:
 
-Reported-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+  CC [M]  drivers/bluetooth/hci_h5.o
+drivers/bluetooth/hci_h5.c:934:36: warning: ‘h5_serdev_driver’ defined but not used [-Wunused-variable]
+ static struct serdev_device_driver h5_serdev_driver = {
+                                    ^~~~~~~~~~~~~~~~
+
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-aspeed.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -859,7 +859,7 @@ static int aspeed_i2c_probe_bus(struct p
- 	if (!match)
- 		bus->get_clk_reg_val = aspeed_i2c_24xx_get_clk_reg_val;
- 	else
--		bus->get_clk_reg_val = match->data;
-+		bus->get_clk_reg_val = (u32 (*)(u32))match->data;
- 
- 	/* Initialize the I2C adapter */
- 	spin_lock_init(&bus->lock);
+--- a/drivers/bluetooth/Kconfig
++++ b/drivers/bluetooth/Kconfig
+@@ -146,6 +146,7 @@ config BT_HCIUART_LL
+ config BT_HCIUART_3WIRE
+ 	bool "Three-wire UART (H5) protocol support"
+ 	depends on BT_HCIUART
++	depends on BT_HCIUART_SERDEV
+ 	help
+ 	  The HCI Three-wire UART Transport Layer makes it possible to
+ 	  user the Bluetooth HCI over a serial port interface. The HCI
 
 
