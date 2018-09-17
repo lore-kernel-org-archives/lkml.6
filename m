@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
 	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B10ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B7DECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DBE20883
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812B120883
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mwotNDpd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70DBE20883
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oQiyH5Q9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812B120883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbeIQVGf (ORCPT
+        id S1729438AbeIQVGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 17:06:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59558 "EHLO
+        Mon, 17 Sep 2018 17:06:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59880 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbeIQVGf (ORCPT
+        with ESMTP id S1727858AbeIQVGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:06:35 -0400
+        Mon, 17 Sep 2018 17:06:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=j3v/nFp3fjtc5iMaX/WT3wAaLTVUZizvfKI7Z6OJb78=; b=mwotNDpdNDyhbt1XTULKsXZ9T
-        NNYKWLn2pFug3Rov2//BpcPhecHJKV+onwF/mOUkm25Zbwf4dbXyjGtCJ2MFbqVTmHPCotFx5yTkf
-        5GE+eL73mF2T1oK3fmZXJ5uQgSOUZF0wt6tGUe5xVE2//KjrMce/E6gLQ+b6c8Jc3UPhKIqczt8C9
-        vV4P8QzvT4t/n4IpKMQ9TFJQlWehv764whxVUD20bAXe9ymiUFDkGRXGoGu7BKVssi0zddALA71wb
-        7YqNMRrrsPbZUIemE/XoUHMleDkKKfkIsoF/3h4hHojoz3XNp9mqRjPSEjArjf7iK0dJnBwIe5sS2
-        w0gSD/WFw==;
+         bh=f0Z/qwk5aasGSqS5N0umEd3apHQoe6SWTGncnlJmryw=; b=oQiyH5Q9H0QWEAK5MQnijJDCw
+        aS/jpIja5VW0RLsJUZsphdkpEjU7rrneoFVK30eenzKed3cC0E/aa6ql4H0lXbXXvZfS1B35sWtig
+        rOrDLRV9lnyLPzPOa20/jvTSronjtkn3/F5TBocSPdNNAjlKbnWzTMPrtiJkIhU5ZF8KynK6Z1TFF
+        6kn4hVRKUuv5lEG2O+UT0VJKZpd/GqI31ye9egRhg4dIwZnbUo6vxM1n+JAnTm5Cn3/b7eA8qfjf2
+        gM21p1o/QHwhENJiU0Il4S6UTjJrOHYfiYIQ9mQE+2+mboBzIwOFSiQO+P78l7gvt/rGf71lnvh/P
+        4eSgnLnAA==;
 Received: from 089144198037.atnat0007.highway.a1.net ([89.144.198.37] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1vbc-00069Q-Q0; Mon, 17 Sep 2018 15:38:33 +0000
+        id 1g1vbf-00069o-Iu; Mon, 17 Sep 2018 15:38:35 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -48,9 +48,9 @@ To:     Will Deacon <will.deacon@arm.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] swiotlb: remove a pointless comment
-Date:   Mon, 17 Sep 2018 17:38:18 +0200
-Message-Id: <20180917153826.28052-2-hch@lst.de>
+Subject: [PATCH 2/9] swiotlb: mark is_swiotlb_buffer static
+Date:   Mon, 17 Sep 2018 17:38:19 +0200
+Message-Id: <20180917153826.28052-3-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180917153826.28052-1-hch@lst.de>
 References: <20180917153826.28052-1-hch@lst.de>
@@ -60,31 +60,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This comments describes an aspect of the map_sg interface that isn't
-even exploited by swiotlb.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- kernel/dma/swiotlb.c | 6 ------
- 1 file changed, 6 deletions(-)
+ include/linux/swiotlb.h | 1 -
+ kernel/dma/swiotlb.c    | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 965be92c33b5..7ef541ce8f34 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -121,7 +121,6 @@ static inline unsigned int swiotlb_max_segment(void) { return 0; }
+ #endif
+ 
+ extern void swiotlb_print_info(void);
+-extern int is_swiotlb_buffer(phys_addr_t paddr);
+ extern void swiotlb_set_max_segment(unsigned int);
+ 
+ extern const struct dma_map_ops swiotlb_dma_ops;
 diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 4f8a6dbf0b60..9062b14bc7f4 100644
+index 9062b14bc7f4..26d3af52956f 100644
 --- a/kernel/dma/swiotlb.c
 +++ b/kernel/dma/swiotlb.c
-@@ -925,12 +925,6 @@ swiotlb_sync_single_for_device(struct device *hwdev, dma_addr_t dev_addr,
-  * appropriate dma address and length.  They are obtained via
-  * sg_dma_{address,length}(SG).
-  *
-- * NOTE: An implementation may be able to use a smaller number of
-- *       DMA address/length pairs than there are SG table elements.
-- *       (for example via virtual mapping capabilities)
-- *       The routine returns the number of addr/length pairs actually
-- *       used, at most nents.
-- *
-  * Device ownership issues as mentioned above for swiotlb_map_page are the
-  * same here.
-  */
+@@ -429,7 +429,7 @@ void __init swiotlb_exit(void)
+ 	max_segment = 0;
+ }
+ 
+-int is_swiotlb_buffer(phys_addr_t paddr)
++static int is_swiotlb_buffer(phys_addr_t paddr)
+ {
+ 	return paddr >= io_tlb_start && paddr < io_tlb_end;
+ }
 -- 
 2.18.0
 
