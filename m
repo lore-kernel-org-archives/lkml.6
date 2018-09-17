@@ -2,115 +2,91 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9312AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A45ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A012088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:42:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A012088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CF3D2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF3D2088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728898AbeIQUK1 (ORCPT
+        id S1728927AbeIQULR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:10:27 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58351 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728158AbeIQUK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:10:27 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6F11A1706D4D9;
-        Mon, 17 Sep 2018 22:42:46 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
- 22:42:39 +0800
-Subject: Re: [PATCH] asm-generic: io: Fix ioport_map() for
- !CONFIG_GENERIC_IOMAP && CONFIG_INDIRECT_PIO
-To:     Andrew Murray <andrew.murray@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Will Deacon" <will.deacon@arm.com>, <dann.frazier@canonical.com>,
-        <bhelgaas@google.com>, <andy.shevchenko@gmail.com>
-References: <1536842907-51732-1-git-send-email-andrew.murray@arm.com>
-CC:     Linuxarm <linuxarm@huawei.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <suzuki.poulose@arm.com>,
-        <jean-philippe.brucker@arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <464e07ab-797e-971a-0839-5fd55e3e2ad3@huawei.com>
-Date:   Mon, 17 Sep 2018 15:42:32 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <1536842907-51732-1-git-send-email-andrew.murray@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+        Mon, 17 Sep 2018 16:11:17 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56655 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728790AbeIQULR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 16:11:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 07:43:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,385,1531810800"; 
+   d="scan'208";a="84224618"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 17 Sep 2018 07:43:35 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id EB1E3FB; Mon, 17 Sep 2018 17:43:34 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Anthony Wong <anthony.wong@canonical.com>
+Subject: [PATCH v2 0/4] thunderbolt: Miscellaneous cleanups
+Date:   Mon, 17 Sep 2018 17:43:30 +0300
+Message-Id: <20180917144334.18367-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- dead e-mail addresses (Zhichang, Gabriele)
+Hi all,
 
-On 13/09/2018 13:48, Andrew Murray wrote:
+Here are a couple of changes which have been in my TODO list some time
+already but have not had time to make a proper patch out of them until now.
 
-Hi Andrew,
+The only change to the previous version is that I realized it could be
+useful for users to see the actual connected devices (including their name
+which is read from DROM) printed to the system log. Hence the patch 2/4.
 
-> The !CONFIG_GENERIC_IOMAP version of ioport_map uses MMIO_UPPER_LIMIT to
-> prevent users from making I/O accesses outside the expected I/O range -
-> however it erroneously treats MMIO_UPPER_LIMIT as a mask which is
-> contradictory to its other users.
->
-> The introduction of CONFIG_INDIRECT_PIO, which subtracts an arbitrary
-> amount from IO_SPACE_LIMIT to form MMIO_UPPER_LIMIT, results in ioport_map
-> mangling the given port rather than capping it.
->
-> We address this by aligning more closely with the CONFIG_GENERIC_IOMAP
-> implementation of ioport_map by using the comparison operator and
-> returning NULL where the port exceeds MMIO_UPPER_LIMIT. Though note that
-> we preserve the existing behavior of masking with IO_SPACE_LIMIT such that
-> we don't break existing buggy drivers that somehow rely on this masking.
+Mika Westerberg (4):
+  thunderbolt: Make the driver less verbose
+  thunderbolt: Print connected devices
+  thunderbolt: Convert rest of the driver files to use SPDX identifier
+  thunderbolt: Add Intel as copyright holder
 
-I wouldn't say any drivers rely on this - for the only device driver 
-which uses the "Indirect" IO space region above MMIO_UPPER_LIMIT 
-(HiSilicon LPC), no child device driver for that host uses ioport_map() 
-[those being ipmi si and 8250 generic+of drivers].
+ drivers/thunderbolt/cap.c      |  3 +-
+ drivers/thunderbolt/ctl.c      |  9 +++--
+ drivers/thunderbolt/ctl.h      |  3 +-
+ drivers/thunderbolt/dma_port.c |  5 +--
+ drivers/thunderbolt/dma_port.h |  5 +--
+ drivers/thunderbolt/domain.c   |  7 +---
+ drivers/thunderbolt/eeprom.c   |  5 ++-
+ drivers/thunderbolt/icm.c      |  5 +--
+ drivers/thunderbolt/nhi.c      | 33 ++++++++--------
+ drivers/thunderbolt/nhi.h      |  3 +-
+ drivers/thunderbolt/nhi_regs.h |  1 +
+ drivers/thunderbolt/path.c     | 26 ++++++-------
+ drivers/thunderbolt/property.c |  5 +--
+ drivers/thunderbolt/switch.c   | 71 +++++++++++++++++++---------------
+ drivers/thunderbolt/tb.c       | 10 ++---
+ drivers/thunderbolt/tb.h       |  9 +++--
+ drivers/thunderbolt/tb_msgs.h  |  5 +--
+ drivers/thunderbolt/tb_regs.h  |  3 +-
+ drivers/thunderbolt/xdomain.c  |  5 +--
+ include/linux/thunderbolt.h    |  5 +--
+ 20 files changed, 107 insertions(+), 111 deletions(-)
 
-Regardless of that, it seems better to return NULL when the port is 
-out-of-range, rather than masking it.
-
-Cheers
-
->
-> Fixes: 5745392e0c2b ("PCI: Apply the new generic I/O management on PCI IO hosts")
-> Reported-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-
-Reviewed-by: John Garry <john.garry@huawei.com>
-
-> ---
->  include/asm-generic/io.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
-> index 66d1d45..d356f80 100644
-> --- a/include/asm-generic/io.h
-> +++ b/include/asm-generic/io.h
-> @@ -1026,7 +1026,8 @@ static inline void __iomem *ioremap_wt(phys_addr_t offset, size_t size)
->  #define ioport_map ioport_map
->  static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
->  {
-> -	return PCI_IOBASE + (port & MMIO_UPPER_LIMIT);
-> +	port &= IO_SPACE_LIMIT;
-> +	return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
->  }
->  #endif
->
->
-
+-- 
+2.18.0
 
