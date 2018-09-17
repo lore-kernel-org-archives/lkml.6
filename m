@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3360DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B225ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E918F2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E918F2146D
+	by mail.kernel.org (Postfix) with ESMTP id 2C6BA2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6BA2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbeIREUr (ORCPT
+        id S1729143AbeIREUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:20:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45008 "EHLO
+        Tue, 18 Sep 2018 00:20:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45026 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREUq (ORCPT
+        with ESMTP id S1727086AbeIREUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:20:46 -0400
+        Tue, 18 Sep 2018 00:20:53 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C853CCAD;
-        Mon, 17 Sep 2018 22:51:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12DE6CAE;
+        Mon, 17 Sep 2018 22:51:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@suse.de>, Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, sramana@codeaurora.org,
+        Ingo Molnar <mingo@kernel.org>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 11/56] selinux: use GFP_NOWAIT in the AVC kmem_caches
-Date:   Tue, 18 Sep 2018 00:41:44 +0200
-Message-Id: <20180917213828.433882553@linuxfoundation.org>
+Subject: [PATCH 4.4 12/56] locking/osq_lock: Fix osq_lock queue corruption
+Date:   Tue, 18 Sep 2018 00:41:45 +0200
+Message-Id: <20180917213828.470483080@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,79 +55,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@kernel.org>
+From: Prateek Sood <prsood@codeaurora.org>
 
-commit 476accbe2f6ef69caeebe99f52a286e12ac35aee upstream.
+commit 50972fe78f24f1cd0b9d7bbf1f87d2be9e4f412e upstream.
 
-There is a strange __GFP_NOMEMALLOC usage pattern in SELinux,
-specifically GFP_ATOMIC | __GFP_NOMEMALLOC which doesn't make much
-sense.  GFP_ATOMIC on its own allows to access memory reserves while
-__GFP_NOMEMALLOC dictates we cannot use memory reserves.  Replace this
-with the much more sane GFP_NOWAIT in the AVC code as we can tolerate
-memory allocation failures in that code.
+Fix ordering of link creation between node->prev and prev->next in
+osq_lock(). A case in which the status of optimistic spin queue is
+CPU6->CPU2 in which CPU6 has acquired the lock.
 
-Signed-off-by: Michal Hocko <mhocko@kernel.org>
-Acked-by: Mel Gorman <mgorman@suse.de>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+        tail
+          v
+  ,-. <- ,-.
+  |6|    |2|
+  `-' -> `-'
+
+At this point if CPU0 comes in to acquire osq_lock, it will update the
+tail count.
+
+  CPU2			CPU0
+  ----------------------------------
+
+				       tail
+				         v
+			  ,-. <- ,-.    ,-.
+			  |6|    |2|    |0|
+			  `-' -> `-'    `-'
+
+After tail count update if CPU2 starts to unqueue itself from
+optimistic spin queue, it will find an updated tail count with CPU0 and
+update CPU2 node->next to NULL in osq_wait_next().
+
+  unqueue-A
+
+	       tail
+	         v
+  ,-. <- ,-.    ,-.
+  |6|    |2|    |0|
+  `-'    `-'    `-'
+
+  unqueue-B
+
+  ->tail != curr && !node->next
+
+If reordering of following stores happen then prev->next where prev
+being CPU2 would be updated to point to CPU0 node:
+
+				       tail
+				         v
+			  ,-. <- ,-.    ,-.
+			  |6|    |2|    |0|
+			  `-'    `-' -> `-'
+
+  osq_wait_next()
+    node->next <- 0
+    xchg(node->next, NULL)
+
+	       tail
+	         v
+  ,-. <- ,-.    ,-.
+  |6|    |2|    |0|
+  `-'    `-'    `-'
+
+  unqueue-C
+
+At this point if next instruction
+	WRITE_ONCE(next->prev, prev);
+in CPU2 path is committed before the update of CPU0 node->prev = prev then
+CPU0 node->prev will point to CPU6 node.
+
+	       tail
+    v----------. v
+  ,-. <- ,-.    ,-.
+  |6|    |2|    |0|
+  `-'    `-'    `-'
+     `----------^
+
+At this point if CPU0 path's node->prev = prev is committed resulting
+in change of CPU0 prev back to CPU2 node. CPU2 node->next is NULL
+currently,
+
+				       tail
+			                 v
+			  ,-. <- ,-. <- ,-.
+			  |6|    |2|    |0|
+			  `-'    `-'    `-'
+			     `----------^
+
+so if CPU0 gets into unqueue path of osq_lock it will keep spinning
+in infinite loop as condition prev->next == node will never be true.
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+[ Added pictures, rewrote comments. ]
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: sramana@codeaurora.org
+Link: http://lkml.kernel.org/r/1500040076-27626-1-git-send-email-prsood@codeaurora.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/avc.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ kernel/locking/osq_lock.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -348,27 +348,26 @@ static struct avc_xperms_decision_node
- 	struct avc_xperms_decision_node *xpd_node;
- 	struct extended_perms_decision *xpd;
+--- a/kernel/locking/osq_lock.c
++++ b/kernel/locking/osq_lock.c
+@@ -104,6 +104,19 @@ bool osq_lock(struct optimistic_spin_que
  
--	xpd_node = kmem_cache_zalloc(avc_xperms_decision_cachep,
--				GFP_ATOMIC | __GFP_NOMEMALLOC);
-+	xpd_node = kmem_cache_zalloc(avc_xperms_decision_cachep, GFP_NOWAIT);
- 	if (!xpd_node)
- 		return NULL;
+ 	prev = decode_cpu(old);
+ 	node->prev = prev;
++
++	/*
++	 * osq_lock()			unqueue
++	 *
++	 * node->prev = prev		osq_wait_next()
++	 * WMB				MB
++	 * prev->next = node		next->prev = prev // unqueue-C
++	 *
++	 * Here 'node->prev' and 'next->prev' are the same variable and we need
++	 * to ensure these stores happen in-order to avoid corrupting the list.
++	 */
++	smp_wmb();
++
+ 	WRITE_ONCE(prev->next, node);
  
- 	xpd = &xpd_node->xpd;
- 	if (which & XPERMS_ALLOWED) {
- 		xpd->allowed = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_ATOMIC | __GFP_NOMEMALLOC);
-+						GFP_NOWAIT);
- 		if (!xpd->allowed)
- 			goto error;
- 	}
- 	if (which & XPERMS_AUDITALLOW) {
- 		xpd->auditallow = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_ATOMIC | __GFP_NOMEMALLOC);
-+						GFP_NOWAIT);
- 		if (!xpd->auditallow)
- 			goto error;
- 	}
- 	if (which & XPERMS_DONTAUDIT) {
- 		xpd->dontaudit = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_ATOMIC | __GFP_NOMEMALLOC);
-+						GFP_NOWAIT);
- 		if (!xpd->dontaudit)
- 			goto error;
- 	}
-@@ -396,8 +395,7 @@ static struct avc_xperms_node *avc_xperm
- {
- 	struct avc_xperms_node *xp_node;
- 
--	xp_node = kmem_cache_zalloc(avc_xperms_cachep,
--				GFP_ATOMIC|__GFP_NOMEMALLOC);
-+	xp_node = kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT);
- 	if (!xp_node)
- 		return xp_node;
- 	INIT_LIST_HEAD(&xp_node->xpd_head);
-@@ -550,7 +548,7 @@ static struct avc_node *avc_alloc_node(v
- {
- 	struct avc_node *node;
- 
--	node = kmem_cache_zalloc(avc_node_cachep, GFP_ATOMIC|__GFP_NOMEMALLOC);
-+	node = kmem_cache_zalloc(avc_node_cachep, GFP_NOWAIT);
- 	if (!node)
- 		goto out;
- 
+ 	/*
 
 
