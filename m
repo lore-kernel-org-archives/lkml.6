@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A679ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D11ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D71214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D71214AB
+	by mail.kernel.org (Postfix) with ESMTP id A708A20867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A708A20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731188AbeIREf0 (ORCPT
+        id S1731201AbeIREf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:35:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49402 "EHLO
+        Tue, 18 Sep 2018 00:35:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49414 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730202AbeIREfZ (ORCPT
+        with ESMTP id S1730202AbeIREf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:35:25 -0400
+        Tue, 18 Sep 2018 00:35:28 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D63F8C77;
-        Mon, 17 Sep 2018 23:05:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23F23C49;
+        Mon, 17 Sep 2018 23:05:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 083/126] f2fs: fix to wait on page writeback before updating page
-Date:   Tue, 18 Sep 2018 00:42:11 +0200
-Message-Id: <20180917211709.542339090@linuxfoundation.org>
+Subject: [PATCH 4.14 084/126] f2fs: Fix uninitialized return in f2fs_ioc_shutdown()
+Date:   Tue, 18 Sep 2018 00:42:12 +0200
+Message-Id: <20180917211709.599110724@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,30 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 6aead1617b3adf2b7e2c56f0f13e4e0ee42ebb4a ]
+[ Upstream commit 2a96d8ad94ce57cb0072f7a660b1039720c47716 ]
 
-In error path of f2fs_move_rehashed_dirents, inode page could be writeback
-state, so we should wait on inode page writeback before updating it.
+"ret" can be uninitialized on the success path when "in ==
+F2FS_GOING_DOWN_FULLSYNC".
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Fixes: 60b2b4ee2bc0 ("f2fs: Fix deadlock in shutdown ioctl")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/inline.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -502,6 +502,7 @@ static int f2fs_move_rehashed_dirents(st
- 	return 0;
- recover:
- 	lock_page(ipage);
-+	f2fs_wait_on_page_writeback(ipage, NODE, true);
- 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA(dir));
- 	f2fs_i_depth_write(dir, 0);
- 	f2fs_i_size_write(dir, MAX_INLINE_DATA(dir));
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1803,7 +1803,7 @@ static int f2fs_ioc_shutdown(struct file
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct super_block *sb = sbi->sb;
+ 	__u32 in;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
 
 
