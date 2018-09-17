@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9602EECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7F5ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C782088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C782088F
+	by mail.kernel.org (Postfix) with ESMTP id 520EF2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520EF2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeIRET4 (ORCPT
+        id S1728988AbeIREUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44898 "EHLO
+        Tue, 18 Sep 2018 00:20:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRET4 (ORCPT
+        with ESMTP id S1725952AbeIREUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:56 -0400
+        Tue, 18 Sep 2018 00:20:06 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6B0CCAF;
-        Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33449CAE;
+        Mon, 17 Sep 2018 22:50:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        longman@redhat.com, parri.andrea@gmail.com, sramana@codeaurora.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 10/56] locking/rwsem-xadd: Fix missed wakeup due to reordering of load
-Date:   Tue, 18 Sep 2018 00:41:43 +0200
-Message-Id: <20180917213828.393496095@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 37/56] net: dcb: For wild-card lookups, use priority -1, not 0
+Date:   Tue, 18 Sep 2018 00:42:10 +0200
+Message-Id: <20180917213829.456703922@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -56,94 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prateek Sood <prsood@codeaurora.org>
+From: Petr Machata <petrm@mellanox.com>
 
-commit 9c29c31830a4eca724e137a9339137204bbb31be upstream.
+[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
 
-If a spinner is present, there is a chance that the load of
-rwsem_has_spinner() in rwsem_wake() can be reordered with
-respect to decrement of rwsem count in __up_write() leading
-to wakeup being missed:
+The function dcb_app_lookup walks the list of specified DCB APP entries,
+looking for one that matches a given criteria: ifindex, selector,
+protocol ID and optionally also priority. The "don't care" value for
+priority is set to 0, because that priority has not been allowed under
+CEE regime, which predates the IEEE standardization.
 
- spinning writer                  up_write caller
- ---------------                  -----------------------
- [S] osq_unlock()                 [L] osq
-  spin_lock(wait_lock)
-  sem->count=0xFFFFFFFF00000001
-            +0xFFFFFFFF00000000
-  count=sem->count
-  MB
-                                   sem->count=0xFFFFFFFE00000001
-                                             -0xFFFFFFFF00000001
-                                   spin_trylock(wait_lock)
-                                   return
- rwsem_try_write_lock(count)
- spin_unlock(wait_lock)
- schedule()
+Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
+considers zero a wild card, attempts to add an APP entry with priority 0
+fail when other entries exist for a given ifindex / selector / PID
+triplet.
 
-Reordering of atomic_long_sub_return_release() in __up_write()
-and rwsem_has_spinner() in rwsem_wake() can cause missing of
-wakeup in up_write() context. In spinning writer, sem->count
-and local variable count is 0XFFFFFFFE00000001. It would result
-in rwsem_try_write_lock() failing to acquire rwsem and spinning
-writer going to sleep in rwsem_down_write_failed().
+Fix by changing the wild-card value to -1.
 
-The smp_rmb() will make sure that the spinner state is
-consulted after sem->count is updated in up_write context.
-
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave@stgolabs.net
-Cc: longman@redhat.com
-Cc: parri.andrea@gmail.com
-Cc: sramana@codeaurora.org
-Link: http://lkml.kernel.org/r/1504794658-15397-1-git-send-email-prsood@codeaurora.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/locking/rwsem-xadd.c |   27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ net/dcb/dcbnl.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -511,6 +511,33 @@ struct rw_semaphore *rwsem_wake(struct r
- 	unsigned long flags;
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1763,7 +1763,7 @@ static struct dcb_app_type *dcb_app_look
+ 		if (itr->app.selector == app->selector &&
+ 		    itr->app.protocol == app->protocol &&
+ 		    itr->ifindex == ifindex &&
+-		    (!prio || itr->app.priority == prio))
++		    ((prio == -1) || itr->app.priority == prio))
+ 			return itr;
+ 	}
  
- 	/*
-+	* __rwsem_down_write_failed_common(sem)
-+	*   rwsem_optimistic_spin(sem)
-+	*     osq_unlock(sem->osq)
-+	*   ...
-+	*   atomic_long_add_return(&sem->count)
-+	*
-+	*      - VS -
-+	*
-+	*              __up_write()
-+	*                if (atomic_long_sub_return_release(&sem->count) < 0)
-+	*                  rwsem_wake(sem)
-+	*                    osq_is_locked(&sem->osq)
-+	*
-+	* And __up_write() must observe !osq_is_locked() when it observes the
-+	* atomic_long_add_return() in order to not miss a wakeup.
-+	*
-+	* This boils down to:
-+	*
-+	* [S.rel] X = 1                [RmW] r0 = (Y += 0)
-+	*         MB                         RMB
-+	* [RmW]   Y += 1               [L]   r1 = X
-+	*
-+	* exists (r0=1 /\ r1=0)
-+	*/
-+	smp_rmb();
-+
-+	/*
- 	 * If a spinner is present, it is not necessary to do the wakeup.
- 	 * Try to do wakeup only if the trylock succeeds to minimize
- 	 * spinlock contention which may introduce too much delay in the
+@@ -1798,7 +1798,8 @@ u8 dcb_getapp(struct net_device *dev, st
+ 	u8 prio = 0;
+ 
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
++	itr = dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio = itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+ 
+@@ -1826,7 +1827,8 @@ int dcb_setapp(struct net_device *dev, s
+ 
+ 	spin_lock_bh(&dcb_lock);
+ 	/* Search for existing match and replace */
+-	if ((itr = dcb_app_lookup(new, dev->ifindex, 0))) {
++	itr = dcb_app_lookup(new, dev->ifindex, -1);
++	if (itr) {
+ 		if (new->priority)
+ 			itr->app.priority = new->priority;
+ 		else {
+@@ -1859,7 +1861,8 @@ u8 dcb_ieee_getapp_mask(struct net_devic
+ 	u8 prio = 0;
+ 
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
++	itr = dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio |= 1 << itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+ 
 
 
