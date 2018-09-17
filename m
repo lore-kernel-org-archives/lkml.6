@@ -2,200 +2,195 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CC7ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3B6ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55259208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E912147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:33:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="B150wx6u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55259208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZOZO8/tQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89E912147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbeIQI6v (ORCPT
+        id S1729062AbeIQI0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:58:51 -0400
-Received: from mail-cys01nam02on0076.outbound.protection.outlook.com ([104.47.37.76]:22553
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:26:40 -0400
+Received: from mail-eopbgr710095.outbound.protection.outlook.com ([40.107.71.95]:52685
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728552AbeIQI6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:58:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+        id S1728957AbeIQI0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:26:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OKDdj+KFBLxmrketiQ6QkPL/0vu/dadwKx4KhD1ObFs=;
- b=B150wx6ugr40E4dVt9iEVwSyeMIc3SaprF36RliQLKIuajZkFYkrupqnkr9HarlhRNc8BESZOt0WMSPM8F4F4+4l49rGMg4E38DRpDadZ6eKxVynsxiHzgmwIAViU+eYi7nMIeBB7cWrSx3j5xnfxQ+HLOKkvl703scckN29NLQ=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- BY2PR0301MB1574.namprd03.prod.outlook.com (2a01:111:e400:526e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.18; Mon, 17 Sep
- 2018 03:33:17 +0000
-Date:   Mon, 17 Sep 2018 11:29:49 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/3] i2c: designware: select gpio/default pin when
- prepare/unprepare recovery
-Message-ID: <20180917112949.414dd56f@xhacker.debian>
-In-Reply-To: <20180917112633.252c591c@xhacker.debian>
-References: <20180917112633.252c591c@xhacker.debian>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: OSBPR01CA0060.jpnprd01.prod.outlook.com
- (2603:1096:604:10::24) To BY2PR0301MB1574.namprd03.prod.outlook.com
- (2a01:111:e400:526e::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ecd16ecd-e2c6-4ff2-5be1-08d61c4e4fe7
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR0301MB1574;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;3:ri4gaxqNwUtICxwdxUv7WcVxety+lWyr5OQV+YxebpTBF2iyCUT1EdfVtmBNOlY6xhTLvvywYY0OH+yNbEtAOlrUcP5pAF2Hoy8LARZcXY4pYpPb6AQGDwemthorlT6YQQupHwu43GMo6lGZfXr6PTkON0nMSpCB6i90DBxoBsw1m2q3gy/jrGmCGIREtQ90NXve0ehpx51NgdI8dcoW9RRnIEtuJhLKEmiL/ev7pqsC8amY99opuZDQeh8m/ab3;25:6gnAsFVMi+FmeY2kSbA9h9S5B8BZ2lANd+xbc4eAm9B24ghUpXX2UjxEMo8Se3fk4dj2bi44vb8mWepKVh3i+qJSApDkY30FuNT9YIguXL93sxo+cx30t5Cnfg4DIuJiFwe1WDEhufkoyshovYH/q2NMogJqCobllonAIyvQ4YKvKnsBZrM0mzeSnjAA/W11xmsFCm4g95TujylsHMeZ81oc6udtKj6hrDRiRBpljCdoZXscaQ5lv15dGUUGYz4rhYPptnriG0OW4rtn542VuYIcqwmo95AWkAJFhAX6VaOuio2efqX8MMcWRT2K1m8mHkA8QnRAjFjPX4YgiefgwA==;31:gQi5Bva1++agtx5gmEYHp2U5oIAI9GfRMXWoTaj6/il3DxQ2EgIm9qp0jsswjqYsb+/kWm5YzNm9bUYyaoTTkjMceYKBchJFRfQHUvNN8XdCOVdpo8Lh0awX9m9rfS7Tw1pxPDZS2wJp/0KEyYXrX5z6q3ki0d6dyfEBhi0gbs6cLcNs8e7seD+6V2KMX1pxzgUqZXQxq19wFtcnQ5SKP0JE44g57yC8zQKmyyrp7sU=
-X-MS-TrafficTypeDiagnostic: BY2PR0301MB1574:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;20:z68kdTsepfxpjBna3rHDQjTIODSFH46vEQye52le1ItNYtNUm3zKkYdiEkkizakcB7ciCWj4bRD19sQo9WseQLytvuVM8PUSKTlzXwYco7L/pzb+1Mwbq+SnLWKeamsCFzgUdV2AdwIE8Vv0Qkg6dCSvy7rFAtprMvY7UtD66eklOB2JpyF03N5Wm1SbFjgTeBO01OezAbwQnj7IEIeSPs7JEY/t5j/sARX2bhfUTfMnTmePYh4wL6gitfS8BWun9Gj3d1ZSB8z9i9WtSnR5Y/VzOmkShPnMqjkc9dtHEDj4sHr+SeSZgSceNjV5fPwPa109XVNGdc6/PKGk7DZfNpcH3pjoJdLSfbYKYY6yLIgB4exzBmCaIKezRFpOU0W2FUzLbboXnFLFG+xWB5qfxg1vyoeQuC3PO56Ta29/qNPjIp4glRZn2XFIFOK/DCaqzBdtH7kAMyT2j0x1usOVxa3O9puDJevFcDmtQ3oalnTMmcDhIHLyOZMag+Co7UKx;4:RmLiAS0HDVteaph+1D+OFdRbWm8h1MSEAAHmgabM/yvi3GgEe0gPS5MEIPXrQkkCy3CHzxP7JJ+UzAN8SH9ZrZY28Sn2ieqlFklF1Pi57AvNuU98GmQp/3ABRXGF/6FADNvPgt7UxhD3oUopFc/lReolrRjai8Iv7SkL2HcE1o83/SB5TAt0U9qHOf6af5zY21vsBfrDHhgUtPsdnRoQRoJ+tz/g6Dy3IbduadvGo88q0r3ZfzrnvE5GaiDc0lxXeZ/KpuUaTo9ZxoeUcGehQQ==
-X-Microsoft-Antispam-PRVS: <BY2PR0301MB157401140BCDA5305EC52054ED1E0@BY2PR0301MB1574.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:BY2PR0301MB1574;BCL:0;PCL:0;RULEID:;SRVR:BY2PR0301MB1574;
-X-Forefront-PRVS: 0798146F16
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(39850400004)(396003)(366004)(376002)(346002)(199004)(189003)(81156014)(14444005)(81166006)(86362001)(575784001)(53936002)(8676002)(5660300001)(72206003)(68736007)(486006)(7736002)(305945005)(55016002)(478600001)(8936002)(9686003)(105586002)(66066001)(3846002)(230700001)(7696005)(52116002)(386003)(6506007)(6116002)(186003)(16526019)(50466002)(50226002)(4326008)(110136005)(25786009)(1076002)(54906003)(2906002)(33896004)(316002)(956004)(11346002)(446003)(106356001)(97736004)(23726003)(6666003)(47776003)(76176011)(476003)(26005)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR0301MB1574;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ bh=5kW3AQtT7IVYxwM/juRMezb1fxRBE3RNe/6kmioWwsA=;
+ b=ZOZO8/tQTS9+oMpDRmcY+O7EzAdHHzsbCPrW8QqjAYSaqj6x563XpalNUgl7SSMU9WaIwPeVEagrQaB6LrlVgVtRhSE22RHWMXFZbkibm0Ys9cRFatxP9QHLQfCQgIXHKlZ8zDNRWpDi5J+DtPliyC83Z735SmeszdXgKwWF+Po=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0167.namprd21.prod.outlook.com (10.173.192.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.12; Mon, 17 Sep 2018 03:01:12 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
+ 03:01:12 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Bart Van Assche <bart.vanassche@wdc.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 049/136] scsi: klist: Make it safe to use klists
+ in atomic context
+Thread-Topic: [PATCH AUTOSEL 4.18 049/136] scsi: klist: Make it safe to use
+ klists in atomic context
+Thread-Index: AQHUTjKfbeyV06AseUCwvVP+x3OvbA==
+Date:   Mon, 17 Sep 2018 03:00:43 +0000
+Message-ID: <20180917030006.245495-49-alexander.levin@microsoft.com>
+References: <20180917030006.245495-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0167;6:vxat6uY7sahDLwSk8w9veEWMFhv0U93TgfCZCMAL4gyHUVtwbq9ugPt73Ju6FRJZNv/k4OISxk2rV6dk+beecoc2HQul+rjQQBbyo12bvE0j1GgVlwFcjDfn6rNvosSJ2r1kq7hs5vQOH7GIO8IgHQeyxVycY4Bmt+nkrjEcMUy8CK2c1pNXSbNaAjpFCLM4CwTqCvjAW9QfM7nKeSAm9eiDNAoeYWZtpGo+rCzyBZDs6qoF8m6nKNC9nUl2ifozo/4xIhMZSUa25ef4l/7St4mSE+xKyJxfSJcEQTbr3sBl74g+gXX4UmgKqJF87XjDd8vygVSy3QFnBSI2TWt2Ew3Jc3QgqyF6I6cZqryuiyiqZLVt09L5XhqCS0uPTftlZhN8tw2MlsNKDc/Jp0mNtroM8jU/8DNi4RwJ5raHQGsNOMej/YiRgOtrkMLoAjUGhcfCsvWg9E9GI02fjJmegA==;5:IdZEGY7DzlCxoOb4PySTjVRq/ZPz2VE+mCIDQRyG0AUXNB1p9q4wYliUD0yYmajn3f56dQSY9fK8UlXI0t1SN8G/7MziJHlOjoEjNFK/qDQHILZURKJU7d2AkAEqiG+531GzDCvbDz962xj/bHyrlfLR9DTKH5/kTNA2iQDVV6s=;7:Od+adG679f9QSu70K9sN1h5q0IDDidrkbDzJGn5UuRHEFgRlGEcN1r2UAwO64uEVGd2hkG0y950wMoQx9RMgMafIBpN709JkE3WgzQ03hEYduAsPsmy0XXalXvGz4wSUEaJ/uKReZDBbOzV4INUoL3NpGc2cLi0BAfv2587IEx8bOG2jhSSCtx+nElXuk9e9oz/bE1bayLt0uTn7ZsqfMnqUYgvJrMYo8ad34w10v5lEO8KfjHf8cVNFo9KizirW
+x-ms-office365-filtering-correlation-id: 35f716d8-ecba-48bc-1fb6-08d61c49d33f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0167;
+x-ms-traffictypediagnostic: CY4PR21MB0167:
+x-microsoft-antispam-prvs: <CY4PR21MB01677451E7A9968DF4942DB6FB1E0@CY4PR21MB0167.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(20558992708506)(146099531331640)(104084551191319)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0167;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0167;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(346002)(136003)(39860400002)(199004)(189003)(51234002)(6116002)(1076002)(86612001)(4326008)(97736004)(53936002)(2900100001)(7736002)(107886003)(106356001)(10290500003)(81166006)(105586002)(68736007)(3846002)(99286004)(305945005)(36756003)(8936002)(2906002)(217873002)(54906003)(86362001)(110136005)(25786009)(316002)(5660300001)(102836004)(66066001)(76176011)(478600001)(446003)(11346002)(2616005)(8676002)(486006)(476003)(6346003)(186003)(26005)(6666003)(6506007)(6512007)(5250100002)(6436002)(10090500001)(6486002)(72206003)(14454004)(256004)(2501003)(22452003)(81156014)(14444005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0167;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR0301MB1574;23:eeNLk9yx5x2p2yI83/cjhWdfoH59NXgTgLLQ3DJ?=
- =?us-ascii?Q?r2GE6gYTpf7YyMz3zUoiu8xnQ+6fAibP1Hyxj1bKi+5Wmpi38R8g/So6AHnJ?=
- =?us-ascii?Q?jwXm4JzVjsZkUebNKA+IXNUaTzL9ZuiXziA0HLKeqzpLTiVDIZ6Zq3g6RHPX?=
- =?us-ascii?Q?aEuyuYB1T7m7NTOvxQX5nbxGR7OKnT/DAjxTkGIIOaF/JWztUeieajIYEK6r?=
- =?us-ascii?Q?xS/Rt/bZJbvpuplq7FRvmJwmrzcdTko5A0x5l4GvYAwqEPeHF7GM+NR7xnBM?=
- =?us-ascii?Q?l8y2tBK0okgotFQ72NHcccheTqOq6iCvyCtwrNvzAfQRWyL204w9EFAuyMHl?=
- =?us-ascii?Q?tbOT/2LVYa1A9Er4rodI9BwB3LqcGUScLpDBJWByzHA92J7PtzBoFOiFGTwt?=
- =?us-ascii?Q?pfhbUoKRta0Qpk4dv1COxv9J6nW4gcBsPw2y1GTxXOwMiUc6D7RIooHTJUTh?=
- =?us-ascii?Q?5FjG5rUMFT/oGRBS9rWpJ5Ev4H+2SwEJuf+/YorMCBfQfWNx+IgIDUCEPrq9?=
- =?us-ascii?Q?vyV2E2iXAZ0vsyCdp91XLCXDAcdIrnNFhVpJDpVMn4n46b81u7B3caQXo4hU?=
- =?us-ascii?Q?5Hcb98Hl+B4ruh/Q3I0ThIJ8AEjbN2VYBGI94PFGdVRAEOkycrIN/7qHinE6?=
- =?us-ascii?Q?h1Ni41rIeG7884A6bIJCrHR3N6LanoyGvwN2W7MuYtQ2ZaNkvAoPe1ULh3hA?=
- =?us-ascii?Q?K4RSKETA69bZ2NlrRX5Z+QAPzQM/q7grka4pzbIeC+r1GVEQOlC/0MgEVOmz?=
- =?us-ascii?Q?m2egvhgJSDcljrlSYUshzKWERxQWYCAW4CDbuHNPda2hEE6hZxrba/NWdEAa?=
- =?us-ascii?Q?oO/eMlQONLF9zOdUo38etoQsHOxyWWXkUdkpTq5KaB7OptALkKLO0pVKXgwX?=
- =?us-ascii?Q?LGTLHPoRceBleIpQoOKOIs0i+Ohn/KC1kljnrMRVV+AtrJ8dmBX9nS4sFksl?=
- =?us-ascii?Q?bUuytvUlFbtMtlGPtCGuwiHKOgpU4u/IMNLBgX5GKp+yzWlY73Sz9wDok0aj?=
- =?us-ascii?Q?GNqb4wp290SPCK+pQqQJzhEyHBl+ahtPDbvmXIvaiHhuvWvGpbRMDEkaMuUC?=
- =?us-ascii?Q?w5hXvugT6AKZ7Md4+mx684uRE3crGcLsQFHAriSNcfmPkqq+voAcNPckaDs0?=
- =?us-ascii?Q?Hru7QzF9r9CW5I/DdjHFz2l4QPhbSFFwgYNSQIoAaguW0W1RQZf1l9MxkNBQ?=
- =?us-ascii?Q?Uo/m4YUxrpQnQ0BF+9wt560DFPrlAR0q5gyJ58c9w4SCyF59Lo63xylYGPNS?=
- =?us-ascii?Q?dXXEkcGCxU3p8kMsVDvq2jXy4AqZdV3GcuqhiwQ05vsq8eXkWIch8rHFBufG?=
- =?us-ascii?Q?mVw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: /3lM6NLbPcc5PLb70I/CzGmrzWqj59OzLkyXxDl2CKCcDq/PH8/9a3NYOjjrhIF8JUTxQAmi/vZjjLuhlYrW7Z40xjuwv9PrcX2RSwrCC80yuv9QAMfCVfczodBApfaS2lCAmQD7PNJQ8wwxrAP+Iqq/Nhp5sVxFSWN71OGvn7FVvVyn7rg+M8+VGozO31Up0Au1M7H+bbtClQxexq/dvy2kfGY0f2aRnRbrSTtRhiPptAvP0/ksfenpkiOuuNX8Shl4BoYQzgxxHoZlzidBlA+ykouy6TRi2P4MaVkLXthdS1iWnomyCOvLhuBtO1wCdRPoLdzUOiYQuzma1rApjOMSTAVltpnci0kHCGsK/Mg=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;6:AnUt3Iu2FX0iMgprgFsjV4W+XS1DOy6S5yfibI6wTzX97BLl5sAea0Av4Gyg8+W6Q6W9QCtQ1MQoCxEV4jj6ZKwefFJuDOQuuzn5DxcPNvH3BUjm+fbQA/kukJ6BeHSYSMxi4bO6chYEaXC5Xi0cvJPTH3RzPThHtHwq3153VyTnB5FTQdxkX89WDhMFOinLRYtn4Ut1wRsXLAinb750mcJxgSEC93AH/2g+4y1tibaJoHssn0v5ZEYJuZyOProIxH2MsjA4genmT4VX96o0FYCnCYCKUYYBJSY27GFwwwiu+RzRrGRMGVe1DdU4UsTqOTQlkzu+RHPIUtQeZ1WTCtZoaUC7QWI4q7sA22xPrbARh3SG6UpiflFxDUGfLNcZZNLCiGHcblWijhV56DUfi2/HiOsbJqeM92aIhbXuCMJwfMJIkISOKUit3AZdShp7ek7mcKVW8T5w6efJjiZIeg==;5:XZ5zpqpwSj73vziXHfJTlzLSztxpFsYg79yXInpbhOeisfv+AnxYfv3S++be5E1H2wKEC3G1rFLWr9JJqMwIh42y70iVt4t7CSbm2qtRGSuGQSSWERCCXhvQAW4jicZQD8fjCc304TBf1DOmV430tAVx6Qxj1TJZ0A11iuw+hQM=;7:f18scNkdpM2kztgvNs8wzNmB4VI6hSL54qUrAFAszoyi0uJUYo0F8qyiH/YUuWL0yDo/IwS1AMKzu+sOS2dVmlG+1DsIovXXnHHC7qJbu4XnjgYsqtdwlNAGGboyx86mNiq7Ae5qaHHlBb8lyzmwfmldhjdlTSwWsWnecMI8l+PIHgb75TKgwFlpOSHuBjpizELXV4zY4ajt3PuIDqIYnMSK6c5Zu4rIpnhRCNd3ibrnvE+2JCMCANeGNiLi8c5j
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 03:33:17.2035 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecd16ecd-e2c6-4ff2-5be1-08d61c4e4fe7
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR0301MB1574
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: gVLpaQvMTnf88mkqY/KD9YbALniDTdGEvVOzcOnt4Lt+zuB+Iowg4NTv47ZnPfJUmNpDT7MVtlOYQPpVn86xlJVwuqdvVFxnhph75u/ruhdYKB06I8k2xLjlAJpHJweh0elLlvR70l4aT2gt7oFyGErremSaQy2rNT2kgXVbyxTKPzz8Ka9plf1EprkF2RsT05g2HgZ29iNk+DNliBn08IMyrhf4hwL90dbY47eXd3Uf6D1bkX8nznHmnGfTQxPODSjW/OOmFM7CuaNmWZ3tH9A1aGAXMtHP6LNz39N72AMMVkHfkCW3lvSyP+YXU8t4AbuGa8yeh/gx1RPOdDfU489cTp3obFwiCT5jBafr0lE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35f716d8-ecba-48bc-1fb6-08d61c49d33f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:43.1358
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms, the sda/scl pins are muxed with gpio functions, so
-they could be used for recovery. Select the gpio/default pin function
-when prepare/unprepare recovery.
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+[ Upstream commit 624fa7790f80575a4ec28fbdb2034097dc18d051 ]
+
+In the scsi_transport_srp implementation it cannot be avoided to
+iterate over a klist from atomic context when using the legacy block
+layer instead of blk-mq. Hence this patch that makes it safe to use
+klists in atomic context. This patch avoids that lockdep reports the
+following:
+
+WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&(&k->k_lock)->rlock);
+                               local_irq_disable();
+                               lock(&(&q->__queue_lock)->rlock);
+                               lock(&(&k->k_lock)->rlock);
+  <Interrupt>
+    lock(&(&q->__queue_lock)->rlock);
+
+stack backtrace:
+Workqueue: kblockd blk_timeout_work
+Call Trace:
+ dump_stack+0xa4/0xf5
+ check_usage+0x6e6/0x700
+ __lock_acquire+0x185d/0x1b50
+ lock_acquire+0xd2/0x260
+ _raw_spin_lock+0x32/0x50
+ klist_next+0x47/0x190
+ device_for_each_child+0x8e/0x100
+ srp_timed_out+0xaf/0x1d0 [scsi_transport_srp]
+ scsi_times_out+0xd4/0x410 [scsi_mod]
+ blk_rq_timed_out+0x36/0x70
+ blk_timeout_work+0x1b5/0x220
+ process_one_work+0x4fe/0xad0
+ worker_thread+0x63/0x5a0
+ kthread+0x1c1/0x1e0
+ ret_from_fork+0x24/0x30
+
+See also commit c9ddf73476ff ("scsi: scsi_transport_srp: Fix shost to
+rport translation").
+
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: James Bottomley <jejb@linux.vnet.ibm.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/i2c/busses/i2c-designware-core.h   |  3 +++
- drivers/i2c/busses/i2c-designware-master.c | 22 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ lib/klist.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index e367b1af4ab2..01d5f01691a4 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -271,6 +271,9 @@ struct dw_i2c_dev {
- 	int			(*init)(struct dw_i2c_dev *dev);
- 	int			mode;
- 	struct i2c_bus_recovery_info rinfo;
-+	struct pinctrl		*pinctrl;
-+	struct pinctrl_state	*pins_default;
-+	struct pinctrl_state	*pins_gpio;
- };
- 
- #define ACCESS_SWAP		0x00000001
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index 94d94b4a9a0d..384d6630366a 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -17,6 +17,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
-@@ -629,6 +630,9 @@ static void i2c_dw_prepare_recovery(struct i2c_adapter *adap)
- {
- 	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
- 
-+	if (dev->pinctrl && dev->pins_gpio)
-+		pinctrl_select_state(dev->pinctrl, dev->pins_gpio);
-+
- 	i2c_dw_disable(dev);
- 	reset_control_assert(dev->rst);
- 	i2c_dw_prepare_clk(dev, false);
-@@ -641,6 +645,9 @@ static void i2c_dw_unprepare_recovery(struct i2c_adapter *adap)
- 	i2c_dw_prepare_clk(dev, true);
- 	reset_control_deassert(dev->rst);
- 	i2c_dw_init_master(dev);
-+
-+	if (dev->pinctrl && dev->pins_default)
-+		pinctrl_select_state(dev->pinctrl, dev->pins_default);
- }
- 
- static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
-@@ -648,6 +655,8 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
- 	struct i2c_bus_recovery_info *rinfo = &dev->rinfo;
- 	struct i2c_adapter *adap = &dev->adapter;
- 	struct gpio_desc *gpio;
-+	struct pinctrl *pinctrl;
-+	struct pinctrl_state *s;
- 	int r;
- 
- 	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
-@@ -664,6 +673,19 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
- 		return PTR_ERR(gpio);
- 	rinfo->sda_gpiod = gpio;
- 
-+	pinctrl = devm_pinctrl_get(dev->dev);
-+	if (PTR_ERR(pinctrl) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+	if (!IS_ERR_OR_NULL(pinctrl)) {
-+		dev->pinctrl = pinctrl;
-+		s = pinctrl_lookup_state(pinctrl, PINCTRL_STATE_DEFAULT);
-+		if (!IS_ERR_OR_NULL(s))
-+			dev->pins_default = s;
-+		s = pinctrl_lookup_state(pinctrl, "gpio");
-+		if (!IS_ERR_OR_NULL(s))
-+			dev->pins_gpio = s;
-+	}
-+
- 	rinfo->recover_bus = i2c_generic_scl_recovery;
- 	rinfo->prepare_recovery = i2c_dw_prepare_recovery;
- 	rinfo->unprepare_recovery = i2c_dw_unprepare_recovery;
--- 
-2.19.0
-
+diff --git a/lib/klist.c b/lib/klist.c
+index 0507fa5d84c5..f6b547812fe3 100644
+--- a/lib/klist.c
++++ b/lib/klist.c
+@@ -336,8 +336,9 @@ struct klist_node *klist_prev(struct klist_iter *i)
+ 	void (*put)(struct klist_node *) =3D i->i_klist->put;
+ 	struct klist_node *last =3D i->i_cur;
+ 	struct klist_node *prev;
++	unsigned long flags;
+=20
+-	spin_lock(&i->i_klist->k_lock);
++	spin_lock_irqsave(&i->i_klist->k_lock, flags);
+=20
+ 	if (last) {
+ 		prev =3D to_klist_node(last->n_node.prev);
+@@ -356,7 +357,7 @@ struct klist_node *klist_prev(struct klist_iter *i)
+ 		prev =3D to_klist_node(prev->n_node.prev);
+ 	}
+=20
+-	spin_unlock(&i->i_klist->k_lock);
++	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
+=20
+ 	if (put && last)
+ 		put(last);
+@@ -377,8 +378,9 @@ struct klist_node *klist_next(struct klist_iter *i)
+ 	void (*put)(struct klist_node *) =3D i->i_klist->put;
+ 	struct klist_node *last =3D i->i_cur;
+ 	struct klist_node *next;
++	unsigned long flags;
+=20
+-	spin_lock(&i->i_klist->k_lock);
++	spin_lock_irqsave(&i->i_klist->k_lock, flags);
+=20
+ 	if (last) {
+ 		next =3D to_klist_node(last->n_node.next);
+@@ -397,7 +399,7 @@ struct klist_node *klist_next(struct klist_iter *i)
+ 		next =3D to_klist_node(next->n_node.next);
+ 	}
+=20
+-	spin_unlock(&i->i_klist->k_lock);
++	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
+=20
+ 	if (put && last)
+ 		put(last);
+--=20
+2.17.1
