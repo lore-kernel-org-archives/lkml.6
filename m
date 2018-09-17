@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96747ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBDAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58AF8214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AF8214AB
+	by mail.kernel.org (Postfix) with ESMTP id 9D71F2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D71F2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730787AbeIREdo (ORCPT
+        id S1730798AbeIREdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49090 "EHLO
+        Tue, 18 Sep 2018 00:33:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49100 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdn (ORCPT
+        with ESMTP id S1727202AbeIREdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:43 -0400
+        Tue, 18 Sep 2018 00:33:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 891FCC49;
-        Mon, 17 Sep 2018 23:04:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC22BC49;
+        Mon, 17 Sep 2018 23:04:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        "Daniel J. Axtens" <daniel.axtens@canonical.com>,
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 044/126] f2fs: do not set free of current section
-Date:   Tue, 18 Sep 2018 00:41:32 +0200
-Message-Id: <20180917211707.554836447@linuxfoundation.org>
+Subject: [PATCH 4.14 080/126] partitions/aix: append null character to print data from disk
+Date:   Tue, 18 Sep 2018 00:42:08 +0200
+Message-Id: <20180917211709.398570651@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,43 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-[ Upstream commit 3611ce9911267cb93d364bd71ddea6821278d11f ]
+[ Upstream commit d43fdae7bac2def8c4314b5a49822cb7f08a45f1 ]
 
-For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
-example, if segment 1 is just used and allocate new segment 2, and the
-blocks of segment 1 is invalidated, at this time, the previous code will
-use __set_test_and_free to free the free_secmap and free_sections++,
-this is not correct since it is still a current section, so fix it.
+Even if properly initialized, the lvname array (i.e., strings)
+is read from disk, and might contain corrupt data (e.g., lack
+the null terminating character for strings).
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+So, make sure the partition name string used in pr_warn() has
+the null terminating character.
+
+Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
+Suggested-by: Daniel J. Axtens <daniel.axtens@canonical.com>
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.h |    3 +++
- 1 file changed, 3 insertions(+)
+ block/partitions/aix.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -414,6 +414,8 @@ static inline void __set_test_and_free(s
- 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
- 		free_i->free_segments++;
- 
-+		if (IS_CURSEC(sbi, secno))
-+			goto skip_free;
- 		next = find_next_bit(free_i->free_segmap,
- 				start_segno + sbi->segs_per_sec, start_segno);
- 		if (next >= start_segno + sbi->segs_per_sec) {
-@@ -421,6 +423,7 @@ static inline void __set_test_and_free(s
- 				free_i->free_sections++;
+--- a/block/partitions/aix.c
++++ b/block/partitions/aix.c
+@@ -282,10 +282,14 @@ int aix_partition(struct parsed_partitio
+ 				next_lp_ix += 1;
  		}
+ 		for (i = 0; i < state->limit; i += 1)
+-			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous)
++			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous) {
++				char tmp[sizeof(n[i].name) + 1]; // null char
++
++				snprintf(tmp, sizeof(tmp), "%s", n[i].name);
+ 				pr_warn("partition %s (%u pp's found) is "
+ 					"not contiguous\n",
+-					n[i].name, lvip[i].pps_found);
++					tmp, lvip[i].pps_found);
++			}
+ 		kfree(pvd);
  	}
-+skip_free:
- 	spin_unlock(&free_i->segmap_lock);
- }
- 
+ 	kfree(n);
 
 
