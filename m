@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB83ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B5CECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C742088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C742088F
+	by mail.kernel.org (Postfix) with ESMTP id 098BC2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098BC2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeIREVq (ORCPT
+        id S1729374AbeIREVt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45268 "EHLO
+        Tue, 18 Sep 2018 00:21:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45278 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVo (ORCPT
+        with ESMTP id S1726275AbeIREVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:44 -0400
+        Tue, 18 Sep 2018 00:21:48 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C57CCA0;
-        Mon, 17 Sep 2018 22:52:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E748CAC;
+        Mon, 17 Sep 2018 22:52:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Chen <peter.chen@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>
-Subject: [PATCH 4.4 51/56] ethernet: ti: davinci_emac: add missing of_node_put after calling of_parse_phandle
-Date:   Tue, 18 Sep 2018 00:42:24 +0200
-Message-Id: <20180917213830.035372822@linuxfoundation.org>
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 52/56] crypto: vmx - Fix sleep-in-atomic bugs
+Date:   Tue, 18 Sep 2018 00:42:25 +0200
+Message-Id: <20180917213830.074386012@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,30 +51,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Chen <peter.chen@nxp.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 5817f977527e5cdbea9ca56d2b95824f59c8747d upstream.
+commit 0522236d4f9c5ab2e79889cb020d1acbe5da416e upstream.
 
-of_node_put needs to be called when the device node which is got
-from of_parse_phandle has finished using.
+This patch fixes sleep-in-atomic bugs in AES-CBC and AES-XTS VMX
+implementations. The problem is that the blkcipher_* functions should
+not be called in atomic context.
 
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+The bugs can be reproduced via the AF_ALG interface by trying to
+encrypt/decrypt sufficiently large buffers (at least 64 KiB) using the
+VMX implementations of 'cbc(aes)' or 'xts(aes)'. Such operations then
+trigger BUG in crypto_yield():
+
+[  891.863680] BUG: sleeping function called from invalid context at include/crypto/algapi.h:424
+[  891.864622] in_atomic(): 1, irqs_disabled(): 0, pid: 12347, name: kcapi-enc
+[  891.864739] 1 lock held by kcapi-enc/12347:
+[  891.864811]  #0: 00000000f5d42c46 (sk_lock-AF_ALG){+.+.}, at: skcipher_recvmsg+0x50/0x530
+[  891.865076] CPU: 5 PID: 12347 Comm: kcapi-enc Not tainted 4.19.0-0.rc0.git3.1.fc30.ppc64le #1
+[  891.865251] Call Trace:
+[  891.865340] [c0000003387578c0] [c000000000d67ea4] dump_stack+0xe8/0x164 (unreliable)
+[  891.865511] [c000000338757910] [c000000000172a58] ___might_sleep+0x2f8/0x310
+[  891.865679] [c000000338757990] [c0000000006bff74] blkcipher_walk_done+0x374/0x4a0
+[  891.865825] [c0000003387579e0] [d000000007e73e70] p8_aes_cbc_encrypt+0x1c8/0x260 [vmx_crypto]
+[  891.865993] [c000000338757ad0] [c0000000006c0ee0] skcipher_encrypt_blkcipher+0x60/0x80
+[  891.866128] [c000000338757b10] [c0000000006ec504] skcipher_recvmsg+0x424/0x530
+[  891.866283] [c000000338757bd0] [c000000000b00654] sock_recvmsg+0x74/0xa0
+[  891.866403] [c000000338757c10] [c000000000b00f64] ___sys_recvmsg+0xf4/0x2f0
+[  891.866515] [c000000338757d90] [c000000000b02bb8] __sys_recvmsg+0x68/0xe0
+[  891.866631] [c000000338757e30] [c00000000000bbe4] system_call+0x5c/0x70
+
+Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+Fixes: c07f5d3da643 ("crypto: vmx - Adding support for XTS")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/davinci_emac.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/vmx/aes_cbc.c |   30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -2108,6 +2108,7 @@ static int davinci_emac_remove(struct pl
- 	cpdma_ctlr_destroy(priv->dma);
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@ -111,24 +111,23 @@ static int p8_aes_cbc_encrypt(struct blk
+ 		ret = crypto_blkcipher_encrypt(&fallback_desc, dst, src,
+ 					       nbytes);
+ 	} else {
+-		preempt_disable();
+-		pagefault_disable();
+-		enable_kernel_altivec();
+-		enable_kernel_vsx();
+-
+ 		blkcipher_walk_init(&walk, dst, src, nbytes);
+ 		ret = blkcipher_walk_virt(desc, &walk);
+ 		while ((nbytes = walk.nbytes)) {
++			preempt_disable();
++			pagefault_disable();
++			enable_kernel_vsx();
++			enable_kernel_altivec();
+ 			aes_p8_cbc_encrypt(walk.src.virt.addr,
+ 					   walk.dst.virt.addr,
+ 					   nbytes & AES_BLOCK_MASK,
+ 					   &ctx->enc_key, walk.iv, 1);
++			pagefault_enable();
++			preempt_enable();
++
+ 			nbytes &= AES_BLOCK_SIZE - 1;
+ 			ret = blkcipher_walk_done(desc, &walk, nbytes);
+ 		}
+-
+-		pagefault_enable();
+-		preempt_enable();
+ 	}
  
- 	unregister_netdev(ndev);
-+	of_node_put(priv->phy_node);
- 	free_netdev(ndev);
+ 	return ret;
+@@ -152,24 +151,23 @@ static int p8_aes_cbc_decrypt(struct blk
+ 		ret = crypto_blkcipher_decrypt(&fallback_desc, dst, src,
+ 					       nbytes);
+ 	} else {
+-		preempt_disable();
+-		pagefault_disable();
+-		enable_kernel_altivec();
+-		enable_kernel_vsx();
+-
+ 		blkcipher_walk_init(&walk, dst, src, nbytes);
+ 		ret = blkcipher_walk_virt(desc, &walk);
+ 		while ((nbytes = walk.nbytes)) {
++			preempt_disable();
++			pagefault_disable();
++			enable_kernel_vsx();
++			enable_kernel_altivec();
+ 			aes_p8_cbc_encrypt(walk.src.virt.addr,
+ 					   walk.dst.virt.addr,
+ 					   nbytes & AES_BLOCK_MASK,
+ 					   &ctx->dec_key, walk.iv, 0);
++			pagefault_enable();
++			preempt_enable();
++
+ 			nbytes &= AES_BLOCK_SIZE - 1;
+ 			ret = blkcipher_walk_done(desc, &walk, nbytes);
+ 		}
+-
+-		pagefault_enable();
+-		preempt_enable();
+ 	}
  
- 	return 0;
+ 	return ret;
 
 
