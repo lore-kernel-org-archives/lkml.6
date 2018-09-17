@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF79FECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C712CECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67892088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67892088F
+	by mail.kernel.org (Postfix) with ESMTP id 8A0D9214FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:09:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A0D9214FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbeIQSg0 (ORCPT
+        id S1728464AbeIQSg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:36:26 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54774 "EHLO
+        Mon, 17 Sep 2018 14:36:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54780 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbeIQSgZ (ORCPT
+        with ESMTP id S1726865AbeIQSg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:36:25 -0400
+        Mon, 17 Sep 2018 14:36:26 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g1tH2-0005DW-3r; Mon, 17 Sep 2018 15:09:08 +0200
-Message-Id: <20180917130706.973042587@linutronix.de>
+        id 1g1tH3-0005Dj-Ij; Mon, 17 Sep 2018 15:09:09 +0200
+Message-Id: <20180917130707.151963007@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 17 Sep 2018 14:45:34 +0200
+Date:   Mon, 17 Sep 2018 14:45:36 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
@@ -44,65 +44,49 @@ Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
         virtualization@lists.linux-foundation.org,
         Paolo Bonzini <pbonzini@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: [patch V2 01/11] clocksource: Provide clocksource_arch_init()
+Subject: [patch V2 03/11] x86/vdso: Enforce 64bit clocksource
 References: <20180917124533.329334911@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=clocksource--Provide-clocksource_arch_init--.patch
+Content-Disposition: inline; filename=x86-vdso--Enforce-64bit-clocksource.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Architectures have extra archdata in the clocksource, e.g. for VDSO
-support. There are no sanity checks or general initializations for this
-available. Add support for that.
+All VDSO clock sources are TSC based and use CLOCKSOURCE_MASK(64). There is
+no point in masking with all FF. Get rid of it and enforce the mask in the
+sanity checker.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/clocksource.h |    5 +++++
- kernel/time/Kconfig         |    4 ++++
- kernel/time/clocksource.c   |    2 ++
- 3 files changed, 11 insertions(+)
+ arch/x86/entry/vdso/vclock_gettime.c |    2 +-
+ arch/x86/kernel/time.c               |    6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -241,6 +241,11 @@ static inline void __clocksource_update_
- 	__clocksource_update_freq_scale(cs, 1000, khz);
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -199,7 +199,7 @@ notrace static inline u64 vgetsns(int *m
+ #endif
+ 	else
+ 		return 0;
+-	v = (cycles - gtod->cycle_last) & gtod->mask;
++	v = cycles - gtod->cycle_last;
+ 	return v * gtod->mult;
  }
  
-+#ifdef CONFIG_ARCH_CLOCKSOURCE_INIT
-+extern void clocksource_arch_init(struct clocksource *cs);
-+#else
-+static inline void clocksource_arch_init(struct clocksource *cs) { }
-+#endif
- 
- extern int timekeeping_notify(struct clocksource *clock);
- 
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -12,6 +12,10 @@ config CLOCKSOURCE_WATCHDOG
- config ARCH_CLOCKSOURCE_DATA
- 	bool
- 
-+# Architecture has extra clocksource init called from registration
-+config ARCH_CLOCKSOURCE_INIT
-+	bool
+--- a/arch/x86/kernel/time.c
++++ b/arch/x86/kernel/time.c
+@@ -120,4 +120,10 @@ void clocksource_arch_init(struct clocks
+ 			cs->name, cs->archdata.vclock_mode);
+ 		cs->archdata.vclock_mode = VCLOCK_NONE;
+ 	}
 +
- # Clocksources require validation of the clocksource against the last
- # cycle update - x86/TSC misfeature
- config CLOCKSOURCE_VALIDATE_LAST_CYCLE
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -937,6 +937,8 @@ int __clocksource_register_scale(struct
- {
- 	unsigned long flags;
- 
-+	clocksource_arch_init(cs);
-+
- 	/* Initialize mult/shift and max_idle_ns */
- 	__clocksource_update_freq_scale(cs, scale, freq);
- 
++	if (cs->mask != CLOCKSOURCE_MASK(64)) {
++		pr_warn("clocksource %s registered with invalid mask %016llx. Disabling vclock.\n",
++			cs->name, cs->mask);
++		cs->archdata.vclock_mode = VCLOCK_NONE;
++	}
+ }
 
 
