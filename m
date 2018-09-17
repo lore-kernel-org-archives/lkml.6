@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55BAECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D47ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F500214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F500214AB
+	by mail.kernel.org (Postfix) with ESMTP id 21BA62146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21BA62146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732659AbeIREmT (ORCPT
+        id S1732669AbeIREmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:42:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50822 "EHLO
+        Tue, 18 Sep 2018 00:42:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728909AbeIREmT (ORCPT
+        with ESMTP id S1732001AbeIREmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:42:19 -0400
+        Tue, 18 Sep 2018 00:42:22 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 116E7C49;
-        Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DCECC49;
+        Mon, 17 Sep 2018 23:12:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 080/158] f2fs: issue discard align to section in LFS mode
-Date:   Tue, 18 Sep 2018 00:41:50 +0200
-Message-Id: <20180917211714.926674087@linuxfoundation.org>
+Subject: [PATCH 4.18 081/158] f2fs: fix defined but not used build warnings
+Date:   Tue, 18 Sep 2018 00:41:51 +0200
+Message-Id: <20180917211714.965796467@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,105 +53,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit ad6672bbc527727dc8968e8d92687f55ae928ce5 ]
+[ Upstream commit cb15d1e43db0a6341c1e26ac6a2c74e61b74f1aa ]
 
-For the case when sbi->segs_per_sec > 1 with lfs mode, take
-section:segment = 5 for example, if the section prefree_map is
-...previous section | current section (1 1 0 1 1) | next section...,
-then the start = x, end = x + 1, after start = start_segno +
-sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
-their bitmap is still set, which will cause duplicated
-f2fs_issue_discard of this same section in the next write_checkpoint:
+Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
 
-round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
-prefree of NO.2 is cleared, and no discard issued
+../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
 
-round 2: rm data block NO.0, NO.1, NO.3, NO.4
-all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
-prefree_map: 1 1 0 1 1
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
-valid blocks of this section, so discard issued, but this time prefree
-bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
-
-round 3:
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
-0 0 0 0 0, no valid blocks of this section, so discard issued,
-this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
-this section is sent again...
-
-To fix this problem, we can align the start and end value to section
-boundary for fstrim and real-time discard operation, and decide to issue
-discard only when the whole section is invalid, which can issue discard
-aligned to section size as much as possible and avoid redundant discard.
-
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ fs/f2fs/sysfs.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1643,21 +1643,30 @@ void f2fs_clear_prefree_segments(struct
- 	unsigned int start = 0, end = -1;
- 	unsigned int secno, start_segno;
- 	bool force = (cpc->reason & CP_DISCARD);
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -9,6 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/compiler.h>
+ #include <linux/proc_fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/seq_file.h>
+@@ -516,7 +517,8 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
  
- 	mutex_lock(&dirty_i->seglist_lock);
+-static int segment_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -543,7 +545,8 @@ static int segment_info_seq_show(struct
+ 	return 0;
+ }
  
- 	while (1) {
- 		int i;
-+
-+		if (need_align && end != -1)
-+			end--;
- 		start = find_next_bit(prefree_map, MAIN_SEGS(sbi), end + 1);
- 		if (start >= MAIN_SEGS(sbi))
- 			break;
- 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
- 								start + 1);
+-static int segment_bits_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -567,7 +570,8 @@ static int segment_bits_seq_show(struct
+ 	return 0;
+ }
  
--		for (i = start; i < end; i++)
--			clear_bit(i, prefree_map);
-+		if (need_align) {
-+			start = rounddown(start, sbi->segs_per_sec);
-+			end = roundup(end, sbi->segs_per_sec);
-+		}
- 
--		dirty_i->nr_dirty[PRE] -= end - start;
-+		for (i = start; i < end; i++) {
-+			if (test_and_clear_bit(i, prefree_map))
-+				dirty_i->nr_dirty[PRE]--;
-+		}
- 
- 		if (!test_opt(sbi, DISCARD))
- 			continue;
-@@ -2437,6 +2446,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sb
- 	struct discard_policy dpolicy;
- 	unsigned long long trimmed = 0;
- 	int err = 0;
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
- 
- 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
- 		return -EINVAL;
-@@ -2454,6 +2464,10 @@ int f2fs_trim_fs(struct f2fs_sb_info *sb
- 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
- 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
- 						GET_SEGNO(sbi, end);
-+	if (need_align) {
-+		start_segno = rounddown(start_segno, sbi->segs_per_sec);
-+		end_segno = roundup(end_segno + 1, sbi->segs_per_sec) - 1;
-+	}
- 
- 	cpc.reason = CP_DISCARD;
- 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
+-static int iostat_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
++					       void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
 
 
