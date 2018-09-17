@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
 	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B7DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B52ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812B120883
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A28F920883
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oQiyH5Q9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812B120883
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B0lO/Jol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A28F920883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbeIQVGn (ORCPT
+        id S1729451AbeIQVGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 17:06:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59880 "EHLO
+        Mon, 17 Sep 2018 17:06:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59948 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbeIQVGn (ORCPT
+        with ESMTP id S1727858AbeIQVGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:06:43 -0400
+        Mon, 17 Sep 2018 17:06:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f0Z/qwk5aasGSqS5N0umEd3apHQoe6SWTGncnlJmryw=; b=oQiyH5Q9H0QWEAK5MQnijJDCw
-        aS/jpIja5VW0RLsJUZsphdkpEjU7rrneoFVK30eenzKed3cC0E/aa6ql4H0lXbXXvZfS1B35sWtig
-        rOrDLRV9lnyLPzPOa20/jvTSronjtkn3/F5TBocSPdNNAjlKbnWzTMPrtiJkIhU5ZF8KynK6Z1TFF
-        6kn4hVRKUuv5lEG2O+UT0VJKZpd/GqI31ye9egRhg4dIwZnbUo6vxM1n+JAnTm5Cn3/b7eA8qfjf2
-        gM21p1o/QHwhENJiU0Il4S6UTjJrOHYfiYIQ9mQE+2+mboBzIwOFSiQO+P78l7gvt/rGf71lnvh/P
-        4eSgnLnAA==;
+         bh=qix1iJUyrJdPI4v1IFPLfBzhDQt7WpL1CLDLBWJoNxI=; b=B0lO/JolgUFCIEBvIXtM8q1YC
+        fnXTT0LtCCWwijPzxfi0leAbhpShRI/AnsgWqriKZi8hLnzTKFj9ejP/6lQT6PcjAGwAbC5KxWN8y
+        BWICaSVg4c7ytfPjOlvvgf2JukkUU2fSIGXH11QuwXECrRk8cF621Mb3UBp3Um0oTKRBz4YvxJSZC
+        MVkhGRo9doIEjjiPAukp8A7AS7BtwOLT85uwFyND/4mDWtqqjW9kpCVfJKFXHWoHsGj3FLui5B06t
+        0H4+6Sb7uEhMC7w8J2EzIR1fdaRkNCJdfX4zFtg5ylLXAHtKiQh20v25//RHZ5LfMvGmSHuA5HHyT
+        T/OTa9lvg==;
 Received: from 089144198037.atnat0007.highway.a1.net ([89.144.198.37] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1vbf-00069o-Iu; Mon, 17 Sep 2018 15:38:35 +0000
+        id 1g1vbi-0006AZ-Cb; Mon, 17 Sep 2018 15:38:38 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -48,9 +48,9 @@ To:     Will Deacon <will.deacon@arm.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] swiotlb: mark is_swiotlb_buffer static
-Date:   Mon, 17 Sep 2018 17:38:19 +0200
-Message-Id: <20180917153826.28052-3-hch@lst.de>
+Subject: [PATCH 3/9] swiotlb: do not panic on mapping failures
+Date:   Mon, 17 Sep 2018 17:38:20 +0200
+Message-Id: <20180917153826.28052-4-hch@lst.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180917153826.28052-1-hch@lst.de>
 References: <20180917153826.28052-1-hch@lst.de>
@@ -60,37 +60,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+All properly written drivers now have error handling in the
+dma_map_single / dma_map_page callers.  As swiotlb_tbl_map_single already
+prints a useful warning when running out of swiotlb pool swace we can
+also remove swiotlb_full entirely as it serves no purpose now.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/swiotlb.h | 1 -
- kernel/dma/swiotlb.c    | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ kernel/dma/swiotlb.c | 33 +--------------------------------
+ 1 file changed, 1 insertion(+), 32 deletions(-)
 
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index 965be92c33b5..7ef541ce8f34 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -121,7 +121,6 @@ static inline unsigned int swiotlb_max_segment(void) { return 0; }
- #endif
- 
- extern void swiotlb_print_info(void);
--extern int is_swiotlb_buffer(phys_addr_t paddr);
- extern void swiotlb_set_max_segment(unsigned int);
- 
- extern const struct dma_map_ops swiotlb_dma_ops;
 diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 9062b14bc7f4..26d3af52956f 100644
+index 26d3af52956f..69bf305ee5f8 100644
 --- a/kernel/dma/swiotlb.c
 +++ b/kernel/dma/swiotlb.c
-@@ -429,7 +429,7 @@ void __init swiotlb_exit(void)
- 	max_segment = 0;
+@@ -761,34 +761,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 	return true;
  }
  
--int is_swiotlb_buffer(phys_addr_t paddr)
-+static int is_swiotlb_buffer(phys_addr_t paddr)
- {
- 	return paddr >= io_tlb_start && paddr < io_tlb_end;
- }
+-static void
+-swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+-	     int do_panic)
+-{
+-	if (swiotlb_force == SWIOTLB_NO_FORCE)
+-		return;
+-
+-	/*
+-	 * Ran out of IOMMU space for this operation. This is very bad.
+-	 * Unfortunately the drivers cannot handle this operation properly.
+-	 * unless they check for dma_mapping_error (most don't)
+-	 * When the mapping is small enough return a static buffer to limit
+-	 * the damage, or panic when the transfer is too big.
+-	 */
+-	dev_err_ratelimited(dev, "DMA: Out of SW-IOMMU space for %zu bytes\n",
+-			    size);
+-
+-	if (size <= io_tlb_overflow || !do_panic)
+-		return;
+-
+-	if (dir == DMA_BIDIRECTIONAL)
+-		panic("DMA: Random memory could be DMA accessed\n");
+-	if (dir == DMA_FROM_DEVICE)
+-		panic("DMA: Random memory could be DMA written\n");
+-	if (dir == DMA_TO_DEVICE)
+-		panic("DMA: Random memory could be DMA read\n");
+-}
+-
+ /*
+  * Map a single buffer of the indicated size for DMA in streaming mode.  The
+  * physical address to use is returned.
+@@ -817,10 +789,8 @@ dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 
+ 	/* Oh well, have to allocate and map a bounce buffer. */
+ 	map = map_single(dev, phys, size, dir, attrs);
+-	if (map == SWIOTLB_MAP_ERROR) {
+-		swiotlb_full(dev, size, dir, 1);
++	if (map == SWIOTLB_MAP_ERROR)
+ 		return __phys_to_dma(dev, io_tlb_overflow_buffer);
+-	}
+ 
+ 	dev_addr = __phys_to_dma(dev, map);
+ 
+@@ -948,7 +918,6 @@ swiotlb_map_sg_attrs(struct device *hwdev, struct scatterlist *sgl, int nelems,
+ 			if (map == SWIOTLB_MAP_ERROR) {
+ 				/* Don't panic here, we expect map_sg users
+ 				   to do proper error handling. */
+-				swiotlb_full(hwdev, sg->length, dir, 0);
+ 				attrs |= DMA_ATTR_SKIP_CPU_SYNC;
+ 				swiotlb_unmap_sg_attrs(hwdev, sgl, i, dir,
+ 						       attrs);
 -- 
 2.18.0
 
