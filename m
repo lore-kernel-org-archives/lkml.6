@@ -2,102 +2,143 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D257ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E5BECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1202D2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1202D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id AE4F92147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:10:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4F92147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeIRCjO (ORCPT
+        id S1728594AbeIRCjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:39:14 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42765 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIRCjN (ORCPT
+        Mon, 17 Sep 2018 22:39:16 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34393 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeIRCjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:39:13 -0400
-Received: by mail-ot1-f66.google.com with SMTP id h26-v6so12832186otl.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 14:10:10 -0700 (PDT)
+        Mon, 17 Sep 2018 22:39:14 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 13-v6so20315710ois.1;
+        Mon, 17 Sep 2018 14:10:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=puJ3mBDOxtGdwK5rKDyjcp3XiYsmpCdlkuS/MUvszGk=;
-        b=niP8rND1wQqO9/WC0dNpDvqvcJuCfg8dREAsUCw3ErsXsmjupFQlbNSrArvoCiVc2N
-         7rcSl2qAqVqZ4yqgmTDYKj17BK/nx6ae8Ic1Xoha/vndb7hibZCxCb6XDvX3w24VUKkD
-         V/3BVYnqbSoezimJXgrATIbdUSbSVRoHNS/R7j1LYKFDw4ypL/wmIBFfxCo3OLfNCgV6
-         mXcwxHWE+kRUOn+Txu5wXi34KihnM53c6WFv77dF+9+E+7C/CVhkCKMcM6bJXIBBY2py
-         I2iYH/UeQsbVATDnZlbF01apnTyHn3go4mwf5SWk7IFtz48EzHMs7hKlU18eaNLjmk8j
-         eW9g==
-X-Gm-Message-State: APzg51DFtH6VlvPOYnoYCtyIrX40cdbN+njq8EFIxc91oW6zKJt0VhYW
-        PU6nXNjsy42thxa8f2198RFlLi32
-X-Google-Smtp-Source: ANB0VdZpmMWUCMqrRAmmPW9n9YicGIkZXGOYcN2iryQaGpLrSe+sH055/UY+z+wBSWedaHkSakB3yg==
-X-Received: by 2002:a9d:1422:: with SMTP id h31-v6mr13623784oth.41.1537218609738;
-        Mon, 17 Sep 2018 14:10:09 -0700 (PDT)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
-        by smtp.gmail.com with ESMTPSA id z1-v6sm4755008ota.44.2018.09.17.14.10.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 14:10:09 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id a19-v6so12827486otl.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 14:10:09 -0700 (PDT)
-X-Received: by 2002:a9d:48a:: with SMTP id 10-v6mr12677044otm.361.1537218608869;
- Mon, 17 Sep 2018 14:10:08 -0700 (PDT)
+        bh=Wn6/2z4zlAOhpUBscoDfHx16LguhclKxj7pRk8ePZ4k=;
+        b=AKOF3FvJZVAR+Pcsw3fYC9gR4yNX6KkYn7dddBI1S7HR3EQhaZdZcBYqugjxPjvuRx
+         PL14J0U9XA8dDOXXkbYzk3qzvuYF8XNy7SMGbE8hooymSe9syTbPtI6ZI1zt37ITytj7
+         rZJqP8vzWiqGj1/ElIzFxASJbhBxUK540lv2vI6miH72gw4BLG1IIgzOvv1nIKgoto5i
+         88r5y67nb2NrGuUE1Pr2O1gHsdR+kPUjCmwEk7kiCMGQfeQluK+n6zVXOVpScnKWWBLC
+         0Icwoo84/B7v595v6afgBFjiGzXbyfEnBW1eEz6WRyHN2iDvMsffAF/aVQBlYHcfPPO8
+         iQRw==
+X-Gm-Message-State: APzg51DKo8026yknotcF7cZzYfi865GFJ93NYThOEwQ8PveyRHq3VmJy
+        eR+ZPYJ50Mw1qgqjiUt2JKhvC+TggGd01k13ILVdfg==
+X-Google-Smtp-Source: ANB0VdbMfOrD93byZ2I8V9S1s9GRtHrvClHPKTobhY/CfluV6/+uAf18L3P0FoQmxaQ/TjyoBs3a6a/+ZN5+1uCC1D8=
+X-Received: by 2002:aca:e6d4:: with SMTP id d203-v6mr18838292oih.311.1537218609959;
+ Mon, 17 Sep 2018 14:10:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180915111005.10028-1-yuehaibing@huawei.com>
-In-Reply-To: <20180915111005.10028-1-yuehaibing@huawei.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Mon, 17 Sep 2018 16:09:57 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSQp78jioP8Eao3ku_vqYCddRTuz1sydskUiPWTfmSUGQ@mail.gmail.com>
-Message-ID: <CADRPPNSQp78jioP8Eao3ku_vqYCddRTuz1sydskUiPWTfmSUGQ@mail.gmail.com>
-Subject: Re: [PATCH -next] fsl/qe: Fix copy-paste error in ucc_get_tdm_sync_shift
-To:     yuehaibing@huawei.com
-Cc:     Zhao Qiang <qiang.zhao@nxp.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20180913160851.18169-1-vkuznets@redhat.com> <4793718.OcKebjM5bH@aspire.rjw.lan>
+ <87d0tg88l3.fsf@vitty.brq.redhat.com> <20180914162103.GA11171@redhat.com>
+ <CAJZ5v0jpK-KWE7Pv1fKAWFXweW7jNH26fFDM=sXMPRNPJ96u7g@mail.gmail.com> <20180917165518.GA25931@redhat.com>
+In-Reply-To: <20180917165518.GA25931@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 17 Sep 2018 23:09:58 +0200
+Message-ID: <CAJZ5v0h9zPofaJCxshZgcEuBDELDKS4e4oQAn9m8KmNCdFR1eQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel/hung_task.c: disable on suspend
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 6:11 AM YueHaibing <yuehaibing@huawei.com> wrote:
+On Mon, Sep 17, 2018 at 6:55 PM Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> if 'mode' is COMM_DIR_TX, 'shift' should use TX_SYNC_SHIFT_BASE
+> On 09/17, Rafael J. Wysocki wrote:
+> >
+> > On Fri, Sep 14, 2018 at 6:21 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > > > Since you are adding the notifier anyway, what about designing it to make
+> > > > > the thread wait on _PREPARE until the notifier kicks it again on exit
+> > > > > fron suspend/hibernation?
+> > >
+> > > Well. I agree that freezable kthreads are not nice, but it seems you are
+> > > going to add another questionable interface ;)
+> >
+> > Why would it be questionable?
+> >
+> > The watchdog needs to be disarmed somehow before tasks are frozen and
+> > re-armed after they have been thawed or it may report false-positives
+> > on the way out.  PM notifiers can be used for that.
 >
-> Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Or watchdog() can simply use set_freezable/freezing interface we already
+> have, without additional complications.
+>
+> Yes, this is not "before tasks are frozen", but probably should work?
 
-Thanks for submitting the patch, but there is already the same fix in
-the queue from Zhao Qiang and Dan Carpenter.
+Well, not really.
 
-> ---
->  drivers/soc/fsl/qe/ucc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+It is a kernel thread and therefore it is frozen after all user space
+and thawed before it.
+
+> OK, I won't argue.
 >
-> diff --git a/drivers/soc/fsl/qe/ucc.c b/drivers/soc/fsl/qe/ucc.c
-> index c646d87..681f7d4 100644
-> --- a/drivers/soc/fsl/qe/ucc.c
-> +++ b/drivers/soc/fsl/qe/ucc.c
-> @@ -626,7 +626,7 @@ static u32 ucc_get_tdm_sync_shift(enum comm_dir mode, u32 tdm_num)
->  {
->         u32 shift;
+> > > Where does the caller of pm_suspend() sleep in D state? Why it sleeps more
+> > > than 120 seconds?
+> >
+> > It need not be sleeping for over 2 minutes, but if suspend-to-idle
+> > advances the clock sufficiently, the watchdog will regard that as the
+> > task sleep time.
 >
-> -       shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : RX_SYNC_SHIFT_BASE;
-> +       shift = (mode == COMM_DIR_RX) ? RX_SYNC_SHIFT_BASE : TX_SYNC_SHIFT_BASE;
->         shift -= tdm_num * 2;
+> As I already said, I don't understand this magic, so you can ignore me.
+
+Suspend-to-RAM suspends timekeeping (among other things) on the way to
+system-wide suspend and resumes it on the way back to the working
+state.  The time between those two events is not added to the
+monotonic clock and jiffies is not updated while timekeeping is
+suspended. As a result, the new jiffies value doesn't include the time
+when the system is in the sleep state.  In that case the 2 minutes
+interval is more than enough to cover the two system transitions (into
+system-wide suspend and back) and the sleep time doesn't count.
+
+Suspend-to-idle, OTOH, only suspends timekeeping when the last CPU
+goes idle and resumes it when the first CPU is woken up.  That may
+take place for multiple times in a row while the system is regarded as
+suspended, due to spurious wakeups.  While the time when timekeeping
+is suspended still doesn't count (the monotonic clock is not advanced
+and jiffies is not updated then), the time when at least one CPU is
+not idle counts.  Hence, if the system is in suspend-to-idle for a
+sufficiently long time and there are sufficiently many spurious
+wakeups during that period, the monotonic clock and jiffies may be
+advanced by over 2 minutes while the system is regarded as suspended.
+
+> But again, it would be nice to explain this in the changelog, I mean, how
+> exactly (and why) jiffies can grow for over 2 minutes in this case.
+
+Agreed, the changelog should explain that.
+
+> > > And. given that it takes system_transition_mutex anyway, can't it use
+> > > lock_system_sleep() which marks the caller as PF_FREEZER_SKIP (checked
+> > > in check_hung_task()) ?
+> >
+> > Well, it could, but that would be somewhat confusing and slightly
+> > abusing the flag IMO.
 >
->         return shift;
-> --
-> 1.8.3.1
->
->
+> OK, I won't insist.
+
+OK :-)
+
+Cheers,
+Rafael
