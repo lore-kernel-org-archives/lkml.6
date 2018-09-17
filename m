@@ -2,143 +2,108 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51AEECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188C0ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F8A214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:52:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IEtxFz4s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F8A214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id CF19B214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF19B214D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeIQWUm (ORCPT
+        id S1728807AbeIQWVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 18:20:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38496 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728143AbeIQWUm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:20:42 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t84-v6so7948672pgb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 09:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fgnBXN8D0NKQWm28wEL7c+0y3obfbWBMR0x6XnJuZho=;
-        b=IEtxFz4smgql8c4geyCp7ffxUcaGj3QsSvT13Hi4bPl64AwWyry2eDvLdGbPnSc9Fu
-         VO7XzOshOe1sHKytqrr0MMZ6X0mJ1d/x7JcaX5HIsJySwN66neqbbEs/b8J0DxMQckIs
-         ljz44B6IvSDSydU5u890fGmEi3DbZszF7ZB194Sn9l7FxTxKazRRX2t6stECjGDNoMxz
-         +hFN+sAR7jngUZegFgubonWIzoyua701xAtO4twMvkj6EG4qdJ0hW2V6Da7OLaUOdw8S
-         1/yvuMk/K/3bQE6rcwn5KbwfFuueaMK9/Bx/DBPVuB8QkvlnmU67PTGuKyW7oMc1eUy2
-         MmFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fgnBXN8D0NKQWm28wEL7c+0y3obfbWBMR0x6XnJuZho=;
-        b=iDamkO5wtiBFVeB6QrRdXYGUmK+S/g84M6hYllD3YqJZd0UoHh8r3O67udC5ECnsu4
-         QPP8+plcJMr6XbIVE150qndJ+rKpj0EcGujoZEA2iycVLFYDCHttR6JT5J/tv0ZPKN4C
-         m60EaTpq5T9B7SMadOLK+tZCP5j9YLBndd233Oc6DWENUSoqMq59U6FOBguY4nxwhkkN
-         bNeG5ZfWAOAIzbiafZ4nROkxUYv7iPUdQsShCqYUq+XxdluuZAcBunm62jlzd/PKbZBu
-         tz45uH74vBo0wD6YBqZFbLzyM9ULNHw9YmsepjcovVpM5IYwpvkmjbOIrJVleD5r3wiC
-         8HIQ==
-X-Gm-Message-State: APzg51B/d37Kkja2HPrhDx2nAK4hO3ET1RffJYFfvPxXKFrlNUUPVE+O
-        Fkhs7ZE+cnid8aLyDhdF0WZLcSDFuZ+IN54tSaBqOA==
-X-Google-Smtp-Source: ANB0VdaPJ0F3fbH8YqesnJ+O2DX9/CNnV6TA3JiIIYrGdp7nVGsyV6YD3lqTYRPPlzxZiQNUD9E0wPiCKDe104PirIs=
-X-Received: by 2002:aa7:800f:: with SMTP id j15-v6mr26847220pfi.174.1537203150575;
- Mon, 17 Sep 2018 09:52:30 -0700 (PDT)
+        Mon, 17 Sep 2018 18:21:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:33832 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728143AbeIQWVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 18:21:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CAEA1596;
+        Mon, 17 Sep 2018 09:53:03 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B58E3F557;
+        Mon, 17 Sep 2018 09:53:00 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 17:52:57 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v4 0/6] PCI: imx: Initial imx7d suspend/resume support
+Message-ID: <20180917165257.GJ7239@e107981-ln.cambridge.arm.com>
+References: <cover.1534264292.git.leonard.crestez@nxp.com>
+ <20180917150941.GH7239@e107981-ln.cambridge.arm.com>
+ <16d68541fd499dfda88e79d4386be7ad6d0919d9.camel@nxp.com>
 MIME-Version: 1.0
-References: <20180915052511.2243-1-natechancellor@gmail.com>
- <20180916105351.1bf859ee@archlinux> <20180916151513.GA10200@flashbox>
-In-Reply-To: <20180916151513.GA10200@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 17 Sep 2018 09:52:18 -0700
-Message-ID: <CAKwvOdkygBGNUkJj6zmBO=na-mXPKCeYQ+Grx49Gcyj2O9XJXw@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: max9611: Avoid implicit enum conversion warning
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16d68541fd499dfda88e79d4386be7ad6d0919d9.camel@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 8:15 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Sun, Sep 16, 2018 at 10:53:51AM +0100, Jonathan Cameron wrote:
-> > On Fri, 14 Sep 2018 22:25:11 -0700
-> > Nathan Chancellor <natechancellor@gmail.com> wrote:
-> >
-> > > Clang warns when an enumerated type is implicitly converted to another.
-> > >
-> > > drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
-> > > enumeration type 'enum max9611_conf_ids' to different enumeration type
-> > > 'enum max9611_csa_gain' [-Wenum-conversion]
-> > >                         *csa_gain = gain_selectors[i];
-> > >                                   ~ ^~~~~~~~~~~~~~~~~
-> > > 1 warning generated.
-> > >
-> > > Change the type of the variable 'gain_selectors' to int so that Clang
-> > > understands this is expected behavior.
-> > >
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > How does this interact with the patch that Stefan Agner sent for
-> > the same issue last week?
+On Mon, Sep 17, 2018 at 04:01:21PM +0000, Leonard Crestez wrote:
+> On Mon, 2018-09-17 at 16:09 +0100, Lorenzo Pieralisi wrote:
+> > On Tue, Aug 14, 2018 at 07:50:14PM +0300, Leonard Crestez wrote:
+> 
+> > > V4 adds 4 more patches with PME_Turn_Off support on top, using a new
+> > > reset bit. I generally try to keep series short but in this case some
+> > > planning might be needed to get patches into 4.20.
+> > > 
+> > > Since the new reset is treated as optional with old DTB there should be
+> > > again no problem if reset and pci are merged out of order.
+> > > 
+> > > Shawn/Philipp/Lorenzo: Would it make sense to merge this series through a
+> > > single specific tree, such as the one for imx?
+> > 
+> > This series is a bit of a mixture of multiple things hard to discern
+> > (actually I already merged patch 2 and patch 1 seems completely
+> > unrelated).
+> > 
+> > I would take the series through the PCI tree but I need an ACK for
+> > patches 5 and 6, please let me know how you want to handle it.
+> 
+> Patches 1 and 2 are already in, the rest need review. I can now just
+> resend patches 3-6 as a separate series, unless somebody complains
+> about spam.
 
-+ Stefan in case he has additional thoughts.  I don't feel strongly
-about one patch vs the other.
+What do you mean by "are already in" ? Patch 2 I queued via the PCI
+tree, patch 1 ? Can I drop it from the PCI patch queue ?
 
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=b1ec0802503820ccbc894aadfd2a44da20232f5e
-> >
-> > Thanks,
-> >
-> > Jonathan
-> >
->
-> Hi Jonathan,
->
-> Sorry for the overlap. My patch is not necessary. I was working off
-> of linux-next so I didn't catch this. I'll be better about checking
-> maintainer trees before sending patches in the future.
->
-> Thanks for the quick response!
-> Nathan
->
-> > > ---
-> > >  drivers/iio/adc/max9611.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-> > > index 0538ff8c4ac1..3c358b16a8fa 100644
-> > > --- a/drivers/iio/adc/max9611.c
-> > > +++ b/drivers/iio/adc/max9611.c
-> > > @@ -275,7 +275,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
-> > >                                 u16 *adc_raw,
-> > >                                 enum max9611_csa_gain *csa_gain)
-> > >  {
-> > > -   enum max9611_conf_ids gain_selectors[] = {
-> > > +   int gain_selectors[] = {
-> > >             CONF_SENSE_1x,
-> > >             CONF_SENSE_4x,
-> > >             CONF_SENSE_8x
-> >
+I do not think there is any need to resend, I can merge patches 3-4
+since they have been reviewed but patches 5 and 6 need review.
 
+Lorenzo
 
-
--- 
-Thanks,
-~Nick Desaulniers
+> Multiple separate patches are required because it touches reset + dt +
+> pci. I guess adding the include constant should be moved from the dts
+> patch to dt-bindings though.
+> 
+> Merging reset and pci out of order should be fine here and is required
+> by DT compatibility rules anyway.
+> 
+> --
+> Regards,
+> Leonard
