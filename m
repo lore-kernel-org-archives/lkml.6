@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15921ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D27ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC672088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC672088F
+	by mail.kernel.org (Postfix) with ESMTP id 3F0872088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F0872088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbeIREXF (ORCPT
+        id S1729637AbeIREXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:23:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45542 "EHLO
+        Tue, 18 Sep 2018 00:23:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45548 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728734AbeIREXE (ORCPT
+        with ESMTP id S1728734AbeIREXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:23:04 -0400
+        Tue, 18 Sep 2018 00:23:07 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19EF9CAE;
-        Mon, 17 Sep 2018 22:53:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48D0FCA0;
+        Mon, 17 Sep 2018 22:53:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
-        Alex Wu <alexwu@synology.com>,
-        Chung-Chiang Cheng <cccheng@synology.com>,
-        BingJing Chang <bingjingc@synology.com>,
-        Shaohua Li <shli@fb.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 25/70] md/raid5: fix data corruption of replacements after originals dropped
-Date:   Tue, 18 Sep 2018 00:41:58 +0200
-Message-Id: <20180917211651.230854919@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 08/70] staging: rt5208: Fix a sleep-in-atomic bug in xd_copy_page
+Date:   Tue, 18 Sep 2018 00:41:41 +0200
+Message-Id: <20180917211649.877327834@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -55,76 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: BingJing Chang <bingjingc@synology.com>
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
-[ Upstream commit d63e2fc804c46e50eee825c5d3a7228e07048b47 ]
+commit 498c4b4e9c23855d17ecc2a108d949bb68020481 upstream.
 
-During raid5 replacement, the stripes can be marked with R5_NeedReplace
-flag. Data can be read from being-replaced devices and written to
-replacing spares without reading all other devices. (It's 'replace'
-mode. s.replacing = 1) If a being-replaced device is dropped, the
-replacement progress will be interrupted and resumed with pure recovery
-mode. However, existing stripes before being interrupted cannot read
-from the dropped device anymore. It prints lots of WARN_ON messages.
-And it results in data corruption because existing stripes write
-problematic data into its replacement device and update the progress.
+The driver may sleep under a spin lock, and the function call path is:
+rtsx_exclusive_enter_ss (acquire the lock by spin_lock)
+  rtsx_enter_ss
+    rtsx_power_off_card
+      xd_cleanup_work
+        xd_delay_write
+          xd_finish_write
+            xd_copy_page
+              wait_timeout
+                schedule_timeout --> may sleep
 
-\# Erase disks (1MB + 2GB)
-dd if=/dev/zero of=/dev/sda bs=1MB count=2049
-dd if=/dev/zero of=/dev/sdb bs=1MB count=2049
-dd if=/dev/zero of=/dev/sdc bs=1MB count=2049
-dd if=/dev/zero of=/dev/sdd bs=1MB count=2049
-mdadm -C /dev/md0 -amd -R -l5 -n3 -x0 /dev/sd[abc] -z 2097152
-\# Ensure array stores non-zero data
-dd if=/root/data_4GB.iso of=/dev/md0 bs=1MB
-\# Start replacement
-mdadm /dev/md0 -a /dev/sdd
-mdadm /dev/md0 --replace /dev/sda
+To fix it, "wait_timeout" is replaced with mdelay in xd_copy_page.
 
-Then, Hot-plug out /dev/sda during recovery, and wait for recovery done.
-echo check > /sys/block/md0/md/sync_action
-cat /sys/block/md0/md/mismatch_cnt # it will be greater than 0.
-
-Soon after you hot-plug out /dev/sda, you will see many WARN_ON
-messages. The replacement recovery will be interrupted shortly. After
-the recovery finishes, it will result in data corruption.
-
-Actually, it's just an unhandled case of replacement. In commit
-<f94c0b6658c7> (md/raid5: fix interaction of 'replace' and 'recovery'.),
-if a NeedReplace device is not UPTODATE then that is an error, the
-commit just simply print WARN_ON but also mark these corrupted stripes
-with R5_WantReplace. (it means it's ready for writes.)
-
-To fix this case, we can leverage 'sync and replace' mode mentioned in
-commit <9a3e1101b827> (md/raid5: detect and handle replacements during
-recovery.). We can add logics to detect and use 'sync and replace' mode
-for these stripes.
-
-Reported-by: Alex Chen <alexchen@synology.com>
-Reviewed-by: Alex Wu <alexwu@synology.com>
-Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/md/raid5.c |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -4207,6 +4207,12 @@ static void analyse_stripe(struct stripe
- 			s->failed++;
- 			if (rdev && !test_bit(Faulty, &rdev->flags))
- 				do_recovery = 1;
-+			else if (!rdev) {
-+				rdev = rcu_dereference(
-+				    conf->disks[i].replacement);
-+				if (rdev && !test_bit(Faulty, &rdev->flags))
-+					do_recovery = 1;
-+			}
- 		}
- 	}
- 	if (test_bit(STRIPE_SYNCING, &sh->state)) {
+---
+ drivers/staging/rts5208/xd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/staging/rts5208/xd.c
++++ b/drivers/staging/rts5208/xd.c
+@@ -1247,7 +1247,7 @@ static int xd_copy_page(struct rtsx_chip
+ 			reg = 0;
+ 			rtsx_read_register(chip, XD_CTL, &reg);
+ 			if (reg & (XD_ECC1_ERROR | XD_ECC2_ERROR)) {
+-				wait_timeout(100);
++				mdelay(100);
+ 
+ 				if (detect_card_cd(chip,
+ 					XD_CARD) != STATUS_SUCCESS) {
 
 
