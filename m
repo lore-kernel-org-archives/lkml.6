@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F223ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1A6ECE564
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1A7214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ED892147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Cn/aUbmr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1A7214C2
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nAm+HcgH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED892147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731559AbeIQIdP (ORCPT
+        id S1731589AbeIQIdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 17 Sep 2018 04:33:15 -0400
-Received: from mail-eopbgr720091.outbound.protection.outlook.com ([40.107.72.91]:17664
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-bn3nam01on0100.outbound.protection.outlook.com ([104.47.33.100]:24062
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731475AbeIQIdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:33:12 -0400
+        id S1731526AbeIQIdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:33:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwRp0MzIMo/Gk9V+9QtOE5tNdtSPhNNqD5h8ZzUscvk=;
- b=Cn/aUbmrjey6Jf5CwqJUU9MVaWyEGbIq8BWLBuaoxq2NSuXkttycmdu7ntzF5xqWcQQ+wE7GcZr/qBBt27e46HClKKsmEw/XB5GqriWQPshPfsdXahgcxMbNHyKoki9jN3dlziDJ+4myY04wf+JbOy8mHUOBgWRw4WBGUyAxPWs=
+ bh=8aPl5683LVGOblQMOp4jpxD+W9VV/gr9173MDem2aSk=;
+ b=nAm+HcgHqCVksB15DOsGWa5HN/oUFJJfwSFkToOk2+DPdaX5e/JdDZiJiBuRFJD+mTw3OrNgzBfTB/0shMwLntaIp2ZzbRfLv4jxzUk5bAf7YEZDOuxzcGujND5wqf8Wy5vvItjagSYkgLHrZjx3pivYfowhzhjlY4wuJ/IiTqo=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0150.namprd21.prod.outlook.com (10.173.189.20) with Microsoft SMTP
+ CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:07:53 +0000
+ 15.20.1164.13; Mon, 17 Sep 2018 03:07:56 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:07:53 +0000
+ 03:07:56 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     Tony Lindgren <tony@atomide.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 15/29] media: s3c-camif: ignore -ENOIOCTLCMD from
- v4l2_subdev_call for s_power
-Thread-Topic: [PATCH AUTOSEL 3.18 15/29] media: s3c-camif: ignore -ENOIOCTLCMD
- from v4l2_subdev_call for s_power
-Thread-Index: AQHUTjNUtpfvjYk0zEOkmKvKWtPgrQ==
-Date:   Mon, 17 Sep 2018 03:05:46 +0000
-Message-ID: <20180917030533.592-15-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 3.18 22/29] wlcore: Add missing PM call for
+ wlcore_cmd_wait_for_event_or_timeout()
+Thread-Topic: [PATCH AUTOSEL 3.18 22/29] wlcore: Add missing PM call for
+ wlcore_cmd_wait_for_event_or_timeout()
+Thread-Index: AQHUTjNXEV7PbGb+ckKT8fW8ijPfyQ==
+Date:   Mon, 17 Sep 2018 03:05:51 +0000
+Message-ID: <20180917030533.592-22-alexander.levin@microsoft.com>
 References: <20180917030533.592-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030533.592-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -62,73 +60,92 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:Gb+25nCBQRusQfO+hDBLeZF4jdWR5WJto9YQh1FcU0vAoFjKP8CD3oh//o7S/z8unI8vLFVRiP1njlggccN+laAdC1NyWTN/EBDycXjykUWQVWUQTZfd+djQC/f2nN2m7qm8PU42qQju1VpGQqBQ6WoR4LjCY402Z67XyRHl4HVkgCjuqt5lTwOdqPlDo0cg+HDWhvZkOYqefMmq2Ua8PZEzRbHegVVDqOI85Le0kjmgSEeFEAR71j+pBjzmrGOJH7HYcx0t9DIc4Zc0qP9/ifIS8yxRPrXh52GAaVkR0CMWLYEOGhH8DI0v2yPB6bd4tWDSTAPNXGorQW6BBD9I/OUx6DmNl3hOjB+x4IJHs6HQyRn2l6LDeMQFXIAQoiKDfrnnkb7ExJhtdSt4q/FIhqcBIM2UsEGnCZBbHRAW5NnGI/3eGngJjY5lE9uwaRXkP6QgbE6A2ptISH5ilQFfXg==;5:NfixFn2r8uCAm8ba5eMw7CCH3kK/SkJxj/TXzUm/YRZzxB8ojwpFex3Axq+zCivaxyu8OUy7c5rS8uhX/4z3pryqOaoi45ifOkxoqtwCwr2Buv+tjuc6xNRbPh/wxGHoIqC/u6AWcKhOfA3DE/PVVvrRRTut+zctS+nLhopYG9A=;7:HOajla2ElImWS9sa4KG74bK4MYWYHi2LG3B+ttqqGDkFTFBhqw+WIoHZyK+S1TmUj7quHy1wAIhM0e7GmOxvkyMUmAPmKEnsppVcOWHbsTPD9Ph13hdvuIZVoQTjTitzVNfbOfFA8ju9WcjGkaz8talWGL8k3R9DQfChlNFoSDBtmhjXprb2zW7rH/QWJPyI+y4sThc3MzxI172H3Yff8+6ZQAn87/4UWRDlIF6+b7KFZCRCwQEpb8tmtziSfNe2
-x-ms-office365-filtering-correlation-id: 01323c37-849f-4f55-ca4a-08d61c4ac22d
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:K0I52ds0vHd1W8Vj6i+Z2H14vkzuHt0EzPew9bfsuSt65ySElddsX6RgixbwfJvAzt0h+zzpXdw5Z9nld5LuNsBUxuGePVB63RRy79At0Lb/zZo1KlErd0f5/MxBHyhPiQUEqtD/B15MyTJYyVZ/FHMqNSVAyNoCU12GLXSL0xfRtr6eOqvFTJjfVCr5+1fJ2s9VcymjlInL1VOyouvd6Alw5tGV6wH41mZN879ND+cbXgZhTGYgppRJO0MISIlH7NLBX39s1+LxJjhJtnFTlTlQx+eiEpoQkMKd5Nj4TuCyXLr8oEQ7lrrCs7iLDDXjqyoI2tNkxLlD7o7QWglhuvKkjmoUZ6FltuUmTCDp3DfrecTi111yRsxQ/fsfdZFIzgX4p56fpMPfF1ngZ5ipdzXWmNxFVgMMlqn1Ar1dKYMKJGYJXZjAPr0n5FW3ECaO7Xg1n6fLEhJ3LOdRawnohQ==;5:/9iVYhXj2CxbyjpDFDZXIX/qzJQC7HncuX8NTZBZMF7FGr8YElF+m7ZJwQSPW9abKxmVrunX1rkpWHBxX1y2upx4OMgVrGnH84mj7WYGzQABJPa2ECazcnKETITLDxDb2EfbmKO2MDZutjTFS7BlqvjXJz8DQeOTkBxBBQK2nTc=;7:nF4WTyep1jnxiTxdumn4rk9qoHsUIvzdJSRFy4O+FkMREE7NCqQ5fza6Z8rvtVXpMCy2El8208h/hymhet+m8rGs2IfUJUSGS79l0UabVI4sBsi6CgcLLMaatkUM9ZxJdzVnvpHrsniYMTQj0ge5qD7bLgNp3g9EuXP1po/oIwM4CYFFvV+DcBNjPBVgdiqldxKanJqbSaj9YFR6PAH3RpCn3rmyYEB+928LeK+hei44IjZiiCzkNWdxZQD8FAlB
+x-ms-office365-filtering-correlation-id: 8051bcff-9ab5-42be-6341-08d61c4ac42e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0150;
-x-ms-traffictypediagnostic: CY4PR21MB0150:
-x-microsoft-antispam-prvs: <CY4PR21MB0150C29DD2EE1F14365A98F7FB1E0@CY4PR21MB0150.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(95692535739014)(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
+x-ms-traffictypediagnostic: CY4PR21MB0821:
+x-microsoft-antispam-prvs: <CY4PR21MB08212BDC4762A4F6EEDDE3CFFB1E0@CY4PR21MB0821.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0150;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0150;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(366004)(39860400002)(199004)(189003)(478600001)(2900100001)(39060400002)(15760500003)(2501003)(6666003)(11346002)(107886003)(5250100002)(14454004)(26005)(10290500003)(36756003)(217873002)(7736002)(99286004)(305945005)(102836004)(72206003)(2616005)(86612001)(476003)(6346003)(186003)(486006)(54906003)(110136005)(446003)(6436002)(5660300001)(4326008)(256004)(86362001)(10090500001)(2906002)(6486002)(316002)(6512007)(53936002)(22452003)(66066001)(97736004)(76176011)(81156014)(81166006)(8676002)(3846002)(6116002)(8936002)(25786009)(6506007)(68736007)(105586002)(106356001)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(396003)(376002)(136003)(366004)(189003)(199004)(5250100002)(53936002)(14454004)(10090500001)(6436002)(97736004)(68736007)(7736002)(8936002)(305945005)(105586002)(106356001)(36756003)(10290500003)(81166006)(81156014)(72206003)(6486002)(8676002)(99286004)(6512007)(478600001)(2501003)(2906002)(446003)(217873002)(14444005)(256004)(2616005)(66066001)(6666003)(2900100001)(4326008)(107886003)(86612001)(5660300001)(3846002)(86362001)(110136005)(54906003)(186003)(316002)(22452003)(102836004)(6506007)(25786009)(26005)(11346002)(476003)(76176011)(486006)(6116002)(6346003)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: iHpP79J2xLxLVansjKxBJQO0b+pB4dZKgW7BW8rZV6GSF5sOa6ErKmZ2GpHp0a8trSWh1st+NwR7d3Ml/ELtVvSzF6v1z4YZCEgTfJTgi3I91K0NiLaPoFNY3JjJAb5Ag5EWFvk2onzyNlKM/E5S0smRvYoQ6HUAPXGkkc4CiYyrKxFksgKMSg/2RYsJPx7+/guMYynTxN5eKKHON/IUX5RTuFuF00t0xD/iFca6pNLJipsfMMxeA7WLk1sZwgumF83TqpN2f4LV1v9t/URnC9c+9MFIJp2G7MgUx6PAroiqYxu/ANO4qjdbS11P9mbC8FIDGjEm8wR6aForcRl3JyfsLhn/6aIzsfDyf6EOLww=
+x-microsoft-antispam-message-info: 1bFRC4KZdgKFxVYIRhJJQJ0RDJjiFN4gzRHL6lcMH1eP3Nr8Sr/kLs6bzomMQ0DAyaZ5ZV7scj3KzT8o3n5M6z9jCiBj/09347mHVivs0Y4cN9zEVJfqM3db1TWVYk/Ebu8vY/F5bsNrZTxkfd+weR3yfM4TCuB43CjnV0WB2mjnCOnzFs/m49X2KrN2NiNshb2WFKwIf6WIECC/U3wciKDMpxgDM5jG8xegua4cayAjlFAK5HKSM5T7zxQngnzvZh0GVCIYmefjUzYObhLfWFntVM5k5zZ0cdOQVNPEEVYfg8huukYWZZ802TGsjN+k0Y+OoXJFrx3rLFAdmoRFr7Yq3n1KTLVfdHrqjMy2WGo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01323c37-849f-4f55-ca4a-08d61c4ac22d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:46.6389
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8051bcff-9ab5-42be-6341-08d61c4ac42e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:51.1076
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0150
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0821
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 30ed2b83343bd1e07884ca7355dac70d25ffc158 ]
+[ Upstream commit 4ec7cece87b3ed21ffcd407c62fb2f151a366bc1 ]
 
-When the subdevice doesn't provide s_power core ops callback, the
-v4l2_subdev_call for s_power returns -ENOIOCTLCMD.  If the subdevice
-doesn't have the special handling for its power saving mode, the s_power
-isn't required.  So -ENOIOCTLCMD from the v4l2_subdev_call should be
-ignored.
+Otherwise we can get:
 
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+WARNING: CPU: 0 PID: 55 at drivers/net/wireless/ti/wlcore/io.h:84
+
+I've only seen this few times with the runtime PM patches enabled
+so this one is probably not needed before that. This seems to
+work currently based on the current PM implementation timer. Let's
+apply this separately though in case others are hitting this issue.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/platform/s3c-camif/camif-capture.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ti/wlcore/cmd.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers/med=
-ia/platform/s3c-camif/camif-capture.c
-index 97a52d4574e7..bb4a57e55aed 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -117,6 +117,8 @@ static int sensor_set_power(struct camif_dev *camif, in=
-t on)
+diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti=
+/wlcore/cmd.c
+index 05604ee31224..de43c0376143 100644
+--- a/drivers/net/wireless/ti/wlcore/cmd.c
++++ b/drivers/net/wireless/ti/wlcore/cmd.c
+@@ -35,6 +35,7 @@
+ #include "wl12xx_80211.h"
+ #include "cmd.h"
+ #include "event.h"
++#include "ps.h"
+ #include "tx.h"
+ #include "hw_ops.h"
 =20
- 	if (camif->sensor.power_count =3D=3D !on)
- 		err =3D v4l2_subdev_call(sensor->sd, core, s_power, on);
-+	if (err =3D=3D -ENOIOCTLCMD)
-+		err =3D 0;
- 	if (!err)
- 		sensor->power_count +=3D on ? 1 : -1;
+@@ -187,6 +188,10 @@ int wlcore_cmd_wait_for_event_or_timeout(struct wl1271=
+ *wl,
 =20
+ 	timeout_time =3D jiffies + msecs_to_jiffies(WL1271_EVENT_TIMEOUT);
+=20
++	ret =3D wl1271_ps_elp_wakeup(wl);
++	if (ret < 0)
++		return ret;
++
+ 	do {
+ 		if (time_after(jiffies, timeout_time)) {
+ 			wl1271_debug(DEBUG_CMD, "timeout waiting for event %d",
+@@ -218,6 +223,7 @@ int wlcore_cmd_wait_for_event_or_timeout(struct wl1271 =
+*wl,
+ 	} while (!event);
+=20
+ out:
++	wl1271_ps_elp_sleep(wl);
+ 	kfree(events_vector);
+ 	return ret;
+ }
 --=20
 2.17.1
