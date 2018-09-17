@@ -2,93 +2,93 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4496BECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93079ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31E9214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:56:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31E9214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D46A214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:03:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NPqEdTe9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D46A214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbeIQQXe (ORCPT
+        id S1727179AbeIQQag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:23:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12167 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726753AbeIQQXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:23:34 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 51D286E5EAF57;
-        Mon, 17 Sep 2018 18:56:40 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 17 Sep 2018 18:56:39 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <davem@davemloft.net>, <bryan.whitehead@microchip.com>,
-        <UNGLinuxDriver@microchip.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: ethernet: Fix a unused function warning.
-Date:   Mon, 17 Sep 2018 18:44:19 +0800
-Message-ID: <1537181059-53563-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Mon, 17 Sep 2018 12:30:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:43655 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726753AbeIQQag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 12:30:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42DNXX0lSvz9sB4;
+        Mon, 17 Sep 2018 21:03:40 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537182222;
+        bh=eUc8awBQHlBuAFU02cnsAM/jhiWsILYWUd3lYr0vyj0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NPqEdTe9svPCrcihJk1CY1VFezuz0zuIXVK+ksmQI1mixYxqR6htkM1SnhClmAtBG
+         PqUMpaE9QXp1CJDdnZsLjZgMla2Qrhk0Yxe5p3qBmCxG2pVNzToJjCovvvS9BINNTx
+         RIqt9eP97NfeXN2XELkBebcgmnJ4Qc6+2CJ/fQy+JmxsDDZLryAMsEp+WWXUJcodHq
+         rQnl9yN5SuyvcIdLNAZbeXD9UnIpK903m4hv/NvgRdnfm6rTDAixjg/Hb/9L2Xn+KR
+         vTyODqXKcTEUb/nhoSEwuNfeeyEVAXjedOVnfM2I4EFANDow5seXCkzTfm8NX2yk02
+         AkfTyMADI3ujw==
+Date:   Mon, 17 Sep 2018 21:03:39 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux-foundation.org>,
+        Ingo Molnar <mingo@elte.hu>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dennis Zhou <dennis@kernel.org>
+Subject: linux-next: changes in the maintainership of the percpu tree
+Message-ID: <20180917210339.21ebb029@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hbDnUY_be7uUy8fVd41.Hxr"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following compile warning:
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/net/ethernet/microchip/lan743x_main.c:2964:12: warning: lan743x_pm_suspend defined but not used [-Wunused-function]
- static int lan743x_pm_suspend(struct device *dev)
-drivers/net/ethernet/microchip/lan743x_main.c:2987:12: warning: lan743x_pm_resume defined but not used [-Wunused-function]
- static int lan743x_pm_resume(struct device *dev)
+Hi Tejun,
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/net/ethernet/microchip/lan743x_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I noticed commit
 
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index e7dce79..001b5f7 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -2850,7 +2850,7 @@ static void lan743x_pcidev_shutdown(struct pci_dev *pdev)
- 	lan743x_hardware_cleanup(adapter);
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- static u16 lan743x_pm_wakeframe_crc16(const u8 *buf, int len)
- {
- 	return bitrev16(crc16(0xFFFF, buf, len));
-@@ -3016,7 +3016,7 @@ static int lan743x_pm_resume(struct device *dev)
- static const struct dev_pm_ops lan743x_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(lan743x_pm_suspend, lan743x_pm_resume)
- };
--#endif /*CONFIG_PM */
-+#endif /* CONFIG_PM_SLEEP */
- 
- static const struct pci_device_id lan743x_pcidev_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SMSC, PCI_DEVICE_ID_SMSC_LAN7430) },
-@@ -3028,7 +3028,7 @@ static int lan743x_pm_resume(struct device *dev)
- 	.id_table = lan743x_pcidev_tbl,
- 	.probe    = lan743x_pcidev_probe,
- 	.remove   = lan743x_pcidev_remove,
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- 	.driver.pm = &lan743x_pm_ops,
- #endif
- 	.shutdown = lan743x_pcidev_shutdown,
--- 
-1.7.12.4
+  1194c4154662 ("MAINTAINERS: Make Dennis the percpu tree maintainer")
 
+Just wondering if this means any changes to the tree/branch I should
+fetch or the contacts I should use for the percpu tree in linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlufigsACgkQAVBC80lX
+0GyRgwf8DoCHOHSabdoBgj1BroUdrOWCYvM+CNd/3pSJ/x64a0qvbZ0JgUGU5B2z
+JOr7+mwYy67HZCQqoio69iEoDvPO+fVu+Tg995epFRuXj6EKp11bGLml/8QvPVQP
+jfIZ6biv8oG5MN1GkhV2gMo506h8HSdK50lfmmOdCWLjhg5lSS+NI6QSYyzJCxcn
+yYJUNErY4H7iOArecRe1CdD1rRv8DptQ1R/mviOsSYKJhgI7w9tBLcovYXnlxfN1
+gi+3rqPGWrWwwDLOB1wbQsRhPmHqU5C3HM6p6GaORYOxaexTG32waoTr3ty1BNQD
+MqpouHk6/JwN/dIOPn/5GppXi0rgMQ==
+=6q5K
+-----END PGP SIGNATURE-----
+
+--Sig_/hbDnUY_be7uUy8fVd41.Hxr--
