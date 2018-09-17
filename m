@@ -2,133 +2,226 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E316ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9482AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2627E2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:37:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="xJOEdVNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2627E2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 35E832146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35E832146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeIRFHF (ORCPT
+        id S1728058AbeIRFJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:07:05 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:60166 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727098AbeIRFHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:07:05 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2D3A75C05D1;
-        Tue, 18 Sep 2018 01:37:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537227445;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XN35WvwzjX5Wtj5t1OzO4YCiizmzxdLyF942ZqhdU6Y=;
-        b=xJOEdVNQmi3/c35N1THt725VnghtKNzPlRsmXA+rc7VMutZsyFw/LizGScJFcecVCKKWJt
-        yiuxxttpY55QgWK+eqKG48Pd97ljJgqGIb9+lzjG9kIjqAEAf+bbLZrmZ3egtxhzjF9reK
-        X3PFb1e9KgS6899j9btOjdDe7iVDdjk=
+        Tue, 18 Sep 2018 01:09:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725849AbeIRFJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 01:09:24 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C5972088F;
+        Mon, 17 Sep 2018 23:39:42 +0000 (UTC)
+Date:   Mon, 17 Sep 2018 19:39:40 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>
+Subject: Re: [PATCH 5/6] arm64/io: Add header for instrumentation of io
+ operations
+Message-ID: <20180917193940.3d68ef88@gandalf.local.home>
+In-Reply-To: <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+        <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 17 Sep 2018 16:37:25 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     Sean Paul <sean@poorly.run>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Airlie <airlied@linux.ie>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        dri-devel@lists.freedesktop.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
-In-Reply-To: <20180917191602.GP188300@art_vandelay>
-References: <cover.1537191359.git.leonard.crestez@nxp.com>
- <20180917191602.GP188300@art_vandelay>
-Message-ID: <80da134658da77f0d3f8fda6894ab756@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.09.2018 12:16, Sean Paul wrote:
-> On Mon, Sep 17, 2018 at 04:42:10PM +0300, Leonard Crestez wrote:
->> Adding lcdif nodes to a power domain currently doesn't work, it results
->> in black/corrupted screens or hangs. While the driver does enable
->> runtime pm it does not deal correctly with the block being unpowered.
->>
->> ---
->>
->> All patches in this series have review tags from a while ago and I
->> tested them again on top of next-20180913. No changes since last
->> version: https://lkml.org/lkml/2018/8/27/299
->>
->> This series stalled so I reached out to Marek on IRC and he was
->> surprised to be listed as maintainer
-> 
-> Hopefully not too surprised since Marek added themself to MAINTAINERS when
-> adding the driver :-)
+On Sun,  9 Sep 2018 01:57:06 +0530
+Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 
-There have been some confusion about the DRM development processes around the mxsfb already in the past.
-
-I guess in general it would be quite clear: Marek as maintainer of mxsfb should pick up the patches and send a pull request to the next level of maintainer, which in DRM case would be David Airlie:
-
-https://01.org/linuxgraphics/gfx-docs/maintainer-tools/repositories.html
-
-> 
-> I suppose we should probably move this to drm-misc since it qualifies as a
-> "small driver" and needs a home. Looking through git history shows the last
-> mxsfb-specific change was back in 02/17. Everything else has been drm-wide
-> refactors. Thoughts?
-> 
-> Marek/Leonard: Care to sign up to be listed as a reviewers?
+> The new asm-generic/io-instrumented.h will keep arch code
+> clean and separate from instrumented version which traces
+> io register accesses. This instrumented header can later
+> be included in arm as well for tracing io register accesses.
 > 
 
-drm-misc seems to make sense. I volunteer to be listed as reviewer or co-maintainer.
+Looks good to me.
 
-I am actually maintainer for the DCU driver (another display controller IP used in NXP products). I should probably move that to drm-misc too...
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
---
-Stefan
+-- Steve
 
-> Sean
+> Suggested-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>  arch/arm64/include/asm/io.h           | 25 ++++++---------
+>  include/asm-generic/io-instrumented.h | 45 +++++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+), 16 deletions(-)
+>  create mode 100644 include/asm-generic/io-instrumented.h
 > 
->> and asked me to resend and add
->> Daniel Vetter.
->>
->> Perhaps it would help to clarify that the pengutronix people should feel
->> free to push patches in this area?
->>
->> Right now drm/imx is mostly for IPUv3 but there are other display output
->> paths on imx, such as the LCDIF supported by this driver. This LCDIF
->> block is included on imx8 so still quite relevant.
->>
->> Leonard Crestez (5):
->>   drm/mxsfb: Move axi clk enable/disable to crtc enable/disable
->>   drm/mxsfb: Fix initial corrupt frame when activating display
->>   drm/mxsfb: Add pm_runtime calls to pipe_enable/disable
->>   drm/mxsfb: Add PM_SLEEP support
->>   drm/mxsfb: Switch to drm_atomic_helper_commit_tail_rpm
->>
->>  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 53 +++++++++++++++++++-----------
->>  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 40 ++++++++++++++++++++++
->>  2 files changed, 74 insertions(+), 19 deletions(-)
->>
->> --
->> 2.17.1
->>
+> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+> index 35b2e50f17fb..768a6a8c5778 100644
+> --- a/arch/arm64/include/asm/io.h
+> +++ b/arch/arm64/include/asm/io.h
+> @@ -36,32 +36,27 @@
+>  /*
+>   * Generic IO read/write.  These perform native-endian accesses.
+>   */
+> -#define __raw_writeb __raw_writeb
+> -static inline void __raw_writeb(u8 val, volatile void __iomem *addr)
+> +static inline void arch_raw_writeb(u8 val, volatile void __iomem *addr)
+>  {
+>  	asm volatile("strb %w0, [%1]" : : "rZ" (val), "r" (addr));
+>  }
+>  
+> -#define __raw_writew __raw_writew
+> -static inline void __raw_writew(u16 val, volatile void __iomem *addr)
+> +static inline void arch_raw_writew(u16 val, volatile void __iomem *addr)
+>  {
+>  	asm volatile("strh %w0, [%1]" : : "rZ" (val), "r" (addr));
+>  }
+>  
+> -#define __raw_writel __raw_writel
+> -static inline void __raw_writel(u32 val, volatile void __iomem *addr)
+> +static inline void arch_raw_writel(u32 val, volatile void __iomem *addr)
+>  {
+>  	asm volatile("str %w0, [%1]" : : "rZ" (val), "r" (addr));
+>  }
+>  
+> -#define __raw_writeq __raw_writeq
+> -static inline void __raw_writeq(u64 val, volatile void __iomem *addr)
+> +static inline void arch_raw_writeq(u64 val, volatile void __iomem *addr)
+>  {
+>  	asm volatile("str %x0, [%1]" : : "rZ" (val), "r" (addr));
+>  }
+>  
+> -#define __raw_readb __raw_readb
+> -static inline u8 __raw_readb(const volatile void __iomem *addr)
+> +static inline u8 arch_raw_readb(const volatile void __iomem *addr)
+>  {
+>  	u8 val;
+>  	asm volatile(ALTERNATIVE("ldrb %w0, [%1]",
+> @@ -71,8 +66,7 @@ static inline u8 __raw_readb(const volatile void __iomem *addr)
+>  	return val;
+>  }
+>  
+> -#define __raw_readw __raw_readw
+> -static inline u16 __raw_readw(const volatile void __iomem *addr)
+> +static inline u16 arch_raw_readw(const volatile void __iomem *addr)
+>  {
+>  	u16 val;
+>  
+> @@ -83,8 +77,7 @@ static inline u16 __raw_readw(const volatile void __iomem *addr)
+>  	return val;
+>  }
+>  
+> -#define __raw_readl __raw_readl
+> -static inline u32 __raw_readl(const volatile void __iomem *addr)
+> +static inline u32 arch_raw_readl(const volatile void __iomem *addr)
+>  {
+>  	u32 val;
+>  	asm volatile(ALTERNATIVE("ldr %w0, [%1]",
+> @@ -94,8 +87,7 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
+>  	return val;
+>  }
+>  
+> -#define __raw_readq __raw_readq
+> -static inline u64 __raw_readq(const volatile void __iomem *addr)
+> +static inline u64 arch_raw_readq(const volatile void __iomem *addr)
+>  {
+>  	u64 val;
+>  	asm volatile(ALTERNATIVE("ldr %0, [%1]",
+> @@ -193,6 +185,7 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
+>  #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+>  #define iowrite64be(v,p)	({ __iowmb(); __raw_writeq((__force __u64)cpu_to_be64(v), p); })
+>  
+> +#include <asm-generic/io-instrumented.h>
+>  #include <asm-generic/io.h>
+>  
+>  /*
+> diff --git a/include/asm-generic/io-instrumented.h b/include/asm-generic/io-instrumented.h
+> new file mode 100644
+> index 000000000000..7b050e2487ed
+> --- /dev/null
+> +++ b/include/asm-generic/io-instrumented.h
+> @@ -0,0 +1,45 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _ASM_GENERIC_IO_INSTRUMENTED_H
+> +#define _ASM_GENERIC_IO_INSTRUMENTED_H
+> +
+> +#if defined(CONFIG_TRACING_EVENTS_IO)
+> +#include <linux/tracepoint-defs.h>
+> +
+> +extern struct tracepoint __tracepoint_io_write;
+> +extern struct tracepoint __tracepoint_io_read;
+> +#define io_tracepoint_active(t) static_key_false(&(t).key)
+> +extern void do_trace_io_write(const char *type, void *addr);
+> +extern void do_trace_io_read(const char *type, void *addr);
+> +#else
+> +#define io_tracepoint_active(t) false
+> +static inline void do_trace_io_write(const char *type, void *addr) {}
+> +static inline void do_trace_io_read(const char *type, void *addr) {}
+> +#endif /* CONFIG_TRACING_EVENTS_IO */
+> +
+> +#define __raw_write(v, a, _l)	({						\
+> +	volatile void __iomem *_a = (a);					\
+> +	if (io_tracepoint_active(__tracepoint_io_write))			\
+> +		do_trace_io_write(__stringify(write##_l), (void __force *)(_a));\
+> +	arch_raw_write##_l((v), _a);						\
+> +	})
+> +
+> +#define __raw_writeb(v, a)	__raw_write((v), a, b)
+> +#define __raw_writew(v, a)	__raw_write((v), a, w)
+> +#define __raw_writel(v, a)	__raw_write((v), a, l)
+> +#define __raw_writeq(v, a)	__raw_write((v), a, q)
+> +
+> +#define __raw_read(a, _l, _t)    ({						\
+> +	_t __a;									\
+> +	const volatile void __iomem *_a = (a);					\
+> +	if (io_tracepoint_active(__tracepoint_io_read))				\
+> +		do_trace_io_read(__stringify(read##_l), (void __force *)(_a));	\
+> +	__a = arch_raw_read##_l(_a);						\
+> +	__a;									\
+> +	})
+> +
+> +#define __raw_readb(a)	__raw_read((a), b, u8)
+> +#define __raw_readw(a)	__raw_read((a), w, u16)
+> +#define __raw_readl(a)	__raw_read((a), l, u32)
+> +#define __raw_readq(a)	__raw_read((a), q, u64)
+> +
+> +#endif /* _ASM_GENERIC_IO_INSTRUMENTED_H */
+
