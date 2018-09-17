@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEEDECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E533ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7EA214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7EA214AB
+	by mail.kernel.org (Postfix) with ESMTP id 103762146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103762146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbeIREdK (ORCPT
+        id S1730686AbeIREdO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48968 "EHLO
+        Tue, 18 Sep 2018 00:33:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48980 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdJ (ORCPT
+        with ESMTP id S1727202AbeIREdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:09 -0400
+        Tue, 18 Sep 2018 00:33:13 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 758F4C03;
-        Mon, 17 Sep 2018 23:03:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE35DC7D;
+        Mon, 17 Sep 2018 23:03:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 075/126] MIPS: generic: fix missing of_node_put()
-Date:   Tue, 18 Sep 2018 00:42:03 +0200
-Message-Id: <20180917211709.129879473@linuxfoundation.org>
+Subject: [PATCH 4.14 076/126] net: dcb: For wild-card lookups, use priority -1, not 0
+Date:   Tue, 18 Sep 2018 00:42:04 +0200
+Message-Id: <20180917211709.184759170@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -54,38 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Petr Machata <petrm@mellanox.com>
 
-[ Upstream commit 28ec2238f37e72a3a40a7eb46893e7651bcc40a6 ]
+[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
 
-of_find_compatible_node() returns a device_node pointer with refcount
-incremented and must be decremented explicitly.
- As this code is using the result only to check presence of the interrupt
-controller (!NULL) but not actually using the result otherwise the
-refcount can be decremented here immediately again.
+The function dcb_app_lookup walks the list of specified DCB APP entries,
+looking for one that matches a given criteria: ifindex, selector,
+protocol ID and optionally also priority. The "don't care" value for
+priority is set to 0, because that priority has not been allowed under
+CEE regime, which predates the IEEE standardization.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19820/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
+considers zero a wild card, attempts to add an APP entry with priority 0
+fail when other entries exist for a given ifindex / selector / PID
+triplet.
+
+Fix by changing the wild-card value to -1.
+
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/generic/init.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/dcb/dcbnl.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/arch/mips/generic/init.c
-+++ b/arch/mips/generic/init.c
-@@ -204,6 +204,7 @@ void __init arch_init_irq(void)
- 					    "mti,cpu-interrupt-controller");
- 	if (!cpu_has_veic && !intc_node)
- 		mips_cpu_irq_init();
-+	of_node_put(intc_node);
+--- a/net/dcb/dcbnl.c
++++ b/net/dcb/dcbnl.c
+@@ -1765,7 +1765,7 @@ static struct dcb_app_type *dcb_app_look
+ 		if (itr->app.selector == app->selector &&
+ 		    itr->app.protocol == app->protocol &&
+ 		    itr->ifindex == ifindex &&
+-		    (!prio || itr->app.priority == prio))
++		    ((prio == -1) || itr->app.priority == prio))
+ 			return itr;
+ 	}
  
- 	irqchip_init();
- }
+@@ -1800,7 +1800,8 @@ u8 dcb_getapp(struct net_device *dev, st
+ 	u8 prio = 0;
+ 
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
++	itr = dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio = itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+ 
+@@ -1828,7 +1829,8 @@ int dcb_setapp(struct net_device *dev, s
+ 
+ 	spin_lock_bh(&dcb_lock);
+ 	/* Search for existing match and replace */
+-	if ((itr = dcb_app_lookup(new, dev->ifindex, 0))) {
++	itr = dcb_app_lookup(new, dev->ifindex, -1);
++	if (itr) {
+ 		if (new->priority)
+ 			itr->app.priority = new->priority;
+ 		else {
+@@ -1861,7 +1863,8 @@ u8 dcb_ieee_getapp_mask(struct net_devic
+ 	u8 prio = 0;
+ 
+ 	spin_lock_bh(&dcb_lock);
+-	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
++	itr = dcb_app_lookup(app, dev->ifindex, -1);
++	if (itr)
+ 		prio |= 1 << itr->app.priority;
+ 	spin_unlock_bh(&dcb_lock);
+ 
 
 
