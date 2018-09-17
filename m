@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC2FECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDADECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C3FD2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3FD2146D
+	by mail.kernel.org (Postfix) with ESMTP id 9CEA520867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEA520867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbeIREYb (ORCPT
+        id S1728953AbeIREZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:24:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45650 "EHLO
+        Tue, 18 Sep 2018 00:25:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIREYa (ORCPT
+        with ESMTP id S1727129AbeIREZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:24:30 -0400
+        Tue, 18 Sep 2018 00:25:38 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 39C2FCAD;
-        Mon, 17 Sep 2018 22:55:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49444CA0;
+        Mon, 17 Sep 2018 22:56:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 34/70] ath9k: report tx status on EOSP
-Date:   Tue, 18 Sep 2018 00:42:07 +0200
-Message-Id: <20180917211651.831586639@linuxfoundation.org>
+Subject: [PATCH 4.9 35/70] ath9k_hw: fix channel maximum power level test
+Date:   Tue, 18 Sep 2018 00:42:08 +0200
+Message-Id: <20180917211651.904153811@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -54,29 +54,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 36e14a787dd0b459760de3622e9709edb745a6af ]
+[ Upstream commit 461d8a6bb9879b0e619752d040292e67aa06f1d2 ]
 
-Fixes missed indications of end of U-APSD service period to mac80211
+The tx power applied by set_txpower is limited by the CTL (conformance
+test limit) entries in the EEPROM. These can change based on the user
+configured regulatory domain.
+Depending on the EEPROM data this can cause the tx power to become too
+limited, if the original regdomain CTLs impose lower limits than the CTLs
+of the user configured regdomain.
+
+To fix this issue, set the initial channel limits without any CTL
+restrictions and only apply the CTL at run time when setting the channel
+and the real tx power.
 
 Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath9k/xmit.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/hw.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/ath/ath9k/xmit.c
-+++ b/drivers/net/wireless/ath/ath9k/xmit.c
-@@ -84,7 +84,8 @@ static void ath_tx_status(struct ieee802
- 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
- 	struct ieee80211_sta *sta = info->status.status_driver_data[0];
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -2915,16 +2915,19 @@ void ath9k_hw_apply_txpower(struct ath_h
+ 	struct ath_regulatory *reg = ath9k_hw_regulatory(ah);
+ 	struct ieee80211_channel *channel;
+ 	int chan_pwr, new_pwr;
++	u16 ctl = NO_CTL;
  
--	if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
-+	if (info->flags & (IEEE80211_TX_CTL_REQ_TX_STATUS |
-+			   IEEE80211_TX_STATUS_EOSP)) {
- 		ieee80211_tx_status(hw, skb);
+ 	if (!chan)
  		return;
- 	}
+ 
++	if (!test)
++		ctl = ath9k_regd_get_ctl(reg, chan);
++
+ 	channel = chan->chan;
+ 	chan_pwr = min_t(int, channel->max_power * 2, MAX_RATE_POWER);
+ 	new_pwr = min_t(int, chan_pwr, reg->power_limit);
+ 
+-	ah->eep_ops->set_txpower(ah, chan,
+-				 ath9k_regd_get_ctl(reg, chan),
++	ah->eep_ops->set_txpower(ah, chan, ctl,
+ 				 get_antenna_gain(ah, chan), new_pwr, test);
+ }
+ 
 
 
