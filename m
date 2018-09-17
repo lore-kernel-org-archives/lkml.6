@@ -2,109 +2,77 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1A7ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8A2ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17AB8214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:06:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GoEte3M9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17AB8214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 93790214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93790214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbeIQVew (ORCPT
+        id S1728518AbeIQVew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 17 Sep 2018 17:34:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35098 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbeIQVev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:34:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o18-v6so10332847wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 09:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fZagmP0C+wtO/FGZ31dSbnE44vX4wTjO5N5JoQCdHnk=;
-        b=GoEte3M99h2OFJ6EWRIASajwDj4lqxA1k/6Ca3laO3pwov/M6IMUPKSYm6GKHXVLuK
-         h8cyDgi+FeBtfirO5sf85At2a30j8PTnyGp52vjz9/l1Pim59HNEng9a//AYCCZ4a0RG
-         XqbYw9SDjnpiyL6KuF4ks85CVqW+tB5KUxfIGRTRHofpqCNfYQCd4tTwl6PrAL0UynbB
-         ZjZfc4jHgSeAU9GdkdV9hh6FsI4jFHrBJiieHDT2UTLzBeerIa/LCtHvIU0VM6jNnhFs
-         LU4lPmPk6JufQ1WsqT4J+Sul0DmAy+OJOIg0C+qyqgKPDILhD2YJ65qRgtIoOF0T3F0E
-         9Gsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fZagmP0C+wtO/FGZ31dSbnE44vX4wTjO5N5JoQCdHnk=;
-        b=Z5h2GAPQ+rEPYi3U4uMDBrPyHYK/PPP3DnODRtMatBI7PR4saJSivuh65tQIfNs5sN
-         IZRRmQosKKg5NbEcOg27RSAeFYPKD+NRpMuwg9puFvmvPjiCzBj8SpHBdB1ftZA0eB6C
-         4nnrFVzQixjBkKTW/r0LwSmdvsd7FDh2w7Pw/fPVzF7FvmOZMl3CPUsFz6kYxuL5dWxQ
-         eXtygxXgde8X+FdX/QEZHzsu8xJlS5YAD6eOVqu+pNYoqeYYlaT4xFaK+R8T71hIwofp
-         XVCxSX6YakCE4Iwp4UBemEbwXLBp0jr3S9KqcLllOJ03GVAVe8IIodM4Ct5kuiTtnifr
-         qlBQ==
-X-Gm-Message-State: APzg51An0GRAVUmo+c0IEFyJq+nmy+3KZSamLSgoQVQv7pVjyJwiKZ+0
-        YGdCgAv49XQsHsKzwOqHe1WTt9vVPgkcJBPYfqfnJyVx
-X-Google-Smtp-Source: ANB0VdYLbcNThGezXvYRpV4mx7bN+uHBaNwMz5swaIhgZrvRq2WH8+2Pz/IB/IQpaaxcPmysiBxsSnEiLHGoeCyYkXE=
-X-Received: by 2002:a1c:cbc1:: with SMTP id b184-v6mr12275207wmg.149.1537200410075;
- Mon, 17 Sep 2018 09:06:50 -0700 (PDT)
+Received: from ale.deltatee.com ([207.54.116.67]:43010 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727691AbeIQVew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 17:34:52 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1g1w2r-0000Bj-7y; Mon, 17 Sep 2018 10:06:41 -0600
+To:     Alexander Fomichev <fomichev.ru@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Shuah Khan <shuah@kernel.org>, Doug Meyer <dmeyer@gigaio.com>,
+        linux@yadro.com
+References: <20180720180034.3964-1-logang@deltatee.com>
+ <20180917151622.lnlckvkiyqqxlt4c@alfbook-pro.local>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <cdf8ac35-75d3-afd2-1bcb-f9d5ac256459@deltatee.com>
+Date:   Mon, 17 Sep 2018 10:06:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
- <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
- <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
- <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
- <35BC21D7-01F4-4F91-A7E9-8D15DE5B95D6@amacapital.net> <CAHmME9qQR4ynsZ5xXejEdnr3oZcOnpRRTdohX+eT9Df+AU2_iA@mail.gmail.com>
-In-Reply-To: <CAHmME9qQR4ynsZ5xXejEdnr3oZcOnpRRTdohX+eT9Df+AU2_iA@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 17 Sep 2018 09:06:36 -0700
-Message-ID: <CALCETrXXg_nnp_pafK3+Pwd00PRUr=X=WfLu+YFYeggRs8-i1Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, andrew@lunn.ch,
-        Eric Biggers <ebiggers@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917151622.lnlckvkiyqqxlt4c@alfbook-pro.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: linux@yadro.com, dmeyer@gigaio.com, shuah@kernel.org, Shyam-sundar.S-k@amd.com, fancer.lancer@gmail.com, allenbh@gmail.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, fomichev.ru@gmail.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v2 0/8] Fix breakage caused by the NTB multi-port patchset
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Sep 17, 2018, at 8:28 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> On Mon, Sep 17, 2018 at 4:52 PM Andy Lutomirski <luto@amacapital.net> wrote:
->>> * (Nit) The GCC command line -include'd .h files contain variable and
->>> function definitions so they are actually .c files.
->>
->> Hmm. I would suggest just getting rid of the -include magic entirely.  The resulting ifdef will be more comprehensible.
->
-> I really don't think so, actually. The way the -include stuff works
-> now is that the glue code is inlined in the same place that the
-> assembly object file is added to the build object list, so it gels
-> together cleanly, as the thing is defined and set in one single place.
-> I could go back to the ifdefs - and even make them as clean as
-> possible - but I think that puts more things in more places and is
-> therefore more confusing. The -include system now works extremely
-> well.
 
-Is it really better than:
 
-#ifdef CONFIG_X86_64
-#include "whatever"
-#endif
+On 17/09/18 09:16 AM, Alexander Fomichev wrote:
+>> Logan Gunthorpe (8):
+>>   NTB: ntb_tool: reading the link file should not end in a NULL byte
+>>   NTB: Setup the DMA mask globally for all drivers
+>>   NTB: Fix the default port and peer numbers for legacy drivers
+>>   NTB: ntb_pingpong: Choose doorbells based on port number
+>>   NTB: perf: Don't require one more memory window than number of peers
+>>   NTB: perf: Fix support for hardware that doesn't have port numbers
+>>   NTB: perf: Fix race condition when run with ntb_test
+>>   NTB: ntb_test: Fix bug when counting remote files
+> 
+> Tested successfully on i5-based desktop PC, NTB on PM8535 chip, both
+> ends are on the local system.
+> 
+> Tested-by: Alexander Fomichev <fomichev.ru@gmail.com>
 
-It seems a more obfuscated than needed to put the equivalent of that
-into the Makefile, and I don't think people really like searching
-through the Makefile to figure out why the code does what it does.
+Thanks Alexander!
+
+Logan
