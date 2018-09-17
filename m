@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E95ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8E9ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F46B214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F46B214D5
+	by mail.kernel.org (Postfix) with ESMTP id 5D52A214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D52A214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbeIREeo (ORCPT
+        id S1731026AbeIREer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:34:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49284 "EHLO
+        Tue, 18 Sep 2018 00:34:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49294 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730207AbeIREen (ORCPT
+        with ESMTP id S1728799AbeIREeq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:34:43 -0400
+        Tue, 18 Sep 2018 00:34:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0C25C49;
-        Mon, 17 Sep 2018 23:05:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1569C77;
+        Mon, 17 Sep 2018 23:05:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 104/126] inet: frags: break the 2GB limit for frags storage
-Date:   Tue, 18 Sep 2018 00:42:32 +0200
-Message-Id: <20180917211710.802054776@linuxfoundation.org>
+Subject: [PATCH 4.14 105/126] inet: frags: do not clone skb in ip_expire()
+Date:   Tue, 18 Sep 2018 00:42:33 +0200
+Message-Id: <20180917211710.857213194@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,252 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-Some users are willing to provision huge amounts of memory to be able
-to perform reassembly reasonnably well under pressure.
+An skb_clone() was added in commit ec4fbd64751d ("inet: frag: release
+spinlock before calling icmp_send()")
 
-Current memory tracking is using one atomic_t and integers.
+While fixing the bug at that time, it also added a very high cost
+for DDOS frags, as the ICMP rate limit is applied after this
+expensive operation (skb_clone() + consume_skb(), implying memory
+allocations, copy, and freeing)
 
-Switch to atomic_long_t so that 64bit arches can use more than 2GB,
-without any cost for 32bit arches.
-
-Note that this patch avoids an overflow error, if high_thresh was set
-to ~2GB, since this test in inet_frag_alloc() was never true :
-
-if (... || frag_mem_limit(nf) > nf->high_thresh)
-
-Tested:
-
-$ echo 16000000000 >/proc/sys/net/ipv4/ipfrag_high_thresh
-
-<frag DDOS>
-
-$ grep FRAG /proc/net/sockstat
-FRAG: inuse 14705885 memory 16000002880
-
-$ nstat -n ; sleep 1 ; nstat | grep Reas
-IpReasmReqds                    3317150            0.0
-IpReasmFails                    3317112            0.0
+We can use skb_get(head) here, all we want is to make sure skb wont
+be freed by another cpu.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 3e67f106f619dcfaf6f4e2039599bdb69848c714)
+(cherry picked from commit 1eec5d5670084ee644597bd26c25e22c69b9f748)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/networking/ip-sysctl.txt  |    4 ++--
- include/net/inet_frag.h                 |   20 ++++++++++----------
- net/ieee802154/6lowpan/reassembly.c     |   10 +++++-----
- net/ipv4/ip_fragment.c                  |   10 +++++-----
- net/ipv4/proc.c                         |    2 +-
- net/ipv6/netfilter/nf_conntrack_reasm.c |   10 +++++-----
- net/ipv6/proc.c                         |    2 +-
- net/ipv6/reassembly.c                   |    6 +++---
- 8 files changed, 32 insertions(+), 32 deletions(-)
+ net/ipv4/ip_fragment.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -133,10 +133,10 @@ min_adv_mss - INTEGER
- 
- IP Fragmentation:
- 
--ipfrag_high_thresh - INTEGER
-+ipfrag_high_thresh - LONG INTEGER
- 	Maximum memory used to reassemble IP fragments.
- 
--ipfrag_low_thresh - INTEGER
-+ipfrag_low_thresh - LONG INTEGER
- 	(Obsolete since linux-4.17)
- 	Maximum memory used to reassemble IP fragments before the kernel
- 	begins to remove incomplete fragment queues to free up resources.
---- a/include/net/inet_frag.h
-+++ b/include/net/inet_frag.h
-@@ -8,11 +8,11 @@ struct netns_frags {
- 	struct rhashtable       rhashtable ____cacheline_aligned_in_smp;
- 
- 	/* Keep atomic mem on separate cachelines in structs that include it */
--	atomic_t		mem ____cacheline_aligned_in_smp;
-+	atomic_long_t		mem ____cacheline_aligned_in_smp;
- 	/* sysctls */
-+	long			high_thresh;
-+	long			low_thresh;
- 	int			timeout;
--	int			high_thresh;
--	int			low_thresh;
- 	int			max_dist;
- 	struct inet_frags	*f;
- };
-@@ -102,7 +102,7 @@ void inet_frags_fini(struct inet_frags *
- 
- static inline int inet_frags_init_net(struct netns_frags *nf)
- {
--	atomic_set(&nf->mem, 0);
-+	atomic_long_set(&nf->mem, 0);
- 	return rhashtable_init(&nf->rhashtable, &nf->f->rhash_params);
- }
- void inet_frags_exit_net(struct netns_frags *nf);
-@@ -119,19 +119,19 @@ static inline void inet_frag_put(struct
- 
- /* Memory Tracking Functions. */
- 
--static inline int frag_mem_limit(struct netns_frags *nf)
-+static inline long frag_mem_limit(const struct netns_frags *nf)
- {
--	return atomic_read(&nf->mem);
-+	return atomic_long_read(&nf->mem);
- }
- 
--static inline void sub_frag_mem_limit(struct netns_frags *nf, int i)
-+static inline void sub_frag_mem_limit(struct netns_frags *nf, long val)
- {
--	atomic_sub(i, &nf->mem);
-+	atomic_long_sub(val, &nf->mem);
- }
- 
--static inline void add_frag_mem_limit(struct netns_frags *nf, int i)
-+static inline void add_frag_mem_limit(struct netns_frags *nf, long val)
- {
--	atomic_add(i, &nf->mem);
-+	atomic_long_add(val, &nf->mem);
- }
- 
- /* RFC 3168 support :
---- a/net/ieee802154/6lowpan/reassembly.c
-+++ b/net/ieee802154/6lowpan/reassembly.c
-@@ -411,23 +411,23 @@ err:
- }
- 
- #ifdef CONFIG_SYSCTL
--static int zero;
-+static long zero;
- 
- static struct ctl_table lowpan_frags_ns_ctl_table[] = {
- 	{
- 		.procname	= "6lowpanfrag_high_thresh",
- 		.data		= &init_net.ieee802154_lowpan.frags.high_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &init_net.ieee802154_lowpan.frags.low_thresh
- 	},
- 	{
- 		.procname	= "6lowpanfrag_low_thresh",
- 		.data		= &init_net.ieee802154_lowpan.frags.low_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &zero,
- 		.extra2		= &init_net.ieee802154_lowpan.frags.high_thresh
- 	},
 --- a/net/ipv4/ip_fragment.c
 +++ b/net/ipv4/ip_fragment.c
-@@ -683,23 +683,23 @@ struct sk_buff *ip_check_defrag(struct n
- EXPORT_SYMBOL(ip_check_defrag);
+@@ -143,8 +143,8 @@ static bool frag_expire_skip_icmp(u32 us
+ static void ip_expire(struct timer_list *t)
+ {
+ 	struct inet_frag_queue *frag = from_timer(frag, t, timer);
+-	struct sk_buff *clone, *head;
+ 	const struct iphdr *iph;
++	struct sk_buff *head;
+ 	struct net *net;
+ 	struct ipq *qp;
+ 	int err;
+@@ -187,16 +187,12 @@ static void ip_expire(struct timer_list
+ 	    (skb_rtable(head)->rt_type != RTN_LOCAL))
+ 		goto out;
  
- #ifdef CONFIG_SYSCTL
--static int zero;
-+static long zero;
+-	clone = skb_clone(head, GFP_ATOMIC);
++	skb_get(head);
++	spin_unlock(&qp->q.lock);
++	icmp_send(head, ICMP_TIME_EXCEEDED, ICMP_EXC_FRAGTIME, 0);
++	kfree_skb(head);
++	goto out_rcu_unlock;
  
- static struct ctl_table ip4_frags_ns_ctl_table[] = {
- 	{
- 		.procname	= "ipfrag_high_thresh",
- 		.data		= &init_net.ipv4.frags.high_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &init_net.ipv4.frags.low_thresh
- 	},
- 	{
- 		.procname	= "ipfrag_low_thresh",
- 		.data		= &init_net.ipv4.frags.low_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &zero,
- 		.extra2		= &init_net.ipv4.frags.high_thresh
- 	},
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -71,7 +71,7 @@ static int sockstat_seq_show(struct seq_
- 		   sock_prot_inuse_get(net, &udplite_prot));
- 	seq_printf(seq, "RAW: inuse %d\n",
- 		   sock_prot_inuse_get(net, &raw_prot));
--	seq_printf(seq,  "FRAG: inuse %u memory %u\n",
-+	seq_printf(seq,  "FRAG: inuse %u memory %lu\n",
- 		   atomic_read(&net->ipv4.frags.rhashtable.nelems),
- 		   frag_mem_limit(&net->ipv4.frags));
- 	return 0;
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -63,7 +63,7 @@ struct nf_ct_frag6_skb_cb
- static struct inet_frags nf_frags;
- 
- #ifdef CONFIG_SYSCTL
--static int zero;
-+static long zero;
- 
- static struct ctl_table nf_ct_frag6_sysctl_table[] = {
- 	{
-@@ -76,18 +76,18 @@ static struct ctl_table nf_ct_frag6_sysc
- 	{
- 		.procname	= "nf_conntrack_frag6_low_thresh",
- 		.data		= &init_net.nf_frag.frags.low_thresh,
--		.maxlen		= sizeof(unsigned int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &zero,
- 		.extra2		= &init_net.nf_frag.frags.high_thresh
- 	},
- 	{
- 		.procname	= "nf_conntrack_frag6_high_thresh",
- 		.data		= &init_net.nf_frag.frags.high_thresh,
--		.maxlen		= sizeof(unsigned int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &init_net.nf_frag.frags.low_thresh
- 	},
- 	{ }
---- a/net/ipv6/proc.c
-+++ b/net/ipv6/proc.c
-@@ -47,7 +47,7 @@ static int sockstat6_seq_show(struct seq
- 			sock_prot_inuse_get(net, &udplitev6_prot));
- 	seq_printf(seq, "RAW6: inuse %d\n",
- 		       sock_prot_inuse_get(net, &rawv6_prot));
--	seq_printf(seq, "FRAG6: inuse %u memory %u\n",
-+	seq_printf(seq, "FRAG6: inuse %u memory %lu\n",
- 		   atomic_read(&net->ipv6.frags.rhashtable.nelems),
- 		   frag_mem_limit(&net->ipv6.frags));
- 	return 0;
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -552,15 +552,15 @@ static struct ctl_table ip6_frags_ns_ctl
- 	{
- 		.procname	= "ip6frag_high_thresh",
- 		.data		= &init_net.ipv6.frags.high_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_doulongvec_minmax,
- 		.extra1		= &init_net.ipv6.frags.low_thresh
- 	},
- 	{
- 		.procname	= "ip6frag_low_thresh",
- 		.data		= &init_net.ipv6.frags.low_thresh,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(unsigned long),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= &zero,
+-	/* Send an ICMP "Fragment Reassembly Timeout" message. */
+-	if (clone) {
+-		spin_unlock(&qp->q.lock);
+-		icmp_send(clone, ICMP_TIME_EXCEEDED,
+-			  ICMP_EXC_FRAGTIME, 0);
+-		consume_skb(clone);
+-		goto out_rcu_unlock;
+-	}
+ out:
+ 	spin_unlock(&qp->q.lock);
+ out_rcu_unlock:
 
 
