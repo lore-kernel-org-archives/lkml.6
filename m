@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6698ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E34ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62983214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62983214C5
+	by mail.kernel.org (Postfix) with ESMTP id D210D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D210D2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbeIRE0h (ORCPT
+        id S1729330AbeIRE0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:26:37 -0400
+        Tue, 18 Sep 2018 00:26:39 -0400
 Received: from mail.linuxfoundation.org ([140.211.169.12]:46458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeIRE0g (ORCPT
+        with ESMTP id S1726759AbeIRE0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:26:36 -0400
+        Tue, 18 Sep 2018 00:26:38 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7B7ECB2;
-        Mon, 17 Sep 2018 22:57:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CFB2CA0;
+        Mon, 17 Sep 2018 22:57:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Vladimir Kondratiev <vladimir.kondratiev@intel.com>,
+        stable@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 38/70] MIPS: Fix ISA virt/bus conversion for non-zero PHYS_OFFSET
-Date:   Tue, 18 Sep 2018 00:42:11 +0200
-Message-Id: <20180917211652.310113015@linuxfoundation.org>
+Subject: [PATCH 4.9 39/70] ata: libahci: Correct setting of DEVSLP register
+Date:   Tue, 18 Sep 2018 00:42:12 +0200
+Message-Id: <20180917211652.373256752@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -54,50 +55,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-[ Upstream commit 0494d7ffdcebc6935410ea0719b24ab626675351 ]
+[ Upstream commit 2dbb3ec29a6c069035857a2fc4c24e80e5dfe3cc ]
 
-isa_virt_to_bus() & isa_bus_to_virt() claim to treat ISA bus addresses
-as being identical to physical addresses, but they fail to do so in the
-presence of a non-zero PHYS_OFFSET.
+We have seen that on some platforms, SATA device never show any DEVSLP
+residency. This prevent power gating of SATA IP, which prevent system
+to transition to low power mode in systems with SLP_S0 aka modern
+standby systems. The PHY logic is off only in DEVSLP not in slumber.
+Reference:
+https://www.intel.com/content/dam/www/public/us/en/documents/datasheets
+/332995-skylake-i-o-platform-datasheet-volume-1.pdf
+Section 28.7.6.1
 
-Correct this by having them use virt_to_phys() & phys_to_virt(), which
-consolidates the calculations to one place & ensures that ISA bus
-addresses do indeed match physical addresses.
+Here driver is trying to do read-modify-write the devslp register. But
+not resetting the bits for which this driver will modify values (DITO,
+MDAT and DETO). So simply reset those bits before updating to new values.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20047/
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/io.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/ata/libahci.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -141,14 +141,14 @@ static inline void * phys_to_virt(unsign
- /*
-  * ISA I/O bus memory addresses are 1:1 with the physical address.
-  */
--static inline unsigned long isa_virt_to_bus(volatile void * address)
-+static inline unsigned long isa_virt_to_bus(volatile void *address)
- {
--	return (unsigned long)address - PAGE_OFFSET;
-+	return virt_to_phys(address);
- }
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -2132,6 +2132,8 @@ static void ahci_set_aggressive_devslp(s
+ 		deto = 20;
+ 	}
  
--static inline void * isa_bus_to_virt(unsigned long address)
-+static inline void *isa_bus_to_virt(unsigned long address)
- {
--	return (void *)(address + PAGE_OFFSET);
-+	return phys_to_virt(address);
- }
- 
- #define isa_page_to_bus page_to_phys
++	/* Make dito, mdat, deto bits to 0s */
++	devslp &= ~GENMASK_ULL(24, 2);
+ 	devslp |= ((dito << PORT_DEVSLP_DITO_OFFSET) |
+ 		   (mdat << PORT_DEVSLP_MDAT_OFFSET) |
+ 		   (deto << PORT_DEVSLP_DETO_OFFSET) |
 
 
