@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE281ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C56ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0852088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E0852088F
+	by mail.kernel.org (Postfix) with ESMTP id 66B7D2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B7D2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbeIREVA (ORCPT
+        id S1729173AbeIREVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45034 "EHLO
+        Tue, 18 Sep 2018 00:21:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREU7 (ORCPT
+        with ESMTP id S1726275AbeIREVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:20:59 -0400
+        Tue, 18 Sep 2018 00:21:04 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC539CAC;
-        Mon, 17 Sep 2018 22:51:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BF99CAC;
+        Mon, 17 Sep 2018 22:51:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.4 13/56] ARC: [plat-axs*]: Enable SWAP
-Date:   Tue, 18 Sep 2018 00:41:46 +0200
-Message-Id: <20180917213828.512923854@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 14/56] misc: mic: SCIF Fix scif_get_new_port() error handling
+Date:   Tue, 18 Sep 2018 00:41:47 +0200
+Message-Id: <20180917213828.554180674@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -51,54 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit c83532fb0fe053d2e43e9387354cb1b52ba26427 upstream.
+[ Upstream commit a39284ae9d2ad09975c8ae33f1bd0f05fbfbf6ee ]
 
-SWAP support on ARC was fixed earlier by
-commit 6e3761145a9b ("ARC: Fix CONFIG_SWAP")
-so now we may safely enable it on platforms that
-have external media like USB and SD-card.
+There are only 2 callers of scif_get_new_port() and both appear to get
+the error handling wrong.  Both treat zero returns as error, but it
+actually returns negative error codes and >= 0 on success.
 
-Note: it was already allowed for HSDK
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: stable@vger.kernel.org # 6e3761145a9b: ARC: Fix CONFIG_SWAP
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Fixes: e9089f43c9a7 ("misc: mic: SCIF open close bind and listen APIs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/configs/axs101_defconfig     |    1 -
- arch/arc/configs/axs103_defconfig     |    1 -
- arch/arc/configs/axs103_smp_defconfig |    1 -
- 3 files changed, 3 deletions(-)
+ drivers/misc/mic/scif/scif_api.c |   20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -1,6 +1,5 @@
- CONFIG_CROSS_COMPILE="arc-linux-"
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -1,6 +1,5 @@
- CONFIG_CROSS_COMPILE="arc-linux-"
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -1,6 +1,5 @@
- CONFIG_CROSS_COMPILE="arc-linux-"
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
+--- a/drivers/misc/mic/scif/scif_api.c
++++ b/drivers/misc/mic/scif/scif_api.c
+@@ -370,11 +370,10 @@ int scif_bind(scif_epd_t epd, u16 pn)
+ 			goto scif_bind_exit;
+ 		}
+ 	} else {
+-		pn = scif_get_new_port();
+-		if (!pn) {
+-			ret = -ENOSPC;
++		ret = scif_get_new_port();
++		if (ret < 0)
+ 			goto scif_bind_exit;
+-		}
++		pn = ret;
+ 	}
+ 
+ 	ep->state = SCIFEP_BOUND;
+@@ -648,13 +647,12 @@ int __scif_connect(scif_epd_t epd, struc
+ 			err = -EISCONN;
+ 		break;
+ 	case SCIFEP_UNBOUND:
+-		ep->port.port = scif_get_new_port();
+-		if (!ep->port.port) {
+-			err = -ENOSPC;
+-		} else {
+-			ep->port.node = scif_info.nodeid;
+-			ep->conn_async_state = ASYNC_CONN_IDLE;
+-		}
++		err = scif_get_new_port();
++		if (err < 0)
++			break;
++		ep->port.port = err;
++		ep->port.node = scif_info.nodeid;
++		ep->conn_async_state = ASYNC_CONN_IDLE;
+ 		/* Fall through */
+ 	case SCIFEP_BOUND:
+ 		/*
 
 
