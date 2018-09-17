@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7130FECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC3ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9732088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9732088F
+	by mail.kernel.org (Postfix) with ESMTP id 6CF152088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF152088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeIRETj (ORCPT
+        id S1728925AbeIRETq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44850 "EHLO
+        Tue, 18 Sep 2018 00:19:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRETi (ORCPT
+        with ESMTP id S1725952AbeIRETp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:38 -0400
+        Tue, 18 Sep 2018 00:19:45 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5DA6CAE;
-        Mon, 17 Sep 2018 22:50:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C59CCAE;
+        Mon, 17 Sep 2018 22:50:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 34/56] gpio: ml-ioh: Fix buffer underwrite on probe error path
-Date:   Tue, 18 Sep 2018 00:42:07 +0200
-Message-Id: <20180917213829.340205680@linuxfoundation.org>
+Subject: [PATCH 4.4 35/56] net: mvneta: fix mtu change on port without link
+Date:   Tue, 18 Sep 2018 00:42:08 +0200
+Message-Id: <20180917213829.382865787@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,41 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
+[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
 
-If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
-to any element of chip_save array, so reverse iteration from pointer chip
-may become chip_save[-1] and gpiochip_remove() will operate with wrong
-memory.
+It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
+port without link. Indeed MTU change for interface without link causes TX
+queues to stuck.
 
-The patch fix the error path of ioh_gpio_probe() to correctly bypass
-chip_save array.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
+network unit")
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+[gregory.clement: adding Fixes tags and rewording commit log]
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-ml-ioh.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvneta.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -495,9 +495,10 @@ err_irq_alloc_descs:
- 
- 	chip = chip_save;
- err_gpiochip_add:
-+	chip = chip_save;
- 	while (--i >= 0) {
--		chip--;
- 		gpiochip_remove(&chip->gpio);
-+		chip++;
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -2569,7 +2569,6 @@ static int mvneta_change_mtu(struct net_
  	}
- 	kfree(chip_save);
+ 
+ 	mvneta_start_dev(pp);
+-	mvneta_port_up(pp);
+ 
+ 	netdev_update_features(dev);
  
 
 
