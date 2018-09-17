@@ -2,98 +2,130 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD18ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098C4ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B42B2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:53:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWiyagfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B42B2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ACF302146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:59:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF302146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeIRCW4 (ORCPT
+        id S1728467AbeIRC2A convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37282 "EHLO mail.kernel.org"
+        Mon, 17 Sep 2018 22:28:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59384 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbeIRCW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:22:56 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727672AbeIRC2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:28:00 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99132206B2;
-        Mon, 17 Sep 2018 20:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537217635;
-        bh=2T+rkmWwuu4N0+cZBNvGNXTvuCYiUxqEoEXRwUJVfHA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oWiyagfdcQeL9yu7OURCU199TnFCr7v92efbTBAVKFMj6m/D9VPEsT3mV5OZEL89v
-         F8yTAR5oICfSqD4mwt8GxOwpS4nDn54x12KqoqpcPkpxYp0MgXfKBctChF34xTP4Nw
-         4wQ56CIKlrN0iRfibqJcaLApzrj8igP6/paOgPok=
-Date:   Mon, 17 Sep 2018 15:53:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sinan Kaya <okaya@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH v2] PCI hotplug Eq v2
-Message-ID: <20180917205354.GB54859@bhelgaas-glaptop.roam.corp.google.com>
-References: <1535667120-3002-1-git-send-email-jonathan.derrick@intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id BB15530E6867;
+        Mon, 17 Sep 2018 20:58:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 64E2982218;
+        Mon, 17 Sep 2018 20:58:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180914041831.GY19965@ZenIV.linux.org.uk>
+References: <20180914041831.GY19965@ZenIV.linux.org.uk> <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk> <153685392942.14766.3347355712333618914.stgit@warthog.procyon.org.uk>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/10] iov_iter: Add mapping and discard iterator types
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535667120-3002-1-git-send-email-jonathan.derrick@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3532.1537217936.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 17 Sep 2018 21:58:56 +0100
+Message-ID: <3533.1537217936@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 17 Sep 2018 20:58:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 30, 2018 at 04:11:59PM -0600, Jon Derrick wrote:
-> Hi Bjorn,
+Al Viro <viro@ZenIV.linux.org.uk> wrote:
+
+> > Add two new iterator types to iov_iter:
+> > 
+> >  (1) ITER_MAPPING
+> > 
+> >      This walks through a set of pages attached to an address_space that
+> >      are pinned or locked, starting at a given page and offset and walking
+> >      for the specified amount of space.  A facility to get a callback each
+> >      time a page is entirely processed is provided.
+> > 
+> >      This is useful for copying data from socket buffers to inodes in
+> >      network filesystems.
 > 
-> Sorry for the delay on this one and pushing it after RC1.
-> Feel free to queue it up for 4.20 if it looks fine.
-> 
-> I've added comments to the git log and source explaining why
-> calculate_iosize was left unchanged. Basically I could not
-> synthesize a condition where it would have affected the topology.
+> Interesting...  Questions:
+> 	* what will hold those pages?  IOW, where will you unlock/drop/whatnot
+> those sucker?
 
-In other words, the only reason you didn't change the
-calculate_iosize() path was because you couldn't test it?
+The caller needs to have those pages pinned - say with PG_locked or
+PG_writeback.  Sorry - I mentioned this in the cover, but not here.
 
-I appreciate your desire to avoid untested changes, but I think it's
-very important to preserve and even improve the symmetry between
-calculate_memsize() and calculate_iosize().  For example, it's not
-obvious why the order is different here:
+You can either undo there changes in the callback or upon completion of the
+iteration.
 
-  calculate_iosize():
-    size = ALIGN(size + size1, align);
-    if (size < old_size)
-      size = old_size;
+> 	* "callback" sounds dangerous - it appears to imply that you won't
+> copy to/from the same page twice.  Not true for a lot of iov_iter users; what
+> happens if you pass such a beast to them?
 
-  calculate_memsize():
-    if (size < old_size)
-      size = old_size;
-    size = ALIGN(size + size1, align);
+Similar to ITER_PIPE.  There's no rewind.  Once you've passed a page, it's
+gone.  Under what circumstances would you want to copy to/from the same page
+twice?
 
-So I don't want to diverge them further unless there's a real
-functional reason why we need to handle I/O port space differently
-than MMIO space.
+> 	* why not simply "build and populate ITER_BVEC aliasing a piece of
+> mapping", possibly in "grab" and "grab+lock" variants?
 
-You've tested the MMIO path, and I'm willing to take the risk of
-doing the same thing in the I/O port path.
+ITER_BVEC is inefficient.  This is what the upstream now.  See
+afs_load_bvec().
 
-Bjorn
+That what the code currently uses.  There's a
+practical limit to the number of pages I can shovel into one in one go.
+
+Further, every time I reach the end of a ITER_BVEC, I have to return to
+process context, which then has to round up the next bundle of pages by
+calling the radix tree.  It seems to work out better to put the radix
+iteration into the iterator if we can.  The caller guarantees that the
+contents of the region of interest are (a) fully populated and (b) pinned.
+
+Yet further, with ITER_BVEC, I can't release any of the pinned pages until the
+entire iteration is finished.  That means if I have a 4GB BVEC, those pages
+are going to be pinned a long time.  With ITER_MAPPING, they're released
+incrementally via the callback.
+
+> Those ITER_MAPPING do seem to be related to ITER_BVEC, at the very least.
+
+Only in the sense that the current position can be described by the same three
+numbers: page, len, offset.  I'm reusing struct bio_vec so that I can share
+some of the code with ITER_BVEC.
+
+> Note, BTW, that iov_iter_get_pages...() might mutate into something similar
+> - "build and populate ITER_BVEC aliasing a piece of given iov_iter".  Or,
+> perhaps, a nicer-on-memory analogue of ITER_BVEC - with <offset, bytes,
+> pointer to pages array> instead of <offset, bytes, page> as elements, with
+> the same "populate from mapping" to get something similar to your
+> functionality and "populate from iov_iter" for
+> iov_iter_get_pages... replacement
+
+The whole point is to avoid having to use ITER_BVEC.  ITER_BVEC has a number
+of issues that ITER_MAPPING overcomes - though ITER_MAPPING can only be used
+with a mapping (or, at least, a radix tree).
+
+There is no point to the loop shifting page runs into a page array for use
+with a BVEC when the mapping carries the same information.  You save memory
+and processing time.
+
+David
