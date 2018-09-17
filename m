@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFCFECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E832ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A14F2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A14F2088F
+	by mail.kernel.org (Postfix) with ESMTP id EA8F12088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8F12088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729306AbeIREVe (ORCPT
+        id S1729321AbeIREVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45226 "EHLO
+        Tue, 18 Sep 2018 00:21:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVe (ORCPT
+        with ESMTP id S1726275AbeIREVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:34 -0400
+        Tue, 18 Sep 2018 00:21:38 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B09BDCAC;
-        Mon, 17 Sep 2018 22:52:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01AF8CAD;
+        Mon, 17 Sep 2018 22:52:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.4 48/56] netfilter: x_tables: avoid stack-out-of-bounds read in xt_copy_counters_from_user
-Date:   Tue, 18 Sep 2018 00:42:21 +0200
-Message-Id: <20180917213829.913321616@linuxfoundation.org>
+        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Andrew Goodbody <andrew.goodbody@cambrionix.com>,
+        Mugunthan V N <mugunthanvnm@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>
+Subject: [PATCH 4.4 49/56] drivers: net: cpsw: fix parsing of phy-handle DT property in dual_emac config
+Date:   Tue, 18 Sep 2018 00:42:22 +0200
+Message-Id: <20180917213829.954751608@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -54,49 +56,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: David Rivshin <drivshin@allworx.com>
 
-commit e466af75c074e76107ae1cd5a2823e9c61894ffb upstream.
+commit 552165bcf7060b998b4a9b5b86110b6a5e04dfd9 upstream.
 
-syzkaller reports an out of bound read in strlcpy(), triggered
-by xt_copy_counters_from_user()
+Commit 9e42f715264ff158478fa30eaed847f6e131366b ("drivers: net: cpsw: add
+phy-handle parsing") saved the "phy-handle" phandle into a new cpsw_priv
+field. However, phy connections are per-slave, so the phy_node field should
+be in cpsw_slave_data rather than cpsw_priv.
 
-Fix this by using memcpy(), then forcing a zero byte at the last position
-of the destination, as Florian did for the non COMPAT code.
+This would go unnoticed in a single emac configuration. But in dual_emac
+mode, the last "phy-handle" property parsed for either slave would be used
+by both of them, causing them both to refer to the same phy_device.
 
-Fixes: d7591f0c41ce ("netfilter: x_tables: introduce and use xt_copy_counters_from_user")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Willem de Bruijn <willemb@google.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Greg Hackmann <ghackmann@google.com>
+Fixes: 9e42f715264f ("drivers: net: cpsw: add phy-handle parsing")
+Signed-off-by: David Rivshin <drivshin@allworx.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Tested-by: Andrew Goodbody <andrew.goodbody@cambrionix.com>
+Reviewed-by: Mugunthan V N <mugunthanvnm@ti.com>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ti/cpsw.c |   13 ++++++-------
+ drivers/net/ethernet/ti/cpsw.h |    1 +
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -876,7 +876,7 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(&compat_tmp, user, sizeof(compat_tmp)) != 0)
- 			return ERR_PTR(-EFAULT);
+--- a/drivers/net/ethernet/ti/cpsw.c
++++ b/drivers/net/ethernet/ti/cpsw.c
+@@ -371,7 +371,6 @@ struct cpsw_priv {
+ 	spinlock_t			lock;
+ 	struct platform_device		*pdev;
+ 	struct net_device		*ndev;
+-	struct device_node		*phy_node;
+ 	struct napi_struct		napi_rx;
+ 	struct napi_struct		napi_tx;
+ 	struct device			*dev;
+@@ -1165,8 +1164,8 @@ static void cpsw_slave_open(struct cpsw_
+ 		cpsw_ale_add_mcast(priv->ale, priv->ndev->broadcast,
+ 				   1 << slave_port, 0, 0, ALE_MCAST_FWD_2);
  
--		strlcpy(info->name, compat_tmp.name, sizeof(info->name));
-+		memcpy(info->name, compat_tmp.name, sizeof(info->name) - 1);
- 		info->num_counters = compat_tmp.num_counters;
- 		user += sizeof(compat_tmp);
- 	} else
-@@ -889,9 +889,9 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(info, user, sizeof(*info)) != 0)
- 			return ERR_PTR(-EFAULT);
+-	if (priv->phy_node)
+-		slave->phy = of_phy_connect(priv->ndev, priv->phy_node,
++	if (slave->data->phy_node)
++		slave->phy = of_phy_connect(priv->ndev, slave->data->phy_node,
+ 				 &cpsw_adjust_link, 0, slave->data->phy_if);
+ 	else
+ 		slave->phy = phy_connect(priv->ndev, slave->data->phy_id,
+@@ -1957,12 +1956,11 @@ static void cpsw_slave_init(struct cpsw_
+ 	slave->port_vlan = data->dual_emac_res_vlan;
+ }
  
--		info->name[sizeof(info->name) - 1] = '\0';
- 		user += sizeof(*info);
- 	}
-+	info->name[sizeof(info->name) - 1] = '\0';
+-static int cpsw_probe_dt(struct cpsw_priv *priv,
++static int cpsw_probe_dt(struct cpsw_platform_data *data,
+ 			 struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *slave_node;
+-	struct cpsw_platform_data *data = &priv->data;
+ 	int i = 0, ret;
+ 	u32 prop;
  
- 	size = sizeof(struct xt_counters);
- 	size *= info->num_counters;
+@@ -2050,7 +2048,8 @@ static int cpsw_probe_dt(struct cpsw_pri
+ 		if (strcmp(slave_node->name, "slave"))
+ 			continue;
+ 
+-		priv->phy_node = of_parse_phandle(slave_node, "phy-handle", 0);
++		slave_data->phy_node = of_parse_phandle(slave_node,
++							"phy-handle", 0);
+ 		parp = of_get_property(slave_node, "phy_id", &lenp);
+ 		if (of_phy_is_fixed_link(slave_node)) {
+ 			struct device_node *phy_node;
+@@ -2291,7 +2290,7 @@ static int cpsw_probe(struct platform_de
+ 	/* Select default pin state */
+ 	pinctrl_pm_select_default_state(&pdev->dev);
+ 
+-	if (cpsw_probe_dt(priv, pdev)) {
++	if (cpsw_probe_dt(&priv->data, pdev)) {
+ 		dev_err(&pdev->dev, "cpsw: platform data missing\n");
+ 		ret = -ENODEV;
+ 		goto clean_runtime_disable_ret;
+--- a/drivers/net/ethernet/ti/cpsw.h
++++ b/drivers/net/ethernet/ti/cpsw.h
+@@ -18,6 +18,7 @@
+ #include <linux/phy.h>
+ 
+ struct cpsw_slave_data {
++	struct device_node *phy_node;
+ 	char		phy_id[MII_BUS_ID_SIZE];
+ 	int		phy_if;
+ 	u8		mac_addr[ETH_ALEN];
 
 
