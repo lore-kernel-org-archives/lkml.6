@@ -6,57 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EB2ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7130FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965B92146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965B92146D
+	by mail.kernel.org (Postfix) with ESMTP id 2F9732088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9732088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728881AbeIRETg (ORCPT
+        id S1728909AbeIRETj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44836 "EHLO
+        Tue, 18 Sep 2018 00:19:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44850 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRETf (ORCPT
+        with ESMTP id S1725952AbeIRETi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:35 -0400
+        Tue, 18 Sep 2018 00:19:38 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37E1DCAD;
-        Mon, 17 Sep 2018 22:50:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5DA6CAE;
+        Mon, 17 Sep 2018 22:50:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, joro@8bytes.org,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 33/56] x86/mm: Remove in_nmi() warning from vmalloc_fault()
-Date:   Tue, 18 Sep 2018 00:42:06 +0200
-Message-Id: <20180917213829.301295044@linuxfoundation.org>
+Subject: [PATCH 4.4 34/56] gpio: ml-ioh: Fix buffer underwrite on probe error path
+Date:   Tue, 18 Sep 2018 00:42:07 +0200
+Message-Id: <20180917213829.340205680@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -74,63 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 6863ea0cda8725072522cd78bda332d9a0b73150 ]
+[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
 
-It is perfectly okay to take page-faults, especially on the
-vmalloc area while executing an NMI handler. Remove the
-warning.
+If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
+to any element of chip_save array, so reverse iteration from pointer chip
+may become chip_save[-1] and gpiochip_remove() will operate with wrong
+memory.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1532533683-5988-2-git-send-email-joro@8bytes.org
+The patch fix the error path of ioh_gpio_probe() to correctly bypass
+chip_save array.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/fault.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpio/gpio-ml-ioh.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -273,8 +273,6 @@ static noinline int vmalloc_fault(unsign
- 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
- 		return -1;
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -495,9 +495,10 @@ err_irq_alloc_descs:
  
--	WARN_ON_ONCE(in_nmi());
--
- 	/*
- 	 * Synchronize this task's top level page-table
- 	 * with the 'reference' page table.
+ 	chip = chip_save;
+ err_gpiochip_add:
++	chip = chip_save;
+ 	while (--i >= 0) {
+-		chip--;
+ 		gpiochip_remove(&chip->gpio);
++		chip++;
+ 	}
+ 	kfree(chip_save);
+ 
 
 
