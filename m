@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1454ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68371ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 698172146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 698172146F
+	by mail.kernel.org (Postfix) with ESMTP id 26FFC2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FFC2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbeIRE3G (ORCPT
+        id S1729846AbeIRE3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47922 "EHLO
+        Tue, 18 Sep 2018 00:29:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47942 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728598AbeIRE3G (ORCPT
+        with ESMTP id S1727559AbeIRE3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:06 -0400
+        Tue, 18 Sep 2018 00:29:10 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2FA3C03;
-        Mon, 17 Sep 2018 22:59:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 271CEC49;
+        Mon, 17 Sep 2018 22:59:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -34,9 +34,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 51/70] MIPS: Octeon: add missing of_node_put()
-Date:   Tue, 18 Sep 2018 00:42:24 +0200
-Message-Id: <20180917211653.228236951@linuxfoundation.org>
+Subject: [PATCH 4.9 52/70] MIPS: generic: fix missing of_node_put()
+Date:   Tue, 18 Sep 2018 00:42:25 +0200
+Message-Id: <20180917211653.282736183@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -56,15 +56,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit b1259519e618d479ede8a0db5474b3aff99f5056 ]
+[ Upstream commit 28ec2238f37e72a3a40a7eb46893e7651bcc40a6 ]
 
-The call to of_find_node_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented here after the last
-usage.
+of_find_compatible_node() returns a device_node pointer with refcount
+incremented and must be decremented explicitly.
+ As this code is using the result only to check presence of the interrupt
+controller (!NULL) but not actually using the result otherwise the
+refcount can be decremented here immediately again.
 
 Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19558/
+Patchwork: https://patchwork.linux-mips.org/patch/19820/
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: James Hogan <jhogan@kernel.org>
 Cc: linux-mips@linux-mips.org
@@ -72,26 +74,18 @@ Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/cavium-octeon/octeon-platform.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/generic/init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/mips/cavium-octeon/octeon-platform.c
-+++ b/arch/mips/cavium-octeon/octeon-platform.c
-@@ -366,6 +366,7 @@ static int __init octeon_ehci_device_ini
- 		return 0;
+--- a/arch/mips/generic/init.c
++++ b/arch/mips/generic/init.c
+@@ -159,6 +159,7 @@ void __init arch_init_irq(void)
+ 					    "mti,cpu-interrupt-controller");
+ 	if (!cpu_has_veic && !intc_node)
+ 		mips_cpu_irq_init();
++	of_node_put(intc_node);
  
- 	pd = of_find_device_by_node(ehci_node);
-+	of_node_put(ehci_node);
- 	if (!pd)
- 		return 0;
- 
-@@ -428,6 +429,7 @@ static int __init octeon_ohci_device_ini
- 		return 0;
- 
- 	pd = of_find_device_by_node(ohci_node);
-+	of_node_put(ohci_node);
- 	if (!pd)
- 		return 0;
- 
+ 	irqchip_init();
+ }
 
 
