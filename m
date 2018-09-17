@@ -6,28 +6,27 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC260ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAE9ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833AC2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 833AC2088F
+	by mail.kernel.org (Postfix) with ESMTP id 559CA2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 559CA2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbeIQTVF (ORCPT
+        id S1728622AbeIQTWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:21:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52610 "EHLO mx1.suse.de"
+        Mon, 17 Sep 2018 15:22:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52998 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727979AbeIQTVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:21:05 -0400
+        id S1726865AbeIQTWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:22:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BA66BAFEE;
-        Mon, 17 Sep 2018 13:53:36 +0000 (UTC)
-Subject: Re: [PATCH 1/5] scsi: libsas: delete dead code in
- scsi_transport_sas.c
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6D0E2AC9C;
+        Mon, 17 Sep 2018 13:54:45 +0000 (UTC)
+Subject: Re: [PATCH 2/5] scsi: libsas: check the lldd callback correctly
 To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
         jejb@linux.vnet.ibm.com
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -37,14 +36,14 @@ Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         miaoxie@huawei.com, Ewan Milne <emilne@redhat.com>,
         Tomas Henzl <thenzl@redhat.com>
 References: <20180912082946.34814-1-yanaijie@huawei.com>
- <20180912082946.34814-2-yanaijie@huawei.com>
+ <20180912082946.34814-3-yanaijie@huawei.com>
 From:   Hannes Reinecke <hare@suse.com>
-Message-ID: <4218aff0-92d5-dee2-2d60-8f24b71c4ad9@suse.com>
-Date:   Mon, 17 Sep 2018 15:53:33 +0200
+Message-ID: <8114701f-be33-9c41-3ed7-e2a13490569d@suse.com>
+Date:   Mon, 17 Sep 2018 15:54:44 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180912082946.34814-2-yanaijie@huawei.com>
+In-Reply-To: <20180912082946.34814-3-yanaijie@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,7 +53,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 09/12/2018 10:29 AM, Jason Yan wrote:
-> This code is dead and no clue implies that it will be back again.
+> We are using lldd_port_deformed so we'd better check if lldd_port_deformed
+> is NULL.
+> 
+> After this, we can remove hisi_sas_port_deformed() because it is just a
+> stub to avoid a NULL dereference caused by the wrong check.
 > 
 > Signed-off-by: Jason Yan <yanaijie@huawei.com>
 > CC: John Garry <john.garry@huawei.com>
@@ -64,32 +67,54 @@ On 09/12/2018 10:29 AM, Jason Yan wrote:
 > CC: Tomas Henzl <thenzl@redhat.com>
 > CC: Dan Williams <dan.j.williams@intel.com>
 > CC: Hannes Reinecke <hare@suse.com>
-> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 > ---
->  drivers/scsi/scsi_transport_sas.c | 2 --
->  1 file changed, 2 deletions(-)
+>  drivers/scsi/hisi_sas/hisi_sas_main.c | 9 ++-------
+>  drivers/scsi/libsas/sas_discover.c    | 2 +-
+>  2 files changed, 3 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/scsi/scsi_transport_sas.c b/drivers/scsi/scsi_transport_sas.c
-> index 0cd16e80b019..0a165b2b3e81 100644
-> --- a/drivers/scsi/scsi_transport_sas.c
-> +++ b/drivers/scsi/scsi_transport_sas.c
-> @@ -612,7 +612,6 @@ sas_phy_protocol_attr(identify.target_port_protocols,
->  sas_phy_simple_attr(identify.sas_address, sas_address, "0x%016llx\n",
->  		unsigned long long);
->  sas_phy_simple_attr(identify.phy_identifier, phy_identifier, "%d\n", u8);
-> -//sas_phy_simple_attr(port_identifier, port_identifier, "%d\n", int);
->  sas_phy_linkspeed_attr(negotiated_linkrate);
->  sas_phy_linkspeed_attr(minimum_linkrate_hw);
->  sas_phy_linkspeed_rw_attr(minimum_linkrate);
-> @@ -1802,7 +1801,6 @@ sas_attach_transport(struct sas_function_template *ft)
->  	SETUP_PHY_ATTRIBUTE(device_type);
->  	SETUP_PHY_ATTRIBUTE(sas_address);
->  	SETUP_PHY_ATTRIBUTE(phy_identifier);
-> -	//SETUP_PHY_ATTRIBUTE(port_identifier);
->  	SETUP_PHY_ATTRIBUTE(negotiated_linkrate);
->  	SETUP_PHY_ATTRIBUTE(minimum_linkrate_hw);
->  	SETUP_PHY_ATTRIBUTE_RW(minimum_linkrate);
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> index a4e2e6aa9a6b..1975c9266978 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> @@ -1861,10 +1861,6 @@ static void hisi_sas_port_formed(struct asd_sas_phy *sas_phy)
+>  	hisi_sas_port_notify_formed(sas_phy);
+>  }
+>  
+> -static void hisi_sas_port_deformed(struct asd_sas_phy *sas_phy)
+> -{
+> -}
+> -
+>  static int hisi_sas_write_gpio(struct sas_ha_struct *sha, u8 reg_type,
+>  			u8 reg_index, u8 reg_count, u8 *write_data)
+>  {
+> @@ -1954,10 +1950,9 @@ static struct sas_domain_function_template hisi_sas_transport_ops = {
+>  	.lldd_I_T_nexus_reset	= hisi_sas_I_T_nexus_reset,
+>  	.lldd_lu_reset		= hisi_sas_lu_reset,
+>  	.lldd_query_task	= hisi_sas_query_task,
+> -	.lldd_clear_nexus_ha = hisi_sas_clear_nexus_ha,
+> +	.lldd_clear_nexus_ha	= hisi_sas_clear_nexus_ha,
+>  	.lldd_port_formed	= hisi_sas_port_formed,
+> -	.lldd_port_deformed = hisi_sas_port_deformed,
+> -	.lldd_write_gpio = hisi_sas_write_gpio,
+> +	.lldd_write_gpio	= hisi_sas_write_gpio,
+>  };
+>  
+>  void hisi_sas_init_mem(struct hisi_hba *hisi_hba)
+> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+> index 0148ae62a52a..dde433aa59c2 100644
+> --- a/drivers/scsi/libsas/sas_discover.c
+> +++ b/drivers/scsi/libsas/sas_discover.c
+> @@ -260,7 +260,7 @@ static void sas_suspend_devices(struct work_struct *work)
+>  	 * phy_list is not being mutated
+>  	 */
+>  	list_for_each_entry(phy, &port->phy_list, port_phy_el) {
+> -		if (si->dft->lldd_port_formed)
+> +		if (si->dft->lldd_port_deformed)
+>  			si->dft->lldd_port_deformed(phy);
+>  		phy->suspended = 1;
+>  		port->suspended = 1;
 > 
+
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
 Cheers,
