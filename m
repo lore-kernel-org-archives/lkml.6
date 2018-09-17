@@ -2,86 +2,237 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38B2ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9C5ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78878214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:50:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78878214AB
+	by mail.kernel.org (Postfix) with ESMTP id 59F72214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:51:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F72214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbeIQORD (ORCPT
+        id S1728183AbeIQORu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:17:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38282 "EHLO mx1.redhat.com"
+        Mon, 17 Sep 2018 10:17:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39938 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727133AbeIQORD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:17:03 -0400
+        id S1727133AbeIQORu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:17:50 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44BB180F7A;
-        Mon, 17 Sep 2018 08:50:37 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8251A4C494;
-        Mon, 17 Sep 2018 08:50:34 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 56CB54F973; Mon, 17 Sep 2018 10:50:33 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 10:50:33 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        open list <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
-Subject: Re: [PATCH 1/2] vfio: add edid api for display (vgpu) devices.
-Message-ID: <20180917085033.ttcs3cpznnf3wngd@sirius.home.kraxel.org>
-References: <20180913054745.6353-1-kraxel@redhat.com>
- <20180913054745.6353-2-kraxel@redhat.com>
- <20180913115139.02775316@t450s.home>
- <20180914122552.3xmepqo7azzmx7ky@sirius.home.kraxel.org>
- <20180917065154.GI20737@zhen-hp.sh.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 1DBC930917B0;
+        Mon, 17 Sep 2018 08:51:24 +0000 (UTC)
+Received: from [10.36.117.44] (ovpn-117-44.ams2.redhat.com [10.36.117.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCB204DA95;
+        Mon, 17 Sep 2018 08:51:09 +0000 (UTC)
+Subject: Re: [PATCH v10 24/26] KVM: s390: device attrs to enable/disable AP
+ interpretation
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1536781396-13601-25-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <9263b698-1827-1b7f-28bf-75b44657dea2@redhat.com>
+Date:   Mon, 17 Sep 2018 10:51:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917065154.GI20737@zhen-hp.sh.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1536781396-13601-25-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 17 Sep 2018 08:50:37 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 17 Sep 2018 08:51:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +#define VFIO_DEVICE_INFO_CAP_EDID	1
-> > +
-> > +struct vfio_device_info_edid_cap {
-> > +	struct vfio_info_cap_header header;
-> > +	__u32   max_x;     /* Max display height (zero == no limit) */
-> > +	__u32   max_y;     /* Max display height (zero == no limit) */
-> > +};
+Am 12.09.18 um 21:43 schrieb Tony Krowiak:
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
 > 
-> As current virtual display for Intel vGPU is still emulating against real HW
-> pipeline with same limitations, asked display developers that whether or not
-> specific mode can work might still depend on current or future HW behavior.
-> So could we add some hints on what kind of edid mode vfio device can operate?
-> Some may support arbitrary modes, but some may only support standard modes.
+> Introduces two new VM crypto device attributes (KVM_S390_VM_CRYPTO)
+> to enable or disable AP instruction interpretation from userspace
+> via the KVM_SET_DEVICE_ATTR ioctl:
+> 
+> * The KVM_S390_VM_CRYPTO_ENABLE_APIE attribute enables hardware
+>   interpretation of AP instructions executed on the guest.
+> 
+> * The KVM_S390_VM_CRYPTO_DISABLE_APIE attribute disables hardware
+>   interpretation of AP instructions executed on the guest. In this
+>   case the instructions will be intercepted and pass through to
+>   the guest.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>  arch/s390/include/asm/kvm_host.h |    1 +
+>  arch/s390/include/uapi/asm/kvm.h |    2 ++
+>  arch/s390/kvm/kvm-s390.c         |   27 +++++++++++++++++++++++----
+>  3 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index b32bd1b..36d3531 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -719,6 +719,7 @@ struct kvm_s390_crypto {
+>  	__u32 crycbd;
+>  	__u8 aes_kw;
+>  	__u8 dea_kw;
+> +	__u8 apie;
+>  };
+>  
+>  #define APCB0_MASK_SIZE 1
+> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
+> index 8c23afc..a8dbd90 100644
+> --- a/arch/s390/include/uapi/asm/kvm.h
+> +++ b/arch/s390/include/uapi/asm/kvm.h
+> @@ -161,6 +161,8 @@ struct kvm_s390_vm_cpu_subfunc {
+>  #define KVM_S390_VM_CRYPTO_ENABLE_DEA_KW	1
+>  #define KVM_S390_VM_CRYPTO_DISABLE_AES_KW	2
+>  #define KVM_S390_VM_CRYPTO_DISABLE_DEA_KW	3
+> +#define KVM_S390_VM_CRYPTO_ENABLE_APIE		4
+> +#define KVM_S390_VM_CRYPTO_DISABLE_APIE		5
+>  
+>  /* kvm attributes for migration mode */
+>  #define KVM_S390_VM_MIGRATION_STOP	0
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 2cdd980..286c2e0 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -856,12 +856,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
+>  
+>  static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
+>  {
+> -	if (!test_kvm_facility(kvm, 76))
+> -		return -EINVAL;
+> -
+>  	mutex_lock(&kvm->lock);
+>  	switch (attr->attr) {
+>  	case KVM_S390_VM_CRYPTO_ENABLE_AES_KW:
+> +		if (!test_kvm_facility(kvm, 76))
+> +			return -EINVAL;
+>  		get_random_bytes(
+>  			kvm->arch.crypto.crycb->aes_wrapping_key_mask,
+>  			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+> @@ -869,6 +868,8 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
+>  		VM_EVENT(kvm, 3, "%s", "ENABLE: AES keywrapping support");
+>  		break;
+>  	case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
+> +		if (!test_kvm_facility(kvm, 76))
+> +			return -EINVAL;
+>  		get_random_bytes(
+>  			kvm->arch.crypto.crycb->dea_wrapping_key_mask,
+>  			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+> @@ -876,17 +877,31 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
+>  		VM_EVENT(kvm, 3, "%s", "ENABLE: DEA keywrapping support");
+>  		break;
+>  	case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
+> +		if (!test_kvm_facility(kvm, 76))
+> +			return -EINVAL;
+>  		kvm->arch.crypto.aes_kw = 0;
+>  		memset(kvm->arch.crypto.crycb->aes_wrapping_key_mask, 0,
+>  			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
+>  		VM_EVENT(kvm, 3, "%s", "DISABLE: AES keywrapping support");
+>  		break;
+>  	case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
+> +		if (!test_kvm_facility(kvm, 76))
+> +			return -EINVAL;
+>  		kvm->arch.crypto.dea_kw = 0;
+>  		memset(kvm->arch.crypto.crycb->dea_wrapping_key_mask, 0,
+>  			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
+>  		VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
+>  		break;
+> +	case KVM_S390_VM_CRYPTO_ENABLE_APIE:
+> +		if (!ap_instructions_available()) {
+> +			mutex_unlock(&kvm->lock);
+> +			return -EOPNOTSUPP;
+> +		}
+> +		kvm->arch.crypto.apie = 1;
+> +		break;
+> +	case KVM_S390_VM_CRYPTO_DISABLE_APIE:
+> +		kvm->arch.crypto.apie = 0;
+> +		break;
+>  	default:
+>  		mutex_unlock(&kvm->lock);
+>  		return -ENXIO;
+> @@ -1493,6 +1508,8 @@ static int kvm_s390_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
+>  		case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
+>  		case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
+>  		case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
+> +		case KVM_S390_VM_CRYPTO_ENABLE_APIE:
+> +		case KVM_S390_VM_CRYPTO_DISABLE_APIE:
 
-What kind of restrictions do we have here?  Really to a fixed list of
-standard modes?
+As also replied to the QEMU series, could we indicate
+KVM_S390_VM_CRYPTO_ENABLE_APIE (and maybe
+KVM_S390_VM_CRYPTO_DISABLE_APIE) only with ap_instructions_available(),
+so we can avoid the additional KVM_S390_VM_CPU_FEAT_AP?
 
-Some testing (kaby lake) indicates y axis has no restrictions and x axis
-gets rounded up to the next multiple of 8 pixels (32 bytes), maybe to
-align scanlines with cachelines?
+KVM_S390_VM_CPU_FEAT_AP is right now completely unused in KVM otherwise
+(never checked, we only care about apie).
 
-Oh, and btw:  Seems the resolution restriction (to 1024x768 for the
-smallest vgpu type) seems to not be enforced.  Intentional?
+-- 
 
-cheers,
-  Gerd
+Thanks,
 
+David / dhildenb
