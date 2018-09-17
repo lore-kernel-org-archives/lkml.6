@@ -6,100 +6,101 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FE7ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFA9ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 506C12088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506C12088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F66A2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:57:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F66A2088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbeIQTYR (ORCPT
+        id S1728669AbeIQTYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:24:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53538 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726894AbeIQTYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:24:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 32697AC9C;
-        Mon, 17 Sep 2018 13:56:48 +0000 (UTC)
-Subject: Re: [PATCH 4/5] scsi: libsas: check the ata device status by
- ata_dev_enabled()
-To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
-        jejb@linux.vnet.ibm.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        john.garry@huawei.com, zhaohongjiang@huawei.com,
-        dan.j.williams@intel.com, jthumshirn@suse.de, hch@lst.de,
-        huangdaode@hisilicon.com, chenxiang66@hisilicon.com,
-        miaoxie@huawei.com, Ewan Milne <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>
-References: <20180912082946.34814-1-yanaijie@huawei.com>
- <20180912082946.34814-5-yanaijie@huawei.com>
-From:   Hannes Reinecke <hare@suse.com>
-Message-ID: <d9c96aca-3761-7fce-a5c8-2b7061900f6b@suse.com>
-Date:   Mon, 17 Sep 2018 15:56:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180912082946.34814-5-yanaijie@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 17 Sep 2018 15:24:39 -0400
+Received: from shell.v3.sk ([90.176.6.54]:48089 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727870AbeIQTYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:24:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id C02BCB008C;
+        Mon, 17 Sep 2018 15:57:08 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Ffr7XtYo9rPZ; Mon, 17 Sep 2018 15:57:06 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id D6DA8B9213;
+        Mon, 17 Sep 2018 15:57:05 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id rke2S47klGeU; Mon, 17 Sep 2018 15:57:05 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2BBDCB008C;
+        Mon, 17 Sep 2018 15:57:05 +0200 (CEST)
+Message-ID: <5044b51a472137b534ed852aa90c5f617801dd11.camel@v3.sk>
+Subject: Re: [PATCH] irqchip/mmp: use cpu_is_pj4() instead of CONFIG_CPU_MMP2
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Date:   Mon, 17 Sep 2018 15:57:05 +0200
+In-Reply-To: <20180910121306.168536-1-lkundrak@v3.sk>
+References: <20180910121306.168536-1-lkundrak@v3.sk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 10:29 AM, Jason Yan wrote:
-> When ata device IDENTIFY failed, the ata device status is
-> ATA_DEV_UNKNOWN. The libata reported like:
+On Mon, 2018-09-10 at 14:13 +0200, Lubomir Rintel wrote:
+> CONFIG_CPU_MMP2 is not there on multiplatform kernels with
+> MACH_MMP2_DT.
+> The MMP2 platform uses the PJ4 CPU.
+
+Actually, this patch breaks the DT-only build.
+
+Please ignore it, sorry for the noise.
+
+Lubo
+
 > 
-> [113518.620433] ata5.00: qc timeout (cmd 0xec)
-> [113518.653646] ata5.00: failed to IDENTIFY (I/O error, err_mask=0x4)
-> 
-> But libsas verifies the device status by ata_dev_disabled(), which
-> skiped ATA_DEV_UNKNOWN. This will make libsas think the ata device
-> probing succeed the device cannot be actually brought up. And even the
-> new bcast of this device will be considered as flutter and will not
-> probe this device again.
-> 
-> Change ata_dev_disabled() to !ata_dev_enabled() so that libsas can
-> deal with this if the ata device probe failed. New bcasts can let us
-> try to probe the device again and bring it up if it is fine to
-> IDENTIFY.
-> 
-> Tested-by: Zhou Yupeng <zhouyupeng1@huawei.com>
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> CC: John Garry <john.garry@huawei.com>
-> CC: Johannes Thumshirn <jthumshirn@suse.de>
-> CC: Ewan Milne <emilne@redhat.com>
-> CC: Christoph Hellwig <hch@lst.de>
-> CC: Tomas Henzl <thenzl@redhat.com>
-> CC: Dan Williams <dan.j.williams@intel.com>
-> CC: Hannes Reinecke <hare@suse.com>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
->  drivers/scsi/libsas/sas_ata.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/irqchip/irq-mmp.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-> index 64a958a99f6a..4f6cdf53e913 100644
-> --- a/drivers/scsi/libsas/sas_ata.c
-> +++ b/drivers/scsi/libsas/sas_ata.c
-> @@ -654,7 +654,7 @@ void sas_probe_sata(struct asd_sas_port *port)
->  		/* if libata could not bring the link up, don't surface
->  		 * the device
->  		 */
-> -		if (ata_dev_disabled(sas_to_ata_dev(dev)))
-> +		if (!ata_dev_enabled(sas_to_ata_dev(dev)))
->  			sas_fail_probe(dev, __func__, -ENODEV);
->  	}
+> diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+> index 25f32e1d7764..10aa2b553145 100644
+> --- a/drivers/irqchip/irq-mmp.c
+> +++ b/drivers/irqchip/irq-mmp.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
 >  
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+> +#include <asm/cputype.h>
+>  #include <asm/exception.h>
+>  #include <asm/hardirq.h>
+>  
+> @@ -74,11 +75,11 @@ static void icu_mask_ack_irq(struct irq_data *d)
+>  		r |= data->conf_disable;
+>  		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
+>  	} else {
+> -#ifdef CONFIG_CPU_MMP2
+> -		if ((data->virq_base == data->clr_mfp_irq_base)
+> -			&& (hwirq == data->clr_mfp_hwirq))
+> -			mmp2_clear_pmic_int();
+> -#endif
+> +		if (cpu_is_pj4()) {
+> +			if ((data->virq_base == data->clr_mfp_irq_base)
+> +				&& (hwirq == data->clr_mfp_hwirq))
+> +				mmp2_clear_pmic_int();
+> +		}
+>  		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
+>  		writel_relaxed(r, data->reg_mask);
+>  	}
 
-Cheers,
-
-Hannes
