@@ -2,97 +2,104 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD30ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C89ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A195214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A195214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 53FD32086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nXi2PlJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FD32086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbeIRCHk (ORCPT
+        id S1728504AbeIRCJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:07:40 -0400
-Received: from mga03.intel.com ([134.134.136.65]:54925 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbeIRCHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:07:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 13:38:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
-   d="scan'208";a="264314567"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Sep 2018 13:38:17 -0700
-Received: from orsmsx151.amr.corp.intel.com ([169.254.7.211]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.237]) with mapi id 14.03.0319.002;
- Mon, 17 Sep 2018 13:38:16 -0700
-From:   "Walker, Benjamin" <benjamin.walker@intel.com>
-To:     "Howell, Seth" <seth.howell@intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "monis@mellanox.com" <monis@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Index: AQHUNB7X7okyqfuXp0e3kpEuk2f+WqTB4cuAgAAKaQCAATczAIAGhGQAgCvyAwA=
-Date:   Mon, 17 Sep 2018 20:38:16 +0000
-Message-ID: <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
-References: <20180814223303.83556-1-seth.howell@intel.com>
-         <20180815225021.GB31799@ziepe.ca>
-         <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
-         <20180816180126.GB10507@ziepe.ca>
-         <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
-In-Reply-To: <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.18.124.203]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4EB06C1CD1EA7E4AABC32B88DFC0AD6E@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 17 Sep 2018 22:09:07 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43746 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728009AbeIRCJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:09:07 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 38-v6so2251257plc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONHY698AS4/lgMtGINXgaFx6XR7w8BK1UatJF0epUrM=;
+        b=nXi2PlJB7qyPxeONGWKy9hJqhkLksTwPNZkqfoBGJFtm9olmGMc5DEazk7ACjh+v5G
+         BwY5G1EE1LusukOgyWGnV1jS07DSr4zDoikQLs0DihK9h0EYvjz4hrLYti6SuNL+vqrL
+         UK9T8K3hFmyfbaFU9/FV6fUWpjRr9kXYSk6hg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONHY698AS4/lgMtGINXgaFx6XR7w8BK1UatJF0epUrM=;
+        b=DBtHf7Ins7E0iLNKRvjv5EA+J6gerwAO7yAnbixExs0qXKtqHtfj9BF7XQ8WV56dw2
+         ort5dFNXrhkMllOuJKmPVnrqa13N93FELFo8bG8LjO9btkmt5XzukX7lmlF8hWJ+h43t
+         49JNzrMwV5siEgJDuo7yZ1lp+L3JJ2RZ0jzxvlZu+bd60gZ+eIiwO7CfW0biE7YE40D8
+         KGeSkEq0ao8zHz5TJ7cQKwRKcu47ZbUm+qqaIXvMyoItar6whmoo8Yj40rDw9BMtHFNj
+         JKnV4OQFn6JpriWWmDwqkMQ/TQv9hvfqd/WPf16T3mf3faKrwInxELpknvTdDFyiIlpd
+         5FLg==
+X-Gm-Message-State: APzg51D0tSjVHCD4yo+p+S4w8rLu2dPeOlazysVMENNLOApOEdp6pRp7
+        ueNDcxkQgBl45XgUrhXYoowiQS+Kqw4=
+X-Google-Smtp-Source: ANB0VdZNWoMQ2Aqm2+h5gADQxKMwqmhpOLj0teYdZ5lm4WXd2HCj6FXAXzGpwFHEbBoOb/4EaEvE3A==
+X-Received: by 2002:a17:902:ba86:: with SMTP id k6-v6mr5410290pls.84.1537216809697;
+        Mon, 17 Sep 2018 13:40:09 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id g25-v6sm26858002pfd.23.2018.09.17.13.40.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 13:40:08 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH v2 0/2] qcom: remove memcpy()ing from cmd-db driver
+Date:   Mon, 17 Sep 2018 13:40:05 -0700
+Message-Id: <20180917204007.250862-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA4LTIwIGF0IDE0OjMyIC0wNzAwLCBIb3dlbGwsIFNldGggd3JvdGU6DQo+
-IEhpIEphc29uLA0KPiANCj4gSSBhcG9sb2dpemUgZm9yIHRoZSBmZXcgZGF5cyBvZiByYWRpbyBz
-aWxlbmNlIG9uIHRoaXMgb25lLiBJIHdhcyBhYmxlIHRvIGFwcGx5DQo+IHlvdXIgcGF0Y2ggb24g
-bXkgbG9jYWwgY29uZmlndXJhdGlvbiBhbmQgY2FuIGNvbmZpcm0gdGhhdCBpdCBmaXhlcyB0aGUg
-aXNzdWUNCj4gb2Ygc2VuZCB3aXRoIGludmFsaWRhdGUgYmVpbmcgaW1wcm9wZXJseSBtYXBwZWQg
-YmV0d2VlbiBhIHVzZXItc3BhY2UgcHJvY2Vzcw0KPiBhbmQgdGhlIGtlcm5lbCByeGUgZHJpdmVy
-Lg0KPiANCj4gVGhhbmtzIGFnYWluIGZvciB5b3VyIHRpbWUgYW5kIGhlbHAuDQo+IA0KPiBTZXRo
-IEhvd2VsbA0KPiANCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgt
-cmRtYS1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzoNCj4gbGludXgtcmRtYS1vd25lckB2
-Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBKYXNvbiBHdW50aG9ycGUNCj4gU2VudDogVGh1
-cnNkYXksIEF1Z3VzdCAxNiwgMjAxOCAxMTowMSBBTQ0KPiBUbzogSG93ZWxsLCBTZXRoIDxzZXRo
-Lmhvd2VsbEBpbnRlbC5jb20+DQo+IENjOiBXYWxrZXIsIEJlbmphbWluIDxiZW5qYW1pbi53YWxr
-ZXJAaW50ZWwuY29tPjsgRG91ZyBMZWRmb3JkIDwNCj4gZGxlZGZvcmRAcmVkaGF0LmNvbT47IGxp
-bnV4LXJkbWFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-IDsgTW9uaSBTaG91YSA8bW9uaXNAbWVsbGFub3guY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-XSByZG1hOiBtb3ZlIHRoZSBpYl93cl9vcGNvZGUgZW51bSB0byBpbmNsdWRlL3VhcGkNCj4gDQo+
-IE9uIFdlZCwgQXVnIDE1LCAyMDE4IGF0IDExOjI3OjM2UE0gKzAwMDAsIEhvd2VsbCwgU2V0aCB3
-cm90ZToNCj4gDQo+ID4gVGhhbmsgeW91IGZvciB0YWtpbmcgdGhlIHRpbWUgdG8gcmV2aWV3IHRo
-aXMgaXNzdWUuIFRoZSBwYXRjaCB5b3UgDQo+ID4gc3VibWl0dGVkIHdpbGwgZGVmaW5pdGVseSBm
-aXggdGhlIHByb2JsZW0gSSB3YXMgZmFjaW5nLg0KPiANCj4gQ2FuIHlvdSB0ZXN0IGl0IHRvIGJl
-IGNlcnRhaW4/DQo+IA0KPiBUaGFua3MsDQo+IEphc29uDQoNCldlJ3ZlIHJlY2VudGx5IHJ1biBp
-bnRvIHRoaXMgc2FtZSBpc3N1ZSBvbiBpNDBpdywgd2hpY2ggYXBwZWFycyB0byBtYWtlIHRoZSBz
-YW1lDQptaXN0YWtlIG9mIHVzaW5nIHRoZSBrZXJuZWwgdmVyc2lvbiBvZiB0aGUgZW51bSBpbnN0
-ZWFkIG9mIHRoZSB1c2Vyc3BhY2UNCnZlcnNpb24uIFRoaXMgcHJvcG9zZWQgcGF0Y2ggd2lsbCBh
-ZGRyZXNzIGl0IHRoZXJlIHRvby4gV2hhdCdzIHRoZSBjdXJyZW50DQpzdGF0dXMgaGVyZT8gQ2Fu
-IGl0IGJlIG1lcmdlZD8gSSBqdXN0IGNoZWNrZWQgYW5kIGRvIG5vdCBzZWUgaXQgbWVyZ2VkIHRv
-IExpbnV4DQptYXN0ZXIuDQoNClJ1bm5pbmcgYSB1c2VyLXNwYWNlIE5WTWUtb0YgdGFyZ2V0IHdp
-dGggUkRNQSBhbmQgYSByZWNlbnQgTGludXgga2VybmVsDQppbml0aWF0b3IgaXMgbm90IGN1cnJl
-bnRseSBwb3NzaWJsZSBvbiByeGUgb3IgaTQwaXcgYmVjYXVzZSBpdCByZXF1aXJlcyBzZW5kDQp3
-aXRoIGludmFsaWRhdGUgc3VwcG9ydC4NCg0KVGhhbmtzLA0KQmVuDQoNCg==
+Some changes to the cmd-db code to not do any more copying
+of memory. Instead, we'll just hand out pointers to things
+inside cmd-db. 
+
+Changes from v1:
+ * Fixed patch#2 for GPU wreckage
+
+Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Cc: Lina Iyer <ilina@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Evan Green <evgreen@chromium.org>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
+
+Stephen Boyd (2):
+  soc: qcom: cmd-db: Remove memcpy()ing from cmd_db_get_header()
+  soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()
+
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 34 +++++-----
+ drivers/soc/qcom/cmd-db.c             | 93 +++++++++------------------
+ include/soc/qcom/cmd-db.h             | 12 +---
+ 3 files changed, 49 insertions(+), 90 deletions(-)
+
+-- 
+Sent by a computer through tubes
+
