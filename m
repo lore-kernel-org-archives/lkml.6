@@ -3,43 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF140ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2C4ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B842146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B842146D
+	by mail.kernel.org (Postfix) with ESMTP id D4967214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4967214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732412AbeIRElB (ORCPT
+        id S1732425AbeIRElG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:41:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50562 "EHLO
+        Tue, 18 Sep 2018 00:41:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50570 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIRElB (ORCPT
+        with ESMTP id S1731765AbeIRElF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:41:01 -0400
+        Tue, 18 Sep 2018 00:41:05 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EB74707;
-        Mon, 17 Sep 2018 23:11:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BAC7707;
+        Mon, 17 Sep 2018 23:11:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 091/158] perf build: Fix installation directory for eBPF
-Date:   Tue, 18 Sep 2018 00:42:01 +0200
-Message-Id: <20180917211715.438633357@linuxfoundation.org>
+Subject: [PATCH 4.18 074/158] uio: fix possible circular locking dependency
+Date:   Tue, 18 Sep 2018 00:41:44 +0200
+Message-Id: <20180917211714.682812666@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -57,147 +51,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-[ Upstream commit 83868bf71d2eb7700b37f1ea188007f0125e4ee4 ]
+[ Upstream commit b34e9a15b37b8ddbf06a4da142b0c39c74211eb4 ]
 
-The perf tool build and install is controlled via a Makefile. The
-'install' rule creates directories and copies files. Among them are
-header files installed in /usr/lib/include/perf/bpf/.
+The call trace:
+XXX/1910 is trying to acquire lock:
+ (&mm->mmap_sem){++++++}, at: [<ffffffff97008c87>] might_fault+0x57/0xb0
 
-However all listed examples are installing its header files in
+but task is already holding lock:
+ (&idev->info_lock){+.+...}, at: [<ffffffffc0638a06>] uio_write+0x46/0x130 [uio]
 
-  /usr/lib/<tool-name>/...[/include]/header.h
+which lock already depends on the new lock.
 
-and not in
+the existing dependency chain (in reverse order) is:
 
-  /usr/lib/include/<tool-name>/.../header.h.
+-> #1 (&idev->info_lock){+.+...}:
+       [<ffffffff96f31fc9>] lock_acquire+0x99/0x1e0
+       [<ffffffff975edad3>] mutex_lock_nested+0x93/0x410
+       [<ffffffffc063873d>] uio_mmap+0x2d/0x170 [uio]
+       [<ffffffff97016b58>] mmap_region+0x428/0x650
+       [<ffffffff97017138>] do_mmap+0x3b8/0x4e0
+       [<ffffffff96ffaba3>] vm_mmap_pgoff+0xd3/0x120
+       [<ffffffff97015261>] SyS_mmap_pgoff+0x1f1/0x270
+       [<ffffffff96e387c2>] SyS_mmap+0x22/0x30
+       [<ffffffff975ff315>] system_call_fastpath+0x1c/0x21
 
-Background information:
+-> #0 (&mm->mmap_sem){++++++}:
+       [<ffffffff96f30e9c>] __lock_acquire+0xdac/0x15f0
+       [<ffffffff96f31fc9>] lock_acquire+0x99/0x1e0
+       [<ffffffff97008cb4>] might_fault+0x84/0xb0
+       [<ffffffffc0638a74>] uio_write+0xb4/0x130 [uio]
+       [<ffffffff9706ffa3>] vfs_write+0xc3/0x1f0
+       [<ffffffff97070e2a>] SyS_write+0x8a/0x100
+       [<ffffffff975ff315>] system_call_fastpath+0x1c/0x21
 
-Building the Fedora 28 glibc RPM on s390x and s390 fails on s390 (gcc
--m31) as gcc is not able to find header-files like stdbool.h.
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+       CPU0                    CPU1
+       ----                    ----
+  lock(&idev->info_lock);
+                               lock(&mm->mmap_sem);
+                               lock(&idev->info_lock);
+  lock(&mm->mmap_sem);
 
-In the glibc.spec file, you can see that glibc is configured with
-"--with-headers". In this case, first -nostdinc is added to the CFLAGS
-and then further include paths are added via -isystem.  One of those
-paths should contain header files like stdbool.h.
+ *** DEADLOCK ***
+1 lock held by XXX/1910:
+ #0:  (&idev->info_lock){+.+...}, at: [<ffffffffc0638a06>] uio_write+0x46/0x130 [uio]
 
-In order to get this path, gcc is invoked with:
+stack backtrace:
+CPU: 0 PID: 1910 Comm: XXX Kdump: loaded Not tainted #1
+Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+Call Trace:
+ [<ffffffff975e9211>] dump_stack+0x19/0x1b
+ [<ffffffff975e260a>] print_circular_bug+0x1f9/0x207
+ [<ffffffff96f2f6a7>] check_prevs_add+0x957/0x960
+ [<ffffffff96f30e9c>] __lock_acquire+0xdac/0x15f0
+ [<ffffffff96f2fb19>] ? mark_held_locks+0xb9/0x140
+ [<ffffffff96f31fc9>] lock_acquire+0x99/0x1e0
+ [<ffffffff97008c87>] ? might_fault+0x57/0xb0
+ [<ffffffff97008cb4>] might_fault+0x84/0xb0
+ [<ffffffff97008c87>] ? might_fault+0x57/0xb0
+ [<ffffffffc0638a74>] uio_write+0xb4/0x130 [uio]
+ [<ffffffff9706ffa3>] vfs_write+0xc3/0x1f0
+ [<ffffffff9709349c>] ? fget_light+0xfc/0x510
+ [<ffffffff97070e2a>] SyS_write+0x8a/0x100
+ [<ffffffff975ff315>] system_call_fastpath+0x1c/0x21
 
-- on Fedora 28 (with 4.18 kernel):
-
-  $ gcc -print-file-name=include
-  /usr/lib/gcc/s390x-redhat-linux/8/include
-  $ gcc -m31 -print-file-name=include
-  /usr/lib/gcc/s390x-redhat-linux/8/../../../../lib/include
-  => If perf is installed, this is: /usr/lib/include
-  On my machine this directory is only containing the directory "perf".
-  If perf is not installed gcc returns: /usr/lib/gcc/s390x-redhat-linux/8/include
-
-- on Ubuntu 18.04 (with 4.15 kernel):
-
-  $ gcc  -print-file-name=include
-  /usr/lib/gcc/s390x-linux-gnu/7/include
-  $ gcc -m31 -print-file-name=include
-  /usr/lib/gcc/s390x-linux-gnu/7/include
-  => gcc returns the correct path even if perf is installed.
-
-In each case, the introduction of the subdirectory /usr/lib/include
-leads to the regression that one can not build the glibc RPM for s390
-anymore as gcc can not find headers like stdbool.h.
-
-To remedy this install bpf.h to /usr/lib/perf/include/bpf/bpf.h
-
-Output before using the command 'perf test -Fv 40':
-
-  echo '...[bpf-program-source]...' | /usr/bin/clang ... \
-		   -I/root/lib/include/perf/bpf ...
-                               ^^^^^^^^^^^^
-...
-  [root@p23lp27 perf]# perf test -F 40
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : Ok
-  [root@p23lp27 perf]#
-
-Output after using command 'perf test -Fv 40':
-
-  echo '...[bpf-program-source]...' | /usr/bin/clang ... \
-		 -I/root/lib/perf/include/bpf ...
-                             ^^^^^^^^^^^^
-...
-  [root@p23lp27 perf]# perf test -F 40
-  40: BPF filter                                            :
-  40.1: Basic BPF filtering                                 : Ok
-  40.2: BPF pinning                                         : Ok
-  40.3: BPF prologue generation                             : Ok
-  40.4: BPF relocation checker                              : Ok
-  [root@p23lp27 perf]#
-
-Committer testing:
-
-While the above 'perf test -F 40' (or 'perf test bpf') will allow us
-to see that the correct path is now added via -I, to actually test this
-we better try to use a bpf script that includes files in the changed
-directory.
-
-We have the files that now reside in /root/lib/perf/examples/bpf/ to do
-just that:
-
-  # tail -8 /root/lib/perf/examples/bpf/5sec.c
-  #include <bpf.h>
-
-  int probe(hrtimer_nanosleep, rqtp->tv_sec)(void *ctx, int err, long sec)
-  {
-	  return sec == 5;
-  }
-
-  license(GPL);
-  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 4
-       0.333 (4000.086 ms): sleep/9248 nanosleep(rqtp: 0x7ffc155f3300) = 0
-  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 5
-       0.287 (         ): sleep/9659 nanosleep(rqtp: 0x7ffeafe38200) ...
-       0.290 (         ): perf_bpf_probe:hrtimer_nanosleep:(ffffffff9911efe0) tv_sec=5
-       0.287 (5000.059 ms): sleep/9659  ... [continued]: nanosleep()) = 0
-  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 6
-       0.247 (5999.951 ms): sleep/10068 nanosleep(rqtp: 0x7fff2086d900) = 0
-  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 5.987
-       0.293 (         ): sleep/10489 nanosleep(rqtp: 0x7ffdd4fc10e0) ...
-       0.296 (         ): perf_bpf_probe:hrtimer_nanosleep:(ffffffff9911efe0) tv_sec=5
-       0.293 (5986.912 ms): sleep/10489  ... [continued]: nanosleep()) = 0
-  #
-
-Suggested-by: Stefan Liebler <stli@linux.ibm.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Fixes: 1b16fffa389d ("perf llvm-utils: Add bpf include path to clang command line")
-Link: http://lkml.kernel.org/r/20180731073254.91090-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/Makefile.config |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/uio/uio.c |   16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -905,8 +905,8 @@ bindir = $(abspath $(prefix)/$(bindir_re
- mandir = share/man
- infodir = share/info
- perfexecdir = libexec/perf-core
--perf_include_dir = lib/include/perf
--perf_examples_dir = lib/examples/perf
-+perf_include_dir = lib/perf/include
-+perf_examples_dir = lib/perf/examples
- sharedir = $(prefix)/share
- template_dir = share/perf-core/templates
- STRACE_GROUPS_DIR = share/perf-core/strace/groups
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -622,6 +622,12 @@ static ssize_t uio_write(struct file *fi
+ 	ssize_t retval;
+ 	s32 irq_on;
+ 
++	if (count != sizeof(s32))
++		return -EINVAL;
++
++	if (copy_from_user(&irq_on, buf, count))
++		return -EFAULT;
++
+ 	mutex_lock(&idev->info_lock);
+ 	if (!idev->info) {
+ 		retval = -EINVAL;
+@@ -633,21 +639,11 @@ static ssize_t uio_write(struct file *fi
+ 		goto out;
+ 	}
+ 
+-	if (count != sizeof(s32)) {
+-		retval = -EINVAL;
+-		goto out;
+-	}
+-
+ 	if (!idev->info->irqcontrol) {
+ 		retval = -ENOSYS;
+ 		goto out;
+ 	}
+ 
+-	if (copy_from_user(&irq_on, buf, count)) {
+-		retval = -EFAULT;
+-		goto out;
+-	}
+-
+ 	retval = idev->info->irqcontrol(idev->info, irq_on);
+ 
+ out:
 
 
