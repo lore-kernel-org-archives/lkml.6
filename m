@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C75ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B140ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E15C2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E15C2146F
+	by mail.kernel.org (Postfix) with ESMTP id 05FFA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FFA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731515AbeIREhD (ORCPT
+        id S1731525AbeIREhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:37:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49774 "EHLO
+        Tue, 18 Sep 2018 00:37:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49780 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbeIREhC (ORCPT
+        with ESMTP id S1727344AbeIREhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:37:02 -0400
+        Tue, 18 Sep 2018 00:37:05 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DB1DC49;
-        Mon, 17 Sep 2018 23:07:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FCFFC77;
+        Mon, 17 Sep 2018 23:07:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.18 002/158] i2c: i801: fix DNVs SMBCTRL register offset
-Date:   Tue, 18 Sep 2018 00:40:32 +0200
-Message-Id: <20180917211710.572864339@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.18 020/158] Btrfs: fix data corruption when deduplicating between different files
+Date:   Tue, 18 Sep 2018 00:40:50 +0200
+Message-Id: <20180917211711.769840046@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,47 +51,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 851a15114895c5bce163a6f2d57e0aa4658a1be4 upstream.
+commit de02b9f6bb65a6a1848f346f7a3617b7a9b930c0 upstream.
 
-DNV's iTCO is slightly different with SMBCTRL sitting at a different
-offset when compared to all other devices. Let's fix so that we can
-properly use iTCO watchdog.
+If we deduplicate extents between two different files we can end up
+corrupting data if the source range ends at the size of the source file,
+the source file's size is not aligned to the filesystem's block size
+and the destination range does not go past the size of the destination
+file size.
 
-Fixes: 84d7f2ebd70d ("i2c: i801: Add support for Intel DNV")
-Cc: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Example:
+
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount /dev/sdb /mnt
+
+  $ xfs_io -f -c "pwrite -S 0x6b 0 2518890" /mnt/foo
+  # The first byte with a value of 0xae starts at an offset (2518890)
+  # which is not a multiple of the sector size.
+  $ xfs_io -c "pwrite -S 0xae 2518890 102398" /mnt/foo
+
+  # Confirm the file content is full of bytes with values 0x6b and 0xae.
+  $ od -t x1 /mnt/foo
+  0000000 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
+  *
+  11467540 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b ae ae ae ae ae ae
+  11467560 ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae
+  *
+  11777540 ae ae ae ae ae ae ae ae
+  11777550
+
+  # Create a second file with a length not aligned to the sector size,
+  # whose bytes all have the value 0x6b, so that its extent(s) can be
+  # deduplicated with the first file.
+  $ xfs_io -f -c "pwrite -S 0x6b 0 557771" /mnt/bar
+
+  # Now deduplicate the entire second file into a range of the first file
+  # that also has all bytes with the value 0x6b. The destination range's
+  # end offset must not be aligned to the sector size and must be less
+  # then the offset of the first byte with the value 0xae (byte at offset
+  # 2518890).
+  $ xfs_io -c "dedupe /mnt/bar 0 1957888 557771" /mnt/foo
+
+  # The bytes in the range starting at offset 2515659 (end of the
+  # deduplication range) and ending at offset 2519040 (start offset
+  # rounded up to the block size) must all have the value 0xae (and not
+  # replaced with 0x00 values). In other words, we should have exactly
+  # the same data we had before we asked for deduplication.
+  $ od -t x1 /mnt/foo
+  0000000 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
+  *
+  11467540 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b ae ae ae ae ae ae
+  11467560 ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae
+  *
+  11777540 ae ae ae ae ae ae ae ae
+  11777550
+
+  # Unmount the filesystem and mount it again. This guarantees any file
+  # data in the page cache is dropped.
+  $ umount /dev/sdb
+  $ mount /dev/sdb /mnt
+
+  $ od -t x1 /mnt/foo
+  0000000 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b
+  *
+  11461300 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 00 00 00 00 00
+  11461320 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  *
+  11470000 ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae ae
+  *
+  11777540 ae ae ae ae ae ae ae ae
+  11777550
+
+  # The bytes in range 2515659 to 2519040 have a value of 0x00 and not a
+  # value of 0xae, data corruption happened due to the deduplication
+  # operation.
+
+So fix this by rounding down, to the sector size, the length used for the
+deduplication when the following conditions are met:
+
+  1) Source file's range ends at its i_size;
+  2) Source file's i_size is not aligned to the sector size;
+  3) Destination range does not cross the i_size of the destination file.
+
+Fixes: e1d227a42ea2 ("btrfs: Handle unaligned length in extent_same")
+CC: stable@vger.kernel.org # 4.2+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/btrfs/ioctl.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -139,6 +139,7 @@
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3463,6 +3463,25 @@ static int btrfs_extent_same_range(struc
  
- #define SBREG_BAR		0x10
- #define SBREG_SMBCTRL		0xc6000c
-+#define SBREG_SMBCTRL_DNV	0xcf000c
- 
- /* Host status bits for SMBPCISTS */
- #define SMBPCISTS_INTS		BIT(3)
-@@ -1396,7 +1397,11 @@ static void i801_add_tco(struct i801_pri
- 	spin_unlock(&p2sb_spinlock);
- 
- 	res = &tco_res[ICH_RES_MEM_OFF];
--	res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
-+	if (pci_dev->device == PCI_DEVICE_ID_INTEL_DNV_SMBUS)
-+		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL_DNV;
-+	else
-+		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
+ 		same_lock_start = min_t(u64, loff, dst_loff);
+ 		same_lock_len = max_t(u64, loff, dst_loff) + len - same_lock_start;
++	} else {
++		/*
++		 * If the source and destination inodes are different, the
++		 * source's range end offset matches the source's i_size, that
++		 * i_size is not a multiple of the sector size, and the
++		 * destination range does not go past the destination's i_size,
++		 * we must round down the length to the nearest sector size
++		 * multiple. If we don't do this adjustment we end replacing
++		 * with zeroes the bytes in the range that starts at the
++		 * deduplication range's end offset and ends at the next sector
++		 * size multiple.
++		 */
++		if (loff + olen == i_size_read(src) &&
++		    dst_loff + len < i_size_read(dst)) {
++			const u64 sz = BTRFS_I(src)->root->fs_info->sectorsize;
 +
- 	res->end = res->start + 3;
- 	res->flags = IORESOURCE_MEM;
++			len = round_down(i_size_read(src), sz) - loff;
++			olen = len;
++		}
+ 	}
  
+ again:
 
 
