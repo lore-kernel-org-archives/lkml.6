@@ -3,40 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0021ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DD0ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B6E214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B6E214DA
+	by mail.kernel.org (Postfix) with ESMTP id D72562146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72562146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbeIREbZ (ORCPT
+        id S1730325AbeIREb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48364 "EHLO
+        Tue, 18 Sep 2018 00:31:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48368 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREbZ (ORCPT
+        with ESMTP id S1727088AbeIREb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:25 -0400
+        Tue, 18 Sep 2018 00:31:29 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F032C77;
-        Mon, 17 Sep 2018 23:01:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC8FBC03;
+        Mon, 17 Sep 2018 23:02:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pierre Morel <pmorel@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.14 011/126] KVM: s390: vsie: copy wrapping keys to right place
-Date:   Tue, 18 Sep 2018 00:40:59 +0200
-Message-Id: <20180917211705.298273504@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.14 012/126] KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
+Date:   Tue, 18 Sep 2018 00:41:00 +0200
+Message-Id: <20180917211705.388847469@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -54,38 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre Morel <pmorel@linux.ibm.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 204c97245612b6c255edf4e21e24d417c4a0c008 upstream.
+commit c4409905cd6eb42cfd06126e9226b0150e05a715 upstream.
 
-Copy the key mask to the right offset inside the shadow CRYCB
+Re-execution after an emulation decode failure is only intended to
+handle a case where two or vCPUs race to write a shadowed page, i.e.
+we should never re-execute an instruction as part of MMIO emulation.
+As handle_ept_misconfig() is only used for MMIO emulation, it should
+pass EMULTYPE_NO_REEXECUTE when using the emulator to skip an instr
+in the fast-MMIO case where VM_EXIT_INSTRUCTION_LEN is invalid.
 
-Fixes: bbeaa58b3 ("KVM: s390: vsie: support aes dea wrapping keys")
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Cc: stable@vger.kernel.org # v4.8+
-Message-Id: <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+And because the cr2 value passed to x86_emulate_instruction() is only
+destined for use when retrying or reexecuting, we can simply call
+emulate_instruction().
+
+Fixes: d391f1207067 ("x86/kvm/vmx: do not use vm-exit instruction length
+                      for fast MMIO when running nested")
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kvm/vsie.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -170,7 +170,8 @@ static int shadow_crycb(struct kvm_vcpu
- 		return set_validity_icpt(scb_s, 0x0039U);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6965,8 +6965,8 @@ static int handle_ept_misconfig(struct k
+ 		if (!static_cpu_has(X86_FEATURE_HYPERVISOR))
+ 			return kvm_skip_emulated_instruction(vcpu);
+ 		else
+-			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
+-						       NULL, 0) == EMULATE_DONE;
++			return emulate_instruction(vcpu, EMULTYPE_SKIP) ==
++								EMULATE_DONE;
+ 	}
  
- 	/* copy only the wrapping keys */
--	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
-+	if (read_guest_real(vcpu, crycb_addr + 72,
-+			    vsie_page->crycb.dea_wrapping_key_mask, 56))
- 		return set_validity_icpt(scb_s, 0x0035U);
- 
- 	scb_s->ecb3 |= ecb3_flags;
+ 	ret = kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
 
 
