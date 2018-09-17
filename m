@@ -2,82 +2,73 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB80ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC053ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771DF214DC
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:42:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771DF214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 75832214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:43:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75832214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbeIQWKq (ORCPT
+        id S1728761AbeIQWL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 18:10:46 -0400
-Received: from sauhun.de ([88.99.104.3]:37546 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727736AbeIQWKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:10:46 -0400
-Received: from localhost (i577B9641.versanet.de [87.123.150.65])
-        by pokefinder.org (Postfix) with ESMTPSA id F09992CE416;
-        Mon, 17 Sep 2018 18:42:35 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 18:42:35 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Korsgaard <peter@korsgaard.com>
-Cc:     Federico Vaga <federico.vaga@cern.ch>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Korsgaard <jacmet@sunsite.dk>
-Subject: Re: i2c:ocores: fixes and polling mechanism
-Message-ID: <20180917164235.GB1082@kunai>
-References: <20180625161303.7991-1-federico.vaga@cern.ch>
- <5011687.103nMUzm2u@harkonnen>
- <20180812153400.GA1010@kunai>
- <8760022x77.fsf@dell.be.48ers.dk>
+        Mon, 17 Sep 2018 18:11:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12592 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728455AbeIQWL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 18:11:56 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BC6361BA55BCB;
+        Tue, 18 Sep 2018 00:43:42 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 18 Sep 2018 00:43:41 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <michael.chan@broadcom.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: bnxt: Fix a uninitialized variable warning.
+Date:   Tue, 18 Sep 2018 00:31:23 +0800
+Message-ID: <1537201883-2518-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
-Content-Disposition: inline
-In-Reply-To: <8760022x77.fsf@dell.be.48ers.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix the following compile warning:
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c:49:5: warning: nvm_param.dir_type may be used uninitialized in this function [-Wmaybe-uninitialized]
+  if (nvm_param.dir_type == BNXT_NVM_PORT_CFG)
 
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Thanks! I'll take a look at the patches now.
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+index f3b9fbc..ab88217 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+@@ -31,7 +31,7 @@ static int bnxt_hwrm_nvm_req(struct bnxt *bp, u32 param_id, void *msg,
+ {
+ 	struct hwrm_nvm_get_variable_input *req = msg;
+ 	void *data_addr = NULL, *buf = NULL;
+-	struct bnxt_dl_nvm_param nvm_param;
++	struct bnxt_dl_nvm_param nvm_param = {0};
+ 	int bytesize, idx = 0, rc, i;
+ 	dma_addr_t data_dma_addr;
+ 
+-- 
+1.7.12.4
 
-Ping :)
-
-
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluf2XsACgkQFA3kzBSg
-KbaiSBAAgCGWJXLkvzG545mw40PHCWZVFWPxGRDYen9W9uDLpmQkFEVZNbq5pflp
-/K3vN95jHYeHn4P1ixQ+hHQE2gJfBNaK0u++tlSqEYFoAo7gGApIh4ooeCeWS1fo
-mPBoQXHYNuvSDewzQsVp4j9RWt2rubvOmQUNvNltMqnNAb/LAj7RUccUAm4IM2tx
-xC24hLqmDCWIQrvNkfb5T9tp7ssBdOiJ6pga1e8InNyM5PYAEx/kgqtPM/w21udg
-NGrPQnUktlbSzrFQIAsncXK/ZpadERvxVre0K5nTZ6wRPWfj+3l7o49BJtCTgTWR
-hrDdjfJIA2WCJgbHsJOoTDdByqdUCFRje/8STRmLsndSjLLgCU8xQBP+4c4LMyXk
-mWnBfUqexw/3BH4fnEJRzagEa67p/4deI6tMPkfQDXkujZ2wZAYyzF8sm/u/z6HX
-lc9tgOep1TFxcEDzBd2/BtuqxZnz4BeQBsdARQVFAnlbmRebK9fCWlbY8RVgizqJ
-ucsJhb8FMtm67jsImbXsOSocPXdSsMeo4iXwMUTpr3cyCiv8C8q0hX+IMQBmcJd7
-9nLNtiSxtSf/oKFpSzgjZoUgUVZYTrRQfb+lXUUuJ6tVOIeZcKuNP6bjnb3VbDmp
-goo4f5xd6qGrmloQV5XOaTjye/g1FZ2NxCpSOW72PAT8fCvKekk=
-=gJye
------END PGP SIGNATURE-----
-
---7iMSBzlTiPOCCT2k--
