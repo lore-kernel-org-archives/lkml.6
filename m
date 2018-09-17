@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78786ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54588ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 331C62146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331C62146F
+	by mail.kernel.org (Postfix) with ESMTP id 164BC2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 164BC2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731362AbeIREgR (ORCPT
+        id S1731374AbeIREgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:36:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49564 "EHLO
+        Tue, 18 Sep 2018 00:36:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49574 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728677AbeIREgQ (ORCPT
+        with ESMTP id S1728677AbeIREgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:16 -0400
+        Tue, 18 Sep 2018 00:36:20 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED90DC49;
-        Mon, 17 Sep 2018 23:06:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1EB8FC49;
+        Mon, 17 Sep 2018 23:06:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrei Vagin <avagin@virtuozzo.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        syzbot+87c3c541582e56943277@syzkaller.appspotmail.com,
+        Ian Kent <raven@themaw.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.14 124/126] tuntap: fix use after free during release
-Date:   Tue, 18 Sep 2018 00:42:52 +0200
-Message-Id: <20180917211712.100481625@linuxfoundation.org>
+Subject: [PATCH 4.14 125/126] autofs: fix autofs_sbi() does not check super block type
+Date:   Tue, 18 Sep 2018 00:42:53 +0200
+Message-Id: <20180917211712.156565386@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,50 +55,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Ian Kent <raven@themaw.net>
 
-commit 7063efd33bb15abc0160347f89eb5aba6b7d000e upstream.
+commit 0633da48f0793aeba27f82d30605624416723a91 upstream.
 
-After commit b196d88aba8a ("tun: fix use after free for ptr_ring") we
-need clean up tx ring during release(). But unfortunately, it tries to
-do the cleanup blindly after socket were destroyed which will lead
-another use-after-free. Fix this by doing the cleanup before dropping
-the last reference of the socket in __tun_detach().
+autofs_sbi() does not check the superblock magic number to verify it has
+been given an autofs super block.
 
-Backport Note :-
-Upstream commit moves the ptr_ring_cleanup call from tun_chr_close to
-__tun_detach. Upstream applied that patch after replacing skb_array with
-ptr_ring. This patch moves the skb_array_cleanup call from
-tun_chr_close to __tun_detach.
+Backport Note: autofs4 has been renamed to autofs upstream. As a result
+the upstream patch does not apply cleanly onto 4.14.y.
 
-Reported-by: Andrei Vagin <avagin@virtuozzo.com>
-Acked-by: Andrei Vagin <avagin@virtuozzo.com>
-Fixes: b196d88aba8a ("tun: fix use after free for ptr_ring")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/153475422934.17131.7563724552005298277.stgit@pluto.themaw.net
+Reported-by: <syzbot+87c3c541582e56943277@syzkaller.appspotmail.com>
+Signed-off-by: Ian Kent <raven@themaw.net>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/autofs4/autofs_i.h |    4 +++-
+ fs/autofs4/inode.c    |    1 -
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -575,6 +575,7 @@ static void __tun_detach(struct tun_file
- 			    tun->dev->reg_state == NETREG_REGISTERED)
- 				unregister_netdevice(tun->dev);
- 		}
-+		skb_array_cleanup(&tfile->tx_array);
- 		sock_put(&tfile->sk);
- 	}
- }
-@@ -2646,7 +2647,6 @@ static int tun_chr_close(struct inode *i
- 	struct tun_file *tfile = file->private_data;
+--- a/fs/autofs4/autofs_i.h
++++ b/fs/autofs4/autofs_i.h
+@@ -26,6 +26,7 @@
+ #include <linux/list.h>
+ #include <linux/completion.h>
+ #include <asm/current.h>
++#include <linux/magic.h>
  
- 	tun_detach(tfile, true);
--	skb_array_cleanup(&tfile->tx_array);
+ /* This is the range of ioctl() numbers we claim as ours */
+ #define AUTOFS_IOC_FIRST     AUTOFS_IOC_READY
+@@ -124,7 +125,8 @@ struct autofs_sb_info {
  
- 	return 0;
+ static inline struct autofs_sb_info *autofs4_sbi(struct super_block *sb)
+ {
+-	return (struct autofs_sb_info *)(sb->s_fs_info);
++	return sb->s_magic != AUTOFS_SUPER_MAGIC ?
++		NULL : (struct autofs_sb_info *)(sb->s_fs_info);
  }
+ 
+ static inline struct autofs_info *autofs4_dentry_ino(struct dentry *dentry)
+--- a/fs/autofs4/inode.c
++++ b/fs/autofs4/inode.c
+@@ -14,7 +14,6 @@
+ #include <linux/pagemap.h>
+ #include <linux/parser.h>
+ #include <linux/bitops.h>
+-#include <linux/magic.h>
+ #include "autofs_i.h"
+ #include <linux/module.h>
+ 
 
 
