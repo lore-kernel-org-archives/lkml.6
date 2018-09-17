@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 554BFECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E0CECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB72214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975B9214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="KAaHveVc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB72214C5
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="aKTRPW3f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975B9214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbeIQTM3 (ORCPT
+        id S1728693AbeIQTMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:12:29 -0400
-Received: from mail-by2nam03on0067.outbound.protection.outlook.com ([104.47.42.67]:10656
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 15:12:33 -0400
+Received: from mail-sn1nam02on0045.outbound.protection.outlook.com ([104.47.36.45]:21120
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727375AbeIQTMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:12:23 -0400
+        id S1728637AbeIQTMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:12:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RbR3fLzO92FLbnn0FpatGAZw4MgV1t8PyiVaoNMXrYk=;
- b=KAaHveVcvoFh1hDf+H/gD5kOGNRu9+9lDn3LBIS3thqK+1NKmA736a580dhSXgyBaxLKBrjoNSPRHyFULgJfIxxuByOKnUcjZ2eX4aHKCbCfm6G5RqDuqrjDRMxe6C2qXvivH23nlyb1ss3r6oBKy6HwGwNmguHS42bb/OD8/KY=
-Received: from MWHPR0201CA0041.namprd02.prod.outlook.com
- (2603:10b6:301:73::18) by SN6PR02MB5118.namprd02.prod.outlook.com
- (2603:10b6:805:68::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.15; Mon, 17 Sep
- 2018 13:44:54 +0000
-Received: from SN1NAM02FT013.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::208) by MWHPR0201CA0041.outlook.office365.com
- (2603:10b6:301:73::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
- Transport; Mon, 17 Sep 2018 13:44:53 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ bh=QZ3NeCBybdN9/05ncCfixJY8fgpgVOMpej2+0X+NoZM=;
+ b=aKTRPW3f0rc9XKJR9WOMt3lPq/WzQbcmt0qVkWpov31+zT5P5xvD7yh+eSf45jNysZyt9TklorO1XDpF1uL/tgjnhKVT/2Cn08FtLOC14R+Db/Yf+zXvYe2cT2P8Rj7dISa9F4RiDfoqd8nQk0G9g1IAaSiuuju3JEMLLJcjHTs=
+Received: from MWHPR0201CA0011.namprd02.prod.outlook.com
+ (2603:10b6:301:74::24) by BYAPR02MB4472.namprd02.prod.outlook.com
+ (2603:10b6:a03:10::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.17; Mon, 17 Sep
+ 2018 13:45:04 +0000
+Received: from SN1NAM02FT041.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::203) by MWHPR0201CA0011.outlook.office365.com
+ (2603:10b6:301:74::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.18 via Frontend
+ Transport; Mon, 17 Sep 2018 13:45:04 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT013.mail.protection.outlook.com (10.152.72.98) with Microsoft SMTP
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT041.mail.protection.outlook.com (10.152.72.217) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1164.13
- via Frontend Transport; Mon, 17 Sep 2018 13:44:53 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:51777 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+ via Frontend Transport; Mon, 17 Sep 2018 13:45:03 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1g1tpc-0000bS-NA; Mon, 17 Sep 2018 06:44:52 -0700
+        id 1g1tpn-0004kP-3Q; Mon, 17 Sep 2018 06:45:03 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1g1tpX-00056M-ID; Mon, 17 Sep 2018 06:44:47 -0700
-Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8HDihRg028455;
-        Mon, 17 Sep 2018 06:44:43 -0700
+        id 1g1tph-00057c-W3; Mon, 17 Sep 2018 06:44:58 -0700
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8HDisqn024422;
+        Mon, 17 Sep 2018 06:44:54 -0700
 Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <mnarani@xilinx.com>)
-        id 1g1tpS-00054e-S0; Mon, 17 Sep 2018 06:44:43 -0700
+        id 1g1tpd-00057M-Qq; Mon, 17 Sep 2018 06:44:54 -0700
 Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
-        id 1338A12142C; Mon, 17 Sep 2018 19:14:42 +0530 (IST)
+        id 0BAFF12142C; Mon, 17 Sep 2018 19:14:53 +0530 (IST)
 From:   Manish Narani <manish.narani@xilinx.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
         <mchehab@kernel.org>, <michal.simek@xilinx.com>,
@@ -77,9 +77,9 @@ CC:     <sgoud@xilinx.com>, <anirudh@xilinx.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-edac@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v6 1/6] edac: synopsys: Fix code comments and naming convention
-Date:   Mon, 17 Sep 2018 19:14:28 +0530
-Message-ID: <1537191873-6582-2-git-send-email-manish.narani@xilinx.com>
+Subject: [PATCH v6 6/6] edac: synopsys: Add Error Injection support for ZynqMP DDRC
+Date:   Mon, 17 Sep 2018 19:14:33 +0530
+Message-ID: <1537191873-6582-7-git-send-email-manish.narani@xilinx.com>
 X-Mailer: git-send-email 2.1.1
 In-Reply-To: <1537191873-6582-1-git-send-email-manish.narani@xilinx.com>
 References: <1537191873-6582-1-git-send-email-manish.narani@xilinx.com>
@@ -88,434 +88,541 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39850400004)(2980300002)(438002)(199004)(189003)(106002)(336012)(63266004)(316002)(51416003)(76176011)(42186006)(2906002)(16586007)(44832011)(11346002)(446003)(6666003)(5660300001)(48376002)(90966002)(103686004)(8676002)(126002)(2616005)(50466002)(7049001)(186003)(110136005)(486006)(54906003)(36386004)(2201001)(52956003)(14444005)(106466001)(5024004)(476003)(305945005)(72206003)(356003)(4326008)(36756003)(426003)(6266002)(81156014)(8936002)(50226002)(47776003)(26005)(81166006)(478600001)(107986001)(5001870100001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5118;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT013;1:PBMa10QbYxk4/iS9LUuHnJYlVCPanPvwEGsZ6YTie9FTU5cOT5DJ6sYZ14v5/6HX6AAV68VUBqIMLBRvqnP6zOmHjcrN0Q6UFYZ4XlbrKBD0nzDW6gp7pDpiEAT4nWmE
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(136003)(2980300002)(438002)(199004)(189003)(5660300001)(316002)(305945005)(6266002)(44832011)(26005)(72206003)(42186006)(2201001)(478600001)(4326008)(103686004)(50226002)(8936002)(8676002)(90966002)(186003)(14444005)(2906002)(106002)(51416003)(76176011)(110136005)(486006)(446003)(476003)(126002)(2616005)(54906003)(16586007)(52956003)(356003)(36386004)(11346002)(426003)(336012)(7049001)(106466001)(63266004)(36756003)(81166006)(81156014)(6666003)(50466002)(47776003)(48376002)(107986001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4472;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT041;1:nGRd60wwgAviSf21kNOvK3aFKkWtltmlHC1JLoU9wu/TjwyOXDSfBpTNzg1ZV8MC7FTMAGuCC8uZtxQeL3yUsc+NEbxF8y7Y/hdxYtDjdOH/ncy1kcI9Y9CTe0r5o1/U
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c762a234-efc3-4981-0ea9-08d61ca3bf63
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB5118;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5118;3:PsqM0LdcwAOyX3r+l68yrCoCbYSmWy4FCL6naChrhoeT4qzVQLSXT6riud89EFBFWhe6ge16odf+Ejps0rZ/oLF1omK3AgpyGSozch9zLXOJto3DyZE+u8H12dIYl5+qxRGxssJ8HWb0hHJ0DcS3Du4ZPIC6qu4Dd9tFDD92Eiko85juk51rJX916NONCbjOKi4xblZ6asuiS5UQT4HLAAVM4NxZLyejgXon9Nn12WOqjIwF8gpJzuEMK7auUUmP3kW29H2T7+sA4WyHzY3NDMa2Ei/rZKv1atosR5qLeVqIkO7Yalji/wWJjtunKDgcopsPT5JnBnpt+TwBCI5AAPTeZNNEtbl+hIoMLEGzbl8=;25:D1szb7KcNhAD/cY+xIFVXMwfRGgm/uZ2czPP7AKPale1cPkNOa5wAM3Oxd7q7S1CmMhF75GjE9XjNuV1Mu50FAuHa0Som76CPJW56c5y9jg+CFi8e8VX5eek5ghmEheCPRR4UcAHnDqNXb5Xiuod7R/q2TqmvPLxxRixZbCrLw8MPdPYISX5YcUhAy5ypc3yceoYaw/jIT3tUaQt8uAF3M7ptQ/uiJ0JYM6Pini962HNBuVZTgmRmcJa36ZDSW/PqksiB4O7HTyKpBXP0Xd2fiS65S6CBK7hYh7PVr045aSduuU2KAihp9T/2tcuMDZ0ulGrvBT7EYviXNiKN/R0Ag==
-X-MS-TrafficTypeDiagnostic: SN6PR02MB5118:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5118;31:PJU/FOeqAgO41PbZ5WEgPQYRCnwT6z7BWUlnh2ncElk+ElgD0fU/EpG4MB7/3xqw/INng3ctZ8TufHJuOCZq0jFQSes/uZTKTItpkLzxDcBIR5aNQ/j1ST1yTy2/knzEHo02dkGZGlizcQL9VmjSSvJXEx6VK9WZ5KbDPXIHUeMnfiKf6p00soSLCFm5eMX7O/XdjX+pMx49aX/31IoRjVKGkXqEqAR4wueUh/Y9Y8Y=;20:6U0niNos1vQ1lxP0IphXhKInFtiCGEpqh6XOT+0ucfv3sdVmGccz9/VujE0ss6+OOLuYAk6CON1H2QWLN41TFyO8torLKJ5WNGtHbNGBi2tV7rNfkrQhHwyne9/Iy0ZeMsPM2dE950Kh8H5QmwBCIzZNeLbAjv9FSGQxwiNY+YqRIQcXfDsu4TueCe9nNeb4KQfSgtgfzUYd1VUU3EIXUQ8tzepQMeFMlKESh6vqaLItexYA3o4xy64cOdATiRIYuv5InsBzE9rZPwKTFdPhePWUn7QkMVP02tULUGjbD2Q+lu2mpBuuFVOlHSNEav/9plA1e1JHkjDnKlsZa98zZyMNmhnnuISUloG8QZKrTOj4k7aKohOinnIgfAWndQzZBQ/FKV5NENJtHYzexlAPb+mIY8sOKfXnED3GB06Wrr8h8Dqz5U6Fo9Kr+FjoCTrPcZKTzvI6FaUoOwxVRZdGci7eylyXgrCb8TUxVIkrXvaK5rdFzMFYwfMNO/aLxZdK
+X-MS-Office365-Filtering-Correlation-Id: c8996f4d-aa74-4451-d9d5-08d61ca3c5a1
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB4472;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;3:xp5K6DUPFtRIJLA0JhjOS0METYmMyvg+soi7ScxbtcUj71v0tTBrcQHCkhniaj/o/N4T2FW6x4EPynReX4XMLTK6ubI7yItYBVfF1ImKVB7+oxxCaw2WTGreWTyzupMMN3Nh9K//0z/0gf+qjsxfCNNA3uEGk3caWDqhrOTzSci9NMHJIs/t9T1KD2PjYQG1jvKH7CSp3aZ5vEd4gFtK8irgYAWb5UdnkkR/U+EEHQHo8zuh2o6Au8WhyFEZS6x+UvIF+74EdbQJcQgL1Wfg5f4qqcboXYr42IoV3iZ+B+FIJ5kQmLh75CYz/QBGFBbYY8aw+l8IttawdwTu5Ss5OtJ3CJ+wsKFlM+w1S4w7Ysk=;25:GPeNoG9M8OU4vD5hXxphJndbvUFVVs+t0+PhyTHc3E6DJPXR6whiislyMW1pPCeuL+t4AZtXaxveQSCKHA8GK6A5ljFOCzmyvPua9kBWyX1/LKO83pZdeP6yaaoSQQ5Bf0r+U0sWvChgEa+sUeOyw+cMr0RVGJa7oGF/aYXpqrUYAC6x89P66qWSsUNgXeZ+nU4JTV4MwgBa9CYg5+eBMPQkXevtfu36hXJUSm+AsJOeJO8jTdbztuAyQHaXskNuFpM9/r+XpLzMSyusNeu03r+D1xceuNp+Bnr3mUmnx23pbgWsC1/10ihJGT6HYwNZVsGvpKANF7obZZ/YXGgjhg==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4472:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;31:CiBTOd4FZYiSNB+rnjBf//zbeA321ihnBtO2UpLfluOP/DvG/tJBq2tdSgVmVIbwe1TU4tsVHno4tAM/BsDBvy7CsFp+79XPLJRA4R1vNXwfxERYxLwfUyxKWLC7gbp52OIWU4HWDnaCsmLQRz6II6ApV8IZJYwK1x7gj2ndOo92g4kCG6oHFlb3Ul6YCm1TNDK7CBVK2Hzu+IV7qwQDdZkGv9iNA2zZTg/SWsJE1R8=;20:UMZxon3dVbWNGZKDquZy0FfETXeihFn/vKn4IINvitkeqplHhoJVnWFSpE5jjv33B/L9kdZLT6x4pFjJhzXfOBNziZyBDhPQq5E2r3XdZP5/uw9XqPz7dJedqTg+nAtywVMhJLu1XKUwIlmeITZFygsUDl6iWMUkti6mvT9ekkIdK5dII7401/w3/7mJHSr/9ykLOFf5S8KTn2ycfdut3jj2DzehHA8U/urfEVh2ZFh3KZlBkeIovzcgio2Sq4lL6Y1De6QK76fwlJMfoJSQhjq4phshS2shj8WP0PYJK5bpllbERTEB5QXQRqcaAlGaXxd+iZ+Ge4nUCZUniu56ijf/AEp+pBnmi6kbDcOInrC1fTYtQTf9DW+tlR9IFgQp5tjCc28FizJa6yQB2jHc1DAsGmnLX5m2ggFT0h+V0Oc4gJ7ELedZPTf5cQgwDwUPt8tNmCKthafclVZDmkFOFrQIJfOVVTG/Nzfzp8M7IDvyf607oIp9nZlDuIWv1Y4r
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB51187FD626318E05266197ADC11E0@SN6PR02MB5118.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(105169848403564)(163750095850);
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4472E14A3F31B620126360E1C11E0@BYAPR02MB4472.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(105169848403564);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(93006095)(93004095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050);SRVR:SN6PR02MB5118;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB5118;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5118;4:Fy1+n2X7WgCA7IXcxo1GBET4CtzcKoDKVxKnG7+TsEFpykSBZG0JW4kjonFfq5oV4P7S7Woy+pL9VYnziBNyRFLqQ3IyJY0A6Uhs5ARl/p9imzQpXFP/gKUB2tgJZUIcqRCjuDvSwU8vA0IsPeVbx3gGUhKJxSk1Fn7xgv5wb+sjpbB9m5iMdIpC/KsQ7zGS7Efctcz5w6+CNwooJS52ZSY4wEvbQrVWPl1Ge5jfjtyJmi5dATYC4LJpFd/NKiG65JVTC/iHIv2cThUeqfikDgK1PMEIA957qk5QFBpbJ0Dd+Kg+BlMYLvlq3CEpG8HTr/SzK4eVpREzyy+UJbllUjGcKXXcpVQPdksLqoHNccOe00G2Q+5tSP7uKWP+5pJC
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93004095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:BYAPR02MB4472;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4472;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;4:iGbg7vGq3e/m3HXVfM1VwJVn8DYitHomLV/Uz3kCIgk063/tdVsEsSlU6hXn59/SefSZj6hJO4gb9I85xxAM1vpozr9NYi68BmAcgSpTM2goxFoZfG5SZlFYwKRo7v2c+8eoHd2cEhMaxnSsOeBcmu6gqhc2gvsddJAmM1VwLEoCAFhsW3xfmrpQW9mvrDEKPgTUsxReUEbXpp+hTMdM+FT4V1BUYYeWTw/7r9a/XHAdbJFOdFkm9+TDH6Hb+AC/GtKUevuxy8zV5BWEUZYYSQl4ZaKH+7LjMPQfIlwtv5jWrrkY3DMCL+XMIOYadwpFNlIUWW7GAQ4EG6DMN2phG8mxaDB8uxN0F4d4EKYO44U=
 X-Forefront-PRVS: 0798146F16
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB5118;23:iIVTmnGwmITZt5DpXST9FxpB//FzHVOSqCohTG5j3?=
- =?us-ascii?Q?yzbUmChVHXijnJ9NzcjQlkX/xIwSf0mbsAhMu/0rJyhYbjzog79bTdV3cPka?=
- =?us-ascii?Q?DZzIORNdhhyb7HYhE8RJaaDjdUn0KMN/p8KwEju+2G5Pv32DFs0Kzno/z111?=
- =?us-ascii?Q?5BXGGW3ffwRmZgOw7e0lOUt7QJFLOjiI7yk0ajFU5OcN8DVKSFn8hMJBGEDj?=
- =?us-ascii?Q?rPk8h8PCABfjneI844B8yMyS4kGyTRkkI+mgAxx7RlXtsvWWAlpxXF4Cep1i?=
- =?us-ascii?Q?Hm0aJGYikxc2b079zQdfLFBp5OQWXdxgwAptBryCTsLZXnF5xTwWRlHGmLIa?=
- =?us-ascii?Q?JXIKWSsBLLP+fwxCVlje6GRWypyzABRnFNWtv6CZF1yt9YsV/2JR0BPusegI?=
- =?us-ascii?Q?OzNDaRRrbVEyOVVLxx8XIaKSz6OJvFr5U9fK6r6VFN9MLBDQRW73uoA7jF7x?=
- =?us-ascii?Q?Qs+9++9aNCwS9tMVuBjViRPvYzo9qWH21T1jqiFJ3FhNlIbbQo9l97Qc8QNk?=
- =?us-ascii?Q?1nytLAB7T51Tx//TbGV/r9b3h5AhXJTP63SKPJMa99JX4QaqdQvZChFXheQd?=
- =?us-ascii?Q?TZg5V0VxkiavKFZbpnXvPPBOkzCK8FWZXAATyQ8eicslhvwVcWyi0dAENxMl?=
- =?us-ascii?Q?EpcdMoFwEE/gayyf8JBM5YjKLOnVmNCBvkQpbcXZ5hBYgvGJ0bdKSP4dXSrA?=
- =?us-ascii?Q?HCjS6YRSxoMXIVBPe14uATY6DvzXKnLXUNnl2h0cEd2f6M/qDX3fEkTirnLM?=
- =?us-ascii?Q?0wV64yV7dJTBYxLI90QrwPTqVbHhgYNTCiDEx4rygNrLcazQ1ijfofoTV25a?=
- =?us-ascii?Q?fK+Io8POI0jxI3Iem5D8pP6UOV/xfvrvan/UDVvL0ThCFyrBg6n90EFIAJ2C?=
- =?us-ascii?Q?+VYPPL8SW+Z22akCpsYqA59py/xnYgYZAhbvwM0JKl/e4YvePWdtuJsYoJ0W?=
- =?us-ascii?Q?nbAzlFBK3v23oU1fCnRnZZ9Yhvwd5fyLYivZ9Rg3d+waF6mODn74fdb4toBr?=
- =?us-ascii?Q?24KGwLcmRk4kW+JxpUfLhuuOsqziQR8QUz4tgEZhGek+9XoSw+wOtpqBF2HR?=
- =?us-ascii?Q?L3Lzf9j+vIDzqlTGFsRZUdOWSBRlB5Hf0Bw26eaz4VWHCS/jQVfCp1a25hsK?=
- =?us-ascii?Q?rahkOCfx++dvRCchkK/M7G07EzRpnNHVVP96bZPwgyomZaXj8n0LAbtANKaO?=
- =?us-ascii?Q?iYW6sjPOk9cQfyW93NnI6ZDAGR8t2dbjQXw8Yk27Mq/5JdvLrMW1JVg4NTti?=
- =?us-ascii?Q?8GwbAZjm6gHvWTMTuKayDdaUAflGoWyxmakPnMJyvVek6DHSq+TcyeD5jXXm?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Antispam-Message-Info: QMkORVSrDZdRK7WeNQPU0j/DUcSBiT1fuoaMc4edwgcrrUtiOmdSClxJh5znwNKxrSks4u+wp/zb+cupm35KSrI86DgraiCkOMwUvyfImeMEZUBKL33W3GG+WybHhMd2+kzo2/kY+l65v/EhZztq0fNsYWeToemsoBIOEhukAmfDrnbPiALKmq0jfBjya7/Zo6ds4OTJXXjVz+CJETBLxWf2ET8AWlVlPO4HEB0X2gmfllLtPHUfaA95IR3OXmmIMBWWhev7ck3Hfl/MfJw6RAEI4RNdem35KkR7Pa9iVgkR+P1i/urO3GfnpafeEqRK4HpQULHgF5QDY+xx4nDDe1NcbHiSFIXemcTFT3I9b6E=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5118;6:sVSGs+XMEZQ6A9of9N7uoeMcoeswej6Pdbkkq1fORpK1pEd1zeNpYszjIeZUvVhsmXx+edRqhxiuTsCLAziPFqKHDs9qWgZbniWCXT+bEspxaRWu+U4C3HecXGzrEK1/l6uXZ6fouN9poi2tYzyyl9F668y9qwF6MpeLmukdGBgjHl/ic4snwJn7F/ci+mVRAv0cPhOAvOqNLQB/HLqJ1ATRqCP9I1YF/ss6LXkKq//YE1eF5bGO7nWLU6XnD71aE04hmZSHrkxEMJAGO04Tz04KQk5GVTG0oR5cRo1QTbg2corXJKnCAXGPoEZnUxAn/HKqq0KWaDcsQDnIoQFqQYTOKwh33zETIKOw0BfmvvqYidyJLCOA7GK1ueuf69R3u8nPxEWwzCo2vsGt16WTWX4O+2aNnQwT346fRzSJp08CoBzVgoZm22XjmwrvGcE+sjxNHqoLURTuwtXU4RmdQA==;5:O116FJglOsCA4QcdDXR+7EbHEOQ0vBmUI7rlyeuxJL2sfdRHnWf5tgXAfDn2pKWvBzAOgv7ky6QarEnrc0E8S5lSqZko/9lPRYHzu31aZNms30idB4XMa2hozfVhInb+dzIR4CSxa8ctw+0SbrU7FSe+hSGU/DBzxefsjGNwnNc=;7:rJhcRTam0WQxXo+E8hO2S73Qldfk5fOVl493kUvXHJBluLEscVH4yTHDeIhx+YI+yd75b6CQrqSem+M4h69VDJd+lgZ40CTjl6DXqulhELoSnatj9OB3zWkN1oE6a+bUseG4F9C/UQWvJuvrgZYdhCtiUcUoDr+xt791cXx/607OlqerytPgLd7uIfCvWRT9HvOglzMCFKIPGJgtNjBtGwuGpwXchLUOpbrWtgV3bRyKGFjoedll6Tv9KeMaXUP4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4472;23:ygWMef6Td9aIrA3i9n1GBBht+WlwTAvC0Opvq4B4S?=
+ =?us-ascii?Q?NXyDwnmeVi4wTpGTt6jH+e5oQE4GE6ABiLrJ/E2RVpmnYJ8Mwl1X/CkJjVnu?=
+ =?us-ascii?Q?ysMMdOnQV3L4svq75Z26VmEFAReM+dcjgTHM9O1T4yBYK21Jyvd4r8+SEtgF?=
+ =?us-ascii?Q?9CmRBOAMC4fMFltILOcrG9nFso6t2UK5D6WZVr+I4vYnaOfydYINMSioa4u1?=
+ =?us-ascii?Q?+ZfSktCSnQC0po3czGum1n9KrABj4BWcAqFjk8tVYfup4cRgsvsFoXOboIQ5?=
+ =?us-ascii?Q?VVE4Uwisp5JraW9c8Ka32GjuTQwHoLHxSF6unK1kkNhb4jV3SRhMlmE6LlwW?=
+ =?us-ascii?Q?e52VYd9FJI308Pd6KDQQQY0G4zat3AK4vSMtHnMjDGnI2Odmc9BcYGTjWHPS?=
+ =?us-ascii?Q?GhnfMks4Fk47XllIQNlkjsjShj7mb9l37J/Ax8ZhGNceKn7coDuFWxV46sTm?=
+ =?us-ascii?Q?3d0ZgE3HMW6A9jSP0Yo2KikVwU9gEyI5zKm4UDAmta7ljzBIbuiMrjc/XZR1?=
+ =?us-ascii?Q?3IWHhmT5g0vXulncAx2BWDi3hdktantQPZPSbblDy34GL3LX3pzWALUav+A2?=
+ =?us-ascii?Q?+fnUXlCAWCgHISO8fd1bgMykm+4JHi0pGNZWSfz/YlXHCWizeww+IgrD+mtX?=
+ =?us-ascii?Q?c99rHB6qNeDu1vhrhTpItcK65PFCqNUK04DiNIA5J+CZwRAtVaRPLRRwEshs?=
+ =?us-ascii?Q?GK+RuQswEUHbyciqEKnhjHIhSVvz3rSyQQBBQhpvAKjHXNMGq4IqWKzHdPTr?=
+ =?us-ascii?Q?KLwfO5BjT+3M/DnTIAkeHsYLrsgDBVLhnWQ1rICG18JcPtHLUHcHGQmoDymg?=
+ =?us-ascii?Q?H4W2nqQRHMTD5uabTPVqn9NSJxlj1oepLkTnXqId9/Vx6FKnXbaogwXOYSip?=
+ =?us-ascii?Q?J+wLBaeBo1YP8Gdl0P+/VnPYx+M+xWIH9Vmj8tqS3hlArmvyoz0MlKzWfE+z?=
+ =?us-ascii?Q?6SWdiZMkm0BrcPKEH+6iQuq4R206/bAkEA85VbnKYfkbt9kV1Yw+MC9M8HeB?=
+ =?us-ascii?Q?u5D2MrxRD3ry5hvYFQloy1nI3k177NKnvssW06QjmCGoprYmRgB2X3awdQ1u?=
+ =?us-ascii?Q?egtw9cpM0uoxKmqvlX2nffvZLeXm1go5mtnnkcBsYosYNeIKVsFQ+tGaIMN8?=
+ =?us-ascii?Q?yFs1yOmSuExDqSoxOJqnEpfPQHLZoE+luHFGTZW7ObXD44823TPWGoxYpzVs?=
+ =?us-ascii?Q?BFY7jtM49AwwmrdsRzYgGA4xN/kOItWDzIQLlZGZ1o1Worb4uv1+u6TTy9F4?=
+ =?us-ascii?Q?Zyy6gVLSgcgtftDAnU=3D?=
+X-Microsoft-Antispam-Message-Info: d7UxhtqC4k8t1LRJZxgN46Ec/nJ2JVQuagBEwRgQXd/bhgumJHWX7FNRcuUcGYlDXtaJeGhjfkvDgGvY5b/7fVkYFueuLko/cw4QpZAYk0cKu/5fwloMOBI5lvWr7UZrNPzPOsQMyCElaQeWMnFNLnxAD+idmH5hXe6xfuEXrahGwsBdC6ZrEevnrigfz+225ndhFMiYrW6sDLIg/zLWmxrNbtgFyza1s7v57qRQrjNjqml275SBoMfSKPZ3CkRLJfyg4kezxe5gWtO2YBxnwAyPU2Vs5+e9y+gjIoCFoWb1doQNP4FXbqXSdb4toeCE+uIIuQA8fFhjer/PDYl+ZQVRfLBApN9RhuXBZSWM/VI=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4472;6:iCyDFRB9CjIPhkT6T3PFhKPxZLlRqBDy9m5fyISvA2N9P529GVvrrPnPArc2JlMTAuzSly97RTxLoolyCh6dcbNe2cNzqJZ2RH5to1rYnrwvIqNzeSlO5djdaipxjBSIZJc9JuyXI4QsVPvBmjC/sXsaf38M1X44H7j7iHvIG4FQ8ZHrOvvJPzqiKwhBw4x8EZ077GMqZzpGU70YP04JEIJHRZtNOdX46jYxtNRceicLpJfFwLvpsWueO6vTqIS1lI6pcmwB/UnSs6NmCi/2LUOTICNkF5ymex+Y8bixAs2y6Sd8OBqD1WUp4fenbXJyTU2hT8KwCFSXH50cCsByo85Lb4K8poAb78WLt8RyEHVuRr2r9JeTe6JAHHDAtOCX+Nt7thFOd380b9Ue3IlknwSUExf74s7VpGTNEq/JnLWfQoHQgVVaxUkMcocQ5e9Q9zwH0yoUNDE0G0cAQg6fGg==;5:wiPZV5NyWe2T1wwwfYeHDW1RoezwtMtdrspkl0D2ewGFymjnSrywDlQl2Ayn0tpNPAhyl0Ra1WKsf2kCv/DRptYpIMvmSP+Lw9aAdRyj2qTbwWXkC/niQbgCrsHqiA2vWKFD+a4Ix9P5afwoc+qnZQRcwNZAlhritDccVXPqwcs=;7:Rbz91ogC9f44+SHy635s5nBweR78c6uH5eSRSt217/CZsAN5TuVw1UvlC8M2pfC/HpSJieIl28+/q6AhaZHrwH9f8q5cSeprRZrYrq8xm9Sse2DnGD+i0JvjDDYdX6AJDupePMJjuAJJn9zeslbt6tVkNqSk8XzmSYEgc5IVQUZ2gcMbqk0dOy339AVi6FiQEZxCxQIb919e18yfurZN0K1Oz7rPj1zKLZBRH4UYwZRSYWomyhP8F2oh6WOcYQNN
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 13:44:53.1315
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 13:45:03.5625
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c762a234-efc3-4981-0ea9-08d61ca3bf63
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8996f4d-aa74-4451-d9d5-08d61ca3c5a1
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5118
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4472
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the comments in the Synopsys EDAC driver. Minor changes to function
-names and return types are also included.
+Add support for Error Injection for ZynqMP DDRC IP. For injecting
+errors, the Row, Column, Bank, Bank Group and Rank bits positions are
+determined via Address Map registers of Synopsys DDRC.
 
 Signed-off-by: Manish Narani <manish.narani@xilinx.com>
 ---
- drivers/edac/synopsys_edac.c | 176 ++++++++++++++++++++-----------------------
- 1 file changed, 80 insertions(+), 96 deletions(-)
+ drivers/edac/synopsys_edac.c | 423 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 417 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
-index 0c9c59e..4963930 100644
+index 7ab5b9a..177b5c3 100644
 --- a/drivers/edac/synopsys_edac.c
 +++ b/drivers/edac/synopsys_edac.c
-@@ -96,12 +96,12 @@
- #define SCRUB_MODE_SECDED	0x4
+@@ -302,12 +302,18 @@ struct synps_ecc_status {
  
  /**
-- * struct ecc_error_info - ECC error log information
-- * @row:	Row number
-- * @col:	Column number
-- * @bank:	Bank number
-- * @bitpos:	Bit position
-- * @data:	Data causing the error
-+ * struct ecc_error_info - ECC error log information.
-+ * @row:	Row number.
-+ * @col:	Column number.
-+ * @bank:	Bank number.
-+ * @bitpos:	Bit position.
-+ * @data:	Data causing the error.
-  */
- struct ecc_error_info {
- 	u32 row;
-@@ -112,11 +112,11 @@ struct ecc_error_info {
- };
- 
- /**
-- * struct synps_ecc_status - ECC status information to report
-- * @ce_cnt:	Correctable error count
-- * @ue_cnt:	Uncorrectable error count
-- * @ceinfo:	Correctable error log information
-- * @ueinfo:	Uncorrectable error log information
-+ * struct synps_ecc_status - ECC status information to report.
-+ * @ce_cnt:	Correctable error count.
-+ * @ue_cnt:	Uncorrectable error count.
-+ * @ceinfo:	Correctable error log information.
-+ * @ueinfo:	Uncorrectable error log information.
-  */
- struct synps_ecc_status {
- 	u32 ce_cnt;
-@@ -126,12 +126,12 @@ struct synps_ecc_status {
- };
- 
- /**
-- * struct synps_edac_priv - DDR memory controller private instance data
-- * @baseaddr:	Base address of the DDR controller
-- * @message:	Buffer for framing the event specific info
-- * @stat:	ECC status information
-- * @ce_cnt:	Correctable Error count
-- * @ue_cnt:	Uncorrectable Error count
-+ * struct synps_edac_priv - DDR memory controller private instance data.
-+ * @baseaddr:	Base address of the DDR controller.
-+ * @message:	Buffer for framing the event specific info.
-+ * @stat:	ECC status information.
-+ * @ce_cnt:	Correctable Error count.
-+ * @ue_cnt:	Uncorrectable Error count.
+  * struct synps_edac_priv - DDR memory controller private instance data.
+- * @baseaddr:	Base address of the DDR controller.
+- * @message:	Buffer for framing the event specific info.
+- * @stat:	ECC status information.
+- * @p_data:	Platform data
+- * @ce_cnt:	Correctable Error count.
+- * @ue_cnt:	Uncorrectable Error count.
++ * @baseaddr:		Base address of the DDR controller.
++ * @message:		Buffer for framing the event specific info.
++ * @stat:		ECC status information.
++ * @p_data:		Platform data
++ * @ce_cnt:		Correctable Error count.
++ * @ue_cnt:		Uncorrectable Error count.
++ * @poison_addr:	Data poison address.
++ * @row_shift:		Bit shifts for row bit.
++ * @col_shift:		Bit shifts for column bit.
++ * @bank_shift:		Bit shifts for bank bit.
++ * @bankgrp_shift:	Bit shifts for bank group bit.
++ * @rank_shift:		Bit shifts for rank bit.
   */
  struct synps_edac_priv {
  	void __iomem *baseaddr;
-@@ -142,15 +142,13 @@ struct synps_edac_priv {
+@@ -316,6 +322,14 @@ struct synps_edac_priv {
+ 	const struct synps_platform_data *p_data;
+ 	u32 ce_cnt;
+ 	u32 ue_cnt;
++#ifdef CONFIG_EDAC_DEBUG
++	ulong poison_addr;
++	u32 row_shift[18];
++	u32 col_shift[14];
++	u32 bank_shift[3];
++	u32 bankgrp_shift[2];
++	u32 rank_shift[1];
++#endif
  };
  
  /**
-- * synps_edac_geterror_info - Get the current ecc error info
-- * @base:	Pointer to the base address of the ddr memory controller
-- * @p:		Pointer to the synopsys ecc status structure
-+ * edac_geterror_info - Get the current ECC error info.
-+ * @base:	Base address of the DDR memory controller.
-+ * @p:		Synopsys ECC status structure.
-  *
-- * Determines there is any ecc error or not
-- *
-- * Return: one if there is no error otherwise returns zero
-+ * Return: one if there is no error otherwise returns zero.
-  */
--static int synps_edac_geterror_info(void __iomem *base,
-+static int edac_geterror_info(void __iomem *base,
- 				    struct synps_ecc_status *p)
- {
- 	u32 regval, clearval = 0;
-@@ -172,7 +170,7 @@ static int synps_edac_geterror_info(void __iomem *base,
- 	p->ceinfo.col = regval & ADDR_COL_MASK;
- 	p->ceinfo.bank = (regval & ADDR_BANK_MASK) >> ADDR_BANK_SHIFT;
- 	p->ceinfo.data = readl(base + CE_DATA_31_0_OFST);
--	edac_dbg(3, "ce bit position: %d data: %d\n", p->ceinfo.bitpos,
-+	edac_dbg(3, "CE bit position: %d data: %d\n", p->ceinfo.bitpos,
- 		 p->ceinfo.data);
- 	clearval = ECC_CTRL_CLR_CE_ERR;
+@@ -842,7 +856,12 @@ static const struct synps_platform_data zynqmp_edac_def = {
+ 	.get_mtype	= zynqmp_get_mtype,
+ 	.get_dtype	= zynqmp_get_dtype,
+ 	.get_eccstate	= zynqmp_get_eccstate,
++#ifdef CONFIG_EDAC_DEBUG
++	.quirks		= (DDR_ECC_INTR_SUPPORT |
++			   DDR_ECC_DATA_POISON_SUPPORT),
++#else
+ 	.quirks		= DDR_ECC_INTR_SUPPORT,
++#endif
+ };
  
-@@ -196,13 +194,13 @@ static int synps_edac_geterror_info(void __iomem *base,
- }
+ static const struct of_device_id synps_edac_match[] = {
+@@ -861,6 +880,380 @@ static const struct of_device_id synps_edac_match[] = {
  
- /**
-- * synps_edac_handle_error - Handle controller error types CE and UE
-- * @mci:	Pointer to the edac memory controller instance
-- * @p:		Pointer to the synopsys ecc status structure
-+ * edac_handle_error - Handle controller error types CE and UE.
-+ * @mci:	EDAC memory controller instance.
-+ * @p:		Synopsys ECC status structure.
-  *
-- * Handles the controller ECC correctable and un correctable error.
-+ * Handles the controller ECC correctable and un-correctable error.
-  */
--static void synps_edac_handle_error(struct mem_ctl_info *mci,
-+static void edac_handle_error(struct mem_ctl_info *mci,
- 				    struct synps_ecc_status *p)
- {
- 	struct synps_edac_priv *priv = mci->pvt_info;
-@@ -232,38 +230,38 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
- }
+ MODULE_DEVICE_TABLE(of, synps_edac_match);
  
- /**
-- * synps_edac_check - Check controller for ECC errors
-- * @mci:	Pointer to the edac memory controller instance
-+ * edac_check - Check controller for ECC errors.
-+ * @mci:	EDAC memory controller instance.
-  *
-- * Used to check and post ECC errors. Called by the polling thread
-+ * Used to check and post ECC errors. Called by the polling thread.
-  */
--static void synps_edac_check(struct mem_ctl_info *mci)
-+static void edac_check(struct mem_ctl_info *mci)
- {
- 	struct synps_edac_priv *priv = mci->pvt_info;
- 	int status;
- 
--	status = synps_edac_geterror_info(priv->baseaddr, &priv->stat);
-+	status = edac_geterror_info(priv->baseaddr, &priv->stat);
- 	if (status)
- 		return;
- 
- 	priv->ce_cnt += priv->stat.ce_cnt;
- 	priv->ue_cnt += priv->stat.ue_cnt;
--	synps_edac_handle_error(mci, &priv->stat);
-+	edac_handle_error(mci, &priv->stat);
- 
--	edac_dbg(3, "Total error count ce %d ue %d\n",
-+	edac_dbg(3, "Total error count CE %d UE %d\n",
- 		 priv->ce_cnt, priv->ue_cnt);
- }
- 
- /**
-- * synps_edac_get_dtype - Return the controller memory width
-- * @base:	Pointer to the ddr memory controller base address
-+ * edac_get_dtype - Return the controller memory width.
-+ * @base:	DDR memory controller base address.
-  *
-  * Get the EDAC device type width appropriate for the current controller
-  * configuration.
-  *
-  * Return: a device type width enumeration.
-  */
--static enum dev_type synps_edac_get_dtype(const void __iomem *base)
-+static enum dev_type edac_get_dtype(const void __iomem *base)
- {
- 	enum dev_type dt;
- 	u32 width;
-@@ -286,20 +284,20 @@ static enum dev_type synps_edac_get_dtype(const void __iomem *base)
- }
- 
- /**
-- * synps_edac_get_eccstate - Return the controller ecc enable/disable status
-- * @base:	Pointer to the ddr memory controller base address
-+ * edac_get_eccstate - Return the controller ECC enable/disable status.
-+ * @base:	DDR memory controller base address.
-  *
-- * Get the ECC enable/disable status for the controller
-+ * Get the ECC enable/disable status for the controller.
-  *
-- * Return: a ecc status boolean i.e true/false - enabled/disabled.
-+ * Return: a ECC status boolean i.e true/false - enabled/disabled.
-  */
--static bool synps_edac_get_eccstate(void __iomem *base)
-+static bool edac_get_eccstate(void __iomem *base)
- {
-+	bool state = false;
- 	enum dev_type dt;
- 	u32 ecctype;
--	bool state = false;
- 
--	dt = synps_edac_get_dtype(base);
-+	dt = edac_get_dtype(base);
- 	if (dt == DEV_UNKNOWN)
- 		return state;
- 
-@@ -311,11 +309,11 @@ static bool synps_edac_get_eccstate(void __iomem *base)
- }
- 
- /**
-- * synps_edac_get_memsize - reads the size of the attached memory device
-+ * edac_get_memsize - reads the size of the attached memory device.
-  *
-- * Return: the memory size in bytes
-+ * Return: the memory size in bytes.
-  */
--static u32 synps_edac_get_memsize(void)
-+static u32 edac_get_memsize(void)
- {
- 	struct sysinfo inf;
- 
-@@ -325,15 +323,15 @@ static u32 synps_edac_get_memsize(void)
- }
- 
- /**
-- * synps_edac_get_mtype - Returns controller memory type
-- * @base:	pointer to the synopsys ecc status structure
-+ * edac_get_mtype - Returns controller memory type.
-+ * @base:	Synopsys ECC status structure.
-  *
-  * Get the EDAC memory type appropriate for the current controller
-  * configuration.
-  *
-  * Return: a memory type enumeration.
-  */
--static enum mem_type synps_edac_get_mtype(const void __iomem *base)
-+static enum mem_type edac_get_mtype(const void __iomem *base)
- {
- 	enum mem_type mt;
- 	u32 memtype;
-@@ -349,54 +347,47 @@ static enum mem_type synps_edac_get_mtype(const void __iomem *base)
- }
- 
- /**
-- * synps_edac_init_csrows - Initialize the cs row data
-- * @mci:	Pointer to the edac memory controller instance
-+ * edac_init_csrows - Initialize the cs row data.
-+ * @mci:	EDAC memory controller instance.
-  *
-  * Initializes the chip select rows associated with the EDAC memory
-- * controller instance
-- *
-- * Return: Unconditionally 0.
-+ * controller instance.
-  */
--static int synps_edac_init_csrows(struct mem_ctl_info *mci)
-+static void edac_init_csrows(struct mem_ctl_info *mci)
- {
++#ifdef CONFIG_EDAC_DEBUG
++#define to_mci(k) container_of(k, struct mem_ctl_info, dev)
++
++/**
++ * ddr_poison_setup -	Update poison registers.
++ * @priv:		DDR memory controller private instance data.
++ *
++ * Update poison registers as per DDR mapping.
++ * Return: none.
++ */
++static void ddr_poison_setup(struct synps_edac_priv *priv)
++{
++	int col = 0, row = 0, bank = 0, bankgrp = 0, rank = 0, regval;
++	int index;
++	ulong hif_addr = 0;
++
++	hif_addr = priv->poison_addr >> 3;
++
++	for (index = 0; index < DDR_MAX_ROW_SHIFT; index++) {
++		if (priv->row_shift[index])
++			row |= (((hif_addr >> priv->row_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_COL_SHIFT; index++) {
++		if (priv->col_shift[index] || index < 3)
++			col |= (((hif_addr >> priv->col_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_BANK_SHIFT; index++) {
++		if (priv->bank_shift[index])
++			bank |= (((hif_addr >> priv->bank_shift[index]) &
++						BIT(0)) << index);
++		else
++			break;
++	}
++
++	for (index = 0; index < DDR_MAX_BANKGRP_SHIFT; index++) {
++		if (priv->bankgrp_shift[index])
++			bankgrp |= (((hif_addr >> priv->bankgrp_shift[index])
++						& BIT(0)) << index);
++		else
++			break;
++	}
++
++	if (priv->rank_shift[0])
++		rank = (hif_addr >> priv->rank_shift[0]) & BIT(0);
++
++	regval = (rank << ECC_POISON0_RANK_SHIFT) & ECC_POISON0_RANK_MASK;
++	regval |= (col << ECC_POISON0_COLUMN_SHIFT) & ECC_POISON0_COLUMN_MASK;
++	writel(regval, priv->baseaddr + ECC_POISON0_OFST);
++
++	regval = (bankgrp << ECC_POISON1_BG_SHIFT) & ECC_POISON1_BG_MASK;
++	regval |= (bank << ECC_POISON1_BANKNR_SHIFT) & ECC_POISON1_BANKNR_MASK;
++	regval |= (row << ECC_POISON1_ROW_SHIFT) & ECC_POISON1_ROW_MASK;
++	writel(regval, priv->baseaddr + ECC_POISON1_OFST);
++}
++
++static ssize_t inject_data_error_show(struct device *dev,
++				      struct device_attribute *mattr,
++				      char *data)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
 +	struct synps_edac_priv *priv = mci->pvt_info;
- 	struct csrow_info *csi;
- 	struct dimm_info *dimm;
--	struct synps_edac_priv *priv = mci->pvt_info;
--	u32 size;
--	int row, j;
-+	u32 size, row;
-+	int j;
- 
- 	for (row = 0; row < mci->nr_csrows; row++) {
- 		csi = mci->csrows[row];
--		size = synps_edac_get_memsize();
-+		size = edac_get_memsize();
- 
- 		for (j = 0; j < csi->nr_channels; j++) {
--			dimm            = csi->channels[j]->dimm;
--			dimm->edac_mode = EDAC_FLAG_SECDED;
--			dimm->mtype     = synps_edac_get_mtype(priv->baseaddr);
--			dimm->nr_pages  = (size >> PAGE_SHIFT) / csi->nr_channels;
--			dimm->grain     = SYNPS_EDAC_ERR_GRAIN;
--			dimm->dtype     = synps_edac_get_dtype(priv->baseaddr);
-+			dimm		= csi->channels[j]->dimm;
-+			dimm->edac_mode	= EDAC_FLAG_SECDED;
-+			dimm->mtype	= edac_get_mtype(priv->baseaddr);
-+			dimm->nr_pages	= (size >> PAGE_SHIFT) / csi->nr_channels;
-+			dimm->grain	= SYNPS_EDAC_ERR_GRAIN;
-+			dimm->dtype	= edac_get_dtype(priv->baseaddr);
- 		}
- 	}
--
--	return 0;
- }
- 
- /**
-- * synps_edac_mc_init - Initialize driver instance
-- * @mci:	Pointer to the edac memory controller instance
-- * @pdev:	Pointer to the platform_device struct
-+ * edac_mc_init - Initialize driver instance.
-+ * @mci:	EDAC memory controller instance.
-+ * @pdev:	platform_device struct.
-  *
-  * Performs initialization of the EDAC memory controller instance and
-  * related driver-private data associated with the memory controller the
-  * instance is bound to.
-- *
-- * Return: Always zero.
-  */
--static int synps_edac_mc_init(struct mem_ctl_info *mci,
-+static void edac_mc_init(struct mem_ctl_info *mci,
- 				 struct platform_device *pdev)
- {
--	int status;
- 	struct synps_edac_priv *priv;
- 
- 	mci->pdev = &pdev->dev;
-@@ -415,17 +406,15 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
- 	mci->mod_name = SYNPS_EDAC_MOD_VER;
- 
- 	edac_op_state = EDAC_OPSTATE_POLL;
--	mci->edac_check = synps_edac_check;
-+	mci->edac_check = edac_check;
- 	mci->ctl_page_to_phys = NULL;
- 
--	status = synps_edac_init_csrows(mci);
--
--	return status;
-+	edac_init_csrows(mci);
- }
- 
- /**
-- * synps_edac_mc_probe - Check controller and bind driver
-- * @pdev:	Pointer to the platform_device struct
-+ * synps_edac_mc_probe - Check controller and bind driver.
-+ * @pdev:	platform_device struct.
-  *
-  * Probes a specific controller instance for binding with the driver.
-  *
-@@ -434,19 +423,19 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
-  */
- static int synps_edac_mc_probe(struct platform_device *pdev)
- {
--	struct mem_ctl_info *mci;
- 	struct edac_mc_layer layers[2];
- 	struct synps_edac_priv *priv;
--	int rc;
--	struct resource *res;
-+	struct mem_ctl_info *mci;
- 	void __iomem *baseaddr;
-+	struct resource *res;
++
++	return sprintf(data, "Poison0 Addr: 0x%08x\n\rPoison1 Addr: 0x%08x\n\r"
++			"Error injection Address: 0x%lx\n\r",
++			readl(priv->baseaddr + ECC_POISON0_OFST),
++			readl(priv->baseaddr + ECC_POISON1_OFST),
++			priv->poison_addr);
++}
++
++static ssize_t inject_data_error_store(struct device *dev,
++				       struct device_attribute *mattr,
++				       const char *data, size_t count)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	if (kstrtoul(data, 0, &priv->poison_addr))
++		return -EINVAL;
++
++	ddr_poison_setup(priv);
++
++	return count;
++}
++
++static ssize_t inject_data_poison_show(struct device *dev,
++				       struct device_attribute *mattr,
++				       char *data)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	return sprintf(data, "Data Poisoning: %s\n\r",
++			(((readl(priv->baseaddr + ECC_CFG1_OFST)) & 0x3) == 0x3)
++			? ("Correctable Error") : ("UnCorrectable Error"));
++}
++
++static ssize_t inject_data_poison_store(struct device *dev,
++					struct device_attribute *mattr,
++					const char *data, size_t count)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct synps_edac_priv *priv = mci->pvt_info;
++
++	writel(0, priv->baseaddr + DDRC_SWCTL);
++	if (strncmp(data, "CE", 2) == 0)
++		writel(ECC_CEPOISON_MASK, priv->baseaddr + ECC_CFG1_OFST);
++	else
++		writel(ECC_UEPOISON_MASK, priv->baseaddr + ECC_CFG1_OFST);
++	writel(1, priv->baseaddr + DDRC_SWCTL);
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(inject_data_error);
++static DEVICE_ATTR_RW(inject_data_poison);
++
++static int synps_edac_create_sysfs_attributes(struct mem_ctl_info *mci)
++{
 +	int rc;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	baseaddr = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(baseaddr))
- 		return PTR_ERR(baseaddr);
- 
--	if (!synps_edac_get_eccstate(baseaddr)) {
-+	if (!edac_get_eccstate(baseaddr)) {
- 		edac_printk(KERN_INFO, EDAC_MC, "ECC not enabled\n");
- 		return -ENXIO;
- 	}
-@@ -468,12 +457,7 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
- 
- 	priv = mci->pvt_info;
- 	priv->baseaddr = baseaddr;
--	rc = synps_edac_mc_init(mci, pdev);
--	if (rc) {
--		edac_printk(KERN_ERR, EDAC_MC,
--			    "Failed to initialize instance\n");
--		goto free_edac_mc;
--	}
-+	edac_mc_init(mci, pdev);
- 
- 	rc = edac_mc_add_mc(mci);
- 	if (rc) {
-@@ -496,8 +480,8 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
- }
- 
++
++	rc = device_create_file(&mci->dev, &dev_attr_inject_data_error);
++	if (rc < 0)
++		return rc;
++	rc = device_create_file(&mci->dev, &dev_attr_inject_data_poison);
++	if (rc < 0)
++		return rc;
++	return 0;
++}
++
++static void synps_edac_remove_sysfs_attributes(struct mem_ctl_info *mci)
++{
++	device_remove_file(&mci->dev, &dev_attr_inject_data_error);
++	device_remove_file(&mci->dev, &dev_attr_inject_data_poison);
++}
++
++static void setup_row_address_map(struct synps_edac_priv *priv, u32 *addrmap)
++{
++	u32 addrmap_row_b2_10;
++	int index;
++
++	priv->row_shift[0] = (addrmap[5] & ROW_MAX_VAL_MASK) + ROW_B0_BASE;
++	priv->row_shift[1] = ((addrmap[5] >> 8) &
++			ROW_MAX_VAL_MASK) + ROW_B1_BASE;
++
++	addrmap_row_b2_10 = (addrmap[5] >> 16) & ROW_MAX_VAL_MASK;
++	if (addrmap_row_b2_10 != ROW_MAX_VAL_MASK) {
++		for (index = 2; index < 11; index++)
++			priv->row_shift[index] = addrmap_row_b2_10 +
++				index + ROW_B0_BASE;
++
++	} else {
++		priv->row_shift[2] = (addrmap[9] &
++				ROW_MAX_VAL_MASK) + ROW_B2_BASE;
++		priv->row_shift[3] = ((addrmap[9] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B3_BASE;
++		priv->row_shift[4] = ((addrmap[9] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B4_BASE;
++		priv->row_shift[5] = ((addrmap[9] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B5_BASE;
++		priv->row_shift[6] = (addrmap[10] &
++				ROW_MAX_VAL_MASK) + ROW_B6_BASE;
++		priv->row_shift[7] = ((addrmap[10] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B7_BASE;
++		priv->row_shift[8] = ((addrmap[10] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B8_BASE;
++		priv->row_shift[9] = ((addrmap[10] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B9_BASE;
++		priv->row_shift[10] = (addrmap[11] &
++				ROW_MAX_VAL_MASK) + ROW_B10_BASE;
++	}
++
++	priv->row_shift[11] = (((addrmap[5] >> 24) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[5] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B11_BASE);
++	priv->row_shift[12] = ((addrmap[6] & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : ((addrmap[6] &
++				ROW_MAX_VAL_MASK) + ROW_B12_BASE);
++	priv->row_shift[13] = (((addrmap[6] >> 8) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B13_BASE);
++	priv->row_shift[14] = (((addrmap[6] >> 16) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 16) &
++				ROW_MAX_VAL_MASK) + ROW_B14_BASE);
++	priv->row_shift[15] = (((addrmap[6] >> 24) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[6] >> 24) &
++				ROW_MAX_VAL_MASK) + ROW_B15_BASE);
++	priv->row_shift[16] = ((addrmap[7] & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : ((addrmap[7] &
++				ROW_MAX_VAL_MASK) + ROW_B16_BASE);
++	priv->row_shift[17] = (((addrmap[7] >> 8) & ROW_MAX_VAL_MASK) ==
++				ROW_MAX_VAL_MASK) ? 0 : (((addrmap[7] >> 8) &
++				ROW_MAX_VAL_MASK) + ROW_B17_BASE);
++}
++
++static void setup_column_address_map(struct synps_edac_priv *priv, u32 *addrmap)
++{
++	u32 width, memtype;
++	int index;
++
++	memtype = readl(priv->baseaddr + CTRL_OFST);
++	width = (memtype & ECC_CTRL_BUSWIDTH_MASK) >> ECC_CTRL_BUSWIDTH_SHIFT;
++
++	priv->col_shift[0] = 0;
++	priv->col_shift[1] = 1;
++	priv->col_shift[2] = (addrmap[2] & COL_MAX_VAL_MASK) + COL_B2_BASE;
++	priv->col_shift[3] = ((addrmap[2] >> 8) &
++			COL_MAX_VAL_MASK) + COL_B3_BASE;
++	priv->col_shift[4] = (((addrmap[2] >> 16) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[2] >> 16) &
++					COL_MAX_VAL_MASK) + COL_B4_BASE);
++	priv->col_shift[5] = (((addrmap[2] >> 24) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[2] >> 24) &
++					COL_MAX_VAL_MASK) + COL_B5_BASE);
++	priv->col_shift[6] = ((addrmap[3] & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : ((addrmap[3] &
++					COL_MAX_VAL_MASK) + COL_B6_BASE);
++	priv->col_shift[7] = (((addrmap[3] >> 8) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 8) &
++					COL_MAX_VAL_MASK) + COL_B7_BASE);
++	priv->col_shift[8] = (((addrmap[3] >> 16) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 16) &
++					COL_MAX_VAL_MASK) + COL_B8_BASE);
++	priv->col_shift[9] = (((addrmap[3] >> 24) & COL_MAX_VAL_MASK) ==
++			COL_MAX_VAL_MASK) ? 0 : (((addrmap[3] >> 24) &
++					COL_MAX_VAL_MASK) + COL_B9_BASE);
++	if (width == DDRCTL_EWDTH_64) {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++			priv->col_shift[11] = (((addrmap[4] >> 8) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[4] >> 8) & COL_MAX_VAL_MASK) +
++				 COL_B11_BASE);
++		} else {
++			priv->col_shift[11] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++			priv->col_shift[13] = (((addrmap[4] >> 8) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[4] >> 8) & COL_MAX_VAL_MASK) +
++				 COL_B11_BASE);
++		}
++	} else if (width == DDRCTL_EWDTH_32) {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[11] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		} else {
++			priv->col_shift[11] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[13] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		}
++	} else {
++		if (memtype & MEM_TYPE_LPDDR3) {
++			priv->col_shift[10] = (((addrmap[3] >> 16) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 16) & COL_MAX_VAL_MASK) +
++				 COL_B8_BASE);
++			priv->col_shift[11] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++			priv->col_shift[13] = ((addrmap[4] &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				((addrmap[4] & COL_MAX_VAL_MASK) +
++				 COL_B10_BASE);
++		} else {
++			priv->col_shift[11] = (((addrmap[3] >> 16) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 16) & COL_MAX_VAL_MASK) +
++				 COL_B8_BASE);
++			priv->col_shift[13] = (((addrmap[3] >> 24) &
++				COL_MAX_VAL_MASK) == COL_MAX_VAL_MASK) ? 0 :
++				(((addrmap[3] >> 24) & COL_MAX_VAL_MASK) +
++				 COL_B9_BASE);
++		}
++	}
++
++	if (width) {
++		for (index = 9; index > width; index--) {
++			priv->col_shift[index] = priv->col_shift[index - width];
++			priv->col_shift[index - width] = 0;
++		}
++	}
++
++}
++
++static void setup_bank_address_map(struct synps_edac_priv *priv, u32 *addrmap)
++{
++	priv->bank_shift[0] = (addrmap[1] & BANK_MAX_VAL_MASK) + BANK_B0_BASE;
++	priv->bank_shift[1] = ((addrmap[1] >> 8) &
++				BANK_MAX_VAL_MASK) + BANK_B1_BASE;
++	priv->bank_shift[2] = (((addrmap[1] >> 16) &
++				BANK_MAX_VAL_MASK) == BANK_MAX_VAL_MASK) ? 0 :
++				(((addrmap[1] >> 16) & BANK_MAX_VAL_MASK) +
++				 BANK_B2_BASE);
++
++}
++
++static void setup_bg_address_map(struct synps_edac_priv *priv, u32 *addrmap)
++{
++	priv->bankgrp_shift[0] = (addrmap[8] &
++				BANKGRP_MAX_VAL_MASK) + BANKGRP_B0_BASE;
++	priv->bankgrp_shift[1] = (((addrmap[8] >> 8) & BANKGRP_MAX_VAL_MASK) ==
++				BANKGRP_MAX_VAL_MASK) ? 0 : (((addrmap[8] >> 8)
++				& BANKGRP_MAX_VAL_MASK) + BANKGRP_B1_BASE);
++
++}
++
++static void setup_rank_address_map(struct synps_edac_priv *priv, u32 *addrmap)
++{
++	priv->rank_shift[0] = ((addrmap[0] & RANK_MAX_VAL_MASK) ==
++				RANK_MAX_VAL_MASK) ? 0 : ((addrmap[0] &
++				RANK_MAX_VAL_MASK) + RANK_B0_BASE);
++}
++
++/**
++ * setup_address_map -	Set Address Map by querying ADDRMAP registers.
++ * @priv:		DDR memory controller private instance data.
++ *
++ * Set Address Map by querying ADDRMAP registers.
++ *
++ * Return: none.
++ */
++static void setup_address_map(struct synps_edac_priv *priv)
++{
++	u32 addrmap[12];
++	int index;
++
++	for (index = 0; index < 12; index++) {
++		u32 addrmap_offset;
++
++		addrmap_offset = ECC_ADDRMAP0_OFFSET + (index * 4);
++		addrmap[index] = readl(priv->baseaddr + addrmap_offset);
++	}
++
++	/* Set Row Address Map */
++	setup_row_address_map(priv, addrmap);
++
++	/* Set Column Address Map */
++	setup_column_address_map(priv, addrmap);
++
++	/* Set Bank Address Map */
++	setup_bank_address_map(priv, addrmap);
++
++	/* Set Bank Group Address Map */
++	setup_bg_address_map(priv, addrmap);
++
++	/* Set Rank Address Map */
++	setup_rank_address_map(priv, addrmap);
++}
++#endif /* CONFIG_EDAC_DEBUG */
++
  /**
-- * synps_edac_mc_remove - Unbind driver from controller
-- * @pdev:	Pointer to the platform_device struct
-+ * synps_edac_mc_remove - Unbind driver from controller.
-+ * @pdev:	Platform_device struct.
-  *
-  * Return: Unconditionally 0
-  */
+  * synps_edac_mc_probe - Check controller and bind driver.
+  * @pdev:	platform_device struct.
+@@ -941,6 +1334,20 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ 		goto free_edac_mc;
+ 	}
+ 
++#ifdef CONFIG_EDAC_DEBUG
++	if (priv->p_data->quirks & DDR_ECC_DATA_POISON_SUPPORT) {
++		if (synps_edac_create_sysfs_attributes(mci)) {
++			edac_printk(KERN_ERR, EDAC_MC,
++					"Failed to create sysfs entries\n");
++			goto free_edac_mc;
++		}
++	}
++
++	if (of_device_is_compatible(pdev->dev.of_node,
++				    "xlnx,zynqmp-ddrc-2.40a"))
++		setup_address_map(priv);
++#endif
++
+ 	/*
+ 	 * Start capturing the correctable and uncorrectable errors. A write of
+ 	 * 0 starts the counters.
+@@ -972,6 +1379,10 @@ static int synps_edac_mc_remove(struct platform_device *pdev)
+ 		writel((DDR_QOSUE_MASK | DDR_QOSCE_MASK),
+ 			priv->baseaddr + DDR_QOS_IRQ_DB_OFST);
+ 	edac_mc_del_mc(&pdev->dev);
++#ifdef CONFIG_EDAC_DEBUG
++	if (priv->p_data->quirks & DDR_ECC_DATA_POISON_SUPPORT)
++		synps_edac_remove_sysfs_attributes(mci);
++#endif
+ 	edac_mc_free(mci);
+ 
+ 	return 0;
 -- 
 2.1.1
 
