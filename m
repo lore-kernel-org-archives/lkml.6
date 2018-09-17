@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED58ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D84FECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111412146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111412146D
+	by mail.kernel.org (Postfix) with ESMTP id 1A31F214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A31F214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732830AbeIREnP (ORCPT
+        id S1732838AbeIREnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:43:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51000 "EHLO
+        Tue, 18 Sep 2018 00:43:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51010 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbeIREnO (ORCPT
+        with ESMTP id S1728925AbeIREnS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:43:14 -0400
+        Tue, 18 Sep 2018 00:43:18 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8300707;
-        Mon, 17 Sep 2018 23:13:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F032C707;
+        Mon, 17 Sep 2018 23:13:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, John Pittman <jpittman@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 128/158] net: dcb: For wild-card lookups, use priority -1, not 0
-Date:   Tue, 18 Sep 2018 00:42:38 +0200
-Message-Id: <20180917211717.104671545@linuxfoundation.org>
+Subject: [PATCH 4.18 129/158] dm cache: only allow a single io_mode cache feature to be requested
+Date:   Tue, 18 Sep 2018 00:42:39 +0200
+Message-Id: <20180917211717.143081266@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,72 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: John Pittman <jpittman@redhat.com>
 
-[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
+[ Upstream commit af9313c32c0fa2a0ac3b113669273833d60cc9de ]
 
-The function dcb_app_lookup walks the list of specified DCB APP entries,
-looking for one that matches a given criteria: ifindex, selector,
-protocol ID and optionally also priority. The "don't care" value for
-priority is set to 0, because that priority has not been allowed under
-CEE regime, which predates the IEEE standardization.
+More than one io_mode feature can be requested when creating a dm cache
+device (as is: last one wins).  The io_mode selections are incompatible
+with one another, we should force them to be selected exclusively.  Add
+a counter to check for more than one io_mode selection.
 
-Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
-considers zero a wild card, attempts to add an APP entry with priority 0
-fail when other entries exist for a given ifindex / selector / PID
-triplet.
-
-Fix by changing the wild-card value to -1.
-
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 629d0a8a1a10 ("dm cache metadata: add "metadata2" feature")
+Signed-off-by: John Pittman <jpittman@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dcb/dcbnl.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/md/dm-cache-target.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/net/dcb/dcbnl.c
-+++ b/net/dcb/dcbnl.c
-@@ -1786,7 +1786,7 @@ static struct dcb_app_type *dcb_app_look
- 		if (itr->app.selector == app->selector &&
- 		    itr->app.protocol == app->protocol &&
- 		    itr->ifindex == ifindex &&
--		    (!prio || itr->app.priority == prio))
-+		    ((prio == -1) || itr->app.priority == prio))
- 			return itr;
+--- a/drivers/md/dm-cache-target.c
++++ b/drivers/md/dm-cache-target.c
+@@ -2250,7 +2250,7 @@ static int parse_features(struct cache_a
+ 		{0, 2, "Invalid number of cache feature arguments"},
+ 	};
+ 
+-	int r;
++	int r, mode_ctr = 0;
+ 	unsigned argc;
+ 	const char *arg;
+ 	struct cache_features *cf = &ca->features;
+@@ -2264,14 +2264,20 @@ static int parse_features(struct cache_a
+ 	while (argc--) {
+ 		arg = dm_shift_arg(as);
+ 
+-		if (!strcasecmp(arg, "writeback"))
++		if (!strcasecmp(arg, "writeback")) {
+ 			cf->io_mode = CM_IO_WRITEBACK;
++			mode_ctr++;
++		}
+ 
+-		else if (!strcasecmp(arg, "writethrough"))
++		else if (!strcasecmp(arg, "writethrough")) {
+ 			cf->io_mode = CM_IO_WRITETHROUGH;
++			mode_ctr++;
++		}
+ 
+-		else if (!strcasecmp(arg, "passthrough"))
++		else if (!strcasecmp(arg, "passthrough")) {
+ 			cf->io_mode = CM_IO_PASSTHROUGH;
++			mode_ctr++;
++		}
+ 
+ 		else if (!strcasecmp(arg, "metadata2"))
+ 			cf->metadata_version = 2;
+@@ -2282,6 +2288,11 @@ static int parse_features(struct cache_a
+ 		}
  	}
  
-@@ -1821,7 +1821,8 @@ u8 dcb_getapp(struct net_device *dev, st
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio = itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
- 
-@@ -1849,7 +1850,8 @@ int dcb_setapp(struct net_device *dev, s
- 
- 	spin_lock_bh(&dcb_lock);
- 	/* Search for existing match and replace */
--	if ((itr = dcb_app_lookup(new, dev->ifindex, 0))) {
-+	itr = dcb_app_lookup(new, dev->ifindex, -1);
-+	if (itr) {
- 		if (new->priority)
- 			itr->app.priority = new->priority;
- 		else {
-@@ -1882,7 +1884,8 @@ u8 dcb_ieee_getapp_mask(struct net_devic
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio |= 1 << itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
++	if (mode_ctr > 1) {
++		*error = "Duplicate cache io_mode features requested";
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
  
 
 
