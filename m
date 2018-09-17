@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0387AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E04EFECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B913A214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B913A214AB
+	by mail.kernel.org (Postfix) with ESMTP id 972A42146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972A42146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbeIREbc (ORCPT
+        id S1730350AbeIREbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48378 "EHLO
+        Tue, 18 Sep 2018 00:31:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREbc (ORCPT
+        with ESMTP id S1727088AbeIREbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:32 -0400
+        Tue, 18 Sep 2018 00:31:35 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1035C03;
-        Mon, 17 Sep 2018 23:02:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C899EC77;
+        Mon, 17 Sep 2018 23:02:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 013/126] ALSA: hda - Fix cancel_work_sync() stall from jackpoll work
-Date:   Tue, 18 Sep 2018 00:41:01 +0200
-Message-Id: <20180917211705.488642958@linuxfoundation.org>
+        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infraded.org>,
+        josh@joshtriplett.org, peterz@infradead.org,
+        jiangshanlai@gmail.com, dzickus@redhat.com,
+        brendan.jackman@arm.com, malat@debian.org, mojha@codeaurora.org,
+        sramana@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 4.14 014/126] cpu/hotplug: Adjust misplaced smb() in cpuhp_thread_fun()
+Date:   Tue, 18 Sep 2018 00:41:02 +0200
+Message-Id: <20180917211705.614335388@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -51,46 +56,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Neeraj Upadhyay <neeraju@codeaurora.org>
 
-commit 16037643969e095509cd8446a3f8e406a6dc3a2c upstream.
+commit f8b7530aa0a1def79c93101216b5b17cf408a70a upstream.
 
-On AMD/ATI controllers, the HD-audio controller driver allows a bus
-reset upon the error recovery, and its procedure includes the
-cancellation of pending jack polling work as found in
-snd_hda_bus_codec_reset().  This works usually fine, but it becomes a
-problem when the reset happens from the jack poll work itself; then
-calling cancel_work_sync() from the work being processed tries to wait
-the finish endlessly.
+The smp_mb() in cpuhp_thread_fun() is misplaced. It needs to be after the
+load of st->should_run to prevent reordering of the later load/stores
+w.r.t. the load of st->should_run.
 
-As a workaround, this patch adds the check of current_work() and
-applies the cancel_work_sync() only when it's not from the
-jackpoll_work.
-
-This doesn't fix the root cause of the reported error below, but at
-least, it eases the unexpected stall of the whole system.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200937
-Cc: <stable@vger.kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 4dddfb5faa61 ("smp/hotplug: Rewrite AP state machine core")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infraded.org>
+Cc: josh@joshtriplett.org
+Cc: peterz@infradead.org
+Cc: jiangshanlai@gmail.com
+Cc: dzickus@redhat.com
+Cc: brendan.jackman@arm.com
+Cc: malat@debian.org
+Cc: mojha@codeaurora.org
+Cc: sramana@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1536126727-11629-1-git-send-email-neeraju@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_codec.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/cpu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -3923,7 +3923,8 @@ void snd_hda_bus_reset_codecs(struct hda
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -612,15 +612,15 @@ static void cpuhp_thread_fun(unsigned in
+ 	bool bringup = st->bringup;
+ 	enum cpuhp_state state;
  
- 	list_for_each_codec(codec, bus) {
- 		/* FIXME: maybe a better way needed for forced reset */
--		cancel_delayed_work_sync(&codec->jackpoll_work);
-+		if (current_work() != &codec->jackpoll_work.work)
-+			cancel_delayed_work_sync(&codec->jackpoll_work);
- #ifdef CONFIG_PM
- 		if (hda_codec_is_power_on(codec)) {
- 			hda_call_codec_suspend(codec);
++	if (WARN_ON_ONCE(!st->should_run))
++		return;
++
+ 	/*
+ 	 * ACQUIRE for the cpuhp_should_run() load of ->should_run. Ensures
+ 	 * that if we see ->should_run we also see the rest of the state.
+ 	 */
+ 	smp_mb();
+ 
+-	if (WARN_ON_ONCE(!st->should_run))
+-		return;
+-
+ 	cpuhp_lock_acquire(bringup);
+ 
+ 	if (st->single) {
 
 
