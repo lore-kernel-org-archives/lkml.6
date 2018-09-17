@@ -2,95 +2,83 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D81ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD26ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C5B2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C5B2088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 10604206B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:33:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10604206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbeIQVAH (ORCPT
+        id S1729233AbeIQVBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 17:00:07 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55436 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbeIQVAH (ORCPT
+        Mon, 17 Sep 2018 17:01:23 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37396 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727063AbeIQVBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:00:07 -0400
-Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g1vVT-0001vG-D5; Mon, 17 Sep 2018 17:32:11 +0200
-Date:   Mon, 17 Sep 2018 17:32:05 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <dou_liyang@163.com>
-cc:     linux-kernel@vger.kernel.org, x86@kernel.org, mingo@redhat.com,
-        hpa@zytor.com, douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v3 2/2] irq/matrix: Spread managed interrupts on
- allocation
-In-Reply-To: <20180908175838.14450-2-dou_liyang@163.com>
-Message-ID: <alpine.DEB.2.21.1809171713270.16580@nanos.tec.linutronix.de>
-References: <20180908175838.14450-1-dou_liyang@163.com> <20180908175838.14450-2-dou_liyang@163.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 17 Sep 2018 17:01:23 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8HFPWJI011989;
+        Mon, 17 Sep 2018 10:33:24 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com ([141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2mgyg0u69d-1;
+        Mon, 17 Sep 2018 10:33:24 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 316616149D47;
+        Mon, 17 Sep 2018 10:33:24 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Sep 2018
+ 16:33:23 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w8HFXM2g013658; Mon,
+ 17 Sep 2018 16:33:22 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH] mfd: arizona: Correct link for sound binding document
+Date:   Mon, 17 Sep 2018 16:33:22 +0100
+Message-ID: <20180917153322.29206-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=698 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1809170156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Sep 2018, Dou Liyang wrote:
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ Documentation/devicetree/bindings/mfd/arizona.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-> 
-> Linux has spread out the non managed interrupt across the possible
-> target CPUs to avoid vector space exhaustion.
-> 
-> But, the same situation may happen on the managed interrupts.
+diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+index 9b62831fdf3e..148ef621a5e5 100644
+--- a/Documentation/devicetree/bindings/mfd/arizona.txt
++++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+@@ -76,7 +76,7 @@ Deprecated properties:
+ Also see child specific device properties:
+   Regulator - ../regulator/arizona-regulator.txt
+   Extcon    - ../extcon/extcon-arizona.txt
+-  Sound     - ../sound/arizona.txt
++  Sound     - ../sound/wlf,arizona.txt
+ 
+ Example:
+ 
+-- 
+2.11.0
 
-Second thougts on this.
-
-Spreading the managed interrupts out at vector allocation time does not
-prevent vector exhaustion at all, because contrary to regular interrupts
-managed interrupts have a guaranteed allocation. IOW when the managed
-interrupt is initialized (that's way before the actual vector allocation
-happens) a vector is reserved on each CPU which is in the associated
-interrupt mask.
-
-This is an essential property of managed interrupts because the kernel
-guarantees that they can be moved to any CPU in the supplied mask during
-CPU hot unplug and consequently shut down when the last CPU in the mask
-goes offline.
-
-So for that special case of pre/post vectors the supplied mask is all CPUs
-and the guaranteed reservation will claim a vector on each CPU. What makes
-it look unbalanced is that when the interrupts are actually requested, all
-end up on CPU0 as that's the first CPU in the mask.
-
-So doing the spreading does not prevent vector exhaustion it merily spreads
-the active interrupts more evenly over the CPUs in the mask.
-
-I think it's still worthwhile to do that, but the changelog needs a major
-overhaul as right now it's outright misleading. I'll just amend it with
-something along the above lines, unless someone disagrees.
-
-That said, it might also be interesting to allow user space affinity
-settings on managed interrupts. Not meant for the pre/post vector case,
-which just needs to be made non managed. It's meant for the case where a
-device has less queues than CPUs, where changing affinity within the spread
-range of CPUs could be allowed. Not sure though. Delegating this to the
-folks who actually use that in their drivers.
-
-Thanks,
-
-	tglx
