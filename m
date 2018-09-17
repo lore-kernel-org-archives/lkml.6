@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D31ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E729ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64ED3214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64ED3214D5
+	by mail.kernel.org (Postfix) with ESMTP id 31523214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31523214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbeIQRDR (ORCPT
+        id S1728369AbeIQRDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:03:17 -0400
-Received: from shell.v3.sk ([90.176.6.54]:47025 "EHLO shell.v3.sk"
+        Mon, 17 Sep 2018 13:03:18 -0400
+Received: from shell.v3.sk ([90.176.6.54]:47031 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbeIQRDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728269AbeIQRDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 13:03:17 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id DFDBEAC50D;
-        Mon, 17 Sep 2018 13:36:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 5650CAD8C6;
+        Mon, 17 Sep 2018 13:36:20 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id czF0Z8eW-8rz; Mon, 17 Sep 2018 13:36:11 +0200 (CEST)
+        with ESMTP id DvAkXxXwMPyx; Mon, 17 Sep 2018 13:36:09 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E488BACCD8;
-        Mon, 17 Sep 2018 13:36:10 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 29514AD8F6;
+        Mon, 17 Sep 2018 13:36:09 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id p0aaFYVi1P2i; Mon, 17 Sep 2018 13:36:08 +0200 (CEST)
+        with ESMTP id FDqY4si_Wylx; Mon, 17 Sep 2018 13:36:07 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 788E0ACF8C;
-        Mon, 17 Sep 2018 13:36:08 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 92588AC396;
+        Mon, 17 Sep 2018 13:36:07 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-spi@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 5/5] DT: marvell,mmp2: Add SSP1 and SSP3
-Date:   Mon, 17 Sep 2018 13:35:59 +0200
-Message-Id: <20180917113559.11101-6-lkundrak@v3.sk>
+Subject: [PATCH v2 1/5] dt-bindings: spi/spi-pxa2xx: add PXA2xx SSP SPI Controller
+Date:   Mon, 17 Sep 2018 13:35:55 +0200
+Message-Id: <20180917113559.11101-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180917113559.11101-1-lkundrak@v3.sk>
 References: <20180917113559.11101-1-lkundrak@v3.sk>
@@ -57,57 +56,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There seem to be SSP2, SSP4 and perhaps SSP5 too, but Marvel keeps their
-base addresses secret.
+This is the SPI controller found on Marvel MMP2 and perhaps more
+platforms.
 
-The SSP1 and SSP3 addresses were taken from OLPC 1.75, OpenFirmware and
-kernel respectively.
+Changes since v1:
+- s/ssp@d4035000/spi@d4035000/
 
-Cc: Eric Miao <eric.y.miao@gmail.com>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../devicetree/bindings/spi/spi-pxa2xx.txt    | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..ba55d6483ed0 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -18,6 +18,8 @@
- 		serial3 = &uart4;
- 		i2c0 = &twsi1;
- 		i2c1 = &twsi2;
-+		spi0 = &ssp1;
-+		spi3 = &ssp3;
- 	};
- 
- 	soc {
-@@ -239,6 +241,22 @@
- 				resets = <&soc_clocks MMP2_CLK_RTC>;
- 				status = "disabled";
- 			};
+diff --git a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
+new file mode 100644
+index 000000000000..0335a9bd2e8a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
+@@ -0,0 +1,24 @@
++PXA2xx SSP SPI Controller
 +
-+			ssp1: ssp@d4035000 {
-+				compatible = "marvell,mmp2-ssp";
-+				reg = <0xd4035000 0x1000>;
-+				clocks = <&soc_clocks MMP2_CLK_SSP0>;
-+				interrupts = <0>;
-+				status = "disabled";
-+			};
++Required properties:
++- compatible: Must be "marvell,mmp2-ssp".
++- reg: Offset and length of the device's register set.
++- interrupts: Should be the interrupt number.
++- clocks: Should contain a single entry describing the clock input.
++- #address-cells:  Number of cells required to define a chip select address.
++- #size-cells: Should be zero.
 +
-+			ssp3: ssp@d4037000 {
-+				compatible = "marvell,mmp2-ssp";
-+				reg = <0xd4037000 0x1000>;
-+				clocks = <&soc_clocks MMP2_CLK_SSP2>;
-+				interrupts = <20>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		soc_clocks: clocks{
++Optional properties:
++- cs-gpios: list of GPIO chip selects. See the SPI bus bindings,
++  Documentation/devicetree/bindings/spi/spi-bus.txt
++
++Child nodes represent devices on the SPI bus
++  See ../spi/spi-bus.txt
++
++Example:
++	ssp1: spi@d4035000 {
++		compatible = "marvell,mmp2-ssp";
++		reg = <0xd4035000 0x1000>;
++		clocks = <&soc_clocks MMP2_CLK_SSP0>;
++		interrupts = <0>;
++	};
 -- 
 2.17.1
 
