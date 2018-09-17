@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51105ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D98ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 119AC2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 119AC2146F
+	by mail.kernel.org (Postfix) with ESMTP id 079FA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079FA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbeIREis (ORCPT
+        id S1731906AbeIREix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:38:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50076 "EHLO
+        Tue, 18 Sep 2018 00:38:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50092 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIREis (ORCPT
+        with ESMTP id S1729124AbeIREiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:38:48 -0400
+        Tue, 18 Sep 2018 00:38:52 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC4BBC49;
-        Mon, 17 Sep 2018 23:09:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7511DC49;
+        Mon, 17 Sep 2018 23:09:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Reza Arbab <arbab@linux.ibm.com>,
+        Alistair Popple <alistair@popple.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 051/158] gpio: tegra: Move driver registration to subsys_init level
-Date:   Tue, 18 Sep 2018 00:41:21 +0200
-Message-Id: <20180917211713.586361837@linuxfoundation.org>
+Subject: [PATCH 4.18 052/158] powerpc/powernv: Fix concurrency issue with npu->mmio_atsd_usage
+Date:   Tue, 18 Sep 2018 00:41:22 +0200
+Message-Id: <20180917211713.645904681@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,37 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Reza Arbab <arbab@linux.ibm.com>
 
-[ Upstream commit 40b25bce0adbe641a744d1291bc0e51fb7f3c3d8 ]
+[ Upstream commit 9eab9901b015f489199105c470de1ffc337cfabb ]
 
-There is a bug in regards to deferred probing within the drivers core
-that causes GPIO-driver to suspend after its users. The bug appears if
-GPIO-driver probe is getting deferred, which happens after introducing
-dependency on PINCTRL-driver for the GPIO-driver by defining "gpio-ranges"
-property in device-tree. The bug in the drivers core is old (more than 4
-years now) and is well known, unfortunately there is no easy fix for it.
-The good news is that we can workaround the deferred probe issue by
-changing GPIO / PINCTRL drivers registration order and hence by moving
-PINCTRL driver registration to the arch_init level and GPIO to the
-subsys_init.
+We've encountered a performance issue when multiple processors stress
+{get,put}_mmio_atsd_reg(). These functions contend for
+mmio_atsd_usage, an unsigned long used as a bitmask.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The accesses to mmio_atsd_usage are done using test_and_set_bit_lock()
+and clear_bit_unlock(). As implemented, both of these will require
+a (successful) stwcx to that same cache line.
+
+What we end up with is thread A, attempting to unlock, being slowed by
+other threads repeatedly attempting to lock. A's stwcx instructions
+fail and retry because the memory reservation is lost every time a
+different thread beats it to the punch.
+
+There may be a long-term way to fix this at a larger scale, but for
+now resolve the immediate problem by gating our call to
+test_and_set_bit_lock() with one to test_bit(), which is obviously
+implemented without using a store.
+
+Fixes: 1ab66d1fbada ("powerpc/powernv: Introduce address translation services for Nvlink2")
+Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
+Acked-by: Alistair Popple <alistair@popple.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-tegra.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/npu-dma.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -720,4 +720,4 @@ static int __init tegra_gpio_init(void)
- {
- 	return platform_driver_register(&tegra_gpio_driver);
- }
--postcore_initcall(tegra_gpio_init);
-+subsys_initcall(tegra_gpio_init);
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -437,8 +437,9 @@ static int get_mmio_atsd_reg(struct npu
+ 	int i;
+ 
+ 	for (i = 0; i < npu->mmio_atsd_count; i++) {
+-		if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
+-			return i;
++		if (!test_bit(i, &npu->mmio_atsd_usage))
++			if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
++				return i;
+ 	}
+ 
+ 	return -ENOSPC;
 
 
