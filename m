@@ -2,211 +2,106 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6AAECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A922ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7457F2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435662086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hkshIIrL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7457F2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JyDL+Er2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 435662086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeIQXd5 (ORCPT
+        id S1728273AbeIQXe3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 19:33:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35168 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIQXd4 (ORCPT
+        Mon, 17 Sep 2018 19:34:29 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52904 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbeIQXe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:33:56 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HI3mZx089201;
-        Mon, 17 Sep 2018 18:04:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=TY71A60RFcidAyt2PJFu5Fu0PtYJcHzq5zYQdjPV/Ww=;
- b=hkshIIrLk9M8tv+RBnC5CEJwo3vYZQphOm0qF9pK03IsBG6AJJy67W7F5JyBeskp5JPH
- CU5QhSv+zHetVhfIIUjuRE+OX0Z5Qy6HOjU4ULvvHzLbAbQV+4FvC8G2GUqP4YZRrYTR
- ttSvSMai7NcnOn+KDu/I3Yy+PP/k5YSm3x7CnpRUiLQ7gQE2itu8t6UurEJCfXWWVGKz
- doeknUUiZO11Dt/LOdYVEFPxC1chREd26SMH2xX3P/WOv7y84pbV91SxbNPrbBNZ7spQ
- xyqrTQW8NOR2wKQXyXBsTZhKMJoKnbxP/y2VeCCSYfjtXFQS2JO3XvNgoAOzcpjVz0By 6Q== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2mgtqqqv38-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 18:04:35 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8HI4X3o006376
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 18:04:34 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8HI4Vah018273;
-        Mon, 17 Sep 2018 18:04:31 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Sep 2018 11:04:31 -0700
-Subject: Re: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
- flr/slot/bus reset with 'reset' SysFS attribute
-To:     =?UTF-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>
-Cc:     Jan Beulich <JBeulich@suse.com>,
-        Govinda Tatti <Govinda.Tatti@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        xen-devel@lists.xenproject.org, roger.pau@citrix.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20171207222145.9769-1-Govinda.Tatti@Oracle.COM>
- <20171207222145.9769-3-Govinda.Tatti@Oracle.COM>
- <5A2A6AB10200007800195D4F@prv-mh.provo.novell.com>
- <8a3bc517-1255-4547-d244-5c400e44cc77@Oracle.COM>
- <f19dbb09-ef22-2cf4-fb38-2a7c42b5dc48@Oracle.COM>
- <5A377E020200007800197FFA@prv-mh.provo.novell.com>
- <559ffd12-b541-8a69-60bd-fbe10e3dc159@oracle.com>
- <20180916114306.GF18222@reaktio.net>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
-Date:   Mon, 17 Sep 2018 14:06:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 17 Sep 2018 19:34:29 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8HI5nGj088040;
+        Mon, 17 Sep 2018 13:05:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537207549;
+        bh=5OkqdboIuXCb4P4/OgfXk1Bk2YMAeZq2/9wdfw/IsxA=;
+        h=From:To:CC:Subject:Date;
+        b=JyDL+Er20FOvQ/MuFooHKiuj+NQxTKnPUJ3l2jA5MRbnRNA8iWqt2wPvEy1beHvX6
+         Am9gX4HraOU7zUzxaj3DbOP/p3ol/jg3s5IuVD1Slyb2D88dMQR/+3eoCnPtpC7ZXs
+         kpRDQZu5RC06aks1ztP1s2L8RxfQMmjTPMFt/HFc=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8HI5nAv013166;
+        Mon, 17 Sep 2018 13:05:49 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 17
+ Sep 2018 13:05:49 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 17 Sep 2018 13:05:49 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8HI5k1B004762;
+        Mon, 17 Sep 2018 13:05:46 -0500
+From:   Vignesh R <vigneshr@ti.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH v4 0/2] pci-dra7xx: Enable errata i870 workaround for RC mode
+Date:   Mon, 17 Sep 2018 23:36:33 +0530
+Message-ID: <20180917180635.26996-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180916114306.GF18222@reaktio.net>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809170179
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/16/18 7:43 AM, Pasi Kärkkäinen wrote:
-> Hi,
->
-> On Mon, Dec 18, 2017 at 12:32:11PM -0500, Boris Ostrovsky wrote:
->> On 12/18/2017 02:36 AM, Jan Beulich wrote:
->>>>>> On 15.12.17 at 20:52, <Govinda.Tatti@Oracle.COM> wrote:
->>>>>>> +static int pcistub_device_reset(struct pci_dev *dev)
->>>>>>> +{
->>>>>>> +	struct xen_pcibk_dev_data *dev_data;
->>>>>>> +	bool slot = false, bus = false;
->>>>>>> +	struct pcistub_args arg = {};
->>>>>>> +
->>>>>>> +	if (!dev)
->>>>>>> +		return -EINVAL;
->>>>>>> +
->>>>>>> +	dev_dbg(&dev->dev, "[%s]\n", __func__);
->>>>>>> +
->>>>>>> +	/* First check and try FLR */
->>>>>>> +	if (pcie_has_flr(dev)) {
->>>>>>> +		dev_dbg(&dev->dev, "resetting %s device using FLR\n",
->>>>>>> +			pci_name(dev));
->>>>>>> +		pcie_flr(dev);
->>>>>> The lack of error check here puzzled me, but I see the function
->>>>>> indeed returns void right now. I think the prereq patch should
->>>>>> change this along with exporting the function - you really don't
->>>>>> want the device to be handed to a guest when the FLR timed
->>>>>> out.
->>>>> We will change pcie_flr() to return error code. I will make this change
->>>>> in the next version of this patch.
->>>> I exchanged some emails with Bjorn/Christoph and it looks like Christoph
->>>> as some planto restructure pcie flr specific functions but I don't know
->>>> the exact time-frame. For now,I am planning to use existing pcie_flr()
->>>> after checking FLR capability. We will switchto revised pcie_flr() once
->>>> it is available.
->>>>
->>>> I hope you are fine with this approach. Please let me know. Thanks.
->>> I've seen that other discussion. I don't think the change here
->>> should be done prior to the error reporting being put in place,
->>> for security reasons. But in the end it'll be Konrad as the
->>> maintainer to judge.
->>>
->>> Or wait, looks like there's some confusion in ./MAINTAINERS:
->>> Konrad is listed as maintainer for "XEN PCI SUBSYSTEM", but the
->>> list of files doesn't include pciback. So it would instead be Boris
->>> or Jürgen to give you a final word.
->>
->> This is now 4.16 material so we can at least wait until closer to
->> opening of the merge window when we may have the PCI updates. (And I
->> just noticed that you responded to Christoph.)
->>
->> Besides, we don't want to make kernel changes until the interface is
->> settled (i.e the toolstack changes are accepted).
->>
-> It seems Govinda's email address is giving an error, so I assume someone else needs to pick up this pciback 'reset' feature.
-> Is it likely someone else from Oracle can/will pick up and refresh this patch, with the review comments addressed?
+Make workaround for errata i870 applicable in Host mode as
+well(previously it was enabled only for EP mode) as per errata
+documentation: http://www.ti.com/lit/er/sprz450/sprz450.pdf
+Driver will continue to work with w/o applying errata in host mode when
+using older DT, to maintain backward compatibility.
+
+Tested on DRA72 EVM
+
+Changes since v3:
+Rebase onto latest next
+Drop DT patches from this series. They will be sent separately once
+driver changes in this series is merged.
+
+Changes since v2:
+Reorder patch 2 to appear at the last.
+Collect all the ACKs
+
+Changes since v1:
+Drop IRQ handling rework (will be sent out separately)
+
+v2: https://patchwork.ozlabs.org/cover/935454/
+v1: https://lkml.org/lkml/2017/12/1/59
 
 
-Govinda is no longer at Oracle.
+Vignesh R (2):
+  dt-bindings: PCI: dra7xx: Add bindings for unaligned access in host
+    mode
+  pci: dwc: pci-dra7xx: Enable errata i870 for both EP and RC mode
 
-What about the toolstack changes? Have they been accepted? I vaguely
-recall there was a discussion about those changes but don't remember how
-it ended.
+ Documentation/devicetree/bindings/pci/ti-pci.txt |  5 +++++
+ drivers/pci/controller/dwc/pci-dra7xx.c          | 12 ++++++------
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
-
--boris
-
-
->
->
-> Meanwhile the pcie_has_flr() has been exported in upstream Linux kernel, so that's already available for use now.
->
-> "PCI: Export pcie_has_flr()":
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2d2917f7747805a1f4188672f308d82a8ba01700
->
->
->
+-- 
+2.19.0
 
