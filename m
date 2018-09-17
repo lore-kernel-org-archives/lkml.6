@@ -2,164 +2,135 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8230ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9130ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7E02088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:24:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HoKy0lS+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7E02088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 61372206B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61372206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728647AbeIRCxV (ORCPT
+        id S1728517AbeIRC44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:53:21 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54384 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728415AbeIRCxV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:53:21 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8HLO9Js008023;
-        Mon, 17 Sep 2018 16:24:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537219449;
-        bh=awpKjWHMLTtfaOjrTYbznoo3DZkkrpxrbfNqhIYC7zY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HoKy0lS+FpqzWhZLeRAW/Klx1kD0Q5N6i18/a0//2itaEijI8qACJCSGFbTn9uTyf
-         p/lZ2r+471Dm7X972XCt/g10Acd5aXe9SvIuMvm4klGwVW/2ytzKK9OH9J8B8mZqls
-         ZW4j+RXnrDS+GkIZ9mufW5ncsNQWW1df5kEXLHm8=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8HLO9aO024243;
-        Mon, 17 Sep 2018 16:24:09 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 17
- Sep 2018 16:24:09 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 17 Sep 2018 16:24:09 -0500
-Received: from [172.22.161.49] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8HLO8f5002661;
-        Mon, 17 Sep 2018 16:24:08 -0500
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lee.jones@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com> <20180912214938.GA30654@amd>
- <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com> <20180914081822.GA21830@amd>
- <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com> <20180914214220.GA2081@amd>
- <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
- <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
- <7a6e83ad-2bc9-c776-21bf-e1d51413b0af@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <4feebb0e-c3e8-13ec-c6c3-5328fa8fffb7@ti.com>
-Date:   Mon, 17 Sep 2018 16:23:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Sep 2018 22:56:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38446 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726844AbeIRC44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:56:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 14:27:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
+   d="scan'208";a="92552304"
+Received: from maclarck-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.39.44])
+  by orsmga002.jf.intel.com with ESMTP; 17 Sep 2018 14:27:36 -0700
+Date:   Tue, 18 Sep 2018 00:27:35 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
+Message-ID: <20180917212735.GA9368@linux.intel.com>
+References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <7a6e83ad-2bc9-c776-21bf-e1d51413b0af@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 09/17/2018 02:22 PM, Jacek Anaszewski wrote:
-> Dan,
+On Mon, Sep 10, 2018 at 10:18:22AM -0700, Tadeusz Struk wrote:
+> The TCG SAPI specification [1] defines a set of functions, which allow
+> applications to use the TPM device in either blocking or non-blocking fashion.
+> Each command defined by the specification has a corresponding
+> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+> mode of operation. Currently the TPM driver supports only blocking calls,
+> which doesn't allow asynchronous IO operations.
+> This patch changes it and adds support for nonblocking write and a new poll
+> function to enable applications, which want to take advantage of this feature.
+> The new functionality can be tested using standard TPM tools implemented
+> in [2], together with modified TCTI from [3], and an example application
+> by Philip Tricca [4]. Here is a short description from Philip:
 > 
-> On 09/17/2018 05:24 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 09/15/2018 03:00 PM, Jacek Anaszewski wrote:
->>> Hi Pavel.
->>>
->>> On 09/14/2018 11:42 PM, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>> You may want to learn more about device tree and/or talk to the device
->>>>>> tree maintainers. This is an old article. https://lwn.net/Articles/561462/
->>>>>
->>>>> The article title is "Device trees as ABI". A device tree is defined
->>>>> in the "*.dts" file that is then compiled to a dtb blob, which
->>>>> constitutes the ABI. And this ABI should be kept backwards compatible.
->>>>>
->>>>> What is discussed here is a documentation of bindings, i.e. according
->>>>> to ePAPR: "requirements for how specific types and classes of devices
->>>>> are represented in the device tree".
->>>>>
->>>>> >From the bindings documented in the
->>>>> Documentation/devicetree/bindings/mfd/ti-lmu.txt only
->>>>> ti,lm3532-backlight is used in the mainline dts file
->>>>> (arch/arm/boot/dts/omap4-droid4-xt894.dts).
->>>>>
->>>>> Having the above it seems that there is no risk of breaking any
->>>>> users.
->>>>
->>>> DTBs and bindings are supposed to be portable between operating
->>>> systems. You are right there are no _mainline_ _Linux_ users.
->>>
->>> No mainline users means no users we should care of.
->>> Other people also don't care - see patch [0].
->>>
->>>>>> NAK on this patch. I see that this binding has problems, but
->>>>>> introducing different binding for subset of devices is _not_ a fix.
->>>>>>
->>>>>>>> What about the multi function devices? They should have same binding.
->>>>>>>
->>>>>>> The MFD devices defined are not in contention here only the SFD.
->>>>>>
->>>>>> I'd like to see common solutions for SFD and MFD, as the hardware is
->>>>>> similar, and that includes the code. Having code that is easier to
->>>>>> maintain is important, and having many drivers are harder to maintain
->>>>>> than one driver.
->>>>>>
->>>>>> Milo's code looks better than yours in that regard. I disagree about
->>>>>> Milo's code being "nightmare" to modify, and care about "easy to
->>>>>> maintain" more than "binary size".
->>>>>
->>>>> Easy to maintain will be a dedicated LED class driver.
->>>>
->>>> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
->>>> parts? We'll need complex driver anyway, and I'd really like to have
->>>> just one.
->>>
->>> In the LED subsystem we can wrap common functionalities
->>> into a library object. MFD driver will be able to reuse it then.
->>
->> I am currently working on that code now.  I expect a RFC on this this week.
+> "The example application `glib-tss2-event` uses a glib main event loop
+> to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+> using a glib timer event to time the operation. A GSource object is
+> used to generate an event when the FD underlying the tss2 function
+> call has data ready. While the application waits for an event indicating
+> that the CreatePrimary operation is complete, it counts timer events
+> that occur every 100ms. Once the CreatePrimary operation completes the
+> number of timer events that occurred is used to make a rough calculation
+> of the elapsed time. This value is then printed to the console.
+> This takes ~300 lines of C code and requires no management or
+> synchronization of threads. The glib GMainContext is "just a poll()
+> loop" according to the glib documentation here:
 > 
-> Will it affect the shape of the driver for lm3697 as of v7 [0]?
-> Or the patch set [0] state should be deemed "awaiting merge"?
+> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
 > 
-
-It will probably affect the driver to call into the library.  We can pull it in and
-modify or we can modify after the common code is there.
-
-It should not affect the bindings though.
-
-Dan
-
-> [0] https://lkml.org/lkml/2018/9/11/760
+> and so supporting 'poll' is the easiest way to integrate with glib /
+> gtk+. This is true of any other event system that relies on 'poll'
+> instead of worker threads."
 > 
+> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+> [2] https://github.com/tpm2-software/tpm2-tools
+> [3] https://github.com/tstruk/tpm2-tss/tree/async
+> [4] https://github.com/flihp/glib-tss2-async-example
+> 
+> ---
+> Changes in v6:
+> - Changed commit message in the first patch to more specific.
+> - Chenged labels names in tpm-interface.c
+> 
+> Changes in v5:
+> - Changed the workqueue allocation time back from the first user interface
+>   open to module init.
+> 
+> Changes in v4:
+> - Changed the way buffer_mutex is handled in nonblocking mode so that
+>   it is not held when write() returns to user space.
+> 
+> Changes in v3:
+> - Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+>   It complained because there is a module_exit() in another file already.
+> - Added info on example application from Philip
+> 
+> Changes in v2:
+> - Split the change into two separate patches. First patch adds a pointer
+>   to the space to the struct file_priv to have access to it from the async job.
+>   This is to avoid memory allocations on every write call. Now everything
+>   what's needed is in the file_priv struct.
+> - Renamed the 'work' member of the timer to avoid confusion.
+>   Now there are 'timeout_work' and 'async_work'.
+> - Removed the global wait queue and moved it to file_priv.
+> - Only creating the work queue when the first file is opened.
+> 
+> Tadeusz Struk (2):
+>       tpm: add ptr to the tpm_space struct to file_priv
+>       tpm: add support for nonblocking operation
+> 
+>  drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+>  drivers/char/tpm/tpm-dev.c        |   22 +++--
+>  drivers/char/tpm/tpm-dev.h        |   19 +++--
+>  drivers/char/tpm/tpm-interface.c  |    1 
+>  drivers/char/tpm/tpm.h            |    1 
+>  drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+>  6 files changed, 152 insertions(+), 72 deletions(-)
+> 
+> --
+> TS
 
+Patches have been merged.
 
--- 
-------------------
-Dan Murphy
+/Jarkko
