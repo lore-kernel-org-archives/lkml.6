@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D74ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF62ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D254E2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D254E2088F
+	by mail.kernel.org (Postfix) with ESMTP id 4DDEF2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDEF2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeIREMw (ORCPT
+        id S1727433AbeIREMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:12:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43020 "EHLO
+        Tue, 18 Sep 2018 00:12:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbeIREMv (ORCPT
+        with ESMTP id S1725772AbeIREMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:12:51 -0400
+        Tue, 18 Sep 2018 00:12:53 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0907FCA0;
-        Mon, 17 Sep 2018 22:43:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D710C9D;
+        Mon, 17 Sep 2018 22:43:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 03/56] ALSA: hda - Fix cancel_work_sync() stall from jackpoll work
-Date:   Tue, 18 Sep 2018 00:41:36 +0200
-Message-Id: <20180917213828.107969909@linuxfoundation.org>
+        stable@vger.kernel.org, Ritesh Harjani <riteshh@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.4 04/56] cfq: Give a chance for arming slice idle timer in case of group_idle
+Date:   Tue, 18 Sep 2018 00:41:37 +0200
+Message-Id: <20180917213828.146234550@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -51,46 +52,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ritesh Harjani <riteshh@codeaurora.org>
 
-commit 16037643969e095509cd8446a3f8e406a6dc3a2c upstream.
+commit b3193bc0dca9bb69c8ba1ec1a318105c76eb4172 upstream.
 
-On AMD/ATI controllers, the HD-audio controller driver allows a bus
-reset upon the error recovery, and its procedure includes the
-cancellation of pending jack polling work as found in
-snd_hda_bus_codec_reset().  This works usually fine, but it becomes a
-problem when the reset happens from the jack poll work itself; then
-calling cancel_work_sync() from the work being processed tries to wait
-the finish endlessly.
+In below scenario blkio cgroup does not work as per their assigned
+weights :-
+1. When the underlying device is nonrotational with a single HW queue
+with depth of >= CFQ_HW_QUEUE_MIN
+2. When the use case is forming two blkio cgroups cg1(weight 1000) &
+cg2(wight 100) and two processes(file1 and file2) doing sync IO in
+their respective blkio cgroups.
 
-As a workaround, this patch adds the check of current_work() and
-applies the cancel_work_sync() only when it's not from the
-jackpoll_work.
+For above usecase result of fio (without this patch):-
+file1: (groupid=0, jobs=1): err= 0: pid=685: Thu Jan  1 19:41:49 1970
+  write: IOPS=1315, BW=41.1MiB/s (43.1MB/s)(1024MiB/24906msec)
+<...>
+file2: (groupid=0, jobs=1): err= 0: pid=686: Thu Jan  1 19:41:49 1970
+  write: IOPS=1295, BW=40.5MiB/s (42.5MB/s)(1024MiB/25293msec)
+<...>
+// both the process BW is equal even though they belong to diff.
+cgroups with weight of 1000(cg1) and 100(cg2)
 
-This doesn't fix the root cause of the reported error below, but at
-least, it eases the unexpected stall of the whole system.
+In above case (for non rotational NCQ devices),
+as soon as the request from cg1 is completed and even
+though it is provided with higher set_slice=10, because of CFQ
+algorithm when the driver tries to fetch the request, CFQ expires
+this group without providing any idle time nor weight priority
+and schedules another cfq group (in this case cg2).
+And thus both cfq groups(cg1 & cg2) keep alternating to get the
+disk time and hence loses the cgroup weight based scheduling.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200937
-Cc: <stable@vger.kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Below patch gives a chance to cfq algorithm (cfq_arm_slice_timer)
+to arm the slice timer in case group_idle is enabled.
+In case if group_idle is also not required (including for nonrotational
+NCQ drives), we need to explicitly set group_idle = 0 from sysfs for
+such cases.
+
+With this patch result of fio(for above usecase) :-
+file1: (groupid=0, jobs=1): err= 0: pid=690: Thu Jan  1 00:06:08 1970
+  write: IOPS=1706, BW=53.3MiB/s (55.9MB/s)(1024MiB/19197msec)
+<..>
+file2: (groupid=0, jobs=1): err= 0: pid=691: Thu Jan  1 00:06:08 1970
+  write: IOPS=1043, BW=32.6MiB/s (34.2MB/s)(1024MiB/31401msec)
+<..>
+// In this processes BW is as per their respective cgroups weight.
+
+Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_codec.c |    3 ++-
+ block/cfq-iosched.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_codec.c
-+++ b/sound/pci/hda/hda_codec.c
-@@ -4019,7 +4019,8 @@ void snd_hda_bus_reset_codecs(struct hda
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -2905,7 +2905,8 @@ static void cfq_arm_slice_timer(struct c
+ 	 * for devices that support queuing, otherwise we still have a problem
+ 	 * with sync vs async workloads.
+ 	 */
+-	if (blk_queue_nonrot(cfqd->queue) && cfqd->hw_tag)
++	if (blk_queue_nonrot(cfqd->queue) && cfqd->hw_tag &&
++		!cfqd->cfq_group_idle)
+ 		return;
  
- 	list_for_each_codec(codec, bus) {
- 		/* FIXME: maybe a better way needed for forced reset */
--		cancel_delayed_work_sync(&codec->jackpoll_work);
-+		if (current_work() != &codec->jackpoll_work.work)
-+			cancel_delayed_work_sync(&codec->jackpoll_work);
- #ifdef CONFIG_PM
- 		if (hda_codec_is_power_on(codec)) {
- 			hda_call_codec_suspend(codec);
+ 	WARN_ON(!RB_EMPTY_ROOT(&cfqq->sort_list));
 
 
