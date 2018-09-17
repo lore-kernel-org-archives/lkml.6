@@ -2,111 +2,134 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B7FECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5805DECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 443CC2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443CC2088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id EF38F2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:41:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF38F2088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729063AbeIQUGN (ORCPT
+        id S1728854AbeIQUJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:06:13 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39664 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728757AbeIQUGM (ORCPT
+        Mon, 17 Sep 2018 16:09:09 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:49169 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728705AbeIQUJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:06:12 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08021893|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03299;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.Cs.KY0z_1537195080;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cs.KY0z_1537195080)
-          by smtp.aliyun-inc.com(10.147.41.187);
-          Mon, 17 Sep 2018 22:38:00 +0800
-Date:   Mon, 17 Sep 2018 22:37:59 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        DTML <devicetree@vger.kernel.org>,
-        andrea.parri@amarulasolutions.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
-Subject: Re: [PATCH V4 00/27] C-SKY(csky) Linux Kernel Port
-Message-ID: <20180917143759.GA2612@guoren-Inspiron-7460>
-References: <cover.1536757532.git.ren_guo@c-sky.com>
- <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
- <b5bbb3e5-d970-dd82-400f-ae13ca782fd5@c-sky.com>
- <20180917215443.3b5808c5@canb.auug.org.au>
+        Mon, 17 Sep 2018 16:09:09 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 1uiMg3w4Jbst71uiPgKOxM; Mon, 17 Sep 2018 16:41:30 +0200
+Subject: Re: [PATCH v3 2/2] [media] videobuf2-dc: Support cacheable MMAP
+To:     Thierry Escande <thierry.escande@collabora.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+References: <1477471926-15796-1-git-send-email-thierry.escande@collabora.com>
+ <1477471926-15796-3-git-send-email-thierry.escande@collabora.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <89fe7216-d391-5a5c-424e-df1a2679f3cf@xs4all.nl>
+Date:   Mon, 17 Sep 2018 16:41:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917215443.3b5808c5@canb.auug.org.au>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1477471926-15796-3-git-send-email-thierry.escande@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLit8/guSYM0Og3UGFPrJAzrPitHe9BhRoSOAB/2gftxFpgGlJ+9XH3AEOG+zKvbW3EuHcVq2q87WwMmGTWqMsHRygS3AI7iOFVla1otE2z55qcq+p41
+ vryJwkT7uKU3JB4BnBqhC8jpRT5/KvjmkxX4/pwPQ6VY+56f1LIRHbpD12B7hA1rZnyYU/tmjjx0pJWUDU1561yzij/RQAkBEpSOWT8QIhgID+FxhZ9XxE/u
+ Gb8ashlFV0eoEbcHWUQDSYoyfZI/kPQDzTgr4AGjRGLlKDOxZ1wuoaLu2NIYCsbOvKptxpjr4dt8EOjvhKZIS+MV/+rWqTfg6qNGHf+g/w+y2LXAOvbhy0UV
+ WkNfp8Z2MbQ86R7fnTuRlxAjYiAdqRW/tHSdH9TNfW2YTq4bAJ1O7qOgBsp0hmTOjFpnhLre
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 09:54:43PM +1000, Stephen Rothwell wrote:
-> Hi Guo,
+I'm going through old patches in patchwork that fell through the
+cracks, and this is one of them.
+
+If this is still desired, please rebase and repost.
+
+I'm marking this series as Obsoleted in patchwork, since it no longer
+applies anyway.
+
+Regards,
+
+	Hans
+
+
+On 10/26/2016 10:52 AM, Thierry Escande wrote:
+> From: Heng-Ruey Hsu <henryhsu@chromium.org>
 > 
-> On Sun, 16 Sep 2018 12:53:26 +0800 Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > I'm Guo Ren from C-SKY and I'm working on csky linux port upstream.
-> > I've prepared my git-tree based on linux-4.19-rc3:
-> > git clone -b linux-next https://github.com/c-sky/csky-linux.git
-> > 
-> > Here is the pre-built cross compiler for fast test from our CI:
-> > https://gitlab.com/c-sky/buildroot/-/jobs/97941896/artifacts/file/output/images/csky_toolchain_csky_ck860_platform_defconfig_72371bf75a51f27ea59fc34eeaf236e06b75bf69.tar.xz
-> > 
-> > You can also build newest gcc, binutils and they are upstreamed but not
-> > released on gnu.org. Glibc is uptreaming now.
-> > 
-> > Please have a look and any feed back is welcome.
+> DMA allocations for MMAP type are uncached by default. But for
+> some cases, CPU has to access the buffers. ie: memcpy for format
+> converter. Supporting cacheable MMAP improves huge performance.
 > 
-> Added from today (called "csky").
+> This patch enables cacheable memory for DMA coherent allocator in mmap
+> buffer allocation if non-consistent DMA attribute is set and kernel
+> mapping is present. Even if userspace doesn't mmap the buffer, sync
+> still should be happening if kernel mapping is present.
+> If not done in allocation, it is enabled when memory is mapped from
+> userspace (if non-consistent DMA attribute is set).
 > 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgement of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window. 
+> Signed-off-by: Heng-Ruey Hsu <henryhsu@chromium.org>
+> Tested-by: Heng-ruey Hsu <henryhsu@chromium.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> ---
+>  drivers/media/v4l2-core/videobuf2-dma-contig.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
->         Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and 
->      * destined for the current or next Linux merge window.
+> diff --git a/drivers/media/v4l2-core/videobuf2-dma-contig.c b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> index 0d9665d..89b534a 100644
+> --- a/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> +++ b/drivers/media/v4l2-core/videobuf2-dma-contig.c
+> @@ -151,6 +151,10 @@ static void vb2_dc_put(void *buf_priv)
+>  		sg_free_table(buf->sgt_base);
+>  		kfree(buf->sgt_base);
+>  	}
+> +	if (buf->dma_sgt) {
+> +		sg_free_table(buf->dma_sgt);
+> +		kfree(buf->dma_sgt);
+> +	}
+>  	dma_free_attrs(buf->dev, buf->size, buf->cookie, buf->dma_addr,
+>  		       buf->attrs);
+>  	put_device(buf->dev);
+> @@ -192,6 +196,14 @@ static void *vb2_dc_alloc(struct device *dev, unsigned long attrs,
+>  	buf->handler.put = vb2_dc_put;
+>  	buf->handler.arg = buf;
+>  
+> +	/*
+> +	 * Enable cache maintenance. Even if userspace doesn't mmap the buffer,
+> +	 * sync still should be happening if kernel mapping is present.
+> +	 */
+> +	if (!(buf->attrs & DMA_ATTR_NO_KERNEL_MAPPING) &&
+> +	    buf->attrs & DMA_ATTR_NON_CONSISTENT)
+> +		buf->dma_sgt = vb2_dc_get_base_sgt(buf);
+> +
+>  	atomic_inc(&buf->refcount);
+>  
+>  	return buf;
+> @@ -227,6 +239,10 @@ static int vb2_dc_mmap(void *buf_priv, struct vm_area_struct *vma)
+>  
+>  	vma->vm_ops->open(vma);
+>  
+> +	/* Enable cache maintenance if not enabled in allocation. */
+> +	if (!buf->dma_sgt && buf->attrs & DMA_ATTR_NON_CONSISTENT)
+> +		buf->dma_sgt = vb2_dc_get_base_sgt(buf);
+> +
+>  	pr_debug("%s: mapped dma addr 0x%08lx at 0x%08lx, size %ld\n",
+>  		__func__, (unsigned long)buf->dma_addr, vma->vm_start,
+>  		buf->size);
 > 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
 
- I am very excited to receive your mail. I have been preparing for this
- for nearly 3 years.
-
- - All files are under GPL v2
- 
- - All Contributors have been Signed-off.
-
- - All have been reviewed.
-
- - For develop detail you can find in: https://github.com/c-sky/csky-linux
-   It records from 'Dec 2015' to 'Sep 2018'.
-
- - Here is the newest ltp test result: https://gitlab.com/c-sky/buildroot/-/jobs/98061317
-
- Best Regards
-  Guo Ren
