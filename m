@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7E3ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF140ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620752146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 620752146D
+	by mail.kernel.org (Postfix) with ESMTP id 75B842146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B842146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbeIREk6 (ORCPT
+        id S1732412AbeIRElB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50546 "EHLO
+        Tue, 18 Sep 2018 00:41:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50562 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIREk5 (ORCPT
+        with ESMTP id S1731765AbeIRElB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:57 -0400
+        Tue, 18 Sep 2018 00:41:01 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7342CCAC;
-        Mon, 17 Sep 2018 23:11:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EB74707;
+        Mon, 17 Sep 2018 23:11:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 090/158] macintosh/via-pmu: Add missing mmio accessors
-Date:   Tue, 18 Sep 2018 00:42:00 +0200
-Message-Id: <20180917211715.382036430@linuxfoundation.org>
+Subject: [PATCH 4.18 091/158] perf build: Fix installation directory for eBPF
+Date:   Tue, 18 Sep 2018 00:42:01 +0200
+Message-Id: <20180917211715.438633357@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -54,52 +57,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 576d5290d678a651b9f36050fc1717e0573aca13 ]
+[ Upstream commit 83868bf71d2eb7700b37f1ea188007f0125e4ee4 ]
 
-Add missing in_8() accessors to init_pmu() and pmu_sr_intr().
+The perf tool build and install is controlled via a Makefile. The
+'install' rule creates directories and copies files. Among them are
+header files installed in /usr/lib/include/perf/bpf/.
 
-This fixes several sparse warnings:
-drivers/macintosh/via-pmu.c:536:29: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:537:33: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:1455:17: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:1456:69: warning: dereference of noderef expression
+However all listed examples are installing its header files in
 
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+  /usr/lib/<tool-name>/...[/include]/header.h
+
+and not in
+
+  /usr/lib/include/<tool-name>/.../header.h.
+
+Background information:
+
+Building the Fedora 28 glibc RPM on s390x and s390 fails on s390 (gcc
+-m31) as gcc is not able to find header-files like stdbool.h.
+
+In the glibc.spec file, you can see that glibc is configured with
+"--with-headers". In this case, first -nostdinc is added to the CFLAGS
+and then further include paths are added via -isystem.  One of those
+paths should contain header files like stdbool.h.
+
+In order to get this path, gcc is invoked with:
+
+- on Fedora 28 (with 4.18 kernel):
+
+  $ gcc -print-file-name=include
+  /usr/lib/gcc/s390x-redhat-linux/8/include
+  $ gcc -m31 -print-file-name=include
+  /usr/lib/gcc/s390x-redhat-linux/8/../../../../lib/include
+  => If perf is installed, this is: /usr/lib/include
+  On my machine this directory is only containing the directory "perf".
+  If perf is not installed gcc returns: /usr/lib/gcc/s390x-redhat-linux/8/include
+
+- on Ubuntu 18.04 (with 4.15 kernel):
+
+  $ gcc  -print-file-name=include
+  /usr/lib/gcc/s390x-linux-gnu/7/include
+  $ gcc -m31 -print-file-name=include
+  /usr/lib/gcc/s390x-linux-gnu/7/include
+  => gcc returns the correct path even if perf is installed.
+
+In each case, the introduction of the subdirectory /usr/lib/include
+leads to the regression that one can not build the glibc RPM for s390
+anymore as gcc can not find headers like stdbool.h.
+
+To remedy this install bpf.h to /usr/lib/perf/include/bpf/bpf.h
+
+Output before using the command 'perf test -Fv 40':
+
+  echo '...[bpf-program-source]...' | /usr/bin/clang ... \
+		   -I/root/lib/include/perf/bpf ...
+                               ^^^^^^^^^^^^
+...
+  [root@p23lp27 perf]# perf test -F 40
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  [root@p23lp27 perf]#
+
+Output after using command 'perf test -Fv 40':
+
+  echo '...[bpf-program-source]...' | /usr/bin/clang ... \
+		 -I/root/lib/perf/include/bpf ...
+                             ^^^^^^^^^^^^
+...
+  [root@p23lp27 perf]# perf test -F 40
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  [root@p23lp27 perf]#
+
+Committer testing:
+
+While the above 'perf test -F 40' (or 'perf test bpf') will allow us
+to see that the correct path is now added via -I, to actually test this
+we better try to use a bpf script that includes files in the changed
+directory.
+
+We have the files that now reside in /root/lib/perf/examples/bpf/ to do
+just that:
+
+  # tail -8 /root/lib/perf/examples/bpf/5sec.c
+  #include <bpf.h>
+
+  int probe(hrtimer_nanosleep, rqtp->tv_sec)(void *ctx, int err, long sec)
+  {
+	  return sec == 5;
+  }
+
+  license(GPL);
+  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 4
+       0.333 (4000.086 ms): sleep/9248 nanosleep(rqtp: 0x7ffc155f3300) = 0
+  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 5
+       0.287 (         ): sleep/9659 nanosleep(rqtp: 0x7ffeafe38200) ...
+       0.290 (         ): perf_bpf_probe:hrtimer_nanosleep:(ffffffff9911efe0) tv_sec=5
+       0.287 (5000.059 ms): sleep/9659  ... [continued]: nanosleep()) = 0
+  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 6
+       0.247 (5999.951 ms): sleep/10068 nanosleep(rqtp: 0x7fff2086d900) = 0
+  # perf trace -e *sleep -e /root/lib/perf/examples/bpf/5sec.c sleep 5.987
+       0.293 (         ): sleep/10489 nanosleep(rqtp: 0x7ffdd4fc10e0) ...
+       0.296 (         ): perf_bpf_probe:hrtimer_nanosleep:(ffffffff9911efe0) tv_sec=5
+       0.293 (5986.912 ms): sleep/10489  ... [continued]: nanosleep()) = 0
+  #
+
+Suggested-by: Stefan Liebler <stli@linux.ibm.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 1b16fffa389d ("perf llvm-utils: Add bpf include path to clang command line")
+Link: http://lkml.kernel.org/r/20180731073254.91090-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/macintosh/via-pmu.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ tools/perf/Makefile.config |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -534,8 +534,9 @@ init_pmu(void)
- 	int timeout;
- 	struct adb_request req;
- 
--	out_8(&via[B], via[B] | TREQ);			/* negate TREQ */
--	out_8(&via[DIRB], (via[DIRB] | TREQ) & ~TACK);	/* TACK in, TREQ out */
-+	/* Negate TREQ. Set TACK to input and TREQ to output. */
-+	out_8(&via[B], in_8(&via[B]) | TREQ);
-+	out_8(&via[DIRB], (in_8(&via[DIRB]) | TREQ) & ~TACK);
- 
- 	pmu_request(&req, NULL, 2, PMU_SET_INTR_MASK, pmu_intr_mask);
- 	timeout =  100000;
-@@ -1418,8 +1419,8 @@ pmu_sr_intr(void)
- 	struct adb_request *req;
- 	int bite = 0;
- 
--	if (via[B] & TREQ) {
--		printk(KERN_ERR "PMU: spurious SR intr (%x)\n", via[B]);
-+	if (in_8(&via[B]) & TREQ) {
-+		printk(KERN_ERR "PMU: spurious SR intr (%x)\n", in_8(&via[B]));
- 		out_8(&via[IFR], SR_INT);
- 		return NULL;
- 	}
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -905,8 +905,8 @@ bindir = $(abspath $(prefix)/$(bindir_re
+ mandir = share/man
+ infodir = share/info
+ perfexecdir = libexec/perf-core
+-perf_include_dir = lib/include/perf
+-perf_examples_dir = lib/examples/perf
++perf_include_dir = lib/perf/include
++perf_examples_dir = lib/perf/examples
+ sharedir = $(prefix)/share
+ template_dir = share/perf-core/templates
+ STRACE_GROUPS_DIR = share/perf-core/strace/groups
 
 
