@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75230ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92174ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368F42146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368F42146F
+	by mail.kernel.org (Postfix) with ESMTP id 546012146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 546012146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732103AbeIREj4 (ORCPT
+        id S1732116AbeIREj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:39:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50318 "EHLO
+        Tue, 18 Sep 2018 00:39:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50326 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREjz (ORCPT
+        with ESMTP id S1729160AbeIREj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:39:55 -0400
+        Tue, 18 Sep 2018 00:39:58 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00537C49;
-        Mon, 17 Sep 2018 23:10:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C568C9D;
+        Mon, 17 Sep 2018 23:10:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 069/158] misc: ti-st: Fix memory leak in the error path of probe()
-Date:   Tue, 18 Sep 2018 00:41:39 +0200
-Message-Id: <20180917211714.431287543@linuxfoundation.org>
+Subject: [PATCH 4.18 070/158] uio: potential double frees if __uio_register_device() fails
+Date:   Tue, 18 Sep 2018 00:41:40 +0200
+Message-Id: <20180917211714.482603544@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -51,41 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 81ae962d7f180c0092859440c82996cccb254976 ]
+[ Upstream commit f019f07ecf6a6b8bd6d7853bce70925d90af02d1 ]
 
-Free resources instead of direct return of the error code if kim_probe
-fails.
+The uio_unregister_device() function assumes that if "info->uio_dev" is
+non-NULL that means "info" is fully allocated.  Setting info->uio_de
+has to be the last thing in the function.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+In the current code, if request_threaded_irq() fails then we return with
+info->uio_dev set to non-NULL but info is not fully allocated and it can
+lead to double frees.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Fixes: beafc54c4e2f ("UIO: Add the User IO core code")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/ti-st/st_kim.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/uio/uio.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/misc/ti-st/st_kim.c
-+++ b/drivers/misc/ti-st/st_kim.c
-@@ -756,14 +756,14 @@ static int kim_probe(struct platform_dev
- 	err = gpio_request(kim_gdata->nshutdown, "kim");
- 	if (unlikely(err)) {
- 		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
--		return err;
-+		goto err_sysfs_group;
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -955,8 +955,6 @@ int __uio_register_device(struct module
+ 	if (ret)
+ 		goto err_uio_dev_add_attributes;
+ 
+-	info->uio_dev = idev;
+-
+ 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
+ 		/*
+ 		 * Note that we deliberately don't use devm_request_irq
+@@ -972,6 +970,7 @@ int __uio_register_device(struct module
+ 			goto err_request_irq;
  	}
  
- 	/* Configure nShutdown GPIO as output=0 */
- 	err = gpio_direction_output(kim_gdata->nshutdown, 0);
- 	if (unlikely(err)) {
- 		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
--		return err;
-+		goto err_sysfs_group;
- 	}
- 	/* get reference of pdev for request_firmware
- 	 */
++	info->uio_dev = idev;
+ 	return 0;
+ 
+ err_request_irq:
 
 
