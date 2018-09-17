@@ -7,162 +7,137 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE32ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350DAECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1318208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B9B214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="k/nGr6lL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1318208AE
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PFz4Uu2f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B9B214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbeIQIa7 (ORCPT
+        id S1730752AbeIQIo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:30:59 -0400
-Received: from mail-eopbgr690134.outbound.protection.outlook.com ([40.107.69.134]:52946
+        Mon, 17 Sep 2018 04:44:27 -0400
+Received: from mail-eopbgr690116.outbound.protection.outlook.com ([40.107.69.116]:54124
         "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730105AbeIQIa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:30:58 -0400
+        id S1730532AbeIQIa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:30:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z0ncOjyrafHCJq+/q7ztZPu7s7yrwhopdsbKhZMQ/mo=;
- b=k/nGr6lLsd2+BRUnvLXZa7idczNcwelnNGn+zqkjWfacTFW80yEeqFqmKI1Sv76I7/xp/AVw2uhG/rPnQPI8svC4hAM714b/d7RKzv/1e80ScsAXx+9B2RDQRppOBmFEzMniToNfzf83yuDxRTtv202lbC2oh79WfM4ZdNB9wNM=
+ bh=Ag2WT9BvrZ6GLk6rHp71rZENL4duretgg6sNp2Dvgbc=;
+ b=PFz4Uu2fb8ra0ZwOOYg6olYs1yXJ9Dgx2+WVxAFyxQquPYv7+W8OUMiRN1WxQsvjGhPvi8Ds0C0Jbi4YfvSWAeuR02cv9b9RgcRGdcoyd1/vx6f4ysoZwr2UJ3UWa3dGCp9LfqliLMf8zeCBzFj6UNzcBFenmxOlJPbY4BAznOg=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
+ CY4PR21MB0133.namprd21.prod.outlook.com (10.173.189.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:05:37 +0000
+ 15.20.1164.11; Mon, 17 Sep 2018 03:05:03 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:05:37 +0000
+ 03:05:03 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sudeep Holla <sudeep.holla@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+CC:     Johan Hovold <johan@kernel.org>,
+        Denis Kirjanov <kirjanov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 07/57] power: vexpress: fix corruption in notifier
- registration
-Thread-Topic: [PATCH AUTOSEL 4.9 07/57] power: vexpress: fix corruption in
- notifier registration
-Thread-Index: AQHUTjMNWIR4bA6t60CLtpiSJiXfIw==
-Date:   Mon, 17 Sep 2018 03:03:48 +0000
-Message-ID: <20180917030340.378-7-alexander.levin@microsoft.com>
-References: <20180917030340.378-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030340.378-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 82/87] EDAC: Fix memleak in module init error
+ path
+Thread-Topic: [PATCH AUTOSEL 4.14 82/87] EDAC: Fix memleak in module init
+ error path
+Thread-Index: AQHUTjL7wwxkVpMga0erdXbPfcgszQ==
+Date:   Mon, 17 Sep 2018 03:03:17 +0000
+Message-ID: <20180917030220.245686-82-alexander.levin@microsoft.com>
+References: <20180917030220.245686-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030220.245686-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:QYjzH+oCqPM3XAHYH27WM3L8McLLAE8S+Uf61jjRYsZvtYicaNVENzgpqrHSgFEpW17F87KokftOqxS8qBiEqR6r/zLZhGJpV/chGyOW7AKV+U3ooqzVkgXfVZHIcF75jeknKphHAnxYVd9a/SRP86HCixBtTAimqqNEFa2OKgGpOrI3RiMD2TPuZ3bQykokaeZZTeRWHXMweCp7vNdcuzgHLUyu6glarM4i5NHeNCGFWOHRWlkFmbzhhMg/0J+Zlw/3k8WDevKnF2fFhiEH19yjqRR5gebP5jvAc3KV+BeqE5yuJhEdyrwyETtqlhTox7Zh/aT2xzmSnzfJhUP5rXLOA9WGuGzS/mMfmYsh6Tm9Jz1yWIEjF75TJH4PKb+CsoRCOH+0xJh1uaKUYqiek6MSNQZI0CFtWZJTpPxJFiYnCW1ezWCQdqLlHbY0qeLc/Jbww+Ky3wqsRTSgfcdkfQ==;5:aSiqcN2Mftx8UwEela2HWYFL4DhVmKg98z4Y80Cl1ilSqkQOM62bGOj17lunqEmd7jqF1a3iUWMLqkKYzRMejrEPSI5Z5E5FCRjonMJoq9N/91zOPlO9NLtRj8ylpBde+3cOkoCxZ6ddEsBFAN6FVz3jcDH1FoP+3NQQ2hzSfQw=;7:V7JwljVKP35HSJ39G6FYmTar85qTi67UdH2oKfVwXJftPNYchvs/0lb82N/6iySp0HxT+YH63x9lFYF0O3uQz34mKAar+cHJ/8DSiy/5eLYK3lnBHvveqm1smXDatFVGVl/nAvk1AlupCbxKIUWZU40a1tWPej6tvuNCqF24FeA3j50R8KxZPCfUbbMPQufEbUjYOgQPrAKJMRRO988M5lP25YImfAnsCfjOzF3jS+q1BBnYvemhL43PX/d+4Gx4
-x-ms-office365-filtering-correlation-id: 70934518-d61a-4cf8-cea4-08d61c4a7179
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0133;6:hbpXq2C2s2tiXfdhcAkNL5Atqw/UVSh7WaH4dvXfmq4vgak8QMucIfC+kZLpZnU8kYjQbMtdsGakiB3V5HMHri62+6GT5taKn7ohP3iW6cFowAxOX96Xqhmo4TXdj9z+3IG6BVdbx3/XGPOlVO9ZCXFcTdOF1Mc3tUxP04+s0HcsjUbW38VEZDZpkAUjBD04VPtQ2TPjGqIBsFx3U05j3JnhLttYNa8dRz/WN3zb13uQS2V4eRG4yEL0xlYgI43bu2KILvkhXSenMD6oU4UdOi/FGqTlBF3zHa/904ZvE2tX4XgyiSXKVoByq5o2BhaN6vMb5kjsaAuR1EGTvCwi6Ms0IrhZSQVPC1uBoCWRGkVfoTkJSaf67h0mxD8Qvu5YJN7vpmae1spn76mCqYW+IjjFmamg8LiDY+TXZOUMoPJTPTlCj0zNZh7jDxaQioewKo+ALPP3tTuBewAqp9JCug==;5:978yaLWIHOx7SzoIMdUXTOWCPmnpwWP874m6yRphn9goOfMCu6wbZUrSGrQN177UHpzdqLvEWwIbDKbsYA4AVOjfjB3liDlz8vkjl5BrJDwJLPtbpZrI1QyNFSGdP/GOQgk9djlwjH1zZqH3nq6vZ4MRQFF7t0oYg1cuB0JIaDs=;7:oQrNzf27bEHOF974Ebk9yOJvrV06KVJwKm3nhKDdY2oGheGOWlKlNOYOI7U5Cu+BkNXoMiUcsDOdDZmDjyCML2eHQUc70XWTlkoYtVZHFLHIXIt5Y9vwKMVg1CpzVoHhcg3CNVYZVfLcDp74wU7HTU7UX6yntxVxBaYtYtoTRUjS6hhDRdrWssaJotq6+ey5nkDeEveG3VPRhoqDWicBgy7i95Rr1LFU0Ly+F2MobDCQ1pWfYpnu0Jilp68pFq0O
+x-ms-office365-filtering-correlation-id: d775f38d-4f8b-43a8-d844-08d61c4a5cfc
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
-x-ms-traffictypediagnostic: CY4PR21MB0120:
-x-microsoft-antispam-prvs: <CY4PR21MB012098A5C96551E106C17EBFFB1E0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
-x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(39860400002)(366004)(199004)(189003)(54906003)(26005)(110136005)(446003)(2906002)(6346003)(99286004)(316002)(575784001)(86362001)(25786009)(102836004)(10090500001)(2616005)(2900100001)(76176011)(97736004)(36756003)(11346002)(72206003)(478600001)(10290500003)(3846002)(6116002)(1076002)(22452003)(107886003)(5250100002)(2501003)(86612001)(4326008)(217873002)(105586002)(106356001)(6486002)(14444005)(14454004)(256004)(6436002)(8676002)(305945005)(8936002)(6506007)(81156014)(81166006)(7736002)(476003)(486006)(68736007)(186003)(66066001)(6512007)(53936002)(5660300001)(6666003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0133;
+x-ms-traffictypediagnostic: CY4PR21MB0133:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: tA8HuxYtYGK2e/pIHwWtDZh2GtEkkncGTx5CS5bpSI+4EGN6t0zYb4p4h2Z7Q1EWAhv5wzhmVP8OOgj/ClTFvnqZbf32D33yBNbM1SIHPdrOw16kQQoJcLKYJSpV0a7KXvxJSJWsvd3K2ZOHjmbxZthAfwRGPY8DqDjGFm0g/osUKVYxDzrp1kHfmtUugtGin7D26ywe3083q82kUsV2sKbtqy12JsrejNYthqO96ZSxrms/kff+ambYUXK9F1fJDgZzA0/+EUi6cqQj0y869FnM1tc2XXE3+A945Isf6ax4gtBKL+A2kPgyMoCw+IKTTO5p2ALacS085pOcZCP49lZfuU3/A0xGsYBjzcvgeA0=
+x-microsoft-antispam-prvs: <CY4PR21MB01335CC2871FBCCF3D641FA6FB1E0@CY4PR21MB0133.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(42068640409301)(85827821059158)(9452136761055)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0133;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0133;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(376002)(346002)(189003)(199004)(102836004)(53936002)(8676002)(486006)(476003)(3846002)(6116002)(76176011)(10290500003)(97736004)(217873002)(256004)(5660300001)(107886003)(6506007)(478600001)(39060400002)(110136005)(2501003)(10090500001)(14444005)(305945005)(7736002)(446003)(11346002)(36756003)(2906002)(1076002)(22452003)(5250100002)(2616005)(26005)(316002)(106356001)(25786009)(68736007)(86362001)(575784001)(14454004)(966005)(72206003)(105586002)(99286004)(6486002)(6306002)(6436002)(6512007)(86612001)(6666003)(81166006)(81156014)(186003)(2900100001)(54906003)(8936002)(4326008)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0133;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 01ui38fS7Qa80EWOWmCMOR2O3vGiMuk5PjWU11JvADazMO7zXTxLVrRyXBRbO0blfYx0uLCiATNy6fSnDmOySl7GdvERfZABS1w2i+bKy/QJuRXXNJPcew3Hbmz4Re9rscKQX4RV+U807QIOKJyYnd++CDgVGeQ2QzzySgcqphb5PHcJ9fdzkRmmYj9akAYd3ExjaV4AlN/9vMQH89BnMo6EJzD0TiAtzD6qVthZxGiSohn/t4YM5o/IO7IQpODGc/tKNN0RnDP9EJ3BQSja5crICZIl+e2LUDhWm5J4JGPZv5FbSSLVwSMRjczD2LJ1MYSpoVii7ptU9NoKbsBIGiPTpvj6Th1k8OJWcRiwLh8=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70934518-d61a-4cf8-cea4-08d61c4a7179
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:03:48.2117
+X-MS-Exchange-CrossTenant-Network-Message-Id: d775f38d-4f8b-43a8-d844-08d61c4a5cfc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:03:17.0089
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0120
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 09bebb1adb21ecd04adf7ccb3b06f73e3a851e93 ]
+[ Upstream commit 4708aa85d50cc6e962dfa8acf5ad4e0d290a21db ]
 
-Vexpress platforms provide two different restart handlers: SYS_REBOOT
-that restart the entire system, while DB_RESET only restarts the
-daughter board containing the CPU. DB_RESET is overridden by SYS_REBOOT
-if it exists.
+Make sure to use put_device() to free the initialised struct device so
+that resources managed by driver core also gets released in the event of
+a registration failure.
 
-notifier_chain_register used in register_restart_handler by design
-relies on notifiers to be registered once only, however vexpress restart
-notifier can get registered twice. When this happen it corrupts list
-of notifiers, as result some notifiers can be not called on proper
-event, traverse on list can be cycled forever, and second unregister
-can access already freed memory.
-
-So far, since this was the only restart handler in the system, no issue
-was observed even if the same notifier was registered twice. However
-commit 6c5c0d48b686 ("watchdog: sp805: add restart handler") added
-support for SP805 restart handlers and since the system under test
-contains two vexpress restart and two SP805 watchdog instances, it was
-observed that during the boot traversing the restart handler list looped
-forever as there's a cycle in that list resulting in boot hang.
-
-This patch fixes the issues by ensuring that the notifier is installed
-only once.
-
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Fixes: 46c99ac66222 ("power/reset: vexpress: Register with kernel restart h=
-andler")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: Denis Kirjanov <kirjanov@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Fixes: 2d56b109e3a5 ("EDAC: Handle error path in edac_mc_sysfs_init() prope=
+rly")
+Link: http://lkml.kernel.org/r/20180612124335.6420-1-johan@kernel.org
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/power/reset/vexpress-poweroff.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/edac/edac_mc_sysfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/power/reset/vexpress-poweroff.c b/drivers/power/reset/=
-vexpress-poweroff.c
-index 102f95a09460..e9e749f87517 100644
---- a/drivers/power/reset/vexpress-poweroff.c
-+++ b/drivers/power/reset/vexpress-poweroff.c
-@@ -35,6 +35,7 @@ static void vexpress_reset_do(struct device *dev, const c=
-har *what)
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index e4fcfa84fbd3..79c13301bf41 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -1097,14 +1097,14 @@ int __init edac_mc_sysfs_init(void)
+=20
+ 	err =3D device_add(mci_pdev);
+ 	if (err < 0)
+-		goto out_dev_free;
++		goto out_put_device;
+=20
+ 	edac_dbg(0, "device %s created\n", dev_name(mci_pdev));
+=20
+ 	return 0;
+=20
+- out_dev_free:
+-	kfree(mci_pdev);
++ out_put_device:
++	put_device(mci_pdev);
+  out:
+ 	return err;
  }
-=20
- static struct device *vexpress_power_off_device;
-+static atomic_t vexpress_restart_nb_refcnt =3D ATOMIC_INIT(0);
-=20
- static void vexpress_power_off(void)
- {
-@@ -99,10 +100,13 @@ static int _vexpress_register_restart_handler(struct d=
-evice *dev)
- 	int err;
-=20
- 	vexpress_restart_device =3D dev;
--	err =3D register_restart_handler(&vexpress_restart_nb);
--	if (err) {
--		dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
--		return err;
-+	if (atomic_inc_return(&vexpress_restart_nb_refcnt) =3D=3D 1) {
-+		err =3D register_restart_handler(&vexpress_restart_nb);
-+		if (err) {
-+			dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
-+			atomic_dec(&vexpress_restart_nb_refcnt);
-+			return err;
-+		}
- 	}
- 	device_create_file(dev, &dev_attr_active);
-=20
 --=20
 2.17.1
