@@ -2,63 +2,62 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFA3ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1624ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B792F20C0E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5550920C0E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:53:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Tte6IcGB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B792F20C0E
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="O0Zu8VHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5550920C0E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeIRFWp (ORCPT
+        id S1728686AbeIRFWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:22:45 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38742 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRFWo (ORCPT
+        Tue, 18 Sep 2018 01:22:46 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36849 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbeIRFWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:22:44 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h33-v6so386326edb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 16:53:01 -0700 (PDT)
+        Tue, 18 Sep 2018 01:22:45 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f4-v6so392418edq.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 16:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+bOgwdcbB1AONl4K/v+gAHTVcRCVvcpItyB7zluGi9c=;
-        b=Tte6IcGB3//aXsng6GSHU6OFREXVaH6rbqd9J8YPSjc6wjJuupSGxX+D25wXnFuNJc
-         gSBG59aMEVao6aUlLMtYcYVHhuAfIrvCjx0thGwTbz49fADgWXOpHdU15JRHeUEkOTqD
-         AOevKoZkFo80OF2WWJSlqWgJXD69/u5CQQSmM30rDuIyevZaShWJ8WeaXmKs7NcOPxYR
-         Q6WU5d85sM0CrOa0fSKb4Z6JHq6qEzs8V8bqsRjjKLJAAMNeVtHunc5+R7tVg24VS7Qh
-         WCYyCU2NQUF8Wc1xWuZZ6rdAkXbSmmuSMOyIhWr6unR0KPH6kaFvsxZaDRJA2t9dRLL/
-         plaA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/YmuauxZavQGn8pT/koRDQ0Q9xTQ32n86mobHdHHnjg=;
+        b=O0Zu8VHd2/UCkNL92y8z6E0kDmFXOkvExAH8If2rIR9a+4wstTaqoCuFxhrqx7Xv+V
+         ltB5NmzNHA7lzQHeKvf4NCk0SnxG4QVSHPAuElDWv8+bWv+Hun7NtYyg+sbggTYB8ozW
+         lkl+5NtN6vofadqAyxjNMy1kI83W4Gc853aFyCqrejn5Um+StqJVWViRmazwACgHO84u
+         w0xl5fBa6Rk10kFBAN0dIcpt2rVihOcjPBT91Qu5AUENoQxK1WHdcMmvl2nwV4y5EeyC
+         on/vv8XOQlGhf40kl4QDsspNBWU9op+Ochp+r4v7VXLiCdCPMCcY/JoiDu8CepS66S94
+         W9gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+bOgwdcbB1AONl4K/v+gAHTVcRCVvcpItyB7zluGi9c=;
-        b=P8wSoBm6tm3lr+aIPcqo71NEAvsF6aHPXkSS96t+Alk4uRK0AAq7925oQQhtJ2s+JG
-         V8r66HkYNFgOWyeV2/UylxoO4Ste5W07IGFnnbmXH1UbrkjUHR8i48eIXTRO+c7bUyJ8
-         GfYsEQFt2dL3jJKfCHUuY7jlMkALqYCIvVRcgNLHBrmRYla0XUsey1/BAxp5dV2JZPqR
-         gQ/cYsqOTQmABF80pOf1AUi9eYWtjMtK5a4HYNr/M6l10OJZ/UF3s8rhn/UqCLQlM34Y
-         V6TC4Kyzu+lci00eSUDjoQa1Q96kzA3a00PTEcQ4UAhPJs9E3+fxPqykjKC53NUjrBH4
-         QEvg==
-X-Gm-Message-State: APzg51BN3JFJc7UUHfJy+kNXfCdEQVWSh/0IwIvyrhwCcWjsHpT6cjv4
-        WIWq57m1Il5Wyy0etIBHj7sCk4mSZ4c=
-X-Google-Smtp-Source: ANB0VdZ5Mcub6qnFN/nZkw6cn3vcGyz7l2Sn1HK86CNmHdFwJwiFPiz3BK/1qdHDlCRYw0aUELA/5A==
-X-Received: by 2002:a50:a542:: with SMTP id z2-v6mr45949622edb.77.1537228380925;
-        Mon, 17 Sep 2018 16:53:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/YmuauxZavQGn8pT/koRDQ0Q9xTQ32n86mobHdHHnjg=;
+        b=Q7a9+ksbFD4XzR6Yhso8EPMvLS+fijNcmSh53oo5fwttMs4q7SMdt11u2dsddNyqM5
+         o97oj4g+zfj8ALgyN1/MSDKhHqy5O+5IuDkCfgA1uWP9kB0wfkJ4O+RIAqQNZpfs1hTw
+         +TtB9Trhx5W8Vab4hsn8zlR+JSPeCD5xTjAvPcUpd2sxvAtC5V+tvj40FSBlTiXvW83N
+         s7PK70YIIkiSqnYeOjUolQkL7S4j9nLXxFBIrMDm84MCawRYdb9WRS202jidxN3Lizo1
+         6zpRmuo32zZdPocBe7j08nolwRxqr+mw6ldaAjjeMu6RB6kEpUZSUOn+Y6Dbb/rCVJNG
+         4vnA==
+X-Gm-Message-State: APzg51Bp3YOdoOKPgxWkLSrJfGiyNFtjLgmWNQNMu+YJ9TBfakbMZhvx
+        Z8aIB1mb+PXf3ardxMnmAxZLatlt/1o=
+X-Google-Smtp-Source: ANB0VdbUe9+RhoVg1vgvc5vXPxIXqE+oE7IKvgTuCTopriM/mM0PSrySpTRm3064IiqaaW1VsOU7dQ==
+X-Received: by 2002:a50:bc03:: with SMTP id j3-v6mr47271830edh.34.1537228382216;
+        Mon, 17 Sep 2018 16:53:02 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id r35-v6sm7193912edr.59.2018.09.17.16.52.59
+        by smtp.gmail.com with ESMTPSA id r35-v6sm7193912edr.59.2018.09.17.16.53.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 16:53:00 -0700 (PDT)
+        Mon, 17 Sep 2018 16:53:01 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -76,102 +75,70 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
+        Jiri Slaby <jslaby@suse.cz>, Jiri Slaby <jslaby@suse.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Subject: [PATCHv5 0/7] tty: Hold write ldisc sem in tty_reopen()
-Date:   Tue, 18 Sep 2018 00:52:51 +0100
-Message-Id: <20180917235258.5719-1-dima@arista.com>
+        stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCHv5 1/7] tty: Drop tty->count on tty_reopen() failure
+Date:   Tue, 18 Sep 2018 00:52:52 +0100
+Message-Id: <20180917235258.5719-2-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180917235258.5719-1-dima@arista.com>
+References: <20180917235258.5719-1-dima@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+In case of tty_ldisc_reinit() failure, tty->count should be decremented
+back, otherwise we will never release_tty().
+Tetsuo reported that it fixes noisy warnings on tty release like:
+  pts pts4033: tty_release: tty->count(10529) != (#fd's(7) + #kopen's(0))
 
-Three fixes that worth to have in the @stable, as they were hit by
-different people, including Arista on v4.9 stable.
+Fixes: commit 892d1fa7eaae ("tty: Destroy ldisc instance on hangup")
 
-And for linux-next - adding lockdep asserts for line discipline changing
-code, verifying that write ldisc sem will be held forthwith.
+Cc: stable@vger.kernel.org # v4.6+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Reviewed-by: Jiri Slaby <jslaby@suse.cz>
+Tested-by: Jiri Slaby <jslaby@suse.com>
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ drivers/tty/tty_io.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-The last patch is an optional and probably, timeout can be dropped for
-read_lock(). I'll do it if everyone agrees.
-(Or as per discussion with Peter in v3, just convert ldisc to
-a regular rwsem).
-
-Thanks,
-Dima
-
-Changes since v4:
-- back to lock ldisc with (5*HZ) timeout in tty_reopen()
-  (LKP report link: lkml.kernel.org/r/<1536940609.3185.29.camel@arista.com>)
-- reordered 3/7 with 2/7 for LKP robot
-
-Changes since v3:
-- Added tested-by Mark Rutland (thanks!)
-- Dropped patch with smp_wmb() - wrong idea
-- lockdep_assert_held() should be actually lockdep_assert_held_exclusive()
-- Described why tty_ldisc_open() can be called without ldisc_sem held
-  for pty slave end (o_tty).
-- Added Peter's patch for dropping self-made lockdep annotations
-- Fix for a reader(s) of ldisc semaphore waiting for an active reader(s)
-
-Changes since v2:
-- Added reviewed-by tags
-- Hopefully, fixed reported by 0-day issue.
-- Added optional fix for wait_readers decrement
-
-Changes since v1:
-- Added tested-by/reported-by tags
-- Dropped 3/4 (locking tty pair for lockdep sake),
-  Because of that - not adding lockdep_assert_held() in tty_ldisc_open()
-- Added 4/4 cleanup to inc tty->count only on success of
-  tty_ldisc_reinit()
-- lock ldisc without (5*HZ) timeout in tty_reopen()
-
-v1 link: lkml.kernel.org/r/<20180829022353.23568-1-dima@arista.com>
-v2 link: lkml.kernel.org/r/<20180903165257.29227-1-dima@arista.com>
-v3 link: lkml.kernel.org/r/<20180911014821.26286-1-dima@arista.com>
-v4 link: lkml.kernel.org/r/<20180912001702.18522-1-dima@arista.com>
-
-Cc: Daniel Axtens <dja@axtens.net>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Michael Neuling <mikey@neuling.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Nathan March <nathan@gt.net>
-Cc: Pasi Kärkkäinen <pasik@iki.fi>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rong, Chen" <rong.a.chen@intel.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Tan Xiaojun <tanxiaojun@huawei.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-(please, ignore if I Cc'ed you mistakenly)
-
-Dmitry Safonov (6):
-  tty: Drop tty->count on tty_reopen() failure
-  tty/ldsem: Wake up readers after timed out down_write()
-  tty: Hold tty_ldisc_lock() during tty_reopen()
-  tty: Simplify tty->count math in tty_reopen()
-  tty/ldsem: Add lockdep asserts for ldisc_sem
-  tty/ldsem: Decrement wait_readers on timeouted down_read()
-
-Peter Zijlstra (1):
-  tty/ldsem: Convert to regular lockdep annotations
-
- drivers/tty/tty_io.c    | 13 ++++++++---
- drivers/tty/tty_ldisc.c |  9 +++++++
- drivers/tty/tty_ldsem.c | 62 ++++++++++++++++++++-----------------------------
- 3 files changed, 44 insertions(+), 40 deletions(-)
-
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 32bc3e3fe4d3..5e5da9acaf0a 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1255,6 +1255,7 @@ static void tty_driver_remove_tty(struct tty_driver *driver, struct tty_struct *
+ static int tty_reopen(struct tty_struct *tty)
+ {
+ 	struct tty_driver *driver = tty->driver;
++	int retval;
+ 
+ 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
+ 	    driver->subtype == PTY_TYPE_MASTER)
+@@ -1268,10 +1269,14 @@ static int tty_reopen(struct tty_struct *tty)
+ 
+ 	tty->count++;
+ 
+-	if (!tty->ldisc)
+-		return tty_ldisc_reinit(tty, tty->termios.c_line);
++	if (tty->ldisc)
++		return 0;
+ 
+-	return 0;
++	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
++	if (retval)
++		tty->count--;
++
++	return retval;
+ }
+ 
+ /**
 -- 
 2.13.6
 
