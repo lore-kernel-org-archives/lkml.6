@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5286AECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C25ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1DE2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1DE2146F
+	by mail.kernel.org (Postfix) with ESMTP id 995842146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995842146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbeIREci (ORCPT
+        id S1730571AbeIREcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:32:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48730 "EHLO
+        Tue, 18 Sep 2018 00:32:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48758 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbeIREch (ORCPT
+        with ESMTP id S1726987AbeIREck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:32:37 -0400
+        Tue, 18 Sep 2018 00:32:40 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE3A5C7D;
-        Mon, 17 Sep 2018 23:03:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E965BCB2;
+        Mon, 17 Sep 2018 23:03:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/126] pinctrl/amd: only handle irq if it is pending and unmasked
-Date:   Tue, 18 Sep 2018 00:41:54 +0200
-Message-Id: <20180917211708.667620480@linuxfoundation.org>
+Subject: [PATCH 4.14 067/126] net: mvneta: fix mtu change on port without link
+Date:   Tue, 18 Sep 2018 00:41:55 +0200
+Message-Id: <20180917211708.708846576@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,52 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-[ Upstream commit 8bbed1eef001fdfc0ee9595f64cc4f769d265af4 ]
+[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
 
-The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
-individual handlers.
+It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
+port without link. Indeed MTU change for interface without link causes TX
+queues to stuck.
 
-If one of these GPIO irqs is configured as a level interrupt, and its
-downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
-source is masked by handle_level_irq() until the eventual return of the
-threaded irq handler.  During this time the level GPIO interrupt status
-will still report as high until the actual gpio source is cleared - both
-in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
-its corresponding "WAKE_INT_STATUS_REG" bit.
-
-Thus, if another GPIO interrupt occurs during this time,
-amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
-level irq is still pending and incorrectly call its handler again.
-
-To fix this, have amd_gpio_irq_handler() check for both interrupts status
-and mask before calling generic_handle_irq().
-
-Note: Is it possible that this bug was the source of the interrupt storm
-on Ryzen when using chained interrupts before commit ba714a9c1dea85
-("pinctrl/amd: Use regular interrupt instead of chained")?
-
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
+network unit")
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+[gregory.clement: adding Fixes tags and rewording commit log]
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-amd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/marvell/mvneta.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -530,7 +530,8 @@ static irqreturn_t amd_gpio_irq_handler(
- 		/* Each status bit covers four pins */
- 		for (i = 0; i < 4; i++) {
- 			regval = readl(regs + i);
--			if (!(regval & PIN_IRQ_PENDING))
-+			if (!(regval & PIN_IRQ_PENDING) ||
-+			    !(regval & BIT(INTERRUPT_MASK_OFF)))
- 				continue;
- 			irq = irq_find_mapping(gc->irqdomain, irqnr + i);
- 			generic_handle_irq(irq);
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -3195,7 +3195,6 @@ static int mvneta_change_mtu(struct net_
+ 
+ 	on_each_cpu(mvneta_percpu_enable, pp, true);
+ 	mvneta_start_dev(pp);
+-	mvneta_port_up(pp);
+ 
+ 	netdev_update_features(dev);
+ 
 
 
