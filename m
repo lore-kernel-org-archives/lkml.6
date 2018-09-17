@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D140ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C21FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3922088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3922088F
+	by mail.kernel.org (Postfix) with ESMTP id 4A9912146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9912146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbeIREWj (ORCPT
+        id S1729544AbeIREWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:22:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45436 "EHLO
+        Tue, 18 Sep 2018 00:22:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbeIREWi (ORCPT
+        with ESMTP id S1728872AbeIREWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:22:38 -0400
+        Tue, 18 Sep 2018 00:22:41 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A71EFCB2;
-        Mon, 17 Sep 2018 22:53:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01848CB2;
+        Mon, 17 Sep 2018 22:53:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Jia He <hejianet@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 17/70] mm: remove seemingly spurious reclaimability check from laptop_mode gating
-Date:   Tue, 18 Sep 2018 00:41:50 +0200
-Message-Id: <20180917211650.585857675@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.9 18/70] ARC: [plat-axs*]: Enable SWAP
+Date:   Tue, 18 Sep 2018 00:41:51 +0200
+Message-Id: <20180917211650.791951250@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -56,44 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Weiner <hannes@cmpxchg.org>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit 047d72c30eedcb953222810f1e7dcaae663aa452 upstream.
+commit c83532fb0fe053d2e43e9387354cb1b52ba26427 upstream.
 
-Commit 1d82de618ddd ("mm, vmscan: make kswapd reclaim in terms of
-nodes") allowed laptop_mode=1 to start writing not just when the
-priority drops to DEF_PRIORITY - 2 but also when the node is
-unreclaimable.
+SWAP support on ARC was fixed earlier by
+commit 6e3761145a9b ("ARC: Fix CONFIG_SWAP")
+so now we may safely enable it on platforms that
+have external media like USB and SD-card.
 
-That appears to be a spurious change in this patch as I doubt the series
-was tested with laptop_mode, and neither is that particular change
-mentioned in the changelog.  Remove it, it's still recent.
+Note: it was already allowed for HSDK
 
-Link: http://lkml.kernel.org/r/20170228214007.5621-4-hannes@cmpxchg.org
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Jia He <hejianet@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: stable@vger.kernel.org # 6e3761145a9b: ARC: Fix CONFIG_SWAP
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/configs/axs101_defconfig     |    1 -
+ arch/arc/configs/axs103_defconfig     |    1 -
+ arch/arc/configs/axs103_smp_defconfig |    1 -
+ 3 files changed, 3 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3301,7 +3301,7 @@ static int balance_pgdat(pg_data_t *pgda
- 		 * If we're getting trouble reclaiming, start doing writepage
- 		 * even in laptop mode.
- 		 */
--		if (sc.priority < DEF_PRIORITY - 2 || !pgdat_reclaimable(pgdat))
-+		if (sc.priority < DEF_PRIORITY - 2)
- 			sc.may_writepage = 1;
- 
- 		/* Call soft limit reclaim before calling shrink_node. */
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -1,5 +1,4 @@
+ CONFIG_DEFAULT_HOSTNAME="ARCLinux"
+-# CONFIG_SWAP is not set
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+--- a/arch/arc/configs/axs103_defconfig
++++ b/arch/arc/configs/axs103_defconfig
+@@ -1,5 +1,4 @@
+ CONFIG_DEFAULT_HOSTNAME="ARCLinux"
+-# CONFIG_SWAP is not set
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
+--- a/arch/arc/configs/axs103_smp_defconfig
++++ b/arch/arc/configs/axs103_smp_defconfig
+@@ -1,5 +1,4 @@
+ CONFIG_DEFAULT_HOSTNAME="ARCLinux"
+-# CONFIG_SWAP is not set
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ # CONFIG_CROSS_MEMORY_ATTACH is not set
 
 
