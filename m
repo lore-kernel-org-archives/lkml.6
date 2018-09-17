@@ -2,86 +2,86 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B53ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22C6ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B702146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B702146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B1582146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1582146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732646AbeIREmS (ORCPT
+        id S1732275AbeIREk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:42:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50808 "EHLO
+        Tue, 18 Sep 2018 00:40:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeIREmS (ORCPT
+        with ESMTP id S1731933AbeIREk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:42:18 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B50F1707;
-        Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
-Date:   Mon, 17 Sep 2018 16:12:45 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] mm: Randomize free memory
-Message-Id: <20180917161245.c4bb8546d2c6069b0506c5dd@linux-foundation.org>
-In-Reply-To: <153702858249.1603922.12913911825267831671.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153702858249.1603922.12913911825267831671.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Sep 2018 00:40:27 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01407C49;
+        Mon, 17 Sep 2018 23:10:56 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 073/158] tty: rocket: Fix possible buffer overwrite on register_PCI
+Date:   Tue, 18 Sep 2018 00:41:43 +0200
+Message-Id: <20180917211714.636308355@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
+References: <20180917211710.383360696@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Sep 2018 09:23:02 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-> Data exfiltration attacks via speculative execution and
-> return-oriented-programming attacks rely on the ability to infer the
-> location of sensitive data objects. The kernel page allocator, has
-> predictable first-in-first-out behavior for physical pages. Pages are
-> freed in physical address order when first onlined. There are also
-> mechanisms like CMA that can free large contiguous areas at once
-> increasing the predictability of allocations in physical memory.
-> 
-> In addition to the security implications this randomization also
-> stabilizes the average performance of direct-mapped memory-side caches.
-> This includes memory-side caches like the one on the Knights Landing
-> processor and those generally described by the ACPI HMAT (Heterogeneous
-> Memory Attributes Table [1]). Cache conflicts are spread over a random
-> distribution rather than localized.
-> 
-> Given the performance sensitivity of the page allocator this
-> randomization is only performed for MAX_ORDER (4MB by default) pages. A
-> kernel parameter, page_alloc.shuffle_page_order, is included to change
-> the page size where randomization occurs.
-> 
-> [1]: See ACPI 6.2 Section 5.2.27.5 Memory Side Cache Information Structure 
+------------------
 
-I'm struggling to understand the justification of all of this.  Are
-such attacks known to exist?  Or reasonably expected to exist in the
-future?  What is the likelihood and what is their cost?  Or is this all
-academic and speculative and possibly pointless?
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-ie, something must have motivated you to do this work rather than
-<something-else>.  Please spell out that motivation.
+[ Upstream commit 0419056ec8fd01ddf5460d2dba0491aad22657dd ]
+
+If number of isa and pci boards exceed NUM_BOARDS on the path
+rp_init()->init_PCI()->register_PCI() then buffer overwrite occurs
+in register_PCI() on assign rcktpt_io_addr[i].
+
+The patch adds check on upper bound for index of registered
+board in register_PCI.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/tty/rocket.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/tty/rocket.c
++++ b/drivers/tty/rocket.c
+@@ -1881,7 +1881,7 @@ static __init int register_PCI(int i, st
+ 	ByteIO_t UPCIRingInd = 0;
+ 
+ 	if (!dev || !pci_match_id(rocket_pci_ids, dev) ||
+-	    pci_enable_device(dev))
++	    pci_enable_device(dev) || i >= NUM_BOARDS)
+ 		return 0;
+ 
+ 	rcktpt_io_addr[i] = pci_resource_start(dev, 0);
 
 
-The new module parameter should be documented, please.  Let's try to
-help people understand why they might ever want to alter the default
-and if so, what settings they should be trying.
-
-
-How come we aren't also shuffling at memory hot-add time?
