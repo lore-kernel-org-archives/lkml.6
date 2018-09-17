@@ -2,148 +2,73 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD29CECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8221ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F14D214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:09:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F14D214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
+	by mail.kernel.org (Postfix) with ESMTP id A3526214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:10:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UxMJS++f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3526214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeIQThP (ORCPT
+        id S1728765AbeIQThu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:37:15 -0400
-Received: from smtp-out-so.shaw.ca ([64.59.136.138]:51200 "EHLO
-        smtp-out-so.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbeIQThP (ORCPT
+        Mon, 17 Sep 2018 15:37:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52262 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727858AbeIQThu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:37:15 -0400
-X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Sep 2018 15:37:14 EDT
-Received: from fanir.tuyoix.net ([68.150.218.192])
-        by shaw.ca with ESMTP
-        id 1u5lgBf4i5Hxq1u5mgwm6i; Mon, 17 Sep 2018 08:01:36 -0600
-X-Authority-Analysis: v=2.3 cv=BMcHU2YG c=1 sm=1 tr=0
- a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
- a=JBFolyDoGHsA:10 a=nlC_4_pT8q9DhB4Ho9EA:9 a=3I1X_3ewAAAA:8
- a=ourswZ7O5i2RYhpjJKcA:9 a=QEXdDO2ut3YA:10 a=VG9N9RgkD3hcbI6YpJ1l:22
-Received: from CLUIJ (cluij.tuyoix.net [192.168.144.15])
-        (authenticated bits=0)
-        by fanir.tuyoix.net (8.15.2/8.15.2) with ESMTPSA id w8HE1UIu026201
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 17 Sep 2018 08:01:30 -0600
-Date:   Mon, 17 Sep 2018 08:01:30 -0600 (Mountain Daylight Time)
-From:   =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
-To:     =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: sysfs: Do not return POSIX ACL xattrs via listxattr()
-In-Reply-To: <alpine.WNT.2.20.1809101709260.3100@CLUIJ>
-Message-ID: <alpine.WNT.2.20.1809170801030.4228@CLUIJ>
-References: <alpine.LNX.2.20.1809091544070.15534@fanir.tuyoix.net> <CAHpGcMJ9jB+Ekfvf6HUvWUr8ipoSJkS+U5arShpMwyjuc4qftg@mail.gmail.com> <alpine.WNT.2.20.1809101709260.3100@CLUIJ>
-User-Agent: Alpine 2.20 (WNT 67 2015-01-07)
+        Mon, 17 Sep 2018 15:37:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=uts/hVjX78tHMfHc3q3KWjUUgKPrXsU4eGL/P0z4EHA=; b=UxMJS++fk9tG7rC/sNEHNNu9p
+        QjCpUCPVjXe2qIS9GwdZrdmFArc6qcfzyPI4029FYqCqMYFdsOTkqHE/Aa8bVgXxTfZFemBnRQKzi
+        iuMDiSf0hi4Y9ZrVZQ0rpeBtQYnOaVLPraV21/yF7wWZt5pZmcRkWpGpzVwmzskl4fA+XzEHyhROI
+        BqzJDXA9aqMRWaGSx3vukUVc+myN2mhVCJJ61Cc5o3OtIBKSyZY4NLWbBEt4rdozutdnnNI2s1yfk
+        VijdH6d+qOuHIDS2XjbNihVmLtC5LdLJMCtsCj9oTqmJHdDbN9KknOY/Xbbm0zt53AiHSHRNA5zbD
+        UfFetf5Jg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g1uEE-000093-Nf; Mon, 17 Sep 2018 14:10:18 +0000
+Date:   Mon, 17 Sep 2018 07:10:18 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: Show CPU ID and Hart ID separately in
+ /proc/cpuinfo
+Message-ID: <20180917141018.GB28689@infradead.org>
+References: <20180912143822.21948-1-anup@brainfault.org>
+ <72961c71-c4e4-7990-da64-a7f1613f2e1c@wdc.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="230644-14400-1537192892=:4228"
-X-CMAE-Envelope: MS4wfHGXgeHqqRRNhnkL8k25M0vy3NoUb1lrlM6QBddBm30KfAIrx1WHN+P/HniF0NyQFIlL5GZloqt4ssbDYWmkqJ0NWAGBwq40vhcVOtU3wU3NQfonh3G4
- sLzYBGxFxktDJT/esgOwlo5diqvGm1n3MDdpRZNmxVql5z5uHffz0KS8wBgwab0xq79G26VWeldAQ4Hfr5fbKXxCjo6Rkx7GymBQQKABarZR01lvd6WPZIEC
- cbiW6MRBOCXZDM7PPpWxjFTpVc6NyehKTl0fJK7H0HW+AYbi4k3mVfWp9eiO+0fxM5p2W45pYKD3s0jQVAleZiu2uclqL5Cnj07kYt+KJOyNQP7QXBpuaRg3
- ovImjL8cqUOz+yjD0KSMtlIIPmx81lSl33KyG+ukZ6v2VaN4wO0JBfeyt4Lo6E5VPNl86sZ6unNgnXfoZh9Q23xVZs/Xzw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <72961c71-c4e4-7990-da64-a7f1613f2e1c@wdc.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Sep 12, 2018 at 09:47:55AM -0700, Atish Patra wrote:
+> The extra hart information will not be parsed by lscpu which will make the
+> cpu information inconsistent between lscpu & /proc/cpuinfo.
+> 
+> Should we patch lscpu as well to show correct hart id as well ?
 
---230644-14400-1537192892=:4228
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-
-On Mon, 10 Sep 2018, Marc Aurèle La France wrote:
-> On Mon, 10 Sep 2018, Andreas Grünbacher wrote:
->> Am Mo., 10. Sep. 2018 schrieb Marc Aurèle La France:
-
->>> Commit 786534b92f3ce68f4afc8a761c80b76887797b0a "tmpfs: listxattr
->>> should include POSIX ACL xattrs", which first appeared in 4.5 kernels,
->>> introduced a regression whereby listxattr() syscalls on anything in
->>> sysfs, or its mountpoint, return the name of the two POSIX ACL xattrs,
->>> but attempts to retrieve these values are denied with EOPNOTSUP.  For
->>> example ...
-
->>>         # getfattr -d --match=- /sys
->>>         /sys: system.posix_acl_access: Operation not supported
->>>         /sys: system.posix_acl_default: Operation not supported
->>>         #
-
->> I can confirm this regression.
-
->>> This inconsistent behaviour confuses rsync(1) (among others) when it
->>> runs into a sysfs mountpoint, even when told to not descend into it.
->>> This issue occurs because simple_xattr_list() does not correctly deal
->>> with cached ACLs.
-
->>> The suggested fix below was developed with a 4.18.7 kernel, but should
->>> apply, modulo patch fuzz, to any kernel >= 4.7.  A fix for 4.5 <=
->>> kernels < 4.7 is trivially different, but I won't bother given such
->>> kernels are no longer maintained.
-
->>> Note that the only other simple_xattr_list() caller, shmem, avoids
->>> this glitch by previously calling cache_no_acl() on all inodes it
->>> creates, so perhaps sysfs/kernfs should do the same.
-
->>> Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
-
->>> --- a/fs/xattr.c
->>> +++ b/fs/xattr.c
->>> @@ -949,13 +949,13 @@ ssize_t simple_xattr_list(struct inode *inode,
->>>         int err = 0;
->>>
->>>  #ifdef CONFIG_FS_POSIX_ACL
->>> -       if (inode->i_acl) {
->>> +       if (inode->i_acl && !is_uncached_acl(inode->i_acl)) {
->>>                 err = xattr_list_one(&buffer, &remaining_size,
->>>                                      XATTR_NAME_POSIX_ACL_ACCESS);
->>>                 if (err)
->>>                         return err;
->>>         }
->>> -       if (inode->i_default_acl) {
->>> +       if (inode->i_default_acl && 
->>> !is_uncached_acl(inode->i_default_acl)) {
->>>                 err = xattr_list_one(&buffer, &remaining_size,
->>>                                      XATTR_NAME_POSIX_ACL_DEFAULT);
->>>                 if (err)
-
->> This seems to be a better fix, but I haven't fully verified it, yet:
-
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -187,7 +187,8 @@ int inode_init_always(struct super_block *sb, struct
->>     inode->i_mapping = mapping;
->>     INIT_HLIST_HEAD(&inode->i_dentry);    /* buggered by rcu freeing */
->>  #ifdef CONFIG_FS_POSIX_ACL
->> -    inode->i_acl = inode->i_default_acl = ACL_NOT_CACHED;
->> +    inode->i_acl = inode->i_default_acl =
->> +           (sb->s_flags & SB_POSIXACL) ? ACL_NOT_CACHED : NULL;
->>  #endif
->>
->>  #ifdef CONFIG_FSNOTIFY
-
-> Yes, that works too, and doesn't seem to cause other issues.
-
-> Tested-by: Marc Aurèle La France <tsi@tuyoix.net>
-
-Anything more on this?
-
-Thanks and have a great day.
-
-Marc.
---230644-14400-1537192892=:4228--
+It would be good to follow whatever prescedent other architectures
+with different logical vs physical cpuids have set.
