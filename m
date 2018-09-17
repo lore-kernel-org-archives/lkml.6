@@ -6,36 +6,57 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5656FECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5702AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187702146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187702146D
+	by mail.kernel.org (Postfix) with ESMTP id 18DB4214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DB4214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732938AbeIREnq (ORCPT
+        id S1732947AbeIREnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:43:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51096 "EHLO
+        Tue, 18 Sep 2018 00:43:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51118 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbeIREnp (ORCPT
+        with ESMTP id S1728925AbeIREnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:43:45 -0400
+        Tue, 18 Sep 2018 00:43:49 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E03A707;
-        Mon, 17 Sep 2018 23:14:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0AE3D707;
+        Mon, 17 Sep 2018 23:14:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Michael Ira Krufky <mkrufky@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, joro@8bytes.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 137/158] media: em28xx: Fix dual transport stream operation
-Date:   Tue, 18 Sep 2018 00:42:47 +0200
-Message-Id: <20180917211717.481554245@linuxfoundation.org>
+Subject: [PATCH 4.18 111/158] x86/mm: Remove in_nmi() warning from vmalloc_fault()
+Date:   Tue, 18 Sep 2018 00:42:21 +0200
+Message-Id: <20180917211716.387140359@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,49 +74,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit a7853c257a3ea0907467a1750ff45de4d9ba1915 ]
+[ Upstream commit 6863ea0cda8725072522cd78bda332d9a0b73150 ]
 
-Addresses the following, which introduced a regression itself:
+It is perfectly okay to take page-faults, especially on the
+vmalloc area while executing an NMI handler. Remove the
+warning.
 
-Commit 509f89652f83 ("media: em28xx: fix a regression with HVR-950")
-
-The regression fix breaks dual transport stream support. Currently,
-when a tuner starts streaming it sets alt mode on the USB interface.
-The problem is, in a dual tuner model, both tuners share the same
-USB interface, so when the second tuner becomes active and sets alt
-mode on the interface it kills streaming on the other port.
-
-This patch addresses the regression by only setting alt mode
-on the USB interface during em28xx_start_streaming, if the
-device is not a dual tuner model. This allows all older and
-single tuner devices to explicitly set alt mode during stream
-startup. Testers report both isoc and bulk DualHD models work
-correctly with the alt mode set only once, in em28xx_dvb_init.
-
-Fixes: 509f89652f83 ("media: em28xx: fix a regression with HVR-950")
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Michael Ira Krufky <mkrufky@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1532533683-5988-2-git-send-email-joro@8bytes.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/em28xx/em28xx-dvb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/mm/fault.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-dvb.c
-+++ b/drivers/media/usb/em28xx/em28xx-dvb.c
-@@ -218,7 +218,9 @@ static int em28xx_start_streaming(struct
- 		dvb_alt = dev->dvb_alt_isoc;
- 	}
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -317,8 +317,6 @@ static noinline int vmalloc_fault(unsign
+ 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
+ 		return -1;
  
--	usb_set_interface(udev, dev->ifnum, dvb_alt);
-+	if (!dev->board.has_dual_ts)
-+		usb_set_interface(udev, dev->ifnum, dvb_alt);
-+
- 	rc = em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
- 	if (rc < 0)
- 		return rc;
+-	WARN_ON_ONCE(in_nmi());
+-
+ 	/*
+ 	 * Synchronize this task's top level page-table
+ 	 * with the 'reference' page table.
 
 
