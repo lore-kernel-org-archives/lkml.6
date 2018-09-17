@@ -2,207 +2,135 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1808ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C600ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4146C2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6832B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:38:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="d2xa4ev4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4146C2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="kWaQ4jxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6832B2147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbeIQJDR (ORCPT
+        id S1728855AbeIQJDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 05:03:17 -0400
-Received: from mail-cys01nam02on0089.outbound.protection.outlook.com ([104.47.37.89]:40222
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 05:03:35 -0400
+Received: from mail-eopbgr710124.outbound.protection.outlook.com ([40.107.71.124]:62784
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728348AbeIQJDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 05:03:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+        id S1728036AbeIQIZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:25:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C2bV/5H1CxKRnC9H1VTa49CA03ZDDlpX5OAtE68D3VU=;
- b=d2xa4ev4MeIYECVoCebdGL7dGT8oBDPh/KxbpaxS6dAQhboQRw3KttttyQNCyl1bghCUT2AaKScxKZ81afdvDftI5j0YI2McVMBv3qMBH1Z+PzUgFGrVzD+EXidrZEeHIKLmR4hFBjT0jnsgCkS17QZl4rGBzZK+nZ3ybSnJabA=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- BY2PR0301MB1574.namprd03.prod.outlook.com (2a01:111:e400:526e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.18; Mon, 17 Sep
- 2018 03:37:44 +0000
-Date:   Mon, 17 Sep 2018 11:34:18 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] i2c: designware: select gpio/default pin when
- prepare/unprepare recovery
-Message-ID: <20180917113418.16881f6c@xhacker.debian>
-In-Reply-To: <20180917112949.414dd56f@xhacker.debian>
-References: <20180917112633.252c591c@xhacker.debian>
-        <20180917112949.414dd56f@xhacker.debian>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY2PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:404:56::17) To BY2PR0301MB1574.namprd03.prod.outlook.com
- (2a01:111:e400:526e::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 84acd89c-872b-4039-2f00-08d61c4ef000
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR0301MB1574;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;3:fm/+83mnLL4q5gWcDYDYLzeEU3r0Yd50AQPm+2rb83YaET/0KGbuNBfSUDwv4kroUE23GaDrsHwPsqxzE0vBIFe2Voult2gZmp54lF0eBQls94NjHGYEZLoaL2rNHcRuc4Y3IAeyTpLXrhxfcRqVC6OUuw6SVdUrZy01uZK6z6n/80AmDibg5Mhf9pBM/Njg0GC/BG+qOjWaTStSlGZx3f9wO+xBajicjWZ1YaDQdKVv1GprLQrmujNSWu2unX0K;25:rxfhcm4sCVZU31EaKKjLZQzzO4lqIUY+Iutt0ZfG3C4YiD3iaDYNVPcaAwo8C0msDGYvNJ1UZM/lSLBvMJKgB/dWzQ4cVP0jhwS350usox3KMO4GLwoFyUrV4vRrO7IO79wxBEEsj6dSeH+cyQrwCuEdrt0Oz1/cZOnc4B/70OMhA4/JVOVoX7TBrcLlzHxORc2umE28sPoOUlI9C0qtA1dfuOEKcDsCiiTmJqRrtXANsh847mxH6N2u+KvyQL1crYLh1lSMcaTDTLQ9XwYfysnk22NUj78eKgiu+VFpCfENqfexm+BP3OKRDwPRtqymScZY3yYegXjG55Sg1uSSZw==;31:y6JQt/MM+YWMIZVRDC40krmwlXXhSABKd0YmvicgBUAxu3NeTIO2QVGSMcMobElK0wiN8BsXKzz0HimFsW8llRtZbnk+zaYOeww1FoyqaLki0xPD1Ang9rMDDn/Adaa7HdfBqcqQEDS1KFTOs7eEySDZ3hMUTOkVUgd9cmq7ku//OuzKAzT/i3f1hJajcqtBVmUawmjMS4EBKbbskTeMz7SPjWfjJbtxX2HdLYWGkho=
-X-MS-TrafficTypeDiagnostic: BY2PR0301MB1574:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;20:wuviXHebg88fPF/0YQ7XhtaMYE1HSqmhTxdJUk31/ZfpCuioSFzdhmVHgb/YTkLw5pndlVx40bMUiMqJ3gfEY8Sl0+mb7UfuNpWkWSss5pd070pj/8LcEYJQmCFs3XXHmidLrLIUoe+BLfpYoLUu78J9CDi5nOcy15Y/hT5kHkx61+Wke+TUgBMKjevxqhuEidnxDh6aq3/HClImaVPEgQJJmqWz+AE14ajDs0T2e01P2C8Hf+HbirWkfv5wADk4u+CEvvz7+hl8fyLPNBwSUIkRP6cydPviPRNFxFsSDPBbfJFfR2vmU1UA+w7w1KLIv7opWpT8SaC/okxIVAeAx7BHyCx2mDvtT+96FK97peHsqjdfXuLgn0wzs+Pv+pjtvO4jPSsur60eBdgmuDd9iPcFvqJjWTH49Hb9H2l8bXj7xBnN7XG4MNUzHDSPQE+VrrOO4dn/f1MIq/LJzbV3vnlfmTK/5ZYgnvN4999jZrZKEuzUdCLtzF/Fq4Hl9rLt;4:iQY03DLWHYlpQbcCzkv9oxBiB7mwOR82bZT+LGoMgSxNitViPT+MYoX5YIMVLPfBXWv9vMD/mkFhWrMTqVXQacFhDmsmHCoIChbK4i0rsvCtEEo7gv5mAl1rCSE707Ehp3sUm7SpDFarDTgtmT16V7NbMHHCq91tJ5/rj2hIKJk0fPSKAn+8CgDO399bJqBt7mEP1hxauAl7GOnB80gqijrWgHlF/SNVJ0MGtBBYiIaQa3oq1J1PV8vwKODGekFM4vYSqIv4QVG4eutIK2XLqw==
-X-Microsoft-Antispam-PRVS: <BY2PR0301MB157433EEDBF72C0181815F3FED1E0@BY2PR0301MB1574.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699050);SRVR:BY2PR0301MB1574;BCL:0;PCL:0;RULEID:;SRVR:BY2PR0301MB1574;
-X-Forefront-PRVS: 0798146F16
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(39850400004)(396003)(366004)(376002)(346002)(199004)(189003)(81156014)(14444005)(81166006)(86362001)(575784001)(229853002)(53936002)(8676002)(5660300001)(72206003)(68736007)(486006)(7736002)(305945005)(55016002)(478600001)(8936002)(9686003)(105586002)(66066001)(3846002)(230700001)(7696005)(52116002)(386003)(6506007)(6116002)(186003)(16526019)(50466002)(7416002)(50226002)(4326008)(110136005)(25786009)(1076002)(54906003)(2906002)(33896004)(316002)(6246003)(956004)(11346002)(446003)(106356001)(97736004)(23726003)(6666003)(47776003)(76176011)(476003)(26005)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR0301MB1574;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ bh=w+gCOm8k/oKPb/uwWtsy266IU0wyj0BgqvtC/ZiqPto=;
+ b=kWaQ4jxJ80m1opXCAVVSAg8WVtyD2yqu61JY23Dc5OlTE0f6pT8UeiVNytreBT+AtRhzUr5IrzX37InQxTMihpXaBVC4PkHqQt+u5eTpJMj7t6PurcotounbkbzKexfnxDJb+Z30YHjMxViiupTT8GnYBtnCyT5E2VWLmnJrGao=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0134.namprd21.prod.outlook.com (10.173.189.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.11; Mon, 17 Sep 2018 03:00:14 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
+ 03:00:14 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 005/136] vmci: type promotion bug in
+ qp_host_get_user_memory()
+Thread-Topic: [PATCH AUTOSEL 4.18 005/136] vmci: type promotion bug in
+ qp_host_get_user_memory()
+Thread-Index: AQHUTjKO4PYqOSy6V0GMYHxZIZGsMw==
+Date:   Mon, 17 Sep 2018 03:00:13 +0000
+Message-ID: <20180917030006.245495-5-alexander.levin@microsoft.com>
+References: <20180917030006.245495-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0134;6:/mcITmbCIHhPwZ6jNcoymkQohavOUsNEUJMQ+PT9FuYppJ2AHFVvpr6U1uDJwYZnKoz1/BzObI/ebKSq/xxj+AToqHtnzgAzNxHIuG7tU2V/sF2AH7z44LuIRwtLhvLwKDPz91nR8C4oLeh7EA0KAqBzchoH3KTZO9N7dKFxDxnMz6wqPwSsCpwvRI1DA3R+14OrLj7a2S5yTNmikzS+LrOSBw0/j/JVD72vHPfB+RSkwuQBAlxcgVoE7SFa8ybc53I3kp3Icn9ywRffunCzgCahqe44Yl32pNQxBtWMvRWNNkAS2ng4OLnUaS8WesJc/FBKp06LGnMp4RlUZiViOXfvMN4mDxqd+BwCBQ9JlgZw9kmQ0bWJydtDTbsPTJQ+Aai9vnm0EMRAp0JdBQq86QfTloZPSWV7LNf2P/DI53SG0ZC0KntJRbwmP7+LYGdgflTgs8+DeqbCJL1U+QXPvg==;5:/ImV8+LkpcOwlevC+aJ9unuYVypWERQ4ZzFDfL2wmRKthq8oi8Xmw3BsPR6SR1oM/PeRwtGR+R0oM7/nUJVABvtM6GzlKw//60bIbMug75BKEkgpqDtmNHErg9A2X77wfnfPuO60hdJBCZ4xGYF2eoVB2U670IcCeHFmNqUqAiQ=;7:wwow3yi/pTjtvbB8LbKlpz6osdlc8ZsnO1fg9KUwf8RsuZVjJeJEu1ARS7QvixxlZGtGszZH5ovN1FPiACmGMUZz79UY+pFT9W0nzIt2pp+1pedngj6KoNMuB3ntbogesGfWpY03fom97XX4n6TuKYzd7e0jLivZ0V07y7iB/bSvb3cRI+j/I2MMlvG+UZ7JBCWysJPAhtYRaLt5CjTyXf9YfOhL1M3M245GPpaKBZcLC9/S3ixaUNchDzT/NptB
+x-ms-office365-filtering-correlation-id: 3bdd61e9-ab5b-44cb-5d12-08d61c49b0a8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0134;
+x-ms-traffictypediagnostic: CY4PR21MB0134:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB0134C08F73276FE83E3666B6FB1E0@CY4PR21MB0134.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0134;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0134;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(346002)(39860400002)(136003)(199004)(189003)(6506007)(10090500001)(14454004)(99286004)(76176011)(68736007)(6512007)(4326008)(25786009)(217873002)(107886003)(72206003)(22452003)(256004)(36756003)(54906003)(110136005)(8676002)(6486002)(97736004)(10290500003)(6116002)(11346002)(26005)(7736002)(86612001)(5660300001)(86362001)(53936002)(316002)(486006)(476003)(2900100001)(5250100002)(105586002)(102836004)(305945005)(106356001)(66066001)(81166006)(81156014)(1076002)(2501003)(2906002)(6436002)(8936002)(446003)(478600001)(2616005)(186003)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0134;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR0301MB1574;23:0ZWfFbXMRYXPde4uHW2cqvMa6W0VzmOf2HAXT1l?=
- =?us-ascii?Q?GaDSLKM7fm/rVIX31VdrRxLkuP+Uvxnx1IvVv/4cnYpKTqw+wpa3kxREz3TP?=
- =?us-ascii?Q?tjnDg/aMEdCy9FJlHRY6baZKM05236IPnj3z4oS6Xb06aAdxIWfOVDZnAWRt?=
- =?us-ascii?Q?1OILbRRWYy3BNmI6QnyxGWvtUXmDfO/JslKtZWmaKTfDEvvjxDI9CfXCyuGQ?=
- =?us-ascii?Q?nIB9CXMTnkrCCasSDUS0uT10uUQYvD9NsGh50D9PZVDyc8Hb9UsJxC+27JZa?=
- =?us-ascii?Q?T/oqiD8IAE+NOB+JTgQYkJW4v0+Cs1gwMwbMZvXTTrIoMO3naBCBw96iB4Sa?=
- =?us-ascii?Q?rmmVMvW7/YtmRu4oSrEipr35aLaZnOZhWgTAndU0GYPI2MSf+cPUR+rviwhM?=
- =?us-ascii?Q?Fe9sp4qQ8SP2Zs0MoGtZwnYAUDwG9rx6TBT0A+sabzWYiskS4O1BbLalr9BP?=
- =?us-ascii?Q?3NdnQB1uglBHT8wt8I/WslazBtLrZyKDWt8Wb2EEZ1A5U4lUQf7pIWFgrcte?=
- =?us-ascii?Q?M/ZZOuZSNLYmyq3lE+uXmLjRTKx1ZHShKIg503aWeLhjuer5ydzCnjgfE2QO?=
- =?us-ascii?Q?Q+f8xlUlNiqw7XKV95YxTSQ9351JT1WJuloWM4bobxDFAXGTqAi5hMn8JJbW?=
- =?us-ascii?Q?LfZTlkHYeG9GqA0Ejh7bSgxGuMdSQLNXuAT92dVGq8wMPlyBdmZicmfmSo9c?=
- =?us-ascii?Q?nq1tYggskCiN+nPSIRBgv9mz0bKWXd/mjyMH66GxWy7Kf5pis0TECD8ntEFo?=
- =?us-ascii?Q?nLMfiNIUfX5S12LrIsWxtSGxya69oY2TS274G9PuLHce6UpQb7399Ls8aPa3?=
- =?us-ascii?Q?wGRfN6NqMwaHUJuTbCZ0lnWZj3/0epEEOaIRqU1o8Ix8XA/XAwsUbNSrvwV6?=
- =?us-ascii?Q?Kcfw78UBumV1+Llx4r1MV3GxTYVe9E+Rk4LsU7URdMeFRFKWHTU+b98ajTrM?=
- =?us-ascii?Q?/Jn5rSBYLNpqJYXDC4G8vxCLgaMF7bfCuu59Eg4yqe0HrU04C/b63Y7oBjIB?=
- =?us-ascii?Q?+IvQutx5BmyG8Z8D8YVPJMzt37ulWBnMr5NKAo0wuHzn9lif+nlVNh1XA6PB?=
- =?us-ascii?Q?+bF9rtQea+KTzVNx+7tQcxUN1JhAfyNmAnYGLCipIThSeTyMdMW9gvJlq8ZX?=
- =?us-ascii?Q?iVZv77QI+ygN7qXgDhxmeo5ObYVN1omtx+PJSEW6O6aj2QTob/L256h9+Ymo?=
- =?us-ascii?Q?RAlP26m04NxpB/11OIObFhI6LFRhxyGyD1qzYLtIKmt3aN89v3RBvQcivk4Y?=
- =?us-ascii?Q?De6Co79Doy0lIp3cLn1bDj5fn2gi7qUHSXrAQfqHpNRjpvc9l9pRidjJSfzV?=
- =?us-ascii?Q?D0TWyhb8Axf0Itur8Bki3g5Muonpr8jYr2N4TcrGmkJkp?=
-X-Microsoft-Antispam-Message-Info: ByzkXJk4mqrBKffNSPTHPr5U699EyjwGvfvNG1waz/pJ1kGSqGu1EgH49K7rXqoatfk7kILWKddyaMdwlyJbWVMSefSGY2yga/6FadhyXneoWFnebTBYjThBwpwwc3qOWd86NnmHsSlOtIKc664lvolwoh43dWNSOHgmewiGL4BaoGowI9ZQvjh6bH4WMm1u9DDrCNr5ICLTCf3UGMD/CL7LC7yXkTNBYZA4txVBMxtpjp822k7GMD2ZviULPGDdVhIoXpuZu4vrIB/C1lMgHc+Gi5Cl+aE2k/PqCzaA76eZc7iYCXKgWskp7CD8M/4JTpawBnAOI82BdAJ8nGWUkwrytGPwU8/tBOrTQTbd6Fw=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;6:mwSoSTwuQKjbSsrQmGD8Bq9MH6rAS6Vff7O35IJ85skMXSE6E3tf5ywS47YOiCh6UhKj+HU6pcHEbwwqupurjboxwgAworl9+rYr4w8uc9Gb6MkBcckf9bSEjQa7f3p6SUXKk57XGwCfoE+FnhlO0j1gX+15AhDsOkGtUo7xeSKrLxditE9C7bv5DGcsfmzuLiE8alEbgOkM0fYobqVbmLRsAo16R/6vuWZVLpBtzbSKvpBS4AxnaHUZPsXrU1bROurSvZ9ysvsBqf3A3a7HD1KeBX650lfev08qIBvEMeqBpBkY5WTDu+W0jzx5wzHu3GfMGzBArwT4sJpjacLjRcjxPP2ZsED25NsdwWAbKrDdH6BWIPHeZLaK83IvRCWu9iBdqgrRGmnEiad1Ilqh1EMZscCFvKc7PEfw3OqZ17veZ32R7P4EnKIAEsfUyhaUf0P3l+pi0Y4iBptDVWjLEw==;5:7ZNeUgvXPgKuFjKKxlT5IYvX54xvd3Ur3iFB08ejp9y8uXqLW8kEU2yX/EqLVxSNugx9nYl8KH5eFsoAvOB58RsRuv7zCL+8yo8KZPQovFQhotSoUWLBSk85WhNZotleVTvX95o6qnuDQzl8NSLCLoXcT+Eud5NmUxBUHRe3ihE=;7:EfIF7MufZw8Pm2AbFbDKXMLlo/XKgvK217Xy8YrQ9NC0UtF3ph01+B0tD/xsfvgeIsf94fTBqTLq/apl3DD2pB2uzYgeTWKbBSyN6MTG8Vo8SY2z99t7aQFvINyndJ1ZhOXENdC1AaoxmI8zg222u+cnJH8yYBXE7is1Yz9fdmQOvEQK6G9aGHa8I45xxKC68Jb2YdS2/oZX2o8r6WHqKd9aZp31Hk4PSodfOYciqexskAYZD/MUUeGfGu4elDJw
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 03:37:44.4396 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84acd89c-872b-4039-2f00-08d61c4ef000
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR0301MB1574
+x-microsoft-antispam-message-info: qy1NHNHEn2Tkd1mV9bjpgyx9Xbt5WdVpRCLIBHDs0zjGmNPZsUibmiG+QFPa3FBrPSH/bF9svw9H3tLA9P55Og/F0LCv86ntVtGkvt2b8VJytlkCCxxTWu6ISU+DVfOXbkSK91IYbNI07UqIdMV06V9tELmraVvoWM4Y/cqWdJvczLHwl6Hrko7ZgKDUuRv4ejhEFN/3zjzAuUhqpkpaXzVPTdE5Ga1TcSn3JkFpm9B33+uzmVZO+yLTgCvFeYbNdiZ4WzmkgnbgTA68z06tnmjeLYHwAg8GzMRpu55s1NUWPYPQrHk+B0hmkjMmjVL7ZTZFhEQUnWobZ3+dnyUlgY2SLc6vqApaqFnY3uTYha8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bdd61e9-ab5b-44cb-5d12-08d61c49b0a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:14.0424
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ DT maintainers
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Mon, 17 Sep 2018 11:29:49 +0800
-Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+[ Upstream commit 7fb2fd4e25fc1fb10dcb30b5519de257cfeae84c ]
 
-> On some platforms, the sda/scl pins are muxed with gpio functions, so
-> they could be used for recovery. Select the gpio/default pin function
-> when prepare/unprepare recovery.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/i2c/busses/i2c-designware-core.h   |  3 +++
->  drivers/i2c/busses/i2c-designware-master.c | 22 ++++++++++++++++++++++
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-> index e367b1af4ab2..01d5f01691a4 100644
-> --- a/drivers/i2c/busses/i2c-designware-core.h
-> +++ b/drivers/i2c/busses/i2c-designware-core.h
-> @@ -271,6 +271,9 @@ struct dw_i2c_dev {
->  	int			(*init)(struct dw_i2c_dev *dev);
->  	int			mode;
->  	struct i2c_bus_recovery_info rinfo;
-> +	struct pinctrl		*pinctrl;
-> +	struct pinctrl_state	*pins_default;
-> +	struct pinctrl_state	*pins_gpio;
->  };
->  
->  #define ACCESS_SWAP		0x00000001
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index 94d94b4a9a0d..384d6630366a 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -17,6 +17,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  
-> @@ -629,6 +630,9 @@ static void i2c_dw_prepare_recovery(struct i2c_adapter *adap)
->  {
->  	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
->  
-> +	if (dev->pinctrl && dev->pins_gpio)
-> +		pinctrl_select_state(dev->pinctrl, dev->pins_gpio);
-> +
->  	i2c_dw_disable(dev);
->  	reset_control_assert(dev->rst);
->  	i2c_dw_prepare_clk(dev, false);
-> @@ -641,6 +645,9 @@ static void i2c_dw_unprepare_recovery(struct i2c_adapter *adap)
->  	i2c_dw_prepare_clk(dev, true);
->  	reset_control_deassert(dev->rst);
->  	i2c_dw_init_master(dev);
-> +
-> +	if (dev->pinctrl && dev->pins_default)
-> +		pinctrl_select_state(dev->pinctrl, dev->pins_default);
->  }
->  
->  static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
-> @@ -648,6 +655,8 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
->  	struct i2c_bus_recovery_info *rinfo = &dev->rinfo;
->  	struct i2c_adapter *adap = &dev->adapter;
->  	struct gpio_desc *gpio;
-> +	struct pinctrl *pinctrl;
-> +	struct pinctrl_state *s;
->  	int r;
->  
->  	gpio = devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
-> @@ -664,6 +673,19 @@ static int i2c_dw_init_recovery_info(struct dw_i2c_dev *dev)
->  		return PTR_ERR(gpio);
->  	rinfo->sda_gpiod = gpio;
->  
-> +	pinctrl = devm_pinctrl_get(dev->dev);
-> +	if (PTR_ERR(pinctrl) == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +	if (!IS_ERR_OR_NULL(pinctrl)) {
-> +		dev->pinctrl = pinctrl;
-> +		s = pinctrl_lookup_state(pinctrl, PINCTRL_STATE_DEFAULT);
-> +		if (!IS_ERR_OR_NULL(s))
-> +			dev->pins_default = s;
-> +		s = pinctrl_lookup_state(pinctrl, "gpio");
-> +		if (!IS_ERR_OR_NULL(s))
-> +			dev->pins_gpio = s;
-> +	}
-> +
->  	rinfo->recover_bus = i2c_generic_scl_recovery;
->  	rinfo->prepare_recovery = i2c_dw_prepare_recovery;
->  	rinfo->unprepare_recovery = i2c_dw_unprepare_recovery;
+The problem is that if get_user_pages_fast() fails and returns a
+negative error code, it gets type promoted to a high positive value and
+treated as a success.
 
+Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/misc/vmw_vmci/vmci_queue_pair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmc=
+i/vmci_queue_pair.c
+index b4d7774cfe07..d95e8648e7b3 100644
+--- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
++++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+@@ -668,7 +668,7 @@ static int qp_host_get_user_memory(u64 produce_uva,
+ 	retval =3D get_user_pages_fast((uintptr_t) produce_uva,
+ 				     produce_q->kernel_if->num_pages, 1,
+ 				     produce_q->kernel_if->u.h.header_page);
+-	if (retval < produce_q->kernel_if->num_pages) {
++	if (retval < (int)produce_q->kernel_if->num_pages) {
+ 		pr_debug("get_user_pages_fast(produce) failed (retval=3D%d)",
+ 			retval);
+ 		qp_release_pages(produce_q->kernel_if->u.h.header_page,
+@@ -680,7 +680,7 @@ static int qp_host_get_user_memory(u64 produce_uva,
+ 	retval =3D get_user_pages_fast((uintptr_t) consume_uva,
+ 				     consume_q->kernel_if->num_pages, 1,
+ 				     consume_q->kernel_if->u.h.header_page);
+-	if (retval < consume_q->kernel_if->num_pages) {
++	if (retval < (int)consume_q->kernel_if->num_pages) {
+ 		pr_debug("get_user_pages_fast(consume) failed (retval=3D%d)",
+ 			retval);
+ 		qp_release_pages(consume_q->kernel_if->u.h.header_page,
+--=20
+2.17.1
