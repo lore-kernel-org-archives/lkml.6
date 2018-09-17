@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB28ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7882AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A4A02146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A4A02146F
+	by mail.kernel.org (Postfix) with ESMTP id 31CAC2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CAC2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731436AbeIREgk (ORCPT
+        id S1731450AbeIREgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:36:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49634 "EHLO
+        Tue, 18 Sep 2018 00:36:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeIREgj (ORCPT
+        with ESMTP id S1730815AbeIREgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:39 -0400
+        Tue, 18 Sep 2018 00:36:42 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8F7A2C49;
-        Mon, 17 Sep 2018 23:07:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6235C03;
+        Mon, 17 Sep 2018 23:07:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 013/158] block: bfq: swap puts in bfqg_and_blkg_put
-Date:   Tue, 18 Sep 2018 00:40:43 +0200
-Message-Id: <20180917211711.318678529@linuxfoundation.org>
+        stable@vger.kernel.org, Todd Kjos <tkjos@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Martijn Coenen <maco@android.com>
+Subject: [PATCH 4.18 014/158] android: binder: fix the race mmap and alloc_new_buf_locked
+Date:   Tue, 18 Sep 2018 00:40:44 +0200
+Message-Id: <20180917211711.383489293@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,35 +52,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Minchan Kim <minchan@kernel.org>
 
-commit d5274b3cd6a814ccb2f56d81ee87cbbf51bd4cf7 upstream.
+commit da1b9564e85b1d7baf66cbfabcab27e183a1db63 upstream.
 
-Fix trivial use-after-free. This could be last reference to bfqg.
+There is RaceFuzzer report like below because we have no lock to close
+below the race between binder_mmap and binder_alloc_new_buf_locked.
+To close the race, let's use memory barrier so that if someone see
+alloc->vma is not NULL, alloc->vma_vm_mm should be never NULL.
 
-Fixes: 8f9bebc33dd7 ("block, bfq: access and cache blkg data only when safe")
-Acked-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+(I didn't add stable mark intentionallybecause standard android
+userspace libraries that interact with binder (libbinder & libhwbinder)
+prevent the mmap/ioctl race. - from Todd)
+
+"
+Thread interleaving:
+CPU0 (binder_alloc_mmap_handler)              CPU1 (binder_alloc_new_buf_locked)
+=====                                         =====
+// drivers/android/binder_alloc.c
+// #L718 (v4.18-rc3)
+alloc->vma = vma;
+                                              // drivers/android/binder_alloc.c
+                                              // #L346 (v4.18-rc3)
+                                              if (alloc->vma == NULL) {
+                                                  ...
+                                                  // alloc->vma is not NULL at this point
+                                                  return ERR_PTR(-ESRCH);
+                                              }
+                                              ...
+                                              // #L438
+                                              binder_update_page_range(alloc, 0,
+                                                      (void *)PAGE_ALIGN((uintptr_t)buffer->data),
+                                                      end_page_addr);
+
+                                              // In binder_update_page_range() #L218
+                                              // But still alloc->vma_vm_mm is NULL here
+                                              if (need_mm && mmget_not_zero(alloc->vma_vm_mm))
+alloc->vma_vm_mm = vma->vm_mm;
+
+Crash Log:
+==================================================================
+BUG: KASAN: null-ptr-deref in __atomic_add_unless include/asm-generic/atomic-instrumented.h:89 [inline]
+BUG: KASAN: null-ptr-deref in atomic_add_unless include/linux/atomic.h:533 [inline]
+BUG: KASAN: null-ptr-deref in mmget_not_zero include/linux/sched/mm.h:75 [inline]
+BUG: KASAN: null-ptr-deref in binder_update_page_range+0xece/0x18e0 drivers/android/binder_alloc.c:218
+Write of size 4 at addr 0000000000000058 by task syz-executor0/11184
+
+CPU: 1 PID: 11184 Comm: syz-executor0 Not tainted 4.18.0-rc3 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x16e/0x22c lib/dump_stack.c:113
+ kasan_report_error mm/kasan/report.c:352 [inline]
+ kasan_report+0x163/0x380 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x140/0x1a0 mm/kasan/kasan.c:267
+ kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+ __atomic_add_unless include/asm-generic/atomic-instrumented.h:89 [inline]
+ atomic_add_unless include/linux/atomic.h:533 [inline]
+ mmget_not_zero include/linux/sched/mm.h:75 [inline]
+ binder_update_page_range+0xece/0x18e0 drivers/android/binder_alloc.c:218
+ binder_alloc_new_buf_locked drivers/android/binder_alloc.c:443 [inline]
+ binder_alloc_new_buf+0x467/0xc30 drivers/android/binder_alloc.c:513
+ binder_transaction+0x125b/0x4fb0 drivers/android/binder.c:2957
+ binder_thread_write+0xc08/0x2770 drivers/android/binder.c:3528
+ binder_ioctl_write_read.isra.39+0x24f/0x8e0 drivers/android/binder.c:4456
+ binder_ioctl+0xa86/0xf34 drivers/android/binder.c:4596
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ do_vfs_ioctl+0x154/0xd40 fs/ioctl.c:686
+ ksys_ioctl+0x94/0xb0 fs/ioctl.c:701
+ __do_sys_ioctl fs/ioctl.c:708 [inline]
+ __se_sys_ioctl fs/ioctl.c:706 [inline]
+ __x64_sys_ioctl+0x43/0x50 fs/ioctl.c:706
+ do_syscall_64+0x167/0x4b0 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+"
+
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Martijn Coenen <maco@android.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/bfq-cgroup.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/android/binder_alloc.c |   43 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -275,9 +275,9 @@ static void bfqg_and_blkg_get(struct bfq
- 
- void bfqg_and_blkg_put(struct bfq_group *bfqg)
- {
--	bfqg_put(bfqg);
--
- 	blkg_put(bfqg_to_blkg(bfqg));
-+
-+	bfqg_put(bfqg);
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -327,6 +327,35 @@ err_no_vma:
+ 	return vma ? -ENOMEM : -ESRCH;
  }
  
- /* @stats = 0 */
++
++static inline void binder_alloc_set_vma(struct binder_alloc *alloc,
++		struct vm_area_struct *vma)
++{
++	if (vma)
++		alloc->vma_vm_mm = vma->vm_mm;
++	/*
++	 * If we see alloc->vma is not NULL, buffer data structures set up
++	 * completely. Look at smp_rmb side binder_alloc_get_vma.
++	 * We also want to guarantee new alloc->vma_vm_mm is always visible
++	 * if alloc->vma is set.
++	 */
++	smp_wmb();
++	alloc->vma = vma;
++}
++
++static inline struct vm_area_struct *binder_alloc_get_vma(
++		struct binder_alloc *alloc)
++{
++	struct vm_area_struct *vma = NULL;
++
++	if (alloc->vma) {
++		/* Look at description in binder_alloc_set_vma */
++		smp_rmb();
++		vma = alloc->vma;
++	}
++	return vma;
++}
++
+ static struct binder_buffer *binder_alloc_new_buf_locked(
+ 				struct binder_alloc *alloc,
+ 				size_t data_size,
+@@ -343,7 +372,7 @@ static struct binder_buffer *binder_allo
+ 	size_t size, data_offsets_size;
+ 	int ret;
+ 
+-	if (alloc->vma == NULL) {
++	if (!binder_alloc_get_vma(alloc)) {
+ 		pr_err("%d: binder_alloc_buf, no vma\n",
+ 		       alloc->pid);
+ 		return ERR_PTR(-ESRCH);
+@@ -714,9 +743,7 @@ int binder_alloc_mmap_handler(struct bin
+ 	buffer->free = 1;
+ 	binder_insert_free_buffer(alloc, buffer);
+ 	alloc->free_async_space = alloc->buffer_size / 2;
+-	barrier();
+-	alloc->vma = vma;
+-	alloc->vma_vm_mm = vma->vm_mm;
++	binder_alloc_set_vma(alloc, vma);
+ 	mmgrab(alloc->vma_vm_mm);
+ 
+ 	return 0;
+@@ -743,10 +770,10 @@ void binder_alloc_deferred_release(struc
+ 	int buffers, page_count;
+ 	struct binder_buffer *buffer;
+ 
+-	BUG_ON(alloc->vma);
+-
+ 	buffers = 0;
+ 	mutex_lock(&alloc->mutex);
++	BUG_ON(alloc->vma);
++
+ 	while ((n = rb_first(&alloc->allocated_buffers))) {
+ 		buffer = rb_entry(n, struct binder_buffer, rb_node);
+ 
+@@ -889,7 +916,7 @@ int binder_alloc_get_allocated_count(str
+  */
+ void binder_alloc_vma_close(struct binder_alloc *alloc)
+ {
+-	WRITE_ONCE(alloc->vma, NULL);
++	binder_alloc_set_vma(alloc, NULL);
+ }
+ 
+ /**
+@@ -924,7 +951,7 @@ enum lru_status binder_alloc_free_page(s
+ 
+ 	index = page - alloc->pages;
+ 	page_addr = (uintptr_t)alloc->buffer + index * PAGE_SIZE;
+-	vma = alloc->vma;
++	vma = binder_alloc_get_vma(alloc);
+ 	if (vma) {
+ 		if (!mmget_not_zero(alloc->vma_vm_mm))
+ 			goto err_mmget;
 
 
