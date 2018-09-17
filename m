@@ -2,75 +2,94 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98203ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62056ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8C22147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:32:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceeKGr0/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8C22147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 197F0214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197F0214D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeIQQ7W (ORCPT
+        id S1728242AbeIQQ76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:59:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727460AbeIQQ7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:59:22 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C02E4214DA;
-        Mon, 17 Sep 2018 11:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537183947;
-        bh=LzQmnILUJ9JTvAXqspk2XR+vBO+IOEYQ64E3Y3OVCJI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ceeKGr0/JGHtC9kM478OXZ4/xnPapWRlR2tYqSSjr3KMzSzz6KJEutZlOfQfAd9Ah
-         epHRXuFvKgdnenhTUbrRgV9kScx94FSloNHA2XRKKGoZFiATbB2DYmuiqyaFQZ4jEr
-         F1Av8C+eUTYwIhwNJLxoDCJMouKs/BV81bIcMW0I=
-Received: by mail-wm1-f47.google.com with SMTP id j25-v6so4481246wmc.1;
-        Mon, 17 Sep 2018 04:32:26 -0700 (PDT)
-X-Gm-Message-State: APzg51CYCdT6DxDY3dGdIhw+9W2Z4LhJbBNxTyGMXsBxYdlHp4cNMMHm
-        06dkJfOuuHrqPiyinkaK6j3dwva/HIopXM42BzE=
-X-Google-Smtp-Source: ANB0VdY/TbfBRMyeQXxqTJxkBDtJSGqnUAuOnc2DrFm8Wdinylu5YBXrtwGbnvQha8VPXPoAohbf/byYkPbtZVaai0o=
-X-Received: by 2002:a1c:7f93:: with SMTP id a141-v6mr11308845wmd.45.1537183945147;
- Mon, 17 Sep 2018 04:32:25 -0700 (PDT)
+        Mon, 17 Sep 2018 12:59:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57728 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727299AbeIQQ76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 12:59:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A82E118A;
+        Mon, 17 Sep 2018 04:33:03 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7952C3F5BD;
+        Mon, 17 Sep 2018 04:33:03 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 0C6B81AE2F82; Mon, 17 Sep 2018 12:33:22 +0100 (BST)
+Date:   Mon, 17 Sep 2018 12:33:22 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     "Kani, Toshi" <toshi.kani@hpe.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
+        "Hocko, Michal" <MHocko@suse.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH 3/5] x86: pgtable: Drop pXd_none() checks from
+ pXd_free_pYd_table()
+Message-ID: <20180917113321.GB22717@arm.com>
+References: <1536747974-25875-1-git-send-email-will.deacon@arm.com>
+ <1536747974-25875-4-git-send-email-will.deacon@arm.com>
+ <dc8b03de1e3318e3dd577d80482260f99ab4e9a5.camel@hpe.com>
 MIME-Version: 1.0
-References: <20180723040816.19455-1-matheus@castello.eng.br> <20180916114520.4375nr2gv3y4ghzv@earth.universe>
-In-Reply-To: <20180916114520.4375nr2gv3y4ghzv@earth.universe>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 17 Sep 2018 13:32:13 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfvs=uETF0-xpwCWc5khSpWjpz2zz354Jcx1bVjm9cG2A@mail.gmail.com>
-Message-ID: <CAJKOXPfvs=uETF0-xpwCWc5khSpWjpz2zz354Jcx1bVjm9cG2A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] power: supply: MAX17040: Add IRQ for low level and
- alert SOC changes
-To:     sebastian.reichel@collabora.com, matheus@castello.eng.br
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc8b03de1e3318e3dd577d80482260f99ab4e9a5.camel@hpe.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Sep 2018 at 22:03, Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hi Matheus,
->
-> Did I miss a v2 of this patchset, that solves the issues
-> found by Krzysztof?
+On Fri, Sep 14, 2018 at 08:37:48PM +0000, Kani, Toshi wrote:
+> On Wed, 2018-09-12 at 11:26 +0100, Will Deacon wrote:
+> > Now that the core code checks this for us, we don't need to do it in the
+> > backend.
+> > 
+> > Cc: Chintan Pandya <cpandya@codeaurora.org>
+> > Cc: Toshi Kani <toshi.kani@hpe.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > ---
+> >  arch/x86/mm/pgtable.c | 6 ------
+> >  1 file changed, 6 deletions(-)
+> > 
+> > diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+> > index ae394552fb94..b4919c44a194 100644
+> > --- a/arch/x86/mm/pgtable.c
+> > +++ b/arch/x86/mm/pgtable.c
+> > @@ -796,9 +796,6 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+> >  	pte_t *pte;
+> >  	int i;
+> >  
+> > -	if (pud_none(*pud))
+> > -		return 1;
+> > -
+> 
+> Do we need to remove this safe guard?  I feel list this is same as
+> kfree() accepting NULL.
 
-I did not see v2. This patchset brings nice feature so it would be a
-pity if it were discontinued.
+I think two big differences with kfree() are (1) that this function has
+exactly one caller in the tree and (2) it's implemented per-arch. Therefore
+we're in a good position to give it some simple semantics and implement
+those. Of course, if the x86 people would like to keep the redundant check,
+that's up to them, but I think it makes the function more confusing and
+tempts people into calling it for present entries.
 
-Best regards,
-Krzysztof
+Will
