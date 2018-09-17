@@ -2,39 +2,41 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675E3ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA13ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 145AA214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145AA214AB
+	by mail.kernel.org (Postfix) with ESMTP id 2DD4B2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD4B2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbeIREkD (ORCPT
+        id S1732187AbeIREkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50338 "EHLO
+        Tue, 18 Sep 2018 00:40:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50346 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREkC (ORCPT
+        with ESMTP id S1729160AbeIREkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:02 -0400
+        Tue, 18 Sep 2018 00:40:06 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 596D8C49;
-        Mon, 17 Sep 2018 23:10:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82A61C9D;
+        Mon, 17 Sep 2018 23:10:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 071/158] firmware: vpd: Fix section enabled flag on vpd_section_destroy
-Date:   Tue, 18 Sep 2018 00:41:41 +0200
-Message-Id: <20180917211714.530065667@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bpetkov@suse.de>
+Subject: [PATCH 4.18 039/158] x86/process: Dont mix user/kernel regs in 64bit __show_regs()
+Date:   Tue, 18 Sep 2018 00:41:09 +0200
+Message-Id: <20180917211712.981489917@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,53 +54,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 45ca3f76de0507ecf143f770570af2942f263812 ]
+commit 9fe6299dde587788f245e9f7a5a1b296fad4e8c7 upstream.
 
-static struct ro_vpd and rw_vpd are initialized by vpd_sections_init()
-in vpd_probe() based on header's ro and rw sizes.
-In vpd_remove() vpd_section_destroy() performs deinitialization based
-on enabled flag, which is set to true by vpd_sections_init().
-This leads to call of vpd_section_destroy() on already destroyed section
-for probe-release-probe-release sequence if first probe performs
-ro_vpd initialization and second probe does not initialize it.
+When the kernel.print-fatal-signals sysctl has been enabled, a simple
+userspace crash will cause the kernel to write a crash dump that contains,
+among other things, the kernel gsbase into dmesg.
 
-The patch adds changing enabled flag on vpd_section_destroy and adds
-cleanup on the error path of vpd_sections_init.
+As suggested by Andy, limit output to pt_regs, FS_BASE and KERNEL_GS_BASE
+in this case.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+This also moves the bitness-specific logic from show_regs() into
+process_{32,64}.c.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 45807a1df9f5 ("vdso: print fatal signals")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bpetkov@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180831194151.123586-1-jannh@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/firmware/google/vpd.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/kdebug.h |   12 +++++++++++-
+ arch/x86/kernel/dumpstack.c   |   11 +++--------
+ arch/x86/kernel/process_32.c  |    4 ++--
+ arch/x86/kernel/process_64.c  |   12 ++++++++++--
+ 4 files changed, 26 insertions(+), 13 deletions(-)
 
---- a/drivers/firmware/google/vpd.c
-+++ b/drivers/firmware/google/vpd.c
-@@ -246,6 +246,7 @@ static int vpd_section_destroy(struct vp
- 		sysfs_remove_bin_file(vpd_kobj, &sec->bin_attr);
- 		kfree(sec->raw_name);
- 		memunmap(sec->baseaddr);
-+		sec->enabled = false;
- 	}
+--- a/arch/x86/include/asm/kdebug.h
++++ b/arch/x86/include/asm/kdebug.h
+@@ -22,10 +22,20 @@ enum die_val {
+ 	DIE_NMIUNKNOWN,
+ };
  
- 	return 0;
-@@ -279,8 +280,10 @@ static int vpd_sections_init(phys_addr_t
- 		ret = vpd_section_init("rw", &rw_vpd,
- 				       physaddr + sizeof(struct vpd_cbmem) +
- 				       header.ro_size, header.rw_size);
--		if (ret)
-+		if (ret) {
-+			vpd_section_destroy(&ro_vpd);
- 			return ret;
-+		}
- 	}
++enum show_regs_mode {
++	SHOW_REGS_SHORT,
++	/*
++	 * For when userspace crashed, but we don't think it's our fault, and
++	 * therefore don't print kernel registers.
++	 */
++	SHOW_REGS_USER,
++	SHOW_REGS_ALL
++};
++
+ extern void die(const char *, struct pt_regs *,long);
+ extern int __must_check __die(const char *, struct pt_regs *, long);
+ extern void show_stack_regs(struct pt_regs *regs);
+-extern void __show_regs(struct pt_regs *regs, int all);
++extern void __show_regs(struct pt_regs *regs, enum show_regs_mode);
+ extern void show_iret_regs(struct pt_regs *regs);
+ extern unsigned long oops_begin(void);
+ extern void oops_end(unsigned long, struct pt_regs *, int signr);
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -155,7 +155,7 @@ static void show_regs_if_on_stack(struct
+ 	 * they can be printed in the right context.
+ 	 */
+ 	if (!partial && on_stack(info, regs, sizeof(*regs))) {
+-		__show_regs(regs, 0);
++		__show_regs(regs, SHOW_REGS_SHORT);
  
- 	return 0;
+ 	} else if (partial && on_stack(info, (void *)regs + IRET_FRAME_OFFSET,
+ 				       IRET_FRAME_SIZE)) {
+@@ -353,7 +353,7 @@ void oops_end(unsigned long flags, struc
+ 	oops_exit();
+ 
+ 	/* Executive summary in case the oops scrolled away */
+-	__show_regs(&exec_summary_regs, true);
++	__show_regs(&exec_summary_regs, SHOW_REGS_ALL);
+ 
+ 	if (!signr)
+ 		return;
+@@ -416,14 +416,9 @@ void die(const char *str, struct pt_regs
+ 
+ void show_regs(struct pt_regs *regs)
+ {
+-	bool all = true;
+-
+ 	show_regs_print_info(KERN_DEFAULT);
+ 
+-	if (IS_ENABLED(CONFIG_X86_32))
+-		all = !user_mode(regs);
+-
+-	__show_regs(regs, all);
++	__show_regs(regs, user_mode(regs) ? SHOW_REGS_USER : SHOW_REGS_ALL);
+ 
+ 	/*
+ 	 * When in-kernel, we also print out the stack at the time of the fault..
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -59,7 +59,7 @@
+ #include <asm/intel_rdt_sched.h>
+ #include <asm/proto.h>
+ 
+-void __show_regs(struct pt_regs *regs, int all)
++void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+ {
+ 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
+ 	unsigned long d0, d1, d2, d3, d6, d7;
+@@ -85,7 +85,7 @@ void __show_regs(struct pt_regs *regs, i
+ 	printk(KERN_DEFAULT "DS: %04x ES: %04x FS: %04x GS: %04x SS: %04x EFLAGS: %08lx\n",
+ 	       (u16)regs->ds, (u16)regs->es, (u16)regs->fs, gs, ss, regs->flags);
+ 
+-	if (!all)
++	if (mode != SHOW_REGS_ALL)
+ 		return;
+ 
+ 	cr0 = read_cr0();
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -62,7 +62,7 @@
+ __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
+ 
+ /* Prints also some state that isn't saved in the pt_regs */
+-void __show_regs(struct pt_regs *regs, int all)
++void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+ {
+ 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L, fs, gs, shadowgs;
+ 	unsigned long d0, d1, d2, d3, d6, d7;
+@@ -87,9 +87,17 @@ void __show_regs(struct pt_regs *regs, i
+ 	printk(KERN_DEFAULT "R13: %016lx R14: %016lx R15: %016lx\n",
+ 	       regs->r13, regs->r14, regs->r15);
+ 
+-	if (!all)
++	if (mode == SHOW_REGS_SHORT)
+ 		return;
+ 
++	if (mode == SHOW_REGS_USER) {
++		rdmsrl(MSR_FS_BASE, fs);
++		rdmsrl(MSR_KERNEL_GS_BASE, shadowgs);
++		printk(KERN_DEFAULT "FS:  %016lx GS:  %016lx\n",
++		       fs, shadowgs);
++		return;
++	}
++
+ 	asm("movl %%ds,%0" : "=r" (ds));
+ 	asm("movl %%cs,%0" : "=r" (cs));
+ 	asm("movl %%es,%0" : "=r" (es));
 
 
