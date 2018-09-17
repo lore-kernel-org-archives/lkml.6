@@ -2,81 +2,131 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27414ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCD3ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2769214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QpE+v3pe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2769214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 24D5D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D5D2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731646AbeIREhj (ORCPT
+        id S1731659AbeIREhk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:37:39 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44404 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbeIREhi (ORCPT
+        Tue, 18 Sep 2018 00:37:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49862 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731108AbeIREhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:37:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZCL3HgdmOEscZMRp29ovpQdUgumnD0V9H/8hzqWR4NU=; b=QpE+v3pehnsgJlDvNRH1e85z7
-        mWeNNZHTt//5SyZYrFdzX0GUrv5JkWinTyPStqpSvphRtYZByGAyBGa76mcV9umyCBQ8I3B5zUMN0
-        ly7ib1FGcxIYA/obtfeu4RfBNwyG/zLnO0FquG34wcacpntPP95oMKMi58k1ML6+2/Odh5Fu1nJmn
-        ULsbDB8Ad+5vRMcz6b5v7duE529h00FdHiGHJ1+I3XDoJ1UJ4TXRy21o04tgFrRdVKxabaFM5ozJp
-        tVQKxOkKdJr+37/aZaOqcN5lA9e2LD0T7k+oEwO07U1sS0PfL5weQuYGSxrpeH5GkMb7S1rp766V2
-        CbgUK8Y5g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g22ca-00074r-2V; Mon, 17 Sep 2018 23:08:00 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 2AE226E0A92; Tue, 18 Sep 2018 01:07:58 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 01:07:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Reinette Chatre <reinette.chatre@intel.com>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        mingo@redhat.com, acme@kernel.org, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, dave.hansen@intel.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 2/6] perf/core: Add helper to obtain performance
- counter index
-Message-ID: <20180917230758.GA3117@worktop.programming.kicks-ass.net>
-References: <cover.1536685533.git.reinette.chatre@intel.com>
- <6f93048a74c66a275f8eb6e1298f10552d1e5d95.1536685533.git.reinette.chatre@intel.com>
- <20180917082336.GP24124@hirez.programming.kicks-ass.net>
- <fdb736aa-3c2a-67d3-473f-b5a2a7d2c0e5@intel.com>
+        Tue, 18 Sep 2018 00:37:39 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43F6EC49;
+        Mon, 17 Sep 2018 23:08:09 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.18 003/158] HID: multitouch: fix Elan panels with 2 input modes declaration
+Date:   Tue, 18 Sep 2018 00:40:33 +0200
+Message-Id: <20180917211710.648266752@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
+References: <20180917211710.383360696@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdb736aa-3c2a-67d3-473f-b5a2a7d2c0e5@intel.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 09:37:14AM -0700, Reinette Chatre wrote:
-> On 9/17/2018 1:23 AM, Peter Zijlstra wrote:
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-> > I said arch/x86/include/asm/perf_events.h and call it:
-> > x86_perf_rdpmc_index().
-> > 
-> > This function is very much x86 specific.
+------------------
 
-> Moving it to arch/x86/include/asm/perf_event.h is not trivial since this
-> file is not familiar with struct perf_event.
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Urgh, right you are. Does it work if you make it a regular function
-instead of an inline? Put the thing in arch/x86/events/core.c or so and
-only an extern decl in asm/perf_event.h.
+commit ec6adef5fbc3f140c70e7499fdad818acb3a46c6 upstream.
+
+When implementing commit 7f81c8db5489 ("HID: multitouch: simplify
+the settings of the various features"), I wrongly removed a test
+that made sure we never try to set the second InputMode feature
+to something else than 0.
+
+This broke badly some recent Elan panels that now forget to send the
+click button in some area of the touchpad.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200899
+Fixes: 7f81c8db5489 ("HID: multitouch: simplify the settings of the various features")
+Cc: stable@vger.kernel.org # v4.18+
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/hid/hid-multitouch.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1167,7 +1167,8 @@ static bool mt_need_to_apply_feature(str
+ 				     struct hid_usage *usage,
+ 				     enum latency_mode latency,
+ 				     bool surface_switch,
+-				     bool button_switch)
++				     bool button_switch,
++				     bool *inputmode_found)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+ 	struct mt_class *cls = &td->mtclass;
+@@ -1179,6 +1180,14 @@ static bool mt_need_to_apply_feature(str
+ 
+ 	switch (usage->hid) {
+ 	case HID_DG_INPUTMODE:
++		/*
++		 * Some elan panels wrongly declare 2 input mode features,
++		 * and silently ignore when we set the value in the second
++		 * field. Skip the second feature and hope for the best.
++		 */
++		if (*inputmode_found)
++			return false;
++
+ 		if (cls->quirks & MT_QUIRK_FORCE_GET_FEATURE) {
+ 			report_len = hid_report_len(report);
+ 			buf = hid_alloc_report_buf(report, GFP_KERNEL);
+@@ -1194,6 +1203,7 @@ static bool mt_need_to_apply_feature(str
+ 		}
+ 
+ 		field->value[index] = td->inputmode_value;
++		*inputmode_found = true;
+ 		return true;
+ 
+ 	case HID_DG_CONTACTMAX:
+@@ -1231,6 +1241,7 @@ static void mt_set_modes(struct hid_devi
+ 	struct hid_usage *usage;
+ 	int i, j;
+ 	bool update_report;
++	bool inputmode_found = false;
+ 
+ 	rep_enum = &hdev->report_enum[HID_FEATURE_REPORT];
+ 	list_for_each_entry(rep, &rep_enum->report_list, list) {
+@@ -1249,7 +1260,8 @@ static void mt_set_modes(struct hid_devi
+ 							     usage,
+ 							     latency,
+ 							     surface_switch,
+-							     button_switch))
++							     button_switch,
++							     &inputmode_found))
+ 					update_report = true;
+ 			}
+ 		}
+
+
