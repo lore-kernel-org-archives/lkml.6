@@ -2,138 +2,135 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104F1ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A106EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BABA9214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4849B214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:22:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="dd8bh/Zm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABA9214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="v0pIH0/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4849B214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeIRAop (ORCPT
+        id S1728396AbeIRAuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:44:45 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:46323 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeIRAop (ORCPT
+        Mon, 17 Sep 2018 20:50:46 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:57530 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbeIRAuq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:44:45 -0400
-Received: by mail-yb1-f195.google.com with SMTP id y20-v6so8219361ybi.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 12:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e0y/zkalFCasYLTyI4ojbO1sEmeLgsjSH2FsUdC9z+Q=;
-        b=dd8bh/Zm6CGlSoD3tAcfy6kscIcqGhka90nX1K2I1tmMDeHFwJH8yxpsOo7D6HkKGU
-         xCF2E0kHLwQUEipQYJVa1Y1tiRvhXQowjKr0sitTZjDGPk4YKm+ZUGAEjAYqdAuJYYnJ
-         XbgJaLEQifQHYGp35zo/MQghiaSrHMaqTQN5HTidiXNKSoESM/TntiK+0j4zbkgyK1pu
-         NJeOoWxNjl9ypP96HYmZgTDdukFbX9HIQriF3O+toeCQxT1KPvWaPKoiuD8QNld4wsFv
-         Sg3BUEFnyxD010Uxt7O1SgpMBoKzCx/Ynl/qLmpNdixbW40Vsp8V74Dq0wf7OQr2UwwR
-         Qz5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e0y/zkalFCasYLTyI4ojbO1sEmeLgsjSH2FsUdC9z+Q=;
-        b=ZQEmel9FxhjuMdbtyUEqMEZ0GR3fmzcDvhQ1HNr+COrtIyWNivHXQPYgXVWf0dSCU+
-         +JNVqwZv4PP9f/US9qhE0OqS/Rvv8QYVDnHfyEexM3siT/lSmk9TvlMZbjOcCOinwwFF
-         ykBh2GygLT0Hj3DNkXElTJ3uhILmj1ytDZn9orJFeDa7Ozb+OdBngw1ka90xJiwKanDI
-         O3PMduHDq8peLOycsrBHbnm1VCG5SnbJSIMoH/iHyM6i8wEvnU+QGIoNup9cKlTlCLci
-         Pr5Qtuct5hsbEWZKI7mwVnDtcMSgC1igI3x/xGxPBJDHR+9lF7OOwj20cla1jRohrbu1
-         ttxw==
-X-Gm-Message-State: APzg51DYr6s0CJ6Gt7q8uvEYj2TXJfs0wRLL7FLaiLnQk4If1nw8PCAK
-        zv/C44ZGoG4LMh9CkZmY/HQ1jw==
-X-Google-Smtp-Source: ANB0VdYzuByViPQ8vMvly5nIPniT01Lko+rcZf0KSNWWdQ933RQoxHuwyQOadD5pCiddw7vUktJ+sw==
-X-Received: by 2002:a25:8605:: with SMTP id y5-v6mr130573ybk.297.1537211763382;
-        Mon, 17 Sep 2018 12:16:03 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id g131-v6sm7662230ywh.70.2018.09.17.12.16.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 12:16:02 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 15:16:02 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Airlie <airlied@linux.ie>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        dri-devel@lists.freedesktop.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
-Message-ID: <20180917191602.GP188300@art_vandelay>
-References: <cover.1537191359.git.leonard.crestez@nxp.com>
+        Mon, 17 Sep 2018 20:50:46 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id AA6E85C021F;
+        Mon, 17 Sep 2018 21:22:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1537212121;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=b/FIpbY5R8/nPoPMWiq8TV1BX00JHPCOUHqSODxV3l0=;
+        b=v0pIH0/5EjZqLpEcJP7KQX7wwprS+SxvQ8rb2pNWBx7Ac8dCr9Ww8s4MyMkNJiNf7s1A2e
+        xID/N2mk9qPJv+GwgpHun8cIi4a/kPhr1kBpY8s9Og02K6fg8iYypKd66k3ztz4VOxVnYS
+        EnVZCgfB4peSIRNmo41ut7n04YzWn88=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1537191359.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 17 Sep 2018 12:22:01 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: adc: max9611: Avoid implicit enum conversion warning
+In-Reply-To: <CAKwvOdkygBGNUkJj6zmBO=na-mXPKCeYQ+Grx49Gcyj2O9XJXw@mail.gmail.com>
+References: <20180915052511.2243-1-natechancellor@gmail.com>
+ <20180916105351.1bf859ee@archlinux> <20180916151513.GA10200@flashbox>
+ <CAKwvOdkygBGNUkJj6zmBO=na-mXPKCeYQ+Grx49Gcyj2O9XJXw@mail.gmail.com>
+Message-ID: <6cae089a39c7423be9837b89ca50c8e9@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 04:42:10PM +0300, Leonard Crestez wrote:
-> Adding lcdif nodes to a power domain currently doesn't work, it results
-> in black/corrupted screens or hangs. While the driver does enable
-> runtime pm it does not deal correctly with the block being unpowered.
+On 17.09.2018 09:52, Nick Desaulniers wrote:
+> On Sun, Sep 16, 2018 at 8:15 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+>>
+>> On Sun, Sep 16, 2018 at 10:53:51AM +0100, Jonathan Cameron wrote:
+>> > On Fri, 14 Sep 2018 22:25:11 -0700
+>> > Nathan Chancellor <natechancellor@gmail.com> wrote:
+>> >
+>> > > Clang warns when an enumerated type is implicitly converted to another.
+>> > >
+>> > > drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
+>> > > enumeration type 'enum max9611_conf_ids' to different enumeration type
+>> > > 'enum max9611_csa_gain' [-Wenum-conversion]
+>> > >                         *csa_gain = gain_selectors[i];
+>> > >                                   ~ ^~~~~~~~~~~~~~~~~
+>> > > 1 warning generated.
+>> > >
+>> > > Change the type of the variable 'gain_selectors' to int so that Clang
+>> > > understands this is expected behavior.
+>> > >
+>> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+>> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> > How does this interact with the patch that Stefan Agner sent for
+>> > the same issue last week?
 > 
-> ---
-> 
-> All patches in this series have review tags from a while ago and I
-> tested them again on top of next-20180913. No changes since last
-> version: https://lkml.org/lkml/2018/8/27/299
-> 
-> This series stalled so I reached out to Marek on IRC and he was
-> surprised to be listed as maintainer 
-
-Hopefully not too surprised since Marek added themself to MAINTAINERS when
-adding the driver :-)
-
-I suppose we should probably move this to drm-misc since it qualifies as a
-"small driver" and needs a home. Looking through git history shows the last
-mxsfb-specific change was back in 02/17. Everything else has been drm-wide
-refactors. Thoughts?
-
-Marek/Leonard: Care to sign up to be listed as a reviewers?
-
-Sean
-
-> and asked me to resend and add
-> Daniel Vetter.
-> 
-> Perhaps it would help to clarify that the pengutronix people should feel
-> free to push patches in this area?
-> 
-> Right now drm/imx is mostly for IPUv3 but there are other display output
-> paths on imx, such as the LCDIF supported by this driver. This LCDIF
-> block is included on imx8 so still quite relevant.
-> 
-> Leonard Crestez (5):
->   drm/mxsfb: Move axi clk enable/disable to crtc enable/disable
->   drm/mxsfb: Fix initial corrupt frame when activating display
->   drm/mxsfb: Add pm_runtime calls to pipe_enable/disable
->   drm/mxsfb: Add PM_SLEEP support
->   drm/mxsfb: Switch to drm_atomic_helper_commit_tail_rpm
-> 
->  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 53 +++++++++++++++++++-----------
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 40 ++++++++++++++++++++++
->  2 files changed, 74 insertions(+), 19 deletions(-)
-> 
-> -- 
-> 2.17.1
+> + Stefan in case he has additional thoughts.  I don't feel strongly
+> about one patch vs the other.
 > 
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+FWIW, only one is needed.
+
+I prefer mine slightly over Nicks since it continues to use struct max9611_conf_ids which is the type required by the max9611_read_single() function..
+
+I don't have a strong opinion though, and did not look deeper into why the driver makes the differentiation between struct max9611_conf_ids and ax9611_csa_gain...
+
+--
+Stefan
+
+
+>> >
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=b1ec0802503820ccbc894aadfd2a44da20232f5e
+>> >
+>> > Thanks,
+>> >
+>> > Jonathan
+>> >
+>>
+>> Hi Jonathan,
+>>
+>> Sorry for the overlap. My patch is not necessary. I was working off
+>> of linux-next so I didn't catch this. I'll be better about checking
+>> maintainer trees before sending patches in the future.
+>>
+>> Thanks for the quick response!
+>> Nathan
+>>
+>> > > ---
+>> > >  drivers/iio/adc/max9611.c | 2 +-
+>> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> > >
+>> > > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+>> > > index 0538ff8c4ac1..3c358b16a8fa 100644
+>> > > --- a/drivers/iio/adc/max9611.c
+>> > > +++ b/drivers/iio/adc/max9611.c
+>> > > @@ -275,7 +275,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
+>> > >                                 u16 *adc_raw,
+>> > >                                 enum max9611_csa_gain *csa_gain)
+>> > >  {
+>> > > -   enum max9611_conf_ids gain_selectors[] = {
+>> > > +   int gain_selectors[] = {
+>> > >             CONF_SENSE_1x,
+>> > >             CONF_SENSE_4x,
+>> > >             CONF_SENSE_8x
+>> >
