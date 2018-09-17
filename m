@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCD3ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD75ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D5D2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D5D2146F
+	by mail.kernel.org (Postfix) with ESMTP id 01F072146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:08:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F072146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731659AbeIREhk (ORCPT
+        id S1731672AbeIREhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:37:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49862 "EHLO
+        Tue, 18 Sep 2018 00:37:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49868 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731108AbeIREhj (ORCPT
+        with ESMTP id S1731108AbeIREhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:37:39 -0400
+        Tue, 18 Sep 2018 00:37:42 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43F6EC49;
-        Mon, 17 Sep 2018 23:08:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0C96C49;
+        Mon, 17 Sep 2018 23:08:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.18 003/158] HID: multitouch: fix Elan panels with 2 input modes declaration
-Date:   Tue, 18 Sep 2018 00:40:33 +0200
-Message-Id: <20180917211710.648266752@linuxfoundation.org>
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+        Xiao Guangrong <xiaoguangrong@tencent.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.18 030/158] KVM: x86: Do not re-{try,execute} after failed emulation in L2
+Date:   Tue, 18 Sep 2018 00:41:00 +0200
+Message-Id: <20180917211712.389170415@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,81 +55,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit ec6adef5fbc3f140c70e7499fdad818acb3a46c6 upstream.
+commit 6c3dfeb6a48b1562bd5b8ec5f3317ef34d0134ef upstream.
 
-When implementing commit 7f81c8db5489 ("HID: multitouch: simplify
-the settings of the various features"), I wrongly removed a test
-that made sure we never try to set the second InputMode feature
-to something else than 0.
+Commit a6f177efaa58 ("KVM: Reenter guest after emulation failure if
+due to access to non-mmio address") added reexecute_instruction() to
+handle the scenario where two (or more) vCPUS race to write a shadowed
+page, i.e. reexecute_instruction() is intended to return true if and
+only if the instruction being emulated was accessing a shadowed page.
+As L0 is only explicitly shadowing L1 tables, an emulation failure of
+a nested VM instruction cannot be due to a race to write a shadowed
+page and so should never be re-executed.
 
-This broke badly some recent Elan panels that now forget to send the
-click button in some area of the touchpad.
+This fixes an issue where an "MMIO" emulation failure[1] in L2 is all
+but guaranteed to result in an infinite loop when TDP is enabled.
+Because "cr2" is actually an L2 GPA when TDP is enabled, calling
+kvm_mmu_gva_to_gpa_write() to translate cr2 in the non-direct mapped
+case (L2 is never direct mapped) will almost always yield UNMAPPED_GVA
+and cause reexecute_instruction() to immediately return true.  The
+!mmio_info_in_cache() check in kvm_mmu_page_fault() doesn't catch this
+case because mmio_info_in_cache() returns false for a nested MMU (the
+MMIO caching currently handles L1 only, e.g. to cache nested guests'
+GPAs we'd have to manually flush the cache when switching between
+VMs and when L1 updated its page tables controlling the nested guest).
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200899
-Fixes: 7f81c8db5489 ("HID: multitouch: simplify the settings of the various features")
-Cc: stable@vger.kernel.org # v4.18+
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Way back when, commit 68be0803456b ("KVM: x86: never re-execute
+instruction with enabled tdp") changed reexecute_instruction() to
+always return false when using TDP under the assumption that KVM would
+only get into the emulator for MMIO.  Commit 95b3cf69bdf8 ("KVM: x86:
+let reexecute_instruction work for tdp") effectively reverted that
+behavior in order to handle the scenario where emulation failed due to
+an access from L1 to the shadow page tables for L2, but it didn't
+account for the case where emulation failed in L2 with TDP enabled.
+
+All of the above logic also applies to retry_instruction(), added by
+commit 1cb3f3ae5a38 ("KVM: x86: retry non-page-table writing
+instructions").  An indefinite loop in retry_instruction() should be
+impossible as it protects against retrying the same instruction over
+and over, but it's still correct to not retry an L2 instruction in
+the first place.
+
+Fix the immediate issue by adding a check for a nested guest when
+determining whether or not to allow retry in kvm_mmu_page_fault().
+In addition to fixing the immediate bug, add WARN_ON_ONCE in the
+retry functions since they are not designed to handle nested cases,
+i.e. they need to be modified even if there is some scenario in the
+future where we want to allow retrying a nested guest.
+
+[1] This issue was encountered after commit 3a2936dedd20 ("kvm: mmu:
+    Don't expose private memslots to L2") changed the page fault path
+    to return KVM_PFN_NOSLOT when translating an L2 access to a
+    prive memslot.  Returning KVM_PFN_NOSLOT is semantically correct
+    when we want to hide a memslot from L2, i.e. there effectively is
+    no defined memory region for L2, but it has the unfortunate side
+    effect of making KVM think the GFN is a MMIO page, thus triggering
+    emulation.  The failure occurred with in-development code that
+    deliberately exposed a private memslot to L2, which L2 accessed
+    with an instruction that is not emulated by KVM.
+
+Fixes: 95b3cf69bdf8 ("KVM: x86: let reexecute_instruction work for tdp")
+Fixes: 1cb3f3ae5a38 ("KVM: x86: retry non-page-table writing instructions")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Cc: Xiao Guangrong <xiaoguangrong@tencent.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-multitouch.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/kvm/mmu.c |    7 +++++--
+ arch/x86/kvm/x86.c |    6 ++++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1167,7 +1167,8 @@ static bool mt_need_to_apply_feature(str
- 				     struct hid_usage *usage,
- 				     enum latency_mode latency,
- 				     bool surface_switch,
--				     bool button_switch)
-+				     bool button_switch,
-+				     bool *inputmode_found)
- {
- 	struct mt_device *td = hid_get_drvdata(hdev);
- 	struct mt_class *cls = &td->mtclass;
-@@ -1179,6 +1180,14 @@ static bool mt_need_to_apply_feature(str
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5007,9 +5007,12 @@ int kvm_mmu_page_fault(struct kvm_vcpu *
+ 	 * re-execute the instruction that caused the page fault.  Do not allow
+ 	 * retrying MMIO emulation, as it's not only pointless but could also
+ 	 * cause us to enter an infinite loop because the processor will keep
+-	 * faulting on the non-existent MMIO address.
++	 * faulting on the non-existent MMIO address.  Retrying an instruction
++	 * from a nested guest is also pointless and dangerous as we are only
++	 * explicitly shadowing L1's page tables, i.e. unprotecting something
++	 * for L1 isn't going to magically fix whatever issue cause L2 to fail.
+ 	 */
+-	if (!mmio_info_in_cache(vcpu, cr2, direct))
++	if (!mmio_info_in_cache(vcpu, cr2, direct) && !is_guest_mode(vcpu))
+ 		emulation_type = EMULTYPE_ALLOW_RETRY;
+ emulate:
+ 	/*
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5813,6 +5813,9 @@ static bool reexecute_instruction(struct
+ 	if (!(emulation_type & EMULTYPE_ALLOW_RETRY))
+ 		return false;
  
- 	switch (usage->hid) {
- 	case HID_DG_INPUTMODE:
-+		/*
-+		 * Some elan panels wrongly declare 2 input mode features,
-+		 * and silently ignore when we set the value in the second
-+		 * field. Skip the second feature and hope for the best.
-+		 */
-+		if (*inputmode_found)
-+			return false;
++	if (WARN_ON_ONCE(is_guest_mode(vcpu)))
++		return false;
 +
- 		if (cls->quirks & MT_QUIRK_FORCE_GET_FEATURE) {
- 			report_len = hid_report_len(report);
- 			buf = hid_alloc_report_buf(report, GFP_KERNEL);
-@@ -1194,6 +1203,7 @@ static bool mt_need_to_apply_feature(str
- 		}
+ 	if (!vcpu->arch.mmu.direct_map) {
+ 		/*
+ 		 * Write permission should be allowed since only
+@@ -5901,6 +5904,9 @@ static bool retry_instruction(struct x86
+ 	if (!(emulation_type & EMULTYPE_ALLOW_RETRY))
+ 		return false;
  
- 		field->value[index] = td->inputmode_value;
-+		*inputmode_found = true;
- 		return true;
++	if (WARN_ON_ONCE(is_guest_mode(vcpu)))
++		return false;
++
+ 	if (x86_page_table_writing_insn(ctxt))
+ 		return false;
  
- 	case HID_DG_CONTACTMAX:
-@@ -1231,6 +1241,7 @@ static void mt_set_modes(struct hid_devi
- 	struct hid_usage *usage;
- 	int i, j;
- 	bool update_report;
-+	bool inputmode_found = false;
- 
- 	rep_enum = &hdev->report_enum[HID_FEATURE_REPORT];
- 	list_for_each_entry(rep, &rep_enum->report_list, list) {
-@@ -1249,7 +1260,8 @@ static void mt_set_modes(struct hid_devi
- 							     usage,
- 							     latency,
- 							     surface_switch,
--							     button_switch))
-+							     button_switch,
-+							     &inputmode_found))
- 					update_report = true;
- 			}
- 		}
 
 
