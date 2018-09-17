@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C64EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C65ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392882146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392882146D
+	by mail.kernel.org (Postfix) with ESMTP id 1910D214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1910D214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbeIREkw (ORCPT
+        id S1732389AbeIREkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50522 "EHLO
+        Tue, 18 Sep 2018 00:40:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIREkv (ORCPT
+        with ESMTP id S1731765AbeIREky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:51 -0400
+        Tue, 18 Sep 2018 00:40:54 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4971C9D;
-        Mon, 17 Sep 2018 23:11:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DBE9707;
+        Mon, 17 Sep 2018 23:11:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sunil K Pandey <sunil.k.pandey@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        "Bryant G. Ly" <bryantly@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 088/158] perf evlist: Fix error out while applying initial delay and LBR
-Date:   Tue, 18 Sep 2018 00:41:58 +0200
-Message-Id: <20180917211715.287489145@linuxfoundation.org>
+Subject: [PATCH 4.18 089/158] powerpc/pseries: fix EEH recovery of some IOV devices
+Date:   Tue, 18 Sep 2018 00:41:59 +0200
+Message-Id: <20180917211715.325802074@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -57,79 +53,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 95035c5e167ae6e740b1ddd30210ae0eaf39a5db ]
+[ Upstream commit b87b9cf4935325c98522823caeddd333022a1c62 ]
 
-'perf record' will error out if both --delay and LBR are applied.
+EEH recovery currently fails on pSeries for some IOV capable PCI
+devices, if CONFIG_PCI_IOV is on and the hypervisor doesn't provide
+certain device tree properties for the device. (Found on an IOV
+capable device using the ipr driver.)
 
-For example:
+Recovery fails in pci_enable_resources() at the check on r->parent,
+because r->flags is set and r->parent is not.  This state is due to
+sriov_init() setting the start, end and flags members of the IOV BARs
+but the parent not being set later in
+pseries_pci_fixup_iov_resources(), because the
+"ibm,open-sriov-vf-bar-info" property is missing.
 
-  # perf record -D 1000 -a -e cycles -j any -- sleep 2
-  Error:
-  dummy:HG: PMU Hardware doesn't support sampling/overflow-interrupts.
-  Try 'perf stat'
-  #
+Correct this by zeroing the resource flags for IOV BARs when they
+can't be configured (this is the same method used by sriov_init() and
+__pci_read_base()).
 
-A dummy event is added implicitly for initial delay, which has the same
-configurations as real sampling events. The dummy event is a software
-event. If LBR is configured, perf must error out.
+VFs cleared this way can't be enabled later, because that requires
+another device tree property, "ibm,number-of-configurable-vfs" as well
+as support for the RTAS function "ibm_map_pes". These are all part of
+hypervisor support for IOV and it seems unlikely that a hypervisor
+would ever partially, but not fully, support it. (None are currently
+provided by QEMU/KVM.)
 
-The dummy event will only be used to track PERF_RECORD_MMAP while perf
-waits for the initial delay to enable the real events. The BRANCH_STACK
-bit can be safely cleared for the dummy event.
-
-After applying the patch:
-
-  # perf record -D 1000 -a -e cycles -j any -- sleep 2
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 1.054 MB perf.data (828 samples) ]
-  #
-
-Reported-by: Sunil K Pandey <sunil.k.pandey@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1531145722-16404-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Reviewed-by: Bryant G. Ly <bryantly@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/evsel.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/powerpc/platforms/pseries/setup.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -848,6 +848,12 @@ static void apply_config_terms(struct pe
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -647,6 +647,15 @@ void of_pci_parse_iov_addrs(struct pci_d
  	}
  }
  
-+static bool is_dummy_event(struct perf_evsel *evsel)
++static void pseries_disable_sriov_resources(struct pci_dev *pdev)
 +{
-+	return (evsel->attr.type == PERF_TYPE_SOFTWARE) &&
-+	       (evsel->attr.config == PERF_COUNT_SW_DUMMY);
++	int i;
++
++	pci_warn(pdev, "No hypervisor support for SR-IOV on this device, IOV BARs disabled.\n");
++	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++)
++		pdev->resource[i + PCI_IOV_RESOURCES].flags = 0;
 +}
 +
- /*
-  * The enable_on_exec/disabled value strategy:
-  *
-@@ -1086,6 +1092,14 @@ void perf_evsel__config(struct perf_evse
- 		else
- 			perf_evsel__reset_sample_bit(evsel, PERIOD);
- 	}
-+
-+	/*
-+	 * For initial_delay, a dummy event is added implicitly.
-+	 * The software event will trigger -EOPNOTSUPP error out,
-+	 * if BRANCH_STACK bit is set.
-+	 */
-+	if (opts->initial_delay && is_dummy_event(evsel))
-+		perf_evsel__reset_sample_bit(evsel, BRANCH_STACK);
+ static void pseries_pci_fixup_resources(struct pci_dev *pdev)
+ {
+ 	const int *indexes;
+@@ -654,10 +663,10 @@ static void pseries_pci_fixup_resources(
+ 
+ 	/*Firmware must support open sriov otherwise dont configure*/
+ 	indexes = of_get_property(dn, "ibm,open-sriov-vf-bar-info", NULL);
+-	if (!indexes)
+-		return;
+-	/* Assign the addresses from device tree*/
+-	of_pci_set_vf_bar_size(pdev, indexes);
++	if (indexes)
++		of_pci_set_vf_bar_size(pdev, indexes);
++	else
++		pseries_disable_sriov_resources(pdev);
  }
  
- static int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads)
+ static void pseries_pci_fixup_iov_resources(struct pci_dev *pdev)
+@@ -669,10 +678,10 @@ static void pseries_pci_fixup_iov_resour
+ 		return;
+ 	/*Firmware must support open sriov otherwise dont configure*/
+ 	indexes = of_get_property(dn, "ibm,open-sriov-vf-bar-info", NULL);
+-	if (!indexes)
+-		return;
+-	/* Assign the addresses from device tree*/
+-	of_pci_parse_iov_addrs(pdev, indexes);
++	if (indexes)
++		of_pci_parse_iov_addrs(pdev, indexes);
++	else
++		pseries_disable_sriov_resources(pdev);
+ }
+ 
+ static resource_size_t pseries_pci_iov_resource_alignment(struct pci_dev *pdev,
 
 
