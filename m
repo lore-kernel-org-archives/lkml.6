@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85572ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E534DECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C922146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C922146D
+	by mail.kernel.org (Postfix) with ESMTP id A757A2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A757A2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbeIREmM (ORCPT
+        id S1732636AbeIREmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:42:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50790 "EHLO
+        Tue, 18 Sep 2018 00:42:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50796 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeIREmL (ORCPT
+        with ESMTP id S1728850AbeIREmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:42:11 -0400
+        Tue, 18 Sep 2018 00:42:14 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 16F52707;
-        Mon, 17 Sep 2018 23:12:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37EC5707;
+        Mon, 17 Sep 2018 23:12:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
+        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 078/158] f2fs: do not set free of current section
-Date:   Tue, 18 Sep 2018 00:41:48 +0200
-Message-Id: <20180917211714.851248844@linuxfoundation.org>
+Subject: [PATCH 4.18 079/158] f2fs: Keep alloc_valid_block_count in sync
+Date:   Tue, 18 Sep 2018 00:41:49 +0200
+Message-Id: <20180917211714.889398271@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,43 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-[ Upstream commit 3611ce9911267cb93d364bd71ddea6821278d11f ]
+[ Upstream commit 36b877af7992893b6d1ddbe96971cab5ab9e50eb ]
 
-For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
-example, if segment 1 is just used and allocate new segment 2, and the
-blocks of segment 1 is invalidated, at this time, the previous code will
-use __set_test_and_free to free the free_secmap and free_sections++,
-this is not correct since it is still a current section, so fix it.
+If we attempt to request more blocks than we have room for, we try to
+instead request as much as we can, however, alloc_valid_block_count
+is not decremented to match the new value, allowing it to drift higher
+until the next checkpoint. This always decrements it when the requested
+amount cannot be fulfilled.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/segment.h |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/f2fs.h |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -448,6 +448,8 @@ static inline void __set_test_and_free(s
- 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
- 		free_i->free_segments++;
- 
-+		if (IS_CURSEC(sbi, secno))
-+			goto skip_free;
- 		next = find_next_bit(free_i->free_segmap,
- 				start_segno + sbi->segs_per_sec, start_segno);
- 		if (next >= start_segno + sbi->segs_per_sec) {
-@@ -455,6 +457,7 @@ static inline void __set_test_and_free(s
- 				free_i->free_sections++;
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1680,18 +1680,20 @@ static inline int inc_valid_block_count(
+ 		sbi->total_valid_block_count -= diff;
+ 		if (!*count) {
+ 			spin_unlock(&sbi->stat_lock);
+-			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
+ 			goto enospc;
  		}
  	}
-+skip_free:
- 	spin_unlock(&free_i->segmap_lock);
- }
+ 	spin_unlock(&sbi->stat_lock);
  
+-	if (unlikely(release))
++	if (unlikely(release)) {
++		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 		dquot_release_reservation_block(inode, release);
++	}
+ 	f2fs_i_blocks_write(inode, *count, true, true);
+ 	return 0;
+ 
+ enospc:
++	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 	dquot_release_reservation_block(inode, release);
+ 	return -ENOSPC;
+ }
 
 
