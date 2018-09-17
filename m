@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 378CDECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 995AEECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6812088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6812088F
+	by mail.kernel.org (Postfix) with ESMTP id 581FD2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581FD2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbeIREVM (ORCPT
+        id S1729227AbeIREVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45136 "EHLO
+        Tue, 18 Sep 2018 00:21:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45164 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVL (ORCPT
+        with ESMTP id S1726275AbeIREVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:11 -0400
+        Tue, 18 Sep 2018 00:21:15 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48417CAC;
-        Mon, 17 Sep 2018 22:51:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21AAECAC;
+        Mon, 17 Sep 2018 22:51:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 16/56] Bluetooth: h5: Fix missing dependency on BT_HCIUART_SERDEV
-Date:   Tue, 18 Sep 2018 00:41:49 +0200
-Message-Id: <20180917213828.634336055@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.4 07/56] staging: rt5208: Fix a sleep-in-atomic bug in xd_copy_page
+Date:   Tue, 18 Sep 2018 00:41:40 +0200
+Message-Id: <20180917213828.274601248@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,36 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hedberg <johan.hedberg@intel.com>
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
-[ Upstream commit 6c3711ec64fd23a9abc8aaf59a9429569a6282df ]
+commit 498c4b4e9c23855d17ecc2a108d949bb68020481 upstream.
 
-This driver was recently updated to use serdev, so add the appropriate
-dependency. Without this one can get compiler warnings like this if
-CONFIG_SERIAL_DEV_BUS is not enabled:
+The driver may sleep under a spin lock, and the function call path is:
+rtsx_exclusive_enter_ss (acquire the lock by spin_lock)
+  rtsx_enter_ss
+    rtsx_power_off_card
+      xd_cleanup_work
+        xd_delay_write
+          xd_finish_write
+            xd_copy_page
+              wait_timeout
+                schedule_timeout --> may sleep
 
-  CC [M]  drivers/bluetooth/hci_h5.o
-drivers/bluetooth/hci_h5.c:934:36: warning: ‘h5_serdev_driver’ defined but not used [-Wunused-variable]
- static struct serdev_device_driver h5_serdev_driver = {
-                                    ^~~~~~~~~~~~~~~~
+To fix it, "wait_timeout" is replaced with mdelay in xd_copy_page.
 
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/bluetooth/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/bluetooth/Kconfig
-+++ b/drivers/bluetooth/Kconfig
-@@ -125,6 +125,7 @@ config BT_HCIUART_LL
- config BT_HCIUART_3WIRE
- 	bool "Three-wire UART (H5) protocol support"
- 	depends on BT_HCIUART
-+	depends on BT_HCIUART_SERDEV
- 	help
- 	  The HCI Three-wire UART Transport Layer makes it possible to
- 	  user the Bluetooth HCI over a serial port interface. The HCI
+---
+ drivers/staging/rts5208/xd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/staging/rts5208/xd.c
++++ b/drivers/staging/rts5208/xd.c
+@@ -1252,7 +1252,7 @@ static int xd_copy_page(struct rtsx_chip
+ 			reg = 0;
+ 			rtsx_read_register(chip, XD_CTL, &reg);
+ 			if (reg & (XD_ECC1_ERROR | XD_ECC2_ERROR)) {
+-				wait_timeout(100);
++				mdelay(100);
+ 
+ 				if (detect_card_cd(chip,
+ 					XD_CARD) != STATUS_SUCCESS) {
 
 
