@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76124ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98482ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4002086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48480214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:40:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V9F4Hz4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4002086E
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f58A4adk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48480214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbeIRCJK (ORCPT
+        id S1728570AbeIRCJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:09:10 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36575 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbeIRCJJ (ORCPT
+        Mon, 17 Sep 2018 22:09:16 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37484 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728515AbeIRCJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:09:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d1-v6so8226351pgo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:40:11 -0700 (PDT)
+        Mon, 17 Sep 2018 22:09:10 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h69-v6so8104376pfd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Eg2Mjkb1M+l5w9+ISrAtsAOrO6qEMIH17I1Pv/SmrYg=;
-        b=V9F4Hz4De0ms/3IPC1meGexVFfjo5+paDnb2s599bGx7B/FQKQCtS9CTKZtZYFcTdp
-         mj2b7aluPxQvQ0wmyF5BB2oob/78ehl0Gv5e+zZjM5FgVGczvVF9tG8BHDKfUjhM4UNW
-         MX9n/ACIQGPmDZtABTn8eDR3Zgc3r37ViSTlU=
+        bh=cl9qCndhHFyPmfRvTA/9yk4YZ1+VCCSmFRNZ4H0i7X8=;
+        b=f58A4adkVafl2RhnPrQ8N1Vd8F8gnGqT9IYEtxM26OyW62l2WiehMSroo7ixKuMKmf
+         wQNKFQgwo0NeY8sOF+Y40M107SAWzU7kKZbCrJPpAwJ2Vu1XEI6jdWU8KFGaDwR15qPo
+         sHY+XCsWFfyP04Md30d2NGXRBK/80i1Wxd5SU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Eg2Mjkb1M+l5w9+ISrAtsAOrO6qEMIH17I1Pv/SmrYg=;
-        b=cYzG8lIYtsLuULHQixOGzQErLwtTO38t1jaYRsjLRhx+9E1+TFZBeWLOwDwgtGJuHS
-         M4+XbogiGXroPqdvKSq8qEyNREyUNpwqvwKHe9fBHCF3GNHS+IfMOXaOooAzipfdDslC
-         YkToOdzWFWFhLmf9XMZQI6CS6tVcPBgksvECgO/BZ5RnNLBmAWvnKMkVNfIHIrY28IAn
-         MiFQx/KlBS0g9XN1xirbuSv54a7Wuq4A1QIq8oVNjX9oGikyw1atxrvh6rpjbiFaJmEB
-         ruBHPqyNF6OVaaH369Y548VwjifTKHaCzDPp6/uW46gii9tOxrTLNXUNU3vJYnRL4kbt
-         5BlA==
-X-Gm-Message-State: APzg51DtHF4UggtCyljTv2jNnCmcHulRObyfNUIiF90Dfm8tveM6FxEf
-        KWN3y2YwLBxcyyCO0nxj/hS+Iw==
-X-Google-Smtp-Source: ANB0VdZaOLDD8ILSmA8X1lkqW2R4GLJIJMnTLJXiApIUmpjbuqIIH9VjckTua+W3r6uF6ZyXILu+mw==
-X-Received: by 2002:a62:ea05:: with SMTP id t5-v6mr27742138pfh.228.1537216811073;
-        Mon, 17 Sep 2018 13:40:11 -0700 (PDT)
+        bh=cl9qCndhHFyPmfRvTA/9yk4YZ1+VCCSmFRNZ4H0i7X8=;
+        b=op0dHlDXGr603AFbuYf0QOqGnNNUwbAz9ja7Omb5UXficvKcc5MeSRR06LZpjL54SM
+         O90ydrh6ZcJ9RKimsQJgG9jwn8IAwrJCXqGbz0bdJywDzphZuyhXl4UHciRw1o5UOxz1
+         dmO3IEl7YnzQK322dGhQctmxW26TosrX3SGx9ULbm4JDRC4MK+P/bxDe86smbKlj0QPS
+         MUvrciOWPtwrE36CQr5Kxd5CBcNVbpZNlu9bP+OX/x3xrE7oEc3YRM72aQqc/2lwIqVs
+         9qB9UuU6cmDadFchWZ9xtsPBeoDbXsrvqaHxNqyDpkgIOwPaudPOLNqQcvLz01TXxp3l
+         yz9w==
+X-Gm-Message-State: APzg51BcXL+l92jDQ3MQvroJ/AV6K93pJt7WAAMUjZCPHrd1tr9DFMFL
+        yJAojoLwGjp4a+MsRY1D8AykKw==
+X-Google-Smtp-Source: ANB0VdZpgyPtETBprw1Yrjq79tMQKLKZd7Q5vuCP7KdNd9ed/DJw+xzTwu9AmWlMr0ceToOPK5I0IA==
+X-Received: by 2002:a62:4dc1:: with SMTP id a184-v6mr27418289pfb.5.1537216812578;
+        Mon, 17 Sep 2018 13:40:12 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id g25-v6sm26858002pfd.23.2018.09.17.13.40.09
+        by smtp.gmail.com with ESMTPSA id g25-v6sm26858002pfd.23.2018.09.17.13.40.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 13:40:10 -0700 (PDT)
+        Mon, 17 Sep 2018 13:40:11 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
@@ -63,10 +63,12 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Mahesh Sivasubramanian <msivasub@codeaurora.org>,
         Lina Iyer <ilina@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH v2 1/2] soc: qcom: cmd-db: Remove memcpy()ing from cmd_db_get_header()
-Date:   Mon, 17 Sep 2018 13:40:06 -0700
-Message-Id: <20180917204007.250862-2-swboyd@chromium.org>
+        Evan Green <evgreen@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH v2 2/2] soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()
+Date:   Mon, 17 Sep 2018 13:40:07 -0700
+Message-Id: <20180917204007.250862-3-swboyd@chromium.org>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180917204007.250862-1-swboyd@chromium.org>
 References: <20180917204007.250862-1-swboyd@chromium.org>
@@ -77,169 +79,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cmd_db_get_header() function is a static local function that doesn't
-need to copy anything from one place to another. Instead, it can just
-point into the region by returning pointers to what we're looking for.
-If we do that, we should mark what we're returning as const so that code
-can't modify cmd-db without an obvious cast.
+Let's change the function signature to return the pointer to memory or
+an error pointer on failure, and take an argument that lets us return
+the size of the aux data read. This way we can remove the
+cmd_db_read_aux_data_len() API entirely and also get rid of the memcpy
+operation from cmd_db to the caller.
 
 Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
 Cc: Lina Iyer <ilina@codeaurora.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Evan Green <evgreen@chromium.org>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/soc/qcom/cmd-db.c | 60 +++++++++++++++++----------------------
- 1 file changed, 26 insertions(+), 34 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 34 ++++++++++-----------
+ drivers/soc/qcom/cmd-db.c             | 43 +++++----------------------
+ include/soc/qcom/cmd-db.h             | 12 ++------
+ 3 files changed, 28 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index a6f646295f06..5c9cc6824891 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -101,8 +101,7 @@ static bool cmd_db_magic_matches(const struct cmd_db_header *header)
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index bbb8126ec5c5..e4387a3fa745 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -860,23 +860,23 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
+ }
  
- static struct cmd_db_header *cmd_db_header;
- 
+ /* Get the list of RPMh voltage levels from cmd-db */
+-static int a6xx_gmu_rpmh_arc_cmds(const char *id, void *vals, int size)
++static const u16 *a6xx_gmu_rpmh_arc_cmds(const char *id, int *size)
+ {
+-	u32 len = cmd_db_read_aux_data_len(id);
 -
--static inline void *rsc_to_entry_header(struct rsc_hdr *hdr)
-+static inline const void *rsc_to_entry_header(const struct rsc_hdr *hdr)
- {
- 	u16 offset = le16_to_cpu(hdr->header_offset);
- 
-@@ -110,7 +109,7 @@ static inline void *rsc_to_entry_header(struct rsc_hdr *hdr)
- }
- 
- static inline void *
--rsc_offset(struct rsc_hdr *hdr, struct entry_header *ent)
-+rsc_offset(const struct rsc_hdr *hdr, const struct entry_header *ent)
- {
- 	u16 offset = le16_to_cpu(hdr->data_offset);
- 	u16 loffset = le16_to_cpu(ent->offset);
-@@ -134,11 +133,11 @@ int cmd_db_ready(void)
- }
- EXPORT_SYMBOL(cmd_db_ready);
- 
--static int cmd_db_get_header(const char *id, struct entry_header *eh,
--			     struct rsc_hdr *rh)
-+static int cmd_db_get_header(const char *id, const struct entry_header **eh,
-+			     const struct rsc_hdr **rh)
- {
--	struct rsc_hdr *rsc_hdr;
--	struct entry_header *ent;
-+	const struct rsc_hdr *rsc_hdr;
-+	const struct entry_header *ent;
- 	int ret, i, j;
- 	u8 query[8];
- 
-@@ -146,9 +145,6 @@ static int cmd_db_get_header(const char *id, struct entry_header *eh,
- 	if (ret)
- 		return ret;
- 
--	if (!eh || !rh)
+-	if (!len)
+-		return 0;
+-
+-	if (WARN_ON(len > size))
 -		return -EINVAL;
 -
- 	/* Pad out query string to same length as in DB */
- 	strncpy(query, id, sizeof(query));
+-	cmd_db_read_aux_data(id, vals, len);
++	size_t len;
++	const u16 *vals;
  
-@@ -159,14 +155,13 @@ static int cmd_db_get_header(const char *id, struct entry_header *eh,
++	vals = cmd_db_read_aux_data(id, &len);
+ 	/*
+ 	 * The data comes back as an array of unsigned shorts so adjust the
+ 	 * count accordingly
+ 	 */
+-	return len >> 1;
++	len >>= 1;
++
++	if (!len || WARN_ON(len > 16))
++		len = 0;
++
++	*size = len;
++	return vals;
+ }
  
- 		ent = rsc_to_entry_header(rsc_hdr);
- 		for (j = 0; j < le16_to_cpu(rsc_hdr->cnt); j++, ent++) {
--			if (memcmp(ent->id, query, sizeof(ent->id)) == 0)
--				break;
--		}
+ /* Return the 'arc-level' for the given frequency */
+@@ -907,8 +907,8 @@ static u32 a6xx_gmu_get_arc_level(struct device *dev, unsigned long freq)
+ 
+ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
+ 		unsigned long *freqs, int freqs_count,
+-		u16 *pri, int pri_count,
+-		u16 *sec, int sec_count)
++		const u16 *pri, int pri_count,
++		const u16 *sec, int sec_count)
+ {
+ 	int i, j;
+ 
+@@ -970,14 +970,14 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+ 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ 	struct msm_gpu *gpu = &adreno_gpu->base;
+ 
+-	u16 gx[16], cx[16], mx[16];
++	const u16 *gx, *cx, *mx;
+ 	u32 gxcount, cxcount, mxcount;
+ 	int ret;
+ 
+ 	/* Get the list of available voltage levels for each component */
+-	gxcount = a6xx_gmu_rpmh_arc_cmds("gfx.lvl", gx, sizeof(gx));
+-	cxcount = a6xx_gmu_rpmh_arc_cmds("cx.lvl", cx, sizeof(cx));
+-	mxcount = a6xx_gmu_rpmh_arc_cmds("mx.lvl", mx, sizeof(mx));
++	gx = a6xx_gmu_rpmh_arc_cmds("gfx.lvl", &gxcount);
++	cx = a6xx_gmu_rpmh_arc_cmds("cx.lvl", &cxcount);
++	mx = a6xx_gmu_rpmh_arc_cmds("mx.lvl", &mxcount);
+ 
+ 	/* Build the GX votes */
+ 	ret = a6xx_gmu_rpmh_arc_votes_init(&gpu->pdev->dev, gmu->gx_arc_votes,
+diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+index 5c9cc6824891..c701b3b010f1 100644
+--- a/drivers/soc/qcom/cmd-db.c
++++ b/drivers/soc/qcom/cmd-db.c
+@@ -192,55 +192,28 @@ EXPORT_SYMBOL(cmd_db_read_addr);
+ /**
+  * cmd_db_read_aux_data() - Query command db for aux data.
+  *
+- *  @id: Resource to retrieve AUX Data on.
+- *  @data: Data buffer to copy returned aux data to. Returns size on NULL
+- *  @len: Caller provides size of data buffer passed in.
++ *  @id: Resource to retrieve AUX Data on
++ *  @len: size of data buffer returned
+  *
+- *  Return: size of data on success, errno otherwise
++ *  Return: pointer to data on success, error pointer otherwise
+  */
+-int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
++const void *cmd_db_read_aux_data(const char *id, size_t *len)
+ {
+ 	int ret;
+ 	const struct entry_header *ent;
+ 	const struct rsc_hdr *rsc_hdr;
+-	u16 ent_len;
 -
--		if (j < le16_to_cpu(rsc_hdr->cnt)) {
--			memcpy(eh, ent, sizeof(*ent));
--			memcpy(rh, rsc_hdr, sizeof(*rh));
--			return 0;
-+			if (memcmp(ent->id, query, sizeof(ent->id)) == 0) {
-+				if (eh)
-+					*eh = ent;
-+				if (rh)
-+					*rh = rsc_hdr;
-+				return 0;
-+			}
- 		}
- 	}
+-	if (!data)
+-		return -EINVAL;
  
-@@ -186,12 +181,11 @@ static int cmd_db_get_header(const char *id, struct entry_header *eh,
- u32 cmd_db_read_addr(const char *id)
- {
- 	int ret;
--	struct entry_header ent;
--	struct rsc_hdr rsc_hdr;
-+	const struct entry_header *ent;
- 
--	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, NULL);
- 
--	return ret < 0 ? 0 : le32_to_cpu(ent.addr);
-+	return ret < 0 ? 0 : le32_to_cpu(ent->addr);
- }
- EXPORT_SYMBOL(cmd_db_read_addr);
- 
-@@ -207,8 +201,8 @@ EXPORT_SYMBOL(cmd_db_read_addr);
- int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
- {
- 	int ret;
--	struct entry_header ent;
--	struct rsc_hdr rsc_hdr;
-+	const struct entry_header *ent;
-+	const struct rsc_hdr *rsc_hdr;
- 	u16 ent_len;
- 
- 	if (!data)
-@@ -218,12 +212,12 @@ int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
+ 	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
  	if (ret)
- 		return ret;
+-		return ret;
+-
+-	ent_len = le16_to_cpu(ent->len);
+-	if (len < ent_len)
+-		return -EINVAL;
++		return ERR_PTR(ret);
  
--	ent_len = le16_to_cpu(ent.len);
-+	ent_len = le16_to_cpu(ent->len);
- 	if (len < ent_len)
- 		return -EINVAL;
+-	len = min_t(u16, ent_len, len);
+-	memcpy(data, rsc_offset(rsc_hdr, ent), len);
++	if (len)
++		*len = le16_to_cpu(ent->len);
  
- 	len = min_t(u16, ent_len, len);
--	memcpy(data, rsc_offset(&rsc_hdr, &ent), len);
-+	memcpy(data, rsc_offset(rsc_hdr, ent), len);
- 
- 	return len;
+-	return len;
++	return rsc_offset(rsc_hdr, ent);
  }
-@@ -239,12 +233,11 @@ EXPORT_SYMBOL(cmd_db_read_aux_data);
- size_t cmd_db_read_aux_data_len(const char *id)
- {
- 	int ret;
--	struct entry_header ent;
--	struct rsc_hdr rsc_hdr;
-+	const struct entry_header *ent;
+ EXPORT_SYMBOL(cmd_db_read_aux_data);
  
--	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, NULL);
+-/**
+- * cmd_db_read_aux_data_len - Get the length of the auxiliary data stored in DB.
+- *
+- * @id: Resource to retrieve AUX Data.
+- *
+- * Return: size on success, 0 on error
+- */
+-size_t cmd_db_read_aux_data_len(const char *id)
+-{
+-	int ret;
+-	const struct entry_header *ent;
+-
+-	ret = cmd_db_get_header(id, &ent, NULL);
+-
+-	return ret < 0 ? 0 : le16_to_cpu(ent->len);
+-}
+-EXPORT_SYMBOL(cmd_db_read_aux_data_len);
+-
+ /**
+  * cmd_db_read_slave_id - Get the slave ID for a given resource address
+  *
+diff --git a/include/soc/qcom/cmd-db.h b/include/soc/qcom/cmd-db.h
+index 578180cbc134..af9722223925 100644
+--- a/include/soc/qcom/cmd-db.h
++++ b/include/soc/qcom/cmd-db.h
+@@ -18,9 +18,7 @@ enum cmd_db_hw_type {
+ #if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
+ u32 cmd_db_read_addr(const char *resource_id);
  
--	return ret < 0 ? 0 : le16_to_cpu(ent.len);
-+	return ret < 0 ? 0 : le16_to_cpu(ent->len);
- }
- EXPORT_SYMBOL(cmd_db_read_aux_data_len);
+-int cmd_db_read_aux_data(const char *resource_id, u8 *data, size_t len);
+-
+-size_t cmd_db_read_aux_data_len(const char *resource_id);
++const void *cmd_db_read_aux_data(const char *resource_id, size_t *len);
  
-@@ -258,15 +251,14 @@ EXPORT_SYMBOL(cmd_db_read_aux_data_len);
- enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
- {
- 	int ret;
--	struct entry_header ent;
--	struct rsc_hdr rsc_hdr;
-+	const struct entry_header *ent;
- 	u32 addr;
+ enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id);
  
--	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
-+	ret = cmd_db_get_header(id, &ent, NULL);
- 	if (ret < 0)
- 		return CMD_DB_HW_INVALID;
+@@ -29,12 +27,8 @@ int cmd_db_ready(void);
+ static inline u32 cmd_db_read_addr(const char *resource_id)
+ { return 0; }
  
--	addr = le32_to_cpu(ent.addr);
-+	addr = le32_to_cpu(ent->addr);
- 	return (addr >> SLAVE_ID_SHIFT) & SLAVE_ID_MASK;
- }
- EXPORT_SYMBOL(cmd_db_read_slave_id);
+-static inline int cmd_db_read_aux_data(const char *resource_id, u8 *data,
+-				       size_t len)
+-{ return -ENODEV; }
+-
+-static inline size_t cmd_db_read_aux_data_len(const char *resource_id)
+-{ return -ENODEV; }
++static inline const void *cmd_db_read_aux_data(const char *resource_id, size_t *len)
++{ return ERR_PTR(-ENODEV); }
+ 
+ static inline enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id)
+ { return -ENODEV; }
 -- 
 Sent by a computer through tubes
 
