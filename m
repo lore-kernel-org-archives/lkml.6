@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2E3ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1447ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4962C2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4962C2146F
+	by mail.kernel.org (Postfix) with ESMTP id 8C4D6214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4D6214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbeIREam (ORCPT
+        id S1730178AbeIREap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:30:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48236 "EHLO
+        Tue, 18 Sep 2018 00:30:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729660AbeIREal (ORCPT
+        with ESMTP id S1729405AbeIREap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:30:41 -0400
+        Tue, 18 Sep 2018 00:30:45 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 601F1C7D;
-        Mon, 17 Sep 2018 23:01:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87A13CB2;
+        Mon, 17 Sep 2018 23:01:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
         Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 032/126] blk-mq: fix updating tags depth
-Date:   Tue, 18 Sep 2018 00:41:20 +0200
-Message-Id: <20180917211706.886465300@linuxfoundation.org>
+Subject: [PATCH 4.14 033/126] scsi: target: fix __transport_register_session locking
+Date:   Tue, 18 Sep 2018 00:41:21 +0200
+Message-Id: <20180917211706.963651668@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -55,68 +54,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Mike Christie <mchristi@redhat.com>
 
-[ Upstream commit 75d6e175fc511e95ae3eb8f708680133bc211ed3 ]
+[ Upstream commit 6a64f6e1591322beb8ce16e952a53582caf2a15c ]
 
-The passed 'nr' from userspace represents the total depth, meantime
-inside 'struct blk_mq_tags', 'nr_tags' stores the total tag depth,
-and 'nr_reserved_tags' stores the reserved part.
+When __transport_register_session is called from transport_register_session
+irqs will already have been disabled, so we do not want the unlock irq call
+to enable them until the higher level has done the final
+spin_unlock_irqrestore/ spin_unlock_irq.
 
-There are two issues in blk_mq_tag_update_depth() now:
+This has __transport_register_session use the save/restore call.
 
-1) for growing tags, we should have used the passed 'nr', and keep the
-number of reserved tags not changed.
-
-2) the passed 'nr' should have been used for checking against
-'tags->nr_tags', instead of number of the normal part.
-
-This patch fixes the above two cases, and avoids kernel crash caused
-by wrong resizing sbitmap queue.
-
-Cc: "Ewan D. Milne" <emilne@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Bart Van Assche <bart.vanassche@sandisk.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Tested by: Marco Patalano <mpatalan@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq-tag.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/target/target_core_transport.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -416,8 +416,6 @@ int blk_mq_tag_update_depth(struct blk_m
- 	if (tdepth <= tags->nr_reserved_tags)
- 		return -EINVAL;
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -317,6 +317,7 @@ void __transport_register_session(
+ {
+ 	const struct target_core_fabric_ops *tfo = se_tpg->se_tpg_tfo;
+ 	unsigned char buf[PR_REG_ISID_LEN];
++	unsigned long flags;
  
--	tdepth -= tags->nr_reserved_tags;
--
- 	/*
- 	 * If we are allowed to grow beyond the original size, allocate
- 	 * a new set of tags before freeing the old one.
-@@ -437,7 +435,8 @@ int blk_mq_tag_update_depth(struct blk_m
- 		if (tdepth > 16 * BLKDEV_MAX_RQ)
- 			return -EINVAL;
+ 	se_sess->se_tpg = se_tpg;
+ 	se_sess->fabric_sess_ptr = fabric_sess_ptr;
+@@ -353,7 +354,7 @@ void __transport_register_session(
+ 			se_sess->sess_bin_isid = get_unaligned_be64(&buf[0]);
+ 		}
  
--		new = blk_mq_alloc_rq_map(set, hctx->queue_num, tdepth, 0);
-+		new = blk_mq_alloc_rq_map(set, hctx->queue_num, tdepth,
-+				tags->nr_reserved_tags);
- 		if (!new)
- 			return -ENOMEM;
- 		ret = blk_mq_alloc_rqs(set, new, hctx->queue_num, tdepth);
-@@ -454,7 +453,8 @@ int blk_mq_tag_update_depth(struct blk_m
- 		 * Don't need (or can't) update reserved tags here, they
- 		 * remain static and should never need resizing.
- 		 */
--		sbitmap_queue_resize(&tags->bitmap_tags, tdepth);
-+		sbitmap_queue_resize(&tags->bitmap_tags,
-+				tdepth - tags->nr_reserved_tags);
+-		spin_lock_irq(&se_nacl->nacl_sess_lock);
++		spin_lock_irqsave(&se_nacl->nacl_sess_lock, flags);
+ 		/*
+ 		 * The se_nacl->nacl_sess pointer will be set to the
+ 		 * last active I_T Nexus for each struct se_node_acl.
+@@ -362,7 +363,7 @@ void __transport_register_session(
+ 
+ 		list_add_tail(&se_sess->sess_acl_list,
+ 			      &se_nacl->acl_sess_list);
+-		spin_unlock_irq(&se_nacl->nacl_sess_lock);
++		spin_unlock_irqrestore(&se_nacl->nacl_sess_lock, flags);
  	}
+ 	list_add_tail(&se_sess->sess_list, &se_tpg->tpg_sess_list);
  
- 	return 0;
 
 
