@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9C7ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F6FECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A154C2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A154C2146D
+	by mail.kernel.org (Postfix) with ESMTP id 1A35F214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A35F214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732298AbeIREkb (ORCPT
+        id S1732308AbeIREkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50434 "EHLO
+        Tue, 18 Sep 2018 00:40:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREkb (ORCPT
+        with ESMTP id S1729160AbeIREke (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:31 -0400
+        Tue, 18 Sep 2018 00:40:34 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29DB4CAC;
-        Mon, 17 Sep 2018 23:10:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8A37C49;
+        Mon, 17 Sep 2018 23:11:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Akshu Agrawal <akshu.agrawal@amd.com>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 082/158] f2fs: fix to detect looped node chain correctly
-Date:   Tue, 18 Sep 2018 00:41:52 +0200
-Message-Id: <20180917211715.007385336@linuxfoundation.org>
+Subject: [PATCH 4.18 083/158] ASoC: soc-pcm: Use delay set in component pointer function
+Date:   Tue, 18 Sep 2018 00:41:53 +0200
+Message-Id: <20180917211715.050225881@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,48 +52,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
 
-[ Upstream commit 82902c06bd17dbf6e8184299842ca5c68880970f ]
+[ Upstream commit 9fb4c2bf130b922c77c16a8368732699799c40de ]
 
-Below dmesg was printed when testing generic/388 of fstest:
+Take into account the base delay set in pointer callback.
 
-F2FS-fs (zram1): find_fsync_dnodes: detect looped node chain, blkaddr:526615, next:526616
-F2FS-fs (zram1): Cannot recover all fsync data errno=-22
-F2FS-fs (zram1): Mounted with checkpoint version = 22300d0e
-F2FS-fs (zram1): find_fsync_dnodes: detect looped node chain, blkaddr:526615, next:526616
-F2FS-fs (zram1): Cannot recover all fsync data errno=-22
+There are cases where a pointer function populates
+runtime->delay, such as:
+./sound/pci/hda/hda_controller.c
+./sound/soc/intel/atom/sst-mfld-platform-pcm.c
 
-The reason is that we initialize free_blocks with free blocks of
-filesystem, so if filesystem is full, free_blocks can be zero,
-below condition will be true, so that, it will fail recovery.
+This delay was getting lost and was overwritten by delays
+from codec or cpu dai delay function if exposed.
 
-if (++loop_cnt >= free_blocks ||
-	blkaddr == next_blkaddr_of_node(page))
+Now,
+Total delay = base delay + cpu_dai delay + codec_dai delay
 
-To fix this issue, initialize free_blocks with correct value which
-includes over-privision blocks.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/recovery.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/soc-pcm.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -241,8 +241,8 @@ static int find_fsync_dnodes(struct f2fs
- 	struct page *page = NULL;
- 	block_t blkaddr;
- 	unsigned int loop_cnt = 0;
--	unsigned int free_blocks = sbi->user_block_count -
--					valid_user_blocks(sbi);
-+	unsigned int free_blocks = MAIN_SEGS(sbi) * sbi->blocks_per_seg -
-+						valid_user_blocks(sbi);
- 	int err = 0;
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1165,6 +1165,9 @@ static snd_pcm_uframes_t soc_pcm_pointer
+ 	snd_pcm_sframes_t codec_delay = 0;
+ 	int i;
  
- 	/* get node pages in the current segment */
++	/* clearing the previous total delay */
++	runtime->delay = 0;
++
+ 	for_each_rtdcom(rtd, rtdcom) {
+ 		component = rtdcom->component;
+ 
+@@ -1176,6 +1179,8 @@ static snd_pcm_uframes_t soc_pcm_pointer
+ 		offset = component->driver->ops->pointer(substream);
+ 		break;
+ 	}
++	/* base delay if assigned in pointer callback */
++	delay = runtime->delay;
+ 
+ 	if (cpu_dai->driver->ops->delay)
+ 		delay += cpu_dai->driver->ops->delay(substream, cpu_dai);
 
 
