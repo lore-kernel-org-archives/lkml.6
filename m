@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF7DECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 04:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F35AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 04:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070FF214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 04:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 168BB2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 04:44:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u5dlnXEv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070FF214C2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuJ3m/6x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 168BB2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeIQKJk (ORCPT
+        id S1728520AbeIQKJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 06:09:40 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43579 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbeIQKJk (ORCPT
+        Mon, 17 Sep 2018 06:09:45 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37786 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbeIQKJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 06:09:40 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 38-v6so1088688plc.10
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 21:44:03 -0700 (PDT)
+        Mon, 17 Sep 2018 06:09:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 2-v6so7048254pgo.4
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 21:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZkoFmZF2SG37NQlyPtlxWTYmb6CPaLuv+Ifc2lHamuQ=;
-        b=u5dlnXEvuPdLKQYDx1Fy1v2T9txUV53MTr1s4xpVLVY2tYO4gzKD375m478F7AIz/F
-         bvMWQ+HR0B7X2Vd5dpOg2RRgVZaqLK+ZEuE0uXENvGzyWrW0jB6UvNbGal4jA/5wWKkB
-         cKmUkA2kbIG9E/OPTCSLs8hEG0XJE3k6sbildQA6/jvcLVgC6m+ZRARIShJI2hZlwqoB
-         BUVkTnZ4ZOPHFHsMaKmIvW5l5q/ddV9AXwOZgfyJaQRpd0IIn1OBZtN6ZZ5bymQVUf8f
-         USzVyyu4KMxl5LE9b+2aXdBuS9nUix7v1NXHG7vU7yenArHV4VYYF0mMDgUlWc86F8Fu
-         TFRw==
+        bh=8dyl5n92Y/sUneObKhhlDsuCQS6Q3FjZOl6LkwY3YEI=;
+        b=BuJ3m/6x36G3hh8AzArJHtreU/uE6pOyub6/3l8pqREAgTTF/1g8NEh4hhZItnOKYZ
+         yujo24psr0RkOmST0KDXerxlDT94/yTSxQ88IfSVhUFeEFGpQuB/6b1+n/8FrKXVjo7C
+         Er8oLqatI3O59ZvBUGcnGiYKhU58X2vc9pJusxrUp9GHoktHV6a/ZVReKk54BkFah1La
+         jiUtVASJkLHS7aOu6SkgcgJz0H/MFllsakmkC6VUQbEdVwuJE9sFbwnojf2vFb52xhpl
+         X/AulZJEOuFa+UBmhAOxAt2++6FBEb6W1VSayrmYs7Hz1gvwTxOlOS//xWfh9q5O+mHm
+         C8Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZkoFmZF2SG37NQlyPtlxWTYmb6CPaLuv+Ifc2lHamuQ=;
-        b=EmQB8eO6ktOASKuhj5IByNY5e4siRnmVWwRKO9RKZOA56OPFovplaKBfHMwTChEBzN
-         sQwDbmiPmO5EEif6lhBhSb6ovlEh17OYsj5u3kVIi8UUnuCa+YtQupF31Ssdo9e3Qv7L
-         IrDQafMnuM9IchOZ5hHHK1F9Ib2RV5tZBohagjRhGc03Z0+0LKT5t/pbnwQ93bzuuiUE
-         GskNfhZTXpDusYEePR8xmgcDp1etajMBF8G4xkDUQjE/xMi+rdxEHYD4/67UPB50APDN
-         ojf/OP7I9Iu1MsVeOBY0lyjsUORl1hfHeNz0jGjoo2VD7MDzkwuqeVV4ObOSgiC1ZXfS
-         O0Ow==
-X-Gm-Message-State: APzg51AkD57hgVmYTfq6VSsTq5aQk/Xfyz3uXkZq0evlqxNduwJ0Ucs7
-        zjEvLswPC8sESq2rZzzXTPbbN0Lcmgg=
-X-Google-Smtp-Source: ANB0VdbOn+gSELpN+SYaa6MkPPP0frbIVmDOjJ1mVkpreE3+/GnNFXsUsSEQU7NuERR++56wgV7tpw==
-X-Received: by 2002:a17:902:8f8c:: with SMTP id z12-v6mr22888038plo.4.1537159443141;
-        Sun, 16 Sep 2018 21:44:03 -0700 (PDT)
+        bh=8dyl5n92Y/sUneObKhhlDsuCQS6Q3FjZOl6LkwY3YEI=;
+        b=dwtQYbemK7trLhspPBTv8WF968ZLjh4zHK30MBq8Rv/CTDAWdYgXCNHWrYWTKxLs+a
+         xPpu0imL6e89U5+Oo4ZLfm3XjVVRR+gjk9Le1ZyAyEloDbwVaxxZ5xPzyfQpLMfjHg/Q
+         JQj3xW2eRS7oT0D3bPxOjx8w7eRr8xawifl3gx9c8ACz9SZDDyEPC0v7LzdD+K5FHfFF
+         RYw3tRYr75OpJg7tVoX1rLdONAwE1pqWVt4A2JixYuDzH+qjTQ9O4YR/KdMDuYCzRMFT
+         s+dBq0yc4tcjlaphJ49Q58qju3iD2O6WSkqoDod3KUpGosXBbxbrG4Xg/fK1mxAbBfux
+         s9AQ==
+X-Gm-Message-State: APzg51BrhS06YEzfVDmygASZG9WyPEsfv6eiNQZEaFE1iGcUiMQFHvZo
+        lr1xenk6B+S+rmXmzGrenfMVCNCdUKM=
+X-Google-Smtp-Source: ANB0VdY6MVzowkyYBlMhTXjeBP8nQVIvr7m4OcvqDBdGniLQJclWn50CGVGCfGg6tJIOflQwTvDMnw==
+X-Received: by 2002:a63:e54b:: with SMTP id z11-v6mr21437497pgj.328.1537159447295;
+        Sun, 16 Sep 2018 21:44:07 -0700 (PDT)
 Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm16876399pff.8.2018.09.16.21.43.59
+        by smtp.gmail.com with ESMTPSA id l3-v6sm16876399pff.8.2018.09.16.21.44.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Sep 2018 21:44:02 -0700 (PDT)
+        Sun, 16 Sep 2018 21:44:06 -0700 (PDT)
 From:   Jun Yao <yaojun8558363@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/6] arm64/mm: Create the initial page table in the init_pg_dir.
-Date:   Mon, 17 Sep 2018 12:43:30 +0800
-Message-Id: <20180917044333.30051-4-yaojun8558363@gmail.com>
+Subject: [PATCH v5 4/6] arm64/mm: Create the final page table directly in swapper_pg_dir.
+Date:   Mon, 17 Sep 2018 12:43:31 +0800
+Message-Id: <20180917044333.30051-5-yaojun8558363@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180917044333.30051-1-yaojun8558363@gmail.com>
 References: <20180917044333.30051-1-yaojun8558363@gmail.com>
@@ -73,90 +73,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create the initial page table in the init_pg_dir. And update the
-init_mm.pgd to make sure that pgd_offset_k() works correctly. When
-the final page table is created, we redirect the init_mm.pgd to the
-swapper_pg_dir.
+As the initial page table is created in the init_pg_dir, we can set
+up the final page table directly in the swapper_pg_dir. And it only
+contains the top level page table, so we can reduce it to a page
+size.
 
 Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
 ---
- arch/arm64/include/asm/pgtable.h | 2 ++
- arch/arm64/kernel/asm-offsets.c  | 1 +
- arch/arm64/kernel/head.S         | 9 +++++++--
- arch/arm64/mm/mmu.c              | 1 +
- 4 files changed, 11 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/vmlinux.lds.S |  2 +-
+ arch/arm64/mm/mmu.c             | 29 ++---------------------------
+ 2 files changed, 3 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 2ab2031b778c..b11d6fc62a62 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -718,6 +718,8 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- }
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 612ffc0bbe11..a634def77442 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -237,7 +237,7 @@ SECTIONS
+ 	. += RESERVED_TTBR0_SIZE;
  #endif
+ 	swapper_pg_dir = .;
+-	. += SWAPPER_DIR_SIZE;
++	. += PAGE_SIZE;
+ 	swapper_pg_end = .;
  
-+extern pgd_t init_pg_dir[PTRS_PER_PGD];
-+extern pgd_t init_pg_end[];
- extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
- extern pgd_t swapper_pg_end[];
- extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 323aeb5f2fe6..43f52cfdfad4 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -82,6 +82,7 @@ int main(void)
-   DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
-   BLANK();
-   DEFINE(MM_CONTEXT_ID,		offsetof(struct mm_struct, context.id.counter));
-+  DEFINE(MM_PGD,		offsetof(struct mm_struct, pgd));
-   BLANK();
-   DEFINE(VMA_VM_MM,		offsetof(struct vm_area_struct, vm_mm));
-   DEFINE(VMA_VM_FLAGS,		offsetof(struct vm_area_struct, vm_flags));
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index de2aaea00bd2..cf8a58211b80 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -376,7 +376,7 @@ __create_page_tables:
- 	/*
- 	 * Map the kernel image (starting with PHYS_OFFSET).
- 	 */
--	adrp	x0, swapper_pg_dir
-+	adrp	x0, init_pg_dir
- 	mov_q	x5, KIMAGE_VADDR + TEXT_OFFSET	// compile time __va(_text)
- 	add	x5, x5, x23			// add KASLR displacement
- 	mov	x4, PTRS_PER_PGD
-@@ -439,6 +439,11 @@ __primary_switched:
- 	bl	__pi_memset
- 	dsb	ishst				// Make zero page visible to PTW
- 
-+	// Update init_mm.pgd
-+	adrp	x0, init_pg_dir
-+	adr_l	x1, init_mm
-+	str	x0, [x1, #MM_PGD]
-+
- #ifdef CONFIG_KASAN
- 	bl	kasan_early_init
- #endif
-@@ -833,7 +838,7 @@ __primary_switch:
- 	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
- #endif
- 
--	adrp	x1, swapper_pg_dir
-+	adrp	x1, init_pg_dir
- 	bl	__enable_mmu
- #ifdef CONFIG_RELOCATABLE
- 	bl	__relocate_kernel
+ 	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
 diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 65f86271f02b..af80dca335ce 100644
+index af80dca335ce..71532bcd76c1 100644
 --- a/arch/arm64/mm/mmu.c
 +++ b/arch/arm64/mm/mmu.c
-@@ -646,6 +646,7 @@ void __init paging_init(void)
- 	cpu_replace_ttbr1(__va(pgd_phys));
- 	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
+@@ -629,35 +629,10 @@ static void __init map_kernel(pgd_t *pgdp)
+  */
+ void __init paging_init(void)
+ {
+-	phys_addr_t pgd_phys = early_pgtable_alloc();
+-	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
+-
+-	map_kernel(pgdp);
+-	map_mem(pgdp);
+-
+-	/*
+-	 * We want to reuse the original swapper_pg_dir so we don't have to
+-	 * communicate the new address to non-coherent secondaries in
+-	 * secondary_entry, and so cpu_switch_mm can generate the address with
+-	 * adrp+add rather than a load from some global variable.
+-	 *
+-	 * To do this we need to go via a temporary pgd.
+-	 */
+-	cpu_replace_ttbr1(__va(pgd_phys));
+-	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
++	map_kernel(swapper_pg_dir);
++	map_mem(swapper_pg_dir);
  	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-+	init_mm.pgd = swapper_pg_dir;
+ 	init_mm.pgd = swapper_pg_dir;
+-
+-	pgd_clear_fixmap();
+-	memblock_free(pgd_phys, PAGE_SIZE);
+-
+-	/*
+-	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
+-	 * allocated with it.
+-	 */
+-	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
+-		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
+-		      - PAGE_SIZE);
+ }
  
- 	pgd_clear_fixmap();
- 	memblock_free(pgd_phys, PAGE_SIZE);
+ /*
 -- 
 2.17.1
 
