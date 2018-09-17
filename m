@@ -2,134 +2,150 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF84ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D074ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 670CC2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:37:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I2esuaOB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 670CC2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 150532147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150532147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbeIQTEi (ORCPT
+        id S1728412AbeIQTFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:04:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38244 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbeIQTEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:04:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Awci2NloivThIfbI7FN2RhRdTGtjr7Ke5VYdFsXkUuA=; b=I2esuaOB8jYWzAPflSLqQQ2r8Y
-        y4lHDLPdNsDHzN3YoJc8iBkCDGnhze+C7Ab7cHA9lToh8orQMnv5ByIq1JeC7gEolEVGrgMVvIEO8
-        tQq9ectED1HZQVFEo1rpUkEy+axxgSUDl607QURnSCYVfActB0nw2ZLv7dnS3/sWCu2FwMQOFWUr0
-        nq/StrUbEr5XmGX1ryrpIVmm0FFFfL1qaeOKDNK/xn4X774epynfjVpLP3foDkVyRahmIl0MgCVF9
-        bnkcrQ4Ks2OPFetoK/zfqBwFljuGDAxIQxSdxOt/ShsNmvKdrv08tcedeHA97II8VMsA3HaruBM1u
-        eqyjor2Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1ti6-00046y-82; Mon, 17 Sep 2018 13:37:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E56702058AF01; Mon, 17 Sep 2018 15:37:03 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 15:37:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-Message-ID: <20180917133703.GU24124@hirez.programming.kicks-ass.net>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 17 Sep 2018 15:05:52 -0400
+Received: from mga09.intel.com ([134.134.136.24]:47172 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726865AbeIQTFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:05:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 06:38:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,385,1531810800"; 
+   d="scan'208";a="90780111"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Sep 2018 06:38:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id D827713F; Mon, 17 Sep 2018 16:38:24 +0300 (EEST)
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Vegard Nossum <vegard.nossum@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org, Zi Yan <zi.yan@cs.rutgers.edu>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: [PATCHv2] mm, thp: Fix mlocking THP page with migration enabled
+Date:   Mon, 17 Sep 2018 16:38:16 +0300
+Message-Id: <20180917133816.43995-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 06:25:44PM +0200, Jan H. Schönherr wrote:
-> On 09/14/2018 01:12 PM, Peter Zijlstra wrote:
+A transparent huge page is represented by a single entry on an LRU list.
+Therefore, we can only make unevictable an entire compound page, not
+individual subpages.
 
-> >> 1. Execute parallel applications that rely on active waiting or synchronous
-> >>    execution concurrently with other applications.
-> >>
-> >>    The prime example in this class are probably virtual machines. Here,
-> >>    coscheduling is an alternative to paravirtualized spinlocks, pause loop
-> >>    exiting, and other techniques with its own set of advantages and
-> >>    disadvantages over the other approaches.
-> > 
-> > Note that in order to avoid PLE and paravirt spinlocks and paravirt
-> > tlb-invalidate you have to gang-schedule the _entire_ VM, not just SMT
-> > siblings.
-> > 
-> > Now explain to me how you're going to gang-schedule a VM with a good
-> > number of vCPU threads (say spanning a number of nodes) and preserving
-> > the rest of CFS without it turning into a massive trainwreck?
-> 
-> You probably don't -- for the same reason, why it is a bad idea to give
-> an endless loop realtime priority. It's just a bad idea. As I said in the
-> text you quoted: coscheduling comes with its own set of advantages and
-> disadvantages. Just because you find one example, where it is a bad idea,
-> doesn't make it a bad thing in general.
-> 
-> 
-> > Such things (gang scheduling VMs) _are_ possible, but not within the
-> > confines of something like CFS, they are also fairly inefficient
-> > because, as you do note, you will have to explicitly schedule idle time
-> > for idle vCPUs.
-> 
-> With gang scheduling as defined by Feitelson and Rudolph [6], you'd have to
-> explicitly schedule idle time. With coscheduling as defined by Ousterhout [7],
-> you don't. In this patch set, the scheduling of idle time is "merely" a quirk
-> of the implementation. And even with this implementation, there's nothing
-> stopping you from down-sizing the width of the coscheduled set to take out
-> the idle vCPUs dynamically, cutting down on fragmentation.
+If a user tries to mlock() part of a huge page, we want the rest of the
+page to be reclaimable.
 
-The thing is, if you drop the full width gang scheduling, you instantly
-require the paravirt spinlock / tlb-invalidate stuff again.
+We handle this by keeping PTE-mapped huge pages on normal LRU lists: the
+PMD on border of VM_LOCKED VMA will be split into PTE table.
 
-Of course, the constraints of L1TF itself requires the explicit
-scheduling of idle time under a bunch of conditions.
+Introduction of THP migration breaks[1] the rules around mlocking THP
+pages. If we had a single PMD mapping of the page in mlocked VMA, the
+page will get mlocked, regardless of PTE mappings of the page.
 
-I did not read your [7] in much detail (also very bad quality scan that
-:-/; but I don't get how they leap from 'thrashing' to co-scheduling.
-Their initial problem, where A generates data that B needs and the 3
-scenarios:
+For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
+remove_migration_pmd().
 
- 1) A has to wait for B
- 2) B has to wait for A
- 3) the data gets buffered
+Anon THP pages can only be shared between processes via fork(). Mlocked
+page can only be shared if parent mlocked it before forking, otherwise
+CoW will be triggered on mlock().
 
-Seems fairly straight forward and is indeed quite common, needing
-co-scheduling for that, I'm not convinced.
+For Anon-THP, we can fix the issue by munlocking the page on removing PTE
+migration entry for the page. PTEs for the page will always come after
+mlocked PMD: rmap walks VMAs from oldest to newest.
 
-We have of course added all sorts of adaptive wait loops in the kernel
-to deal with just that issue.
+Test-case:
 
-With co-scheduling you 'ensure' B is running when A is, but that doesn't
-mean you can actually make more progress, you could just be burning a
-lot of CPu cycles (which could've been spend doing other work).
+	#include <unistd.h>
+	#include <sys/mman.h>
+	#include <sys/wait.h>
+	#include <linux/mempolicy.h>
+	#include <numaif.h>
 
-I'm also not convinced co-scheduling makes _any_ sense outside SMT --
-does one of the many papers you cite make a good case for !SMT
-co-scheduling? It just doesn't make sense to co-schedule the LLC domain,
-that's 16+ cores on recent chips.
+	int main(void)
+	{
+	        unsigned long nodemask = 4;
+	        void *addr;
+
+		addr = mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE,
+			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
+
+	        if (fork()) {
+			wait(NULL);
+			return 0;
+	        }
+
+	        mlock(addr, 4UL << 10);
+	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,
+	                &nodemask, 4, MPOL_MF_MOVE);
+
+	        return 0;
+	}
+
+[1] https://lkml.kernel.org/r/CAOMGZ=G52R-30rZvhGxEbkTw7rLLwBGadVYeo--iizcD3upL3A@mail.gmail.com
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
+Cc: <stable@vger.kernel.org> [v4.14+]
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+---
+ mm/huge_memory.c | 2 +-
+ mm/migrate.c     | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 533f9b00147d..00704060b7f7 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2931,7 +2931,7 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
+ 	else
+ 		page_add_file_rmap(new, true);
+ 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+-	if (vma->vm_flags & VM_LOCKED)
++	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
+ 		mlock_vma_page(new);
+ 	update_mmu_cache_pmd(vma, address, pvmw->pmd);
+ }
+diff --git a/mm/migrate.c b/mm/migrate.c
+index d6a2e89b086a..9d374011c244 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -275,6 +275,9 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
+ 		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
+ 			mlock_vma_page(new);
+ 
++		if (PageTransHuge(page) && PageMlocked(page))
++			clear_page_mlock(page);
++
+ 		/* No need to invalidate - it was non-present before */
+ 		update_mmu_cache(vma, pvmw.address, pvmw.pte);
+ 	}
+-- 
+2.18.0
+
