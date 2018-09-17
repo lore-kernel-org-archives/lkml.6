@@ -2,144 +2,161 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A165AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29196ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1282146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C89832146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:09:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DYqwMV66"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1282146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eifXGtmt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89832146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeIRCh3 (ORCPT
+        id S1728539AbeIRCi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:37:29 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42718 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728202AbeIRCh3 (ORCPT
+        Mon, 17 Sep 2018 22:38:56 -0400
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:44348 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728009AbeIRCi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:37:29 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g23-v6so7983420plq.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 14:08:26 -0700 (PDT)
+        Mon, 17 Sep 2018 22:38:56 -0400
+Received: by mail-ot1-f49.google.com with SMTP id 36-v6so12829697oth.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 14:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ghJwUjV6tbM+kp4hb+91uM3gpdooa8rCPZVG8PR1RtE=;
-        b=DYqwMV663/GU+yd6ty107gL2LoqVrer7+3dqIW9mdR1Cy0PlAVqxow+Kd4thj64q1p
-         5peDyfnyTOQbvCSzMkU0Wr6uZujvfXUQnoh5rdjsB0OpKNCVhcsOuRcTwGb1wFZHUQAa
-         rKMNUeD+XyEIvr1PU4XborP8gD8WPyeKMJgEvhdiWq+3SMWp2M4VY8WTOx+j+/SX50QR
-         WCq4X80gXzJp8vLJSXfCI8li4vyEX0ulQi9sGdQGDLZVlPHYGrVzd4uPinXtU5Lr+rlg
-         LVa025lK/4UKD8Dy8VrJ+Ztc45zMLy0Doo4VXZUInVawRPonbL5RYMpd4q7F0sbVKCii
-         64ZA==
+        d=gmail.com; s=20161025;
+        h=to:cc:references:subject:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=A/KwgUh38TcVZgacujmNwH6jwi/OXkMN/gaXA6fQb+E=;
+        b=eifXGtmtIWYLay7R2pwvDR4HCU26nGwgZi6gYFSFwwEWTSI/ZW53+SMoPKLD97eCIf
+         NTV9G1puHjNScxJ08TjWpTrhBzv+Quw2pjPIOMLdruokDH/UwiQheFIwJh7/gqdm498I
+         wHv6qFWqr3ekKhJUhcQwAwy4Oove0A5siXc0yPRzrVw2X/vYat4CNFzu8l+eSZn+GKgQ
+         WIx1ou/hwjOTPtNzwVOHe9zb1yJ8EeFWhttt0q8Eit6XqA6CUm0YcN2JV0T9DDDU9ikj
+         kkaeMyZpbObdTMDkxy9dBfToqe+cj38yhhhkoFKFvXEjxp/7reWJ3m8rmwXrNKUbaVNh
+         VjnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ghJwUjV6tbM+kp4hb+91uM3gpdooa8rCPZVG8PR1RtE=;
-        b=NtSNaut3+vWP8XIoM/bbV76elH40hzNiSL/CWkvNMMtu25CYM0iM7/GGq2S7vU4Zl+
-         aRxZOjuLONnqRdessQfP719tdv1n71hRmyKl1pLk769Ayu4QVQ1YeV3B3iZY8BZFjSuR
-         y9bIWZshm3M/jGZVbNro775P1G7U89FLR/Jes4NhCd0J12+n16e0RapMPqS3YINYbFbt
-         J5NK6PpTwRTZ/LApYzsUSjOtUTlKYJMYwxQfDQqqVmPcJBJdCDTrZkU8OGkeJZX7busi
-         sDGaApzoX6MuWLHgVFLmD/v0oBxNEn/BZKamhaY+BFu6tDH1AkbEmM3LdbgsfD1VmK5b
-         FVZw==
-X-Gm-Message-State: APzg51Cu3vbdYLNrmLo57OET1c6fkL57R+m80kf+qKVcQm2cQeYWDqTF
-        dq9wXTQAQb20fi/pDSehb5bWOg==
-X-Google-Smtp-Source: ANB0Vdb6JuxWXezyWLZlFk8G5VNEQ7t0GVaDSCYMA3C+jk0+sENHUD38JD+0v42h5CGnm/OaqT/e6w==
-X-Received: by 2002:a17:902:6f16:: with SMTP id w22-v6mr26786221plk.127.1537218506039;
-        Mon, 17 Sep 2018 14:08:26 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id g25-v6sm26899123pfd.23.2018.09.17.14.08.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 14:08:25 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g20kq-0008C8-OV; Mon, 17 Sep 2018 15:08:24 -0600
-Date:   Mon, 17 Sep 2018 15:08:24 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Walker, Benjamin" <benjamin.walker@intel.com>
-Cc:     "Howell, Seth" <seth.howell@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "monis@mellanox.com" <monis@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Message-ID: <20180917210824.GF11367@ziepe.ca>
-References: <20180814223303.83556-1-seth.howell@intel.com>
- <20180815225021.GB31799@ziepe.ca>
- <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
- <20180816180126.GB10507@ziepe.ca>
- <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
- <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
+        h=x-gm-message-state:to:cc:references:subject:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=A/KwgUh38TcVZgacujmNwH6jwi/OXkMN/gaXA6fQb+E=;
+        b=Wzphbh58XYTH3xDA5XnTZ8H5/AeBZUrleBKiGGh6GQqxjcHUCyxxu1O9s7qprXLuk1
+         3fOMJj8jJ9ge0MPXOm3KwTyd/4IwK1CdBxVWF1rRYM5Zrexfvp1LWLwFIxLOp276IrIN
+         /3kjYE1s7rVrJVRspcnCvwRSPkNecpP47V1rq+8xPd7P+jY0Ow9QmhhCaS1NfR7qVXb7
+         SVjJLFZ8fH9hzm++fr6+R3F1WgmCKNCzFCmaZFekgI/rdwikHQoQVofPqyR67tFwy+8/
+         hl+hCrUml23jcObnZsoGegj5frUSG6CYJAFdcLJCzF0NyPWXWaKYM9hUGkcuFpl0c7CA
+         cmJg==
+X-Gm-Message-State: APzg51D4Gzqoks9MyXD3/0OmqbLpB73A21QqsePC5p+rZiDqB8kWCnZt
+        OTbHYZP2l0KNOAGvAfbZG1JCsYz0+Rk=
+X-Google-Smtp-Source: ANB0VdbEvNhuGmx/owc1LNz7/kFGQyahPDIYV1jjQzq8/ppOT5huLxV2tbHvRRcpEPTk8v8YmEt2TA==
+X-Received: by 2002:a9d:3d4b:: with SMTP id a69-v6mr13309792otc.334.1537218591747;
+        Mon, 17 Sep 2018 14:09:51 -0700 (PDT)
+Received: from a.local (ip-28-232-239-173.texas.us.northamericancoax.com. [173.239.232.28])
+        by smtp.gmail.com with ESMTPSA id i132-v6sm7759807oif.20.2018.09.17.14.09.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 14:09:51 -0700 (PDT)
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+References: <CA+55aFy+Hv9O5citAawS+mVZO+ywCKd9NQ2wxUmGsz9ZJzqgJQ@mail.gmail.com>
+Subject: Re: Linux 4.19-rc4 released, an apology, and a maintainership note
+From:   Michael Woods <michaeljpwoods@gmail.com>
+Message-ID: <93424bb0-180e-71ff-f0d6-602caa2d5883@gmail.com>
+Date:   Mon, 17 Sep 2018 22:09:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+55aFy+Hv9O5citAawS+mVZO+ywCKd9NQ2wxUmGsz9ZJzqgJQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 08:38:16PM +0000, Walker, Benjamin wrote:
-> On Mon, 2018-08-20 at 14:32 -0700, Howell, Seth wrote:
-> > Hi Jason,
-> > 
-> > I apologize for the few days of radio silence on this one. I was able to apply
-> > your patch on my local configuration and can confirm that it fixes the issue
-> > of send with invalidate being improperly mapped between a user-space process
-> > and the kernel rxe driver.
-> > 
-> > Thanks again for your time and help.
-> > 
-> > Seth Howell
-> > 
-> > From: linux-rdma-owner@vger.kernel.org [mailto:
-> > linux-rdma-owner@vger.kernel.org] On Behalf Of Jason Gunthorpe
-> > Sent: Thursday, August 16, 2018 11:01 AM
-> > To: Howell, Seth <seth.howell@intel.com>
-> > Cc: Walker, Benjamin <benjamin.walker@intel.com>; Doug Ledford <
-> > dledford@redhat.com>; linux-rdma@vger.kernel.org; linux-kernel@vger.kernel.org
-> > ; Moni Shoua <monis@mellanox.com>
-> > Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-> > 
-> > On Wed, Aug 15, 2018 at 11:27:36PM +0000, Howell, Seth wrote:
-> > 
-> > > Thank you for taking the time to review this issue. The patch you 
-> > > submitted will definitely fix the problem I was facing.
-> > 
-> > Can you test it to be certain?
-> > 
-> > Thanks,
-> > Jason
-> 
-> We've recently run into this same issue on i40iw, which appears to make the same
-> mistake of using the kernel version of the enum instead of the userspace
-> version. 
+Hi Linus,
 
-Confused by this?? i40iw_upost_send does not handle the kernel numbers
-at all, as far as I can see? How does it develop a kernel dependency??
+ > The one change that stands out and merits mention is the code of
+ > conduct addition...
 
-> What's the current status here? Can it be merged? I just checked and
-> do not see it merged to Linux master.
+The Code of Conflict was perfectly fine. Whomever convinced you to add 
+the Code of Conduct was convincing you to give control over to a social 
+justice initiative that has no interest in the kernel's core function or 
+reason for existence.
 
-Oh! This apparently got lost, thanks for bringing it up again.
+"Codes of conduct are tools used by the incompetent to wrest control 
+away from the people who own the project, so they can feed on the corpse 
+and wear the skin of the project as a fetish play"
 
-> Running a user-space NVMe-oF target with RDMA and a recent Linux kernel
-> initiator is not currently possible on rxe or i40iw because it requires send
-> with invalidate support.
+Examples of these people trying to introduce codes of conduct, with 
+commentary on the emotions and motivations driving CoC introduction:
+- LLVM: http://voxday.blogspot.com/2018/05/the-costs-of-code-of-conduct.html
+- PHP: http://voxday.blogspot.com/2016/01/initial-sjw-attack-defeated.html
+- PHP 2: http://voxday.blogspot.com/2016/01/a-second-sjw-attack-on-php.html
+- Ruby: http://voxday.blogspot.com/2016/01/more-sjw-attacks-in-tech.html
+- Ruby 2: 
+http://voxday.blogspot.com/2016/01/the-sjw-war-on-ruby-continues.html
+- Node.js: http://voxday.blogspot.com/2017/08/how-sjws-react-to-defeat.html
+- Awesome-Django: 
+http://voxday.blogspot.com/2015/10/exposing-true-face-of-sjw.html
+- Go: http://voxday.blogspot.com/2015/06/you-cant-run-you-cant-hide.html
 
-Okay, but i40iw doesn't seem to support send with invalidate at all in
-userspace?
+Some alternative ideas should you wish to rethink the Code of Conduct:
+- Code of Merit: http://voxday.blogspot.com/2016/01/code-of-merit.html
+- No Code of Conduct: 
+http://voxday.blogspot.com/2016/01/no-code-of-conduct.html
 
-i40iw_upost_send() swithces on opcode, doesn't handle SEND_INV and
-then blows up in the default clause - how does this patch make any
-difference???
+ > This is my reality.  I am not an emotionally empathetic kind of person
+ > and that probably doesn't come as a big surprise to anybody.  Least of
+ > all me.  The fact that I then misread people and don't realize (for
+ > years) how badly I've judged a situation and contributed to an
+ > unprofessional environment is not good.
 
-Jason
+It has been good, this is easily proven by the quality and success of 
+the Linux kernel. If you start being "nice" instead of forthright, every 
+excuse in the mental health cookbook will be used to persuade you that 
+emotions of the incompetent and their politics, are more important than 
+improving the kernel.
+
+ > This week people in our community confronted me about my lifetime of
+ > not understanding emotions.  My flippant attacks in emails have been
+ > both unprofessional and uncalled for.  Especially at times when I made
+ > it personal.  In my quest for a better patch, this made sense to me.
+ > I know now this was not OK and I am truly sorry.
+ >
+ > The above is basically a long-winded way to get to the somewhat
+ > painful personal admission that hey, I need to change some of my
+ > behavior, and I want to apologize to the people that my personal
+ > behavior hurt and possibly drove away from kernel development
+ > entirely.
+
+You are not that bad. The incompetent and mentally ill have convinced 
+you to act against your best interests, and those of the Linux kernel.
+
+ > I am going to take time off and get some assistance on how to
+ > understand people’s emotions and respond appropriately.
+
+Don't try to understand people's emotions, it has not been necessary and 
+is not necessary. It is a trap, set to weaken your resolve and standards.
+
+ > To tie this all back to the actual 4.19-rc4 release (no, really, this
+ > _is_ related!) I actually think that 4.19 is looking fairly good,
+ > things have gotten to the "calm" period of the release cycle, and I've
+ > talked to Greg to ask him if he'd mind finishing up 4.19 for me, so
+ > that I can take a break, and try to at least fix my own behavior.
+
+ > I know when I really look “myself in the mirror” it will be clear it's
+ > not the only change that has to happen, but hey...  You can send me
+ > suggestions in email.
+
+I wish you the very best, my hope is that you recuperate & take stock, 
+realise how the snakes tricked you and come back with a vengeance.
+
+Kindest Regards,
+Michael
+
