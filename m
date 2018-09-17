@@ -2,159 +2,166 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC5AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38186ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA38214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD760214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8xAjtZ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA38214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="M/geCUnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD760214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbeIRAvl (ORCPT
+        id S1728461AbeIRAwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:51:41 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53132 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbeIRAvl (ORCPT
+        Mon, 17 Sep 2018 20:52:16 -0400
+Received: from sonic305-9.consmr.mail.bf2.yahoo.com ([74.6.133.48]:36951 "EHLO
+        sonic305-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727176AbeIRAwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:51:41 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y139-v6so10849460wmc.2;
-        Mon, 17 Sep 2018 12:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6GBjaSZ4kCqwCbgJ3waYfPyNwAUNz+UfRKd1/WIBfGY=;
-        b=A8xAjtZ5D3DJVjPwrgY9Y4Ctux0GfOW5VY1YHO4UV6mDzucXM9M6t3u5pjl5DSq+rc
-         8x+HgnFqhFFH+aMca8lLK+iTsIE1G49EN/PMUslq1+OE6QNlHxu7sUqq3SFeB/GOPUxr
-         xCEs7HoEDBBNsxfn5qnKgxrm88WPWbyyVfAvfjhal3qQlOuxz7i35vqgTz9htH16hFAe
-         mkFqWq7GIqZuR44GUUEwQp4hEviyyCLD47cdCPTdda72uGiso2tLxGA8V8LTdff7vCF6
-         AQYzI6pyESVo35rMBw47ejd7xZI4o+6KAqfEB758nHfLsjGcbM0GIjlNZQsrVdyEtm7C
-         ynFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6GBjaSZ4kCqwCbgJ3waYfPyNwAUNz+UfRKd1/WIBfGY=;
-        b=oPmztxnpJiCZvgG/GXlqwdjCxvqM2ADOfDS/ibrjYmefk3lexjYGRZ/hM725Mum8au
-         g/K4Fl1HQf0uB2iHITkehsjrIx7IqtB6sqO0XvzBUNQwPFbEipNETTbN0ICCl5tmgwai
-         BsxGkNNRhld6geMtstCDOHtiE4V2GolpQ/xoyFQyEi8t0hRSWCCtxmPFQNGcqeUgtuXO
-         Q00rlPm+VhUfkEUcKqNRInv5WORo3aP1PY1h935+gQjRIsrgxLJkC93DZi9QszEtFAp1
-         j9X0jgIsiJI58W4i4HJgTLzWAvNMZzpNNTRN7eLnQ84+JWlM1w5IHAYs6UX15KAP7Src
-         8dgw==
-X-Gm-Message-State: APzg51BETIPIu2fR9jvkmU2mm3p9gKzKyF3MxtRJqwXzUIAbu1dQ38MQ
-        lQLVJCpz4vPODHI9DeK7IhLJaQqI
-X-Google-Smtp-Source: ANB0VdZlla7a7027cbwh8AY5A5qQpPYoOeuLpMqcHBLwpkGmrTL7n05/F1zgRNPs7RLSt87Hl2e/yw==
-X-Received: by 2002:a1c:cf8a:: with SMTP id f132-v6mr12555276wmg.0.1537212176807;
-        Mon, 17 Sep 2018 12:22:56 -0700 (PDT)
-Received: from [192.168.1.18] (ckd81.neoplus.adsl.tpnet.pl. [83.31.79.81])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm19789941wrn.83.2018.09.17.12.22.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 12:22:56 -0700 (PDT)
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lee.jones@linaro.org,
-        linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
- <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com> <20180912214938.GA30654@amd>
- <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com> <20180914081822.GA21830@amd>
- <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com> <20180914214220.GA2081@amd>
- <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
- <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <7a6e83ad-2bc9-c776-21bf-e1d51413b0af@gmail.com>
-Date:   Mon, 17 Sep 2018 21:22:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Mon, 17 Sep 2018 20:52:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537212212; bh=+sXvozdIY8zCZwQR8dgN1ChzxpGArhlhwBgVBV6bGbg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=M/geCUnNi5k4iklFVD4jb6VeGFvPCuAdEIfIOWh4Jzjg6DcJAXWZ4Nb9bJJ/9VTDOODt8wIgIg3EoUfthJ9jVniCAuuahsVC9A0agGZpVvMMn/AnIOhLBkd86rvPkQD0kUjcNtXumcGULxAewzNzp62Hqymbt/Sta9gF9gGUV9lGfRsgL1P3s1J92QTlXlHFs3S+I1gN3KhDmoGeFbsmvMd+rYcwmp60IxSvdxQOE94iFReobarPoHjx27BTHnl0FN1w3ww6UyIEO55/el54nVZUYxcKKK2BiEq9VbYMgdYxAfoFV69GP/LUZYRnGXx6uSwmEohUvqsNA683PINxIg==
+X-YMail-OSG: d1GIaRwVM1l3rOnnvGx4QsPV.4S6FjVliBFJvuwxTfNFAwSmkuuTnAnzHkzLi5s
+ TU_ObNAoG3GPIk1VdwL.UQO5DqeRIOW4GpmYQ7QnGIUGODQLZEQDGRGDkxyxyuMbAM0sTovvA345
+ Nd1Auulum_OP0mj6_v7sNd0W.n2NTuxJNkARLkiFNiLLNFO0BPQi.7sN9whCweDawmWrRy.knGPI
+ x4fvenbQG97RBwp8qpe4yYa0uiHhbpn9zKztPWrckXDaPKJc9PNirlPJPMqrIvCdXntHwzWaQlUF
+ BAGXfqdnacr3Ki8gI.CH4HJaP6uRHeTppXJ0SLXnu6PhVyenj_8V4kxUuKxNlLwDjulw6deTloeK
+ zFUjrDOLNCjZ._ZeVlUY.5vUops27lUvzQqkSH5v4468ltT1k6_rXBooATzCbPsG_q7ucAy6TzQT
+ OKhNElXJIbkMfwu9r5eDsV_3tdxq1GOCxeK4nNqPhvLFe3yAKPELJ0GD8CJr9XDnq1mCgeRb1q4A
+ EuUUTcrYLg4zgpmsUseU8kP2NoXo5uIwpD0x5ORdaQsuyX98842Sc_C7nDD2RoDedQSiGWKSj4KU
+ js5gldUk81n9rPNw5odrwgbgTPcUWeVQXNdYjSTfocJ7c1OoXYnnUAwjVrNzFANE730y8jZPtEOj
+ sBtWILoTRRZKP6VRgysGMv_DuJ8.JV0dke7sg.wsBmzZY0hNhOcruNwpxGDolPiUOhhSmMeppsWn
+ FvabdUVSF10U5pDJi0QxXwGLZCnTQ3OAGrhGDjg_LKGhC45HulPJglN0R3Jqs90FLlJZ5sLncRS9
+ 3ewEs3o3D4OCicQ09LY5gmxpyMNau4UhY0DLTTyxu_US25L8RELNuPIud8wuLo.AXgwdSKWeV05v
+ U6ek2w_aS3JwPP.q2ia2xARA_2aG6yvoi3Ro8gnlnIVINei4LutQ0juXflj4xQcjTd8AvUffbsHe
+ lGf4B3wQ4baloDpbPpv5w5Zfe2HlSIHiNWE4DA.UiDdOH3xHh1y6pPnLiu_FATwnGgNfFSRClv6_
+ 4i76Gr3Q-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Mon, 17 Sep 2018 19:23:32 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp413.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 967627353be920d439f0e7ab48b98d12;
+          Mon, 17 Sep 2018 19:23:29 +0000 (UTC)
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+References: <20180916003059.1046-1-keescook@chromium.org>
+ <20180916003059.1046-17-keescook@chromium.org>
+ <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+ <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+ <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com>
+ <CAGXu5jJ71RLGh0nDgOaN3vCXFGE0poXFU2Gb9o+20aO+AEdOvw@mail.gmail.com>
+ <8f0bd39b-29a6-325d-4558-d9f484249c22@schaufler-ca.com>
+ <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <53377892-695f-6336-8574-54c7aa0a4201@schaufler-ca.com>
+Date:   Mon, 17 Sep 2018 12:23:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+In-Reply-To: <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
-
-On 09/17/2018 05:24 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 09/15/2018 03:00 PM, Jacek Anaszewski wrote:
->> Hi Pavel.
+On 9/17/2018 11:14 AM, Kees Cook wrote:
+>
+>> Keep security=$lsm with the existing exclusive behavior.
+>> Add lsm=$lsm1,...,$lsmN which requires a full list of modules
 >>
->> On 09/14/2018 11:42 PM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>> You may want to learn more about device tree and/or talk to the device
->>>>> tree maintainers. This is an old article. https://lwn.net/Articles/561462/
->>>>
->>>> The article title is "Device trees as ABI". A device tree is defined
->>>> in the "*.dts" file that is then compiled to a dtb blob, which
->>>> constitutes the ABI. And this ABI should be kept backwards compatible.
->>>>
->>>> What is discussed here is a documentation of bindings, i.e. according
->>>> to ePAPR: "requirements for how specific types and classes of devices
->>>> are represented in the device tree".
->>>>
->>>> >From the bindings documented in the
->>>> Documentation/devicetree/bindings/mfd/ti-lmu.txt only
->>>> ti,lm3532-backlight is used in the mainline dts file
->>>> (arch/arm/boot/dts/omap4-droid4-xt894.dts).
->>>>
->>>> Having the above it seems that there is no risk of breaking any
->>>> users.
->>>
->>> DTBs and bindings are supposed to be portable between operating
->>> systems. You are right there are no _mainline_ _Linux_ users.
+>> If you want to be fancy (I don't!) you could add
 >>
->> No mainline users means no users we should care of.
->> Other people also don't care - see patch [0].
->>
->>>>> NAK on this patch. I see that this binding has problems, but
->>>>> introducing different binding for subset of devices is _not_ a fix.
->>>>>
->>>>>>> What about the multi function devices? They should have same binding.
->>>>>>
->>>>>> The MFD devices defined are not in contention here only the SFD.
->>>>>
->>>>> I'd like to see common solutions for SFD and MFD, as the hardware is
->>>>> similar, and that includes the code. Having code that is easier to
->>>>> maintain is important, and having many drivers are harder to maintain
->>>>> than one driver.
->>>>>
->>>>> Milo's code looks better than yours in that regard. I disagree about
->>>>> Milo's code being "nightmare" to modify, and care about "easy to
->>>>> maintain" more than "binary size".
->>>>
->>>> Easy to maintain will be a dedicated LED class driver.
->>>
->>> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
->>> parts? We'll need complex driver anyway, and I'd really like to have
->>> just one.
->>
->> In the LED subsystem we can wrap common functionalities
->> into a library object. MFD driver will be able to reuse it then.
-> 
-> I am currently working on that code now.  I expect a RFC on this this week.
+>> lsm.add=$lsm1,...,$lsmN which adds the modules to the stack
+>> lsm.delete=$lsm1,...,$lsmN which deletes modules from the stack
+> We've got two issues: ordering and enablement. It's been strongly
+> suggested that we should move away from per-LSM enable/disable flags
+> (to which I agree).
 
-Will it affect the shape of the driver for lm3697 as of v7 [0]?
-Or the patch set [0] state should be deemed "awaiting merge"?
+I also agree. There are way too many ways to turn off some LSMs.
 
-[0] https://lkml.org/lkml/2018/9/11/760
+> If ordering should be separate from enablement (to
+> avoid the "booted kernel with new LSM built in, but my lsm="..." line
+> didn't include it so it's disabled case), then I think we need to
+> split the logic (otherwise we just reinvented "security=" with similar
+> problems).
 
--- 
-Best regards,
-Jacek Anaszewski
+We could reduce the problem by declaring that LSM ordering is
+not something you can specify on the boot line. I can see value
+in specifying it when you build the kernel, but your circumstances
+would have to be pretty strange to change it at boot time.
+
+> Should "lsm=" allow arbitrary ordering? (I think yes.)
+
+I say no. Assume you can specify it at build time. When would
+you want to change the order? Why would you?
+
+> Should "lsm=" imply implicit enable/disable? (I think no: unlisted
+> LSMs are implicitly auto-appended to the explicit list)
+
+If you want to add something that isn't there instead of making
+it explicit you want "lsm.enable=" not "lsm=".
+
+> So then we could have "lsm.enable=..." and "lsm.disable=...".
+>
+> If builtin list was:
+> capability,yama,loadpin,integrity,{selinux,smack,tomoyo,apparmor}
+> then:
+>
+>     lsm.disable=loadpin lsm=smack
+
+Methinks this should be lsm.disable=loadpin lsm.enable=smack
+
+> becomes
+>
+>     capability,smack,yama,integrity
+>
+> and
+>
+>     CONFIG_SECURITY_LOADPIN_DEFAULT_ENABLED=n
+>     selinux.enable=0 lsm.add=loadpin lsm.disable=smack,tomoyo lsm=integrity
+
+Do you mean
+	selinux.enable=0 lsm.enable=loadpin lsm.disable=smack,tomoyo lsm.enable=integrity
+	selinux.enable=0 lsm.enable=loadpin,integrity lsm.disable=smack,tomoyo
+	selinux.enable=0 lsm.enable=loadpin lsm.enable=integrity lsm.disable=smack lsm.disable=tomoyo
+
+> becomes
+>
+>     capability,integrity,yama,loadpin,apparmor
+>
+>
+> If "lsm=" _does_ imply enablement, then how does it interact with
+> per-LSM disabling? i.e. what does "apparmor.enabled=0
+> lsm=yama,apparmor" mean? If it means "turn on apparmor" how do I turn
+> on a CONFIG-default-off LSM without specifying all the other LSMs too?
+
+There should either be one option "lsm=", which is an explicit list or
+two, "lsm.enable=" and "lsm.disable", which modify the built in default.
+
+In the "lsm=" case "apparmor.enabled=0" should be equivalent to leaving
+apparmor off the list, but it's up to the AppArmor code to do that.
+
+If "lsm.enable=apparmor apparmor.enabled=0" is specified the explict wish
+of the security module is used, but it's up to the AppArmor code to do that.
+
+If "lsm.disable=apparmor apparmor.enabled=1" is specified the infrastructure
+should have shut down AppArmor before it looked to see the "apparmor.enabled=1",
+so it will remain disabled.
+
+If "lsm.enable=apparmor lsm.disable=apparmor" is specified the last value
+specified is used giving "lsm.disable=apparmor".
+
