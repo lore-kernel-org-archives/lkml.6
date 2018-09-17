@@ -2,200 +2,228 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F93FECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C83AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D5220671
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:45:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D5220671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B12A720671
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:46:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bpPv+ptf";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PomeeYVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12A720671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeIQQLz (ORCPT
+        id S1728386AbeIQQMu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:11:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:56888 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727491AbeIQQLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:11:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F56D18A;
-        Mon, 17 Sep 2018 03:45:06 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4DA143F5BD;
-        Mon, 17 Sep 2018 03:45:05 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 11:45:02 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: qcom: Fix error handling in pm_runtime support
-Message-ID: <20180917104502.GD7239@e107981-ln.cambridge.arm.com>
-References: <20180831225510.32230-1-bjorn.andersson@linaro.org>
+        Mon, 17 Sep 2018 12:12:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41826 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbeIQQMu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 12:12:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 05FE960C4D; Mon, 17 Sep 2018 10:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537181161;
+        bh=NwSUufpIbLSAFDcpJq3FqsFHEZ5ea8RrJgR7luXAoag=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=bpPv+ptftw+4ZtuNKY4LDELF9XGmMM0QnLcPBWIa1WtAf+JfLsE6T6GgIkLH1Ff1n
+         Mo2bAiUhXGWCIr3fclczN9U/q6hHtOWd9aJ1CGeeUi7MowifhqTj6DPuq/scsSSjwA
+         edBpi8+hzMwWC/dgZy3VqhVoVAVj74uZRn1wsLPA=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 04EE460213;
+        Mon, 17 Sep 2018 10:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537181160;
+        bh=NwSUufpIbLSAFDcpJq3FqsFHEZ5ea8RrJgR7luXAoag=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=PomeeYVhWJ8Nzv+His1FTT43aZJNdapEh3SaScC9PF/sfQmptRTVdxoXNR2jYzJDj
+         4SVFQDoy358/caZ6/Jcliu7Cvup/cCHAoM3x3HSYWJWgCtjIu2h3nGsQ9VCkQqOA+G
+         wUJGnXTJglk5mfyOcgDrxB4J/jziz3z2JBtCtMqA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04EE460213
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH v4] dt-binding: remoteproc: Add QTI ADSP PIL bindings
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        rohkumar@qti.qualcomm.com
+References: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <d4732c85-432f-def7-aabe-b2e9c39b9939@codeaurora.org>
+Date:   Mon, 17 Sep 2018 16:15:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831225510.32230-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 03:55:10PM -0700, Bjorn Andersson wrote:
-> The driver does not cope with the fact that probe can fail in a number
-> of cases after enabling pm_runtime on the device, this results in
-> warnings about "Unbalanced pm_runtime_enable". Further more if probe
-> fails after invoking host_init the power-domain will be left referenced.
-> 
-> As it's not possible for the error handling in qcom_pcie_host_init() to
-> handle errors happening after returning from that function the
-> pm_runtime_get_sync() is moved to probe() as well.
-> 
-> Fixes: 854b69efbdd2 ("PCI: qcom: add runtime pm support to pcie_port")
-> Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hello Rob,
+
+Can you please review this patch and let me know if there is any concern 
+with this patch.
+
+
+On 9/11/2018 9:24 AM, Rohit kumar wrote:
+> Add devicetree bindings documentation file for Qualcomm
+> Technolgies Inc ADSP Peripheral Image Loader.
+>
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 > ---
-> 
-> Changes since v1:
-> - Dropped remove function, as this can't be called
-> - Handle pm_runtime_get_sync() errors
-> - Add "Fixes" tag
-> 
->  drivers/pci/controller/dwc/pcie-qcom.c | 56 ++++++++++++++++++--------
->  1 file changed, 39 insertions(+), 17 deletions(-)
-
-Applied to pci/dwc for v4.20, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index d2373e4d141c..3bfaad052736 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1117,7 +1117,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->  	int ret;
->  
-> -	pm_runtime_get_sync(pci->dev);
->  	qcom_ep_reset_assert(pcie);
->  
->  	ret = pcie->ops->init(pcie);
-> @@ -1154,7 +1153,6 @@ static int qcom_pcie_host_init(struct pcie_port *pp)
->  	phy_power_off(pcie->phy);
->  err_deinit:
->  	pcie->ops->deinit(pcie);
-> -	pm_runtime_put(pci->dev);
->  
->  	return ret;
->  }
-> @@ -1244,6 +1242,12 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	pm_runtime_enable(dev);
-> +	ret = pm_runtime_get_sync(dev);
-> +	if (ret < 0) {
-> +		pm_runtime_disable(dev);
-> +		return ret;
-> +	}
+> Changes since v3:
+> Addressed comments given by Rob
+>
+>   .../bindings/remoteproc/qcom,adsp-pil.txt          | 126 +++++++++++++++++++++
+>   1 file changed, 126 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+> new file mode 100644
+> index 0000000..06558de
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+> @@ -0,0 +1,126 @@
+> +Qualcomm Technology Inc. ADSP Peripheral Image Loader
 > +
->  	pci->dev = dev;
->  	pci->ops = &dw_pcie_ops;
->  	pp = &pci->pp;
-> @@ -1253,44 +1257,56 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  	pcie->ops = of_device_get_match_data(dev);
->  
->  	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
-> -	if (IS_ERR(pcie->reset))
-> -		return PTR_ERR(pcie->reset);
-> +	if (IS_ERR(pcie->reset)) {
-> +		ret = PTR_ERR(pcie->reset);
-> +		goto err_pm_runtime_put;
-> +	}
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "parf");
->  	pcie->parf = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(pcie->parf))
-> -		return PTR_ERR(pcie->parf);
-> +	if (IS_ERR(pcie->parf)) {
-> +		ret = PTR_ERR(pcie->parf);
-> +		goto err_pm_runtime_put;
-> +	}
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
->  	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
-> -	if (IS_ERR(pci->dbi_base))
-> -		return PTR_ERR(pci->dbi_base);
-> +	if (IS_ERR(pci->dbi_base)) {
-> +		ret = PTR_ERR(pci->dbi_base);
-> +		goto err_pm_runtime_put;
-> +	}
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
->  	pcie->elbi = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(pcie->elbi))
-> -		return PTR_ERR(pcie->elbi);
-> +	if (IS_ERR(pcie->elbi)) {
-> +		ret = PTR_ERR(pcie->elbi);
-> +		goto err_pm_runtime_put;
-> +	}
->  
->  	pcie->phy = devm_phy_optional_get(dev, "pciephy");
-> -	if (IS_ERR(pcie->phy))
-> -		return PTR_ERR(pcie->phy);
-> +	if (IS_ERR(pcie->phy)) {
-> +		ret = PTR_ERR(pcie->phy);
-> +		goto err_pm_runtime_put;
-> +	}
->  
->  	ret = pcie->ops->get_resources(pcie);
->  	if (ret)
-> -		return ret;
-> +		goto err_pm_runtime_put;
->  
->  	pp->ops = &qcom_pcie_dw_ops;
->  
->  	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->  		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
-> -		if (pp->msi_irq < 0)
-> -			return pp->msi_irq;
-> +		if (pp->msi_irq < 0) {
-> +			ret = pp->msi_irq;
-> +			goto err_pm_runtime_put;
-> +		}
->  	}
->  
->  	ret = phy_init(pcie->phy);
->  	if (ret) {
->  		pm_runtime_disable(&pdev->dev);
-> -		return ret;
-> +		goto err_pm_runtime_put;
->  	}
->  
->  	platform_set_drvdata(pdev, pcie);
-> @@ -1299,10 +1315,16 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  	if (ret) {
->  		dev_err(dev, "cannot initialize host\n");
->  		pm_runtime_disable(&pdev->dev);
-> -		return ret;
-> +		goto err_pm_runtime_put;
->  	}
->  
->  	return 0;
+> +This document defines the binding for a component that loads and boots firmware
+> +on the Qualcomm Technology Inc. ADSP Hexagon core.
 > +
-> +err_pm_runtime_put:
-> +	pm_runtime_put(dev);
-> +	pm_runtime_disable(dev);
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be one of:
+> +		    "qcom,sdm845-adsp-pil"
 > +
-> +	return ret;
->  }
->  
->  static const struct of_device_id qcom_pcie_match[] = {
-> -- 
-> 2.18.0
-> 
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must specify the base address and size of the qdsp6ss register
+> +
+> +- interrupts-extended:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must list the watchdog, fatal IRQs ready, handover and
+> +		    stop-ack IRQs
+> +
+> +- interrupt-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
+> +
+> +- clocks:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition:  List of 8 phandle and clock specifier pairs for the adsp.
+> +
+> +- clock-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: List of clock input name strings sorted in the same
+> +		    order as the clocks property. Definition must have
+> +		    "xo", "sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr",
+> +		    "lpass_ahbm_aon_cbcr", "qdsp6ss_xo", "qdsp6ss_sleep"
+> +		    and "qdsp6ss_core".
+> +
+> +- power-domains:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to cx power domain node.
+> +
+> +- resets:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the list of 2 reset-controller for the adsp.
+> +
+> +- reset-names:
+> +        Usage: required
+> +        Value type: <stringlist>
+> +        Definition: must be "pdc_sync" and "cc_lpass"
+> +
+> +- qcom,halt-regs:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: a phandle reference to a syscon representing TCSR followed
+> +			by the offset within syscon for lpass halt register.
+> +
+> +- memory-region:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the reserved-memory for the ADSP
+> +
+> +- qcom,smem-states:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the smem state for requesting the ADSP to
+> +		    shut down
+> +
+> +- qcom,smem-state-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "stop"
+> +
+> +
+> += SUBNODES
+> +The adsp node may have an subnode named "glink-edge" that describes the
+> +communication edge, channels and devices related to the ADSP.
+> +See ../soc/qcom/qcom,glink.txt for details on how to describe these.
+> +
+> += EXAMPLE
+> +The following example describes the resources needed to boot control the
+> +ADSP, as it is found on SDM845 boards.
+> +	adsp-pil {
+> +		compatible = "qcom,sdm845-adsp-pil";
+> +
+> +		reg = <0x17300000 0x40c>;
+> +
+> +		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-names = "wdog", "fatal", "ready",
+> +			"handover", "stop-ack";
+> +
+> +		clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +			<&gcc GCC_LPASS_SWAY_CLK>,
+> +			<&lpasscc LPASS_AUDIO_WRAPPER_AON_CLK>,
+> +			<&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+> +			<&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_XO_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+> +		clock-names = "xo", "sway_cbcr", "lpass_aon",
+> +			"lpass_ahbs_aon_cbcr",
+> +			"lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+> +			"qdsp6ss_sleep", "qdsp6ss_core";
+> +
+> +		power-domains = <&rpmhpd SDM845_CX>;
+> +
+> +		resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+> +			 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+> +		reset-names = "pdc_sync", "cc_lpass";
+> +
+> +		qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+> +
+> +		memory-region = <&pil_adsp_mem>;
+> +
+> +		qcom,smem-states = <&adsp_smp2p_out 0>;
+> +		qcom,smem-state-names = "stop";
+> +	};
+
+Thanks,
+Rohit
