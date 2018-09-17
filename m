@@ -2,135 +2,159 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A106EECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC5AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4849B214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:22:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA38214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="v0pIH0/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4849B214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8xAjtZ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA38214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbeIRAuq (ORCPT
+        id S1728419AbeIRAvl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:50:46 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:57530 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeIRAuq (ORCPT
+        Mon, 17 Sep 2018 20:51:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53132 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbeIRAvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:50:46 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id AA6E85C021F;
-        Mon, 17 Sep 2018 21:22:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537212121;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=b/FIpbY5R8/nPoPMWiq8TV1BX00JHPCOUHqSODxV3l0=;
-        b=v0pIH0/5EjZqLpEcJP7KQX7wwprS+SxvQ8rb2pNWBx7Ac8dCr9Ww8s4MyMkNJiNf7s1A2e
-        xID/N2mk9qPJv+GwgpHun8cIi4a/kPhr1kBpY8s9Og02K6fg8iYypKd66k3ztz4VOxVnYS
-        EnVZCgfB4peSIRNmo41ut7n04YzWn88=
+        Mon, 17 Sep 2018 20:51:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y139-v6so10849460wmc.2;
+        Mon, 17 Sep 2018 12:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6GBjaSZ4kCqwCbgJ3waYfPyNwAUNz+UfRKd1/WIBfGY=;
+        b=A8xAjtZ5D3DJVjPwrgY9Y4Ctux0GfOW5VY1YHO4UV6mDzucXM9M6t3u5pjl5DSq+rc
+         8x+HgnFqhFFH+aMca8lLK+iTsIE1G49EN/PMUslq1+OE6QNlHxu7sUqq3SFeB/GOPUxr
+         xCEs7HoEDBBNsxfn5qnKgxrm88WPWbyyVfAvfjhal3qQlOuxz7i35vqgTz9htH16hFAe
+         mkFqWq7GIqZuR44GUUEwQp4hEviyyCLD47cdCPTdda72uGiso2tLxGA8V8LTdff7vCF6
+         AQYzI6pyESVo35rMBw47ejd7xZI4o+6KAqfEB758nHfLsjGcbM0GIjlNZQsrVdyEtm7C
+         ynFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6GBjaSZ4kCqwCbgJ3waYfPyNwAUNz+UfRKd1/WIBfGY=;
+        b=oPmztxnpJiCZvgG/GXlqwdjCxvqM2ADOfDS/ibrjYmefk3lexjYGRZ/hM725Mum8au
+         g/K4Fl1HQf0uB2iHITkehsjrIx7IqtB6sqO0XvzBUNQwPFbEipNETTbN0ICCl5tmgwai
+         BsxGkNNRhld6geMtstCDOHtiE4V2GolpQ/xoyFQyEi8t0hRSWCCtxmPFQNGcqeUgtuXO
+         Q00rlPm+VhUfkEUcKqNRInv5WORo3aP1PY1h935+gQjRIsrgxLJkC93DZi9QszEtFAp1
+         j9X0jgIsiJI58W4i4HJgTLzWAvNMZzpNNTRN7eLnQ84+JWlM1w5IHAYs6UX15KAP7Src
+         8dgw==
+X-Gm-Message-State: APzg51BETIPIu2fR9jvkmU2mm3p9gKzKyF3MxtRJqwXzUIAbu1dQ38MQ
+        lQLVJCpz4vPODHI9DeK7IhLJaQqI
+X-Google-Smtp-Source: ANB0VdZlla7a7027cbwh8AY5A5qQpPYoOeuLpMqcHBLwpkGmrTL7n05/F1zgRNPs7RLSt87Hl2e/yw==
+X-Received: by 2002:a1c:cf8a:: with SMTP id f132-v6mr12555276wmg.0.1537212176807;
+        Mon, 17 Sep 2018 12:22:56 -0700 (PDT)
+Received: from [192.168.1.18] (ckd81.neoplus.adsl.tpnet.pl. [83.31.79.81])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm19789941wrn.83.2018.09.17.12.22.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 12:22:56 -0700 (PDT)
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lee.jones@linaro.org,
+        linux-omap@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20180911170825.17789-1-dmurphy@ti.com>
+ <20180911170825.17789-2-dmurphy@ti.com> <20180911200530.GA28290@amd>
+ <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com> <20180912214938.GA30654@amd>
+ <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com> <20180914081822.GA21830@amd>
+ <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com> <20180914214220.GA2081@amd>
+ <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
+ <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <7a6e83ad-2bc9-c776-21bf-e1d51413b0af@gmail.com>
+Date:   Mon, 17 Sep 2018 21:22:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 17 Sep 2018 12:22:01 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: max9611: Avoid implicit enum conversion warning
-In-Reply-To: <CAKwvOdkygBGNUkJj6zmBO=na-mXPKCeYQ+Grx49Gcyj2O9XJXw@mail.gmail.com>
-References: <20180915052511.2243-1-natechancellor@gmail.com>
- <20180916105351.1bf859ee@archlinux> <20180916151513.GA10200@flashbox>
- <CAKwvOdkygBGNUkJj6zmBO=na-mXPKCeYQ+Grx49Gcyj2O9XJXw@mail.gmail.com>
-Message-ID: <6cae089a39c7423be9837b89ca50c8e9@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.09.2018 09:52, Nick Desaulniers wrote:
-> On Sun, Sep 16, 2018 at 8:15 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
->>
->> On Sun, Sep 16, 2018 at 10:53:51AM +0100, Jonathan Cameron wrote:
->> > On Fri, 14 Sep 2018 22:25:11 -0700
->> > Nathan Chancellor <natechancellor@gmail.com> wrote:
->> >
->> > > Clang warns when an enumerated type is implicitly converted to another.
->> > >
->> > > drivers/iio/adc/max9611.c:292:16: warning: implicit conversion from
->> > > enumeration type 'enum max9611_conf_ids' to different enumeration type
->> > > 'enum max9611_csa_gain' [-Wenum-conversion]
->> > >                         *csa_gain = gain_selectors[i];
->> > >                                   ~ ^~~~~~~~~~~~~~~~~
->> > > 1 warning generated.
->> > >
->> > > Change the type of the variable 'gain_selectors' to int so that Clang
->> > > understands this is expected behavior.
->> > >
->> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
->> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> > How does this interact with the patch that Stefan Agner sent for
->> > the same issue last week?
+Dan,
+
+On 09/17/2018 05:24 PM, Dan Murphy wrote:
+> Jacek
 > 
-> + Stefan in case he has additional thoughts.  I don't feel strongly
-> about one patch vs the other.
+> On 09/15/2018 03:00 PM, Jacek Anaszewski wrote:
+>> Hi Pavel.
+>>
+>> On 09/14/2018 11:42 PM, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>>>> You may want to learn more about device tree and/or talk to the device
+>>>>> tree maintainers. This is an old article. https://lwn.net/Articles/561462/
+>>>>
+>>>> The article title is "Device trees as ABI". A device tree is defined
+>>>> in the "*.dts" file that is then compiled to a dtb blob, which
+>>>> constitutes the ABI. And this ABI should be kept backwards compatible.
+>>>>
+>>>> What is discussed here is a documentation of bindings, i.e. according
+>>>> to ePAPR: "requirements for how specific types and classes of devices
+>>>> are represented in the device tree".
+>>>>
+>>>> >From the bindings documented in the
+>>>> Documentation/devicetree/bindings/mfd/ti-lmu.txt only
+>>>> ti,lm3532-backlight is used in the mainline dts file
+>>>> (arch/arm/boot/dts/omap4-droid4-xt894.dts).
+>>>>
+>>>> Having the above it seems that there is no risk of breaking any
+>>>> users.
+>>>
+>>> DTBs and bindings are supposed to be portable between operating
+>>> systems. You are right there are no _mainline_ _Linux_ users.
+>>
+>> No mainline users means no users we should care of.
+>> Other people also don't care - see patch [0].
+>>
+>>>>> NAK on this patch. I see that this binding has problems, but
+>>>>> introducing different binding for subset of devices is _not_ a fix.
+>>>>>
+>>>>>>> What about the multi function devices? They should have same binding.
+>>>>>>
+>>>>>> The MFD devices defined are not in contention here only the SFD.
+>>>>>
+>>>>> I'd like to see common solutions for SFD and MFD, as the hardware is
+>>>>> similar, and that includes the code. Having code that is easier to
+>>>>> maintain is important, and having many drivers are harder to maintain
+>>>>> than one driver.
+>>>>>
+>>>>> Milo's code looks better than yours in that regard. I disagree about
+>>>>> Milo's code being "nightmare" to modify, and care about "easy to
+>>>>> maintain" more than "binary size".
+>>>>
+>>>> Easy to maintain will be a dedicated LED class driver.
+>>>
+>>> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
+>>> parts? We'll need complex driver anyway, and I'd really like to have
+>>> just one.
+>>
+>> In the LED subsystem we can wrap common functionalities
+>> into a library object. MFD driver will be able to reuse it then.
 > 
+> I am currently working on that code now.  I expect a RFC on this this week.
 
-FWIW, only one is needed.
+Will it affect the shape of the driver for lm3697 as of v7 [0]?
+Or the patch set [0] state should be deemed "awaiting merge"?
 
-I prefer mine slightly over Nicks since it continues to use struct max9611_conf_ids which is the type required by the max9611_read_single() function..
+[0] https://lkml.org/lkml/2018/9/11/760
 
-I don't have a strong opinion though, and did not look deeper into why the driver makes the differentiation between struct max9611_conf_ids and ax9611_csa_gain...
-
---
-Stefan
-
-
->> >
->> > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=b1ec0802503820ccbc894aadfd2a44da20232f5e
->> >
->> > Thanks,
->> >
->> > Jonathan
->> >
->>
->> Hi Jonathan,
->>
->> Sorry for the overlap. My patch is not necessary. I was working off
->> of linux-next so I didn't catch this. I'll be better about checking
->> maintainer trees before sending patches in the future.
->>
->> Thanks for the quick response!
->> Nathan
->>
->> > > ---
->> > >  drivers/iio/adc/max9611.c | 2 +-
->> > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > >
->> > > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
->> > > index 0538ff8c4ac1..3c358b16a8fa 100644
->> > > --- a/drivers/iio/adc/max9611.c
->> > > +++ b/drivers/iio/adc/max9611.c
->> > > @@ -275,7 +275,7 @@ static int max9611_read_csa_voltage(struct max9611_dev *max9611,
->> > >                                 u16 *adc_raw,
->> > >                                 enum max9611_csa_gain *csa_gain)
->> > >  {
->> > > -   enum max9611_conf_ids gain_selectors[] = {
->> > > +   int gain_selectors[] = {
->> > >             CONF_SENSE_1x,
->> > >             CONF_SENSE_4x,
->> > >             CONF_SENSE_8x
->> >
+-- 
+Best regards,
+Jacek Anaszewski
