@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C3FECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB28ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A454E2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A454E2146F
+	by mail.kernel.org (Postfix) with ESMTP id 8A4A02146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A4A02146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731426AbeIREgh (ORCPT
+        id S1731436AbeIREgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:36:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49626 "EHLO
+        Tue, 18 Sep 2018 00:36:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49634 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeIREgg (ORCPT
+        with ESMTP id S1730815AbeIREgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:36 -0400
+        Tue, 18 Sep 2018 00:36:39 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 777A2C49;
-        Mon, 17 Sep 2018 23:07:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8F7A2C49;
+        Mon, 17 Sep 2018 23:07:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 012/158] block: dont warn when doing fsync on read-only devices
-Date:   Tue, 18 Sep 2018 00:40:42 +0200
-Message-Id: <20180917211711.259329063@linuxfoundation.org>
+Subject: [PATCH 4.18 013/158] block: bfq: swap puts in bfqg_and_blkg_put
+Date:   Tue, 18 Sep 2018 00:40:43 +0200
+Message-Id: <20180917211711.318678529@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -51,43 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-commit 8b2ded1c94c06f841f8c1612bcfa33c85012a36b upstream.
+commit d5274b3cd6a814ccb2f56d81ee87cbbf51bd4cf7 upstream.
 
-It is possible to call fsync on a read-only handle (for example, fsck.ext2
-does it when doing read-only check), and this call results in kernel
-warning.
+Fix trivial use-after-free. This could be last reference to bfqg.
 
-The patch b089cfd95d32 ("block: don't warn for flush on read-only device")
-attempted to disable the warning, but it is buggy and it doesn't
-(op_is_flush tests flags, but bio_op strips off the flags).
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Fixes: 721c7fc701c7 ("block: fail op_is_write() requests to read-only partitions")
-Cc: stable@vger.kernel.org	# 4.18
+Fixes: 8f9bebc33dd7 ("block, bfq: access and cache blkg data only when safe")
+Acked-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ block/bfq-cgroup.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2161,9 +2161,12 @@ static inline bool bio_check_ro(struct b
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -275,9 +275,9 @@ static void bfqg_and_blkg_get(struct bfq
+ 
+ void bfqg_and_blkg_put(struct bfq_group *bfqg)
  {
- 	const int op = bio_op(bio);
- 
--	if (part->policy && (op_is_write(op) && !op_is_flush(op))) {
-+	if (part->policy && op_is_write(op)) {
- 		char b[BDEVNAME_SIZE];
- 
-+		if (op_is_flush(bio->bi_opf) && !bio_sectors(bio))
-+			return false;
+-	bfqg_put(bfqg);
+-
+ 	blkg_put(bfqg_to_blkg(bfqg));
 +
- 		WARN_ONCE(1,
- 		       "generic_make_request: Trying to write "
- 			"to read-only block-device %s (partno %d)\n",
++	bfqg_put(bfqg);
+ }
+ 
+ /* @stats = 0 */
 
 
