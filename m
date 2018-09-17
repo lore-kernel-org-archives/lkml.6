@@ -2,153 +2,227 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29158ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A37ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8B51208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D74208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:36:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="E6IWRQar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8B51208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Y+rIsDN+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D74208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbeIQJB0 (ORCPT
+        id S1728676AbeIQIZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 05:01:26 -0400
-Received: from mail-eopbgr710081.outbound.protection.outlook.com ([40.107.71.81]:21184
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:25:53 -0400
+Received: from mail-by2nam03on0137.outbound.protection.outlook.com ([104.47.42.137]:35861
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728852AbeIQJBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 05:01:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+        id S1728603AbeIQIZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:25:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sFlcRPa5bSpY4lR8eBePsWmMOKQd2vo/lfCCg4K1KTA=;
- b=E6IWRQar/q7/p/YUO7S0bW2m2PP9ref4D1nKA/QJHpJ+Ee6K7tE46CaO0+/soDGB53F9TekGM3AbGnkZQQnHL1+B5WzHe5ggvwCIWXhU1KZWLWRdkmK4JraGc3fI8fq03PpUZN949Z7D8Nv6EUokCTaBp335pJINv9LbYkHLokk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- CY1PR0301MB1578.namprd03.prod.outlook.com (2a01:111:e400:529c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.18; Mon, 17 Sep
- 2018 03:35:55 +0000
-Date:   Mon, 17 Sep 2018 11:32:28 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: designware: add optional gpio
- recovery properties
-Message-ID: <20180917113228.43c9b8dc@xhacker.debian>
-In-Reply-To: <20180917112741.7c3d6514@xhacker.debian>
-References: <20180917112633.252c591c@xhacker.debian>
-        <20180917112741.7c3d6514@xhacker.debian>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR04CA0001.apcprd04.prod.outlook.com
- (2603:1096:404:15::13) To CY1PR0301MB1578.namprd03.prod.outlook.com
- (2a01:111:e400:529c::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 44448259-d774-438b-f8ab-08d61c4eaef5
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR0301MB1578;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;3:HzOQNIKHf0egO5mLYhlcfSKrjvY+Hn/Np6v/v9DxrCBpeSJlDBCoqRCZah5alm84CpS2iMXJpTCL+khoqNoDGy8iFZOsE0GvffbhwsS8xGRbLvLQ3alTVFkDmVAERjsUN5c50wJb01qUBDSRKQ9mejyTsgnczNPyCJMi9qYcRMqHOOTfeIn+6CiFQZ0sXN+dYKWFGU1t2mQSO3fiZm+dkUQ9ZAUBMTs6tClmowJbyK+r18id+GFDcg/WKqmeD3YR;25:2RD38nDsKbtqgME0IcN+dTbsYggNyunf2caL5cVKhvsM7wwWUp8x93acvj7zrbT7uDh/hXtYKDHv+zmvVZwvQJ4gf1XyH+EBBR7IRP46WnTJqpkKI5VrcGwODM3MwCGyjVBW3H7qlwjKKxHeY5hKCgmrMAV5mUBZ2qTrvaAILIolQjM0GV7FgaYiAgNe5utltojFf5Tzt001dsYTJAytDk1y2htiYuilPn/qnBGVbc3iTfr2GTRfHt02fgj3LN9XgVRIZwxa0x85LuZGrzI/Svnb1wrz+3CkKbZOSaw82J12e9+gLVofPAr75gSWGaAa/gI/7TGu3A/SkW46uGTWXA==;31:rPSdEb+Kn4KidNuuvz0HnfPJT6sdDO+EF7O5I3Run755JCEqyALffk5BE9uzGuBId/ptgVr2zFDnmaG4UJbaX6yVyTd5MHLYzxbEVMEkCrLtcLiIJLHHGdpSrtGp6/5BYEstwX1M8hpCSgl8QZF8eZHq7vyLoaGWoNCqyYN3ULEyJ3Hrn1dYcKgzu68gv4s7Ff5dW61i6rH0KQibeIH4o9peJl9v0A5dvPdKdDq/J20=
-X-MS-TrafficTypeDiagnostic: CY1PR0301MB1578:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;20:iusehEFN6NpgpfLUc8QzL3hSRUz5WH6FguNHk0pohiWiDP+aoehlYmuvAI5ZfKCQm+on9fqUVroG1ELpJ8F/6lfNSs1gyhAQaPV51d0uj3sHxh0LTuk9XGjnIpSd6xjFUeAwCdxJyOvYVL4c3v06IRx6GVijV4Jt/JDYevc4df4HEvEyJ+YuqbYXn2KNohFxgshjuGm0RCf29aIWhj4J/b6QkmhHayhgdlJHCzWdNwlmLpGeMGLBdDYSBMzrVkwPIZ1mvce/2CvYoOP5YFHwUxVijkHjae/8iHZwjoHnyRNVqKTwS+nfeBMZ7xxCz5ATE6L4LyGcmpXTOFPoYyNI+Zz+zmu8yVMwPyMDiaTrLTKxhsRW32N82YkjyQlyF9Xfd23uWnADkYYxen0/X4lz26jCMX2Vk5Ktuypy2iCzI1JD1xGXFoPJkcHFyCfNI5ysKHoQrgatess6Q/6m+a/P8lBFWAALPKgdOMDObCfS0TcCKdhAa27RTRZpCahTbjn8;4:1pg0S5EQvAAYnU22jzztOiAkJ7d1AT8DV5/NlJ4V/Ex1Ep3oHN708N9wTMpDvenk5Ua6x+katJhSZKrkcZCVzUj2ecOqd5zGv80EWxsH+zWH15/L1TDgJlVaaANNuNoC+ukKhrKEHJsZHOE+y1BCOrnw6XnBXAHiOmZkxsZuHEXFHEwdPXjiakV+YD0h7efyJ310906QiKZHzFsqY2wCUhegdlo9MeD89gr0+GKYWJm4Cak6mNO9mbNLc/YI+PYBkxMjn8kdKlnWNv4N8prR7w==
-X-Microsoft-Antispam-PRVS: <CY1PR0301MB15781EDF5DD8A7F4359B07ECED1E0@CY1PR0301MB1578.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050);SRVR:CY1PR0301MB1578;BCL:0;PCL:0;RULEID:;SRVR:CY1PR0301MB1578;
-X-Forefront-PRVS: 0798146F16
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(366004)(396003)(39850400004)(199004)(189003)(230700001)(7696005)(76176011)(33896004)(68736007)(52116002)(55016002)(7416002)(81166006)(54906003)(8936002)(50226002)(316002)(110136005)(81156014)(8676002)(6246003)(86362001)(7736002)(305945005)(575784001)(25786009)(1076002)(6116002)(3846002)(23726003)(4326008)(956004)(446003)(476003)(47776003)(50466002)(6666003)(386003)(6506007)(186003)(26005)(5660300001)(2906002)(229853002)(66066001)(106356001)(11346002)(9686003)(105586002)(97736004)(478600001)(72206003)(486006)(53936002)(16526019)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR0301MB1578;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ bh=GrV6RP7izp2Szf+NaQCfJM/2vbaKonKyyaux3vW7Ww0=;
+ b=Y+rIsDN+idjl7vYLSiP0CPweOf8NZv6lLllnIXD2wQeclkUzHg4pJYJ7j4yQf/9QGp/cGSg8YvKS5g3CCRZchdPYOBbUiVc99EWIb3k4brrp6PGpY+8bHNa8rsatKD8wQJ/gyDtLAta2MS5zM8oGbiIznxqgLZ1jMZohuLPEqck=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0277.namprd21.prod.outlook.com (10.173.193.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.4; Mon, 17 Sep 2018 03:00:26 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
+ 03:00:26 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Niklas Cassel <niklas.cassel@linaro.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 022/136] iommu/msm: Don't call
+ iommu_device_{,un}link from atomic context
+Thread-Topic: [PATCH AUTOSEL 4.18 022/136] iommu/msm: Don't call
+ iommu_device_{,un}link from atomic context
+Thread-Index: AQHUTjKUi34qJdL9Yk+m/1q8eMFKIg==
+Date:   Mon, 17 Sep 2018 03:00:25 +0000
+Message-ID: <20180917030006.245495-22-alexander.levin@microsoft.com>
+References: <20180917030006.245495-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0277;6:+xvcczahC1wg0cvVqjZBEVhqsxnTfLMaN/lOVD0zl84G4ewds+TapQm5mzGjzzYAyJ973g8/RoeoEUj5/nhCViZmSQuiyLWiN5vRxcmx/OPVi+J5te0hEfIvZ3VU+B0qi49i0HXyXBYcgNJjLmydd8JIiE+ulY+cZVWX4j+vg0gwWVnRox8Oga4w0IfXFhuLYGfid0he4NM7i49I8t2GPcnMAHlIzJjsJTxpt/Dxlr8XDPN741OpGHiGnAT6a/8nEdlmMck5a41Bw/lKatgU4QUOH4NV+C5V6bw8kfoGO0afeMxNgzQy0+DmCtE0b45uS8IWtPMTp2OfD3ZTm3gRDIBE2fV/VFDJqmdW4kZkW5Nj+0nZ2IwPQ3Nv7XODIh2MKIC+JqT+XMjFJ7O/NdZjTgzxB4WbskY56JubwcxPvw6PHqs0KCQFj+vo9DLC10H9yglULL90K/w9r+bq6XrDYw==;5:jjCei3ZQ9xXfDYba5ur8XXWDdvFUJvR3FH/MmTma+M7a0KtV6imOBbhmzAte/Fz/m1gocGHH8R2qZcwHbFaTUJd1it/tegW4AKe0PGSsbjyxdV0T2dKHW8Inp5NupAqRdVUDGRk4aPBcvelQcvXnPu1GPI0UC6uBvlt4vcENR7A=;7:XAAASJ+QVPWpCtxaT9xcAJgMRG2L3C6erRhgMRUjdkAoHJGCz6B1qEPUQrpMEzUR24y0OGFt9CocthA8aqCH8H+WI+6iVyLME+zqj1xsqAbmc1i5qxjCvgrXohTYsLpcz4Aa64xJBOqmBsqHkwBv20iH+nvsBdhq/hZaaGMb5IGNcu0o1xK8zJ8HZxUZrGyRQIgNvXJQu1A1f1Na+0yNBtGWlqizVDk5Oo0M0PxfXW+Zt1AcnFdk1xUVYuLGcTEq
+x-ms-office365-filtering-correlation-id: 0cd61067-d5cf-4225-12e0-08d61c49b81e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0277;
+x-ms-traffictypediagnostic: CY4PR21MB0277:
+x-microsoft-antispam-prvs: <CY4PR21MB0277719E6A7C5DE65C77FFD4FB1E0@CY4PR21MB0277.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0277;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0277;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(136003)(39860400002)(51234002)(199004)(189003)(446003)(4326008)(2616005)(53936002)(107886003)(11346002)(22452003)(68736007)(486006)(316002)(14454004)(106356001)(476003)(217873002)(25786009)(105586002)(10290500003)(14444005)(5024004)(97736004)(66066001)(6486002)(6436002)(5660300001)(256004)(5250100002)(6512007)(2906002)(2501003)(6346003)(99286004)(72206003)(2900100001)(26005)(6116002)(186003)(1076002)(36756003)(81166006)(6506007)(10090500001)(81156014)(86612001)(102836004)(575784001)(86362001)(8676002)(54906003)(8936002)(110136005)(305945005)(76176011)(478600001)(7736002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0277;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR0301MB1578;23:3G9hSDy79C2K1jDgWB4jBpy5xCdLyP5jPGFPdoc?=
- =?us-ascii?Q?NRY99yLAo6TQgwQo+HbOQ5LIt5piNKEiu47tUBuyTTZvoCFOQHvnFx5J3BiX?=
- =?us-ascii?Q?eot1zIhnWqdzEwPKovGAqshoABPg9/bnnazQ0M25f3Q3LV6Q8z0An4lryO9H?=
- =?us-ascii?Q?j0e30cFN7Lhrt7YavsvRrEsZp8hr3pbaM/6JgWGO2MQ65Yamc3T9nzWZRw66?=
- =?us-ascii?Q?3VarhMREYbxFNdunPA7vMbm3uCOmjz0VHT+QWwC1wOIL6vkWUnNpee6kvZhP?=
- =?us-ascii?Q?xGyFzHyq8QIhPqaRqa2JArGJ9UWZbAg8yOvRNIvFEwjkivyG2uJx1rsTe9uY?=
- =?us-ascii?Q?4T9zQ1oYiLGx5fTTa8hrlsM6/SuDkpMrcpJ9tGzURlhj/tYGBuAU8y5oT79G?=
- =?us-ascii?Q?uh3oBrPsJB50hO+f8uQkPdncNqVEDj4DbAPl5dUdK5naUjf+Y+uRcmtj8AbJ?=
- =?us-ascii?Q?I3Ezvx2zqKefrMBm65wt+ls8HhkQBdk64MsnmYp7S7KyKqUQy9lhpxZ5vMlP?=
- =?us-ascii?Q?8i3QrGlTg6wPg1GZvsHPmeBmG/JamZhKV3uhIWYHgC8DPsJ7JURXe33IouCp?=
- =?us-ascii?Q?faV+VvWNr9eoc2xUU291g7z6UXx63KOZpegZ4vjarUWlYJ/JxDDSf++HdfXl?=
- =?us-ascii?Q?DabuY5JcnnXxfV8ug/8KmrbYbS9DhSW3s7dqlyCvDTT1HfB+Z3Mwvg8thXwQ?=
- =?us-ascii?Q?pFFLZ/Tn/YLls0KTDMaU9aa8hzfTC0840bFhw4PGd0MR00eicqt14zfcOwSV?=
- =?us-ascii?Q?hoKgGYX4wNoV6UtQDmk+HjbdY/vz7udm6bHNNFrZOzc1JuP2LCmaY2GU/N4J?=
- =?us-ascii?Q?bzIDjoxzjphSPg0rUatURE0lMA4bjDS2vylQGbuYRD0pMBkIa781P6pOSi+6?=
- =?us-ascii?Q?3tXDka//xXngg/NP6GfEbudeL0XeIhkPAkjJhJfTnevXqmPwdjM5vWnN9/zk?=
- =?us-ascii?Q?vFmFqME5gTncHn9ihu8IzEYW8guC4JfP8F6q4x/57jKvluJjdjI8KsZ0ZeWx?=
- =?us-ascii?Q?rqEtdkclWrec7QqScQxrq9UCuT3HX5QLMlykF8JRWI4GWDbxtE1dmyNAfnYI?=
- =?us-ascii?Q?k9BoO/ox4Ifs1KDx/SYlxTLz+8V09Wh1CIIT71j30DlMdpcfJuAOa3vefoi5?=
- =?us-ascii?Q?Tl2wcYYFeVDYELkVe5sH+fzc8icPHtb2PwHAmZtJCNLJV69VrfQWk+0tg7Nx?=
- =?us-ascii?Q?c2I+xxbO0QtILugJdgIrtQMys0uHa0d7nYmsaw/m8aUZfdvFYGQeLB4/sECQ?=
- =?us-ascii?Q?u90qUOVRQY47kFPpjPZsuRWwFlcUFQyBvfqmTEM1Jf1KZl9g1TTze77VEbKn?=
- =?us-ascii?Q?UOLNOUTYGA+q10jaOhBNUY4j9OYi3s/nenEEE2tO2QzS2?=
-X-Microsoft-Antispam-Message-Info: X0/IN6QEdMptakuEE73DqXpZZYw1Sb1BeQnokKBV19NJkf6QSWJ1LtLe1uFwPweaHlYoZ8Qjke8pMplG7mCSqzeOJMnrGwkyC/2AtSkVHY02SwkM+og6V761E0fYNFyc9aGlBfpiC6PS5/uZYtFRzWnigmxxZ7wEWYusB2BNvjNkb7izm8pEaYvG7lAfijjCOGbURgEi/HXtkZHeHm0Y4rRcGY2r/ui76LzkVNmCmpYdZgaZJPiqmsDlxNET744S2uZKO/wREwoHNZZrJCLxfT2wN08kKKyX3cJPWjN385XPpZkUsTCtl9HVacHfzhY6yLc4mwxY35m19H7R7yE6nVVinZChALXIWakVFnM3MJI=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR0301MB1578;6:bQBGPb7FtVcXorpb8KzjX+ErpYgxvJ2zTOoVCaTGanXTlLlvxLnzn5v4nDQO8YSSQ2eUmGLAXkeu7UQAUsq+Gpe0sdOeqdXwVmp8SbyuViWAYOzn971ifXwXwp3UThDSTiU32JkU8tkCPnW1qk/EMYcpEenaZOAkf0s7xyncLUbadE+OtoF5fZA61OERQxYEh0Q2bykoGheji1y2PR6AMqcYVI1p23y+cZWXmLdFb0m37RTkuSm983+TEDbljMvgQVQ1kfkFkokfGHsOZj9+Dy9EGzOT5ob2+KCLpeceAdjdbsewb40hE1np9w7Tnt6g3XnDZoHN/gsTs1FnNLN6a2cKwoNc6fXr5D6jozNAzr3xwWUsco64FQ2rKYmSWg1MzvroIx3J4USX5fzlivR6+9HwGyiN/ekydNM706xRg8W4gAP/NoOs8XxlPBPznRErpwwdoBZonCo4+rqr8NciRg==;5:s64F/Tco+2tiGSprzZfEOBgXhMIdTxRWMCGLOnL8w+0zJM9TZIMonoGMeXGbgkwWn3cuF2qSgioEzO22ayDloq+jm3z7Htcf3+Cc/4qVHf6iwgUFC+82oZniHzqmB40wJ07eCI4BdgweTo7X0FGbWMCxPvqQaZbQ1LQFMayMWXY=;7:Cn098IevFj6nrou4hBwypXsTwRlzHGrZMvEhioW2M9a84lXEIOSk8EqjYP+49a1YrBmFzt89fMCEPAuvu8+sHomqbEMnyfrEFgisX9Fdiez16hKZ9j6JqPME/RVTKusMwh/hfRfZ2YYP8mMaXM/ABRW0a58QXOMSvRDAnXhZWVpjwoPBCT+AJ1oXnwSldkGwJo5n/SL4cHg7rdHndjN7RFoxLFJkRbZbfnhUL9rG2b9l73PCH+zuNNSWQsdLYm/G
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 03:35:55.8652 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44448259-d774-438b-f8ab-08d61c4eaef5
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0301MB1578
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: imsiGgwppUrdCIyLU+mq5KMl7ak1611Z+SJ13WiNMCRgsEaiMJ5OJ1BE6IWFdQ77hPH35TvkWz+u9oLzGHdVW2iSHSH6k/Kt2aAf10DHjfrK5zfBBTQuQeb0I1iecbotNloivF8y+KV0qYYF6IQw9fHzLUaGYWdqO4a+fFMzrauM0kVgcaXL9QvF1ns7AayrIXWUA9wlL2tAFBHeha8EtUECYc92DWaEzpQMPny/rdYA9sbmA5mrDmML7MxfyghrJJvTbsZg5t9Xp4RYMgmVGobiD/tIBeqUpQZmNaN93VjYSQ7QBDGH2yXx7jABI5nK9WqAPi7OhvNjci2XvQ/i3QFZiIJcnofGpUqY/t7THmA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cd61067-d5cf-4225-12e0-08d61c49b81e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:25.1048
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0277
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ DT maintainers
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-On Mon, 17 Sep 2018 11:27:41 +0800
-Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+[ Upstream commit 379521462e4add27f3514da8e4ab1fd7a54fe1c7 ]
 
-> Document the scl-gpios and sda-gpios properties for bus recovery.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-designware.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> index fbb0a6d8b964..1d6a6a8061ba 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> @@ -20,6 +20,10 @@ Optional properties :
->   - i2c-sda-falling-time-ns : should contain the SDA falling time in nanoseconds.
->     This value which is by default 300ns is used to compute the tHIGH period.
->  
-> + - scl-gpios: specify the gpio of the SCL line for gpio recovery
-> +
-> + - sda-gpios: specify the gpio of the SDA line for gpio recovery
-> +
->  Examples :
->  
->  	i2c@f0000 {
-> @@ -42,6 +46,8 @@ Examples :
->  		i2c-sda-hold-time-ns = <300>;
->  		i2c-sda-falling-time-ns = <300>;
->  		i2c-scl-falling-time-ns = <300>;
-> +		scl-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
-> +		sda-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
->  	};
->  
->  	i2c@1120000 {
+Fixes the following splat during boot:
 
+BUG: sleeping function called from invalid context at kernel/locking/mutex.=
+c:747
+in_atomic(): 1, irqs_disabled(): 128, pid: 77, name: kworker/2:1
+4 locks held by kworker/2:1/77:
+ #0: (ptrval) ((wq_completion)"events"){+.+.}, at: process_one_work+0x1fc/0=
+x8fc
+ #1: (ptrval) (deferred_probe_work){+.+.}, at: process_one_work+0x1fc/0x8fc
+ #2: (ptrval) (&dev->mutex){....}, at: __device_attach+0x40/0x178
+ #3: (ptrval) (msm_iommu_lock){....}, at: msm_iommu_add_device+0x28/0xcc
+irq event stamp: 348
+hardirqs last  enabled at (347): [<c049dc18>] kfree+0xe0/0x3c0
+hardirqs last disabled at (348): [<c0c35cac>] _raw_spin_lock_irqsave+0x2c/0=
+x68
+softirqs last  enabled at (0): [<c0322fd8>] copy_process.part.5+0x280/0x1a6=
+8
+softirqs last disabled at (0): [<00000000>]   (null)
+Preemption disabled at:
+[<00000000>]   (null)
+CPU: 2 PID: 77 Comm: kworker/2:1 Not tainted 4.17.0-rc5-wt-ath-01075-gaca05=
+16bb4cf #239
+Hardware name: Generic DT based system
+Workqueue: events deferred_probe_work_func
+[<c0314e00>] (unwind_backtrace) from [<c030fc70>] (show_stack+0x20/0x24)
+[<c030fc70>] (show_stack) from [<c0c16ad8>] (dump_stack+0xa0/0xcc)
+[<c0c16ad8>] (dump_stack) from [<c035a978>] (___might_sleep+0x1f8/0x2d4)
+ath10k_sdio mmc2:0001:1: Direct firmware load for ath10k/QCA9377/hw1.0/boar=
+d-2.bin failed with error -2
+[<c035a978>] (___might_sleep) from [<c035aac4>] (__might_sleep+0x70/0xa8)
+[<c035aac4>] (__might_sleep) from [<c0c3066c>] (__mutex_lock+0x50/0xb28)
+[<c0c3066c>] (__mutex_lock) from [<c0c31170>] (mutex_lock_nested+0x2c/0x34)
+ath10k_sdio mmc2:0001:1: board_file api 1 bmi_id N/A crc32 544289f7
+[<c0c31170>] (mutex_lock_nested) from [<c052d798>] (kernfs_find_and_get_ns+=
+0x30/0x5c)
+[<c052d798>] (kernfs_find_and_get_ns) from [<c0531cc8>] (sysfs_add_link_to_=
+group+0x28/0x58)
+[<c0531cc8>] (sysfs_add_link_to_group) from [<c07ef75c>] (iommu_device_link=
++0x50/0xb4)
+[<c07ef75c>] (iommu_device_link) from [<c07f2288>] (msm_iommu_add_device+0x=
+a0/0xcc)
+[<c07f2288>] (msm_iommu_add_device) from [<c07ec6d0>] (add_iommu_group+0x3c=
+/0x64)
+[<c07ec6d0>] (add_iommu_group) from [<c07f9d40>] (bus_for_each_dev+0x84/0xc=
+4)
+[<c07f9d40>] (bus_for_each_dev) from [<c07ec7c8>] (bus_set_iommu+0xd0/0x10c=
+)
+[<c07ec7c8>] (bus_set_iommu) from [<c07f1a68>] (msm_iommu_probe+0x5b8/0x66c=
+)
+[<c07f1a68>] (msm_iommu_probe) from [<c07feaa8>] (platform_drv_probe+0x60/0=
+xbc)
+[<c07feaa8>] (platform_drv_probe) from [<c07fc1fc>] (driver_probe_device+0x=
+30c/0x4cc)
+[<c07fc1fc>] (driver_probe_device) from [<c07fc59c>] (__device_attach_drive=
+r+0xac/0x14c)
+[<c07fc59c>] (__device_attach_driver) from [<c07f9e14>] (bus_for_each_drv+0=
+x68/0xc8)
+[<c07f9e14>] (bus_for_each_drv) from [<c07fbd3c>] (__device_attach+0xe4/0x1=
+78)
+[<c07fbd3c>] (__device_attach) from [<c07fc698>] (device_initial_probe+0x1c=
+/0x20)
+[<c07fc698>] (device_initial_probe) from [<c07faee8>] (bus_probe_device+0x9=
+8/0xa0)
+[<c07faee8>] (bus_probe_device) from [<c07fb4f4>] (deferred_probe_work_func=
++0x74/0x198)
+[<c07fb4f4>] (deferred_probe_work_func) from [<c0348eb4>] (process_one_work=
++0x2c4/0x8fc)
+[<c0348eb4>] (process_one_work) from [<c03497b0>] (worker_thread+0x2c4/0x5c=
+c)
+[<c03497b0>] (worker_thread) from [<c0350d10>] (kthread+0x180/0x188)
+[<c0350d10>] (kthread) from [<c03010b4>] (ret_from_fork+0x14/0x20)
+
+Fixes: 42df43b36163 ("iommu/msm: Make use of iommu_device_register interfac=
+e")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/iommu/msm_iommu.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 0d3350463a3f..9a95c9b9d0d8 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -395,20 +395,15 @@ static int msm_iommu_add_device(struct device *dev)
+ 	struct msm_iommu_dev *iommu;
+ 	struct iommu_group *group;
+ 	unsigned long flags;
+-	int ret =3D 0;
+=20
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+-
+ 	iommu =3D find_iommu_for_dev(dev);
++	spin_unlock_irqrestore(&msm_iommu_lock, flags);
++
+ 	if (iommu)
+ 		iommu_device_link(&iommu->iommu, dev);
+ 	else
+-		ret =3D -ENODEV;
+-
+-	spin_unlock_irqrestore(&msm_iommu_lock, flags);
+-
+-	if (ret)
+-		return ret;
++		return -ENODEV;
+=20
+ 	group =3D iommu_group_get_for_dev(dev);
+ 	if (IS_ERR(group))
+@@ -425,13 +420,12 @@ static void msm_iommu_remove_device(struct device *de=
+v)
+ 	unsigned long flags;
+=20
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+-
+ 	iommu =3D find_iommu_for_dev(dev);
++	spin_unlock_irqrestore(&msm_iommu_lock, flags);
++
+ 	if (iommu)
+ 		iommu_device_unlink(&iommu->iommu, dev);
+=20
+-	spin_unlock_irqrestore(&msm_iommu_lock, flags);
+-
+ 	iommu_group_remove_device(dev);
+ }
+=20
+--=20
+2.17.1
