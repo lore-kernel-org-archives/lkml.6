@@ -3,39 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03148ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96747ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8A82146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8A82146F
+	by mail.kernel.org (Postfix) with ESMTP id 58AF8214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AF8214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbeIREdl (ORCPT
+        id S1730787AbeIREdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49078 "EHLO
+        Tue, 18 Sep 2018 00:33:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdk (ORCPT
+        with ESMTP id S1727202AbeIREdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:40 -0400
+        Tue, 18 Sep 2018 00:33:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60BA3C49;
-        Mon, 17 Sep 2018 23:04:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 891FCC49;
+        Mon, 17 Sep 2018 23:04:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 053/126] ath10k: prevent active scans on potential unusable channels
-Date:   Tue, 18 Sep 2018 00:41:41 +0200
-Message-Id: <20180917211708.011798891@linuxfoundation.org>
+Subject: [PATCH 4.14 044/126] f2fs: do not set free of current section
+Date:   Tue, 18 Sep 2018 00:41:32 +0200
+Message-Id: <20180917211707.554836447@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,49 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-[ Upstream commit 3f259111583801013cb605bb4414aa529adccf1c ]
+[ Upstream commit 3611ce9911267cb93d364bd71ddea6821278d11f ]
 
-The QCA4019 hw1.0 firmware 10.4-3.2.1-00050 and 10.4-3.5.3-00053 (and most
-likely all other) seem to ignore the WMI_CHAN_FLAG_DFS flag during the
-scan. This results in transmission (probe requests) on channels which are
-not "available" for transmissions.
+For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+example, if segment 1 is just used and allocate new segment 2, and the
+blocks of segment 1 is invalidated, at this time, the previous code will
+use __set_test_and_free to free the free_secmap and free_sections++,
+this is not correct since it is still a current section, so fix it.
 
-Since the firmware is closed source and nothing can be done from our side
-to fix the problem in it, the driver has to work around this problem. The
-WMI_CHAN_FLAG_PASSIVE seems to be interpreted by the firmware to not
-scan actively on a channel unless an AP was detected on it. Simple probe
-requests will then be transmitted by the STA on the channel.
-
-ath10k must therefore also use this flag when it queues a radar channel for
-scanning. This should reduce the chance of an active scan when the channel
-might be "unusable" for transmissions.
-
-Fixes: e8a50f8ba44b ("ath10k: introduce DFS implementation")
-Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/f2fs/segment.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -3074,6 +3074,13 @@ static int ath10k_update_channel_list(st
- 			passive = channel->flags & IEEE80211_CHAN_NO_IR;
- 			ch->passive = passive;
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -414,6 +414,8 @@ static inline void __set_test_and_free(s
+ 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
+ 		free_i->free_segments++;
  
-+			/* the firmware is ignoring the "radar" flag of the
-+			 * channel and is scanning actively using Probe Requests
-+			 * on "Radar detection"/DFS channels which are not
-+			 * marked as "available"
-+			 */
-+			ch->passive |= ch->chan_radar;
-+
- 			ch->freq = channel->center_freq;
- 			ch->band_center_freq1 = channel->center_freq;
- 			ch->min_power = 0;
++		if (IS_CURSEC(sbi, secno))
++			goto skip_free;
+ 		next = find_next_bit(free_i->free_segmap,
+ 				start_segno + sbi->segs_per_sec, start_segno);
+ 		if (next >= start_segno + sbi->segs_per_sec) {
+@@ -421,6 +423,7 @@ static inline void __set_test_and_free(s
+ 				free_i->free_sections++;
+ 		}
+ 	}
++skip_free:
+ 	spin_unlock(&free_i->segmap_lock);
+ }
+ 
 
 
