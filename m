@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097C6ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450A2ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E4C2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA715214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YO5u3tdg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E4C2147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="E+eM0GTz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA715214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeIQIZn (ORCPT
+        id S1728621AbeIQIZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:25:43 -0400
-Received: from mail-by2nam03on0137.outbound.protection.outlook.com ([104.47.42.137]:35861
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:25:46 -0400
+Received: from mail-eopbgr730139.outbound.protection.outlook.com ([40.107.73.139]:12480
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728537AbeIQIZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:25:43 -0400
+        id S1728537AbeIQIZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:25:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GF+EjkxdbfyK8NCkMh4798mkzh5luPfQm+MMuhyEzEE=;
- b=YO5u3tdgQVYS4Gh0q3rsLTWmEko9R0fih/WxvshW8PFAGzGn6Wy9CeggPy98rAw3WVjUQL/f+xgDb7W6wiuKHi8Hj2e7BthYHxHr0x4qpc7AHS1i/ol6igJxBmGM/YBjxlf2RRZUb7KqW6v0tUI64aKm4ksqF9mtoqSTG3EkyQg=
+ bh=V7QplqAtlt4hbQN3i8FeyAnzlJJv5C3Lkn+RDVxnAAk=;
+ b=E+eM0GTzvQPD9shvq+UEt1heCJDGQB+Bz/o5CNFRmThuNEjVqsEzIRW5qnqvWooAgOaqL1xHPbg4KQadFNiHXW5I2owAr2P6GoCV2wKJ181UN9xBVygBD7l/wuSfuuhIG8W0Htun8CTyaAH8RZXgahOaPM0L5elpVaifTIn3x2w=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0277.namprd21.prod.outlook.com (10.173.193.143) with Microsoft SMTP
+ CY4PR21MB0629.namprd21.prod.outlook.com (10.175.115.19) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:00:24 +0000
+ 15.20.1164.13; Mon, 17 Sep 2018 03:00:29 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:00:24 +0000
+ 03:00:29 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 015/136] serial: sh-sci: Stop RX FIFO timer
- during port shutdown
-Thread-Topic: [PATCH AUTOSEL 4.18 015/136] serial: sh-sci: Stop RX FIFO timer
- during port shutdown
-Thread-Index: AQHUTjKRC9/QAkQ0kk29BFAxq4Wfkg==
-Date:   Mon, 17 Sep 2018 03:00:20 +0000
-Message-ID: <20180917030006.245495-15-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 029/136] RDMA/bnxt_re: Fix a couple off by one
+ bugs
+Thread-Topic: [PATCH AUTOSEL 4.18 029/136] RDMA/bnxt_re: Fix a couple off by
+ one bugs
+Thread-Index: AQHUTjKX/6jJKUIwkEyHgQzMo04jBA==
+Date:   Mon, 17 Sep 2018 03:00:29 +0000
+Message-ID: <20180917030006.245495-29-alexander.levin@microsoft.com>
 References: <20180917030006.245495-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,70 +60,78 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0277;6:7kQ9YK9gz7IcOiOCt3+OT/gdSTwZZKAspNvpzscEHAroFwBVpkAdIqdwxfDha5YlHVunEDAD1UFhGYADSkKz0s4Q8DLETq+RJCIX9Y5pLs8jL0ew+GW+Y9i0sd/Bb7BwDi+ZKOekN7SN25nYChT8CiViVL+2QZjmBygxWzg+NkH/40PECx7I1/FI9Rwznd0WEligZIADV9wt9dyjsF1YGd6TxdgzD+y+ZXSg7YKkSaNeE1EYVTokETvrXve7E3lNcmrezfWkk+D5ErYjl+kK6bi6SJNySBGqtlrh9EedZrlrV+4q3oYi1sZk/15C7ygAncp4UZBmqFtOetPwDth3T2WB363EbSuSlWcdpXuTMY/Ixb3I4Q99oNdyCRUrZ2G7FTa4WmXi9b0BO0vhl0UVVmwZ3LcpcZkqEVJU5uchPL9eCjK8EvpuaaLNy3DsxIh1cCZzyZKFMGGD+QjXZK8F3w==;5:vrWCA89yk77pIMniaLnGYpDojOBe1lGYeFL8aXP8T9Q/Rwg9VOdG8u2aannYc1P5QzYS++yddsEPEUeqQnRlORA9jSr6IsWnKlN5U2HN/hg40djbi6piKbBAAPC/oLb+rPDRev72FxuZnDTFy4BRWL067KNN4TSjIbAgObZWW2Q=;7:1y4pRNOkGOcQgpGq+lIfeuvuj4MVOhWRMl51eunjq164sKa0+RVqcBphT3QnGtzpJ47KKOCBKe9U97u/mSKimTFK7VrS3PUJuN3PE7zeOCJ1l2BJY4Si293bSQ6ylfPlbOaqQPgkqVceV/lD48qtDOlMheRCC+hpRKe1hlodTHwvvFyLcC/d6p1ZTjH2Rk8D7wtB1hD9nzAkgQLMnbx0UqLiCSgQU12qSIBiHCICu98T4ItOCpHhdZREuxq717U1
-x-ms-office365-filtering-correlation-id: 912c972d-daa6-49cb-26ae-08d61c49b68b
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0629;6:S/e1m4l+WJQlx2KQyTRIEzB0VgShPSV9erS9X3isQc//uRZKczwKlstC/kAHIVn810OwgXfcFUzFN6rAB+0qeslw8MSg1PqW6Iam3lycUsLqiBGwV5iD/9OEoRL/ibTkJcxaRlv+jy4WhCN/ZrXHnb2wPrHUiYCLHAsd9hxrLGKYJhEUfew/A7Fjpn/0/iFUiRc1xlrw5Nd1Sfex4hvr3LA3aJtQrSa9RPb/LreP3w6tcrhRcqD1PUNf6eGDSIVJ0JjL65aApEzRavHwfi/vHPgzYQ+ubXNqn6wMwzQ8pdqXkeRzA8n9SG+XU9YMNtNQA9s1ebEn7shJB6JhlrYMl7+HD8nnPwf01821atWoF1J8rhmAmnSnvXf13E56vxrB2oSg5rQqwaphDaMNsfBI4Ilr3G4jxv5nC9W1Q4SQuUQ6x2iegN61P53lj5vb+uoWLBnhCqZIstlgjvN5JYAMpQ==;5:tHAbxtonWz9lxM1kQQgV4QdRi/8Znia4bEi4wZM3JArlPvfaUIQ5k1brBAtoL5GeLDYjF906jJFUjlqkj1N8H5jOQRG1BEqka3P+3XlYKAqDMVp+QLBKZGdZm1mglk2zWioOX1nam0TrGIEpc547enuxLTNEXnXRMjzDiWstncg=;7:IMAolb0W9hhH6poHpqRG7NZLQRY2wiAgcfbf08MIe5MJCQjplmkiewubhigSG72v7MDfGnhBA/qE7kWLzndHSktWkMZQH0X1rb0Xh1dUspMzJnDno3XuuDjRooSnWmfYQbTuzkuViJ/ao42Q6uoY5Tq5zn6bt95jAVgxpBvYAgGWTTRcW2EoljY02SS6sCbdVzVwUVtoK7bcQPHAzstsfr34Q29ruxxnIWPytTyPcPigLZbCjc4DWZQWWa4f2mK1
+x-ms-office365-filtering-correlation-id: 0b1eac16-483a-4045-fbfe-08d61c49b9ee
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0277;
-x-ms-traffictypediagnostic: CY4PR21MB0277:
-x-microsoft-antispam-prvs: <CY4PR21MB02773BA44DDA7C244BD9E087FB1E0@CY4PR21MB0277.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0277;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0277;
-x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(136003)(39860400002)(199004)(189003)(446003)(4326008)(2616005)(53936002)(107886003)(11346002)(22452003)(68736007)(486006)(316002)(14454004)(106356001)(476003)(217873002)(25786009)(105586002)(10290500003)(97736004)(66066001)(6486002)(6436002)(5660300001)(256004)(5250100002)(6512007)(6666003)(2906002)(2501003)(6346003)(99286004)(72206003)(2900100001)(26005)(6116002)(186003)(1076002)(36756003)(81166006)(6506007)(10090500001)(81156014)(86612001)(102836004)(575784001)(86362001)(8676002)(54906003)(8936002)(110136005)(305945005)(76176011)(478600001)(7736002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0277;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0629;
+x-ms-traffictypediagnostic: CY4PR21MB0629:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: zW6yvkGCq5X8baQWSfTsfHJh9/o8b+TYqLEiAAHwt7tz0PPvSXTLRFgwTHqEUXzFgMzxJjxcPJ0BivaBNsT9vjVbJScOZ/o6bXSAtSGA7l1Sti37nKApMYBksg0y0aZvde1eTfquJeTQlQtK7n4Wd8920W/mCg61LAsUkWI9RVirPPYDvuII5A88mOOIrszMAOQjF/lWmk5TWyhUvGOiXIZKVoZEwqUEXnaN6w5DIcNyMLNELYkxHfQXufimVgTlqNQeV6FlwyVRnY2XXb5TML1u8mxUsfc2Z1iSF8IhPErAkk+/FTfCSb5GG2uLCttGDhMmliYwY0jwdjN//6sRFaCZhn4eeUVJdRXpzpVqwYo=
+x-microsoft-antispam-prvs: <CY4PR21MB062928958CA97F18E4838FA4FB1E0@CY4PR21MB0629.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640)(208715162771679)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0629;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0629;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(39860400002)(376002)(396003)(136003)(189003)(199004)(76176011)(1076002)(86612001)(105586002)(22452003)(5250100002)(7736002)(68736007)(4326008)(86362001)(2501003)(99286004)(6116002)(3846002)(36756003)(107886003)(72206003)(25786009)(106356001)(14454004)(6436002)(5660300001)(10290500003)(486006)(2616005)(446003)(6506007)(11346002)(97736004)(256004)(476003)(478600001)(305945005)(217873002)(81166006)(102836004)(6512007)(8676002)(6486002)(2906002)(66066001)(2900100001)(186003)(26005)(54906003)(316002)(53936002)(8936002)(10090500001)(81156014)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0629;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LFA3gKD9g/qxtHmJa3vb72+2+BaqPHxl04uBmU9pXT6sUHuE3MgHqlXcv5J/jdfJpEVaePIRP13hJ7q+uIqphk0CoLCYAMzH8dqk2euBC4JuIw5lJRp5FZijD99sJcvhAOQzB6mG6asdSRZzsUflpXonh1yLT7bFJJizm3kWn21WbsL6qHal9ZNhdgP3lsannFf/y7bP0+e47E8WIhza3p6AayVUSkqVYQa2ClrCowefPXkzO9uNxvp1Kmy9nP5g3xB5C1/RiFMbIFZtDFcJvrj6IESaFXkrgC1t+VOLo8x5eW/Uua/TlxwKd/erztFfLnb5fCAw4e7xri5aBlAmu6+lqUYgx7qFWQfMBhuc3TA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 912c972d-daa6-49cb-26ae-08d61c49b68b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:20.5111
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b1eac16-483a-4045-fbfe-08d61c49b9ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:29.6672
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0277
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0629
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c5a9262fa8bfed0dddc7466ef10fcd292e2af61b ]
+[ Upstream commit 474e5a86067e5f12c97d1db8b170c7f45b53097a ]
 
-The RX FIFO timer may be armed when the port is shut down, hence the
-timer function may still be called afterwards.
+The sgid_tbl->tbl[] array is allocated in bnxt_qplib_alloc_sgid_tbl().
+It has sgid_tbl->max elements.  So the > should be >=3D to prevent
+accessing one element beyond the end of the array.
 
-Fix this race condition by deleting the timer during port shutdown.
-
-Fixes: 039403765e5da3c6 ("serial: sh-sci: SCIFA/B RX FIFO software timeout"=
-)
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/tty/serial/sh-sci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/bnxt_re/qplib_sp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index c181eb37f985..3c55600a8236 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2099,6 +2099,8 @@ static void sci_shutdown(struct uart_port *port)
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_sp.c b/drivers/infiniband/=
+hw/bnxt_re/qplib_sp.c
+index 2f3f32eaa1d5..4097f3fa25c5 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_sp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_sp.c
+@@ -197,7 +197,7 @@ int bnxt_qplib_get_sgid(struct bnxt_qplib_res *res,
+ 			struct bnxt_qplib_sgid_tbl *sgid_tbl, int index,
+ 			struct bnxt_qplib_gid *gid)
+ {
+-	if (index > sgid_tbl->max) {
++	if (index >=3D sgid_tbl->max) {
+ 		dev_err(&res->pdev->dev,
+ 			"QPLIB: Index %d exceeded SGID table max (%d)",
+ 			index, sgid_tbl->max);
+@@ -402,7 +402,7 @@ int bnxt_qplib_get_pkey(struct bnxt_qplib_res *res,
+ 		*pkey =3D 0xFFFF;
+ 		return 0;
  	}
- #endif
-=20
-+	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0)
-+		del_timer_sync(&s->rx_fifo_timer);
- 	sci_free_irq(s);
- 	sci_free_dma(port);
- }
+-	if (index > pkey_tbl->max) {
++	if (index >=3D pkey_tbl->max) {
+ 		dev_err(&res->pdev->dev,
+ 			"QPLIB: Index %d exceeded PKEY table max (%d)",
+ 			index, pkey_tbl->max);
 --=20
 2.17.1
