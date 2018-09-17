@@ -2,252 +2,147 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D945ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC27CECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6AD5214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F1452147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YlKUxobw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AD5214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="He2IMNPF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1452147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbeIQKwJ (ORCPT
+        id S1728410AbeIQLAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 06:52:09 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40754 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeIQKwJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 06:52:09 -0400
-Received: by mail-io1-f66.google.com with SMTP id l14-v6so10436504iob.7
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 22:26:23 -0700 (PDT)
+        Mon, 17 Sep 2018 07:00:07 -0400
+Received: from mail-sn1nam01on0058.outbound.protection.outlook.com ([104.47.32.58]:1472
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727874AbeIQLAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 07:00:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xSDiHcWVpPzTmOXmNIyAqPlCRgcFjLTQ4zA32TRrvaw=;
-        b=YlKUxobwv9dKKuFFzmV5Viij7fZH1NjCXGHqT88Fj7CTQC/9jwzmbyNx36/hXGmA+q
-         ElGldgfpmr/PLpAfCszw1Rusl6Lbu5yJORMoImilBhUu0QyWLNXy2OiKHpmzkpsaAO0J
-         dy9GuRg33wVhMFRhllIsZMey0UIhrQ5lGdyNQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xSDiHcWVpPzTmOXmNIyAqPlCRgcFjLTQ4zA32TRrvaw=;
-        b=NctuEFI5M1EpwDPC7YGTQ0FEhMrahi2soLdEhjBFoQ/litVn91rFeXGzfvBdslTHlO
-         1CySSs0boyy7bXBknXsqA3eXl7bxAe27D/2Aqp24eJ23r9H7Ds4S08lkJWTnqKYgdICA
-         1mXZ3V8YcSjWjpKDtaD1MO7t7/Rwz/T4qU64eHX9d7HwsTMC5hDiYTgN869qqceUtZFu
-         GsLG4hstGvsIM3cSWuZvH7g/XGM+/FKuIc0fT/+W3CExM4mAcK0xc2RcS/paQ2hfAQpe
-         qVZHYiptAY+yZjkv3BiZWJDpfguOmboe61zyfGmQB0t05Y4+pSzOZZfy7Z9jdmXG0zuJ
-         jZYg==
-X-Gm-Message-State: APzg51Bz5WN3yyc1rGtIjA5//yd33aDW7kJUn5Yhhxu8rUc26n+xNz+1
-        1GaZfZGfwMxmQyG+OsgWe/8ExnYqIXTPQYYb9v3GfQ==
-X-Google-Smtp-Source: ANB0VdaUfMnDwRvnHn59KmKnRaxQLkXmZhoowgJsEiHezx6SBtTkGxygWUgsPw0fVqS1iVc0feukOrcb4cSs3e11cVs=
-X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr20379815ioa.60.1537161982767;
- Sun, 16 Sep 2018 22:26:22 -0700 (PDT)
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UxpyRyy+ygjK9kSEx0ttCabd1NkwW2+oEbmjxdWMUo=;
+ b=He2IMNPFL/14FjpZfilqM9fcUm4yNno4MVoWcIJ4p/fE1V/ucvmz05gRAcd0x9eKMYUzqR69JWmEH9gaXmDMWNG9Ki0OUWojglwt7kOhxWB1UX/h2L/6CVn2dI5vJ5YXPjlS1w6JCwS2Sz+eq6EkMtHM6OW2eSLUZzALFVQR5k0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ BLUPR0301MB1571.namprd03.prod.outlook.com (2a01:111:e400:52a9::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.18; Mon, 17 Sep
+ 2018 05:34:14 +0000
+Date:   Mon, 17 Sep 2018 13:30:41 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH mmc-next] mmc: sdhci: fix __sdhci_adma_write_desc
+Message-ID: <20180917133041.66100101@xhacker.debian>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Sun, 16 Sep 2018 22:26:21
- -0700 (PDT)
-In-Reply-To: <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
-References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
- <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
- <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 16 Sep 2018 22:26:21 -0700
-Message-ID: <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: OSBPR01CA0005.jpnprd01.prod.outlook.com (2603:1096:603::17)
+ To BLUPR0301MB1571.namprd03.prod.outlook.com (2a01:111:e400:52a9::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e589456f-b7f1-4a5c-10b3-08d61c5f357d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR0301MB1571;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;3:3OwQa+QoJnigHoHGyXMfNpaX8fqhomADOh2CJ2YViT2CVP/oUgNbvSs3ZSFnfcWt3Wn5Baf4LoSnXwwWfuKUIz2OEnfqp6YOkGq/qptO78Md2NnWDXTUJNS/6Z6JYUjzFatjIkvaSlG1GNDyOiltlLb4pvpdrTNqR3lcnaKMe7PDVziIMFaiR5W2e7axwPO7JqnZyPadvIYIix0uf+3AlWFYlyYlnWh3HFCF0usOIpGOPMm8x0EuWtvQdldTpYUN;25:D8gG8Wt3dDUwND6HXT41bseS0yHsLioDWzHo2Ywa/BqgYUPQpk2GMO36O0+QjM908puOljTs9ddApl2b/B6GQljST1c70/Z4oQEcmtHpDKyQ32cEua9suL4FamOY29VZzI0OUXIzuz5KrO9YiRQGa5AJY8HORcBqZHJKGR/WwDLzdrCm8u7vUm/oMNHhxxEpD240BsqUxrzDXnAlt0ErPzkAAMAaf2uO+pDT0IL650vRxvf5yli7xm6gLtC3QUxETziYskhJ7REXb+txZ0MtG39EIRo9rSlfuJK4qqwOY+/p6Pw4tWPUDVEDYQTgoVYwsCTdOa2TdUU6VakuKMYk6Q==;31:uAktickShyA6BLP11ueX/Z+9RgVblkVhGgtkbJJFJDX8Zestzrr0+pIOmQ11TVHwubXSLEAdRYyMmgisfjap2stAFHbaEJ3pBZBLBpD0hqs0lDmx5sw8zMNrl5bSnGF6jU+s19W2JwTVOd5Ha4SYKNmUG9S9esSByjiSZjoKV6S3ZYrcguhWn1zOV9rsO5Q/Vwn3cHDnNNewb9yUdvAf1jWXd1EunZ02HEn+YSoCVnU=
+X-MS-TrafficTypeDiagnostic: BLUPR0301MB1571:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;20:Z3n0Ap/WlQco44QsVJmOLh7Q6bTa31VFDqdBXB8JxCPUtYGZ5kaksqwSYfM3VBMNe1R72p1sEVLC46+dhYPJrnKthKWg2N9vPZK/Lbv72ZDEkRrBRsSTHYcGeAtwIYjJuQNaY40soMj4FbwfIJKeL7+Xaq9gVYBSYvZ2lzQjvaRM4FW9jJ5eNq3MlBeKgIyAXPdnm35rnmvWZqGM/fK5K+oAje7ZQb1nXl7IQWjvxs2AMsYQovVS7uwDWtg7fhKLVGynRg1e3az5tuGghxEyV67MnED5eb1Vdd9YKzdoIRn8+uCU3K+imQ418tKSFbY1KABhTuDbVC/nRpcrRzIBXNFHWUJ09TbcJrywGbRlLe/Qm2TXVLWunIq4aU6p96eoteBqyGbfyx3XUGXTDu6/HGfgixIPz3rPxRH/Ptjypjr2KnsliqDflrgQ1FXMdZhSWkoO3a6ZzNAzWpvwGKHoDGPjTli7uFq8tKAec2/1hrY3nhkLlGkr2+nEKrPNUlm0;4:fmijVdiy3QgJROf4+3AObSRDYg+3M1SXcLDTTAAdxrAsC0TzyY+Z1rdR2nyKZpf4dBmHfpZBGKLtAiND0FF5GfohSFydF4jRnw0qSsnDcfzqb/VnjNYtMY0ONRaFo8Q1l0fAClZE/ALUtmMj9dXjfDW8KdJRzSMMNwTc8lgqVCnXrB2tGKxceCXPjGfMNYF+jt6yEfwv0NF7hgKbb7jRyYjjIHibQMhvxqShhwgyfFi88ojL4WxZ2EtNF1/BINNIHXNcji/KtpUSkQH++kUOWQ==
+X-Microsoft-Antispam-PRVS: <BLUPR0301MB15711ECB43159346EC17536BED1E0@BLUPR0301MB1571.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050);SRVR:BLUPR0301MB1571;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0301MB1571;
+X-Forefront-PRVS: 0798146F16
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39850400004)(346002)(396003)(136003)(366004)(199004)(189003)(53936002)(55016002)(1970100002)(26005)(186003)(16526019)(33896004)(106356001)(7696005)(8266002)(52116002)(97736004)(68736007)(97876018)(86362001)(2906002)(6506007)(386003)(105586002)(486006)(25786009)(476003)(956004)(50226002)(8676002)(4326008)(8936002)(81166006)(81156014)(9686003)(5660300001)(7736002)(478600001)(305945005)(117636001)(72206003)(66066001)(23726003)(1076002)(6116002)(3846002)(50466002)(230700001)(6666003)(110136005)(70486001)(47776003)(316002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0301MB1571;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR0301MB1571;23:WsHLk84sv7k4m1RUVXHAhIRIUC5FFYqSLEZJGO9?=
+ =?us-ascii?Q?8bF5QBWoPvNsY0hY5L6fQ1uEhaJsFlHBLe9L1u9/UmRx7AcHV7dpvtOakldf?=
+ =?us-ascii?Q?tLc01QuR9YNN/pdCmwZXw1EcVHUkB/FIZpvUMyZ0TO8PR+H07qeVdD6pEPO/?=
+ =?us-ascii?Q?CzIQotf/raRwgp2+LjO6vKd7Dd1AQ+67ZUx75KZhUQMcitaXWDf17oVqn3Mv?=
+ =?us-ascii?Q?l92Y2XR3U6WTfBwc7yo8ibP2aCaEl1M//NIl7hsQV+Vc0OERJ0Eg6E3pcK1Y?=
+ =?us-ascii?Q?Ko9v+BNtkRVyQ5T2tPx9pJjynrUqIYddAM/wARPNFE4HD60yOovHYjR2ORJs?=
+ =?us-ascii?Q?fhqcXpvNPQrn1HG+IZ9rOR9USAobOPa8M5Nm8Jtz9x0syEsiDJOX3SSEh+eZ?=
+ =?us-ascii?Q?vKQtKKi1Elu54SbLey9GVJz18ShPizNfaJ7TOY5p9tIGI86YIJnhiKSA4TfY?=
+ =?us-ascii?Q?SSjUSNOD/eKaLsqThhVECphZCNZ2gS2y7wlRliq5t17N42QgXtwlTmxQ2jxI?=
+ =?us-ascii?Q?DAKeozmZ65tWcXZz0Nk3sAs8cmh+zOAIn612HTuPGQvjF5ncbk6Jm60ZRYjw?=
+ =?us-ascii?Q?NRsUap/HZYyKwI0laJFdcJ5cOG3+U6xLcs9s/lHRYWKLbRDgiOu0Fs3CrqTX?=
+ =?us-ascii?Q?QK0JGEFWmS2u3pb4HfZZ1du2AZ//IhSm5PvePwdVUGYWv57XV4juLeJjPOts?=
+ =?us-ascii?Q?D1tdQj2Pd2wsIv5ibzCs6K7JLTO6KMR6sHcKDYOaneniXVE02mt73CY+8wlY?=
+ =?us-ascii?Q?pLtLlHwNu2/oOU2yvnf+pIWrgjngSGU7KLYAUefJzXxAxIv6FQR7IYQeQ9MI?=
+ =?us-ascii?Q?ESX3Znzar38DTYI5t5uS/UERKueyFSvlnHhpSLCsmKZvu5PdrAPrvtw3tPlN?=
+ =?us-ascii?Q?48U0MwWLAi2d5Vv+vKdSWRbYlJ7KgrdVwemCRZSUdcWFfrAChPeOTYN4qin0?=
+ =?us-ascii?Q?lKwh/j3z03sJiHRehvmbmN009zgTx/p67N3LEAJ/A2+0CxB8pPin5EELT5CY?=
+ =?us-ascii?Q?UzmJMmO6S5GDeQFY6YpPBc6+8kbION0LaO19apKj7vMIEkv3BIuRQ5ha5i2G?=
+ =?us-ascii?Q?9kXhIiDjnZm2+Ci9i/gwXqMr9HBiVfM03+cntKMb+woJMBAOY1bUwCt+taCD?=
+ =?us-ascii?Q?soX8yf6zmcFrLWqQ9QkeisCeT93Q83NPMpEeF2eTzARbE0n3pXpQP2GM9ps/?=
+ =?us-ascii?Q?KbUv2RCWN6xtFD/YuHNdaw6lF2t6y5um0EF/DtfO+RDAmYlqFJhrcuJfmZEk?=
+ =?us-ascii?Q?SDDvc5w/ppsIr9/WavDEZbnhUCSENQwQMeGs0m4UQ?=
+X-Microsoft-Antispam-Message-Info: vbgoAvZ+J+EMHES4gLaSkS3pvAR4Yc8bZKILivQpQkrRVXQdKpVBYxi1t55f1y4DR0/kKzIIeo7NF8HX/qae/EegVtlRW2KVyMcT9AKDeu5xWNGohjTo+KJbPUiQhuwE1xRlrDmlSSmfGJx0Bw1vUx42sygKvKNsvgWIn8bDFceoC7hXhKkhax1TpnzaxkZtUa9DpdpHkFawsz09dXERAjtoDnb7e/AyN+DtWHHW4lmerDcajHj1dA/yf+Mt1pSxpPkRMv3ZGbVf64S53fL1jzs8Z4orSjh/iWc56M1EyAQf3ec+5o3kxOyu1cOFxrLKhjemoTfNwh7fdsZhTglkrNAmt+w6tg+pc1lbTgebsgA=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1571;6:mdHfudhYAJq9DA4EI4//9Wm+GcQ9ZAGD7Pl6HUsFlWnyxe7t2Q7TIp1z2IodzHeYzff/GLPZrjL8kz7xgBi2toE0Ndh08FclE1A791amiX2ckdoE9IlwAfwb6ip06/9Q49Ga+ymRDhPyogc66LDEYoMQQq87JXE5vPwRKo/C5Gw7VPwvOFc8aQntwwV8dpu595fFnV/qU31tfcXItj3CW3rHk6uMdwrkomlJkshwrC80CXRgQjACrjvWE9nuvgVS66SJE5EKYnIH6vNUT2bfPGTUd8la9r+dNUIiEGbGtZV2QbNu581AttSFelX3jzPWpqJzjzrihEm1L2OTkGafXXn5a8KSrIYgb0IuAjEd21kSU787IquUSitrCsnIvMT46hcJfQjYlxz0vqv7cvZqFWdaXG/BHSyF6K87PK9w++HE/5osNfp+XkDulsFOEE74SGH1hdpvGTFixk6xO5nwmg==;5:PPQqNiSBj4GJwjJWDMuMDlbgKgVqlkSwr4zj/+BAZD6slKNenk6nmBRwA2dprJDZNTZeY32ZBkuBAEGoTcMGaomuQDvAf/UX22n1vBv5NkuqB6gPmIdbYNKlAle7YsNph6NVWam7BkuIJlgtjUYk3A9449tKYywfUesIC/rWd4A=;7:dUaEMgbwZs9xCUWHx5OiCfilnYQLIlFYeCVbulBdRgg2Ka4/QGf+GzGVTdAbpb25inSi2YGwxeYMOa8aBoTJmoFApWdF4Vwc8+pB+2wLE5Lfbj4EhdWERBraxNtz8qeBqFteDr4D0E07YtkALE4VCTVsC3v2yBuPSlbsFThjVeLcM9DdynpmpoK3gBwGz0pIut5jrI24/8iA9iMk0pPGPmb4UIK/PHjUVPrc7covGOzgyrZ25d3A7TkytFXr3G1e
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 05:34:14.6977 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e589456f-b7f1-4a5c-10b3-08d61c5f357d
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0301MB1571
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 September 2018 at 06:09, Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Sep 11, 2018 at 4:57 PM David Miller <davem@davemloft.net> wrote:
->>
->> From: Andrew Lunn <andrew@lunn.ch>
->> Date: Wed, 12 Sep 2018 01:30:15 +0200
->>
->> > Just as an FYI:
->> >
->> > 1) I don't think anybody in netdev has taken a serious look at the
->> > network code yet. There is little point until the controversial part
->> > of the code, Zinc, has been sorted out.
->> >
->> > 2) I personally would be surprised if DaveM took this code without
->> > having an Acked-by from the crypto subsystem people. In the same way,
->> > i doubt the crypto people would take an Ethernet driver without having
->> > DaveM's Acked-by.
->>
->> Both of Andrew's statements are completely true.
->>
->> I'm not looking at any of the networking bits until the crypto stuff
->> is fully sorted and fully supported and Ack'd by crypto folks.
->
-> So, as a process question, whom exactly are we waiting for:
->
-> CRYPTO API
-> M:      Herbert Xu <herbert@gondor.apana.org.au>
-> M:      "David S. Miller" <davem@davemloft.net>
-> L:      linux-crypto@vger.kernel.org
->
-> Herbert hasn't replied to any of these submissions.  You're the other
-> maintainer :)
->
-> To the extent that you (DaveM) want my ack, here's what I think of the
-> series so far:
->
-> The new APIs to the crypto primitives are good.  For code that wants
-> to do a specific known crypto operation, they are much, much more
-> pleasant to use than the existing crypto API.  The code cleanups in
-> the big keys patch speak for themselves IMO.  I have no problem with
-> the addition of a brand-new API to the kernel, especially when it's a
-> nice one like Zinc's, even if that API starts out with only a couple
-> of users.
->
-> Zinc's arrangement of arch code is just fine.  Sure, there are
-> arguments that putting arch-specific code in arch/ is better, but this
-> is mostly bikeshedding IMO.
->
-> There has been some discussion of the exact best way to handle
-> simd_relax() and some other minor nitpicks of API details.  This kind
-> of stuff doesn't need to block the series -- it can always be reworked
-> down the road if needed.
->
-> There are two things I don't like right now, though:
->
-> 1. Zinc conflates the addition of a new API with the replacement of
-> some algorithm implementations.  This is problematic.  Look at the
-> recent benchmarks of ipsec before and after this series.  Apparently
-> big packets get faster and small packets get slower.  It would be
-> really nice to bisect the series to narrow down *where* the regression
-> came from, but, as currently structured, you can't.
->
-> The right way to do this is to rearrange the series.  First, the new
-> Zinc APIs should be added, and they should be backed with the
-> *existing* crypto code.  (If the code needs to be moved or copied to a
-> new location, so be it.  The patch will be messy because somehow the
-> Zinc API is going to have to dispatch to the arch-specific code, and
-> the way that the crypto API handles it is not exactly friendly to this
-> type of use.  So be it.)  Then another patch should switch the crypto
-> API to use the Zinc interface.  That patch, *by itself*, can be
-> benchmarked.  If it causes a regression for small ipsec packets, then
-> it can be tracked down relatively easily.  Once this is all done, the
-> actual crypto implementation can be changed, and that changed can be
-> reviewed on its own merits.
->
-> As a simplistic example, I wrote this code a while back:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=crypto/sha256_bpf&id=e9e12f056f2abed50a30b762db9185799f5864e6
->
-> and its two parents.  This series added a more Zinc-like API to
-> SHA256.  And it did it without replacing the SHA256 implementation.
-> Doing this for Zinc would be a bit more complication, since the arch
-> code would need to be invoked too, but it should be doable.
->
-> FWIW, Wireguard should not actually depend on the replacement of the
-> crypto implementation.
->
-> 2. The new Zinc crypto implementations look like they're brand new.  I
-> realize that they have some history, some of them are derived from
-> OpenSSL, etc, but none of this is really apparent in the patches
-> themselves.  It would be great if the kernel could literally share the
-> same code as something like OpenSSL, since OpenSSL gets much more
-> attention than the kernel's crypto.  Failing that, it would be nice if
-> the patches made it more clear how the code differs from its origin.
-> At the very least, though, if the replacement of the crypto code were,
-> as above, a patch that just replaced the crypto code, it would be much
-> easier to review and benchmark intelligently.
->
+If hosts provides ops->adma_write_desc, we should not fall back to the
+general sdhci_adma_write_desc().
 
-OK, so let me summarize my remaining concerns as well. I may be a bit
-more finicky than Andy, though.
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
 
-First of all, the rate at which new revisions of this series are
-appearing increases the review effort unnecessarily, especially given
-that the latest version seemed to have some issues that would have
-been spotted by a simple build test. I would like to urge Jason to
-bear with us and bring this discussion to a close before resubmitting.
+Hi Ulf, Adrian,
 
-As far as I can tell (i.e., as a user not a network dev), WireGuard is
-an excellent piece of code, and I would like to see it merged. I also
-think there is little disagreement about the quality of the proposed
-algorithm implementations and the usefulness of having a set of easy
-to use solid crypto primitives in addition to or complementing the
-current crypto API.
+When I introduced .adma_write_desc, I made a mistake since v4 -- if the host
+provide ops->adma_write_desc, we should just call it and don't fall back
+to the general sdhci_adma_write_desc(). Before v4, the adma_write_desc return
+int, since v4 there's no return value, so when I prepared the v4, I just
+removed return, this is where the mistake is from. I dunno how to handle
+this case, fold the patch into previous commit or apply it as a separate patch?
 
-I do have some concerns over how the code is organized though:
+I'm very sorry for this. In fact, Adrian caught another similar bug during
+review.
 
-* simd_relax() is currently not called by the crypto routines
-themselves. This means that the worst case scheduling latency is
-unbounded, which is unacceptable for the -rt kernel. The worst case
-scheduling latency should never be proportional to the input size.
-(Apologies for not spotting that earlier)
+Sorry about the inconvenience,
+Jisheng
 
-* Using a cute name for the crypto library [that will end up being the
-preferred choice for casual use only] may confuse people, given that
-we have lots of code in crypto/ already. I'd much prefer using, e.g.,
-crypto/lib and crypto/api (regardless of where the arch specific
-pieces live)
+ drivers/mmc/host/sdhci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-* I'd prefer the arch specific pieces to live under arch, but I can
-live with keeping them in a single place, as long as the arch
-maintainers have some kind of jurisdiction over them. I also think
-there should be some overlap between the maintainership
-responsibilities of the two generic pieces (api and lib).
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 0dda6f4b6a24..99bdae53fa2e 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -649,8 +649,8 @@ static inline void __sdhci_adma_write_desc(struct sdhci_host *host,
+ {
+ 	if (host->ops->adma_write_desc)
+ 		host->ops->adma_write_desc(host, desc, addr, len, cmd);
+-
+-	sdhci_adma_write_desc(host, desc, addr, len, cmd);
++	else
++		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+ }
+ 
+ static void sdhci_adma_mark_end(void *desc)
+-- 
+2.19.0
 
-* (Nit) The GCC command line -include'd .h files contain variable and
-function definitions so they are actually .c files.
-
-* (Nit) Referencing CONFIG_xxx macros from -include'd files adds the
-implicit assumption that the -include appears after the -include of
-kconfig.h.
-
-* Adding /conditional/ -include's (or #include's) increases the size
-of the validation space, which is why we generally prefer
-unconditional includes (and static inline stubs), and 'if
-(IS_ENABLED(CONFIG_xxx))' over #ifdef CONFIG_xxx
-
-* The current organization of the code puts all available (for the
-arch) versions of all routines into a single module, which can only be
-built in once we update random.c to use Zinc's chacha20 routines. This
-bloats the core kernel (which is a huge deal for embedded systems that
-have very strict boot requirements). It also makes it impossible to
-simply blacklist a module if you, for instance, prefer to use the
-[potentially more power efficient] scalar code over the SIMD code when
-using a distro kernel.
-
-[To summarize the 4 points above, I'd much rather see a more
-conventional organization where different parts are provided by
-different modules. I don't think the argument that inlining is needed
-for performance is actually valid, given that we have branch
-predictors and static keys, and the arch SIMD code is built as
-separate object files anyway]
-
-* If we reuse source files from OpenSSL, we should use that actual
-source which is the perlasm not the emitted assembler. Also, we should
-work with Andy Polyakov (as I have done several times over the past 5+
-years) to upstream the changes we apply to the kernel version of the
-code. The same applies to code from other sources, btw, but I am not
-personally familiar with them.
-
-* If upstreaming the changes is not an option, they should be applied
-as a separate patch and not hidden in a 5000 line patch without any
-justification or documentation (but Jason is already working on that)
