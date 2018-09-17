@@ -2,162 +2,107 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD57ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAEDECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97AB32086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97AB32086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 284AB2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oFlhORMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284AB2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbeIQSFk (ORCPT
+        id S1728382AbeIQSGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:05:40 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40043 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeIQSFk (ORCPT
+        Mon, 17 Sep 2018 14:06:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45352 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728244AbeIQSGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:05:40 -0400
-Received: by mail-ot1-f67.google.com with SMTP id v10-v6so11071509otk.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 05:38:31 -0700 (PDT)
+        Mon, 17 Sep 2018 14:06:53 -0400
+Received: by mail-pf1-f194.google.com with SMTP id i26-v6so7491824pfo.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 05:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d0sS73uimJ1s5neWwBu2BrqlcqJf66GavrewFSodIHc=;
+        b=oFlhORMVu5oIsw6/iceWtUuiFv5C+r0YI5zvo8zIahufmbuybHgLJt2n674G0BF7NQ
+         aPA3+zk9pqx5P4J0vD4GSUSswbKqj9wWdokWc8aJau88dvAGyDnmSX9tDp1f84swWj62
+         UBk4L8UfTZPf+C0makmxyvWwzFxBaGkaewNvkzrYXTmJnPYxvHq5mmkdsFowuT3BfgE4
+         xQE1FeVj8WFzmqw2/pSgXBQ7d3uZGiairT2ypTgaUGTjcnwDhljQa4UIQ+KcYx7vlv8q
+         /r6E4uyoSkvRazkEdLe53eH/NuoLqoJCP6d1tK88VX9ZUtOK/doxs+1jEUwE1pE4G85E
+         tT7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xv0yfF12xsO3aa+GjpeOS04wpnpzdTm2qFOAIby5ZYA=;
-        b=W4/L6ZZY9ZPUwVN3ead7bJ685EvcmrsWZxBnPbq/jqKx1VlutmsX5AGujMQWHSWZaF
-         io+fh55gDHCt+4kq0xlhG7DxX+YqRT/tferXzUuvqBHSyeNIP3lROKCI28wIptfqh2Ws
-         qZZvPkBUK3JtHoajquoRSLC8pVsgCRRu482wSsrTncoeZdajcENO4Z4CtA10Wn3m4fhv
-         eYXFOVJMyNx4halXsUcSW+/xgGoo7F94XrCy6H0VJt0Z1OzVfwTDjlLIaRqhQL3CiKvc
-         tsc8/808NpjvBebXbsO99+INaErebyUlZwwdPPNSKL1nj5cDI3Wvl+myWJ+CrdExFopw
-         Ei1A==
-X-Gm-Message-State: APzg51A1z3QkLsGlJdjX4MeNqoqoz+81AkkSBJZF+ScCxZQG8daYxjZl
-        0XD/14TpTCQQzO+Zvjc2ei1VEdkwYjHKbSZFpjonKg==
-X-Google-Smtp-Source: ANB0VdbKOWNtEoDrkIQyDuY1JZqyNm4YUaIFiB6Wa1e0JuFzXFpmtsudZNz/CCg206hQDvqcUBfbY1P6WT7r1z41EZI=
-X-Received: by 2002:a9d:4788:: with SMTP id b8-v6mr12855789otf.214.1537187910931;
- Mon, 17 Sep 2018 05:38:30 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d0sS73uimJ1s5neWwBu2BrqlcqJf66GavrewFSodIHc=;
+        b=fBoG+y6ftAg2ZRTga4yuX+zJZ7Jz9WL7C8m5N100K5t8nrmY6gOZmgp5eq2WNY5StT
+         A4hZuwi+HaGElRIhNsX52X7OWVJNf8JLYRT+kfl2J2oVxyG8p9bAYEPDF+/ZcmhlTH8v
+         7bbVePTewvIhcSeorsM7YpcdU1wV0mlyRuuNnUYNe52qTiyUQpkV4eYx3tIkVoMAfzc9
+         3nGg9Cm51i2IlV34XS+EysRaFL7p/V/RbNmDc9KBNR/x0F0TEiiVmmNNj8L8sue5kjtX
+         f4qE/E307nrIdfDLgOR8n1ifq4i9g4x2moj/xQwOfNQcUS4vP4lcjZPrsmeNQY1xEV5b
+         kNRg==
+X-Gm-Message-State: APzg51Da3biJjXJSjmoYHArqbRgHBuo8LGTMufOMpZwiDYFrRj3FnxIj
+        /Fe68WNE7hadMumPLvBqVUQ=
+X-Google-Smtp-Source: ANB0VdYDbewcxAEeb0VPg7V0fkGB98vT38gVqfhE5CfBh/RbQW6y1ZnbChz6mD+NOzXdiqZMUhRqww==
+X-Received: by 2002:a63:4606:: with SMTP id t6-v6mr23242057pga.271.1537187984038;
+        Mon, 17 Sep 2018 05:39:44 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id v22-v6sm26960020pfi.60.2018.09.17.05.39.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 05:39:43 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 00/10] staging: gasket: Apex uncloaks, plus fixes
+Date:   Mon, 17 Sep 2018 05:38:55 -0700
+Message-Id: <20180917123905.213639-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 MIME-Version: 1.0
-References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-2-omosnace@redhat.com>
- <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 17 Sep 2018 14:38:19 +0200
-Message-ID: <CAFqZXNuir-8TE7WUHYhw5t446THO=sCjOXv+WAxNDs79e6OTWQ@mail.gmail.com>
-Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 5:19 AM Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Aug 24, 2018 at 8:00 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > This patch adds two auxiliary record types that will be used to annotate
-> > the adjtimex SYSCALL records with the NTP/timekeeping values that have
-> > been changed.
-> >
-> > Next, it adds two functions to the audit interface:
-> >  - audit_tk_injoffset(), which will be called whenever a timekeeping
-> >    offset is injected by a syscall from userspace,
-> >  - audit_ntp_adjust(), which will be called whenever an NTP internal
-> >    variable is changed by a syscall from userspace.
-> >
-> > Quick reference for the fields of the new records:
-> >     AUDIT_TIME_INJOFFSET
-> >         sec - the 'seconds' part of the offset
-> >         nsec - the 'nanoseconds' part of the offset
-> >     AUDIT_TIME_ADJNTPVAL
-> >         op - which value was adjusted:
-> >             offset - corresponding to the time_offset variable
-> >             freq   - corresponding to the time_freq variable
-> >             status - corresponding to the time_status variable
-> >             adjust - corresponding to the time_adjust variable
-> >             tick   - corresponding to the tick_usec variable
-> >             tai    - corresponding to the timekeeping's TAI offset
->
-> I understand that reusing "op" is tempting, but the above aren't
-> really operations, they are state variables which are being changed.
+From: Todd Poynor <toddpoynor@google.com>
 
-I remember Steve (or was it Richard?) convincing me at one of the
-meetings that "op" is the right filed name to use, despite it not
-being a name for an operation... But I don't really care, I'm okay
-with changing it to e.g. "var" as Richard suggests later in this
-thread.
+Add a description of the Gasket framework device Apex (it's a Google
+Edge TPU machine learning accelerator soon to be released), plus a
+handful of fixes.
 
-> Using the CONFIG_CHANGE record as a basis, I wonder if we are better
-> off with something like the following:
->
->  type=TIME_CHANGE <var>=<value_new> old=<value_old>
->
-> ... you might need to preface the variable names with something like
-> "ntp_" or "offset_".  You'll notice I'm also suggesting we use a
-> single record type here; is there any reason why two records types are
-> required?
+Nick Ewalt (7):
+  staging: gasket: fix DMA direction for extended page tables
+  staging: gasket: fix data page unmap DMA direction
+  staging: gasket: page_table: don't unmap coherent pages
+  staging: gasket: fix gasket_free_coherent_memory metadata frees
+  staging: gasket: cleanup if dma_map_page fails in
+    gasket_perform_mapping
+  staging: gasket: page_table: use total_entries for max ext lvl0 page
+    idx
+  staging: gasket: page_table: handle failed dma_map_page
 
-There are actually two reasons:
-1. The injected offset is a timespec64, so it consists of two integer
-values (and it would be weird to produce two records for it, since IMO
-it is conceptually still a single variable).
-2. In all other cases the variable is reset to the (possibly
-transformed) input value, while in this case the input value is added
-directly to the system time. This can be viewed as a kind of variable
-too, but it would be weird to report old and new value for it, since
-its value flows with time.
+Todd Poynor (3):
+  staging: gasket: Kconfig: describe Apex as an Edge TPU device
+  staging: gasket: interrupt: remove PCI-MSIX-specific status check
+  staging: gasket: page table: use GFP_KERNEL for dma_alloc_coherent
 
-Plus, when I look at:
-type=TIME_INJOFFSET [...]: sec=-16 nsec=124887145
+ drivers/staging/gasket/Kconfig             |  5 +-
+ drivers/staging/gasket/gasket_interrupt.c  |  5 --
+ drivers/staging/gasket/gasket_page_table.c | 61 +++++++++++++++-------
+ 3 files changed, 45 insertions(+), 26 deletions(-)
 
-I can immediately see that the time was shifted back by 16-something
-seconds, while when I look at something like:
+-- 
+2.19.0.397.gdd90340f6a-goog
 
-type=TIME_CHANGE [...]: var=time_sec new=1537185685 old=1537185701
-type=TIME_CHANGE [...]: var=time_nsec new=664373417 old=789260562
-
-I can just see some big numbers that I need to do math with before I
-get an idea of what is the magnitude (or sign) of the change.
-
->
-> >         old - the old value
-> >         new - the new value
-> >
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >  include/linux/audit.h      | 21 +++++++++++++++++++++
-> >  include/uapi/linux/audit.h |  2 ++
-> >  kernel/auditsc.c           | 15 +++++++++++++++
-> >  3 files changed, 38 insertions(+)
->
-> A reminder that we need tests for these new records and a RFE page on the wiki:
->
-> * https://github.com/linux-audit/audit-testsuite
-
-I was going to start working on this once the format issues are
-settled. (Although I probably should have kept the RFC in the subject
-until then...)
-
-> * https://github.com/linux-audit/audit-kernel/wiki
-
-I admit I forgot about this duty, but again I would like to wait for
-the discussions to settle before writing that up.
-
->
-> --
-> paul moore
-> www.paul-moore.com--
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
