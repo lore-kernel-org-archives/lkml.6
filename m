@@ -2,86 +2,99 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17510ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F16ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43322086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3E9D2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:22:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KBxbIuP2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43322086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="ERLqbQ82"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E9D2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbeIQKqg (ORCPT
+        id S1728498AbeIQKsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 06:46:36 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:40152 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeIQKqg (ORCPT
+        Mon, 17 Sep 2018 06:48:00 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38731 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbeIQKr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 06:46:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IsFYNlXJJtrdYfgXiT30+ULZsYQjtHF7YUy5ZB5BR1k=; b=KBxbIuP2nV2on6/Q8M4fa0Pb4J
-        A5cq1mjbSaoHRH+aIxSST1ZOtKWTAZdUKKrweXuMIaWjiKIADSm8KrzhNwsVXHnBHCl7c6bg7ucoi
-        WUAgoEH76nyDkQp552Txi9NpT7tlftrebrehmiHJDKIESba5zR6WGM3Dum15V0JkK+jY=;
-Received: from p200300ccfbca24001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbca:2400:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g1lxo-0006Tb-Fy; Mon, 17 Sep 2018 07:20:48 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g1lxn-0003CG-O8; Mon, 17 Sep 2018 07:20:47 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     sre@kernel.org, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, linux-kernel@vger.kernel.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH RESEND] twl4030_charger: fix charging current out-of-bounds
-Date:   Mon, 17 Sep 2018 07:20:35 +0200
-Message-Id: <20180917052035.12234-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
+        Mon, 17 Sep 2018 06:47:59 -0400
+Received: by mail-oi0-f66.google.com with SMTP id x197-v6so17773513oix.5
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 22:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WpYvUsoYgEGeP6B6ATx+yRD/LNy0fnUPx29m2jEuTH0=;
+        b=ERLqbQ82XbYx90SfX4tnL/wbyHap91e5MDsXAGtg188sqPSn0VU/1QGQVJyykCCLuL
+         k2S2qg8x5oU5LkUewMwlT9nZQw4IjIOPRw66rADU5GaCG+ReitZsyvVnFrcMFirUSS0r
+         KjxiQc0+Qap2ZRl87QFxnWLt/xooxreN9W+4jBUQAGKl9vvHHLxEwd/9UYbK5P0aNxGz
+         1Pgl+ZNVIdS0MKWT/1/x9P4Wwf3P/awtEAZhHChx+AXkhkjiNdOR1x8fCfBrXdLCbd9d
+         XLO2h1PVt/Gzif01jRz1O/wwumAy5so8xJ6gLq56EA0z7u4UMT8gfEJo49/oHTaFmVAf
+         8w3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WpYvUsoYgEGeP6B6ATx+yRD/LNy0fnUPx29m2jEuTH0=;
+        b=PE5C4omukf6GeFmoZvSDGayhLD7C4h3Uds0tuKZPbPCZIAMsy5TVKiMM7J3TSf3R4/
+         Xv/13sm5H6py3p3+bU+QFJFC9yeIQgPUgXiz8aJvOkrTs+35NJjfukQrzIGm+WvuKEn0
+         bLxEeSo/vKzbhQlgspZE7ZIOnftkHfUM707gbsjxjPeUOC6DK7Gcata4vmS0osWmEwPA
+         U4JOMwZXVfnMVbsLEqqSZIdrcr6mZ5ddNROWgZJxjKjAidNgd1QpuGWME2WVYJxjm4wO
+         REWuRw9kT/FeEZaU+7L0P5Q/3dAKFOB7jtf2k7OszO4dthi5NfbZxKYuz+0MCtm3wHXq
+         7osA==
+X-Gm-Message-State: APzg51AZPM2sOF1HrdJW2IhDc5SZxuOP826REu/Uys1vFTMxlktlCHoY
+        /fnip9+geWcHibgJ8GKw+c1ab4EV1iOzBdZmKcUlIw==
+X-Google-Smtp-Source: ANB0VdYrd0ZTOyB1ckn2C3AgPnWnQtDpvHzUG4U4q6wVXHtOLMiadsrWueK4jPdUfYIyBewkcyaPAyNoOGz0ABlAQtU=
+X-Received: by 2002:aca:338a:: with SMTP id z132-v6mr17268356oiz.184.1537161735227;
+ Sun, 16 Sep 2018 22:22:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:4a2b:0:0:0:0:0 with HTTP; Sun, 16 Sep 2018 22:22:14
+ -0700 (PDT)
+In-Reply-To: <CAJuCfpG1=pXOg=1GwC33Uy0BcXNq-BsR6dO0JJq4Jnm5TyNENQ@mail.gmail.com>
+References: <20180828172258.3185-1-hannes@cmpxchg.org> <20180905214303.GA30178@cmpxchg.org>
+ <20180907110407.GQ24106@hirez.programming.kicks-ass.net> <20180907150955.GC11088@cmpxchg.org>
+ <CAJuCfpG1=pXOg=1GwC33Uy0BcXNq-BsR6dO0JJq4Jnm5TyNENQ@mail.gmail.com>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Mon, 17 Sep 2018 13:22:14 +0800
+Message-ID: <CAD8Lp47F5N8xN41KFHybVVTpV_TEewERD-eJov6iiqBJUyVR9g@mail.gmail.com>
+Subject: Re: [PATCH 0/9] psi: pressure stall information for CPU, memory, and
+ IO v4
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Mike Galbraith <efault@gmx.de>, linux-mm <linux-mm@kvack.org>,
+        cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the charging current uses unsigned int variables, if we step back
-if the current is still low, we would run into negative which
-means setting the target to a huge value.
-Better add checks here.
+Hi Suren
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/power/supply/twl4030_charger.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, Sep 7, 2018 at 11:58 PM, Suren Baghdasaryan <surenb@google.com> wrote:
+> Thanks for the new patchset! Backported to 4.9 and retested on ARMv8 8
+> code system running Android. Signals behave as expected reacting to
+> memory pressure, no jumps in "total" counters that would indicate an
+> overflow/underflow issues. Nicely done!
 
-diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-index b72838663872..c954b7234393 100644
---- a/drivers/power/supply/twl4030_charger.c
-+++ b/drivers/power/supply/twl4030_charger.c
-@@ -421,7 +421,8 @@ static void twl4030_current_worker(struct work_struct *data)
- 
- 	if (v < USB_MIN_VOLT) {
- 		/* Back up and stop adjusting. */
--		bci->usb_cur -= USB_CUR_STEP;
-+		if (bci->usb_cur >= USB_CUR_STEP)
-+			bci->usb_cur -= USB_CUR_STEP;
- 		bci->usb_cur_target = bci->usb_cur;
- 	} else if (bci->usb_cur >= bci->usb_cur_target ||
- 		   bci->usb_cur + USB_CUR_STEP > USB_MAX_CURRENT) {
--- 
-2.11.0
+Can you share your Linux v4.9 psi backport somewhere?
 
+Thanks
+Daniel
