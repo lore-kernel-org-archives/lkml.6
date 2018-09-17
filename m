@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC41FECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF43ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6890A2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEBD82147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="RVW5yzQE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6890A2147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZhFcvIpm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEBD82147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731460AbeIQIdI (ORCPT
+        id S1731444AbeIQIdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 17 Sep 2018 04:33:08 -0400
-Received: from mail-bl2nam02on0121.outbound.protection.outlook.com ([104.47.38.121]:19879
+Received: from mail-bl2nam02on0116.outbound.protection.outlook.com ([104.47.38.116]:52292
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730718AbeIQIdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728731AbeIQIdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 04:33:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iMTaILXXKYZwF/DwPzFHuYUYe55/hY5pCp0uQ+Ssy3k=;
- b=RVW5yzQEnSUmyGSjuwmkQyBOG0+z238HGZ9tzyIh7B5OitCMKzKUsQID0OLn4I6nqtcP0WmMDAfIYNSyP+lQCjzfJf0kArrhy4owR9aJwCyJWsZwf7x+HkkE3MuX865d8XWJnYSQ0mVC2CAHoB4aqJ1S9jHL3KuK3grx6uEUAuo=
+ bh=fZlVdXACHbzUdGg5aflCvIY151DvxYKQZdATt1BAXRA=;
+ b=ZhFcvIpmskArBZbRlS9yYr9xNLllalB1IhIc9sxUx6LWYnwnIBX9tSszX6r6YsyFf2/BTET30pxeAeYNaTbXgNEiobITl0IErRAWia6SETD1D/HOGdfO+UUYUOJRXrcweED9lThHJImdzdYNjq0EZ+EbZNpuybBISPFR9+AjEs0=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,18 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Johan Hovold <johan@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
+CC:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 39/43] EDAC, i7core: Fix memleaks and
- use-after-free on probe and remove
-Thread-Topic: [PATCH AUTOSEL 4.4 39/43] EDAC, i7core: Fix memleaks and
- use-after-free on probe and remove
-Thread-Index: AQHUTjNAHHR/zY3XMkuoKtYfVM06UA==
+Subject: [PATCH AUTOSEL 4.4 40/43] ASoC: dapm: Fix potential DAI widget
+ pointer deref when linking DAIs
+Thread-Topic: [PATCH AUTOSEL 4.4 40/43] ASoC: dapm: Fix potential DAI widget
+ pointer deref when linking DAIs
+Thread-Index: AQHUTjNACMNWtlYpX0aLsp9FTZj6pQ==
 Date:   Mon, 17 Sep 2018 03:05:13 +0000
-Message-ID: <20180917030445.484-39-alexander.levin@microsoft.com>
+Message-ID: <20180917030445.484-40-alexander.levin@microsoft.com>
 References: <20180917030445.484-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030445.484-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -62,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:h8bobM0derkfkJraQHULl545Yvejs4wE1qzD8PVu4NxxgMhVKYw2mG5Dx6tA2ns0SWViEfq3Lk1fClGWvkSA5gkGXanJD2pikyrNwPnXVEia2EoAojG5qU/5ELJrQ7bMCDCKSQKONUAgsxsolSMJzVSyDI4Ahv/vDJ3bFv3hr3WXJ/isX4jCZbN9TKB53eN7adexjWG/6H6xxdoEEuu5rglm8U41ePls3GU8lzsDPjH+3Eh42OFicwOQl9DmNy9zrMnCQwBggNfp4Np3jHhFnPNpkSMjSoyM08bZqerGmhd1EqJmX9zmGFOdtK1weqSBLLgr3vp5G4aMOS+i0kaM0QO82HaVcXxjUWspQbNsztKfuQ8oLE8kJ2Aga9C6Rv3h16AM0yACq2+cUP8/9N3+n3aaM3i8TgU3kGYIySbzYlAg3QokkKtM2MlavVKjMGLR3VcK8KJCQwjuTHxw5aB3Zg==;5:x2EaKB8OtyMV5si5uHneCLOsqrW0EiMV0Ss8cyG4bi8d+kacFT0QdYLZNMjW/QYyl1wivwdoTufVKxh1p26HkstE1TVN/yDapc0POMTIGS83fXCNsJPfeyy5V5r9X0CVhHq34sZQ/jKmaM1zlnqizVOAgsO/IYH7g9lV10Sr72I=;7:UNXUlzpG+oc9VkQ++q0caqWtnqMVgTWVocKQejAZyiTltG6+UAhEkfZUb80yIWfgJIn5OUm2ppGOQx+tFLDAAEqwGjZDQBwFhE/UpMQxSsKAufILp/sePXDQwLQm4gY65DhQO5ykow/2JXkUyBAG7NEqlrnQR0Y9mbANMNGQOvF+IHkRy48jAK9FJZD6jfTlM87F14CpR5jOh50c3IhQ0Pbe9Y01T7TCTaJ73q9a7uORHf5tjUD+o0ouBIQ5udCp
-x-ms-office365-filtering-correlation-id: 1b33ac1e-8fde-4d10-2308-08d61c4abe17
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:WooZs8XbWKlUEUsBm/ukhGR/DpzAmWoNTSOkoqnpLeuSeCNRxEqsTpqKOXbyXxxkLCLx9Oke2BLRZtYPFppVxaQ+O9WWxA8CpsOGL4x4MXCXGSwWRdpjA8ll2PcPVBMG6uvdmc0dbAdCokFttEiTAxbkno6u3PJUxcheuroCol8Hnm7PA9IEltp6rq2aqsV+wK5Bus0JcIaAXaM+TgnCOpwVSverj/zZtKvYrNzFh7GXpzcoC8Nz5Y2e6ShoLKPhiDCumKq4vKxEJDtekwxFh7uhIQh1UfRNcYIvuyeHcah7UKfXaJy+wncvEnk2tjyT8XTxQLvgL+g5Ne0UBQLR1NvhkgSR8HY8KyB5o1XirHV6Ol/kofxAhT5kvNfKytMm6ssMk69eSzG2eveq5VCERStG69oNlOirA9HbkWMlembESxp13gUh03iRy6LQbwYDyld84og5cwkko3Y/dJ9cSg==;5:bY5W8gVGXh6SGC/1lSDxL2lwcNxUtb8IVDnUtYUC+Hlq0AoF+3asBw0YksPKtcxKwb0hJR6zdohtwDJRXA44ik4/x/80fkyzDl9RBKIXm2cWERJLRMQpp3jrQQFBuKuo1eaUhotpFJrEGNSHhSKW1BS2y5IYLhCczkEtVZFuzcg=;7:L3CWjnX/xEAFRfodAmmc0bG9Hqd4y5xsdEuEcjs+YVYaYrODwKBwL2lcR3KTS6oiehelU7yaf1YJSOJU1c9gV4QDFS+vEC9yd7u4+0ZzHdUa8KhbjvUSSXkCjvZIB2lou58U7z9qk8Qc61EIWBpSNa5e/Q+bksXcD/9sdR4bC5LxDxpOz8mnKiYIbmeZiMwtUCvKO803Z3teU4l17qr5nftLtorI18NfThF/2JSvvaLu6YPg5Mt64dFjk8dJyV4l
+x-ms-office365-filtering-correlation-id: b33a16ba-ce6a-4158-0d4b-08d61c4abe42
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
 x-ms-traffictypediagnostic: CY4PR21MB0839:
-x-microsoft-antispam-prvs: <CY4PR21MB083935A2321A70919E86FA8BFB1E0@CY4PR21MB0839.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(42068640409301)(9452136761055)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB08396A68B6464E255755175AFB1E0@CY4PR21MB0839.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(136003)(376002)(396003)(189003)(199004)(8936002)(6116002)(86612001)(3846002)(575784001)(53936002)(81166006)(25786009)(217873002)(5660300001)(68736007)(5250100002)(6666003)(107886003)(256004)(14444005)(305945005)(7736002)(2900100001)(1076002)(86362001)(2501003)(966005)(6506007)(4326008)(22452003)(10090500001)(6436002)(11346002)(446003)(76176011)(102836004)(6486002)(186003)(105586002)(6346003)(26005)(106356001)(54906003)(110136005)(6306002)(316002)(478600001)(6512007)(2616005)(476003)(486006)(10290500003)(2906002)(81156014)(36756003)(66066001)(72206003)(8676002)(97736004)(99286004)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(136003)(376002)(396003)(189003)(199004)(8936002)(6116002)(86612001)(3846002)(575784001)(53936002)(81166006)(25786009)(217873002)(5660300001)(68736007)(5250100002)(6666003)(107886003)(256004)(305945005)(7736002)(2900100001)(1076002)(86362001)(2501003)(6506007)(4326008)(22452003)(10090500001)(6436002)(11346002)(446003)(76176011)(102836004)(6486002)(186003)(105586002)(6346003)(26005)(106356001)(54906003)(110136005)(316002)(478600001)(6512007)(2616005)(476003)(486006)(10290500003)(2906002)(81156014)(36756003)(66066001)(72206003)(8676002)(97736004)(99286004)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: TpGHcOhEV4ZuR3k+oU9w2q5pgBy/E+0TPmNkgmkdg2bjk93dE+e2Nud1zVZxRnI9VuBqlbgbHEQZTkU7ocZq42YqXnOaLhQat/M3IkkuKcX42Y+bAY9EcBo/+3fpLZLESHs8BaVUw3SJbjZd4KqsNXFTUwMQmuYpTX4zai+qGnizqvdiq0BJQDpnP3sN3Uwn+xcidHOQwfjpySBU2KAzQWrFEfLdWyj/WRqzfCX5FmNm9xUbYPyQ5P3EygTtUZ6TVCBptMFCyxKAFJc1XT9FenE++UJKTrUktaFdbuhIjoSPUkJusqJJYWFIHT+L0H3hi4I50VXqiEchy2dJlr+r82LHLq1vyL/r2Nup1gt5CmA=
+x-microsoft-antispam-message-info: SLs/BZgILFvyVa3x4wxiObRkaHNeKOuxQAcNDlLGaRUDfnDF6sPP6XeXCorXkNZubSNiR9wLTElLLETpp5O8sLtzQnwrqpG1MgYkWbMAftA5OzqKUWQMXonKq1yEYXc4Vlyhmfxie66x24lGI83h6asje2LvpKTxNBHiHJ4xUFyZOdDruGcNY428snJ+7dbSVY/v2IuPy5JbV0yb7E+EyW8Y6lwy5RncjvcsF8B5ffuHbyIBY4CeUQKi+ykU70dVXjZTTcf5h4xmXRnXKFt8B/jrvW4QLTYh5YsoN3O3kpS9cbhhPdbrwbLxCatgWs4Mz5OL4s/VT9ylv70uQn+rABAcC12grGUWwgl+f3YAEfA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b33ac1e-8fde-4d10-2308-08d61c4abe17
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:13.3515
+X-MS-Exchange-CrossTenant-Network-Message-Id: b33a16ba-ce6a-4158-0d4b-08d61c4abe42
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:13.8828
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -95,87 +93,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
 
-[ Upstream commit 6c974d4dfafe5e9ee754f2a6fba0eb1864f1649e ]
+[ Upstream commit e01b4f624278d5efe5fb5da585ca371947b16680 ]
 
-Make sure to free and deregister the addrmatch and chancounts devices
-allocated during probe in all error paths. Also fix use-after-free in a
-probe error path and in the remove success path where the devices were
-being put before before deregistration.
+Sometime a component or topology may configure a DAI widget with no
+private data leading to a dev_dbg() dereferencne of this data.
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Fixes: 356f0a30860d ("i7core_edac: change the mem allocation scheme to make=
- Documentation/kobject.txt happy")
-Link: http://lkml.kernel.org/r/20180612124335.6420-2-johan@kernel.org
-Signed-off-by: Borislav Petkov <bp@suse.de>
+Fix this to check for non NULL private data and let users know if widget
+is missing DAI.
+
+Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/edac/i7core_edac.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ sound/soc/soc-dapm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
-index 792bdae2b91d..d14c8ffea910 100644
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1187,15 +1187,14 @@ static int i7core_create_sysfs_devices(struct mem_c=
-tl_info *mci)
-=20
- 	rc =3D device_add(pvt->addrmatch_dev);
- 	if (rc < 0)
--		return rc;
-+		goto err_put_addrmatch;
-=20
- 	if (!pvt->is_registered) {
- 		pvt->chancounts_dev =3D kzalloc(sizeof(*pvt->chancounts_dev),
- 					      GFP_KERNEL);
- 		if (!pvt->chancounts_dev) {
--			put_device(pvt->addrmatch_dev);
--			device_del(pvt->addrmatch_dev);
--			return -ENOMEM;
-+			rc =3D -ENOMEM;
-+			goto err_del_addrmatch;
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 9e784cc3e5d2..0aefed8ab0cf 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3864,6 +3864,13 @@ int snd_soc_dapm_link_dai_widgets(struct snd_soc_car=
+d *card)
+ 			continue;
  		}
 =20
- 		pvt->chancounts_dev->type =3D &all_channel_counts_type;
-@@ -1209,9 +1208,18 @@ static int i7core_create_sysfs_devices(struct mem_ct=
-l_info *mci)
-=20
- 		rc =3D device_add(pvt->chancounts_dev);
- 		if (rc < 0)
--			return rc;
-+			goto err_put_chancounts;
- 	}
- 	return 0;
++		/* let users know there is no DAI to link */
++		if (!dai_w->priv) {
++			dev_dbg(card->dev, "dai widget %s has no DAI\n",
++				dai_w->name);
++			continue;
++		}
 +
-+err_put_chancounts:
-+	put_device(pvt->chancounts_dev);
-+err_del_addrmatch:
-+	device_del(pvt->addrmatch_dev);
-+err_put_addrmatch:
-+	put_device(pvt->addrmatch_dev);
-+
-+	return rc;
- }
+ 		dai =3D dai_w->priv;
 =20
- static void i7core_delete_sysfs_devices(struct mem_ctl_info *mci)
-@@ -1221,11 +1229,11 @@ static void i7core_delete_sysfs_devices(struct mem_=
-ctl_info *mci)
- 	edac_dbg(1, "\n");
-=20
- 	if (!pvt->is_registered) {
--		put_device(pvt->chancounts_dev);
- 		device_del(pvt->chancounts_dev);
-+		put_device(pvt->chancounts_dev);
- 	}
--	put_device(pvt->addrmatch_dev);
- 	device_del(pvt->addrmatch_dev);
-+	put_device(pvt->addrmatch_dev);
- }
-=20
- /*************************************************************************=
-***
+ 		/* ...find all widgets with the same stream and link them */
 --=20
 2.17.1
