@@ -2,135 +2,75 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9130ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E513ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61372206B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61372206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B47620867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B47620867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbeIRC44 (ORCPT
+        id S1728556AbeIRDBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:56:56 -0400
-Received: from mga18.intel.com ([134.134.136.126]:38446 "EHLO mga18.intel.com"
+        Mon, 17 Sep 2018 23:01:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55876 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbeIRC44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:56:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 14:27:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
-   d="scan'208";a="92552304"
-Received: from maclarck-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.39.44])
-  by orsmga002.jf.intel.com with ESMTP; 17 Sep 2018 14:27:36 -0700
-Date:   Tue, 18 Sep 2018 00:27:35 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     flihp@twobit.us, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] tpm: add support for nonblocking operation
-Message-ID: <20180917212735.GA9368@linux.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
+        id S1727329AbeIRDBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:01:54 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 420AF307D851;
+        Mon, 17 Sep 2018 21:32:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF8471C95D;
+        Mon, 17 Sep 2018 21:32:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <a37220c23479c79239b046e2487cfc95544b8f13.camel@hammerspace.com>
+References: <a37220c23479c79239b046e2487cfc95544b8f13.camel@hammerspace.com> <153685389564.14766.11306559824641824935.stgit@warthog.procyon.org.uk> <153685392942.14766.3347355712333618914.stgit@warthog.procyon.org.uk> <20180914041831.GY19965@ZenIV.linux.org.uk>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     dhowells@redhat.com,
+        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 04/10] iov_iter: Add mapping and discard iterator types
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5763.1537219964.1@warthog.procyon.org.uk>
+Date:   Mon, 17 Sep 2018 22:32:44 +0100
+Message-ID: <5764.1537219964@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 17 Sep 2018 21:32:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:18:22AM -0700, Tadeusz Struk wrote:
-> The TCG SAPI specification [1] defines a set of functions, which allow
-> applications to use the TPM device in either blocking or non-blocking fashion.
-> Each command defined by the specification has a corresponding
-> Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
-> together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
-> mode of operation. Currently the TPM driver supports only blocking calls,
-> which doesn't allow asynchronous IO operations.
-> This patch changes it and adds support for nonblocking write and a new poll
-> function to enable applications, which want to take advantage of this feature.
-> The new functionality can be tested using standard TPM tools implemented
-> in [2], together with modified TCTI from [3], and an example application
-> by Philip Tricca [4]. Here is a short description from Philip:
-> 
-> "The example application `glib-tss2-event` uses a glib main event loop
-> to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
-> using a glib timer event to time the operation. A GSource object is
-> used to generate an event when the FD underlying the tss2 function
-> call has data ready. While the application waits for an event indicating
-> that the CreatePrimary operation is complete, it counts timer events
-> that occur every 100ms. Once the CreatePrimary operation completes the
-> number of timer events that occurred is used to make a rough calculation
-> of the elapsed time. This value is then printed to the console.
-> This takes ~300 lines of C code and requires no management or
-> synchronization of threads. The glib GMainContext is "just a poll()
-> loop" according to the glib documentation here:
-> 
-> https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
-> 
-> and so supporting 'poll' is the easiest way to integrate with glib /
-> gtk+. This is true of any other event system that relies on 'poll'
-> instead of worker threads."
-> 
-> [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
-> [2] https://github.com/tpm2-software/tpm2-tools
-> [3] https://github.com/tstruk/tpm2-tss/tree/async
-> [4] https://github.com/flihp/glib-tss2-async-example
-> 
-> ---
-> Changes in v6:
-> - Changed commit message in the first patch to more specific.
-> - Chenged labels names in tpm-interface.c
-> 
-> Changes in v5:
-> - Changed the workqueue allocation time back from the first user interface
->   open to module init.
-> 
-> Changes in v4:
-> - Changed the way buffer_mutex is handled in nonblocking mode so that
->   it is not held when write() returns to user space.
-> 
-> Changes in v3:
-> - Fixed problem reported by 0-dey kbuild test robot around __exitcall.
->   It complained because there is a module_exit() in another file already.
-> - Added info on example application from Philip
-> 
-> Changes in v2:
-> - Split the change into two separate patches. First patch adds a pointer
->   to the space to the struct file_priv to have access to it from the async job.
->   This is to avoid memory allocations on every write call. Now everything
->   what's needed is in the file_priv struct.
-> - Renamed the 'work' member of the timer to avoid confusion.
->   Now there are 'timeout_work' and 'async_work'.
-> - Removed the global wait queue and moved it to file_priv.
-> - Only creating the work queue when the first file is opened.
-> 
-> Tadeusz Struk (2):
->       tpm: add ptr to the tpm_space struct to file_priv
->       tpm: add support for nonblocking operation
-> 
->  drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
->  drivers/char/tpm/tpm-dev.c        |   22 +++--
->  drivers/char/tpm/tpm-dev.h        |   19 +++--
->  drivers/char/tpm/tpm-interface.c  |    1 
->  drivers/char/tpm/tpm.h            |    1 
->  drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
->  6 files changed, 152 insertions(+), 72 deletions(-)
-> 
-> --
-> TS
+Trond Myklebust <trondmy@hammerspace.com> wrote:
 
-Patches have been merged.
+> Another question that is relevant for most networked filesystems
+> (including AFS, I believe), is how will you deal with encryption of the
+> data you are transmitting? Encrypting and decrypting in-place directly
+> in the page cache or in a userspace O_DIRECT mapped buffer might not be
+> the best and most secure option, so won't you find yourself wanting to
+> copy the data anyway?
 
-/Jarkko
+For kAFS, the interface between kAFS and AF_RXRPC takes an iterator.
+
+Currently, encryption is done in place on the sk_buffs inside AF_RXRPC, but
+the goal I have in mind is to use the crypto operation to replace the copy
+between sk_buff and buffer.  This is tricky, however, as the encrypted payload
+contains metadata as well as data and on reception I have to read the metadata
+to find out how much data there actually is.
+
+David
