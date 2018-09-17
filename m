@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D11ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DB9ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A708A20867
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A708A20867
+	by mail.kernel.org (Postfix) with ESMTP id 965A22146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965A22146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeIREf3 (ORCPT
+        id S1731211AbeIREfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:35:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49414 "EHLO
+        Tue, 18 Sep 2018 00:35:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730202AbeIREf2 (ORCPT
+        with ESMTP id S1728677AbeIREfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:35:28 -0400
+        Tue, 18 Sep 2018 00:35:33 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23F23C49;
-        Mon, 17 Sep 2018 23:05:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48541C49;
+        Mon, 17 Sep 2018 23:06:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 084/126] f2fs: Fix uninitialized return in f2fs_ioc_shutdown()
-Date:   Tue, 18 Sep 2018 00:42:12 +0200
-Message-Id: <20180917211709.599110724@linuxfoundation.org>
+Subject: [PATCH 4.14 085/126] iommu/ipmmu-vmsa: Fix allocation in atomic context
+Date:   Tue, 18 Sep 2018 00:42:13 +0200
+Message-Id: <20180917211709.651465526@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,33 +54,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 2a96d8ad94ce57cb0072f7a660b1039720c47716 ]
+[ Upstream commit 46583e8c48c5a094ba28060615b3a7c8c576690f ]
 
-"ret" can be uninitialized on the success path when "in ==
-F2FS_GOING_DOWN_FULLSYNC".
+When attaching a device to an IOMMU group with
+CONFIG_DEBUG_ATOMIC_SLEEP=y:
 
-Fixes: 60b2b4ee2bc0 ("f2fs: Fix deadlock in shutdown ioctl")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+    BUG: sleeping function called from invalid context at mm/slab.h:421
+    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
+    ...
+    Call trace:
+     ...
+     arm_lpae_alloc_pgtable+0x114/0x184
+     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
+     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
+     alloc_io_pgtable_ops+0x60/0x88
+     ipmmu_attach_device+0x140/0x334
+
+ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
+allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
+had its own custom page table allocation implementation using
+GFP_ATOMIC, hence the spinlock was fine.
+
+Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
+does.
+
+Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/ipmmu-vmsa.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1803,7 +1803,7 @@ static int f2fs_ioc_shutdown(struct file
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct super_block *sb = sbi->sb;
- 	__u32 in;
--	int ret;
-+	int ret = 0;
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -54,7 +54,7 @@ struct ipmmu_vmsa_domain {
+ 	struct io_pgtable_ops *iop;
  
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
+ 	unsigned int context_id;
+-	spinlock_t lock;			/* Protects mappings */
++	struct mutex mutex;			/* Protects mappings */
+ };
+ 
+ struct ipmmu_vmsa_iommu_priv {
+@@ -523,7 +523,7 @@ static struct iommu_domain *__ipmmu_doma
+ 	if (!domain)
+ 		return NULL;
+ 
+-	spin_lock_init(&domain->lock);
++	mutex_init(&domain->mutex);
+ 
+ 	return &domain->io_domain;
+ }
+@@ -548,7 +548,6 @@ static int ipmmu_attach_device(struct io
+ 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
+ 	struct ipmmu_vmsa_device *mmu = priv->mmu;
+ 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
+-	unsigned long flags;
+ 	unsigned int i;
+ 	int ret = 0;
+ 
+@@ -557,7 +556,7 @@ static int ipmmu_attach_device(struct io
+ 		return -ENXIO;
+ 	}
+ 
+-	spin_lock_irqsave(&domain->lock, flags);
++	mutex_lock(&domain->mutex);
+ 
+ 	if (!domain->mmu) {
+ 		/* The domain hasn't been used yet, initialize it. */
+@@ -574,7 +573,7 @@ static int ipmmu_attach_device(struct io
+ 	} else
+ 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
+ 
+-	spin_unlock_irqrestore(&domain->lock, flags);
++	mutex_unlock(&domain->mutex);
+ 
+ 	if (ret < 0)
+ 		return ret;
 
 
