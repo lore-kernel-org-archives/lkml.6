@@ -2,137 +2,212 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8201BECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9650EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC22214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:16:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="MLt3n6vO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC22214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 44EC0214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44EC0214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbeIQToX (ORCPT
+        id S1728730AbeIQTr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:44:23 -0400
-Received: from mail-by2nam01on0107.outbound.protection.outlook.com ([104.47.34.107]:39576
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727052AbeIQToX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:44:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xfQ29uFb3F9nl0ueY6fUFjzOULYfg1MrWgOG9aw6ILo=;
- b=MLt3n6vOMm7fBiVr/ZE8LBl++QNyVEmBHUhEWQ5CMbZe4N8NTn7eLdQci9jbjo2io3ryiyap8ZDUPbgyCwE85RiaxattlD3wKw+62EGYEnvFh+pPFVhYOrTqkTKj5lfV/ZLkRGrkPD14QlG3NYZ9DMU/PkXooE4iy4WW7ViOtfU=
-Received: from MW2PR2101MB1113.namprd21.prod.outlook.com (52.132.149.30) by
- MW2PR2101MB1068.namprd21.prod.outlook.com (52.132.149.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Mon, 17 Sep 2018 14:16:49 +0000
-Received: from MW2PR2101MB1113.namprd21.prod.outlook.com
- ([fe80::8dea:f5e5:67f7:c879]) by MW2PR2101MB1113.namprd21.prod.outlook.com
- ([fe80::8dea:f5e5:67f7:c879%5]) with mapi id 15.20.1185.006; Mon, 17 Sep 2018
- 14:16:49 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>
-Subject: RE: [PATCH 2/2] tools: hv: fcopy: set 'error' in case an unknown
- operation was requested
-Thread-Topic: [PATCH 2/2] tools: hv: fcopy: set 'error' in case an unknown
- operation was requested
-Thread-Index: AQHUTj0kC9QAPEQ0iE6UniLG57hPj6Tz6QmAgACbuWA=
-Date:   Mon, 17 Sep 2018 14:16:48 +0000
-Message-ID: <MW2PR2101MB11138F9E55814399F152859FA01E0@MW2PR2101MB1113.namprd21.prod.outlook.com>
-References: <20180917041352.11402-1-kys@linuxonhyperv.com>
- <20180917041455.11455-1-kys@linuxonhyperv.com>
- <20180917041455.11455-2-kys@linuxonhyperv.com>
- <20180917045613.GA25435@kroah.com>
-In-Reply-To: <20180917045613.GA25435@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:2537:f2ed:4e7c:3212]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB1068;6:Ss+VFYlmszpXNUUytDbM67gZltZ6QAveUoeNXFM1Z19gjuPiXN1XHyhbw0z9ntv5ZJbClBP7FYyZxttNpKfdsuuQh8ECR4QpXqlzsgRpvbPRnvMNDQWQsJWyxnHCLy0MaONhSKESVYn7vTw8Qnw52dbDjYHy7JzH4H9wD8Ts4Ku9+PZSzErN9e3CkPBMXR1heasVQOtjGIsMbyj5uevqyRL8c9hMEKFfc5Y7Vy8xlbd7dRFdGHKE5sOdW2UAWNqk+uF+ZuPzC8WibaJt0HaswG1+KTknJBmgy0RJ5NByA1V86YG+rmZyGfXXcXlA25BduYzWxvfMjqkJmam5huyLpLIBfMn42Hg09lejaVp5DA6Que/M3v8f3mAZQZ8YhQCaaGRU7dI6HV12xiZeQJNVwjZW+KqS97pyxmx25xuMYY4Ftm4Nwx/S7UIDeH4eFB0nYuwQtvDj/QAmhC5QCdAD+w==;5:H/zvx8O0qUkOCEEcKgPtb/XCpo3vtGsdV9dOaQ63SWOV+qNFszOXPCeaHYmX77FzMjYNunlDu/XVTCmzcnHcuhFkCnVuXsBkrgx2DjTfp/VcyPHaZn4+8PzCQJff/nHPNMY0ae6WQPqbu7j3O2Ftne3u9w0CVRWHyIo7X10rqk4=;7:UJhlKOr4Y8KMNM9vhs7Llij4P0zcnd4KF21JCghDmWs+6GkMIsyyTe5xyzGvQWdXI7KX/xhqsJso8+tr0sVCCUdLUTeVI0u5ezYdudkNlpvCUqUZrxVST8VTIIpyL9GRRPrpnwdf2B9JxSHZ6FkWYoLAWtqcsxyXnHccwsj3ONNg/3wfzkPLROrwo9E+uqJVVPuuupja1wz/yyvOZOkcBd5m2i4GokveNzcxntRLKn3XWIUphnRwA4C7ExLbyGG+
-x-ms-office365-filtering-correlation-id: baba17fb-eb40-48f1-2a43-08d61ca8351a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:MW2PR2101MB1068;
-x-ms-traffictypediagnostic: MW2PR2101MB1068:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <MW2PR2101MB10685C2D5C0AEB4A66AC7315A01E0@MW2PR2101MB1068.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(198206253151910)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:MW2PR2101MB1068;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB1068;
-x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(346002)(366004)(39860400002)(199004)(13464003)(189003)(106356001)(105586002)(33656002)(305945005)(74316002)(81166006)(14454004)(8936002)(8676002)(54906003)(81156014)(6116002)(97736004)(229853002)(2900100001)(5250100002)(9686003)(7736002)(6436002)(55016002)(478600001)(10290500003)(53936002)(6246003)(53546011)(2906002)(5660300001)(4326008)(76176011)(186003)(6506007)(7696005)(25786009)(6916009)(86362001)(102836004)(46003)(99286004)(11346002)(486006)(446003)(476003)(8990500004)(68736007)(22452003)(316002)(93886005)(10090500001)(256004)(86612001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1068;H:MW2PR2101MB1113.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: JVlINot+ifNvUVxPhyid835IFXdGZtfUGMDxbOlANnmdUMF+0w6dq9rmzTRW5iRjN2vtSAaW4dy25tG36R7TynUueEzXKmYsZluStsI9Iklj2CWjQE+gcyi0nr1exev5QymPbpzVoFL/r4J2QZq20eQhxIy4qw1Kyejq0YC1JOKEBx4vaXNWnYEsJIVedR4Q3g3RCTnAFGEZBzheO6Dx61y0csVSRXVb76T2w05v4AhFKuxut2Qo6SanRkmiMTgqbrjWxSBWoYKguFTa2WQHIVjfY6jFVCdqgKwvkJA+pHLKvRANRTg807SkXONZJMkiwk36TmL642ijHjKj0Y/x9xX6bvzHNM2Wg5B/psVMLM4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Sep 2018 15:47:28 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:32807 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728465AbeIQTr1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:47:27 -0400
+Received: by mail-qt0-f196.google.com with SMTP id r37-v6so15429174qtc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 07:19:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version;
+        bh=l9u5yS9YGBOlI2a3pg43GNDTQasmydrJVi9oRbRWKn4=;
+        b=fo/AwlSpn5vRVGJt7xmr8UZ6S7+EwjSE9jCH6ZNOQ4PbXG8usnHpqfOOn1sgUX4ytt
+         mRRVKxDwcWXuLMVErLOrN10/gyMRAIByKV9Dei5uT2MuUc5u8yR437DVg/UKPVXhI+jD
+         Lb+x9atIajfgPEkHHORJZHtlendBU07j+QcvbLi6WUVD7Ynyl7W/KFaxkovivJF0rm1H
+         yYcj4w3PFnV1pAUqwGbGiNt9qtGvAOc1jiGZWixZZvv1tYLe185lOAaWWMhhV8EArzFw
+         weRIspFB0Vp5LPtyupqLZFJihmuofPJp2sala9KSWjq/m4OHakN93mE0C/AQpNeoI9YE
+         CXkw==
+X-Gm-Message-State: APzg51AotrFUKijNzfoxNWltSNmipDSSDQRXwKCzNsNbsVrWoV7+yRc3
+        yOKEgnXbV53hU478BXauQVFKcA==
+X-Google-Smtp-Source: ANB0VdaWgIsrWK/TM3y0d6qx4TW+d1PEwCRiUkZPCe2vuz9MZNPOQCRJ4NRqZMGUmB/pdCA6Nb1MGw==
+X-Received: by 2002:a0c:95f7:: with SMTP id t52-v6mr17846185qvt.246.1537193994158;
+        Mon, 17 Sep 2018 07:19:54 -0700 (PDT)
+Received: from [172.25.130.148] (pool-128-6-36-179.nat.rutgers.edu. [128.6.36.179])
+        by smtp.gmail.com with ESMTPSA id n25-v6sm7711127qtp.94.2018.09.17.07.19.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 07:19:53 -0700 (PDT)
+From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Vegard Nossum" <vegard.nossum@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Andrea Arcangeli" <aarcange@redhat.com>
+Subject: Re: [PATCHv2] mm, thp: Fix mlocking THP page with migration enabled
+Date:   Mon, 17 Sep 2018 10:19:51 -0400
+X-Mailer: MailMate (2.0BETAr6121)
+Message-ID: <899A7C0D-26EB-4FEF-A9DB-02E134ED841A@cs.rutgers.edu>
+In-Reply-To: <20180917133816.43995-1-kirill.shutemov@linux.intel.com>
+References: <20180917133816.43995-1-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: baba17fb-eb40-48f1-2a43-08d61ca8351a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 14:16:48.9473
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1068
+Content-Type: multipart/signed;
+ boundary="=_MailMate_77024829-9149-44E2-8585-7FAB1DBDD09D_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
+--=_MailMate_77024829-9149-44E2-8585-7FAB1DBDD09D_=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Greg KH <gregkh@linuxfoundation.org>
-> Sent: Sunday, September 16, 2018 9:56 PM
-> To: KY Srinivasan <kys@microsoft.com>
-> Cc: linux-kernel@vger.kernel.org; devel@linuxdriverproject.org;
-> olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com; Stephen
-> Hemminger <sthemmin@microsoft.com>; Michael Kelley (EOSG)
-> <Michael.H.Kelley@microsoft.com>; vkuznets <vkuznets@redhat.com>
-> Subject: Re: [PATCH 2/2] tools: hv: fcopy: set 'error' in case an unknown
-> operation was requested
->=20
-> On Mon, Sep 17, 2018 at 04:14:55AM +0000, kys@linuxonhyperv.com wrote:
-> > From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> >
-> > 'error' variable is left uninitialized in case we see an unknown operat=
-ion.
-> > As we don't immediately return and proceed to pwrite() we need to set i=
-t
-> > to something, HV_E_FAIL sounds good enough.
-> >
-> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> > ---
-> >  tools/hv/hv_fcopy_daemon.c | 1 +
-> >  1 file changed, 1 insertion(+)
->=20
-> No need to backport for stable?
-Thanks for pointing this out. Should I resubmit with the stable tag?
+On 17 Sep 2018, at 9:38, Kirill A. Shutemov wrote:
 
-Thanks,
+> A transparent huge page is represented by a single entry on an LRU list=
+=2E
+> Therefore, we can only make unevictable an entire compound page, not
+> individual subpages.
+>
+> If a user tries to mlock() part of a huge page, we want the rest of the=
 
-K. Y
+> page to be reclaimable.
+>
+> We handle this by keeping PTE-mapped huge pages on normal LRU lists: th=
+e
+> PMD on border of VM_LOCKED VMA will be split into PTE table.
+>
+> Introduction of THP migration breaks[1] the rules around mlocking THP
+> pages. If we had a single PMD mapping of the page in mlocked VMA, the
+> page will get mlocked, regardless of PTE mappings of the page.
+>
+> For tmpfs/shmem it's easy to fix by checking PageDoubleMap() in
+> remove_migration_pmd().
+>
+> Anon THP pages can only be shared between processes via fork(). Mlocked=
 
+> page can only be shared if parent mlocked it before forking, otherwise
+> CoW will be triggered on mlock().
+>
+> For Anon-THP, we can fix the issue by munlocking the page on removing P=
+TE
+> migration entry for the page. PTEs for the page will always come after
+> mlocked PMD: rmap walks VMAs from oldest to newest.
+>
+> Test-case:
+>
+> 	#include <unistd.h>
+> 	#include <sys/mman.h>
+> 	#include <sys/wait.h>
+> 	#include <linux/mempolicy.h>
+> 	#include <numaif.h>
+>
+> 	int main(void)
+> 	{
+> 	        unsigned long nodemask =3D 4;
+> 	        void *addr;
+>
+> 		addr =3D mmap((void *)0x20000000UL, 2UL << 20, PROT_READ | PROT_WRITE=
+,
+> 			MAP_PRIVATE | MAP_ANONYMOUS | MAP_LOCKED, -1, 0);
+>
+> 	        if (fork()) {
+> 			wait(NULL);
+> 			return 0;
+> 	        }
+>
+> 	        mlock(addr, 4UL << 10);
+> 	        mbind(addr, 2UL << 20, MPOL_PREFERRED | MPOL_F_RELATIVE_NODES,=
+
+> 	                &nodemask, 4, MPOL_MF_MOVE);
+>
+> 	        return 0;
+> 	}
+>
+> [1] https://lkml.kernel.org/r/CAOMGZ=3DG52R-30rZvhGxEbkTw7rLLwBGadVYeo-=
+-iizcD3upL3A@mail.gmail.com
+>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+> Fixes: 616b8371539a ("mm: thp: enable thp migration in generic path")
+> Cc: <stable@vger.kernel.org> [v4.14+]
+> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> ---
+>  mm/huge_memory.c | 2 +-
+>  mm/migrate.c     | 3 +++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 533f9b00147d..00704060b7f7 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2931,7 +2931,7 @@ void remove_migration_pmd(struct page_vma_mapped_=
+walk *pvmw, struct page *new)
+>  	else
+>  		page_add_file_rmap(new, true);
+>  	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+> -	if (vma->vm_flags & VM_LOCKED)
+> +	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
+>  		mlock_vma_page(new);
+>  	update_mmu_cache_pmd(vma, address, pvmw->pmd);
+>  }
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index d6a2e89b086a..9d374011c244 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -275,6 +275,9 @@ static bool remove_migration_pte(struct page *page,=
+ struct vm_area_struct *vma,
+>  		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
+>  			mlock_vma_page(new);
+>
+> +		if (PageTransHuge(page) && PageMlocked(page))
+> +			clear_page_mlock(page);
+> +
+>  		/* No need to invalidate - it was non-present before */
+>  		update_mmu_cache(vma, pvmw.address, pvmw.pte);
+>  	}
+> -- =
+
+> 2.18.0
+
+Thank you for the patch.
+
+Reviewed-by: Zi Yan <zi.yan@cs.rutgers.edu>
+
+--
+Best Regards
+Yan Zi
+
+--=_MailMate_77024829-9149-44E2-8585-7FAB1DBDD09D_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - https://gpgtools.org
+
+iQEcBAEBCgAGBQJbn7gHAAoJEEGLLxGcTqbMAtMIAJhhq7gAYdDlkf2IbQ8h3rGV
+0Xi9sn44v7wMc3ToNgepO9PXpF0MGAEQ9/MaZawrPR7MtTiiMxAI6WGF0O62Pji3
+2WKyEMN1SyGLk5wGaqLmZplzuDhanSlemjNK7R2zvtEeyEBATDDacTw3gnKfmsx5
+MwqEvtdcctOQQMQrwEMgxoXGegrmYgrmHesoOrC+cvg6dVIpAnAcbczkRg5U7U2T
+NpBdBxwuz3WSFFaZLphiG5gUCBZLztXtD5GoepQ4Q0iuuukJElUtbj0XcxAH1liw
+dPP8Jb/S6QhxfU9RPGUcj3LHVROux6bbXOhLHZfMby3bmlnyATbIASf5ZQnFssU=
+=ZICK
+-----END PGP SIGNATURE-----
+
+--=_MailMate_77024829-9149-44E2-8585-7FAB1DBDD09D_=--
