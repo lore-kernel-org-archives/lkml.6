@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02ECECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB17ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733D8214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 733D8214AB
+	by mail.kernel.org (Postfix) with ESMTP id A299E2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A299E2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbeIREdF (ORCPT
+        id S1730662AbeIREdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48936 "EHLO
+        Tue, 18 Sep 2018 00:33:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdE (ORCPT
+        with ESMTP id S1727202AbeIREdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:04 -0400
+        Tue, 18 Sep 2018 00:33:07 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 154C1C03;
-        Mon, 17 Sep 2018 23:03:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 430ACC77;
+        Mon, 17 Sep 2018 23:03:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 047/126] NFSv4.0 fix client reference leak in callback
-Date:   Tue, 18 Sep 2018 00:41:35 +0200
-Message-Id: <20180917211707.702093233@linuxfoundation.org>
+Subject: [PATCH 4.14 074/126] MIPS: Octeon: add missing of_node_put()
+Date:   Tue, 18 Sep 2018 00:42:02 +0200
+Message-Id: <20180917211709.070481335@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,48 +54,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 32cd3ee511f4e07ca25d71163b50e704808d22f4 ]
+[ Upstream commit b1259519e618d479ede8a0db5474b3aff99f5056 ]
 
-If there is an error during processing of a callback message, it leads
-to refrence leak on the client structure and eventually an unclean
-superblock.
+The call to of_find_node_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
 
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19558/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/callback_xdr.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/mips/cavium-octeon/octeon-platform.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/nfs/callback_xdr.c
-+++ b/fs/nfs/callback_xdr.c
-@@ -904,16 +904,21 @@ static __be32 nfs4_callback_compound(str
+--- a/arch/mips/cavium-octeon/octeon-platform.c
++++ b/arch/mips/cavium-octeon/octeon-platform.c
+@@ -322,6 +322,7 @@ static int __init octeon_ehci_device_ini
+ 		return 0;
  
- 	if (hdr_arg.minorversion == 0) {
- 		cps.clp = nfs4_find_client_ident(SVC_NET(rqstp), hdr_arg.cb_ident);
--		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp))
-+		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp)) {
-+			if (cps.clp)
-+				nfs_put_client(cps.clp);
- 			goto out_invalidcred;
-+		}
- 	}
+ 	pd = of_find_device_by_node(ehci_node);
++	of_node_put(ehci_node);
+ 	if (!pd)
+ 		return 0;
  
- 	cps.minorversion = hdr_arg.minorversion;
- 	hdr_res.taglen = hdr_arg.taglen;
- 	hdr_res.tag = hdr_arg.tag;
--	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0)
-+	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0) {
-+		if (cps.clp)
-+			nfs_put_client(cps.clp);
- 		return rpc_system_err;
--
-+	}
- 	while (status == 0 && nops != hdr_arg.nops) {
- 		status = process_op(nops, rqstp, &xdr_in,
- 				    rqstp->rq_argp, &xdr_out, rqstp->rq_resp,
+@@ -384,6 +385,7 @@ static int __init octeon_ohci_device_ini
+ 		return 0;
+ 
+ 	pd = of_find_device_by_node(ohci_node);
++	of_node_put(ohci_node);
+ 	if (!pd)
+ 		return 0;
+ 
 
 
