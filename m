@@ -6,89 +6,133 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5281ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E40BECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EED5214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EED5214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id CD26C214FF
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD26C214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeIQPKm (ORCPT
+        id S1728090AbeIQPON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 11:10:42 -0400
-Received: from mail.windriver.com ([147.11.1.11]:44933 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeIQPKm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 11:10:42 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w8H9hoAw004511
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 17 Sep 2018 02:43:51 -0700 (PDT)
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 17 Sep
- 2018 02:43:50 -0700
-Subject: Re: [PATCH] scripts/gcc-goto.sh: Show stdout and stderr for potential
- errors
-To:     <tglx@linutronix.de>, <kstewart@linuxfoundation.org>,
-        <pombredanne@nexb.com>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1533803685-42422-1-git-send-email-zhe.he@windriver.com>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <70e45fbe-b447-ee69-c870-c45f37a8f2c3@windriver.com>
-Date:   Mon, 17 Sep 2018 17:43:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Sep 2018 11:14:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55965 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727299AbeIQPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 11:14:13 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D57A41E03E34;
+        Mon, 17 Sep 2018 17:47:32 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
+ 17:47:24 +0800
+Subject: Re: [PATCH 5/5] scsi: libsas: fix a race condition when smp task
+ timeout
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180912082946.34814-1-yanaijie@huawei.com>
+ <20180912082946.34814-6-yanaijie@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <miaoxie@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>, Linuxarm <linuxarm@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <357ad1d1-1675-4479-c0c3-c872b5f71892@huawei.com>
+Date:   Mon, 17 Sep 2018 10:47:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <1533803685-42422-1-git-send-email-zhe.he@windriver.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+In-Reply-To: <20180912082946.34814-6-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-May I have your input?
+On 12/09/2018 09:29, Jason Yan wrote:
+> When the lldd is processing the complete sas task in interrupt and set
+> the task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to
+> be triggered at the same time. And smp_task_timedout() will complete the
+> task wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may
+> freed before lldd end the interrupt process. Thus a use-after-free will
+> happen.
+>
+> Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
+> set. And remove the check of the return value of the del_timer().
+>
+
+Hi Jason,
+
+Please mention that once the LLDD sets DONE, it must call task->done(), 
+which will call smp_task_done()->complete()
+
+> Reported-by: chenxiang <chenxiang66@hisilicon.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_expander.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+> index 52222940d398..0d1f72752ca2 100644
+> --- a/drivers/scsi/libsas/sas_expander.c
+> +++ b/drivers/scsi/libsas/sas_expander.c
+> @@ -48,17 +48,16 @@ static void smp_task_timedout(struct timer_list *t)
+>  	unsigned long flags;
+>
+>  	spin_lock_irqsave(&task->task_state_lock, flags);
+> -	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
+> +	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+>  		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
+> +		complete(&task->slow_task->completion);
+
+Nit: for consistency with any other time we use this lock, can we call 
+complete() outside the lock? Maybe just use a flag variable for this.
+
+> +	}
+>  	spin_unlock_irqrestore(&task->task_state_lock, flags);
+> -
+> -	complete(&task->slow_task->completion);
+>  }
+>
+>  static void smp_task_done(struct sas_task *task)
+>  {
+> -	if (!del_timer(&task->slow_task->timer))
+> -		return;
+> +	del_timer(&task->slow_task->timer);
+>  	complete(&task->slow_task->completion);
+>  }
+
+Do we also need this change or similar:
+static int smp_execute_task_sg(struct domain_device *dev,
+	if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
+		SAS_DPRINTK("smp task timed out or aborted\n");
+		i->dft->lldd_abort_task(task);
+-		if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+-			SAS_DPRINTK("SMP task aborted and not done\n");
+-			break;
+-		}
++		break;
+
+To me, the ABORTED and DONE states are mutually exclusive.
+
+>
+>
 
 Thanks,
-Zhe
+John
 
-On 2018年08月09日 16:34, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
->
-> The check may fail not only because ${CC} does not support the asm
-> feature, but also due to potential defects of ${CC} itself like what
-> we experienced below or even it's missing.
->
-> Assembler messages:
-> Fatal error: The input and output files must be distinct
-> (introduced by binutils-2.31 "Stop the assembler from overwriting its
-> output file.")
->
-> This patch enables stdout and stderr to give user direct error
-> information for those cases, while not polluting the output for normal
-> cases.
->
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
->  scripts/gcc-goto.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/gcc-goto.sh b/scripts/gcc-goto.sh
-> index 083c526..bd7fc8eb 100755
-> --- a/scripts/gcc-goto.sh
-> +++ b/scripts/gcc-goto.sh
-> @@ -3,7 +3,7 @@
->  # Test for gcc 'asm goto' support
->  # Copyright (C) 2010, Jason Baron <jbaron@redhat.com>
->  
-> -cat << "END" | $@ -x c - -c -o /dev/null >/dev/null 2>&1 && echo "y"
-> +cat << "END" | $@ -x c - -c -o /dev/null && echo "y"
->  int main(void)
->  {
->  #if defined(__arm__) || defined(__aarch64__)
 
