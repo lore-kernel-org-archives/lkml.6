@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D141ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FE7ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB1B2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:55:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DB1B2088F
+	by mail.kernel.org (Postfix) with ESMTP id 506C12088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506C12088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbeIQTWz (ORCPT
+        id S1728603AbeIQTYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:22:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53184 "EHLO mx1.suse.de"
+        Mon, 17 Sep 2018 15:24:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53538 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726865AbeIQTWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:22:55 -0400
+        id S1726894AbeIQTYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:24:17 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1464BAD49;
-        Mon, 17 Sep 2018 13:55:27 +0000 (UTC)
-Subject: Re: [PATCH 3/5] scsi: libsas: always unregister the old device if
- going to discover new
+        by mx1.suse.de (Postfix) with ESMTP id 32697AC9C;
+        Mon, 17 Sep 2018 13:56:48 +0000 (UTC)
+Subject: Re: [PATCH 4/5] scsi: libsas: check the ata device status by
+ ata_dev_enabled()
 To:     Jason Yan <yanaijie@huawei.com>, martin.petersen@oracle.com,
         jejb@linux.vnet.ibm.com
 Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -37,14 +37,14 @@ Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         miaoxie@huawei.com, Ewan Milne <emilne@redhat.com>,
         Tomas Henzl <thenzl@redhat.com>
 References: <20180912082946.34814-1-yanaijie@huawei.com>
- <20180912082946.34814-4-yanaijie@huawei.com>
+ <20180912082946.34814-5-yanaijie@huawei.com>
 From:   Hannes Reinecke <hare@suse.com>
-Message-ID: <c64532c9-9497-29c5-9d96-efef453ee050@suse.com>
-Date:   Mon, 17 Sep 2018 15:55:26 +0200
+Message-ID: <d9c96aca-3761-7fce-a5c8-2b7061900f6b@suse.com>
+Date:   Mon, 17 Sep 2018 15:56:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180912082946.34814-4-yanaijie@huawei.com>
+In-Reply-To: <20180912082946.34814-5-yanaijie@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,16 +54,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 09/12/2018 10:29 AM, Jason Yan wrote:
-> If we went into sas_rediscover_dev() the attached_sas_addr was already
-> insured not to be zero. So it's unnecessary to check if the
-> attached_sas_addr is zero.
+> When ata device IDENTIFY failed, the ata device status is
+> ATA_DEV_UNKNOWN. The libata reported like:
 > 
-> And although if the sas address is not changed, we always have to
-> unregister the old device when we are going to register a new one. We
-> cannot just leave the device there and bring up the new.
+> [113518.620433] ata5.00: qc timeout (cmd 0xec)
+> [113518.653646] ata5.00: failed to IDENTIFY (I/O error, err_mask=0x4)
 > 
+> But libsas verifies the device status by ata_dev_disabled(), which
+> skiped ATA_DEV_UNKNOWN. This will make libsas think the ata device
+> probing succeed the device cannot be actually brought up. And even the
+> new bcast of this device will be considered as flutter and will not
+> probe this device again.
+> 
+> Change ata_dev_disabled() to !ata_dev_enabled() so that libsas can
+> deal with this if the ata device probe failed. New bcasts can let us
+> try to probe the device again and bring it up if it is fine to
+> IDENTIFY.
+> 
+> Tested-by: Zhou Yupeng <zhouyupeng1@huawei.com>
 > Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> CC: chenxiang <chenxiang66@hisilicon.com>
 > CC: John Garry <john.garry@huawei.com>
 > CC: Johannes Thumshirn <jthumshirn@suse.de>
 > CC: Ewan Milne <emilne@redhat.com>
@@ -71,35 +80,23 @@ On 09/12/2018 10:29 AM, Jason Yan wrote:
 > CC: Tomas Henzl <thenzl@redhat.com>
 > CC: Dan Williams <dan.j.williams@intel.com>
 > CC: Hannes Reinecke <hare@suse.com>
-> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 > ---
->  drivers/scsi/libsas/sas_expander.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
+>  drivers/scsi/libsas/sas_ata.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-> index fadc99cb60df..52222940d398 100644
-> --- a/drivers/scsi/libsas/sas_expander.c
-> +++ b/drivers/scsi/libsas/sas_expander.c
-> @@ -2054,14 +2054,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
->  		return res;
+> diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+> index 64a958a99f6a..4f6cdf53e913 100644
+> --- a/drivers/scsi/libsas/sas_ata.c
+> +++ b/drivers/scsi/libsas/sas_ata.c
+> @@ -654,7 +654,7 @@ void sas_probe_sata(struct asd_sas_port *port)
+>  		/* if libata could not bring the link up, don't surface
+>  		 * the device
+>  		 */
+> -		if (ata_dev_disabled(sas_to_ata_dev(dev)))
+> +		if (!ata_dev_enabled(sas_to_ata_dev(dev)))
+>  			sas_fail_probe(dev, __func__, -ENODEV);
 >  	}
 >  
-> -	/* delete the old link */
-> -	if (SAS_ADDR(phy->attached_sas_addr) &&
-> -	    SAS_ADDR(sas_addr) != SAS_ADDR(phy->attached_sas_addr)) {
-> -		SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
-> -			    SAS_ADDR(dev->sas_addr), phy_id,
-> -			    SAS_ADDR(phy->attached_sas_addr));
-> -		sas_unregister_devs_sas_addr(dev, phy_id, last);
-> -	}
-> +	/* we always have to delete the old device when we went here */
-> +	SAS_DPRINTK("ex %016llx phy 0x%x replace %016llx\n",
-> +		    SAS_ADDR(dev->sas_addr), phy_id,
-> +		    SAS_ADDR(phy->attached_sas_addr));
-> +	sas_unregister_devs_sas_addr(dev, phy_id, last);
->  
->  	return sas_discover_new(dev, phy_id);
->  }
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 
