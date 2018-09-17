@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BD5ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F15ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324022146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324022146D
+	by mail.kernel.org (Postfix) with ESMTP id F054A2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F054A2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbeIREXZ (ORCPT
+        id S1729099AbeIREYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:23:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45590 "EHLO
+        Tue, 18 Sep 2018 00:24:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeIREXY (ORCPT
+        with ESMTP id S1727229AbeIREYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:23:24 -0400
+        Tue, 18 Sep 2018 00:24:06 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D8A3CA0;
-        Mon, 17 Sep 2018 22:53:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 550C0CA0;
+        Mon, 17 Sep 2018 22:54:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 29/70] tty: rocket: Fix possible buffer overwrite on register_PCI
-Date:   Tue, 18 Sep 2018 00:42:02 +0200
-Message-Id: <20180917211651.508272700@linuxfoundation.org>
+Subject: [PATCH 4.9 30/70] f2fs: do not set free of current section
+Date:   Tue, 18 Sep 2018 00:42:03 +0200
+Message-Id: <20180917211651.598148574@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -51,37 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-[ Upstream commit 0419056ec8fd01ddf5460d2dba0491aad22657dd ]
+[ Upstream commit 3611ce9911267cb93d364bd71ddea6821278d11f ]
 
-If number of isa and pci boards exceed NUM_BOARDS on the path
-rp_init()->init_PCI()->register_PCI() then buffer overwrite occurs
-in register_PCI() on assign rcktpt_io_addr[i].
+For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+example, if segment 1 is just used and allocate new segment 2, and the
+blocks of segment 1 is invalidated, at this time, the previous code will
+use __set_test_and_free to free the free_secmap and free_sections++,
+this is not correct since it is still a current section, so fix it.
 
-The patch adds check on upper bound for index of registered
-board in register_PCI.
-
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/rocket.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/segment.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/tty/rocket.c
-+++ b/drivers/tty/rocket.c
-@@ -1913,7 +1913,7 @@ static __init int register_PCI(int i, st
- 	ByteIO_t UPCIRingInd = 0;
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -386,6 +386,8 @@ static inline void __set_test_and_free(s
+ 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
+ 		free_i->free_segments++;
  
- 	if (!dev || !pci_match_id(rocket_pci_ids, dev) ||
--	    pci_enable_device(dev))
-+	    pci_enable_device(dev) || i >= NUM_BOARDS)
- 		return 0;
++		if (IS_CURSEC(sbi, secno))
++			goto skip_free;
+ 		next = find_next_bit(free_i->free_segmap,
+ 				start_segno + sbi->segs_per_sec, start_segno);
+ 		if (next >= start_segno + sbi->segs_per_sec) {
+@@ -393,6 +395,7 @@ static inline void __set_test_and_free(s
+ 				free_i->free_sections++;
+ 		}
+ 	}
++skip_free:
+ 	spin_unlock(&free_i->segmap_lock);
+ }
  
- 	rcktpt_io_addr[i] = pci_resource_start(dev, 0);
 
 
