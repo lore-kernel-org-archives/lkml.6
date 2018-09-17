@@ -7,51 +7,56 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FFAECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AD8ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E7F208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311AD208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="fyRpqVSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E7F208AE
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="AiU46qyA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311AD208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbeIQIzH (ORCPT
+        id S1729500AbeIQI15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:55:07 -0400
-Received: from mail-eopbgr710116.outbound.protection.outlook.com ([40.107.71.116]:59328
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729486AbeIQI15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 04:27:57 -0400
+Received: from mail-by2nam03on0129.outbound.protection.outlook.com ([104.47.42.129]:47904
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729483AbeIQI14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:27:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kvGs5Cm/BzoQtT9P8g0uaTWVPG7cR4kMgCBWvHR4oxc=;
- b=fyRpqVSWqCJbH6nr6S8HvLdKSU++W7Zt58Yi8xyoeTMCVJaiDeJMhVSaxClyyj+dIO1LOE8+xUpyZIe+7QOSTz9Sp8Jc+8m/eX1gZL3q3Y/riIGRcL+iJoPLrH43HSgSViCw5Pk5LZ1dW8NzDiHkhNwgNcnqS/ypa62KY+NaCao=
+ bh=0BywqZ5QSg6CiGchPncd7VdxCgOiJ3bEGenEX1by9gQ=;
+ b=AiU46qyADG4TzPr2Ani6Q+2XBLOsMiHpt11Wz4Vaol/o+OKmmjOxG5hI7kusurFW1To584l330gNVsL78gftflhHrz20UfZHF/SMUW1poxjYzHrjYB61eHw6qkJ5IhDVFmIXcVB/QemyjwjsEi7ba+bQDdN1kBJMyQTSuGmrLak=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0790.namprd21.prod.outlook.com (10.175.121.144) with Microsoft SMTP
+ CY4PR21MB0168.namprd21.prod.outlook.com (10.173.192.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.9; Mon, 17 Sep 2018 03:02:36 +0000
+ 15.20.1164.12; Mon, 17 Sep 2018 03:02:39 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:02:36 +0000
+ 03:02:39 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Ethan Tuttle <ethan@ethantuttle.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+CC:     Stephen Boyd <swboyd@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Jiri Kosina <jkosina@suse.cz>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 097/136] ARM: mvebu: declare asm symbols as
- character arrays in pmsu.c
-Thread-Topic: [PATCH AUTOSEL 4.18 097/136] ARM: mvebu: declare asm symbols as
- character arrays in pmsu.c
-Thread-Index: AQHUTjKxeF768D58vkajZHy8p+YUaA==
-Date:   Mon, 17 Sep 2018 03:01:13 +0000
-Message-ID: <20180917030006.245495-97-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 103/136] HID: i2c-hid: Use devm to allocate
+ i2c_hid struct
+Thread-Topic: [PATCH AUTOSEL 4.18 103/136] HID: i2c-hid: Use devm to allocate
+ i2c_hid struct
+Thread-Index: AQHUTjKzt5qiF4nk4kKYKvbnZPUdoA==
+Date:   Mon, 17 Sep 2018 03:01:17 +0000
+Message-ID: <20180917030006.245495-103-alexander.levin@microsoft.com>
 References: <20180917030006.245495-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,98 +65,103 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0790;6:9RbS/Tkx9jo3K+OF05J1QH2uRnwRigqqI3ju4XSLGaOix6C+NSIMX9yqKfZSkdADSZtt6//uaQ15FPEf5QQppXnr/L5TenvxbZYf0kUClpKIymNcsKFNiGLVt+ti5BHP0KDgNJm7o6sZvprFT7eDWgxJsEbrY/SwesK/d1fx0RjXjLAZD+/NWzVybr7lYLRs7Op33q/B1OGAs1GDeQ0XNXECWq/rkwJPUMSqJLEjbFBQSK89L76D5zM0ZhAXuteDj0XgitXfq81Q+V+3dSKnCsKvbiN51y3OpacQ3rfKifVF585MGNra67qLELoNOGeq4ARZMsG+UTAK5oSBhxJhFv9Abnk6Q/jFpeYxDIUcsQvGwQjPIPx2OWedbpHFgE4TqzZyeKRaHMBljsQRRyE/ygNa0wwjo7HOfnSX2j2nzI4DsMQhvN7XhPSMcEtVpQKOZ1CK92qdTY+QkbKxN5uJzQ==;5:dyZPdcE0ee1af6VwUq3KK4Yi1uHLJ9Xtg71hpxTvunXPsnjI7sZPI+w4JEHD6MdEDEkGMoOwdKdG9+vB83vZh4VuEo0TgE1ALZ4ZpTwMFbLkk6ZuI4PwdUaViktA638PlAYa5rlxeSRnNUNAtUPOJhmbFncjm7gzEhcyJGnn5Ds=;7:LXIIPaVue3jQyy70bWgF1hYgtOvBL90XWJ/vi8lHZJrYvTIHBBKvXgQNDcBUVAbQBfH0yIvHeRbmPV+CM/Q25Y9xucVOFewVxnRuSKEx3Jf5m5W3njAK74jGPEhjY318mF/klL9rNCP4aT4MAQOxaB6xyeNxNaIwJuHdDHpoo/tGLj66Hc67Vbo9XA7+RPyTMBu91BD9inAshvpsxfq0xPWyHRpiJYJHzOz4Taqi1OYTl48HNu2lqZq5WEeO2ElI
-x-ms-office365-filtering-correlation-id: 70f46c4b-154a-4408-305a-08d61c4a0587
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0168;6:lMt0CD0NpEZkuajzAQ/EyVZ+7pz5xGiq2SBlesX/D7dkcmKk1f5TTmcb4Az/N4y7VZKUjmZeaLFsGOKF+8SLbnx+MwldEGXmNWwLcue+dqwpZAV8ckdzXT/GokbI9ykxf98OypSGOfnx0e7hUnSJd5YyvMCdK3oAn7NOCtAs4uah1Mzs2uOfxyHDSuh1sVWrTCXTFg6GTay88jRBbcgZVHqaWB5CBMgKnzWcHgW80YBTNwq3nrv4sH0KQazEJ6vRLMXkF3/xK0uZLj086Vza/890BpokjFRyGDuzwYCfch4LynSApxEmKtyRJ2tzuieG9YLrLXO9C0PAgEI+/bNEz0QHGiwTivbPMHs51BzAlx6p2A8uN8Xm+5uqLBCgvdEVJIpt5GURgrM1Cg3eKUpeU458XHqc0HicVmnM61cBKsIhStjWYoiU17jhzhjcT/7OphYdLNEzRf6wVY0iCyi1yw==;5:rLsg5NsPHoX76Fn+q3JVHjXwGBIpsX1Tv47aA3i8MRVt1G6ANz/NSbKR2sFHB2X68vQaWsChoAt6gSyY84PEdiPL725j9Fq7oNwLYEOaxKHyuVCzAOMOJzeQNaeuSlqFiqPlQFAIOU1kaWLA4K+CHCVbR+83ltdP7WdBBsvgMqo=;7:beDCi8u/Mtpu/X3v4V/b166ox5s71q43YzFKQ82ueHcYOreqKOO4DaZ40gne8suZ01b/Is7uTiFQFiQCXY0Prbfz2xaSN5ytHs0suSCBlIcHOTTb06e3ReGhkn4/Rlos7GWsFnWXRnWONgvNtc5XPvC1vdY8v7sAHwirsJ0o8q56XVpt9iQKBHOP9J9HL0EP0IHw+FRGyDRfez4vS4jduo83S2ZEYfJEXUp+t9Ru9IKc++y4BBXMfpicy+YgmIMa
+x-ms-office365-filtering-correlation-id: 8ccaaac7-a0a7-44ac-a2dc-08d61c4a0761
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0790;
-x-ms-traffictypediagnostic: CY4PR21MB0790:
-x-microsoft-antispam-prvs: <CY4PR21MB07906900E8A16E0E7F4F0FB8FB1E0@CY4PR21MB0790.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0168;
+x-ms-traffictypediagnostic: CY4PR21MB0168:
+x-microsoft-antispam-prvs: <CY4PR21MB01686A4B0DFFE9959A4CBD55FB1E0@CY4PR21MB0168.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0790;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0790;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0168;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0168;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(396003)(376002)(366004)(199004)(189003)(76176011)(22452003)(6666003)(110136005)(99286004)(6436002)(6486002)(2900100001)(2906002)(54906003)(6346003)(10090500001)(5660300001)(7736002)(6512007)(14444005)(217873002)(316002)(256004)(53936002)(36756003)(6506007)(25786009)(106356001)(26005)(86612001)(10290500003)(1076002)(68736007)(476003)(6116002)(3846002)(478600001)(5250100002)(11346002)(446003)(72206003)(2501003)(81156014)(81166006)(8676002)(14454004)(102836004)(107886003)(186003)(2616005)(575784001)(97736004)(86362001)(66066001)(305945005)(486006)(8936002)(4326008)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0790;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(366004)(39860400002)(346002)(136003)(199004)(189003)(11346002)(4326008)(105586002)(106356001)(486006)(446003)(6436002)(2616005)(22452003)(107886003)(10090500001)(25786009)(476003)(14454004)(110136005)(54906003)(316002)(2906002)(76176011)(99286004)(575784001)(36756003)(186003)(26005)(6346003)(5660300001)(7736002)(305945005)(10290500003)(8676002)(81156014)(81166006)(6486002)(68736007)(6666003)(102836004)(6116002)(3846002)(1076002)(53936002)(217873002)(72206003)(97736004)(6506007)(8936002)(86362001)(256004)(6512007)(2501003)(5250100002)(2900100001)(478600001)(66066001)(86612001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0168;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: 2jAv4E5FAGcSlkeiggpWgItCsXVOttB9tQssCibTMvoBHCOk5LYPGb5gm1pzNAwafPUxiyrR2eHDV+MYEZ35R/g4Wim7G/MEwHAsKHeSPhFx/kBwETns2ziJEgCM70NqHEbc6vtq8fg8I0Dj+wfPCZ5ODFk6bOhI28zl5qdJxWXUF5vh/F4++OUZzmT6JVWoszx+qY0+G6RcQmFiIjFLAFXiANp8zcjOJxmrCiTfxcNF8fr7a9TmK4FEf/4zUZrjvbIR7vgTW1FRt+LYNQy3f12ITuftJrkgjTGmgJxkkYBNkdOkezFOpxZN2OdvCtN0pxpe43EDnMY7VDhwaLX0HQT9mHUedZeA3ZjlgjG9jI8=
+x-microsoft-antispam-message-info: Y1veynlfDm5SiW1ikcpJ+wh1BvBasR6T5nZzz+REpfsfNVaWru7JH4vB6I7P1vghUEKuYhEK5NrxwHDi2PGTOOm0vCMTU1HEDyZYj5kQJfwK6QAPW+A9pFuUMDcoRv7sWx5MOEtP78KqhAGTiU5QeivSbL68MemKZfsdQe6qU/kORsujAKbpBXemgh6mEYCvmN3qToul//1u/Vs4I1aBns0+MulLH+n/IY/NuVgJ+3naTPXNE+dBNvDesVw25emDu8FN//Z5xXf9axU0Fdmw0EausEz3FuPnpxawcQyPxfk2Wbkq+VNSzHcFIWCicfBRTcGg9uhx1nwtYfAlJ1oe5UmA2ESXj1nXluOVTfR1LxY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70f46c4b-154a-4408-305a-08d61c4a0587
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:01:13.2292
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ccaaac7-a0a7-44ac-a2dc-08d61c4a0761
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:01:17.4166
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0790
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ethan Tuttle <ethan@ethantuttle.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit d0d378ff451a66e486488eec842e507d28145813 ]
+[ Upstream commit d6f83894110de247a81392ab7ef89e5498df7e80 ]
 
-With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
-detect buffer overflows.  If src or dest is declared as a char, attempts to
-copy more than byte will result in a fortify_panic().
+Use devm here to save some lines and prepare for bulk regulator usage in
+this driver. Otherwise, when we devm bulk get regulators we'll free the
+containing i2c_hid structure and try to put regulator pointers from
+freed memory.
 
-Address this problem in mvebu_setup_boot_addr_wa() by declaring
-mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
-a couple addressof operators to avoid "arithmetic on pointer to an
-incomplete type" compiler error.
-
-See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
-not single characters") for a similar fix.
-
-Fixes "detected buffer overflow in memcpy" error during init on some mvebu
-systems (armada-370-xp, armada-375):
-
-(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
-(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
-(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
-(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
-(kernel_init_freeable) from (kernel_init+0x8/0x114)
-(kernel_init) from (ret_from_fork+0x14/0x2c)
-
-Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
-Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Dmitry Torokhov <dtor@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/arm/mach-mvebu/pmsu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-mvebu/pmsu.c b/arch/arm/mach-mvebu/pmsu.c
-index 27a78c80e5b1..73d5d72dfc3e 100644
---- a/arch/arm/mach-mvebu/pmsu.c
-+++ b/arch/arm/mach-mvebu/pmsu.c
-@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw_cpu, void *boo=
-t_addr)
- 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index eae0cb3ddec6..3d1506f1c590 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1002,18 +1002,18 @@ static int i2c_hid_probe(struct i2c_client *client,
+ 		return client->irq;
+ 	}
+=20
+-	ihid =3D kzalloc(sizeof(struct i2c_hid), GFP_KERNEL);
++	ihid =3D devm_kzalloc(&client->dev, sizeof(*ihid), GFP_KERNEL);
+ 	if (!ihid)
+ 		return -ENOMEM;
+=20
+ 	if (client->dev.of_node) {
+ 		ret =3D i2c_hid_of_probe(client, &ihid->pdata);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 	} else if (!platform_data) {
+ 		ret =3D i2c_hid_acpi_pdata(client, &ihid->pdata);
+ 		if (ret)
+-			goto err;
++			return ret;
+ 	} else {
+ 		ihid->pdata =3D *platform_data;
+ 	}
+@@ -1126,7 +1126,6 @@ static int i2c_hid_probe(struct i2c_client *client,
+=20
+ err:
+ 	i2c_hid_free_buffers(ihid);
+-	kfree(ihid);
+ 	return ret;
  }
 =20
--extern unsigned char mvebu_boot_wa_start;
--extern unsigned char mvebu_boot_wa_end;
-+extern unsigned char mvebu_boot_wa_start[];
-+extern unsigned char mvebu_boot_wa_end[];
+@@ -1150,8 +1149,6 @@ static int i2c_hid_remove(struct i2c_client *client)
 =20
- /*
-  * This function sets up the boot address workaround needed for SMP
-@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned int crypto_eng_ta=
-rget,
- 			     phys_addr_t resume_addr_reg)
- {
- 	void __iomem *sram_virt_base;
--	u32 code_len =3D &mvebu_boot_wa_end - &mvebu_boot_wa_start;
-+	u32 code_len =3D mvebu_boot_wa_end - mvebu_boot_wa_start;
+ 	regulator_disable(ihid->pdata.supply);
 =20
- 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
- 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
+-	kfree(ihid);
+-
+ 	return 0;
+ }
+=20
 --=20
 2.17.1
