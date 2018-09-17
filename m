@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7901ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA23ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AC22146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AC22146F
+	by mail.kernel.org (Postfix) with ESMTP id 498282146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:01:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 498282146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeIREbC (ORCPT
+        id S1730246AbeIREbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48298 "EHLO
+        Tue, 18 Sep 2018 00:31:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48308 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREbB (ORCPT
+        with ESMTP id S1727088AbeIREbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:01 -0400
+        Tue, 18 Sep 2018 00:31:05 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A28E1C03;
-        Mon, 17 Sep 2018 23:01:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6EBAC77;
+        Mon, 17 Sep 2018 23:01:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 037/126] gpu: ipu-v3: default to id 0 on missing OF alias
-Date:   Tue, 18 Sep 2018 00:41:25 +0200
-Message-Id: <20180917211707.198115795@linuxfoundation.org>
+Subject: [PATCH 4.14 038/126] misc: ti-st: Fix memory leak in the error path of probe()
+Date:   Tue, 18 Sep 2018 00:41:26 +0200
+Message-Id: <20180917211707.239358815@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -51,30 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 2d87e6c1b99c402360fdfe19ce4f579ab2f96adf ]
+[ Upstream commit 81ae962d7f180c0092859440c82996cccb254976 ]
 
-This is better than storing -ENODEV in the id number. This fixes SoCs
-with only one IPU that don't specify an IPU alias in the device tree.
+Free resources instead of direct return of the error code if kim_probe
+fails.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/ipu-v3/ipu-common.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/ti-st/st_kim.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/ipu-v3/ipu-common.c
-+++ b/drivers/gpu/ipu-v3/ipu-common.c
-@@ -1401,6 +1401,8 @@ static int ipu_probe(struct platform_dev
- 		return -ENODEV;
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -756,14 +756,14 @@ static int kim_probe(struct platform_dev
+ 	err = gpio_request(kim_gdata->nshutdown, "kim");
+ 	if (unlikely(err)) {
+ 		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
  
- 	ipu->id = of_alias_get_id(np, "ipu");
-+	if (ipu->id < 0)
-+		ipu->id = 0;
- 
- 	if (of_device_is_compatible(np, "fsl,imx6qp-ipu") &&
- 	    IS_ENABLED(CONFIG_DRM)) {
+ 	/* Configure nShutdown GPIO as output=0 */
+ 	err = gpio_direction_output(kim_gdata->nshutdown, 0);
+ 	if (unlikely(err)) {
+ 		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
+ 	/* get reference of pdev for request_firmware
+ 	 */
 
 
