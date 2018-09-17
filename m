@@ -2,120 +2,111 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8FCECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25215ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E554A214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E554A214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id D9A6B214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A6B214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbeIQRyT (ORCPT
+        id S1728535AbeIQRy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:54:19 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:23471 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726826AbeIQRyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:54:19 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42DQNk3ndBz9ttCP;
-        Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 0MYFMlEue0Tc; Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42DQNk3HRsz9ttBj;
-        Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CE9F88B7A0;
-        Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 8TcXA_9GMHyX; Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9C90B8B79C;
-        Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
-Subject: Re: [PATCH] powerpc: fix csum_ipv6_magic() on little endian platforms
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Xin Long <lucien.xin@gmail.com>, benh@kernel.crashing.org,
-        paulus@samba.org, jishi@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-References: <3c4cddf185438cc7200908b4f971a8e6ed7472fd.1536558233.git.christophe.leroy@c-s.fr>
- <CADvbK_c+VVoC=tcX4z-NbX6xGHfkzzNuBXoMHFJfZdiBMzX3+w@mail.gmail.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <76289d79-0e7e-7b22-2364-0b5777f42c8b@c-s.fr>
-Date:   Mon, 17 Sep 2018 14:27:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CADvbK_c+VVoC=tcX4z-NbX6xGHfkzzNuBXoMHFJfZdiBMzX3+w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        Mon, 17 Sep 2018 13:54:28 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:33368 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728521AbeIQRy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 13:54:27 -0400
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8HCQeHE074486;
+        Mon, 17 Sep 2018 21:26:40 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Mon, 17 Sep 2018 21:26:40 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from localhost.localdomain (239.166.151.153.ap.dti.ne.jp [153.151.166.239])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8HCQZ52074459
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 17 Sep 2018 21:26:40 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH v2] arm64: dts: rockchip: add spdif sound node for rock64
+Date:   Mon, 17 Sep 2018 21:26:33 +0900
+Message-Id: <20180917122633.31401-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+This patch adds sound card node for rock64. Currently we can support
+S/PDIF only. It seems the lack of codec driver of rk3328 to enable
+analog audio out.
 
-Le 10/09/2018 à 16:28, Xin Long a écrit :
-> On Mon, Sep 10, 2018 at 2:09 PM Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->> On little endian platforms, csum_ipv6_magic() keeps len and proto in
->> CPU byte order. This generates a bad results leading to ICMPv6 packets
->> from other hosts being dropped by powerpc64le platforms.
->>
->> In order to fix this, len and proto should be converted to network
->> byte order ie bigendian byte order. However checksumming 0x12345678
->> and 0x56341278 provide the exact same result so it is enough to
->> rotate the sum of len and proto by 1 byte.
->>
->> PPC32 only support bigendian so the fix is needed for PPC64 only
->>
->> Fixes: e9c4943a107b ("powerpc: Implement csum_ipv6_magic in assembly")
->> Reported-by: Jianlin Shi <jishi@redhat.com>
->> Reported-by: Xin Long <lucien.xin@gmail.com>
->> Cc: <stable@vger.kernel.org> # 4.18+
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/lib/checksum_64.S | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/arch/powerpc/lib/checksum_64.S b/arch/powerpc/lib/checksum_64.S
->> index 886ed94b9c13..2a68c43e13f5 100644
->> --- a/arch/powerpc/lib/checksum_64.S
->> +++ b/arch/powerpc/lib/checksum_64.S
->> @@ -443,6 +443,9 @@ _GLOBAL(csum_ipv6_magic)
->>          addc    r0, r8, r9
->>          ld      r10, 0(r4)
->>          ld      r11, 8(r4)
->> +#ifndef CONFIG_CPU_BIG_ENDIAN
->> +       rotldi  r5, r5, 8
->> +#endif
->>          adde    r0, r0, r10
->>          add     r5, r5, r7
->>          adde    r0, r0, r11
->> --
->> 2.13.3
->>
-> Tested-by: Xin Long <lucien.xin@gmail.com>
-> 
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ .../arm64/boot/dts/rockchip/rk3328-rock64.dts | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Could you take this fix for 4.19 ?
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+index 5852061e497b..9ee4f57557f3 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+@@ -62,6 +62,23 @@
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 	};
++
++	sound {
++		compatible = "audio-graph-card";
++		label = "rockchip,rk3328";
++		dais = <&spdif_p0>;
++	};
++
++	spdif-dit {
++		compatible = "linux,spdif-dit";
++		#sound-dai-cells = <0>;
++
++		port {
++			dit_p0_0: endpoint {
++				remote-endpoint = <&spdif_p0_0>;
++			};
++		};
++	};
+ };
+ 
+ &cpu0 {
+@@ -261,6 +278,18 @@
+ 	status = "okay";
+ };
+ 
++&spdif {
++	pinctrl-0 = <&spdifm0_tx>;
++	status = "okay";
++	#sound-dai-cells = <0>;
++
++	spdif_p0: port {
++		spdif_p0_0: endpoint {
++			remote-endpoint = <&dit_p0_0>;
++		};
++	};
++};
++
+ &tsadc {
+ 	rockchip,hw-tshut-mode = <0>;
+ 	rockchip,hw-tshut-polarity = <0>;
+-- 
+2.18.0
 
-Unless someone takes it through the netdev tree ?
-
-Thanks
-Christophe
