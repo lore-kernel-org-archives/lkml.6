@@ -2,69 +2,68 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBC1ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8109EECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2681E214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC24214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmG3uuc/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2681E214DA
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgl2hjf1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC24214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbeIRADt (ORCPT
+        id S1728539AbeIRAEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:03:49 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40365 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbeIRADt (ORCPT
+        Mon, 17 Sep 2018 20:04:08 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54940 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbeIRAEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:03:49 -0400
-Received: by mail-it0-f66.google.com with SMTP id h23-v6so12269159ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 11:35:16 -0700 (PDT)
+        Mon, 17 Sep 2018 20:04:08 -0400
+Received: by mail-it0-f67.google.com with SMTP id f14-v6so12546022ita.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 11:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=4MvxcIxQK0YX3LzlA7sMwj811mocUxktLgEKX/cywM4=;
-        b=DmG3uuc/uBOF7ZRifGSJbWIv8FHVNMycRcAtbJnCxFxq6v+tgvreWWnjbKZ5ykENeR
-         EkfQXnd92KGBncmS1C4N5HOY2n1vheYHzMZ9zIysA77V45aIzQq89UPnr3PpEnOuLbwO
-         NKdBEDB7BilozItYw8vfS8XHzQscf8PoBG8SA=
+        bh=OYrSi1V7lR8DIOe2oTa8DcRNpOb3O2kJw7hmjEVYZdM=;
+        b=dgl2hjf16DdPgaXGVqXEe2t5FYZnBd/kjqH/R+K3zS6SQ9qajo/USXaF9gQTm4BZHR
+         vW5UATy5qBKo3VinDDCvh+5r7mANPTbLS3duHiwHDX8GU1cum16B/ZIByCf8cCdCDQZ5
+         4mqVMcjqJ1He9kQpw0PUBThrFOtmrRMtqB/FA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=4MvxcIxQK0YX3LzlA7sMwj811mocUxktLgEKX/cywM4=;
-        b=A52HvcxOwXdVXUyHfkxyV1CjDSvJrwtpFnjWLj7NVopODiG1tyQQcl9z0yN3Wrvib0
-         adn5osDlf9cLc6Knx8oa+IFw2dZhTtCvCWt5yCwIF/uNQbM7qHHN93T1H0HtGORh3ijj
-         LrkPMhcFHBhpNITG7Zp0OFovyBzYgoT1mg+MNQeG/bDZYmWrXDBMf21lzKv3XCqGL1Wi
-         oGOucDwHv7N/kk74XQoay9dmmBU/k01N5x4mo5qCxEdf0/I/0CHs3ZxpXirh9RV3y1jz
-         9PrrRZICPjb2MI6SI9r6AXamQ4fhlG5mbVULR2X/GzNp8IDeh6SBoV8Py90gEszsOFv5
-         21mw==
-X-Gm-Message-State: APzg51AmjT/N+DMMQnpRQI+0w2+v8cm1+GvUglBsdMt1z9VWnUZPobaT
-        owAT/sxSjWNm0qBFHd14/B7GJAfJCDol2q3bbYouvfLOFbw=
-X-Google-Smtp-Source: ANB0VdYsO70f2/2RhPowVBnLc/dVbbAqrFt1ugAiZJlGIEZE4PF8npNAVwKUtNE/6dedMAMhkQFVBU0S3aXQW6Ipj5U=
-X-Received: by 2002:a02:344:: with SMTP id y65-v6mr24163279jad.121.1537209315619;
- Mon, 17 Sep 2018 11:35:15 -0700 (PDT)
+        bh=OYrSi1V7lR8DIOe2oTa8DcRNpOb3O2kJw7hmjEVYZdM=;
+        b=PYBol6L4pbhw1T5DdEeqTWs3yLV6N1smpfq/koWyC9o52+1MjzyrNPP80Ea/RJDN+6
+         C8kbJNm/xZlPwpNIWe4oi35Y0lM1Wr5+QtOdHZPQYpm+JxLch8fY3+Me0svw3vUo3gwo
+         XNH7ueLjx9MFa4WfJNJiJ0pImLITPXjAJcq9bFAW5jS4FyAu2XjXXtuG55F3ifsnGbS+
+         Jnkglf8rzO9GX6TlC9ybF5+nthn2TtxJZtOCk7Sa0b5Tw/GcsKV5ktMZHBZmcFVRjH3T
+         gkiD6ypvv3Yz2rfkDMleTr94MF3A3l2DfUa5bvbgbEs4kIlPFxI0J+bDotOA/RCYsoaf
+         4YgA==
+X-Gm-Message-State: APzg51APi4bbIKnv96lipEoF6hkWutZ3ZQYdMnXf5yOGwqsnnDvQjvhy
+        EdptlK4mteo1JmOAC7rNbAvg8hH7D5edu6UKd4QbHA==
+X-Google-Smtp-Source: ANB0VdZ0Ex2w3dJw4hgwjh14TGTgqASEzpytuHW0smBFhctbv9v4roCqBi5WZ1pIK1MX2apKgqXVBY9oDgt6A3IJcN8=
+X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr13259180ita.64.1537209334180;
+ Mon, 17 Sep 2018 11:35:34 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 11:35:15
+Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 11:35:33
  -0700 (PDT)
-In-Reply-To: <20180917133041.66100101@xhacker.debian>
-References: <20180917133041.66100101@xhacker.debian>
+In-Reply-To: <20180911144701.53383-1-hangdianqj@163.com>
+References: <20180911144701.53383-1-hangdianqj@163.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 17 Sep 2018 20:35:15 +0200
-Message-ID: <CAPDyKFrBQHxOr5qfWir7SorJEvmvCjT_jNABwFXhGoR=_Zcc=Q@mail.gmail.com>
-Subject: Re: [PATCH mmc-next] mmc: sdhci: fix __sdhci_adma_write_desc
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+Date:   Mon, 17 Sep 2018 20:35:33 +0200
+Message-ID: <CAPDyKFqr61j91qPKMv49nSKnwUbiZxPXDCYpbX4CNvN7eVGWGw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mxcmmc: replace spin_lock_irqsave with spin_lock in ISR
+To:     jun qian <hangdianqj@163.com>
+Cc:     Kees Cook <keescook@chromium.org>, Allen <allen.lkml@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,57 +71,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 September 2018 at 07:30, Jisheng Zhang
-<Jisheng.Zhang@synaptics.com> wrote:
-> If hosts provides ops->adma_write_desc, we should not fall back to the
-> general sdhci_adma_write_desc().
+On 11 September 2018 at 16:47, jun qian <hangdianqj@163.com> wrote:
+> As you are already in ISR, it is unnecessary to call spin_lock_irqsave.
 >
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->
-> Hi Ulf, Adrian,
->
-> When I introduced .adma_write_desc, I made a mistake since v4 -- if the host
-> provide ops->adma_write_desc, we should just call it and don't fall back
-> to the general sdhci_adma_write_desc(). Before v4, the adma_write_desc return
-> int, since v4 there's no return value, so when I prepared the v4, I just
-> removed return, this is where the mistake is from. I dunno how to handle
-> this case, fold the patch into previous commit or apply it as a separate patch?
->
-> I'm very sorry for this. In fact, Adrian caught another similar bug during
-> review.
->
-> Sorry about the inconvenience,
-> Jisheng
+> Signed-off-by: jun qian <hangdianqj@163.com>
 
-No worries, mistakes happens - the important thing is that we fix them!
-
-Thanks for providing the information above.
-
-I have applied this as is for next.
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
+> ---
+>  drivers/mmc/host/mxcmmc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 >
->  drivers/mmc/host/sdhci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 0dda6f4b6a24..99bdae53fa2e 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -649,8 +649,8 @@ static inline void __sdhci_adma_write_desc(struct sdhci_host *host,
+> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+> index de4e6e5bf304..4d17032d15ee 100644
+> --- a/drivers/mmc/host/mxcmmc.c
+> +++ b/drivers/mmc/host/mxcmmc.c
+> @@ -728,7 +728,6 @@ static void mxcmci_cmd_done(struct mxcmci_host *host, unsigned int stat)
+>  static irqreturn_t mxcmci_irq(int irq, void *devid)
 >  {
->         if (host->ops->adma_write_desc)
->                 host->ops->adma_write_desc(host, desc, addr, len, cmd);
-> -
-> -       sdhci_adma_write_desc(host, desc, addr, len, cmd);
-> +       else
-> +               sdhci_adma_write_desc(host, desc, addr, len, cmd);
->  }
+>         struct mxcmci_host *host = devid;
+> -       unsigned long flags;
+>         bool sdio_irq;
+>         u32 stat;
 >
->  static void sdhci_adma_mark_end(void *desc)
+> @@ -740,9 +739,9 @@ static irqreturn_t mxcmci_irq(int irq, void *devid)
+>
+>         dev_dbg(mmc_dev(host->mmc), "%s: 0x%08x\n", __func__, stat);
+>
+> -       spin_lock_irqsave(&host->lock, flags);
+> +       spin_lock(&host->lock);
+>         sdio_irq = (stat & STATUS_SDIO_INT_ACTIVE) && host->use_sdio;
+> -       spin_unlock_irqrestore(&host->lock, flags);
+> +       spin_unlock(&host->lock);
+>
+>         if (mxcmci_use_dma(host) && (stat & (STATUS_WRITE_OP_DONE)))
+>                 mxcmci_writel(host, STATUS_WRITE_OP_DONE, MMC_REG_STATUS);
 > --
-> 2.19.0
+> 2.17.1
+>
+>
 >
