@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E534DECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55BAECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A757A2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A757A2146D
+	by mail.kernel.org (Postfix) with ESMTP id 9F500214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F500214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732636AbeIREmP (ORCPT
+        id S1732659AbeIREmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:42:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50796 "EHLO
+        Tue, 18 Sep 2018 00:42:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeIREmO (ORCPT
+        with ESMTP id S1728909AbeIREmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:42:14 -0400
+        Tue, 18 Sep 2018 00:42:19 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37EC5707;
-        Mon, 17 Sep 2018 23:12:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 116E7C49;
+        Mon, 17 Sep 2018 23:12:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
+        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 079/158] f2fs: Keep alloc_valid_block_count in sync
-Date:   Tue, 18 Sep 2018 00:41:49 +0200
-Message-Id: <20180917211714.889398271@linuxfoundation.org>
+Subject: [PATCH 4.18 080/158] f2fs: issue discard align to section in LFS mode
+Date:   Tue, 18 Sep 2018 00:41:50 +0200
+Message-Id: <20180917211714.926674087@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,49 +52,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-[ Upstream commit 36b877af7992893b6d1ddbe96971cab5ab9e50eb ]
+[ Upstream commit ad6672bbc527727dc8968e8d92687f55ae928ce5 ]
 
-If we attempt to request more blocks than we have room for, we try to
-instead request as much as we can, however, alloc_valid_block_count
-is not decremented to match the new value, allowing it to drift higher
-until the next checkpoint. This always decrements it when the requested
-amount cannot be fulfilled.
+For the case when sbi->segs_per_sec > 1 with lfs mode, take
+section:segment = 5 for example, if the section prefree_map is
+...previous section | current section (1 1 0 1 1) | next section...,
+then the start = x, end = x + 1, after start = start_segno +
+sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
+their bitmap is still set, which will cause duplicated
+f2fs_issue_discard of this same section in the next write_checkpoint:
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
+round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
+prefree of NO.2 is cleared, and no discard issued
+
+round 2: rm data block NO.0, NO.1, NO.3, NO.4
+all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
+prefree_map: 1 1 0 1 1
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
+valid blocks of this section, so discard issued, but this time prefree
+bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+
+round 3:
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
+0 0 0 0 0, no valid blocks of this section, so discard issued,
+this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
+this section is sent again...
+
+To fix this problem, we can align the start and end value to section
+boundary for fstrim and real-time discard operation, and decide to issue
+discard only when the whole section is invalid, which can issue discard
+aligned to section size as much as possible and avoid redundant discard.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/f2fs.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1680,18 +1680,20 @@ static inline int inc_valid_block_count(
- 		sbi->total_valid_block_count -= diff;
- 		if (!*count) {
- 			spin_unlock(&sbi->stat_lock);
--			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
- 			goto enospc;
- 		}
- 	}
- 	spin_unlock(&sbi->stat_lock);
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1643,21 +1643,30 @@ void f2fs_clear_prefree_segments(struct
+ 	unsigned int start = 0, end = -1;
+ 	unsigned int secno, start_segno;
+ 	bool force = (cpc->reason & CP_DISCARD);
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
  
--	if (unlikely(release))
-+	if (unlikely(release)) {
-+		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 		dquot_release_reservation_block(inode, release);
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 
+ 	while (1) {
+ 		int i;
++
++		if (need_align && end != -1)
++			end--;
+ 		start = find_next_bit(prefree_map, MAIN_SEGS(sbi), end + 1);
+ 		if (start >= MAIN_SEGS(sbi))
+ 			break;
+ 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
+ 								start + 1);
+ 
+-		for (i = start; i < end; i++)
+-			clear_bit(i, prefree_map);
++		if (need_align) {
++			start = rounddown(start, sbi->segs_per_sec);
++			end = roundup(end, sbi->segs_per_sec);
++		}
+ 
+-		dirty_i->nr_dirty[PRE] -= end - start;
++		for (i = start; i < end; i++) {
++			if (test_and_clear_bit(i, prefree_map))
++				dirty_i->nr_dirty[PRE]--;
++		}
+ 
+ 		if (!test_opt(sbi, DISCARD))
+ 			continue;
+@@ -2437,6 +2446,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sb
+ 	struct discard_policy dpolicy;
+ 	unsigned long long trimmed = 0;
+ 	int err = 0;
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
+ 
+ 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
+ 		return -EINVAL;
+@@ -2454,6 +2464,10 @@ int f2fs_trim_fs(struct f2fs_sb_info *sb
+ 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+ 						GET_SEGNO(sbi, end);
++	if (need_align) {
++		start_segno = rounddown(start_segno, sbi->segs_per_sec);
++		end_segno = roundup(end_segno + 1, sbi->segs_per_sec) - 1;
 +	}
- 	f2fs_i_blocks_write(inode, *count, true, true);
- 	return 0;
  
- enospc:
-+	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 	dquot_release_reservation_block(inode, release);
- 	return -ENOSPC;
- }
+ 	cpc.reason = CP_DISCARD;
+ 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
 
 
