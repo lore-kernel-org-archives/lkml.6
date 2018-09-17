@@ -3,43 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6CDECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 535EEECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F3762088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F3762088F
+	by mail.kernel.org (Postfix) with ESMTP id 0DFB72088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFB72088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeIREWF (ORCPT
+        id S1729442AbeIREWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:22:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45322 "EHLO
+        Tue, 18 Sep 2018 00:22:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45332 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeIREWE (ORCPT
+        with ESMTP id S1727233AbeIREWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:22:04 -0400
+        Tue, 18 Sep 2018 00:22:07 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20CE5CA0;
-        Mon, 17 Sep 2018 22:52:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DF1BCA0;
+        Mon, 17 Sep 2018 22:52:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.9 01/70] i2c: xiic: Make the start and the byte count write atomic
-Date:   Tue, 18 Sep 2018 00:41:34 +0200
-Message-Id: <20180917211649.234918625@linuxfoundation.org>
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.9 02/70] i2c: i801: fix DNVs SMBCTRL register offset
+Date:   Tue, 18 Sep 2018 00:41:35 +0200
+Message-Id: <20180917211649.294042104@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,59 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-commit ae7304c3ea28a3ba47a7a8312c76c654ef24967e upstream.
+commit 851a15114895c5bce163a6f2d57e0aa4658a1be4 upstream.
 
-Disable interrupts while configuring the transfer and enable them back.
+DNV's iTCO is slightly different with SMBCTRL sitting at a different
+offset when compared to all other devices. Let's fix so that we can
+properly use iTCO watchdog.
 
-We have below as the programming sequence
-1. start and slave address
-2. byte count and stop
-
-In some customer platform there was a lot of interrupts between 1 and 2
-and after slave address (around 7 clock cyles) if 2 is not executed
-then the transaction is nacked.
-
-To fix this case make the 2 writes atomic.
-
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-[wsa: added a newline for better readability]
+Fixes: 84d7f2ebd70d ("i2c: i801: Add support for Intel DNV")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-xiic.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/i2c/busses/i2c-i801.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-xiic.c
-+++ b/drivers/i2c/busses/i2c-xiic.c
-@@ -538,6 +538,7 @@ static void xiic_start_recv(struct xiic_
- {
- 	u8 rx_watermark;
- 	struct i2c_msg *msg = i2c->rx_msg = i2c->tx_msg;
-+	unsigned long flags;
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -135,6 +135,7 @@
  
- 	/* Clear and enable Rx full interrupt. */
- 	xiic_irq_clr_en(i2c, XIIC_INTR_RX_FULL_MASK | XIIC_INTR_TX_ERROR_MASK);
-@@ -553,6 +554,7 @@ static void xiic_start_recv(struct xiic_
- 		rx_watermark = IIC_RX_FIFO_DEPTH;
- 	xiic_setreg8(i2c, XIIC_RFD_REG_OFFSET, rx_watermark - 1);
+ #define SBREG_BAR		0x10
+ #define SBREG_SMBCTRL		0xc6000c
++#define SBREG_SMBCTRL_DNV	0xcf000c
  
-+	local_irq_save(flags);
- 	if (!(msg->flags & I2C_M_NOSTART))
- 		/* write the address */
- 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
-@@ -563,6 +565,8 @@ static void xiic_start_recv(struct xiic_
+ /* Host status bits for SMBPCISTS */
+ #define SMBPCISTS_INTS		0x08
+@@ -1387,7 +1388,11 @@ static void i801_add_tco(struct i801_pri
+ 	spin_unlock(&p2sb_spinlock);
  
- 	xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
- 		msg->len | ((i2c->nmsgs == 1) ? XIIC_TX_DYN_STOP_MASK : 0));
-+	local_irq_restore(flags);
+ 	res = &tco_res[ICH_RES_MEM_OFF];
+-	res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
++	if (pci_dev->device == PCI_DEVICE_ID_INTEL_DNV_SMBUS)
++		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL_DNV;
++	else
++		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
 +
- 	if (i2c->nmsgs == 1)
- 		/* very last, enable bus not busy as well */
- 		xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
+ 	res->end = res->start + 3;
+ 	res->flags = IORESOURCE_MEM;
+ 
 
 
