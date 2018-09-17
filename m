@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B51CECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5DAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF897214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF897214AB
+	by mail.kernel.org (Postfix) with ESMTP id 3054D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3054D2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeIRE1s (ORCPT
+        id S1729607AbeIRE1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:27:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47650 "EHLO
+        Tue, 18 Sep 2018 00:27:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbeIRE1s (ORCPT
+        with ESMTP id S1728660AbeIRE1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:27:48 -0400
+        Tue, 18 Sep 2018 00:27:51 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC81ECB2;
-        Mon, 17 Sep 2018 22:58:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2792DC49;
+        Mon, 17 Sep 2018 22:58:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nick Dyer <nick.dyer@itdev.co.uk>,
+        Benson Leung <bleung@chromium.org>,
+        Yufeng Shen <miletus@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 45/70] net: mvneta: fix mtu change on port without link
-Date:   Tue, 18 Sep 2018 00:42:18 +0200
-Message-Id: <20180917211652.798928139@linuxfoundation.org>
+Subject: [PATCH 4.9 54/70] Input: atmel_mxt_ts - only use first T9 instance
+Date:   Tue, 18 Sep 2018 00:42:27 +0200
+Message-Id: <20180917211653.431517010@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -53,35 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
+[ Upstream commit 36f5d9ef26e52edff046b4b097855db89bf0cd4a ]
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+The driver only registers one input device, which uses the screen
+parameters from the first T9 instance. The first T63 instance also uses
+those parameters.
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+It is incorrect to send input reports from the second instances of these
+objects if they are enabled: the input scaling will be wrong and the
+positions will be mashed together.
+
+This also causes problems on Android if the number of slots exceeds 32.
+
+In the future, this could be handled by looking for enabled touch object
+instances and creating an input device for each one.
+
+Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+Acked-by: Benson Leung <bleung@chromium.org>
+Acked-by: Yufeng Shen <miletus@chromium.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/input/touchscreen/atmel_mxt_ts.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -3117,7 +3117,6 @@ static int mvneta_change_mtu(struct net_
- 
- 	on_each_cpu(mvneta_percpu_enable, pp, true);
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
- 
- 	netdev_update_features(dev);
- 
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -1671,10 +1671,11 @@ static int mxt_get_object_table(struct m
+ 			break;
+ 		case MXT_TOUCH_MULTI_T9:
+ 			data->multitouch = MXT_TOUCH_MULTI_T9;
++			/* Only handle messages from first T9 instance */
+ 			data->T9_reportid_min = min_id;
+-			data->T9_reportid_max = max_id;
+-			data->num_touchids = object->num_report_ids
+-						* mxt_obj_instances(object);
++			data->T9_reportid_max = min_id +
++						object->num_report_ids - 1;
++			data->num_touchids = object->num_report_ids;
+ 			break;
+ 		case MXT_SPT_MESSAGECOUNT_T44:
+ 			data->T44_address = object->start_address;
 
 
