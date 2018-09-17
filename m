@@ -2,126 +2,158 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333C4ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E9FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D231A214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9246214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ktm7yXBR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D231A214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="GeZeGItH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9246214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeIQN7j (ORCPT
+        id S1728294AbeIQN7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 09:59:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728208AbeIQN7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 09:59:39 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32685214C5;
-        Mon, 17 Sep 2018 08:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537173196;
-        bh=o0eFfszP9XkyenL4n/Hq4csmafg4rf3AjxTbCYSxC0s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ktm7yXBRulTF4bXxIW/dmBiBAQiYyL0KPSWgGMqlhhg05/oUqMq5aSzbQ6OYSE4gG
-         IL5IlNwMMnutKQrlArs+xz622UxpBNxtflEmEyUxbqLcCBpkEHvOrqEB5aDXYfMq7E
-         JXLS3j2ePD3gOci7kAnbU1q7RYWInyGHX9zlx62Q=
-Received: by mail-wr1-f43.google.com with SMTP id k5-v6so16305962wre.10;
-        Mon, 17 Sep 2018 01:33:16 -0700 (PDT)
-X-Gm-Message-State: APzg51AiB6mU9Jn2qNqVQ7MG4awgn/qrRllU69iO7efbyTA9ay45qbYe
-        3gcqk/+JN871XlO+yzY42wJpCfzZxC0xWX4BkdQ=
-X-Google-Smtp-Source: ANB0VdboPmEqUAE+R0STUw1tY9h5+oZTknBfqB2uZaTf6mh6L0ezji/Q7IOk0uJ9Zuwj/i/RC3nbMo/BLcXN8oTcDAU=
-X-Received: by 2002:adf:b726:: with SMTP id l38-v6mr16128742wre.115.1537173194591;
- Mon, 17 Sep 2018 01:33:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180907215446.15160-1-sed@free.fr> <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
- <4cf38559-b00d-ede4-def5-7cd832d8a506@free.fr>
-In-Reply-To: <4cf38559-b00d-ede4-def5-7cd832d8a506@free.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 17 Sep 2018 10:33:03 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdvDrWOEkj3kEJ2KhHqp7NVmLeMTVdwB8suH8PWQXf-Pg@mail.gmail.com>
-Message-ID: <CAJKOXPdvDrWOEkj3kEJ2KhHqp7NVmLeMTVdwB8suH8PWQXf-Pg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in mach-mini2440.c
-To:     sed@free.fr
-Cc:     joe@perches.com, kgene@kernel.org, linux@armlinux.org.uk,
+        Mon, 17 Sep 2018 09:59:44 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36926 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728208AbeIQN7n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 09:59:43 -0400
+Received: by mail-lf1-f66.google.com with SMTP id t140-v6so6974252lff.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 01:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nRmzbtqjLEY7FqouRot4ZW0r6LEUGDxmvttZoEcKink=;
+        b=GeZeGItH8NPG3eGdb3pu+fnfRKpM4GKfOj/YXdcuCAqLYuY940xguVjYbznitThwlv
+         4gz+OkrlisQRza+4TpjSqO1cAi2SuVi/lHUVKPKs93h5d4SpyIT5GslrBJP1+VgjiD1H
+         N1CqHHeDB9vUWiTLTDi4lfGX5UkyyekYH4ZGHm3wmSFwEb2hw4edT9IjwUJKqeYYEMng
+         m91347qJq4LsE6wvutHOgCPqVhOEAMg5lRUpj7c3jXSB1SXcuhZUFwzvfn7JVkwmep21
+         NDNJU1u32tDr5aCL/mKkghmblL0euQE/i+49I5K/PDtkSdSl6A9sjVyJIYKB9L18biig
+         PRmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nRmzbtqjLEY7FqouRot4ZW0r6LEUGDxmvttZoEcKink=;
+        b=qS0UU4dpDveq0PRcETwza+SNGg4dN+XZykY/P6PDigH6DOakmGxnCGgdAHoXpSeJlD
+         ONFzAxJ8iDClUeNmFP9RDxKXeT0fCQUS85A3mmfPpLONkLNmdzs46PJPKg3zseHCcHeu
+         Ff2Vm0aYHPBkfUDRdo4tGwSQJzdxVunC0RPUwgkvcHheifCwxkHzCUKzQjPL972FbmKA
+         LyiIrxg791dRQCNioPGv+ElKcp3EBdMAvLkf4GcpM59C7JaEeZR7veX3bHZqJbe31FVA
+         jH1zUddoTqavD+Akh/StF6jHdtYAquZKwLsYuWIKN8ZNwC9SPs6mjoQ0BYBM6pco2B/h
+         CQOg==
+X-Gm-Message-State: APzg51Ans3SbCRwjxnmTZjDnDVCu8N9hlTFMNKzA5i0Nq/J0C/+5am4g
+        oTG1i1X2EPtKZs+pTMCE2I92uQ==
+X-Google-Smtp-Source: ANB0Vdb1ath1xcoOR5FeVPgvsCt4Ki7Vm5DZMKdhzGGTZdSIANo+ffNvOTwgTZuEul4q/gO+b/KXgA==
+X-Received: by 2002:a19:8f57:: with SMTP id r84-v6mr2921873lfd.131.1537173199406;
+        Mon, 17 Sep 2018 01:33:19 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.83.107])
+        by smtp.gmail.com with ESMTPSA id m8-v6sm2751595ljj.10.2018.09.17.01.33.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 01:33:18 -0700 (PDT)
+Subject: Re: [PATCH 1/2] dt-binding: mediatek: Add binding document for
+ MediaTek GMAC
+To:     Biao Huang <biao.huang@mediatek.com>, davem@davemloft.net,
+        robh+dt@kernel.org
+Cc:     honghui.zhang@mediatek.com, yt.shen@mediatek.com,
+        liguo.zhang@mediatek.com, mark.rutland@arm.com,
+        sean.wang@mediatek.com, nelson.chang@mediatek.com,
+        matthias.bgg@gmail.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-mediatek@lists.infradead.org
+References: <1537165763-13112-1-git-send-email-biao.huang@mediatek.com>
+ <1537165763-13112-2-git-send-email-biao.huang@mediatek.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <fb327132-0830-9df0-434e-06bb0033bac4@cogentembedded.com>
+Date:   Mon, 17 Sep 2018 11:33:22 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1537165763-13112-2-git-send-email-biao.huang@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Sep 2018 at 22:24, Cedric Roux <sed@free.fr> wrote:
->
-> Hi,
->
-> On 09/12/2018 09:21 PM, Joe Perches wrote:
-> > On Fri, 2018-09-07 at 23:54 +0200, Cedric Roux wrote:
-> >> Running:
-> >>     scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
-> >> revealed several errors and warnings.
-> >>
-> >> They were all removed, except one which is an #if 0 around the declaration
-> >> of a gpio pin. This needs some more investigation and I prefer to let it
-> >> here. This is not some dead code.
-> > []
-> >> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
-> > []
-> >> @@ -674,17 +680,17 @@ static void __init mini2440_init(void)
-> >>              mini2440_fb_info.displays =
-> >>                      &mini2440_lcd_cfg[features.lcd_index];
-> >>
-> >> -            printk(KERN_INFO "MINI2440: LCD");
-> >> +            pr_info("MINI2440: LCD");
-> >
-> > OK
-> >
-> >>              for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
-> >>                      if (li == features.lcd_index)
-> >> -                            printk(" [%d:%dx%d]", li,
-> >> +                            pr_info(" [%d:%dx%d]", li,
-> >>                                      mini2440_lcd_cfg[li].width,
-> >>                                      mini2440_lcd_cfg[li].height);
-> >
-> > pr_cont
-> >
-> >>                      else
-> >> -                            printk(" %d:%dx%d", li,
-> >> +                            pr_info(" %d:%dx%d", li,
-> >
-> > pr_cont
-> >
-> >>                                      mini2440_lcd_cfg[li].width,
-> >>                                      mini2440_lcd_cfg[li].height);
-> >> -            printk("\n");
-> >> +            pr_info("\n");
-> >
-> > pr_cont
-> >
-> > So only the first printk should use pr_info().
-> > The subsequent printk uses should use pr_cont()
->
-> at this point, I don't know what to do.
->
-> Should I resubmit the patches? Or is it in the hands of
-> Krzysztof (krzk@kernel.org)? I would say a git rebase -i
-> is enough to edit the patch and this rebase is obviously
-> not to be done by me, but I don't know the process.
+On 9/17/2018 9:29 AM, Biao Huang wrote:
 
-Can you send a incremental fix for this, restoring the original
-continued printks?
+> The commit adds the device tree binding documentation for the MediaTek
+> GMAC found on Mediatek MT2712.
+> 
+> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> ---
+>   .../devicetree/bindings/net/mediatek-gmac.txt      |   45 ++++++++++++++++++++
+>   1 file changed, 45 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/net/mediatek-gmac.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek-gmac.txt b/Documentation/devicetree/bindings/net/mediatek-gmac.txt
+> new file mode 100644
+> index 0000000..14876ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mediatek-gmac.txt
+> @@ -0,0 +1,45 @@
+> +MediaTek Gigabit Ethernet controller
+> +=========================================
+> +
+> +The gigabit ethernet controller can be found on MediaTek SoCs.
+> +
+> +* Ethernet controller node
+> +
+> +Required properties:
+> +- compatible: Should be
+> +	"mediatek,mt2712-eth": for MT2712 SoC
+> +- reg: Address and length of the register set for the device
+> +- interrupts: Should contain the MAC interrupts
+> +- interrupt-names: the name of interrupt in the interrupts property. These are
+> +	"macirq": For MT2712 SoC
+> +- clocks: the clock used by the controller
+> +- clock-names: the names of the clock listed in the clocks property. These are
+> +	"axi", "apb", "mac_ext", "ptp", "ptp_parent", "ptp_top": For MT2712 SoC
+> +- mac-address: See ethernet.txt in the same directory
+> +- power-domains: phandle to the power domain that the ethernet is part of
 
-Best regards,
-Krzysztof
+    This (required) prop is absent in your example.
+
+> +- phy-mode: See ethernet.txt file in the same directory.
+> +- reset-gpio: gpio number for phy reset.
+> +
+> +Example:
+> +
+> +eth: eth@1101c000 {
+
+eth: ethernet@1101c000 {
+
+> +		compatible = "mediatek,mt2712-eth";
+> +		reg = <0 0x1101c000 0 0x1200>;
+> +		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-names = "macirq";
+> +		phy-mode ="rgmii";
+> +		mac-address = [00 55 7b b5 7d f7];
+> +		clock-names = "axi",
+> +			      "apb",
+> +			      "mac_ext",
+> +			      "ptp",
+> +			      "ptp_parent",
+> +			      "ptp_top";
+> +		clocks = <&pericfg CLK_PERI_GMAC>,
+> +			 <&pericfg CLK_PERI_GMAC_PCLK>,
+> +			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
+> +			 <&topckgen CLK_TOP_ETHER_50M_SEL>,
+> +			 <&topckgen CLK_TOP_APLL1_D3>,
+> +			 <&topckgen CLK_TOP_APLL1>;
+> +		reset-gpio = <&pio 87 GPIO_ACTIVE_HIGH>;
+> +	};
+
+MBR, Sergei
