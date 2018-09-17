@@ -4,57 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8831EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C2BECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E502147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D0FA2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CwpQqpMJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E502147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FA5mk9tV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0FA2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731400AbeIQIeq (ORCPT
+        id S1731574AbeIQIdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:34:46 -0400
-Received: from mail-bl2nam02on0116.outbound.protection.outlook.com ([104.47.38.116]:52292
+        Mon, 17 Sep 2018 04:33:15 -0400
+Received: from mail-bl2nam02on0121.outbound.protection.outlook.com ([104.47.38.121]:19879
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731540AbeIQIdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:33:15 -0400
+        id S1731499AbeIQIdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:33:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SdpdctwA5SpcAWfIytqXmntsYzDGkmBANOvn3vULeF8=;
- b=CwpQqpMJwHqEfT1gjoTECL/o99E5PR9i44B9n78f9YWCjozTxTewuB+fZkgCx0m0bGxNXVr/Vab+ijbAWOQiZRWphZBWKmYND0VMm3nKytpoBw744ys138iAT5dRISXpvO/njIpQo6F/LVvi1EwEHYOU+D0NZT7t9xnpxq8B/ns=
+ bh=MPTi1YAfpswXuMyapEkp8zRrzMM8q6HbHnLSFqmtkZg=;
+ b=FA5mk9tVMjrm09y+X6gTiQVWCJWYWS+6TKY0brHfzjGCBAN2LVmYAbQJFC+HmzKd6u7R270RPY+MIkLP+dPBMYlt6n6sEzqULXrCcMBKmUJsaA0UKJ/Bpj2/FrmAav2rF5r0lqaVC4oxlJeyul4d84sIj2i1zefgmrUtaEeWWYU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.11; Mon, 17 Sep 2018 03:07:50 +0000
+ 15.20.1164.11; Mon, 17 Sep 2018 03:07:49 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:07:50 +0000
+ 03:07:49 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bart Van Assche <bart.vanassche@wdc.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC:     Johan Hovold <johan@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 09/29] scsi: target/iscsi: Make
- iscsit_ta_authentication() respect the output buffer size
-Thread-Topic: [PATCH AUTOSEL 3.18 09/29] scsi: target/iscsi: Make
- iscsit_ta_authentication() respect the output buffer size
-Thread-Index: AQHUTjNRZI7QOe5BnUqwkxtKO4GtKw==
-Date:   Mon, 17 Sep 2018 03:05:42 +0000
-Message-ID: <20180917030533.592-9-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 3.18 05/29] USB: serial: kobil_sct: fix modem-status
+ error handling
+Thread-Topic: [PATCH AUTOSEL 3.18 05/29] USB: serial: kobil_sct: fix
+ modem-status error handling
+Thread-Index: AQHUTjNQEwY0IOtxaEqCX/p9Ih/V4A==
+Date:   Mon, 17 Sep 2018 03:05:39 +0000
+Message-ID: <20180917030533.592-5-alexander.levin@microsoft.com>
 References: <20180917030533.592-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030533.592-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -63,13 +59,13 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:3VJ60Vg4Hf5EYPqhNbFltedxP0NHEjP93kYQiPEXHmG6mXHInjSRg1NWwSgJfiJ9Y4Babvlu2C6Rc9xfBx7DbhtGsWMiJzxJ3ELBZdbFa4pXiLf3uX0lWms4zDvuzD/DQxSj0BxKSIkxrfjBbzBp+z71LR93nzQRrzxn+XMsAOg3wEDk7QjN8Lk6+2WinBSR8BvenxcaFmnkXypB92dxAwpIZPI2FFkNnOSG+cSkknnGFOyxsGmMTzwSyUqmHCOGeCaf4/ijJblfbgmitucuisDRV5jRT3TM3nwq5lPUdkTKNuV+23fKgTkCYLMi3n5Ao5l9Ic5/37ik78F/h6ae0/cESCM4uXujXpT8AoaaNQ2rqAZj/t6Toxc7NTrJlJMN1dBSUJlWzISA6l5gp6Avl0SejvdIfeoa4cq0Keg47eS+jTxlzGZAlIY9Cno/vwoB2IzTOKRPOezVFHMJ69acpA==;5:vHx0g9cQ/XVgCXG0ZFr2eSBA/1g+jYoxXQF7alHrAbRMePG8D6xmL/oXvS2No7qfq8VwSVenxhgEKr4KfSz31QXcS/tlTdfnnbgt8erNy+9cXu7kAs2JFk5I+dbbZ3l4PFZmzS+91bNmwP39kfxRQIQvf++lYm5X0kOdbp/Z2SU=;7:lqWoqgXBFdM9hCQIw6INQXab8u97V7EIht5yk6KXIWnJMDHjw1kfPCRtiTr7VQ6EcrtuHQqL4tLxiQvpjO9nMrtMKgyHOo5rV4Q+XtmWsiTPZDX/eYaUB6qoUjH3ujVC+/Wnzq4Czc8jeVOZnFLMmDWDaT+EAYS+GoGW/HLqHcqiqAuoM3w5NXtj06tV6Bt4w06qpCeKs7xFTKOXImS+vsO6f4cHk4fJdSrKr6baomTJFBaCll6mZ9duM8KLFRDj
-x-ms-office365-filtering-correlation-id: a678f9f8-b46e-4ead-b1e0-08d61c4ac0f0
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:CnBfPvx2dTINWo42M/smXvqX2oAJO+6DgCETy2R+wyJ5o+0Ps8yCbN8FnsGMDpJzXsW6OXP8x8DTB6xuZ71AwZUW+CRNAFi2hn35XpgI1XklWjl6XaTrn+Fev4vR3KgBdY73kydn3RLVn72cWFxd6KwECq23PyJZKN5P6vZsWxWsgKj3VwEBVictDCi5MM/0YQolxUeZ5nzDSAk9K3L2nb2h70dvd6QnyojKT9FH75K3dSZQ7YE8obYIxuU2+Z/GLJNvllCSdzp+IYWtZCG0cm6pIQQhpUv2E1m8sqBW4ZFUpyvoIWIBNKs7kyVeGx2ewDtvCHdkx9yAvUW48xnT2JyYbpI8/vrj8Vx3H5kqm1NLfxxbk9nkqD3sMX4QAXgF3AEiZrEpbBTr6BfHQ915ehoxUAaZaOjAhUQHY/Kz/YCfvWtkHxhvTeJHz6aq7zg5AqO7PKOYD0zqQcmy/I5jUg==;5:4UGADD+QPHZI9KevaSWSuqYry0j1Ud0hV2gq3S9X1ifTKWbJWVJ3N00B8BWAuNo/asONY3fiRcWVJfDBKMfqb7JRl20lzfiym4PFWrp5d0ttW5dkyErZTapAJ1/hDpXX3EI9FYvqejuyfwuFq54hwT7004RjW5AdRtQvWdzCV+I=;7:5yUz0js5SKsMBaoAowQD/sgF+Z+tQdtaId3+68XHXcyk6DfFrl1pwvQ/1JvEk/7fSaROVx01oPxI77BLOFqVX3dxO90Z1XdsaShoJoR5p7eIP7rKDtJ2d4C7ESUBYW8loaHGbq623CYmZKI+ibECrWuqHJWtBhSmvqcZ7bqmwL3625LJydzraT7klywu22RiplhibieNn5gXgm+xq79L/NkXwrPv6WKpXVTdaW9wmZnA1ONmON0tYI+ULJ3x4DEA
+x-ms-office365-filtering-correlation-id: 5d1c9b37-c6d6-4f32-f77e-08d61c4ac012
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
 x-ms-traffictypediagnostic: CY4PR21MB0839:
-x-microsoft-antispam-prvs: <CY4PR21MB08398F972B0D0BD80177DEA9FB1E0@CY4PR21MB0839.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0839FB8C9DDEC1460DA66AC1FB1E0@CY4PR21MB0839.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
 x-forefront-prvs: 0798146F16
@@ -78,15 +74,15 @@ received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: exLz51I92Y2+CvmB8AtThNkVPsRSB1ZIzPFe6Zse6sXT+9ZpibSHwGYXQuhDjwFhUNCL+rzF8mbnfQNKIkxoLo8/Wesx24dIsCHkENBsbZHt9WFHs4NPYQDPzcAwuGUbwjJ1vQGF/LL0RoQp+yl9F1Sn5Piuz/2ZtzcqbSTqrPVlFvVeh7FWL5WMDGUxTFPW9Grx8mLXkIbacU6fbmDraRdcYITmK0T3IoSv6hzf5yfaWj9FEm4nolv+LibbkmDT0jPJX8fqqhxcCmAttCn+Omr6Ux2GjuKiyqbWUPbYPS9EqEE8Vuo/4k/6mSvwd34N6wINV9pgkXveogI6sW6SEWHEs7YY3ds7Y58/dg7D/tc=
+x-microsoft-antispam-message-info: h1GTo1gdlUB+IRuu4GuQr6NPniT6MRWoxvkWQN7ZRCzfhsIL+uoJP8l0iQmLdquqAAJSfqIj5Pix/SAYS7Mb9SspmKoyxcSYkYuHdu7P/UhQtDstAP+pyrjWOlKrIo64SqjAEbFJa6yYmWysGEffIyOrGo3NH8Fx6YJ/IDmJu0+F0ipR/m04mpsYdBuBtFTaVq8Luq4b5JWluEskMRlb9KnGMutGYAmqXS24AIEM/W+R5FVfl72IQI982dJM6wqem2eyFp3yk3Fgvjs0uhjEHewQTmt6whyNcNj06V/gazpTWWDGzJt9Ccauu+P9qIwFGv9zOIZ3Ilzs9R17nL6AcDhvYfMuAK5EV//y2uhpqow=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a678f9f8-b46e-4ead-b1e0-08d61c4ac0f0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:42.3421
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d1c9b37-c6d6-4f32-f77e-08d61c4ac012
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:39.6859
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -96,38 +92,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 35bea5c84fd13c643cce63f0b5cd4b148f8c901d ]
+[ Upstream commit a420b5d939ee58f1d950f0ea782834056520aeaa ]
 
-Fixes: e48354ce078c ("iscsi-target: Add iSCSI fabric support for target v4.=
-1")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Make sure to return -EIO in case of a short modem-status read request.
+
+While at it, split the debug message to not include the (zeroed)
+transfer-buffer content in case of errors.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/target/iscsi/iscsi_target_tpg.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/serial/kobil_sct.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/target/iscsi/iscsi_target_tpg.c b/drivers/target/iscsi=
-/iscsi_target_tpg.c
-index 5530321c44f2..afef70b1aaaf 100644
---- a/drivers/target/iscsi/iscsi_target_tpg.c
-+++ b/drivers/target/iscsi/iscsi_target_tpg.c
-@@ -651,8 +651,7 @@ int iscsit_ta_authentication(struct iscsi_portal_group =
-*tpg, u32 authentication)
- 		none =3D strstr(buf1, NONE);
- 		if (none)
- 			goto out;
--		strncat(buf1, ",", strlen(","));
--		strncat(buf1, NONE, strlen(NONE));
-+		strlcat(buf1, "," NONE, sizeof(buf1));
- 		if (iscsi_update_param_value(param, buf1) < 0)
- 			return -EINVAL;
- 	}
+diff --git a/drivers/usb/serial/kobil_sct.c b/drivers/usb/serial/kobil_sct.=
+c
+index 02c420af251e..d056bdb42771 100644
+--- a/drivers/usb/serial/kobil_sct.c
++++ b/drivers/usb/serial/kobil_sct.c
+@@ -396,12 +396,20 @@ static int kobil_tiocmget(struct tty_struct *tty)
+ 			  transfer_buffer_length,
+ 			  KOBIL_TIMEOUT);
+=20
+-	dev_dbg(&port->dev, "%s - Send get_status_line_state URB returns: %i. Sta=
+tusline: %02x\n",
+-		__func__, result, transfer_buffer[0]);
++	dev_dbg(&port->dev, "Send get_status_line_state URB returns: %i\n",
++			result);
++	if (result < 1) {
++		if (result >=3D 0)
++			result =3D -EIO;
++		goto out_free;
++	}
++
++	dev_dbg(&port->dev, "Statusline: %02x\n", transfer_buffer[0]);
+=20
+ 	result =3D 0;
+ 	if ((transfer_buffer[0] & SUSBCR_GSL_DSR) !=3D 0)
+ 		result =3D TIOCM_DSR;
++out_free:
+ 	kfree(transfer_buffer);
+ 	return result;
+ }
 --=20
 2.17.1
