@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD001ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B237EECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CF4214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CF4214AB
+	by mail.kernel.org (Postfix) with ESMTP id 705172146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705172146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbeIREgY (ORCPT
+        id S1731399AbeIREg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:36:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49588 "EHLO
+        Tue, 18 Sep 2018 00:36:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49598 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730769AbeIREgX (ORCPT
+        with ESMTP id S1730769AbeIREg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:23 -0400
+        Tue, 18 Sep 2018 00:36:26 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37988C77;
-        Mon, 17 Sep 2018 23:06:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7350C49;
+        Mon, 17 Sep 2018 23:06:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 116/126] net: add rb_to_skb() and other rb tree helpers
-Date:   Tue, 18 Sep 2018 00:42:44 +0200
-Message-Id: <20180917211711.607235891@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.18 001/158] i2c: xiic: Make the start and the byte count write atomic
+Date:   Tue, 18 Sep 2018 00:40:31 +0200
+Message-Id: <20180917211710.463810485@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
-References: <20180917211703.481236999@linuxfoundation.org>
+In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
+References: <20180917211710.383360696@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,251 +48,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-Geeralize private netem_rb_to_skb()
+commit ae7304c3ea28a3ba47a7a8312c76c654ef24967e upstream.
 
-TCP rtx queue will soon be converted to rb-tree,
-so we will need skb_rbtree_walk() helpers.
+Disable interrupts while configuring the transfer and enable them back.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 18a4c0eab2623cc95be98a1e6af1ad18e7695977)
+We have below as the programming sequence
+1. start and slave address
+2. byte count and stop
+
+In some customer platform there was a lot of interrupts between 1 and 2
+and after slave address (around 7 clock cyles) if 2 is not executed
+then the transaction is nacked.
+
+To fix this case make the 2 writes atomic.
+
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+[wsa: added a newline for better readability]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/skbuff.h  |   18 ++++++++++++++++++
- net/ipv4/tcp_fastopen.c |    8 +++-----
- net/ipv4/tcp_input.c    |   33 ++++++++++++---------------------
- net/sched/sch_netem.c   |   14 ++++----------
- 4 files changed, 37 insertions(+), 36 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3169,6 +3169,12 @@ static inline int __skb_grow_rcsum(struc
- 
- #define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
- 
-+#define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
-+#define skb_rb_first(root) rb_to_skb(rb_first(root))
-+#define skb_rb_last(root)  rb_to_skb(rb_last(root))
-+#define skb_rb_next(skb)   rb_to_skb(rb_next(&(skb)->rbnode))
-+#define skb_rb_prev(skb)   rb_to_skb(rb_prev(&(skb)->rbnode))
-+
- #define skb_queue_walk(queue, skb) \
- 		for (skb = (queue)->next;					\
- 		     skb != (struct sk_buff *)(queue);				\
-@@ -3183,6 +3189,18 @@ static inline int __skb_grow_rcsum(struc
- 		for (; skb != (struct sk_buff *)(queue);			\
- 		     skb = skb->next)
- 
-+#define skb_rbtree_walk(skb, root)						\
-+		for (skb = skb_rb_first(root); skb != NULL;			\
-+		     skb = skb_rb_next(skb))
-+
-+#define skb_rbtree_walk_from(skb)						\
-+		for (; skb != NULL;						\
-+		     skb = skb_rb_next(skb))
-+
-+#define skb_rbtree_walk_from_safe(skb, tmp)					\
-+		for (; tmp = skb ? skb_rb_next(skb) : NULL, (skb != NULL);	\
-+		     skb = tmp)
-+
- #define skb_queue_walk_from_safe(queue, skb, tmp)				\
- 		for (tmp = skb->next;						\
- 		     skb != (struct sk_buff *)(queue);				\
---- a/net/ipv4/tcp_fastopen.c
-+++ b/net/ipv4/tcp_fastopen.c
-@@ -458,17 +458,15 @@ bool tcp_fastopen_active_should_disable(
- void tcp_fastopen_active_disable_ofo_check(struct sock *sk)
+---
+ drivers/i2c/busses/i2c-xiic.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -532,6 +532,7 @@ static void xiic_start_recv(struct xiic_
  {
- 	struct tcp_sock *tp = tcp_sk(sk);
--	struct rb_node *p;
--	struct sk_buff *skb;
- 	struct dst_entry *dst;
-+	struct sk_buff *skb;
+ 	u8 rx_watermark;
+ 	struct i2c_msg *msg = i2c->rx_msg = i2c->tx_msg;
++	unsigned long flags;
  
- 	if (!tp->syn_fastopen)
- 		return;
+ 	/* Clear and enable Rx full interrupt. */
+ 	xiic_irq_clr_en(i2c, XIIC_INTR_RX_FULL_MASK | XIIC_INTR_TX_ERROR_MASK);
+@@ -547,6 +548,7 @@ static void xiic_start_recv(struct xiic_
+ 		rx_watermark = IIC_RX_FIFO_DEPTH;
+ 	xiic_setreg8(i2c, XIIC_RFD_REG_OFFSET, rx_watermark - 1);
  
- 	if (!tp->data_segs_in) {
--		p = rb_first(&tp->out_of_order_queue);
--		if (p && !rb_next(p)) {
--			skb = rb_entry(p, struct sk_buff, rbnode);
-+		skb = skb_rb_first(&tp->out_of_order_queue);
-+		if (skb && !skb_rb_next(skb)) {
- 			if (TCP_SKB_CB(skb)->tcp_flags & TCPHDR_FIN) {
- 				tcp_fastopen_active_disable(sk);
- 				return;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4372,7 +4372,7 @@ static void tcp_ofo_queue(struct sock *s
++	local_irq_save(flags);
+ 	if (!(msg->flags & I2C_M_NOSTART))
+ 		/* write the address */
+ 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+@@ -556,6 +558,8 @@ static void xiic_start_recv(struct xiic_
  
- 	p = rb_first(&tp->out_of_order_queue);
- 	while (p) {
--		skb = rb_entry(p, struct sk_buff, rbnode);
-+		skb = rb_to_skb(p);
- 		if (after(TCP_SKB_CB(skb)->seq, tp->rcv_nxt))
- 			break;
- 
-@@ -4440,7 +4440,7 @@ static int tcp_try_rmem_schedule(struct
- static void tcp_data_queue_ofo(struct sock *sk, struct sk_buff *skb)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
--	struct rb_node **p, *q, *parent;
-+	struct rb_node **p, *parent;
- 	struct sk_buff *skb1;
- 	u32 seq, end_seq;
- 	bool fragstolen;
-@@ -4503,7 +4503,7 @@ coalesce_done:
- 	parent = NULL;
- 	while (*p) {
- 		parent = *p;
--		skb1 = rb_entry(parent, struct sk_buff, rbnode);
-+		skb1 = rb_to_skb(parent);
- 		if (before(seq, TCP_SKB_CB(skb1)->seq)) {
- 			p = &parent->rb_left;
- 			continue;
-@@ -4548,9 +4548,7 @@ insert:
- 
- merge_right:
- 	/* Remove other segments covered by skb. */
--	while ((q = rb_next(&skb->rbnode)) != NULL) {
--		skb1 = rb_entry(q, struct sk_buff, rbnode);
--
-+	while ((skb1 = skb_rb_next(skb)) != NULL) {
- 		if (!after(end_seq, TCP_SKB_CB(skb1)->seq))
- 			break;
- 		if (before(end_seq, TCP_SKB_CB(skb1)->end_seq)) {
-@@ -4565,7 +4563,7 @@ merge_right:
- 		tcp_drop(sk, skb1);
- 	}
- 	/* If there is no skb after us, we are the last_skb ! */
--	if (!q)
-+	if (!skb1)
- 		tp->ooo_last_skb = skb;
- 
- add_sack:
-@@ -4749,7 +4747,7 @@ static struct sk_buff *tcp_skb_next(stru
- 	if (list)
- 		return !skb_queue_is_last(list, skb) ? skb->next : NULL;
- 
--	return rb_entry_safe(rb_next(&skb->rbnode), struct sk_buff, rbnode);
-+	return skb_rb_next(skb);
- }
- 
- static struct sk_buff *tcp_collapse_one(struct sock *sk, struct sk_buff *skb,
-@@ -4778,7 +4776,7 @@ static void tcp_rbtree_insert(struct rb_
- 
- 	while (*p) {
- 		parent = *p;
--		skb1 = rb_entry(parent, struct sk_buff, rbnode);
-+		skb1 = rb_to_skb(parent);
- 		if (before(TCP_SKB_CB(skb)->seq, TCP_SKB_CB(skb1)->seq))
- 			p = &parent->rb_left;
- 		else
-@@ -4898,19 +4896,12 @@ static void tcp_collapse_ofo_queue(struc
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	u32 range_truesize, sum_tiny = 0;
- 	struct sk_buff *skb, *head;
--	struct rb_node *p;
- 	u32 start, end;
- 
--	p = rb_first(&tp->out_of_order_queue);
--	skb = rb_entry_safe(p, struct sk_buff, rbnode);
-+	skb = skb_rb_first(&tp->out_of_order_queue);
- new_range:
- 	if (!skb) {
--		p = rb_last(&tp->out_of_order_queue);
--		/* Note: This is possible p is NULL here. We do not
--		 * use rb_entry_safe(), as ooo_last_skb is valid only
--		 * if rbtree is not empty.
--		 */
--		tp->ooo_last_skb = rb_entry(p, struct sk_buff, rbnode);
-+		tp->ooo_last_skb = skb_rb_last(&tp->out_of_order_queue);
- 		return;
- 	}
- 	start = TCP_SKB_CB(skb)->seq;
-@@ -4918,7 +4909,7 @@ new_range:
- 	range_truesize = skb->truesize;
- 
- 	for (head = skb;;) {
--		skb = tcp_skb_next(skb, NULL);
-+		skb = skb_rb_next(skb);
- 
- 		/* Range is terminated when we see a gap or when
- 		 * we are at the queue end.
-@@ -4974,7 +4965,7 @@ static bool tcp_prune_ofo_queue(struct s
- 		prev = rb_prev(node);
- 		rb_erase(node, &tp->out_of_order_queue);
- 		goal -= rb_to_skb(node)->truesize;
--		tcp_drop(sk, rb_entry(node, struct sk_buff, rbnode));
-+		tcp_drop(sk, rb_to_skb(node));
- 		if (!prev || goal <= 0) {
- 			sk_mem_reclaim(sk);
- 			if (atomic_read(&sk->sk_rmem_alloc) <= sk->sk_rcvbuf &&
-@@ -4984,7 +4975,7 @@ static bool tcp_prune_ofo_queue(struct s
- 		}
- 		node = prev;
- 	} while (node);
--	tp->ooo_last_skb = rb_entry(prev, struct sk_buff, rbnode);
-+	tp->ooo_last_skb = rb_to_skb(prev);
- 
- 	/* Reset SACK state.  A conforming SACK implementation will
- 	 * do the same at a timeout based retransmit.  When a connection
---- a/net/sched/sch_netem.c
-+++ b/net/sched/sch_netem.c
-@@ -149,12 +149,6 @@ struct netem_skb_cb {
- 	ktime_t		tstamp_save;
- };
- 
--
--static struct sk_buff *netem_rb_to_skb(struct rb_node *rb)
--{
--	return rb_entry(rb, struct sk_buff, rbnode);
--}
--
- static inline struct netem_skb_cb *netem_skb_cb(struct sk_buff *skb)
- {
- 	/* we assume we can use skb next/prev/tstamp as storage for rb_node */
-@@ -365,7 +359,7 @@ static void tfifo_reset(struct Qdisc *sc
- 	struct rb_node *p;
- 
- 	while ((p = rb_first(&q->t_root))) {
--		struct sk_buff *skb = netem_rb_to_skb(p);
-+		struct sk_buff *skb = rb_to_skb(p);
- 
- 		rb_erase(p, &q->t_root);
- 		rtnl_kfree_skbs(skb, skb);
-@@ -382,7 +376,7 @@ static void tfifo_enqueue(struct sk_buff
- 		struct sk_buff *skb;
- 
- 		parent = *p;
--		skb = netem_rb_to_skb(parent);
-+		skb = rb_to_skb(parent);
- 		if (tnext >= netem_skb_cb(skb)->time_to_send)
- 			p = &parent->rb_right;
- 		else
-@@ -538,7 +532,7 @@ static int netem_enqueue(struct sk_buff
- 				struct sk_buff *t_skb;
- 				struct netem_skb_cb *t_last;
- 
--				t_skb = netem_rb_to_skb(rb_last(&q->t_root));
-+				t_skb = skb_rb_last(&q->t_root);
- 				t_last = netem_skb_cb(t_skb);
- 				if (!last ||
- 				    t_last->time_to_send > last->time_to_send) {
-@@ -618,7 +612,7 @@ deliver:
- 	if (p) {
- 		psched_time_t time_to_send;
- 
--		skb = netem_rb_to_skb(p);
-+		skb = rb_to_skb(p);
- 
- 		/* if more time remaining? */
- 		time_to_send = netem_skb_cb(skb)->time_to_send;
+ 	xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+ 		msg->len | ((i2c->nmsgs == 1) ? XIIC_TX_DYN_STOP_MASK : 0));
++	local_irq_restore(flags);
++
+ 	if (i2c->nmsgs == 1)
+ 		/* very last, enable bus not busy as well */
+ 		xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
 
 
