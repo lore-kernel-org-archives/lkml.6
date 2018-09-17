@@ -6,40 +6,57 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B064ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BA4ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2C2214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B2C2214C5
+	by mail.kernel.org (Postfix) with ESMTP id 07A192146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A192146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbeIRE1S (ORCPT
+        id S1729488AbeIRE10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:27:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47332 "EHLO
+        Tue, 18 Sep 2018 00:27:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeIRE1R (ORCPT
+        with ESMTP id S1726759AbeIRE1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:27:17 -0400
+        Tue, 18 Sep 2018 00:27:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E170CC7D;
-        Mon, 17 Sep 2018 22:57:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2668C03;
+        Mon, 17 Sep 2018 22:57:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Moni Shoua <monis@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Sean Hefty <sean.hefty@intel.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 10/70] IB/rxe: do not copy extra stack memory to skb
-Date:   Tue, 18 Sep 2018 00:41:43 +0200
-Message-Id: <20180917211650.034412121@linuxfoundation.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, joro@8bytes.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 43/70] x86/mm: Remove in_nmi() warning from vmalloc_fault()
+Date:   Tue, 18 Sep 2018 00:42:16 +0200
+Message-Id: <20180917211652.657673636@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -57,62 +74,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Joerg Roedel <jroedel@suse.de>
 
-commit 4c93496f18ce5044d78e4f7f9e018682a4f44b3d upstream.
+[ Upstream commit 6863ea0cda8725072522cd78bda332d9a0b73150 ]
 
-This fixes a over-read condition detected by FORTIFY_SOURCE for this
-line:
+It is perfectly okay to take page-faults, especially on the
+vmalloc area while executing an NMI handler. Remove the
+warning.
 
-	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
-
-The error was:
-
-  In file included from ./include/linux/bitmap.h:8:0,
-                   from ./include/linux/cpumask.h:11,
-                   from ./include/linux/mm_types_task.h:13,
-                   from ./include/linux/mm_types.h:4,
-                   from ./include/linux/kmemcheck.h:4,
-                   from ./include/linux/skbuff.h:18,
-                   from drivers/infiniband/sw/rxe/rxe_resp.c:34:
-  In function 'memcpy',
-      inlined from 'send_atomic_ack.constprop' at drivers/infiniband/sw/rxe/rxe_resp.c:998:2,
-      inlined from 'acknowledge' at drivers/infiniband/sw/rxe/rxe_resp.c:1026:3,
-      inlined from 'rxe_responder' at drivers/infiniband/sw/rxe/rxe_resp.c:1286:10:
-  ./include/linux/string.h:309:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
-      __read_overflow2();
-
-Daniel Micay noted that struct rxe_pkt_info is 32 bytes on 32-bit
-architectures, but skb->cb is still 64.  The memcpy() over-reads 32
-bytes.  This fixes it by zeroing the unused bytes in skb->cb.
-
-Link: http://lkml.kernel.org/r/1497903987-21002-5-git-send-email-keescook@chromium.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Cc: Moni Shoua <monis@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Sean Hefty <sean.hefty@intel.com>
-Cc: Daniel Micay <danielmicay@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1532533683-5988-2-git-send-email-joro@8bytes.org
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/sw/rxe/rxe_resp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/mm/fault.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -978,7 +978,9 @@ static int send_atomic_ack(struct rxe_qp
- 	free_rd_atomic_resource(qp, res);
- 	rxe_advance_resp_resource(qp);
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -330,8 +330,6 @@ static noinline int vmalloc_fault(unsign
+ 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
+ 		return -1;
  
--	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
-+	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(ack_pkt));
-+	memset((unsigned char *)SKB_TO_PKT(skb) + sizeof(ack_pkt), 0,
-+	       sizeof(skb->cb) - sizeof(ack_pkt));
- 
- 	res->type = RXE_ATOMIC_MASK;
- 	res->atomic.skb = skb;
+-	WARN_ON_ONCE(in_nmi());
+-
+ 	/*
+ 	 * Synchronize this task's top level page-table
+ 	 * with the 'reference' page table.
 
 
