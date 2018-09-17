@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3D9ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A20AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F792146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F792146F
+	by mail.kernel.org (Postfix) with ESMTP id CE6AA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6AA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731926AbeIREi7 (ORCPT
+        id S1731937AbeIREjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:38:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
+        Tue, 18 Sep 2018 00:39:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIREi6 (ORCPT
+        with ESMTP id S1728781AbeIREjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:38:58 -0400
+        Tue, 18 Sep 2018 00:39:01 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BADB3C7D;
-        Mon, 17 Sep 2018 23:09:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC3D5C9D;
+        Mon, 17 Sep 2018 23:09:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Arthur Fabre <afabre@cloudflare.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 054/158] selftests/bpf: fix a typo in map in map test
-Date:   Tue, 18 Sep 2018 00:41:24 +0200
-Message-Id: <20180917211713.749852618@linuxfoundation.org>
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, sironi@amazon.de
+Subject: [PATCH 4.18 037/158] x86/microcode: Make sure boot_cpu_data.microcode is up-to-date
+Date:   Tue, 18 Sep 2018 00:41:07 +0200
+Message-Id: <20180917211712.830200818@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -55,59 +53,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Gushchin <guro@fb.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit 0069fb854364da79fd99236ea620affc8e1152d5 ]
+commit 370a132bb2227ff76278f98370e0e701d86ff752 upstream.
 
-Commit fbeb1603bf4e ("bpf: verifier: MOV64 don't mark dst reg unbounded")
-revealed a typo in commit fb30d4b71214 ("bpf: Add tests for map-in-map"):
-BPF_MOV64_REG(BPF_REG_0, 0) was used instead of
-BPF_MOV64_IMM(BPF_REG_0, 0).
+When preparing an MCE record for logging, boot_cpu_data.microcode is used
+to read out the microcode revision on the box.
 
-I've noticed the problem by running bpf kselftests.
+However, on systems where late microcode update has happened, the microcode
+revision output in a MCE log record is wrong because
+boot_cpu_data.microcode is not updated when the microcode gets updated.
 
-Fixes: fb30d4b71214 ("bpf: Add tests for map-in-map")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Arthur Fabre <afabre@cloudflare.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+But, the microcode revision saved in boot_cpu_data's microcode member
+should be kept up-to-date, regardless, for consistency.
+
+Make it so.
+
+Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: sironi@amazon.de
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180731112739.32338-1-prarit@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/bpf/test_verifier.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -6997,7 +6997,7 @@ static struct bpf_test tests[] = {
- 			BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
- 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
- 				     BPF_FUNC_map_lookup_elem),
--			BPF_MOV64_REG(BPF_REG_0, 0),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
- 			BPF_EXIT_INSN(),
- 		},
- 		.fixup_map_in_map = { 3 },
-@@ -7020,7 +7020,7 @@ static struct bpf_test tests[] = {
- 			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 8),
- 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
- 				     BPF_FUNC_map_lookup_elem),
--			BPF_MOV64_REG(BPF_REG_0, 0),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
- 			BPF_EXIT_INSN(),
- 		},
- 		.fixup_map_in_map = { 3 },
-@@ -7042,7 +7042,7 @@ static struct bpf_test tests[] = {
- 			BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
- 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
- 				     BPF_FUNC_map_lookup_elem),
--			BPF_MOV64_REG(BPF_REG_0, 0),
-+			BPF_MOV64_IMM(BPF_REG_0, 0),
- 			BPF_EXIT_INSN(),
- 		},
- 		.fixup_map_in_map = { 3 },
+---
+ arch/x86/kernel/cpu/microcode/amd.c   |    4 ++++
+ arch/x86/kernel/cpu/microcode/intel.c |    4 ++++
+ 2 files changed, 8 insertions(+)
+
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_
+ 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+ 	c->microcode = mc_amd->hdr.patch_id;
+ 
++	/* Update boot_cpu_data's revision too, if we're on the BSP: */
++	if (c->cpu_index == boot_cpu_data.cpu_index)
++		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
++
+ 	return UCODE_UPDATED;
+ }
+ 
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
++	/* Update boot_cpu_data's revision too, if we're on the BSP: */
++	if (c->cpu_index == boot_cpu_data.cpu_index)
++		boot_cpu_data.microcode = rev;
++
+ 	return UCODE_UPDATED;
+ }
+ 
 
 
