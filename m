@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9C8ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9602EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF122088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF122088F
+	by mail.kernel.org (Postfix) with ESMTP id 36C782088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C782088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbeIRETw (ORCPT
+        id S1728972AbeIRET4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44878 "EHLO
+        Tue, 18 Sep 2018 00:19:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRETw (ORCPT
+        with ESMTP id S1725952AbeIRET4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:52 -0400
+        Tue, 18 Sep 2018 00:19:56 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 977DECAE;
-        Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6B0CCAF;
+        Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 36/56] MIPS: Octeon: add missing of_node_put()
-Date:   Tue, 18 Sep 2018 00:42:09 +0200
-Message-Id: <20180917213829.419730920@linuxfoundation.org>
+        stable@vger.kernel.org, Prateek Sood <prsood@codeaurora.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        longman@redhat.com, parri.andrea@gmail.com, sramana@codeaurora.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.4 10/56] locking/rwsem-xadd: Fix missed wakeup due to reordering of load
+Date:   Tue, 18 Sep 2018 00:41:43 +0200
+Message-Id: <20180917213828.393496095@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -54,44 +56,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Prateek Sood <prsood@codeaurora.org>
 
-[ Upstream commit b1259519e618d479ede8a0db5474b3aff99f5056 ]
+commit 9c29c31830a4eca724e137a9339137204bbb31be upstream.
 
-The call to of_find_node_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented here after the last
-usage.
+If a spinner is present, there is a chance that the load of
+rwsem_has_spinner() in rwsem_wake() can be reordered with
+respect to decrement of rwsem count in __up_write() leading
+to wakeup being missed:
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19558/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+ spinning writer                  up_write caller
+ ---------------                  -----------------------
+ [S] osq_unlock()                 [L] osq
+  spin_lock(wait_lock)
+  sem->count=0xFFFFFFFF00000001
+            +0xFFFFFFFF00000000
+  count=sem->count
+  MB
+                                   sem->count=0xFFFFFFFE00000001
+                                             -0xFFFFFFFF00000001
+                                   spin_trylock(wait_lock)
+                                   return
+ rwsem_try_write_lock(count)
+ spin_unlock(wait_lock)
+ schedule()
+
+Reordering of atomic_long_sub_return_release() in __up_write()
+and rwsem_has_spinner() in rwsem_wake() can cause missing of
+wakeup in up_write() context. In spinning writer, sem->count
+and local variable count is 0XFFFFFFFE00000001. It would result
+in rwsem_try_write_lock() failing to acquire rwsem and spinning
+writer going to sleep in rwsem_down_write_failed().
+
+The smp_rmb() will make sure that the spinner state is
+consulted after sem->count is updated in up_write context.
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dave@stgolabs.net
+Cc: longman@redhat.com
+Cc: parri.andrea@gmail.com
+Cc: sramana@codeaurora.org
+Link: http://lkml.kernel.org/r/1504794658-15397-1-git-send-email-prsood@codeaurora.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/mips/cavium-octeon/octeon-platform.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/arch/mips/cavium-octeon/octeon-platform.c
-+++ b/arch/mips/cavium-octeon/octeon-platform.c
-@@ -349,6 +349,7 @@ static int __init octeon_ehci_device_ini
- 		return 0;
+---
+ kernel/locking/rwsem-xadd.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -511,6 +511,33 @@ struct rw_semaphore *rwsem_wake(struct r
+ 	unsigned long flags;
  
- 	pd = of_find_device_by_node(ehci_node);
-+	of_node_put(ehci_node);
- 	if (!pd)
- 		return 0;
- 
-@@ -411,6 +412,7 @@ static int __init octeon_ohci_device_ini
- 		return 0;
- 
- 	pd = of_find_device_by_node(ohci_node);
-+	of_node_put(ohci_node);
- 	if (!pd)
- 		return 0;
- 
+ 	/*
++	* __rwsem_down_write_failed_common(sem)
++	*   rwsem_optimistic_spin(sem)
++	*     osq_unlock(sem->osq)
++	*   ...
++	*   atomic_long_add_return(&sem->count)
++	*
++	*      - VS -
++	*
++	*              __up_write()
++	*                if (atomic_long_sub_return_release(&sem->count) < 0)
++	*                  rwsem_wake(sem)
++	*                    osq_is_locked(&sem->osq)
++	*
++	* And __up_write() must observe !osq_is_locked() when it observes the
++	* atomic_long_add_return() in order to not miss a wakeup.
++	*
++	* This boils down to:
++	*
++	* [S.rel] X = 1                [RmW] r0 = (Y += 0)
++	*         MB                         RMB
++	* [RmW]   Y += 1               [L]   r1 = X
++	*
++	* exists (r0=1 /\ r1=0)
++	*/
++	smp_rmb();
++
++	/*
+ 	 * If a spinner is present, it is not necessary to do the wakeup.
+ 	 * Try to do wakeup only if the trylock succeeds to minimize
+ 	 * spinlock contention which may introduce too much delay in the
 
 
