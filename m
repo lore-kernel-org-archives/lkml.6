@@ -2,64 +2,120 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE3EECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D4FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288B62086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:16:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288B62086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1271D2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:18:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="soCkVD47"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1271D2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeIRCpd (ORCPT
+        id S1728575AbeIRCrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:45:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:59587 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbeIRCpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:45:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 14:16:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
-   d="scan'208";a="92549726"
-Received: from maclarck-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.39.44])
-  by orsmga002.jf.intel.com with ESMTP; 17 Sep 2018 14:16:23 -0700
-Date:   Tue, 18 Sep 2018 00:16:22 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20180917211622.GC6716@linux.intel.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
- <20180905114202.7757-4-roberto.sassu@huawei.com>
- <20180916123749.GF5040@linux.intel.com>
- <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+        Mon, 17 Sep 2018 22:47:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33914 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeIRCrD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:47:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/LclAU4reglbNS2yposkqn9A0u4I4tK0aTQFZvyVcNU=; b=soCkVD47+5cdOx7FgWniXvvCH
+        YT6xXvKMsgdVEnIQXulURzC4Nn0nsF8yeKT+kshaRuscGOqWTyFLAUuzhhEJmQTzjAQvIZWwm0VtN
+        7XhXfk3wbUMwRICvNN4bjq829e0l9hUi2+3xs3fRavCR0Ntg1xqEShcL8ZTD7HW9Y/eBM=;
+Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g20tV-0000jM-P5; Mon, 17 Sep 2018 21:17:21 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6AE0C440078; Mon, 17 Sep 2018 22:17:19 +0100 (BST)
+Date:   Mon, 17 Sep 2018 14:17:19 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     David Lechner <david@lechnology.com>
+Cc:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] spi: introduce SPI_CS_WORD mode flag
+Message-ID: <20180917211719.GG2471@sirena.org.uk>
+References: <20180913003920.30600-1-david@lechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+sHJum3is6Tsg7/J"
 Content-Disposition: inline
-In-Reply-To: <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180913003920.30600-1-david@lechnology.com>
+X-Cookie: Universe, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
-> This code has the same behavior of tpm2_get_pcr_allocation(). If some
-> banks are not used, set the algorithm of the first unused to
-> TPM_ALG_ERROR.
 
-My point is that maybe it would sense to use zero for that in order
-to make code a bit simpler.
+--+sHJum3is6Tsg7/J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/Jarkko
+On Wed, Sep 12, 2018 at 07:39:16PM -0500, David Lechner wrote:
+> This series introduces a new SPI mode flag, SPI_CS_WORD, that indicates that
+> the chip select line should be toggled after each word sent. This series
+> includes examples of how this can be implemented for both an SPI controller
+> and an SPI device.
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-cs-word
+
+for you to fetch changes up to cbaa62e0094a840fecc853910e0c0454529cec03:
+
+  spi: add software implementation for SPI_CS_WORD (2018-09-17 14:14:18 -0700)
+
+----------------------------------------------------------------
+spi: Provide SPI_CS_WORD
+
+This provides a SPI operation mode which changes chip select after every
+word, used by some devices such as ADCs and DACs.
+
+----------------------------------------------------------------
+David Lechner (2):
+      spi: add new SPI_CS_WORD flag
+      spi: add software implementation for SPI_CS_WORD
+
+ drivers/spi/spi.c       | 31 ++++++++++++++++++++++++++++++-
+ include/linux/spi/spi.h |  2 +-
+ 2 files changed, 31 insertions(+), 2 deletions(-)
+
+--+sHJum3is6Tsg7/J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlugGd4ACgkQJNaLcl1U
+h9DJIgf/f4joAEfsig+UrOY9kHMRYVZQQFoCjDDAefcaga6TIqBd+4x5xuZQImCY
+inytWF9nN4fkhmdlYAS1yDBSFQJveVIRS26W6A0qPZFJ1ZcIE7DAbcfZ6E5orXlD
+lTNn3SbkZWUDEw2TCSbMvgRPBvIvvaKQW1sqomZTM5Em6IivdRoQRpzR8E6V6oZL
+ThWQ/ApRuVKjdfzz1cho02XDGnPUX+3/AszMIsymBXjRnF+FkViQf+Wz+lvIweeR
+14IJVEdYn1ZeAFKOihoVpGKf0TO4CtviaFYCuAtbmvX6UwLjsz0FpWuA8L4NExVj
+4M06Dc8gbeMtjZT1YF7lia4ShuRNbw==
+=mNnI
+-----END PGP SIGNATURE-----
+
+--+sHJum3is6Tsg7/J--
