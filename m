@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE0ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65826ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C60E2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10BF6214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Pz3kZxDW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C60E2147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="UsyNKCwv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BF6214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731137AbeIQIcW (ORCPT
+        id S1731144AbeIQIcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:32:22 -0400
+        Mon, 17 Sep 2018 04:32:24 -0400
 Received: from mail-eopbgr690120.outbound.protection.outlook.com ([40.107.69.120]:6882
         "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729631AbeIQIcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:32:21 -0400
+        id S1730581AbeIQIcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:32:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RocoyjXW8KHfkvBSgBQRn5LR+teywWJUGFzXncryNI8=;
- b=Pz3kZxDW8DLX7JFog57yo7G/d9V/GDRrv7dyrXlAzipeeCuiJa6RL5nVy8/U6qWEtgKAaooZ4EKqOX1OK3Idg8EPu750twRBKIC7fLDuL2EFIvIh84/yeq95pcj45vSqj5IQXEf8YFcUOrS6iuLBe3aIYt/qWI/sswzZ9PvlGsU=
+ bh=XHNKAXCLtoSmw7dgjR+83UPFXJO/fliDywmgNsiKS1U=;
+ b=UsyNKCwvNKQaJ6pGDDocjzi2xnWxu4qoIu0agSfgik1sMAYSparljAZDMllh2U9dxg6FTfggDSOx0lkrln2dkCpfATTySkFHZvUi5hc8oMJwAU9Qk07GmGnfo5elVUYj1HKSECB5cmYoORC1hooZ41HAaeUmAKjgY8tFiGQFz6c=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0166.namprd21.prod.outlook.com (10.173.192.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.12; Mon, 17 Sep 2018 03:07:02 +0000
+ 15.20.1164.12; Mon, 17 Sep 2018 03:07:03 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:07:02 +0000
+ 03:07:03 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sudeep Holla <sudeep.holla@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+CC:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 07/43] power: vexpress: fix corruption in notifier
- registration
-Thread-Topic: [PATCH AUTOSEL 4.4 07/43] power: vexpress: fix corruption in
- notifier registration
-Thread-Index: AQHUTjM0SJZWIkKXmk2yzPEK/OUNqQ==
-Date:   Mon, 17 Sep 2018 03:04:52 +0000
-Message-ID: <20180917030445.484-7-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 08/43] Bluetooth: Add a new Realtek 8723DE ID
+ 0bda:b009
+Thread-Topic: [PATCH AUTOSEL 4.4 08/43] Bluetooth: Add a new Realtek 8723DE ID
+ 0bda:b009
+Thread-Index: AQHUTjM03yg9d/i6cUyMxV7PHnwNaw==
+Date:   Mon, 17 Sep 2018 03:04:53 +0000
+Message-ID: <20180917030445.484-8-alexander.levin@microsoft.com>
 References: <20180917030445.484-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030445.484-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0166;6:/c2X3HHSa8F0pwtSdBWrt8YD8jTHmC+wvk/kmW4WanKrFAvKEivqtT5s6TM4Y5R3Yw3gu3tTKuKGucempAuSEh6NsvkUeXZuhem4qoEng1FadcHtaPakwDxb3At0w4qISgSDmPbcTbD5s9GhOa/qKzhg0AubORVU2s/fvv1JZxmEsUZX91c1o3lU8ujPxYpCN5sy4ZOfbdhXmvJ2HvS8rhP2hpRNCJltRaYu710KbRj8KX/8wcsjLHgcvYXnvP16boToOFrxXueZz7FGNID83S+d3sX9PUtyAkwzbvLKk0Qz4m/RnzK1TLKMPFV5g8R61cL0QCJj2XtxLccHJ7jnokygdBovlZQUdsZiz3zFYhZ0VYRR+7MlOf+rIuxgs8NWdQm+8u2PbdwRA2mUKkO2KjU4gJRlPjzaVVmZvggo35yLdhQVbO40YB98fpcOsmFSW1PeXKWeAwHzVR8CBAlvjQ==;5:t4o2bSKFecS8ZZbOYLrmj5SajkBYeYnoKeahuyqaWgu0/QSLqQPImiZCn+54o+9DUti2wiEg/AfCSpdAwaFjGWk8RwOvWudWouXxPjmaizWhKKaSWIXTHs5nL2sfYIcvpgWXV7m3MhPaevIqalRP4miBhYRMSYDkZONuF0ZkYco=;7:MDs3uLrJD4f8ZwpkDQmjtCAq3op19Vay8NQjKyZcawHn326gz5DqZ+JjR2YaVCxxpvkut9QON0AOgy42qr/OyH6AT0Hip+OX5z6QW/Rl7EWK+RKr9tdQj+a9H05bD0KyxpjmQmOjvfiGLRK3fj9GUMLMuwEZ9+9JAIAXxM8yBboUlTgFEMZDexSlRdJTUsRI25a0JK5QlFfMfS+5xM6x8hDE91CDU84dMNHncTMjUJvvMIvgYza7HANWXAKC0sqQ
-x-ms-office365-filtering-correlation-id: d1abfbab-700b-465c-827c-08d61c4aa454
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0166;6:v4nTvNuIBME2opNWRpgMiW2rGYfvIJCV8yPyFLzNsuPzfmoeNRID0x/mZ75UOws9DIMaqkayT/0yfBrmqGZgY/K7SB6Xr7dCJpKQKDDzFCEn8lREFxD6z3OFt2q2+qdlpIvaPeJcnDjLwknsAMhNYjYjOcpFoZYLFCsoWBUS7D7KAbOxPryGpgNJSraHMsRqNWFY8nFd/70ArZexlX78mCb8lY3FfxrVE92LND3gukDxQyR5hO1/yMflQgt5g16PAuiTYoayCkw+4yvCfphjZBeqF6fhJOEvudKCxOZ6eiwOHZBaZwPZVX8E6RG6vpNL9AJCruAC273fYhQf5g9B6XJyg0AiOc1a+yHOa8KcqtP2xxJMMCCxD25QSPiIWAmNn65fkqQL05fP6lj3ICL0AhagkVlDgkjp5FGPUSKu3Y0vQl8mqMbBiRuEvYd6aug4KT68uXoXiZcHRHD6DkBwyw==;5:LPkLDK33DQVRKqFxwmWz7dUnTRGoG2OxE5NxO3gqXHag5hEYfNbJFupLd5ZLZFZm8WOc0r+g+POcfQMFyhh1SX4XHhs+UNPU23CIz2zzSCam58/GCoLRP112TiVR+uV1QTGx4ge8chy7f4/ryWwRXqJLxRgiWdHLnfZykLMA77M=;7:0XyQboSjs3Dzm9zJ1j139cgXNhaEm+avyRkL3XZkao43bDbAYarkZgrjfrsVCh/9l7nXGd2dbwz2pJcgiGaOqsh9EQg+DQewPFubbaUueV11BHJzrMkpBlMpM2LlmHfG8dUScz2xiBxoVXKsZIb/Ln7U6B3jRDiKaFMIMSUvRfbWNDnrTsWCinUcdtZeT79OhWFOvf8Bk8oUGec4WArBgrs7hopbjv75JTwun7pc+zZuSFBz9by6frabGYO4xIVd
+x-ms-office365-filtering-correlation-id: 04716b9a-ede7-4437-924e-08d61c4aa4a5
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0166;
 x-ms-traffictypediagnostic: CY4PR21MB0166:
-x-microsoft-antispam-prvs: <CY4PR21MB0166C7C423B7CC56BFAD82FCFB1E0@CY4PR21MB0166.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB016659DA45B2836D07AB34F1FB1E0@CY4PR21MB0166.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(163750095850)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0166;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0166;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(366004)(39860400002)(396003)(189003)(199004)(305945005)(256004)(14444005)(217873002)(486006)(186003)(86612001)(66066001)(7736002)(6486002)(102836004)(6512007)(2900100001)(25786009)(14454004)(6666003)(2616005)(476003)(1076002)(575784001)(97736004)(86362001)(6436002)(5660300001)(6346003)(316002)(2501003)(6116002)(76176011)(6506007)(105586002)(8676002)(478600001)(3846002)(106356001)(53936002)(68736007)(72206003)(446003)(22452003)(5250100002)(81156014)(8936002)(36756003)(10090500001)(107886003)(4326008)(110136005)(11346002)(99286004)(81166006)(2906002)(26005)(54906003)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0166;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(366004)(39860400002)(396003)(189003)(199004)(305945005)(256004)(217873002)(486006)(186003)(86612001)(66066001)(7736002)(6486002)(102836004)(6512007)(2900100001)(25786009)(14454004)(6666003)(2616005)(476003)(1076002)(575784001)(97736004)(86362001)(6436002)(5660300001)(6346003)(316002)(2501003)(6116002)(76176011)(6506007)(105586002)(8676002)(478600001)(3846002)(106356001)(53936002)(68736007)(72206003)(446003)(22452003)(5250100002)(81156014)(8936002)(36756003)(10090500001)(107886003)(4326008)(110136005)(11346002)(99286004)(81166006)(2906002)(26005)(54906003)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0166;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: HKxOCCfvqxFIGZZ/dwk97dEQ3K4nD7ghs4bEkxpgZFg+33deTiu/h9lzbTS+WP18jy65nFTmOt5G7AK/Lvc1Jwe2MMo8sipE+uz2Y2tsc5Huj99M/jiL6AlnA56HU8OPA6OiYfdHJ7oZRY43yW09nC0zWndkIMjzRmsF+pHYUv2qyuAJPbSEl9Qe7Uy2x9ewcqzl5Jdp2bN6Uq1uB52/NzwIC6ZGKbU6sjcJI++blUMdT1kDi7I159T/y2KofBXXIq14oiYjpmdbFtmpFK+LjR1X5os5B+kRD37EgjY480NQbxx2CMEMQM2/rfMgOordCuQ1YhCLsrBsFWtiu/iYymmvX8e7ybSPgSw0D6WQYTo=
+x-microsoft-antispam-message-info: mp6BNGhcti2GrEvbuKlnTR05uodoxBXfdNLWrCMsJodlrmh/k3gpPh9adHNw2hU6Hhn8T7rNra0Bqktr7xZy9XhriGfgEKzu8fzRvuS3//jfizOUqaDoZJt2gzDUhXI7MYRaowVjRVkREZ9fF3pj3C01oDIjpKec0y9cpyk9kiU8fjEX3aeFZcB/QeXQZpBZI5PTZCs/NYKBki4ZlHr3h63y86egR3NlwioqOvpHjojqpYZk/yXKMsCCeZ0Sf03bnYOuoYHcYwoX1ncIMnSoljDii2nXsEfaT1XDRaYNfxH4odakRfkKzbH6F4D0CuH06fopCLa4FogYWpNAGp0MvQXZQ9TLKUle5ry9fV9kW2U=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1abfbab-700b-465c-827c-08d61c4aa454
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:04:52.9924
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04716b9a-ede7-4437-924e-08d61c4aa4a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:04:53.5393
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,75 +93,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit 09bebb1adb21ecd04adf7ccb3b06f73e3a851e93 ]
+[ Upstream commit 45ae68b8cfc25bdbffc11248001c47ab1b76ff6e ]
 
-Vexpress platforms provide two different restart handlers: SYS_REBOOT
-that restart the entire system, while DB_RESET only restarts the
-daughter board containing the CPU. DB_RESET is overridden by SYS_REBOOT
-if it exists.
+Without this patch we cannot turn on the Bluethooth adapter on HP
+14-bs007la.
 
-notifier_chain_register used in register_restart_handler by design
-relies on notifiers to be registered once only, however vexpress restart
-notifier can get registered twice. When this happen it corrupts list
-of notifiers, as result some notifiers can be not called on proper
-event, traverse on list can be cycled forever, and second unregister
-can access already freed memory.
+T:  Bus=3D01 Lev=3D02 Prnt=3D03 Port=3D00 Cnt=3D01 Dev#=3D  4 Spd=3D12   Mx=
+Ch=3D 0
+D:  Ver=3D 1.10 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
+P:  Vendor=3D0bda ProdID=3Db009 Rev=3D 2.00
+S:  Manufacturer=3DRealtek
+S:  Product=3D802.11n WLAN Adapter
+S:  SerialNumber=3D00e04c000001
+C:* #Ifs=3D 2 Cfg#=3D 1 Atr=3De0 MxPwr=3D500mA
+I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D1ms
+E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
+E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
+I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
 
-So far, since this was the only restart handler in the system, no issue
-was observed even if the same notifier was registered twice. However
-commit 6c5c0d48b686 ("watchdog: sp805: add restart handler") added
-support for SP805 restart handlers and since the system under test
-contains two vexpress restart and two SP805 watchdog instances, it was
-observed that during the boot traversing the restart handler list looped
-forever as there's a cycle in that list resulting in boot hang.
-
-This patch fixes the issues by ensuring that the notifier is installed
-only once.
-
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Fixes: 46c99ac66222 ("power/reset: vexpress: Register with kernel restart h=
-andler")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/power/reset/vexpress-poweroff.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/bluetooth/btusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/power/reset/vexpress-poweroff.c b/drivers/power/reset/=
-vexpress-poweroff.c
-index 6a9bf7089373..ccb619632e46 100644
---- a/drivers/power/reset/vexpress-poweroff.c
-+++ b/drivers/power/reset/vexpress-poweroff.c
-@@ -35,6 +35,7 @@ static void vexpress_reset_do(struct device *dev, const c=
-har *what)
- }
-=20
- static struct device *vexpress_power_off_device;
-+static atomic_t vexpress_restart_nb_refcnt =3D ATOMIC_INIT(0);
-=20
- static void vexpress_power_off(void)
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 4a899b41145e..b0a12e6dae43 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -340,6 +340,7 @@ static const struct usb_device_id blacklist_table[] =3D=
  {
-@@ -99,10 +100,13 @@ static int _vexpress_register_restart_handler(struct d=
-evice *dev)
- 	int err;
+ 	{ USB_DEVICE(0x7392, 0xa611), .driver_info =3D BTUSB_REALTEK },
 =20
- 	vexpress_restart_device =3D dev;
--	err =3D register_restart_handler(&vexpress_restart_nb);
--	if (err) {
--		dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
--		return err;
-+	if (atomic_inc_return(&vexpress_restart_nb_refcnt) =3D=3D 1) {
-+		err =3D register_restart_handler(&vexpress_restart_nb);
-+		if (err) {
-+			dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
-+			atomic_dec(&vexpress_restart_nb_refcnt);
-+			return err;
-+		}
- 	}
- 	device_create_file(dev, &dev_attr_active);
+ 	/* Additional Realtek 8723DE Bluetooth devices */
++	{ USB_DEVICE(0x0bda, 0xb009), .driver_info =3D BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x2ff8, 0xb011), .driver_info =3D BTUSB_REALTEK },
 =20
+ 	/* Additional Realtek 8821AE Bluetooth devices */
 --=20
 2.17.1
