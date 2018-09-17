@@ -2,77 +2,86 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC6FECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9489CECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59944214DC
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E85E214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:16:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F73qjYUr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59944214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ph1VhSwd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E85E214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbeIQVlW (ORCPT
+        id S1728527AbeIQVoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 17:41:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54680 "EHLO mail.kernel.org"
+        Mon, 17 Sep 2018 17:44:32 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:40865 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeIQVlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:41:22 -0400
-Received: from localhost (unknown [209.121.128.187])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2800E214C5;
-        Mon, 17 Sep 2018 16:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537200800;
-        bh=SPeGaiDcWl/sjOuncuBnnae+wYoui2ky5pw5kanr4IY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F73qjYUr1usD3M71iUb1JQiBQEvWFM7pUEtCuPtVnZR+xS2NiAQgbC+UKaztgCm3Q
-         NhlWR1A4vV7w5lL3EAiyAchJUO0lfnCHnOb6znVQgl79C7C92QDRPT3oZbg3PUNgfu
-         mbhYuYKu8b4pvQ61YY64QqstebtpJ10hYlJse3BM=
-Date:   Mon, 17 Sep 2018 09:13:19 -0700
-From:   Vinod <vkoul@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     moderated for non-subscribers <alsa-devel@alsa-project.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Shreyas NC <shreyas.nc@intel.com>
-Subject: Re: [PATCH] Documentation: soundwire: fix stream.rst markup warnings
-Message-ID: <20180917161319.GB2613@vkoul-mobl>
-References: <8e1ec734-06b8-ba8a-fdca-3221ac134ea0@infradead.org>
+        id S1726795AbeIQVoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 17:44:32 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c4c421a1;
+        Mon, 17 Sep 2018 15:59:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=22QLD/q5h6ppBKNB7/8qWa7Ng4E=; b=ph1VhS
+        wdbpdQjzIt68yrLA1Cb3a6KK7M7uVtGu8xmWgT30NM8o/OEsiChtyFADsF1vyIaA
+        XNLSmUNb8FQsWOlUVLatU98azNwgCLQvhdlPESncOQ1zSTIkhxZ/b5Hetcq/b7ll
+        u+6umD22zXlsn5idKfHLU8QWK+EtBpqrUq/ONg05os4OFUMAanXD2giOK8VZCJar
+        lBZAp3gA/30CtUhf/PJvDpLAhoyTCL4G8geM1Zq/NWR0mzk8O/H8V+AlFt/F0xBu
+        YiJuGWi7ZoWsATyJ9d11HgL4AlEDEeX1aJEURui1/0Dyy5c6CgjRoekvjtLYajhf
+        S9NeH+Mc+cZNSA4w==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d71bd556 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Mon, 17 Sep 2018 15:59:00 +0000 (UTC)
+Received: by mail-ot1-f46.google.com with SMTP id a19-v6so11884011otl.12;
+        Mon, 17 Sep 2018 09:16:26 -0700 (PDT)
+X-Gm-Message-State: APzg51Ant7T240+w7fb4LA8DwjR2LH2T9Tr2mg10uFyRDOpGVlAfz1XP
+        dm5vMR+09cyB5fdocW6PbjxKuwf7LjLGKGlnmyo=
+X-Google-Smtp-Source: ANB0VdYuW8DXHGaBV09GEZZiLYhTrVEqPDv83Fa7ACN4ZPEKiXky7IKWjug6vnRdx6WZvPcGAUOTkQGgpzHBlMJZ+14=
+X-Received: by 2002:a9d:4a8f:: with SMTP id i15-v6mr13595546otf.138.1537200985969;
+ Mon, 17 Sep 2018 09:16:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e1ec734-06b8-ba8a-fdca-3221ac134ea0@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
+ <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
+ <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
+ <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
+ <35BC21D7-01F4-4F91-A7E9-8D15DE5B95D6@amacapital.net> <CAHmME9o2sB-rQo0DRh56AFe7ZLJJh+CU6Z1m5XZ4tA8vATCy1g@mail.gmail.com>
+ <CALCETrWHWZibRev=hZeE1_YFjktnpV9VBN_QmvHJfakb-saRuA@mail.gmail.com>
+In-Reply-To: <CALCETrWHWZibRev=hZeE1_YFjktnpV9VBN_QmvHJfakb-saRuA@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 17 Sep 2018 18:16:10 +0200
+X-Gmail-Original-Message-ID: <CAHmME9o+Q25t8c2Yk5_5ob2yJsu=7OA7WeAM71S5krP8KMY5GQ@mail.gmail.com>
+Message-ID: <CAHmME9o+Q25t8c2Yk5_5ob2yJsu=7OA7WeAM71S5krP8KMY5GQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-09-18, 17:34, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix kernel-doc markup warnings in soundwire/stream.rst:
-> 
-> rc4/Documentation/driver-api/soundwire/stream.rst:177: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:203: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:248: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:277: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:304: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:328: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:352: WARNING: Explicit markup ends without a blank line; unexpected unindent.
-> rc4/Documentation/driver-api/soundwire/stream.rst:364: WARNING: Explicit markup ends without a blank line; unexpected unindent.
+On Mon, Sep 17, 2018 at 6:14 PM Andy Lutomirski <luto@amacapital.net> wrote:
+> Indeed.  What I'm saying is that you shouldn't refactor it this way
+> because it will be slow.  I agree it would be conceptually nice to be
+> able to blacklist a chacha20_x86_64 module to disable the asm, but I
+> think it would be very hard to get good performance.
 
-Applied, thanks
-
--- 
-~Vinod
+I hadn't understood your nosimd=1 command line suggestion the first
+time through, but now I see what you were after. This would be really
+easy to add. And I can do it for v5 if you want. But I'm kind of loath
+to add too much stuff to the initial patchset. Do you think this is an
+important feature to have for it? Or should I leave it for later?
