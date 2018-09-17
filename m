@@ -2,44 +2,45 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70A0ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1E3ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0542098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE9D2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:25:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="CLZwSgdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0542098A
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="gjC3fNak"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE9D2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbeIQTxI (ORCPT
+        id S1728835AbeIQTxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:53:08 -0400
-Received: from mail-eopbgr700063.outbound.protection.outlook.com ([40.107.70.63]:9696
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 15:53:15 -0400
+Received: from mail-bl2nam02on0044.outbound.protection.outlook.com ([104.47.38.44]:52320
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727021AbeIQTxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:53:07 -0400
+        id S1728065AbeIQTxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:53:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raZ6Uk924v1xDT/b5VGfzq9EWiiEWa293GxMnUYXOus=;
- b=CLZwSgdqkqrcTgDGtQcamnc1KBcT0VB+07cTyBz/HbT13LvPsLQvMyPIHb4J0OWP2ZoLvP0zHH8+BKeuJw7iu0UuVCVtXR0sx4L6AlB7M98zUwXqsztkDFpqcJFe15JTWq3Ol26r4P43qqkZ2rujinieHD375quFvT5lgL+w+OI=
-Received: from CY4PR02CA0036.namprd02.prod.outlook.com (2603:10b6:903:117::22)
- by SN6PR02MB4479.namprd02.prod.outlook.com (2603:10b6:805:af::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.15; Mon, 17 Sep
+ bh=RbR3fLzO92FLbnn0FpatGAZw4MgV1t8PyiVaoNMXrYk=;
+ b=gjC3fNakS5IsPy26B/fuR6xUa5AgVwhR+zu7Qrl0d5EOouzh546CeCMV/5RFFHNmueiGMaFdaS8foWU+LdtcDS3CHbcRs6Q0aWl2xO0HGeYqI4ryKkgqHs11T/qbrHhaCfa39HW1FB0U/T8eL/ww+mjPtL6rlIqlIoC9pDKniks=
+Received: from MWHPR0201CA0087.namprd02.prod.outlook.com
+ (2603:10b6:301:75::28) by BYAPR02MB5111.namprd02.prod.outlook.com
+ (2603:10b6:a03:70::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.17; Mon, 17 Sep
  2018 14:25:31 +0000
-Received: from CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::204) by CY4PR02CA0036.outlook.office365.com
- (2603:10b6:903:117::22) with Microsoft SMTP Server (version=TLS1_2,
+Received: from SN1NAM02FT037.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::200) by MWHPR0201CA0087.outlook.office365.com
+ (2603:10b6:301:75::28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
- Transport; Mon, 17 Sep 2018 14:25:31 +0000
+ Transport; Mon, 17 Sep 2018 14:25:30 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
@@ -48,26 +49,26 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT055.mail.protection.outlook.com (10.152.74.80) with Microsoft SMTP
+ SN1NAM02FT037.mail.protection.outlook.com (10.152.72.89) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1164.13
  via Frontend Transport; Mon, 17 Sep 2018 14:25:30 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1g1uSv-00056G-Kx; Mon, 17 Sep 2018 07:25:29 -0700
+        id 1g1uSv-00056H-ME; Mon, 17 Sep 2018 07:25:29 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <manish.narani@xilinx.com>)
-        id 1g1uSq-0005LT-HB; Mon, 17 Sep 2018 07:25:24 -0700
-Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8HEPH4O007834;
-        Mon, 17 Sep 2018 07:25:17 -0700
+        id 1g1uSq-0005LT-Ii; Mon, 17 Sep 2018 07:25:24 -0700
+Received: from xsj-pvapsmtp01 (smtp3.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w8HEPL4t007854;
+        Mon, 17 Sep 2018 07:25:21 -0700
 Received: from [172.23.64.106] (helo=xhdvnc125.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <mnarani@xilinx.com>)
-        id 1g1uSj-0005K9-2S; Mon, 17 Sep 2018 07:25:17 -0700
+        id 1g1uSm-0005LA-Um; Mon, 17 Sep 2018 07:25:21 -0700
 Received: by xhdvnc125.xilinx.com (Postfix, from userid 16987)
-        id 3FC59121463; Mon, 17 Sep 2018 19:55:16 +0530 (IST)
+        id 27313121463; Mon, 17 Sep 2018 19:55:20 +0530 (IST)
 From:   Manish Narani <manish.narani@xilinx.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
         <mchehab@kernel.org>, <michal.simek@xilinx.com>,
@@ -76,119 +77,444 @@ To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-edac@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v7 0/7] EDAC: Enhancements to Synopsys EDAC driver
-Date:   Mon, 17 Sep 2018 19:54:58 +0530
-Message-ID: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
+Subject: [PATCH v7 1/7] edac: synopsys: Fix code comments and naming convention
+Date:   Mon, 17 Sep 2018 19:54:59 +0530
+Message-ID: <1537194305-9243-2-git-send-email-manish.narani@xilinx.com>
 X-Mailer: git-send-email 2.1.1
+In-Reply-To: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
+References: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39850400004)(376002)(396003)(136003)(346002)(2980300002)(438002)(199004)(189003)(2906002)(42186006)(81166006)(81156014)(50466002)(106002)(6266002)(48376002)(8936002)(51416003)(54906003)(110136005)(50226002)(103686004)(106466001)(4326008)(476003)(63266004)(126002)(426003)(36386004)(2616005)(16586007)(486006)(7416002)(336012)(44832011)(36756003)(305945005)(6666003)(5660300001)(478600001)(90966002)(8676002)(356003)(26005)(72206003)(52956003)(316002)(47776003)(2201001)(186003)(107986001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4479;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT055;1:447P6gZzpNdpJ8gw7/W36UXixRw6Y92s1mE+OWd+S7phNnrYXNU6SUw9X5Aa/GsHRZxa2Ih8QfS85h+gXVraE0uzNA1UDKtq4z7gj9eazntdYU8qA4KY+CSt71ASga3y
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(346002)(39860400002)(2980300002)(438002)(189003)(199004)(42186006)(36756003)(6666003)(63266004)(54906003)(110136005)(16586007)(106002)(51416003)(76176011)(305945005)(48376002)(50466002)(47776003)(5024004)(14444005)(316002)(4326008)(356003)(5660300001)(2616005)(106466001)(8676002)(336012)(426003)(50226002)(2906002)(26005)(6266002)(2201001)(11346002)(7416002)(44832011)(126002)(446003)(90966002)(8936002)(186003)(52956003)(486006)(36386004)(72206003)(81156014)(81166006)(103686004)(476003)(478600001)(107986001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5111;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT037;1:QvuF1UGbIzA4t9DhQ2iG6Po0hdGALJXGTuFHjf6Hb81aA4/vPDxvOHST1wAC2nQDhTfKio22dkx5tkRGpEPoV9MTkpxbU0nF8F9nprt0LNBn3KV+io+XAWbhUIB/2PYy
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7c1ebc34-67e0-48aa-ad47-08d61ca96c23
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB4479;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4479;3:WK22L1ybHH+6hG+9i6hlUBpDgozw09fyN/lxHLN4UH8M5OaIXg/TtWjfdW8f2okeO+al9LL1R/UgNY73WsQs9wxwLDkqS6tPd3kCU/qZZ8lyqGc92LfIfGhmupW2fZjIr4l17D0uW//NL5aDaxULHoBYIunyn5Ypme8bbKiuJFrtyT6qg6mBuFyzKW38yKv7lhvI3y4UNq5s4xNGnyyYTkelQL2gr+1WHIGo65Yf4JrOqTpdh79SYLdmI2FOiHWHxKF++vNil3AxxsCUnQ7/sQgF+cBPiVJrZHzXLKATbi01c6fB7B69NsbyQ+J2v3XzPi05ExnZOjAdu3xNhRjsvwGeNeYbuEW9pVJPURQeWog=;25:XPl1Ty3ndRZC+Z9wkTtM67Qp0N/wu8PlpTFOjYoHg6lxE4CwBpOsDnY3EcQCh/udMGAcbZkHEsQT5ORGjE3En/bwLSNo3LUWWWZ7kbSoVTfi3Z5fGLf9B75OEMf7OYgXvem3J+XDNVhH+4vstnB//uJ9DjdGttKuVS58VahmpXOiJKbWz4aX62ofhzYX1UMY2TeNmfboDCSIbBmK8zqMw8nf0wn9rUJupLaCSZ11r4S4AT1a/gaq6wp7ubtL4OmfbrSBjsCU8XZA66b0dRwRnVhxMYPXbwlxQSWZ0a0M9BMvSHB/P5oSXySbiLSH3ihav3A+gJklSGtrRB9fIReCMA==
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4479:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4479;31:BfbotV76VFyymCp/VkGjkh9Gn8B4omo0Q7rpFccZ0VqLDlKbIrBKWk3rMTuEoXfJ3Xiwk2oAhAy5q++oeoJ/X/6Bz6fkzBCE72DmwjIM5nNR2eWoOlqayM6MWPL0mFE0MU2NIEzQYaSSSOT6GKJOu4DJRp1Th8ka9Ku7bj0UXYpJ7jmlrDBGMubSQkU9Z3DLROeKJt098bmC6/Wx8KpgKY03Obz9HRezr6CSY51eYAA=;20:gzdjrT9tInCi+FPkydEvzHSl5I1eoHhOfEzc5qEOE0zj53fL6FV5oq461bhjXcInDLtpW4tgjGqelpOKvaj+SSU43SpGyrHXTHkvtbrjwJ2/yePRGGEg1k3YyPUmYPFMu78LaqyhKVG/JP5XlgzChk+lZUHzXVcb5at97CCgYBybMj7x5I+XFtcFw0TB14T6yyPQocIbs+xUbpIkCUFhqeVvl4qm8jZlVUgknY7x3y1MSV45UvFvNrH7aGEy4cZJ8VNymJdmpZG793QrFTU9+ZsJ8g498gU3HQ7uMSyjFJB/H5dJ+pQIR9CfWLQhRzIDFKJ+YJkydvSPi2xmWEZ+RHfYpLuJromI6KkSPrTVJ2X4vDYxAoSEK/A/xkgiBcUK+Sn8GXFxHE03USOyThzqPyW8zUJ9unWDdsfcZR68ngDqe0Ja/A7rbj3sXWxXsC+Evr9w41vIVzsEeqqLNXR4r1hmm2JlaAhU+2QnfMYadHk/qfWkYZ6szkWzAFb/Di7i
+X-MS-Office365-Filtering-Correlation-Id: 4154e4f8-1a08-47a0-4674-08d61ca96c12
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BYAPR02MB5111;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5111;3:r+odYkzdPC3xmSY0W+AAJmOQHJXgXPGrADqR1OHaFdBO2gGJiyPmpq1PcTw1eOoS+VWKDE3J9xgBqpl5Igeg0VZrAHv+jCuDIuSfdka9Tdw3rdn4W+Ingn5+4HhLaUR6awZ977OFgzwAjf7PP1O3bSMQzqv8+SvVYjND05Yug4ZMH8tyxt9iVDWp+rYW57k5WI2mUVsEMB0sCCMdsgq5M7joQq2YxWrwvl1XfuwEvn9jchwzHhFDIq+1b59ucmVl80fLZpG3MRjVDbfAzU6OQgyQRmeTRuNLa/3vohZWb2WRzFMolzTBlL8QRYQbflpakd2aBpVdKh+0LKqalfiDEEN7vaeAGaJRCIO0fq8fr6c=;25:cVN4nbLoNwruXsq1zlExjsK2gAZhHwg4WhqEQDpJ3qKp0br6gInW4yjiNQynBy5By7eY/JgZfXBDrlwXR56jSQgFEvSP1x09p4GouE4YCN68xZwxc7h0/LuHEELg5YvFDmkahjaTWqz7PcbeD1pkDvesv87bMDhlrD2f1JnunyL0aDYnJufPq5h6rjwcYu+Dx0I3BDczSFi3oVnepqhtPjl1SNdMnpD2/zxlYIM1z7vulUhhnB9i8mxXbf69bpAJaFOiqB2sdbsI9LX2iPmOdd/FgnFtOEAD1iqrh4vPag3D0t0EH65kLIPeg2+un4/EnsIb3Z8L4gp6v7+PJbt4kA==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB5111:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5111;31:hOXFeK+u+iMbRExx7NsHc4go9gugQbUQiathRvD25BeVILJNOC/UGrRi59BdTaKQaT9BLAX8cpcgMHWKZscxQp/CDmKqPBePdwiitf/vs/rBPOBfFbkSK0i4k58l1YghvQkXxhP2QpyJKJr4r64sgjRzGBthzUBzOYs7tl7er6IsNgI59UOIcXwbXv+1KAQgD7nXbsD0Be3iPAS9AI7IW458GsYHt+tsORFxn0WvJQk=;20:S7rZf0lvIUtu6TW0wYV7Z59u7wXvgrdb+AbCqC6UID5iwdiEj7Z3M4MvJJRd2j3+aZm0bH6ykVYRSkEjVI6yacxXBKcwM//AOASQvGc8bYs/L6oCLQW1MIslVYe1qENDkBJRHDBBZFt77zjOhMLKpGuW2xlz4RuLqC9VqB6s5q47TA5aUfFyUckeSLlPANMTSgUx9CfgXP7w10vm7Ephp17vFXuO+FvPGfT9RI0HoBbln54jLtID84I93Ex9hOiKYY11EpftrEROxCM2nk2zKq6wgXdEBC8TYrR5zN5rpl+DjWzUi/JaJlaHJvUB5J760En6ymL79emHRJ7EbTM1Wv8ngR2xCoZp8MqwDYN/7cuf1L0SM8Jt1AwM2ZtrU35dxjgcuMpm2JGStS/PMlxelr9CC/lt3rb9+TlCfcJT+KD52+eGXG6TkrwTJ+F8yfGng2zEir9kC7c9yX8wEi8PVECrGQibWj/R+brJjwfjJePZUiezMEXE7zjtZ35vLQ9/
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB447991C561ACFBB5ED88AE36C11E0@SN6PR02MB4479.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <BYAPR02MB5111841F7C070E304AB8C4E0C11E0@BYAPR02MB5111.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(105169848403564)(163750095850);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93004095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:SN6PR02MB4479;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4479;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4479;4:R/W54JufCXQlNAzWNKfsCUaPiHnwuRVB502ee3yjEUf4h0MLknQOSahlYKqUOqmNaj2EKzPbDPbiPKHFrASDYdqu4YKiKOlHTUynBbN0ArKVXLE8DsYY8D1c0DC3nlxGKIR1iQO0N+DKlzMYGvE8mL2FPEWcSF3V4Fk33q5dCFTF6iq7KWoTmAgGdOigBWTX345t5NxF4bmPZS14RT8G7I3V/7VM4MJnP97wVFxUpudWkI2zAlvdgDL+CT7JmXasadMPGoz2z/C/evld33iegw==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:BYAPR02MB5111;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB5111;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5111;4:vOB+UQZ4Bn0InbdKWVHYwk3E7U7XaHwXyQRrrpF+8esa9niWmgd4LykbkAwA+R/5DQWyhWLk/yykSD43WLExKg40lxygHqMznMCaQQzTaXsnSIX+GrFp1K9Z7cg0wv9M/cPB7sOdsmTe6YH/oEpfPUmGCTApVUrjFU/bABn1FXsi+LaTgROXuJ3uKlMS7SfstEyKPPPGKyZ7m/5KzyqRx+hL5/nEBTylgO7YU2wvIQu/4vdlK2cNtRI3mCE++EIe+H6pBWmOUdlWVBu5tYijDYNpg91hYQEDF2yMV0FWA/zh4+XjnJHXGK1xJ67PXoSRFuhORaTKWkTqpyhaEt2DU3UFhefaWOnDJBfqo9utck8P6JKHxMIj/3imDvBLljJT
 X-Forefront-PRVS: 0798146F16
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB4479;23:jOt5a7yjlAD8QxJKvhzqM7MDKncIh6hCqdcXPxxUk?=
- =?us-ascii?Q?NZK6RPq/PnG3m8GhDHqK6Z9PEeBlbY4HjuzsTqHVhkT8NLjcM3rqjLaXsdKt?=
- =?us-ascii?Q?qDpJwHE2y3dmhpU73b2XZ7nzDWqLgBkXI/ZPiIyZwR35/3Po7LC+2AoiVvfq?=
- =?us-ascii?Q?E6nH2h8zxLR13kf/vMy9vWKL+ZWJCMTWE4oH7A4V2RUrkn01QIg7iJgLo+0P?=
- =?us-ascii?Q?fBIq1nvMRmra2SbwYaAhf0rKG0JtLiOEogQ851jjbydRfeO7K1oB4/NlMXzO?=
- =?us-ascii?Q?dJF+pM8azA4bgKLW013EptFNeNjODwYNa9n6jj49STfDlyvbq9fSNsuW6KGK?=
- =?us-ascii?Q?x6ylgDP75W3bc+6WPSX6WfaWgyl7gFkLj1x0HBwp41eLOhNIOr48C51VpwkO?=
- =?us-ascii?Q?gzLJKO3ktVA13Kxw4a63qTYvBJyojkoOq+NefbrtMTyzKke1fCPR2sgurzyc?=
- =?us-ascii?Q?QVQVEz1DrgB+o9KxOHjuzMVkl0kuziMlPV68rdT2Y2UOv9L3hU9kHp5yFVHq?=
- =?us-ascii?Q?h1shUHcX7PhJcAqUBESi1Ul5A/Rfbl+uNiBhsbxmG57jJe4iS2WV2Y34wSxP?=
- =?us-ascii?Q?yaQwXpgsZm6+mLhm1XqnRJtBKazRM+vGUEZ2XqzYJYtLIyUSrvcrHzwjLvp0?=
- =?us-ascii?Q?VaGs04WT2rnNT+xogaSk3fjGcVU+Tf6euWx3IojSuVszq4QI4SNC13N7NaWY?=
- =?us-ascii?Q?FBtZ6yCxDuRQHHPTRoEfkHs73qdPbSrP85xy+QMSYY0q+zhQZPmuoLueZDdH?=
- =?us-ascii?Q?TUJxQRG9XeTUX0WA8p2Mfm7EcX9ccQc8yNG8Y/1KETlY8213zF6P0DWeYNM/?=
- =?us-ascii?Q?+MzYGAai19rJt1Dm0rhLcyTQ4LXzCTa92fyTk59fTv1DrAeutYESlUVx5rVq?=
- =?us-ascii?Q?Q3P/F4ahZTJ06VVuotV2yhRbnVV67Ahpnsi0R51G6dz6XKGBg9GhfUhVjfr+?=
- =?us-ascii?Q?5o0vqch2feVCDKGqPkWIweloa4c7BX4gVvJ9xJOzOHU8hGWZsSTfIzfN30E7?=
- =?us-ascii?Q?wf6qUMaC1tckzSKoMUOnwlhW+3+pobWsE4tB3rcPFSSLbEr8erBLqpPxwONX?=
- =?us-ascii?Q?RHlY3/WxsBsN9yTtOhBiXtKAryMgXgDh9PEQB8xOuCV9F802ogjKlMmRddNS?=
- =?us-ascii?Q?ddhi3slKxwXtWBQRtg7yG7k9VUXWR2mz1olZ+sUZF9rwiIkQDGwrw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: t4UGYT69+Cm6eVErxvhKmMFx6zgTKFWdwQF6W7r4Yo+kn27AhVug5lGugfxOPM7bSjjP1aPSeSzj9wR8VkRRXkhYyZTSt6r6w5+J+kK/IF+i7FvmFRZveVFYFJKdWzpXFLEU+k6rkj4KygNJQwUWi6K8JswQ95KbBee7mFFN1TNktzFCztzMbRs2jXu4MWt18PfwhDoO27hav7CDPeZ3yDShGx8/U5naFV8pDkqxVi/DFodFpCylCX2GjnJTtw9gAHHxc3nTaXEcjTWluwiuYA4jow5fJowkL+u9al8zAgKML9ol3EJyb00eNYeL6WjSSFC1PA8qB/aiznEdUOGp+cyzNrEIhAKtEdnrvHrWQvI=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4479;6:hG2TkEncctOUTj12HnLjFokGIBBESaw/F/goLQkRzrpcyUmTppt5287N9EqGkDeoCIRui9sKqAQ+SUMo8cgEZkA8wkLNge7l3xqDJ7QS1F5oiLuQ6VB6d6SNInDgINFfBBH7TxF+PLZZzO/ZQMTWKP4k7YB9ar8mc703i19JAXJgh2fNXC21clZ7YojmfdHjSMZaD3iFxrgdnrBiClg1w0sdnZJDi2+9zTv/awhcjuSPrr6zxVGmqFgiSoNkqRmoa3IU0HgmVVJWqB3IfGyvMJgHNpcHIOHMyv6mNg2MupP9eSG7JVQDI0qvCyMHjGGtMcn3d9gmkWkVJlH5YJNYTkkxbFRE5vrkMF10o8IXNP/DwBjQb2/njniwfyhzBl2SkWnBLBbXnA/K5AkFYirhZSRFWMir32rfJT3P7xk7tOiSdK6Xn9kGO6O7C91y9EjMM3js6QSlcPSemoA2fG2tGA==;5:RqydHpAnityUXjSNbvlP6mo5wVPzOW+MZnEfhYChuJif+LtPxU0QdICdJIwKM8oIYsN5OBTdDhjT/O5o5iMeNXPJwrtQlcObXm1lNoS2YGgJlAqD9gSrw2Aa1bOzpd1uZ9DXLMOZInF11pjDiMtigrTD31sdS9MLq+7FjAtUfuU=;7:Ig22z4JorZir7F+9VjkFGnkZG/xIeDv2Xh9f43fbSQTt9gRuERcGn8tK7nz4FI2Q2ng/7qIHPOusYdMEwl7n1knt5/WZfgb6ZJ7O2RyiibY5mRupNM6m8e+reTLmzyZtWa9t7+nrkph8ctAokG8l4K5stItsCxLRAuSwqk4L3PDA0ZpJm1UzkN40LmSJYVuaBZchXFmdEPesiyjzBh+zTv9zJtdcybvzaOJpsPwcqXQ9RVylc/R1w6vM3LzlOHYe
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB5111;23:wd7VU5Xbj/1nd8ZCFNmvco/XV0jC2dHmyepR/2Rhf?=
+ =?us-ascii?Q?8eakfQETwHxoKX/KLozVVHpGDx6D5LEScro1w/TdtHx1RFrGZqT/GP5DCRdF?=
+ =?us-ascii?Q?4no7jynObotx+JQg4NjilSccRN6jvpVDZcWLMnkCpVsrvkAmK8Lz5qhBe+Y+?=
+ =?us-ascii?Q?r1heLfiVvRZSHzgU2d0hrboi3QAocSM1wUeH1duCb0hxhA7ZVGgfQopBoo/p?=
+ =?us-ascii?Q?mzlHMlyTHgJmpGQoN1Fl0vFvBfamTyBj7vJpdH8PJI7M6vlRieNX9xLvsL6l?=
+ =?us-ascii?Q?V3yooHf/594YqaCS0ZcHinZbQy0oUqSpH/pBWGD11I0eRfgYXILlnMjdh6Rx?=
+ =?us-ascii?Q?KAKbJsN6A4nsjZ9oQ7YTd+N0Sg5WEA2kM0qX+5z80gmRcffEPugW/DbYTDi6?=
+ =?us-ascii?Q?/x5UnrfHCIOeJUJzasMvJpQarHJMGQrpjuT9EPMXfPK5m6LqRLw7EjzEfGXy?=
+ =?us-ascii?Q?Xy/etV4zwrwaJIbWEigC5dnp2kZASt9WoVOSjGcnU4iFqFwOCHHKQajkQr8d?=
+ =?us-ascii?Q?8iZfMNKtKV9WB6cPVZLCIBoPF0YMr2la/xh29A2mQODA94NWnagfhWMcP6eX?=
+ =?us-ascii?Q?F7GBS2e3eTyAYJwdCe4p307TbTb5U1XZtvyrHdhZhbEtvhMalgGsyB6a7tul?=
+ =?us-ascii?Q?mdnUvCdMwhRn0RqLmhI5obfWpS+GWpk6NpouIZXwc5dO4BZHz3by2Tjspuhz?=
+ =?us-ascii?Q?zA6IIlkjbwdO88Egr1r+JAZlcfIja4YrzlX5owoCydzsdCQrSMNqRBGxiAw2?=
+ =?us-ascii?Q?KIw5CujzE75izr1gyPSJyBbl/bN1qQcCuFr0ofKU4GdOqjaL/rr/w+2I36gn?=
+ =?us-ascii?Q?A1NhYiHrpKc8b/wIIicV6l/oGN5fcT9ONohpKO//TKhyiCsqzeu8SGI8KMjd?=
+ =?us-ascii?Q?btqmp9ssqp3DC8cfkUhn3vGyHWC7glXs83BQRFLKqTJkRupfl1fKBg5JsBXk?=
+ =?us-ascii?Q?uKbiGUtsL6/7wtycDJKT/HfWcIUcQb/1pcXqS5y4tgiJiNGEKCQzm0dl4sYc?=
+ =?us-ascii?Q?r9E4UXEo5X8hi8RtBJzat+R4cHRu5Zj5VqyaRen35jL9rqUx8zafB+ehHZDM?=
+ =?us-ascii?Q?5MbOLDfTKd6g8W59dHcUe8KGdvrPAfD4I+JpgHN/drQ9tl9CdyFSlOjeju2k?=
+ =?us-ascii?Q?uT6HmN6I6U3sBvkA2Lzv5FKmuz3QdCz0E+wLcNO8yFgmaeTwPCO3USL7uwvf?=
+ =?us-ascii?Q?gFBdkb0wnL5zF5/3y+fMYEJtpnGh8fHoAgdy7cLz4E3I545vAhBo88YX/vgW?=
+ =?us-ascii?Q?r6M+N1mT1oFyv5m6aQFmk0H7Pwp6a7hAE5J/3bW?=
+X-Microsoft-Antispam-Message-Info: P9JZlGKzamEP3QPCanzU4QV137/UIqqjOG7o+XealsIuVbQL5RzS05TYlgSGzUSvX8D8m+1233JM5JTyazRaNj1gLqLVqrIA+JeZgEWQoDxT2+rethwvOwWKiw6mia5ylkUU4lVhX338OS5WVjfievt/S7km46uy/iR7luOGVjhTtPqtE/Hx/SJ260I6rmDo4Anf8e8y9SdsWeciguc067sUaRhkkOI8Ld/R9lFjLxAfNyOqbQu3Q09K+o4sPUOQEw2oRvf3CkIfRzaDV/uYr99HoDq1livysXo8h+VbfcBBl5wAN4PVAmXvAMkrEotyyJCTF+7jOtIc8R9vRfuLGYfAgPf7Vi+6M5QIYlzOuyY=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5111;6:ykpCzN5vhObthAtq8xOgT+idJw66VDvEvRQtEqpfn0qfBSPTOb5ZH9AQSLJ8k9Nw8vN/oVQBbCAT5oHEseKogoGhNSmiW4W7+r1yMXfG0a51G6GjVtc92toEAqIRms1yHX0mIYRi1Lht7dw/cQXlkTgBB4aziqnoP9W1qSMd0258POCNEiMTTJ+BYrPnwuebj1EGehGxhj2LudMYU3yiBfaqOul2Zz+0xyOB8LE7XTaQnh9kM2utkQ9OGf5798qsTqgnIP3e0NTtPWOVinc/MXFKg/2WYMYkzOyVXhJS3Z7q5qok5OH3zPdoaSwXe3+3teAU3MJz8HH5yT6AruBLzbwWcJs/IZcIKkUNb8TJxW3+5bTzdoX/EncNXjOZkjFuHcRwZHlA2aF4X3tRAOrBZK33oz3m7eewanBgPonieQvPNj4VhWgdzZ8wXRH5e2/6P86zrD/BuzhLIGQCnFzauw==;5:BcZ2Lhf0rAPjCBGjJ1x7JTBHRSFInnnPlPNeK+C8tYURMs39OKdRtU2T55CSVamr7uJ/SexCmB4N3zE/znfkrH4FIY5DEprgr7sZ6a1NxM/W3K1jqHmEqlL91z4lB0Q5Nd2XJB9RjZOfa2FB/cIUssE/789b9VcHzVhQZP4JQLQ=;7:64e8GrTozTHTBRJFioK8uYW+wKfgSvNsKhm5h7MhChAGtcvIi3xn+47FRVIrVJSpwufUhGUCJUCqHCzr6Fs6Fg7yPR/abzqCkHKdaJNpjTt6KQAdkr3/kBnfmYSiTE5Rzf7VAyi0OD2LuC83gTolHaiI+HySjwR3papfYVOU+8Sb+cNJMGpKhEoPoVQt1nl8/wOWxnEetQHRz/whX9uzIIU5pfiMV62XYCbGPaLMB+Mue+3F38+FcRK4Fse6Ezjk
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 14:25:30.2738
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 14:25:30.2535
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c1ebc34-67e0-48aa-ad47-08d61ca96c23
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4154e4f8-1a08-47a0-4674-08d61ca96c12
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4479
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series enhances the current EDAC driver to support different
-platforms. This series adds support for ZynqMP DDRC controller in synopsys
-EDAC driver. This series also adds Device tree properties and relevant
-binding documentation.
+Update the comments in the Synopsys EDAC driver. Minor changes to function
+names and return types are also included.
 
-Changes in v2:
-	- Moved checking of DDR_ECC_INTR_SUPPORT from (1/4) to (3/4) as it is
-	  a feature of ZynqMP DDRC
-	- The Binding Documentation in (2/4) is modified as per the review
-	  comments
+Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+---
+ drivers/edac/synopsys_edac.c | 176 ++++++++++++++++++++-----------------------
+ 1 file changed, 80 insertions(+), 96 deletions(-)
 
-Changes in v3:
-	- The commit message in (2/4) is modified (Synopsys EDAC Driver -->
-	  ZynqMP DDRC)
-
-Changes in v4:
-	- Updated the commit message in (1/4)
-	- Renamed function pointer names removing 'synps_' in (1/4)
-	- Shortened unnecessary long lines as per the review comment on (1/4)
-
-Changes in v5:
-	- Updated the commit message in (2/4) and (4/4).
-	- Removed the unnecessary check for match data in probe() in (1/4)
-	- Some Indentation changes for better readability in (1/4) and (3/4)
-	- Removed repeated code in (3/4)
-	- Used 'zynq' and 'zynqmp' instead of 'synps_enh_edac' in function names
-
-Changes in v6:
-	- Splitted the patches according to functionalities
-	- Addressed code style comments from v5 review
-	- Moved the Error Injection to CONFIG_EDAC_DEBUG mode
-
-Changes in v7:
-	- Included DTS patch (6/7) which was missed in v6 patch set
-
-Manish Narani (7):
-  edac: synopsys: Fix code comments and naming convention
-  edac: synps: Add platform specific structures for ddrc controller
-  dt: bindings: Document ZynqMP DDRC in Synopsys documentation
-  edac: synopsys: Add macro defines for ZynqMP DDRC
-  edac: synopsys: Add EDAC ECC support for ZynqMP DDRC
-  arm64: zynqmp: Add DDRC node
-  edac: synopsys: Add Error Injection support for ZynqMP DDRC
-
- .../bindings/memory-controllers/synopsys.txt       |   27 +-
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |    7 +
- drivers/edac/Kconfig                               |    2 +-
- drivers/edac/synopsys_edac.c                       | 1098 ++++++++++++++++++--
- 4 files changed, 1014 insertions(+), 120 deletions(-)
-
+diff --git a/drivers/edac/synopsys_edac.c b/drivers/edac/synopsys_edac.c
+index 0c9c59e..4963930 100644
+--- a/drivers/edac/synopsys_edac.c
++++ b/drivers/edac/synopsys_edac.c
+@@ -96,12 +96,12 @@
+ #define SCRUB_MODE_SECDED	0x4
+ 
+ /**
+- * struct ecc_error_info - ECC error log information
+- * @row:	Row number
+- * @col:	Column number
+- * @bank:	Bank number
+- * @bitpos:	Bit position
+- * @data:	Data causing the error
++ * struct ecc_error_info - ECC error log information.
++ * @row:	Row number.
++ * @col:	Column number.
++ * @bank:	Bank number.
++ * @bitpos:	Bit position.
++ * @data:	Data causing the error.
+  */
+ struct ecc_error_info {
+ 	u32 row;
+@@ -112,11 +112,11 @@ struct ecc_error_info {
+ };
+ 
+ /**
+- * struct synps_ecc_status - ECC status information to report
+- * @ce_cnt:	Correctable error count
+- * @ue_cnt:	Uncorrectable error count
+- * @ceinfo:	Correctable error log information
+- * @ueinfo:	Uncorrectable error log information
++ * struct synps_ecc_status - ECC status information to report.
++ * @ce_cnt:	Correctable error count.
++ * @ue_cnt:	Uncorrectable error count.
++ * @ceinfo:	Correctable error log information.
++ * @ueinfo:	Uncorrectable error log information.
+  */
+ struct synps_ecc_status {
+ 	u32 ce_cnt;
+@@ -126,12 +126,12 @@ struct synps_ecc_status {
+ };
+ 
+ /**
+- * struct synps_edac_priv - DDR memory controller private instance data
+- * @baseaddr:	Base address of the DDR controller
+- * @message:	Buffer for framing the event specific info
+- * @stat:	ECC status information
+- * @ce_cnt:	Correctable Error count
+- * @ue_cnt:	Uncorrectable Error count
++ * struct synps_edac_priv - DDR memory controller private instance data.
++ * @baseaddr:	Base address of the DDR controller.
++ * @message:	Buffer for framing the event specific info.
++ * @stat:	ECC status information.
++ * @ce_cnt:	Correctable Error count.
++ * @ue_cnt:	Uncorrectable Error count.
+  */
+ struct synps_edac_priv {
+ 	void __iomem *baseaddr;
+@@ -142,15 +142,13 @@ struct synps_edac_priv {
+ };
+ 
+ /**
+- * synps_edac_geterror_info - Get the current ecc error info
+- * @base:	Pointer to the base address of the ddr memory controller
+- * @p:		Pointer to the synopsys ecc status structure
++ * edac_geterror_info - Get the current ECC error info.
++ * @base:	Base address of the DDR memory controller.
++ * @p:		Synopsys ECC status structure.
+  *
+- * Determines there is any ecc error or not
+- *
+- * Return: one if there is no error otherwise returns zero
++ * Return: one if there is no error otherwise returns zero.
+  */
+-static int synps_edac_geterror_info(void __iomem *base,
++static int edac_geterror_info(void __iomem *base,
+ 				    struct synps_ecc_status *p)
+ {
+ 	u32 regval, clearval = 0;
+@@ -172,7 +170,7 @@ static int synps_edac_geterror_info(void __iomem *base,
+ 	p->ceinfo.col = regval & ADDR_COL_MASK;
+ 	p->ceinfo.bank = (regval & ADDR_BANK_MASK) >> ADDR_BANK_SHIFT;
+ 	p->ceinfo.data = readl(base + CE_DATA_31_0_OFST);
+-	edac_dbg(3, "ce bit position: %d data: %d\n", p->ceinfo.bitpos,
++	edac_dbg(3, "CE bit position: %d data: %d\n", p->ceinfo.bitpos,
+ 		 p->ceinfo.data);
+ 	clearval = ECC_CTRL_CLR_CE_ERR;
+ 
+@@ -196,13 +194,13 @@ static int synps_edac_geterror_info(void __iomem *base,
+ }
+ 
+ /**
+- * synps_edac_handle_error - Handle controller error types CE and UE
+- * @mci:	Pointer to the edac memory controller instance
+- * @p:		Pointer to the synopsys ecc status structure
++ * edac_handle_error - Handle controller error types CE and UE.
++ * @mci:	EDAC memory controller instance.
++ * @p:		Synopsys ECC status structure.
+  *
+- * Handles the controller ECC correctable and un correctable error.
++ * Handles the controller ECC correctable and un-correctable error.
+  */
+-static void synps_edac_handle_error(struct mem_ctl_info *mci,
++static void edac_handle_error(struct mem_ctl_info *mci,
+ 				    struct synps_ecc_status *p)
+ {
+ 	struct synps_edac_priv *priv = mci->pvt_info;
+@@ -232,38 +230,38 @@ static void synps_edac_handle_error(struct mem_ctl_info *mci,
+ }
+ 
+ /**
+- * synps_edac_check - Check controller for ECC errors
+- * @mci:	Pointer to the edac memory controller instance
++ * edac_check - Check controller for ECC errors.
++ * @mci:	EDAC memory controller instance.
+  *
+- * Used to check and post ECC errors. Called by the polling thread
++ * Used to check and post ECC errors. Called by the polling thread.
+  */
+-static void synps_edac_check(struct mem_ctl_info *mci)
++static void edac_check(struct mem_ctl_info *mci)
+ {
+ 	struct synps_edac_priv *priv = mci->pvt_info;
+ 	int status;
+ 
+-	status = synps_edac_geterror_info(priv->baseaddr, &priv->stat);
++	status = edac_geterror_info(priv->baseaddr, &priv->stat);
+ 	if (status)
+ 		return;
+ 
+ 	priv->ce_cnt += priv->stat.ce_cnt;
+ 	priv->ue_cnt += priv->stat.ue_cnt;
+-	synps_edac_handle_error(mci, &priv->stat);
++	edac_handle_error(mci, &priv->stat);
+ 
+-	edac_dbg(3, "Total error count ce %d ue %d\n",
++	edac_dbg(3, "Total error count CE %d UE %d\n",
+ 		 priv->ce_cnt, priv->ue_cnt);
+ }
+ 
+ /**
+- * synps_edac_get_dtype - Return the controller memory width
+- * @base:	Pointer to the ddr memory controller base address
++ * edac_get_dtype - Return the controller memory width.
++ * @base:	DDR memory controller base address.
+  *
+  * Get the EDAC device type width appropriate for the current controller
+  * configuration.
+  *
+  * Return: a device type width enumeration.
+  */
+-static enum dev_type synps_edac_get_dtype(const void __iomem *base)
++static enum dev_type edac_get_dtype(const void __iomem *base)
+ {
+ 	enum dev_type dt;
+ 	u32 width;
+@@ -286,20 +284,20 @@ static enum dev_type synps_edac_get_dtype(const void __iomem *base)
+ }
+ 
+ /**
+- * synps_edac_get_eccstate - Return the controller ecc enable/disable status
+- * @base:	Pointer to the ddr memory controller base address
++ * edac_get_eccstate - Return the controller ECC enable/disable status.
++ * @base:	DDR memory controller base address.
+  *
+- * Get the ECC enable/disable status for the controller
++ * Get the ECC enable/disable status for the controller.
+  *
+- * Return: a ecc status boolean i.e true/false - enabled/disabled.
++ * Return: a ECC status boolean i.e true/false - enabled/disabled.
+  */
+-static bool synps_edac_get_eccstate(void __iomem *base)
++static bool edac_get_eccstate(void __iomem *base)
+ {
++	bool state = false;
+ 	enum dev_type dt;
+ 	u32 ecctype;
+-	bool state = false;
+ 
+-	dt = synps_edac_get_dtype(base);
++	dt = edac_get_dtype(base);
+ 	if (dt == DEV_UNKNOWN)
+ 		return state;
+ 
+@@ -311,11 +309,11 @@ static bool synps_edac_get_eccstate(void __iomem *base)
+ }
+ 
+ /**
+- * synps_edac_get_memsize - reads the size of the attached memory device
++ * edac_get_memsize - reads the size of the attached memory device.
+  *
+- * Return: the memory size in bytes
++ * Return: the memory size in bytes.
+  */
+-static u32 synps_edac_get_memsize(void)
++static u32 edac_get_memsize(void)
+ {
+ 	struct sysinfo inf;
+ 
+@@ -325,15 +323,15 @@ static u32 synps_edac_get_memsize(void)
+ }
+ 
+ /**
+- * synps_edac_get_mtype - Returns controller memory type
+- * @base:	pointer to the synopsys ecc status structure
++ * edac_get_mtype - Returns controller memory type.
++ * @base:	Synopsys ECC status structure.
+  *
+  * Get the EDAC memory type appropriate for the current controller
+  * configuration.
+  *
+  * Return: a memory type enumeration.
+  */
+-static enum mem_type synps_edac_get_mtype(const void __iomem *base)
++static enum mem_type edac_get_mtype(const void __iomem *base)
+ {
+ 	enum mem_type mt;
+ 	u32 memtype;
+@@ -349,54 +347,47 @@ static enum mem_type synps_edac_get_mtype(const void __iomem *base)
+ }
+ 
+ /**
+- * synps_edac_init_csrows - Initialize the cs row data
+- * @mci:	Pointer to the edac memory controller instance
++ * edac_init_csrows - Initialize the cs row data.
++ * @mci:	EDAC memory controller instance.
+  *
+  * Initializes the chip select rows associated with the EDAC memory
+- * controller instance
+- *
+- * Return: Unconditionally 0.
++ * controller instance.
+  */
+-static int synps_edac_init_csrows(struct mem_ctl_info *mci)
++static void edac_init_csrows(struct mem_ctl_info *mci)
+ {
++	struct synps_edac_priv *priv = mci->pvt_info;
+ 	struct csrow_info *csi;
+ 	struct dimm_info *dimm;
+-	struct synps_edac_priv *priv = mci->pvt_info;
+-	u32 size;
+-	int row, j;
++	u32 size, row;
++	int j;
+ 
+ 	for (row = 0; row < mci->nr_csrows; row++) {
+ 		csi = mci->csrows[row];
+-		size = synps_edac_get_memsize();
++		size = edac_get_memsize();
+ 
+ 		for (j = 0; j < csi->nr_channels; j++) {
+-			dimm            = csi->channels[j]->dimm;
+-			dimm->edac_mode = EDAC_FLAG_SECDED;
+-			dimm->mtype     = synps_edac_get_mtype(priv->baseaddr);
+-			dimm->nr_pages  = (size >> PAGE_SHIFT) / csi->nr_channels;
+-			dimm->grain     = SYNPS_EDAC_ERR_GRAIN;
+-			dimm->dtype     = synps_edac_get_dtype(priv->baseaddr);
++			dimm		= csi->channels[j]->dimm;
++			dimm->edac_mode	= EDAC_FLAG_SECDED;
++			dimm->mtype	= edac_get_mtype(priv->baseaddr);
++			dimm->nr_pages	= (size >> PAGE_SHIFT) / csi->nr_channels;
++			dimm->grain	= SYNPS_EDAC_ERR_GRAIN;
++			dimm->dtype	= edac_get_dtype(priv->baseaddr);
+ 		}
+ 	}
+-
+-	return 0;
+ }
+ 
+ /**
+- * synps_edac_mc_init - Initialize driver instance
+- * @mci:	Pointer to the edac memory controller instance
+- * @pdev:	Pointer to the platform_device struct
++ * edac_mc_init - Initialize driver instance.
++ * @mci:	EDAC memory controller instance.
++ * @pdev:	platform_device struct.
+  *
+  * Performs initialization of the EDAC memory controller instance and
+  * related driver-private data associated with the memory controller the
+  * instance is bound to.
+- *
+- * Return: Always zero.
+  */
+-static int synps_edac_mc_init(struct mem_ctl_info *mci,
++static void edac_mc_init(struct mem_ctl_info *mci,
+ 				 struct platform_device *pdev)
+ {
+-	int status;
+ 	struct synps_edac_priv *priv;
+ 
+ 	mci->pdev = &pdev->dev;
+@@ -415,17 +406,15 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
+ 	mci->mod_name = SYNPS_EDAC_MOD_VER;
+ 
+ 	edac_op_state = EDAC_OPSTATE_POLL;
+-	mci->edac_check = synps_edac_check;
++	mci->edac_check = edac_check;
+ 	mci->ctl_page_to_phys = NULL;
+ 
+-	status = synps_edac_init_csrows(mci);
+-
+-	return status;
++	edac_init_csrows(mci);
+ }
+ 
+ /**
+- * synps_edac_mc_probe - Check controller and bind driver
+- * @pdev:	Pointer to the platform_device struct
++ * synps_edac_mc_probe - Check controller and bind driver.
++ * @pdev:	platform_device struct.
+  *
+  * Probes a specific controller instance for binding with the driver.
+  *
+@@ -434,19 +423,19 @@ static int synps_edac_mc_init(struct mem_ctl_info *mci,
+  */
+ static int synps_edac_mc_probe(struct platform_device *pdev)
+ {
+-	struct mem_ctl_info *mci;
+ 	struct edac_mc_layer layers[2];
+ 	struct synps_edac_priv *priv;
+-	int rc;
+-	struct resource *res;
++	struct mem_ctl_info *mci;
+ 	void __iomem *baseaddr;
++	struct resource *res;
++	int rc;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	baseaddr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(baseaddr))
+ 		return PTR_ERR(baseaddr);
+ 
+-	if (!synps_edac_get_eccstate(baseaddr)) {
++	if (!edac_get_eccstate(baseaddr)) {
+ 		edac_printk(KERN_INFO, EDAC_MC, "ECC not enabled\n");
+ 		return -ENXIO;
+ 	}
+@@ -468,12 +457,7 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ 
+ 	priv = mci->pvt_info;
+ 	priv->baseaddr = baseaddr;
+-	rc = synps_edac_mc_init(mci, pdev);
+-	if (rc) {
+-		edac_printk(KERN_ERR, EDAC_MC,
+-			    "Failed to initialize instance\n");
+-		goto free_edac_mc;
+-	}
++	edac_mc_init(mci, pdev);
+ 
+ 	rc = edac_mc_add_mc(mci);
+ 	if (rc) {
+@@ -496,8 +480,8 @@ static int synps_edac_mc_probe(struct platform_device *pdev)
+ }
+ 
+ /**
+- * synps_edac_mc_remove - Unbind driver from controller
+- * @pdev:	Pointer to the platform_device struct
++ * synps_edac_mc_remove - Unbind driver from controller.
++ * @pdev:	Platform_device struct.
+  *
+  * Return: Unconditionally 0
+  */
 -- 
 2.1.1
 
