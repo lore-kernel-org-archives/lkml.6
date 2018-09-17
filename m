@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AC0ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DF5ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12AA214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12AA214AB
+	by mail.kernel.org (Postfix) with ESMTP id BBE9F2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:13:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE9F2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732727AbeIREmj (ORCPT
+        id S1732741AbeIREmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:42:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50888 "EHLO
+        Tue, 18 Sep 2018 00:42:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50896 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbeIREmj (ORCPT
+        with ESMTP id S1728925AbeIREml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:42:39 -0400
+        Tue, 18 Sep 2018 00:42:41 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EED7C49;
-        Mon, 17 Sep 2018 23:13:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36736707;
+        Mon, 17 Sep 2018 23:13:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 120/158] f2fs: fix to skip GC if type in SSA and SIT is inconsistent
-Date:   Tue, 18 Sep 2018 00:42:30 +0200
-Message-Id: <20180917211716.767995376@linuxfoundation.org>
+Subject: [PATCH 4.18 121/158] tpm_tis_spi: Pass the SPI IRQ down to the driver
+Date:   Tue, 18 Sep 2018 00:42:31 +0200
+Message-Id: <20180917211716.810707897@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,74 +53,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 10d255c3540239c7920f52d2eb223756e186af56 ]
+[ Upstream commit 1a339b658d9dbe1471f67b78237cf8fa08bbbeb5 ]
 
-If segment type in SSA and SIT is inconsistent, we will encounter below
-BUG_ON during GC, to avoid this panic, let's just skip doing GC on such
-segment.
+An SPI TPM device managed directly on an embedded board using
+the SPI bus and some GPIO or similar line as IRQ handler will
+pass the IRQn from the TPM device associated with the SPI
+device. This is already handled by the SPI core, so make sure
+to pass this down to the core as well.
 
-The bug is triggered with image reported in below link:
+(The TPM core habit of using -1 to signal no IRQ is dubious
+(as IRQ 0 is NO_IRQ) but I do not want to mess with that
+semantic in this patch.)
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200223
-
-[  388.060262] ------------[ cut here ]------------
-[  388.060268] kernel BUG at /home/y00370721/git/devf2fs/gc.c:989!
-[  388.061172] invalid opcode: 0000 [#1] SMP
-[  388.061773] Modules linked in: f2fs(O) bluetooth ecdh_generic xt_tcpudp iptable_filter ip_tables x_tables lp ttm drm_kms_helper drm intel_rapl sb_edac crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel fb_sys_fops ppdev aes_x86_64 syscopyarea crypto_simd sysfillrect parport_pc joydev sysimgblt glue_helper parport cryptd i2c_piix4 serio_raw mac_hid btrfs hid_generic usbhid hid raid6_pq psmouse pata_acpi floppy
-[  388.064247] CPU: 7 PID: 4151 Comm: f2fs_gc-7:0 Tainted: G           O    4.13.0-rc1+ #26
-[  388.065306] Hardware name: Xen HVM domU, BIOS 4.1.2_115-900.260_ 11/06/2015
-[  388.066058] task: ffff880201583b80 task.stack: ffffc90004d7c000
-[  388.069948] RIP: 0010:do_garbage_collect+0xcc8/0xcd0 [f2fs]
-[  388.070766] RSP: 0018:ffffc90004d7fc68 EFLAGS: 00010202
-[  388.071783] RAX: ffff8801ed227000 RBX: 0000000000000001 RCX: ffffea0007b489c0
-[  388.072700] RDX: ffff880000000000 RSI: 0000000000000001 RDI: ffffea0007b489c0
-[  388.073607] RBP: ffffc90004d7fd58 R08: 0000000000000003 R09: ffffea0007b489dc
-[  388.074619] R10: 0000000000000000 R11: 0052782ab317138d R12: 0000000000000018
-[  388.075625] R13: 0000000000000018 R14: ffff880211ceb000 R15: ffff880211ceb000
-[  388.076687] FS:  0000000000000000(0000) GS:ffff880214fc0000(0000) knlGS:0000000000000000
-[  388.083277] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  388.084536] CR2: 0000000000e18c60 CR3: 00000001ecf2e000 CR4: 00000000001406e0
-[  388.085748] Call Trace:
-[  388.086690]  ? find_next_bit+0xb/0x10
-[  388.088091]  f2fs_gc+0x1a8/0x9d0 [f2fs]
-[  388.088888]  ? lock_timer_base+0x7d/0xa0
-[  388.090213]  ? try_to_del_timer_sync+0x44/0x60
-[  388.091698]  gc_thread_func+0x342/0x4b0 [f2fs]
-[  388.092892]  ? wait_woken+0x80/0x80
-[  388.094098]  kthread+0x109/0x140
-[  388.095010]  ? f2fs_gc+0x9d0/0x9d0 [f2fs]
-[  388.096043]  ? kthread_park+0x60/0x60
-[  388.097281]  ret_from_fork+0x25/0x30
-[  388.098401] Code: ff ff 48 83 e8 01 48 89 44 24 58 e9 27 f8 ff ff 48 83 e8 01 e9 78 fc ff ff 48 8d 78 ff e9 17 fb ff ff 48 83 ef 01 e9 4d f4 ff ff <0f> 0b 66 0f 1f 44 00 00 0f 1f 44 00 00 55 48 89 e5 41 56 41 55
-[  388.100864] RIP: do_garbage_collect+0xcc8/0xcd0 [f2fs] RSP: ffffc90004d7fc68
-[  388.101810] ---[ end trace 81c73d6e6b7da61d ]---
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/gc.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_spi.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -986,7 +986,13 @@ static int do_garbage_collect(struct f2f
- 			goto next;
+--- a/drivers/char/tpm/tpm_tis_spi.c
++++ b/drivers/char/tpm/tpm_tis_spi.c
+@@ -199,6 +199,7 @@ static const struct tpm_tis_phy_ops tpm_
+ static int tpm_tis_spi_probe(struct spi_device *dev)
+ {
+ 	struct tpm_tis_spi_phy *phy;
++	int irq;
  
- 		sum = page_address(sum_page);
--		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
-+		if (type != GET_SUM_TYPE((&sum->footer))) {
-+			f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent segment (%u) "
-+				"type [%d, %d] in SSA and SIT",
-+				segno, type, GET_SUM_TYPE((&sum->footer)));
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			goto next;
-+		}
+ 	phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_spi_phy),
+ 			   GFP_KERNEL);
+@@ -211,7 +212,13 @@ static int tpm_tis_spi_probe(struct spi_
+ 	if (!phy->iobuf)
+ 		return -ENOMEM;
  
- 		/*
- 		 * this is to avoid deadlock:
+-	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_spi_phy_ops,
++	/* If the SPI device has an IRQ then use that */
++	if (dev->irq > 0)
++		irq = dev->irq;
++	else
++		irq = -1;
++
++	return tpm_tis_core_init(&dev->dev, &phy->priv, irq, &tpm_spi_phy_ops,
+ 				 NULL);
+ }
+ 
 
 
