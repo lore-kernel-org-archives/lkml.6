@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A54ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0FEECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3882088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3882088F
+	by mail.kernel.org (Postfix) with ESMTP id 4C7D12088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7D12088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeIRES6 (ORCPT
+        id S1728658AbeIRETE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:18:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44564 "EHLO
+        Tue, 18 Sep 2018 00:19:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRES5 (ORCPT
+        with ESMTP id S1725952AbeIRETD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:18:57 -0400
+        Tue, 18 Sep 2018 00:19:03 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2C15CAD;
-        Mon, 17 Sep 2018 22:49:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7357CA0;
+        Mon, 17 Sep 2018 22:49:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Marc MERLIN <marc@merlins.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@fb.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 09/56] block,blkcg: use __GFP_NOWARN for best-effort allocations in blkcg
-Date:   Tue, 18 Sep 2018 00:41:42 +0200
-Message-Id: <20180917213828.353779479@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 27/56] ath10k: prevent active scans on potential unusable channels
+Date:   Tue, 18 Sep 2018 00:42:00 +0200
+Message-Id: <20180917213829.060821040@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -53,81 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tejun Heo <tj@kernel.org>
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 
-commit e00f4f4d0ff7e13b9115428a245b49108d625f09 upstream.
+[ Upstream commit 3f259111583801013cb605bb4414aa529adccf1c ]
 
-blkcg allocates some per-cgroup data structures with GFP_NOWAIT and
-when that fails falls back to operations which aren't specific to the
-cgroup.  Occassional failures are expected under pressure and falling
-back to non-cgroup operation is the right thing to do.
+The QCA4019 hw1.0 firmware 10.4-3.2.1-00050 and 10.4-3.5.3-00053 (and most
+likely all other) seem to ignore the WMI_CHAN_FLAG_DFS flag during the
+scan. This results in transmission (probe requests) on channels which are
+not "available" for transmissions.
 
-Unfortunately, I forgot to add __GFP_NOWARN to these allocations and
-these expected failures end up creating a lot of noise.  Add
-__GFP_NOWARN.
+Since the firmware is closed source and nothing can be done from our side
+to fix the problem in it, the driver has to work around this problem. The
+WMI_CHAN_FLAG_PASSIVE seems to be interpreted by the firmware to not
+scan actively on a channel unless an AP was detected on it. Simple probe
+requests will then be transmitted by the STA on the channel.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Marc MERLIN <marc@merlins.org>
-Reported-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Jens Axboe <axboe@fb.com>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+ath10k must therefore also use this flag when it queues a radar channel for
+scanning. This should reduce the chance of an active scan when the channel
+might be "unusable" for transmissions.
+
+Fixes: e8a50f8ba44b ("ath10k: introduce DFS implementation")
+Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-cgroup.c  |    9 +++++----
- block/cfq-iosched.c |    3 ++-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -185,7 +185,8 @@ static struct blkcg_gq *blkg_create(stru
- 	}
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -2901,6 +2901,13 @@ static int ath10k_update_channel_list(st
+ 			passive = channel->flags & IEEE80211_CHAN_NO_IR;
+ 			ch->passive = passive;
  
- 	wb_congested = wb_congested_get_create(&q->backing_dev_info,
--					       blkcg->css.id, GFP_NOWAIT);
-+					       blkcg->css.id,
-+					       GFP_NOWAIT | __GFP_NOWARN);
- 	if (!wb_congested) {
- 		ret = -ENOMEM;
- 		goto err_put_css;
-@@ -193,7 +194,7 @@ static struct blkcg_gq *blkg_create(stru
- 
- 	/* allocate */
- 	if (!new_blkg) {
--		new_blkg = blkg_alloc(blkcg, q, GFP_NOWAIT);
-+		new_blkg = blkg_alloc(blkcg, q, GFP_NOWAIT | __GFP_NOWARN);
- 		if (unlikely(!new_blkg)) {
- 			ret = -ENOMEM;
- 			goto err_put_congested;
-@@ -1022,7 +1023,7 @@ blkcg_css_alloc(struct cgroup_subsys_sta
- 	}
- 
- 	spin_lock_init(&blkcg->lock);
--	INIT_RADIX_TREE(&blkcg->blkg_tree, GFP_NOWAIT);
-+	INIT_RADIX_TREE(&blkcg->blkg_tree, GFP_NOWAIT | __GFP_NOWARN);
- 	INIT_HLIST_HEAD(&blkcg->blkg_list);
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	INIT_LIST_HEAD(&blkcg->cgwb_list);
-@@ -1238,7 +1239,7 @@ pd_prealloc:
- 		if (blkg->pd[pol->plid])
- 			continue;
- 
--		pd = pol->pd_alloc_fn(GFP_NOWAIT, q->node);
-+		pd = pol->pd_alloc_fn(GFP_NOWAIT | __GFP_NOWARN, q->node);
- 		if (!pd)
- 			swap(pd, pd_prealloc);
- 		if (!pd) {
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -3811,7 +3811,8 @@ cfq_get_queue(struct cfq_data *cfqd, boo
- 			goto out;
- 	}
- 
--	cfqq = kmem_cache_alloc_node(cfq_pool, GFP_NOWAIT | __GFP_ZERO,
-+	cfqq = kmem_cache_alloc_node(cfq_pool,
-+				     GFP_NOWAIT | __GFP_ZERO | __GFP_NOWARN,
- 				     cfqd->queue->node);
- 	if (!cfqq) {
- 		cfqq = &cfqd->oom_cfqq;
++			/* the firmware is ignoring the "radar" flag of the
++			 * channel and is scanning actively using Probe Requests
++			 * on "Radar detection"/DFS channels which are not
++			 * marked as "available"
++			 */
++			ch->passive |= ch->chan_radar;
++
+ 			ch->freq = channel->center_freq;
+ 			ch->band_center_freq1 = channel->center_freq;
+ 			ch->min_power = 0;
 
 
