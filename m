@@ -2,352 +2,149 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FA0ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64FAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E9A2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:37:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E9A2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 69D6E2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D6E2088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=efe-gmbh.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbeIQSFB (ORCPT
+        id S1728080AbeIQSFT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:05:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43640 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbeIQSFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:05:01 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D81D23082137;
-        Mon, 17 Sep 2018 12:37:52 +0000 (UTC)
-Received: from redhat.com (ovpn-121-243.rdu2.redhat.com [10.10.121.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05AAD3091375;
-        Mon, 17 Sep 2018 12:37:47 +0000 (UTC)
-Date:   Mon, 17 Sep 2018 08:37:45 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, kvm@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, Alex Williamson <alex.williamson@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-crypto@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180917123744.GA3605@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
- <20180917083940.GE207969@Turing-Arch-b>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917083940.GE207969@Turing-Arch-b>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 17 Sep 2018 12:37:53 +0000 (UTC)
+        Mon, 17 Sep 2018 14:05:19 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:53311 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbeIQSFT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 14:05:19 -0400
+Received: from EFESN2455.efe.local ([217.94.30.50]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1McpeM-1fS04a1JTu-00ZtZo; Mon, 17 Sep 2018 14:38:06 +0200
+From:   Karsten Mueller <mueller.k@efe-gmbh.de>
+To:     mueller.k@efe-gmbh.de
+Cc:     renner@efe-gmbh.de, Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 2/3] dt-bindings: power: supply: bq2416x driver
+Date:   Mon, 17 Sep 2018 14:37:28 +0200
+Message-Id: <20180917123729.23461-2-mueller.k@efe-gmbh.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180917123729.23461-1-mueller.k@efe-gmbh.de>
+References: <20180917123729.23461-1-mueller.k@efe-gmbh.de>
+X-Provags-ID: V03:K1:fmj4tgRY8hVBY7kJSWH1BJfDG2Oy+rMoLSfqNyzcJrgIA4UUpm8
+ 2H28gEGCoLdwTlCdgkOKospnH1SFl7LKiYheSPXeqys/r67Gv7V4grzQqVZXmbGXiEp/YAO
+ o7IHQYd8/77euqTrQXhXOVd+fw2lJ8ygWTe8rk4XXN3pwaH6rCkwgZpQn3J14EacSK3Ypq+
+ o3zClXRgAOS7OhpiJEqIQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:l0WUBQ7cR5s=:olUGau3RON1BxzaksgfFfE
+ yRgA3AhK/afjpNP/RFEhndwKYy43dtIFH8gW5JqzZiUvLkqkOF1teIB1Kx+f/pAb+NKPJ0KJb
+ 4HyyvMybEh3E19IUV5AJVWE5WiaqyFJoGwxMwvWP8GmE2Ju9WHAd1cYWg2M1cE6O+RJg5U1JY
+ m1JAenNJe1S/T9JTpFujh1SiVRpMQ+XUbAx47P1Anv+hsARE94kfXdJ+u6qN+6Q5dUWW0Rol9
+ muboLZBq5XEYCzBu1/iMk2RDdEuMAjLh1FbHxAQS6o7kePk23+fwCDFaXtkCwVpwKZcNfovGj
+ 4T0/n5Zv1Z4YLf11Vlp9fhVjgdoOGd1DiPuaaR6Yaid5gQJ/+h3MwaPGgFhFcAern/9O/dmcQ
+ 0AKnu4JyRlj3bNjRMvCBGp2DdRWiJFXzeIielOdHhX4rB2AATVJQk/xvqJ2pLPfofsmHLZ06i
+ zJovqaz7kOKbE41Bkw/v/X8djEQKwfdR+jcbzbxBlspd54N2TJzP+T0IpMXudhCOhX6KVEDA8
+ yMB/JwAzSazK8Jis0Ns+mdEgRcxowA1TuvmrBSdeU7NFcA381CoKeKr2/6tHooBwAPGlkOmXl
+ TmsbSd7qrpx7aZxv4bkmkDmWUDhAHTgwD7R9TJHhzk6X6WkujrLWussEJpqVHyyqP9UmW/Dfm
+ 7mjlh64641BuE0yRS/ZIwK8NOvjzJUUalO9qITFTQC9mgOQFVdPAEXHolKHYDlo0chV8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
-> On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> > So i want to summarize issues i have as this threads have dig deep into
-> > details. For this i would like to differentiate two cases first the easy
-> > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> 
-> Thank you very much for the summary.
-> 
-> > In both cases your objectives as i understand them:
-> > 
-> > [R1]- expose a common user space API that make it easy to share boiler
-> >       plate code accross many devices (discovering devices, opening
-> >       device, creating context, creating command queue ...).
-> > [R2]- try to share the device as much as possible up to device limits
-> >       (number of independant queues the device has)
-> > [R3]- minimize syscall by allowing user space to directly schedule on the
-> >       device queue without a round trip to the kernel
-> > 
-> > I don't think i missed any.
-> > 
-> > 
-> > (1) Device with SVA/SVM
-> > 
-> > For that case it is easy, you do not need to be in VFIO or part of any
-> > thing specific in the kernel. There is no security risk (modulo bug in
-> > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> > to a device is just couple dozen lines of code.
-> > 
-> 
-> This is right...logically. But the kernel has no clear definition about "Device
-> with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
-> boiler plate.
-> 
-> VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
-> one. If we add that support within VFIO, which solve most of the problem of
-> SVA/SVM, it will save a lot of work in the future.
+Signed-off-by: Karsten Mueller <mueller.k@efe-gmbh.de>
+---
+ .../bindings/power/supply/bq2416x.txt         | 75 +++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/bq2416x.txt
 
-You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
-all do the SVA/SVM setup in couple dozen lines and i failed to see how it
-would require any more than that in your case.
+diff --git a/Documentation/devicetree/bindings/power/supply/bq2416x.txt b/Documentation/devicetree/bindings/power/supply/bq2416x.txt
+new file mode 100644
+index 000000000..742d41642
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/bq2416x.txt
+@@ -0,0 +1,75 @@
++Binding for TI bq2416x Li-Ion Charger
++
++Required properties:
++====================
++- compatible: one of the following:
++ * "ti,bq24160"
++ * "ti,bq24160a"
++ * "ti,bq24161"
++ * "ti,bq24161b"
++ * "ti,bq24163"
++ * "ti,bq24168"
++
++- reg:			I2C address of the device.
++- interrupt-parent:	The IRQ controller (phandle) connected to the INT pin of
++			the bq2416x
++- interrupts:		The IRQ number assigned for INT pin.
++
++Optional properties:
++====================
++
++- ti,in-current-limit-microamp:	IN source current limit.
++	Possible values: 1500000 (default), 2500000
++
++- ti,usb-current-limit-microamp: USB source current limit.
++	If not specified, auto detection of USB (D+/D- based) is used (for
++	BQ24160/0A/3 only) or settings of default mode are kept (BQ24161/1B/8).
++	Both pre-select only 100 mA or 1500 mA (refer to datasheet).
++	Possible values: 100000, 150000, 500000, 800000, 90000, 1500000
++
++- ti,usb-dpm-voltage-microvolt:	USB threshold for dynamic power path management.
++	Configures the threshold input voltage (usb input) for the dynamic power
++	path management. If not specified a default of 4,200,000 (= 4.2V) is
++	used.
++
++- ti,in-dpm-voltage-microvolt: IN threshold for dynamic power path management.
++	Configures the threshold input voltage (in input) for the dynamic power
++	path management. If not specified a default of 4,200,000 (= 4.2V) is
++	used.
++
++- monitored-battery: phandle of battery information devicetree node
++	If not specified, no battery is assumed (charge disable, nobat operation
++	mode, no NTC check of battery), Vsys output voltage is set to 4.2V. The
++	charger uses the following battery properties:
++	+ constant_charge_current_max_microamp: maximum current in fast charge
++	  mode
++	+ constant_charge_voltage_max_microvolt: maximum constant charging
++	  voltage / output voltage (refer to datasheet)
++	+ charge-term-current-microamp: a charge cycle terminates when the
++	  battery voltage is above recharge threshold, and the current is below
++	  this setting (typically 10% of battery capacity). If not specified,
++	  termination of current detection is disabled (refer to datasheet).
++
++Example:
++========
++
++bat: battery {
++		compatible = "simple-battery";
++		charge-term-current-microamp = <128000>;
++		constant-charge-current-max-microamp = <900000>;
++		constant-charge-voltage-max-microvolt = <4200000>;
++	};
++
++bq24160@6b {
++	compatible = "ti,bq24160";
++	reg = <0x6b>;
++
++	interrupt-parent = <&gpio5>;
++	interrupts = <31 IRQ_TYPE_EDGE_RISING>;
++
++	monitored-battery = <&bat>;
++	ti,in-current-limit-microamp = <1500000>;
++	ti,usb-current-limit-microamp = <500000>;
++	ti,usb-dpm-voltage-microvolt = <4300000>;
++	ti,in-dpm-voltage-microvolt = <4300000>;
++};
+-- 
+2.17.1
 
-
-> I think this is the key confliction between us. So could Alex please say
-> something here? If the VFIO is going to take this into its scope, we can try
-> together to solve all the problem on the way. If it it is not, it is also
-> simple, we can just go to another way to fulfill this part of requirements even
-> we have to duplicate most of the code.
-> 
-> Another point I need to emphasis here: because we have to replace the hardware
-> queue when fork, so it won't be very simple even in SVA/SVM case.
-
-I am assuming hardware queue can only be setup by the kernel and thus
-you are totaly safe forkwise as the queue is setup against a PASID and
-the child does not bind to any PASID and you use VM_DONTCOPY on the
-mmap of the hardware MMIO queue because you should really use that flag
-for that.
-
-
-> > (2) Device does not have SVA/SVM (or it is disabled)
-> > 
-> > You want to still allow device to be part of your framework. However
-> > here i see fundamentals securities issues and you move the burden of
-> > being careful to user space which i think is a bad idea. We should
-> > never trus the userspace from kernel space.
-> > 
-> > To keep the same API for the user space code you want a 1:1 mapping
-> > between device physical address and process virtual address (ie if
-> > device access device physical address A it is accessing the same
-> > memory as what is backing the virtual address A in the process.
-> > 
-> > Security issues are on two things:
-> > [I1]- fork/exec, a process who opened any such device and created an
-> >       active queue can transfer without its knowledge control of its
-> >       commands queue through COW. The parent map some anonymous region
-> >       to the device as a command queue buffer but because of COW the
-> >       parent can be the first to copy on write and thus the child can
-> >       inherit the original pages that are mapped to the hardware.
-> >       Here parent lose control and child gain it.
-> 
-> This is indeed an issue. But it remains an issue only if you continue to use the
-> queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
-> user space.
-
-Trusting user space is a no go from my point of view.
-
-
-> From some perspectives, I think the issue can be solved by iommu_notifier. For
-> example, when the process is fork-ed, we can set the mapped device mmio space as
-> COW for the child process, so a new queue can be created and set to the same
-> state as the parent's if the space is accessed. Then we can have two separated
-> queues for both the parent and the child. The memory part can be done in the
-> same way.
-
-The mmap of mmio space for the queue is not an issue just use VM_DONTCOPY
-for it. Issue is with COW and IOMMU mapping of pages and this can not be
-solve in your model.
-
-> The thing is, the same strategy can be applied to VFIO without changing its
-> original feature.
-
-No it can not it would break existing VFIO contract (which only should be
-use against private anonymous vma).
-
-> 
-> > 
-> > [I2]- Because of [R3] you want to allow userspace to schedule commands
-> >       on the device without doing an ioctl and thus here user space
-> >       can schedule any commands to the device with any address. What
-> >       happens if that address have not been mapped by the user space
-> >       is undefined and in fact can not be defined as what each IOMMU
-> >       does on invalid address access is different from IOMMU to IOMMU.
-> > 
-> >       In case of a bad IOMMU, or simply an IOMMU improperly setup by
-> >       the kernel, this can potentialy allow user space to DMA anywhere.
-> 
-> I don't think this is an issue. If you cannot trust IOMMU and proper setup of
-> IOMMU in kernel, you cannot trust anything. And the whole VFIO framework is
-> untrustable.
-
-VFIO device is usualy restricted to trusted user and other device that
-do DMA do various checks to make sure user space can not abuse them, the
-assumption i have always seen so far is to not trust that IOMMU will do
-all the work. So exposing user space access to device with DMA capabilities
-should be done carefuly IMHO.
-
-To be thorough list of potential bugs i am concern about:
-    - IOMMU hardware bug
-    - IOMMU does not isolate device after too many fail attempt
-    - firmware setup the IOMMU in some unsafe way and linux kernel does
-      not catch that (like passthrough on error or when there is no
-      entry for the PA which i am told is a thing for debug)
-    - bug in the linux IOMMU kernel driver
-
-
-
-> > 
-> > [I3]- By relying on GUP in VFIO you are not abiding by the implicit
-> >       contract (at least i hope it is implicit) that you should not
-> >       try to map to the device any file backed vma (private or share).
-> > 
-> >       The VFIO code never check the vma controlling the addresses that
-> >       are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
-> >       user space can provide file backed range.
-> > 
-> >       I am guessing that the VFIO code never had any issues because its
-> >       number one user is QEMU and QEMU never does that (and that's good
-> >       as no one should ever do that).
-> > 
-> >       So if process does that you are opening your self to serious file
-> >       system corruption (depending on file system this can lead to total
-> >       data loss for the filesystem).
-> > 
-> >       Issue is that once you GUP you never abide to file system flushing
-> >       which write protect the page before writing to the disk. So
-> >       because the page is still map with write permission to the device
-> >       (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
-> >       write to the page while it is in the middle of being written back
-> >       to disk. Consult your nearest file system specialist to ask him
-> >       how bad that can be.
-> 
-> Same as I2, it is an issue, but the problem can be solved in VFIO if we really
-> take it in the scope of VFIO.
-
-Except it can not be solve without breaking VFIO. If you use mmu_notifier
-it means that the the IOMMU mapping can vanish at _any_ time and because
-you allow user space to directly schedule work on the hardware command
-queue than you do not have any synchronization point to use.
-
-When notifier calls you must stop all hardware access and wait for any
-pending work that might still dereference affected range. Finaly you can
-restore mapping only once the notifier is done. AFAICT this would break
-all existing VFIO user.
-
-So solving that for your case it means you would have to:
-warp_invalidate_range_callback() {
-    - take some lock to protect against restore
-    - unmap the command queue (zap_range) from userspace to stop further
-      commands
-    - wait for any pending commands on the hardware to complete
-    - clear all IOMMU mappings for the range
-    - put_pages()
-    - drop restore lock
-    return to let invalidation complete its works
-}
-
-warp_restore() {
-    // This is call by the page fault handler on the command queue mapped
-    // to user space.
-    - take restore lock
-    - go over all IOMMU mapping and restore them (GUP)
-    - remap command queue to userspace
-    - drop restore lock
-}
-
-This model does not work for VFIO existing users AFAICT.
-
-
-> > [I4]- Design issue, mdev design As Far As I Understand It is about
-> >       sharing a single device to multiple clients (most obvious case
-> >       here is again QEMU guest). But you are going against that model,
-> >       in fact AFAIUI you are doing the exect opposite. When there is
-> >       no SVA/SVM you want only one mdev device that can not be share.
-> 
-> Wait. It is NOT "I want only one mdev device when there is no SVA/SVM", it is "I
-> can support only one mdev when there is no PASID support for the IOMMU".
-
-Except you can support more than one user when no SVA/SVM with the model
-i outlined below.
-
-
-> > 
-> >       So this is counter intuitive to the mdev existing design. It is
-> >       not about sharing device among multiple users but about giving
-> >       exclusive access to the device to one user.
-> > 
-> > 
-> > 
-> > All the reasons above is why i believe a different model would serve
-> > you and your user better. Below is a design that avoids all of the
-> > above issues and still delivers all of your objectives with the
-> > exceptions of the third one [R3] when there is no SVA/SVM.
-> > 
-> > 
-> > Create a subsystem (very much boiler plate code) which allow device to
-> > register themself against (very much like what you do in your current
-> > patchset but outside of VFIO).
-> > 
-> > That subsystem will create a device file for each registered system and
-> > expose a common API (ie set of ioctl) for each of those device files.
-> > 
-> > When user space create a queue (through an ioctl after opening the device
-> > file) the kernel can return -EBUSY if all the device queue are in use,
-> > or create a device queue and return a flag like SYNC_ONLY for device that
-> > do not have SVA/SVM.
-> > 
-> > For device with SVA/SVM at the time the process create a queue you bind
-> > the process PASID to the device queue. From there on the userspace can
-> > schedule commands and use the device without going to kernel space.
-> 
-> As mentioned previously, this is not enough for fork scenario.
-
-It is for every existing user of SVA/SVM so i fail to see why it would
-be any different in your case. Note that they all use VM_DONTCOPY flag
-on the queue mapped to userspace.
-
-
-> > For device without SVA/SVM you create a fake queue that is just pure
-> > memory is not related to the device. From there on the userspace must
-> > call an ioctl every time it wants the device to consume its queue
-> > (hence why the SYNC_ONLY flag for synchronous operation only). The
-> > kernel portion read the fake queue expose to user space and copy
-> > commands into the real hardware queue but first it properly map any
-> > of the process memory needed for those commands to the device and
-> > adjust the device physical address with the one it gets from dma_map
-> > API.
-> > 
-> 
-> But in this way, we will lost most of the benefit of avoiding syscall.
-
-Yes but only when there is SVA/SVM. What i am trying to stress is that
-there is no sane way to mirror user space address space onto device
-without mmu_notifier so short of that this model where you have to
-syscall to schedules thing on the hardware is the easiest thing to do.
-
-
-> > With that model it is "easy" to listen to mmu_notifier and to abide by
-> > them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
-> > issue by only mapping a fake device queue to userspace.
-> > 
-> > So yes with that models it means that every device that wish to support
-> > the non SVA/SVM case will have to do extra work (ie emulate its command
-> > queue in software in the kernel). But by doing so, you support an
-> > unlimited number of process on your device (ie all the process can share
-> > one single hardware command queues or multiple hardware queues).
-> 
-> If I can do this, I will not need WarpDrive at all:(
-
-This is only needed if you wish to support non SVA/SVM, shifting the
-burden to the kernel is always the thing to do especially if they are
-legitimate security concerns.
-
-
-Cheers,
-Jérôme
