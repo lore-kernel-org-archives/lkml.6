@@ -2,102 +2,144 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5DAECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB889ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81824214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:36:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81824214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B417214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:37:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B417214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbeIQODR (ORCPT
+        id S1728279AbeIQODw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:03:17 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:54240 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727166AbeIQODR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:03:17 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07658547|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.Cruj.ud_1537173385;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cruj.ud_1537173385)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Mon, 17 Sep 2018 16:36:25 +0800
-Date:   Mon, 17 Sep 2018 16:36:25 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V5 2/3] dt-bindings: interrupt-controller: C-SKY APB intc
-Message-ID: <20180917083623.GA1069@guoren>
-References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
- <162f7f98697cd9d806a1a843c6177bb943ea2b33.1537087118.git.ren_guo@c-sky.com>
- <20180917062336.GA20555@bogus>
+        Mon, 17 Sep 2018 10:03:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727166AbeIQODw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:03:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5905C04D319;
+        Mon, 17 Sep 2018 08:37:28 +0000 (UTC)
+Received: from [10.36.117.82] (ovpn-117-82.ams2.redhat.com [10.36.117.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7172417CE3;
+        Mon, 17 Sep 2018 08:37:22 +0000 (UTC)
+Subject: Re: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>
+References: <20180912133353.20595-1-bigeasy@linutronix.de>
+ <20180912133353.20595-5-bigeasy@linutronix.de>
+ <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
+ <20180914203501.qibhpmueosvkr74w@linutronix.de>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a239e97a-d1a1-388e-5db9-10758c33d702@redhat.com>
+Date:   Mon, 17 Sep 2018 10:37:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917062336.GA20555@bogus>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180914203501.qibhpmueosvkr74w@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 17 Sep 2018 08:37:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 02:23:36AM -0400, Rob Herring wrote:
-> On Sun, Sep 16, 2018 at 04:50:03PM +0800, Guo Ren wrote:
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+>> I think you can go a step further and exclude PKRU state from
+>> copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
+>> means you don't need to call __fpregs_* functions in write_pkru.
 > 
-> Needs a commit description.
-> 
-> > ---
-> >  .../interrupt-controller/csky,apb-intc.txt         | 70 ++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> > new file mode 100644
-> > index 0000000..be7c3d1
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-> > @@ -0,0 +1,70 @@
-> > +==============================
-> > +C-SKY APB Interrupt Controller
-> > +==============================
-> > +
-> > +C-SKY APB Interrupt Controller is a simple soc interrupt controller
-> > +on the apb bus and we only use it as root irq controller.
-> > +
-> > + - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
-> > + - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
-> > + - csky,gx6605s-intc is gx6605s soc internal irq interrupt controller, 64 irq nums.
-> 
-> Is there a relationship between csky,gx6605s-intc and csky,apb-intc?
-They all use pending register to get irq num and use enable register to
-mask/unmask.
+> something like this then? It looks like kvm excludes PKRU from
+> xsave/xrestore, too. This wouldn't be required then
 
-> > +        - support-pulse-signal:
-> > +                Usage: select
-> > +		Description: to support pulse signal flag
+Yes, that's why the subject caught my eye!  In fact, the reason for KVM
+to do so is either the opposite as your patch (it wants to call WRPKRU
+_after_ XRSTOR, not before) or the same (it wants to keep the userspace
+PKRU loaded for as long as possible), depending on how you look at it.
+
+> . This is (again)
+> untested since I have no box with this PKRU feature. This only available
+> on Intel's Xeon Scalable, right?
+
+It is available on QEMU too (the slower JIT thing without KVM, i.e. use
+/usr/bin/qemu-system-x86_64 instead of /usr/bin/qemu-kvm or /usr/bin/kvm).
+
+> -	if (preload)
+> -		__fpregs_load_activate(new_fpu, cpu);
+> +	if (!preload)
+> +		return;
+> +
+> +	__fpregs_load_activate(new_fpu, cpu);
+> +
+> +#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+> +	/* Protection keys need to be in place right at context switch time. */
+> +	if (boot_cpu_has(X86_FEATURE_OSPKE)) {
+> +		if (new_fpu->pkru != __read_pkru())
+> +			__write_pkru(new_fpu->pkru);
+> +	}
+> +#endif
+
+I think this would be before the "if (preload)"?
 > 
-> What is this for?
-This is a level-triger interrupt controller at first, but we want it
-to support pulse signal. It means that when the pulse signal coming,
-the pending register will hold signals without clear the IFR reg.
+>  	if (boot_cpu_has(X86_FEATURE_OSPKE))
+> -		copy_init_pkru_to_fpregs();
+> +		pkru_set_init_value();
+>  }
+>  
 
-Some C-SKY cpu's socs need this feature to support pulse interrupt
-signal.
+Likewise, move this to fpu__clear and outside "if
+(static_cpu_has(X86_FEATURE_FPU))"?
 
-> > +	intc: interrupt-controller@500000 {
-> > +		compatible = "csky,apb-intc";
-> > +		#interrupt-cells = <1>;
-> > +		reg = <0x00500000 0x400>;
-> > +		interrupt-controller;
-> > +	};
-> Not really worth 2 examples for just 1 property difference.
-Ok.
-I'll retain the above, because only a few socs use support-pulse-signal.
+Also, a __read_pkru() seems to be missing in switch_fpu_prepare.
+
+Thanks,
+
+Paolo
