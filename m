@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D719BECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83261ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982F02088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982F02088F
+	by mail.kernel.org (Postfix) with ESMTP id 402A82088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402A82088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbeIREUN (ORCPT
+        id S1729040AbeIREUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:20:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44926 "EHLO
+        Tue, 18 Sep 2018 00:20:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44940 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIREUM (ORCPT
+        with ESMTP id S1725952AbeIREUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:20:12 -0400
+        Tue, 18 Sep 2018 00:20:16 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AB11CAC;
-        Mon, 17 Sep 2018 22:50:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0094FCAE;
+        Mon, 17 Sep 2018 22:50:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Dyer <nick.dyer@itdev.co.uk>,
-        Benson Leung <bleung@chromium.org>,
-        Yufeng Shen <miletus@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org,
+        "Daniel J. Axtens" <daniel.axtens@canonical.com>,
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 38/56] Input: atmel_mxt_ts - only use first T9 instance
-Date:   Tue, 18 Sep 2018 00:42:11 +0200
-Message-Id: <20180917213829.494899099@linuxfoundation.org>
+Subject: [PATCH 4.4 39/56] partitions/aix: append null character to print data from disk
+Date:   Tue, 18 Sep 2018 00:42:12 +0200
+Message-Id: <20180917213829.538356933@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -54,49 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-[ Upstream commit 36f5d9ef26e52edff046b4b097855db89bf0cd4a ]
+[ Upstream commit d43fdae7bac2def8c4314b5a49822cb7f08a45f1 ]
 
-The driver only registers one input device, which uses the screen
-parameters from the first T9 instance. The first T63 instance also uses
-those parameters.
+Even if properly initialized, the lvname array (i.e., strings)
+is read from disk, and might contain corrupt data (e.g., lack
+the null terminating character for strings).
 
-It is incorrect to send input reports from the second instances of these
-objects if they are enabled: the input scaling will be wrong and the
-positions will be mashed together.
+So, make sure the partition name string used in pr_warn() has
+the null terminating character.
 
-This also causes problems on Android if the number of slots exceeds 32.
-
-In the future, this could be handled by looking for enabled touch object
-instances and creating an input device for each one.
-
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-Acked-by: Benson Leung <bleung@chromium.org>
-Acked-by: Yufeng Shen <miletus@chromium.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
+Suggested-by: Daniel J. Axtens <daniel.axtens@canonical.com>
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ block/partitions/aix.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1593,10 +1593,11 @@ static int mxt_get_object_table(struct m
- 			break;
- 		case MXT_TOUCH_MULTI_T9:
- 			data->multitouch = MXT_TOUCH_MULTI_T9;
-+			/* Only handle messages from first T9 instance */
- 			data->T9_reportid_min = min_id;
--			data->T9_reportid_max = max_id;
--			data->num_touchids = object->num_report_ids
--						* mxt_obj_instances(object);
-+			data->T9_reportid_max = min_id +
-+						object->num_report_ids - 1;
-+			data->num_touchids = object->num_report_ids;
- 			break;
- 		case MXT_SPT_MESSAGECOUNT_T44:
- 			data->T44_address = object->start_address;
+--- a/block/partitions/aix.c
++++ b/block/partitions/aix.c
+@@ -281,10 +281,14 @@ int aix_partition(struct parsed_partitio
+ 				next_lp_ix += 1;
+ 		}
+ 		for (i = 0; i < state->limit; i += 1)
+-			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous)
++			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous) {
++				char tmp[sizeof(n[i].name) + 1]; // null char
++
++				snprintf(tmp, sizeof(tmp), "%s", n[i].name);
+ 				pr_warn("partition %s (%u pp's found) is "
+ 					"not contiguous\n",
+-					n[i].name, lvip[i].pps_found);
++					tmp, lvip[i].pps_found);
++			}
+ 		kfree(pvd);
+ 	}
+ 	kfree(n);
 
 
