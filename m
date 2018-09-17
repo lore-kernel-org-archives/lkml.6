@@ -6,37 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA13ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EF1ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD4B2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD4B2146D
+	by mail.kernel.org (Postfix) with ESMTP id E1D5F2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D5F2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732187AbeIREkG (ORCPT
+        id S1732198AbeIREkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50346 "EHLO
+        Tue, 18 Sep 2018 00:40:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREkG (ORCPT
+        with ESMTP id S1729160AbeIREkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:06 -0400
+        Tue, 18 Sep 2018 00:40:08 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82A61C9D;
-        Mon, 17 Sep 2018 23:10:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABE9BCAC;
+        Mon, 17 Sep 2018 23:10:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>
-Subject: [PATCH 4.18 039/158] x86/process: Dont mix user/kernel regs in 64bit __show_regs()
-Date:   Tue, 18 Sep 2018 00:41:09 +0200
-Message-Id: <20180917211712.981489917@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.18 040/158] x86/apic/vector: Make error return value negative
+Date:   Tue, 18 Sep 2018 00:41:10 +0200
+Message-Id: <20180917211713.024734634@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -54,147 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 9fe6299dde587788f245e9f7a5a1b296fad4e8c7 upstream.
+commit 47b7360ce563e18c524ce92b55fb4da72b3b3578 upstream.
 
-When the kernel.print-fatal-signals sysctl has been enabled, a simple
-userspace crash will cause the kernel to write a crash dump that contains,
-among other things, the kernel gsbase into dmesg.
+activate_managed() returns EINVAL instead of -EINVAL in case of
+error. While this is unlikely to happen, the positive return value would
+cause further malfunction at the call site.
 
-As suggested by Andy, limit output to pt_regs, FS_BASE and KERNEL_GS_BASE
-in this case.
-
-This also moves the bitness-specific logic from show_regs() into
-process_{32,64}.c.
-
-Fixes: 45807a1df9f5 ("vdso: print fatal signals")
-Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: 2db1f959d9dc ("x86/vector: Handle managed interrupts proper")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bpetkov@suse.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180831194151.123586-1-jannh@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kdebug.h |   12 +++++++++++-
- arch/x86/kernel/dumpstack.c   |   11 +++--------
- arch/x86/kernel/process_32.c  |    4 ++--
- arch/x86/kernel/process_64.c  |   12 ++++++++++--
- 4 files changed, 26 insertions(+), 13 deletions(-)
+ arch/x86/kernel/apic/vector.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/kdebug.h
-+++ b/arch/x86/include/asm/kdebug.h
-@@ -22,10 +22,20 @@ enum die_val {
- 	DIE_NMIUNKNOWN,
- };
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -422,7 +422,7 @@ static int activate_managed(struct irq_d
+ 	if (WARN_ON_ONCE(cpumask_empty(vector_searchmask))) {
+ 		/* Something in the core code broke! Survive gracefully */
+ 		pr_err("Managed startup for irq %u, but no CPU\n", irqd->irq);
+-		return EINVAL;
++		return -EINVAL;
+ 	}
  
-+enum show_regs_mode {
-+	SHOW_REGS_SHORT,
-+	/*
-+	 * For when userspace crashed, but we don't think it's our fault, and
-+	 * therefore don't print kernel registers.
-+	 */
-+	SHOW_REGS_USER,
-+	SHOW_REGS_ALL
-+};
-+
- extern void die(const char *, struct pt_regs *,long);
- extern int __must_check __die(const char *, struct pt_regs *, long);
- extern void show_stack_regs(struct pt_regs *regs);
--extern void __show_regs(struct pt_regs *regs, int all);
-+extern void __show_regs(struct pt_regs *regs, enum show_regs_mode);
- extern void show_iret_regs(struct pt_regs *regs);
- extern unsigned long oops_begin(void);
- extern void oops_end(unsigned long, struct pt_regs *, int signr);
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -155,7 +155,7 @@ static void show_regs_if_on_stack(struct
- 	 * they can be printed in the right context.
- 	 */
- 	if (!partial && on_stack(info, regs, sizeof(*regs))) {
--		__show_regs(regs, 0);
-+		__show_regs(regs, SHOW_REGS_SHORT);
- 
- 	} else if (partial && on_stack(info, (void *)regs + IRET_FRAME_OFFSET,
- 				       IRET_FRAME_SIZE)) {
-@@ -353,7 +353,7 @@ void oops_end(unsigned long flags, struc
- 	oops_exit();
- 
- 	/* Executive summary in case the oops scrolled away */
--	__show_regs(&exec_summary_regs, true);
-+	__show_regs(&exec_summary_regs, SHOW_REGS_ALL);
- 
- 	if (!signr)
- 		return;
-@@ -416,14 +416,9 @@ void die(const char *str, struct pt_regs
- 
- void show_regs(struct pt_regs *regs)
- {
--	bool all = true;
--
- 	show_regs_print_info(KERN_DEFAULT);
- 
--	if (IS_ENABLED(CONFIG_X86_32))
--		all = !user_mode(regs);
--
--	__show_regs(regs, all);
-+	__show_regs(regs, user_mode(regs) ? SHOW_REGS_USER : SHOW_REGS_ALL);
- 
- 	/*
- 	 * When in-kernel, we also print out the stack at the time of the fault..
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -59,7 +59,7 @@
- #include <asm/intel_rdt_sched.h>
- #include <asm/proto.h>
- 
--void __show_regs(struct pt_regs *regs, int all)
-+void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- {
- 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L;
- 	unsigned long d0, d1, d2, d3, d6, d7;
-@@ -85,7 +85,7 @@ void __show_regs(struct pt_regs *regs, i
- 	printk(KERN_DEFAULT "DS: %04x ES: %04x FS: %04x GS: %04x SS: %04x EFLAGS: %08lx\n",
- 	       (u16)regs->ds, (u16)regs->es, (u16)regs->fs, gs, ss, regs->flags);
- 
--	if (!all)
-+	if (mode != SHOW_REGS_ALL)
- 		return;
- 
- 	cr0 = read_cr0();
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -62,7 +62,7 @@
- __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
- 
- /* Prints also some state that isn't saved in the pt_regs */
--void __show_regs(struct pt_regs *regs, int all)
-+void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- {
- 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L, fs, gs, shadowgs;
- 	unsigned long d0, d1, d2, d3, d6, d7;
-@@ -87,9 +87,17 @@ void __show_regs(struct pt_regs *regs, i
- 	printk(KERN_DEFAULT "R13: %016lx R14: %016lx R15: %016lx\n",
- 	       regs->r13, regs->r14, regs->r15);
- 
--	if (!all)
-+	if (mode == SHOW_REGS_SHORT)
- 		return;
- 
-+	if (mode == SHOW_REGS_USER) {
-+		rdmsrl(MSR_FS_BASE, fs);
-+		rdmsrl(MSR_KERNEL_GS_BASE, shadowgs);
-+		printk(KERN_DEFAULT "FS:  %016lx GS:  %016lx\n",
-+		       fs, shadowgs);
-+		return;
-+	}
-+
- 	asm("movl %%ds,%0" : "=r" (ds));
- 	asm("movl %%cs,%0" : "=r" (cs));
- 	asm("movl %%es,%0" : "=r" (es));
+ 	ret = assign_managed_vector(irqd, vector_searchmask);
 
 
