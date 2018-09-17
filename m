@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBD0ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4DEECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B08A2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B08A2146D
+	by mail.kernel.org (Postfix) with ESMTP id 70AD8214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AD8214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733258AbeIREpA (ORCPT
+        id S1733268AbeIREpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:45:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51410 "EHLO
+        Tue, 18 Sep 2018 00:45:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732623AbeIREpA (ORCPT
+        with ESMTP id S1732623AbeIREpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:45:00 -0400
+        Tue, 18 Sep 2018 00:45:03 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53524C49;
-        Mon, 17 Sep 2018 23:15:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 795ACC49;
+        Mon, 17 Sep 2018 23:15:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 147/158] f2fs: fix to do sanity check with {sit,nat}_ver_bitmap_bytesize
-Date:   Tue, 18 Sep 2018 00:42:57 +0200
-Message-Id: <20180917211717.883956936@linuxfoundation.org>
+Subject: [PATCH 4.18 148/158] f2fs: fix to propagate return value of scan_nat_page()
+Date:   Tue, 18 Sep 2018 00:42:58 +0200
+Message-Id: <20180917211717.926278982@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -54,221 +55,204 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit c77ec61ca0a49544ca81881cc5d5529858f7e196 ]
+[ Upstream commit e2374015f27fe5ee5d5c37966e2faf396cdaaa65 ]
 
-This patch adds to do sanity check with {sit,nat}_ver_bitmap_bytesize
-during mount, in order to avoid accessing across cache boundary with
-this abnormal bitmap size.
+As Anatoly Trosinenko reported in bugzilla:
 
-- Overview
-buffer overrun in build_sit_info() when mounting a crafted f2fs image
+How to reproduce:
+1. Compile the 73fcb1a370c76 version of the kernel using the config attached
+2. Unpack and mount the attached filesystem image as F2FS
+3. The kernel will BUG() on mount (BUGs are explicitly enabled in config)
 
-- Reproduce
+[    2.233612] F2FS-fs (sda): Found nat_bits in checkpoint
+[    2.248422] ------------[ cut here ]------------
+[    2.248857] kernel BUG at fs/f2fs/node.c:1967!
+[    2.249760] invalid opcode: 0000 [#1] SMP NOPTI
+[    2.250219] Modules linked in:
+[    2.251848] CPU: 0 PID: 944 Comm: mount Not tainted 4.17.0-rc5+ #1
+[    2.252331] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[    2.253305] RIP: 0010:build_free_nids+0x337/0x3f0
+[    2.253672] RSP: 0018:ffffae7fc0857c50 EFLAGS: 00000246
+[    2.254080] RAX: 00000000ffffffff RBX: 0000000000000123 RCX: 0000000000000001
+[    2.254638] RDX: ffff9aa7063d5c00 RSI: 0000000000000122 RDI: ffff9aa705852e00
+[    2.255190] RBP: ffff9aa705852e00 R08: 0000000000000001 R09: ffff9aa7059090c0
+[    2.255719] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9aa705852e00
+[    2.256242] R13: ffff9aa7063ad000 R14: ffff9aa705919000 R15: 0000000000000123
+[    2.256809] FS:  00000000023078c0(0000) GS:ffff9aa707800000(0000) knlGS:0000000000000000
+[    2.258654] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.259153] CR2: 00000000005511ae CR3: 0000000005872000 CR4: 00000000000006f0
+[    2.259801] Call Trace:
+[    2.260583]  build_node_manager+0x5cd/0x600
+[    2.260963]  f2fs_fill_super+0x66a/0x17c0
+[    2.261300]  ? f2fs_commit_super+0xe0/0xe0
+[    2.261622]  mount_bdev+0x16e/0x1a0
+[    2.261899]  mount_fs+0x30/0x150
+[    2.262398]  vfs_kern_mount.part.28+0x4f/0xf0
+[    2.262743]  do_mount+0x5d0/0xc60
+[    2.263010]  ? _copy_from_user+0x37/0x60
+[    2.263313]  ? memdup_user+0x39/0x60
+[    2.263692]  ksys_mount+0x7b/0xd0
+[    2.263960]  __x64_sys_mount+0x1c/0x20
+[    2.264268]  do_syscall_64+0x43/0xf0
+[    2.264560]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[    2.265095] RIP: 0033:0x48d31a
+[    2.265502] RSP: 002b:00007ffc6fe60a08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+[    2.266089] RAX: ffffffffffffffda RBX: 0000000000008000 RCX: 000000000048d31a
+[    2.266607] RDX: 00007ffc6fe62fa5 RSI: 00007ffc6fe62f9d RDI: 00007ffc6fe62f94
+[    2.267130] RBP: 00000000023078a0 R08: 0000000000000000 R09: 0000000000000000
+[    2.267670] R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000000
+[    2.268192] R13: 0000000000000000 R14: 00007ffc6fe60c78 R15: 0000000000000000
+[    2.268767] Code: e8 5f c3 ff ff 83 c3 01 41 83 c7 01 81 fb c7 01 00 00 74 48 44 39 7d 04 76 42 48 63 c3 48 8d 04 c0 41 8b 44 06 05 83 f8 ff 75 c1 <0f> 0b 49 8b 45 50 48 8d b8 b0 00 00 00 e8 37 59 69 00 b9 01 00
+[    2.270434] RIP: build_free_nids+0x337/0x3f0 RSP: ffffae7fc0857c50
+[    2.271426] ---[ end trace ab20c06cd3c8fde4 ]---
 
-- Kernel message
-[  548.580867] F2FS-fs (loop0): Invalid log blocks per segment (8201)
+During loading NAT entries, we will do sanity check, once the entry info
+is corrupted, it will cause BUG_ON directly to protect user data from
+being overwrited.
 
-[  548.580877] F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-[  548.584979] ==================================================================
-[  548.586568] BUG: KASAN: use-after-free in kmemdup+0x36/0x50
-[  548.587715] Read of size 64 at addr ffff8801e9c265ff by task mount/1295
+In this case, it will be better to just return failure on mount() instead
+of panic, so that user can get hint from kmsg and try fsck for recovery
+immediately rather than after an abnormal reboot.
 
-[  548.589428] CPU: 1 PID: 1295 Comm: mount Not tainted 4.18.0-rc1+ #4
-[  548.589432] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  548.589438] Call Trace:
-[  548.589474]  dump_stack+0x7b/0xb5
-[  548.589487]  print_address_description+0x70/0x290
-[  548.589492]  kasan_report+0x291/0x390
-[  548.589496]  ? kmemdup+0x36/0x50
-[  548.589509]  check_memory_region+0x139/0x190
-[  548.589514]  memcpy+0x23/0x50
-[  548.589518]  kmemdup+0x36/0x50
-[  548.589545]  f2fs_build_segment_manager+0x8fa/0x3410
-[  548.589551]  ? __asan_loadN+0xf/0x20
-[  548.589560]  ? f2fs_sanity_check_ckpt+0x1be/0x240
-[  548.589566]  ? f2fs_flush_sit_entries+0x10c0/0x10c0
-[  548.589587]  ? __put_user_ns+0x40/0x40
-[  548.589604]  ? find_next_bit+0x57/0x90
-[  548.589610]  f2fs_fill_super+0x194b/0x2b40
-[  548.589617]  ? f2fs_commit_super+0x1b0/0x1b0
-[  548.589637]  ? set_blocksize+0x90/0x140
-[  548.589651]  mount_bdev+0x1c5/0x210
-[  548.589655]  ? f2fs_commit_super+0x1b0/0x1b0
-[  548.589667]  f2fs_mount+0x15/0x20
-[  548.589672]  mount_fs+0x60/0x1a0
-[  548.589683]  ? alloc_vfsmnt+0x309/0x360
-[  548.589688]  vfs_kern_mount+0x6b/0x1a0
-[  548.589699]  do_mount+0x34a/0x18c0
-[  548.589710]  ? lockref_put_or_lock+0xcf/0x160
-[  548.589716]  ? copy_mount_string+0x20/0x20
-[  548.589728]  ? memcg_kmem_put_cache+0x1b/0xa0
-[  548.589734]  ? kasan_check_write+0x14/0x20
-[  548.589740]  ? _copy_from_user+0x6a/0x90
-[  548.589744]  ? memdup_user+0x42/0x60
-[  548.589750]  ksys_mount+0x83/0xd0
-[  548.589755]  __x64_sys_mount+0x67/0x80
-[  548.589781]  do_syscall_64+0x78/0x170
-[  548.589797]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  548.589820] RIP: 0033:0x7f76fc331b9a
-[  548.589821] Code: 48 8b 0d 01 c3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ce c2 2b 00 f7 d8 64 89 01 48
-[  548.589880] RSP: 002b:00007ffd4f0a0e48 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[  548.589890] RAX: ffffffffffffffda RBX: 000000000146c030 RCX: 00007f76fc331b9a
-[  548.589892] RDX: 000000000146c210 RSI: 000000000146df30 RDI: 0000000001474ec0
-[  548.589895] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-[  548.589897] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 0000000001474ec0
-[  548.589900] R13: 000000000146c210 R14: 0000000000000000 R15: 0000000000000003
+https://bugzilla.kernel.org/show_bug.cgi?id=199769
 
-[  548.590242] The buggy address belongs to the page:
-[  548.591243] page:ffffea0007a70980 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  548.592886] flags: 0x2ffff0000000000()
-[  548.593665] raw: 02ffff0000000000 dead000000000100 dead000000000200 0000000000000000
-[  548.595258] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  548.603713] page dumped because: kasan: bad access detected
-
-[  548.605203] Memory state around the buggy address:
-[  548.606198]  ffff8801e9c26480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[  548.607676]  ffff8801e9c26500: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[  548.609157] >ffff8801e9c26580: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[  548.610629]                                                                 ^
-[  548.612088]  ffff8801e9c26600: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[  548.613674]  ffff8801e9c26680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-[  548.615141] ==================================================================
-[  548.616613] Disabling lock debugging due to kernel taint
-[  548.622871] WARNING: CPU: 1 PID: 1295 at mm/page_alloc.c:4065 __alloc_pages_slowpath+0xe4a/0x1420
-[  548.622878] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  548.623217] CPU: 1 PID: 1295 Comm: mount Tainted: G    B             4.18.0-rc1+ #4
-[  548.623219] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  548.623226] RIP: 0010:__alloc_pages_slowpath+0xe4a/0x1420
-[  548.623227] Code: ff ff 01 89 85 c8 fe ff ff e9 91 fc ff ff 41 89 c5 e9 5c fc ff ff 0f 0b 89 f8 25 ff ff f7 ff 89 85 8c fe ff ff e9 d5 f2 ff ff <0f> 0b e9 65 f2 ff ff 65 8b 05 38 81 d2 47 f6 c4 01 74 1c 65 48 8b
-[  548.623281] RSP: 0018:ffff8801f28c7678 EFLAGS: 00010246
-[  548.623284] RAX: 0000000000000000 RBX: 00000000006040c0 RCX: ffffffffb82f73b7
-[  548.623287] RDX: 1ffff1003e518eeb RSI: 000000000000000c RDI: 0000000000000000
-[  548.623290] RBP: ffff8801f28c7880 R08: 0000000000000000 R09: ffffed0047fff2c5
-[  548.623292] R10: 0000000000000001 R11: ffffed0047fff2c4 R12: ffff8801e88de040
-[  548.623295] R13: 00000000006040c0 R14: 000000000000000c R15: ffff8801f28c7938
-[  548.623299] FS:  00007f76fca51840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  548.623302] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  548.623304] CR2: 00007f19b9171760 CR3: 00000001ed952000 CR4: 00000000000006e0
-[  548.623317] Call Trace:
-[  548.623325]  ? kasan_check_read+0x11/0x20
-[  548.623330]  ? __zone_watermark_ok+0x92/0x240
-[  548.623336]  ? get_page_from_freelist+0x1c3/0x1d90
-[  548.623347]  ? _raw_spin_lock_irqsave+0x2a/0x60
-[  548.623353]  ? warn_alloc+0x250/0x250
-[  548.623358]  ? save_stack+0x46/0xd0
-[  548.623361]  ? kasan_kmalloc+0xad/0xe0
-[  548.623366]  ? __isolate_free_page+0x2a0/0x2a0
-[  548.623370]  ? mount_fs+0x60/0x1a0
-[  548.623374]  ? vfs_kern_mount+0x6b/0x1a0
-[  548.623378]  ? do_mount+0x34a/0x18c0
-[  548.623383]  ? ksys_mount+0x83/0xd0
-[  548.623387]  ? __x64_sys_mount+0x67/0x80
-[  548.623391]  ? do_syscall_64+0x78/0x170
-[  548.623396]  ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  548.623401]  __alloc_pages_nodemask+0x3c5/0x400
-[  548.623407]  ? __alloc_pages_slowpath+0x1420/0x1420
-[  548.623412]  ? __mutex_lock_slowpath+0x20/0x20
-[  548.623417]  ? kvmalloc_node+0x31/0x80
-[  548.623424]  alloc_pages_current+0x75/0x110
-[  548.623436]  kmalloc_order+0x24/0x60
-[  548.623442]  kmalloc_order_trace+0x24/0xb0
-[  548.623448]  __kmalloc_track_caller+0x207/0x220
-[  548.623455]  ? f2fs_build_node_manager+0x399/0xbb0
-[  548.623460]  kmemdup+0x20/0x50
-[  548.623465]  f2fs_build_node_manager+0x399/0xbb0
-[  548.623470]  f2fs_fill_super+0x195e/0x2b40
-[  548.623477]  ? f2fs_commit_super+0x1b0/0x1b0
-[  548.623481]  ? set_blocksize+0x90/0x140
-[  548.623486]  mount_bdev+0x1c5/0x210
-[  548.623489]  ? f2fs_commit_super+0x1b0/0x1b0
-[  548.623495]  f2fs_mount+0x15/0x20
-[  548.623498]  mount_fs+0x60/0x1a0
-[  548.623503]  ? alloc_vfsmnt+0x309/0x360
-[  548.623508]  vfs_kern_mount+0x6b/0x1a0
-[  548.623513]  do_mount+0x34a/0x18c0
-[  548.623518]  ? lockref_put_or_lock+0xcf/0x160
-[  548.623523]  ? copy_mount_string+0x20/0x20
-[  548.623528]  ? memcg_kmem_put_cache+0x1b/0xa0
-[  548.623533]  ? kasan_check_write+0x14/0x20
-[  548.623537]  ? _copy_from_user+0x6a/0x90
-[  548.623542]  ? memdup_user+0x42/0x60
-[  548.623547]  ksys_mount+0x83/0xd0
-[  548.623552]  __x64_sys_mount+0x67/0x80
-[  548.623557]  do_syscall_64+0x78/0x170
-[  548.623562]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  548.623566] RIP: 0033:0x7f76fc331b9a
-[  548.623567] Code: 48 8b 0d 01 c3 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ce c2 2b 00 f7 d8 64 89 01 48
-[  548.623632] RSP: 002b:00007ffd4f0a0e48 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[  548.623636] RAX: ffffffffffffffda RBX: 000000000146c030 RCX: 00007f76fc331b9a
-[  548.623639] RDX: 000000000146c210 RSI: 000000000146df30 RDI: 0000000001474ec0
-[  548.623641] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000013
-[  548.623643] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 0000000001474ec0
-[  548.623646] R13: 000000000146c210 R14: 0000000000000000 R15: 0000000000000003
-[  548.623650] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  548.623656] F2FS-fs (loop0): Failed to initialize F2FS node manager
-[  548.627936] F2FS-fs (loop0): Invalid log blocks per segment (8201)
-
-[  548.627940] F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-[  548.635835] F2FS-fs (loop0): Failed to initialize F2FS node manager
-
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/f2fs/segment.c#L3578
-
-	sit_i->sit_bitmap = kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
-
-Buffer overrun happens when doing memcpy. I suspect there is missing (inconsistent) checks on bitmap_size.
-
-Reported by Wen Xu (wen.xu@gatech.edu) from SSLab, Gatech.
-
-Reported-by: Wen Xu <wen.xu@gatech.edu>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |   21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h |    2 +-
+ fs/f2fs/node.c |   42 ++++++++++++++++++++++++++++++------------
+ 2 files changed, 31 insertions(+), 13 deletions(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2282,12 +2282,17 @@ int f2fs_sanity_check_ckpt(struct f2fs_s
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	unsigned int ovp_segments, reserved_segments;
- 	unsigned int main_segs, blocks_per_seg;
-+	unsigned int sit_segs, nat_segs;
-+	unsigned int sit_bitmap_size, nat_bitmap_size;
-+	unsigned int log_blocks_per_seg;
- 	int i;
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2819,7 +2819,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb
+ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			struct writeback_control *wbc,
+ 			bool do_balance, enum iostat_type io_type);
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+ void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+ void f2fs_alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1970,7 +1970,7 @@ static void remove_free_nid(struct f2fs_
+ 		kmem_cache_free(free_nid_slab, i);
+ }
  
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
--	fsmeta += le32_to_cpu(raw_super->segment_count_sit);
--	fsmeta += le32_to_cpu(raw_super->segment_count_nat);
-+	sit_segs = le32_to_cpu(raw_super->segment_count_sit);
-+	fsmeta += sit_segs;
-+	nat_segs = le32_to_cpu(raw_super->segment_count_nat);
-+	fsmeta += nat_segs;
- 	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
- 	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
+-static void scan_nat_page(struct f2fs_sb_info *sbi,
++static int scan_nat_page(struct f2fs_sb_info *sbi,
+ 			struct page *nat_page, nid_t start_nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1988,7 +1988,10 @@ static void scan_nat_page(struct f2fs_sb
+ 			break;
  
-@@ -2318,6 +2323,18 @@ int f2fs_sanity_check_ckpt(struct f2fs_s
- 			return 1;
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+-		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
++
++		if (blk_addr == NEW_ADDR)
++			return -EINVAL;
++
+ 		if (blk_addr == NULL_ADDR) {
+ 			add_free_nid(sbi, start_nid, true, true);
+ 		} else {
+@@ -1997,6 +2000,8 @@ static void scan_nat_page(struct f2fs_sb
+ 			spin_unlock(&NM_I(sbi)->nid_list_lock);
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ static void scan_curseg_cache(struct f2fs_sb_info *sbi)
+@@ -2052,11 +2057,11 @@ out:
+ 	up_read(&nm_i->nat_tree_lock);
+ }
+ 
+-static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
++static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 						bool sync, bool mount)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	int i = 0;
++	int i = 0, ret;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
+ 	if (unlikely(nid >= nm_i->max_nid))
+@@ -2064,17 +2069,17 @@ static void __f2fs_build_free_nids(struc
+ 
+ 	/* Enough entries */
+ 	if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-		return;
++		return 0;
+ 
+ 	if (!sync && !f2fs_available_free_memory(sbi, FREE_NIDS))
+-		return;
++		return 0;
+ 
+ 	if (!mount) {
+ 		/* try to find free nids in free_nid_bitmap */
+ 		scan_free_nid_bits(sbi);
+ 
+ 		if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-			return;
++			return 0;
  	}
  
-+	sit_bitmap_size = le32_to_cpu(ckpt->sit_ver_bitmap_bytesize);
-+	nat_bitmap_size = le32_to_cpu(ckpt->nat_ver_bitmap_bytesize);
-+	log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
+ 	/* readahead nat pages to be scanned */
+@@ -2088,8 +2093,16 @@ static void __f2fs_build_free_nids(struc
+ 						nm_i->nat_block_bitmap)) {
+ 			struct page *page = get_current_nat_page(sbi, nid);
+ 
+-			scan_nat_page(sbi, page, nid);
++			ret = scan_nat_page(sbi, page, nid);
+ 			f2fs_put_page(page, 1);
 +
-+	if (sit_bitmap_size != ((sit_segs / 2) << log_blocks_per_seg) / 8 ||
-+		nat_bitmap_size != ((nat_segs / 2) << log_blocks_per_seg) / 8) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong bitmap size: sit: %u, nat:%u",
-+			sit_bitmap_size, nat_bitmap_size);
-+		return 1;
-+	}
++			if (ret) {
++				up_read(&nm_i->nat_tree_lock);
++				f2fs_bug_on(sbi, !mount);
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"NAT is corrupt, run fsck to fix it");
++				return -EINVAL;
++			}
+ 		}
+ 
+ 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+@@ -2110,13 +2123,19 @@ static void __f2fs_build_free_nids(struc
+ 
+ 	f2fs_ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+ 					nm_i->ra_nid_pages, META_NAT, false);
 +
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
++	return 0;
+ }
+ 
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ {
++	int ret;
++
+ 	mutex_lock(&NM_I(sbi)->build_lock);
+-	__f2fs_build_free_nids(sbi, sync, mount);
++	ret = __f2fs_build_free_nids(sbi, sync, mount);
+ 	mutex_unlock(&NM_I(sbi)->build_lock);
++
++	return ret;
+ }
+ 
+ /*
+@@ -2803,8 +2822,7 @@ int f2fs_build_node_manager(struct f2fs_
+ 	/* load free nid status from nat_bits table */
+ 	load_free_nid_bitmap(sbi);
+ 
+-	f2fs_build_free_nids(sbi, true, true);
+-	return 0;
++	return f2fs_build_free_nids(sbi, true, true);
+ }
+ 
+ void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
 
 
