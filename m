@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC3ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9C8ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CF152088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF152088F
+	by mail.kernel.org (Postfix) with ESMTP id 4AF122088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF122088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeIRETq (ORCPT
+        id S1728966AbeIRETw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44858 "EHLO
+        Tue, 18 Sep 2018 00:19:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44878 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeIRETp (ORCPT
+        with ESMTP id S1725952AbeIRETw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:45 -0400
+        Tue, 18 Sep 2018 00:19:52 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C59CCAE;
-        Mon, 17 Sep 2018 22:50:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 977DECAE;
+        Mon, 17 Sep 2018 22:50:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 35/56] net: mvneta: fix mtu change on port without link
-Date:   Tue, 18 Sep 2018 00:42:08 +0200
-Message-Id: <20180917213829.382865787@linuxfoundation.org>
+Subject: [PATCH 4.4 36/56] MIPS: Octeon: add missing of_node_put()
+Date:   Tue, 18 Sep 2018 00:42:09 +0200
+Message-Id: <20180917213829.419730920@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -53,35 +54,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
+[ Upstream commit b1259519e618d479ede8a0db5474b3aff99f5056 ]
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+The call to of_find_node_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented here after the last
+usage.
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19558/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/mips/cavium-octeon/octeon-platform.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -2569,7 +2569,6 @@ static int mvneta_change_mtu(struct net_
- 	}
+--- a/arch/mips/cavium-octeon/octeon-platform.c
++++ b/arch/mips/cavium-octeon/octeon-platform.c
+@@ -349,6 +349,7 @@ static int __init octeon_ehci_device_ini
+ 		return 0;
  
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
+ 	pd = of_find_device_by_node(ehci_node);
++	of_node_put(ehci_node);
+ 	if (!pd)
+ 		return 0;
  
- 	netdev_update_features(dev);
+@@ -411,6 +412,7 @@ static int __init octeon_ohci_device_ini
+ 		return 0;
+ 
+ 	pd = of_find_device_by_node(ohci_node);
++	of_node_put(ohci_node);
+ 	if (!pd)
+ 		return 0;
  
 
 
