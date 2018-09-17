@@ -2,80 +2,90 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0E2ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631C1ECE564
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212DF214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212DF214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CE88214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE88214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeIQOUG (ORCPT
+        id S1728079AbeIQOUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 17 Sep 2018 10:20:07 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:32891 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbeIQOUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 10:20:06 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55872 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727168AbeIQOUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:20:06 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5E77743322221;
-        Mon, 17 Sep 2018 16:53:35 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
- 16:53:32 +0800
-Message-ID: <5B9F6B8B.7020100@huawei.com>
-Date:   Mon, 17 Sep 2018 16:53:31 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 66DD53AEAEF;
+        Mon, 17 Sep 2018 10:53:38 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: =?UTF-8?B?W+KApl0=?= an apology, and a maintainership note
+Date:   Mon, 17 Sep 2018 10:53:32 +0200
+Message-ID: <2936237.GcMzexieOU@merkaba>
+In-Reply-To: <2882117.Jnuu2veLAZ@merkaba>
+References: <CA+55aFy+Hv9O5citAawS+mVZO+ywCKd9NQ2wxUmGsz9ZJzqgJQ@mail.gmail.com> <2882117.Jnuu2veLAZ@merkaba>
 MIME-Version: 1.0
-To:     <georgi.djakov@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] interconnect: Fix a GCC compiler warning
-References: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com>
-In-Reply-To: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+to Greg and Andrew.
+Martin Steigerwald - 17.09.18, 09:57:
+> Dear Linus.
+> 
+> Linus Torvalds - 16.09.18, 21:22:
+> > This is my reality.  I am not an emotionally empathetic kind of
+> > person and that probably doesn't come as a big surprise to anybody.
+> >  Least of all me.  The fact that I then misread people and don't
+> > realize (for years) how badly I've judged a situation and
+> > contributed to an unprofessional environment is not good.
+> > 
+> > This week people in our community confronted me about my lifetime of
+> > not understanding emotions.  My flippant attacks in emails have been
+> > both unprofessional and uncalled for.  Especially at times when I
+> > made it personal.  In my quest for a better patch, this made sense
+> > to me. I know now this was not OK and I am truly sorry.
+> > 
+> > The above is basically a long-winded way to get to the somewhat
+> > painful personal admission that hey, I need to change some of my
+> > behavior, and I want to apologize to the people that my personal
+> > behavior hurt and possibly drove away from kernel development
+> > entirely.
+> 
+> I applaud you for the courage to go the bold step you have gone with
+> this mail. I can imagine coming up with this mail has been challenging
+> for you.
+> 
+> Your step provides a big chance for a shift to happen towards a more
+> welcoming and friendly Linux kernel community. From what I saw here as
+> mostly someone who tests rc kernels and as mostly a by-stander of
+> kernel development you may not be the only one here having challenges
+> to deal with emotions.
 
-On 2018/9/16 22:31, zhong jiang wrote:
-> Fix the following compile warning:
->
-> drivers/interconnect/core.c:26:23: warning: icc_debugfs_dir defined but not used [-Wunused-variable]
->  static struct dentry *icc_debugfs_dir;
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/interconnect/core.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> index 2740f1a..9ea9959 100644
-> --- a/drivers/interconnect/core.c
-> +++ b/drivers/interconnect/core.c
-> @@ -23,7 +23,10 @@
->  static DEFINE_IDR(icc_idr);
->  static LIST_HEAD(icc_provider_list);
->  static DEFINE_MUTEX(icc_lock);
-> +
-> +#ifdef CONFIG_DEBUG_FS
->  static struct dentry *icc_debugfs_dir;
-> +#endif
->  
->  /**
->   * struct icc_req - constraints that are attached to each node
+That written: Quite some of the rude mails that contained swearwords I 
+read from you have been about code, not persons. I think this is an 
+important distinction. I do not have much of an issue with swearing at 
+code :), especially when it is in some humorous way.
+
+Code quality indeed is important.
+
+As are human interactions.
+
+-- 
+Martin
 
 
