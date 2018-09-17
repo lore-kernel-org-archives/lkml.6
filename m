@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF62ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E2DECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDEF2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDEF2088F
+	by mail.kernel.org (Postfix) with ESMTP id F3AB42088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AB42088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeIREMz (ORCPT
+        id S1727684AbeIREM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:12:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43028 "EHLO
+        Tue, 18 Sep 2018 00:12:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43042 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeIREMx (ORCPT
+        with ESMTP id S1725772AbeIREM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:12:53 -0400
+        Tue, 18 Sep 2018 00:12:57 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D710C9D;
-        Mon, 17 Sep 2018 22:43:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F473C9D;
+        Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ritesh Harjani <riteshh@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Jamie Iles <jamie.iles@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 04/56] cfq: Give a chance for arming slice idle timer in case of group_idle
-Date:   Tue, 18 Sep 2018 00:41:37 +0200
-Message-Id: <20180917213828.146234550@linuxfoundation.org>
+Subject: [PATCH 4.4 05/56] kthread: Fix use-after-free if kthread fork fails
+Date:   Tue, 18 Sep 2018 00:41:38 +0200
+Message-Id: <20180917213828.192669884@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,72 +57,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ritesh Harjani <riteshh@codeaurora.org>
+From: Vegard Nossum <vegard.nossum@oracle.com>
 
-commit b3193bc0dca9bb69c8ba1ec1a318105c76eb4172 upstream.
+commit 4d6501dce079c1eb6bf0b1d8f528a5e81770109e upstream.
 
-In below scenario blkio cgroup does not work as per their assigned
-weights :-
-1. When the underlying device is nonrotational with a single HW queue
-with depth of >= CFQ_HW_QUEUE_MIN
-2. When the use case is forming two blkio cgroups cg1(weight 1000) &
-cg2(wight 100) and two processes(file1 and file2) doing sync IO in
-their respective blkio cgroups.
+If a kthread forks (e.g. usermodehelper since commit 1da5c46fa965) but
+fails in copy_process() between calling dup_task_struct() and setting
+p->set_child_tid, then the value of p->set_child_tid will be inherited
+from the parent and get prematurely freed by free_kthread_struct().
 
-For above usecase result of fio (without this patch):-
-file1: (groupid=0, jobs=1): err= 0: pid=685: Thu Jan  1 19:41:49 1970
-  write: IOPS=1315, BW=41.1MiB/s (43.1MB/s)(1024MiB/24906msec)
-<...>
-file2: (groupid=0, jobs=1): err= 0: pid=686: Thu Jan  1 19:41:49 1970
-  write: IOPS=1295, BW=40.5MiB/s (42.5MB/s)(1024MiB/25293msec)
-<...>
-// both the process BW is equal even though they belong to diff.
-cgroups with weight of 1000(cg1) and 100(cg2)
+    kthread()
+     - worker_thread()
+        - process_one_work()
+        |  - call_usermodehelper_exec_work()
+        |     - kernel_thread()
+        |        - _do_fork()
+        |           - copy_process()
+        |              - dup_task_struct()
+        |                 - arch_dup_task_struct()
+        |                    - tsk->set_child_tid = current->set_child_tid // implied
+        |              - ...
+        |              - goto bad_fork_*
+        |              - ...
+        |              - free_task(tsk)
+        |                 - free_kthread_struct(tsk)
+        |                    - kfree(tsk->set_child_tid)
+        - ...
+        - schedule()
+           - __schedule()
+              - wq_worker_sleeping()
+                 - kthread_data(task)->flags // UAF
 
-In above case (for non rotational NCQ devices),
-as soon as the request from cg1 is completed and even
-though it is provided with higher set_slice=10, because of CFQ
-algorithm when the driver tries to fetch the request, CFQ expires
-this group without providing any idle time nor weight priority
-and schedules another cfq group (in this case cg2).
-And thus both cfq groups(cg1 & cg2) keep alternating to get the
-disk time and hence loses the cgroup weight based scheduling.
+The problem started showing up with commit 1da5c46fa965 since it reused
+->set_child_tid for the kthread worker data.
 
-Below patch gives a chance to cfq algorithm (cfq_arm_slice_timer)
-to arm the slice timer in case group_idle is enabled.
-In case if group_idle is also not required (including for nonrotational
-NCQ drives), we need to explicitly set group_idle = 0 from sysfs for
-such cases.
+A better long-term solution might be to get rid of the ->set_child_tid
+abuse. The comment in set_kthread_struct() also looks slightly wrong.
 
-With this patch result of fio(for above usecase) :-
-file1: (groupid=0, jobs=1): err= 0: pid=690: Thu Jan  1 00:06:08 1970
-  write: IOPS=1706, BW=53.3MiB/s (55.9MB/s)(1024MiB/19197msec)
-<..>
-file2: (groupid=0, jobs=1): err= 0: pid=691: Thu Jan  1 00:06:08 1970
-  write: IOPS=1043, BW=32.6MiB/s (34.2MB/s)(1024MiB/31401msec)
-<..>
-// In this processes BW is as per their respective cgroups weight.
-
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Debugged-by: Jamie Iles <jamie.iles@oracle.com>
+Fixes: 1da5c46fa965 ("kthread: Make struct kthread kmalloc'ed")
+Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Jamie Iles <jamie.iles@oracle.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20170509073959.17858-1-vegard.nossum@oracle.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/cfq-iosched.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/fork.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -2905,7 +2905,8 @@ static void cfq_arm_slice_timer(struct c
- 	 * for devices that support queuing, otherwise we still have a problem
- 	 * with sync vs async workloads.
- 	 */
--	if (blk_queue_nonrot(cfqd->queue) && cfqd->hw_tag)
-+	if (blk_queue_nonrot(cfqd->queue) && cfqd->hw_tag &&
-+		!cfqd->cfq_group_idle)
- 		return;
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1337,6 +1337,18 @@ static struct task_struct *copy_process(
+ 	if (!p)
+ 		goto fork_out;
  
- 	WARN_ON(!RB_EMPTY_ROOT(&cfqq->sort_list));
++	/*
++	 * This _must_ happen before we call free_task(), i.e. before we jump
++	 * to any of the bad_fork_* labels. This is to avoid freeing
++	 * p->set_child_tid which is (ab)used as a kthread's data pointer for
++	 * kernel threads (PF_KTHREAD).
++	 */
++	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
++	/*
++	 * Clear TID on mm_release()?
++	 */
++	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
++
+ 	ftrace_graph_init_task(p);
+ 
+ 	rt_mutex_init_task(p);
+@@ -1498,11 +1510,6 @@ static struct task_struct *copy_process(
+ 		}
+ 	}
+ 
+-	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
+-	/*
+-	 * Clear TID on mm_release()?
+-	 */
+-	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
+ #ifdef CONFIG_BLOCK
+ 	p->plug = NULL;
+ #endif
 
 
