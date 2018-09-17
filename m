@@ -2,40 +2,42 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04040ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3D9ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6A02146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6A02146F
+	by mail.kernel.org (Postfix) with ESMTP id A9F792146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F792146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731917AbeIREi4 (ORCPT
+        id S1731926AbeIREi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:38:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50108 "EHLO
+        Tue, 18 Sep 2018 00:38:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIREiz (ORCPT
+        with ESMTP id S1729124AbeIREi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:38:55 -0400
+        Tue, 18 Sep 2018 00:38:58 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA58C49;
-        Mon, 17 Sep 2018 23:09:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BADB3C7D;
+        Mon, 17 Sep 2018 23:09:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Arthur Fabre <afabre@cloudflare.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 053/158] powerpc/4xx: Fix error return path in ppc4xx_msi_probe()
-Date:   Tue, 18 Sep 2018 00:41:23 +0200
-Message-Id: <20180917211713.689436697@linuxfoundation.org>
+Subject: [PATCH 4.18 054/158] selftests/bpf: fix a typo in map in map test
+Date:   Tue, 18 Sep 2018 00:41:24 +0200
+Message-Id: <20180917211713.749852618@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,197 +55,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit 6e0495c2e8ac39b1aad0a4588fe64413ce9028c0 ]
+[ Upstream commit 0069fb854364da79fd99236ea620affc8e1152d5 ]
 
-An arbitrary error in ppc4xx_msi_probe() quite likely results in a
-crash similar to the following, seen after dma_alloc_coherent()
-returned an error.
+Commit fbeb1603bf4e ("bpf: verifier: MOV64 don't mark dst reg unbounded")
+revealed a typo in commit fb30d4b71214 ("bpf: Add tests for map-in-map"):
+BPF_MOV64_REG(BPF_REG_0, 0) was used instead of
+BPF_MOV64_IMM(BPF_REG_0, 0).
 
-  Unable to handle kernel paging request for data at address 0x00000000
-  Faulting instruction address: 0xc001bff0
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  BE Canyonlands
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper Tainted: G        W
-  4.18.0-rc6-00010-gff33d1030a6c #1
-  NIP:  c001bff0 LR: c001c418 CTR: c01faa7c
-  REGS: cf82db40 TRAP: 0300   Tainted: G        W
-  (4.18.0-rc6-00010-gff33d1030a6c)
-  MSR:  00029000 <CE,EE,ME>  CR: 28002024  XER: 00000000
-  DEAR: 00000000 ESR: 00000000
-  GPR00: c001c418 cf82dbf0 cf828000 cf8de400 00000000 00000000 000000c4 000000c4
-  GPR08: c0481ea4 00000000 00000000 000000c4 22002024 00000000 c00025e8 00000000
-  GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c0492380 0000004a
-  GPR24: 00029000 0000000c 00000000 cf8de410 c0494d60 c0494d60 cf8bebc0 00000001
-  NIP [c001bff0] ppc4xx_of_msi_remove+0x48/0xa0
-  LR [c001c418] ppc4xx_msi_probe+0x294/0x3b8
-  Call Trace:
-  [cf82dbf0] [00029000] 0x29000 (unreliable)
-  [cf82dc10] [c001c418] ppc4xx_msi_probe+0x294/0x3b8
-  [cf82dc70] [c0209fbc] platform_drv_probe+0x40/0x9c
-  [cf82dc90] [c0208240] driver_probe_device+0x2a8/0x350
-  [cf82dcc0] [c0206204] bus_for_each_drv+0x60/0xac
-  [cf82dcf0] [c0207e88] __device_attach+0xe8/0x160
-  [cf82dd20] [c02071e0] bus_probe_device+0xa0/0xbc
-  [cf82dd40] [c02050c8] device_add+0x404/0x5c4
-  [cf82dd90] [c0288978] of_platform_device_create_pdata+0x88/0xd8
-  [cf82ddb0] [c0288b70] of_platform_bus_create+0x134/0x220
-  [cf82de10] [c0288bcc] of_platform_bus_create+0x190/0x220
-  [cf82de70] [c0288cf4] of_platform_bus_probe+0x98/0xec
-  [cf82de90] [c0449650] __machine_initcall_canyonlands_ppc460ex_device_probe+0x38/0x54
-  [cf82dea0] [c0002404] do_one_initcall+0x40/0x188
-  [cf82df00] [c043daec] kernel_init_freeable+0x130/0x1d0
-  [cf82df30] [c0002600] kernel_init+0x18/0x104
-  [cf82df40] [c000c23c] ret_from_kernel_thread+0x14/0x1c
-  Instruction dump:
-  90010024 813d0024 2f890000 83c30058 41bd0014 48000038 813d0024 7f89f800
-  409d002c 813e000c 57ea103a 3bff0001 <7c69502e> 2f830000 419effe0 4803b26d
-  ---[ end trace 8cf551077ecfc42a ]---
+I've noticed the problem by running bpf kselftests.
 
-Fix it up. Specifically,
-
-- Return valid error codes from ppc4xx_setup_pcieh_hw(), have it clean
-  up after itself, and only access hardware after all possible error
-  conditions have been handled.
-- Use devm_kzalloc() instead of kzalloc() in ppc4xx_msi_probe()
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: fb30d4b71214 ("bpf: Add tests for map-in-map")
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Arthur Fabre <afabre@cloudflare.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/4xx/msi.c |   51 ++++++++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 21 deletions(-)
+ tools/testing/selftests/bpf/test_verifier.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/platforms/4xx/msi.c
-+++ b/arch/powerpc/platforms/4xx/msi.c
-@@ -146,13 +146,19 @@ static int ppc4xx_setup_pcieh_hw(struct
- 	const u32 *sdr_addr;
- 	dma_addr_t msi_phys;
- 	void *msi_virt;
-+	int err;
- 
- 	sdr_addr = of_get_property(dev->dev.of_node, "sdr-base", NULL);
- 	if (!sdr_addr)
--		return -1;
-+		return -EINVAL;
- 
--	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
--	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
-+	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
-+	if (!msi_data)
-+		return -EINVAL;
-+
-+	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
-+	if (!msi_mask)
-+		return -EINVAL;
- 
- 	msi->msi_dev = of_find_node_by_name(NULL, "ppc4xx-msi");
- 	if (!msi->msi_dev)
-@@ -160,30 +166,30 @@ static int ppc4xx_setup_pcieh_hw(struct
- 
- 	msi->msi_regs = of_iomap(msi->msi_dev, 0);
- 	if (!msi->msi_regs) {
--		dev_err(&dev->dev, "of_iomap problem failed\n");
--		return -ENOMEM;
-+		dev_err(&dev->dev, "of_iomap failed\n");
-+		err = -ENOMEM;
-+		goto node_put;
- 	}
- 	dev_dbg(&dev->dev, "PCIE-MSI: msi register mapped 0x%x 0x%x\n",
- 		(u32) (msi->msi_regs + PEIH_TERMADH), (u32) (msi->msi_regs));
- 
- 	msi_virt = dma_alloc_coherent(&dev->dev, 64, &msi_phys, GFP_KERNEL);
--	if (!msi_virt)
--		return -ENOMEM;
-+	if (!msi_virt) {
-+		err = -ENOMEM;
-+		goto iounmap;
-+	}
- 	msi->msi_addr_hi = upper_32_bits(msi_phys);
- 	msi->msi_addr_lo = lower_32_bits(msi_phys & 0xffffffff);
- 	dev_dbg(&dev->dev, "PCIE-MSI: msi address high 0x%x, low 0x%x\n",
- 		msi->msi_addr_hi, msi->msi_addr_lo);
- 
-+	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
-+	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
-+
- 	/* Progam the Interrupt handler Termination addr registers */
- 	out_be32(msi->msi_regs + PEIH_TERMADH, msi->msi_addr_hi);
- 	out_be32(msi->msi_regs + PEIH_TERMADL, msi->msi_addr_lo);
- 
--	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
--	if (!msi_data)
--		return -1;
--	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
--	if (!msi_mask)
--		return -1;
- 	/* Program MSI Expected data and Mask bits */
- 	out_be32(msi->msi_regs + PEIH_MSIED, *msi_data);
- 	out_be32(msi->msi_regs + PEIH_MSIMK, *msi_mask);
-@@ -191,6 +197,12 @@ static int ppc4xx_setup_pcieh_hw(struct
- 	dma_free_coherent(&dev->dev, 64, msi_virt, msi_phys);
- 
- 	return 0;
-+
-+iounmap:
-+	iounmap(msi->msi_regs);
-+node_put:
-+	of_node_put(msi->msi_dev);
-+	return err;
- }
- 
- static int ppc4xx_of_msi_remove(struct platform_device *dev)
-@@ -209,7 +221,6 @@ static int ppc4xx_of_msi_remove(struct p
- 		msi_bitmap_free(&msi->bitmap);
- 	iounmap(msi->msi_regs);
- 	of_node_put(msi->msi_dev);
--	kfree(msi);
- 
- 	return 0;
- }
-@@ -223,18 +234,16 @@ static int ppc4xx_msi_probe(struct platf
- 
- 	dev_dbg(&dev->dev, "PCIE-MSI: Setting up MSI support...\n");
- 
--	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
--	if (!msi) {
--		dev_err(&dev->dev, "No memory for MSI structure\n");
-+	msi = devm_kzalloc(&dev->dev, sizeof(*msi), GFP_KERNEL);
-+	if (!msi)
- 		return -ENOMEM;
--	}
- 	dev->dev.platform_data = msi;
- 
- 	/* Get MSI ranges */
- 	err = of_address_to_resource(dev->dev.of_node, 0, &res);
- 	if (err) {
- 		dev_err(&dev->dev, "%pOF resource error!\n", dev->dev.of_node);
--		goto error_out;
-+		return err;
- 	}
- 
- 	msi_irqs = of_irq_count(dev->dev.of_node);
-@@ -243,7 +252,7 @@ static int ppc4xx_msi_probe(struct platf
- 
- 	err = ppc4xx_setup_pcieh_hw(dev, res, msi);
- 	if (err)
--		goto error_out;
-+		return err;
- 
- 	err = ppc4xx_msi_init_allocator(dev, msi);
- 	if (err) {
-@@ -256,7 +265,7 @@ static int ppc4xx_msi_probe(struct platf
- 		phb->controller_ops.setup_msi_irqs = ppc4xx_setup_msi_irqs;
- 		phb->controller_ops.teardown_msi_irqs = ppc4xx_teardown_msi_irqs;
- 	}
--	return err;
-+	return 0;
- 
- error_out:
- 	ppc4xx_of_msi_remove(dev);
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -6997,7 +6997,7 @@ static struct bpf_test tests[] = {
+ 			BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
+ 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
+ 				     BPF_FUNC_map_lookup_elem),
+-			BPF_MOV64_REG(BPF_REG_0, 0),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
+ 			BPF_EXIT_INSN(),
+ 		},
+ 		.fixup_map_in_map = { 3 },
+@@ -7020,7 +7020,7 @@ static struct bpf_test tests[] = {
+ 			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, 8),
+ 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
+ 				     BPF_FUNC_map_lookup_elem),
+-			BPF_MOV64_REG(BPF_REG_0, 0),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
+ 			BPF_EXIT_INSN(),
+ 		},
+ 		.fixup_map_in_map = { 3 },
+@@ -7042,7 +7042,7 @@ static struct bpf_test tests[] = {
+ 			BPF_MOV64_REG(BPF_REG_1, BPF_REG_0),
+ 			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
+ 				     BPF_FUNC_map_lookup_elem),
+-			BPF_MOV64_REG(BPF_REG_0, 0),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
+ 			BPF_EXIT_INSN(),
+ 		},
+ 		.fixup_map_in_map = { 3 },
 
 
