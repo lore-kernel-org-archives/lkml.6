@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8860EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487B3ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F620208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF0F208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:24:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FQPimor+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F620208AE
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PHisCOA3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF0F208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbeIQItF (ORCPT
+        id S1730073AbeIQI3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:49:05 -0400
-Received: from mail-eopbgr710114.outbound.protection.outlook.com ([40.107.71.114]:1680
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:29:06 -0400
+Received: from mail-eopbgr690092.outbound.protection.outlook.com ([40.107.69.92]:17633
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728969AbeIQI3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:29:33 -0400
+        id S1729986AbeIQI3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:29:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5kW3AQtT7IVYxwM/juRMezb1fxRBE3RNe/6kmioWwsA=;
- b=FQPimor+3Li8OfBPfwWkM34v8uybmMtJJVne1rQ/wd8esZblD5Wvs3ZX3NDnqJcT8TTEif3gDY97S/IPV/nG8BLI8y6yrwpUSnVfCukOYrSlJUVEeltZ9ZCiPfYJxmlT29opOzGxsmuI4RwPEMEB98jhpoogu8e9tHjjB9UVudY=
+ bh=B/T64wYABD25HlXju51k67xUHK541wp0ONHjQtaUjMc=;
+ b=PHisCOA3ZSU9x3xtQRGu+sXnNvqDNywa0+3lXLxWYVi7K9rQAtZkNqcggyN/+0mVmBGY+F5KgvGa7oNF77Bo+R/c6RHbcEIO0pDt60C8yMm+2fgTt5VLHJRyC8nwEI4Tp/wn8dB9BFQD75wMnqkhZy/Dm/oJjHnefhgAMdPzVBQ=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) with Microsoft SMTP
+ CY4PR21MB0470.namprd21.prod.outlook.com (10.172.121.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.5; Mon, 17 Sep 2018 03:04:13 +0000
+ 15.20.1164.12; Mon, 17 Sep 2018 03:03:39 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:04:13 +0000
+ 03:03:39 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bart Van Assche <bart.vanassche@wdc.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
+CC:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 35/87] scsi: klist: Make it safe to use klists in
- atomic context
-Thread-Topic: [PATCH AUTOSEL 4.14 35/87] scsi: klist: Make it safe to use
- klists in atomic context
-Thread-Index: AQHUTjLoRlKihnIMJkKmLcmntRQoyg==
-Date:   Mon, 17 Sep 2018 03:02:46 +0000
-Message-ID: <20180917030220.245686-35-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 27/87] media: fsl-viu: fix error handling in
+ viu_of_probe()
+Thread-Topic: [PATCH AUTOSEL 4.14 27/87] media: fsl-viu: fix error handling in
+ viu_of_probe()
+Thread-Index: AQHUTjLlCmA8CTzZkUKLGku4/QpUgA==
+Date:   Mon, 17 Sep 2018 03:02:40 +0000
+Message-ID: <20180917030220.245686-27-alexander.levin@microsoft.com>
 References: <20180917030220.245686-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030220.245686-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,136 +61,180 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0776;6:jhGzS+ldzNAqGaFxHQgk7B25btnWGcEJC8X1NMcLkIjeXMNbw+3w2kdeDcr7LqgwBS0IVM6jg0O77q54HsDipBWaXfiX+8DQC7LDUeuQfWiciEhVf0awjUXJFPTQsDj3VdIwMZxcWlpRa6pL3jcSbbslraKyQCv4pyDB7mE588T4Of0/bIG/1/UOjADcWF7q7FWega/JsZIbb3mHA++woocXyC0abBmXCnKsuaGhlOd2YoBBvDBgSDHOs+hSaz4CoB1DCmWrOY4PeOodqvNvJqFgnVJDAK8ht2qzV0IZRxupuaW5/LufN/Y57ybUEvqvdGAEUoQTB5XuC73trMo7sqesTA4bomeF+g7ucklI5dJrh40UIj4Y6gjpLgUn9Vx8hsutLNb07tFWzDKroEzXdj6m0UAfITfJmj5puP2E4QOtgSL5Vqu/L8m9quQrahH158bJc31TFSq0Yo1+Kv7xVA==;5:Y91rhApfLa0uJI2hdHA8Hf7LeoVVJvay5UTALeBtqsh+JuCZ48+BuktReAQESDAu1qe7v9GQOouhTC+pO6FpbnHnumxjCLISRzIUQioerxDURyOjViIkm2j87cpVbmFltVpXwqg0vbfLEgVJfvlMaoE5epPy7zCVgASmqMaSeMY=;7:QqA58M/b4yoAGH7ntbKULdtucjFfP6phqP5HoSE7zmOsjsq9GM95d+0eO69XFuFu3tjXxQRG9PTFcPVABtvSUGyYWuFGfCmBpsdoHzV24x+xm/1oqD0fZRDSgLtHcV8Rz1PStGACbuIEXEszTay9GrInCDb/vmVXwjt3wPTuQrxFKxp8ieCs52n1fCFCyVllLHUnwB7SKCKsnY11qw0Yk0Ko6JS5nnHq9DTIskmDf4WhJ5K9xv7lUpmhyWcQzCV1
-x-ms-office365-filtering-correlation-id: 91675091-7f2e-4527-47ee-08d61c4a3f15
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0470;6:B06bxQ10Bw5wBX+ch58vifMuCn7NAhczVUI3VRHMYoftOZsAVosvzeCNvjaB5b96J6dZXsFw3okU4IYBzDOjbFAZRRbK2HDXjNDtGz3rN6l3UknaUdy13b9Y4Tpa0ihdUdHAZAbN4MhY6OU4dLZnShvA7fRsJQ/kEjdKVoLd/5G65Y3hQkAPAkapAa8h+28/8lWQREHSgowx9WRosGAG8rVMG14gbjr7AxdnGT0f99Hi0Lx1bjnYawLtWFP1Yk3P+MxwxRkGl/CO0Jal61Xg2fbrP53M2xJFCp170EzAd5cDEqF9HYCU1K7jivgwftFZIIvmIFeeKC8SccrJezw+oswjczbSPEaTMnsyTzLAKZQ3KWm9a7jGK4xoT8AtclpI/PLD38zsaimKTH0hQGsJnFXTc4xFCElI6mEfxTEBRuzvMEEaZe1e8qd955zIOG6GV5HntgXOBBZYlsK+oDKMng==;5:IRMZUPO/WzVFGZUIMEoCTR3lbqKqd93/w7C5vmIs33sOpuCvupYxouvi0jUW29ycrxBwBiGrdHdB3cNhbWVJKOOMgdCvuMMUufVfRpZGHJG5YqCJd9nX49ZY/BidSzmy6Al0VtxhsyaxouJTOmDqaew+GKI1VYYksWkOMf/m+tA=;7:s3WleBM+QaFsd0UN+fkJ5kz0sqoQJkdC8Z/ZSUiE8QC0ZFUoAd2ZTNlAw6r125SPnL0MuGYMo2VQk0GKkPG8Qa8mzHXU+JlNrzndVL3OhUwarTFTZxw5DEzQY4+nDZkdIPnTTmQ0PgeFUxX6u9s1S4+ZxeCSJ1yyDlYT0yzkCcGGhiP8hZgLYEQ8VI9KBgEvkxnKa2sfp7CgfjmDASxtsqcNgcYHLVJngSFBqrOW/nnFVXKVHj5aUJBi7uD+Vnak
+x-ms-office365-filtering-correlation-id: 3a48313f-94da-4f91-41f2-08d61c4a2b3a
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0776;
-x-ms-traffictypediagnostic: CY4PR21MB0776:
-x-microsoft-antispam-prvs: <CY4PR21MB0776BBDE38F8EE9FC6F97F3AFB1E0@CY4PR21MB0776.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(20558992708506)(146099531331640)(104084551191319)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0470;
+x-ms-traffictypediagnostic: CY4PR21MB0470:
+x-microsoft-antispam-prvs: <CY4PR21MB04704DD6BE38AD6D0BD4226BFB1E0@CY4PR21MB0470.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(95692535739014)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0776;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0776;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0470;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0470;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(346002)(376002)(396003)(51234002)(199004)(189003)(5250100002)(53936002)(72206003)(14454004)(102836004)(478600001)(4326008)(6346003)(2501003)(25786009)(6666003)(10290500003)(110136005)(54906003)(6436002)(66066001)(8936002)(316002)(107886003)(76176011)(2906002)(217873002)(6116002)(3846002)(22452003)(14444005)(6506007)(486006)(5660300001)(7736002)(2616005)(11346002)(446003)(97736004)(476003)(6486002)(105586002)(81166006)(99286004)(186003)(81156014)(2900100001)(8676002)(86612001)(68736007)(86362001)(26005)(36756003)(305945005)(256004)(106356001)(6512007)(1076002)(10090500001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0776;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(366004)(136003)(189003)(199004)(1076002)(25786009)(4326008)(107886003)(5660300001)(3846002)(6116002)(54906003)(110136005)(22452003)(316002)(86612001)(76176011)(53936002)(6512007)(68736007)(7736002)(305945005)(86362001)(2900100001)(256004)(66066001)(8936002)(11346002)(446003)(10290500003)(6486002)(14454004)(4477795004)(81156014)(486006)(6506007)(2501003)(99286004)(26005)(2906002)(10090500001)(6666003)(478600001)(72206003)(105586002)(6436002)(102836004)(186003)(8676002)(2616005)(476003)(5250100002)(36756003)(81166006)(106356001)(6346003)(14444005)(97736004)(217873002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0470;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: QTBG4Z8bdEzc3g/KXeCsQ+Mrdwo/umjdtYLQKvwsNdTYfIvw5kAax8YTL+dLf9r9V2aLnyl+glIPhdOmTaKTSB8wBtWDHrkbsNteppblsaIGy4rswb+DKvGYA1PDcmekC/pzIM10ULjDnYReT9M2p8OdjjTOX6WY9O4HFpnaPiZUYnryyDsXNfagA6BORQu7DLB+khEsmVIJhfR+v7XOksByHoEXFkQZk1nDqBnCX1w3Duaexd3Cf9NDW9FvV3fY24eSBNCuCSJq4b92T2dZIJUq+ANVV+YuB74IH+1aPmEZu21SLaC6rtBLra6Iigumxit/vU9A2xtJWZUXptIUpMiKXrYo42nBH2cin1IddN0=
+x-microsoft-antispam-message-info: +UIUOpcyCvGkPohY6AsKI+xXa6LsjWm6ClVC7s2H7nWEkqYOeUAICzt3Lu/JQYu9u4V6krUBjxVAM3WE5+YCXQZwMwBqiF0SK7X1drVuoJXXrKkXgU8ypXcaKtLy9KhniNcuhZoRvCQzpe9vBSCJvueUCxP77fS0kILsE68wG8+vzKfzmwN/8P6BFiDx+8J86OcaZbehkVlRO0R8TnPdoOYyN+n3W9hJaUfWPiLjCKVASpFMDdp5FMBje3XBb0cshuiVruJnuPtwrezKlY5yNYU4dpKUjWHRKrjhInQUXpXzEHbgCyU22tsARz3f5BFcVfsGEiHN4rCQwWg02uxY8fP+Ty29Ud8kRf1FP5hCl14=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91675091-7f2e-4527-47ee-08d61c4a3f15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:02:46.1343
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a48313f-94da-4f91-41f2-08d61c4a2b3a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:02:40.8688
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0776
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0470
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 624fa7790f80575a4ec28fbdb2034097dc18d051 ]
+[ Upstream commit 662a99e145661c2b35155cf375044deae9b79896 ]
 
-In the scsi_transport_srp implementation it cannot be avoided to
-iterate over a klist from atomic context when using the legacy block
-layer instead of blk-mq. Hence this patch that makes it safe to use
-klists in atomic context. This patch avoids that lockdep reports the
-following:
+viu_of_probe() ignores fails in i2c_get_adapter(),
+tries to unlock uninitialized mutex on error path.
 
-WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
- Possible interrupt unsafe locking scenario:
+The patch streamlining the error handling in viu_of_probe().
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&(&k->k_lock)->rlock);
-                               local_irq_disable();
-                               lock(&(&q->__queue_lock)->rlock);
-                               lock(&(&k->k_lock)->rlock);
-  <Interrupt>
-    lock(&(&q->__queue_lock)->rlock);
+Found by Linux Driver Verification project (linuxtesting.org).
 
-stack backtrace:
-Workqueue: kblockd blk_timeout_work
-Call Trace:
- dump_stack+0xa4/0xf5
- check_usage+0x6e6/0x700
- __lock_acquire+0x185d/0x1b50
- lock_acquire+0xd2/0x260
- _raw_spin_lock+0x32/0x50
- klist_next+0x47/0x190
- device_for_each_child+0x8e/0x100
- srp_timed_out+0xaf/0x1d0 [scsi_transport_srp]
- scsi_times_out+0xd4/0x410 [scsi_mod]
- blk_rq_timed_out+0x36/0x70
- blk_timeout_work+0x1b5/0x220
- process_one_work+0x4fe/0xad0
- worker_thread+0x63/0x5a0
- kthread+0x1c1/0x1e0
- ret_from_fork+0x24/0x30
-
-See also commit c9ddf73476ff ("scsi: scsi_transport_srp: Fix shost to
-rport translation").
-
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James Bottomley <jejb@linux.vnet.ibm.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- lib/klist.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/media/platform/fsl-viu.c | 38 +++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/lib/klist.c b/lib/klist.c
-index 0507fa5d84c5..f6b547812fe3 100644
---- a/lib/klist.c
-+++ b/lib/klist.c
-@@ -336,8 +336,9 @@ struct klist_node *klist_prev(struct klist_iter *i)
- 	void (*put)(struct klist_node *) =3D i->i_klist->put;
- 	struct klist_node *last =3D i->i_cur;
- 	struct klist_node *prev;
-+	unsigned long flags;
-=20
--	spin_lock(&i->i_klist->k_lock);
-+	spin_lock_irqsave(&i->i_klist->k_lock, flags);
-=20
- 	if (last) {
- 		prev =3D to_klist_node(last->n_node.prev);
-@@ -356,7 +357,7 @@ struct klist_node *klist_prev(struct klist_iter *i)
- 		prev =3D to_klist_node(prev->n_node.prev);
+diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-=
+viu.c
+index fb43025df573..254d696dffd8 100644
+--- a/drivers/media/platform/fsl-viu.c
++++ b/drivers/media/platform/fsl-viu.c
+@@ -1417,7 +1417,7 @@ static int viu_of_probe(struct platform_device *op)
+ 				     sizeof(struct viu_reg), DRV_NAME)) {
+ 		dev_err(&op->dev, "Error while requesting mem region\n");
+ 		ret =3D -EBUSY;
+-		goto err;
++		goto err_irq;
  	}
 =20
--	spin_unlock(&i->i_klist->k_lock);
-+	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
-=20
- 	if (put && last)
- 		put(last);
-@@ -377,8 +378,9 @@ struct klist_node *klist_next(struct klist_iter *i)
- 	void (*put)(struct klist_node *) =3D i->i_klist->put;
- 	struct klist_node *last =3D i->i_cur;
- 	struct klist_node *next;
-+	unsigned long flags;
-=20
--	spin_lock(&i->i_klist->k_lock);
-+	spin_lock_irqsave(&i->i_klist->k_lock, flags);
-=20
- 	if (last) {
- 		next =3D to_klist_node(last->n_node.next);
-@@ -397,7 +399,7 @@ struct klist_node *klist_next(struct klist_iter *i)
- 		next =3D to_klist_node(next->n_node.next);
+ 	/* remap registers */
+@@ -1425,7 +1425,7 @@ static int viu_of_probe(struct platform_device *op)
+ 	if (!viu_regs) {
+ 		dev_err(&op->dev, "Can't map register set\n");
+ 		ret =3D -ENOMEM;
+-		goto err;
++		goto err_irq;
  	}
 =20
--	spin_unlock(&i->i_klist->k_lock);
-+	spin_unlock_irqrestore(&i->i_klist->k_lock, flags);
+ 	/* Prepare our private structure */
+@@ -1433,7 +1433,7 @@ static int viu_of_probe(struct platform_device *op)
+ 	if (!viu_dev) {
+ 		dev_err(&op->dev, "Can't allocate private structure\n");
+ 		ret =3D -ENOMEM;
+-		goto err;
++		goto err_irq;
+ 	}
 =20
- 	if (put && last)
- 		put(last);
+ 	viu_dev->vr =3D viu_regs;
+@@ -1449,16 +1449,21 @@ static int viu_of_probe(struct platform_device *op)
+ 	ret =3D v4l2_device_register(viu_dev->dev, &viu_dev->v4l2_dev);
+ 	if (ret < 0) {
+ 		dev_err(&op->dev, "v4l2_device_register() failed: %d\n", ret);
+-		goto err;
++		goto err_irq;
+ 	}
+=20
+ 	ad =3D i2c_get_adapter(0);
++	if (!ad) {
++		ret =3D -EFAULT;
++		dev_err(&op->dev, "couldn't get i2c adapter\n");
++		goto err_v4l2;
++	}
+=20
+ 	v4l2_ctrl_handler_init(&viu_dev->hdl, 5);
+ 	if (viu_dev->hdl.error) {
+ 		ret =3D viu_dev->hdl.error;
+ 		dev_err(&op->dev, "couldn't register control\n");
+-		goto err_vdev;
++		goto err_i2c;
+ 	}
+ 	/* This control handler will inherit the control(s) from the
+ 	   sub-device(s). */
+@@ -1475,7 +1480,7 @@ static int viu_of_probe(struct platform_device *op)
+ 	vdev =3D video_device_alloc();
+ 	if (vdev =3D=3D NULL) {
+ 		ret =3D -ENOMEM;
+-		goto err_vdev;
++		goto err_hdl;
+ 	}
+=20
+ 	*vdev =3D viu_template;
+@@ -1496,7 +1501,7 @@ static int viu_of_probe(struct platform_device *op)
+ 	ret =3D video_register_device(viu_dev->vdev, VFL_TYPE_GRABBER, -1);
+ 	if (ret < 0) {
+ 		video_device_release(viu_dev->vdev);
+-		goto err_vdev;
++		goto err_unlock;
+ 	}
+=20
+ 	/* enable VIU clock */
+@@ -1504,12 +1509,12 @@ static int viu_of_probe(struct platform_device *op)
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&op->dev, "failed to lookup the clock!\n");
+ 		ret =3D PTR_ERR(clk);
+-		goto err_clk;
++		goto err_vdev;
+ 	}
+ 	ret =3D clk_prepare_enable(clk);
+ 	if (ret) {
+ 		dev_err(&op->dev, "failed to enable the clock!\n");
+-		goto err_clk;
++		goto err_vdev;
+ 	}
+ 	viu_dev->clk =3D clk;
+=20
+@@ -1520,7 +1525,7 @@ static int viu_of_probe(struct platform_device *op)
+ 	if (request_irq(viu_dev->irq, viu_intr, 0, "viu", (void *)viu_dev)) {
+ 		dev_err(&op->dev, "Request VIU IRQ failed.\n");
+ 		ret =3D -ENODEV;
+-		goto err_irq;
++		goto err_clk;
+ 	}
+=20
+ 	mutex_unlock(&viu_dev->lock);
+@@ -1528,16 +1533,19 @@ static int viu_of_probe(struct platform_device *op)
+ 	dev_info(&op->dev, "Freescale VIU Video Capture Board\n");
+ 	return ret;
+=20
+-err_irq:
+-	clk_disable_unprepare(viu_dev->clk);
+ err_clk:
+-	video_unregister_device(viu_dev->vdev);
++	clk_disable_unprepare(viu_dev->clk);
+ err_vdev:
+-	v4l2_ctrl_handler_free(&viu_dev->hdl);
++	video_unregister_device(viu_dev->vdev);
++err_unlock:
+ 	mutex_unlock(&viu_dev->lock);
++err_hdl:
++	v4l2_ctrl_handler_free(&viu_dev->hdl);
++err_i2c:
+ 	i2c_put_adapter(ad);
++err_v4l2:
+ 	v4l2_device_unregister(&viu_dev->v4l2_dev);
+-err:
++err_irq:
+ 	irq_dispose_mapping(viu_irq);
+ 	return ret;
+ }
 --=20
 2.17.1
