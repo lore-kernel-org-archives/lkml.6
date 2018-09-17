@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE6DECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303DAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67B22146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67B22146F
+	by mail.kernel.org (Postfix) with ESMTP id E7E9E2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E9E2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbeIREdu (ORCPT
+        id S1730822AbeIREdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49114 "EHLO
+        Tue, 18 Sep 2018 00:33:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49124 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREdt (ORCPT
+        with ESMTP id S1727202AbeIREdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:49 -0400
+        Tue, 18 Sep 2018 00:33:53 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 002B8C49;
-        Mon, 17 Sep 2018 23:04:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F904C77;
+        Mon, 17 Sep 2018 23:04:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 089/126] MIPS: WARN_ON invalid DMA cache maintenance, not BUG_ON
-Date:   Tue, 18 Sep 2018 00:42:17 +0200
-Message-Id: <20180917211709.866145677@linuxfoundation.org>
+Subject: [PATCH 4.14 090/126] RDMA/cma: Do not ignore net namespace for unbound cm_id
+Date:   Tue, 18 Sep 2018 00:42:18 +0200
+Message-Id: <20180917211709.916694579@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,46 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@imgtec.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit d4da0e97baea8768b3d66ccef3967bebd50dfc3b ]
+[ Upstream commit 643d213a9a034fa04f5575a40dfc8548e33ce04f ]
 
-If a driver causes DMA cache maintenance with a zero length then we
-currently BUG and kill the kernel. As this is a scenario that we may
-well be able to recover from, WARN & return in the condition instead.
+Currently if the cm_id is not bound to any netdevice, than for such cm_id,
+net namespace is ignored; which is incorrect.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Patchwork: https://patchwork.linux-mips.org/patch/14623/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Regardless of cm_id bound to a netdevice or not, net namespace must
+match. When a cm_id is bound to a netdevice, in such case net namespace
+and netdevice both must match.
+
+Fixes: 4c21b5bcef73 ("IB/cma: Add net_dev and private data checks to RDMA CM")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/mm/c-r4k.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/cma.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -835,7 +835,8 @@ static void r4k_flush_icache_user_range(
- static void r4k_dma_cache_wback_inv(unsigned long addr, unsigned long size)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size == 0);
-+	if (WARN_ON(size == 0))
-+		return;
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -1459,9 +1459,16 @@ static bool cma_match_net_dev(const stru
+ 		       (addr->src_addr.ss_family == AF_IB ||
+ 			cma_protocol_roce_dev_port(id->device, port_num));
  
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
-@@ -871,7 +872,8 @@ static void r4k_dma_cache_wback_inv(unsi
- static void r4k_dma_cache_inv(unsigned long addr, unsigned long size)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size == 0);
-+	if (WARN_ON(size == 0))
-+		return;
+-	return !addr->dev_addr.bound_dev_if ||
+-	       (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
+-		addr->dev_addr.bound_dev_if == net_dev->ifindex);
++	/*
++	 * Net namespaces must match, and if the listner is listening
++	 * on a specific netdevice than netdevice must match as well.
++	 */
++	if (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
++	    (!!addr->dev_addr.bound_dev_if ==
++	     (addr->dev_addr.bound_dev_if == net_dev->ifindex)))
++		return true;
++	else
++		return false;
+ }
  
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
+ static struct rdma_id_private *cma_find_listener(
 
 
