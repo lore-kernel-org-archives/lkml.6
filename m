@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24540ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB73ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74A2208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5F1208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:16:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="fFMpl0CR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74A2208AE
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="itVNrYLs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5F1208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731192AbeIQImG (ORCPT
+        id S1731028AbeIQImG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 17 Sep 2018 04:42:06 -0400
-Received: from mail-eopbgr690134.outbound.protection.outlook.com ([40.107.69.134]:52946
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr710091.outbound.protection.outlook.com ([40.107.71.91]:43296
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730114AbeIQIbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729427AbeIQIbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 04:31:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9PqEDB/mwsh8OQ3i1P0wfKmgW9TbookyV+vcomZ189Q=;
- b=fFMpl0CRRzltYMdL/t1tzq8NEAF5wOXpunuNjJKQDb337QORo5tfqkIoHNVLr9aVk2LqMT5Ql9aS7RzUdsfbCl5p5V97FbiVhC8wqIgAd5pCYl+AhpRR7rorX9UHphdlSq+b2Eqo7DUGKzdmj5b5M1XrkSZAHEWRvqZqr3wCrs8=
+ bh=hcaj9NUgHNWwNt6S3PeukzjKfBodQAUcubEvB6psUcg=;
+ b=itVNrYLsTtlW68lr+aoa+JovhSPXMtDm6zU6QXS+n5t//rGTzNO/lehmXmcmZsj+23x59ufNjhiU+W2Bpt9RGRQHXmA5ORKnVOz5YyWO2zVLiciLV15P40punkJDuh/rVncpuUUpEH328yI0xrQiMFyCJ3lEFmYsaqV9ptKGdYo=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0120.namprd21.prod.outlook.com (10.173.189.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:05:41 +0000
+ CY4PR21MB0757.namprd21.prod.outlook.com (10.173.192.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1164.6; Mon, 17 Sep 2018 03:05:47 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:05:41 +0000
+ 03:05:46 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 17/57] media: exynos4-is: Prevent NULL pointer
- dereference in __isp_video_try_fmt()
-Thread-Topic: [PATCH AUTOSEL 4.9 17/57] media: exynos4-is: Prevent NULL
- pointer dereference in __isp_video_try_fmt()
-Thread-Index: AQHUTjMRdzbLkDn0pkqdffSSFUqhbg==
-Date:   Mon, 17 Sep 2018 03:03:53 +0000
-Message-ID: <20180917030340.378-17-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 30/57] s390/extmem: fix gcc 8 stringop-overflow
+ warning
+Thread-Topic: [PATCH AUTOSEL 4.9 30/57] s390/extmem: fix gcc 8
+ stringop-overflow warning
+Thread-Index: AQHUTjMVV+vrt854zk6acx/VtDf9ag==
+Date:   Mon, 17 Sep 2018 03:04:01 +0000
+Message-ID: <20180917030340.378-30-alexander.levin@microsoft.com>
 References: <20180917030340.378-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030340.378-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,87 +60,87 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0120;6:sEC7DoDr09OSej/kPTPBOy1gARpEEi91u2tfl/5VesoqYsOXprZAu3/DNVx+WVyDQFK5cL+Dj0KnCuAEX8O2cFWcrwa8SFiopQZwTk9MI2wsKWsRDsb8QmCnca4Mr/SEIpgvevqsCLkU7NaJLu736mT9ZVhp6h2cCzQd76A7t3xMcnWMTCNmh1bBpzDnqIdWKogeCkL1EBIHm4hvpZjaOR+vHI3zqVg7RQiE5dtePyG2BWOnGO3BTa2Ug12YsStt/7dDUc30zcF4FCUETjbEWTAcXAPLbz3rHp063XLfGsn/zp3YQcYaq+qCHlZg+zak8Kq//WySQXkr1bBpe4hTaqpZbVZabF/N/XDSqE3yf/EU2PSmGYhcqQxa/qyfAMm4geDYyf/gv7Nepa9HO85ku+iGtUZZmtzV4dFjW4RfIBcvONc/X1JrjNrDdYuyXGlD;5:q7TXsGK408w1zLwuH1jnu/853YHPysbnRCuemg6+diEHeqKg4eXgOw9ygB+uwdavi0FqPZ8DgNGCz1UeBDpXTC/Yp68B59bC9yMiX7k60Q9JIZtmDzRTcs8Ta7SvJcl/7tMuRvgWdMctOEdztwdCpIGsk5L6nip3g25mL0brbWc=;7:8NLWjtVfaPuwV4c9BgfAULJMa2b28rpgYWndEwH71jl8x/6/4/kJGfLsYVAbTxA1VxLtvw7R/Ntt9pnxxYHPz2m/9v6LcJTUhUezXCMxOgMu30ioIM+vQpcPnfiUe4Ejxf680iPA72izRicJUiELDhOoFX63VzZNGeUkDUhzlFaZJTTVAzNaA2PIh5FwZhucRbsYJGxvEl1xCKor69t/u1ikgO+lJdZWL29TzFcgJ7V/GtW6LglTc90Q7I4ocGCm
-x-ms-office365-filtering-correlation-id: 14999eb6-25c1-4034-cdaa-08d61c4a73b4
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0757;6:cYBxzSwcrlADQGpxKDjFME+XdWBjo6mSOCXS+PfoX5BII5CB8od8OBk4PxZPgERK8NDcdFU248+muWnRny0jxR93WOwEXerWVCjgbd5tmMY60vvWyYk4Vcj0uU2mluX9nOXPDtZt7ElWnjjPllJscQaTyyuZi6cb5d4rduwvBMF2EcFl6lx35Lueq8ghFX+OIvwdV6/TtVj31bRSEid/mfvVeSF/YBka80kmHAkkXJ30xFxGkFejXYRoMuLgFpZQSz6i8oIpnYomJF4Px6a2nbwAU4C200UrIhuGfOZBqDJCa0pkMPeDvYTKx4zRBTPGlBPk5u6P9PLggopjwdkagta1w+a0Hx10lqs8vZg7jw5qP6cJvZQJ+zCf9BErP8L7SDk4K6yB4xpkG3pP2G1ecztjH2+8fqiGNoYBeHByAtho0GmYNiGczkFNdO/W0nkUuyudS9XM6OTKidog0/7HyQ==;5:i3ccTwhCvgIfogfUFs6KsEq0K2P2+KcYSYY5R3/NlB+hJOrX7qF+4/iGxI9u0ryhz7JjhMbTQmqOhJFMVPWhrywYsJB2Ag/rETtw6NahG1cvQwqcN2A0ebNa9Y5vMWZwEy71Hrcqp725HjQ/WVt8gV/ugv9dIgP6yybnod5/m+Q=;7:OwrqRyATQWhGPcukx4ejt12IRJ9OXlBrj8u3rwy43BFKIMacSkSWU99E7HbAqoj21Fnty1MpJmIBCl3QofVVpK7bU2F0EMhY4LwD9uZzY1F1tRRJ9eyPcbwu1ZzMrsXupF7lM006vsV+JDvPua51gF7ukHMOu1JUA/8IzfSdlS93zJm+k2R3KhzNtYV3kNXVnqJ6Wis0atbooStTuSdBGuNEppndzIpuWdUiD4EMdXQGhNFILJHYj6tK9Jq4fIPd
+x-ms-office365-filtering-correlation-id: 479672a3-4efe-4b01-b752-08d61c4a770c
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0120;
-x-ms-traffictypediagnostic: CY4PR21MB0120:
-x-microsoft-antispam-prvs: <CY4PR21MB012030ABAEB62A9F4299EA04FB1E0@CY4PR21MB0120.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(17755550239193)(7411616537696)(146099531331640)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0757;
+x-ms-traffictypediagnostic: CY4PR21MB0757:
+x-microsoft-antispam-prvs: <CY4PR21MB0757B94C417496FA39ADC27EFB1E0@CY4PR21MB0757.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(104084551191319)(190383065149520)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0120;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0120;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0757;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0757;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(136003)(39860400002)(366004)(199004)(189003)(54906003)(26005)(110136005)(446003)(2906002)(6346003)(99286004)(316002)(575784001)(86362001)(25786009)(102836004)(10090500001)(2616005)(2900100001)(76176011)(97736004)(36756003)(11346002)(72206003)(478600001)(10290500003)(3846002)(6116002)(1076002)(22452003)(107886003)(5250100002)(2501003)(86612001)(4326008)(217873002)(105586002)(106356001)(6486002)(14444005)(14454004)(256004)(6436002)(8676002)(305945005)(8936002)(6506007)(81156014)(81166006)(7736002)(476003)(486006)(68736007)(186003)(66066001)(6512007)(53936002)(5660300001)(6666003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0120;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(136003)(366004)(346002)(376002)(396003)(189003)(199004)(8936002)(68736007)(476003)(10290500003)(446003)(53936002)(11346002)(6512007)(486006)(86612001)(6436002)(1076002)(256004)(6486002)(2616005)(14444005)(81156014)(81166006)(7736002)(8676002)(217873002)(478600001)(305945005)(3846002)(6116002)(86362001)(4326008)(106356001)(66066001)(186003)(36756003)(99286004)(76176011)(102836004)(107886003)(26005)(2906002)(5660300001)(110136005)(54906003)(10090500001)(22452003)(72206003)(2900100001)(316002)(14454004)(97736004)(105586002)(6506007)(25786009)(6346003)(6666003)(5250100002)(2501003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0757;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: BzEFpoVCMUi1/qafM6kO4PUYCPEIiuP3d/XEyIrQI8clQN/dsXytyCDNPHbex2Ue9JSy/p3POB7iLfH+hwihpXBscgfPxCW6wCBwhqbgw/2vSJSAxAbWgN+rb0IZ5GdEI0eFCvFJGRKoxcXR/iJfqJ1Yy5EE/c3VaY58yubVYfct7jJSqawq3Fo6l57YowmC9RYeD+ChSJ2elCZHnjwYpOp3uMCJGJGxc37VYAx0T/v8BohWe3JEEMK7wUrGxN7MMfdPht3XV1mtZHDY1x6yhXnXrVUc2Md80V22qh/gPUxo0GOj2g7E9fIc6TQat2+QNzuOPlKXlTVz7Xm2QCEjXw==
+x-microsoft-antispam-message-info: 5tHvrLPDJFAIrPQGFB3m6ctdurd4P2XVvjq1bVPqEW8nKo99efEWMP1j/aZ5AxLh3uCY+WKNI7gFPcDzP7YXHmkiqutNLXkmlyQdXOL6CHcPp+kKTeLp4d3z5e+dsJDvW/1lfQozw0zMRnE4wFeql25CHUKZIJLe9mGXoopD0t3Oznvim37hXQF+TllVnFrarYxu8lXQAhbkddqEkch8qRhlAKh/wJnPehVUwkG3TpmFaviY5/kOaJHS3BN+bwYnTZoIb20pciwCpjw6IfKI5X9un2/E8O8/yhzNGTA8vTpjGxK85SLwINZCz+Yq3vXqhw9ERsfHXwo1aH6zOCFVNXMA7LnVGMy+xFO3TFIWYEA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14999eb6-25c1-4034-cdaa-08d61c4a73b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:03:53.8835
+X-MS-Exchange-CrossTenant-Network-Message-Id: 479672a3-4efe-4b01-b752-08d61c4a770c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:04:01.7740
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0120
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0757
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 7c1b9a5aeed91bef98988ac0fcf38c8c1f4f9a3a ]
+[ Upstream commit 6b2ddf33baec23dace85bd647e3fc4ac070963e8 ]
 
-This patch fixes potential NULL pointer dereference as indicated
-by the following static checker warning:
+arch/s390/mm/extmem.c: In function '__segment_load':
+arch/s390/mm/extmem.c:436:2: warning: 'strncat' specified bound 7 equals
+source length [-Wstringop-overflow=3D]
+  strncat(seg->res_name, " (DCSS)", 7);
 
-drivers/media/platform/exynos4-is/fimc-isp-video.c:408 isp_video_try_fmt_mp=
-lane()
-error: NULL dereference inside function '__isp_video_try_fmt(isp, &f->fmt.p=
-ix_mp, (0))()'.
+What gcc complains about here is the misuse of strncat function, which
+in this case does not limit a number of bytes taken from "src", so it is
+in the end the same as strcat(seg->res_name, " (DCSS)");
 
-Fixes: 34947b8aebe3: ("[media] exynos4-is: Add the FIMC-IS ISP capture DMA =
-driver")
+Keeping in mind that a res_name is 15 bytes, strncat in this case
+would overflow the buffer and write 0 into alignment byte between the
+fields in the struct. To avoid that increasing res_name size to 16,
+and reusing strlcat.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/media/platform/exynos4-is/fimc-isp-video.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/s390/mm/extmem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/m=
-edia/platform/exynos4-is/fimc-isp-video.c
-index 400ce0cb0c0d..e00fa03ddc3e 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -384,12 +384,17 @@ static void __isp_video_try_fmt(struct fimc_isp *isp,
- 				struct v4l2_pix_format_mplane *pixm,
- 				const struct fimc_fmt **fmt)
- {
--	*fmt =3D fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
-+	const struct fimc_fmt *__fmt;
-+
-+	__fmt =3D fimc_isp_find_format(&pixm->pixelformat, NULL, 2);
-+
-+	if (fmt)
-+		*fmt =3D __fmt;
-=20
- 	pixm->colorspace =3D V4L2_COLORSPACE_SRGB;
- 	pixm->field =3D V4L2_FIELD_NONE;
--	pixm->num_planes =3D (*fmt)->memplanes;
--	pixm->pixelformat =3D (*fmt)->fourcc;
-+	pixm->num_planes =3D __fmt->memplanes;
-+	pixm->pixelformat =3D __fmt->fourcc;
- 	/*
- 	 * TODO: double check with the docmentation these width/height
- 	 * constraints are correct.
+diff --git a/arch/s390/mm/extmem.c b/arch/s390/mm/extmem.c
+index 02042b6b66bf..e6665a6e105e 100644
+--- a/arch/s390/mm/extmem.c
++++ b/arch/s390/mm/extmem.c
+@@ -79,7 +79,7 @@ struct qin64 {
+ struct dcss_segment {
+ 	struct list_head list;
+ 	char dcss_name[8];
+-	char res_name[15];
++	char res_name[16];
+ 	unsigned long start_addr;
+ 	unsigned long end;
+ 	atomic_t ref_count;
+@@ -432,7 +432,7 @@ __segment_load (char *name, int do_nonshared, unsigned =
+long *addr, unsigned long
+ 	memcpy(&seg->res_name, seg->dcss_name, 8);
+ 	EBCASC(seg->res_name, 8);
+ 	seg->res_name[8] =3D '\0';
+-	strncat(seg->res_name, " (DCSS)", 7);
++	strlcat(seg->res_name, " (DCSS)", sizeof(seg->res_name));
+ 	seg->res->name =3D seg->res_name;
+ 	rc =3D seg->vm_segtype;
+ 	if (rc =3D=3D SEG_TYPE_SC ||
 --=20
 2.17.1
