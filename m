@@ -2,95 +2,125 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA64ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890D7ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E03ED214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03ED214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FB29214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB29214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbeIQOvF (ORCPT
+        id S1727473AbeIQOwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:51:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44586 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeIQOvF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:51:05 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D8DDBE0;
-        Mon, 17 Sep 2018 09:24:31 +0000 (UTC)
-Date:   Mon, 17 Sep 2018 11:24:29 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     georgi.djakov@linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] interconnect: Fix a GCC compiler warning
-Message-ID: <20180917092429.GB25662@kroah.com>
-References: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com>
- <5B9F6B8B.7020100@huawei.com>
- <20180917085954.GA23740@kroah.com>
- <5B9F7196.1070203@huawei.com>
+        Mon, 17 Sep 2018 10:52:31 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59659 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725757AbeIQOwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:52:31 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 02:25:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
+   d="asc'?scan'208";a="233536977"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.143])
+  by orsmga004.jf.intel.com with ESMTP; 17 Sep 2018 02:25:56 -0700
+Date:   Mon, 17 Sep 2018 17:15:50 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        open list <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/2] vfio: add edid api for display (vgpu) devices.
+Message-ID: <20180917091550.GK20737@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20180913054745.6353-1-kraxel@redhat.com>
+ <20180913054745.6353-2-kraxel@redhat.com>
+ <20180913115139.02775316@t450s.home>
+ <20180914122552.3xmepqo7azzmx7ky@sirius.home.kraxel.org>
+ <20180917065154.GI20737@zhen-hp.sh.intel.com>
+ <20180917085033.ttcs3cpznnf3wngd@sirius.home.kraxel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="O8nUzFXSEQuWwhTG"
 Content-Disposition: inline
-In-Reply-To: <5B9F7196.1070203@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180917085033.ttcs3cpznnf3wngd@sirius.home.kraxel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 05:19:18PM +0800, zhong jiang wrote:
-> On 2018/9/17 16:59, Greg KH wrote:
-> > On Mon, Sep 17, 2018 at 04:53:31PM +0800, zhong jiang wrote:
-> >> +to Greg and Andrew.
-> >>
-> >> On 2018/9/16 22:31, zhong jiang wrote:
-> >>> Fix the following compile warning:
-> >>>
-> >>> drivers/interconnect/core.c:26:23: warning: 'icc_debugfs_dir' defined but not used [-Wunused-variable]
-> >>>  static struct dentry *icc_debugfs_dir;
-> >>>
-> >>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> >>> ---
-> >>>  drivers/interconnect/core.c | 3 +++
-> > This file is not in a released tree, where are you seeing it?
-> I see it in linux-next.
 
-Then please contact the owner of the branch where it came from.  They
-are the only ones that can handle such a patch, not anyone else.
+--O8nUzFXSEQuWwhTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-> >>> index 2740f1a..9ea9959 100644
-> >>> --- a/drivers/interconnect/core.c
-> >>> +++ b/drivers/interconnect/core.c
-> >>> @@ -23,7 +23,10 @@
-> >>>  static DEFINE_IDR(icc_idr);
-> >>>  static LIST_HEAD(icc_provider_list);
-> >>>  static DEFINE_MUTEX(icc_lock);
-> >>> +
-> >>> +#ifdef CONFIG_DEBUG_FS
-> >>>  static struct dentry *icc_debugfs_dir;
-> >>> +#endif
-> > Why not move the variable to where it is used?  It should be able to go
-> > under an existing #ifdef section, right?
-> Because the variable need to be used in __init and __exit.  So it should be identified as
-> a gloabl variable.  I fix it under the #ifdef condition.
+On 2018.09.17 10:50:33 +0200, Gerd Hoffmann wrote:
+> > > +#define VFIO_DEVICE_INFO_CAP_EDID	1
+> > > +
+> > > +struct vfio_device_info_edid_cap {
+> > > +	struct vfio_info_cap_header header;
+> > > +	__u32   max_x;     /* Max display height (zero =3D=3D no limit) */
+> > > +	__u32   max_y;     /* Max display height (zero =3D=3D no limit) */
+> > > +};
+> >=20
+> > As current virtual display for Intel vGPU is still emulating against re=
+al HW
+> > pipeline with same limitations, asked display developers that whether o=
+r not
+> > specific mode can work might still depend on current or future HW behav=
+ior.
+> > So could we add some hints on what kind of edid mode vfio device can op=
+erate?
+> > Some may support arbitrary modes, but some may only support standard mo=
+des.
+>=20
+> What kind of restrictions do we have here?  Really to a fixed list of
+> standard modes?
 
-If the variable is being used this way, then the code is written
-incorrectly, such an #ifdef should not be needed for any debugfs
-calls/variables.
+Restriction is still with HW differences, e.g for skl/kbl with ddi wrpll
+within min/max clock range which may generate any required frequency, but
+I've been told for bxt there're some gaps in clock range that could be
+generated.
 
-thanks,
+>=20
+> Some testing (kaby lake) indicates y axis has no restrictions and x axis
+> gets rounded up to the next multiple of 8 pixels (32 bytes), maybe to
+> align scanlines with cachelines?
 
-greg k-h
+That should be plane stride requirement I think.
+
+>=20
+> Oh, and btw:  Seems the resolution restriction (to 1024x768 for the
+> smallest vgpu type) seems to not be enforced.  Intentional?
+>=20
+
+hmm, what do you mean here? Not enforce to have only one mode for vgpu type?
+Or can't change to other mode?
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--O8nUzFXSEQuWwhTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCW59wxgAKCRCxBBozTXgY
+J7O8AJsFx1JPF0xgMGdYaJXONvbIWvOM3ACglzhQ+F/jyxdCf2qr4oqUg3j+jyc=
+=0BaV
+-----END PGP SIGNATURE-----
+
+--O8nUzFXSEQuWwhTG--
