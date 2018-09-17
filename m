@@ -2,185 +2,313 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE4AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0732ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0296E214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:08:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dem8uHLo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0296E214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B1222147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1222147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbeIQRfl (ORCPT
+        id S1728430AbeIQRgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:35:41 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38851 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728241AbeIQRfk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:35:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id t25-v6so9266058wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 05:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=01xnjUBjpsg6KuuGXx13wnd3HzOPmCqvqdiDn4zfD8Y=;
-        b=Dem8uHLo/PJWAxqKDdpm6EfnTRbyUtqqkQK1ZK2pezUqYmB5UdDO92iTvhEpcspCNR
-         jzec9RaaX7sIDzBZSsfD7+ArrRS+kA2IqDHzCCD5RS1O8a6Nlc+ssFcPn9DFtCd7vOh2
-         peOl3VHNrfwkvMy6CxH12zHKoztgNLMNKZgVSGUs7x7my9+49/0DIgPCnrPynsRO8z1m
-         W/jh8hY29xVgku2H+ZAg4ZrVC5YE43fh/qCRsXXM+QAEzCBzD5epjbK3EFS3ud3ShQTa
-         5lOjYsgsZtuxy3GWB0Zrye9wR3Dt2q/KkxZsw74H0QjHN+She1xPwHXRyN1YTRRbXnff
-         zazw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=01xnjUBjpsg6KuuGXx13wnd3HzOPmCqvqdiDn4zfD8Y=;
-        b=EycTaAcGB9MJu2IZx9hGv7HLRI9l7td5ifDdBqSY8hk1f2l3peP7F1bNkxhAO0x49Y
-         a+3QbZqmKHDu2Cx+BQvVFEow2vYl7SoZ0U3uQGuJoWbXg4vBKMpwQcZ7jdoID18IKTxm
-         AKbtR1D+xhEvHNH+K5j3gq8aYWjKM+GjvVf3mc8FvyA2SGJWe6mV+bI/+ajdF/UnAXzp
-         YbMdoyJpcZQ8DY/9Eds1uJdxGYGzt/alAv/lQ+lSpnJAP118VW9E8TfFkAArWgk1zrZT
-         AFX8kTYmSN/ScoHaoO+J7Vd8pQEReJHTCi/LrNtxqurEUoJAst7mRsigrbjweLZNP53Z
-         eS/A==
-X-Gm-Message-State: APzg51D4wTI7J00aRKxhbRUdSF/T6GRjue4qcbfbP+w6TDvfwcfF9xZ1
-        6MTrBBjyqj21qWma9nUgL2olecvm
-X-Google-Smtp-Source: ANB0Vda7IFHwc4RKpScluDevpMyq723D+USOguGUmd1ynZ1W5nWthAna2XqCNn0NUh1izKrMfBfLqA==
-X-Received: by 2002:a1c:3503:: with SMTP id c3-v6mr11122272wma.46.1537186116009;
-        Mon, 17 Sep 2018 05:08:36 -0700 (PDT)
-Received: from baker.fritz.box ([2a02:908:1257:4460:21bc:9ef5:2350:67f5])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm11608213wro.66.2018.09.17.05.08.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 05:08:35 -0700 (PDT)
-From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org
-Subject: [PATCH] list: introduce list_bulk_move_tail helper
-Date:   Mon, 17 Sep 2018 14:08:34 +0200
-Message-Id: <20180917120834.13993-1-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.14.1
+        Mon, 17 Sep 2018 13:36:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37008 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728176AbeIQRgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 13:36:37 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 48C1320618; Mon, 17 Sep 2018 14:09:32 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 01C7B203DA;
+        Mon, 17 Sep 2018 14:09:21 +0200 (CEST)
+Date:   Mon, 17 Sep 2018 14:09:22 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     masonccyang@mxic.com.tw
+Cc:     broonie@kernel.org, tpiepho@impinj.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        juliensu@mxic.com.tw, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 1/2] spi: Add MXIC controller driver
+Message-ID: <20180917140922.3132ab99@bbrezillon>
+In-Reply-To: <1537168579-31593-2-git-send-email-masonccyang@mxic.com.tw>
+References: <1537168579-31593-1-git-send-email-masonccyang@mxic.com.tw>
+        <1537168579-31593-2-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move all entries between @first and including @last before @head.
+Hi Mason,
 
-This is useful for LRU lists where a whole block of entries should be
-moved to the end of the list.
+On Mon, 17 Sep 2018 15:16:18 +0800
+masonccyang@mxic.com.tw wrote:
 
-Used as a band aid in TTM, but better placed in the common list headers.
+> +
+> +static int mxic_spi_mem_exec_op(struct spi_mem *mem,
+> +				const struct spi_mem_op *op)
+> +{
+> +	struct mxic_spi *mxic = spi_master_get_devdata(mem->spi->master);
+> +	int nio = 1, i, ret;
+> +	u32 ss_ctrl;
+> +	u8 addr[8];
+> +
+> +	ret = mxic_spi_clk_setup(mem->spi);
+> +	if (ret)
+> +		return ret;
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/ttm/ttm_bo.c | 25 +++++--------------------
- include/linux/list.h         | 23 +++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 20 deletions(-)
+Hm, can we change the rate when the clk/PLL is enabled? If not then
+you'll have to first call pm_runtime_get_sync() to start from a know
+state, then inside mxic_spi_clk_setup(), call mxic_spi_clk_disable(),
+change the rate and call mxic_spi_clk_enable().
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-index b2a33bf1ef10..26b889f86670 100644
---- a/drivers/gpu/drm/ttm/ttm_bo.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c
-@@ -247,20 +247,6 @@ void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo,
- }
- EXPORT_SYMBOL(ttm_bo_move_to_lru_tail);
- 
--static void ttm_list_move_bulk_tail(struct list_head *list,
--				    struct list_head *first,
--				    struct list_head *last)
--{
--	first->prev->next = last->next;
--	last->next->prev = first->prev;
--
--	list->prev->next = first;
--	first->prev = list->prev;
--
--	last->next = list;
--	list->prev = last;
--}
--
- void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- {
- 	unsigned i;
-@@ -276,8 +262,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		reservation_object_assert_held(pos->last->resv);
- 
- 		man = &pos->first->bdev->man[TTM_PL_TT];
--		ttm_list_move_bulk_tail(&man->lru[i], &pos->first->lru,
--					&pos->last->lru);
-+		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-+				    &pos->last->lru);
- 	}
- 
- 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
-@@ -291,8 +277,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		reservation_object_assert_held(pos->last->resv);
- 
- 		man = &pos->first->bdev->man[TTM_PL_VRAM];
--		ttm_list_move_bulk_tail(&man->lru[i], &pos->first->lru,
--					&pos->last->lru);
-+		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-+				    &pos->last->lru);
- 	}
- 
- 	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
-@@ -306,8 +292,7 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
- 		reservation_object_assert_held(pos->last->resv);
- 
- 		lru = &pos->first->bdev->glob->swap_lru[i];
--		ttm_list_move_bulk_tail(lru, &pos->first->swap,
--					&pos->last->swap);
-+		list_bulk_move_tail(lru, &pos->first->swap, &pos->last->swap);
- 	}
- }
- EXPORT_SYMBOL(ttm_bo_bulk_move_lru_tail);
-diff --git a/include/linux/list.h b/include/linux/list.h
-index de04cc5ed536..edb7628e46ed 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -183,6 +183,29 @@ static inline void list_move_tail(struct list_head *list,
- 	list_add_tail(list, head);
- }
- 
-+/**
-+ * list_bulk_move_tail - move a subsection of a list to its tail
-+ * @head: the head that will follow our entry
-+ * @first: first entry to move
-+ * @last: last entry to move, can be the same as first
-+ *
-+ * Move all entries between @first and including @last before @head.
-+ * All three entries must belong to the same linked list.
-+ */
-+static inline void list_bulk_move_tail(struct list_head *head,
-+				       struct list_head *first,
-+				       struct list_head *last)
-+{
-+	first->prev->next = last->next;
-+	last->next->prev = first->prev;
-+
-+	head->prev->next = first;
-+	first->prev = head->prev;
-+
-+	last->next = head;
-+	head->prev = last;
-+}
-+
- /**
-  * list_is_last - tests whether @list is the last entry in list @head
-  * @list: the entry to test
--- 
-2.14.1
+> +
+> +	ret = mxic_spi_clk_enable(mxic);
+> +	if (ret)
+> +		return ret;
 
+Hm, why do you need that one? Isn't it already taken care of by the
+core when it calls pm_runtime_get_sync() here [1]?
+
+> +
+> +	if (mem->spi->mode & (SPI_TX_QUAD | SPI_RX_QUAD))
+> +		nio = 4;
+> +	else if (mem->spi->mode & (SPI_TX_DUAL | SPI_RX_DUAL))
+> +		nio = 2;
+> +
+> +	writel(HC_CFG_NIO(nio) |
+> +	       HC_CFG_TYPE(mem->spi->chip_select, HC_CFG_TYPE_SPI_NOR) |
+> +	       HC_CFG_SLV_ACT(mem->spi->chip_select) | HC_CFG_IDLE_SIO_LVL(1) |
+> +	       HC_CFG_MAN_CS_EN,
+> +	       mxic->regs + HC_CFG);
+> +	writel(HC_EN_BIT, mxic->regs + HC_EN);
+> +
+> +	ss_ctrl = OP_CMD_BYTES(1) | OP_CMD_BUSW(fls(op->cmd.buswidth) - 1);
+> +
+> +	if (op->addr.nbytes)
+> +		ss_ctrl |= OP_ADDR_BYTES(op->addr.nbytes) |
+> +			   OP_ADDR_BUSW(fls(op->addr.buswidth) - 1);
+> +
+> +	if (op->dummy.nbytes)
+> +		ss_ctrl |= OP_DUMMY_CYC(op->dummy.nbytes);
+> +
+> +	if (op->data.nbytes) {
+> +		ss_ctrl |= OP_DATA_BUSW(fls(op->data.buswidth) - 1);
+> +		if (op->data.dir == SPI_MEM_DATA_IN)
+> +			ss_ctrl |= OP_READ;
+> +	}
+> +
+> +	writel(ss_ctrl, mxic->regs + SS_CTRL(mem->spi->chip_select));
+> +
+> +	writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_ASSERT,
+> +	       mxic->regs + HC_CFG);
+> +
+> +	ret = mxic_spi_data_xfer(mxic, &op->cmd.opcode, NULL, 1);
+> +	if (ret)
+> +		goto out;
+> +
+> +	for (i = 0; i < op->addr.nbytes; i++)
+> +		addr[i] = op->addr.val >> (8 * (op->addr.nbytes - i - 1));
+> +
+> +	ret = mxic_spi_data_xfer(mxic, addr, NULL, op->addr.nbytes);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = mxic_spi_data_xfer(mxic, NULL, NULL, op->dummy.nbytes);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = mxic_spi_data_xfer(mxic,
+> +				 op->data.dir == SPI_MEM_DATA_OUT ?
+> +				 op->data.buf.out : NULL,
+> +				 op->data.dir == SPI_MEM_DATA_IN ?
+> +				 op->data.buf.in : NULL,
+> +				 op->data.nbytes);
+> +
+> +out:
+> +	writel(readl(mxic->regs + HC_CFG) & ~HC_CFG_MAN_CS_ASSERT,
+> +	       mxic->regs + HC_CFG);
+> +	writel(0, mxic->regs + HC_EN);
+> +
+> +	mxic_spi_clk_disable(mxic);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct spi_controller_mem_ops mxic_spi_mem_ops = {
+> +	.supports_op = mxic_spi_mem_supports_op,
+> +	.exec_op = mxic_spi_mem_exec_op,
+> +};
+> +
+> +static void mxic_spi_set_cs(struct spi_device *spi, bool lvl)
+> +{
+> +	struct mxic_spi *mxic = spi_master_get_devdata(spi->master);
+> +
+> +	if (!lvl) {
+> +		if (mxic_spi_clk_setup(spi))
+> +			return;
+> +		if (mxic_spi_clk_enable(mxic))
+> +			return;
+
+Same here. I'd expect the clks to be enabled by the core [2].
+
+> +		writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_EN,
+> +		       mxic->regs + HC_CFG);
+> +		writel(HC_EN_BIT, mxic->regs + HC_EN);
+> +		writel(readl(mxic->regs + HC_CFG) | HC_CFG_MAN_CS_ASSERT,
+> +		       mxic->regs + HC_CFG);
+> +	} else {
+> +		writel(readl(mxic->regs + HC_CFG) & ~HC_CFG_MAN_CS_ASSERT,
+> +		       mxic->regs + HC_CFG);
+> +		writel(0, mxic->regs + HC_EN);
+> +		mxic_spi_clk_disable(mxic);
+> +	}
+> +}
+> +
+
+[...]
+
+> +
+> +static int __maybe_unused mxic_spi_suspend(struct device *dev)
+> +{
+> +	struct spi_master *master = dev_get_drvdata(dev);
+> +	struct mxic_spi *mxic = spi_master_get_devdata(master);
+> +
+> +	clk_disable_unprepare(mxic->ps_clk);
+
+Hm, why not putting the ->ps_clk enabling bits in the runtime PM hooks? 
+
+> +
+> +	spi_master_suspend(master);
+> +
+> +	return 0;
+> +}
+> +
+
+[...]
+
+> +
+> +static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct mxic_spi *mxic = spi_master_get_devdata(master);
+> +
+> +	dev_dbg(dev, "dis-able ps_clock.\n");
+
+		      ^ disable
+
+And I'm not even sure we need this trace here. Looks like some
+leftovers from your debugging.
+
+> +	clk_disable_unprepare(mxic->ps_clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused mxic_spi_runtime_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+> +	struct mxic_spi *mxic = spi_master_get_devdata(master);
+> +	int ret;
+> +
+> +	dev_dbg(dev, "en-able ps_clock.\n");
+
+		      ^enable
+
+> +	ret = clk_prepare_enable(mxic->ps_clk);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot enable ps_clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops mxic_spi_dev_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(mxic_spi_runtime_suspend,
+> +			   mxic_spi_runtime_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(mxic_spi_suspend, mxic_spi_resume)
+> +};
+> +
+> +static int mxic_spi_probe(struct platform_device *pdev)
+> +{
+> +	struct spi_master *master;
+> +	struct resource *res;
+> +	struct mxic_spi *mxic;
+> +	int ret;
+> +
+> +	master = spi_alloc_master(&pdev->dev, sizeof(struct mxic_spi));
+> +	if (!master)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, master);
+> +
+> +	mxic = spi_master_get_devdata(master);
+> +
+> +	master->dev.of_node = pdev->dev.of_node;
+> +
+> +	mxic->ps_clk = devm_clk_get(&pdev->dev, "ps_clk");
+> +	if (IS_ERR(mxic->ps_clk))
+> +		return PTR_ERR(mxic->ps_clk);
+> +
+> +	mxic->send_clk = devm_clk_get(&pdev->dev, "send_clk");
+> +	if (IS_ERR(mxic->send_clk))
+> +		return PTR_ERR(mxic->send_clk);
+> +
+> +	mxic->send_dly_clk = devm_clk_get(&pdev->dev, "send_dly_clk");
+> +	if (IS_ERR(mxic->send_dly_clk))
+> +		return PTR_ERR(mxic->send_dly_clk);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+> +	mxic->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(mxic->regs))
+> +		return PTR_ERR(mxic->regs);
+> +
+> +	ret = clk_prepare_enable(mxic->ps_clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, SPI_AUTOSUSPEND_TIMEOUT);
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	master->auto_runtime_pm = true;
+> +
+> +	master->num_chipselect = 1;
+> +	master->setup = mxic_spi_setup;
+> +	master->mem_ops = &mxic_spi_mem_ops;
+> +
+> +	master->set_cs = mxic_spi_set_cs;
+> +	master->transfer_one = mxic_spi_transfer_one;
+> +	master->bits_per_word_mask = SPI_BPW_MASK(8);
+> +	master->mode_bits = SPI_CPOL | SPI_CPHA |
+> +			SPI_RX_DUAL | SPI_TX_DUAL |
+> +			SPI_RX_QUAD | SPI_TX_QUAD;
+> +
+> +	mxic_spi_hw_init(mxic);
+> +
+> +	pm_runtime_mark_last_busy(&pdev->dev);
+> +	pm_runtime_put_autosuspend(&pdev->dev);
+
+Okay, I'll let others review the runtime PM init/cleanup bits, because
+I'm not an expert, but I don't remember seeing this
+pm_runtime_set_active()+pm_runtime_mark_last_busy()+pm_runtime_put_autosuspend()
+dance in the drivers I worked on. Most probably because they were not
+using autosuspend.
+
+Regards,
+
+Boris
+
+[1]https://elixir.bootlin.com/linux/v4.19-rc4/source/drivers/spi/spi-mem.c#L210
+[2]https://elixir.bootlin.com/linux/v4.19-rc4/source/drivers/spi/spi.c#L1214
