@@ -2,151 +2,111 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB0FECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B7FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37EC214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMe9yjbw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37EC214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 443CC2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443CC2088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbeIQUFl (ORCPT
+        id S1729063AbeIQUGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:05:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43654 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbeIQUFk (ORCPT
+        Mon, 17 Sep 2018 16:06:13 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39664 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728757AbeIQUGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:05:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v66-v6so7757608pgb.10;
-        Mon, 17 Sep 2018 07:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=r13M3UmqOcHbEC8GaTabIZog1gCJnGnjbKlt4PbmxHA=;
-        b=HMe9yjbw86Hk/yqDLxlvl9MYZIfztVuXjlh+Ht6+ScfvBhWfXaCJ+JWl164QPWon4j
-         HaDWzf+cXtCAhemIzODKuWyMOU5twT3kC5++l9o2Ga5ZSqpRMY8nrlUGAtxE26ARpoo5
-         Nsu94eZKn+9ZYSzVwt1LXJmgcJ6TaYFDLPB1iuWNXZR6X7nq7s9fYDnkSKK9tLHeRDun
-         UPJ1V7Gj+iIeLOADtdcDzxQFVfGPCXRM9Cxn84N9No0tIVVV2jbxa+a/Kfl6GJesY5+j
-         /mDeEvkVL55m8J9uaSV97GCJ93VAn3osSOAJpfsiitwsiPT5gNXe2MuDN4Fd21lfblXo
-         BI+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r13M3UmqOcHbEC8GaTabIZog1gCJnGnjbKlt4PbmxHA=;
-        b=EzRQ7IoniYjboN63OybSBVKmA4TPCF+p/iwPep5+TtcIgYAbi0v27T4hgU47ikvePG
-         D6ScsLbrbSDRzYetg3CTm9Yx5dqojK0iSbcIlfO8v7g6LQy2/KBWZ8AUs9SJRFbV3iXe
-         wWA9r1kuMuZs4i8+BTIzlQEsCRaYk2Zwr+DVhIjpcPJHyK5E+pe1vHYFlcDKH8OnWR9R
-         xskkrLXeOTUmX0yXFguRugBJSdWEpEZOmUt4DH0tCFd5gRpirNBid6sva3QET9sbohR7
-         klQ5Fwhrbjhr5cQagb/r6t9UHf+bQPUXD/oBkWxDqbTH+ozLrtvLCrYi5xJ7QPYSxnEH
-         fVJA==
-X-Gm-Message-State: APzg51Bb5dSDVpV6tN9DeuDwVly/BiHrjsP8RaLsANKZtuQf4QGCYscP
-        ZQJFV/BRSBgZDQhtXl+E3HZ5PixA
-X-Google-Smtp-Source: ANB0VdYlAU6gp1hOoBYcQGTPuiWWbE6bFYnEQ3oQgE/l/r4IEJ9y0KdS/FMD70/szb8FxC5PjEw+rA==
-X-Received: by 2002:a63:b95e:: with SMTP id v30-v6mr23506372pgo.221.1537195083864;
-        Mon, 17 Sep 2018 07:38:03 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id h20-v6sm17470216pgg.3.2018.09.17.07.38.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 07:38:03 -0700 (PDT)
-Subject: Re: [PATCH] bonding: avoid repeated display of same link status
- change
-To:     mk.singh@oracle.com, netdev@vger.kernel.org
-Cc:     Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-References: <20180917072059.32657-1-mk.singh@oracle.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <33a66a80-22ed-d6b3-f6b2-4463357c5ffa@gmail.com>
-Date:   Mon, 17 Sep 2018 07:38:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 17 Sep 2018 16:06:12 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08021893|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03299;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.Cs.KY0z_1537195080;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cs.KY0z_1537195080)
+          by smtp.aliyun-inc.com(10.147.41.187);
+          Mon, 17 Sep 2018 22:38:00 +0800
+Date:   Mon, 17 Sep 2018 22:37:59 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        DTML <devicetree@vger.kernel.org>,
+        andrea.parri@amarulasolutions.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Subject: Re: [PATCH V4 00/27] C-SKY(csky) Linux Kernel Port
+Message-ID: <20180917143759.GA2612@guoren-Inspiron-7460>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+ <CAK8P3a0CUYyMR9hDG97Zf2Oyj+D9vwQRnPZrEs0rrOLwHqxYfw@mail.gmail.com>
+ <b5bbb3e5-d970-dd82-400f-ae13ca782fd5@c-sky.com>
+ <20180917215443.3b5808c5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180917072059.32657-1-mk.singh@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917215443.3b5808c5@canb.auug.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/17/2018 12:20 AM, mk.singh@oracle.com wrote:
-> From: Manish Kumar Singh <mk.singh@oracle.com>
+On Mon, Sep 17, 2018 at 09:54:43PM +1000, Stephen Rothwell wrote:
+> Hi Guo,
 > 
-> When link status change needs to be committed and rtnl lock couldn't be
-> taken, avoid redisplay of same link status change message.
+> On Sun, 16 Sep 2018 12:53:26 +0800 Guo Ren <ren_guo@c-sky.com> wrote:
+> >
+> > I'm Guo Ren from C-SKY and I'm working on csky linux port upstream.
+> > I've prepared my git-tree based on linux-4.19-rc3:
+> > git clone -b linux-next https://github.com/c-sky/csky-linux.git
+> > 
+> > Here is the pre-built cross compiler for fast test from our CI:
+> > https://gitlab.com/c-sky/buildroot/-/jobs/97941896/artifacts/file/output/images/csky_toolchain_csky_ck860_platform_defconfig_72371bf75a51f27ea59fc34eeaf236e06b75bf69.tar.xz
+> > 
+> > You can also build newest gcc, binutils and they are upstreamed but not
+> > released on gnu.org. Glibc is uptreaming now.
+> > 
+> > Please have a look and any feed back is welcome.
 > 
-> Signed-off-by: Manish Kumar Singh <mk.singh@oracle.com>
-> ---
->  drivers/net/bonding/bond_main.c | 6 ++++--
->  include/net/bonding.h           | 1 +
->  2 files changed, 5 insertions(+), 2 deletions(-)
+> Added from today (called "csky").
 > 
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index 217b790d22ed..fb4e3aff1677 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -2087,7 +2087,7 @@ static int bond_miimon_inspect(struct bonding *bond)
->  			bond_propose_link_state(slave, BOND_LINK_FAIL);
->  			commit++;
->  			slave->delay = bond->params.downdelay;
-> -			if (slave->delay) {
-> +			if (slave->delay && !bond->rtnl_needed) {
->  				netdev_info(bond->dev, "link status down for %sinterface %s, disabling it in %d ms\n",
->  					    (BOND_MODE(bond) ==
->  					     BOND_MODE_ACTIVEBACKUP) ?
-> @@ -2127,7 +2127,7 @@ static int bond_miimon_inspect(struct bonding *bond)
->  			commit++;
->  			slave->delay = bond->params.updelay;
->  
-> -			if (slave->delay) {
-> +			if (slave->delay && !bond->rtnl_needed) {
->  				netdev_info(bond->dev, "link status up for interface %s, enabling it in %d ms\n",
->  					    slave->dev->name,
->  					    ignore_updelay ? 0 :
-> @@ -2301,9 +2301,11 @@ static void bond_mii_monitor(struct work_struct *work)
->  		if (!rtnl_trylock()) {
->  			delay = 1;
->  			should_notify_peers = false;
-> +			bond->rtnl_needed = true;
-
-How can you set a shared variable with no synchronization ?
-
-A bool is particularly dangerous here, at least on some arches.
-
->  			goto re_arm;
->  		}
->  
-> +		bond->rtnl_needed = false;
->  		bond_for_each_slave(bond, slave, iter) {
->  			bond_commit_link_state(slave, BOND_SLAVE_NOTIFY_LATER);
->  		}
-> diff --git a/include/net/bonding.h b/include/net/bonding.h
-> index 808f1d167349..50d61cf77855 100644
-> --- a/include/net/bonding.h
-> +++ b/include/net/bonding.h
-> @@ -234,6 +234,7 @@ struct bonding {
->  	struct	 dentry *debug_dir;
->  #endif /* CONFIG_DEBUG_FS */
->  	struct rtnl_link_stats64 bond_stats;
-> +	bool rtnl_needed;
->  };
->  
->  #define bond_slave_get_rcu(dev) \
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgement of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
 > 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+
+ I am very excited to receive your mail. I have been preparing for this
+ for nearly 3 years.
+
+ - All files are under GPL v2
+ 
+ - All Contributors have been Signed-off.
+
+ - All have been reviewed.
+
+ - For develop detail you can find in: https://github.com/c-sky/csky-linux
+   It records from 'Dec 2015' to 'Sep 2018'.
+
+ - Here is the newest ltp test result: https://gitlab.com/c-sky/buildroot/-/jobs/98061317
+
+ Best Regards
+  Guo Ren
