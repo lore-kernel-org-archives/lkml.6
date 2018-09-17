@@ -2,88 +2,80 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3297ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F28ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7633214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7633214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C7B62086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:13:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7B62086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbeIQLjB (ORCPT
+        id S1728334AbeIQLjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 07:39:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:56892 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbeIQLjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 07:39:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 23:13:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
-   d="scan'208";a="92340624"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga002.jf.intel.com with SMTP; 16 Sep 2018 23:12:18 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 17 Sep 2018 09:12:17 +0300
-Date:   Mon, 17 Sep 2018 09:12:17 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Peter Anemone <peter.anemone@gmail.com>
-Cc:     rjw@rjwysocki.net, lenb@kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION][BISECTED] Boot stall related to
- drivers/pci/hotplug/acpiphp_glue.c
-Message-ID: <20180917061217.GI14465@lahna.fi.intel.com>
-References: <CAFtaAxE8G15vU40jCKzqzuwpt_-bDfVpWuaeuy6cQ-sh=Ap2XQ@mail.gmail.com>
+        Mon, 17 Sep 2018 07:39:23 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12159 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726075AbeIQLjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 07:39:23 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8C7306B13E0BB;
+        Mon, 17 Sep 2018 14:13:26 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.399.0; Mon, 17 Sep 2018 14:13:24 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <jikos@kernel.org>
+CC:     <hpa@zytor.com>, <x86@kernel.org>, <rafael.j.wysocki@intel.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/apm: Fix a unused function warning
+Date:   Mon, 17 Sep 2018 14:01:06 +0800
+Message-ID: <1537164066-39990-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFtaAxE8G15vU40jCKzqzuwpt_-bDfVpWuaeuy6cQ-sh=Ap2XQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 08:58:50AM +0300, Peter Anemone wrote:
-> Dear kernel developers
-> I reported a bug at Bugzilla, but Greg Kroah-Hartman pointed me in
-> mailing lists. Here's my bug report:
-> 
-> Linux has been unbootable for me from 4.18 upwards. Even the fallback
-> image does not boot. This has not been fixed yet in 4.19-rc3. acpi=off
-> kernel parameter lets me boot 4.18.6 and 4.19-rc3.
-> 
-> I used git bisect to track down the first bad commit:
-> 84c8b58ed3addf17d3beb2e5037b001ffa65c5ef
-> 
-> The commit is about:
-> "ACPI / hotplug / PCI: Don't scan bridges managed by native hotplug"
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=84c8b58ed3addf17d3beb2e5037b001ffa65c5ef
-> 
-> Linux 4.17 booted fine. Reverting commit
-> 84c8b58ed3addf17d3beb2e5037b001ffa65c5ef makes 4.18 and 4.19-rc3
-> bootable again (without the acpi=off parameter).
-> 
-> Information about my system:
-> Model: HP 6730b laptop
-> CPU: Intel Core 2 Duo P8600
-> Boot manager: systemd-boot (UEFI)
-> More information of my system as attachments on the bug report at Bugzilla.
-> 
-> Link to the bug report:
-> https://bugzilla.kernel.org/show_bug.cgi?id=201127
+Fix the following compile warning:
 
-Thanks for the report. Since there is bugzilla about the issue already,
-let's continue investigation there.
+arch/x86/kernel/apm_32.c:1643:12: warning: proc_apm_show defined but not used [-Wunused-function]
+ static int proc_apm_show(struct seq_file *m, void *v)
 
-Can you also attach full dmesg of the failure (if possible) to the bug?
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ arch/x86/kernel/apm_32.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index ec00d1f..f7151cd 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -1640,6 +1640,7 @@ static int do_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ static int proc_apm_show(struct seq_file *m, void *v)
+ {
+ 	unsigned short	bx;
+@@ -1719,6 +1720,7 @@ static int proc_apm_show(struct seq_file *m, void *v)
+ 		   units);
+ 	return 0;
+ }
++#endif
+ 
+ static int apm(void *unused)
+ {
+-- 
+1.7.12.4
+
