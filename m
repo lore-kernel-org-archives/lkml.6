@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 194C3ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E987FECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D002D2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D002D2146F
+	by mail.kernel.org (Postfix) with ESMTP id AB9032146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB9032146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeIREj0 (ORCPT
+        id S1732031AbeIREj3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:39:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50208 "EHLO
+        Tue, 18 Sep 2018 00:39:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50220 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730295AbeIREjZ (ORCPT
+        with ESMTP id S1730295AbeIREj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:39:25 -0400
+        Tue, 18 Sep 2018 00:39:29 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B46BE707;
-        Mon, 17 Sep 2018 23:09:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51E0D707;
+        Mon, 17 Sep 2018 23:09:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 061/158] clk: scmi: Fix the rounding of clock rate
-Date:   Tue, 18 Sep 2018 00:41:31 +0200
-Message-Id: <20180917211714.059887195@linuxfoundation.org>
+Subject: [PATCH 4.18 062/158] blk-mq: fix updating tags depth
+Date:   Tue, 18 Sep 2018 00:41:32 +0200
+Message-Id: <20180917211714.099958995@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,45 +55,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amit Daniel Kachhap <amit.kachhap@arm.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit 7a8655e19bdb3be43f6a3b4768c9b0928a2585fc ]
+[ Upstream commit 75d6e175fc511e95ae3eb8f708680133bc211ed3 ]
 
-This fix rounds the clock rate properly by using quotient and not
-remainder in the calculation. This issue was found while testing HDMI
-in the Juno platform.
+The passed 'nr' from userspace represents the total depth, meantime
+inside 'struct blk_mq_tags', 'nr_tags' stores the total tag depth,
+and 'nr_reserved_tags' stores the reserved part.
 
-Fixes: 6d6a1d82eaef7 ("clk: add support for clocks provided by SCMI")
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+There are two issues in blk_mq_tag_update_depth() now:
+
+1) for growing tags, we should have used the passed 'nr', and keep the
+number of reserved tags not changed.
+
+2) the passed 'nr' should have been used for checking against
+'tags->nr_tags', instead of number of the normal part.
+
+This patch fixes the above two cases, and avoids kernel crash caused
+by wrong resizing sbitmap queue.
+
+Cc: "Ewan D. Milne" <emilne@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Bart Van Assche <bart.vanassche@sandisk.com>
+Cc: Omar Sandoval <osandov@fb.com>
+Tested by: Marco Patalano <mpatalan@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-scmi.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ block/blk-mq-tag.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -38,7 +38,6 @@ static unsigned long scmi_clk_recalc_rat
- static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *parent_rate)
- {
--	int step;
- 	u64 fmin, fmax, ftmp;
- 	struct scmi_clk *clk = to_scmi_clk(hw);
+--- a/block/blk-mq-tag.c
++++ b/block/blk-mq-tag.c
+@@ -402,8 +402,6 @@ int blk_mq_tag_update_depth(struct blk_m
+ 	if (tdepth <= tags->nr_reserved_tags)
+ 		return -EINVAL;
  
-@@ -60,9 +59,9 @@ static long scmi_clk_round_rate(struct c
+-	tdepth -= tags->nr_reserved_tags;
+-
+ 	/*
+ 	 * If we are allowed to grow beyond the original size, allocate
+ 	 * a new set of tags before freeing the old one.
+@@ -423,7 +421,8 @@ int blk_mq_tag_update_depth(struct blk_m
+ 		if (tdepth > 16 * BLKDEV_MAX_RQ)
+ 			return -EINVAL;
  
- 	ftmp = rate - fmin;
- 	ftmp += clk->info->range.step_size - 1; /* to round up */
--	step = do_div(ftmp, clk->info->range.step_size);
-+	do_div(ftmp, clk->info->range.step_size);
+-		new = blk_mq_alloc_rq_map(set, hctx->queue_num, tdepth, 0);
++		new = blk_mq_alloc_rq_map(set, hctx->queue_num, tdepth,
++				tags->nr_reserved_tags);
+ 		if (!new)
+ 			return -ENOMEM;
+ 		ret = blk_mq_alloc_rqs(set, new, hctx->queue_num, tdepth);
+@@ -440,7 +439,8 @@ int blk_mq_tag_update_depth(struct blk_m
+ 		 * Don't need (or can't) update reserved tags here, they
+ 		 * remain static and should never need resizing.
+ 		 */
+-		sbitmap_queue_resize(&tags->bitmap_tags, tdepth);
++		sbitmap_queue_resize(&tags->bitmap_tags,
++				tdepth - tags->nr_reserved_tags);
+ 	}
  
--	return step * clk->info->range.step_size + fmin;
-+	return ftmp * clk->info->range.step_size + fmin;
- }
- 
- static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
 
 
