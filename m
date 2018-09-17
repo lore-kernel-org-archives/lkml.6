@@ -6,102 +6,98 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C65ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE17EECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 030C1214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:23:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030C1214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 7153D214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 06:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7153D214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeIQLsx (ORCPT
+        id S1728512AbeIQLtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 07:48:53 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:48461 "EHLO pegase1.c-s.fr"
+        Mon, 17 Sep 2018 07:49:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:15111 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727130AbeIQLsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 07:48:51 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42DGJR0GC0z9ttCC;
-        Mon, 17 Sep 2018 08:22:47 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id sHN1mFclsFDv; Mon, 17 Sep 2018 08:22:46 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42DGJQ6vPnz9ttBw;
-        Mon, 17 Sep 2018 08:22:46 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F20A38B787;
-        Mon, 17 Sep 2018 08:22:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id hytKnrCm8bgw; Mon, 17 Sep 2018 08:22:55 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BF4F58B786;
-        Mon, 17 Sep 2018 08:22:55 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id A0B1A7191E; Mon, 17 Sep 2018 06:22:53 +0000 (UTC)
-Message-Id: <e3e0bcfd7b779b978d07e088a8bd667ea9ddf4aa.1537163780.git.christophe.leroy@c-s.fr>
-In-Reply-To: <c09f541d459c29aca40d54fff152d5645e24b50d.1537163776.git.christophe.leroy@c-s.fr>
-References: <c09f541d459c29aca40d54fff152d5645e24b50d.1537163776.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 3/3] dt-bindings: watchdog: add mpc8xxx-wdt support
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Radu Rendec <radu.rendec@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org
-Date:   Mon, 17 Sep 2018 06:22:53 +0000 (UTC)
+        id S1727130AbeIQLtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 07:49:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2018 23:23:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
+   d="scan'208";a="263188827"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Sep 2018 23:23:03 -0700
+Subject: Re: [PATCH mmc-next] mmc: sdhci: fix __sdhci_adma_write_desc
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180917133041.66100101@xhacker.debian>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0bec0d01-9fde-1df3-3cc3-fb922dd5350d@intel.com>
+Date:   Mon, 17 Sep 2018 09:21:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180917133041.66100101@xhacker.debian>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add description of DT bindings for mpc8xxx-wdt driver which
-handles the CPU watchdog timer on the mpc83xx, mpc86xx and mpc8xx.
+On 17/09/18 08:30, Jisheng Zhang wrote:
+> If hosts provides ops->adma_write_desc, we should not fall back to the
+> general sdhci_adma_write_desc().
+> 
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+> 
+> Hi Ulf, Adrian,
+> 
+> When I introduced .adma_write_desc, I made a mistake since v4 -- if the host
+> provide ops->adma_write_desc, we should just call it and don't fall back
+> to the general sdhci_adma_write_desc(). Before v4, the adma_write_desc return
+> int, since v4 there's no return value, so when I prepared the v4, I just
+> removed return, this is where the mistake is from. I dunno how to handle
+> this case, fold the patch into previous commit or apply it as a separate patch?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- .../devicetree/bindings/watchdog/mpc8xxx-wdt.txt   | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
+Up to Ulf, but in any case:
 
-diff --git a/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt b/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
-new file mode 100644
-index 000000000000..e176face472a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
-@@ -0,0 +1,25 @@
-+* Freescale mpc8xxx watchdog driver (For 83xx, 86xx and 8xx)
-+
-+Required properties:
-+- compatible: Shall contain one of the following:
-+	"mpc83xx_wdt" for an mpc83xx
-+	"fsl,mpc8610-wdt" for an mpc86xx
-+	"fsl,mpc823-wdt" for an mpc8xx
-+- reg: base physical address and length of the area hosting the
-+       watchdog registers.
-+		On the 83xx, "Watchdog Timer Registers" area:	<0x200 0x100>
-+		On the 86xx, "Watchdog Timer Registers" area:	<0xe4000 0x100>
-+		On the 8xx, "General System Interface Unit" area: <0x0 0x10>
-+
-+Optional properties:
-+- reg: additional physical address and length (4) of location of the
-+       Reset Status Register (called RSTRSCR on the mpc86xx)
-+       		On the 83xx, it is located at offset 0x910
-+       		On the 86xx, it is located at offset 0xe0094
-+       		On the 8xx, it is located at offset 0x288
-+
-+Example:
-+		WDT: watchdog@0 {
-+		    compatible = "fsl,mpc823-wdt";
-+		    reg = <0x0 0x10 0x288 0x4>;
-+		};
--- 
-2.13.3
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> 
+> I'm very sorry for this. In fact, Adrian caught another similar bug during
+> review.
+> 
+> Sorry about the inconvenience,
+> Jisheng
+> 
+>  drivers/mmc/host/sdhci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 0dda6f4b6a24..99bdae53fa2e 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -649,8 +649,8 @@ static inline void __sdhci_adma_write_desc(struct sdhci_host *host,
+>  {
+>  	if (host->ops->adma_write_desc)
+>  		host->ops->adma_write_desc(host, desc, addr, len, cmd);
+> -
+> -	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +	else
+> +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+>  }
+>  
+>  static void sdhci_adma_mark_end(void *desc)
+> 
 
