@@ -2,140 +2,102 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892BDECE563
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6619ECE562
 	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34521208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:26:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EK3ussCV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34521208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B5F6214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:26:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5F6214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730033AbeIQIvW (ORCPT
+        id S1730182AbeIQIv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:51:22 -0400
-Received: from mail-dm3nam03on0101.outbound.protection.outlook.com ([104.47.41.101]:50080
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729169AbeIQI2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:28:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qp8WV33vnw67y1yNtnIPJPSfztlfyXwtp47n52+XmdU=;
- b=EK3ussCVh9eLtP7eMq3ed+GuuYfE8oCDuftm0Ej0EfL7pYM8Gm3QYSdSSK2NfGkZTN5rVvGMbA0q0fl6Eb/H4FSIG1jyO/lCvjt5JpfrohvVMHxiotbnou8tNihG7noEHeWkHViBGxc9TN4e22u0KHbck/PyaFOBUtoP+NTX/RY=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:03:34 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:03:34 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Johan Hovold <johan@kernel.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 14/87] USB: serial: kobil_sct: fix modem-status
- error handling
-Thread-Topic: [PATCH AUTOSEL 4.14 14/87] USB: serial: kobil_sct: fix
- modem-status error handling
-Thread-Index: AQHUTjLhoDlvIxIQfE64JF2C/n+I8A==
-Date:   Mon, 17 Sep 2018 03:02:33 +0000
-Message-ID: <20180917030220.245686-14-alexander.levin@microsoft.com>
-References: <20180917030220.245686-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030220.245686-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:R60PrVWDoirpfV1tnElEJrvXEf7JdgA4YZGYCS5K43UqP3AIhYF0s40egdM7iIoqr4FWG3Q4PaWZ3n5ik0/1i7TkXaATg5LEBAQ5gxTcSgbNZXurLMkzEtFYNRhG+VyStZq7ajgprBHT8cZLQf7uz8xVrNkntVV5+RuhpjWO+sW+v/zZe9/LawnE2WwUCroKBvpGT5LXMwllvMbPOzNCREg6zlFUEcoFCwMjkHvuYHbxHkynW1L4Ymoo2MqQCp5SZR9Wr7mKR0KO/G0DP1/TUbMUWHEu6VlnJaH7fYDS7N//BUaK4z/2F3ndDQ3cE8rLoZRtyM/n24J0TS53A+/veoePPT3S35OSekRA2K78MRZxIHEB/LQHWZ68xP/XeUikm1vZAeKt+tLkyDwkKo2YaYd3FM2oCkMcvvenf+uPi+W6POn8LcGQXWgUat4KhLo90mEHunkDemDAW4D2WShHmw==;5:xiIbma89fMLVYPTVu40niiDsWir+JlqNEjQ3+yBt76bRerFquATIskp/vIxK6tfiahONfSIszplDxvMsrnkijCPF2Kb3S95Q74k3DHJFlor9FkgxJDwdwsKhvPKOykf+qrVNYZyPq8tslRqc4GTYtzMN+IuQQivsDoc/1vA8S5c=;7:98rTZdVmWs9c0vwa6GqCOY792v+gODyNj2xRcL4TDT++vG/+UOZPR1DpPIjYcIPOCx4W/DBVSHWCQjQBv0xYcLs7kzfpRAkAmBwX2Z6TB8TFF26eraACbmXC8N53rX8PxDKmE0MVQelVDRcW4+kcyEak/RjHGbwp8oR6XmE4SM4oRA57MWFlI/udMBqraKjrTW8Cpybg2nYSAOZ7E1crJa+LgZsoMA93UG85YA9jDqIVRnI0ijCuPHHLY3YBfXmh
-x-ms-office365-filtering-correlation-id: b2e9c79e-9dc3-4187-909e-08d61c4a281b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
-x-ms-traffictypediagnostic: CY4PR21MB0855:
-x-microsoft-antispam-prvs: <CY4PR21MB0855CEA455FA6F343CD1B545FB1E0@CY4PR21MB0855.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
-x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(136003)(366004)(199004)(189003)(6436002)(99286004)(7736002)(110136005)(54906003)(97736004)(5660300001)(66066001)(446003)(72206003)(76176011)(86362001)(86612001)(81166006)(81156014)(2906002)(478600001)(305945005)(68736007)(105586002)(2616005)(106356001)(476003)(11346002)(22452003)(575784001)(6486002)(10090500001)(10290500003)(8676002)(36756003)(6346003)(6116002)(6506007)(3846002)(102836004)(107886003)(6512007)(1076002)(25786009)(217873002)(4326008)(14454004)(26005)(256004)(14444005)(486006)(186003)(316002)(2900100001)(8936002)(53936002)(5250100002)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: skb3cv6LoB/OTetvvobHP8m8DQX98cZTBKtXZ05SlXTOfOuAVEMjlg6476hvgSRFhGYsHbFw7nLDxsfDvHSXGjeYtd4GOCg1f+xrKqu6bsvZW83kuK1tauClga/SnAdfcZaWDnDXqPeX1khGZDX/3agjxZKdouvlPyHfCxSDPdmChS+tV9mG20JYhhJYu04YwPxKjsoQRdg+yhe8MGralvC1mpY/dt2vAh6fqFpGn+8bme+7YaP01EMlY5zKXIJQxCJX+5M+9w+wSFd4BwvXZA2UaucyV2ksOreHI1nBD3wB3z+2JKPrAPQ5eF788sUjL5S5ckw8oniJumuiLeNjDa3TUWZINKGQtBciPh1h5kA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Sep 2018 04:51:29 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:49600 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729621AbeIQIv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:51:29 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8H3OWMl020932
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Sun, 16 Sep 2018 20:24:43 -0700
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Sun, 16 Sep 2018 20:24:22 -0700
+From:   <zhe.he@windriver.com>
+To:     <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+CC:     <zhe.he@windriver.com>
+Subject: [PATCH] kernel/dma: Fix panic caused by passing cma to command line
+Date:   Mon, 17 Sep 2018 11:24:20 +0800
+Message-ID: <1537154660-296740-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2e9c79e-9dc3-4187-909e-08d61c4a281b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:02:33.4157
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: He Zhe <zhe.he@windriver.com>
 
-[ Upstream commit a420b5d939ee58f1d950f0ea782834056520aeaa ]
+early_cma does not check input argument before passing it to
+simple_strtoull. The argument would be a NULL pointer if "cma", without
+its value, is set in command line and thus causes the following panic.
 
-Make sure to return -EIO in case of a short modem-status read request.
+PANIC: early exception 0xe3 IP 10:ffffffffa3e9db8d error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #7
+[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
+...
+[    0.000000] Call Trace:
+[    0.000000]  simple_strtoull+0x29/0x70
+[    0.000000]  memparse+0x26/0x90
+[    0.000000]  early_cma+0x17/0x6a
+[    0.000000]  do_early_param+0x57/0x8e
+[    0.000000]  parse_args+0x208/0x320
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_options+0x29/0x2d
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_param+0x36/0x4d
+[    0.000000]  setup_arch+0x336/0x99e
+[    0.000000]  start_kernel+0x6f/0x4e6
+[    0.000000]  x86_64_start_reservations+0x24/0x26
+[    0.000000]  x86_64_start_kernel+0x6f/0x72
+[    0.000000]  secondary_startup_64+0xa4/0xb0
 
-While at it, split the debug message to not include the (zeroed)
-transfer-buffer content in case of errors.
+This patch adds a check to prevent the panic.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: stable@vger.kernel.org
+Cc: hch@lst.de
+Cc: m.szyprowski@samsung.com
+Cc: robin.murphy@arm.com
 ---
- drivers/usb/serial/kobil_sct.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ kernel/dma/contiguous.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/serial/kobil_sct.c b/drivers/usb/serial/kobil_sct.=
-c
-index 3024b9b25360..75181d3afd95 100644
---- a/drivers/usb/serial/kobil_sct.c
-+++ b/drivers/usb/serial/kobil_sct.c
-@@ -397,12 +397,20 @@ static int kobil_tiocmget(struct tty_struct *tty)
- 			  transfer_buffer_length,
- 			  KOBIL_TIMEOUT);
-=20
--	dev_dbg(&port->dev, "%s - Send get_status_line_state URB returns: %i. Sta=
-tusline: %02x\n",
--		__func__, result, transfer_buffer[0]);
-+	dev_dbg(&port->dev, "Send get_status_line_state URB returns: %i\n",
-+			result);
-+	if (result < 1) {
-+		if (result >=3D 0)
-+			result =3D -EIO;
-+		goto out_free;
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 286d823..b2a8790 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -49,7 +49,11 @@ static phys_addr_t limit_cmdline;
+ 
+ static int __init early_cma(char *p)
+ {
+-	pr_debug("%s(%s)\n", __func__, p);
++	if (!p) {
++		pr_err("Config string not provided\n");
++		return -EINVAL;
 +	}
 +
-+	dev_dbg(&port->dev, "Statusline: %02x\n", transfer_buffer[0]);
-=20
- 	result =3D 0;
- 	if ((transfer_buffer[0] & SUSBCR_GSL_DSR) !=3D 0)
- 		result =3D TIOCM_DSR;
-+out_free:
- 	kfree(transfer_buffer);
- 	return result;
- }
---=20
-2.17.1
+ 	size_cmdline = memparse(p, &p);
+ 	if (*p != '@')
+ 		return 0;
+-- 
+2.7.4
+
