@@ -2,121 +2,110 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA5BECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D5CECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD40214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD40214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 55ECB214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55ECB214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeIQNdw (ORCPT
+        id S1728101AbeIQNee convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 09:33:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43292 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbeIQNdw (ORCPT
+        Mon, 17 Sep 2018 09:34:34 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34524 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeIQNee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 09:33:52 -0400
-Received: from mail-pl1-f197.google.com ([209.85.214.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1g1oZC-0007Eo-1r
-        for linux-kernel@vger.kernel.org; Mon, 17 Sep 2018 08:07:34 +0000
-Received: by mail-pl1-f197.google.com with SMTP id g12-v6so7573798plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 01:07:33 -0700 (PDT)
+        Mon, 17 Sep 2018 09:34:34 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i12-v6so10376725otl.1;
+        Mon, 17 Sep 2018 01:08:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Mh3Noc8E1gwQPDa/UuRCxD+AUUpZR7sVVJkX5vnZaQs=;
-        b=a8jHarXkQYV9m+vTWqVN/RCkMOIvr0R4VqqOXBupplS6O9P4sEi1McVNCADonEFqkO
-         kYKDhY6CkHsbw01eSAFQpZp9XMeUxpxbjmOQ1WURFWMItSZVNFB/PS3W9269MH3ReE3J
-         hDKq3g0rPJR4sJMjk0sZBdrcNPe2Y/JArnJB1r+hhK6jCTwJWOtzTfvrryfejNWOr90A
-         Lt3Nmc8iq6vYapz6E7LsHtAXt/4/H+Zi1oI4yW47oKzUguGtGrptdyAD5Y5ct20hJ0B2
-         UNcoOMCasWAmSmLlo48U6jLC0UrC+OZ1k2t7phAaOPi87zHj0TSsSC0eufwefhdJ8IFe
-         B2jg==
-X-Gm-Message-State: APzg51B7LUO0U7eseyF/FJTirrId0/YFrC6G8PpTExwgR/XHRixuKcmI
-        SZUiOKaiKdMKhpjTmAq6f/Zn947XuZ+f+1eIszUSd4tuwSQ9GTEP3DM6cwDwY7Vy+FHFXz8PGkg
-        gY9wtWPtHUN0RMkvAnqBU8hQfYf1nuj7q1wbBQbNqtw==
-X-Received: by 2002:a62:59d5:: with SMTP id k82-v6mr24454964pfj.143.1537171652667;
-        Mon, 17 Sep 2018 01:07:32 -0700 (PDT)
-X-Google-Smtp-Source: ANB0VdbuUL8oUeRkkaipH/vI9gXqsxJ80HNuhQ+uaJCMDN1jpKH1Kd4XTffqxFNmLL01HqWBWSITXA==
-X-Received: by 2002:a62:59d5:: with SMTP id k82-v6mr24454938pfj.143.1537171652301;
-        Mon, 17 Sep 2018 01:07:32 -0700 (PDT)
-Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id v140-v6sm18707136pgb.45.2018.09.17.01.07.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 01:07:31 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 1/5] misc: rtsx_usb: Use USB remote wakeup signaling for
- card insertion detection
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <Pine.LNX.4.44L0.1809130936350.1990-100000@iolanthe.rowland.org>
-Date:   Mon, 17 Sep 2018 16:07:27 +0800
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=owavJQ73XMPzBMz4Kir1uv+vaLcBQKtS8jSPJrlxbOQ=;
+        b=XQxwh7dle2OjB+VJtXjn1Dg17Z7ANBkotJe4WWU02tEQqJtD0DM/Uzxz0Rz179/kiJ
+         w+Bhn94XVftW5fc+esYBZxrlhEddAwONHMMaID99CI+tMjWYR7BD+gj+AGq1otA9VtGj
+         Ne1eEbK+dlFg6jgcdx3m9UdssQkxEPS14oBntGNtMBu6E8hV4RREgT4Z6/SqYwAMVE0A
+         gTaY4UBNgp81DQsbtU10IRP8xrWoNoBw9vMf07Du2nSMWg39d7Fsf4CyrNMTAu7v06iq
+         0npqgQjgeGMZD78nFvlWbMTTZA3/gEPwbhb+gCjW4c/e8i/BkgpnkxWgf+GkAphKPStn
+         CZMQ==
+X-Gm-Message-State: APzg51DITkuLAj2CUt5K4wVOCM6wM/TrFyHKOYD/H+vPdpI6ikBcFmTB
+        jRc3afOuMQYhcJGdKIfqkuFjHZdhcUPzUTdp/FI=
+X-Google-Smtp-Source: ANB0VdYcrDfBgh0wMRjv9QOqgsttlZn08JmlxgPl9FW0mMvgRtHdSbtMcpzgnOp958DEtVScAHcO53rumyg3zep08b4=
+X-Received: by 2002:a9d:7317:: with SMTP id e23-v6mr11032376otk.162.1537171696845;
+ Mon, 17 Sep 2018 01:08:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <9611469.2z7W9akjOQ@aspire.rjw.lan> <767e9ec4-cc35-9255-360a-4d12736aa4de@nextfour.com>
+ <1831106.CYv9dyYV15@aspire.rjw.lan> <e028742e-cd42-24a7-0da1-4fa12d8c9d7c@nextfour.com>
+ <CAJZ5v0gRjfGDSyZXRwGgF9dOBR9OJbfYE8Dbpqdx6oCMN1XUVA@mail.gmail.com> <alpine.DEB.2.21.1809141438560.10480@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1809141438560.10480@nanos.tec.linutronix.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 17 Sep 2018 10:08:05 +0200
+Message-ID: <CAJZ5v0iw99hWVY6P+uxOwZR4CkJJAbSytKuMr5Qk2-TYvzftCQ@mail.gmail.com>
+Subject: Re: [PATCH] PM / suspend: Count suspend-to-idle loop as sleep time
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        mika.penttila@nextfour.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <481937DD-FB33-4086-B478-32491A01B51A@canonical.com>
-References: <Pine.LNX.4.44L0.1809130936350.1990-100000@iolanthe.rowland.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 21:41, Alan Stern <stern@rowland.harvard.edu> wrote:
-
-> On Thu, 13 Sep 2018, Kai-Heng Feng wrote:
+On Fri, Sep 14, 2018 at 2:41 PM Thomas Gleixner <tglx@linutronix.de> wrote:
 >
->> I am working on the next version of this series, and the last missing
->> puzzle is to differentiate system-wide resume from runtime resume in
->> usb_driver's resume() and reset_resume() callback.
->>
->> The parent device, rtsx_usb, has two child devices, rtsx_usb_ms and
->> rtsx_usb_sdmmc.
->> pm_request_resume() is used in rtsx_usb's resume() to facilitate USB  
->> remote
->> wakeup signaling, so we don't need to poll the card slot status.
->> But this has a side effect: during system resume the rtsx_usb calls
->> pm_request_resume() in its resume(), so child devices calls their
->> runtime_resume() instead of resume() callback.
+> On Fri, 14 Sep 2018, Rafael J. Wysocki wrote:
+> > On Fri, Sep 14, 2018 at 11:53 AM Mika Penttilä
 >
-> Have you actually observed this?  It shouldn't happen.
-> pm_request_resume() schedules a runtime resume on the PM work queue,
-> but this work queue is frozen during system sleep.  It doesn't unfreeze
-> until after all the devices have been restored to full power.  Thus the
-> child device's resume() callback should be invoked before
-> runtime_resume().
-
-You are right, I read the trace wrong.
-
-It happens right before system-wide suspension, when the PM core resumes it  
-to fully functional state.
-
+> > > >> But doesn't injecting sleep time here make monotonic clock too large
+> > > >> by the amount of sleeptime?  tick_freeze() / tick_unfreeze() already
+> > > >> injects the sleeptime (otherwise delta would be 0).  > > >
+> > > >
+> > > > No, it doesn't.
+> > > >
+> > > > The delta here is the extra time taken by the loop which hasn't been counted
+> > > > as sleep time yet.
+> > >
 >
->> So, is it reasonable to pass pm_message_t to resume() and reset_resume()
->> callbacks and use PMSG_IS_AUTO() to differentiate them?
->
-> It should not be necessary to do this.
+> > > I said incorrectly monotonic clock, but
+> > > timekeeping_inject_sleeptime64() forwards the wall time, by the amount
+> > > of delta.  Why wouldn't some other cpu update xtime when one cpu is in
+> > > the loop? And if all cpus enter s2idle, tick_unfreeze() injects
+> > > sleeptime. My point is that this extra injection makes wall time wrong,
+> > > no?
+> >
+> > OK, you're right.  I got that the other way around.
+> >
+> > So, the patch is withdrawn.
 
-Understood, thanks.
+[Sorry for the delay, personal life intervened.]
 
-Kai-Heng
+> I just tried to wrap my brain around that whole thing and utterly
+> failed, so I can't give any recommendations right now.
 
->
-> Alan Stern
+Thanks for looking into this!
 
+> Rafael, could you please enable some lightweight instrumentation which lets
+> me see the longer sequence of events which are leading to this or tell me
+> what I need to do to reproduce that myself?
 
+I will, when I find out more.  The reported issues may just go away
+after fixing some other bugs.
+
+Cheers,
+Rafael
