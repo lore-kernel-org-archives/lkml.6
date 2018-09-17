@@ -2,148 +2,81 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45121ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64096ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59CA214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:06:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59CA214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id D23EE214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:12:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="KBMe/8gj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23EE214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbeIQMcG (ORCPT
+        id S1727691AbeIQMiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 08:32:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42144 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeIQMcF (ORCPT
+        Mon, 17 Sep 2018 08:38:46 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:36150 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeIQMip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 08:32:05 -0400
-Received: from mail-pg1-f200.google.com ([209.85.215.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1g1nbb-0003pB-Oz
-        for linux-kernel@vger.kernel.org; Mon, 17 Sep 2018 07:05:59 +0000
-Received: by mail-pg1-f200.google.com with SMTP id v195-v6so6091322pgb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 00:05:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=PHSZRbkmG0Zb2jEBiSePQgWCCtGMw9HYLC7XywLoCtc=;
-        b=fQSCu1QFvvrUD6qP0kNxiTAzWKVBvu+qfPd3cFYDdZp+r5ejKnVTuKx2n8OhA3qBgz
-         9hcHn8tgXgzi8yfnxEqNMCrm6LQBLu+PjEbVJrLtn+NQbOgOwEO1hjl1V2w8O/vMflEA
-         2I9HhyzzCeaTQ/zzbFttbdwEKUIo8vSgUJaP3J6WkLsf/iSsvsxiCb3xpphWhcfxDLKf
-         GIGdjZ+Yb5HOsV0ljrN2zUDWrWTweeI0B+8HTEy95QjqPcrS3iPkseH2VqhdGOn/C1sO
-         9Fr8Jkpb8fjXd2LEQHL0+tETgJhbmW14JbYAc6hLP6vA7SivmBBTtf8f/DD5ghgIwbBy
-         CRJg==
-X-Gm-Message-State: APzg51C5UXCLx9ZDU0Ee9Bg2Py0cGyRZBQWmFz1eRqAVpumOvgBZ5OCp
-        MtAuNnNbHHAz0qaqAw+fVG4oJLoKtHjsI//g1z2sokaKo7GY1lvhzt4DkoOMzTQf3b2sjLl7pln
-        /gzOmuJ/lnevc95onjj3sO0Y9EnSrkCMoan9k3ZbtIA==
-X-Received: by 2002:a17:902:47:: with SMTP id 65-v6mr23062649pla.293.1537167958353;
-        Mon, 17 Sep 2018 00:05:58 -0700 (PDT)
-X-Google-Smtp-Source: ANB0Vdb2bakt4ZEQz/O90cPst7Yi3SXO5TGsdqAL5qkf50n4fUH8qR9kZsrj+D5Y1wwINnsa96RvuQ==
-X-Received: by 2002:a17:902:47:: with SMTP id 65-v6mr23062605pla.293.1537167957972;
-        Mon, 17 Sep 2018 00:05:57 -0700 (PDT)
-Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm16770209pfn.44.2018.09.17.00.05.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 00:05:56 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] usb: core: safely deal with the dynamic quirk lists
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180914085816.10888-1-harry.pan@intel.com>
-Date:   Mon, 17 Sep 2018 15:05:51 +0800
-Cc:     LKML <linux-kernel@vger.kernel.org>, gs0622@gmail.com,
-        jongpil19.jung@samsung.com, rajatja@chromium.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        snecknico@gmail.com, jackstocker.93@gmail.com, oneukum@suse.com,
-        linux-usb@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <8950C3C8-AF9B-49DF-BE29-5F6892FCCEC8@canonical.com>
-References: <20180914085816.10888-1-harry.pan@intel.com>
-To:     Harry Pan <harry.pan@intel.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mon, 17 Sep 2018 08:38:45 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2B8E025B814;
+        Mon, 17 Sep 2018 17:12:39 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1537168359; bh=9OJdPEEE7Pi5QZqymSLnMovOC97WpK4XIRx8xfy9bA8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KBMe/8gjmNyNSNuyCLf9LfSxKdm5HJUfgwel3ZIQncEbv8FvLD8eRdEDnWB4uqvgU
+         CZ58YyDkMiGACCdZ3jL9GUzeQ3xNKLMJ5NPU0yIGXBkKRdB6TNGfwZ8WfNQGyWb6ng
+         McfUU5vUAGda0+edcJSnQsCYWAZ5V7SY1qV6jcEY=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id EA3A3940480; Mon, 17 Sep 2018 09:12:36 +0200 (CEST)
+Date:   Mon, 17 Sep 2018 09:12:36 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Alex Elder <elder@linaro.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: enable R8A774C0 SoC
+Message-ID: <20180917071236.ldhp64ei7et7kuib@verge.net.au>
+References: <1536760371-17300-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536760371-17300-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 16:58, Harry Pan <harry.pan@intel.com> wrote:
-
-> Applying dynamic usbcore quirks in early booting when the slab is
-> not yet ready would cause kernel panic of null pointer dereference
-> because the quirk_count has been counted as 1 while the quirk_list
-> was failed to allocate.
->
-> i.e.,
-> [    1.044970] BUG: unable to handle kernel NULL pointer dereference  
-> at           (null)
-> [    1.044995] IP: [<ffffffffb0953ec7>] usb_detect_quirks+0x88/0xd1
-> [    1.045016] PGD 0
-> [    1.045026] Oops: 0000 [#1] PREEMPT SMP
-> [    1.046986] gsmi: Log Shutdown Reason 0x03
-> [    1.046995] Modules linked in:
-> [    1.047008] CPU: 0 PID: 81 Comm: kworker/0:3 Not tainted 4.4.154 #28
-> [    1.047016] Hardware name: Google Coral/Coral, BIOS  
-> Google_Coral.10068.27.0 12/04/2017
-> [    1.047028] Workqueue: usb_hub_wq hub_event
-> [    1.047037] task: ffff88017a321c80 task.stack: ffff88017a384000
-> [    1.047044] RIP: 0010:[<ffffffffb0953ec7>]  [<ffffffffb0953ec7>]  
-> usb_detect_quirks+0x88/0xd1
->
-> To tackle this odd, let's balance the quirk_count to 0 when the kcalloc
-> call fails, and defer the quirk setting into a lower level callback
-> which ensures that the kernel memory management has been initialized.
->
-> Fixes: 027bd6cafd9a ("usb: core: Add "quirks" parameter for usbcore")
->
-> Signed-off-by: Harry Pan <harry.pan@intel.com>
-
-Thanks for the catch!
-
-This issue doesn't appear when usbcore is built as module.
-
-Acked-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-
+On Wed, Sep 12, 2018 at 02:52:50PM +0100, Fabrizio Castro wrote:
+> Enable the Renesas RZ/G2E (R8A774C0) SoC in the ARM64 defconfig.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 > ---
->  drivers/usb/core/quirks.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-> index 097057d2eacf..1fe9843fb9c8 100644
-> --- a/drivers/usb/core/quirks.c
-> +++ b/drivers/usb/core/quirks.c
-> @@ -58,6 +58,7 @@ static int quirks_param_set(const char *val, const  
-> struct kernel_param *kp)
->  	quirk_list = kcalloc(quirk_count, sizeof(struct quirk_entry),
->  			     GFP_KERNEL);
->  	if (!quirk_list) {
-> +		quirk_count = 0;
->  		mutex_unlock(&quirk_mutex);
->  		return -ENOMEM;
->  	}
-> @@ -154,7 +155,7 @@ static struct kparam_string quirks_param_string = {
->  	.string = quirks_param,
->  };
->
-> -module_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
-> +device_param_cb(quirks, &quirks_param_ops, &quirks_param_string, 0644);
->  MODULE_PARM_DESC(quirks, "Add/modify USB quirks by specifying quirks=vendorID:productID:quirks");
->
->  /* Lists of quirky USB devices, split in device quirks and interface quirks.
-> -- 
-> 2.16.4
+> This patch applies on top of next-20180912
 
-
+Thanks, applied to the arm64-defconfig branch of the renesas tree for v4.20.
