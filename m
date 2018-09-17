@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7882AECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA9AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CAC2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CAC2146F
+	by mail.kernel.org (Postfix) with ESMTP id 2C93E2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C93E2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731450AbeIREgn (ORCPT
+        id S1731463AbeIREgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:36:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49646 "EHLO
+        Tue, 18 Sep 2018 00:36:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeIREgm (ORCPT
+        with ESMTP id S1730815AbeIREgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:42 -0400
+        Tue, 18 Sep 2018 00:36:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6235C03;
-        Mon, 17 Sep 2018 23:07:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D79D4C49;
+        Mon, 17 Sep 2018 23:07:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Todd Kjos <tkjos@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Martijn Coenen <maco@android.com>
-Subject: [PATCH 4.18 014/158] android: binder: fix the race mmap and alloc_new_buf_locked
-Date:   Tue, 18 Sep 2018 00:40:44 +0200
-Message-Id: <20180917211711.383489293@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Rene Nielsen <rene.nielsen@microsemi.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.18 015/158] MIPS: VDSO: Match data page cache colouring when D$ aliases
+Date:   Tue, 18 Sep 2018 00:40:45 +0200
+Message-Id: <20180917211711.461581501@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,181 +54,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Minchan Kim <minchan@kernel.org>
+From: Paul Burton <paul.burton@mips.com>
 
-commit da1b9564e85b1d7baf66cbfabcab27e183a1db63 upstream.
+commit 0f02cfbc3d9e413d450d8d0fd660077c23f67eff upstream.
 
-There is RaceFuzzer report like below because we have no lock to close
-below the race between binder_mmap and binder_alloc_new_buf_locked.
-To close the race, let's use memory barrier so that if someone see
-alloc->vma is not NULL, alloc->vma_vm_mm should be never NULL.
+When a system suffers from dcache aliasing a user program may observe
+stale VDSO data from an aliased cache line. Notably this can break the
+expectation that clock_gettime(CLOCK_MONOTONIC, ...) is, as its name
+suggests, monotonic.
 
-(I didn't add stable mark intentionallybecause standard android
-userspace libraries that interact with binder (libbinder & libhwbinder)
-prevent the mmap/ioctl race. - from Todd)
+In order to ensure that users observe updates to the VDSO data page as
+intended, align the user mappings of the VDSO data page such that their
+cache colouring matches that of the virtual address range which the
+kernel will use to update the data page - typically its unmapped address
+within kseg0.
 
-"
-Thread interleaving:
-CPU0 (binder_alloc_mmap_handler)              CPU1 (binder_alloc_new_buf_locked)
-=====                                         =====
-// drivers/android/binder_alloc.c
-// #L718 (v4.18-rc3)
-alloc->vma = vma;
-                                              // drivers/android/binder_alloc.c
-                                              // #L346 (v4.18-rc3)
-                                              if (alloc->vma == NULL) {
-                                                  ...
-                                                  // alloc->vma is not NULL at this point
-                                                  return ERR_PTR(-ESRCH);
-                                              }
-                                              ...
-                                              // #L438
-                                              binder_update_page_range(alloc, 0,
-                                                      (void *)PAGE_ALIGN((uintptr_t)buffer->data),
-                                                      end_page_addr);
+This ensures that we don't introduce aliasing cache lines for the VDSO
+data page, and therefore that userland will observe updates without
+requiring cache invalidation.
 
-                                              // In binder_update_page_range() #L218
-                                              // But still alloc->vma_vm_mm is NULL here
-                                              if (need_mm && mmget_not_zero(alloc->vma_vm_mm))
-alloc->vma_vm_mm = vma->vm_mm;
-
-Crash Log:
-==================================================================
-BUG: KASAN: null-ptr-deref in __atomic_add_unless include/asm-generic/atomic-instrumented.h:89 [inline]
-BUG: KASAN: null-ptr-deref in atomic_add_unless include/linux/atomic.h:533 [inline]
-BUG: KASAN: null-ptr-deref in mmget_not_zero include/linux/sched/mm.h:75 [inline]
-BUG: KASAN: null-ptr-deref in binder_update_page_range+0xece/0x18e0 drivers/android/binder_alloc.c:218
-Write of size 4 at addr 0000000000000058 by task syz-executor0/11184
-
-CPU: 1 PID: 11184 Comm: syz-executor0 Not tainted 4.18.0-rc3 #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x16e/0x22c lib/dump_stack.c:113
- kasan_report_error mm/kasan/report.c:352 [inline]
- kasan_report+0x163/0x380 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x140/0x1a0 mm/kasan/kasan.c:267
- kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
- __atomic_add_unless include/asm-generic/atomic-instrumented.h:89 [inline]
- atomic_add_unless include/linux/atomic.h:533 [inline]
- mmget_not_zero include/linux/sched/mm.h:75 [inline]
- binder_update_page_range+0xece/0x18e0 drivers/android/binder_alloc.c:218
- binder_alloc_new_buf_locked drivers/android/binder_alloc.c:443 [inline]
- binder_alloc_new_buf+0x467/0xc30 drivers/android/binder_alloc.c:513
- binder_transaction+0x125b/0x4fb0 drivers/android/binder.c:2957
- binder_thread_write+0xc08/0x2770 drivers/android/binder.c:3528
- binder_ioctl_write_read.isra.39+0x24f/0x8e0 drivers/android/binder.c:4456
- binder_ioctl+0xa86/0xf34 drivers/android/binder.c:4596
- vfs_ioctl fs/ioctl.c:46 [inline]
- do_vfs_ioctl+0x154/0xd40 fs/ioctl.c:686
- ksys_ioctl+0x94/0xb0 fs/ioctl.c:701
- __do_sys_ioctl fs/ioctl.c:708 [inline]
- __se_sys_ioctl fs/ioctl.c:706 [inline]
- __x64_sys_ioctl+0x43/0x50 fs/ioctl.c:706
- do_syscall_64+0x167/0x4b0 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-"
-
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
-Reviewed-by: Martijn Coenen <maco@android.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reported-by: Rene Nielsen <rene.nielsen@microsemi.com>
+Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Patchwork: https://patchwork.linux-mips.org/patch/20344/
+Tested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/android/binder_alloc.c |   43 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 8 deletions(-)
+ arch/mips/kernel/vdso.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -327,6 +327,35 @@ err_no_vma:
- 	return vma ? -ENOMEM : -ESRCH;
- }
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+@@ -20,6 +21,7 @@
  
-+
-+static inline void binder_alloc_set_vma(struct binder_alloc *alloc,
-+		struct vm_area_struct *vma)
-+{
-+	if (vma)
-+		alloc->vma_vm_mm = vma->vm_mm;
+ #include <asm/abi.h>
+ #include <asm/mips-cps.h>
++#include <asm/page.h>
+ #include <asm/vdso.h>
+ 
+ /* Kernel-provided data used by the VDSO. */
+@@ -128,12 +130,30 @@ int arch_setup_additional_pages(struct l
+ 	vvar_size = gic_size + PAGE_SIZE;
+ 	size = vvar_size + image->size;
+ 
 +	/*
-+	 * If we see alloc->vma is not NULL, buffer data structures set up
-+	 * completely. Look at smp_rmb side binder_alloc_get_vma.
-+	 * We also want to guarantee new alloc->vma_vm_mm is always visible
-+	 * if alloc->vma is set.
++	 * Find a region that's large enough for us to perform the
++	 * colour-matching alignment below.
 +	 */
-+	smp_wmb();
-+	alloc->vma = vma;
-+}
++	if (cpu_has_dc_aliases)
++		size += shm_align_mask + 1;
 +
-+static inline struct vm_area_struct *binder_alloc_get_vma(
-+		struct binder_alloc *alloc)
-+{
-+	struct vm_area_struct *vma = NULL;
-+
-+	if (alloc->vma) {
-+		/* Look at description in binder_alloc_set_vma */
-+		smp_rmb();
-+		vma = alloc->vma;
+ 	base = get_unmapped_area(NULL, 0, size, 0, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
+ 	}
+ 
++	/*
++	 * If we suffer from dcache aliasing, ensure that the VDSO data page
++	 * mapping is coloured the same as the kernel's mapping of that memory.
++	 * This ensures that when the kernel updates the VDSO data userland
++	 * will observe it without requiring cache invalidations.
++	 */
++	if (cpu_has_dc_aliases) {
++		base = __ALIGN_MASK(base, shm_align_mask);
++		base += ((unsigned long)&vdso_data - gic_size) & shm_align_mask;
 +	}
-+	return vma;
-+}
 +
- static struct binder_buffer *binder_alloc_new_buf_locked(
- 				struct binder_alloc *alloc,
- 				size_t data_size,
-@@ -343,7 +372,7 @@ static struct binder_buffer *binder_allo
- 	size_t size, data_offsets_size;
- 	int ret;
+ 	data_addr = base + gic_size;
+ 	vdso_addr = data_addr + PAGE_SIZE;
  
--	if (alloc->vma == NULL) {
-+	if (!binder_alloc_get_vma(alloc)) {
- 		pr_err("%d: binder_alloc_buf, no vma\n",
- 		       alloc->pid);
- 		return ERR_PTR(-ESRCH);
-@@ -714,9 +743,7 @@ int binder_alloc_mmap_handler(struct bin
- 	buffer->free = 1;
- 	binder_insert_free_buffer(alloc, buffer);
- 	alloc->free_async_space = alloc->buffer_size / 2;
--	barrier();
--	alloc->vma = vma;
--	alloc->vma_vm_mm = vma->vm_mm;
-+	binder_alloc_set_vma(alloc, vma);
- 	mmgrab(alloc->vma_vm_mm);
- 
- 	return 0;
-@@ -743,10 +770,10 @@ void binder_alloc_deferred_release(struc
- 	int buffers, page_count;
- 	struct binder_buffer *buffer;
- 
--	BUG_ON(alloc->vma);
--
- 	buffers = 0;
- 	mutex_lock(&alloc->mutex);
-+	BUG_ON(alloc->vma);
-+
- 	while ((n = rb_first(&alloc->allocated_buffers))) {
- 		buffer = rb_entry(n, struct binder_buffer, rb_node);
- 
-@@ -889,7 +916,7 @@ int binder_alloc_get_allocated_count(str
-  */
- void binder_alloc_vma_close(struct binder_alloc *alloc)
- {
--	WRITE_ONCE(alloc->vma, NULL);
-+	binder_alloc_set_vma(alloc, NULL);
- }
- 
- /**
-@@ -924,7 +951,7 @@ enum lru_status binder_alloc_free_page(s
- 
- 	index = page - alloc->pages;
- 	page_addr = (uintptr_t)alloc->buffer + index * PAGE_SIZE;
--	vma = alloc->vma;
-+	vma = binder_alloc_get_vma(alloc);
- 	if (vma) {
- 		if (!mmget_not_zero(alloc->vma_vm_mm))
- 			goto err_mmget;
 
 
