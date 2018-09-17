@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6893ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BD5ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F262088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F262088F
+	by mail.kernel.org (Postfix) with ESMTP id 324022146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:54:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324022146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbeIREXW (ORCPT
+        id S1729685AbeIREXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:23:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45580 "EHLO
+        Tue, 18 Sep 2018 00:23:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45590 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeIREXV (ORCPT
+        with ESMTP id S1728720AbeIREXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:23:21 -0400
+        Tue, 18 Sep 2018 00:23:24 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4F4FCAE;
-        Mon, 17 Sep 2018 22:53:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D8A3CA0;
+        Mon, 17 Sep 2018 22:53:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 28/70] uio: potential double frees if __uio_register_device() fails
-Date:   Tue, 18 Sep 2018 00:42:01 +0200
-Message-Id: <20180917211651.419796670@linuxfoundation.org>
+Subject: [PATCH 4.9 29/70] tty: rocket: Fix possible buffer overwrite on register_PCI
+Date:   Tue, 18 Sep 2018 00:42:02 +0200
+Message-Id: <20180917211651.508272700@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -51,45 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit f019f07ecf6a6b8bd6d7853bce70925d90af02d1 ]
+[ Upstream commit 0419056ec8fd01ddf5460d2dba0491aad22657dd ]
 
-The uio_unregister_device() function assumes that if "info->uio_dev" is
-non-NULL that means "info" is fully allocated.  Setting info->uio_de
-has to be the last thing in the function.
+If number of isa and pci boards exceed NUM_BOARDS on the path
+rp_init()->init_PCI()->register_PCI() then buffer overwrite occurs
+in register_PCI() on assign rcktpt_io_addr[i].
 
-In the current code, if request_threaded_irq() fails then we return with
-info->uio_dev set to non-NULL but info is not fully allocated and it can
-lead to double frees.
+The patch adds check on upper bound for index of registered
+board in register_PCI.
 
-Fixes: beafc54c4e2f ("UIO: Add the User IO core code")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/uio/uio.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/rocket.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -841,8 +841,6 @@ int __uio_register_device(struct module
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
+--- a/drivers/tty/rocket.c
++++ b/drivers/tty/rocket.c
+@@ -1913,7 +1913,7 @@ static __init int register_PCI(int i, st
+ 	ByteIO_t UPCIRingInd = 0;
  
--	info->uio_dev = idev;
--
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		/*
- 		 * Note that we deliberately don't use devm_request_irq
-@@ -858,6 +856,7 @@ int __uio_register_device(struct module
- 			goto err_request_irq;
- 	}
+ 	if (!dev || !pci_match_id(rocket_pci_ids, dev) ||
+-	    pci_enable_device(dev))
++	    pci_enable_device(dev) || i >= NUM_BOARDS)
+ 		return 0;
  
-+	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+ 	rcktpt_io_addr[i] = pci_resource_start(dev, 0);
 
 
