@@ -2,59 +2,86 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3476BECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE34ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA909214DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA909214DD
+	by mail.kernel.org (Postfix) with ESMTP id 658D4214EE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:36:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658D4214EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbeIQRDJ (ORCPT
+        id S1728303AbeIQRDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:03:09 -0400
-Received: from shell.v3.sk ([90.176.6.54]:47009 "EHLO shell.v3.sk"
+        Mon, 17 Sep 2018 13:03:14 -0400
+Received: from shell.v3.sk ([90.176.6.54]:47019 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbeIQRDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:03:09 -0400
+        id S1726824AbeIQRDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 13:03:14 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B7C35AC669;
-        Mon, 17 Sep 2018 13:36:10 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 27B23A74CC;
+        Mon, 17 Sep 2018 13:36:17 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id RlMOSkqcySmN; Mon, 17 Sep 2018 13:36:06 +0200 (CEST)
+        with ESMTP id GkOjoPTiBDcz; Mon, 17 Sep 2018 13:36:09 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id EF5BCAC50D;
-        Mon, 17 Sep 2018 13:36:05 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 9B77BAE3D0;
+        Mon, 17 Sep 2018 13:36:09 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1Ou-wwrG7YjV; Mon, 17 Sep 2018 13:36:05 +0200 (CEST)
+        with ESMTP id 3cvlLRKKt9Mf; Mon, 17 Sep 2018 13:36:08 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 2F9E6AC396;
-        Mon, 17 Sep 2018 13:36:05 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id D3FB2AC669;
+        Mon, 17 Sep 2018 13:36:07 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: [PATCH v2 0/5] Make SPI work on DT MMP2
-Date:   Mon, 17 Sep 2018 13:35:54 +0200
-Message-Id: <20180917113559.11101-1-lkundrak@v3.sk>
+        linux-spi@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v2 2/5] PCI: Provide pci_match_id() with CONFIG_PCI=n
+Date:   Mon, 17 Sep 2018 13:35:56 +0200
+Message-Id: <20180917113559.11101-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180917113559.11101-1-lkundrak@v3.sk>
+References: <20180917113559.11101-1-lkundrak@v3.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes SPI work on an OPLC 1.75 that is a DT MMP2 platform.
-Changes since v1 are cosmetic, describe in individual patches.
+This spares drivers from #ifdef-ing on CONFIG_PCI if the driver can be
+optionally built on machines without PCI bus.
 
-Thanks,
-Lubo
+Consistent with acpi_driver_match_device() and similar.
 
+Changes since v1:
+- Capitalization in the commit message
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ include/linux/pci.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 6925828f9f25..2c4755032475 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1705,6 +1705,10 @@ static inline int pci_irqd_intx_xlate(struct irq_domain *d,
+ 				      unsigned long *out_hwirq,
+ 				      unsigned int *out_type)
+ { return -EINVAL; }
++
++static inline const struct pci_device_id *pci_match_id(const struct pci_device_id *ids,
++							 struct pci_dev *dev)
++{ return NULL; }
+ #endif /* CONFIG_PCI */
+ 
+ /* Include architecture-dependent settings and functions */
+-- 
+2.17.1
 
