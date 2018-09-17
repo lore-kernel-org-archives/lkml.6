@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E42ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77DAECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBED2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CBED2146D
+	by mail.kernel.org (Postfix) with ESMTP id 7F60F2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F60F2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733112AbeIREok (ORCPT
+        id S1733213AbeIREoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:44:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51328 "EHLO
+        Tue, 18 Sep 2018 00:44:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51340 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730352AbeIREoj (ORCPT
+        with ESMTP id S1730352AbeIREon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:44:39 -0400
+        Tue, 18 Sep 2018 00:44:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F06CFC9D;
-        Mon, 17 Sep 2018 23:15:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 564FFC49;
+        Mon, 17 Sep 2018 23:15:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Paul Burton <paul.burton@mips.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, ralf@linux-mips.org, jhogan@kernel.org,
-        linux-mips@linux-mips.org, devicetree@vger.kernel.org,
-        thomas.petazzoni@bootlin.com,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 154/158] MIPS: mscc: ocelot: fix length of memory address space for MIIM
-Date:   Tue, 18 Sep 2018 00:43:04 +0200
-Message-Id: <20180917211718.210530654@linuxfoundation.org>
+Subject: [PATCH 4.18 155/158] RDMA/cma: Do not ignore net namespace for unbound cm_id
+Date:   Tue, 18 Sep 2018 00:43:05 +0200
+Message-Id: <20180917211718.259748883@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -57,44 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quentin Schulz <quentin.schulz@bootlin.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 49e5bb13adc11fe6e2e40f65c04f3a461aea1fec ]
+[ Upstream commit 643d213a9a034fa04f5575a40dfc8548e33ce04f ]
 
-The length of memory address space for MIIM0 is from 0x7107009c to
-0x710700bf included which is 36 bytes long in decimal, or 0x24 bytes in
-hexadecimal and not 0x36.
+Currently if the cm_id is not bound to any netdevice, than for such cm_id,
+net namespace is ignored; which is incorrect.
 
-Fixes: 49b031690abe ("MIPS: mscc: Add switch to ocelot")
+Regardless of cm_id bound to a netdevice or not, net namespace must
+match. When a cm_id is bound to a netdevice, in such case net namespace
+and netdevice both must match.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20013/
-Cc: robh+dt@kernel.org
-Cc: mark.rutland@arm.com
-Cc: ralf@linux-mips.org
-Cc: jhogan@kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: thomas.petazzoni@bootlin.com
+Fixes: 4c21b5bcef73 ("IB/cma: Add net_dev and private data checks to RDMA CM")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/boot/dts/mscc/ocelot.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/cma.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/arch/mips/boot/dts/mscc/ocelot.dtsi
-+++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
-@@ -184,7 +184,7 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "mscc,ocelot-miim";
--			reg = <0x107009c 0x36>, <0x10700f0 0x8>;
-+			reg = <0x107009c 0x24>, <0x10700f0 0x8>;
- 			interrupts = <14>;
- 			status = "disabled";
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -1445,9 +1445,16 @@ static bool cma_match_net_dev(const stru
+ 		       (addr->src_addr.ss_family == AF_IB ||
+ 			rdma_protocol_roce(id->device, port_num));
  
+-	return !addr->dev_addr.bound_dev_if ||
+-	       (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
+-		addr->dev_addr.bound_dev_if == net_dev->ifindex);
++	/*
++	 * Net namespaces must match, and if the listner is listening
++	 * on a specific netdevice than netdevice must match as well.
++	 */
++	if (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
++	    (!!addr->dev_addr.bound_dev_if ==
++	     (addr->dev_addr.bound_dev_if == net_dev->ifindex)))
++		return true;
++	else
++		return false;
+ }
+ 
+ static struct rdma_id_private *cma_find_listener(
 
 
