@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35194ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC94ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB123214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:26:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB123214D5
+	by mail.kernel.org (Postfix) with ESMTP id AD16C2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 11:28:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD16C2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeIQQxV (ORCPT
+        id S1728084AbeIQQze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:53:21 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:52874 "EHLO
+        Mon, 17 Sep 2018 12:55:34 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:59022 "EHLO
         lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726824AbeIQQxV (ORCPT
+        with ESMTP id S1727134AbeIQQze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:53:21 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 17 Sep 2018 20:26:16 +0900
-X-Original-SENDERIP: 156.147.1.126
+        Mon, 17 Sep 2018 12:55:34 -0400
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.52 with ESMTP; 17 Sep 2018 20:28:37 +0900
+X-Original-SENDERIP: 156.147.1.125
 X-Original-MAILFROM: namhyung@kernel.org
 Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.126 with ESMTP; 17 Sep 2018 20:26:16 +0900
+        by 156.147.1.125 with ESMTP; 17 Sep 2018 20:28:37 +0900
 X-Original-SENDERIP: 10.177.227.17
 X-Original-MAILFROM: namhyung@kernel.org
-Date:   Mon, 17 Sep 2018 20:26:15 +0900
+Date:   Mon, 17 Sep 2018 20:28:37 +0900
 From:   Namhyung Kim <namhyung@kernel.org>
 To:     Jiri Olsa <jolsa@kernel.org>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
@@ -42,155 +42,129 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Andi Kleen <andi@firstfloor.org>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         kernel-team@lge.com
-Subject: Re: [PATCH 37/48] perf record: Introduce struct record_thread
-Message-ID: <20180917112615.GB18395@sejong>
+Subject: Re: [PATCH 38/48] perf record: Read record thread's mmaps
+Message-ID: <20180917112837.GC18395@sejong>
 References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-38-jolsa@kernel.org>
+ <20180913125450.21342-39-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180913125450.21342-38-jolsa@kernel.org>
+In-Reply-To: <20180913125450.21342-39-jolsa@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
-
-On Thu, Sep 13, 2018 at 02:54:39PM +0200, Jiri Olsa wrote:
-> Adding struct record_thread to carry the single thread's maps.
+On Thu, Sep 13, 2018 at 02:54:40PM +0200, Jiri Olsa wrote:
+> Switch the maps source from evlist into thread data.
 > 
-> Link: http://lkml.kernel.org/n/tip-dsyi97xdc7ullvsisqmha0ca@git.kernel.org
+> Link: http://lkml.kernel.org/n/tip-2r6hn6shl185j66b4vl1k4pr@git.kernel.org
 > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->  tools/perf/builtin-record.c | 179 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 179 insertions(+)
+>  tools/perf/builtin-record.c | 37 ++++++++++++++++++++-----------------
+>  1 file changed, 20 insertions(+), 17 deletions(-)
 > 
 > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 1b01cb4d06b8..5c6b56f164a9 100644
+> index 5c6b56f164a9..d6fef646b67f 100644
 > --- a/tools/perf/builtin-record.c
 > +++ b/tools/perf/builtin-record.c
-> @@ -65,6 +65,15 @@ struct switch_output {
->  	bool		 set;
+> @@ -96,6 +96,8 @@ struct record {
+>  	int			threads_cnt;
 >  };
 >  
-> +struct record_thread {
-> +	struct perf_mmap	**mmap;
-> +	int			  mmap_nr;
-> +	struct perf_mmap	**ovw_mmap;
-> +	int			  ovw_mmap_nr;
-> +	struct fdarray		  pollfd;
-> +	struct record		 *rec;
-> +};
+> +static __thread struct record_thread *thread;
 > +
->  struct record {
->  	struct perf_tool	tool;
->  	struct record_opts	opts;
-> @@ -83,6 +92,8 @@ struct record {
->  	bool			timestamp_boundary;
->  	struct switch_output	switch_output;
->  	unsigned long long	samples;
-> +	struct record_thread	*threads;
-> +	int			threads_cnt;
->  };
->  
 >  static volatile int auxtrace_record__snapshot_started;
-> @@ -967,6 +978,166 @@ static int record__synthesize(struct record *rec, bool tail)
->  	return err;
->  }
+>  static DEFINE_TRIGGER(auxtrace_snapshot_trigger);
+>  static DEFINE_TRIGGER(switch_output_trigger);
+> @@ -561,24 +563,24 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>  				    bool overwrite)
+>  {
+>  	u64 bytes_written = rec->bytes_written;
+> -	int i;
+> +	int i, nr;
+>  	int rc = 0;
+> -	struct perf_mmap *maps;
+> +	struct perf_mmap **maps;
 >  
-> +static void
-> +record_thread__clean(struct record_thread *th)
-> +{
-> +	free(th->mmap);
-> +	free(th->ovw_mmap);
-> +}
+>  	if (!evlist)
+>  		return 0;
+>  
+> -	maps = overwrite ? evlist->overwrite_mmap : evlist->mmap;
+> +	maps = overwrite ? thread->ovw_mmap : thread->mmap;
+>  	if (!maps)
+>  		return 0;
+>  
+>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+>  		return 0;
+>  
+> -	for (i = 0; i < evlist->nr_mmaps; i++) {
+> -		struct perf_mmap *map = &maps[i];
+> -		struct perf_mmap *track_map =  evlist->track_mmap ?
+> -					      &evlist->track_mmap[i] : NULL;
+> +	nr = overwrite ? thread->ovw_mmap_nr : thread->mmap_nr;
 > +
-> +static void
-> +record__threads_clean(struct record *rec)
-> +{
-> +	struct record_thread *threads = rec->threads;
-> +	int i;
-> +
-> +	if (threads) {
-> +		for (i = 0; i < rec->threads_cnt; i++)
-> +			record_thread__clean(threads + i);
-> +	}
-> +}
-> +
-> +static void record_thread__init(struct record_thread *th, struct record *rec)
-> +{
-> +	memset(th, 0, sizeof(*th));
-> +	fdarray__init(&th->pollfd, 64);
-> +	th->rec = rec;
-> +}
-> +
-> +static int
-> +record_thread__mmap(struct record_thread *th, int nr, int nr_ovw)
-> +{
-> +	struct perf_mmap **mmap;
-> +
-> +	mmap = zalloc(sizeof(*mmap) * nr);
-> +	if (!mmap)
-> +		return -ENOMEM;
-> +
-> +	th->mmap    = mmap;
-> +	th->mmap_nr = nr;
-> +
-> +	if (nr_ovw) {
-> +		mmap = zalloc(sizeof(*mmap) * nr_ovw);
-> +		if (!mmap)
-> +			return -ENOMEM;
-> +
-> +		th->ovw_mmap    = mmap;
-> +		th->ovw_mmap_nr = nr;
+> +	for (i = 0; i < nr; i++) {
+> +		struct perf_mmap *map = maps[i];
+>  
+>  		if (map->base) {
+>  			if (perf_mmap__push(map, rec, record__pushfn) != 0) {
+> @@ -592,21 +594,20 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+>  			rc = -1;
+>  			goto out;
+>  		}
+> -
+> -		if (track_map && track_map->base) {
+> -			if (perf_mmap__push(track_map, rec, record__pushfn) != 0) {
+> -				rc = -1;
+> -				goto out;
+> -			}
+> -		}
+>  	}
+>  
+>  	/*
+>  	 * Mark the round finished in case we wrote
+>  	 * at least one event.
+>  	 */
+> -	if (bytes_written != rec->bytes_written)
+> -		rc = record__write(rec, NULL, &finished_round_event, sizeof(finished_round_event));
+> +	if (bytes_written != rec->bytes_written) {
+> +		/*
+> +		 * All maps of the threads point to a single file,
+> +		 * so we can just pick first one.
+> +		 */
+> +		rc = record__write(rec, thread->mmap[0], &finished_round_event,
 
-s/nr;/nr_ovw;/ ?
-
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +record__threads_assign(struct record *rec)
-> +{
-> +	struct record_thread *threads = rec->threads;
-> +	struct record_thread *thread0 = threads;
-> +	struct perf_evlist *evlist = rec->evlist;
-> +	int i, j, nr, nr0, nr_ovw, nr_trk;
-> +	int ret = -ENOMEM;
-> +
-> +	nr     = evlist->mmap           ? evlist->nr_mmaps : 0;
-> +	nr_trk = evlist->track_mmap     ? evlist->nr_mmaps : 0;
-> +	nr_ovw = evlist->overwrite_mmap ? evlist->nr_mmaps : 0;
-> +
-> +	nr0  = nr_trk;
-> +	nr0 += nr;
-> +
-> +	if (record_thread__mmap(thread0, nr0, nr_ovw))
-> +		goto out_error;
-> +
-> +	for (i = 0; i < nr_ovw; i++)
-> +		thread0->ovw_mmap[i] = &evlist->overwrite_mmap[i];
-> +
-> +	for (i = 0; i < nr_trk; i++)
-> +		thread0->mmap[i] = &evlist->track_mmap[i];
-> +
-> +	for (j = 0; i < nr0 && j < nr; i++, j++)
-> +		thread0->mmap[i] = &evlist->mmap[j];
-
-I'm not sure it'll work with the overwrite mmap well..
+Shouldn't it be maps[0] ?
 
 Thanks,
 Namhyung
 
 
+> +				   sizeof(finished_round_event));
+> +	}
+>  
+>  	if (overwrite)
+>  		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
+> @@ -1222,6 +1223,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  			goto out_child;
+>  	}
+>  
+> +	thread = &rec->threads[0];
 > +
-> +	ret = 0;
-> +
-> +out_error:
-> +	return ret;
-> +}
+>  	err = bpf__apply_obj_config();
+>  	if (err) {
+>  		char errbuf[BUFSIZ];
+> @@ -1415,7 +1418,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  		if (hits == rec->samples) {
+>  			if (done || draining)
+>  				break;
+> -			err = perf_evlist__poll(rec->evlist, -1);
+> +			err = fdarray__poll(&thread->pollfd, -1);
+>  			/*
+>  			 * Propagate error, only if there's any. Ignore positive
+>  			 * number of returned events and interrupt error.
+> -- 
+> 2.17.1
+> 
