@@ -7,140 +7,143 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E73EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E7DECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6E82147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 600752147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="euOV/1SP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F6E82147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="V2tNLz0a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600752147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbeIQIf0 (ORCPT
+        id S1731508AbeIQIdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:35:26 -0400
-Received: from mail-eopbgr720091.outbound.protection.outlook.com ([40.107.72.91]:17664
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:33:11 -0400
+Received: from mail-bl2nam02on0116.outbound.protection.outlook.com ([104.47.38.116]:52292
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731446AbeIQIdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:33:13 -0400
+        id S1731475AbeIQIdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:33:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hsooG36r76oAZjB3VjNMFpvfCODt54KIlcKHNjIS9Pw=;
- b=euOV/1SPPrRQgHb/6fLDqEGo6lHtwzeWn98IXXnWl/KfL8xEQLwlh1rMKCFIqu0THdbx1sor5qVp5kjP1p09K4wW4zz+79CHIv5HkpBjo/sdDQEoVqUt8vh4mwSyhH8csFj29jHJh3id7DpToa5xcBUyb4FzB26QeEyVfSjhVhQ=
+ bh=4j5jl4cyBv74NGRdIQbs98HYeHI6vaQjbcHQm0Q0fXk=;
+ b=V2tNLz0aT9KGzyJmmkmnkhB6RBkKBxi5s92xfv1Ac0Z7VJyfvuqOUNFEiGM/vtr6bt2YTJXqo+onE57x/6V3av+KCFDoDWmQZh3qykGLztqOM62ocW3ydCm+53HLfzW+3kNR3a5a4r9kdlqkmTGWtTjI+pyT9WN7CccEPudk/GM=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0150.namprd21.prod.outlook.com (10.173.189.20) with Microsoft SMTP
+ CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Mon, 17 Sep 2018 03:07:53 +0000
+ 15.20.1164.11; Mon, 17 Sep 2018 03:07:47 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:07:53 +0000
+ 03:07:47 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+CC:     Stafford Horne <shorne@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 16/29] media: soc_camera: ov772x: correct setting
- of banding filter
-Thread-Topic: [PATCH AUTOSEL 3.18 16/29] media: soc_camera: ov772x: correct
- setting of banding filter
-Thread-Index: AQHUTjNUvAOdRFQljUejOUaxLvCI1w==
-Date:   Mon, 17 Sep 2018 03:05:47 +0000
-Message-ID: <20180917030533.592-16-alexander.levin@microsoft.com>
-References: <20180917030533.592-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030533.592-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 3.18 01/29] crypto: skcipher - Fix
+ -Wstringop-truncation warnings
+Thread-Topic: [PATCH AUTOSEL 3.18 01/29] crypto: skcipher - Fix
+ -Wstringop-truncation warnings
+Thread-Index: AQHUTjNOGgBE05WUwkWDOUqA+1jtXw==
+Date:   Mon, 17 Sep 2018 03:05:37 +0000
+Message-ID: <20180917030533.592-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:X4GCkkYL/qr3fbaiRNan7/gOPOMAkPMmuFaf16wHV+5mpWGWDMwEMU6g9Oj0nLWePg1Pqn6F/9vAUtTAvIWMB+IrP4o/PbuV/xjIzxi9Ydn6seRkt3B27RzkLc6IsSFK1/tB62msr+PMnUF9LXY0bZXnAJ97l+OMRc758c5OG8davK9AyaZ49Ec/RdmOPukdEywkU2u6mFZB3ADrHBc9+1vzMctW2oeSuQNqV7jrbfrg0G1AXeUoevHU5IZPlU5bLzVC2EkHWxCEXdIbihE0opFYDjPA9A13UrqzCasYd4e+5vfi9nCUkFj+seFDgeNMh2euTcN1o2Kqp5Yrr7gavlUvQUCxab4ZxEYNZQAjsYXmt4juJLOHUCopUBr9PX4+B+qFUq14ndgc1x7I6ye3scOHXY4pvT5KaY4Q5AQzn++wPeFjwbiEo9P2pH/zbYZcug1PcjRQKCT50JFMEbDzsA==;5:UZC2UY5cTeRN28GglhORjSnlfRrcy6s4FvuT7ntUTcw51+vCL03TsbKMFH0bPV2wXfTLU6HJ8n1EVPtBSYtU908bHTKD7V6gEmQy1VCWQz1JMQOQ+BbAQAlpE7mHEDHu9iYhxVCsqw6yerI8CPTuohNgDh4cw5JmwNSRsNsYMbY=;7:81ueP81QzXQ1OHBIacrqDhM2daEqJxObmTepRpzhpJeffk6UYGhaK88uvfi5dxCY+Oue6/F7s+8IYg+dlxI+tGmLvMZAOLNP4gCls7H4Z+h9jjrGq2fXpE1nbgsHuXDArlCCb6t4U0CWBEI3b4Wpg40cPuquMhmQUYimQ2X2xFAQ59Xr5bKsimt1RxEDcdUE2h2D+dLdYPWKdv7bkkCN6GaJHgeW7dG0vNRYGpHvLkU9ifcv+KlAWOayH9o7zo/0
-x-ms-office365-filtering-correlation-id: a4b1ced9-5912-4971-8c21-08d61c4ac270
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:1VGZTEROmvQLAivnfqSGHUZeuTiLh0vq12bdB7lxAtR+3TvyBJ44bxjnddVAdhi35ZmJ71xm8a1DKext+G4cc9omvqmutcuKA6GEV2ImvOHK/849kM16d+2tyhGCiUQySecf3diHjeYUqeGdlBWZDVgweddd8nb+XFvPF2kHFD65bPfQ2DWTQzdl3LvZKLAnbdUDxmMgXYC4AXcN5CxvoOvfFUuUOvdOqQfB1UJOgUbtzL8juTH8tV/mMFLT5jrH4CQBwbj9Ser6Rkrcym47R4IkHjMvOpaMQgWCkIaTwEJIKaRJ2SdpUVwJGrGEhYrHFIAyLYqEnI9/pkFDfeinbgz0k3Qw/rafIVkb7TTS+TQo1zHAOih1phwdWAM/5kDHsPFXbUnbVUD7v15vCmhp40q1RmmyuY7lAe5IkeajZkUptbKf6fqtq+LKKSYj7nu6NMPdMQus/xvUHiyud2yG4Q==;5:OtOn0XkZip/e4brqlLvHmaaKZrO3l4gyKxwjiMifWtuMDFmbJJYlUmWhrtFu6hlOIyCATXGe9x/MRiyqxL0eonF9t0hzsM9UAqqd7OAhVMoqahz+WoHGlIRxEejYJPXx6+gzifNwnSuvtHUcD1x86qHPGTZlxyHbUl/tnNIpTa4=;7:33j2QL8i5qPoXS7zkl1MaHIzIaQJ4iQiDvT0XPDm2lVxCnTVOiyY2CYVJWPth6GHuFykrs/8jIhZfXFONCfm6cvrJgBQDiREXZpiEyJxFs9GoTqXg5BuSWN6I9C90wgpRVHTvXnF7rqywJSiytVNqP65hAcx8uxXgLL/u6UmBRClD6hCxbHcw9Mhs+yLQZTWeAGIpyUFvCe/Tz50fzuTt3m9vxtQvgGoKwu13bIGH47lrogsADB4/EzHJopg+gSQ
+x-ms-office365-filtering-correlation-id: 64c335dc-ed4b-4629-eefa-08d61c4abf26
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0150;
-x-ms-traffictypediagnostic: CY4PR21MB0150:
-x-microsoft-antispam-prvs: <CY4PR21MB0150B8236CE602FD4B566606FB1E0@CY4PR21MB0150.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(95692535739014)(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
+x-ms-traffictypediagnostic: CY4PR21MB0839:
+x-microsoft-antispam-prvs: <CY4PR21MB0839C2311A8E6BC61DCEDE35FB1E0@CY4PR21MB0839.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(211171220733660)(85827821059158)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0150;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0150;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(366004)(39860400002)(199004)(189003)(478600001)(2900100001)(39060400002)(2501003)(6666003)(11346002)(107886003)(5250100002)(14454004)(26005)(10290500003)(36756003)(217873002)(7736002)(99286004)(305945005)(102836004)(72206003)(2616005)(86612001)(476003)(6346003)(186003)(14444005)(486006)(54906003)(110136005)(446003)(6436002)(5660300001)(4326008)(256004)(86362001)(10090500001)(2906002)(6486002)(316002)(6512007)(53936002)(22452003)(66066001)(97736004)(76176011)(81156014)(81166006)(8676002)(3846002)(6116002)(8936002)(25786009)(6506007)(68736007)(105586002)(106356001)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(136003)(376002)(396003)(189003)(199004)(8936002)(6116002)(86612001)(3846002)(575784001)(53936002)(81166006)(25786009)(217873002)(39060400002)(5660300001)(68736007)(5250100002)(6666003)(107886003)(256004)(14444005)(305945005)(7736002)(2900100001)(1076002)(86362001)(2501003)(6506007)(4326008)(22452003)(10090500001)(6436002)(102836004)(6486002)(186003)(105586002)(6346003)(26005)(106356001)(54906003)(110136005)(316002)(478600001)(6512007)(2616005)(476003)(486006)(10290500003)(2906002)(81156014)(36756003)(66066001)(72206003)(8676002)(97736004)(99286004)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: qE3igRhWVagBX59fjSo+STzrKY8NijXTzE3NUFO8Y7iBi4z7aGIi5FtMS8GVK3xswGTbLe+SAqp+cx0RTIx3yfcQuPZ973Yx6i+uHIW0REvHAlfNOoIueEEaugwtQEaNMQCha+L3i8tvwU0Z9UhmaPYstwywxO44Q5MqHO1LUvJ4hTvddgYxVJSYKGSpni59QoHlHx1/4AERnjPdOPc004etkvHLFeaWYHIu8vnKuNvJmEZP87dJfpnScHlIJ34bLHDqhx/S1oYTN8wiOxCE3cl+f2iGig2Zx7J4ASBXfd7L3jXRJmGiOYPUtmp5MFoDqe8Hh+lYdO4mGEqU5K32zBnl4iYh1LitQSmfnDMzqjc=
+x-microsoft-antispam-message-info: r5H+FbIeivSXgN9Bd8bypGp9OmkyIrPwHqv7JYeRUwXlg1+VPH3Rda57HX6PP4x0/kjFepPT+vFjQqVYYiqazPAlJkxzorPnz2l8fMzYitvnFGqZ5hvirWpcjyvzgh+tq8tLZ7fhh6jr6eOUNhWbOQHrne3e0guphMGTde8uMPBlnKc/nLhLz21Pm8JxPHm+FXX08s+gez1U34umkBn7Rye+PQLKBfQvisOpabLMNNkux9jBjmaU5KAIgiedDqzfL5Mc55WknjufhpDqvpBNKV7UZvk7D0JoVX0NlVnukknmfe9jVRbEbwJgH4i1y9E9W5Edp3kQKQwmMne3jaqMjwbggWDr2H5NGlh8DfQzRYg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <01CB7D2FD84B2F49AF5CDE80B8CF4E7B@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b1ced9-5912-4971-8c21-08d61c4ac270
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:47.4046
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64c335dc-ed4b-4629-eefa-08d61c4abf26
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:37.1325
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0150
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0839
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
-
-[ Upstream commit 22216ec41e919682c15345e95928f266e8ba6f9e ]
-
-The banding filter ON/OFF is controlled via bit 5 of COM8 register.  It
-is attempted to be enabled in ov772x_set_params() by the following line.
-
-	ret =3D ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
-
-But this unexpectedly results disabling the banding filter, because the
-mask and set bits are exclusive.
-
-On the other hand, ov772x_s_ctrl() correctly sets the bit by:
-
-	ret =3D ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
-
-The same fix was already applied to non-soc_camera version of ov772x
-driver in the commit commit a024ee14cd36 ("media: ov772x: correct setting
-of banding filter")
-
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/media/i2c/soc_camera/ov772x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/i2c/soc_camera/ov772x.c b/drivers/media/i2c/soc_=
-camera/ov772x.c
-index 970a04e1e56e..a08502766474 100644
---- a/drivers/media/i2c/soc_camera/ov772x.c
-+++ b/drivers/media/i2c/soc_camera/ov772x.c
-@@ -834,7 +834,7 @@ static int ov772x_set_params(struct ov772x_priv *priv,
- 	 * set COM8
- 	 */
- 	if (priv->band_filter) {
--		ret =3D ov772x_mask_set(client, COM8, BNDF_ON_OFF, 1);
-+		ret =3D ov772x_mask_set(client, COM8, BNDF_ON_OFF, BNDF_ON_OFF);
- 		if (!ret)
- 			ret =3D ov772x_mask_set(client, BDBASE,
- 					      0xff, 256 - priv->band_filter);
---=20
-2.17.1
+RnJvbTogU3RhZmZvcmQgSG9ybmUgPHNob3JuZUBnbWFpbC5jb20+DQoNClsgVXBzdHJlYW0gY29t
+bWl0IGNlZmQ3NjlmZDAxOTJjODRkNjM4ZjY2ZGEyMDI0NTllZDhhZDYzYmEgXQ0KDQpBcyBvZiBH
+Q0MgOS4wLjAgdGhlIGJ1aWxkIGlzIHJlcG9ydGluZyB3YXJuaW5ncyBsaWtlOg0KDQogICAgY3J5
+cHRvL2FibGtjaXBoZXIuYzogSW4gZnVuY3Rpb24g4oCYY3J5cHRvX2FibGtjaXBoZXJfcmVwb3J0
+4oCZOg0KICAgIGNyeXB0by9hYmxrY2lwaGVyLmM6Mzc0OjI6IHdhcm5pbmc6IOKAmHN0cm5jcHni
+gJkgc3BlY2lmaWVkIGJvdW5kIDY0IGVxdWFscyBkZXN0aW5hdGlvbiBzaXplIFstV3N0cmluZ29w
+LXRydW5jYXRpb25dDQogICAgICBzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+Y3JhX2Fi
+bGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogICAgICBefn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQogICAgICAg
+c2l6ZW9mKHJibGtjaXBoZXIuZ2VuaXYpKTsNCiAgICAgICB+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+DQoNClRoaXMgbWVhbnMgdGhlIHN0cm55Y3B5IG1pZ2h0IGNyZWF0ZSBhIG5vbiBudWxsIHRl
+cm1pbmF0ZWQgc3RyaW5nLiAgRml4IHRoaXMgYnkNCmV4cGxpY2l0bHkgcGVyZm9ybWluZyAnXDAn
+IHRlcm1pbmF0aW9uLg0KDQpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3Vu
+ZGF0aW9uLm9yZz4NCkNjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPg0KQ2M6IE1heCBG
+aWxpcHBvdiA8amNtdmJrYmNAZ21haWwuY29tPg0KQ2M6IEVyaWMgQmlnZ2VycyA8ZWJpZ2dlcnMz
+QGdtYWlsLmNvbT4NCkNjOiBOaWNrIERlc2F1bG5pZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdtYWls
+LmNvbT4NClNpZ25lZC1vZmYtYnk6IFN0YWZmb3JkIEhvcm5lIDxzaG9ybmVAZ21haWwuY29tPg0K
+U2lnbmVkLW9mZi1ieTogSGVyYmVydCBYdSA8aGVyYmVydEBnb25kb3IuYXBhbmEub3JnLmF1Pg0K
+U2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29t
+Pg0KLS0tDQogY3J5cHRvL2FibGtjaXBoZXIuYyB8IDIgKysNCiBjcnlwdG8vYmxrY2lwaGVyLmMg
+IHwgMSArDQogMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBh
+L2NyeXB0by9hYmxrY2lwaGVyLmMgYi9jcnlwdG8vYWJsa2NpcGhlci5jDQppbmRleCA1MDYxZDdh
+ZDMzZTQuLmNhZDY2YWY1YTFhZSAxMDA2NDQNCi0tLSBhL2NyeXB0by9hYmxrY2lwaGVyLmMNCisr
+KyBiL2NyeXB0by9hYmxrY2lwaGVyLmMNCkBAIC0zODIsNiArMzgyLDcgQEAgc3RhdGljIGludCBj
+cnlwdG9fYWJsa2NpcGhlcl9yZXBvcnQoc3RydWN0IHNrX2J1ZmYgKnNrYiwgc3RydWN0IGNyeXB0
+b19hbGcgKmFsZykNCiAJc3RybmNweShyYmxrY2lwaGVyLnR5cGUsICJhYmxrY2lwaGVyIiwgc2l6
+ZW9mKHJibGtjaXBoZXIudHlwZSkpOw0KIAlzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+
+Y3JhX2FibGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogCQlzaXplb2YocmJsa2NpcGhl
+ci5nZW5pdikpOw0KKwlyYmxrY2lwaGVyLmdlbml2W3NpemVvZihyYmxrY2lwaGVyLmdlbml2KSAt
+IDFdID0gJ1wwJzsNCiANCiAJcmJsa2NpcGhlci5ibG9ja3NpemUgPSBhbGctPmNyYV9ibG9ja3Np
+emU7DQogCXJibGtjaXBoZXIubWluX2tleXNpemUgPSBhbGctPmNyYV9hYmxrY2lwaGVyLm1pbl9r
+ZXlzaXplOw0KQEAgLTQ2Myw2ICs0NjQsNyBAQCBzdGF0aWMgaW50IGNyeXB0b19naXZjaXBoZXJf
+cmVwb3J0KHN0cnVjdCBza19idWZmICpza2IsIHN0cnVjdCBjcnlwdG9fYWxnICphbGcpDQogCXN0
+cm5jcHkocmJsa2NpcGhlci50eXBlLCAiZ2l2Y2lwaGVyIiwgc2l6ZW9mKHJibGtjaXBoZXIudHlw
+ZSkpOw0KIAlzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+Y3JhX2FibGtjaXBoZXIuZ2Vu
+aXYgPzogIjxidWlsdC1pbj4iLA0KIAkJc2l6ZW9mKHJibGtjaXBoZXIuZ2VuaXYpKTsNCisJcmJs
+a2NpcGhlci5nZW5pdltzaXplb2YocmJsa2NpcGhlci5nZW5pdikgLSAxXSA9ICdcMCc7DQogDQog
+CXJibGtjaXBoZXIuYmxvY2tzaXplID0gYWxnLT5jcmFfYmxvY2tzaXplOw0KIAlyYmxrY2lwaGVy
+Lm1pbl9rZXlzaXplID0gYWxnLT5jcmFfYWJsa2NpcGhlci5taW5fa2V5c2l6ZTsNCmRpZmYgLS1n
+aXQgYS9jcnlwdG8vYmxrY2lwaGVyLmMgYi9jcnlwdG8vYmxrY2lwaGVyLmMNCmluZGV4IDVlYmZk
+ZDBkNDU0My4uNWJhOTkxNmEzM2M4IDEwMDY0NA0KLS0tIGEvY3J5cHRvL2Jsa2NpcGhlci5jDQor
+KysgYi9jcnlwdG8vYmxrY2lwaGVyLmMNCkBAIC01MTQsNiArNTE0LDcgQEAgc3RhdGljIGludCBj
+cnlwdG9fYmxrY2lwaGVyX3JlcG9ydChzdHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1Y3QgY3J5cHRv
+X2FsZyAqYWxnKQ0KIAlzdHJuY3B5KHJibGtjaXBoZXIudHlwZSwgImJsa2NpcGhlciIsIHNpemVv
+ZihyYmxrY2lwaGVyLnR5cGUpKTsNCiAJc3RybmNweShyYmxrY2lwaGVyLmdlbml2LCBhbGctPmNy
+YV9ibGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogCQlzaXplb2YocmJsa2NpcGhlci5n
+ZW5pdikpOw0KKwlyYmxrY2lwaGVyLmdlbml2W3NpemVvZihyYmxrY2lwaGVyLmdlbml2KSAtIDFd
+ID0gJ1wwJzsNCiANCiAJcmJsa2NpcGhlci5ibG9ja3NpemUgPSBhbGctPmNyYV9ibG9ja3NpemU7
+DQogCXJibGtjaXBoZXIubWluX2tleXNpemUgPSBhbGctPmNyYV9ibGtjaXBoZXIubWluX2tleXNp
+emU7DQotLSANCjIuMTcuMQ0K
