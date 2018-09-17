@@ -2,37 +2,37 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A45ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A513ECE564
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF3D2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF3D2088F
+	by mail.kernel.org (Postfix) with ESMTP id C89252088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:43:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89252088F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbeIQULR (ORCPT
+        id S1728946AbeIQULS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:11:17 -0400
-Received: from mga11.intel.com ([192.55.52.93]:56655 "EHLO mga11.intel.com"
+        Mon, 17 Sep 2018 16:11:18 -0400
+Received: from mga02.intel.com ([134.134.136.20]:47207 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728790AbeIQULR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728906AbeIQULR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Sep 2018 16:11:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 07:43:38 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 07:43:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,385,1531810800"; 
-   d="scan'208";a="84224618"
+   d="scan'208";a="73671062"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 17 Sep 2018 07:43:35 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Sep 2018 07:43:36 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id EB1E3FB; Mon, 17 Sep 2018 17:43:34 +0300 (EEST)
+        id 309FA39B; Mon, 17 Sep 2018 17:43:35 +0300 (EEST)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andreas Noever <andreas.noever@gmail.com>,
@@ -41,52 +41,193 @@ Cc:     Andreas Noever <andreas.noever@gmail.com>,
         Yehezkel Bernat <YehezkelShB@gmail.com>,
         Lukas Wunner <lukas@wunner.de>,
         Anthony Wong <anthony.wong@canonical.com>
-Subject: [PATCH v2 0/4] thunderbolt: Miscellaneous cleanups
-Date:   Mon, 17 Sep 2018 17:43:30 +0300
-Message-Id: <20180917144334.18367-1-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 4/4] thunderbolt: Add Intel as copyright holder
+Date:   Mon, 17 Sep 2018 17:43:34 +0300
+Message-Id: <20180917144334.18367-5-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180917144334.18367-1-mika.westerberg@linux.intel.com>
+References: <20180917144334.18367-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Intel has done pretty major changes to the driver and we continue to do
+so in the future as well. Add Intel as copyright holder of the files we
+have done changes.
 
-Here are a couple of changes which have been in my TODO list some time
-already but have not had time to make a proper patch out of them until now.
+While there drop "Cactus Ridge" from the headers because this driver
+works also with other Thunderbolt controllers.
 
-The only change to the previous version is that I realized it could be
-useful for users to see the actual connected devices (including their name
-which is read from DROM) printed to the system log. Hence the patch 2/4.
+No functional changes intended.
 
-Mika Westerberg (4):
-  thunderbolt: Make the driver less verbose
-  thunderbolt: Print connected devices
-  thunderbolt: Convert rest of the driver files to use SPDX identifier
-  thunderbolt: Add Intel as copyright holder
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/cap.c      | 3 ++-
+ drivers/thunderbolt/ctl.c      | 3 ++-
+ drivers/thunderbolt/ctl.h      | 3 ++-
+ drivers/thunderbolt/eeprom.c   | 3 ++-
+ drivers/thunderbolt/nhi.c      | 3 ++-
+ drivers/thunderbolt/nhi.h      | 3 ++-
+ drivers/thunderbolt/nhi_regs.h | 1 +
+ drivers/thunderbolt/switch.c   | 3 ++-
+ drivers/thunderbolt/tb.h       | 3 ++-
+ drivers/thunderbolt/tb_regs.h  | 3 ++-
+ 10 files changed, 19 insertions(+), 9 deletions(-)
 
- drivers/thunderbolt/cap.c      |  3 +-
- drivers/thunderbolt/ctl.c      |  9 +++--
- drivers/thunderbolt/ctl.h      |  3 +-
- drivers/thunderbolt/dma_port.c |  5 +--
- drivers/thunderbolt/dma_port.h |  5 +--
- drivers/thunderbolt/domain.c   |  7 +---
- drivers/thunderbolt/eeprom.c   |  5 ++-
- drivers/thunderbolt/icm.c      |  5 +--
- drivers/thunderbolt/nhi.c      | 33 ++++++++--------
- drivers/thunderbolt/nhi.h      |  3 +-
- drivers/thunderbolt/nhi_regs.h |  1 +
- drivers/thunderbolt/path.c     | 26 ++++++-------
- drivers/thunderbolt/property.c |  5 +--
- drivers/thunderbolt/switch.c   | 71 +++++++++++++++++++---------------
- drivers/thunderbolt/tb.c       | 10 ++---
- drivers/thunderbolt/tb.h       |  9 +++--
- drivers/thunderbolt/tb_msgs.h  |  5 +--
- drivers/thunderbolt/tb_regs.h  |  3 +-
- drivers/thunderbolt/xdomain.c  |  5 +--
- include/linux/thunderbolt.h    |  5 +--
- 20 files changed, 107 insertions(+), 111 deletions(-)
-
+diff --git a/drivers/thunderbolt/cap.c b/drivers/thunderbolt/cap.c
+index c2277b8ee88d..9553305c63ea 100644
+--- a/drivers/thunderbolt/cap.c
++++ b/drivers/thunderbolt/cap.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Thunderbolt Cactus Ridge driver - capabilities lookup
++ * Thunderbolt driver - capabilities lookup
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #include <linux/slab.h>
+diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
+index 2ab6033a0a3d..270fec96c603 100644
+--- a/drivers/thunderbolt/ctl.c
++++ b/drivers/thunderbolt/ctl.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Thunderbolt Cactus Ridge driver - control channel and configuration commands
++ * Thunderbolt driver - control channel and configuration commands
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #include <linux/crc32.h>
+diff --git a/drivers/thunderbolt/ctl.h b/drivers/thunderbolt/ctl.h
+index 3062e0b5f71e..2f1a1e111110 100644
+--- a/drivers/thunderbolt/ctl.h
++++ b/drivers/thunderbolt/ctl.h
+@@ -1,8 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Thunderbolt Cactus Ridge driver - control channel and configuration commands
++ * Thunderbolt driver - control channel and configuration commands
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #ifndef _TB_CFG
+diff --git a/drivers/thunderbolt/eeprom.c b/drivers/thunderbolt/eeprom.c
+index d2dd40390783..81e8ac4c5805 100644
+--- a/drivers/thunderbolt/eeprom.c
++++ b/drivers/thunderbolt/eeprom.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Thunderbolt Cactus Ridge driver - eeprom access
++ * Thunderbolt driver - eeprom access
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #include <linux/crc32.h>
+diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
+index 02379aa27120..2874f9400123 100644
+--- a/drivers/thunderbolt/nhi.c
++++ b/drivers/thunderbolt/nhi.c
+@@ -1,10 +1,11 @@
+ /*
+- * Thunderbolt Cactus Ridge driver - NHI driver
++ * Thunderbolt driver - NHI driver
+  *
+  * The NHI (native host interface) is the pci device that allows us to send and
+  * receive frames from the thunderbolt bus.
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #include <linux/pm_runtime.h>
+diff --git a/drivers/thunderbolt/nhi.h b/drivers/thunderbolt/nhi.h
+index 1696a4560948..1b5d47ecd3ed 100644
+--- a/drivers/thunderbolt/nhi.h
++++ b/drivers/thunderbolt/nhi.h
+@@ -1,8 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Thunderbolt Cactus Ridge driver - NHI driver
++ * Thunderbolt driver - NHI driver
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #ifndef DSL3510_H_
+diff --git a/drivers/thunderbolt/nhi_regs.h b/drivers/thunderbolt/nhi_regs.h
+index b3e49d19c01e..a60bd98c1d04 100644
+--- a/drivers/thunderbolt/nhi_regs.h
++++ b/drivers/thunderbolt/nhi_regs.h
+@@ -3,6 +3,7 @@
+  * Thunderbolt driver - NHI registers
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #ifndef NHI_REGS_H_
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 9f44a2924dac..52ff854f0d6c 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Thunderbolt Cactus Ridge driver - switch/port utility functions
++ * Thunderbolt driver - switch/port utility functions
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #include <linux/delay.h>
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 5a99245573c0..52584c4003e3 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -1,8 +1,9 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Thunderbolt Cactus Ridge driver - bus logic (NHI independent)
++ * Thunderbolt driver - bus logic (NHI independent)
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #ifndef TB_H_
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index 693b0353c3fe..6f1ff04ee195 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -1,12 +1,13 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Thunderbolt Cactus Ridge driver - Port/Switch config area registers
++ * Thunderbolt driver - Port/Switch config area registers
+  *
+  * Every thunderbolt device consists (logically) of a switch with multiple
+  * ports. Every port contains up to four config regions (HOPS, PORT, SWITCH,
+  * COUNTERS) which are used to configure the device.
+  *
+  * Copyright (c) 2014 Andreas Noever <andreas.noever@gmail.com>
++ * Copyright (C) 2018, Intel Corporation
+  */
+ 
+ #ifndef _TB_REGS
 -- 
 2.18.0
 
