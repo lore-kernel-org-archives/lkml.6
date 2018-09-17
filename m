@@ -2,187 +2,194 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86930ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E9CECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F3D2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:07:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F3D2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F37D2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F37D2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeIQOdv (ORCPT
+        id S1727979AbeIQOf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:33:51 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:32900 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbeIQOdv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:33:51 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 8-v6so18288309oip.0;
-        Mon, 17 Sep 2018 02:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2xLPiiC3F2fNaw6VUQwcnuiHNxST+bcD/i6/1wgAca4=;
-        b=F1ILyxVAYKNc/DxF7ceIkYBD8z2/4iDK8E+5xbcitHmYVvPTDp3TfxHyFTzvxvWNlF
-         FdK4RBHI+6NQ0Bm/y8QRQNANE7Eq6hzHLHRD0dv+ybBuVAtqAJQlTzfIbPLpszUzggVc
-         a9iwL5iKI7ROVTIvUP6vpDxkwzdfCRkJz41dF9vy7ipLEPiPUy4O7uHJykjiqpbbq/2Y
-         KV4gWHMG5lBh/2H3492IpeiZPegQWhDRzs0ARgeccOCMkqpn5YlA+dTlPU1LxIWP0QK8
-         DpKVa6WrZB40P96iS21gOlz1SzwdQZbtB+o7d4DgHcNnY40dmjxc23SSAoivon9W/IRy
-         GBpg==
-X-Gm-Message-State: APzg51Clwln4NdiCQ+ookTEOcKnWyFJ2ud7aUpDe847HIi0j6dAbmi5T
-        Npipxyr3wn7GYnNCrO71MWAAW5A1pLiE7AhOrnA=
-X-Google-Smtp-Source: ANB0Vda6Lq5YqtcbKQqbzKnt85P3Ceguv7ebTo0kDw5xxePhx1fRZzHpeBEr2UEu1ZF9VTrOtDFcP1wVit144Ij9GjA=
-X-Received: by 2002:aca:fd4f:: with SMTP id b76-v6mr17543812oii.307.1537175241062;
- Mon, 17 Sep 2018 02:07:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180831172851.79812-1-srinivas.pandruvada@linux.intel.com>
- <23293649.J1qzPCXian@aspire.rjw.lan> <87in3c7x9o.fsf@riseup.net>
- <2646540.WJ9HbOajLd@aspire.rjw.lan> <87pnxf6zhe.fsf@riseup.net>
-In-Reply-To: <87pnxf6zhe.fsf@riseup.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 17 Sep 2018 11:07:09 +0200
-Message-ID: <CAJZ5v0j5TWT-6+PcbQ3ohbfA4rNkJ83PO-YxRG9hK1q61=C4EA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Optimize IO boost in non HWP mode
-To:     currojerez@riseup.net
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        eero.t.tamminen@intel.com, Len Brown <lenb@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Mon, 17 Sep 2018 10:35:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:21030 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727166AbeIQOf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:35:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 02:09:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
+   d="scan'208";a="70581758"
+Received: from shbuild888.sh.intel.com ([10.239.146.239])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Sep 2018 02:09:23 -0700
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        H Peter Anvin <hpa@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michal Hocko <mhocko@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v3] x86/mm: Expand static page table for fixmap space
+Date:   Mon, 17 Sep 2018 17:14:23 +0800
+Message-Id: <20180917091423.16069-1-feng.tang@intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 15, 2018 at 8:53 AM Francisco Jerez <currojerez@riseup.net> wrote:
->
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->
-> > On Tuesday, September 11, 2018 7:35:15 PM CEST Francisco Jerez wrote:
-> >>
-> >> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
-> >>
-> >> > On Thursday, September 6, 2018 6:20:08 AM CEST Francisco Jerez wrote:
-> >> >
-> >> >> Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com> writes:
-> >> >>=20
-> >> >> > [...]
-> >> >> >
-> >> >> >> > >=3D20
-> >> >> >> > > This patch causes a number of statistically significant
-> >> >> >> > > regressions
-> >> >> >> > > (with significance of 1%) on the two systems I've tested it
-> >> >> >> > > on.  On
-> >> >> >> > > my
-> >> >> >> >=3D20
-> >> >> >> > Sure. These patches are targeted to Atom clients where some of
-> >> >> >> > these
-> >> >> >> > server like workload may have some minor regression on few watts
-> >> >> >> > TDP
-> >> >> >> > parts.
-> >> >> >>=3D20
-> >> >> >> Neither the 36% regression of fs-mark, the 21% regression of sqlite,
-> >> >> >> nor
-> >> >> >> the 10% regression of warsaw qualify as small.  And most of the test
-> >> >> >> cases on the list of regressions aren't exclusively server-like, if
-> >> >> >> at
-> >> >> >> all.  Warsaw, gtkperf, jxrendermark and lightsmark are all graphics
-> >> >> >> benchmarks -- Latency is as important if not more for interactive
-> >> >> >> workloads than it is for server workloads.  In the case of a conflict
-> >> >> >> like the one we're dealing with right now between optimizing for
-> >> >> >> throughput (e.g. for the maximum number of requests per second) and
-> >> >> >> optimizing for latency (e.g. for the minimum request duration), you
-> >> >> >> are
-> >> >> >> more likely to be concerned about the former than about the latter in
-> >> >> >> a
-> >> >> >> server setup.
-> >> >> >
-> >> >> > Eero,
-> >> >> > Please add your test results here.
-> >> >> >
-> >> >> > No matter which algorithm you do, there will be variations. So you have
-> >> >> > to look at the platforms which you are targeting. For this platform=3D=
-> >> 20
-> >> >> > number one item is use of less turbo and hope you know why?
-> >> >>=20
-> >> >> Unfortunately the current controller uses turbo frequently on Atoms for
-> >> >> TDP-limited graphics workloads regardless of IOWAIT boosting.  IOWAIT
-> >> >> boosting simply exacerbated the pre-existing energy efficiency problem.
-> >> >
-> >> > My current understanding of the issue at hand is that using IOWAIT boosti=
-> >> ng
-> >> > on Atoms is a regression relative to the previous behavior.
-> >>
-> >> Not universally.  IOWAIT boosting helps under roughly the same
-> >> conditions on Atom as it does on big core, so applying this patch will
-> >> necessarily cause regressions too (see my reply from Sep. 3 for some
-> >> numbers), and won't completely restore the previous behavior since it
-> >> simply decreases the degree of IOWAIT boosting applied without being
-> >> able to avoid it (c.f. the series I'm working on that does something
-> >> similar to IOWAIT boosting when it's able to determine it's actually
-> >> CPU-bound, which prevents energy inefficient behavior for non-CPU-bound
-> >> workloads that don't benefit from a higher CPU clock frequency anyway).
-> >
-> > Well, OK.  That doesn't seem to be a clear-cut regression situation, then,
-> > since getting back is not desirable, apparently.
-> >
-> > Or would it restore the previous behavior if we didn't do any IOWAIT
-> > boosting on Atoms at all?
-> >
-> >> > That is what Srinivas is trying to address here AFAICS.
-> >> >
-> >> > Now, you seem to be saying that the overall behavior is suboptimal and the
-> >> > IOWAIT boosting doesn't matter that much,
-> >>
-> >> I was just saying that IOWAIT boosting is less than half of the energy
-> >> efficiency problem, and this patch only partially addresses that half of
-> >> the problem.
-> >
-> > Well, fair enough, but there are two things to consider here, the general
-> > energy-efficiency problem and the difference made by IOWAIT boosting.
-> >
-> > If the general energy-efficiency problem had existed for a relatively long
-> > time, but it has got worse recently due to the IOWAIT boosting, it still
-> > may be desirable to get the IOWAIT boosting out of the picture first
-> > and then get to the general problem.
-> >
->
-> IMHO what is needed in order to address the IOWAIT boosting energy
-> efficiency problem is roughly the same we need in order to address the
-> other energy efficiency problem: A mechanism along the lines of [1]
-> allowing us to determine whether the workload is IO-bound or not.  In
-> the former case IOWAIT boosting won't be able to improve the performance
-> of the workload since the limiting factor is the IO throughput, so it
-> will only increase the energy usage, potentially exacerbating the
-> bottleneck if the IO device is an integrated GPU.  In the latter case
-> where the CPU and IO devices being waited on are both underutilized it
-> makes sense to optimize for low latency more aggressively (certainly
-> more aggressively than this patch does) which will increase the
-> utilization of the IO devices until at least one IO device becomes a
-> bottleneck, at which point the throughput of the system becomes roughly
-> independent of the CPU frequency and we're back to the former case.
->
-> [1] https://patchwork.kernel.org/patch/10312259/
+We met a kernel panic when enabling earlycon, which is due to
+the fixmap address of earlycon is not statically setup.
 
-I remember your argumentation above from the previous posts and I'm
-not questioning it.  I don't see much point in repeating arguments
-that have been given already.
+Currently the static fixmap setup in head_64.S only covers 2M
+virtual address space, while it acutually could be in 4M space
+with different kernel configurations.
 
-My question was whether or not there was a regression related
-specifically to adding the IOWAIT boosting mechanism that needed to be
-addressed separately.  I gather from the discussion so far that this
-is not the case.
+So increase the static space to 4M for now by defining FIXMAP_PMD_NUM
+to 2, and add a build time check for future possible overflow so that
+the macro could be increased accordingly.
 
-Thanks,
-Rafael
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+---
+ arch/x86/include/asm/fixmap.h     |  3 +++
+ arch/x86/include/asm/pgtable_64.h |  3 ++-
+ arch/x86/kernel/head_64.S         | 16 ++++++++++++----
+ arch/x86/mm/pgtable.c             | 10 ++++++++++
+ arch/x86/xen/mmu_pv.c             |  7 +++++--
+ 5 files changed, 32 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index e203169..ffaa0fa 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -14,6 +14,9 @@
+ #ifndef _ASM_X86_FIXMAP_H
+ #define _ASM_X86_FIXMAP_H
+ 
++/* Put here to be accessble for assembly code like head_64.S */
++#define FIXMAP_PMD_NUM	2
++
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ #include <asm/acpi.h>
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index ce2b590..9c85b54 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -14,6 +14,7 @@
+ #include <asm/processor.h>
+ #include <linux/bitops.h>
+ #include <linux/threads.h>
++#include <asm/fixmap.h>
+ 
+ extern p4d_t level4_kernel_pgt[512];
+ extern p4d_t level4_ident_pgt[512];
+@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
+ extern pmd_t level2_kernel_pgt[512];
+ extern pmd_t level2_fixmap_pgt[512];
+ extern pmd_t level2_ident_pgt[512];
+-extern pte_t level1_fixmap_pgt[512];
++extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
+ extern pgd_t init_top_pgt[];
+ 
+ #define swapper_pg_dir init_top_pgt
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 15ebc2f..a3618cf 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -24,6 +24,7 @@
+ #include "../entry/calling.h"
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/fixmap.h>
+ 
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/asm-offsets.h>
+@@ -445,13 +446,20 @@ NEXT_PAGE(level2_kernel_pgt)
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+ 
+ NEXT_PAGE(level2_fixmap_pgt)
+-	.fill	506,8,0
+-	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+-	.fill	5,8,0
++	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
++	pgtno = 0
++	.rept (FIXMAP_PMD_NUM)
++	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
++		+ _PAGE_TABLE_NOENC;
++	pgtno = pgtno + 1
++	.endr
++	/* 6 MB reserved space + a 2MB hole */
++	.fill	4,8,0
+ 
+ NEXT_PAGE(level1_fixmap_pgt)
++	.rept (FIXMAP_PMD_NUM)
+ 	.fill	512,8,0
++	.endr
+ 
+ #undef PMDS
+ 
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index ae39455..a4052b1 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -637,6 +637,16 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
+ {
+ 	unsigned long address = __fix_to_virt(idx);
+ 
++#ifdef CONFIG_X86_64
++       /*
++	* In arch/x86/kernel/head_64.S, the static page table has
++	* been setup for fixmap. Add a sanity compiling check
++	* whether fixmap space has exceeded the capacity.
++	*/
++	BUILD_BUG_ON(__end_of_permanent_fixed_addresses
++			> (FIXMAP_PMD_NUM * PTRS_PER_PMD));
++#endif
++
+ 	if (idx >= __end_of_fixed_addresses) {
+ 		BUG();
+ 		return;
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 2fe5c9b..ee82aa3 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1907,7 +1907,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
+ 	/* L3_k[511] -> level2_fixmap_pgt */
+ 	convert_pfn_mfn(level3_kernel_pgt);
+ 
+-	/* L3_k[511][506] -> level1_fixmap_pgt */
++	/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
+ 	convert_pfn_mfn(level2_fixmap_pgt);
+ 
+ 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
+@@ -1952,7 +1952,10 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
+ 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
+-	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
++
++	for (i = 0; i < FIXMAP_PMD_NUM; i++)
++		set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
++				PAGE_KERNEL_RO);
+ 
+ 	/* Pin down new L4 */
+ 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
+-- 
+2.7.4
+
