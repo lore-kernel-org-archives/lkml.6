@@ -2,128 +2,122 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B5CECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAEAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECAFA214FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:26:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8mlRCB8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECAFA214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C567214FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C567214FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbeIRAyo (ORCPT
+        id S1728202AbeIRBDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:54:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbeIRAyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:54:44 -0400
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14795214FE
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 19:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537212360;
-        bh=Lv+GLupaRo5hCP9HnNMyUrPg84YJuzARl2Fo3aXm3I8=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=N8mlRCB8Hwl0tqBme45Fv0emymouOnnhBP8WWS2z6Tph2XN1FGzpWaDZaF5820JMM
-         xZ3qV+7rr+u6+of2xGZC+xnC/rjWeYoysNwN4idz+XFFquzI/iPVmJBYXX/c5MMdCT
-         dN0o4pFQLQgkng5dCeP6XRaIHUxitvbuNlYmnwS4=
-Received: by mail-wm1-f52.google.com with SMTP id c14-v6so10928058wmb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 12:26:00 -0700 (PDT)
-X-Gm-Message-State: APzg51CYjpvdml85S9pUWnW4H6zPV6j8GLY7AOUcyCOcGXzaAq0ia5Mt
-        CpuS3E7GitdUkYP9Zr01CwkFne5pWJz1Cdu8ktxIsw==
-X-Google-Smtp-Source: ANB0VdatiCtrRBAEXx1fvTTo4TksfrETU4sUIxl0JmAQqF6W65na63uItz0WgyuskT6iZ+PRj/kXTGZZHXN77Hn3ips=
-X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr12554970wmd.137.1537212358434;
- Mon, 17 Sep 2018 12:25:58 -0700 (PDT)
+        Mon, 17 Sep 2018 21:03:36 -0400
+Received: from mail-eopbgr40078.outbound.protection.outlook.com ([40.107.4.78]:12928
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727329AbeIRBDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 21:03:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=22kDRg6omrir+k4yoKZz7qlCMbOtBoHBWcnZBfkZFyg=;
+ b=bnmpGlX3Fy75VHS13zuKw8rh+GaXOGTNeNgyF6PrLpuiI07f+XGzr8nSW4b4hDjIvwJyvWRwRrFKPARN5bMrKuKivRxbrrXZ59orQzMgZsXOd1z+SBgvBS/LiBgxw+zAE5Jkbfyu19LKNBq5Zm+uYjNZf2XA01rtB2Xl1a9Pn3s=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4241.eurprd04.prod.outlook.com (52.134.126.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Mon, 17 Sep 2018 19:34:48 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c5f:d09d:bdc1:fe03]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c5f:d09d:bdc1:fe03%2]) with mapi id 15.20.1143.017; Mon, 17 Sep 2018
+ 19:34:48 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "marex@denx.de" <marex@denx.de>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
+Thread-Topic: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif
+ block
+Thread-Index: AQHUToxYC5nA0ZROGECLHk7Ehnp4vqT02KYAgAAFNwA=
+Date:   Mon, 17 Sep 2018 19:34:48 +0000
+Message-ID: <4a9eae61c79abd844c9077edb039be348b77224f.camel@nxp.com>
+References: <cover.1537191359.git.leonard.crestez@nxp.com>
+         <20180917191602.GP188300@art_vandelay>
+In-Reply-To: <20180917191602.GP188300@art_vandelay>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4241;6:0fJ+/gNipWabeTHMD4vynd4/YTSs1EEVWYysuZ588ZsRQ12UOWnlRb9yYSRZOgNI/3SoJr+FtlGkHGBuWj4AZBv22uvKN2C7ycuhLtG/cr/aZpMCU+37k84kKVrFK1VizRB9GZl4rGasaoty3qKpCZwz0QSxN0U7HK9zfNv4KUSrCUuCW/AN8Rhn/GOdXvU990ROt+HE2TDgt+H/BCNHsYTq/7S14y6oRPYQGR6vklmzvM7qeH1bn9azIBhSlX/jZOrxIqc/efMP0DB07AIrkVtbs0HMeGAkyMVGR950PYhPpj3OXU7B0ioXkO8Q5FvjXscSEJhcObwSPRMfj1zlSY2PSY9yUkE5sWDVsG8SjybImtAHBOPTny7jHeNYnqkwQOtMwkU/qJ0MXFfjs3KqSTAmlZDDHxDykFnLUaA1n+37uhiQuHzJf4XP1a95TfNRV3sX1FATku3Xlx5uKSpqYQ==;5:qsX2CZjvZAzwrTfrnJuaTBVm33eYnC8O9Pdk49GzAnm+iwmMuJnVwb6ljjpolTC6Yu1BfOqOBIAO38cQRCE3aderJgxTE4RvrEvnYPOrCoNG7CiKNTmzt9Cft77iVNWfqMrvyD6dZtivQtVog2Go/x4rT5G35N17Ce+9uJV8W0M=;7:qWoYmY2Rfr5mHKY019wjMVNThxsXaOKN8+pJI5S+Jx2ZhOgIf/3Z8xLDlwgIPAUwRjSruYdrxG7bqlDnPJKMmsuyF/PDnV1t9nJCBcWlSRKR1UHt9t5zq0BGPMvtRl7+ewlLx2eb0VAs6+2AagS0ytcA60GZXNt8C4SGQY1/QB4qxdeu9RsUuqUfjiPD2eWiTMFA6R5Q6U5Ia+WnV7keYxHnIKz+bLbKrgsMAJejRTUr83GpflIL8d6fl61z+SMm
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 941e2f48-c79f-4829-4696-08d61cd4a196
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4241;
+x-ms-traffictypediagnostic: AM0PR04MB4241:
+x-microsoft-antispam-prvs: <AM0PR04MB42412C7C120F9BAD7BEB949BEE1E0@AM0PR04MB4241.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699050);SRVR:AM0PR04MB4241;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4241;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(39860400002)(376002)(346002)(199004)(189003)(102836004)(8676002)(36756003)(478600001)(86362001)(7736002)(97736004)(6512007)(66066001)(305945005)(106356001)(105586002)(4326008)(6436002)(8936002)(2501003)(53936002)(186003)(5250100002)(50226002)(486006)(81166006)(81156014)(2906002)(110136005)(2201001)(14454004)(6506007)(5660300001)(76176011)(2900100001)(68736007)(256004)(14444005)(44832011)(3846002)(6116002)(118296001)(54906003)(11346002)(2616005)(6246003)(446003)(316002)(7416002)(6486002)(25786009)(99286004)(476003)(26005)(229853002)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4241;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 4r0FXcruqZiRNBZ37boXZ2PogHPx3CSud63TRR63w4kkY0JSoaRAWZHmLwA4sosNN5yN3hO7wGu3T0W7kv7Tu0ySzJRK3waLRm0lpEnUlR9Ehye4flEkfYodSYSf5i6UdSRJQ2IxLF84w4atYELdtxHfJhhyx21XOE5qfEYmFV3Fh0sMu4FV+sO5NyxNnCYRHW4yQ8WrZ0nxWSiMTl+71VknDFjSmhKCNa9CYhYVE8W0XzryT/RdM16s2sv6cxsvJavZFUs1c9vUyVMv6nt368HnsEJyHk5lr7Iv6qsvoqrpU7nsaiUV9aoPlZPqkjvpTQMlOFSXXFduNTee8ImUKQcyZZRKsmcYX6ZKR/yhGd4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E0741C46552AAE4199C8664C16948F29@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a1c:7810:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 12:25:38
- -0700 (PDT)
-In-Reply-To: <20180914125118.909646643@linutronix.de>
-References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Sep 2018 12:25:38 -0700
-X-Gmail-Original-Message-ID: <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
-Message-ID: <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 941e2f48-c79f-4829-4696-08d61cd4a196
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 19:34:48.8328
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 5:50 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> The code flow for the vclocks is convoluted as it requires the vclocks
-> which can be invalidated separately from the vsyscall_gtod_data sequence to
-> store the fact in a separate variable. That's inefficient.
->
-
->  notrace static int do_hres(clockid_t clk, struct timespec *ts)
->  {
->         struct vgtod_ts *base = &gtod->basetime[clk];
->         unsigned int seq;
-> -       int mode;
-> -       u64 ns;
-> +       u64 cycles, ns;
->
->         do {
->                 seq = gtod_read_begin(gtod);
-> -               mode = gtod->vclock_mode;
->                 ts->tv_sec = base->sec;
->                 ns = base->nsec;
-> -               ns += vgetsns(&mode);
-> +               cycles = vgetcyc(gtod->vclock_mode);
-> +               if (unlikely((s64)cycles < 0))
-> +                       return vdso_fallback_gettime(clk, ts);
-
-i was contemplating this, and I would suggest one of two optimizations:
-
-1. have all the helpers return a struct containing a u64 and a bool,
-and use that bool.  The compiler should do okay.
-
-2. Be sneaky.  Later in the series, you do:
-
-                if (unlikely((s64)cycles < 0))
-                        return vdso_fallback_gettime(clk, ts);
--               ns += (cycles - gtod->cycle_last) * gtod->mult;
-+               if (cycles > last)
-+                       ns += (cycles - last) * gtod->mult;
-
-How about:
-
-if (unlikely((s64)cycles <= last)) {
-  if (cycles < 0) [or cycles == -1 or whatever]
-    return vdso_fallback_gettime;
-} else {
-  ns += (cycles - last) * gtod->mult;
-}
-
-which should actually make this whole mess be essentially free.
-
-Also, I'm not entirely convinced that this "last" thing is needed at
-all.  John, what's the scenario under which we need it?
-
---Andy
-
---Andy
+T24gTW9uLCAyMDE4LTA5LTE3IGF0IDE1OjE2IC0wNDAwLCBTZWFuIFBhdWwgd3JvdGU6DQo+IE9u
+IE1vbiwgU2VwIDE3LCAyMDE4IGF0IDA0OjQyOjEwUE0gKzAzMDAsIExlb25hcmQgQ3Jlc3RleiB3
+cm90ZToNCj4gPiBBZGRpbmcgbGNkaWYgbm9kZXMgdG8gYSBwb3dlciBkb21haW4gY3VycmVudGx5
+IGRvZXNuJ3Qgd29yaywgaXQgcmVzdWx0cw0KPiA+IGluIGJsYWNrL2NvcnJ1cHRlZCBzY3JlZW5z
+IG9yIGhhbmdzLiBXaGlsZSB0aGUgZHJpdmVyIGRvZXMgZW5hYmxlDQo+ID4gcnVudGltZSBwbSBp
+dCBkb2VzIG5vdCBkZWFsIGNvcnJlY3RseSB3aXRoIHRoZSBibG9jayBiZWluZyB1bnBvd2VyZWQu
+DQo+ID4gDQo+ID4gVGhpcyBzZXJpZXMgc3RhbGxlZCBzbyBJIHJlYWNoZWQgb3V0IHRvIE1hcmVr
+IG9uIElSQyBhbmQgaGUgd2FzDQo+ID4gc3VycHJpc2VkIHRvIGJlIGxpc3RlZCBhcyBtYWludGFp
+bmVyIA0KPiANCj4gSG9wZWZ1bGx5IG5vdCB0b28gc3VycHJpc2VkIHNpbmNlIE1hcmVrIGFkZGVk
+IHRoZW1zZWxmIHRvIE1BSU5UQUlORVJTIHdoZW4NCj4gYWRkaW5nIHRoZSBkcml2ZXIgOi0pDQo+
+IA0KPiBJIHN1cHBvc2Ugd2Ugc2hvdWxkIHByb2JhYmx5IG1vdmUgdGhpcyB0byBkcm0tbWlzYyBz
+aW5jZSBpdCBxdWFsaWZpZXMgYXMgYQ0KPiAic21hbGwgZHJpdmVyIiBhbmQgbmVlZHMgYSBob21l
+LiBMb29raW5nIHRocm91Z2ggZ2l0IGhpc3Rvcnkgc2hvd3MgdGhlIGxhc3QNCj4gbXhzZmItc3Bl
+Y2lmaWMgY2hhbmdlIHdhcyBiYWNrIGluIDAyLzE3LiBFdmVyeXRoaW5nIGVsc2UgaGFzIGJlZW4g
+ZHJtLXdpZGUNCj4gcmVmYWN0b3JzLiBUaG91Z2h0cz8NCj4gDQo+IE1hcmVrL0xlb25hcmQ6IENh
+cmUgdG8gc2lnbiB1cCB0byBiZSBsaXN0ZWQgYXMgYSByZXZpZXdlcnM/DQoNClNpbmNlIG15IGtu
+b3dsZWRnZSBvZiBkcm0gaXMgdmVyeSBiYXNpYzogbm8gdGhhbmtzLg0KDQpTaW5jZSB0aGlzIGlz
+IGFuIGlteCBkcml2ZXIgaXQgd291bGQgbWFrZSBhIGxvdCBvZiBzZW5zZSB0byBncm91cCB0aGlz
+DQp0b2dldGhlciB3aXRoIHRoZSByZXN0IG9mIGRybS9pbXggc29tZWhvdy4NCg0KLS0NClJlZ2Fy
+ZHMsDQpMZW9uYXJk
