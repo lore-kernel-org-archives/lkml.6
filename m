@@ -2,99 +2,150 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C441EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F385CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 401622147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:47:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 401622147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 9DED22147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:57:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j55spvxV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DED22147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbeIQGMR (ORCPT
+        id S1727444AbeIQGWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 02:12:17 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61306 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeIQGMQ (ORCPT
+        Mon, 17 Sep 2018 02:22:50 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:39851 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbeIQGWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 02:12:16 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8H0l2Ee094630;
-        Mon, 17 Sep 2018 09:47:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Mon, 17 Sep 2018 09:47:02 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8H0kv74094624
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 17 Sep 2018 09:47:01 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
-To:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>
-References: <20180916003059.1046-1-keescook@chromium.org>
- <20180916003059.1046-17-keescook@chromium.org>
- <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
- <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <e6e7521f-7810-a938-3f0e-daefb6579344@i-love.sakura.ne.jp>
-Date:   Mon, 17 Sep 2018 09:46:58 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Sep 2018 02:22:50 -0400
+Received: by mail-it0-f66.google.com with SMTP id h1-v6so8898425itj.4
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 17:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=fmaXJem1u+BE9/4vZE6vncVsavp9C4jAYD9xOClR9Ws=;
+        b=j55spvxVALibpBjYKZ95Xh7msT3+fcBOUwE0xIpQQRNAl65DwFA9J+6Hq/horkzlJq
+         u+XdmzsBuVcnJfAvdnVFJ/d1vsbMb+OS6PN87paPYFMax4oJ6RTFCcKULJMnKUc9hpBe
+         jS8tCzocYnhkd3KXu/j/hNSHSOiwGA3N1b62o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fmaXJem1u+BE9/4vZE6vncVsavp9C4jAYD9xOClR9Ws=;
+        b=ckNBI+2LIsRBXb2BErSymSSVfmnDoglNZXAg50QXX9ZNoabVJVV6+LHI2ywSR0p1yL
+         OxAWwybTQ+L6JcYT7t/uyK5dXjLwWOnPeHICEgsg7ntYOIUuioVq/J+FmVcSzuYVPGgc
+         LScKVREw4Fr9tsjfEv12Fs2FmF6trjsosSF7PL4N3OpJmX53YhtXzTLPLLxsq2xy9iCH
+         y7ckMwfN3r7LGdCiwy4lqSOZlmpGLiNGb5Y1iquH0yit0oePTCI98wdOYwsm77455aqh
+         BMetlRWN0KEr/LKYclPO8xXqwvNComXrQ/8apOVHYX/ascJkrvkbEDPeZX5nM6n2pN3r
+         +nxw==
+X-Gm-Message-State: APzg51DOa29mtySLkAK/aiBWc2xcOQ9MLn7oeWQ96wAnY44Da30/ZjVW
+        xSBS0VGUWO2iMq6H8G3l8Sj5Pg==
+X-Google-Smtp-Source: ANB0VdZ7DCJElnnbt0SCXqRF2wjD0+DUlBWOrQPTPBagvXu5hY6VugmGc2VJiCQeujngZLJf8wgMAw==
+X-Received: by 2002:a24:bcc4:: with SMTP id n187-v6mr10370044ite.144.1537145876925;
+        Sun, 16 Sep 2018 17:57:56 -0700 (PDT)
+Received: from localhost.localdomain ([209.82.80.116])
+        by smtp.gmail.com with ESMTPSA id f64-v6sm829972ite.4.2018.09.16.17.57.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Sep 2018 17:57:56 -0700 (PDT)
+From:   srinivas.kandagatla@linaro.org
+To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
+Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, bgoswami@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, alsa-devel@alsa-project.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 00/14] ASoC: Add support to WCD9335 Audio Codec
+Date:   Sun, 16 Sep 2018 17:57:13 -0700
+Message-Id: <20180917005727.32728-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.9.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/09/17 8:00, Kees Cook wrote:
-> On Sun, Sep 16, 2018 at 11:49 AM, Casey Schaufler
-> <casey@schaufler-ca.com> wrote:
->> One solution is to leave security= as is, not affecting "minor"
->> modules and only allowing specification of one major module, and adding
-> 
-> I would much prefer this, yes.
-> 
-> A question remains: how do we map the existing "security=" selection
-> of a "major" LSM against what will be next "exclusive" plus tomoyo,
-> and in the extreme case, nothing?
-> 
-> Perhaps as part of deprecating "security=", we could just declare that
-> it is selecting between SELinux, AppArmor, Smack, and Tomoyo only?
-> 
->> another boot option security.stack= that overrides a security= option
->> and that takes the list as you've implemented here.
-> 
-> or "lsm.stack=" that overrides "security=" entirely?
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
+Thankyou for reviewing v3 patchset, here is v4 addressing comments from v3.
 
-Yes, I think we can add new option.
+Qualcomm WCD9335 Codec is a standalone Hi-Fi audio codec IC.
+It is integrated in multiple Qualcomm SoCs like: MSM8996, MSM8976,
+and MSM8956 chipsets.
 
-For example, introducing lsm= and obsoleting security= (because total length for
-kernel command line is limited while enumeration makes the parameter value longer).
+WCD9335 had multiple functional blocks, like: Soundwire controller,
+interrupt mux, pin controller, Audio codec, MBHC, MAD(Mic activity Detection),
+Ultrasonic proximity and pen detection, Battery-voltage monitoring and
+Codec processing engine.
 
-  security= works like current behavior.
+Currently this patchset has been only tested with SLIMbus interface due
+to hardware avaiablity, but it can be easily made to work with both SLIMbus
+and I2C/I2S.    
 
-  lsm= requires explicit enumeration of all modules (except capability which has to
-  be always enabled) which should be enabled at boot.
+This patchset adds very basic playback and capture support witout much
+fancy features. New features will be added once the basic support is in.
+This patchset is tested on top of linux-next on DB820c for both playback
+, capture paths and MBHC.
 
-  security= is ignored if lsm= is specified.
+Some parts of the code has been inherited from Qualcomm andriod kernel,
+so credits to various authors.
+
+WCD9335 can be interfaced via I2S/I2C or SLIMbus. 
+
+Here is my test branch incase someone want to try this out:
+https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=wcd9335
+
+Thanks,
+Srini
+
+Changes since v3 (https://lkml.org/lkml/2018/9/4/318/)
+ - Updated mbhc dt bindings according to Robs Comments.
+ - Added a cleanup patch to common up fixups.
+ - Addressed various comments on mfd driver by Lee Jones.
+ - Added acks on bindings and irq support.
+ - fixed module loading
+
+Srinivas Kandagatla (14):
+  ASoC: dt-bindings: update wcd9335 bindings.
+  mfd: wcd9335: add support to wcd9335 core
+  mfd: wcd9335: add wcd irq support
+  ASoC: wcd9335: add support to wcd9335 codec
+  ASoC: wcd9335: add CLASS-H Controller support
+  ASoC: wcd9335: add basic controls
+  ASoC: wcd9335: add playback dapm widgets
+  ASoC: wcd9335: add capture dapm widgets
+  ASoC: wcd9335: add audio routings
+  ASoC: dt-bindings: Add WCD9335 MBHC specific properties
+  ASoC: wcd9335: add mbhc support
+  ASoC: apq8096: add slim support
+  ASoC: apq8096: add headset JACK support
+  ASoC: qcom: common: move be_hw_fixup to common
+
+ .../devicetree/bindings/sound/qcom,wcd9335.txt     |   30 +-
+ drivers/mfd/Kconfig                                |   13 +
+ drivers/mfd/Makefile                               |    4 +
+ drivers/mfd/wcd9335-core.c                         |  394 ++
+ include/linux/mfd/wcd9335/registers.h              |  640 +++
+ include/linux/mfd/wcd9335/wcd9335.h                |   81 +
+ sound/soc/codecs/Kconfig                           |    5 +
+ sound/soc/codecs/Makefile                          |    2 +
+ sound/soc/codecs/wcd-clsh-v2.c                     |  577 +++
+ sound/soc/codecs/wcd-clsh-v2.h                     |   49 +
+ sound/soc/codecs/wcd9335.c                         | 5241 ++++++++++++++++++++
+ sound/soc/qcom/apq8096.c                           |  128 +-
+ sound/soc/qcom/common.c                            |   17 +
+ sound/soc/qcom/sdm845.c                            |   22 +-
+ 14 files changed, 7168 insertions(+), 35 deletions(-)
+ create mode 100644 drivers/mfd/wcd9335-core.c
+ create mode 100644 include/linux/mfd/wcd9335/registers.h
+ create mode 100644 include/linux/mfd/wcd9335/wcd9335.h
+ create mode 100644 sound/soc/codecs/wcd-clsh-v2.c
+ create mode 100644 sound/soc/codecs/wcd-clsh-v2.h
+ create mode 100644 sound/soc/codecs/wcd9335.c
+
+-- 
+2.9.3
+
