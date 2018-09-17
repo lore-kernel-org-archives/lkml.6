@@ -2,144 +2,316 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089C2ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756DCECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B47592147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102B62147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwFYlP8m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47592147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="M6aiWYxH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102B62147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbeIRBlB (ORCPT
+        id S1728660AbeIRBkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 21:41:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36462 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728869AbeIRBk6 (ORCPT
+        Mon, 17 Sep 2018 21:40:15 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41754 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbeIRBkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 21:40:58 -0400
-Received: by mail-wm1-f66.google.com with SMTP id j192-v6so31783wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:12:06 -0700 (PDT)
+        Mon, 17 Sep 2018 21:40:14 -0400
+Received: by mail-qk1-f194.google.com with SMTP id h138-v6so9729397qke.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:11:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=7hi3CvN1Nd+o/3PPm1TcDbLUNws5AYaU/jcL5pNHJh4=;
-        b=QwFYlP8mE3VKDCStuoKRuGp3vFEVSHw0RWEfFZjkxi9TCw1phRODzPRfFF17QTPpNt
-         8Yrsh0MVEqAFgMcy7ptyimKD2hhKFdXhRiZwILcYXdgdu7/B62CXGiEBb+F7ChEQc9Sl
-         K0sW6fWCpsIvfK2sUbw+zOY0SgUSuDA+LbBNQ=
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qoA7p70DREEGHDGYkqmqpCGl6/L2/Ybk6ecH83aW6UM=;
+        b=M6aiWYxHA5UVmIi+9VHXPUR7DPm/TQQ25lR/zGaRw8xEqpP0y+xaNay+EYQ2S40X8K
+         C6EkYSg3UE1cndjvZbvCbAk9uIA7HnLe2jUXVhQW5iSWdJIBZi4MwW53JgvJwDod7wJ6
+         NLZKJFksdgo3C7XtikccvyK+MeCEPCNUKeoHj/fpRE2n0z7A0Uvq5B13EuNr3J2cU+58
+         I2Xjdx5kpEVatXrpc4eqBw5dty6fIWvJoSAamwK1mcZaCNugZkzs0XUpuvX1Wb7M6Pgh
+         dq3+kVhFrv8kfDEIufGdaZdRAzZgRvuJOWnYw9k2Y0RGK6dxfEgzPRzSP7zGWyjv/1+j
+         xbAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=7hi3CvN1Nd+o/3PPm1TcDbLUNws5AYaU/jcL5pNHJh4=;
-        b=ZUVmE/ZvLs5cYmjahH/fX0BsAHAZ4wyK+lu5MtEU3YYlL8IIbpm2wZWyq6stTu7yRw
-         qmu1kjZIkIi3PNWtPea73uSdsgUH5r0fNd7MjKmMcIieljS+TOSHUcrgtA6nGP0nbwVR
-         HH64JCJCG0Qmaj1JbE4O4ACGnabPJINQGkIpIz88ohqXlLiWDxPbz8MH+2//p41eqUJC
-         5cbPQKuTmRoKH5xQ2CUWwlF0PKjigDghumUhsOoRGCACYzOkKRn8ajCQB/vKK1ZDBPfT
-         m/fBpVs6MWz7o5+nwQwXGIujm9j3c5W+rgng483YEOVGOIG1zhPWIvpueaws/M+6m3Ao
-         PaQg==
-X-Gm-Message-State: APzg51Ccbli0xhq3cEzCazNKI8Lap1Peij0so+jcGYEtqatYQqjRg1y/
-        z/KMQuobcqcKcXDd/6HEZ66BD7N9wyYjoChagE0eLg==
-X-Google-Smtp-Source: ANB0VdZoLtffyu5AhHRdvJZCRUG7VrGiOiyYlE/uBF+x+m/R/wzUuzChmvLhKdylrwwWbxXSctV/SEgDqVyTPUCI6z4=
-X-Received: by 2002:a1c:aa8f:: with SMTP id t137-v6mr11139638wme.54.1537215125150;
- Mon, 17 Sep 2018 13:12:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qoA7p70DREEGHDGYkqmqpCGl6/L2/Ybk6ecH83aW6UM=;
+        b=gq/sn1hGDsK6ikLdRcdKZHPcd4gFF2W9e9RJrMR3fcY7FtsuwKhrbQ4WZiGEe8USAz
+         5XOYl0kwRrgRDcvFhn4YHWHZrnEWoSk3n83izTDRv4UUfQb679m6kDHdgjpS6aLVXIwC
+         5Ku0KqseGVtPeec+Tn5DCwHn+LA9GYcc2ZruU4FUQ7GVlZNY4w0i5m8NdtoKBrcDUG2T
+         bRU4AxZwmLaisRTXXqi7Yy2nmzy4TWlX0UYDcD5BOFXKBP8XBBkU43AGZWWXAkmjYt2+
+         1tpDnKudj/SLsnL4ueYzyFWEv+HU0daRwtk34HCuHiGdMtCedadZQXXvezQjV3C4a7Nx
+         71Dg==
+X-Gm-Message-State: APzg51CxxzWAJqxTjSwN2ZictLnTos/Bhi7RNs/D16hMEachJG0Bjtd6
+        GuoelV2kctHllUhk29UrDMJqqlXbwQVNIq2W
+X-Google-Smtp-Source: ANB0VdZCN4MPUtAUw+ahV5n9AvdKWdlcDJMEhC5sCpbYyAINHSepuN1ppXI6AYMmX+BOxn9qjJIvmQ==
+X-Received: by 2002:a37:6e01:: with SMTP id j1-v6mr18637788qkc.70.1537215082631;
+        Mon, 17 Sep 2018 13:11:22 -0700 (PDT)
+Received: from ip-172-31-22-34.ec2.internal (ec2-18-215-252-133.compute-1.amazonaws.com. [18.215.252.133])
+        by smtp.gmail.com with ESMTPSA id n8-v6sm11053480qtk.38.2018.09.17.13.11.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Sep 2018 13:11:21 -0700 (PDT)
+From:   Martin Brandenburg <martin@omnibond.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        devel@lists.orangefs.org
+Cc:     Martin Brandenburg <martin@omnibond.com>
+Subject: [PATCH 11/17] orangefs: migrate to generic_file_read_iter
+Date:   Mon, 17 Sep 2018 20:10:48 +0000
+Message-Id: <20180917201054.3530-12-martin@omnibond.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917201054.3530-1-martin@omnibond.com>
+References: <20180917201054.3530-1-martin@omnibond.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:a986:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 13:12:04
- -0700 (PDT)
-In-Reply-To: <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
-References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de>
- <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 17 Sep 2018 13:12:04 -0700
-Message-ID: <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 12:25 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Fri, Sep 14, 2018 at 5:50 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> The code flow for the vclocks is convoluted as it requires the vclocks
->> which can be invalidated separately from the vsyscall_gtod_data sequence to
->> store the fact in a separate variable. That's inefficient.
->>
->
->>  notrace static int do_hres(clockid_t clk, struct timespec *ts)
->>  {
->>         struct vgtod_ts *base = &gtod->basetime[clk];
->>         unsigned int seq;
->> -       int mode;
->> -       u64 ns;
->> +       u64 cycles, ns;
->>
->>         do {
->>                 seq = gtod_read_begin(gtod);
->> -               mode = gtod->vclock_mode;
->>                 ts->tv_sec = base->sec;
->>                 ns = base->nsec;
->> -               ns += vgetsns(&mode);
->> +               cycles = vgetcyc(gtod->vclock_mode);
->> +               if (unlikely((s64)cycles < 0))
->> +                       return vdso_fallback_gettime(clk, ts);
->
-> i was contemplating this, and I would suggest one of two optimizations:
->
-> 1. have all the helpers return a struct containing a u64 and a bool,
-> and use that bool.  The compiler should do okay.
->
-> 2. Be sneaky.  Later in the series, you do:
->
->                 if (unlikely((s64)cycles < 0))
->                         return vdso_fallback_gettime(clk, ts);
-> -               ns += (cycles - gtod->cycle_last) * gtod->mult;
-> +               if (cycles > last)
-> +                       ns += (cycles - last) * gtod->mult;
->
-> How about:
->
-> if (unlikely((s64)cycles <= last)) {
->   if (cycles < 0) [or cycles == -1 or whatever]
->     return vdso_fallback_gettime;
-> } else {
->   ns += (cycles - last) * gtod->mult;
-> }
->
-> which should actually make this whole mess be essentially free.
->
-> Also, I'm not entirely convinced that this "last" thing is needed at
-> all.  John, what's the scenario under which we need it?
+Remove orangefs_inode_read.  It was used by readpage.  Calling
+wait_for_direct_io directly serves the purpose just as well.  There is
+now no check of the bufmap size in the readpage path.  There are already
+other places the bufmap size is assumed to be greater than PAGE_SIZE.
 
-So my memory is probably a bit foggy, but I recall that as we
-accelerated gettimeofday, we found that even on systems that claimed
-to have synced TSCs, they were actually just slightly out of sync.
-Enough that right after cycles_last had been updated, a read on
-another cpu could come in just behind cycles_last, resulting in a
-negative interval causing lots of havoc.
+Important to call truncate_inode_pages now in the write path so a
+subsequent read sees the new data.
 
-So the sanity check is needed to avoid that case.
+Signed-off-by: Martin Brandenburg <martin@omnibond.com>
+---
+ fs/orangefs/file.c            | 68 ++++-------------------------------
+ fs/orangefs/inode.c           | 63 ++++++++++++--------------------
+ fs/orangefs/orangefs-kernel.h | 13 ++++---
+ 3 files changed, 38 insertions(+), 106 deletions(-)
 
-thanks
--john
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index aec17635a50f..4bc06c310e02 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -44,7 +44,7 @@ static int flush_racache(struct inode *inode)
+ /*
+  * Post and wait for the I/O upcall to finish
+  */
+-static ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
++ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+ 		loff_t *offset, struct iov_iter *iter,
+ 		size_t total_size, loff_t readahead_size)
+ {
+@@ -240,7 +240,7 @@ static ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inod
+  * augmented/extended metadata attached to the file.
+  * Note: File extended attributes override any mount options.
+  */
+-static ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
++ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
+ 		loff_t *offset, struct iov_iter *iter)
+ {
+ 	struct inode *inode = file->f_mapping->host;
+@@ -341,67 +341,11 @@ static ssize_t do_readv_writev(enum ORANGEFS_io_type type, struct file *file,
+ 	return ret;
+ }
+ 
+-/*
+- * Read data from a specified offset in a file (referenced by inode).
+- * Data may be placed either in a user or kernel buffer.
+- */
+-ssize_t orangefs_inode_read(struct inode *inode,
+-			    struct iov_iter *iter,
+-			    loff_t *offset,
+-			    loff_t readahead_size)
++static ssize_t orangefs_file_read_iter(struct kiocb *iocb,
++    struct iov_iter *iter)
+ {
+-	struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
+-	size_t count = iov_iter_count(iter);
+-	size_t bufmap_size;
+-	ssize_t ret = -EINVAL;
+-
+ 	orangefs_stats.reads++;
+-
+-	bufmap_size = orangefs_bufmap_size_query();
+-	if (count > bufmap_size) {
+-		gossip_debug(GOSSIP_FILE_DEBUG,
+-			     "%s: count is too large (%zd/%zd)!\n",
+-			     __func__, count, bufmap_size);
+-		return -EINVAL;
+-	}
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG,
+-		     "%s(%pU) %zd@%llu\n",
+-		     __func__,
+-		     &orangefs_inode->refn.khandle,
+-		     count,
+-		     llu(*offset));
+-
+-	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, offset, iter,
+-			count, readahead_size);
+-	if (ret > 0)
+-		*offset += ret;
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG,
+-		     "%s(%pU): Value(%zd) returned.\n",
+-		     __func__,
+-		     &orangefs_inode->refn.khandle,
+-		     ret);
+-
+-	return ret;
+-}
+-
+-static ssize_t orangefs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct file *file = iocb->ki_filp;
+-	loff_t pos = iocb->ki_pos;
+-	ssize_t rc = 0;
+-
+-	BUG_ON(iocb->private);
+-
+-	gossip_debug(GOSSIP_FILE_DEBUG, "orangefs_file_read_iter\n");
+-
+-	orangefs_stats.reads++;
+-
+-	rc = do_readv_writev(ORANGEFS_IO_READ, file, &pos, iter);
+-	iocb->ki_pos = pos;
+-
+-	return rc;
++	return generic_file_read_iter(iocb, iter);
+ }
+ 
+ static ssize_t orangefs_file_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+@@ -412,6 +356,8 @@ static ssize_t orangefs_file_write_iter(struct kiocb *iocb, struct iov_iter *ite
+ 
+ 	BUG_ON(iocb->private);
+ 
++	truncate_inode_pages(file->f_mapping, 0);
++
+ 	gossip_debug(GOSSIP_FILE_DEBUG, "orangefs_file_write_iter\n");
+ 
+ 	inode_lock(file->f_mapping->host);
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 1ef000b69e06..826054b979cc 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -17,37 +17,25 @@
+ 
+ static int orangefs_readpage(struct file *file, struct page *page)
+ {
+-	int ret;
+-	int max_block;
+-	ssize_t bytes_read = 0;
+ 	struct inode *inode = page->mapping->host;
+-	const __u32 blocksize = PAGE_SIZE;
+-	const __u32 blockbits = PAGE_SHIFT;
+-	struct iov_iter to;
+-	struct bio_vec bv = {.bv_page = page, .bv_len = PAGE_SIZE};
+-
+-	iov_iter_bvec(&to, ITER_BVEC | READ, &bv, 1, PAGE_SIZE);
+-
+-	gossip_debug(GOSSIP_INODE_DEBUG,
+-		    "orangefs_readpage called with page %p\n",
+-		     page);
+-
+-	max_block = ((inode->i_size / blocksize) + 1);
+-
+-	if (page->index < max_block) {
+-		loff_t blockptr_offset = (((loff_t) page->index) << blockbits);
+-
+-		bytes_read = orangefs_inode_read(inode,
+-						 &to,
+-						 &blockptr_offset,
+-						 inode->i_size);
+-	}
++	struct iov_iter iter;
++	struct bio_vec bv;
++	ssize_t ret;
++	loff_t off;
++
++	off = page_offset(page);
++	bv.bv_page = page;
++	bv.bv_len = PAGE_SIZE;
++	bv.bv_offset = 0;
++	iov_iter_bvec(&iter, ITER_BVEC | READ, &bv, 1, PAGE_SIZE);
++
++	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
++	    PAGE_SIZE, inode->i_size);
+ 	/* this will only zero remaining unread portions of the page data */
+-	iov_iter_zero(~0U, &to);
++	iov_iter_zero(~0U, &iter);
+ 	/* takes care of potential aliasing */
+ 	flush_dcache_page(page);
+-	if (bytes_read < 0) {
+-		ret = bytes_read;
++	if (ret < 0) {
+ 		SetPageError(page);
+ 	} else {
+ 		SetPageUptodate(page);
+@@ -84,22 +72,17 @@ static int orangefs_releasepage(struct page *page, gfp_t foo)
+ 	return 0;
+ }
+ 
+-/*
+- * Having a direct_IO entry point in the address_space_operations
+- * struct causes the kernel to allows us to use O_DIRECT on
+- * open. Nothing will ever call this thing, but in the future we
+- * will need to be able to use O_DIRECT on open in order to support
+- * AIO. Modeled after NFS, they do this too.
+- */
+-
+ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
+ 				  struct iov_iter *iter)
+ {
+-	gossip_debug(GOSSIP_INODE_DEBUG,
+-		     "orangefs_direct_IO: %pD\n",
+-		     iocb->ki_filp);
+-
+-	return -EINVAL;
++	struct file *file = iocb->ki_filp;
++	loff_t pos = *(&iocb->ki_pos);
++	/*
++	 * This cannot happen until write_iter becomes
++	 * generic_file_write_iter.
++	 */
++	BUG_ON(iov_iter_rw(iter) != READ);
++	return do_readv_writev(ORANGEFS_IO_READ, file, &pos, iter);
+ }
+ 
+ /** ORANGEFS2 implementation of address space operations */
+diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
+index cdb08e51a4b1..e128500e33b4 100644
+--- a/fs/orangefs/orangefs-kernel.h
++++ b/fs/orangefs/orangefs-kernel.h
+@@ -368,11 +368,6 @@ ssize_t orangefs_listxattr(struct dentry *dentry, char *buffer, size_t size);
+ struct inode *orangefs_iget(struct super_block *sb,
+ 			 struct orangefs_object_kref *ref);
+ 
+-ssize_t orangefs_inode_read(struct inode *inode,
+-			    struct iov_iter *iter,
+-			    loff_t *offset,
+-			    loff_t readahead_size);
+-
+ /*
+  * defined in devorangefs-req.c
+  */
+@@ -383,6 +378,14 @@ void orangefs_dev_cleanup(void);
+ int is_daemon_in_service(void);
+ bool __is_daemon_in_service(void);
+ 
++/*
++ * defined in file.c
++ */
++ssize_t wait_for_direct_io(enum ORANGEFS_io_type, struct inode *, loff_t *,
++    struct iov_iter *, size_t, loff_t);
++ssize_t do_readv_writev(enum ORANGEFS_io_type, struct file *, loff_t *,
++    struct iov_iter *);
++
+ /*
+  * defined in orangefs-utils.c
+  */
+-- 
+2.19.0
+
