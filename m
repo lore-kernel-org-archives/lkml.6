@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64FAECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122BBECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D6E2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D6E2088F
+	by mail.kernel.org (Postfix) with ESMTP id BF4612086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:38:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4612086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=efe-gmbh.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbeIQSFT (ORCPT
+        id S1728327AbeIQSFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:05:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:53311 "EHLO
+        Mon, 17 Sep 2018 14:05:22 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:50821 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbeIQSFT (ORCPT
+        with ESMTP id S1726889AbeIQSFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:05:19 -0400
+        Mon, 17 Sep 2018 14:05:21 -0400
 Received: from EFESN2455.efe.local ([217.94.30.50]) by
  mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1McpeM-1fS04a1JTu-00ZtZo; Mon, 17 Sep 2018 14:38:06 +0200
+ id 1MplHR-1fTMyg17JF-00qAJj; Mon, 17 Sep 2018 14:38:07 +0200
 From:   Karsten Mueller <mueller.k@efe-gmbh.de>
 To:     mueller.k@efe-gmbh.de
 Cc:     renner@efe-gmbh.de, Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 2/3] dt-bindings: power: supply: bq2416x driver
-Date:   Mon, 17 Sep 2018 14:37:28 +0200
-Message-Id: <20180917123729.23461-2-mueller.k@efe-gmbh.de>
+Subject: [PATCH 3/3] Add sysfs ABI for bq2416x
+Date:   Mon, 17 Sep 2018 14:37:29 +0200
+Message-Id: <20180917123729.23461-3-mueller.k@efe-gmbh.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180917123729.23461-1-mueller.k@efe-gmbh.de>
 References: <20180917123729.23461-1-mueller.k@efe-gmbh.de>
-X-Provags-ID: V03:K1:fmj4tgRY8hVBY7kJSWH1BJfDG2Oy+rMoLSfqNyzcJrgIA4UUpm8
- 2H28gEGCoLdwTlCdgkOKospnH1SFl7LKiYheSPXeqys/r67Gv7V4grzQqVZXmbGXiEp/YAO
- o7IHQYd8/77euqTrQXhXOVd+fw2lJ8ygWTe8rk4XXN3pwaH6rCkwgZpQn3J14EacSK3Ypq+
- o3zClXRgAOS7OhpiJEqIQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:l0WUBQ7cR5s=:olUGau3RON1BxzaksgfFfE
- yRgA3AhK/afjpNP/RFEhndwKYy43dtIFH8gW5JqzZiUvLkqkOF1teIB1Kx+f/pAb+NKPJ0KJb
- 4HyyvMybEh3E19IUV5AJVWE5WiaqyFJoGwxMwvWP8GmE2Ju9WHAd1cYWg2M1cE6O+RJg5U1JY
- m1JAenNJe1S/T9JTpFujh1SiVRpMQ+XUbAx47P1Anv+hsARE94kfXdJ+u6qN+6Q5dUWW0Rol9
- muboLZBq5XEYCzBu1/iMk2RDdEuMAjLh1FbHxAQS6o7kePk23+fwCDFaXtkCwVpwKZcNfovGj
- 4T0/n5Zv1Z4YLf11Vlp9fhVjgdoOGd1DiPuaaR6Yaid5gQJ/+h3MwaPGgFhFcAern/9O/dmcQ
- 0AKnu4JyRlj3bNjRMvCBGp2DdRWiJFXzeIielOdHhX4rB2AATVJQk/xvqJ2pLPfofsmHLZ06i
- zJovqaz7kOKbE41Bkw/v/X8djEQKwfdR+jcbzbxBlspd54N2TJzP+T0IpMXudhCOhX6KVEDA8
- yMB/JwAzSazK8Jis0Ns+mdEgRcxowA1TuvmrBSdeU7NFcA381CoKeKr2/6tHooBwAPGlkOmXl
- TmsbSd7qrpx7aZxv4bkmkDmWUDhAHTgwD7R9TJHhzk6X6WkujrLWussEJpqVHyyqP9UmW/Dfm
- 7mjlh64641BuE0yRS/ZIwK8NOvjzJUUalO9qITFTQC9mgOQFVdPAEXHolKHYDlo0chV8=
+X-Provags-ID: V03:K1:G0iefJxaWw1GU71ab/7+iv1KXvLLGhR73X7nQ+iPaQC9JkJ3eUx
+ Gz3VnxaBy2vVzAnVuqVW2SMvkumEW56aMj67LIPtPWsg7CWfHQIBvNCbzVkedLzW8Oq0lqL
+ oRWDso4zVNJgM1GUvAHqKnuEcy/OYbustWiFC2Z3h+oNktIBIazhI33qYgq39iQ6fIX1X75
+ lQZ2obhkWdCrDzUa+5bhA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ptim1J+dLi0=:FfoF0JczCs3QmcLLMVs0+z
+ rPDbGv7K2BdN4MhDdv/GxO7Co+kdvCfn0zWOQHlwGg+8VnOczR3qZC0MDzxIPspqiUv9PATyk
+ OFG5y0yVmpPZcfcdFFB1IQD4ZJT6lTBesZFiJoKqJsRHrcp7D1cj4fI5+T/fLGg2WnyTB2zeW
+ gq/2yWUYcZoLBUpVHE4m63T+ZyNk0aeFvHMeRueiddvg+u2QkQ4vEK0PHkiTmLs5bSuqB71U6
+ D2v8diLfh459oweWr7EBS0o/3ceuQNe0tXLQQdfQXwwPo08espCgu02qneWUCzB6Nhc9YSOKJ
+ gUZnhKJwBM+yfuxzzUJYfMuLPbCYvyntE+qkTQPE/mWiOXaThoWwWbmS8TtGWE2bLFEtEkp5R
+ /OhLjP15ZCFVeGqIrbqeLgZ6aGo4hhwmoi60zShFYkI6ZT2HxNPqqPg/eLPfOTui0lybYUyLA
+ bAgBOhcEqAX3KsQOz7oCLFtuIkmZHrqmq7ddUKuPqwOGQ5kVCul6nY8cKGDrWQxpJSvqQnMhW
+ Hlr4Lpawa3z8Zj7E1uHB48zwxPFaXVwaetMnVkl+iOtbQpksI+FOq1HbZXuU2JFqiMoNwaVj9
+ a+QI/PeO4OHIniedBfQWpqSKWKtXBHTmo9V2hS+AkTbDQGvDKvpHxXN6sjTFEdfBbwLFeGf+J
+ 4uqW2S/ZlZ3NjrYKHM+fxDUsrVn03V+uszs+9XKqE+mMQ/0X90zGeFmZq91Sta56rr48=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,91 +60,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Karsten Mueller <mueller.k@efe-gmbh.de>
 ---
- .../bindings/power/supply/bq2416x.txt         | 75 +++++++++++++++++++
- 1 file changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/bq2416x.txt
+ Documentation/ABI/testing/sysfs-class-power | 118 ++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/bq2416x.txt b/Documentation/devicetree/bindings/power/supply/bq2416x.txt
-new file mode 100644
-index 000000000..742d41642
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/bq2416x.txt
-@@ -0,0 +1,75 @@
-+Binding for TI bq2416x Li-Ion Charger
+diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
+index 5e23e22dc..3881485ca 100644
+--- a/Documentation/ABI/testing/sysfs-class-power
++++ b/Documentation/ABI/testing/sysfs-class-power
+@@ -587,3 +587,121 @@ Description:
+ 		Valid values:
+ 		- 1: enabled
+ 		- 0: disabled
 +
-+Required properties:
-+====================
-+- compatible: one of the following:
-+ * "ti,bq24160"
-+ * "ti,bq24160a"
-+ * "ti,bq24161"
-+ * "ti,bq24161b"
-+ * "ti,bq24163"
-+ * "ti,bq24168"
++What:		/sys/class/power_supply/bq2416x-charger/usb_curr_limit
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports and sets the maximum current the "usb" supply can
++		support.
 +
-+- reg:			I2C address of the device.
-+- interrupt-parent:	The IRQ controller (phandle) connected to the INT pin of
-+			the bq2416x
-+- interrupts:		The IRQ number assigned for INT pin.
++		Access: Read, Write
++		Valid values:
++		- 100000, 150000, 500000, 800000, 900000, 1500000 (uA)
 +
-+Optional properties:
-+====================
++What:		/sys/class/power_supply/bq2416x-charger/in_curr_limit
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports and sets the maximum current the "in" (wall) supply can
++		support.
 +
-+- ti,in-current-limit-microamp:	IN source current limit.
-+	Possible values: 1500000 (default), 2500000
++		Access: Read, Write
++		Valid values:
++		- 1500000, 2500000 (uA)
 +
-+- ti,usb-current-limit-microamp: USB source current limit.
-+	If not specified, auto detection of USB (D+/D- based) is used (for
-+	BQ24160/0A/3 only) or settings of default mode are kept (BQ24161/1B/8).
-+	Both pre-select only 100 mA or 1500 mA (refer to datasheet).
-+	Possible values: 100000, 150000, 500000, 800000, 90000, 1500000
++What:		/sys/class/power_supply/bq2416x-charger/in_dpm_voltage
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		This entry configures the "in" (wall) input dynamic power path
++		management voltage of bq2416x-type charger devices. Once the
++		supply drops to the configured voltage, the input current limit
++		is reduced down to prevent the further drop of the supply. When
++		the IC enters this mode, the charge current is lower than the
++		set value.
 +
-+- ti,usb-dpm-voltage-microvolt:	USB threshold for dynamic power path management.
-+	Configures the threshold input voltage (usb input) for the dynamic power
-+	path management. If not specified a default of 4,200,000 (= 4.2V) is
-+	used.
++		Access: Read, Write
++		Valid values:
++		- 4200000, 4280000, 4360000, 4440000, 4520000, 4600000, 4680000,
++		  4760000 (all uV)
 +
-+- ti,in-dpm-voltage-microvolt: IN threshold for dynamic power path management.
-+	Configures the threshold input voltage (in input) for the dynamic power
-+	path management. If not specified a default of 4,200,000 (= 4.2V) is
-+	used.
++What:		/sys/class/power_supply/bq2416x-charger/usb_dpm_voltage
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		This entry configures the "usb" input dynamic power path
++		management voltage of bq2416x-type charger devices. Once the
++		supply drops to the configured voltage, the input current limit
++		is reduced down to prevent the further drop of the supply. When
++		the IC enters this mode, the charge current is lower than the
++		set value.
 +
-+- monitored-battery: phandle of battery information devicetree node
-+	If not specified, no battery is assumed (charge disable, nobat operation
-+	mode, no NTC check of battery), Vsys output voltage is set to 4.2V. The
-+	charger uses the following battery properties:
-+	+ constant_charge_current_max_microamp: maximum current in fast charge
-+	  mode
-+	+ constant_charge_voltage_max_microvolt: maximum constant charging
-+	  voltage / output voltage (refer to datasheet)
-+	+ charge-term-current-microamp: a charge cycle terminates when the
-+	  battery voltage is above recharge threshold, and the current is below
-+	  this setting (typically 10% of battery capacity). If not specified,
-+	  termination of current detection is disabled (refer to datasheet).
++		Access: Read, Write
++		Valid values:
++		- 4200000, 4280000, 4360000, 4440000, 4520000, 4600000, 4680000,
++		  4760000 (all uV)
 +
-+Example:
-+========
++What:		/sys/class/power_supply/bq2416x-charger/high_impedance_enable
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		This entry allows enabling the high-impedance mode of
++		bq2416x-type charger devices. If enabled, it places the charger
++		IC into low power standby mode with the switch mode controller
++		disabled. When disabled, the charger operates normally.
 +
-+bat: battery {
-+		compatible = "simple-battery";
-+		charge-term-current-microamp = <128000>;
-+		constant-charge-current-max-microamp = <900000>;
-+		constant-charge-voltage-max-microvolt = <4200000>;
-+	};
++		Access: Read, Write
++		Valid values:
++		- 1: enabled
++		- 0: disabled
 +
-+bq24160@6b {
-+	compatible = "ti,bq24160";
-+	reg = <0x6b>;
++What:		/sys/class/power_supply/bq2416x-charger/dpm_status
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports whether dynamic power management is active, i.e. input
++		current of used source is limited to prevent further drop of
++		voltage.
 +
-+	interrupt-parent = <&gpio5>;
-+	interrupts = <31 IRQ_TYPE_EDGE_RISING>;
++		Valid values:
++		- 0: not active
++		- 1: active
 +
-+	monitored-battery = <&bat>;
-+	ti,in-current-limit-microamp = <1500000>;
-+	ti,usb-current-limit-microamp = <500000>;
-+	ti,usb-dpm-voltage-microvolt = <4300000>;
-+	ti,in-dpm-voltage-microvolt = <4300000>;
-+};
++What:		/sys/class/power_supply/bq2416x-charger/supply_sel
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		This entry configures which input ("in", "usb") should be
++		preferred as input source.
++
++		Valid values:
++		- "in", "usb"
++
++What:		/sys/class/power_supply/bq2416x-charger/ts_fault
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports state of NTC temperature monitor.
++
++		Valid values:
++		- "normal", "cold/hot(charge suspended)",
++		  "cool(half current charge)", "warm(voltage reduced)"
++
++What:		/sys/class/power_supply/bq2416x-charger/in_status
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports state of "in" input source.
++
++		Valid values:
++		- "Normal", "OVP", "Weak source", "Faulty Adapter"
++
++What:		/sys/class/power_supply/bq2416x-charger/usb_status
++Date:		September 2018
++Contact:	Karsten Mueller <mueller.k@efe-gmbh.de>
++Description:
++		Reports state of "usb" input source.
++
++		Valid values:
++		- "Normal", "OVP", "Weak source", "Faulty Adapter"
 -- 
 2.17.1
 
