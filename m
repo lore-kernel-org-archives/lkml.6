@@ -2,44 +2,47 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E2DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398B4ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3AB42088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AB42088F
+	by mail.kernel.org (Postfix) with ESMTP id EF4E62088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF4E62088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeIREM6 (ORCPT
+        id S1728120AbeIRENB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:12:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43042 "EHLO
+        Tue, 18 Sep 2018 00:13:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbeIREM5 (ORCPT
+        with ESMTP id S1725772AbeIRENB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:12:57 -0400
+        Tue, 18 Sep 2018 00:13:01 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F473C9D;
-        Mon, 17 Sep 2018 22:43:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 635B7CA0;
+        Mon, 17 Sep 2018 22:43:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Stafford Horne <shorne@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Jamie Iles <jamie.iles@oracle.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org, Jamie Iles <jamie.iles@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 05/56] kthread: Fix use-after-free if kthread fork fails
-Date:   Tue, 18 Sep 2018 00:41:38 +0200
-Message-Id: <20180917213828.192669884@linuxfoundation.org>
+Subject: [PATCH 4.4 06/56] kthread: fix boot hang (regression) on MIPS/OpenRISC
+Date:   Tue, 18 Sep 2018 00:41:39 +0200
+Message-Id: <20180917213828.234588179@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -59,92 +62,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vegard Nossum <vegard.nossum@oracle.com>
 
-commit 4d6501dce079c1eb6bf0b1d8f528a5e81770109e upstream.
+commit b0f5a8f32e8bbdaae1abb8abe2d3cbafaba57e08 upstream.
 
-If a kthread forks (e.g. usermodehelper since commit 1da5c46fa965) but
-fails in copy_process() between calling dup_task_struct() and setting
-p->set_child_tid, then the value of p->set_child_tid will be inherited
-from the parent and get prematurely freed by free_kthread_struct().
+This fixes a regression in commit 4d6501dce079 where I didn't notice
+that MIPS and OpenRISC were reinitialising p->{set,clear}_child_tid to
+NULL after our initialisation in copy_process().
 
-    kthread()
-     - worker_thread()
-        - process_one_work()
-        |  - call_usermodehelper_exec_work()
-        |     - kernel_thread()
-        |        - _do_fork()
-        |           - copy_process()
-        |              - dup_task_struct()
-        |                 - arch_dup_task_struct()
-        |                    - tsk->set_child_tid = current->set_child_tid // implied
-        |              - ...
-        |              - goto bad_fork_*
-        |              - ...
-        |              - free_task(tsk)
-        |                 - free_kthread_struct(tsk)
-        |                    - kfree(tsk->set_child_tid)
-        - ...
-        - schedule()
-           - __schedule()
-              - wq_worker_sleeping()
-                 - kthread_data(task)->flags // UAF
+We can simply get rid of the arch-specific initialisation here since it
+is now always done in copy_process() before hitting copy_thread{,_tls}().
 
-The problem started showing up with commit 1da5c46fa965 since it reused
-->set_child_tid for the kthread worker data.
+Review notes:
 
-A better long-term solution might be to get rid of the ->set_child_tid
-abuse. The comment in set_kthread_struct() also looks slightly wrong.
+ - As far as I can tell, copy_process() is the only user of
+   copy_thread_tls(), which is the only caller of copy_thread() for
+   architectures that don't implement copy_thread_tls().
 
-Debugged-by: Jamie Iles <jamie.iles@oracle.com>
-Fixes: 1da5c46fa965 ("kthread: Make struct kthread kmalloc'ed")
-Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+ - After this patch, there is no arch-specific code touching
+   p->set_child_tid or p->clear_child_tid whatsoever.
+
+ - It may look like MIPS/OpenRISC wanted to always have these fields be
+   NULL, but that's not true, as copy_process() would unconditionally
+   set them again _after_ calling copy_thread_tls() before commit
+   4d6501dce079.
+
+Fixes: 4d6501dce079c1eb6bf0b1d8f528a5e81770109e ("kthread: Fix use-after-free if kthread fork fails")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Guenter Roeck <linux@roeck-us.net> # MIPS only
+Acked-by: Stafford Horne <shorne@gmail.com>
 Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: openrisc@lists.librecores.org
 Cc: Jamie Iles <jamie.iles@oracle.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170509073959.17858-1-vegard.nossum@oracle.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ arch/mips/kernel/process.c     |    1 -
+ arch/openrisc/kernel/process.c |    2 --
+ 2 files changed, 3 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1337,6 +1337,18 @@ static struct task_struct *copy_process(
- 	if (!p)
- 		goto fork_out;
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -115,7 +115,6 @@ int copy_thread(unsigned long clone_flag
+ 	struct thread_info *ti = task_thread_info(p);
+ 	struct pt_regs *childregs, *regs = current_pt_regs();
+ 	unsigned long childksp;
+-	p->set_child_tid = p->clear_child_tid = NULL;
  
-+	/*
-+	 * This _must_ happen before we call free_task(), i.e. before we jump
-+	 * to any of the bad_fork_* labels. This is to avoid freeing
-+	 * p->set_child_tid which is (ab)used as a kthread's data pointer for
-+	 * kernel threads (PF_KTHREAD).
-+	 */
-+	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
-+	/*
-+	 * Clear TID on mm_release()?
-+	 */
-+	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
-+
- 	ftrace_graph_init_task(p);
+ 	childksp = (unsigned long)task_stack_page(p) + THREAD_SIZE - 32;
  
- 	rt_mutex_init_task(p);
-@@ -1498,11 +1510,6 @@ static struct task_struct *copy_process(
- 		}
- 	}
+--- a/arch/openrisc/kernel/process.c
++++ b/arch/openrisc/kernel/process.c
+@@ -152,8 +152,6 @@ copy_thread(unsigned long clone_flags, u
  
--	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
--	/*
--	 * Clear TID on mm_release()?
--	 */
--	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
- #ifdef CONFIG_BLOCK
- 	p->plug = NULL;
- #endif
+ 	top_of_kernel_stack = sp;
+ 
+-	p->set_child_tid = p->clear_child_tid = NULL;
+-
+ 	/* Locate userspace context on stack... */
+ 	sp -= STACK_FRAME_OVERHEAD;	/* redzone */
+ 	sp -= sizeof(struct pt_regs);
 
 
