@@ -2,165 +2,86 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F6BECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17510ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92ABB2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43322086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:20:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZyFeQZM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92ABB2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KBxbIuP2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43322086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbeIQKnO (ORCPT
+        id S1728450AbeIQKqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 06:43:14 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41605 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeIQKnO (ORCPT
+        Mon, 17 Sep 2018 06:46:36 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:40152 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeIQKqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 06:43:14 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so12000072ljy.8
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 22:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z+S/xVSlFt4RjonH7tI/KM5sUlNiH6lX11CBOmk2DTo=;
-        b=bZyFeQZMKEoQf34Ddex2xHaGvPtj8HHkc7qzoUTF3FelnxDvOy30qsoZL/+EyXD3XB
-         T6NlSINCiBQgWg0TEEP8eiU4HNY9gPOiONR9Ro6nYl57KJTLbmF98EThXfYpclcv64X1
-         T9GfYVKsghWHeSZl2SsOuNYPJmY1nxWpbNDV/SFFvbPZNfciqeQzZ616ovnAbxu8Lh7p
-         e3wjzne/WlANOFsgI7LeL1IFT7uiV8g9RA1mzXVRbQb3v3F82kFhnmNq9DavVu/qyA3W
-         DKxQoWClch4SFGdK+xxI8QhE6jh364fK7/iy52ugHt/DC4iNoBymoeVrWRfVu6Tzm2z+
-         uRqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z+S/xVSlFt4RjonH7tI/KM5sUlNiH6lX11CBOmk2DTo=;
-        b=YwHdL4A2t5c+l1a3TrLzPgf5hSxIKQG89SWynBKMc/tynWFAPJGbP3ZRYyk5+Mx/Ej
-         ccJsASbJ5imXNygY0+nGItwYZ8W+mV7BiXdpBWTijFFtpiBg7hLKY2RhhX49bZUQOexD
-         11II/1FkVArHcy84ahN4THVGZKd8xihvSFrJ5CniHLDpGiRZsqF9t2UswsP1YFBg0Zgx
-         esLrk5gtbGWPTEZO1wD2jnlaN55bRES6/m5j3mGwHEKjRJbS8XLlCp2N27nOR2GvF8GM
-         N4A68Tl7FMQzkbewt7zTS80Xv9R0WBoaikJrW9/9FIYgZQWcjoi4FeIoTO5STZX/y09Z
-         Q8og==
-X-Gm-Message-State: APzg51BpRjVFPFImsj6J6B+YHMvyRDxp8KbtbYSM4E/y7JlNodCtlGCf
-        fLsuPIXjPyr8Pl3I3IyNXFv5NwxpDNsiimdihgozkw==
-X-Google-Smtp-Source: ANB0Vdb4SC0JsJLtMXy/pZ523zplqzxLPibusu+2WHZRoOF+wIH/TexqMtCspEBW+87dpU73J9Ui5mWhC81qydnhQRk=
-X-Received: by 2002:a2e:8ed1:: with SMTP id e17-v6mr13572662ljl.86.1537161449113;
- Sun, 16 Sep 2018 22:17:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180806144900.GA13925@jordon-HP-15-Notebook-PC> <CAFqt6zYWehpkSNf7LHFXFaY1s-aAdXg=OV0C9Hr8j9fS-P3OCw@mail.gmail.com>
-In-Reply-To: <CAFqt6zYWehpkSNf7LHFXFaY1s-aAdXg=OV0C9Hr8j9fS-P3OCw@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 17 Sep 2018 10:47:16 +0530
-Message-ID: <CAFqt6zYyBQhbvQiy4EWOpHHL-a77Fjm9LCLNA+drT62MhHuKeQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu/drm/hisilicon: Convert drm_atomic_helper_suspend/resume()
-To:     xinliang <z.liuxinliang@hisilicon.com>,
-        Zou Rongrong <zourongrong@gmail.com>,
-        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
-        airlied@linux.ie, Ajit Linux <ajitn.linux@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Sep 2018 06:46:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IsFYNlXJJtrdYfgXiT30+ULZsYQjtHF7YUy5ZB5BR1k=; b=KBxbIuP2nV2on6/Q8M4fa0Pb4J
+        A5cq1mjbSaoHRH+aIxSST1ZOtKWTAZdUKKrweXuMIaWjiKIADSm8KrzhNwsVXHnBHCl7c6bg7ucoi
+        WUAgoEH76nyDkQp552Txi9NpT7tlftrebrehmiHJDKIESba5zR6WGM3Dum15V0JkK+jY=;
+Received: from p200300ccfbca24001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbca:2400:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g1lxo-0006Tb-Fy; Mon, 17 Sep 2018 07:20:48 +0200
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g1lxn-0003CG-O8; Mon, 17 Sep 2018 07:20:47 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     sre@kernel.org, linux-pm@vger.kernel.org,
+        linux-omap@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, linux-kernel@vger.kernel.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH RESEND] twl4030_charger: fix charging current out-of-bounds
+Date:   Mon, 17 Sep 2018 07:20:35 +0200
+Message-Id: <20180917052035.12234-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 2:04 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Mon, Aug 6, 2018 at 8:16 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > convert drm_atomic_helper_suspend/resume() to use
-> > drm_mode_config_helper_suspend/resume().
-> >
-> > Fixed one sparse warning by making hibmc_drm_interrupt
-> > static.
-> >
-> > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > Reviewed-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
->
-> Can we get this patch in queue for 4.20 ??
+the charging current uses unsigned int variables, if we step back
+if the current is still low, we would run into negative which
+means setting the target to a huge value.
+Better add checks here.
 
-Daniel, can we get this patch in queue for 4.20, if no further comment  ?
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/power/supply/twl4030_charger.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->
-> > ---
-> > v2: remove ret variable from both suspend and resume.
-> >     remove suspend_state from hibmc_drm_private struct.
-> >
-> >  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 20 +++-----------------
-> >  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h |  1 -
-> >  2 files changed, 3 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> > index d4f6f1f..ee24480 100644
-> > --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> > +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-> > @@ -37,7 +37,7 @@
-> >         .llseek         = no_llseek,
-> >  };
-> >
-> > -irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
-> > +static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
-> >  {
-> >         struct drm_device *dev = (struct drm_device *)arg;
-> >         struct hibmc_drm_private *priv =
-> > @@ -74,30 +74,16 @@ static int __maybe_unused hibmc_pm_suspend(struct device *dev)
-> >  {
-> >         struct pci_dev *pdev = to_pci_dev(dev);
-> >         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> > -       struct hibmc_drm_private *priv = drm_dev->dev_private;
-> > -
-> > -       drm_kms_helper_poll_disable(drm_dev);
-> > -       priv->suspend_state = drm_atomic_helper_suspend(drm_dev);
-> > -       if (IS_ERR(priv->suspend_state)) {
-> > -               DRM_ERROR("drm_atomic_helper_suspend failed: %ld\n",
-> > -                         PTR_ERR(priv->suspend_state));
-> > -               drm_kms_helper_poll_enable(drm_dev);
-> > -               return PTR_ERR(priv->suspend_state);
-> > -       }
-> >
-> > -       return 0;
-> > +       return drm_mode_config_helper_suspend(drm_dev);
-> >  }
-> >
-> >  static int  __maybe_unused hibmc_pm_resume(struct device *dev)
-> >  {
-> >         struct pci_dev *pdev = to_pci_dev(dev);
-> >         struct drm_device *drm_dev = pci_get_drvdata(pdev);
-> > -       struct hibmc_drm_private *priv = drm_dev->dev_private;
-> >
-> > -       drm_atomic_helper_resume(drm_dev, priv->suspend_state);
-> > -       drm_kms_helper_poll_enable(drm_dev);
-> > -
-> > -       return 0;
-> > +       return drm_mode_config_helper_resume(drm_dev);
-> >  }
-> >
-> >  static const struct dev_pm_ops hibmc_pm_ops = {
-> > diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> > index e195521..45c25a4 100644
-> > --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> > +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-> > @@ -47,7 +47,6 @@ struct hibmc_drm_private {
-> >         /* drm */
-> >         struct drm_device  *dev;
-> >         bool mode_config_initialized;
-> > -       struct drm_atomic_state *suspend_state;
-> >
-> >         /* ttm */
-> >         struct drm_global_reference mem_global_ref;
-> > --
-> > 1.9.1
-> >
+diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
+index b72838663872..c954b7234393 100644
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -421,7 +421,8 @@ static void twl4030_current_worker(struct work_struct *data)
+ 
+ 	if (v < USB_MIN_VOLT) {
+ 		/* Back up and stop adjusting. */
+-		bci->usb_cur -= USB_CUR_STEP;
++		if (bci->usb_cur >= USB_CUR_STEP)
++			bci->usb_cur -= USB_CUR_STEP;
+ 		bci->usb_cur_target = bci->usb_cur;
+ 	} else if (bci->usb_cur >= bci->usb_cur_target ||
+ 		   bci->usb_cur + USB_CUR_STEP > USB_MAX_CURRENT) {
+-- 
+2.11.0
+
