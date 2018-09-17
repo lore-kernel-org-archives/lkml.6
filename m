@@ -6,42 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5DEECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74248ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52282146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52282146F
+	by mail.kernel.org (Postfix) with ESMTP id 373A52146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 373A52146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbeIREd5 (ORCPT
+        id S1730473AbeIREeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:33:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49134 "EHLO
+        Tue, 18 Sep 2018 00:34:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49146 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbeIREd5 (ORCPT
+        with ESMTP id S1727202AbeIREeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:33:57 -0400
+        Tue, 18 Sep 2018 00:34:00 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1EF76C7D;
-        Mon, 17 Sep 2018 23:04:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BD6CC03;
+        Mon, 17 Sep 2018 23:04:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Kope=C4=87?= <mkopec12@gmail.com>,
-        "N. W." <nw9165-3201@yahoo.com>,
-        Nicholas Stommel <nicholas.stommel@gmail.com>,
-        Tom Yan <tom.ty89@gmail.com>,
-        Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.14 091/126] drm/i915: set DP Main Stream Attribute for color range on DDI platforms
-Date:   Tue, 18 Sep 2018 00:42:19 +0200
-Message-Id: <20180917211709.962066570@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 092/126] inet: frags: change inet_frags_init_net() return value
+Date:   Tue, 18 Sep 2018 00:42:20 +0200
+Message-Id: <20180917211710.018517713@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -59,84 +51,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jani Nikula <jani.nikula@intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 6209c285e7a5e68dbcdf8fd2456c6dd68433806b upstream.
+We will soon initialize one rhashtable per struct netns_frags
+in inet_frags_init_net().
 
-Since Haswell we have no color range indication either in the pipe or
-port registers for DP. Instead, there's a separate register for setting
-the DP Main Stream Attributes (MSA) directly. The MSA register
-definition makes no references to colorimetry, just a vague reference to
-the DP spec. The connection to the color range was lost.
+This patch changes the return value to eventually propagate an
+error.
 
-Apparently we've failed to set the proper MSA bit for limited, or CEA,
-range ever since the first DDI platforms. We've started setting other
-MSA parameters since commit dae847991a43 ("drm/i915: add
-intel_ddi_set_pipe_settings").
-
-Without the crucial bit of information, the DP sink has no way of
-knowing the source is actually transmitting limited range RGB, leading
-to "washed out" colors. With the colorimetry information, compliant
-sinks should be able to handle the limited range properly. Native
-(i.e. non-LSPCON) HDMI was not affected because we do pass the color
-range via AVI infoframes.
-
-Though not the root cause, the problem was made worse for DDI platforms
-with commit 55bc60db5988 ("drm/i915: Add "Automatic" mode for the
-"Broadcast RGB" property"), which selects limited range RGB
-automatically based on the mode, as per the DP, HDMI and CEA specs.
-
-After all these years, the fix boils down to flipping one bit.
-
-[Per testing reports, this fixes DP sinks, but not the LSPCON. My
- educated guess is that the LSPCON fails to turn the CEA range MSA into
- AVI infoframes for HDMI.]
-
-Reported-by: Michał Kopeć <mkopec12@gmail.com>
-Reported-by: N. W. <nw9165-3201@yahoo.com>
-Reported-by: Nicholas Stommel <nicholas.stommel@gmail.com>
-Reported-by: Tom Yan <tom.ty89@gmail.com>
-Tested-by: Nicholas Stommel <nicholas.stommel@gmail.com>
-References: https://bugs.freedesktop.org/show_bug.cgi?id=100023
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107476
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=94921
-Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v3.9+
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180814060001.18224-1-jani.nikula@intel.com
-(cherry picked from commit dc5977da99ea28094b8fa4e9bacbd29bedc41de5)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 787bea7748a76130566f881c2342a0be4127d182)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/i915/i915_reg.h  |    1 +
- drivers/gpu/drm/i915/intel_ddi.c |    4 ++++
- 2 files changed, 5 insertions(+)
+ include/net/inet_frag.h                 |    3 ++-
+ net/ieee802154/6lowpan/reassembly.c     |   11 ++++++++---
+ net/ipv4/ip_fragment.c                  |   12 +++++++++---
+ net/ipv6/netfilter/nf_conntrack_reasm.c |   12 +++++++++---
+ net/ipv6/reassembly.c                   |   11 +++++++++--
+ 5 files changed, 37 insertions(+), 12 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -8462,6 +8462,7 @@ enum skl_power_gate {
- #define  TRANS_MSA_10_BPC		(2<<5)
- #define  TRANS_MSA_12_BPC		(3<<5)
- #define  TRANS_MSA_16_BPC		(4<<5)
-+#define  TRANS_MSA_CEA_RANGE		(1<<3)
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -104,9 +104,10 @@ struct inet_frags {
+ int inet_frags_init(struct inet_frags *);
+ void inet_frags_fini(struct inet_frags *);
  
- /* LCPLL Control */
- #define LCPLL_CTL			_MMIO(0x130040)
---- a/drivers/gpu/drm/i915/intel_ddi.c
-+++ b/drivers/gpu/drm/i915/intel_ddi.c
-@@ -1396,6 +1396,10 @@ void intel_ddi_set_pipe_settings(const s
- 		WARN_ON(transcoder_is_dsi(cpu_transcoder));
+-static inline void inet_frags_init_net(struct netns_frags *nf)
++static inline int inet_frags_init_net(struct netns_frags *nf)
+ {
+ 	atomic_set(&nf->mem, 0);
++	return 0;
+ }
+ void inet_frags_exit_net(struct netns_frags *nf, struct inet_frags *f);
  
- 		temp = TRANS_MSA_SYNC_CLK;
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -580,14 +580,19 @@ static int __net_init lowpan_frags_init_
+ {
+ 	struct netns_ieee802154_lowpan *ieee802154_lowpan =
+ 		net_ieee802154_lowpan(net);
++	int res;
+ 
+ 	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
+ 
+-	inet_frags_init_net(&ieee802154_lowpan->frags);
+-
+-	return lowpan_frags_ns_sysctl_register(net);
++	res = inet_frags_init_net(&ieee802154_lowpan->frags);
++	if (res < 0)
++		return res;
++	res = lowpan_frags_ns_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
++	return res;
+ }
+ 
+ static void __net_exit lowpan_frags_exit_net(struct net *net)
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -850,6 +850,8 @@ static void __init ip4_frags_ctl_registe
+ 
+ static int __net_init ipv4_frags_init_net(struct net *net)
+ {
++	int res;
 +
-+		if (crtc_state->limited_color_range)
-+			temp |= TRANS_MSA_CEA_RANGE;
+ 	/* Fragment cache limits.
+ 	 *
+ 	 * The fragment memory accounting code, (tries to) account for
+@@ -875,9 +877,13 @@ static int __net_init ipv4_frags_init_ne
+ 
+ 	net->ipv4.frags.max_dist = 64;
+ 
+-	inet_frags_init_net(&net->ipv4.frags);
+-
+-	return ip4_frags_ns_ctl_register(net);
++	res = inet_frags_init_net(&net->ipv4.frags);
++	if (res < 0)
++		return res;
++	res = ip4_frags_ns_ctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->ipv4.frags, &ip4_frags);
++	return res;
+ }
+ 
+ static void __net_exit ipv4_frags_exit_net(struct net *net)
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -630,12 +630,18 @@ EXPORT_SYMBOL_GPL(nf_ct_frag6_gather);
+ 
+ static int nf_ct_net_init(struct net *net)
+ {
++	int res;
 +
- 		switch (crtc_state->pipe_bpp) {
- 		case 18:
- 			temp |= TRANS_MSA_6_BPC;
+ 	net->nf_frag.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->nf_frag.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->nf_frag.frags.timeout = IPV6_FRAG_TIMEOUT;
+-	inet_frags_init_net(&net->nf_frag.frags);
+-
+-	return nf_ct_frag6_sysctl_register(net);
++	res = inet_frags_init_net(&net->nf_frag.frags);
++	if (res < 0)
++		return res;
++	res = nf_ct_frag6_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->nf_frag.frags, &nf_frags);
++	return res;
+ }
+ 
+ static void nf_ct_net_exit(struct net *net)
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -714,13 +714,20 @@ static void ip6_frags_sysctl_unregister(
+ 
+ static int __net_init ipv6_frags_init_net(struct net *net)
+ {
++	int res;
++
+ 	net->ipv6.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->ipv6.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->ipv6.frags.timeout = IPV6_FRAG_TIMEOUT;
+ 
+-	inet_frags_init_net(&net->ipv6.frags);
++	res = inet_frags_init_net(&net->ipv6.frags);
++	if (res < 0)
++		return res;
+ 
+-	return ip6_frags_ns_sysctl_register(net);
++	res = ip6_frags_ns_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->ipv6.frags, &ip6_frags);
++	return res;
+ }
+ 
+ static void __net_exit ipv6_frags_exit_net(struct net *net)
 
 
