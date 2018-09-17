@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB1EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3982DECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF86B214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:29:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF86B214C2
+	by mail.kernel.org (Postfix) with ESMTP id F2B5E214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B5E214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeIQS5L (ORCPT
+        id S1728568AbeIQS5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:57:11 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:56865 "EHLO cstnet.cn"
+        Mon, 17 Sep 2018 14:57:37 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:57273 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728250AbeIQS5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:57:10 -0400
+        id S1728273AbeIQS5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 14:57:37 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowADXsxw+rJ9bPKWlCg--.43S2;
-        Mon, 17 Sep 2018 21:29:39 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowAD32O1YrJ9b4qmlCg--.186S2;
+        Mon, 17 Sep 2018 21:30:04 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v7 02/16] x86/cpu: Get cache info and setup cache cpumap for Hygon Dhyana
-Date:   Mon, 17 Sep 2018 21:29:33 +0800
-Message-Id: <2a686b2ac0e2f5a1f2f5f101124d9dd44f949731.1537182523.git.puwen@hygon.cn>
+Subject: [PATCH v7 03/16] x86/cpu/mtrr: Support TOP_MEM2 and get MTRR number
+Date:   Mon, 17 Sep 2018 21:29:53 +0800
+Message-Id: <8246f81648d014601de3812ade40e85d9c50d9b3.1537182523.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1537182523.git.puwen@hygon.cn>
 References: <cover.1537182523.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowADXsxw+rJ9bPKWlCg--.43S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGry5Zr4DGFy8Xrykur1rZwb_yoWrtw1rpr
-        W2kw4rJF4xWFyfG3s8Jr4kXw4fZrykKa1xK347Ga4rAanrZr18Xrn8Kw13Zr98Zw4rCw4S
-        qF40gw17KF1rJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUyC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID: swCowAD32O1YrJ9b4qmlCg--.186S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4kCrWDWr1xJryDAr4rAFb_yoW8Xr48pr
+        W7WF48tF4UWan5A34jy397XrW5Zw4qga1Iqw4DGas5J3WFv347ZFs5Cw1xtw1jvF1rKr1r
+        KFyv9F4Yyws5AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
         rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-        WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0E
-        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-        I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
-        k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
-        xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXF4iUUUUU=
+        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbV
+        WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6x
+        AIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY
+        1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUG1v3UUUUU=
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,140 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Hygon Dhyana CPU has topology extensions bit in CPUID. With this
-bit, the kernel can get the cache information. So add support in
-cpuid4_cache_lookup_regs() to get the correct cache size.
+The Hygon Dhyana CPU has a special magic MSR way to force WB for
+memory >4GB, and support TOP_MEM2. Therefore, it is necessary to
+add Hygon Dhyana support in amd_special_default_mtrr().
 
-The Hygon Dhyana CPU also discovers num_cache_leaves via CPUID leaf
-0x8000001d, so add support to it in find_num_cache_leaves().
-
-Also add cacheinfo_hygon_init_llc_id() and init_hygon_cacheinfo()
-functions to initialize Dhyana cache info. Setup cache cpumap in
-the same way as AMD does.
+The number of variable MTRRs for Hygon is 2 as AMD's.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 Reviewed-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/include/asm/cacheinfo.h |  1 +
- arch/x86/kernel/cpu/cacheinfo.c  | 31 +++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/cpu.h        |  1 +
- arch/x86/kernel/cpu/hygon.c      |  3 +++
- 4 files changed, 34 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/mtrr/cleanup.c | 3 ++-
+ arch/x86/kernel/cpu/mtrr/mtrr.c    | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/cacheinfo.h b/arch/x86/include/asm/cacheinfo.h
-index e958e28..86b63c7 100644
---- a/arch/x86/include/asm/cacheinfo.h
-+++ b/arch/x86/include/asm/cacheinfo.h
-@@ -3,5 +3,6 @@
- #define _ASM_X86_CACHEINFO_H
- 
- void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
- 
- #endif /* _ASM_X86_CACHEINFO_H */
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 0c5fcbd..dc1b934 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -602,6 +602,10 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
- 		else
- 			amd_cpuid4(index, &eax, &ebx, &ecx);
- 		amd_init_l3_cache(this_leaf, index);
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-+		cpuid_count(0x8000001d, index, &eax.full,
-+			    &ebx.full, &ecx.full, &edx);
-+		amd_init_l3_cache(this_leaf, index);
- 	} else {
- 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
- 	}
-@@ -625,7 +629,8 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 	union _cpuid4_leaf_eax	cache_eax;
- 	int 			i = -1;
- 
--	if (c->x86_vendor == X86_VENDOR_AMD)
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON)
- 		op = 0x8000001d;
- 	else
- 		op = 4;
-@@ -678,6 +683,22 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
- 	}
- }
- 
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
-+{
-+	/*
-+	 * We may have multiple LLCs if L3 caches exist, so check if we
-+	 * have an L3 cache by looking at the L3 cache CPUID leaf.
-+	 */
-+	if (!cpuid_edx(0x80000006))
-+		return;
-+
-+	/*
-+	 * LLC is at the core complex level.
-+	 * Core complex ID is ApicId[3] for these processors.
-+	 */
-+	per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
-+}
-+
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
+diff --git a/arch/x86/kernel/cpu/mtrr/cleanup.c b/arch/x86/kernel/cpu/mtrr/cleanup.c
+index 765afd5..3668c5d 100644
+--- a/arch/x86/kernel/cpu/mtrr/cleanup.c
++++ b/arch/x86/kernel/cpu/mtrr/cleanup.c
+@@ -831,7 +831,8 @@ int __init amd_special_default_mtrr(void)
  {
+ 	u32 l, h;
  
-@@ -691,6 +712,11 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- 	}
- }
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return 0;
+ 	if (boot_cpu_data.x86 < 0xf)
+ 		return 0;
+diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
+index 9a19c80..507039c 100644
+--- a/arch/x86/kernel/cpu/mtrr/mtrr.c
++++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
+@@ -127,7 +127,7 @@ static void __init set_num_var_ranges(void)
  
-+void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
-+{
-+	num_cache_leaves = find_num_cache_leaves(c);
-+}
-+
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	/* Cache sizes */
-@@ -913,7 +939,8 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 	int index_msb, i;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 
--	if (c->x86_vendor == X86_VENDOR_AMD) {
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON) {
- 		if (__cache_amd_cpumap_setup(cpu, index, base))
- 			return;
- 	}
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 7b229af..da5446a 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -54,6 +54,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
- 				    enum cpuid_regs_idx reg);
- extern void init_intel_cacheinfo(struct cpuinfo_x86 *c);
- extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
-+extern void init_hygon_cacheinfo(struct cpuinfo_x86 *c);
- 
- extern void detect_num_cpu_cores(struct cpuinfo_x86 *c);
- extern int detect_extended_topology_early(struct cpuinfo_x86 *c);
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index 9f5679e..ac70997 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -90,6 +90,7 @@ static void hygon_get_topology(struct cpuinfo_x86 *c)
- 		if (!err)
- 			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
- 
-+		cacheinfo_hygon_init_llc_id(c, cpu, node_id);
- 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
- 		u64 value;
- 
-@@ -324,6 +325,8 @@ static void init_hygon(struct cpuinfo_x86 *c)
- 	hygon_get_topology(c);
- 	srat_detect_node(c);
- 
-+	init_hygon_cacheinfo(c);
-+
- 	if (cpu_has(c, X86_FEATURE_XMM2)) {
- 		unsigned long long val;
- 		int ret;
+ 	if (use_intel())
+ 		rdmsr(MSR_MTRRcap, config, dummy);
+-	else if (is_cpu(AMD))
++	else if (is_cpu(AMD) || is_cpu(HYGON))
+ 		config = 2;
+ 	else if (is_cpu(CYRIX) || is_cpu(CENTAUR))
+ 		config = 8;
 -- 
 2.7.4
 
