@@ -5,87 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631C1ECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89080ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE88214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE88214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id 3F273214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F273214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeIQOUH (ORCPT
+        id S1728101AbeIQOXV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:20:07 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:32891 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbeIQOUG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:20:06 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id 66DD53AEAEF;
-        Mon, 17 Sep 2018 10:53:38 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: =?UTF-8?B?W+KApl0=?= an apology, and a maintainership note
-Date:   Mon, 17 Sep 2018 10:53:32 +0200
-Message-ID: <2936237.GcMzexieOU@merkaba>
-In-Reply-To: <2882117.Jnuu2veLAZ@merkaba>
-References: <CA+55aFy+Hv9O5citAawS+mVZO+ywCKd9NQ2wxUmGsz9ZJzqgJQ@mail.gmail.com> <2882117.Jnuu2veLAZ@merkaba>
+        Mon, 17 Sep 2018 10:23:21 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37671 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727166AbeIQOXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:23:20 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0572D34BD0BE0;
+        Mon, 17 Sep 2018 16:56:39 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
+ 16:56:38 +0800
+Message-ID: <5B9F6C45.1020804@huawei.com>
+Date:   Mon, 17 Sep 2018 16:56:37 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <georgi.djakov@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] interconnect: Fix a GCC compiler warning
+References: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com> <5B9F4683.7010706@huawei.com> <20180917065428.GB26155@kroah.com> <5B9F54AF.7010208@huawei.com> <20180917084812.GB21981@kroah.com>
+In-Reply-To: <20180917084812.GB21981@kroah.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Steigerwald - 17.09.18, 09:57:
-> Dear Linus.
-> 
-> Linus Torvalds - 16.09.18, 21:22:
-> > This is my reality.  I am not an emotionally empathetic kind of
-> > person and that probably doesn't come as a big surprise to anybody.
-> >  Least of all me.  The fact that I then misread people and don't
-> > realize (for years) how badly I've judged a situation and
-> > contributed to an unprofessional environment is not good.
-> > 
-> > This week people in our community confronted me about my lifetime of
-> > not understanding emotions.  My flippant attacks in emails have been
-> > both unprofessional and uncalled for.  Especially at times when I
-> > made it personal.  In my quest for a better patch, this made sense
-> > to me. I know now this was not OK and I am truly sorry.
-> > 
-> > The above is basically a long-winded way to get to the somewhat
-> > painful personal admission that hey, I need to change some of my
-> > behavior, and I want to apologize to the people that my personal
-> > behavior hurt and possibly drove away from kernel development
-> > entirely.
-> 
-> I applaud you for the courage to go the bold step you have gone with
-> this mail. I can imagine coming up with this mail has been challenging
-> for you.
-> 
-> Your step provides a big chance for a shift to happen towards a more
-> welcoming and friendly Linux kernel community. From what I saw here as
-> mostly someone who tests rc kernels and as mostly a by-stander of
-> kernel development you may not be the only one here having challenges
-> to deal with emotions.
+On 2018/9/17 16:48, Greg KH wrote:
+> On Mon, Sep 17, 2018 at 03:15:59PM +0800, zhong jiang wrote:
+>> On 2018/9/17 14:54, Greg KH wrote:
+>>> On Mon, Sep 17, 2018 at 02:15:31PM +0800, zhong jiang wrote:
+>>>> On 2018/9/16 22:31, zhong jiang wrote:
+>>>>> Fix the following compile warning:
+>>>> +to  Andrew and Greg
+>>>>
+>>> +me for what?  Nothing is here :(
+>> The drivers/interconnect/core.c is not updated since 2017. I think the maintainer
+>>  is busy with other things.  Therefore,  I hope that you or Andrew and pick up the
+>> patch. :-)  . if you can not do this.  I am sorry for disturbing you.
+> I can do that, but again, I do not see any patch here in this email at
+> all, sorry.
+:-[ ,  I am sorry for handling email mistakely. 
 
-That written: Quite some of the rude mails that contained swearwords I 
-read from you have been about code, not persons. I think this is an 
-important distinction. I do not have much of an issue with swearing at 
-code :), especially when it is in some humorous way.
-
-Code quality indeed is important.
-
-As are human interactions.
-
--- 
-Martin
-
+Thanks,
+zhong jiang
+> greg k-h
 
