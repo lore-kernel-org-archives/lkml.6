@@ -2,97 +2,135 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC5ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900DDECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F838214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:10:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dH5QtRHZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F838214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 59344214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59344214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbeIQXi3 (ORCPT
+        id S1728382AbeIQXid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 19:38:29 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33449 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIQXi3 (ORCPT
+        Mon, 17 Sep 2018 19:38:33 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37356 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbeIQXic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:38:29 -0400
-Received: by mail-yb1-f193.google.com with SMTP id y9-v6so4146967ybh.0;
-        Mon, 17 Sep 2018 11:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eX5KDtEAj+eVU/2cXHu622QzEWm1V+H9eVTxqUyYC4E=;
-        b=dH5QtRHZJTy8jb7ekPi85r1/LLNaPcT/kS4fMD4IIe4HfT1U8UX+S+KNMW6uIw4hBF
-         cR9wwHiBYLqakkYMlWA+CpV0AWXJZGvRtvYz4QOsnTOHJpBaP7xDsL9kAQ3/WePUDd8M
-         Gu71/ilr6dbdN9GVkda86xpRYx6keTxfbgcKtqZfZF2OAoHFkYVPu3ClJSWo+vb/skeu
-         NvVmaTT9npVo7+PCFl0bBIGsa9Y9aCzOqS907qKuHz4/Vqkeyol8hzsgZ3+TLLaDYhi2
-         n2+KrmGWcDSGFCnBpGAzSbNZvMpEC0knlKCxjXTO4dLOlXOZsQ7NPWkPSTk37LQ2hD90
-         6C/Q==
+        Mon, 17 Sep 2018 19:38:32 -0400
+Received: by mail-qt0-f196.google.com with SMTP id n6-v6so16172609qtl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 11:10:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eX5KDtEAj+eVU/2cXHu622QzEWm1V+H9eVTxqUyYC4E=;
-        b=EWnHkqpl0jRaQXXSvWv6hrWzvt+ZJz4furZ1I40iw9s4dEhb2QsYeSgedi3d0GvgVC
-         71Aadn2v87y8RSrPVV+5v7wsrC4awjvUJhH18INkdtx27YJXWJ8cT+RFJMudomwSGe/T
-         5JGBFOY1A3PngYAf8dxCQIm7SwaaHV0IRpS/GRkiKbjut3ZtsoMtVY9LTXv2cTZAenfs
-         YgJjWxM7bdWL2l+7bA58YZ2uAA+ouZooA+r6KENMTa4Ab5pc/eWZgid4hyjGmEgjXbBS
-         hAW16aTTgNpEw+dPsyBaFMSShlzt9IOiI/F+k2mPnZJAeI5usPBLsbvLXiVNuxlaun2U
-         DB3A==
-X-Gm-Message-State: APzg51Dzibf3ZdOLbeB4XRDFN6QQnFM+SFXSqu635hEmoyagPuambmnz
-        JKv71WzNgszLYzta2icdy2Q=
-X-Google-Smtp-Source: ANB0VdYA004Q+QIU1q2ZeYFsJhobLd6hsv//DlGCjZb2sa8RM8brtNtZ9xMwbwMkziYHzMnM9G+hTg==
-X-Received: by 2002:a25:2ce:: with SMTP id 197-v6mr10704705ybc.215.1537207799879;
-        Mon, 17 Sep 2018 11:09:59 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id y144-v6sm8008914ywy.79.2018.09.17.11.09.58
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
+         :in-reply-to:references:organization:mime-version
+         :content-transfer-encoding;
+        bh=PGcyZ2PDlVPgQTMAItWjNBLw7foMMz0CpChIINkWMu8=;
+        b=EnZy0zktc//cRs5nC8ywUxXvq88EPBE3MDQZFk9g3OWTk396ajtylROdOdd1gtWHWe
+         wnYtcaO3ilY5yfPQUYIBLC0oNAU7q5FhdOv7mqXbZi+c98SWJF58U1bFt3/xzkgWDwwI
+         TIf/E5jMu3aP1hhLyk9h+t6Joa4XF1ayfJwjbxauGgo2KKFb6QBOpBT3FxYBMr7dQ9nI
+         KlnEmMrKJxEYh+TFeiSYoTudr65NV5aSDlQwpZL866BluVeAm4iH5rYnmLKlHbpxhFt9
+         IamLh3nyXoL9E0RVugiihgWmo/q+HX5VPkbUITg69Mt3AqROd6OcQsWMQOtF86/hbPQr
+         kG3Q==
+X-Gm-Message-State: APzg51AiwgasR5Re1saoMxvZtIYhm2XxFzJlW84bQurrB3GjAEaFIdLI
+        pYpLliHlNxtg+lJMWr0s0O8iqQ==
+X-Google-Smtp-Source: ANB0VdZSsC6eZOAajBHlze9LTxfaayEcxLKH82MXX5Lhcx7logkWuvTjpx140pHpy8GpK6p8H5EISg==
+X-Received: by 2002:aed:26a3:: with SMTP id q32-v6mr18948297qtd.103.1537207803931;
+        Mon, 17 Sep 2018 11:10:03 -0700 (PDT)
+Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
+        by smtp.gmail.com with ESMTPSA id s8-v6sm10629374qtc.71.2018.09.17.11.10.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 11:09:58 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 11:09:56 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-input@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Subject: Re: [PATCH V2] input: egalax_ts: add system wakeup support
-Message-ID: <20180917180956.GC104770@dtor-ws>
-References: <1536204258-433-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5DzYBz3U=RT-HzzK5KMMnYipceCWh9eYuYRmBctkRZ_=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5DzYBz3U=RT-HzzK5KMMnYipceCWh9eYuYRmBctkRZ_=w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 17 Sep 2018 11:10:02 -0700 (PDT)
+Message-ID: <54c01a13f382aacd7cd4d75a642630053f54b8f1.camel@redhat.com>
+Subject: Re: [PATCH] drm/probe_helper: Don't bother probing when connectors
+ are forced off
+From:   Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Sep 2018 14:10:02 -0400
+In-Reply-To: <20180917175545.GP5565@intel.com>
+References: <20180917174344.22011-1-lyude@redhat.com>
+         <20180917175545.GP5565@intel.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 06, 2018 at 01:46:32PM -0300, Fabio Estevam wrote:
-> On Thu, Sep 6, 2018 at 12:24 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> > This patch adds wakeup function support for egalax touch
-> > screen, if "wakeup-source" is added to device tree's egalax
-> > touch screen node, the wakeup function will be enabled, and
-> > egalax touch screen will be able to wakeup system from suspend.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Mon, 2018-09-17 at 20:55 +0300, Ville Syrjälä wrote:
+> On Mon, Sep 17, 2018 at 01:43:44PM -0400, Lyude Paul wrote:
+> > Userspace asked them to be forced off, so why would we care about what a
+> > probe tells us?
 > 
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> I believe there should be force checks in the callers already.
+> Or are we missing some?
 
-Applied, thank you.
+JFYI, what triggered me to send this patch are these error messages that come
+from nouveau when a hotplug happens on a port that we've forced off:
 
--- 
-Dmitry
+[ 1903.918104] nouveau 0000:01:00.0: DRM: DDC responded, but no EDID for DP-2
+[ 1903.918123] [drm:drm_helper_hpd_irq_event [drm_kms_helper]] [CONNECTOR:61:DP-2] status updated from disconnected to disconnected
+
+That being said; I'm sure there are probably some checks missing, but I don't
+really see the purpose in calling the driver's probe functions at all if they're
+just supposed to return the status we forced.
+
+> 
+> > 
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > ---
+> >  drivers/gpu/drm/drm_probe_helper.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_probe_helper.c
+> > b/drivers/gpu/drm/drm_probe_helper.c
+> > index a1bb157bfdfa..56d2b5dd1f58 100644
+> > --- a/drivers/gpu/drm/drm_probe_helper.c
+> > +++ b/drivers/gpu/drm/drm_probe_helper.c
+> > @@ -269,7 +269,9 @@ drm_helper_probe_detect_ctx(struct drm_connector
+> > *connector, bool force)
+> >  retry:
+> >  	ret = drm_modeset_lock(&connector->dev->mode_config.connection_mutex,
+> > &ctx);
+> >  	if (!ret) {
+> > -		if (funcs->detect_ctx)
+> > +		if (connector->force == DRM_FORCE_OFF)
+> > +			ret = connector_status_disconnected;
+> 
+> connector->force is protected by mode_config.mutex IIRC.
+> 
+> > +		else if (funcs->detect_ctx)
+> >  			ret = funcs->detect_ctx(connector, &ctx, force);
+> >  		else if (connector->funcs->detect)
+> >  			ret = connector->funcs->detect(connector, force);
+> > @@ -317,6 +319,9 @@ drm_helper_probe_detect(struct drm_connector *connector,
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > +	if (connector->force == DRM_FORCE_OFF)
+> > +		return connector_status_disconnected;
+> > +
+> >  	if (funcs->detect_ctx)
+> >  		return funcs->detect_ctx(connector, ctx, force);
+> >  	else if (connector->funcs->detect)
+> > -- 
+> > 2.17.1
+> > 
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+
