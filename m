@@ -2,142 +2,111 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DC1ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C02ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95B8214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95B8214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id B6771214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:54:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeNZ+zPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6771214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbeIQQOS (ORCPT
+        id S1727299AbeIQQUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 12:14:18 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:33506 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727547AbeIQQOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 12:14:17 -0400
-Received: from wd0459.dip.tu-dresden.de ([141.76.109.203] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1g1r3l-0000bj-Ot; Mon, 17 Sep 2018 12:47:17 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: add i2s and spdif endpoints of rk3328
-Date:   Mon, 17 Sep 2018 12:47:17 +0200
-Message-ID: <9920488.EWSIgOMfRJ@phil>
-In-Reply-To: <20180917085555.21775-1-katsuhiro@katsuster.net>
-References: <20180917085555.21775-1-katsuhiro@katsuster.net>
+        Mon, 17 Sep 2018 12:20:50 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:34533 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbeIQQUu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 12:20:50 -0400
+Received: by mail-yw1-f66.google.com with SMTP id y134-v6so5236368ywg.1;
+        Mon, 17 Sep 2018 03:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fA1nUlEz+N7M2D+tDxOVeSk+U0bT/2oDobcJWPqYKkc=;
+        b=YeNZ+zPnD0T6T90U4afBQVGaCVmKknBTAuu6PLvrr/mLBYMEZAyLEW4FpJHoccLMdt
+         CZnIeBp6Xz7cGVhp7CzBYD+FYTr1juw7gv/kqoqVOTqmvETtZoFW6sxMEGUCURPhlP3F
+         uKFMBliPEcsrO/y9qCp+rcaVuo+xnVWKyyitdTPz7laHeVk7/LW8Nqfgcq3T5gC+y14J
+         yjeo44ksjnRHuUaDYnLaXyoh+45TK5iwNbRVfJNEeFhlHt7prr/t6tWJpBfMyPvNrv/V
+         BpUVP0AMC8bdLFFECKeYk8redJoPiNi61311lqdB2vvxt5sJ+x9A8V0eyxRReTJGE2ZP
+         5M7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fA1nUlEz+N7M2D+tDxOVeSk+U0bT/2oDobcJWPqYKkc=;
+        b=JhhzcyXdctrj+zAbKvEjq1NQHTqOJdSxTrmoGHFZpTfjyzS85LFOj35obvhR89B+4u
+         rrS9gmBLup8OgP5sJ436gw7eRgyGb9wkqRpOW/qXb41Wkbf84/Z7evf8vAbfQx5NadF9
+         hI8mMOx1LbZjTvl0hH1jeWuXw4XMpnZUvM+D1GB9Lgnb1G1lb8cF/oV2wFU/GVdXm6cC
+         E1Te6XZMQXAOW71P06/WLQ1fR67NAGFwZWRNsTWAAT9uWt9XlbwQyQAR/QEOqo1Cne1r
+         jPqINg9pUq97EB1Ei1KLKVk9ccrrmfCr5UEYnyGyaFvoAgQLlPMSbDWQ8PT4p452GfJ/
+         b8uw==
+X-Gm-Message-State: APzg51CwlfwQExUMAG08RsjHQiUihCCpx5qZWSZ3dlmygd09HQVsm7Y/
+        yjxMdRuebUrOZYwpqWNplyE5Ft45ForEYgexPQw=
+X-Google-Smtp-Source: ANB0VdZ967HhBbhWpuYdE78fpsMBR6xIH2nYZfHFERp5j1Fea3PsQce5e9hI6oGuHKPoXMkjYdBSQnLtO6zmkUczl18=
+X-Received: by 2002:a81:ac09:: with SMTP id k9-v6mr10119806ywh.409.1537181640112;
+ Mon, 17 Sep 2018 03:54:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20180917091602.21531-1-nixiaoming@huawei.com>
+In-Reply-To: <20180917091602.21531-1-nixiaoming@huawei.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 17 Sep 2018 13:53:48 +0300
+Message-ID: <CAOQ4uxiBMD7ZRVz=iiY9bUEmvQOYSqz7wWxMQvwj7EpAd-ft1A@mail.gmail.com>
+Subject: Re: [PATCH] fanotify support save thread id
+To:     nixiaoming@huawei.com
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Sep 17, 2018 at 1:02 PM nixiaoming <nixiaoming@huawei.com> wrote:
+>
+> Added FAN_EVENT_INFO_TID to select the thread id of the event trigger
+>
 
-Am Montag, 17. September 2018, 10:55:55 CEST schrieb Katsuhiro Suzuki:
-> This patch adds port and endpoint of i2s and spdif nodes for rk3328.
-> Because to use modern sound card interface such as audio-graph-card.
-> 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Maybe "to report the thread id of the task that caused the event".
+Also in commit title, I think "reporting thread id" is more to the point
+than "save thread id".
+
+
+> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 > ---
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> index d3ef6566325e..fd35dbd37ee2 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> @@ -179,7 +179,13 @@
->  		clock-names = "i2s_clk", "i2s_hclk";
->  		dmas = <&dmac 11>, <&dmac 12>;
->  		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->  		status = "disabled";
-> +
-> +		i2s0_p0: port {
-> +			i2s0_p0_0: endpoint {
-> +			};
-> +		};
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -18,6 +18,7 @@
+>
+>  #define FAN_ONDIR              0x40000000      /* event occurred against dir */
+>
+> +#define FAN_EVENT_INFO_TID     0x02000000      /* event save thread id replace tgid */
+>  #define FAN_EVENT_ON_CHILD     0x08000000      /* interested in child events */
+>
 
-I'm still pondering this. I.e. I'm not sure I really like adding all these
-empty nodes only to have them filled in board devicetrees.
+nixiaoming,
 
-This is specific to the audio-graph-card, and neither simple-audio-card
-nor the Rockchip-specific cards we have use something like this, so
-currently I'm tending to just have all audio-graph-nodes defined in the
-board devicetree using it.
+You misunderstood me.
 
-For example similar to arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-or zte/zx296718-pcbox.dts do it.
+I meant that you should add support for flag FAN_EVENT_INFO_TID
+for the fanotify_init() syscall, not the fanotify_mark() syscall.
 
-It would be different if the graph-links were actually on the soc-level
-like vop<->hdmi or so, but this is completely board-specific.
+See this commit from Steve Grubb for example of adding new opt-in
+behavior to fanotify:
+de8cd83e91bc audit: Record fanotify access control decisions
 
-Same for the others below.
+BTW, Steve, did you ever follow up with a man-pages patch?
 
-Thoughts?
-Heiko
-
-
->  	};
->  
->  	i2s1: i2s@ff010000 {
-> @@ -190,7 +196,13 @@
->  		clock-names = "i2s_clk", "i2s_hclk";
->  		dmas = <&dmac 14>, <&dmac 15>;
->  		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->  		status = "disabled";
-> +
-> +		i2s1_p0: port {
-> +			i2s1_p0_0: endpoint {
-> +			};
-> +		};
->  	};
->  
->  	i2s2: i2s@ff020000 {
-> @@ -201,7 +213,13 @@
->  		clock-names = "i2s_clk", "i2s_hclk";
->  		dmas = <&dmac 0>, <&dmac 1>;
->  		dma-names = "tx", "rx";
-> +		#sound-dai-cells = <0>;
->  		status = "disabled";
-> +
-> +		i2s2_p0: port {
-> +			i2s2_p0_0: endpoint {
-> +			};
-> +		};
->  	};
->  
->  	spdif: spdif@ff030000 {
-> @@ -214,7 +232,13 @@
->  		dma-names = "tx";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&spdifm2_tx>;
-> +		#sound-dai-cells = <0>;
->  		status = "disabled";
-> +
-> +		spdif_p0: port {
-> +			spdif_p0_0: endpoint {
-> +			};
-> +		};
->  	};
->  
->  	pdm: pdm@ff040000 {
-> 
-
-
-
-
+Thanks,
+Amir.
