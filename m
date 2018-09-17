@@ -2,91 +2,82 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312BAECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD87FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E241120883
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:01:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E241120883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9713F20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:01:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9713F20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbeIQU3E (ORCPT
+        id S1729194AbeIQU3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:29:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:60546 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbeIQU3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:29:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFA51ED1;
-        Mon, 17 Sep 2018 08:01:21 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A0563F5BD;
-        Mon, 17 Sep 2018 08:01:20 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 16:01:17 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Ray Jui <ray.jui@broadcom.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-Subject: Re: [PATCH] PCI: iproc: Remove PAXC slot check to allow VF support
-Message-ID: <20180917150117.GG7239@e107981-ln.cambridge.arm.com>
-References: <20180828172258.76629-1-ray.jui@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828172258.76629-1-ray.jui@broadcom.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 17 Sep 2018 16:29:08 -0400
+Received: from smtprelay0195.hostedemail.com ([216.40.44.195]:40973 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728016AbeIQU3H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 16:29:07 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 5495681CC;
+        Mon, 17 Sep 2018 15:01:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bean02_45ce144452d0b
+X-Filterd-Recvd-Size: 2042
+Received: from joe-laptop.perches.com (mb42736d0.tmodns.net [208.54.39.180])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 17 Sep 2018 15:01:19 +0000 (UTC)
+From:   Joe Perches <joe@perches.com>
+To:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc:     Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Neaten logging uses
+Date:   Mon, 17 Sep 2018 08:01:07 -0700
+Message-Id: <cover.1537183087.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 10:22:58AM -0700, Ray Jui wrote:
-> From: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-> 
-> Fix previous incorrect logic that limits PAXC slot number to zero only.
-> In order for SRIOV/VF to work, we need to allow the slot number to be
-> greater than zero.
-> 
-> Fixes: 46560388c476c ("PCI: iproc: Allow multiple devices except on PAXC")
-> Signed-off-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
-> ---
->  drivers/pci/controller/pcie-iproc.c | 8 --------
->  1 file changed, 8 deletions(-)
+Several defects exist in the logging uses
 
-Applied to pci/iproc for v4.20, thanks.
+o Missing KERN_<LEVEL>
+o Unnecessary KERN_<LEVEL> uses with panic
+o Mismatched MPT3SAS_FMT and %s: with name and __func__
 
-Lorenzo
+Correct these defects and perhaps add some clarity to the logging.
 
-> diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-> index 3160e9342a2f..c20fd6bd68fd 100644
-> --- a/drivers/pci/controller/pcie-iproc.c
-> +++ b/drivers/pci/controller/pcie-iproc.c
-> @@ -630,14 +630,6 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct iproc_pcie *pcie,
->  			return (pcie->base + offset);
->  	}
->  
-> -	/*
-> -	 * PAXC is connected to an internally emulated EP within the SoC.  It
-> -	 * allows only one device.
-> -	 */
-> -	if (pcie->ep_is_internal)
-> -		if (slot > 0)
-> -			return NULL;
-> -
->  	return iproc_pcie_map_ep_cfg_reg(pcie, busno, slot, fn, where);
->  }
->  
-> -- 
-> 2.17.1
-> 
+Joe Perches (7):
+  mpt3sas: Add ioc_<level> logging macros
+  mpt3sas: Convert uses of pr_<level> with MPT3SAS_FMT to ioc_<level>
+  mpt3sas: Convert mlsleading uses of pr_<level> with MPT3SAS_FMT
+  mpt3sas: Convert logging uses with MPT3SAS_FMT and reply_q_name to %s:
+  mpt3sas: Remove KERN_WARNING from panic uses
+  mpt3sas: Convert logging uses with MPT3SAS_FMT without logging levels
+  mpt3sas: Remove unused macro MPT3SAS_FMT
+
+ drivers/scsi/mpt3sas/mpt3sas_base.c         | 1116 +++++++++-----------
+ drivers/scsi/mpt3sas/mpt3sas_base.h         |    9 +-
+ drivers/scsi/mpt3sas/mpt3sas_config.c       |   89 +-
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c          |  493 ++++-----
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c        | 1487 ++++++++++++---------------
+ drivers/scsi/mpt3sas/mpt3sas_transport.c    |  337 +++---
+ drivers/scsi/mpt3sas/mpt3sas_trigger_diag.c |  101 +-
+ drivers/scsi/mpt3sas/mpt3sas_warpdrive.c    |   70 +-
+ 8 files changed, 1618 insertions(+), 2084 deletions(-)
+
+-- 
+2.15.0
+
