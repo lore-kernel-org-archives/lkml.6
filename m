@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BB1ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E754CECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 174762146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174762146F
+	by mail.kernel.org (Postfix) with ESMTP id A88262146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88262146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732062AbeIREjk (ORCPT
+        id S1732072AbeIREjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:39:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50266 "EHLO
+        Tue, 18 Sep 2018 00:39:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50276 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREjj (ORCPT
+        with ESMTP id S1729160AbeIREjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:39:39 -0400
+        Tue, 18 Sep 2018 00:39:42 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57A78707;
-        Mon, 17 Sep 2018 23:10:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 717AEC9D;
+        Mon, 17 Sep 2018 23:10:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>, prarit@redhat.com
-Subject: [PATCH 4.18 038/158] x86/microcode: Update the new microcode revision unconditionally
-Date:   Tue, 18 Sep 2018 00:41:08 +0200
-Message-Id: <20180917211712.903811251@linuxfoundation.org>
+        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
+        Alex Wu <alexwu@synology.com>,
+        Chung-Chiang Cheng <cccheng@synology.com>,
+        BingJing Chang <bingjingc@synology.com>,
+        Shaohua Li <shli@fb.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 065/158] md/raid5: fix data corruption of replacements after originals dropped
+Date:   Tue, 18 Sep 2018 00:41:35 +0200
+Message-Id: <20180917211714.240649986@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,121 +55,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filippo Sironi <sironi@amazon.de>
+From: BingJing Chang <bingjingc@synology.com>
 
-commit 8da38ebaad23fe1b0c4a205438676f6356607cfc upstream.
+[ Upstream commit d63e2fc804c46e50eee825c5d3a7228e07048b47 ]
 
-Handle the case where microcode gets loaded on the BSP's hyperthread
-sibling first and the boot_cpu_data's microcode revision doesn't get
-updated because of early exit due to the siblings sharing a microcode
-engine.
+During raid5 replacement, the stripes can be marked with R5_NeedReplace
+flag. Data can be read from being-replaced devices and written to
+replacing spares without reading all other devices. (It's 'replace'
+mode. s.replacing = 1) If a being-replaced device is dropped, the
+replacement progress will be interrupted and resumed with pure recovery
+mode. However, existing stripes before being interrupted cannot read
+from the dropped device anymore. It prints lots of WARN_ON messages.
+And it results in data corruption because existing stripes write
+problematic data into its replacement device and update the progress.
 
-For that, simply write the updated revision on all CPUs unconditionally.
+\# Erase disks (1MB + 2GB)
+dd if=/dev/zero of=/dev/sda bs=1MB count=2049
+dd if=/dev/zero of=/dev/sdb bs=1MB count=2049
+dd if=/dev/zero of=/dev/sdc bs=1MB count=2049
+dd if=/dev/zero of=/dev/sdd bs=1MB count=2049
+mdadm -C /dev/md0 -amd -R -l5 -n3 -x0 /dev/sd[abc] -z 2097152
+\# Ensure array stores non-zero data
+dd if=/root/data_4GB.iso of=/dev/md0 bs=1MB
+\# Start replacement
+mdadm /dev/md0 -a /dev/sdd
+mdadm /dev/md0 --replace /dev/sda
 
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: prarit@redhat.com
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1533050970-14385-1-git-send-email-sironi@amazon.de
+Then, Hot-plug out /dev/sda during recovery, and wait for recovery done.
+echo check > /sys/block/md0/md/sync_action
+cat /sys/block/md0/md/mismatch_cnt # it will be greater than 0.
+
+Soon after you hot-plug out /dev/sda, you will see many WARN_ON
+messages. The replacement recovery will be interrupted shortly. After
+the recovery finishes, it will result in data corruption.
+
+Actually, it's just an unhandled case of replacement. In commit
+<f94c0b6658c7> (md/raid5: fix interaction of 'replace' and 'recovery'.),
+if a NeedReplace device is not UPTODATE then that is an error, the
+commit just simply print WARN_ON but also mark these corrupted stripes
+with R5_WantReplace. (it means it's ready for writes.)
+
+To fix this case, we can leverage 'sync and replace' mode mentioned in
+commit <9a3e1101b827> (md/raid5: detect and handle replacements during
+recovery.). We can add logics to detect and use 'sync and replace' mode
+for these stripes.
+
+Reported-by: Alex Chen <alexchen@synology.com>
+Reviewed-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+Signed-off-by: BingJing Chang <bingjingc@synology.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/microcode/amd.c   |   22 +++++++++++++---------
- arch/x86/kernel/cpu/microcode/intel.c |   13 ++++++++-----
- 2 files changed, 21 insertions(+), 14 deletions(-)
+ drivers/md/raid5.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -504,6 +504,7 @@ static enum ucode_state apply_microcode_
- 	struct microcode_amd *mc_amd;
- 	struct ucode_cpu_info *uci;
- 	struct ucode_patch *p;
-+	enum ucode_state ret;
- 	u32 rev, dummy;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4521,6 +4521,12 @@ static void analyse_stripe(struct stripe
+ 			s->failed++;
+ 			if (rdev && !test_bit(Faulty, &rdev->flags))
+ 				do_recovery = 1;
++			else if (!rdev) {
++				rdev = rcu_dereference(
++				    conf->disks[i].replacement);
++				if (rdev && !test_bit(Faulty, &rdev->flags))
++					do_recovery = 1;
++			}
+ 		}
  
- 	BUG_ON(raw_smp_processor_id() != cpu);
-@@ -521,9 +522,8 @@ static enum ucode_state apply_microcode_
- 
- 	/* need to apply patch? */
- 	if (rev >= mc_amd->hdr.patch_id) {
--		c->microcode = rev;
--		uci->cpu_sig.rev = rev;
--		return UCODE_OK;
-+		ret = UCODE_OK;
-+		goto out;
- 	}
- 
- 	if (__apply_microcode_amd(mc_amd)) {
-@@ -531,17 +531,21 @@ static enum ucode_state apply_microcode_
- 			cpu, mc_amd->hdr.patch_id);
- 		return UCODE_ERROR;
- 	}
--	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
--		mc_amd->hdr.patch_id);
- 
--	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
--	c->microcode = mc_amd->hdr.patch_id;
-+	rev = mc_amd->hdr.patch_id;
-+	ret = UCODE_UPDATED;
-+
-+	pr_info("CPU%d: new patch_level=0x%08x\n", cpu, rev);
-+
-+out:
-+	uci->cpu_sig.rev = rev;
-+	c->microcode	 = rev;
- 
- 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
- 	if (c->cpu_index == boot_cpu_data.cpu_index)
--		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
-+		boot_cpu_data.microcode = rev;
- 
--	return UCODE_UPDATED;
-+	return ret;
- }
- 
- static int install_equiv_cpu_table(const u8 *buf)
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -795,6 +795,7 @@ static enum ucode_state apply_microcode_
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct microcode_intel *mc;
-+	enum ucode_state ret;
- 	static int prev_rev;
- 	u32 rev;
- 
-@@ -817,9 +818,8 @@ static enum ucode_state apply_microcode_
- 	 */
- 	rev = intel_get_microcode_revision();
- 	if (rev >= mc->hdr.rev) {
--		uci->cpu_sig.rev = rev;
--		c->microcode = rev;
--		return UCODE_OK;
-+		ret = UCODE_OK;
-+		goto out;
- 	}
- 
- 	/*
-@@ -848,14 +848,17 @@ static enum ucode_state apply_microcode_
- 		prev_rev = rev;
- 	}
- 
-+	ret = UCODE_UPDATED;
-+
-+out:
- 	uci->cpu_sig.rev = rev;
--	c->microcode = rev;
-+	c->microcode	 = rev;
- 
- 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
- 	if (c->cpu_index == boot_cpu_data.cpu_index)
- 		boot_cpu_data.microcode = rev;
- 
--	return UCODE_UPDATED;
-+	return ret;
- }
- 
- static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
+ 		if (test_bit(R5_InJournal, &dev->flags))
 
 
