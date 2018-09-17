@@ -2,72 +2,120 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8207DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F3AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC54214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1F362098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GiE5emYl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC54214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzfiiTE1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F362098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeIQTun (ORCPT
+        id S1728802AbeIQTvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:50:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58546 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728090AbeIQTun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:50:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6tBWE85R2ILzm13UaxFxXmD91sWMmvqz6SQDGAZV1jk=; b=GiE5emYloAm3kF9Eb8fOuDGSA
-        NfHKmAROjGgkQewjZN+yj7snpz0ONMr/KZHm58PHaYOjbidheolumKpHGEY/L9aZqsstc+ip2AAkq
-        +ZNmf1k6MpmHCSqU2RgZ4HWFqHF6rOxnJivqKyOyGv/iVAoxFbWCKvevjEnJ3+ViQTXSF+kHXiP7V
-        +fuc6m0q1ZvfTCV9PhoDfzLdlN63hH7pP0zs4UBNO/rZWuxOtd/CtSAtU5NyJC43w10+y09u2H2xo
-        OvF5tyFbuXx6Aed9H8wLBD0XV5n7cEIs/sflJTi7KSo6aHJISQbq5b0pBuDJ9BivS7vP7EinaHIAt
-        EcroDhz8A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1uQe-0005uA-LF; Mon, 17 Sep 2018 14:23:08 +0000
-Date:   Mon, 17 Sep 2018 07:23:08 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        hch@infradead.org, mark.rutland@arm.com, robh@kernel.org,
-        Damien.LeMoal@wdc.com, marc.zyngier@arm.com, anup@brainfault.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Subject: Re: [RFC 2/3] RISC-V:Support per-hart timebase-frequency
-Message-ID: <20180917142308.GB15588@infradead.org>
-References: <1536962096-233842-1-git-send-email-atish.patra@wdc.com>
- <1536962096-233842-3-git-send-email-atish.patra@wdc.com>
+        Mon, 17 Sep 2018 15:51:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728090AbeIQTvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 15:51:23 -0400
+Received: from mail-qt0-f180.google.com (mail-qt0-f180.google.com [209.85.216.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20989214DA;
+        Mon, 17 Sep 2018 14:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537194229;
+        bh=wwpD+nKD+NYJolPUicqzvE+SY/l95dZ42cCywe1Q3dQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NzfiiTE1telsxt4Pwo3Ec2Q+TY2DWoRNIkn4lrUczGYKgAt83xdoLcCEAIaNhcr7B
+         FDenFsTO15Jl2JXBxraEjGGN4lWfxbWWf0eB8TgaCwJmfEBKTAFqAk5t+DYTsulajt
+         IY16OIr4lC2UtECBo7LNPTBX3jpDIAnvVAyRROuM=
+Received: by mail-qt0-f180.google.com with SMTP id m13-v6so15448854qth.1;
+        Mon, 17 Sep 2018 07:23:49 -0700 (PDT)
+X-Gm-Message-State: APzg51DuQH2wa5qPTLORJ3AI44ci69dQ/d0lnJHq0AbykeGdNr82RdWn
+        wThl5kMNPqkdP7I3FZiVx0bsg0IqkRgELsUD1g==
+X-Google-Smtp-Source: ANB0VdY4QAL5kElODBNzlx2bju6c2QiE0DW6nvxPc2mZAs7rrN16gXBbo3+jzYB9AhXaoRIvw+3i5takeFRaLhLL9n8=
+X-Received: by 2002:a0c:d5d3:: with SMTP id h19-v6mr18204974qvi.218.1537194228276;
+ Mon, 17 Sep 2018 07:23:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1536962096-233842-3-git-send-email-atish.patra@wdc.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
+ <162f7f98697cd9d806a1a843c6177bb943ea2b33.1537087118.git.ren_guo@c-sky.com>
+ <20180917062336.GA20555@bogus> <20180917083623.GA1069@guoren>
+In-Reply-To: <20180917083623.GA1069@guoren>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 17 Sep 2018 07:23:36 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqJOoek+P+NR_jEfPJD1JLC4U-x_hmJL=vjvMU5JWxjVeA@mail.gmail.com>
+Message-ID: <CAL_JsqJOoek+P+NR_jEfPJD1JLC4U-x_hmJL=vjvMU5JWxjVeA@mail.gmail.com>
+Subject: Re: [PATCH V5 2/3] dt-bindings: interrupt-controller: C-SKY APB intc
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 02:54:55PM -0700, Atish Patra wrote:
-> Follow the updated DT specs and read the timebase-frequency
-> from the boot cpu. Keep the old DT reading as well for backward
-> compatibility. This patch is rework of old patch from Palmer.
-> 
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+On Mon, Sep 17, 2018 at 1:36 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> On Mon, Sep 17, 2018 at 02:23:36AM -0400, Rob Herring wrote:
+> > On Sun, Sep 16, 2018 at 04:50:03PM +0800, Guo Ren wrote:
+> > > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> >
+> > Needs a commit description.
+> >
+> > > ---
+> > >  .../interrupt-controller/csky,apb-intc.txt         | 70 ++++++++++++++++++++++
+> > >  1 file changed, 70 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+> > > new file mode 100644
+> > > index 0000000..be7c3d1
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+> > > @@ -0,0 +1,70 @@
+> > > +==============================
+> > > +C-SKY APB Interrupt Controller
+> > > +==============================
+> > > +
+> > > +C-SKY APB Interrupt Controller is a simple soc interrupt controller
+> > > +on the apb bus and we only use it as root irq controller.
+> > > +
+> > > + - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
+> > > + - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
+> > > + - csky,gx6605s-intc is gx6605s soc internal irq interrupt controller, 64 irq nums.
+> >
+> > Is there a relationship between csky,gx6605s-intc and csky,apb-intc?
+> They all use pending register to get irq num and use enable register to
+> mask/unmask.
+>
+> > > +        - support-pulse-signal:
+> > > +                Usage: select
+> > > +           Description: to support pulse signal flag
+> >
+> > What is this for?
+> This is a level-triger interrupt controller at first, but we want it
+> to support pulse signal. It means that when the pulse signal coming,
+> the pending register will hold signals without clear the IFR reg.
+>
+> Some C-SKY cpu's socs need this feature to support pulse interrupt
+> signal.
 
-This setup looks a bit odd because it keeps blindly overwriting
-riscv_timebase for every cpu found.  Shouldn't we at least check that
-they all match for now as the rest of the port assumes that?
+So an edge triggered interrupt. We have a way to support that on a per
+interrupt basis with a 2nd cell (which you should consider if you may
+need anyways). But this is a global setting for all interrupts the
+interrupt controller serves? If so, it's fine, but does need a vendor
+prefix.
+
+Rob
