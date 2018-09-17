@@ -4,71 +4,228 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC053ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 581B6ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75832214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:43:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75832214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id F0AAA214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:47:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AAA214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeIQWL4 (ORCPT
+        id S1728711AbeIQWPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 18:11:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12592 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728455AbeIQWL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:11:56 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BC6361BA55BCB;
-        Tue, 18 Sep 2018 00:43:42 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 18 Sep 2018 00:43:41 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <michael.chan@broadcom.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: bnxt: Fix a uninitialized variable warning.
-Date:   Tue, 18 Sep 2018 00:31:23 +0800
-Message-ID: <1537201883-2518-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Mon, 17 Sep 2018 18:15:19 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4446 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727124AbeIQWPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 18:15:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 09:47:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
+   d="scan'208";a="73937006"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga008.jf.intel.com with ESMTP; 17 Sep 2018 09:46:35 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id A0ECC2069E; Mon, 17 Sep 2018 19:46:34 +0300 (EEST)
+Date:   Mon, 17 Sep 2018 19:46:34 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/2] [media] v4l: allow to register dev nodes for
+ individual v4l2 subdevs
+Message-ID: <20180917164634.arevvwkrvdmmteem@paasikivi.fi.intel.com>
+References: <20180904113018.14428-1-javierm@redhat.com>
+ <20180904113018.14428-2-javierm@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180904113018.14428-2-javierm@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following compile warning:
+Hi Javier,
 
-drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c:49:5: warning: nvm_param.dir_type may be used uninitialized in this function [-Wmaybe-uninitialized]
-  if (nvm_param.dir_type == BNXT_NVM_PORT_CFG)
+On Tue, Sep 04, 2018 at 01:30:17PM +0200, Javier Martinez Canillas wrote:
+> Currently there's only a function to register device nodes for all subdevs
+> of a v4l2 device that are marked with the V4L2_SUBDEV_FL_HAS_DEVNODE flag.
+> 
+> But drivers may want to register device nodes for individual subdevices,
+> so add a v4l2_device_register_subdev_node() for this purpose.
+> 
+> A use case for this function is for media device drivers to register the
+> device nodes in the v4l2 async notifier .bound callback instead of doing
+> a registration for all subdevices in the .complete callback.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the set.
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-index f3b9fbc..ab88217 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
-@@ -31,7 +31,7 @@ static int bnxt_hwrm_nvm_req(struct bnxt *bp, u32 param_id, void *msg,
- {
- 	struct hwrm_nvm_get_variable_input *req = msg;
- 	void *data_addr = NULL, *buf = NULL;
--	struct bnxt_dl_nvm_param nvm_param;
-+	struct bnxt_dl_nvm_param nvm_param = {0};
- 	int bytesize, idx = 0, rc, i;
- 	dma_addr_t data_dma_addr;
- 
+I've been doing some work to add events to MC; with Hans's property API
+set, assuming it could be used to tell the registration is complete, we
+have all bits for a complete solution.
+
+As the driver is buggy and fails to work correctly in the case if not every
+sub-devices probes successfully, I see no reason to postpone applying the
+two patches now.
+
+One more comment below. (No need to resend just for that IMO.)
+
+> 
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> ---
+> 
+>  drivers/media/v4l2-core/v4l2-device.c | 90 ++++++++++++++++-----------
+>  include/media/v4l2-device.h           | 10 +++
+>  2 files changed, 63 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
+> index 3940e55c72f1..e5fc51b6604c 100644
+> --- a/drivers/media/v4l2-core/v4l2-device.c
+> +++ b/drivers/media/v4l2-core/v4l2-device.c
+> @@ -222,9 +222,59 @@ static void v4l2_device_release_subdev_node(struct video_device *vdev)
+>  	kfree(vdev);
+>  }
+>  
+> -int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
+> +int v4l2_device_register_subdev_node(struct v4l2_device *v4l2_dev,
+> +				     struct v4l2_subdev *sd)
+>  {
+>  	struct video_device *vdev;
+> +	int err;
+> +
+> +	if (!(sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE))
+> +		return -EINVAL;
+> +
+> +	vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
+> +	if (!vdev)
+> +		return -ENOMEM;
+> +
+> +	video_set_drvdata(vdev, sd);
+> +	strlcpy(vdev->name, sd->name, sizeof(vdev->name));
+> +	vdev->v4l2_dev = v4l2_dev;
+> +	vdev->fops = &v4l2_subdev_fops;
+> +	vdev->release = v4l2_device_release_subdev_node;
+> +	vdev->ctrl_handler = sd->ctrl_handler;
+> +	err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
+> +				      sd->owner);
+> +	if (err < 0) {
+> +		kfree(vdev);
+> +		return err;
+> +	}
+> +	sd->devnode = vdev;
+> +#if defined(CONFIG_MEDIA_CONTROLLER)
+> +	sd->entity.info.dev.major = VIDEO_MAJOR;
+> +	sd->entity.info.dev.minor = vdev->minor;
+> +
+> +	/* Interface is created by __video_register_device() */
+> +	if (vdev->v4l2_dev->mdev) {
+> +		struct media_link *link;
+> +
+> +		link = media_create_intf_link(&sd->entity,
+> +					      &vdev->intf_devnode->intf,
+> +					      MEDIA_LNK_FL_ENABLED |
+> +					      MEDIA_LNK_FL_IMMUTABLE);
+> +		if (!link) {
+> +			err = -ENOMEM;
+> +			video_unregister_device(sd->devnode);
+> +			return err;
+> +		}
+> +	}
+> +#endif
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_device_register_subdev_node);
+> +
+> +int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
+> +{
+> +
+>  	struct v4l2_subdev *sd;
+>  	int err;
+>  
+> @@ -238,43 +288,9 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
+>  		if (sd->devnode)
+>  			continue;
+>  
+> -		vdev = kzalloc(sizeof(*vdev), GFP_KERNEL);
+> -		if (!vdev) {
+> -			err = -ENOMEM;
+> -			goto clean_up;
+> -		}
+> -
+> -		video_set_drvdata(vdev, sd);
+> -		strlcpy(vdev->name, sd->name, sizeof(vdev->name));
+> -		vdev->v4l2_dev = v4l2_dev;
+> -		vdev->fops = &v4l2_subdev_fops;
+> -		vdev->release = v4l2_device_release_subdev_node;
+> -		vdev->ctrl_handler = sd->ctrl_handler;
+> -		err = __video_register_device(vdev, VFL_TYPE_SUBDEV, -1, 1,
+> -					      sd->owner);
+> -		if (err < 0) {
+> -			kfree(vdev);
+> +		err = v4l2_device_register_subdev_node(v4l2_dev, sd);
+> +		if (err)
+>  			goto clean_up;
+> -		}
+> -		sd->devnode = vdev;
+> -#if defined(CONFIG_MEDIA_CONTROLLER)
+> -		sd->entity.info.dev.major = VIDEO_MAJOR;
+> -		sd->entity.info.dev.minor = vdev->minor;
+> -
+> -		/* Interface is created by __video_register_device() */
+> -		if (vdev->v4l2_dev->mdev) {
+> -			struct media_link *link;
+> -
+> -			link = media_create_intf_link(&sd->entity,
+> -						      &vdev->intf_devnode->intf,
+> -						      MEDIA_LNK_FL_ENABLED |
+> -						      MEDIA_LNK_FL_IMMUTABLE);
+> -			if (!link) {
+> -				err = -ENOMEM;
+> -				goto clean_up;
+> -			}
+> -		}
+> -#endif
+>  	}
+>  	return 0;
+>  
+> diff --git a/include/media/v4l2-device.h b/include/media/v4l2-device.h
+> index b330e4a08a6b..bf25418a1ad6 100644
+> --- a/include/media/v4l2-device.h
+> +++ b/include/media/v4l2-device.h
+> @@ -185,6 +185,16 @@ int __must_check v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
+>   */
+>  void v4l2_device_unregister_subdev(struct v4l2_subdev *sd);
+>  
+> +/**
+> + * v4l2_device_register_subdev_node - Registers a device node for a subdev
+> + *	of the v4l2 device.
+> + *
+> + * @v4l2_dev: pointer to struct v4l2_device
+
+struct -> &struct
+
+> + * @sd: pointer to &struct v4l2_subdev
+> + */
+> +int __must_check v4l2_device_register_subdev_node(struct v4l2_device *v4l2_dev,
+> +						  struct v4l2_subdev *sd);
+> +
+>  /**
+>   * v4l2_device_register_subdev_nodes - Registers device nodes for all subdevs
+>   *	of the v4l2 device that are marked with
+
 -- 
-1.7.12.4
+Regards,
 
+Sakari Ailus
+sakari.ailus@linux.intel.com
