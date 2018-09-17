@@ -2,89 +2,100 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1371BECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AF0ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA1C214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108812147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:24:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="FrHBBV7Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA1C214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NvTfzESZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108812147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbeIQNul (ORCPT
+        id S1728268AbeIQNvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 09:50:41 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:34759 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727946AbeIQNul (ORCPT
+        Mon, 17 Sep 2018 09:51:08 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39832 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeIQNvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 09:50:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1537172657;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:Cc:Message-Id:Date:Subject:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=J2Q8smOLS15NYOOfY3N2Eym4ryrOvqeUtsKITP0/5co=;
-        b=FrHBBV7Yd3yve3hGV3LHqdFOKzpQHA4bMDwNidpbtkBOanPmkXl/gXzaCcU5U3Bz4d
-        6J7+x/6+tzbFTymFXQ31hETZ4sKGNkrReId2OOMp7G4uSXspcXAmIxZf8gwfU1mmUAWH
-        pz5VnSOecIbOlxVG5ygsC8GdphY1+ajcecDoo5G+GBIElweIXOF11hOCFjqlXVbuEUtR
-        r6Z8KtPjrT19sOzUl7Re4Iwx1F5rsRGUOZ4rf7SHvFt2S89X5c80wTKyCXFhIcR8Qweo
-        1IjN9SEv/rnjZ5PvEq6quZGahok+Xg003XXFNelWbZUloD5wjq+dzS6v2x3L1vCbEVTJ
-        MpDA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5gpw91kgwllb1BmCEUA="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.1 DYNA|AUTH)
-        with ESMTPSA id 60b24bu8H8OGBkr
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 17 Sep 2018 10:24:16 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-Subject: omap5: dwc3 interface status in /sys
-Date:   Mon, 17 Sep 2018 10:24:16 +0200
-Message-Id: <5ECC1431-E758-41E6-B751-D336A94433FA@goldelico.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-To:     Felipe Balbi <balbi@kernel.org>, Roger Quadros <rogerq@ti.com>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-X-Mailer: Apple Mail (2.3124)
+        Mon, 17 Sep 2018 09:51:07 -0400
+Received: by mail-wm1-f65.google.com with SMTP id q8-v6so8482573wmq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 01:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KQnjTwSJHg0TN3FwzHWrSFaSSGp8r2Omj4sGkkxcPKs=;
+        b=NvTfzESZUDXM/J8xtVw2UoMQWGngkmtJtlzooViq1Ka4dCyNg4SX6Z57DrSl4mEJRZ
+         HCQQt0EBCr70NT99WIvNXy8IHjFs0nXkvJJ7Ed6fjAzdVDKsgeYgICHU6UjFXneSijtJ
+         GySlvH3yKS7qV8J72rut14vMjgiZbqDo6J8s4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KQnjTwSJHg0TN3FwzHWrSFaSSGp8r2Omj4sGkkxcPKs=;
+        b=n4hR8N5OLn157xim6knl4KjB5n/kpKU8MKz08wfH4wX7J5E8Bw4DISZUwKqXxgwCQ8
+         ZAq6Y61XJPKc8pm3jURk2xFOevj1ARFElp+Hrl2znpRO0piimIW0g3jLVa3d6y0x/zfP
+         xlNKZ0Umwys8fptaRQOE1bWs7eiqFu3gTnmzz3NPcYy2anJf5y4zWi/lqWSw1P1W9Lbt
+         lakEMYqcWflllPhWnM31L1S/dq56NkKp5VRXVKPCE4s6YbGT7XPBuqIo98DHpDrguBIu
+         0DEenl9JXkAc7f6Q3kBlaSgZrcHUpZU9aoyOZcaCazFpJ2nJMdWqWryZa64TtcHYMERE
+         hWFQ==
+X-Gm-Message-State: APzg51Bv/3WNlDkGEBtAagrCfNXzU8bws9sN4q2zej6cHoHw/NkPyQFi
+        stxyMgj8uG3JKAAroFB278LOKg==
+X-Google-Smtp-Source: ANB0Vdawy0a27SBp1hNkGdmIShrG/O1kPE5tCLoCsJenwtZE/LTkj59InULou8g90dBceNhQgp+gZQ==
+X-Received: by 2002:a7b:c143:: with SMTP id z3-v6mr10608533wmi.105.1537172686058;
+        Mon, 17 Sep 2018 01:24:46 -0700 (PDT)
+Received: from lmecxl0911.lme.st.com (lya72-2-88-175-155-153.fbx.proxad.net. [88.175.155.153])
+        by smtp.gmail.com with ESMTPSA id i4-v6sm10678710wrs.85.2018.09.17.01.24.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Sep 2018 01:24:45 -0700 (PDT)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
+Cc:     linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] MAINTAINERS: Update stm32 entry
+Date:   Mon, 17 Sep 2018 10:24:41 +0200
+Message-Id: <20180917082441.31979-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Felipe,
-I have made otg mode work on the omap5-uevm with help from Roger
-and now I wonder how to read the interface status for GUI display.
+Add mailing list for stm32 architecture.
+Add "stm" pattern to not miss some drivers/directories when asking for maintainers.
 
-On omap3/twl4030 systems we can simply read
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	/sys/bus/platform/devices/musb-hdrc.0.auto/mode
-
-and get reports e.g. "b_peripheral", "a_host", "b_idle" etc. which can =
-easily
-be translated into icons for GUI display.
-
-We have not found a similar attribute for dwc3 (except part of this =
-information
-in
-
-	/sys/kernel/debug/4a030000.dwc3
-
-but mounting debugfs for GUI purposes isn't a good idea).
-
-So do you think it is possible to provide such information to
-
-	=
-/sys/devices/platform/44000000.ocp/4a020000.omap_dwc3/4a030000.dwc3?
-
-BR,
-Nikolaus
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ece30f15777..237e7012f3ea 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2085,10 +2085,12 @@ F:	include/linux/remoteproc/st_slim_rproc.h
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+ M:	Alexandre Torgue <alexandre.torgue@st.com>
++L:	linux-stm32@st-md-mailman.stormreply.com (moderated for non-subscribers)
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
+ N:	stm32
++N:	stm
+ F:	arch/arm/boot/dts/stm32*
+ F:	arch/arm/mach-stm32/
+ F:	drivers/clocksource/armv7m_systick.c
+-- 
+2.15.0
 
