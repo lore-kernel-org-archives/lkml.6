@@ -2,160 +2,138 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889BBECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104F1ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304B9214EE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BABA9214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:16:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HvuN5wPJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304B9214EE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="dd8bh/Zm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BABA9214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeIRAkn (ORCPT
+        id S1728367AbeIRAop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:40:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43708 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIRAkm (ORCPT
+        Mon, 17 Sep 2018 20:44:45 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:46323 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbeIRAop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:40:42 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so12412278ioa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 12:12:02 -0700 (PDT)
+        Mon, 17 Sep 2018 20:44:45 -0400
+Received: by mail-yb1-f195.google.com with SMTP id y20-v6so8219361ybi.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 12:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gWplmzHDH6KZolY8ldYoeSPd33NxuFmbGBatguzK8Vc=;
-        b=HvuN5wPJisbwgEIduyQO1/cxxJBQTiPteioabMrGnqLzEbe7VUjMs0YfIPmLaTfeiu
-         cNWsfSyuG//Oi1D2FfkVY8iVHq1eiztamv8xKjA92GpoWuC5J+nIFtSFdYJhqgCCodh+
-         2MgKI7xLF1LtD1yW9XrknA7fa5yD6I6RpabkiLgfRdS/HQ+ZNwrcSON2pfZG+C0bR/wv
-         fpZA3JlrF+kwjoOsc6P9BWYRu11vjAHYf8MoEOH+sZZrpV+ZZqe9nB5viymzjt1WRgOy
-         2T3DL2tKyh7odq44ZHGU+cPj/PZ0lUEjdToLeBkVhOolidZr26aju3+4UJO360cnw4lc
-         8YSg==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e0y/zkalFCasYLTyI4ojbO1sEmeLgsjSH2FsUdC9z+Q=;
+        b=dd8bh/Zm6CGlSoD3tAcfy6kscIcqGhka90nX1K2I1tmMDeHFwJH8yxpsOo7D6HkKGU
+         xCF2E0kHLwQUEipQYJVa1Y1tiRvhXQowjKr0sitTZjDGPk4YKm+ZUGAEjAYqdAuJYYnJ
+         XbgJaLEQifQHYGp35zo/MQghiaSrHMaqTQN5HTidiXNKSoESM/TntiK+0j4zbkgyK1pu
+         NJeOoWxNjl9ypP96HYmZgTDdukFbX9HIQriF3O+toeCQxT1KPvWaPKoiuD8QNld4wsFv
+         Sg3BUEFnyxD010Uxt7O1SgpMBoKzCx/Ynl/qLmpNdixbW40Vsp8V74Dq0wf7OQr2UwwR
+         Qz5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gWplmzHDH6KZolY8ldYoeSPd33NxuFmbGBatguzK8Vc=;
-        b=bJY1rNSIMY9dNpwOLXEAoHKgxP0+J2lGv5Axy9ytXssO59eg+4P+6Urwfu8vI5ECNQ
-         ZfOL/n0UpHBskkei9zXWE6aOC6Uv2ReW9wqop6nbpj1iCTA/QQl2vMtfxokQtdxbo+46
-         X5g6AX1Ht2MGYI5QP6owCvFgEFUebPYgLTpSoc09Ia6K2x0FN4cnq8tG750SB1hotRPB
-         Nl/6+2LUyanl26UIUTT9mbHu5FttJIinINg7XX7RoiLoG/Vxa5PuyoaDym55hd0091Sr
-         xhyw6fg0REwMFmJ7qVTs/mBYel4tDlJZST5bgvLYKf4y84SH6HqCTvr4X8/arvDRtoLx
-         wBAw==
-X-Gm-Message-State: APzg51AyqhhC/k7rmw/0JvdeTi7uTmLWT3sO6DsigvCHSe3Ey971qjbY
-        5iG67PaPrWtBykS5hQ75c3caI4I3t9s+KilhQvTPCA==
-X-Google-Smtp-Source: ANB0VdY8n+M9HhpuOcLEY/zyoMKmpOkxRQdF6e0axt54jjcUVmq4g5FH/VdtRL5J93mMn1oQb/fbjviFylli1rc6S+A=
-X-Received: by 2002:a6b:2147:: with SMTP id h68-v6mr21853988ioh.192.1537211521383;
- Mon, 17 Sep 2018 12:12:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e0y/zkalFCasYLTyI4ojbO1sEmeLgsjSH2FsUdC9z+Q=;
+        b=ZQEmel9FxhjuMdbtyUEqMEZ0GR3fmzcDvhQ1HNr+COrtIyWNivHXQPYgXVWf0dSCU+
+         +JNVqwZv4PP9f/US9qhE0OqS/Rvv8QYVDnHfyEexM3siT/lSmk9TvlMZbjOcCOinwwFF
+         ykBh2GygLT0Hj3DNkXElTJ3uhILmj1ytDZn9orJFeDa7Ozb+OdBngw1ka90xJiwKanDI
+         O3PMduHDq8peLOycsrBHbnm1VCG5SnbJSIMoH/iHyM6i8wEvnU+QGIoNup9cKlTlCLci
+         Pr5Qtuct5hsbEWZKI7mwVnDtcMSgC1igI3x/xGxPBJDHR+9lF7OOwj20cla1jRohrbu1
+         ttxw==
+X-Gm-Message-State: APzg51DYr6s0CJ6Gt7q8uvEYj2TXJfs0wRLL7FLaiLnQk4If1nw8PCAK
+        zv/C44ZGoG4LMh9CkZmY/HQ1jw==
+X-Google-Smtp-Source: ANB0VdYzuByViPQ8vMvly5nIPniT01Lko+rcZf0KSNWWdQ933RQoxHuwyQOadD5pCiddw7vUktJ+sw==
+X-Received: by 2002:a25:8605:: with SMTP id y5-v6mr130573ybk.297.1537211763382;
+        Mon, 17 Sep 2018 12:16:03 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id g131-v6sm7662230ywh.70.2018.09.17.12.16.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Sep 2018 12:16:02 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 15:16:02 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        David Airlie <airlied@linux.ie>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        dri-devel@lists.freedesktop.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND 0/5] drm/mxsfb: Fix runtime PM for unpowering lcdif block
+Message-ID: <20180917191602.GP188300@art_vandelay>
+References: <cover.1537191359.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Received: by 2002:a02:c54e:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 12:12:00
- -0700 (PDT)
-In-Reply-To: <CACT4Y+ZwLnk7V1cY-EAHbrfXPBxs6qyynZPhxoSKZZDWSK8Fuw@mail.gmail.com>
-References: <cover.1535462971.git.andreyknvl@google.com> <f5e73b5ead3355932ad8b5fc96b141c3f5b8c16c.1535462971.git.andreyknvl@google.com>
- <CACT4Y+ZwLnk7V1cY-EAHbrfXPBxs6qyynZPhxoSKZZDWSK8Fuw@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 17 Sep 2018 21:12:00 +0200
-Message-ID: <CAAeHK+wVgmp2G63c5w4sMH1i97Ju-YW7RUQgOQjr5d8aMgh1EQ@mail.gmail.com>
-Subject: Re: [PATCH v6 15/18] khwasan, arm64: add brk handler for inline instrumentation
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1537191359.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 7:13 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+On Mon, Sep 17, 2018 at 04:42:10PM +0300, Leonard Crestez wrote:
+> Adding lcdif nodes to a power domain currently doesn't work, it results
+> in black/corrupted screens or hangs. While the driver does enable
+> runtime pm it does not deal correctly with the block being unpowered.
+> 
+> ---
+> 
+> All patches in this series have review tags from a while ago and I
+> tested them again on top of next-20180913. No changes since last
+> version: https://lkml.org/lkml/2018/8/27/299
+> 
+> This series stalled so I reached out to Marek on IRC and he was
+> surprised to be listed as maintainer 
 
->> +static int khwasan_handler(struct pt_regs *regs, unsigned int esr)
->> +{
->> +       bool recover = esr & KHWASAN_ESR_RECOVER;
->> +       bool write = esr & KHWASAN_ESR_WRITE;
->> +       size_t size = KHWASAN_ESR_SIZE(esr);
->> +       u64 addr = regs->regs[0];
->> +       u64 pc = regs->pc;
->> +
->> +       if (user_mode(regs))
->> +               return DBG_HOOK_ERROR;
->> +
->> +       kasan_report(addr, size, write, pc);
->> +
->> +       /*
->> +        * The instrumentation allows to control whether we can proceed after
->> +        * a crash was detected. This is done by passing the -recover flag to
->> +        * the compiler. Disabling recovery allows to generate more compact
->> +        * code.
->> +        *
->> +        * Unfortunately disabling recovery doesn't work for the kernel right
->> +        * now. KHWASAN reporting is disabled in some contexts (for example when
->> +        * the allocator accesses slab object metadata; same is true for KASAN;
->> +        * this is controlled by current->kasan_depth). All these accesses are
->> +        * detected by the tool, even though the reports for them are not
->> +        * printed.
->
->
-> I am not following this part.
-> Slab accesses metadata. OK.
-> This is detected as bad access. OK.
-> Report is not printed. OK.
-> We skip BRK and resume execution.
-> What is the problem?
+Hopefully not too surprised since Marek added themself to MAINTAINERS when
+adding the driver :-)
 
-When the kernel is compiled with -fsanitize=kernel-hwaddress without
-any additional flags (like it's done now with KASAN_HW) everything
-works as you described and there's no problem. However if one were to
-recompile the kernel with hwasan recovery disabled, KHWASAN wouldn't
-work due to the reasons described in the comment. Should I make it
-more clear?
+I suppose we should probably move this to drm-misc since it qualifies as a
+"small driver" and needs a home. Looking through git history shows the last
+mxsfb-specific change was back in 02/17. Everything else has been drm-wide
+refactors. Thoughts?
 
->
->
->
->> +        *
->> +        * This is something that might be fixed at some point in the future.
->> +        */
->> +       if (!recover)
->> +               die("Oops - KHWASAN", regs, 0);
+Marek/Leonard: Care to sign up to be listed as a reviewers?
+
+Sean
+
+> and asked me to resend and add
+> Daniel Vetter.
+> 
+> Perhaps it would help to clarify that the pengutronix people should feel
+> free to push patches in this area?
+> 
+> Right now drm/imx is mostly for IPUv3 but there are other display output
+> paths on imx, such as the LCDIF supported by this driver. This LCDIF
+> block is included on imx8 so still quite relevant.
+> 
+> Leonard Crestez (5):
+>   drm/mxsfb: Move axi clk enable/disable to crtc enable/disable
+>   drm/mxsfb: Fix initial corrupt frame when activating display
+>   drm/mxsfb: Add pm_runtime calls to pipe_enable/disable
+>   drm/mxsfb: Add PM_SLEEP support
+>   drm/mxsfb: Switch to drm_atomic_helper_commit_tail_rpm
+> 
+>  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 53 +++++++++++++++++++-----------
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 40 ++++++++++++++++++++++
+>  2 files changed, 74 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
