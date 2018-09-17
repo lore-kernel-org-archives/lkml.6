@@ -6,40 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703FAECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B51CECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0FF2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0FF2146F
+	by mail.kernel.org (Postfix) with ESMTP id BF897214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:58:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF897214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbeIRE1p (ORCPT
+        id S1729594AbeIRE1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:27:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47634 "EHLO
+        Tue, 18 Sep 2018 00:27:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbeIRE1p (ORCPT
+        with ESMTP id S1728723AbeIRE1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:27:45 -0400
+        Tue, 18 Sep 2018 00:27:48 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB1B0C7D;
-        Mon, 17 Sep 2018 22:58:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC81ECB2;
+        Mon, 17 Sep 2018 22:58:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Jamie Iles <jamie.iles@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 06/70] kthread: Fix use-after-free if kthread fork fails
-Date:   Tue, 18 Sep 2018 00:41:39 +0200
-Message-Id: <20180917211649.718199590@linuxfoundation.org>
+        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 45/70] net: mvneta: fix mtu change on port without link
+Date:   Tue, 18 Sep 2018 00:42:18 +0200
+Message-Id: <20180917211652.798928139@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -57,94 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vegard Nossum <vegard.nossum@oracle.com>
+From: Yelena Krivosheev <yelena@marvell.com>
 
-commit 4d6501dce079c1eb6bf0b1d8f528a5e81770109e upstream.
+[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
 
-If a kthread forks (e.g. usermodehelper since commit 1da5c46fa965) but
-fails in copy_process() between calling dup_task_struct() and setting
-p->set_child_tid, then the value of p->set_child_tid will be inherited
-from the parent and get prematurely freed by free_kthread_struct().
+It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
+port without link. Indeed MTU change for interface without link causes TX
+queues to stuck.
 
-    kthread()
-     - worker_thread()
-        - process_one_work()
-        |  - call_usermodehelper_exec_work()
-        |     - kernel_thread()
-        |        - _do_fork()
-        |           - copy_process()
-        |              - dup_task_struct()
-        |                 - arch_dup_task_struct()
-        |                    - tsk->set_child_tid = current->set_child_tid // implied
-        |              - ...
-        |              - goto bad_fork_*
-        |              - ...
-        |              - free_task(tsk)
-        |                 - free_kthread_struct(tsk)
-        |                    - kfree(tsk->set_child_tid)
-        - ...
-        - schedule()
-           - __schedule()
-              - wq_worker_sleeping()
-                 - kthread_data(task)->flags // UAF
-
-The problem started showing up with commit 1da5c46fa965 since it reused
-->set_child_tid for the kthread worker data.
-
-A better long-term solution might be to get rid of the ->set_child_tid
-abuse. The comment in set_kthread_struct() also looks slightly wrong.
-
-Debugged-by: Jamie Iles <jamie.iles@oracle.com>
-Fixes: 1da5c46fa965 ("kthread: Make struct kthread kmalloc'ed")
-Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Jamie Iles <jamie.iles@oracle.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170509073959.17858-1-vegard.nossum@oracle.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
+network unit")
+Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+[gregory.clement: adding Fixes tags and rewording commit log]
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/fork.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1532,6 +1532,18 @@ static __latent_entropy struct task_stru
- 	if (!p)
- 		goto fork_out;
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -3117,7 +3117,6 @@ static int mvneta_change_mtu(struct net_
  
-+	/*
-+	 * This _must_ happen before we call free_task(), i.e. before we jump
-+	 * to any of the bad_fork_* labels. This is to avoid freeing
-+	 * p->set_child_tid which is (ab)used as a kthread's data pointer for
-+	 * kernel threads (PF_KTHREAD).
-+	 */
-+	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
-+	/*
-+	 * Clear TID on mm_release()?
-+	 */
-+	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
-+
- 	ftrace_graph_init_task(p);
+ 	on_each_cpu(mvneta_percpu_enable, pp, true);
+ 	mvneta_start_dev(pp);
+-	mvneta_port_up(pp);
  
- 	rt_mutex_init_task(p);
-@@ -1693,11 +1705,6 @@ static __latent_entropy struct task_stru
- 		}
- 	}
+ 	netdev_update_features(dev);
  
--	p->set_child_tid = (clone_flags & CLONE_CHILD_SETTID) ? child_tidptr : NULL;
--	/*
--	 * Clear TID on mm_release()?
--	 */
--	p->clear_child_tid = (clone_flags & CLONE_CHILD_CLEARTID) ? child_tidptr : NULL;
- #ifdef CONFIG_BLOCK
- 	p->plug = NULL;
- #endif
 
 
