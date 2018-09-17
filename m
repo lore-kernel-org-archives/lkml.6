@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DD5ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D15BECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B1A2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BFC52088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R8IGhvPs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B1A2088F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHZvRH8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFC52088F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728624AbeIQSHB (ORCPT
+        id S1728655AbeIQSHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:07:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36560 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbeIQSHA (ORCPT
+        Mon, 17 Sep 2018 14:07:03 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35307 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbeIQSHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:07:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b11-v6so7516582pfo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 05:39:51 -0700 (PDT)
+        Mon, 17 Sep 2018 14:07:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 7-v6so7619143pgf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 05:39:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KC3PdfmgH0ZMOrLJHcQpbROB9hoqev3XLFUCQ2iDNRk=;
-        b=R8IGhvPsHm3jIIvP4DE1nzp76IE9xiOQqrDpHTGGGbWVzBWzLXbuBo37FS8gdNA/Ow
-         E2gBptYqT+lBfzDBwnm+BINQ/GDv8bxe4NDAso0SBC3Zwmk+qJ0DEWPhaQ9wVtl93zDN
-         KznSQDEaGb2DM6yEYkOXRMBh7mmcJMXQWBcmbJyN/iaWJxX0Ol/pcQmsMkRqyzgrYSSQ
-         tiRHQTHwVniOTTTiOaoNV/pbXYLwdZz7yNzpZKoNyghYqMBNPBmO5f5P4/2GGCx8W5au
-         X7ZNfi9NiIp+08/vsoQjdj1y5PpGaV9eBHWZlL2LWdwTy6FBRxV0R15d//bWIVy7ZaTB
-         rmwA==
+        bh=IvHC7e36zmVTHp3aDES3WiuYNM3yF2vxS7ZZngJBYu0=;
+        b=JHZvRH8MvWMSvSOoF78R/hoXQx1lbGGtfr+HQgzbVxh4ZaC/9icjId43gOcGhCPDBu
+         Q20mmUdhXA/TIcf5/06v6SwOC7rNnwtf2s5u4fECY1XPMUEBi+wLsLLlOvmtAcSK0KGl
+         bp+i9zQofihPwdbGpUxB1cBjCssZr8Vw5detbaGvGzMcmgSN7CE0910OQKP0ybwsJ6+d
+         0NiDUvkXeMoHuscxdNLauGC7MyzjFuc4BXxbQaHPLOW1ejOmrq1fVFA3B8P3vSIr0DbI
+         vlQ/vGkaW5wbRbL7KGGaX2jdftB7FzleMQbYAWTQ91PO0fZZszsNaRYLD+xhn5A+z0g4
+         ykIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KC3PdfmgH0ZMOrLJHcQpbROB9hoqev3XLFUCQ2iDNRk=;
-        b=m0bqLicY0LytQWwy2A8CkPcNkEFEGs7LVYNhRQN6prKy3DLMy1loxa+KqdwNat5BSj
-         6Y2aPnlMVuLIva98Ztdtzki8/EaB0QLujGRsnbVlPlNzf1oaJU4g5DR8E+mnNzPJo4Yp
-         5/26xpQBkftiLDAgxoCdlHz6MX7ZeUpdDekIcAyCX4bRL/wPzhdMu0LbnaB97QqAVILv
-         aegvKRgh2byBiOjcYxjw+qILOsfTYmorvqVGPHlJqoVCtbfb5phOEns4Jj/1IHiwi2Uw
-         N8Xb3IbrXwFur3XhxDrwLMEDuax+3+jc3dHcTxI4+30PoC7nwMVThgK8YY1QiBDYyv9S
-         7NAQ==
-X-Gm-Message-State: APzg51ASimWr9lkhLWvDq/EksFl7rjoYs5RzKXO0b4EdUhotf/4El/0c
-        b/70zukRiTBHG3J6EKAywYA=
-X-Google-Smtp-Source: ANB0VdaREtA+0di9lXPtl/cYVMMlKSG2jHawHYEtGpP970Q44RM5Ye7lUUtk3XdJC+PkCo8kzrz8dw==
-X-Received: by 2002:a63:4306:: with SMTP id q6-v6mr23813643pga.181.1537187990564;
-        Mon, 17 Sep 2018 05:39:50 -0700 (PDT)
+        bh=IvHC7e36zmVTHp3aDES3WiuYNM3yF2vxS7ZZngJBYu0=;
+        b=ThO1hdUlX08p5Ki+Ps8EjLxrYkUihN6kB4ziWxEom8lte3MuFNQGx/COY/mBDAjp7z
+         J9Ys5Ly5UmG4UB83I/6iylpBkbzNoHdReMplYNQ9HmWfAvdrQWkgPVS2jUnbgIqsItJ6
+         u6J+p99R4G38VzfznG7iF+FRS141e7qhZjxXNAfRQBj44yYwvPR/SI2Su00ZeTRqQcHE
+         4UPe4rtNXkCjfwdN05iqtUZHHGr67d8jKbMbcp+8tvmcr/IBcIBMLyFWByr6u4l2hywV
+         bF9pe8B45B8toLNYEmcAq/buAGEAGViqMqxgV88KdwUNGXTJw5Wt0+YOZVLuqq0eokUb
+         KkNg==
+X-Gm-Message-State: APzg51D02MWLTVcX3cFez191XDNgVkEHG9Q9kZgDy8ceuVIAvfK9NWTp
+        O+UQkKFUWT4Am3CTeRYnR1M=
+X-Google-Smtp-Source: ANB0VdZ4M5bT8G9p++Czn9tAqzH9RR4+Sp59bzx0KwMojLoSjQlclV1lEcFXUcS4kbv6XPOrtdXjfQ==
+X-Received: by 2002:a62:848e:: with SMTP id k136-v6mr25702881pfd.231.1537187992587;
+        Mon, 17 Sep 2018 05:39:52 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id v22-v6sm26960020pfi.60.2018.09.17.05.39.49
+        by smtp.gmail.com with ESMTPSA id v22-v6sm26960020pfi.60.2018.09.17.05.39.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 05:39:49 -0700 (PDT)
+        Mon, 17 Sep 2018 05:39:52 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         Ben Chan <benchan@chromium.org>,
@@ -66,9 +66,9 @@ To:     Rob Springer <rspringer@google.com>,
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Nick Ewalt <nicholasewalt@google.com>,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 06/10] staging: gasket: page_table: don't unmap coherent pages
-Date:   Mon, 17 Sep 2018 05:39:01 -0700
-Message-Id: <20180917123905.213639-7-toddpoynor@gmail.com>
+Subject: [PATCH 08/10] staging: gasket: cleanup if dma_map_page fails in gasket_perform_mapping
+Date:   Mon, 17 Sep 2018 05:39:03 -0700
+Message-Id: <20180917123905.213639-9-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180917123905.213639-1-toddpoynor@gmail.com>
 References: <20180917123905.213639-1-toddpoynor@gmail.com>
@@ -81,27 +81,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nick Ewalt <nicholasewalt@google.com>
 
-Only call dma_unmap_page if there was an associated dma_map_page call.
+Previously pages would have never been unmapped in this case.
 
 Signed-off-by: Nick Ewalt <nicholasewalt@google.com>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_page_table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_page_table.c | 33 +++++++++++++---------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 8fe27e7d1b53c..33d98043953a5 100644
+index c1ce8f984f8e0..779ad2f23ef9b 100644
 --- a/drivers/staging/gasket/gasket_page_table.c
 +++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -610,7 +610,7 @@ static void gasket_perform_unmapping(struct gasket_page_table *pg_tbl,
+@@ -433,6 +433,19 @@ static int is_coherent(struct gasket_page_table *pg_tbl, ulong host_addr)
+ 	return min <= host_addr && host_addr < max;
+ }
  
- 		/* release the address from the driver, */
- 		if (ptes[i].status == PTE_INUSE) {
--			if (ptes[i].dma_addr) {
-+			if (ptes[i].page && ptes[i].dma_addr) {
- 				dma_unmap_page(pg_tbl->device, ptes[i].dma_addr,
- 					       PAGE_SIZE, DMA_BIDIRECTIONAL);
++/* Safely return a page to the OS. */
++static bool gasket_release_page(struct page *page)
++{
++	if (!page)
++		return false;
++
++	if (!PageReserved(page))
++		SetPageDirty(page);
++	put_page(page);
++
++	return true;
++}
++
+ /*
+  * Get and map last level page table buffers.
+  *
+@@ -500,6 +513,13 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
+ 					(unsigned long long)ptes[i].dma_addr,
+ 					(void *)page_to_pfn(page),
+ 					(void *)page_to_phys(page));
++
++				/* clean up */
++				if (gasket_release_page(ptes[i].page))
++					--pg_tbl->num_active_pages;
++
++				memset(&ptes[i], 0,
++				       sizeof(struct gasket_page_table_entry));
+ 				return -1;
  			}
+ 		}
+@@ -571,19 +591,6 @@ static int gasket_alloc_simple_entries(struct gasket_page_table *pg_tbl,
+ 	return 0;
+ }
+ 
+-/* Safely return a page to the OS. */
+-static bool gasket_release_page(struct page *page)
+-{
+-	if (!page)
+-		return false;
+-
+-	if (!PageReserved(page))
+-		SetPageDirty(page);
+-	put_page(page);
+-
+-	return true;
+-}
+-
+ /*
+  * Unmap and release mapped pages.
+  * The page table mutex must be held by the caller.
 -- 
 2.19.0.397.gdd90340f6a-goog
 
