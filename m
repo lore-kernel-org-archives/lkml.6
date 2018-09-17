@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DD0ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0387AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D72562146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72562146F
+	by mail.kernel.org (Postfix) with ESMTP id B913A214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B913A214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbeIREb3 (ORCPT
+        id S1730335AbeIREbc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48368 "EHLO
+        Tue, 18 Sep 2018 00:31:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48378 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREb3 (ORCPT
+        with ESMTP id S1727088AbeIREbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:29 -0400
+        Tue, 18 Sep 2018 00:31:32 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC8FBC03;
-        Mon, 17 Sep 2018 23:02:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1035C03;
+        Mon, 17 Sep 2018 23:02:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 012/126] KVM: VMX: Do not allow reexecute_instruction() when skipping MMIO instr
-Date:   Tue, 18 Sep 2018 00:41:00 +0200
-Message-Id: <20180917211705.388847469@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 013/126] ALSA: hda - Fix cancel_work_sync() stall from jackpoll work
+Date:   Tue, 18 Sep 2018 00:41:01 +0200
+Message-Id: <20180917211705.488642958@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,45 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit c4409905cd6eb42cfd06126e9226b0150e05a715 upstream.
+commit 16037643969e095509cd8446a3f8e406a6dc3a2c upstream.
 
-Re-execution after an emulation decode failure is only intended to
-handle a case where two or vCPUs race to write a shadowed page, i.e.
-we should never re-execute an instruction as part of MMIO emulation.
-As handle_ept_misconfig() is only used for MMIO emulation, it should
-pass EMULTYPE_NO_REEXECUTE when using the emulator to skip an instr
-in the fast-MMIO case where VM_EXIT_INSTRUCTION_LEN is invalid.
+On AMD/ATI controllers, the HD-audio controller driver allows a bus
+reset upon the error recovery, and its procedure includes the
+cancellation of pending jack polling work as found in
+snd_hda_bus_codec_reset().  This works usually fine, but it becomes a
+problem when the reset happens from the jack poll work itself; then
+calling cancel_work_sync() from the work being processed tries to wait
+the finish endlessly.
 
-And because the cr2 value passed to x86_emulate_instruction() is only
-destined for use when retrying or reexecuting, we can simply call
-emulate_instruction().
+As a workaround, this patch adds the check of current_work() and
+applies the cancel_work_sync() only when it's not from the
+jackpoll_work.
 
-Fixes: d391f1207067 ("x86/kvm/vmx: do not use vm-exit instruction length
-                      for fast MMIO when running nested")
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+This doesn't fix the root cause of the reported error below, but at
+least, it eases the unexpected stall of the whole system.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200937
+Cc: <stable@vger.kernel.org>
+Cc: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_codec.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6965,8 +6965,8 @@ static int handle_ept_misconfig(struct k
- 		if (!static_cpu_has(X86_FEATURE_HYPERVISOR))
- 			return kvm_skip_emulated_instruction(vcpu);
- 		else
--			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
--						       NULL, 0) == EMULATE_DONE;
-+			return emulate_instruction(vcpu, EMULTYPE_SKIP) ==
-+								EMULATE_DONE;
- 	}
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -3923,7 +3923,8 @@ void snd_hda_bus_reset_codecs(struct hda
  
- 	ret = kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
+ 	list_for_each_codec(codec, bus) {
+ 		/* FIXME: maybe a better way needed for forced reset */
+-		cancel_delayed_work_sync(&codec->jackpoll_work);
++		if (current_work() != &codec->jackpoll_work.work)
++			cancel_delayed_work_sync(&codec->jackpoll_work);
+ #ifdef CONFIG_PM
+ 		if (hda_codec_is_power_on(codec)) {
+ 			hda_call_codec_suspend(codec);
 
 
