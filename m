@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 547C1ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5286AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1770721508
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1770721508
+	by mail.kernel.org (Postfix) with ESMTP id 0B1DE2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1DE2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730544AbeIREce (ORCPT
+        id S1730557AbeIREci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:32:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48684 "EHLO
+        Tue, 18 Sep 2018 00:32:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbeIREcd (ORCPT
+        with ESMTP id S1726987AbeIREch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:32:33 -0400
+        Tue, 18 Sep 2018 00:32:37 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4912BC77;
-        Mon, 17 Sep 2018 23:03:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE3A5C7D;
+        Mon, 17 Sep 2018 23:03:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        stable@vger.kernel.org, Daniel Kurtz <djkurtz@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 065/126] gpio: ml-ioh: Fix buffer underwrite on probe error path
-Date:   Tue, 18 Sep 2018 00:41:53 +0200
-Message-Id: <20180917211708.611315061@linuxfoundation.org>
+Subject: [PATCH 4.14 066/126] pinctrl/amd: only handle irq if it is pending and unmasked
+Date:   Tue, 18 Sep 2018 00:41:54 +0200
+Message-Id: <20180917211708.667620480@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -52,41 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
+[ Upstream commit 8bbed1eef001fdfc0ee9595f64cc4f769d265af4 ]
 
-If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
-to any element of chip_save array, so reverse iteration from pointer chip
-may become chip_save[-1] and gpiochip_remove() will operate with wrong
-memory.
+The AMD pinctrl driver demultiplexes GPIO interrupts and fires off their
+individual handlers.
 
-The patch fix the error path of ioh_gpio_probe() to correctly bypass
-chip_save array.
+If one of these GPIO irqs is configured as a level interrupt, and its
+downstream handler is a threaded ONESHOT interrupt, the GPIO interrupt
+source is masked by handle_level_irq() until the eventual return of the
+threaded irq handler.  During this time the level GPIO interrupt status
+will still report as high until the actual gpio source is cleared - both
+in the individual GPIO interrupt status bit (INTERRUPT_STS_OFF) and in
+its corresponding "WAKE_INT_STATUS_REG" bit.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Thus, if another GPIO interrupt occurs during this time,
+amd_gpio_irq_handler() will see that the (masked-and-not-yet-cleared)
+level irq is still pending and incorrectly call its handler again.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+To fix this, have amd_gpio_irq_handler() check for both interrupts status
+and mask before calling generic_handle_irq().
+
+Note: Is it possible that this bug was the source of the interrupt storm
+on Ryzen when using chained interrupts before commit ba714a9c1dea85
+("pinctrl/amd: Use regular interrupt instead of chained")?
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-ml-ioh.c |    3 ++-
+ drivers/pinctrl/pinctrl-amd.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -497,9 +497,10 @@ static int ioh_gpio_probe(struct pci_dev
- 	return 0;
- 
- err_gpiochip_add:
-+	chip = chip_save;
- 	while (--i >= 0) {
--		chip--;
- 		gpiochip_remove(&chip->gpio);
-+		chip++;
- 	}
- 	kfree(chip_save);
- 
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -530,7 +530,8 @@ static irqreturn_t amd_gpio_irq_handler(
+ 		/* Each status bit covers four pins */
+ 		for (i = 0; i < 4; i++) {
+ 			regval = readl(regs + i);
+-			if (!(regval & PIN_IRQ_PENDING))
++			if (!(regval & PIN_IRQ_PENDING) ||
++			    !(regval & BIT(INTERRUPT_MASK_OFF)))
+ 				continue;
+ 			irq = irq_find_mapping(gc->irqdomain, irqnr + i);
+ 			generic_handle_irq(irq);
 
 
