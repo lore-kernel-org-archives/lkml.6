@@ -2,221 +2,151 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14C4ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB0FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51902088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51902088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F37EC214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:38:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMe9yjbw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37EC214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbeIQUFd (ORCPT
+        id S1729044AbeIQUFl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:05:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55204 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728839AbeIQUEm (ORCPT
+        Mon, 17 Sep 2018 16:05:41 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43654 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728757AbeIQUFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:04:42 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g1ue8-0008SQ-38; Mon, 17 Sep 2018 16:37:04 +0200
-Message-Id: <20180917143545.995734490@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Mon, 17 Sep 2018 16:29:10 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Bin Yang <bin.yang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-Subject: [patch V3 04/11] x86/mm/cpa: Allow range check for static protections
-References: <20180917142906.384767038@linutronix.de>
+        Mon, 17 Sep 2018 16:05:40 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v66-v6so7757608pgb.10;
+        Mon, 17 Sep 2018 07:38:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r13M3UmqOcHbEC8GaTabIZog1gCJnGnjbKlt4PbmxHA=;
+        b=HMe9yjbw86Hk/yqDLxlvl9MYZIfztVuXjlh+Ht6+ScfvBhWfXaCJ+JWl164QPWon4j
+         HaDWzf+cXtCAhemIzODKuWyMOU5twT3kC5++l9o2Ga5ZSqpRMY8nrlUGAtxE26ARpoo5
+         Nsu94eZKn+9ZYSzVwt1LXJmgcJ6TaYFDLPB1iuWNXZR6X7nq7s9fYDnkSKK9tLHeRDun
+         UPJ1V7Gj+iIeLOADtdcDzxQFVfGPCXRM9Cxn84N9No0tIVVV2jbxa+a/Kfl6GJesY5+j
+         /mDeEvkVL55m8J9uaSV97GCJ93VAn3osSOAJpfsiitwsiPT5gNXe2MuDN4Fd21lfblXo
+         BI+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r13M3UmqOcHbEC8GaTabIZog1gCJnGnjbKlt4PbmxHA=;
+        b=EzRQ7IoniYjboN63OybSBVKmA4TPCF+p/iwPep5+TtcIgYAbi0v27T4hgU47ikvePG
+         D6ScsLbrbSDRzYetg3CTm9Yx5dqojK0iSbcIlfO8v7g6LQy2/KBWZ8AUs9SJRFbV3iXe
+         wWA9r1kuMuZs4i8+BTIzlQEsCRaYk2Zwr+DVhIjpcPJHyK5E+pe1vHYFlcDKH8OnWR9R
+         xskkrLXeOTUmX0yXFguRugBJSdWEpEZOmUt4DH0tCFd5gRpirNBid6sva3QET9sbohR7
+         klQ5Fwhrbjhr5cQagb/r6t9UHf+bQPUXD/oBkWxDqbTH+ozLrtvLCrYi5xJ7QPYSxnEH
+         fVJA==
+X-Gm-Message-State: APzg51Bb5dSDVpV6tN9DeuDwVly/BiHrjsP8RaLsANKZtuQf4QGCYscP
+        ZQJFV/BRSBgZDQhtXl+E3HZ5PixA
+X-Google-Smtp-Source: ANB0VdYlAU6gp1hOoBYcQGTPuiWWbE6bFYnEQ3oQgE/l/r4IEJ9y0KdS/FMD70/szb8FxC5PjEw+rA==
+X-Received: by 2002:a63:b95e:: with SMTP id v30-v6mr23506372pgo.221.1537195083864;
+        Mon, 17 Sep 2018 07:38:03 -0700 (PDT)
+Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id h20-v6sm17470216pgg.3.2018.09.17.07.38.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 07:38:03 -0700 (PDT)
+Subject: Re: [PATCH] bonding: avoid repeated display of same link status
+ change
+To:     mk.singh@oracle.com, netdev@vger.kernel.org
+Cc:     Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+References: <20180917072059.32657-1-mk.singh@oracle.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <33a66a80-22ed-d6b3-f6b2-4463357c5ffa@gmail.com>
+Date:   Mon, 17 Sep 2018 07:38:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=x86-mm-cpa--Allow-range-check-for-static-protections.patch
+In-Reply-To: <20180917072059.32657-1-mk.singh@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking static protections only page by page is slow especially for huge
-pages. To allow quick checks over a complete range, add the ability to do
-that.
-
-Make the checks inclusive so the ranges can be directly used for debug output
-later.
-
-No functional change.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/mm/pageattr.c |   69 +++++++++++++++++++++++++++++++------------------
- 1 file changed, 44 insertions(+), 25 deletions(-)
-
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -286,22 +286,29 @@ static void cpa_flush_array(unsigned lon
- 	}
- }
- 
-+static bool overlaps(unsigned long r1_start, unsigned long r1_end,
-+		     unsigned long r2_start, unsigned long r2_end)
-+{
-+	return (r1_start <= r2_end && r1_end >= r2_start) ||
-+		(r2_start <= r1_end && r2_end >= r1_start);
-+}
-+
- #ifdef CONFIG_PCI_BIOS
- /*
-  * The BIOS area between 640k and 1Mb needs to be executable for PCI BIOS
-  * based config access (CONFIG_PCI_GOBIOS) support.
-  */
- #define BIOS_PFN	PFN_DOWN(BIOS_BEGIN)
--#define BIOS_PFN_END	PFN_DOWN(BIOS_END)
-+#define BIOS_PFN_END	PFN_DOWN(BIOS_END - 1)
- 
--static pgprotval_t protect_pci_bios(unsigned long pfn)
-+static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
- {
--	if (pcibios_enabled && within(pfn, BIOS_PFN, BIOS_PFN_END))
-+	if (pcibios_enabled && overlaps(spfn, epfn, BIOS_PFN, BIOS_PFN_END))
- 		return _PAGE_NX;
- 	return 0;
- }
- #else
--static pgprotval_t protect_pci_bios(unsigned long pfn)
-+static pgprotval_t protect_pci_bios(unsigned long spfn, unsigned long epfn)
- {
- 	return 0;
- }
-@@ -312,12 +319,17 @@ static pgprotval_t protect_pci_bios(unsi
-  * aliases.  This also includes __ro_after_init, so do not enforce until
-  * kernel_set_to_readonly is true.
-  */
--static pgprotval_t protect_rodata(unsigned long pfn)
-+static pgprotval_t protect_rodata(unsigned long spfn, unsigned long epfn)
- {
--	unsigned long start_pfn = __pa_symbol(__start_rodata) >> PAGE_SHIFT;
--	unsigned long end_pfn = __pa_symbol(__end_rodata) >> PAGE_SHIFT;
-+	unsigned long epfn_ro, spfn_ro = PFN_DOWN(__pa_symbol(__start_rodata));
-+
-+	/*
-+	 * Note: __end_rodata is at page aligned and not inclusive, so
-+	 * subtract 1 to get the last enforced PFN in the rodata area.
-+	 */
-+	epfn_ro = PFN_DOWN(__pa_symbol(__end_rodata)) - 1;
- 
--	if (kernel_set_to_readonly && within(pfn, start_pfn, end_pfn))
-+	if (kernel_set_to_readonly && overlaps(spfn, epfn, spfn_ro, epfn_ro))
- 		return _PAGE_RW;
- 	return 0;
- }
-@@ -327,9 +339,12 @@ static pgprotval_t protect_rodata(unsign
-  * not cover __inittext since that is gone after boot. On 64bit we do not
-  * enforce !NX on the low mapping
-  */
--static pgprotval_t protect_kernel_text(unsigned long address)
-+static pgprotval_t protect_kernel_text(unsigned long start, unsigned long end)
- {
--	if (within(address, (unsigned long)_text, (unsigned long)_etext))
-+	unsigned long t_end = (unsigned long)_etext - 1;
-+	unsigned long t_start = (unsigned long)_text;
-+
-+	if (overlaps(start, end, t_start, t_end))
- 		return _PAGE_NX;
- 	return 0;
- }
-@@ -344,13 +359,14 @@ static pgprotval_t protect_kernel_text(u
-  * This will preserve the large page mappings for kernel text/data at no
-  * extra cost.
-  */
--static pgprotval_t protect_kernel_text_ro(unsigned long address)
-+static pgprotval_t protect_kernel_text_ro(unsigned long start,
-+					  unsigned long end)
- {
--	unsigned long end = (unsigned long)__end_rodata_hpage_align;
--	unsigned long start = (unsigned long)_text;
-+	unsigned long t_end = (unsigned long)__end_rodata_hpage_align - 1;
-+	unsigned long t_start = (unsigned long)_text;
- 	unsigned int level;
- 
--	if (!kernel_set_to_readonly || !within(address, start, end))
-+	if (!kernel_set_to_readonly || !overlaps(start, end, t_start, t_end))
- 		return 0;
- 	/*
- 	 * Don't enforce the !RW mapping for the kernel text mapping, if
-@@ -364,12 +380,13 @@ static pgprotval_t protect_kernel_text_r
- 	 * so the protections for kernel text and identity mappings have to
- 	 * be the same.
- 	 */
--	if (lookup_address(address, &level) && (level != PG_LEVEL_4K))
-+	if (lookup_address(start, &level) && (level != PG_LEVEL_4K))
- 		return _PAGE_RW;
- 	return 0;
- }
- #else
--static pgprotval_t protect_kernel_text_ro(unsigned long address)
-+static pgprotval_t protect_kernel_text_ro(unsigned long start,
-+					  unsigned long end)
- {
- 	return 0;
- }
-@@ -381,18 +398,20 @@ static pgprotval_t protect_kernel_text_r
-  * right (again, ioremap() on BIOS memory is not uncommon) so this function
-  * checks and fixes these known static required protection bits.
-  */
--static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
--					  unsigned long pfn)
-+static inline pgprot_t static_protections(pgprot_t prot, unsigned long start,
-+					  unsigned long pfn, unsigned long npg)
- {
- 	pgprotval_t forbidden;
-+	unsigned long end;
- 
- 	/* Operate on the virtual address */
--	forbidden  = protect_kernel_text(address);
--	forbidden |= protect_kernel_text_ro(address);
-+	end = start + npg * PAGE_SIZE - 1;
-+	forbidden  = protect_kernel_text(start, end);
-+	forbidden |= protect_kernel_text_ro(start, end);
- 
- 	/* Check the PFN directly */
--	forbidden |= protect_pci_bios(pfn);
--	forbidden |= protect_rodata(pfn);
-+	forbidden |= protect_pci_bios(pfn, pfn + npg - 1);
-+	forbidden |= protect_rodata(pfn, pfn + npg - 1);
- 
- 	return __pgprot(pgprot_val(prot) & ~forbidden);
- }
-@@ -664,10 +683,10 @@ static int __should_split_large_page(pte
- 	 * in it results in a different pgprot than the first one of the
- 	 * requested range. If yes, then the page needs to be split.
- 	 */
--	new_prot = static_protections(req_prot, address, pfn);
-+	new_prot = static_protections(req_prot, address, pfn, 1);
- 	pfn = old_pfn;
- 	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
--		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
-+		pgprot_t chk_prot = static_protections(req_prot, addr, pfn, 1);
- 
- 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
- 			return 1;
-@@ -1277,7 +1296,7 @@ static int __change_page_attr(struct cpa
- 		pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
- 		pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
- 
--		new_prot = static_protections(new_prot, address, pfn);
-+		new_prot = static_protections(new_prot, address, pfn, 1);
- 
- 		new_prot = pgprot_clear_protnone_bits(new_prot);
- 
 
 
+On 09/17/2018 12:20 AM, mk.singh@oracle.com wrote:
+> From: Manish Kumar Singh <mk.singh@oracle.com>
+> 
+> When link status change needs to be committed and rtnl lock couldn't be
+> taken, avoid redisplay of same link status change message.
+> 
+> Signed-off-by: Manish Kumar Singh <mk.singh@oracle.com>
+> ---
+>  drivers/net/bonding/bond_main.c | 6 ++++--
+>  include/net/bonding.h           | 1 +
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index 217b790d22ed..fb4e3aff1677 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -2087,7 +2087,7 @@ static int bond_miimon_inspect(struct bonding *bond)
+>  			bond_propose_link_state(slave, BOND_LINK_FAIL);
+>  			commit++;
+>  			slave->delay = bond->params.downdelay;
+> -			if (slave->delay) {
+> +			if (slave->delay && !bond->rtnl_needed) {
+>  				netdev_info(bond->dev, "link status down for %sinterface %s, disabling it in %d ms\n",
+>  					    (BOND_MODE(bond) ==
+>  					     BOND_MODE_ACTIVEBACKUP) ?
+> @@ -2127,7 +2127,7 @@ static int bond_miimon_inspect(struct bonding *bond)
+>  			commit++;
+>  			slave->delay = bond->params.updelay;
+>  
+> -			if (slave->delay) {
+> +			if (slave->delay && !bond->rtnl_needed) {
+>  				netdev_info(bond->dev, "link status up for interface %s, enabling it in %d ms\n",
+>  					    slave->dev->name,
+>  					    ignore_updelay ? 0 :
+> @@ -2301,9 +2301,11 @@ static void bond_mii_monitor(struct work_struct *work)
+>  		if (!rtnl_trylock()) {
+>  			delay = 1;
+>  			should_notify_peers = false;
+> +			bond->rtnl_needed = true;
+
+How can you set a shared variable with no synchronization ?
+
+A bool is particularly dangerous here, at least on some arches.
+
+>  			goto re_arm;
+>  		}
+>  
+> +		bond->rtnl_needed = false;
+>  		bond_for_each_slave(bond, slave, iter) {
+>  			bond_commit_link_state(slave, BOND_SLAVE_NOTIFY_LATER);
+>  		}
+> diff --git a/include/net/bonding.h b/include/net/bonding.h
+> index 808f1d167349..50d61cf77855 100644
+> --- a/include/net/bonding.h
+> +++ b/include/net/bonding.h
+> @@ -234,6 +234,7 @@ struct bonding {
+>  	struct	 dentry *debug_dir;
+>  #endif /* CONFIG_DEBUG_FS */
+>  	struct rtnl_link_stats64 bond_stats;
+> +	bool rtnl_needed;
+>  };
+>  
+>  #define bond_slave_get_rcu(dev) \
+> 
