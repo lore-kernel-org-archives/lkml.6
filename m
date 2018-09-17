@@ -7,121 +7,162 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DFAECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE0ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2DDD214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C60E2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:07:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="kFNidDzj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DDD214C2
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Pz3kZxDW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C60E2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731102AbeIQIcS (ORCPT
+        id S1731137AbeIQIcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:32:18 -0400
-Received: from mail-cys01nam02on0126.outbound.protection.outlook.com ([104.47.37.126]:15104
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:32:22 -0400
+Received: from mail-eopbgr690120.outbound.protection.outlook.com ([40.107.69.120]:6882
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729631AbeIQIb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:31:58 -0400
+        id S1729631AbeIQIcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:32:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y+YUT/I62FRRTSTCAp+jzilbOTQBz2n2Bk6JmRiTjYc=;
- b=kFNidDzjLbswO5gN5XBOs1dQzTXFNKs+49wg0eJipqYQXUeGIi2z1viPlnXKZit2QC4RzTWa19asfcc8JYYbU0VXJ5rTDs8JV9fQ9tBxVYYX6HkFVlZ2yF08bCi0qD0Vc7LIJ4pXx7xKDYe/fPk1divqKJLL8RrEblym17M4uW4=
+ bh=RocoyjXW8KHfkvBSgBQRn5LR+teywWJUGFzXncryNI8=;
+ b=Pz3kZxDW8DLX7JFog57yo7G/d9V/GDRrv7dyrXlAzipeeCuiJa6RL5nVy8/U6qWEtgKAaooZ4EKqOX1OK3Idg8EPu750twRBKIC7fLDuL2EFIvIh84/yeq95pcj45vSqj5IQXEf8YFcUOrS6iuLBe3aIYt/qWI/sswzZ9PvlGsU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0742.namprd21.prod.outlook.com (10.173.189.8) with Microsoft SMTP
+ CY4PR21MB0166.namprd21.prod.outlook.com (10.173.192.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Mon, 17 Sep 2018 03:06:24 +0000
+ 15.20.1164.12; Mon, 17 Sep 2018 03:07:02 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:06:24 +0000
+ 03:07:02 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+CC:     Sudeep Holla <sudeep.holla@arm.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 50/57] scsi: megaraid_sas: Update controller info
- during resume
-Thread-Topic: [PATCH AUTOSEL 4.9 50/57] scsi: megaraid_sas: Update controller
- info during resume
-Thread-Index: AQHUTjMdiLdXRmRUi0y9YL5FcQqquA==
-Date:   Mon, 17 Sep 2018 03:04:14 +0000
-Message-ID: <20180917030340.378-50-alexander.levin@microsoft.com>
-References: <20180917030340.378-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030340.378-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 07/43] power: vexpress: fix corruption in notifier
+ registration
+Thread-Topic: [PATCH AUTOSEL 4.4 07/43] power: vexpress: fix corruption in
+ notifier registration
+Thread-Index: AQHUTjM0SJZWIkKXmk2yzPEK/OUNqQ==
+Date:   Mon, 17 Sep 2018 03:04:52 +0000
+Message-ID: <20180917030445.484-7-alexander.levin@microsoft.com>
+References: <20180917030445.484-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030445.484-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0742;6:LErh09CZPQKsmPt3qWKGrwndoDVPLpNjtNakvyko3cW1S1UXSyi8bpvyt0GlSYdARxhSV+DkDjYXqVao6sfJ4dDl3gVwgw/UKnZ3h9q9JiUwVjE4Co9ZDYme0sC5WOqMrTqbmT7Igls66CEu0BsATeEW8K7pCGJHc3lEQGOeQqW3Zsbghe1ct0yKWFITWypYemao13rcKUo9nR/R8otsmlBn1JFPzaR95rSOvLlTo+NjJ6bSx0wdfV9DOpSsqi6TLePJfLLUJ7Z+BcWqb6N3pUbQCCFIEBaz2ueqtcb4yTOUe0sf56gHWlmsvGxh7KXPztbOv4ItS5ez+ITC2sUhHrl8Gqf2Jzrze8SYwrYqYseF41Mytr3dOA6yPuEBN69m8/pzrZCjzB9FpIdyy0tkthh5KNnrPDPKAZFCKEBrgZ3bI42Unjcl8UlCdKKjXDP3Qh74tusfpgHlyUnDVdthkQ==;5:W6dqSXcoLmb4GVqeYy3YcNZEumMrkoRbgmPunBBmx0csjRkiNJnwpUnFE/5qDs3XNk+eqhnFfvP7Bu/PIrcSvWYPLbSBhpeuwY32JCwebf8Vmhf2aonRH0WP9/9cDongRW8G6hjZOG5b2IyvJTBcuEFdzmq/ctWjOpCbK/Wi1q4=;7:DRHOf+Rg8Mps7zj/fN2XembJgGBNEj3xqIRq9+yUZJ03yN+aY/HeXoOgXti5fahuPRHVH2ouKbveMQYL+299RIiFrOUWmJodSUAIpnAnYvhMeiq5568USaa3LIySGTICQwo+E0jIVA+PGhIATWJYCBIJLMOALFAMXuqlllFVLp2+WFApyKxFjNrpkcNHt6z4CQxF7ozglNaIlfCSTtG7aHQTKr3mDKyTBp4mHEEXZHAXrNRS+YI4TuF0zgwabfRu
-x-ms-office365-filtering-correlation-id: 1967062f-439d-4ecc-13dc-08d61c4a8d69
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0166;6:/c2X3HHSa8F0pwtSdBWrt8YD8jTHmC+wvk/kmW4WanKrFAvKEivqtT5s6TM4Y5R3Yw3gu3tTKuKGucempAuSEh6NsvkUeXZuhem4qoEng1FadcHtaPakwDxb3At0w4qISgSDmPbcTbD5s9GhOa/qKzhg0AubORVU2s/fvv1JZxmEsUZX91c1o3lU8ujPxYpCN5sy4ZOfbdhXmvJ2HvS8rhP2hpRNCJltRaYu710KbRj8KX/8wcsjLHgcvYXnvP16boToOFrxXueZz7FGNID83S+d3sX9PUtyAkwzbvLKk0Qz4m/RnzK1TLKMPFV5g8R61cL0QCJj2XtxLccHJ7jnokygdBovlZQUdsZiz3zFYhZ0VYRR+7MlOf+rIuxgs8NWdQm+8u2PbdwRA2mUKkO2KjU4gJRlPjzaVVmZvggo35yLdhQVbO40YB98fpcOsmFSW1PeXKWeAwHzVR8CBAlvjQ==;5:t4o2bSKFecS8ZZbOYLrmj5SajkBYeYnoKeahuyqaWgu0/QSLqQPImiZCn+54o+9DUti2wiEg/AfCSpdAwaFjGWk8RwOvWudWouXxPjmaizWhKKaSWIXTHs5nL2sfYIcvpgWXV7m3MhPaevIqalRP4miBhYRMSYDkZONuF0ZkYco=;7:MDs3uLrJD4f8ZwpkDQmjtCAq3op19Vay8NQjKyZcawHn326gz5DqZ+JjR2YaVCxxpvkut9QON0AOgy42qr/OyH6AT0Hip+OX5z6QW/Rl7EWK+RKr9tdQj+a9H05bD0KyxpjmQmOjvfiGLRK3fj9GUMLMuwEZ9+9JAIAXxM8yBboUlTgFEMZDexSlRdJTUsRI25a0JK5QlFfMfS+5xM6x8hDE91CDU84dMNHncTMjUJvvMIvgYza7HANWXAKC0sqQ
+x-ms-office365-filtering-correlation-id: d1abfbab-700b-465c-827c-08d61c4aa454
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0742;
-x-ms-traffictypediagnostic: CY4PR21MB0742:
-x-microsoft-antispam-prvs: <CY4PR21MB074200F9010788126C7D128AFB1E0@CY4PR21MB0742.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(208715162771679)(146099531331640)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0166;
+x-ms-traffictypediagnostic: CY4PR21MB0166:
+x-microsoft-antispam-prvs: <CY4PR21MB0166C7C423B7CC56BFAD82FCFB1E0@CY4PR21MB0166.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0742;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0742;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0166;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0166;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(366004)(396003)(376002)(199004)(189003)(6486002)(6436002)(6512007)(53936002)(15650500001)(4326008)(3846002)(217873002)(25786009)(2616005)(1076002)(14444005)(6506007)(186003)(6346003)(11346002)(446003)(26005)(2900100001)(6116002)(486006)(102836004)(256004)(107886003)(476003)(86612001)(86362001)(2501003)(14454004)(97736004)(66066001)(76176011)(6666003)(316002)(54906003)(110136005)(99286004)(68736007)(10090500001)(22452003)(81156014)(2906002)(36756003)(8676002)(8936002)(81166006)(7736002)(305945005)(105586002)(5660300001)(106356001)(10290500003)(478600001)(72206003)(5250100002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0742;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(366004)(39860400002)(396003)(189003)(199004)(305945005)(256004)(14444005)(217873002)(486006)(186003)(86612001)(66066001)(7736002)(6486002)(102836004)(6512007)(2900100001)(25786009)(14454004)(6666003)(2616005)(476003)(1076002)(575784001)(97736004)(86362001)(6436002)(5660300001)(6346003)(316002)(2501003)(6116002)(76176011)(6506007)(105586002)(8676002)(478600001)(3846002)(106356001)(53936002)(68736007)(72206003)(446003)(22452003)(5250100002)(81156014)(8936002)(36756003)(10090500001)(107886003)(4326008)(110136005)(11346002)(99286004)(81166006)(2906002)(26005)(54906003)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0166;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: siuQZdCH9nMhDqcx+LcoTovukDZvFGQlHl9V5NJb2gsFRQejq4eh7TAkgSv1F3175TjBPUdLcVu9wAm7fT4JNOfTol2RBwZoeDH5rGTk8rPudfwKuTV7PcJEpRUH6Vkzc1RglUwaO4zGaL3dOx82X5KTTYnmI/JgM8BlPTRDwqq9BGFqWvJVclgQ2JQ2I3n4UZZ63f9YAcvQ3aAmmYdY8zVl5wGptzc7af1GNUJQ/LOuXQBjoA2JD55N/I3uAfWQdKCsVWOi22fpuHQfn+yJQDwiR3Dp7N6kWAF0mwgzTH0h881DZIe89A/nlpefd5Ey5eEZ1Xg5owCEb0iH/fwnyyK1Y92LHKdnKXZTKb6JRLg=
+x-microsoft-antispam-message-info: HKxOCCfvqxFIGZZ/dwk97dEQ3K4nD7ghs4bEkxpgZFg+33deTiu/h9lzbTS+WP18jy65nFTmOt5G7AK/Lvc1Jwe2MMo8sipE+uz2Y2tsc5Huj99M/jiL6AlnA56HU8OPA6OiYfdHJ7oZRY43yW09nC0zWndkIMjzRmsF+pHYUv2qyuAJPbSEl9Qe7Uy2x9ewcqzl5Jdp2bN6Uq1uB52/NzwIC6ZGKbU6sjcJI++blUMdT1kDi7I159T/y2KofBXXIq14oiYjpmdbFtmpFK+LjR1X5os5B+kRD37EgjY480NQbxx2CMEMQM2/rfMgOordCuQ1YhCLsrBsFWtiu/iYymmvX8e7ybSPgSw0D6WQYTo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1967062f-439d-4ecc-13dc-08d61c4a8d69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:04:14.1801
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1abfbab-700b-465c-827c-08d61c4aa454
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:04:52.9924
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0742
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-[ Upstream commit c3b10a55abc943a526aaecd7e860b15671beb906 ]
+[ Upstream commit 09bebb1adb21ecd04adf7ccb3b06f73e3a851e93 ]
 
-There is a possibility that firmware on the controller was upgraded before
-system was suspended. During resume, driver needs to read updated
-controller properties.
+Vexpress platforms provide two different restart handlers: SYS_REBOOT
+that restart the entire system, while DB_RESET only restarts the
+daughter board containing the CPU. DB_RESET is overridden by SYS_REBOOT
+if it exists.
 
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+notifier_chain_register used in register_restart_handler by design
+relies on notifiers to be registered once only, however vexpress restart
+notifier can get registered twice. When this happen it corrupts list
+of notifiers, as result some notifiers can be not called on proper
+event, traverse on list can be cycled forever, and second unregister
+can access already freed memory.
+
+So far, since this was the only restart handler in the system, no issue
+was observed even if the same notifier was registered twice. However
+commit 6c5c0d48b686 ("watchdog: sp805: add restart handler") added
+support for SP805 restart handlers and since the system under test
+contains two vexpress restart and two SP805 watchdog instances, it was
+observed that during the boot traversing the restart handler list looped
+forever as there's a cycle in that list resulting in boot hang.
+
+This patch fixes the issues by ensuring that the notifier is installed
+only once.
+
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Fixes: 46c99ac66222 ("power/reset: vexpress: Register with kernel restart h=
+andler")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/power/reset/vexpress-poweroff.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megar=
-aid/megaraid_sas_base.c
-index 35cbd36f8d3b..090fdcdd15c9 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -6193,6 +6193,9 @@ megasas_resume(struct pci_dev *pdev)
- 			goto fail_init_mfi;
- 	}
+diff --git a/drivers/power/reset/vexpress-poweroff.c b/drivers/power/reset/=
+vexpress-poweroff.c
+index 6a9bf7089373..ccb619632e46 100644
+--- a/drivers/power/reset/vexpress-poweroff.c
++++ b/drivers/power/reset/vexpress-poweroff.c
+@@ -35,6 +35,7 @@ static void vexpress_reset_do(struct device *dev, const c=
+har *what)
+ }
 =20
-+	if (megasas_get_ctrl_info(instance) !=3D DCMD_SUCCESS)
-+		goto fail_init_mfi;
-+
- 	tasklet_init(&instance->isr_tasklet, instance->instancet->tasklet,
- 		     (unsigned long)instance);
+ static struct device *vexpress_power_off_device;
++static atomic_t vexpress_restart_nb_refcnt =3D ATOMIC_INIT(0);
+=20
+ static void vexpress_power_off(void)
+ {
+@@ -99,10 +100,13 @@ static int _vexpress_register_restart_handler(struct d=
+evice *dev)
+ 	int err;
+=20
+ 	vexpress_restart_device =3D dev;
+-	err =3D register_restart_handler(&vexpress_restart_nb);
+-	if (err) {
+-		dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
+-		return err;
++	if (atomic_inc_return(&vexpress_restart_nb_refcnt) =3D=3D 1) {
++		err =3D register_restart_handler(&vexpress_restart_nb);
++		if (err) {
++			dev_err(dev, "cannot register restart handler (err=3D%d)\n", err);
++			atomic_dec(&vexpress_restart_nb_refcnt);
++			return err;
++		}
+ 	}
+ 	device_create_file(dev, &dev_attr_active);
 =20
 --=20
 2.17.1
