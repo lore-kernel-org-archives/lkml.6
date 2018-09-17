@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2974ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 547C1ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945D42146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945D42146F
+	by mail.kernel.org (Postfix) with ESMTP id 1770721508
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1770721508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbeIREca (ORCPT
+        id S1730544AbeIREce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:32:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48670 "EHLO
+        Tue, 18 Sep 2018 00:32:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48684 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbeIREc3 (ORCPT
+        with ESMTP id S1726987AbeIREcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:32:29 -0400
+        Tue, 18 Sep 2018 00:32:33 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90842C77;
-        Mon, 17 Sep 2018 23:03:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4912BC77;
+        Mon, 17 Sep 2018 23:03:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 064/126] pinctrl: imx: off by one in imx_pinconf_group_dbg_show()
-Date:   Tue, 18 Sep 2018 00:41:52 +0200
-Message-Id: <20180917211708.567653908@linuxfoundation.org>
+Subject: [PATCH 4.14 065/126] gpio: ml-ioh: Fix buffer underwrite on probe error path
+Date:   Tue, 18 Sep 2018 00:41:53 +0200
+Message-Id: <20180917211708.611315061@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,33 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit b4859f3edb47825f62d1b2efdd75fe7945996f49 ]
+[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
 
-The > should really be >= here.  It's harmless because
-pinctrl_generic_get_group() will return a NULL if group is invalid.
+If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
+to any element of chip_save array, so reverse iteration from pointer chip
+may become chip_save[-1] and gpiochip_remove() will operate with wrong
+memory.
 
-Fixes: ae75ff814538 ("pinctrl: pinctrl-imx: add imx pinctrl core driver")
-Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+The patch fix the error path of ioh_gpio_probe() to correctly bypass
+chip_save array.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-ml-ioh.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -389,7 +389,7 @@ static void imx_pinconf_group_dbg_show(s
- 	const char *name;
- 	int i, ret;
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -497,9 +497,10 @@ static int ioh_gpio_probe(struct pci_dev
+ 	return 0;
  
--	if (group > pctldev->num_groups)
-+	if (group >= pctldev->num_groups)
- 		return;
+ err_gpiochip_add:
++	chip = chip_save;
+ 	while (--i >= 0) {
+-		chip--;
+ 		gpiochip_remove(&chip->gpio);
++		chip++;
+ 	}
+ 	kfree(chip_save);
  
- 	seq_printf(s, "\n");
 
 
