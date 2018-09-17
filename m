@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C8FECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 083BAECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7CE02088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7CE02088F
+	by mail.kernel.org (Postfix) with ESMTP id BCDDD2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDDD2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeIRETM (ORCPT
+        id S1728789AbeIRETR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:19:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44678 "EHLO
+        Tue, 18 Sep 2018 00:19:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeIRETM (ORCPT
+        with ESMTP id S1725952AbeIRETQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:19:12 -0400
+        Tue, 18 Sep 2018 00:19:16 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91B5BCAD;
-        Mon, 17 Sep 2018 22:49:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32AD3CA0;
+        Mon, 17 Sep 2018 22:49:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Adam Radford <aradford@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 29/56] ata: libahci: Correct setting of DEVSLP register
-Date:   Tue, 18 Sep 2018 00:42:02 +0200
-Message-Id: <20180917213829.144051215@linuxfoundation.org>
+Subject: [PATCH 4.4 30/56] scsi: 3ware: fix return 0 on the error path of probe
+Date:   Tue, 18 Sep 2018 00:42:03 +0200
+Message-Id: <20180917213829.186196602@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -55,43 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 2dbb3ec29a6c069035857a2fc4c24e80e5dfe3cc ]
+[ Upstream commit 4dc98c1995482262e70e83ef029135247fafe0f2 ]
 
-We have seen that on some platforms, SATA device never show any DEVSLP
-residency. This prevent power gating of SATA IP, which prevent system
-to transition to low power mode in systems with SLP_S0 aka modern
-standby systems. The PHY logic is off only in DEVSLP not in slumber.
-Reference:
-https://www.intel.com/content/dam/www/public/us/en/documents/datasheets
-/332995-skylake-i-o-platform-datasheet-volume-1.pdf
-Section 28.7.6.1
+tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
+pci_resource_start() or tw_reset_sequence() and releases resources.
+twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
+pci_iomap() and twl_reset_sequence().  twa_probe() returns 0 in case of
+fail of tw_initialize_device_extension(), ioremap() and
+twa_reset_sequence().
 
-Here driver is trying to do read-modify-write the devslp register. But
-not resetting the bits for which this driver will modify values (DITO,
-MDAT and DETO). So simply reset those bits before updating to new values.
+The patch adds retval initialization for these cases.
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libahci.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/3w-9xxx.c |    6 +++++-
+ drivers/scsi/3w-sas.c  |    3 +++
+ drivers/scsi/3w-xxxx.c |    2 ++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -2113,6 +2113,8 @@ static void ahci_set_aggressive_devslp(s
- 		deto = 20;
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -2045,6 +2045,7 @@ static int twa_probe(struct pci_dev *pde
+ 
+ 	if (twa_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
  	}
  
-+	/* Make dito, mdat, deto bits to 0s */
-+	devslp &= ~GENMASK_ULL(24, 2);
- 	devslp |= ((dito << PORT_DEVSLP_DITO_OFFSET) |
- 		   (mdat << PORT_DEVSLP_MDAT_OFFSET) |
- 		   (deto << PORT_DEVSLP_DETO_OFFSET) |
+@@ -2067,6 +2068,7 @@ static int twa_probe(struct pci_dev *pde
+ 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
+@@ -2074,8 +2076,10 @@ static int twa_probe(struct pci_dev *pde
+ 	TW_DISABLE_INTERRUPTS(tw_dev);
+ 
+ 	/* Initialize the card */
+-	if (twa_reset_sequence(tw_dev, 0))
++	if (twa_reset_sequence(tw_dev, 0)) {
++		retval = -ENOMEM;
+ 		goto out_iounmap;
++	}
+ 
+ 	/* Set host specific parameters */
+ 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1600,6 +1600,7 @@ static int twl_probe(struct pci_dev *pde
+ 
+ 	if (twl_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -1614,6 +1615,7 @@ static int twl_probe(struct pci_dev *pde
+ 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
+@@ -1623,6 +1625,7 @@ static int twl_probe(struct pci_dev *pde
+ 	/* Initialize the card */
+ 	if (twl_reset_sequence(tw_dev, 0)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
++		retval = -ENOMEM;
+ 		goto out_iounmap;
+ 	}
+ 
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -2278,6 +2278,7 @@ static int tw_probe(struct pci_dev *pdev
+ 
+ 	if (tw_initialize_device_extension(tw_dev)) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -2292,6 +2293,7 @@ static int tw_probe(struct pci_dev *pdev
+ 	tw_dev->base_addr = pci_resource_start(pdev, 0);
+ 	if (!tw_dev->base_addr) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
 
 
