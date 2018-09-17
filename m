@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686EFECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCD7ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292682146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292682146F
+	by mail.kernel.org (Postfix) with ESMTP id 4156B2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4156B2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730390AbeIREbp (ORCPT
+        id S1730402AbeIREbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48442 "EHLO
+        Tue, 18 Sep 2018 00:31:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREbp (ORCPT
+        with ESMTP id S1727088AbeIREbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:45 -0400
+        Tue, 18 Sep 2018 00:31:48 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A561C49;
-        Mon, 17 Sep 2018 23:02:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 028A0CC1;
+        Mon, 17 Sep 2018 23:02:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Rene Nielsen <rene.nielsen@microsemi.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.14 007/126] MIPS: VDSO: Match data page cache colouring when D$ aliases
-Date:   Tue, 18 Sep 2018 00:40:55 +0200
-Message-Id: <20180917211704.293713196@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 045/126] f2fs: fix defined but not used build warnings
+Date:   Tue, 18 Sep 2018 00:41:33 +0200
+Message-Id: <20180917211707.604787292@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -54,90 +53,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 0f02cfbc3d9e413d450d8d0fd660077c23f67eff upstream.
+[ Upstream commit cb15d1e43db0a6341c1e26ac6a2c74e61b74f1aa ]
 
-When a system suffers from dcache aliasing a user program may observe
-stale VDSO data from an aliased cache line. Notably this can break the
-expectation that clock_gettime(CLOCK_MONOTONIC, ...) is, as its name
-suggests, monotonic.
+Fix build warnings in f2fs when CONFIG_PROC_FS is not enabled
+by marking the unused functions as __maybe_unused.
 
-In order to ensure that users observe updates to the VDSO data page as
-intended, align the user mappings of the VDSO data page such that their
-cache colouring matches that of the virtual address range which the
-kernel will use to update the data page - typically its unmapped address
-within kseg0.
+../fs/f2fs/sysfs.c:519:12: warning: 'segment_info_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:546:12: warning: 'segment_bits_seq_show' defined but not used [-Wunused-function]
+../fs/f2fs/sysfs.c:570:12: warning: 'iostat_info_seq_show' defined but not used [-Wunused-function]
 
-This ensures that we don't introduce aliasing cache lines for the VDSO
-data page, and therefore that userland will observe updates without
-requiring cache invalidation.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
-Reported-by: Rene Nielsen <rene.nielsen@microsemi.com>
-Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
-Patchwork: https://patchwork.linux-mips.org/patch/20344/
-Tested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/kernel/vdso.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ fs/f2fs/sysfs.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/ioport.h>
-+#include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-@@ -20,6 +21,7 @@
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -9,6 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
++#include <linux/compiler.h>
+ #include <linux/proc_fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/seq_file.h>
+@@ -381,7 +382,8 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
  
- #include <asm/abi.h>
- #include <asm/mips-cps.h>
-+#include <asm/page.h>
- #include <asm/vdso.h>
+-static int segment_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -408,7 +410,8 @@ static int segment_info_seq_show(struct
+ 	return 0;
+ }
  
- /* Kernel-provided data used by the VDSO. */
-@@ -128,12 +130,30 @@ int arch_setup_additional_pages(struct l
- 	vvar_size = gic_size + PAGE_SIZE;
- 	size = vvar_size + image->size;
+-static int segment_bits_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused segment_bits_seq_show(struct seq_file *seq,
++						void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -432,7 +435,8 @@ static int segment_bits_seq_show(struct
+ 	return 0;
+ }
  
-+	/*
-+	 * Find a region that's large enough for us to perform the
-+	 * colour-matching alignment below.
-+	 */
-+	if (cpu_has_dc_aliases)
-+		size += shm_align_mask + 1;
-+
- 	base = get_unmapped_area(NULL, 0, size, 0, 0);
- 	if (IS_ERR_VALUE(base)) {
- 		ret = base;
- 		goto out;
- 	}
- 
-+	/*
-+	 * If we suffer from dcache aliasing, ensure that the VDSO data page
-+	 * mapping is coloured the same as the kernel's mapping of that memory.
-+	 * This ensures that when the kernel updates the VDSO data userland
-+	 * will observe it without requiring cache invalidations.
-+	 */
-+	if (cpu_has_dc_aliases) {
-+		base = __ALIGN_MASK(base, shm_align_mask);
-+		base += ((unsigned long)&vdso_data - gic_size) & shm_align_mask;
-+	}
-+
- 	data_addr = base + gic_size;
- 	vdso_addr = data_addr + PAGE_SIZE;
- 
+-static int iostat_info_seq_show(struct seq_file *seq, void *offset)
++static int __maybe_unused iostat_info_seq_show(struct seq_file *seq,
++					       void *offset)
+ {
+ 	struct super_block *sb = seq->private;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
 
 
