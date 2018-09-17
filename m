@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B459ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B131EECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D72A02146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72A02146D
+	by mail.kernel.org (Postfix) with ESMTP id 611DC2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 611DC2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbeIREkW (ORCPT
+        id S1732260AbeIREkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50398 "EHLO
+        Tue, 18 Sep 2018 00:40:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731666AbeIREkV (ORCPT
+        with ESMTP id S1731666AbeIREkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:21 -0400
+        Tue, 18 Sep 2018 00:40:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67918C49;
-        Mon, 17 Sep 2018 23:10:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67BB6707;
+        Mon, 17 Sep 2018 23:10:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 044/158] tc-testing: remove duplicate spaces in connmark match patterns
-Date:   Tue, 18 Sep 2018 00:41:14 +0200
-Message-Id: <20180917211713.241551269@linuxfoundation.org>
+        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infraded.org>,
+        josh@joshtriplett.org, peterz@infradead.org,
+        jiangshanlai@gmail.com, dzickus@redhat.com,
+        brendan.jackman@arm.com, malat@debian.org, mojha@codeaurora.org,
+        sramana@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 4.18 035/158] cpu/hotplug: Adjust misplaced smb() in cpuhp_thread_fun()
+Date:   Tue, 18 Sep 2018 00:41:05 +0200
+Message-Id: <20180917211712.697608630@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,133 +56,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlad Buslov <vladbu@mellanox.com>
+From: Neeraj Upadhyay <neeraju@codeaurora.org>
 
-[ Upstream commit 757a9a39d483ae415a712388c33d4042a98b751f ]
+commit f8b7530aa0a1def79c93101216b5b17cf408a70a upstream.
 
-Match patterns for some connmark tests contain duplicate whitespace that is
-not present in actual tc output. This causes tests to fail because they
-can't match required action, even when it was successfully created.
+The smp_mb() in cpuhp_thread_fun() is misplaced. It needs to be after the
+load of st->should_run to prevent reordering of the later load/stores
+w.r.t. the load of st->should_run.
 
-Fixes: 1dad0f9ffff7 ("tc-testing: add connmark action tests")
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 4dddfb5faa61 ("smp/hotplug: Rewrite AP state machine core")
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infraded.org>
+Cc: josh@joshtriplett.org
+Cc: peterz@infradead.org
+Cc: jiangshanlai@gmail.com
+Cc: dzickus@redhat.com
+Cc: brendan.jackman@arm.com
+Cc: malat@debian.org
+Cc: mojha@codeaurora.org
+Cc: sramana@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1536126727-11629-1-git-send-email-neeraju@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/tc-testing/tc-tests/actions/connmark.json |   24 +++++-----
- 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/tools/testing/selftests/tc-testing/tc-tests/actions/connmark.json
-+++ b/tools/testing/selftests/tc-testing/tc-tests/actions/connmark.json
-@@ -17,7 +17,7 @@
-         "cmdUnderTest": "$TC actions add action connmark",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions list action connmark",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 pipe",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 pipe",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -41,7 +41,7 @@
-         "cmdUnderTest": "$TC actions add action connmark pass index 1",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 1",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 pass.*index 1 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 pass.*index 1 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -65,7 +65,7 @@
-         "cmdUnderTest": "$TC actions add action connmark drop index 100",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 100",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 drop.*index 100 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 drop.*index 100 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -89,7 +89,7 @@
-         "cmdUnderTest": "$TC actions add action connmark pipe index 455",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 455",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 pipe.*index 455 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 pipe.*index 455 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -113,7 +113,7 @@
-         "cmdUnderTest": "$TC actions add action connmark reclassify index 7",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions list action connmark",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 reclassify.*index 7 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 reclassify.*index 7 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -137,7 +137,7 @@
-         "cmdUnderTest": "$TC actions add action connmark continue index 17",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions list action connmark",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 continue.*index 17 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 continue.*index 17 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -161,7 +161,7 @@
-         "cmdUnderTest": "$TC actions add action connmark jump 10 index 17",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions list action connmark",
--        "matchPattern": "action order [0-9]+:  connmark zone 0 jump 10.*index 17 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 0 jump 10.*index 17 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -185,7 +185,7 @@
-         "cmdUnderTest": "$TC actions add action connmark zone 100 pipe index 1",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 1",
--        "matchPattern": "action order [0-9]+:  connmark zone 100 pipe.*index 1 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 100 pipe.*index 1 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -209,7 +209,7 @@
-         "cmdUnderTest": "$TC actions add action connmark zone 65536 reclassify index 21",
-         "expExitCode": "255",
-         "verifyCmd": "$TC actions get action connmark index 1",
--        "matchPattern": "action order [0-9]+:  connmark zone 65536 reclassify.*index 21 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 65536 reclassify.*index 21 ref",
-         "matchCount": "0",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -233,7 +233,7 @@
-         "cmdUnderTest": "$TC actions add action connmark zone 655 unsupp_arg pass index 2",
-         "expExitCode": "255",
-         "verifyCmd": "$TC actions get action connmark index 2",
--        "matchPattern": "action order [0-9]+:  connmark zone 655 unsupp_arg pass.*index 2 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 655 unsupp_arg pass.*index 2 ref",
-         "matchCount": "0",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -258,7 +258,7 @@
-         "cmdUnderTest": "$TC actions replace action connmark zone 555 reclassify index 555",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 555",
--        "matchPattern": "action order [0-9]+:  connmark zone 555 reclassify.*index 555 ref",
-+        "matchPattern": "action order [0-9]+: connmark zone 555 reclassify.*index 555 ref",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
-@@ -282,7 +282,7 @@
-         "cmdUnderTest": "$TC actions add action connmark zone 555 pipe index 5 cookie aabbccddeeff112233445566778800a1",
-         "expExitCode": "0",
-         "verifyCmd": "$TC actions get action connmark index 5",
--        "matchPattern": "action order [0-9]+:  connmark zone 555 pipe.*index 5 ref.*cookie aabbccddeeff112233445566778800a1",
-+        "matchPattern": "action order [0-9]+: connmark zone 555 pipe.*index 5 ref.*cookie aabbccddeeff112233445566778800a1",
-         "matchCount": "1",
-         "teardown": [
-             "$TC actions flush action connmark"
+---
+ kernel/cpu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -608,15 +608,15 @@ static void cpuhp_thread_fun(unsigned in
+ 	bool bringup = st->bringup;
+ 	enum cpuhp_state state;
+ 
++	if (WARN_ON_ONCE(!st->should_run))
++		return;
++
+ 	/*
+ 	 * ACQUIRE for the cpuhp_should_run() load of ->should_run. Ensures
+ 	 * that if we see ->should_run we also see the rest of the state.
+ 	 */
+ 	smp_mb();
+ 
+-	if (WARN_ON_ONCE(!st->should_run))
+-		return;
+-
+ 	cpuhp_lock_acquire(bringup);
+ 
+ 	if (st->single) {
 
 
