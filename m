@@ -2,86 +2,59 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833D2ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62F2ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363FC214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:00:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363FC214D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=golosunov.pp.ru
+	by mail.kernel.org (Postfix) with ESMTP id 652702147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652702147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbeIRC3L (ORCPT
+        id S1728533AbeIRCaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:29:11 -0400
-Received: from relay13.nicmail.ru ([195.208.6.7]:60672 "EHLO
-        relay13.nicmail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727672AbeIRC3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:29:11 -0400
-X-Greylist: delayed 1528 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Sep 2018 22:29:09 EDT
-Received: from [109.70.25.185] (port=55717 helo=sghpc.hn.golosunov.pp.ru)
-        by f17.mail.nic.ru with esmtp (Exim 5.55)
-        (envelope-from <stepan@golosunov.pp.ru>)
-        id 1g20EE-00022o-3x; Mon, 17 Sep 2018 23:34:42 +0300
-Received: from [46.0.59.155] (account sghpc@golosunov.pp.ru HELO sghpc.hn.golosunov.pp.ru)
-        by proxy06.mail.nic.ru (Exim 5.55)
-        with id 1g20EE-0000rm-59; Mon, 17 Sep 2018 23:34:42 +0300
-Received: from stepan by sghpc.hn.golosunov.pp.ru with local (Exim 4.89)
-        (envelope-from <stepan@golosunov.pp.ru>)
-        id 1g20EB-0003sy-2R; Tue, 18 Sep 2018 00:34:39 +0400
-Date:   Tue, 18 Sep 2018 00:34:39 +0400
-From:   Stepan Golosunov <stepan@golosunov.pp.ru>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-aio@kvack.org
-Subject: Re: [PATCH v3 4/5] pselect6: use __kernel_timespec
-Message-ID: <20180917203438.maary2eo64dbuhw2@sghpc.golosunov.pp.ru>
-References: <20180917010458.23159-1-deepa.kernel@gmail.com>
- <20180917010458.23159-5-deepa.kernel@gmail.com>
+        Mon, 17 Sep 2018 22:30:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37760 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726844AbeIRCaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 22:30:00 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9DCB2146D;
+        Mon, 17 Sep 2018 21:00:57 +0000 (UTC)
+Date:   Mon, 17 Sep 2018 17:00:55 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Vaibhav Nagarnaik <vnagarnaik@google.com>
+Cc:     linux-kernel@vger.kernel.org, Jason Behmer <jbehmer@google.com>
+Subject: Re: [PATCH] ring-buffer: Allow for rescheduling when removing pages
+Message-ID: <20180917170055.1f1d161f@gandalf.local.home>
+In-Reply-To: <CAL26m8+C3tPJLy38i4LajM1_9B+x_AOOvUTot-VUkpHTZfFKmA@mail.gmail.com>
+References: <20180907182131.144514-1-vnagarnaik@google.com>
+        <20180907223129.71994-1-vnagarnaik@google.com>
+        <CAL26m8+C3tPJLy38i4LajM1_9B+x_AOOvUTot-VUkpHTZfFKmA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917010458.23159-5-deepa.kernel@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 06:04:57PM -0700, Deepa Dinamani wrote:
->  static long do_compat_pselect(int n, compat_ulong_t __user *inp,
->  	compat_ulong_t __user *outp, compat_ulong_t __user *exp,
-> -	struct old_timespec32 __user *tsp, compat_sigset_t __user *sigmask,
-> -	compat_size_t sigsetsize)
-> +	void __user *tsp, compat_sigset_t __user *sigmask,
-> +	compat_size_t sigsetsize, enum poll_time_type type)
->  {
->  	sigset_t ksigmask, sigsaved;
->  	struct timespec64 ts, end_time, *to = NULL;
->  	int ret;
->  
->  	if (tsp) {
-> -		if (get_old_timespec32(&ts, tsp))
-> -			return -EFAULT;
-> +		switch (type) {
-> +		case PT_OLD_TIMESPEC:
-> +			if (get_old_timespec32(&ts, tsp))
-> +				return -EFAULT;
-> +			break;
-> +		case PT_TIMESPEC:
-> +			if (get_old_timespec32(&ts, tsp))
-> +				return -EFAULT;
-> +			break;
-> +		default:
-> +			BUG();
-> +		}
+On Mon, 17 Sep 2018 13:53:05 -0700
+Vaibhav Nagarnaik <vnagarnaik@google.com> wrote:
 
-One of the two get_old_timespec32 calls here should be
-get_timespec64.
+> Hi Steven,
+> 
+> Does the patch look good? Can this be picked up in the next rc?
+> 
+
+Yes it's fine. I can pick it up. Does it need to be marked for stable?
+
+Thanks!
+
+-- Steve
