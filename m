@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C47ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E714AECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50ED2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A50ED2146D
+	by mail.kernel.org (Postfix) with ESMTP id A609B2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A609B2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733076AbeIREo3 (ORCPT
+        id S1733086AbeIREod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:44:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51284 "EHLO
+        Tue, 18 Sep 2018 00:44:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730352AbeIREo2 (ORCPT
+        with ESMTP id S1730352AbeIREoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:44:28 -0400
+        Tue, 18 Sep 2018 00:44:32 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC700C49;
-        Mon, 17 Sep 2018 23:14:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1510C49;
+        Mon, 17 Sep 2018 23:14:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yelena Krivosheev <yelena@marvell.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 117/158] net: mvneta: fix mtu change on port without link
-Date:   Tue, 18 Sep 2018 00:42:27 +0200
-Message-Id: <20180917211716.645716403@linuxfoundation.org>
+Subject: [PATCH 4.18 108/158] PCI: mobiveil: Fix struct mobiveil_pcie.pcie_reg_base address type
+Date:   Tue, 18 Sep 2018 00:42:18 +0200
+Message-Id: <20180917211716.267385259@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,35 +54,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-[ Upstream commit 8466baf788ec3e18836bd9c91ba0b1a07af25878 ]
+[ Upstream commit af3f606e0bbb6d811c50b7b90fe324b07fb7cab8 ]
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+The field pcie_reg_base in struct mobiveil_pcie represents a physical
+address so it should be of phys_addr_t type rather than void __iomem*;
+this results in the following compilation  warnings:
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+drivers/pci/controller/pcie-mobiveil.c: In function
+'mobiveil_pcie_parse_dt':
+drivers/pci/controller/pcie-mobiveil.c:326:22: warning: assignment makes
+pointer from integer without a cast [-Wint-conversion]
+  pcie->pcie_reg_base = res->start;
+                      ^
+drivers/pci/controller/pcie-mobiveil.c: In function
+'mobiveil_pcie_enable_msi':
+drivers/pci/controller/pcie-mobiveil.c:485:25: warning: initialization
+makes integer from pointer without a cast [-Wint-conversion]
+  phys_addr_t msg_addr = pcie->pcie_reg_base;
+                         ^~~~
+drivers/pci/controller/pcie-mobiveil.c: In function
+'mobiveil_compose_msi_msg':
+drivers/pci/controller/pcie-mobiveil.c:640:21: warning: initialization
+makes integer from pointer without a cast [-Wint-conversion]
+  phys_addr_t addr = pcie->pcie_reg_base + (data->hwirq * sizeof(int));
+
+Fix the type and with it the compilation warnings.
+
+Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP
+driver")
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvneta.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/pci/controller/pcie-mobiveil.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -3196,7 +3196,6 @@ static int mvneta_change_mtu(struct net_
- 
- 	on_each_cpu(mvneta_percpu_enable, pp, true);
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
- 
- 	netdev_update_features(dev);
- 
+--- a/drivers/pci/controller/pcie-mobiveil.c
++++ b/drivers/pci/controller/pcie-mobiveil.c
+@@ -132,7 +132,7 @@ struct mobiveil_pcie {
+ 	void __iomem *config_axi_slave_base;	/* endpoint config base */
+ 	void __iomem *csr_axi_slave_base;	/* root port config base */
+ 	void __iomem *apb_csr_base;	/* MSI register base */
+-	void __iomem *pcie_reg_base;	/* Physical PCIe Controller Base */
++	phys_addr_t pcie_reg_base;	/* Physical PCIe Controller Base */
+ 	struct irq_domain *intx_domain;
+ 	raw_spinlock_t intx_mask_lock;
+ 	int irq;
 
 
