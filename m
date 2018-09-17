@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C56ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E87ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B7D2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B7D2146D
+	by mail.kernel.org (Postfix) with ESMTP id 0233C2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:51:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0233C2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbeIREVE (ORCPT
+        id S1728630AbeIREVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45040 "EHLO
+        Tue, 18 Sep 2018 00:21:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVE (ORCPT
+        with ESMTP id S1726275AbeIREVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:04 -0400
+        Tue, 18 Sep 2018 00:21:08 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BF99CAC;
-        Mon, 17 Sep 2018 22:51:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F934CAD;
+        Mon, 17 Sep 2018 22:51:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 14/56] misc: mic: SCIF Fix scif_get_new_port() error handling
-Date:   Tue, 18 Sep 2018 00:41:47 +0200
-Message-Id: <20180917213828.554180674@linuxfoundation.org>
+Subject: [PATCH 4.4 15/56] ethtool: Remove trailing semicolon for static inline
+Date:   Tue, 18 Sep 2018 00:41:48 +0200
+Message-Id: <20180917213828.595242876@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -51,59 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit a39284ae9d2ad09975c8ae33f1bd0f05fbfbf6ee ]
+[ Upstream commit d89d41556141a527030a15233135ba622ba3350d ]
 
-There are only 2 callers of scif_get_new_port() and both appear to get
-the error handling wrong.  Both treat zero returns as error, but it
-actually returns negative error codes and >= 0 on success.
+Android's header sanitization tool chokes on static inline functions having a
+trailing semicolon, leading to an incorrectly parsed header file. While the
+tool should obviously be fixed, also fix the header files for the two affected
+functions: ethtool_get_flow_spec_ring() and ethtool_get_flow_spec_ring_vf().
 
-Fixes: e9089f43c9a7 ("misc: mic: SCIF open close bind and listen APIs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 8cf6f497de40 ("ethtool: Add helper routines to pass vf to rx_flow_spec")
+Reporetd-by: Blair Prescott <blair.prescott@broadcom.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/mic/scif/scif_api.c |   20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ include/uapi/linux/ethtool.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/mic/scif/scif_api.c
-+++ b/drivers/misc/mic/scif/scif_api.c
-@@ -370,11 +370,10 @@ int scif_bind(scif_epd_t epd, u16 pn)
- 			goto scif_bind_exit;
- 		}
- 	} else {
--		pn = scif_get_new_port();
--		if (!pn) {
--			ret = -ENOSPC;
-+		ret = scif_get_new_port();
-+		if (ret < 0)
- 			goto scif_bind_exit;
--		}
-+		pn = ret;
- 	}
+--- a/include/uapi/linux/ethtool.h
++++ b/include/uapi/linux/ethtool.h
+@@ -819,13 +819,13 @@ struct ethtool_rx_flow_spec {
+ static inline __u64 ethtool_get_flow_spec_ring(__u64 ring_cookie)
+ {
+ 	return ETHTOOL_RX_FLOW_SPEC_RING & ring_cookie;
+-};
++}
  
- 	ep->state = SCIFEP_BOUND;
-@@ -648,13 +647,12 @@ int __scif_connect(scif_epd_t epd, struc
- 			err = -EISCONN;
- 		break;
- 	case SCIFEP_UNBOUND:
--		ep->port.port = scif_get_new_port();
--		if (!ep->port.port) {
--			err = -ENOSPC;
--		} else {
--			ep->port.node = scif_info.nodeid;
--			ep->conn_async_state = ASYNC_CONN_IDLE;
--		}
-+		err = scif_get_new_port();
-+		if (err < 0)
-+			break;
-+		ep->port.port = err;
-+		ep->port.node = scif_info.nodeid;
-+		ep->conn_async_state = ASYNC_CONN_IDLE;
- 		/* Fall through */
- 	case SCIFEP_BOUND:
- 		/*
+ static inline __u64 ethtool_get_flow_spec_ring_vf(__u64 ring_cookie)
+ {
+ 	return (ETHTOOL_RX_FLOW_SPEC_RING_VF & ring_cookie) >>
+ 				ETHTOOL_RX_FLOW_SPEC_RING_VF_OFF;
+-};
++}
+ 
+ /**
+  * struct ethtool_rxnfc - command to get or set RX flow classification rules
 
 
