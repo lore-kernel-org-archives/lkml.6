@@ -2,69 +2,123 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89080ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD6FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F273214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F273214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 51521214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51521214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeIQOXV (ORCPT
+        id S1728198AbeIQOXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:23:21 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37671 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727166AbeIQOXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:23:20 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 0572D34BD0BE0;
-        Mon, 17 Sep 2018 16:56:39 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
- 16:56:38 +0800
-Message-ID: <5B9F6C45.1020804@huawei.com>
-Date:   Mon, 17 Sep 2018 16:56:37 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <georgi.djakov@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] interconnect: Fix a GCC compiler warning
-References: <1537108310-2086-1-git-send-email-zhongjiang@huawei.com> <5B9F4683.7010706@huawei.com> <20180917065428.GB26155@kroah.com> <5B9F54AF.7010208@huawei.com> <20180917084812.GB21981@kroah.com>
-In-Reply-To: <20180917084812.GB21981@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        Mon, 17 Sep 2018 10:23:23 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:32074 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeIQOXX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:23:23 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8H8uQst014526;
+        Mon, 17 Sep 2018 17:56:26 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Mon, 17 Sep 2018 17:56:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from localhost.localdomain (239.166.151.153.ap.dti.ne.jp [153.151.166.239])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8H8uKNP014481
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 17 Sep 2018 17:56:25 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH v2] arm64: dts: rockchip: add i2s and spdif endpoints of rk3328
+Date:   Mon, 17 Sep 2018 17:55:55 +0900
+Message-Id: <20180917085555.21775-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/17 16:48, Greg KH wrote:
-> On Mon, Sep 17, 2018 at 03:15:59PM +0800, zhong jiang wrote:
->> On 2018/9/17 14:54, Greg KH wrote:
->>> On Mon, Sep 17, 2018 at 02:15:31PM +0800, zhong jiang wrote:
->>>> On 2018/9/16 22:31, zhong jiang wrote:
->>>>> Fix the following compile warning:
->>>> +to  Andrew and Greg
->>>>
->>> +me for what?  Nothing is here :(
->> The drivers/interconnect/core.c is not updated since 2017. I think the maintainer
->>  is busy with other things.  Therefore,  I hope that you or Andrew and pick up the
->> patch. :-)  . if you can not do this.  I am sorry for disturbing you.
-> I can do that, but again, I do not see any patch here in this email at
-> all, sorry.
-:-[ ,  I am sorry for handling email mistakely. 
+This patch adds port and endpoint of i2s and spdif nodes for rk3328.
+Because to use modern sound card interface such as audio-graph-card.
 
-Thanks,
-zhong jiang
-> greg k-h
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index d3ef6566325e..fd35dbd37ee2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -179,7 +179,13 @@
+ 		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac 11>, <&dmac 12>;
+ 		dma-names = "tx", "rx";
++		#sound-dai-cells = <0>;
+ 		status = "disabled";
++
++		i2s0_p0: port {
++			i2s0_p0_0: endpoint {
++			};
++		};
+ 	};
+ 
+ 	i2s1: i2s@ff010000 {
+@@ -190,7 +196,13 @@
+ 		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac 14>, <&dmac 15>;
+ 		dma-names = "tx", "rx";
++		#sound-dai-cells = <0>;
+ 		status = "disabled";
++
++		i2s1_p0: port {
++			i2s1_p0_0: endpoint {
++			};
++		};
+ 	};
+ 
+ 	i2s2: i2s@ff020000 {
+@@ -201,7 +213,13 @@
+ 		clock-names = "i2s_clk", "i2s_hclk";
+ 		dmas = <&dmac 0>, <&dmac 1>;
+ 		dma-names = "tx", "rx";
++		#sound-dai-cells = <0>;
+ 		status = "disabled";
++
++		i2s2_p0: port {
++			i2s2_p0_0: endpoint {
++			};
++		};
+ 	};
+ 
+ 	spdif: spdif@ff030000 {
+@@ -214,7 +232,13 @@
+ 		dma-names = "tx";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&spdifm2_tx>;
++		#sound-dai-cells = <0>;
+ 		status = "disabled";
++
++		spdif_p0: port {
++			spdif_p0_0: endpoint {
++			};
++		};
+ 	};
+ 
+ 	pdm: pdm@ff040000 {
+-- 
+2.18.0
 
