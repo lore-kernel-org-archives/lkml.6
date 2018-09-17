@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15493ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEE1ECE564
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E91214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF95B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:08:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="IbvFQUr8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E91214C2
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="csLBd2wP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF95B2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731629AbeIQIdU (ORCPT
+        id S1731643AbeIQIdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:33:20 -0400
+        Mon, 17 Sep 2018 04:33:21 -0400
 Received: from mail-eopbgr720091.outbound.protection.outlook.com ([40.107.72.91]:17664
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731614AbeIQIdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:33:19 -0400
+        id S1731111AbeIQIdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:33:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=njTSxHaULu+KKkNNBznEmTeXlSnWj7qQEKXVtLcEaGg=;
- b=IbvFQUr80HfyJ1TPbp1LRGEWxe8QsehYLu0JYoxs7zESZ/TLIHLDg0pzRCuJNyIbqCsdlsiTD4jJnkokyRsgRi2XZQ4htmFj4jntF2S4/5+63cwn03w89ffcWa40OwvWHjaF/oU3ETlY3yWKkZujVy0G8wq3Pt6nh8+ITcuSqDQ=
+ bh=/tLGlFI2pPVPA8yZ7oq/wnJ5i6LtjTJ8JQ9+ygdk0lw=;
+ b=csLBd2wPwDiEo+lJcDbhR0jUJHB1lJ8XfURRnwirnmKQVXOsYsC2+t0NIPkQQfNmQO5VD4KLtqnA64zxsXwFBd2gepmIz7EJDpB+Bl2QH3XLrB0b5N15RncBAkmwsAfGkSO/7FKZHHwfKSzMYnx7o10KT4Q2wMFp+qih44g5yh8=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0150.namprd21.prod.outlook.com (10.173.189.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,17 +42,16 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Takashi Iwai <tiwai@suse.de>,
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 3.18 20/29] ALSA: hda: Add AZX_DCAPS_PM_RUNTIME for
- AMD Raven Ridge
-Thread-Topic: [PATCH AUTOSEL 3.18 20/29] ALSA: hda: Add AZX_DCAPS_PM_RUNTIME
- for AMD Raven Ridge
-Thread-Index: AQHUTjNWTaEFl1LjnE6KDh0+6FBbew==
-Date:   Mon, 17 Sep 2018 03:05:49 +0000
-Message-ID: <20180917030533.592-20-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 3.18 21/29] rndis_wlan: potential buffer overflow in
+ rndis_wlan_auth_indication()
+Thread-Topic: [PATCH AUTOSEL 3.18 21/29] rndis_wlan: potential buffer overflow
+ in rndis_wlan_auth_indication()
+Thread-Index: AQHUTjNWlQTiPQIRj0qRSqTuN0dPJw==
+Date:   Mon, 17 Sep 2018 03:05:50 +0000
+Message-ID: <20180917030533.592-21-alexander.levin@microsoft.com>
 References: <20180917030533.592-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030533.592-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:SErAeAcDeD3al+TP5m6PU2Cfofbvk1xlkRzZv4Ylw1xIRy8vPykofnMJ1fwnlQQ57nYBl11yMG4XOsyos6cNYuJIwljZV8Y+wUwVb0ocfj42oXNeUGZegeCuOpHX0UxkR0raYFhCHKB3nL35bCnONEXBRUQ9p8RAw1j0VJTIJrFGSC57deT+hN8ow2cCJxG1nTWOvLj/X/T5pKfVyOYgQt+yxpsTX7ZTkp4bXPPDSXgjFjuFeCgCnMtC913ALxiptdm4o/71IGnN3xyeX0LqaTpZFUHOZ1Q4ZoeCkEaGtg0BYJBk5NeTjR7qvxyuadpLL2wBbJIFQjmBSsq5VQatH3j7UD/rNXRvDCoePPgLjPxVqDpwxFpURm0gLf07kHdSoG7Nrw7TktsJQn1nX/50LVMXvQt6K/QF7AwkILxDCjnWZ6xn2NCesEq9xCyRhegxePJq3Cr3j2Thh3qbHqGEQA==;5:oqFRmFBfc82fdG54BBHBnNEWq4b+zFSqeiuhlIkE+aWoHxKq6dD960Xz2hwwAZdnuFkOeuVkrvbEJcqrnKMxB8yaxMHGPHrw0uIPridyVFEhF8MOywO/+OgOIPMpQZLyaZEsWBChFlFD0Hysi0J+L3rE+AKS4G5ywhtKwclXba0=;7:XShW8j3HqS824tqt6cXfH8ogDe1d3gM9JQYgWzi/puACzo8yS76825CCPy6Q8e0WmRHzsoxMnb0+V7iTtmXbpIbqq+omlZV7ZWPrFcVD+IVxb5YFsczc9X+/RZq2mmdftrMyAFwJlY+JWitcOlMdJBZdUNGj+CoBJa6LMVrJwVdgFGGbQsMpM4Fk0r3f6ZK0yvkFmZZQcTsUQEwXGQYnimRUfU5+/ty97txtvELM6jvHcHqj5HU4Ls/FGU0a6QQ2
-x-ms-office365-filtering-correlation-id: 3cbba84c-0247-4b06-cb7b-08d61c4ac3b4
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0150;6:auuALIkNtB8lsWNf+frzGnJZVL0vwNIET9GuVndl6TLT34lr4T0ADAZZW9tw5x25KUcQxb9rUD7Y2Fvz/jgTv6ZQGlxpqjlZLQjMT1xwluvJ/J7aBj+p3w2sDVyhTqv3GmeQcMfJIMOmV/BpoIkwCfnXSKu5UWNMe7tX3IVJ6Hxdhlax0m3X+VdBOWzQOGuewj1vQzLT2LiKGYIhJdbaajeO/iL6n7IY9wjzugsoVd2MSB6i9JjKEl9ntVSzcUlKfZIqZnuGwoqSBqt6un3qK5ilDu0eDdXoc3Bl0h8/HLG2PPxIc7qoZqy13jFhnjO5M/GqZ3wtxYRJUkYMPbdO6xIfkVwFr+b8Fw+j1JdtjWP92Xms1watk9MD7zx8QdRBL7IowhOEwZHVN8kK/x0PUfAMmqQaHvn3PvtxLHEeNlqRtg0hiZbocFgjzBH1Dbf818l9jzN4cfPmGAufaGCH9Q==;5:myM/W2wLKcQD3PDRx4oqfVwk7bmnuz0PVza7LdUjxnvR3dqQp/bb/KTMIM1mAXGLFwSOxvz1rIZ8vfVLEXCXmvjzw6E356EZX/9Wusdsi8DTcsQpxYc3bc5E5HEhbbtHHvkeaHxzNofEAIenE0T/KnnDfauFvg3w9ZJzLWVKPyw=;7:YATY5GId7ZBWjMXOHHWUaLg0brsEENQxPDO+5mAFaymGvNYZz14Ybs6Bxn9Drcxqz4JeXxCL4YdEMibgA92TQNSzW0NQGoACwoscLJGhebltDfMKSR9oPgwvmHdl6VHt3/SfNsDr++MenUSzvkdi1mUc+S37b6lHw73FGiaxxaZshLQWMSl3XsI1n6+LoCjIT3m3qUcusp9kPeXKiiA2BmcrFtPWLyh1MGSDOPvbd1sRH5h+AQFDmLY+agi0cBFp
+x-ms-office365-filtering-correlation-id: 16594a2d-75c4-43ee-3f24-08d61c4ac3e9
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0150;
 x-ms-traffictypediagnostic: CY4PR21MB0150:
-x-microsoft-antispam-prvs: <CY4PR21MB0150564DD384262BEA18E6CBFB1E0@CY4PR21MB0150.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(198206253151910)(767451399110)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB015089E146DC1E79037CE95EFB1E0@CY4PR21MB0150.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0150;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0150;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(366004)(39860400002)(199004)(189003)(478600001)(2900100001)(2501003)(6666003)(11346002)(107886003)(5250100002)(14454004)(26005)(10290500003)(36756003)(217873002)(7736002)(99286004)(305945005)(102836004)(72206003)(2616005)(86612001)(476003)(6346003)(186003)(14444005)(486006)(54906003)(110136005)(446003)(6436002)(5660300001)(4326008)(256004)(575784001)(86362001)(10090500001)(2906002)(6486002)(316002)(6512007)(53936002)(22452003)(66066001)(97736004)(76176011)(81156014)(81166006)(8676002)(3846002)(6116002)(8936002)(25786009)(6506007)(68736007)(105586002)(106356001)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(366004)(39860400002)(199004)(189003)(478600001)(2900100001)(2501003)(6666003)(11346002)(107886003)(5250100002)(14454004)(26005)(10290500003)(36756003)(217873002)(7736002)(99286004)(305945005)(102836004)(72206003)(2616005)(86612001)(476003)(6346003)(186003)(486006)(54906003)(110136005)(446003)(6436002)(5660300001)(4326008)(256004)(86362001)(10090500001)(2906002)(6486002)(316002)(6512007)(53936002)(22452003)(66066001)(97736004)(76176011)(81156014)(81166006)(8676002)(3846002)(6116002)(8936002)(25786009)(6506007)(68736007)(105586002)(106356001)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0150;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: xcp7EBr2FgMNtNPUmXJNMELkeBC9LkdrQ7+xrSzuadshIexqWx+F28fXp8LEybDoJo7gS0IrdfHe0pJFfTmqazzZJR/Oz1fQx1eCoiY7AqmyfZKiQER/OcWV+wlOdSmBue2s3q9Igcp+BzEyVCF5+nvG7uo2kBjNjyOab0lGxDkdf8Y5XmypPN2xrDeSUathDnlHxCwBQyZUqbqcvRy2JzXZj1HAhWbppBf3IssjfyELnfNSZT4sWdaHd/CCAeGt+oFcRDMiR61S8EH3ohu2Qpc18+qG4Gec2xK6NwgAhguNOWqf1mHiCjjCSqxPEXlsm4uDuTumW4aMP5NxE+OCWkJPimr5lQRJwy9BElDIyuc=
+x-microsoft-antispam-message-info: nrhZbOo6tdkabGiz233FIGIVgRj0mqdA56XQvMmNuo4MWTeq7tS0vrMoyT/cXwfqV+JEndNdZQay/VIGO7vn13voSOGiDmdJ9TRcKaEr8IQ/P7BMTsUzEJ6OkK4IGC4xND16P0nGEq0ammEfsntZEQJFQYYldE8vorTz7CXE+tXpMNEBwnn3iitlA5kxUQpYtbp44685aRrsq6ixLb9+fXkqkV4f5cl8uXEyUiFa6OVKlwxwlahdtr8iY4b6efa3IorIT8gJF4WxdgJukxDMjA7YQ/lIiaUqDtYS+ejXsw3lK+6kPmRUcewF5rZJB7T2wbysJW6EP0ul7q7k4D8Lfc6Z0zQPUdGCYhFxi8eo8ds=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cbba84c-0247-4b06-cb7b-08d61c4ac3b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:50.0139
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16594a2d-75c4-43ee-3f24-08d61c4ac3e9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:05:50.5764
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,35 +93,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 1adca4b0cd65c14cb8b8c9c257720385869c3d5f ]
+[ Upstream commit ae636fb1554833ee5133ca47bf4b2791b6739c52 ]
 
-This patch can make audio controller in AMD Raven Ridge gets runtime
-suspended to D3, to save ~1W power when it's not in use.
+This is a static checker fix, not something I have tested.  The issue
+is that on the second iteration through the loop, we jump forward by
+le32_to_cpu(auth_req->length) bytes.  The problem is that if the length
+is more than "buflen" then we end up with a negative "buflen".  A
+negative buflen is type promoted to a high positive value and the loop
+continues but it's accessing beyond the end of the buffer.
 
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+I believe the "auth_req->length" comes from the firmware and if the
+firmware is malicious or buggy, you're already toasted so the impact of
+this bug is probably not very severe.
+
+Fixes: 030645aceb3d ("rndis_wlan: handle 802.11 indications from device")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- sound/pci/hda/hda_intel.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rndis_wlan.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 5b89e110f6d4..7218e40f4d9f 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2094,7 +2094,8 @@ static const struct pci_device_id azx_ids[] =3D {
- 	  .driver_data =3D AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
- 	/* AMD Raven */
- 	{ PCI_DEVICE(0x1022, 0x15e3),
--	  .driver_data =3D AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	  .driver_data =3D AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
-+			 AZX_DCAPS_PM_RUNTIME },
- 	/* ATI HDMI */
- 	{ PCI_DEVICE(0x1002, 0x0002),
- 	  .driver_data =3D AZX_DRIVER_ATIHDMI_NS | AZX_DCAPS_PRESET_ATI_HDMI_NS }=
-,
+diff --git a/drivers/net/wireless/rndis_wlan.c b/drivers/net/wireless/rndis=
+_wlan.c
+index 46dda22cec15..ebe762bf01dd 100644
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -2919,6 +2919,8 @@ static void rndis_wlan_auth_indication(struct usbnet =
+*usbdev,
+=20
+ 	while (buflen >=3D sizeof(*auth_req)) {
+ 		auth_req =3D (void *)buf;
++		if (buflen < le32_to_cpu(auth_req->length))
++			return;
+ 		type =3D "unknown";
+ 		flags =3D le32_to_cpu(auth_req->flags);
+ 		pairwise_error =3D false;
 --=20
 2.17.1
