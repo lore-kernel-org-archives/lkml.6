@@ -2,194 +2,145 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E9CECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27576ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F37D2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F37D2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BFB42214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:09:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ZnPiCKO+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB42214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbeIQOf6 (ORCPT
+        id S1728189AbeIQOgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:35:58 -0400
-Received: from mga01.intel.com ([192.55.52.88]:21030 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbeIQOf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:35:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 02:09:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
-   d="scan'208";a="70581758"
-Received: from shbuild888.sh.intel.com ([10.239.146.239])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Sep 2018 02:09:23 -0700
-From:   Feng Tang <feng.tang@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>
-Cc:     Feng Tang <feng.tang@intel.com>
-Subject: [PATCH v3] x86/mm: Expand static page table for fixmap space
-Date:   Mon, 17 Sep 2018 17:14:23 +0800
-Message-Id: <20180917091423.16069-1-feng.tang@intel.com>
-X-Mailer: git-send-email 2.14.1
+        Mon, 17 Sep 2018 10:36:20 -0400
+Received: from mail-by2nam03on0060.outbound.protection.outlook.com ([104.47.42.60]:48640
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727166AbeIQOgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:36:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8OYCJrI+cU3eTVtXL6Nfivv9BnOBrmai0ddoGAgyAsU=;
+ b=ZnPiCKO+0iAuJxpae8mS92+znlhyc+xpY4aT8FZ/2Vvsy9iJkHL99Gs/mcc/LG70z+6s4T6ypUBQLOYH0ZZ2CetgVL0ejIK7bMp4gR/t/np02PIaBT2fE3Mf5lkxf17lcqj1zVtpQV3S+Q4IBSeueki5vFK7InAPfXgqUkw5934=
+Received: from BYAPR02MB4710.namprd02.prod.outlook.com (52.135.232.23) by
+ BYAPR02MB5175.namprd02.prod.outlook.com (20.176.254.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.15; Mon, 17 Sep 2018 09:09:46 +0000
+Received: from BYAPR02MB4710.namprd02.prod.outlook.com
+ ([fe80::80dc:1608:389e:bdd8]) by BYAPR02MB4710.namprd02.prod.outlook.com
+ ([fe80::80dc:1608:389e:bdd8%5]) with mapi id 15.20.1143.017; Mon, 17 Sep 2018
+ 09:09:46 +0000
+From:   Nava kishore Manne <navam@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Rajan Vaja <RAJANV@xilinx.com>, Jolly Shah <JOLLYS@xilinx.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC PATCH v3 2/3] dt-bindings: reset: Add bindings for ZynqMP
+ reset driver
+Thread-Topic: [RFC PATCH v3 2/3] dt-bindings: reset: Add bindings for ZynqMP
+ reset driver
+Thread-Index: AQHUROdicf/LQjvTwE+b+sRENje4CaTp+10AgApCiaA=
+Date:   Mon, 17 Sep 2018 09:09:45 +0000
+Message-ID: <BYAPR02MB471009755B88F55A97DA5694C21E0@BYAPR02MB4710.namprd02.prod.outlook.com>
+References: <1536131342-28041-1-git-send-email-nava.manne@xilinx.com>
+ <1536131342-28041-3-git-send-email-nava.manne@xilinx.com>
+ <20180910201224.GA31501@bogus>
+In-Reply-To: <20180910201224.GA31501@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=navam@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR02MB5175;6:2483sDo20CXd0a350xIbUhLsLziMaoVvlO+HecT4PHzC1Vi0ZWi//aTu+N1jvIWazYEzuNV0cfqM2Dvm+Uu+R7wqqvMaUyXOC70hIJcn3XRkwnSSBxyun+7ajygQFaiZOKUTlERK4P1Sr1XShv4uwbHsKtFQCR3DRGIkf2WR4KmScj+D1Mjp4nf3dVbf+aZ5Ux4AyBmNKOVBwXh9lSw+x19ncexkftFOnJlt+x6w3dLjMzh2Io8CHf5x3Oc364jrADKD/xdpeuTd4iRYqQEAro7cj0Nl8xHYL3s+ppjttCAgHzdwdyvVzT8krdXjmGbdH8H+81CrJ7UvFmqxmNddRPuOu6eyzESFspc50tAhPAURz9ulCVjkwChlV2zr0FGEemgQ34kIC8xAuLuRKPfkQRJEx26IphM2pMCq3veg+LZXM1QTFp41kC+Lw18F8OrQBbgQXPn+TCyDd9uGcQx4ZA==;5:kqVT0D88YVUs6j4jazKSa1zacbOD8rgcsXX8DGG28l47KUdmB0S4K9Lqtl9tukR15aaiY3284oRDS83C4SkP6tR3qEuI0Pe6dYpWzAbkN19F2CjdYRARAsNHY8PMT/6FBg4ejrjyMex1urcnaq1dB7hSNgixj8GaUR7JezIQUy4=;7:e6CvLzVj2rz3VkH12kk9CF31gnFEiVUrFN0ohFiFAS++QQPzBdQ9Basit7ObexUvTfHJm+jqZ9UEV/S0vDMmuFUivCGuXJHKA7Ddoc4F2SfQ24Sh99rcZ6OKP5ZZMHR1HdiMDgfAaMpeyQv/qG16RsHH/BiRZMJH437h2P5DekIGRGPPvfp2lgpmLGrTRS4XFKhiYWk2KRQGwVk1/SrHYSfYH5Dm7NgKHT/dUMaX8lW+nt2cAUOVpYFKVc+F/tgb
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: fdfe563b-c542-45cb-c903-08d61c7d5029
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR02MB5175;
+x-ms-traffictypediagnostic: BYAPR02MB5175:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BYAPR02MB5175B9D731B267E0826F7611C21E0@BYAPR02MB5175.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699050);SRVR:BYAPR02MB5175;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB5175;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(366004)(396003)(346002)(13464003)(189003)(199004)(6246003)(305945005)(74316002)(25786009)(97736004)(478600001)(7696005)(53936002)(2906002)(55016002)(76176011)(9686003)(68736007)(6436002)(217873002)(7736002)(86362001)(229853002)(6306002)(4326008)(966005)(8676002)(66066001)(476003)(81166006)(81156014)(486006)(102836004)(26005)(186003)(316002)(256004)(6506007)(53546011)(3846002)(5660300001)(99286004)(14454004)(5250100002)(106356001)(8936002)(6116002)(2900100001)(446003)(33656002)(11346002)(105586002)(54906003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5175;H:BYAPR02MB4710.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fvHSwgH6Xo2LoW57X0WlPce1JBE6lAhJAFJZOVPTF9pPnP0O2w8mKnbOjImCJbQl6fSWo/3f/8w1bnQfuDj6maCVsPZgdIrZFsKsgZfGifcEM2YGTgNCAbNMA0/z4qm2Iigo2KLjl65SWwRCCbJuvvCedMCZJzbDbkWNrtMDHSyXVfXkBKvRYipJDPUBEZzXLnFCS3I2vGaGZkJuezuV4CEh8VAQmvCOgTYNClnrKCz/MQ2riBt7QWcJP/yFBx35UW+6OX3HAzi5J4GvL+XLAxwTHRfW/1jAC4IIQIl7XLCx2ifecb1hk9nGShvmEGBFuIxf8U36/NdjaYessGfL+6wBzd0EvR4NOFhomnbv6DA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdfe563b-c542-45cb-c903-08d61c7d5029
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 09:09:45.9034
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We met a kernel panic when enabling earlycon, which is due to
-the fixmap address of earlycon is not statically setup.
+Hi Rob,
 
-Currently the static fixmap setup in head_64.S only covers 2M
-virtual address space, while it acutually could be in 4M space
-with different kernel configurations.
+Thanks for providing the comments...
+Please find my response inline.
 
-So increase the static space to 4M for now by defining FIXMAP_PMD_NUM
-to 2, and add a build time check for future possible overflow so that
-the macro could be increased accordingly.
+> -----Original Message-----
+> From: Rob Herring [mailto:robh@kernel.org]
+> Sent: Tuesday, September 11, 2018 1:42 AM
+> To: Nava kishore Manne <navam@xilinx.com>
+> Cc: mark.rutland@arm.com; Michal Simek <michals@xilinx.com>;
+> p.zabel@pengutronix.de; Rajan Vaja <RAJANV@xilinx.com>; Jolly Shah
+> <JOLLYS@xilinx.com>; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [RFC PATCH v3 2/3] dt-bindings: reset: Add bindings for Zynq=
+MP
+> reset driver
+>=20
+> On Wed, Sep 05, 2018 at 12:39:01PM +0530, Nava kishore Manne wrote:
+> > Add documentation to describe Xilinx ZynqMP reset driver bindings.
+> >
+> > Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> > ---
+> > Changes for v3:
+> > 		-Corrected Commit Msg.
+> > Changes for v2:
+> > 		-Moved reset node as a child to firwmare
+> > 		 node.
+>=20
+> Why? There's no reason for that. The parent can be multiple providers.
+> You only need child nodes if the sub functions have their own DT resource=
+s.
+>=20
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
-Signed-off-by: Feng Tang <feng.tang@intel.com>
----
- arch/x86/include/asm/fixmap.h     |  3 +++
- arch/x86/include/asm/pgtable_64.h |  3 ++-
- arch/x86/kernel/head_64.S         | 16 ++++++++++++----
- arch/x86/mm/pgtable.c             | 10 ++++++++++
- arch/x86/xen/mmu_pv.c             |  7 +++++--
- 5 files changed, 32 insertions(+), 7 deletions(-)
+This driver having a dependency on firmware. So I have moved this node as a=
+ child to firmware
+As per other drivers which is using this firmware interface=20
+https://lkml.org/lkml/2018/8/14/432=20
+I didn't get your comment could you please elaborate more???=20
+Did you mean I should move the changes in the file to Documentation/devicet=
+ree/bindings/reset/ ???
 
-diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-index e203169..ffaa0fa 100644
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -14,6 +14,9 @@
- #ifndef _ASM_X86_FIXMAP_H
- #define _ASM_X86_FIXMAP_H
- 
-+/* Put here to be accessble for assembly code like head_64.S */
-+#define FIXMAP_PMD_NUM	2
-+
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- #include <asm/acpi.h>
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index ce2b590..9c85b54 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -14,6 +14,7 @@
- #include <asm/processor.h>
- #include <linux/bitops.h>
- #include <linux/threads.h>
-+#include <asm/fixmap.h>
- 
- extern p4d_t level4_kernel_pgt[512];
- extern p4d_t level4_ident_pgt[512];
-@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
- extern pmd_t level2_kernel_pgt[512];
- extern pmd_t level2_fixmap_pgt[512];
- extern pmd_t level2_ident_pgt[512];
--extern pte_t level1_fixmap_pgt[512];
-+extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
- extern pgd_t init_top_pgt[];
- 
- #define swapper_pg_dir init_top_pgt
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 15ebc2f..a3618cf 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -24,6 +24,7 @@
- #include "../entry/calling.h"
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
-+#include <asm/fixmap.h>
- 
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -445,13 +446,20 @@ NEXT_PAGE(level2_kernel_pgt)
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
- 
- NEXT_PAGE(level2_fixmap_pgt)
--	.fill	506,8,0
--	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
--	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
--	.fill	5,8,0
-+	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
-+	pgtno = 0
-+	.rept (FIXMAP_PMD_NUM)
-+	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
-+		+ _PAGE_TABLE_NOENC;
-+	pgtno = pgtno + 1
-+	.endr
-+	/* 6 MB reserved space + a 2MB hole */
-+	.fill	4,8,0
- 
- NEXT_PAGE(level1_fixmap_pgt)
-+	.rept (FIXMAP_PMD_NUM)
- 	.fill	512,8,0
-+	.endr
- 
- #undef PMDS
- 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ae39455..a4052b1 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -637,6 +637,16 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
- {
- 	unsigned long address = __fix_to_virt(idx);
- 
-+#ifdef CONFIG_X86_64
-+       /*
-+	* In arch/x86/kernel/head_64.S, the static page table has
-+	* been setup for fixmap. Add a sanity compiling check
-+	* whether fixmap space has exceeded the capacity.
-+	*/
-+	BUILD_BUG_ON(__end_of_permanent_fixed_addresses
-+			> (FIXMAP_PMD_NUM * PTRS_PER_PMD));
-+#endif
-+
- 	if (idx >= __end_of_fixed_addresses) {
- 		BUG();
- 		return;
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2fe5c9b..ee82aa3 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1907,7 +1907,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	/* L3_k[511] -> level2_fixmap_pgt */
- 	convert_pfn_mfn(level3_kernel_pgt);
- 
--	/* L3_k[511][506] -> level1_fixmap_pgt */
-+	/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
- 	convert_pfn_mfn(level2_fixmap_pgt);
- 
- 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
-@@ -1952,7 +1952,10 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
- 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
- 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
--	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
-+
-+	for (i = 0; i < FIXMAP_PMD_NUM; i++)
-+		set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
-+				PAGE_KERNEL_RO);
- 
- 	/* Pin down new L4 */
- 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
--- 
-2.7.4
-
+Regards,
+Navakishore.
