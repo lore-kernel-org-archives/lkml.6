@@ -6,52 +6,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C281ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB23DECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EA9214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EA9214C2
+	by mail.kernel.org (Postfix) with ESMTP id AD479214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD479214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbeIQS7K (ORCPT
+        id S1728582AbeIQS7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:59:10 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:58526 "EHLO cstnet.cn"
+        Mon, 17 Sep 2018 14:59:48 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:59087 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727746AbeIQS7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:59:10 -0400
+        id S1727746AbeIQS7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 14:59:48 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowAAX+u62rJ9bdbylCg--.2757S2;
-        Mon, 17 Sep 2018 21:31:38 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowAD32O3arJ9b+MOlCg--.350S2;
+        Mon, 17 Sep 2018 21:32:14 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com
+        x86@kernel.org, thomas.lendacky@amd.com, tony.luck@intel.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v7 09/16] x86/bugs: Add mitigation to spectre and no meltdown for Hygon Dhyana
-Date:   Mon, 17 Sep 2018 21:31:33 +0800
-Message-Id: <9e74e951a631616fcb33f47ac91960664e301e34.1537182523.git.puwen@hygon.cn>
+        linux-edac@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v7 10/16] x86/mce: Add Hygon Dhyana support to MCE infrastructure
+Date:   Mon, 17 Sep 2018 21:32:01 +0800
+Message-Id: <c11ce7ee592dd584a29fdb0e25ffc2fa7c91ffca.1537182523.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1537182523.git.puwen@hygon.cn>
 References: <cover.1537182523.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowAAX+u62rJ9bdbylCg--.2757S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr43Jr47XF4DtF45CF47XFb_yoW8Aw4Up3
-        y7tF4xJF18W3ZxZa4qyrWkWrWUuF1kGa13Kw4UWwn3JFn0vry7XFs29w1IkryjvayrWryS
-        va45uan5ta10k3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID: swCowAD32O3arJ9b+MOlCg--.350S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr1DZrW3JFW7KryUGF1xKrg_yoWrCFy3pr
+        W7tFZYgF4ruF9xG34qyFZ7Zr48ZF1vga1xW343Cw1rA3WDAryUXrs0yw1YqryUA395Cw1f
+        ta15uw47Ja1kAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
         rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
         JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
         1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
         7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
-        v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxAIw28IcxkI
-        7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0x
-        vE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv
-        6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbKLvtUUUUU==
+        v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+        7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+        0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+        tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcV
+        CY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv
+        67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43
+        ZEXa7VUbKLvtUUUUU==
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,51 +60,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Hygon Dhyana CPU has the same speculative execution as AMD family
-17h, so share AMD spectre mitigation code for Hygon Dhyana.
-
-Also Hygon Dhyana is not affected by meltdown vulnerability, so add
-exception for it.
+The machine check architecture for Hygon Dhyana CPU is similar to the
+AMD family 17h one. To make MCE working on Hygon platform, add vendor
+checking for Hygon Dhyana to share the code path of AMD family 17h.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/cpu/bugs.c   | 4 +++-
- arch/x86/kernel/cpu/common.c | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/mce.h                |  2 ++
+ arch/x86/kernel/cpu/mcheck/mce-severity.c |  3 ++-
+ arch/x86/kernel/cpu/mcheck/mce.c          | 20 +++++++++++++++-----
+ 3 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 40bdaea..b810cc2 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -312,6 +312,7 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	}
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 3a17107..550f2c9 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -214,6 +214,8 @@ static inline void mce_amd_feature_init(struct cpuinfo_x86 *c) { }
+ static inline int umc_normaddr_to_sysaddr(u64 norm_addr, u16 nid, u8 umc, u64 *sys_addr) { return -EINVAL; };
+ #endif
  
- 	if (cmd == SPECTRE_V2_CMD_RETPOLINE_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON &&
- 	    boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
- 		pr_err("retpoline,amd selected but CPU is not AMD. Switching to AUTO select\n");
- 		return SPECTRE_V2_CMD_AUTO;
-@@ -371,7 +372,8 @@ static void __init spectre_v2_select_mitigation(void)
- 	return;
++static inline void mce_hygon_feature_init(struct cpuinfo_x86 *c) { return mce_amd_feature_init(c); }
++
+ int mce_available(struct cpuinfo_x86 *c);
+ bool mce_is_memory_error(struct mce *m);
  
- retpoline_auto:
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
+diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mcheck/mce-severity.c
+index f34d89c..44396d5 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
++++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
+@@ -336,7 +336,8 @@ int (*mce_severity)(struct mce *m, int tolerant, char **msg, bool is_excp) =
+ 
+ void __init mcheck_vendor_init_severity(void)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
 +	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
- 	retpoline_amd:
- 		if (!boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
- 			pr_err("Spectre mitigation: LFENCE not serializing, switching to generic retpoline\n");
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 44c4ef3..851cbe7 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -963,6 +963,7 @@ static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+ 		mce_severity = mce_severity_amd;
+ }
  
- static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
- 	{ X86_VENDOR_AMD },
-+	{ X86_VENDOR_HYGON },
- 	{}
- };
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 953b3ce..909f1d7 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -270,7 +270,7 @@ static void print_mce(struct mce *m)
+ {
+ 	__print_mce(m);
+ 
+-	if (m->cpuvendor != X86_VENDOR_AMD)
++	if (m->cpuvendor != X86_VENDOR_AMD && m->cpuvendor != X86_VENDOR_HYGON)
+ 		pr_emerg_ratelimited(HW_ERR "Run the above through 'mcelog --ascii'\n");
+ }
+ 
+@@ -508,9 +508,9 @@ static int mce_usable_address(struct mce *m)
+ 
+ bool mce_is_memory_error(struct mce *m)
+ {
+-	if (m->cpuvendor == X86_VENDOR_AMD) {
++	if (m->cpuvendor == X86_VENDOR_AMD ||
++	    m->cpuvendor == X86_VENDOR_HYGON) {
+ 		return amd_mce_is_memory_error(m);
+-
+ 	} else if (m->cpuvendor == X86_VENDOR_INTEL) {
+ 		/*
+ 		 * Intel SDM Volume 3B - 15.9.2 Compound Error Codes
+@@ -539,6 +539,9 @@ static bool mce_is_correctable(struct mce *m)
+ 	if (m->cpuvendor == X86_VENDOR_AMD && m->status & MCI_STATUS_DEFERRED)
+ 		return false;
+ 
++	if (m->cpuvendor == X86_VENDOR_HYGON && m->status & MCI_STATUS_DEFERRED)
++		return false;
++
+ 	if (m->status & MCI_STATUS_UC)
+ 		return false;
+ 
+@@ -1705,7 +1708,7 @@ static int __mcheck_cpu_ancient_init(struct cpuinfo_x86 *c)
+  */
+ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
+ {
+-	if (c->x86_vendor == X86_VENDOR_AMD) {
++	if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) {
+ 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
+ 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
+ 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
+@@ -1746,6 +1749,11 @@ static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
+ 		mce_amd_feature_init(c);
+ 		break;
+ 		}
++
++	case X86_VENDOR_HYGON:
++		mce_hygon_feature_init(c);
++		break;
++
+ 	case X86_VENDOR_CENTAUR:
+ 		mce_centaur_feature_init(c);
+ 		break;
+@@ -1971,12 +1979,14 @@ static void mce_disable_error_reporting(void)
+ static void vendor_disable_error_reporting(void)
+ {
+ 	/*
+-	 * Don't clear on Intel or AMD CPUs. Some of these MSRs are socket-wide.
++	 * Don't clear on Intel or AMD or Hygon CPUs. Some of these MSRs
++	 * are socket-wide.
+ 	 * Disabling them for just a single offlined CPU is bad, since it will
+ 	 * inhibit reporting for all shared resources on the socket like the
+ 	 * last level cache (LLC), the integrated memory controller (iMC), etc.
+ 	 */
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL ||
++	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON ||
+ 	    boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+ 		return;
  
 -- 
 2.7.4
