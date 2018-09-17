@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4122ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686EFECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A271F214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A271F214AB
+	by mail.kernel.org (Postfix) with ESMTP id 292682146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292682146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeIREbm (ORCPT
+        id S1730390AbeIREbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:31:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48430 "EHLO
+        Tue, 18 Sep 2018 00:31:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48442 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREbl (ORCPT
+        with ESMTP id S1727088AbeIREbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:31:41 -0400
+        Tue, 18 Sep 2018 00:31:45 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53061CB2;
-        Mon, 17 Sep 2018 23:02:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A561C49;
+        Mon, 17 Sep 2018 23:02:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, sironi@amazon.de
-Subject: [PATCH 4.14 016/126] x86/microcode: Make sure boot_cpu_data.microcode is up-to-date
-Date:   Tue, 18 Sep 2018 00:41:04 +0200
-Message-Id: <20180917211705.763389040@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Rene Nielsen <rene.nielsen@microsemi.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.14 007/126] MIPS: VDSO: Match data page cache colouring when D$ aliases
+Date:   Tue, 18 Sep 2018 00:40:55 +0200
+Message-Id: <20180917211704.293713196@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,62 +54,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 370a132bb2227ff76278f98370e0e701d86ff752 upstream.
+commit 0f02cfbc3d9e413d450d8d0fd660077c23f67eff upstream.
 
-When preparing an MCE record for logging, boot_cpu_data.microcode is used
-to read out the microcode revision on the box.
+When a system suffers from dcache aliasing a user program may observe
+stale VDSO data from an aliased cache line. Notably this can break the
+expectation that clock_gettime(CLOCK_MONOTONIC, ...) is, as its name
+suggests, monotonic.
 
-However, on systems where late microcode update has happened, the microcode
-revision output in a MCE log record is wrong because
-boot_cpu_data.microcode is not updated when the microcode gets updated.
+In order to ensure that users observe updates to the VDSO data page as
+intended, align the user mappings of the VDSO data page such that their
+cache colouring matches that of the virtual address range which the
+kernel will use to update the data page - typically its unmapped address
+within kseg0.
 
-But, the microcode revision saved in boot_cpu_data's microcode member
-should be kept up-to-date, regardless, for consistency.
+This ensures that we don't introduce aliasing cache lines for the VDSO
+data page, and therefore that userland will observe updates without
+requiring cache invalidation.
 
-Make it so.
-
-Fixes: fa94d0c6e0f3 ("x86/MCE: Save microcode revision in machine check records")
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: sironi@amazon.de
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180731112739.32338-1-prarit@redhat.com
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reported-by: Rene Nielsen <rene.nielsen@microsemi.com>
+Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Patchwork: https://patchwork.linux-mips.org/patch/20344/
+Tested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/amd.c   |    4 ++++
- arch/x86/kernel/cpu/microcode/intel.c |    4 ++++
- 2 files changed, 8 insertions(+)
+ arch/mips/kernel/vdso.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -537,6 +537,10 @@ static enum ucode_state apply_microcode_
- 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
- 	c->microcode = mc_amd->hdr.patch_id;
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -13,6 +13,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+@@ -20,6 +21,7 @@
  
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
+ #include <asm/abi.h>
+ #include <asm/mips-cps.h>
++#include <asm/page.h>
+ #include <asm/vdso.h>
+ 
+ /* Kernel-provided data used by the VDSO. */
+@@ -128,12 +130,30 @@ int arch_setup_additional_pages(struct l
+ 	vvar_size = gic_size + PAGE_SIZE;
+ 	size = vvar_size + image->size;
+ 
++	/*
++	 * Find a region that's large enough for us to perform the
++	 * colour-matching alignment below.
++	 */
++	if (cpu_has_dc_aliases)
++		size += shm_align_mask + 1;
 +
- 	return UCODE_UPDATED;
- }
+ 	base = get_unmapped_area(NULL, 0, size, 0, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
+ 	}
  
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -851,6 +851,10 @@ static enum ucode_state apply_microcode_
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
-+	/* Update boot_cpu_data's revision too, if we're on the BSP: */
-+	if (c->cpu_index == boot_cpu_data.cpu_index)
-+		boot_cpu_data.microcode = rev;
++	/*
++	 * If we suffer from dcache aliasing, ensure that the VDSO data page
++	 * mapping is coloured the same as the kernel's mapping of that memory.
++	 * This ensures that when the kernel updates the VDSO data userland
++	 * will observe it without requiring cache invalidations.
++	 */
++	if (cpu_has_dc_aliases) {
++		base = __ALIGN_MASK(base, shm_align_mask);
++		base += ((unsigned long)&vdso_data - gic_size) & shm_align_mask;
++	}
 +
- 	return UCODE_UPDATED;
- }
+ 	data_addr = base + gic_size;
+ 	vdso_addr = data_addr + PAGE_SIZE;
  
 
 
