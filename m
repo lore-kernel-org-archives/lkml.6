@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30CBECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6873ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94EA92146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EA92146F
+	by mail.kernel.org (Postfix) with ESMTP id 898412146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 898412146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbeIREcL (ORCPT
+        id S1730476AbeIREcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:32:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48538 "EHLO
+        Tue, 18 Sep 2018 00:32:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREcK (ORCPT
+        with ESMTP id S1727088AbeIREcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:32:10 -0400
+        Tue, 18 Sep 2018 00:32:13 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2879C03;
-        Mon, 17 Sep 2018 23:02:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA19EC49;
+        Mon, 17 Sep 2018 23:02:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Adam Radford <aradford@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 059/126] scsi: 3ware: fix return 0 on the error path of probe
-Date:   Tue, 18 Sep 2018 00:41:47 +0200
-Message-Id: <20180917211708.302790822@linuxfoundation.org>
+Subject: [PATCH 4.14 060/126] tools/testing/nvdimm: kaddr and pfn can be NULL to ->direct_access()
+Date:   Tue, 18 Sep 2018 00:41:48 +0200
+Message-Id: <20180917211708.358544248@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,105 +54,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-[ Upstream commit 4dc98c1995482262e70e83ef029135247fafe0f2 ]
+[ Upstream commit 45df5d3dc0c7289c1e67afe6d2ba806ad5174314 ]
 
-tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
-pci_resource_start() or tw_reset_sequence() and releases resources.
-twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
-pci_iomap() and twl_reset_sequence().  twa_probe() returns 0 in case of
-fail of tw_initialize_device_extension(), ioremap() and
-twa_reset_sequence().
+The mock / test version of pmem_direct_access() needs to check the
+validity of pointers kaddr and pfn for NULL assignment. If anyone
+equals to NULL, it doesn't need to calculate the value.
 
-The patch adds retval initialization for these cases.
+If pointer equals to NULL, that is to say callers may have no need for
+kaddr or pfn, so this patch is prepared for allowing them to pass in
+NULL instead of having to pass in a local pointer or variable that
+they then just throw away.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Adam Radford <aradford@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/3w-9xxx.c |    6 +++++-
- drivers/scsi/3w-sas.c  |    3 +++
- drivers/scsi/3w-xxxx.c |    2 ++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ tools/testing/nvdimm/pmem-dax.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/3w-9xxx.c
-+++ b/drivers/scsi/3w-9xxx.c
-@@ -2042,6 +2042,7 @@ static int twa_probe(struct pci_dev *pde
+--- a/tools/testing/nvdimm/pmem-dax.c
++++ b/tools/testing/nvdimm/pmem-dax.c
+@@ -31,17 +31,21 @@ long __pmem_direct_access(struct pmem_de
+ 	if (get_nfit_res(pmem->phys_addr + offset)) {
+ 		struct page *page;
  
- 	if (twa_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
+-		*kaddr = pmem->virt_addr + offset;
++		if (kaddr)
++			*kaddr = pmem->virt_addr + offset;
+ 		page = vmalloc_to_page(pmem->virt_addr + offset);
+-		*pfn = page_to_pfn_t(page);
++		if (pfn)
++			*pfn = page_to_pfn_t(page);
+ 		pr_debug_ratelimited("%s: pmem: %p pgoff: %#lx pfn: %#lx\n",
+ 				__func__, pmem, pgoff, page_to_pfn(page));
+ 
+ 		return 1;
  	}
  
-@@ -2064,6 +2065,7 @@ static int twa_probe(struct pci_dev *pde
- 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
+-	*kaddr = pmem->virt_addr + offset;
+-	*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
++	if (kaddr)
++		*kaddr = pmem->virt_addr + offset;
++	if (pfn)
++		*pfn = phys_to_pfn_t(pmem->phys_addr + offset, pmem->pfn_flags);
  
-@@ -2071,8 +2073,10 @@ static int twa_probe(struct pci_dev *pde
- 	TW_DISABLE_INTERRUPTS(tw_dev);
- 
- 	/* Initialize the card */
--	if (twa_reset_sequence(tw_dev, 0))
-+	if (twa_reset_sequence(tw_dev, 0)) {
-+		retval = -ENOMEM;
- 		goto out_iounmap;
-+	}
- 
- 	/* Set host specific parameters */
- 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
---- a/drivers/scsi/3w-sas.c
-+++ b/drivers/scsi/3w-sas.c
-@@ -1597,6 +1597,7 @@ static int twl_probe(struct pci_dev *pde
- 
- 	if (twl_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -1611,6 +1612,7 @@ static int twl_probe(struct pci_dev *pde
- 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
-@@ -1620,6 +1622,7 @@ static int twl_probe(struct pci_dev *pde
- 	/* Initialize the card */
- 	if (twl_reset_sequence(tw_dev, 0)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
-+		retval = -ENOMEM;
- 		goto out_iounmap;
- 	}
- 
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -2280,6 +2280,7 @@ static int tw_probe(struct pci_dev *pdev
- 
- 	if (tw_initialize_device_extension(tw_dev)) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -2294,6 +2295,7 @@ static int tw_probe(struct pci_dev *pdev
- 	tw_dev->base_addr = pci_resource_start(pdev, 0);
- 	if (!tw_dev->base_addr) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
+ 	/*
+ 	 * If badblocks are present, limit known good range to the
 
 
