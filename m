@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A96DECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC2FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6A62088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6A62088F
+	by mail.kernel.org (Postfix) with ESMTP id 9C3FD2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3FD2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbeIREY1 (ORCPT
+        id S1729431AbeIREYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:24:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45636 "EHLO
+        Tue, 18 Sep 2018 00:24:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIREY1 (ORCPT
+        with ESMTP id S1727229AbeIREYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:24:27 -0400
+        Tue, 18 Sep 2018 00:24:30 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 005C6CAD;
-        Mon, 17 Sep 2018 22:55:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 39C2FCAD;
+        Mon, 17 Sep 2018 22:55:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 33/70] macintosh/via-pmu: Add missing mmio accessors
-Date:   Tue, 18 Sep 2018 00:42:06 +0200
-Message-Id: <20180917211651.766238138@linuxfoundation.org>
+Subject: [PATCH 4.9 34/70] ath9k: report tx status on EOSP
+Date:   Tue, 18 Sep 2018 00:42:07 +0200
+Message-Id: <20180917211651.831586639@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -54,52 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit 576d5290d678a651b9f36050fc1717e0573aca13 ]
+[ Upstream commit 36e14a787dd0b459760de3622e9709edb745a6af ]
 
-Add missing in_8() accessors to init_pmu() and pmu_sr_intr().
+Fixes missed indications of end of U-APSD service period to mac80211
 
-This fixes several sparse warnings:
-drivers/macintosh/via-pmu.c:536:29: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:537:33: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:1455:17: warning: dereference of noderef expression
-drivers/macintosh/via-pmu.c:1456:69: warning: dereference of noderef expression
-
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/macintosh/via-pmu.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath9k/xmit.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -531,8 +531,9 @@ init_pmu(void)
- 	int timeout;
- 	struct adb_request req;
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -84,7 +84,8 @@ static void ath_tx_status(struct ieee802
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+ 	struct ieee80211_sta *sta = info->status.status_driver_data[0];
  
--	out_8(&via[B], via[B] | TREQ);			/* negate TREQ */
--	out_8(&via[DIRB], (via[DIRB] | TREQ) & ~TACK);	/* TACK in, TREQ out */
-+	/* Negate TREQ. Set TACK to input and TREQ to output. */
-+	out_8(&via[B], in_8(&via[B]) | TREQ);
-+	out_8(&via[DIRB], (in_8(&via[DIRB]) | TREQ) & ~TACK);
- 
- 	pmu_request(&req, NULL, 2, PMU_SET_INTR_MASK, pmu_intr_mask);
- 	timeout =  100000;
-@@ -1454,8 +1455,8 @@ pmu_sr_intr(void)
- 	struct adb_request *req;
- 	int bite = 0;
- 
--	if (via[B] & TREQ) {
--		printk(KERN_ERR "PMU: spurious SR intr (%x)\n", via[B]);
-+	if (in_8(&via[B]) & TREQ) {
-+		printk(KERN_ERR "PMU: spurious SR intr (%x)\n", in_8(&via[B]));
- 		out_8(&via[IFR], SR_INT);
- 		return NULL;
+-	if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
++	if (info->flags & (IEEE80211_TX_CTL_REQ_TX_STATUS |
++			   IEEE80211_TX_STATUS_EOSP)) {
+ 		ieee80211_tx_status(hw, skb);
+ 		return;
  	}
 
 
