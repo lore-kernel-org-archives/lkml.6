@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDADECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D788ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CEA520867
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CEA520867
+	by mail.kernel.org (Postfix) with ESMTP id C32CF20867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:56:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32CF20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbeIREZi (ORCPT
+        id S1729216AbeIREZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:25:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45662 "EHLO
+        Tue, 18 Sep 2018 00:25:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbeIREZi (ORCPT
+        with ESMTP id S1726759AbeIREZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:25:38 -0400
+        Tue, 18 Sep 2018 00:25:43 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 49444CA0;
-        Mon, 17 Sep 2018 22:56:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE561CA0;
+        Mon, 17 Sep 2018 22:56:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 35/70] ath9k_hw: fix channel maximum power level test
-Date:   Tue, 18 Sep 2018 00:42:08 +0200
-Message-Id: <20180917211651.904153811@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Wayne Porter <wporter82@gmail.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 09/70] staging/rts5208: Fix read overflow in memcpy
+Date:   Tue, 18 Sep 2018 00:41:42 +0200
+Message-Id: <20180917211649.955562162@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -52,52 +53,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Daniel Micay <danielmicay@gmail.com>
 
-[ Upstream commit 461d8a6bb9879b0e619752d040292e67aa06f1d2 ]
+commit 88a5b39b69ab1828fd4130e2baadd184109cea69 upstream.
 
-The tx power applied by set_txpower is limited by the CTL (conformance
-test limit) entries in the EEPROM. These can change based on the user
-configured regulatory domain.
-Depending on the EEPROM data this can cause the tx power to become too
-limited, if the original regdomain CTLs impose lower limits than the CTLs
-of the user configured regdomain.
+Noticed by FORTIFY_SOURCE, this swaps memcpy() for strncpy() to zero-value
+fill the end of the buffer instead of over-reading a string from .rodata.
 
-To fix this issue, set the initial channel limits without any CTL
-restrictions and only apply the CTL at run time when setting the channel
-and the real tx power.
+Signed-off-by: Daniel Micay <danielmicay@gmail.com>
+[kees: wrote commit log]
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wayne Porter <wporter82@gmail.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath9k/hw.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/staging/rts5208/rtsx_scsi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath9k/hw.c
-+++ b/drivers/net/wireless/ath/ath9k/hw.c
-@@ -2915,16 +2915,19 @@ void ath9k_hw_apply_txpower(struct ath_h
- 	struct ath_regulatory *reg = ath9k_hw_regulatory(ah);
- 	struct ieee80211_channel *channel;
- 	int chan_pwr, new_pwr;
-+	u16 ctl = NO_CTL;
+--- a/drivers/staging/rts5208/rtsx_scsi.c
++++ b/drivers/staging/rts5208/rtsx_scsi.c
+@@ -536,7 +536,7 @@ static int inquiry(struct scsi_cmnd *srb
  
- 	if (!chan)
- 		return;
- 
-+	if (!test)
-+		ctl = ath9k_regd_get_ctl(reg, chan);
-+
- 	channel = chan->chan;
- 	chan_pwr = min_t(int, channel->max_power * 2, MAX_RATE_POWER);
- 	new_pwr = min_t(int, chan_pwr, reg->power_limit);
- 
--	ah->eep_ops->set_txpower(ah, chan,
--				 ath9k_regd_get_ctl(reg, chan),
-+	ah->eep_ops->set_txpower(ah, chan, ctl,
- 				 get_antenna_gain(ah, chan), new_pwr, test);
- }
- 
+ 	if (sendbytes > 8) {
+ 		memcpy(buf, inquiry_buf, 8);
+-		memcpy(buf + 8, inquiry_string,	sendbytes - 8);
++		strncpy(buf + 8, inquiry_string, sendbytes - 8);
+ 		if (pro_formatter_flag) {
+ 			/* Additional Length */
+ 			buf[4] = 0x33;
 
 
