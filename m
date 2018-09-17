@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEB5ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C2DECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB952146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB952146D
+	by mail.kernel.org (Postfix) with ESMTP id 93F372146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F372146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732561AbeIRElq (ORCPT
+        id S1732572AbeIRElu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:41:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50696 "EHLO
+        Tue, 18 Sep 2018 00:41:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50708 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeIRElq (ORCPT
+        with ESMTP id S1728850AbeIRElu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:41:46 -0400
+        Tue, 18 Sep 2018 00:41:50 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7DECC707;
-        Mon, 17 Sep 2018 23:12:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE63F707;
+        Mon, 17 Sep 2018 23:12:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helen Chao <helen.chao@oracle.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Bill Baker <bill.baker@oracle.com>,
-        Calum Mackay <calum.mackay@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Adam Radford <aradford@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 102/158] nfs: Referrals not inheriting proto setting from parent
-Date:   Tue, 18 Sep 2018 00:42:12 +0200
-Message-Id: <20180917211716.020387022@linuxfoundation.org>
+Subject: [PATCH 4.18 103/158] scsi: 3ware: fix return 0 on the error path of probe
+Date:   Tue, 18 Sep 2018 00:42:13 +0200
+Message-Id: <20180917211716.063359810@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -55,57 +53,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Calum Mackay <calum.mackay@oracle.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 23a88ade7131aa259c532ab17685c76de562242b ]
+[ Upstream commit 4dc98c1995482262e70e83ef029135247fafe0f2 ]
 
-Commit 530ea4219231 ("nfs: Referrals should use the same proto setting
-as their parent") encloses the fix with #ifdef CONFIG_SUNRPC_XPRT_RDMA.
+tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
+pci_resource_start() or tw_reset_sequence() and releases resources.
+twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
+pci_iomap() and twl_reset_sequence().  twa_probe() returns 0 in case of
+fail of tw_initialize_device_extension(), ioremap() and
+twa_reset_sequence().
 
-CONFIG_SUNRPC_XPRT_RDMA is a tristate option, so it should be tested
-with #if IS_ENABLED().
+The patch adds retval initialization for these cases.
 
-Fixes: 530ea4219231 ("nfs: Referrals should use the same proto setting as their parent")
-Reported-by: Helen Chao <helen.chao@oracle.com>
-Tested-by: Helen Chao <helen.chao@oracle.com>
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Reviewed-by: Bill Baker <bill.baker@oracle.com>
-Signed-off-by: Calum Mackay <calum.mackay@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Adam Radford <aradford@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4client.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/3w-9xxx.c |    6 +++++-
+ drivers/scsi/3w-sas.c  |    3 +++
+ drivers/scsi/3w-xxxx.c |    2 ++
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -1127,7 +1127,7 @@ struct nfs_server *nfs4_create_referral_
- 	nfs_server_copy_userdata(server, parent_server);
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -2038,6 +2038,7 @@ static int twa_probe(struct pci_dev *pde
  
- 	/* Get a client representation */
--#ifdef CONFIG_SUNRPC_XPRT_RDMA
-+#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
- 	rpc_set_port(data->addr, NFS_RDMA_PORT);
- 	error = nfs4_set_client(server, data->hostname,
- 				data->addr,
-@@ -1139,7 +1139,7 @@ struct nfs_server *nfs4_create_referral_
- 				parent_client->cl_net);
- 	if (!error)
- 		goto init_server;
--#endif	/* CONFIG_SUNRPC_XPRT_RDMA */
-+#endif	/* IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA) */
+ 	if (twa_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
  
- 	rpc_set_port(data->addr, NFS_PORT);
- 	error = nfs4_set_client(server, data->hostname,
-@@ -1153,7 +1153,7 @@ struct nfs_server *nfs4_create_referral_
- 	if (error < 0)
- 		goto error;
+@@ -2060,6 +2061,7 @@ static int twa_probe(struct pci_dev *pde
+ 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
  
--#ifdef CONFIG_SUNRPC_XPRT_RDMA
-+#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
- init_server:
- #endif
- 	error = nfs_init_server_rpcclient(server, parent_server->client->cl_timeout, data->authflavor);
+@@ -2067,8 +2069,10 @@ static int twa_probe(struct pci_dev *pde
+ 	TW_DISABLE_INTERRUPTS(tw_dev);
+ 
+ 	/* Initialize the card */
+-	if (twa_reset_sequence(tw_dev, 0))
++	if (twa_reset_sequence(tw_dev, 0)) {
++		retval = -ENOMEM;
+ 		goto out_iounmap;
++	}
+ 
+ 	/* Set host specific parameters */
+ 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1594,6 +1594,7 @@ static int twl_probe(struct pci_dev *pde
+ 
+ 	if (twl_initialize_device_extension(tw_dev)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -1608,6 +1609,7 @@ static int twl_probe(struct pci_dev *pde
+ 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
+ 	if (!tw_dev->base_addr) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
+@@ -1617,6 +1619,7 @@ static int twl_probe(struct pci_dev *pde
+ 	/* Initialize the card */
+ 	if (twl_reset_sequence(tw_dev, 0)) {
+ 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
++		retval = -ENOMEM;
+ 		goto out_iounmap;
+ 	}
+ 
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -2280,6 +2280,7 @@ static int tw_probe(struct pci_dev *pdev
+ 
+ 	if (tw_initialize_device_extension(tw_dev)) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
++		retval = -ENOMEM;
+ 		goto out_free_device_extension;
+ 	}
+ 
+@@ -2294,6 +2295,7 @@ static int tw_probe(struct pci_dev *pdev
+ 	tw_dev->base_addr = pci_resource_start(pdev, 0);
+ 	if (!tw_dev->base_addr) {
+ 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
++		retval = -ENOMEM;
+ 		goto out_release_mem_region;
+ 	}
+ 
 
 
