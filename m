@@ -7,83 +7,87 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAB7ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E34ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A339214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511CD2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:05:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gAMXkWZu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A339214C2
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="iq8Xxyb7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511CD2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbeIQIaa (ORCPT
+        id S1730614AbeIQIae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:30:30 -0400
-Received: from mail-eopbgr690116.outbound.protection.outlook.com ([40.107.69.116]:54124
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:30:34 -0400
+Received: from mail-bl2nam02on0103.outbound.protection.outlook.com ([104.47.38.103]:18657
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730540AbeIQIaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:30:30 -0400
+        id S1730570AbeIQIad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:30:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DrvTibS4sTRZNHnbIJFyuaI3UaJmEoH5NO6xC+mnGbw=;
- b=gAMXkWZucAr55P0iBXrwlVaK++DSVgF5Qd8CTP9vNrdbk2mhBEOx0wqoarghMHlK9D6c/BBz2m+8j/hzDVGm0ahKsNDvMxOm0qnSsQ+a8/l7QavLN8LvyQiklP6QROmoF8oE5gi3vA81lGkhRB98UOvODei8p0wD/81cdnSrDtc=
+ bh=SUS+NM3xCElNwWyVB0rCTgIdP0DofccLjpJrCoOoVhA=;
+ b=iq8Xxyb7JPLnljWvGXfj/oq5qVruWL0NAxhU5ElhuFPATESb65cT66GJm8ElFtchmck4FBY/veLE5eQGMLuotsc7FM3ZerkC9j5UKLuLjmdtn6A00GLrXNGvV88XJV80JL8hQHxKjIVpEBplEH6QnblIohfpuKl66BpOUfvOxHI=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0133.namprd21.prod.outlook.com (10.173.189.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.11; Mon, 17 Sep 2018 03:05:03 +0000
+ 15.20.1164.11; Mon, 17 Sep 2018 03:05:05 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:05:03 +0000
+ 03:05:05 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Jeff Layton <jlayton@redhat.com>,
+CC:     Stafford Horne <shorne@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 83/87] fs/lock: skip lock owner pid translation
- in case we are in init_pid_ns
-Thread-Topic: [PATCH AUTOSEL 4.14 83/87] fs/lock: skip lock owner pid
- translation in case we are in init_pid_ns
-Thread-Index: AQHUTjL7B20MhIK0pUijYZhbcu8PdA==
-Date:   Mon, 17 Sep 2018 03:03:17 +0000
-Message-ID: <20180917030220.245686-83-alexander.levin@microsoft.com>
-References: <20180917030220.245686-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030220.245686-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 01/57] crypto: skcipher - Fix
+ -Wstringop-truncation warnings
+Thread-Topic: [PATCH AUTOSEL 4.9 01/57] crypto: skcipher - Fix
+ -Wstringop-truncation warnings
+Thread-Index: AQHUTjMLDalYEffR+EylONMMbNRvkA==
+Date:   Mon, 17 Sep 2018 03:03:44 +0000
+Message-ID: <20180917030340.378-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0133;6:wFGSzJd1vrpXezb9eV4JSPQhLSGOmS7sZwDYrNsa3LjiqRBssmcAcrQMElmRCQ42RWAfEZcx6eaFVRq+Uj9gqnND26xKg9Bs3O+IWTvsibOTFe3T8OOH+tjf1YIbvx1TwdNY0toldBi09yYpEb0reWcoCBTBWhkN9W5yDf6KJUTwAkKC7xUVdlNCEZ6WMoFfjCz2NR8GOTfHfA2Fy3pqiZ6jNwT4Sgal+20GsY1EL4Lb+uoN99cRvw/L53cD3AHhtXi7Zj5QZS4vjMmObJbVl8jf4esUw7icCI7epAf0jN5MKf0Kpz24/3mSsHdxx8o542ox/7rMPSoJOUVhtStERlhaCNeno8zuKZciHSQP2z0SNikWv18m3oBv1N41JQfkWxFs/eB8AqL8qzlpLj8AXVWyHq+auNr22mYzACu+u7tjFsuRU5vKgi773hwPLu6AuheovoTGZR+AHLoU1atPMw==;5:Q+n8SEpAJN+AijATUVOtTZNZllRHrigTIA2S1PFTH5MsYvbLqiPLCn6sspaYxoh3rz9MJhtQDYbwTVfDItuFUku9PMhRhBBNEjQCWYQ7QKY6Pw4ZQugmvo7jYhMWnsGc5Syzvbj9t0O9F0PQ2s/k58lMTdPkZvR1rMTF92HFJyk=;7:zpCuum+IdO73HjV5Z/GgLtSgBIz5hNRItyk/qSSsjLiJ+WOOcEhnLyD2luHNUC8l79APdc7C1HyLxiokj+DK8BCV5fZyClc+h1xRUsPX8L8cnwxh9hMmtlzOrFMMp9zZMYqow+MtcErDO/dSlMpkJa141Ja9ylvY0qz/R58Ijmmxu/J/qB6FvHgPzhCCCBnNLptgfkXQMcIXxmv3fqAahlsYtwukv0qapif1TbSXaq2jEbG4BwkTgH8DBBW2ul8r
-x-ms-office365-filtering-correlation-id: 385e2e64-5b73-47d5-e976-08d61c4a5d2e
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0133;6:1a5hiPQjFwTiREf8D6tMiFo7J87AIbcvQDC9e0o5udF14bM2E+QDVCXyAPPYAe4hQhVHviyLvD8c/nIgeZ/arfV/29NxKXP1u37WlDBiyoZhhpFdUjuFfebn6WhxXD5HL84mNXEmbZ73QP7rG/nHgprfQQ9T7euy5fqQpBdyNpxYxx+qBiFyUCAtFiM/GSDK9pzu450+RxvelhNizpDLU7a0a9zFOscNmcdswEqYSKpLFuLT8OoIbFDti2sirhv8ws5N4rhh0DfjBZEJthmvGVhN6z71mbwzEHa2Lhuvj1a7sCv5Bapoxm2unewzVQ8CGx24BmB8q3MjmIzy2A2ztayzvRoh4HmLC9C9DSzIdfnJ5zqX9pT9MJSerCho0UFc2vaDtSfJZDmKBmeFMQnY/TwrZ+IcnqdmhbBV+MVQZ2eW9N9ZNdTGP+blLlE9TO7qoH2ZlX+LpUzdpoFNTrk6ng==;5:MT0NUEN++TgLjHWARllTw3KoSpQOLLnAW3jGd438FaaRB/lUUIJKFMeVCGYwyJfEfRSro8SMYz38ffC8U0YWkYPnRXzQZDqyl9sxApcW/4pozcCRO8lKN4TyNdbEOBA9fX9Wolf5YoLAgZ/EFWJyFyQmhfUrTFz27sXa6oaWjII=;7:Y1qYmAuhCdcgBHSkjxlyG75nQlnCgJVwpkgJB2kkUjTs1pMmSiN0xFLCxElxTNwVKYI2gPdt6d/a7xWVzbsturYUAv5B2Dw235ROSZF168h4PoSGUEnO8AdFJ7l7ojAt+OAO8gEY416+NF9wv6kQEj/SxvFTwyQqqmmHSXHJmg+tZ0QPrIC96dQWc5re6XIT4F44FY2Qq5gRXYo60GKyZOzOv5MZ9nMXayo0A1XiJc2v8KhQM6tm9uqvbkUi45g9
+x-ms-office365-filtering-correlation-id: 302889f4-e12c-410e-a072-08d61c4a5e4a
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0133;
 x-ms-traffictypediagnostic: CY4PR21MB0133:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB013389A26B8567A899A404EAFB1E0@CY4PR21MB0133.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0133944744C7E008055F3B01FB1E0@CY4PR21MB0133.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(211171220733660)(85827821059158)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0133;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0133;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(376002)(346002)(189003)(199004)(102836004)(53936002)(8676002)(486006)(476003)(3846002)(6116002)(76176011)(10290500003)(97736004)(217873002)(256004)(5660300001)(107886003)(6506007)(478600001)(110136005)(2501003)(10090500001)(14444005)(305945005)(7736002)(446003)(11346002)(36756003)(2906002)(1076002)(22452003)(5250100002)(2616005)(26005)(316002)(106356001)(25786009)(68736007)(86362001)(575784001)(14454004)(72206003)(105586002)(99286004)(6486002)(6436002)(6512007)(86612001)(6666003)(81166006)(81156014)(186003)(2900100001)(54906003)(8936002)(4326008)(66066001)(414714003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0133;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(376002)(346002)(189003)(199004)(102836004)(53936002)(8676002)(486006)(476003)(3846002)(6116002)(10290500003)(97736004)(217873002)(256004)(5660300001)(107886003)(6506007)(478600001)(39060400002)(110136005)(2501003)(10090500001)(14444005)(305945005)(7736002)(36756003)(2906002)(1076002)(22452003)(5250100002)(2616005)(26005)(316002)(106356001)(25786009)(68736007)(86362001)(575784001)(14454004)(72206003)(105586002)(99286004)(6486002)(6436002)(6512007)(86612001)(6666003)(81166006)(81156014)(186003)(2900100001)(54906003)(8936002)(4326008)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0133;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: UQ5Ap9a+fElkDoIGWPp/aYWUU69pHU0kfdNiBmBAhuzoO/Ha6nWaHmgF7iMiC0qpzEjZPgBFHQZHBWYZKiXEswAICLKrL6Ux253PzzoprE9gPZd/TSTLCwVXXwQXPaTJt6U6LWFcvsftw01YQ4YyjH1JRA0eNO2yn978gPlS7vwBL0Z1OuBRp1SQYU+RwIYLSlEgjVe9AKNZ68rrf4zLUA1BYADnoVCdl3pN74uWlfA80qWgIKjcnhhs9Frr1KVxuOg+XGD69Lw7ReBWs0H1ll9Fs+nITDVcjyN9t4GuwYfh+cA4l1//2J4UcLz4vo1Eh2mcwsOKbrJel7sdisIPJhRAYaCPfL3076OCnnmYrTc=
+x-microsoft-antispam-message-info: +0suir4u5Zh94Ket3l35xh3TiOBZP2WzF5pgGC4QUUtopUjtbPaYkTsNqH1ANGfN7FLaja+Na4MfK5RzEYoM4lbcj7cHBwIWeYXzGxk9fd8xeZpNpPUDcW15htLLEvIFbZRD/faS6mhxADJFekR63HabdacWARWLb7ZOedmkt60Pk6JW2HMVGLdwP1Nd3HpCe72lW6VxpLXUGR0SaoHpiqcHxhnJ/lIFQyuufGdOEQX6VDnrYSsgSNhDiYnn4JQgtpZGJ31ludgwiEcx33LBPVFrIrHG3c7/erBAam4uxCHLwI4SWZmcOTvNC7kA0TRvfTiUgxU3ZPBlc9QUY7Yi+jZx7dwVA4CJq+fwfLPl9gc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8CCCD1A178578A47A8D9A9259EEAA024@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 385e2e64-5b73-47d5-e976-08d61c4a5d2e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:03:17.6027
+X-MS-Exchange-CrossTenant-Network-Message-Id: 302889f4-e12c-410e-a072-08d61c4a5e4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:03:44.5242
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,67 +97,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khorenko <khorenko@virtuozzo.com>
-
-[ Upstream commit 826d7bc9f013d01e92997883d2fd0c25f4af1f1c ]
-
-If the flock owner process is dead and its pid has been already freed,
-pid translation won't work, but we still want to show flock owner pid
-number when expecting /proc/$PID/fdinfo/$FD in init pidns.
-
-Reproducer:
-process A	process A1	process A2
-fork()--------->
-exit()		open()
-		flock()
-		fork()--------->
-		exit()		sleep()
-
-Before the patch:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-(root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
-pos:    4
-flags:  02100002
-mnt_id: 257
-lock:   (root@vz7)/:
-
-After the patch:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-(root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
-pos:    4
-flags:  02100002
-mnt_id: 295
-lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
-
-Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid f=
-or remote locks")
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-Acked-by: Andrey Vagin <avagin@openvz.org>
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- fs/locks.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/locks.c b/fs/locks.c
-index 1bd71c4d663a..665e3ce9ab47 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2074,6 +2074,13 @@ static pid_t locks_translate_pid(struct file_lock *f=
-l, struct pid_namespace *ns)
- 		return -1;
- 	if (IS_REMOTELCK(fl))
- 		return fl->fl_pid;
-+	/*
-+	 * If the flock owner process is dead and its pid has been already
-+	 * freed, the translation below won't work, but we still want to show
-+	 * flock owner pid number in init pidns.
-+	 */
-+	if (ns =3D=3D &init_pid_ns)
-+		return (pid_t)fl->fl_pid;
-=20
- 	rcu_read_lock();
- 	pid =3D find_pid_ns(fl->fl_pid, &init_pid_ns);
---=20
-2.17.1
+RnJvbTogU3RhZmZvcmQgSG9ybmUgPHNob3JuZUBnbWFpbC5jb20+DQoNClsgVXBzdHJlYW0gY29t
+bWl0IGNlZmQ3NjlmZDAxOTJjODRkNjM4ZjY2ZGEyMDI0NTllZDhhZDYzYmEgXQ0KDQpBcyBvZiBH
+Q0MgOS4wLjAgdGhlIGJ1aWxkIGlzIHJlcG9ydGluZyB3YXJuaW5ncyBsaWtlOg0KDQogICAgY3J5
+cHRvL2FibGtjaXBoZXIuYzogSW4gZnVuY3Rpb24g4oCYY3J5cHRvX2FibGtjaXBoZXJfcmVwb3J0
+4oCZOg0KICAgIGNyeXB0by9hYmxrY2lwaGVyLmM6Mzc0OjI6IHdhcm5pbmc6IOKAmHN0cm5jcHni
+gJkgc3BlY2lmaWVkIGJvdW5kIDY0IGVxdWFscyBkZXN0aW5hdGlvbiBzaXplIFstV3N0cmluZ29w
+LXRydW5jYXRpb25dDQogICAgICBzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+Y3JhX2Fi
+bGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogICAgICBefn5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQogICAgICAg
+c2l6ZW9mKHJibGtjaXBoZXIuZ2VuaXYpKTsNCiAgICAgICB+fn5+fn5+fn5+fn5+fn5+fn5+fn5+
+fn5+DQoNClRoaXMgbWVhbnMgdGhlIHN0cm55Y3B5IG1pZ2h0IGNyZWF0ZSBhIG5vbiBudWxsIHRl
+cm1pbmF0ZWQgc3RyaW5nLiAgRml4IHRoaXMgYnkNCmV4cGxpY2l0bHkgcGVyZm9ybWluZyAnXDAn
+IHRlcm1pbmF0aW9uLg0KDQpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3Vu
+ZGF0aW9uLm9yZz4NCkNjOiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPg0KQ2M6IE1heCBG
+aWxpcHBvdiA8amNtdmJrYmNAZ21haWwuY29tPg0KQ2M6IEVyaWMgQmlnZ2VycyA8ZWJpZ2dlcnMz
+QGdtYWlsLmNvbT4NCkNjOiBOaWNrIERlc2F1bG5pZXJzIDxuaWNrLmRlc2F1bG5pZXJzQGdtYWls
+LmNvbT4NClNpZ25lZC1vZmYtYnk6IFN0YWZmb3JkIEhvcm5lIDxzaG9ybmVAZ21haWwuY29tPg0K
+U2lnbmVkLW9mZi1ieTogSGVyYmVydCBYdSA8aGVyYmVydEBnb25kb3IuYXBhbmEub3JnLmF1Pg0K
+U2lnbmVkLW9mZi1ieTogU2FzaGEgTGV2aW4gPGFsZXhhbmRlci5sZXZpbkBtaWNyb3NvZnQuY29t
+Pg0KLS0tDQogY3J5cHRvL2FibGtjaXBoZXIuYyB8IDIgKysNCiBjcnlwdG8vYmxrY2lwaGVyLmMg
+IHwgMSArDQogMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBh
+L2NyeXB0by9hYmxrY2lwaGVyLmMgYi9jcnlwdG8vYWJsa2NpcGhlci5jDQppbmRleCA4NjBjOWU1
+ZGZkN2EuLjNiYzBlNzZlYWFlZiAxMDA2NDQNCi0tLSBhL2NyeXB0by9hYmxrY2lwaGVyLmMNCisr
+KyBiL2NyeXB0by9hYmxrY2lwaGVyLmMNCkBAIC0zNjcsNiArMzY3LDcgQEAgc3RhdGljIGludCBj
+cnlwdG9fYWJsa2NpcGhlcl9yZXBvcnQoc3RydWN0IHNrX2J1ZmYgKnNrYiwgc3RydWN0IGNyeXB0
+b19hbGcgKmFsZykNCiAJc3RybmNweShyYmxrY2lwaGVyLnR5cGUsICJhYmxrY2lwaGVyIiwgc2l6
+ZW9mKHJibGtjaXBoZXIudHlwZSkpOw0KIAlzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+
+Y3JhX2FibGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogCQlzaXplb2YocmJsa2NpcGhl
+ci5nZW5pdikpOw0KKwlyYmxrY2lwaGVyLmdlbml2W3NpemVvZihyYmxrY2lwaGVyLmdlbml2KSAt
+IDFdID0gJ1wwJzsNCiANCiAJcmJsa2NpcGhlci5ibG9ja3NpemUgPSBhbGctPmNyYV9ibG9ja3Np
+emU7DQogCXJibGtjaXBoZXIubWluX2tleXNpemUgPSBhbGctPmNyYV9hYmxrY2lwaGVyLm1pbl9r
+ZXlzaXplOw0KQEAgLTQ0MSw2ICs0NDIsNyBAQCBzdGF0aWMgaW50IGNyeXB0b19naXZjaXBoZXJf
+cmVwb3J0KHN0cnVjdCBza19idWZmICpza2IsIHN0cnVjdCBjcnlwdG9fYWxnICphbGcpDQogCXN0
+cm5jcHkocmJsa2NpcGhlci50eXBlLCAiZ2l2Y2lwaGVyIiwgc2l6ZW9mKHJibGtjaXBoZXIudHlw
+ZSkpOw0KIAlzdHJuY3B5KHJibGtjaXBoZXIuZ2VuaXYsIGFsZy0+Y3JhX2FibGtjaXBoZXIuZ2Vu
+aXYgPzogIjxidWlsdC1pbj4iLA0KIAkJc2l6ZW9mKHJibGtjaXBoZXIuZ2VuaXYpKTsNCisJcmJs
+a2NpcGhlci5nZW5pdltzaXplb2YocmJsa2NpcGhlci5nZW5pdikgLSAxXSA9ICdcMCc7DQogDQog
+CXJibGtjaXBoZXIuYmxvY2tzaXplID0gYWxnLT5jcmFfYmxvY2tzaXplOw0KIAlyYmxrY2lwaGVy
+Lm1pbl9rZXlzaXplID0gYWxnLT5jcmFfYWJsa2NpcGhlci5taW5fa2V5c2l6ZTsNCmRpZmYgLS1n
+aXQgYS9jcnlwdG8vYmxrY2lwaGVyLmMgYi9jcnlwdG8vYmxrY2lwaGVyLmMNCmluZGV4IDI3Zjk4
+NjY2NzYzYS4uNTlhMDkzNmVkOGJjIDEwMDY0NA0KLS0tIGEvY3J5cHRvL2Jsa2NpcGhlci5jDQor
+KysgYi9jcnlwdG8vYmxrY2lwaGVyLmMNCkBAIC01MTAsNiArNTEwLDcgQEAgc3RhdGljIGludCBj
+cnlwdG9fYmxrY2lwaGVyX3JlcG9ydChzdHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1Y3QgY3J5cHRv
+X2FsZyAqYWxnKQ0KIAlzdHJuY3B5KHJibGtjaXBoZXIudHlwZSwgImJsa2NpcGhlciIsIHNpemVv
+ZihyYmxrY2lwaGVyLnR5cGUpKTsNCiAJc3RybmNweShyYmxrY2lwaGVyLmdlbml2LCBhbGctPmNy
+YV9ibGtjaXBoZXIuZ2VuaXYgPzogIjxkZWZhdWx0PiIsDQogCQlzaXplb2YocmJsa2NpcGhlci5n
+ZW5pdikpOw0KKwlyYmxrY2lwaGVyLmdlbml2W3NpemVvZihyYmxrY2lwaGVyLmdlbml2KSAtIDFd
+ID0gJ1wwJzsNCiANCiAJcmJsa2NpcGhlci5ibG9ja3NpemUgPSBhbGctPmNyYV9ibG9ja3NpemU7
+DQogCXJibGtjaXBoZXIubWluX2tleXNpemUgPSBhbGctPmNyYV9ibGtjaXBoZXIubWluX2tleXNp
+emU7DQotLSANCjIuMTcuMQ0K
