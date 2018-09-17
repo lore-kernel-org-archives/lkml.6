@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1799ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5C8ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F622146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F622146D
+	by mail.kernel.org (Postfix) with ESMTP id 5B8C72146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8C72146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732218AbeIREkP (ORCPT
+        id S1732232AbeIREkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50374 "EHLO
+        Tue, 18 Sep 2018 00:40:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREkP (ORCPT
+        with ESMTP id S1729160AbeIREkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:15 -0400
+        Tue, 18 Sep 2018 00:40:18 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EAF4707;
-        Mon, 17 Sep 2018 23:10:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 385D0707;
+        Mon, 17 Sep 2018 23:10:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.18 042/158] ARC: [plat-axs*]: Enable SWAP
-Date:   Tue, 18 Sep 2018 00:41:12 +0200
-Message-Id: <20180917211713.131639809@linuxfoundation.org>
+        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 043/158] tc-testing: flush gact actions on test teardown
+Date:   Tue, 18 Sep 2018 00:41:13 +0200
+Message-Id: <20180917211713.192629357@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -51,51 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Vlad Buslov <vladbu@mellanox.com>
 
-commit c83532fb0fe053d2e43e9387354cb1b52ba26427 upstream.
+[ Upstream commit 0c62f8a820b7fdeacf5ad9f9e24b53043d372c97 ]
 
-SWAP support on ARC was fixed earlier by
-commit 6e3761145a9b ("ARC: Fix CONFIG_SWAP")
-so now we may safely enable it on platforms that
-have external media like USB and SD-card.
+Test 6fb4 creates one mirred and one pipe action, but only flushes mirred
+on teardown. Leaking pipe action causes failures in other tests.
 
-Note: it was already allowed for HSDK
+Add additional teardown command to also flush gact actions.
 
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: stable@vger.kernel.org # 6e3761145a9b: ARC: Fix CONFIG_SWAP
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arc/configs/axs101_defconfig     |    1 -
- arch/arc/configs/axs103_defconfig     |    1 -
- arch/arc/configs/axs103_smp_defconfig |    1 -
- 3 files changed, 3 deletions(-)
+ tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arc/configs/axs101_defconfig
-+++ b/arch/arc/configs/axs101_defconfig
-@@ -1,5 +1,4 @@
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
---- a/arch/arc/configs/axs103_defconfig
-+++ b/arch/arc/configs/axs103_defconfig
-@@ -1,5 +1,4 @@
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
---- a/arch/arc/configs/axs103_smp_defconfig
-+++ b/arch/arc/configs/axs103_smp_defconfig
-@@ -1,5 +1,4 @@
- CONFIG_DEFAULT_HOSTNAME="ARCLinux"
--# CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
+--- a/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/actions/mirred.json
+@@ -44,7 +44,8 @@
+         "matchPattern": "action order [0-9]*: mirred \\(Egress Redirect to device lo\\).*index 2 ref",
+         "matchCount": "1",
+         "teardown": [
+-            "$TC actions flush action mirred"
++            "$TC actions flush action mirred",
++            "$TC actions flush action gact"
+         ]
+     },
+     {
 
 
