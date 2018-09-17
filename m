@@ -2,109 +2,108 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0479BECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A79ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B949A214FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:14:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B949A214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AC3C4214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 10:14:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hww4X8VK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3C4214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeIQPkn (ORCPT
+        id S1727674AbeIQPlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 11:40:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41590 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725757AbeIQPkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 11:40:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6C213082DD4;
-        Mon, 17 Sep 2018 10:13:59 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 92B5F17A7C;
-        Mon, 17 Sep 2018 10:13:56 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 36D9541A42; Mon, 17 Sep 2018 12:13:55 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 12:13:55 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        open list <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
-Subject: Re: [PATCH 1/2] vfio: add edid api for display (vgpu) devices.
-Message-ID: <20180917101355.pfk2bbmgdwabcyqc@sirius.home.kraxel.org>
-References: <20180913054745.6353-1-kraxel@redhat.com>
- <20180913054745.6353-2-kraxel@redhat.com>
- <20180913115139.02775316@t450s.home>
- <20180914122552.3xmepqo7azzmx7ky@sirius.home.kraxel.org>
- <20180917065154.GI20737@zhen-hp.sh.intel.com>
- <20180917085033.ttcs3cpznnf3wngd@sirius.home.kraxel.org>
- <20180917091550.GK20737@zhen-hp.sh.intel.com>
+        Mon, 17 Sep 2018 11:41:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42343 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbeIQPlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 11:41:20 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f1-v6so12632708ljc.9;
+        Mon, 17 Sep 2018 03:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9SqPlVUxQy+vbuNcH1v7ijfG5njf3uUfvXLX7FXDlak=;
+        b=Hww4X8VKsMvBy2IVBcc4LRmZ45b7vcmDv0tvbN2q9QjtaBTcpcSlMNGlTI+Qt2ed97
+         un493KxCZZvcRC7DTuFUDTLvmEjVc0Bu8bY8bgM6YkLfwvHYeKj9EyHFVUyn0k9JBazj
+         HHwH7kpSyQLW96ehcfq7Fkc+4lcMNKXQh0mHpOQdXshEZDCseJ9L5zy5OWO37Jaykp9G
+         0v3IYtRx5kM/GS1MqdvN+eczQYZWZKLwSKDiq4+hYcHFZ9di+wSf/Fd6tXMUisLoQILL
+         1NX/lSlKY2d9yeoi+VqWIVFwd82ffwLSajXXY1buI+RyfLVZqyZMHbpXMyGMY61MUTPk
+         2foQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9SqPlVUxQy+vbuNcH1v7ijfG5njf3uUfvXLX7FXDlak=;
+        b=ZbCK1as50xVqnZUh+foY55ti2TGqE5gRda3h+waNd0vaWXGW8gA71dmIbGR6HdYq2V
+         xlQPD0tqFWnV4z0GQXeMuBt+HFXU5oD7OL9iJk7/TvvtEdeupUXplQeKYd+rTvZTX7/S
+         4vuB16pnQrif06UMTlc/u5iQHfIz7bU7M2Q31l87lhQ2yMkZ0nPP7xJALcBa8wnNx0Ym
+         TZNwZoXqC78r3LEq93FQnN80ewfJy0pKt4zX6nkOdDPA9hV83cNFIijgdRFO9VIKFtay
+         NnR/AcfFzCB3yrk43dCy1YXJNkAMMG1/7tAvkrOqllP1vzqCTKBYeF6zHMHsGR6E5ka4
+         9OWw==
+X-Gm-Message-State: APzg51CbbEV7iyMKxVyZdTi15p2MVOymGQkuhrzoGrejTYu5Bn9/9a/H
+        mpJqgr2k1GS2+ZxUA0CUW5ROdfdrcJ2qP+jEgeJZHL1r
+X-Google-Smtp-Source: ANB0VdYh1JeFmO8t4US3QP86bEW8a7eolQiJxjPLosSubj3/NlQe/3UlPaSqB7HItDm5SaeCc7mI66oJNlSOHVV3ksg=
+X-Received: by 2002:a2e:680a:: with SMTP id c10-v6mr15288467lja.59.1537179274332;
+ Mon, 17 Sep 2018 03:14:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917091550.GK20737@zhen-hp.sh.intel.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 17 Sep 2018 10:13:59 +0000 (UTC)
+References: <20180913133704.15739-1-ricardo.ribalda@gmail.com> <CACRpkdYgC7Z79c3swKE=ZwEUfVTC+oijKOqo5HwVdXLOsTT8Mg@mail.gmail.com>
+In-Reply-To: <CACRpkdYgC7Z79c3swKE=ZwEUfVTC+oijKOqo5HwVdXLOsTT8Mg@mail.gmail.com>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Mon, 17 Sep 2018 12:14:17 +0200
+Message-ID: <CAPybu_3aaCyw9e4FJpu2r7QbGUVzDrjPmfo4oSue1Ncu0jkLGQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Free the last requested descriptor
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Timur Tabi <timur@codeaurora.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 05:15:50PM +0800, Zhenyu Wang wrote:
-> On 2018.09.17 10:50:33 +0200, Gerd Hoffmann wrote:
-> > > > +#define VFIO_DEVICE_INFO_CAP_EDID	1
-> > > > +
-> > > > +struct vfio_device_info_edid_cap {
-> > > > +	struct vfio_info_cap_header header;
-> > > > +	__u32   max_x;     /* Max display height (zero == no limit) */
-> > > > +	__u32   max_y;     /* Max display height (zero == no limit) */
-> > > > +};
-> > > 
-> > > As current virtual display for Intel vGPU is still emulating against real HW
-> > > pipeline with same limitations, asked display developers that whether or not
-> > > specific mode can work might still depend on current or future HW behavior.
-> > > So could we add some hints on what kind of edid mode vfio device can operate?
-> > > Some may support arbitrary modes, but some may only support standard modes.
-> > 
-> > What kind of restrictions do we have here?  Really to a fixed list of
-> > standard modes?
-> 
-> Restriction is still with HW differences, e.g for skl/kbl with ddi wrpll
-> within min/max clock range which may generate any required frequency, but
-> I've been told for bxt there're some gaps in clock range that could be
-> generated.
+Hi Linus
+On Fri, Sep 14, 2018 at 10:56 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Thu, Sep 13, 2018 at 3:37 PM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+>
+> > The current code only frees N-1 gpios if an error occurs during
+> > gpiod_set_transitory, gpiod_direction_output or gpiod_direction_input.
+> > Leading to gpios that cannot be used by userspace nor other drivers.
+> >
+> > Cc: Timur Tabi <timur@codeaurora.org>
+> > Cc: stable@vger.kernel.org
+> > Fixes: ab3dbcf78f60f46d ("gpioib: do not free unrequested descriptors)
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+>
+> Patch applied for fixes with Jan's Reported-by tag.
 
-Ok, handling min/max clock (pixel clock I assume) should be easy.
-Ranges are more difficuilt ...
+Just a heads-up
 
-But shouldn't the guest driver be able to cope with modes which can't be
-displayed?  Monitors don't adjust edid to display driver capabilities
-either, so the non-working modes are probably simply dropped from the
-list of monitor modes ...
+I haven't seem the patch on your kernel tree at
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/refs/heads
 
-> > Oh, and btw:  Seems the resolution restriction (to 1024x768 for the
-> > smallest vgpu type) seems to not be enforced.  Intentional?
-> 
-> hmm, what do you mean here? Not enforce to have only one mode for vgpu type?
-> Or can't change to other mode?
+it is probably on your computer tree, but I wanted to make sure the
+patch is not lost in the wind :P
 
-Using i915-GVTg_V5_8 type.  Description says "resolution: 1024x768".
-The edid data lists 640x480, 800x600, 1024x768.
+Thanks!
 
-I can set modes higher than 1024x768 though.  Can create custom modes
-(using xrandr --newmode), attach them to the output (xrandr --addmode)
-and activate them (xrandr --mode).
 
-cheers,
-  Gerd
+>
+> Yours,
+> Linus Walleij
 
+
+
+-- 
+Ricardo Ribalda
