@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCEEECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62205ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA382146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA382146D
+	by mail.kernel.org (Postfix) with ESMTP id 24AAF2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AAF2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbeIREko (ORCPT
+        id S1732368AbeIREks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50486 "EHLO
+        Tue, 18 Sep 2018 00:40:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIREko (ORCPT
+        with ESMTP id S1731765AbeIREkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:44 -0400
+        Tue, 18 Sep 2018 00:40:47 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83342707;
-        Mon, 17 Sep 2018 23:11:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C376707;
+        Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, rodia@autistici.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Don Zickus <dzickus@redhat.com>, Joe Mario <jmario@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 086/158] NFSv4.0 fix client reference leak in callback
-Date:   Tue, 18 Sep 2018 00:41:56 +0200
-Message-Id: <20180917211715.181696624@linuxfoundation.org>
+Subject: [PATCH 4.18 087/158] perf c2c report: Fix crash for empty browser
+Date:   Tue, 18 Sep 2018 00:41:57 +0200
+Message-Id: <20180917211715.229961689@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,48 +58,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 32cd3ee511f4e07ca25d71163b50e704808d22f4 ]
+[ Upstream commit 73978332572ccf5e364c31e9a70ba953f8202b46 ]
 
-If there is an error during processing of a callback message, it leads
-to refrence leak on the client structure and eventually an unclean
-superblock.
+'perf c2c' scans read/write accesses and tries to find false sharing
+cases, so when the events it wants were not asked for or ended up not
+taking place, we get no histograms.
 
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+So do not try to display entry details if there's not any. Currently
+this ends up in crash:
+
+  $ perf c2c report # then press 'd'
+  perf: Segmentation fault
+  $
+
+Committer testing:
+
+Before:
+
+Record a perf.data file without events of interest to 'perf c2c report',
+then call it and press 'd':
+
+  # perf record sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
+  # perf c2c report
+  perf: Segmentation fault
+  -------- backtrace --------
+  perf[0x5b1d2a]
+  /lib64/libc.so.6(+0x346df)[0x7fcb566e36df]
+  perf[0x46fcae]
+  perf[0x4a9f1e]
+  perf[0x4aa220]
+  perf(main+0x301)[0x42c561]
+  /lib64/libc.so.6(__libc_start_main+0xe9)[0x7fcb566cff29]
+  perf(_start+0x29)[0x42c999]
+  #
+
+After the patch the segfault doesn't take place, a follow up patch to
+tell the user why nothing changes when 'd' is pressed would be good.
+
+Reported-by: rodia@autistici.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: Joe Mario <jmario@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: f1c5fd4d0bb9 ("perf c2c report: Add TUI cacheline browser")
+Link: http://lkml.kernel.org/r/20180724062008.26126-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/callback_xdr.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ tools/perf/builtin-c2c.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/nfs/callback_xdr.c
-+++ b/fs/nfs/callback_xdr.c
-@@ -883,16 +883,21 @@ static __be32 nfs4_callback_compound(str
+--- a/tools/perf/builtin-c2c.c
++++ b/tools/perf/builtin-c2c.c
+@@ -2349,6 +2349,9 @@ static int perf_c2c__browse_cacheline(st
+ 	" s             Toggle full length of symbol and source line columns \n"
+ 	" q             Return back to cacheline list \n";
  
- 	if (hdr_arg.minorversion == 0) {
- 		cps.clp = nfs4_find_client_ident(SVC_NET(rqstp), hdr_arg.cb_ident);
--		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp))
-+		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp)) {
-+			if (cps.clp)
-+				nfs_put_client(cps.clp);
- 			goto out_invalidcred;
-+		}
- 	}
++	if (!he)
++		return 0;
++
+ 	/* Display compact version first. */
+ 	c2c.symbol_full = false;
  
- 	cps.minorversion = hdr_arg.minorversion;
- 	hdr_res.taglen = hdr_arg.taglen;
- 	hdr_res.tag = hdr_arg.tag;
--	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0)
-+	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0) {
-+		if (cps.clp)
-+			nfs_put_client(cps.clp);
- 		return rpc_system_err;
--
-+	}
- 	while (status == 0 && nops != hdr_arg.nops) {
- 		status = process_op(nops, rqstp, &xdr_in,
- 				    rqstp->rq_argp, &xdr_out, rqstp->rq_resp,
 
 
