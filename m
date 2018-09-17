@@ -2,141 +2,78 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3A2ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3A6ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC17B2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC17B2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2BFDF214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFDF214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbeIQRnm (ORCPT
+        id S1728475AbeIQRsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:43:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34743 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbeIQRnl (ORCPT
+        Mon, 17 Sep 2018 13:48:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58464 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728241AbeIQRsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:43:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g33-v6so17077049wrd.1;
-        Mon, 17 Sep 2018 05:16:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=PjUNyc4NPYNbsWBM8cl41Aa9kvxSMJyFdO8AAv3b0VQ=;
-        b=gjwJCDZ4ICbfcAGV+V7ikOtcw2WVRhTkZqBKCFQtIq780M8644mbae9RIH+jMuaZJw
-         aual1ZPiTpnptKq5IQ2g1WP48mOl44SBPjQ5HgMvCQY0HTJ/UORLSb/+lGe2MJPgGynN
-         nPGN6VQCpKMIh4UDa1o2vSlOjql22vT3zYTIsVW8ALcVUuH+uhus/iKzXDv3bbgCJ7U/
-         xRk1FiccPMdrFhmrNPCMS3fiIMQFgbfLgsHEaHy7mQgJbJJUItzgcHnnAdzehII/ACnn
-         jzy0PfStFKV/yoUIQ2/ojT0ramRaMNTXPMS6pd8Xp8PiVFete03/0dKT3aAztEbzkVgP
-         FQZw==
-X-Gm-Message-State: APzg51A9grw0RrxjYfsBMNFHAGNQWWYTWz7VaWS/Px+5cc1bFDArsStd
-        MmAmh85UHnOsGfb5EtS5nGU=
-X-Google-Smtp-Source: ANB0VdYr5bBFYOa3G5trLA12XzYwFh3Pl8V60ZB6neyiNP0HZ1iiQIwObOU5ueLikjCrDgizVuLMyw==
-X-Received: by 2002:adf:9244:: with SMTP id 62-v6mr17145583wrj.62.1537186595997;
-        Mon, 17 Sep 2018 05:16:35 -0700 (PDT)
-Received: from [192.168.118.200] ([81.19.42.250])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm11617257wro.66.2018.09.17.05.16.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 05:16:35 -0700 (PDT)
+        Mon, 17 Sep 2018 13:48:02 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B992C74;
+        Mon, 17 Sep 2018 12:20:55 +0000 (UTC)
+Date:   Mon, 17 Sep 2018 14:20:53 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Andi Kleen <andi@firstfloor.org>, stable@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        bernhard.kaindl@thalesgroup.com, Andi Kleen <ak@linux.intel.com>
 Subject: Re: [PATCH] x86/mm/pat: Fix L1TF stable backport for CPA
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Andi Kleen <andi@firstfloor.org>
-Cc:     stable@vger.kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, bernhard.kaindl@thalesgroup.com,
-        Andi Kleen <ak@linux.intel.com>
+Message-ID: <20180917122053.GA572@kroah.com>
 References: <20180825135015.33547-1-andi@firstfloor.org>
  <2374a957-ab3c-5fad-64eb-14ce4a698715@suse.cz>
  <20180906202749.siuw4hlnafzq4o23@two.firstfloor.org>
  <20180917115151.GJ13057@kroah.com>
-From:   Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0263c7cf-dafb-012a-78af-9b9f8e4a57fe@suse.cz>
-Date:   Mon, 17 Sep 2018 14:16:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <0263c7cf-dafb-012a-78af-9b9f8e4a57fe@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180917115151.GJ13057@kroah.com>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0263c7cf-dafb-012a-78af-9b9f8e4a57fe@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/17/2018, 01:51 PM, Greg KH wrote:
-> On Thu, Sep 06, 2018 at 01:27:49PM -0700, Andi Kleen wrote:
->>> And what about populate_pud?
->>>                 set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
->>>                                    canon_pgprot(pud_pgprot))));
->>>
->>>                 start     += PUD_SIZE;
->>>                 cpa->pfn  += PUD_SIZE;
->>
->> Yes you're right. That case needs to be fixed too.
->>
->> Are you sending a patch, or should I?
+On Mon, Sep 17, 2018 at 02:16:33PM +0200, Jiri Slaby wrote:
+> On 09/17/2018, 01:51 PM, Greg KH wrote:
+> > On Thu, Sep 06, 2018 at 01:27:49PM -0700, Andi Kleen wrote:
+> >>> And what about populate_pud?
+> >>>                 set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
+> >>>                                    canon_pgprot(pud_pgprot))));
+> >>>
+> >>>                 start     += PUD_SIZE;
+> >>>                 cpa->pfn  += PUD_SIZE;
+> >>
+> >> Yes you're right. That case needs to be fixed too.
+> >>
+> >> Are you sending a patch, or should I?
+> > 
+> > Someone needs to.  Please?
 > 
-> Someone needs to.  Please?
+> You already released 4.4.x with the patch :):
+> 
+> commit 15898df477269c981dc1ae5afa39e1bb65e1db0a
+> Author: Jiri Slaby <jslaby@suse.cz>
+> Date:   Fri Sep 7 11:13:07 2018 +0200
+> 
+>     x86/mm/pat: Fix L1TF stable backport for CPA, 2nd call
+> 
 
-You already released 4.4.x with the patch :):
+Ugh, nevermind, sorry for the noise :)
 
-commit 15898df477269c981dc1ae5afa39e1bb65e1db0a
-Author: Jiri Slaby <jslaby@suse.cz>
-Date:   Fri Sep 7 11:13:07 2018 +0200
-
-    x86/mm/pat: Fix L1TF stable backport for CPA, 2nd call
-
-thanks,
--- 
-js
-suse labs
+greg k-h
