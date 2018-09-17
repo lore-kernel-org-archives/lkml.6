@@ -2,39 +2,42 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C38ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5511FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9402088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:52:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9402088F
+	by mail.kernel.org (Postfix) with ESMTP id 1BF69214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:52:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF69214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbeIQTT1 (ORCPT
+        id S1728568AbeIQTTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:19:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55858 "EHLO
+        Mon, 17 Sep 2018 15:19:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbeIQTT1 (ORCPT
+        with ESMTP id S1726865AbeIQTTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:19:27 -0400
+        Mon, 17 Sep 2018 15:19:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03BF4DC0;
-        Mon, 17 Sep 2018 13:51:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E531FDC0;
+        Mon, 17 Sep 2018 13:52:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     sameo@linux.intel.com, davem@davemloft.net, netdev@vger.kernel.org
 Cc:     allen.pais@oracle.com, keescook@chromium.org, surenb@google.com,
         linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 0/2] NFC fixes for 4.19-final
-Date:   Mon, 17 Sep 2018 15:51:39 +0200
-Message-Id: <20180917135141.28328-1-gregkh@linuxfoundation.org>
+Subject: [PATCH 1/2] NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
+Date:   Mon, 17 Sep 2018 15:51:40 +0200
+Message-Id: <20180917135141.28328-2-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917135141.28328-1-gregkh@linuxfoundation.org>
+References: <20180917135141.28328-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,27 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some reason, these two NFC patches fell through the cracks.  It
-looks like sometimes NFC patches go through the wireless tree, and
-other times, through the networking tree directly.
+From: Suren Baghdasaryan <surenb@google.com>
 
-I don't care which way they go, but they should get merged through some
-way, or, I can take them in my device tree, but that feels a bit odd to
-me.
+When handling SHDLC I-Frame commands "pipe" field used for indexing
+into an array should be checked before usage. If left unchecked it
+might access memory outside of the array of size NFC_HCI_MAX_PIPES(127).
 
-thanks,
+Malformed NFC HCI frames could be injected by a malicious NFC device
+communicating with the device being attacked (remote attack vector),
+or even by an attacker with physical access to the I2C bus such that
+they could influence the data transfers on that bus (local attack vector).
+skb->data is controlled by the attacker and has only been sanitized in
+the most trivial ways (CRC check), therefore we can consider the
+create_info struct and all of its members to tainted. 'create_info->pipe'
+with max value of 255 (uint8) is used to take an offset of the
+hdev->pipes array of 127 elements which can lead to OOB write.
 
-greg k-h
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Allen Pais <allen.pais@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Suggested-by: Kevin Deus <kdeus@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/nfc/hci/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Suren Baghdasaryan (2):
-  NFC: Fix possible memory corruption when handling SHDLC I-Frame
-    commands
-  NFC: Fix the number of pipes
-
- include/net/nfc/hci.h |  2 +-
- net/nfc/hci/core.c    | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
+diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
+index ac8030c4bcf8..19cb2e473ea6 100644
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 		}
+ 		create_info = (struct hci_create_pipe_resp *)skb->data;
+ 
++		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+ 		 * but since we received this cmd from host controller, we
+@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 		}
+ 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
+ 
++		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
+ 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
+ 		break;
 -- 
 2.19.0
 
