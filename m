@@ -2,196 +2,104 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83505ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A0BECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261AA2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:26:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcHoDKXm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 261AA2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 988D92098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:27:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988D92098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeIQSxf (ORCPT
+        id S1728389AbeIQSys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:53:35 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39069 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbeIQSxf (ORCPT
+        Mon, 17 Sep 2018 14:54:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54967 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbeIQSys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:53:35 -0400
-Received: by mail-qk1-f194.google.com with SMTP id b19-v6so8945699qkc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 06:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T1VhFzl1/xZH/+MeOaxQrLxmATdf8qv6R0nSNJzVzfs=;
-        b=JcHoDKXmPwl74Vs8VfGxf7UYnMZuyCwnRa6+Nx3fslrPC9mGt9dtHpJ2xtS4XVFDAs
-         1sVCmsByu7/EGD77xJl7u+eXsmh7XE48DbooJMhT0NNxS5ivRe4LshVoeEfeJ/+1EenD
-         YQHBqEpqjyIiIH35l39b8p9Oq6du/prpMe2VZ2yICKf6Y6G90sq2RWIs0p5aBJ0HFtZH
-         6er1V2I9pROOvzWQXOaUwOnpO0h7Pt2khnhi2Vxsa8aVsy+8QZTQwQFp+VYi7airT38x
-         WNlsUqY/nqSuo/1EgQebjscc2Co2WASk8rG2DhlLazSPX1VqghlMLYuSQ4k1w+c6DqQb
-         i72A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T1VhFzl1/xZH/+MeOaxQrLxmATdf8qv6R0nSNJzVzfs=;
-        b=LZjBdEFEuBwdzjwWNbZKOAooMUdIOdXH+m99hnQPTySkZA2Oac4TdjFnZwE3iwM/oH
-         haxgWOyGsixGg/mA2kNkkrMLZaBou0O4Z0ZdBdmYZMi6F7C53lToLMH9/N1zPNtUutT3
-         uC++Meh+gPkPZ7mOAbfJ35uMe41/R0FP5wdhc766GW6yH9Jt4eYYm/QVbEwCb7eXSyoz
-         sat0CHQq39QpkY8QowGgWV3jEspwYWjEYhatNVWjX0YcOuzlgVH+GNjpWylI5cqYhHnJ
-         3V0hnrCYSEBqviWRIP8CP9PPOCS+rR3idUlMmjp7gJ57mutsYQJPmWRy2Nwo8N/Osf91
-         Brjw==
-X-Gm-Message-State: APzg51Ao7TYrU/RJi5g/1L+bCZiqGhprsvvZOpNLG3LF3S/TJoogLvHq
-        gUHduS9sP/Dp3qEvvwIrFQ==
-X-Google-Smtp-Source: ANB0VdZ3ERuoZMUvi0oJNbDir93TnkQgET27XZ0vdV1juJ7zYh3CpApSQO3irYYuZW87wwEeBiOzlQ==
-X-Received: by 2002:a37:88c2:: with SMTP id k185-v6mr16176174qkd.166.1537190774810;
-        Mon, 17 Sep 2018 06:26:14 -0700 (PDT)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q1-v6sm10550955qkl.31.2018.09.17.06.26.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 06:26:13 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 09:26:07 -0400
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 2/2] mm: zero remaining unavailable struct pages
-Message-ID: <20180917132605.eln6tlc6hf7vfjy2@gabell>
-References: <20180823182513.8801-1-msys.mizuma@gmail.com>
- <20180823182513.8801-2-msys.mizuma@gmail.com>
- <7c773dec-ded0-7a1e-b3ad-6c6826851015@microsoft.com>
- <484388a7-1e75-0782-fdfb-20345e1bda0d@gmail.com>
- <20180831025536.GA29753@hori1.linux.bs1.fc.nec.co.jp>
+        Mon, 17 Sep 2018 14:54:48 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g1tYi-0005nk-VD; Mon, 17 Sep 2018 15:27:25 +0200
+Date:   Mon, 17 Sep 2018 15:27:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Multi-parent IRQ domains
+In-Reply-To: <20180917130712.GC27927@ulmo>
+Message-ID: <alpine.DEB.2.21.1809171510020.16580@nanos.tec.linutronix.de>
+References: <20180913155945.GA19903@ulmo> <alpine.DEB.2.21.1809141211200.1473@nanos.tec.linutronix.de> <20180917095222.GA27927@ulmo> <alpine.DEB.2.21.1809171358070.16580@nanos.tec.linutronix.de> <20180917130712.GC27927@ulmo>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180831025536.GA29753@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 02:55:36AM +0000, Naoya Horiguchi wrote:
-> On Wed, Aug 29, 2018 at 11:16:30AM -0400, Masayoshi Mizuma wrote:
-> > Hi Horiguchi-san and Pavel
+On Mon, 17 Sep 2018, Thierry Reding wrote:
+> On Mon, Sep 17, 2018 at 02:28:01PM +0200, Thomas Gleixner wrote:
+> > I'm not a DT wizerd, but the GPIO cannot be linked there I think.
 > > 
-> > Thank you for your comments!
-> > The Pavel's additional patch looks good to me, so I will add it to this series.
+> >     RTC ---------------------------> [ PMC domain 1] -----> GIC
 > > 
-> > However, unfortunately, the movable_node option has something wrong yet...
-> > When I offline the memory which belongs to movable zone, I got the following
-> > warning. I'm trying to debug it.
+> >     Button --> [GPIO domain] ------> [ PMC domain 2]
 > > 
-> > I try to describe the issue as following. 
-> > If you have any comments, please let me know.
+> > The RTC is connected to PMC domain 1 and that allocates the GIC irq.
 > > 
-> > WARNING: CPU: 156 PID: 25611 at mm/page_alloc.c:7730 has_unmovable_pages+0x1bf/0x200
-> > RIP: 0010:has_unmovable_pages+0x1bf/0x200
-> > ...
-> > Call Trace:
-> >  is_mem_section_removable+0xd3/0x160
-> >  show_mem_removable+0x8e/0xb0
-> >  dev_attr_show+0x1c/0x50
-> >  sysfs_kf_seq_show+0xb3/0x110
-> >  seq_read+0xee/0x480
-> >  __vfs_read+0x36/0x190
-> >  vfs_read+0x89/0x130
-> >  ksys_read+0x52/0xc0
-> >  do_syscall_64+0x5b/0x180
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > RIP: 0033:0x7fe7b7823f70
-> > ...
-> > 
-> > I added a printk to catch the unmovable page.
-> > ---
-> > @@ -7713,8 +7719,12 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> >                  * is set to both of a memory hole page and a _used_ kernel
-> >                  * page at boot.
-> >                  */
-> > -               if (found > count)
-> > +               if (found > count) {
-> > +                       pr_info("DEBUG: %s zone: %lx page: %lx pfn: %lx flags: %lx found: %ld count: %ld \n",
-> > +                               __func__, zone, page, page_to_pfn(page), page->flags, found, count);
-> >                         goto unmovable;
-> > +               }
-> > ---
-> > 
-> > Then I got the following. The page (PFN: 0x1c0ff130d) flag is 
-> > 0xdfffffc0040048 (uptodate|active|swapbacked)
-> > 
-> > ---
-> > DEBUG: has_unmovable_pages zone: 0xffff8c0ffff80380 page: 0xffffea703fc4c340 pfn: 0x1c0ff130d flags: 0xdfffffc0040048 found: 1 count: 0 
-> > ---
-> > 
-> > And I got the owner from /sys/kernel/debug/page_owner.
-> > 
-> > Page allocated via order 0, mask 0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO)
-> > PFN 7532909325 type Movable Block 14712713 type Movable Flags 0xdfffffc0040048(uptodate|active|swapbacked)
-> >  __alloc_pages_nodemask+0xfc/0x270
-> >  alloc_pages_vma+0x7c/0x1e0
-> >  handle_pte_fault+0x399/0xe50
-> >  __handle_mm_fault+0x38e/0x520
-> >  handle_mm_fault+0xdc/0x210
-> >  __do_page_fault+0x243/0x4c0
-> >  do_page_fault+0x31/0x130
-> >  page_fault+0x1e/0x30
-> > 
-> > The page is allocated as anonymous page via page fault.
-> > I'm not sure, but lru flag should be added to the page...?
+> > The button is conntected to the GPIO which connect to the PMC domain
+> > 2. That PMC domain has no connection to anything. It ends there.
 > 
-> There is a small window of no PageLRU flag just after page allocation
-> until the page is linked to some LRU list.
-> This kind of unmovability is transient, so retrying can work.
+> Interesting, I was assuming the following:
 > 
-> I guess that this warning seems to be visible since commit 15c30bc09085
-> ("mm, memory_hotplug: make has_unmovable_pages more robust")
-> which turned off the optimization based on the assumption that pages
-> under ZONE_MOVABLE are always movable.
-> I think that it helps developers find the issue that permanently
-> unmovable pages are accidentally located in ZONE_MOVABLE zone.
-> But even ZONE_MOVABLE zone could have transiently unmovable pages,
-> so the reported warning seems to me a false charge and should be avoided.
-> Doing lru_add_drain_all()/drain_all_pages() before has_unmovable_pages()
-> might be helpful?
+>     Button --> [PMC domain 2] --> [GPIO domain]
+> 
+> based on the hardware documentation that maps the wake events to
+> specific signals on the chip.
 
-Thanks you for your proposal! And sorry for delayed responce.
+That might be, but there is no reason why we can't interpret that
+creatively :)
 
-lru_add_drain_all()/drain_all_pages() might be helpful, but it 
-seems that the window is not very small because I tried to do
-offline some times, and every offline failed...
+> > So, I don't know how GPIOs are mapped into the PMC when they are a wakeup
+> > source. It might be all of them have the ability so there is some 1:1
+> > relation ship or if the whole GPIO -> PMC connection can be built at run
+> > time, but that's just an implementation detail.
+> 
+> There's a fixed mapping for which signals go to which wake event. Some
+> of those events are mapped to GPIOs, others to different signals, such
+> as the RTC alarm. I think I should be able to build a GPIO -> PMC map
+> at runtime using a static table.
 
-I have another idea. I found that if the page is belonged to
-Movable zone and it has Uptodate flag, the page will go lru
-soon, so I think we can pass the page.
-Does the idea make sence? As far as I tested it, it works well.
+Ok, so for the RTC and the like (which are directly GIC backed) it's easy
+as you just say: RTC interrupt = PMC irq #N.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 52d9efe8c9fb..ecf87bec8ac6 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7758,6 +7758,9 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-                if (__PageMovable(page))
-                        continue;
+And for GPIO you can just have the GPIO domains all parented by the PMC
+domain 2 and then have the allocation function of the PMC domain do the
+lookup of the GPIOs which actually have a PMC connection.
 
-+               if ((zone_idx(zone) == ZONE_MOVABLE) && PageUptodate(page))
-+                       continue;
-+
-                if (!PageLRU(page))
-                        found++;
-                /*
+If it's there then you set the hwirq in the domains irq_data to the real
+PMC hwirq number and for those which are not connected you set it to some
+invalid value. In the set_type() callback you can then error out when it's
+called for a GPIO which is not connected to the PMC by checking the hwirq
+value.
+
+That way the GPIO code does not have any requirement to know about the PMC
+connections and only the PMC domain 2 needs to know. So if in the next chip
+the GPIO/PMC association changes, you don't have to worry about it at the
+GPIO (driver) level, you just hand a different GPIO/PMC map to the PMC
+driver via DT.
 
 Thanks,
-Masa
+
+	tglx
