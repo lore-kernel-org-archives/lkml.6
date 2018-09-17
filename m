@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DB9ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80322ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965A22146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965A22146F
+	by mail.kernel.org (Postfix) with ESMTP id 406802146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:06:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406802146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731211AbeIREfe (ORCPT
+        id S1731222AbeIREfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:35:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49424 "EHLO
+        Tue, 18 Sep 2018 00:35:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728677AbeIREfd (ORCPT
+        with ESMTP id S1728677AbeIREfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:35:33 -0400
+        Tue, 18 Sep 2018 00:35:36 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48541C49;
-        Mon, 17 Sep 2018 23:06:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEFACC77;
+        Mon, 17 Sep 2018 23:06:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Zumeng Chen <zumeng.chen@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 085/126] iommu/ipmmu-vmsa: Fix allocation in atomic context
-Date:   Tue, 18 Sep 2018 00:42:13 +0200
-Message-Id: <20180917211709.651465526@linuxfoundation.org>
+Subject: [PATCH 4.14 086/126] mfd: ti_am335x_tscadc: Fix struct clk memory leak
+Date:   Tue, 18 Sep 2018 00:42:14 +0200
+Message-Id: <20180917211709.702198704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -54,87 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Zumeng Chen <zumeng.chen@gmail.com>
 
-[ Upstream commit 46583e8c48c5a094ba28060615b3a7c8c576690f ]
+[ Upstream commit c2b1509c77a99a0dcea0a9051ca743cb88385f50 ]
 
-When attaching a device to an IOMMU group with
-CONFIG_DEBUG_ATOMIC_SLEEP=y:
+Use devm_elk_get() to let Linux manage struct clk memory to avoid the following
+memory leakage report:
 
-    BUG: sleeping function called from invalid context at mm/slab.h:421
-    in_atomic(): 1, irqs_disabled(): 128, pid: 61, name: kworker/1:1
-    ...
-    Call trace:
-     ...
-     arm_lpae_alloc_pgtable+0x114/0x184
-     arm_64_lpae_alloc_pgtable_s1+0x2c/0x128
-     arm_32_lpae_alloc_pgtable_s1+0x40/0x6c
-     alloc_io_pgtable_ops+0x60/0x88
-     ipmmu_attach_device+0x140/0x334
+unreferenced object 0xdd75efc0 (size 64):
+  comm "systemd-udevd", pid 186, jiffies 4294945126 (age 1195.750s)
+  hex dump (first 32 bytes):
+    61 64 63 5f 74 73 63 5f 66 63 6b 00 00 00 00 00  adc_tsc_fck.....
+    00 00 00 00 92 03 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<c0a15260>] kmemleak_alloc+0x40/0x74
+    [<c0287a10>] __kmalloc_track_caller+0x198/0x388
+    [<c0255610>] kstrdup+0x40/0x5c
+    [<c025565c>] kstrdup_const+0x30/0x3c
+    [<c0636630>] __clk_create_clk+0x60/0xac
+    [<c0630918>] clk_get_sys+0x74/0x144
+    [<c0630cdc>] clk_get+0x5c/0x68
+    [<bf0ac540>] ti_tscadc_probe+0x260/0x468 [ti_am335x_tscadc]
+    [<c06f3c0c>] platform_drv_probe+0x60/0xac
+    [<c06f1abc>] driver_probe_device+0x214/0x2dc
+    [<c06f1c18>] __driver_attach+0x94/0xc0
+    [<c06efe2c>] bus_for_each_dev+0x90/0xa0
+    [<c06f1470>] driver_attach+0x28/0x30
+    [<c06f1030>] bus_add_driver+0x184/0x1ec
+    [<c06f2b74>] driver_register+0xb0/0xf0
+    [<c06f3b4c>] __platform_driver_register+0x40/0x54
 
-ipmmu_attach_device() takes a spinlock, while arm_lpae_alloc_pgtable()
-allocates memory using GFP_KERNEL.  Originally, the ipmmu-vmsa driver
-had its own custom page table allocation implementation using
-GFP_ATOMIC, hence the spinlock was fine.
-
-Fix this by replacing the spinlock by a mutex, like the arm-smmu driver
-does.
-
-Fixes: f20ed39f53145e45 ("iommu/ipmmu-vmsa: Use the ARM LPAE page table allocator")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/ipmmu-vmsa.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/mfd/ti_am335x_tscadc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -54,7 +54,7 @@ struct ipmmu_vmsa_domain {
- 	struct io_pgtable_ops *iop;
- 
- 	unsigned int context_id;
--	spinlock_t lock;			/* Protects mappings */
-+	struct mutex mutex;			/* Protects mappings */
- };
- 
- struct ipmmu_vmsa_iommu_priv {
-@@ -523,7 +523,7 @@ static struct iommu_domain *__ipmmu_doma
- 	if (!domain)
- 		return NULL;
- 
--	spin_lock_init(&domain->lock);
-+	mutex_init(&domain->mutex);
- 
- 	return &domain->io_domain;
- }
-@@ -548,7 +548,6 @@ static int ipmmu_attach_device(struct io
- 	struct iommu_fwspec *fwspec = dev->iommu_fwspec;
- 	struct ipmmu_vmsa_device *mmu = priv->mmu;
- 	struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
--	unsigned long flags;
- 	unsigned int i;
- 	int ret = 0;
- 
-@@ -557,7 +556,7 @@ static int ipmmu_attach_device(struct io
- 		return -ENXIO;
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -210,14 +210,13 @@ static	int ti_tscadc_probe(struct platfo
+ 	 * The TSC_ADC_SS controller design assumes the OCP clock is
+ 	 * at least 6x faster than the ADC clock.
+ 	 */
+-	clk = clk_get(&pdev->dev, "adc_tsc_fck");
++	clk = devm_clk_get(&pdev->dev, "adc_tsc_fck");
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get TSC fck\n");
+ 		err = PTR_ERR(clk);
+ 		goto err_disable_clk;
  	}
+ 	clock_rate = clk_get_rate(clk);
+-	clk_put(clk);
+ 	tscadc->clk_div = clock_rate / ADC_CLK;
  
--	spin_lock_irqsave(&domain->lock, flags);
-+	mutex_lock(&domain->mutex);
- 
- 	if (!domain->mmu) {
- 		/* The domain hasn't been used yet, initialize it. */
-@@ -574,7 +573,7 @@ static int ipmmu_attach_device(struct io
- 	} else
- 		dev_info(dev, "Reusing IPMMU context %u\n", domain->context_id);
- 
--	spin_unlock_irqrestore(&domain->lock, flags);
-+	mutex_unlock(&domain->mutex);
- 
- 	if (ret < 0)
- 		return ret;
+ 	/* TSCADC_CLKDIV needs to be configured to the value minus 1 */
 
 
