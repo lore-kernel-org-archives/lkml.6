@@ -2,96 +2,252 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CCCECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D945ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7172086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6AD5214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 05:26:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="ksb3gIPg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7172086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YlKUxobw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AD5214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeIQKtf (ORCPT
+        id S1728440AbeIQKwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 06:49:35 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:40190 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbeIQKtf (ORCPT
+        Mon, 17 Sep 2018 06:52:09 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40754 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbeIQKwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 06:49:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rmr8r/dvg5zBfzVzBC6i7VTPg85Egzw2u+whUMYD8Oc=; b=ksb3gIPgbAQi0oL1iCZk+LwADH
-        b5jjVmNTUkTp5lzG50Bfu2V7b0+vh03kbeWhHadu/+GZWt6uARMyMP+h3CeIA76dFilf1bj03J/wi
-        PEw7BAl51GL0/eVGpiZV0AbpXq60iavoqAN+4B+e1hM8JEm5HNFoSwNcct231e+dbVRM=;
-Received: from p200300ccfbca24001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbca:2400:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g1m0g-0006W0-3k; Mon, 17 Sep 2018 07:23:46 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g1m0f-0003Gz-Rk; Mon, 17 Sep 2018 07:23:45 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     kishon@ti.com, lee.jones@linaro.org, dmitry.torokhov@gmail.com,
-        daniel.thompson@linaro.org, wsa@the-dreams.de,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH RESEND] phy: phy-twl4030-usb: fix denied runtime access
-Date:   Mon, 17 Sep 2018 07:22:54 +0200
-Message-Id: <20180917052254.12336-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
+        Mon, 17 Sep 2018 06:52:09 -0400
+Received: by mail-io1-f66.google.com with SMTP id l14-v6so10436504iob.7
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 22:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xSDiHcWVpPzTmOXmNIyAqPlCRgcFjLTQ4zA32TRrvaw=;
+        b=YlKUxobwv9dKKuFFzmV5Viij7fZH1NjCXGHqT88Fj7CTQC/9jwzmbyNx36/hXGmA+q
+         ElGldgfpmr/PLpAfCszw1Rusl6Lbu5yJORMoImilBhUu0QyWLNXy2OiKHpmzkpsaAO0J
+         dy9GuRg33wVhMFRhllIsZMey0UIhrQ5lGdyNQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xSDiHcWVpPzTmOXmNIyAqPlCRgcFjLTQ4zA32TRrvaw=;
+        b=NctuEFI5M1EpwDPC7YGTQ0FEhMrahi2soLdEhjBFoQ/litVn91rFeXGzfvBdslTHlO
+         1CySSs0boyy7bXBknXsqA3eXl7bxAe27D/2Aqp24eJ23r9H7Ds4S08lkJWTnqKYgdICA
+         1mXZ3V8YcSjWjpKDtaD1MO7t7/Rwz/T4qU64eHX9d7HwsTMC5hDiYTgN869qqceUtZFu
+         GsLG4hstGvsIM3cSWuZvH7g/XGM+/FKuIc0fT/+W3CExM4mAcK0xc2RcS/paQ2hfAQpe
+         qVZHYiptAY+yZjkv3BiZWJDpfguOmboe61zyfGmQB0t05Y4+pSzOZZfy7Z9jdmXG0zuJ
+         jZYg==
+X-Gm-Message-State: APzg51Bz5WN3yyc1rGtIjA5//yd33aDW7kJUn5Yhhxu8rUc26n+xNz+1
+        1GaZfZGfwMxmQyG+OsgWe/8ExnYqIXTPQYYb9v3GfQ==
+X-Google-Smtp-Source: ANB0VdaUfMnDwRvnHn59KmKnRaxQLkXmZhoowgJsEiHezx6SBtTkGxygWUgsPw0fVqS1iVc0feukOrcb4cSs3e11cVs=
+X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr20379815ioa.60.1537161982767;
+ Sun, 16 Sep 2018 22:26:22 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Sun, 16 Sep 2018 22:26:21
+ -0700 (PDT)
+In-Reply-To: <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
+References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
+ <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
+ <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sun, 16 Sep 2018 22:26:21 -0700
+Message-ID: <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
-the counter will be incremented but the resume callback not called,
-so enumeration and charging will not start properly.
-To avoid that happen, wait and try again later.
+On 17 September 2018 at 06:09, Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, Sep 11, 2018 at 4:57 PM David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Andrew Lunn <andrew@lunn.ch>
+>> Date: Wed, 12 Sep 2018 01:30:15 +0200
+>>
+>> > Just as an FYI:
+>> >
+>> > 1) I don't think anybody in netdev has taken a serious look at the
+>> > network code yet. There is little point until the controversial part
+>> > of the code, Zinc, has been sorted out.
+>> >
+>> > 2) I personally would be surprised if DaveM took this code without
+>> > having an Acked-by from the crypto subsystem people. In the same way,
+>> > i doubt the crypto people would take an Ethernet driver without having
+>> > DaveM's Acked-by.
+>>
+>> Both of Andrew's statements are completely true.
+>>
+>> I'm not looking at any of the networking bits until the crypto stuff
+>> is fully sorted and fully supported and Ack'd by crypto folks.
+>
+> So, as a process question, whom exactly are we waiting for:
+>
+> CRYPTO API
+> M:      Herbert Xu <herbert@gondor.apana.org.au>
+> M:      "David S. Miller" <davem@davemloft.net>
+> L:      linux-crypto@vger.kernel.org
+>
+> Herbert hasn't replied to any of these submissions.  You're the other
+> maintainer :)
+>
+> To the extent that you (DaveM) want my ack, here's what I think of the
+> series so far:
+>
+> The new APIs to the crypto primitives are good.  For code that wants
+> to do a specific known crypto operation, they are much, much more
+> pleasant to use than the existing crypto API.  The code cleanups in
+> the big keys patch speak for themselves IMO.  I have no problem with
+> the addition of a brand-new API to the kernel, especially when it's a
+> nice one like Zinc's, even if that API starts out with only a couple
+> of users.
+>
+> Zinc's arrangement of arch code is just fine.  Sure, there are
+> arguments that putting arch-specific code in arch/ is better, but this
+> is mostly bikeshedding IMO.
+>
+> There has been some discussion of the exact best way to handle
+> simd_relax() and some other minor nitpicks of API details.  This kind
+> of stuff doesn't need to block the series -- it can always be reworked
+> down the road if needed.
+>
+> There are two things I don't like right now, though:
+>
+> 1. Zinc conflates the addition of a new API with the replacement of
+> some algorithm implementations.  This is problematic.  Look at the
+> recent benchmarks of ipsec before and after this series.  Apparently
+> big packets get faster and small packets get slower.  It would be
+> really nice to bisect the series to narrow down *where* the regression
+> came from, but, as currently structured, you can't.
+>
+> The right way to do this is to rearrange the series.  First, the new
+> Zinc APIs should be added, and they should be backed with the
+> *existing* crypto code.  (If the code needs to be moved or copied to a
+> new location, so be it.  The patch will be messy because somehow the
+> Zinc API is going to have to dispatch to the arch-specific code, and
+> the way that the crypto API handles it is not exactly friendly to this
+> type of use.  So be it.)  Then another patch should switch the crypto
+> API to use the Zinc interface.  That patch, *by itself*, can be
+> benchmarked.  If it causes a regression for small ipsec packets, then
+> it can be tracked down relatively easily.  Once this is all done, the
+> actual crypto implementation can be changed, and that changed can be
+> reviewed on its own merits.
+>
+> As a simplistic example, I wrote this code a while back:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=crypto/sha256_bpf&id=e9e12f056f2abed50a30b762db9185799f5864e6
+>
+> and its two parents.  This series added a more Zinc-like API to
+> SHA256.  And it did it without replacing the SHA256 implementation.
+> Doing this for Zinc would be a bit more complication, since the arch
+> code would need to be invoked too, but it should be doable.
+>
+> FWIW, Wireguard should not actually depend on the replacement of the
+> crypto implementation.
+>
+> 2. The new Zinc crypto implementations look like they're brand new.  I
+> realize that they have some history, some of them are derived from
+> OpenSSL, etc, but none of this is really apparent in the patches
+> themselves.  It would be great if the kernel could literally share the
+> same code as something like OpenSSL, since OpenSSL gets much more
+> attention than the kernel's crypto.  Failing that, it would be nice if
+> the patches made it more clear how the code differs from its origin.
+> At the very least, though, if the replacement of the crypto code were,
+> as above, a patch that just replaced the crypto code, it would be much
+> easier to review and benchmark intelligently.
+>
 
-Practically this happens when the device is woken up from suspend by
-plugging in usb.
+OK, so let me summarize my remaining concerns as well. I may be a bit
+more finicky than Andy, though.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/phy/ti/phy-twl4030-usb.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+First of all, the rate at which new revisions of this series are
+appearing increases the review effort unnecessarily, especially given
+that the latest version seemed to have some issues that would have
+been spotted by a simple build test. I would like to urge Jason to
+bear with us and bring this discussion to a close before resubmitting.
 
-diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4030-usb.c
-index a44680d64f9b..1f3cf4e48383 100644
---- a/drivers/phy/ti/phy-twl4030-usb.c
-+++ b/drivers/phy/ti/phy-twl4030-usb.c
-@@ -552,6 +552,15 @@ static irqreturn_t twl4030_usb_irq(int irq, void *_twl)
- 
- 	status = twl4030_usb_linkstat(twl);
- 
-+	/* we might get here too early when runtime is not ready yet
-+	 * and we will get an EACCESS later, so try again later
-+	 */
-+	if (!pm_runtime_enabled(twl->dev)) {
-+		cancel_delayed_work(&twl->id_workaround_work);
-+		schedule_delayed_work(&twl->id_workaround_work, HZ);
-+		return IRQ_HANDLED;
-+	}
-+
- 	mutex_lock(&twl->lock);
- 	if (status >= 0 && status != twl->linkstat) {
- 		status_changed =
--- 
-2.11.0
+As far as I can tell (i.e., as a user not a network dev), WireGuard is
+an excellent piece of code, and I would like to see it merged. I also
+think there is little disagreement about the quality of the proposed
+algorithm implementations and the usefulness of having a set of easy
+to use solid crypto primitives in addition to or complementing the
+current crypto API.
 
+I do have some concerns over how the code is organized though:
+
+* simd_relax() is currently not called by the crypto routines
+themselves. This means that the worst case scheduling latency is
+unbounded, which is unacceptable for the -rt kernel. The worst case
+scheduling latency should never be proportional to the input size.
+(Apologies for not spotting that earlier)
+
+* Using a cute name for the crypto library [that will end up being the
+preferred choice for casual use only] may confuse people, given that
+we have lots of code in crypto/ already. I'd much prefer using, e.g.,
+crypto/lib and crypto/api (regardless of where the arch specific
+pieces live)
+
+* I'd prefer the arch specific pieces to live under arch, but I can
+live with keeping them in a single place, as long as the arch
+maintainers have some kind of jurisdiction over them. I also think
+there should be some overlap between the maintainership
+responsibilities of the two generic pieces (api and lib).
+
+* (Nit) The GCC command line -include'd .h files contain variable and
+function definitions so they are actually .c files.
+
+* (Nit) Referencing CONFIG_xxx macros from -include'd files adds the
+implicit assumption that the -include appears after the -include of
+kconfig.h.
+
+* Adding /conditional/ -include's (or #include's) increases the size
+of the validation space, which is why we generally prefer
+unconditional includes (and static inline stubs), and 'if
+(IS_ENABLED(CONFIG_xxx))' over #ifdef CONFIG_xxx
+
+* The current organization of the code puts all available (for the
+arch) versions of all routines into a single module, which can only be
+built in once we update random.c to use Zinc's chacha20 routines. This
+bloats the core kernel (which is a huge deal for embedded systems that
+have very strict boot requirements). It also makes it impossible to
+simply blacklist a module if you, for instance, prefer to use the
+[potentially more power efficient] scalar code over the SIMD code when
+using a distro kernel.
+
+[To summarize the 4 points above, I'd much rather see a more
+conventional organization where different parts are provided by
+different modules. I don't think the argument that inlining is needed
+for performance is actually valid, given that we have branch
+predictors and static keys, and the arch SIMD code is built as
+separate object files anyway]
+
+* If we reuse source files from OpenSSL, we should use that actual
+source which is the perlasm not the emitted assembler. Also, we should
+work with Andy Polyakov (as I have done several times over the past 5+
+years) to upstream the changes we apply to the kernel version of the
+code. The same applies to code from other sources, btw, but I am not
+personally familiar with them.
+
+* If upstreaming the changes is not an option, they should be applied
+as a separate patch and not hidden in a 5000 line patch without any
+justification or documentation (but Jason is already working on that)
