@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCDCECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCEEECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D16F214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D16F214C5
+	by mail.kernel.org (Postfix) with ESMTP id 2EA382146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA382146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732347AbeIREkm (ORCPT
+        id S1732359AbeIREko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50478 "EHLO
+        Tue, 18 Sep 2018 00:40:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50486 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIREkm (ORCPT
+        with ESMTP id S1731765AbeIREko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:42 -0400
+        Tue, 18 Sep 2018 00:40:44 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45597707;
-        Mon, 17 Sep 2018 23:11:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83342707;
+        Mon, 17 Sep 2018 23:11:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
+        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 085/158] device-dax: avoid hang on error before devm_memremap_pages()
-Date:   Tue, 18 Sep 2018 00:41:55 +0200
-Message-Id: <20180917211715.132439137@linuxfoundation.org>
+Subject: [PATCH 4.18 086/158] NFSv4.0 fix client reference leak in callback
+Date:   Tue, 18 Sep 2018 00:41:56 +0200
+Message-Id: <20180917211715.181696624@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -52,62 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+From: Olga Kornievskaia <kolga@netapp.com>
 
-[ Upstream commit b7751410c180a05fdc21268f8661b1480169b0df ]
+[ Upstream commit 32cd3ee511f4e07ca25d71163b50e704808d22f4 ]
 
-dax_pmem_percpu_exit() waits for dax_pmem_percpu_release() to invoke the
-dax_pmem->cmp completion.  Unfortunately this approach to cleaning up
-the percpu_ref only works after devm_memremap_pages() was successful.
+If there is an error during processing of a callback message, it leads
+to refrence leak on the client structure and eventually an unclean
+superblock.
 
-If devm_add_action_or_reset() or devm_memremap_pages() fails,
-dax_pmem_percpu_release() is not invoked.  Therefore
-dax_pmem_percpu_exit() hangs waiting for the completion:
-
-  rc = devm_add_action_or_reset(dev, dax_pmem_percpu_exit,
-  				&dax_pmem->ref);
-  if (rc)
-  	return rc;
-
-  dax_pmem->pgmap.ref = &dax_pmem->ref;
-  addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
-
-Avoid the hang by calling percpu_ref_exit() in the error paths instead
-of going through dax_pmem_percpu_exit().
-
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dax/pmem.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/nfs/callback_xdr.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -105,15 +105,19 @@ static int dax_pmem_probe(struct device
- 	if (rc)
- 		return rc;
+--- a/fs/nfs/callback_xdr.c
++++ b/fs/nfs/callback_xdr.c
+@@ -883,16 +883,21 @@ static __be32 nfs4_callback_compound(str
  
--	rc = devm_add_action_or_reset(dev, dax_pmem_percpu_exit,
--							&dax_pmem->ref);
--	if (rc)
-+	rc = devm_add_action(dev, dax_pmem_percpu_exit, &dax_pmem->ref);
-+	if (rc) {
-+		percpu_ref_exit(&dax_pmem->ref);
- 		return rc;
+ 	if (hdr_arg.minorversion == 0) {
+ 		cps.clp = nfs4_find_client_ident(SVC_NET(rqstp), hdr_arg.cb_ident);
+-		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp))
++		if (!cps.clp || !check_gss_callback_principal(cps.clp, rqstp)) {
++			if (cps.clp)
++				nfs_put_client(cps.clp);
+ 			goto out_invalidcred;
++		}
+ 	}
+ 
+ 	cps.minorversion = hdr_arg.minorversion;
+ 	hdr_res.taglen = hdr_arg.taglen;
+ 	hdr_res.tag = hdr_arg.tag;
+-	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0)
++	if (encode_compound_hdr_res(&xdr_out, &hdr_res) != 0) {
++		if (cps.clp)
++			nfs_put_client(cps.clp);
+ 		return rpc_system_err;
+-
 +	}
- 
- 	dax_pmem->pgmap.ref = &dax_pmem->ref;
- 	addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
--	if (IS_ERR(addr))
-+	if (IS_ERR(addr)) {
-+		devm_remove_action(dev, dax_pmem_percpu_exit, &dax_pmem->ref);
-+		percpu_ref_exit(&dax_pmem->ref);
- 		return PTR_ERR(addr);
-+	}
- 
- 	rc = devm_add_action_or_reset(dev, dax_pmem_percpu_kill,
- 							&dax_pmem->ref);
+ 	while (status == 0 && nops != hdr_arg.nops) {
+ 		status = process_op(nops, rqstp, &xdr_in,
+ 				    rqstp->rq_argp, &xdr_out, rqstp->rq_resp,
 
 
