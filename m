@@ -6,56 +6,67 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B81ECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D72ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82B5F214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:37:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82B5F214D5
+	by mail.kernel.org (Postfix) with ESMTP id 3D3D0214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:37:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D3D0214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeIQUEt (ORCPT
+        id S1728977AbeIQUEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:04:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55244 "EHLO
+        Mon, 17 Sep 2018 16:04:55 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55239 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728892AbeIQUEs (ORCPT
+        with ESMTP id S1728931AbeIQUEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:04:48 -0400
+        Mon, 17 Sep 2018 16:04:46 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1g1ueD-0008Tw-Dv; Mon, 17 Sep 2018 16:37:09 +0200
-Message-Id: <20180917143546.589642503@linutronix.de>
+        id 1g1ueC-0008TO-6a; Mon, 17 Sep 2018 16:37:08 +0200
+Message-Id: <20180917143546.507259989@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 17 Sep 2018 16:29:17 +0200
+Date:   Mon, 17 Sep 2018 16:29:16 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [patch V3 11/11] x86/mm/cpa: Avoid the 4k pages check completely
+Subject: [patch V3 10/11] x86/mm/cpa: Do the range check early
 References: <20180917142906.384767038@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-mm-cpa--Avoid-the-4k-pages-check-completely.patch
+ filename=x86-mm-cpa--Do-the-range-check-early.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The extra loop which tries hard to preserve large pages in case of conflicts
-with static protection regions turns out to be not preserving anything, at
-least not in the experiments which have been conducted.
+To avoid excessive 4k wise checks in the common case do a quick check first
+whether the requested new page protections conflict with a static
+protection area in the large page. If there is no conflict then the
+decision whether to preserve or to split the page can be made immediately.
 
-There might be corner cases in which the code would be able to preserve a
-large page oaccsionally, but it's really not worth the extra code and the
-cycles wasted in the common case.
+If the requested range covers the full large page, preserve it. Otherwise
+split it up. No point in doing a slow crawl in 4k steps.
 
 Before:
+
+ 1G pages checked:                    2
+ 1G pages sameprot:                   0
+ 1G pages preserved:                  0
+ 2M pages checked:                  538
+ 2M pages sameprot:                 466
+ 2M pages preserved:                 47
+ 4K pages checked:               560642
+ 4K pages set-checked:             7668
+
+After:
 
  1G pages checked:                    2
  1G pages sameprot:                   0
@@ -66,138 +77,51 @@ Before:
  4K pages checked:                  514
  4K pages set-checked:             7668
 
-After:
- 1G pages checked:                    2
- 1G pages sameprot:                   0
- 1G pages preserved:                  0
- 2M pages checked:                  538
- 2M pages sameprot:                 466
- 2M pages preserved:                 47
- 4K pages set-checked:             7668
-
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/mm/pageattr.c |   66 ++++++++++++-------------------------------------
- 1 file changed, 17 insertions(+), 49 deletions(-)
+ arch/x86/mm/pageattr.c |   27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -111,7 +111,6 @@ static unsigned long cpa_1g_preserved;
- static unsigned long cpa_2m_checked;
- static unsigned long cpa_2m_sameprot;
- static unsigned long cpa_2m_preserved;
--static unsigned long cpa_4k_checked;
- static unsigned long cpa_4k_install;
- 
- static inline void cpa_inc_1g_checked(void)
-@@ -124,11 +123,6 @@ static inline void cpa_inc_2m_checked(vo
- 	cpa_2m_checked++;
- }
- 
--static inline void cpa_inc_4k_checked(void)
--{
--	cpa_4k_checked++;
--}
--
- static inline void cpa_inc_4k_install(void)
- {
- 	cpa_4k_install++;
-@@ -158,7 +152,6 @@ static int cpastats_show(struct seq_file
- 	seq_printf(m, "2M pages checked:     %16lu\n", cpa_2m_checked);
- 	seq_printf(m, "2M pages sameprot:    %16lu\n", cpa_2m_sameprot);
- 	seq_printf(m, "2M pages preserved:   %16lu\n", cpa_2m_preserved);
--	seq_printf(m, "4K pages checked:     %16lu\n", cpa_4k_checked);
- 	seq_printf(m, "4K pages set-checked: %16lu\n", cpa_4k_install);
- 	return 0;
- }
-@@ -185,7 +178,6 @@ late_initcall(cpa_stats_init);
- #else
- static inline void cpa_inc_1g_checked(void) { }
- static inline void cpa_inc_2m_checked(void) { }
--static inline void cpa_inc_4k_checked(void) { }
- static inline void cpa_inc_4k_install(void) { }
- static inline void cpa_inc_lp_sameprot(int level) { }
- static inline void cpa_inc_lp_preserved(int level) { }
-@@ -741,11 +733,10 @@ static pgprot_t pgprot_clear_protnone_bi
- static int __should_split_large_page(pte_t *kpte, unsigned long address,
- 				     struct cpa_data *cpa)
- {
--	unsigned long numpages, pmask, psize, lpaddr, addr, pfn, old_pfn;
-+	unsigned long numpages, pmask, psize, lpaddr, pfn, old_pfn;
- 	pgprot_t old_prot, new_prot, req_prot, chk_prot;
- 	pte_t new_pte, old_pte, *tmp;
- 	enum pg_level level;
--	int i;
- 
- 	/*
- 	 * Check for races, another CPU might have split this page
-@@ -850,53 +841,30 @@ static int __should_split_large_page(pte
+@@ -850,10 +850,28 @@ static int __should_split_large_page(pte
  	}
  
  	/*
--	 * Optimization: Check whether the requested pgprot is conflicting
--	 * with a static protection requirement in the large page. If not,
--	 * then checking whether the requested range is fully covering the
--	 * large page can be done right here.
-+	 * If the requested range does not cover the full page, split it up
- 	 */
--	new_prot = static_protections(req_prot, lpaddr, old_pfn, numpages,
--				      CPA_DETECT);
--
--	if (pgprot_val(req_prot) == pgprot_val(new_prot)) {
--		if (address != lpaddr || cpa->numpages != numpages)
--			return 1;
--		goto setlp;
--	}
-+	if (address != lpaddr || cpa->numpages != numpages)
-+		return 1;
- 
- 	/*
--	 * Slow path. The full large page check above established that the
--	 * requested pgprot cannot be applied to the full large page due to
--	 * conflicting requirements of static protection regions. It might
--	 * turn out that the whole requested range is covered by the
--	 * modified protection of the first 4k segment at @address. This
--	 * might result in the ability to preserve the large page
--	 * nevertheless.
--	 */
--	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
--	pfn = old_pfn;
--	for (i = 0, addr = lpaddr; i < numpages; i++, addr += PAGE_SIZE, pfn++) {
--		chk_prot = static_protections(req_prot, addr, pfn, 1,
--					      CPA_DETECT);
--		cpa_inc_4k_checked();
--		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
--			return 1;
--	}
--
--	/* If there are no changes, return. */
--	if (pgprot_val(new_prot) == pgprot_val(old_prot)) {
--		cpa_inc_lp_sameprot(level);
--		return 0;
--	}
-+	 * Check whether the requested pgprot is conflicting with a static
-+	 * protection requirement in the large page.
+-	 * Make sure that the requested pgprot does not violate the static
+-	 * protections. Check the full large page whether one of the pages
+-	 * in it results in a different pgprot than the first one of the
+-	 * requested range. If yes, then the page needs to be split.
++	 * Optimization: Check whether the requested pgprot is conflicting
++	 * with a static protection requirement in the large page. If not,
++	 * then checking whether the requested range is fully covering the
++	 * large page can be done right here.
 +	 */
 +	new_prot = static_protections(req_prot, lpaddr, old_pfn, numpages,
 +				      CPA_DETECT);
- 
- 	/*
--	 * Verify that the address is aligned and the number of pages
--	 * covers the full page.
-+	 * If there is a conflict, split the large page.
-+	 *
-+	 * There used to be a 4k wise evaluation trying really hard to
-+	 * preserve the large pages, but experimentation has shown, that this
-+	 * does not help at all. There might be corner cases which would
-+	 * preserve one large page occasionally, but it's really not worth the
-+	 * extra code and cycles for the common case.
++
++	if (pgprot_val(req_prot) == pgprot_val(new_prot)) {
++		if (address != lpaddr || cpa->numpages != numpages)
++			return 1;
++		goto setlp;
++	}
++
++	/*
++	 * Slow path. The full large page check above established that the
++	 * requested pgprot cannot be applied to the full large page due to
++	 * conflicting requirements of static protection regions. It might
++	 * turn out that the whole requested range is covered by the
++	 * modified protection of the first 4k segment at @address. This
++	 * might result in the ability to preserve the large page
++	 * nevertheless.
  	 */
--	if (address != lpaddr || cpa->numpages != numpages)
-+	if (pgprot_val(req_prot) != pgprot_val(new_prot))
+ 	new_prot = static_protections(req_prot, address, pfn, 1, CPA_DETECT);
+ 	pfn = old_pfn;
+@@ -878,6 +896,7 @@ static int __should_split_large_page(pte
+ 	if (address != lpaddr || cpa->numpages != numpages)
  		return 1;
  
--setlp:
++setlp:
  	/* All checks passed. Update the large page mapping. */
  	new_pte = pfn_pte(old_pfn, new_prot);
  	__set_pmd_pte(kpte, address, new_pte);
