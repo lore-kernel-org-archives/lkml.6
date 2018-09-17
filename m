@@ -2,68 +2,68 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D0AECE565
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BCFECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C46214C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F9CB2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 00:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KvmAE2K1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C46214C3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z2pYCTr+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9CB2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbeIQGXN (ORCPT
+        id S1728559AbeIQGXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 02:23:13 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52587 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728511AbeIQGXM (ORCPT
+        Mon, 17 Sep 2018 02:23:14 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52590 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728518AbeIQGXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 02:23:12 -0400
-Received: by mail-it0-f66.google.com with SMTP id h3-v6so9079248ita.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 17:58:19 -0700 (PDT)
+        Mon, 17 Sep 2018 02:23:13 -0400
+Received: by mail-it0-f68.google.com with SMTP id h3-v6so9079286ita.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 17:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eJH11aBb5GlguuXS0xBxC+fzG4Kc/S3a2ZBQ9aPxUZQ=;
-        b=KvmAE2K1QPiVuM0vacAsHLFyQN0Yg3RlgWSBKLvPjztxElR5VxAbIyg96z2S6a9zNM
-         QsOsvLhGc9v0dguuCHLkUiiT6RbniOu0NPl56r94CnhrzwD92zDdqNKLUJFUUABcvNac
-         rYe5EpXv69pnU5yMECXbjyoLaKlc/Uniq8j4Q=
+        bh=IA3NssNVI2Q9RVwkXpQaJ3ttyxnrxpJbsIkQeijt2Ss=;
+        b=Z2pYCTr+Y/yxuuilUK/mg+MDzsVEnq5rsFz/kAZsIDZykVc179SM+xFUeVkKEiT+jv
+         0cmtGq80u9EFhJ8dX2/8nZGY0CQF6ZSmB6aBu/TdNWCZESwWL+I62W6m+2Y/CGeY+3UI
+         eAcmXhDbaJ83TY+QuLMHYze8svWIB5+BXRI2s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eJH11aBb5GlguuXS0xBxC+fzG4Kc/S3a2ZBQ9aPxUZQ=;
-        b=Dn1sabPXUa6rykGO3RscbuR6556Xc7JgkujftQcIVzMpfoa68ogIhDm9TkGvscNZIo
-         0XSkBI6G+oJqvq4l/DfmMdOmI9OFe7dyaXr8N6u7hUMuiai2kA/aNPOPFBmcf2Bo3WTb
-         vsmKbXAxoi1V/FulKLfyH0PJXvpcq2op/vLn1grP6GnFIIRJwVFqYw0C9upnFwomJeWl
-         vGISFaIvIdP2NsF/yMbKBY6wVmpnWlVU9sE9zmBzbWr+w3cStxB/k4tJZJnSnwbnCmdl
-         DulSVbVnCeqzVh3aU4L4SiS6G3gRBNfGDwLJtinbo6HjveJ5FuOwtZryLKS4MpMcKGXO
-         BNmQ==
-X-Gm-Message-State: APzg51BXPQu+84AIC17tYBW3jD5YT6ee2rXdiDza40PN93bTpYlLD8Mv
-        vt56NE3tMkgxt3z+XjOtCkuleA==
-X-Google-Smtp-Source: ANB0VdY3Ug7+qHV9HRxeHemw1MsUahz7XN0r0zw1Kzw6eD8ZEEn3EEmKwZsj+pxfo4GkJNUcsX78Ww==
-X-Received: by 2002:a24:1d52:: with SMTP id 79-v6mr10305796itj.142.1537145898993;
-        Sun, 16 Sep 2018 17:58:18 -0700 (PDT)
+        bh=IA3NssNVI2Q9RVwkXpQaJ3ttyxnrxpJbsIkQeijt2Ss=;
+        b=q87fw/UsCbQTUHarcEhm2tMM0nslSVRINHdmMRN7OFeXwk26CLuSVeUBOL97Ip5hLu
+         hq4z+OdrZTxaGzkpkZ3pDay1jjRhhJj93pv9I/vq72s4+HSyZ6AoS7cqUwCyT04WTiYS
+         nbXfS58e+Jc6CCs5ePEzYUD+5fs5LvDfpl8BFCZaFtnNgiMz/svnOCoAnTQMWryyMl8k
+         blwYBRz5dYvPD/eOVnqynHpOtXW3awXmJZ4jYADkyUWjro2LS88nwParF2BCwB+rvsj8
+         M3fvcPVlE9WeD+vaHBCV4x5oxKr6wiZuI6XgzS7nIvTm855loADmya1SQ5GgKzlMx1Y3
+         StYw==
+X-Gm-Message-State: APzg51BixiKcoHsRZEzWJ/tVFUY9bjbHlv6YwbcaX2c37PC8vthobSrq
+        LyQPHR76OKPmfK7Sjqs06mscoQ==
+X-Google-Smtp-Source: ANB0VdbfsDXVl7Owl/BfMbkrOrg58YWGLqF1DDptBLvFuebojrkXqmldp1COty2dWmBSXXuFeN/v5Q==
+X-Received: by 2002:a02:9a10:: with SMTP id b16-v6mr20810874jal.4.1537145900260;
+        Sun, 16 Sep 2018 17:58:20 -0700 (PDT)
 Received: from localhost.localdomain ([209.82.80.116])
-        by smtp.gmail.com with ESMTPSA id f64-v6sm829972ite.4.2018.09.16.17.58.17
+        by smtp.gmail.com with ESMTPSA id f64-v6sm829972ite.4.2018.09.16.17.58.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Sep 2018 17:58:18 -0700 (PDT)
+        Sun, 16 Sep 2018 17:58:19 -0700 (PDT)
 From:   srinivas.kandagatla@linaro.org
 To:     lee.jones@linaro.org, robh+dt@kernel.org, broonie@kernel.org
 Cc:     mark.rutland@arm.com, lgirdwood@gmail.com, bgoswami@codeaurora.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         vkoul@kernel.org, alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 13/14] ASoC: apq8096: add headset JACK support
-Date:   Sun, 16 Sep 2018 17:57:26 -0700
-Message-Id: <20180917005727.32728-14-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 14/14] ASoC: qcom: common: move be_hw_fixup to common
+Date:   Sun, 16 Sep 2018 17:57:27 -0700
+Message-Id: <20180917005727.32728-15-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.9.3
 In-Reply-To: <20180917005727.32728-1-srinivas.kandagatla@linaro.org>
 References: <20180917005727.32728-1-srinivas.kandagatla@linaro.org>
@@ -74,136 +74,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
+be_hw_fixup for qdsp is common across mutiple qcom machine drivers,
+so move it to common file and remove the redundant code.
+
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- sound/soc/qcom/apq8096.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ sound/soc/qcom/apq8096.c | 15 ---------------
+ sound/soc/qcom/common.c  | 17 +++++++++++++++++
+ sound/soc/qcom/sdm845.c  | 22 ++--------------------
+ 3 files changed, 19 insertions(+), 35 deletions(-)
 
 diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index 66a28c2..daad43f 100644
+index daad43f..9cb26aee 100644
 --- a/sound/soc/qcom/apq8096.c
 +++ b/sound/soc/qcom/apq8096.c
-@@ -5,14 +5,21 @@
- #include <linux/platform_device.h>
- #include <linux/of_device.h>
- #include <sound/soc.h>
-+#include <sound/jack.h>
- #include <sound/soc-dapm.h>
- #include <sound/pcm.h>
-+#include <uapi/linux/input-event-codes.h>
+@@ -20,20 +20,6 @@ struct apq8096_card_data {
+ 	bool jack_setup;
+ };
+ 
+-static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+-				      struct snd_pcm_hw_params *params)
+-{
+-	struct snd_interval *rate = hw_param_interval(params,
+-					SNDRV_PCM_HW_PARAM_RATE);
+-	struct snd_interval *channels = hw_param_interval(params,
+-					SNDRV_PCM_HW_PARAM_CHANNELS);
+-
+-	rate->min = rate->max = 48000;
+-	channels->min = channels->max = 2;
+-
+-	return 0;
+-}
+-
+ static int msm_snd_hw_params(struct snd_pcm_substream *substream,
+ 			     struct snd_pcm_hw_params *params)
+ {
+@@ -139,7 +125,6 @@ static void apq8096_add_be_ops(struct snd_soc_card *card)
+ 
+ 	for (i = 0; i < num_links; i++) {
+ 		if (link->no_pcm == 1) {
+-			link->be_hw_params_fixup = apq8096_be_hw_params_fixup;
+ 			link->init = apq8096_init;
+ 			link->ops = &apq8096_ops;
+ 		}
+diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
+index eb1b9da..ce8e759 100644
+--- a/sound/soc/qcom/common.c
++++ b/sound/soc/qcom/common.c
+@@ -3,8 +3,24 @@
+ // Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ 
+ #include <linux/module.h>
++#include <sound/pcm_params.h>
  #include "common.h"
  
- #define SLIM_MAX_TX_PORTS 16
- #define SLIM_MAX_RX_PORTS 16
- #define WCD9335_DEFAULT_MCLK_RATE	9600000
- 
-+struct apq8096_card_data {
-+	struct snd_soc_jack jack;
-+	bool jack_setup;
-+};
++static int qcom_snd_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
++				       struct snd_pcm_hw_params *params)
++{
++	struct snd_interval *rate = hw_param_interval(params,
++					SNDRV_PCM_HW_PARAM_RATE);
++	struct snd_interval *channels = hw_param_interval(params,
++					SNDRV_PCM_HW_PARAM_CHANNELS);
 +
- static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 				      struct snd_pcm_hw_params *params)
++	rate->min = rate->max = 48000;
++	channels->min = channels->max = 2;
++	params_set_format(params, SNDRV_PCM_FORMAT_S16_LE);
++
++	return 0;
++}
++
+ int qcom_snd_parse_of(struct snd_soc_card *card)
  {
-@@ -68,6 +75,7 @@ static struct snd_soc_ops apq8096_ops = {
- static int apq8096_init(struct snd_soc_pcm_runtime *rtd)
+ 	struct device_node *np;
+@@ -79,6 +95,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 			}
+ 			link->no_pcm = 1;
+ 			link->ignore_pmdown_time = 1;
++			link->be_hw_params_fixup = qcom_snd_be_hw_params_fixup;
+ 		} else {
+ 			link->platform_of_node = link->cpu_of_node;
+ 			link->codec_dai_name = "snd-soc-dummy-dai";
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index 2a781d8..87e150c 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -11,7 +11,6 @@
+ #include "common.h"
+ #include "qdsp6/q6afe.h"
+ 
+-#define DEFAULT_SAMPLE_RATE_48K		48000
+ #define DEFAULT_MCLK_RATE		24576000
+ #define DEFAULT_BCLK_RATE		12288000
+ 
+@@ -177,32 +176,15 @@ static struct snd_soc_ops sdm845_be_ops = {
+ 	.shutdown = sdm845_snd_shutdown,
+ };
+ 
+-static int sdm845_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+-				struct snd_pcm_hw_params *params)
+-{
+-	struct snd_interval *rate = hw_param_interval(params,
+-					SNDRV_PCM_HW_PARAM_RATE);
+-	struct snd_interval *channels = hw_param_interval(params,
+-					SNDRV_PCM_HW_PARAM_CHANNELS);
+-	struct snd_mask *fmt = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
+-
+-	rate->min = rate->max = DEFAULT_SAMPLE_RATE_48K;
+-	channels->min = channels->max = 2;
+-	snd_mask_set_format(fmt, SNDRV_PCM_FORMAT_S16_LE);
+-
+-	return 0;
+-}
+-
+ static void sdm845_add_be_ops(struct snd_soc_card *card)
  {
- 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	struct apq8096_card_data *data = snd_soc_card_get_drvdata(rtd->card);
+ 	struct snd_soc_dai_link *link = card->dai_link;
+ 	int i, num_links = card->num_links;
  
- 	/*
- 	 * Codec SLIMBUS configuration
-@@ -80,6 +88,8 @@ static int apq8096_init(struct snd_soc_pcm_runtime *rtd)
- 	unsigned int tx_ch[SLIM_MAX_TX_PORTS] = {128, 129, 130, 131, 132, 133,
- 					    134, 135, 136, 137, 138, 139,
- 					    140, 141, 142, 143};
-+	struct snd_soc_card *card = rtd->card;
-+	int rval;
- 
- 	snd_soc_dai_set_channel_map(codec_dai, ARRAY_SIZE(tx_ch),
- 					tx_ch, ARRAY_SIZE(rx_ch), rx_ch);
-@@ -87,6 +97,38 @@ static int apq8096_init(struct snd_soc_pcm_runtime *rtd)
- 	snd_soc_dai_set_sysclk(codec_dai, 0, WCD9335_DEFAULT_MCLK_RATE,
- 				SNDRV_PCM_STREAM_PLAYBACK);
- 
-+	if (!data->jack_setup) {
-+		struct snd_jack *jack;
+ 	for (i = 0; i < num_links; i++) {
+-		if (link->no_pcm == 1) {
++		if (link->no_pcm == 1)
+ 			link->ops = &sdm845_be_ops;
+-			link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
+-		}
 +
-+		rval = snd_soc_card_jack_new(card, "Headset Jack",
-+					     SND_JACK_HEADSET |
-+					     SND_JACK_HEADPHONE |
-+					     SND_JACK_BTN_0 | SND_JACK_BTN_1 |
-+					     SND_JACK_BTN_2 | SND_JACK_BTN_3 |
-+					     SND_JACK_BTN_4,
-+					     &data->jack, NULL, 0);
-+
-+		if (rval < 0) {
-+			dev_err(card->dev, "Unable to add Headphone Jack\n");
-+			return rval;
-+		}
-+
-+		jack = data->jack.jack;
-+
-+		snd_jack_set_key(jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
-+		snd_jack_set_key(jack, SND_JACK_BTN_1, KEY_VOICECOMMAND);
-+		snd_jack_set_key(jack, SND_JACK_BTN_2, KEY_VOLUMEUP);
-+		snd_jack_set_key(jack, SND_JACK_BTN_3, KEY_VOLUMEDOWN);
-+		data->jack_setup = true;
-+	}
-+
-+	rval = snd_soc_component_set_jack(codec_dai->component,
-+					 &data->jack, NULL);
-+	if (rval != 0 && rval != -ENOTSUPP) {
-+		dev_warn(card->dev, "Failed to set jack: %d\n", rval);
-+		return rval;
-+	}
-+
- 	return 0;
- }
- 
-@@ -107,6 +149,7 @@ static void apq8096_add_be_ops(struct snd_soc_card *card)
- 
- static int apq8096_platform_probe(struct platform_device *pdev)
- {
-+	struct apq8096_card_data *data;
- 	struct snd_soc_card *card;
- 	struct device *dev = &pdev->dev;
- 	int ret;
-@@ -115,8 +158,15 @@ static int apq8096_platform_probe(struct platform_device *pdev)
- 	if (!card)
- 		return -ENOMEM;
- 
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data) {
-+		kfree(card);
-+		return -ENOMEM;
-+	}
-+
- 	card->dev = dev;
- 	dev_set_drvdata(dev, card);
-+	snd_soc_card_set_drvdata(card, data);
- 	ret = qcom_snd_parse_of(card);
- 	if (ret) {
- 		dev_err(dev, "Error parsing OF data\n");
-@@ -134,16 +184,19 @@ static int apq8096_platform_probe(struct platform_device *pdev)
- 	kfree(card->dai_link);
- err:
- 	kfree(card);
-+	kfree(data);
- 	return ret;
- }
- 
- static int apq8096_platform_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = dev_get_drvdata(&pdev->dev);
-+	struct apq8096_card_data *data = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 	kfree(card->dai_link);
- 	kfree(card);
-+	kfree(data);
- 
- 	return 0;
+ 		link++;
+ 	}
  }
 -- 
 2.9.3
