@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AD8ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75230ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29AB72146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29AB72146F
+	by mail.kernel.org (Postfix) with ESMTP id 368F42146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:10:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368F42146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732095AbeIREjt (ORCPT
+        id S1732103AbeIREj4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:39:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50302 "EHLO
+        Tue, 18 Sep 2018 00:39:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50318 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbeIREjs (ORCPT
+        with ESMTP id S1729160AbeIREjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:39:48 -0400
+        Tue, 18 Sep 2018 00:39:55 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1388707;
-        Mon, 17 Sep 2018 23:10:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00537C49;
+        Mon, 17 Sep 2018 23:10:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 067/158] media: camss: csid: Configure data type and decode format properly
-Date:   Tue, 18 Sep 2018 00:41:37 +0200
-Message-Id: <20180917211714.335058930@linuxfoundation.org>
+Subject: [PATCH 4.18 069/158] misc: ti-st: Fix memory leak in the error path of probe()
+Date:   Tue, 18 Sep 2018 00:41:39 +0200
+Message-Id: <20180917211714.431287543@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,74 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Todor Tomov <todor.tomov@linaro.org>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit c628e78899ff8006b5f9d8206da54ed3bb994342 ]
+[ Upstream commit 81ae962d7f180c0092859440c82996cccb254976 ]
 
-The CSID decodes the input data stream. When the input comes from
-the Test Generator the format of the stream is set on the source
-media pad. When the input comes from the CSIPHY the format is the
-one on the sink media pad. Use the proper format for each case.
+Free resources instead of direct return of the error code if kim_probe
+fails.
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/qcom/camss-8x16/camss-csid.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/misc/ti-st/st_kim.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss-8x16/camss-csid.c
-@@ -392,9 +392,6 @@ static int csid_set_stream(struct v4l2_s
- 		    !media_entity_remote_pad(&csid->pads[MSM_CSID_PAD_SINK]))
- 			return -ENOLINK;
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -756,14 +756,14 @@ static int kim_probe(struct platform_dev
+ 	err = gpio_request(kim_gdata->nshutdown, "kim");
+ 	if (unlikely(err)) {
+ 		pr_err(" gpio %d request failed ", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
  
--		dt = csid_get_fmt_entry(csid->fmt[MSM_CSID_PAD_SRC].code)->
--								data_type;
--
- 		if (tg->enabled) {
- 			/* Config Test Generator */
- 			struct v4l2_mbus_framefmt *f =
-@@ -416,6 +413,9 @@ static int csid_set_stream(struct v4l2_s
- 			writel_relaxed(val, csid->base +
- 				       CAMSS_CSID_TG_DT_n_CGG_0(0));
- 
-+			dt = csid_get_fmt_entry(
-+				csid->fmt[MSM_CSID_PAD_SRC].code)->data_type;
-+
- 			/* 5:0 data type */
- 			val = dt;
- 			writel_relaxed(val, csid->base +
-@@ -425,6 +425,9 @@ static int csid_set_stream(struct v4l2_s
- 			val = tg->payload_mode;
- 			writel_relaxed(val, csid->base +
- 				       CAMSS_CSID_TG_DT_n_CGG_2(0));
-+
-+			df = csid_get_fmt_entry(
-+				csid->fmt[MSM_CSID_PAD_SRC].code)->decode_format;
- 		} else {
- 			struct csid_phy_config *phy = &csid->phy;
- 
-@@ -439,13 +442,16 @@ static int csid_set_stream(struct v4l2_s
- 
- 			writel_relaxed(val,
- 				       csid->base + CAMSS_CSID_CORE_CTRL_1);
-+
-+			dt = csid_get_fmt_entry(
-+				csid->fmt[MSM_CSID_PAD_SINK].code)->data_type;
-+			df = csid_get_fmt_entry(
-+				csid->fmt[MSM_CSID_PAD_SINK].code)->decode_format;
- 		}
- 
- 		/* Config LUT */
- 
- 		dt_shift = (cid % 4) * 8;
--		df = csid_get_fmt_entry(csid->fmt[MSM_CSID_PAD_SINK].code)->
--								decode_format;
- 
- 		val = readl_relaxed(csid->base + CAMSS_CSID_CID_LUT_VC_n(vc));
- 		val &= ~(0xff << dt_shift);
+ 	/* Configure nShutdown GPIO as output=0 */
+ 	err = gpio_direction_output(kim_gdata->nshutdown, 0);
+ 	if (unlikely(err)) {
+ 		pr_err(" unable to configure gpio %d", kim_gdata->nshutdown);
+-		return err;
++		goto err_sysfs_group;
+ 	}
+ 	/* get reference of pdev for request_firmware
+ 	 */
 
 
