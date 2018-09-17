@@ -2,41 +2,39 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E688ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345CDECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000E32146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000E32146F
+	by mail.kernel.org (Postfix) with ESMTP id EAC122146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC122146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729344AbeIRE2e (ORCPT
+        id S1727846AbeIRE2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:28:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47804 "EHLO
+        Tue, 18 Sep 2018 00:28:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47814 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbeIRE2e (ORCPT
+        with ESMTP id S1727139AbeIRE2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:28:34 -0400
+        Tue, 18 Sep 2018 00:28:37 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F7E9C03;
-        Mon, 17 Sep 2018 22:59:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0165C03;
+        Mon, 17 Sep 2018 22:59:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 65/70] RDMA/cma: Do not ignore net namespace for unbound cm_id
-Date:   Tue, 18 Sep 2018 00:42:38 +0200
-Message-Id: <20180917211654.218058045@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 4.9 66/70] xhci: Fix use-after-free in xhci_free_virt_device
+Date:   Tue, 18 Sep 2018 00:42:39 +0200
+Message-Id: <20180917211654.286753406@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -54,49 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit 643d213a9a034fa04f5575a40dfc8548e33ce04f ]
+commit 44a182b9d17765514fa2b1cc911e4e65134eef93 upstream.
 
-Currently if the cm_id is not bound to any netdevice, than for such cm_id,
-net namespace is ignored; which is incorrect.
+KASAN found a use-after-free in xhci_free_virt_device+0x33b/0x38e
+where xhci_free_virt_device() sets slot id to 0 if udev exists:
+if (dev->udev && dev->udev->slot_id)
+	dev->udev->slot_id = 0;
 
-Regardless of cm_id bound to a netdevice or not, net namespace must
-match. When a cm_id is bound to a netdevice, in such case net namespace
-and netdevice both must match.
+dev->udev will be true even if udev is freed because dev->udev is
+not set to NULL.
 
-Fixes: 4c21b5bcef73 ("IB/cma: Add net_dev and private data checks to RDMA CM")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+set dev->udev pointer to NULL in xhci_free_dev()
+
+The original patch went to stable so this fix needs to be applied
+there as well.
+
+Fixes: a400efe455f7 ("xhci: zero usb device slot_id member when disabling and freeing a xhci slot")
+Cc: <stable@vger.kernel.org>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/core/cma.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -1409,9 +1409,16 @@ static bool cma_match_net_dev(const stru
- 		       (addr->src_addr.ss_family == AF_IB ||
- 			cma_protocol_roce_dev_port(id->device, port_num));
+---
+ drivers/usb/host/xhci.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3656,6 +3656,9 @@ void xhci_free_dev(struct usb_hcd *hcd,
+ 	}
  
--	return !addr->dev_addr.bound_dev_if ||
--	       (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
--		addr->dev_addr.bound_dev_if == net_dev->ifindex);
-+	/*
-+	 * Net namespaces must match, and if the listner is listening
-+	 * on a specific netdevice than netdevice must match as well.
-+	 */
-+	if (net_eq(dev_net(net_dev), addr->dev_addr.net) &&
-+	    (!!addr->dev_addr.bound_dev_if ==
-+	     (addr->dev_addr.bound_dev_if == net_dev->ifindex)))
-+		return true;
-+	else
-+		return false;
- }
- 
- static struct rdma_id_private *cma_find_listener(
+ 	spin_lock_irqsave(&xhci->lock, flags);
++
++	virt_dev->udev = NULL;
++
+ 	/* Don't disable the slot if the host controller is dead. */
+ 	state = readl(&xhci->op_regs->status);
+ 	if (state == 0xffffffff || (xhci->xhc_state & XHCI_STATE_DYING) ||
 
 
