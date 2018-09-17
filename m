@@ -2,106 +2,96 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4309ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9211EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE2B214EE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE2B214EE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 475EA20867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:57:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5G7jgnOK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475EA20867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeIQXYd (ORCPT
+        id S1728321AbeIQXZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 19:24:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:59422 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeIQXYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:24:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 10:56:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,386,1531810800"; 
-   d="scan'208";a="90853308"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga001.fm.intel.com with SMTP; 17 Sep 2018 10:55:46 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Mon, 17 Sep 2018 20:55:45 +0300
-Date:   Mon, 17 Sep 2018 20:55:45 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/probe_helper: Don't bother probing when connectors
- are forced off
-Message-ID: <20180917175545.GP5565@intel.com>
-References: <20180917174344.22011-1-lyude@redhat.com>
+        Mon, 17 Sep 2018 19:25:46 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59086 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeIQXZq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 19:25:46 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HHsC45128988;
+        Mon, 17 Sep 2018 17:57:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=h1JZzBrF4PZlpeiePmKRDHPc9I67vlmJwNJXrhrvDyU=;
+ b=5G7jgnOKZX3taKG6XBEjY/QsKJOwiSe7LbYYyB5vwiDKn4fRh4gYLjFF+BnY0Aji+3lb
+ xaxDOwTYDqGtLJloy/v1j5IM1b8NB10JVypPkB/gBwSX8zC0oO2AbJiHj19v1QpqvCmn
+ 5Ay/iC2Ww5xJo+nyRqjXELGmJVYykC4NSBKPft39m3RzYFA6+TSzZTwpTNcA52cCgbDy
+ AZO4R56PP0pU9vj2VvB2WlZVB+YBg6K6t3e5xZ0YWvpBhwbsn5X84Iif8qARqlAgCZED
+ +CDWHz9MNNffcSmAB9iH7OHn9AsXleFuaciqzWD+7WvuMAY7qbS+RN+o25pXMuYn+Wxr +Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2mgt1pfvw8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Sep 2018 17:57:14 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8HHvD7W029281
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Sep 2018 17:57:13 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8HHvDpU028469;
+        Mon, 17 Sep 2018 17:57:13 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Sep 2018 10:57:12 -0700
+From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>
+To:     Doug Ledford <dledford@redhat.com>, yishaih@mellanox.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jgg@ziepe.ca
+Cc:     jackm@dev.mellanox.co.il
+Subject: [PATCH v2 0/2] IB/mlx4: Enable debug print of SMPs and enhance output for MADs
+Date:   Mon, 17 Sep 2018 19:56:56 +0200
+Message-Id: <20180917175658.1261435-1-Haakon.Bugge@oracle.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917174344.22011-1-lyude@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=445
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809170178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 01:43:44PM -0400, Lyude Paul wrote:
-> Userspace asked them to be forced off, so why would we care about what a
-> probe tells us?
+SMPs were not printed at all. Added printing of port number and TID to
+all MADs
 
-I believe there should be force checks in the callers already.
-Or are we missing some?
 
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/drm_probe_helper.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_probe_helper.c b/drivers/gpu/drm/drm_probe_helper.c
-> index a1bb157bfdfa..56d2b5dd1f58 100644
-> --- a/drivers/gpu/drm/drm_probe_helper.c
-> +++ b/drivers/gpu/drm/drm_probe_helper.c
-> @@ -269,7 +269,9 @@ drm_helper_probe_detect_ctx(struct drm_connector *connector, bool force)
->  retry:
->  	ret = drm_modeset_lock(&connector->dev->mode_config.connection_mutex, &ctx);
->  	if (!ret) {
-> -		if (funcs->detect_ctx)
-> +		if (connector->force == DRM_FORCE_OFF)
-> +			ret = connector_status_disconnected;
 
-connector->force is protected by mode_config.mutex IIRC.
 
-> +		else if (funcs->detect_ctx)
->  			ret = funcs->detect_ctx(connector, &ctx, force);
->  		else if (connector->funcs->detect)
->  			ret = connector->funcs->detect(connector, force);
-> @@ -317,6 +319,9 @@ drm_helper_probe_detect(struct drm_connector *connector,
->  	if (ret)
->  		return ret;
->  
-> +	if (connector->force == DRM_FORCE_OFF)
-> +		return connector_status_disconnected;
-> +
->  	if (funcs->detect_ctx)
->  		return funcs->detect_ctx(connector, ctx, force);
->  	else if (connector->funcs->detect)
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
--- 
-Ville Syrjälä
-Intel
+HÃ¥kon Bugge (2):
+  IB/mlx4: Enable debug print of SMPs
+  IB/mlx4: Add port and TID to MAD debug print
+
+ drivers/infiniband/hw/mlx4/mad.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+--
+
+v1 -> v2
+    * Fixed incorrect format for printing the TID for the second patch
+
+2.14.3
+
