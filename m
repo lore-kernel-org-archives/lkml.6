@@ -2,190 +2,168 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8574ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA27ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DA9206B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:55:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DA9206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DCC0214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 07:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCC0214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbeIQNVr (ORCPT
+        id S1727460AbeIQNX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 09:21:47 -0400
-Received: from mga17.intel.com ([192.55.52.151]:17546 "EHLO mga17.intel.com"
+        Mon, 17 Sep 2018 09:23:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58668 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726419AbeIQNVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 09:21:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 00:55:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
-   d="scan'208";a="90694825"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 17 Sep 2018 00:55:31 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 17 Sep 2018 10:55:29 +0300
-Date:   Mon, 17 Sep 2018 10:55:29 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        casey.g.bowman@intel.com,
-        "Atwood, Matthew S" <matthew.s.atwood@intel.com>
-Subject: Re: pinctrl-icelake: driver writes to wrong offsets?
-Message-ID: <20180917075529.GJ14465@lahna.fi.intel.com>
-References: <CACK8Z6ECjwWqDnaXKrmEbEXzmiX41Sbzys=FSCqMwh8eYLPH9A@mail.gmail.com>
+        id S1726652AbeIQNX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 09:23:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 46F7086664;
+        Mon, 17 Sep 2018 07:57:15 +0000 (UTC)
+Received: from [10.36.117.44] (ovpn-117-44.ams2.redhat.com [10.36.117.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 053A817A66;
+        Mon, 17 Sep 2018 07:57:06 +0000 (UTC)
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <8f3f3f41-a052-1975-69e2-49e1a662ecab@linux.ibm.com>
+ <38b87fc4-9344-70d8-4602-bf8e114769ef@redhat.com>
+ <20180823102447.05430368.cohuck@redhat.com>
+ <1e0fc615-101c-7b9d-6dd1-de9a43fae734@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
+ 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
+ xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
+ jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
+ s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
+ m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
+ MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
+ z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
+ dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
+ UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
+ 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
+ uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
+ 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
+ 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
+ xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
+ 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
+ hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
+ u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
+ gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
+ rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
+ BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
+ KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
+ NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
+ YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
+ lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
+ qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
+ C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
+ W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
+ TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
+ +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <8f5463ca-7a52-89a5-6d7f-12065484879a@redhat.com>
+Date:   Mon, 17 Sep 2018 09:57:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACK8Z6ECjwWqDnaXKrmEbEXzmiX41Sbzys=FSCqMwh8eYLPH9A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1e0fc615-101c-7b9d-6dd1-de9a43fae734@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 17 Sep 2018 07:57:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 05:18:34PM -0700, Rajat Jain wrote:
-> Hi,
+Am 12.09.18 um 19:42 schrieb Tony Krowiak:
+> On 08/23/2018 04:24 AM, Cornelia Huck wrote:
+>> On Thu, 23 Aug 2018 09:48:48 +0200
+>> David Hildenbrand <david@redhat.com> wrote:
+>>
+>>>> Migration of AP devices is not supported by this patch series, so this
+>>>> should
+>>>> not be an issue.
+>>> Might not be a problem now, but could be later. As I said in a different
+>>> reply, the CPU model in QEMU does not care about KVM.
+>>>
+>>> I want the QEMU CPU model and the KVM interfaces to be clean and future
+>>> proof. That's why my opinion is to handle PQAP(QCI) just like all the
+>>> other "feature blocks" we already have.
+>> +1 to that sentiment.
+>>
+>> It's better to try to get this correct now than having to hack around
+>> should we want to implement things in the future.
 > 
-> This is to report what I think is a problem in the pinctrl-icelake
-> driver. It seems that when trying to control GPIO pins GPP_A* and
-> GPIO_B*, the driver ends up writing to incorrect PADCFG registers.
-> I've reached this conclusion by putting debug prints in the driver,
-> although this can be seen by the following commands too. Please let me
-> know if something is wrong in my experiments. For example, when trying
-> to control GPP_B8/ISH_I2C1_SCL, the driver ends up writing to
-> GPP_A6/ESPI_RESETB registers.
+> Just so we're on the same page here as far as what to expect for v10 of
+> this patch series, let me summarize the the very long series of private
+> exchanges as well as this thread:
 > 
-> I want to control the pin GPP_B8 i.e. ISH_I2C1_SCL and drive it low or
-> high. I looked at the driver code, and it tells me that I need to use
-> pin number 16:
+> * The APXA facility indicated by a bit returned in the response to the
+>    PQAP(QCI) function indicates only whether the APXA facility is available
+>    on one or more APs installed on the system.
+> * The only way to change the bit returned from PQAP(QCI) is to intercept the
+>    instruction and emulate it, so it makes no sense for passthrough devices.
+> * The AP(s) with APXA installed may not necessarily even be in the 
+> configuration.
+> * The only way to determine whether APXA is installed in a given AP is to
+>    query it using the PQAP(TAPQ) instruction.
 > 
-> static const struct pinctrl_pin_desc icllp_pins[] = {
->        ....
->         /* GPP_B */
->        ....
->         PINCTRL_PIN(16, "ISH_I2C1_SCL"),
->        .....
-> 
-> The pin number 16 is mapped to GPIO 224 as per the below output:
-> 
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/gpio-ranges
-> GPIO ranges handled:
-> 0: INT3455:00 GPIOS [184 - 191] PINS [0 - 7]
-> 32: INT3455:00 GPIOS [216 - 241] PINS [8 - 33]
-> 64: INT3455:00 GPIOS [248 - 272] PINS [34 - 58]
-> 96: INT3455:00 GPIOS [280 - 303] PINS [59 - 82]
-> 128: INT3455:00 GPIOS [312 - 332] PINS [83 - 103]
-> 160: INT3455:00 GPIOS [344 - 363] PINS [104 - 123]
-> 192: INT3455:00 GPIOS [376 - 404] PINS [124 - 152]
-> 224: INT3455:00 GPIOS [408 - 431] PINS [153 - 176]
-> 256: INT3455:00 GPIOS [440 - 463] PINS [183 - 206]
-> 288: INT3455:00 GPIOS [472 - 479] PINS [216 - 223]
-> 320: INT3455:00 GPIOS [504 - 511] PINS [224 - 231]
-> localhost /sys/class/gpio #
-> 
-> So I did this:
-> 
-> localhost /sys/class/gpio # ls
-> export  gpiochip184  unexport
-> localhost /sys/class/gpio # cat gpiochip184/label
-> INT3455:00
-> localhost /sys/class/gpio # cat gpiochip184/ngpio
-> 328
-> localhost /sys/class/gpio # echo 224 > export
-> localhost /sys/class/gpio # ls
-> export  gpio224  gpiochip184  unexport
-> localhost /sys/class/gpio #
-> 
-> Before trying to change the value, I decided to take a dump of the
-> PADCFG of the pins before and after I tried to change it. Here is the
-> dump I took before changing:
-> 
-> localhost /sys/class/gpio # cat gpio224/active_low
-> 0
-> localhost /sys/class/gpio # cat gpio224/direction
-> in
-> localhost /sys/class/gpio # cat gpio224/edge
-> none
-> localhost /sys/class/gpio # cat gpio224/value
-> 0
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/pins | grep
-> "ISH_I2C1_SCL\|ESPI_RESETB"
-> pin 16 (ISH_I2C1_SCL) GPIO 0x44000102 0x00000028 0x00000000 [ACPI]
-> pin 40 (ESPI_RESETB) mode 1 0x44000700 0x0000003e 0x00000100 [ACPI]
-> localhost /sys/class/gpio #
-> 
-> Here is when I tried to change it and then dump the values again:
-> 
-> localhost /sys/class/gpio # echo out > gpio224/direction
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/pins | grep
-> "ISH_I2C1_SCL\|ESPI_RESETB"
-> pin 16 (ISH_I2C1_SCL) GPIO 0x44000200 0x00000028 0x00000000 [ACPI]
-> pin 40 (ESPI_RESETB) mode 1 0x44000700 0x0000003e 0x00000100 [ACPI]
-> localhost /sys/class/gpio #
-> 
-> Note that things look good so far (the PADCFG DW0 for pin 16 is
-> corrrectly changed).
-> But now when I try to write the value, it is the PADCFG DW0 for pin 40
-> that gets written to, while the pin16 value does not change:
-> 
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio # echo 1 > gpio224/value
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/pins | grep
-> "ISH_I2C1_SCL\|ESPI_RESETB"
-> pin 16 (ISH_I2C1_SCL) GPIO 0x44000200 0x00000028 0x00000000 [ACPI]
-> pin 40 (ESPI_RESETB) mode 1 0x44000701 0x0000003e 0x00000100 [ACPI]
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio # echo 0 > gpio224/value
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/pins | grep
-> "ISH_I2C1_SCL\|ESPI_RESETB"
-> pin 16 (ISH_I2C1_SCL) GPIO 0x44000200 0x00000028 0x00000000 [ACPI]
-> pin 40 (ESPI_RESETB) mode 1 0x44000700 0x0000003e 0x00000100 [ACPI]
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio # echo 1 > gpio224/value
-> localhost /sys/class/gpio # cat
-> /sys/kernel/debug/pinctrl/INT3455\:00/pins | grep
-> "ISH_I2C1_SCL\|ESPI_RESETB"
-> pin 16 (ISH_I2C1_SCL) GPIO 0x44000200 0x00000028 0x00000000 [ACPI]
-> pin 40 (ESPI_RESETB) mode 1 0x44000701 0x0000003e 0x00000100 [ACPI]
-> localhost /sys/class/gpio #
-> localhost /sys/class/gpio #
-> 
-> I have also verified this using an oscilloscope on the external pin
-> that the ISH_I2C1_SCL does not change. Also the gpio224/value stays
-> stuck at 0.
-> 
-> localhost /sys/class/gpio # cat gpio224/value
-> 0
-> localhost /sys/class/gpio #
-> 
-> I failed to understand how could it be that the correct pin (16) is
-> picked up when setting direction but incorrect pin (40) is picked up
-> when setting value. I suspect some mux related call is being missed
-> out while setting the value, may be? Can you please check this at your
-> end?
+> It was decided that APXA is better modeled as device configuration. If 
+> and when
+> emulation is implemented, APXA can be configured for any AP devices assigned
+> to a guest. Since AP instructions will be intercepted when emulating AP,
+> the PQAP(QCI) instruction can return the APXA bit according to whether any
+> AP is configured with APXA installed. That matches the real architecture 
+> much
+> more closely. So, the bottom line is that we will not introduce a new 
+> CPU model
+> feature for APXA in v10 of this series.
 
-Do you have schematics of the system? It could be that the ISH_I2C1_SCL
-is just pulled low.
+Yes, that sounds sane to me. In addition, all other QCI indicated
+"features/facilitites" are handled on a per-device basis and not on a
+CPU-model basis.
 
-Can you try some other pin that you could measure and is wired a pin
-header?
+
+-- 
+
+Thanks,
+
+David / dhildenb
