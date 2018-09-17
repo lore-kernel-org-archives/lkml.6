@@ -2,145 +2,145 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EF9ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFFBECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA92208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBDB208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="pRgfh248"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA92208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YGV83wQR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBDB208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbeIQI4g (ORCPT
+        id S1729334AbeIQI1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:56:36 -0400
-Received: from mail-sn1nam02on0079.outbound.protection.outlook.com ([104.47.36.79]:26118
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:27:24 -0400
+Received: from mail-eopbgr720118.outbound.protection.outlook.com ([40.107.72.118]:6704
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729322AbeIQI4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:56:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+        id S1728417AbeIQI1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:27:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4cmwYGxLe8gg4jOzWNSNzOrWo3eIpy4vFF+AovXAqzg=;
- b=pRgfh248Y1WXP81Drsixp2Ry+32krFJuu0KCqUn2q27fDiOuInnaS3aV92TKTZx7JAT8LEiIgHPfJEcqFZsY77aGuvSZcfuBa/C+IDhq8fcnPzMEjvjMASa3AJEA13fv3PariRAqTvmZ/cjS2dEJvLYs1nxXlgqAyzM+MsS6cUU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- SN1PR0301MB1583.namprd03.prod.outlook.com (2a01:111:e400:5232::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.17; Mon, 17 Sep
- 2018 03:31:08 +0000
-Date:   Mon, 17 Sep 2018 11:27:41 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/3] dt-bindings: i2c: designware: add optional gpio
- recovery properties
-Message-ID: <20180917112741.7c3d6514@xhacker.debian>
-In-Reply-To: <20180917112633.252c591c@xhacker.debian>
-References: <20180917112633.252c591c@xhacker.debian>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: KAWPR01CA0081.jpnprd01.prod.outlook.com
- (2603:1096:402:c::17) To SN1PR0301MB1583.namprd03.prod.outlook.com
- (2a01:111:e400:5232::17)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e2c88991-7ec0-429b-08c2-08d61c4e032e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR0301MB1583;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;3:mPDPau0y29rZUlJt+N8ZhA8EenMHAQsiUSspVCLLxrfNMgHLf/RG/r5xyDVDY+xm5qe/DJCnmiO+Wo4QjDcKtyphL0B/+9mj+ZKL+QOUP/PchIjnV7aN2M/hb/oeXerh/3xA12TnsMUOFiY7AW9IjuppFYAF+tIOhT2lxw6yRM+VDdhW047XhTUpAuEcZ4VaODs8iVJI9bcItUFE3NpFlJv47itQsyX0JulNAjQluAt1XhX8ZMCGO5s8MhPOZk/F;25:0Hrzt3Bv2lvK1I8HnAwY0tuqTyzZlLnlmoDP8DNNxZZlrjQrJM59+IJTdQdocycgJyrIBSxKNHEmf2EHFQ7j6OhlJg3TFgjuGISe/uLEdGIUBmUXSRh0plgR4ECWmpWkf/mfvKzBXP4Bcs/oUCOHPvXWII4ufZbQuwaaRrKsfJ0JN17mxsVl5QU3ofOGDJqGNhDs7FFqw2joscqsvLRCvhpn/o4LeUBNujMjx2NedGYTBxajsOg4LZa9f7OX/F+V8IskXXTG/PpkvtiYQV1MdefiXunhxT5NNZCRaI7XVKK88IONWMgXoc2PdIUxrYhuEoK17qUAPyBpaxyzoKfC9g==;31:1ZcZAfVZ304gLiIBw++iB1W4dTQDmicsxIM1JdkujFM29c9RuOQ2IhOVoqDhearhuUPs8KFusOSPEsLyPXQFKLSZ5bA27l4oqEJ8pqao2l3IWA+xRThMJp6mhMc6QTGsxlagyDuWepbhXyMrerLNAOhDqmNTWBVX7TIkcSZO7pQtshm5pPEkq7mWTTBcn6jm659ifS0d1+3V27NC7yS1YG36r7eSaMDWAVuAAovVMik=
-X-MS-TrafficTypeDiagnostic: SN1PR0301MB1583:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;20:2gZ+zzX13EU5NJL8z9wlo5Df4DvPnmmusaHTQoL5f1ksPgktJZD9+wAsOyBT5HyE2TDqt/kkLJBlskjcLgKwmLSQFVbZ6lrzaDiBkLGoXyCce+qgh4z0w/PRkP67/FPROQ2bvyuqWilLIHB+scMUtpx33P8ivLG0/bkyS2RFrI/lUMFXOs32h7msvvTbUoyqfQRYQzGfbbM1XDoGAAxBTKrgnl+DSuDiPBo60dt+PqrGBGJYkY6A4+5tIRs5LOhrh+QV0k84gr/EHLphABSc3cPf0ZzV972t4ey3X6AsV0Ta0UAwg3OB5N6vKNR17J2Yrg6KUEjIS1SluhHilICddJcIyTppue/jDMdl/Gw9tLm3jhv1kd6RG/HW2bO81I1HLzwIM56sZF4bE4BKtdajNQ0ZMi9D0BJ6Su2of2YF+hI7Eu4UnqgxUxCvOYpDWiO+Psy8/rgrBg3fHV3Mg9XOcCt44DeS/4Tlca47tnAdLpcHj/fsEfMuEgpQhoBJP2tf;4:hHBiEgA+g1aPzbrJ3OM8089llxDcZkYVSck/HCuuTgOA+VbfvHF5yUbIeKRhy7FGHQGLOoXzNMkx48DSMKlNHsQdWazANQO88DrxATZq2jBgN3fGPSiXZiU3TJjdraHBcRUv89nO8kte4bL5YPAFwk1tKuMbsi5FhIcyl0Ly0fDmeFf6dkjjOxszZK5KwmgaJpqBwW3m7VOz78O0S/PH17BgOJz4Vgnh6rrc7xAYtZCwV+FrPFRs2iePviSWcFK/HAl8UAQgmsQ1im1RKB3qog==
-X-Microsoft-Antispam-PRVS: <SN1PR0301MB1583CF823D4B6E268A8EA1F0ED1E0@SN1PR0301MB1583.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:SN1PR0301MB1583;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0301MB1583;
-X-Forefront-PRVS: 0798146F16
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39850400004)(376002)(346002)(136003)(199004)(189003)(3846002)(53936002)(6116002)(446003)(11346002)(478600001)(8676002)(68736007)(50226002)(81156014)(23726003)(8936002)(33896004)(2906002)(50466002)(97736004)(72206003)(81166006)(26005)(16526019)(4326008)(25786009)(52116002)(7696005)(76176011)(186003)(6666003)(86362001)(7736002)(47776003)(386003)(6506007)(5660300001)(956004)(66066001)(106356001)(9686003)(55016002)(230700001)(305945005)(476003)(575784001)(110136005)(54906003)(105586002)(1076002)(486006)(316002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0301MB1583;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ bh=QkviSSIWG5BFpoeqgk4ii7gKB25WahJa1vekQs2U794=;
+ b=YGV83wQRU/2tgxAocyLNV9uO8NwI4EZm4xnw4pQYKYrlZXg7wLwW25jlcG3ryeXOALjqPWg9+2NPw5RHOlBhWbfCVT2JOwjYoIM4vglmPUDypakDF3TD7TkwIGBzJRW9lj37mEcVS60M3/SbMskWE93NtPiYq02UUiEZn1TtKPE=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0790.namprd21.prod.outlook.com (10.175.121.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.9; Mon, 17 Sep 2018 03:02:01 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
+ 03:02:01 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 083/136] ASoC: qdsp6: qdafe: fix some off by one
+ bugs
+Thread-Topic: [PATCH AUTOSEL 4.18 083/136] ASoC: qdsp6: qdafe: fix some off by
+ one bugs
+Thread-Index: AQHUTjKsY8p7bBiCEUmo9INplaGmsQ==
+Date:   Mon, 17 Sep 2018 03:01:04 +0000
+Message-ID: <20180917030006.245495-83-alexander.levin@microsoft.com>
+References: <20180917030006.245495-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0790;6:phcXq8YDO4FA2ojRNViB/5fuQLFypaZbwVCytO2l3WWgdbJPdHNS5Tm7QPZ6GVRfKDdX2qyFCdnKv2pj2yjVpipyACohMzZoGBLtoUtfQQ+DB56dxOD+pre4NJwt+W3stK3rOTR3Af10c2sie7xoGbSb/MxCIbrohzl4KRrCfTRsqZCruMR4F4OgOCZqkIy1WjeYouIwjDD07HyvvFmf0zs+OfG6nmXv/299rk9tLqELWIvild10CnvKCqmFRBGF4GYBjaAAuzDghk9RpvIlatQWcstx5uKK/2+ZU/T4TcGAj8Z+HaXhaCq7FY8ESJIWdQQ/uHID5Q1Ow2vt80UkWUsVMU9iUlzgcu+1HGAlPPYGsTU8+WoHwg3n5TjkJfSttTa5P6eDz5LOdoylXVWXrJhvROIoF9pWE/CQQfPgnUvLd0dchxziUladKBAE718stAeYeAD2jj6daCXibk+DiA==;5:/UdVb1ELaEZ/urdnIc15pUOWif4QeM3/1YEbFpVyhjsnUnkVQxKovyt4MyrempUrZAPttAuGpIUAZsyBVhkZpOysuLpcpLsFy3GOxfuE+zEuEl+s3xnk01EIn9hikLlis8mIQasmaWjF3ovJxkQe59jOp+b2EUfH4HpDv/S2XPQ=;7:lJPZAh7NiFw+6p2xMtS7K116rdq0nbc76Uo9RygU1nLY7tY7Hya/kWt91toGxkc0BTNFRM4qvQlPTgKxB+Z7lrD+jWww/dkVi+yTi2lwrD5CRq5FNjNTBigq7AbCen0S1Qq3fJyOS+c66y5e2qnhL4y7Ra3XAYjvlHL8QCEb6DMllJM5WGdAyhVTrsQGvB/E2+aIyWQLPWgc5c1UebBJ6Mtc9ugkpWxL0/pyX1sVC0eAZlpRVfJ+5aR4cJa1E9Y/
+x-ms-office365-filtering-correlation-id: 2bd77f3a-e3b4-45f4-3820-08d61c49f095
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0790;
+x-ms-traffictypediagnostic: CY4PR21MB0790:
+x-microsoft-antispam-prvs: <CY4PR21MB07902B3054E5C705333756DFFB1E0@CY4PR21MB0790.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0790;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0790;
+x-forefront-prvs: 0798146F16
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(396003)(376002)(366004)(199004)(189003)(76176011)(22452003)(110136005)(99286004)(6436002)(6486002)(2900100001)(2906002)(54906003)(6346003)(10090500001)(5660300001)(7736002)(6512007)(217873002)(316002)(256004)(53936002)(36756003)(6506007)(25786009)(106356001)(26005)(86612001)(10290500003)(1076002)(68736007)(476003)(6116002)(3846002)(478600001)(5250100002)(11346002)(446003)(72206003)(2501003)(81156014)(81166006)(8676002)(14454004)(102836004)(107886003)(186003)(2616005)(97736004)(86362001)(66066001)(305945005)(486006)(8936002)(4326008)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0790;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR0301MB1583;23:/Vz2RVQAmiwXjY2T5SWk0AbgXlURS7UzxQkleg8?=
- =?us-ascii?Q?CnWKPTHfL5+JEpTso8nmjKhitGvEMd4rteo85k5jgLkPChs/SFsBkCEre1wU?=
- =?us-ascii?Q?BT0v3QJmOhaogeuK4N7FtUWLuKwMQHCbx0KBzK9mnMX5pH1j1vJsHS6KA5bt?=
- =?us-ascii?Q?rivA6Z9oSVKNloS/jKRD7NCx6+LV0fL+5nXpxG9wcYfTEMNy5w70ci7GAHbR?=
- =?us-ascii?Q?h6CFCYLkfp0Of4hGBhkIeAV+gaiOIwG4SrV86jxl+zt2aMY+2ojzrWYQozah?=
- =?us-ascii?Q?Ov0rS0H0d5CyvEUpm4lts9bfmbK82nn4s22cdV400r/clNGGzgqHHK5nf4bK?=
- =?us-ascii?Q?j5y+F03GcrPlwc2ACr72xY/5d3xifE6gUTHKFDMcYWkgGXbuDcLTiL6N4N1z?=
- =?us-ascii?Q?5FkpeBiBibZQyBNeBrTknjjAD3tVjnQTz23Nn4huZgCAdMy/lUeD6DmRsIJU?=
- =?us-ascii?Q?7x3CHBDSsIFGzy+r6doqiSeioP5zXsxNZOa81lMrh+YPSiI16zPsZRjiWUih?=
- =?us-ascii?Q?GhR0rmQp6LolZYAsDr6pHzH/vJ4R7zpjpgz09G6TNPBNN3MvLRT5d4q3tLVU?=
- =?us-ascii?Q?y2nAvmWgaIvlqYjWU1f1xJb7Oz/kn7CoEFti3WeqzETHwhLIDKMy6YmSQqSt?=
- =?us-ascii?Q?CoXhXaYqWOOcer8xWbbiO4L11RmcGbwQYZV5ghNYBFqKKUIKYGCcq8jyjk6S?=
- =?us-ascii?Q?JsD5vpmtG/H6oQHtWDpoHfivDUmJvRcoaNBT89/mUvNkXfFf4O1wkRkOpjL+?=
- =?us-ascii?Q?XAOFSns1dJ4ovnF0WwOI1g/UbPWDUK4dBXwicBDCnQSBThRNL/DGin5HvzUk?=
- =?us-ascii?Q?w5oLL7unGWURhQsGFHFFX/bK0H8Qe2cIgv32dKRgja2TEe5xFrsoL72p/+Rj?=
- =?us-ascii?Q?/kWlbM6ZwWhWuwSxNLWQXQN/J5Gw4dkE/1EZiEr/nHFd3apWi5sjrhSiTkCt?=
- =?us-ascii?Q?3goN8vD7j3qNPsreRTZJr+1mv4J7mzIs80rt3PmVgJya+E78Ac4erYy3Og40?=
- =?us-ascii?Q?rt3b2wR0K8c56JqhooTwi3lecAodhi+1/IBX6UNkGKWp/6nTg1miZ9uAJ04U?=
- =?us-ascii?Q?sMSNnGfu4oMeHRRic8LHpAbuzNYAvrkhGoBTUvjB3VHv+KpYilZZwM/n28t/?=
- =?us-ascii?Q?/Ju8o4uCwRXDLXWhsYWeu40h8EHIGRyGp3w0zN0ZXxVcAW2JBCh47NDYS/py?=
- =?us-ascii?Q?AL4t9tIsVSuV0gmD1XCyUeMJby4KJN8xJhWgKPn7MIIimAs2VSnWZN1VBZPp?=
- =?us-ascii?Q?qaSkqpRKlPWQlCitdS+6EEd5njsQMPqbM5bVoB58q?=
-X-Microsoft-Antispam-Message-Info: 2e0p0HSzftuzt+A80ZDXERUpJHEaSf+a6Bc81BSWIQQp0/CZ70K7Nh9+RGvobWy9RUlR18eESwCIlCeU54pMTKmCHNNRYEI89PTbjZ0qrGQRLi5r0GJp4qCBa6RHVlHF17u418vbv0lUnJEJHhE3boX3XrBBknn6+p9D2SiVFnV0BHM6azaa/ARmFNCw7uVwLIMLqDy4NjUlQRurgpYykVyI35XlCSIT0Exc8TyjnW45s6NOqOsaqvQ48sEctFufQCIRSld2IV5jGBswDNgtI7mkgH7BLiw5/KgIAKId7LP036PYtZfiV2oHF8M4pbin1956KG6gdGIYr2Sf2DGMD0U4t2ywCQ9N/br9yPXMLts=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;6:6BYu8PalkvYd7oPnBhb/OA+m7+yqc4aofF/3Ue2nOb5CEKrTYxU9mF/ajQCJc0/yCmcs0S7o3MLpXw8cNa++sezbXOzkn3AxWSiGDitUUROZCIcQZk6IQIC/LO09k2KJpDpyfpo29+uirxZ1Zvz4qoyGxDzf2wXYrDsnMxL+3C7LBmALURPAtuuuHxzAhv3+pygmGCSpZOaSQGGiXZGqNVRcOTQrzuoQ9iEXabRzYo6kv+ExWHL/t9BjXHxUPtO/swcbOzKvREKIAZHpzARWgD8lMAdHtdRwJ4K2YDh6diimxa7tmsaYB1nWPq4mzyWZrOoiFfPHH7rndMp9W7RMhQFvepBw/LBC7tKh5uYWrHgSNm+0gQwknw8cWIuoPwXHgSMlaupyumpE5ZSN0pF7a1arCKmdElWm7/wgPQ0WSA9IYjvUZPFF1khGjls6Fiet626AlDWydoGMD0FJXAlH/Q==;5:/eTVLFSrzDmam8uxJlsc62gzT/NsU4vhVWDzJ7rtH5dkPce0iaWoxe5zc6kdme9ZPvedaitwER0f8G67ncYeAY7/2BM0xgOjHA69nxl1fn8fFymcOwzBK0Ym8xD9r5UPwVb3WUNvcHOvA2rdbSwxlgIkRhIhPm053dQqfuoOLTY=;7:LRvdwo7KiJnEbih1nFHSQUVSEbTxCAaIMSLLcJLOZBGmfoh3uvKl1dHGHzTAWaXYQJ2hB2A3eQ5sVrBmnHlfGnCBmUCIEIcnGFJT6hzvpFjuLv6RR1R7q0FWBxPufxCEymubk2nV2go30SK3JHYKxxFaVArR6hY9igMat9wc+paR0mqvrqeN+byG7PRKVwrJn/NpCuHaACe5W3haWY3UJ3Kv7gdZkT1GBDlHRGSXoDU+OFwZmP0Il7X82xsGdhiB
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 03:31:08.7634 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2c88991-7ec0-429b-08c2-08d61c4e032e
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0301MB1583
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: 0PjIRLU588BHcHmsU7gSgkQOwjAnpT2YyNlYUlO9TKhKZtCJDoa6eCi38hsofdLEVY4/D9qAWQKMu1b1gvgLtaeScoNfAk70vTOvdmDBKHkrzi+AIfUFdUEzWzEvwQXpd+ZV0PexWY+V3FgjUorQeYpWmkYpzwpuG27zH71uxr4acXL5/ucTPvDXwYYcufzz5Y7UiSCjiXO3JHNANtnbZChWmucj+9OgL3hSBlljld18BL86Hp+RlU0ZATL/nWtUAP32BL13rdOYaOWViX1fqw9vpKQWuIqGAesrNKK81vQ2dKhPPe8VX0+ZqdO0Ys3DEKFc9/IAcRO9t7ZW+nkxbx6ksm7St8+azlr/a513jFI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bd77f3a-e3b4-45f4-3820-08d61c49f095
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:01:04.1824
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0790
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the scl-gpios and sda-gpios properties for bus recovery.
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+[ Upstream commit c54c1c5ee8e73b7cb752834e52e2129b1dab00bd ]
+
+The > should be >=3D or we could read one element beyond the end of the
+port_maps[] array.
+
+Fixes: 7fa2d70f9766 ("ASoC: qdsp6: q6afe: Add q6afe driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-designware.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/qcom/qdsp6/q6afe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-index fbb0a6d8b964..1d6a6a8061ba 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-@@ -20,6 +20,10 @@ Optional properties :
-  - i2c-sda-falling-time-ns : should contain the SDA falling time in nanoseconds.
-    This value which is by default 300ns is used to compute the tHIGH period.
- 
-+ - scl-gpios: specify the gpio of the SCL line for gpio recovery
-+
-+ - sda-gpios: specify the gpio of the SDA line for gpio recovery
-+
- Examples :
- 
- 	i2c@f0000 {
-@@ -42,6 +46,8 @@ Examples :
- 		i2c-sda-hold-time-ns = <300>;
- 		i2c-sda-falling-time-ns = <300>;
- 		i2c-scl-falling-time-ns = <300>;
-+		scl-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
-+		sda-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
- 	};
- 
- 	i2c@1120000 {
--- 
-2.19.0
-
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 01f43218984b..69a7896cb713 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -777,7 +777,7 @@ static int q6afe_callback(struct apr_device *adev, stru=
+ct apr_resp_pkt *data)
+  */
+ int q6afe_get_port_id(int index)
+ {
+-	if (index < 0 || index > AFE_PORT_MAX)
++	if (index < 0 || index >=3D AFE_PORT_MAX)
+ 		return -EINVAL;
+=20
+ 	return port_maps[index].port_id;
+@@ -1014,7 +1014,7 @@ int q6afe_port_stop(struct q6afe_port *port)
+=20
+ 	port_id =3D port->id;
+ 	index =3D port->token;
+-	if (index < 0 || index > AFE_PORT_MAX) {
++	if (index < 0 || index >=3D AFE_PORT_MAX) {
+ 		dev_err(afe->dev, "AFE port index[%d] invalid!\n", index);
+ 		return -EINVAL;
+ 	}
+@@ -1355,7 +1355,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct devi=
+ce *dev, int id)
+ 	unsigned long flags;
+ 	int cfg_type;
+=20
+-	if (id < 0 || id > AFE_PORT_MAX) {
++	if (id < 0 || id >=3D AFE_PORT_MAX) {
+ 		dev_err(dev, "AFE port token[%d] invalid!\n", id);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+--=20
+2.17.1
