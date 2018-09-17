@@ -6,49 +6,43 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7977ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E66ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E035220867
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 200B520867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:15:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="KpfzyLV4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E035220867
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="NTwPP7VH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 200B520867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbeIRDoH (ORCPT
+        id S1728590AbeIRDoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 23:44:07 -0400
-Received: from cock.li ([185.100.85.212]:52364 "EHLO cock.li"
+        Mon, 17 Sep 2018 23:44:21 -0400
+Received: from cock.li ([185.100.85.212]:52562 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbeIRDoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:44:06 -0400
-X-Greylist: delayed 482 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Sep 2018 23:44:05 EDT
+        id S1728415AbeIRDoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 23:44:21 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537222487; bh=nvO4Mh8YSenpdAsCY8//cKkhvujHthOVQlmxI+pozQQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KpfzyLV4b1p4hwdnzz/sdNG3odiKrqq4XQqLbzHdAvb6XxV1mYY2zqITTlEPm7rnp
-         Kf6TPriq/Qcl3iLlPSlqJv/gAfWmXQSl8jITYsOmTTs0iAPczM9NcGid22oZeKzC2i
-         LGtDD3n69fmd9ls0TcWs/6Di1PaNXnojGZp2v+T9H9Dk/qyTJCt9xANGv1WFr6N05Y
-         Ogf4QsmqLFhMDHkG+85aNSOrtzHcuSEu4g4V6aLZR1mqvdDo0TvsgIWNda+LU34b8I
-         +Y1R5UJlGAQqiPn30/pW+FH9v3aUMNjtLQWarQjyYK0z/yXtYCli9zOZw9bHjT5qaP
-         woipNc1cQDmKw==
+        t=1537222007; bh=nvO4Mh8YSenpdAsCY8//cKkhvujHthOVQlmxI+pozQQ=;
+        h=Date:From:To:Subject:From;
+        b=NTwPP7VHAkp+UN3NLJL2vqdNQCGU28kHN7H8WT+dOFPtX6osf11x6GXJnSwTIwBFu
+         3JtT4Ckdb7k3MQVM1LqIqyAJFm1ZSKKqym2ZHehpeEuhLV7/Vpp1SqxSWgX0+X8lbc
+         Eh8AWeD54oU+I741almumyynF1WtxRkhOL0ouRqLppknnF0Eg5xGG9WSjRS210WoEg
+         ILJPrDsH8d6bD2m9qAAhMYA/2QOJTJYMpfQB0P7hRySltRc4wG9AHFlkk6+G5ifFsT
+         +914QrUZziF4ViFvoh2uQPpVM2G3MVe1lKjD6HCq7KH1dBlKKx8DstQAne524ApEH3
+         KGburbTg+RLWA==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 17 Sep 2018 22:14:46 +0000
+Date:   Mon, 17 Sep 2018 22:06:47 +0000
 From:   observerofaffairs@redchan.it
-To:     moglen@columbia.edu, tcallawa@redhat.com,
-        blukashev@sempervictus.com, bkuhn@sfconservancy.org,
-        dng@lists.dyne.org, debian-vote@lists.debian.org, bruce@perens.com,
-        esr@thyrsus.com, editor@lwn.net, torvalds@osdl.org
-Cc:     debian-user@lists.debian.org, oss-security@lists.openwall.com,
-        linux-kernel@vger.kernel.org
-Subject: GPL version 2 is a bare license. Recind. (Regarding (future) linux
- Code of Conduct Bannings).
-Message-ID: <f02bb27c83835d2b95c279e887fb3bfc@redchan.it>
+To:     linux-kernel@vger.kernel.org
+Subject: GPL version 2 is a bare license. Recind. (Regarding (future) Code of
+ Conduct Bannings).
+Message-ID: <b22ac824ef538afa8ec016844e343550@redchan.it>
 X-Sender: observerofaffairs@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -116,4 +110,3 @@ Additionally, regarding those who promoted the Code of Conduct to be
 used against the linux kernel contributors, knowing full well the effect 
 it would have and desiring those effects; recovery for the ejected 
 contributors via a tortious interference claim may be possible.
-
