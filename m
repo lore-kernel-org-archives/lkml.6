@@ -2,125 +2,166 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5205AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B5FECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16BB12098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:05:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16BB12098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B4060214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4060214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbeIQUdl (ORCPT
+        id S1729214AbeIQUdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:33:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12168 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728437AbeIQUdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:33:41 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 79F8CF96C0871;
-        Mon, 17 Sep 2018 23:05:52 +0800 (CST)
-Received: from linux-work.huawei.com (10.67.189.174) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Mon, 17 Sep 2018 23:05:48 +0800
-From:   nixiaoming <nixiaoming@huawei.com>
-To:     <jack@suse.cz>, <amir73il@gmail.com>
-CC:     <nixiaoming@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] fanotify reports the thread id of the event trigger
-Date:   Mon, 17 Sep 2018 22:19:50 +0800
-Message-ID: <20180917141950.111841-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.10.1
+        Mon, 17 Sep 2018 16:33:54 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:47273 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728437AbeIQUdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 16:33:54 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07450628|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03293;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.Cs.vR8o_1537196733;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.Cs.vR8o_1537196733)
+          by smtp.aliyun-inc.com(10.147.40.26);
+          Mon, 17 Sep 2018 23:05:33 +0800
+Date:   Mon, 17 Sep 2018 23:05:32 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, devicetree@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V3 11/27] csky: Atomic operations
+Message-ID: <20180917150532.GC2612@guoren-Inspiron-7460>
+References: <cover.1536757532.git.ren_guo@c-sky.com>
+ <93e8b592e429c156ad4d4ca5d85ef48fd0ab8b70.1536757532.git.ren_guo@c-sky.com>
+ <20180912155514.GV24082@hirez.programming.kicks-ass.net>
+ <20180915145512.GA18355@guoren-Inspiron-7460>
+ <20180917081755.GO24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917081755.GO24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to identify which thread triggered the event in the
-multi-threaded program, add the FAN_EVENT_INFO_TID tag in fanotify_init
-to select whether to report the event creator's thread id information.
+On Mon, Sep 17, 2018 at 10:17:55AM +0200, Peter Zijlstra wrote:
+> On Sat, Sep 15, 2018 at 10:55:13PM +0800, Guo Ren wrote:
+> > > > +#define ATOMIC_OP_RETURN(op, c_op)					\
+> 
+> > > > +#define ATOMIC_FETCH_OP(op, c_op)					\
+> 
+> > > For these you could generate _relaxed variants and not provide smp_mb()
+> > > inside them.
+> > Ok, but I'll modify it in next commit.
+> 
+> That's fine. Just wanted to let you know about _relaxed() since it will
+> benefit your platform.
+Thank you.
 
-Signed-off-by: nixiaoming <nixiaoming@huawei.com>
----
- fs/notify/fanotify/fanotify.c      | 5 ++++-
- fs/notify/fanotify/fanotify_user.c | 5 +++--
- include/linux/fsnotify_backend.h   | 1 +
- include/uapi/linux/fanotify.h      | 1 +
- 4 files changed, 9 insertions(+), 3 deletions(-)
+> > > > +#define ATOMIC_OP(op, c_op)						\
+> > > > +static inline void atomic_##op(int i, atomic_t *v)			\
+> > > > +{									\
+> > > > +	unsigned long tmp, flags;					\
+> > > > +									\
+> > > > +	raw_local_irq_save(flags);					\
+> > > > +									\
+> > > > +	asm volatile (							\
+> > > > +	"	ldw		%0, (%2) \n"				\
+> > > > +	"	" #op "		%0, %1   \n"				\
+> > > > +	"	stw		%0, (%2) \n"				\
+> > > > +		: "=&r" (tmp)						\
+> > > > +		: "r" (i), "r"(&v->counter)				\
+> > > > +		: "memory");						\
+> > > > +									\
+> > > > +	raw_local_irq_restore(flags);					\
+> > > > +}
+> > > 
+> > > Is this really 'better' than the generic UP fallback implementation?
+> > There is a lock irq instruction "idly4" with out irq_save. eg:
+> > 	asm volatile (							\
+> > 	"	idly4			 \n"				\
+> > 	"	ldw		%0, (%2) \n"				\
+> > 	"	" #op "		%0, %1   \n"				\
+> > 	"	stw		%0, (%2) \n"				\
+> > I'll change to that after full tested.
+> 
+> That is pretty nifty, could you explain (or reference me to a arch doc
+> that does) the exact semantics of that "idly4" instruction?
+The idly4 allows the 4 instructions behind it to not respond to interrupts.
+When ldw got exception, it will cause the carry to be 1. So I need
+prepare the assemble like this:
+1:	cmpne r0, r0
+	idly4
+	ldw	%0, (%2)
+	bt	1b
+	" #op " ...
+	stw ...
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 94b5215..5a3af87 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -171,7 +171,10 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
- 		goto out;
- init: __maybe_unused
- 	fsnotify_init_event(&event->fse, inode, mask);
--	event->tgid = get_pid(task_tgid(current));
-+	if (group->fanotify_data.should_report_tid)
-+		event->tgid = get_pid(task_pid(current));
-+	else
-+		event->tgid = get_pid(task_tgid(current));
- 	if (path) {
- 		event->path = *path;
- 		path_get(&event->path);
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 6905488..3aa425b 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -693,9 +693,9 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 		return -EPERM;
- 
- #ifdef CONFIG_AUDITSYSCALL
--	if (flags & ~(FAN_ALL_INIT_FLAGS | FAN_ENABLE_AUDIT))
-+	if (flags & ~(FAN_ALL_INIT_FLAGS | FAN_ENABLE_AUDIT | FAN_EVENT_INFO_TID))
- #else
--	if (flags & ~FAN_ALL_INIT_FLAGS)
-+	if (flags & ~(FAN_ALL_INIT_FLAGS | FAN_EVENT_INFO_TID))
- #endif
- 		return -EINVAL;
- 
-@@ -731,6 +731,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	}
- 
- 	group->fanotify_data.user = user;
-+	group->fanotify_data.should_report_tid = (flags & FAN_EVENT_INFO_TID) ? true : false;
- 	atomic_inc(&user->fanotify_listeners);
- 	group->memcg = get_mem_cgroup_from_mm(current->mm);
- 
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index b8f4182..44c659f 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -193,6 +193,7 @@ struct fsnotify_group {
- 			unsigned int max_marks;
- 			struct user_struct *user;
- 			bool audit;
-+			bool should_report_tid;
- 		} fanotify_data;
- #endif /* CONFIG_FANOTIFY */
- 	};
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 7424791..4eba41c 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -18,6 +18,7 @@
- 
- #define FAN_ONDIR		0x40000000	/* event occurred against dir */
- 
-+#define FAN_EVENT_INFO_TID	0x02000000	/* reports the thread id of the event trigger */
- #define FAN_EVENT_ON_CHILD	0x08000000	/* interested in child events */
- 
- /* helper events */
--- 
-2.10.1
+I need more stress test on it and then I'll change to it.
 
+> > > > +static inline void arch_spin_lock(arch_spinlock_t *lock)
+> > > > +{
+> > > > +	arch_spinlock_t lockval;
+> > > > +	u32 ticket_next = 1 << TICKET_NEXT;
+> > > > +	u32 *p = &lock->lock;
+> > > > +	u32 tmp;
+> > > > +
+> > > > +	smp_mb();
+> > > 
+> > > spin_lock() doesn't need smp_mb() before.
+> > read_lock and write_lock also needn't smp_mb() before, isn't it?
+> 
+> Correct. The various *_lock() functions only need imply an ACQUIRE
+> barrier, such that the critical section happens after the lock is taken.
+> 
+> > > > +
+> > > > +static inline void arch_spin_unlock(arch_spinlock_t *lock)
+> > > > +{
+> > > > +	smp_mb();
+> > > > +	lock->tickets.owner++;
+> > > > +	smp_mb();
+> > > 
+> > > spin_unlock() doesn't need smp_mb() after.
+> > read_unlock and write_unlock also needn't smp_mb() after, isn't it?
+> 
+> Indeed so, the various *_unlock() functions only need imply a RELEASE
+> barrier, such that the critical section happend before the lock is
+> released.
+> 
+> In both cases (lock and unlock) there is a great amount of subtle
+> details, but most of that is irrelevant if all you have is smp_mb().
+Got it, Thx for the explanation.
+
+> 
+> 
+> > > > +/*
+> > > > + * Test-and-set spin-locking.
+> > > > + */
+> > > 
+> > > Why retain that?
+> > > 
+> > > same comments; it has far too many smp_mb()s in.
+> > I'm not sure about queued_rwlocks and just for 2-cores-smp test-and-set is
+> > faster and simpler, isn't it?
+> 
+> Even on 2 cores I think you can create starvation cases with
+> test-and-set spinlocks. And the maintenace overhead of carrying two lock
+> implementations is non trivial.
+> 
+> As to performance; I cannot say, but the ticket lock isn't very
+> expensive, you could benchmark of course.
+Ticket lock is good.
+But How about queued_rwlocks v.s my_test_set_rwlock?
+I'm not sure about the queued_rwlocks. I just implement the ticket-spinlock.
+
+Best Regards
+ Guo Ren
