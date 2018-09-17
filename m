@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864FDECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783AAECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C8F20867
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C8F20867
+	by mail.kernel.org (Postfix) with ESMTP id 3773220867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3773220867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731113AbeIREfE (ORCPT
+        id S1731125AbeIREfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:35:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49336 "EHLO
+        Tue, 18 Sep 2018 00:35:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49346 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbeIREfD (ORCPT
+        with ESMTP id S1730492AbeIREfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:35:03 -0400
+        Tue, 18 Sep 2018 00:35:07 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47CB6C49;
-        Mon, 17 Sep 2018 23:05:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D880AC49;
+        Mon, 17 Sep 2018 23:05:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 109/126] inet: frags: get rid of ipfrag_skb_cb/FRAG_CB
-Date:   Tue, 18 Sep 2018 00:42:37 +0200
-Message-Id: <20180917211711.127328288@linuxfoundation.org>
+Subject: [PATCH 4.14 110/126] inet: frags: fix ip6frag_low_thresh boundary
+Date:   Tue, 18 Sep 2018 00:42:38 +0200
+Message-Id: <20180917211711.192268276@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,139 +54,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-ip_defrag uses skb->cb[] to store the fragment offset, and unfortunately
-this integer is currently in a different cache line than skb->next,
-meaning that we use two cache lines per skb when finding the insertion point.
+Giving an integer to proc_doulongvec_minmax() is dangerous on 64bit arches,
+since linker might place next to it a non zero value preventing a change
+to ip6frag_low_thresh.
 
-By aliasing skb->ip_defrag_offset and skb->dev, we pack all the fields
-in a single cache line and save precious memory bandwidth.
+ip6frag_low_thresh is not used anymore in the kernel, but we do not
+want to prematuraly break user scripts wanting to change it.
 
-Note that after the fast path added by Changli Gao in commit
-d6bebca92c66 ("fragment: add fast path for in-order fragments")
-this change wont help the fast path, since we still need
-to access prev->len (2nd cache line), but will show great
-benefits when slow path is entered, since we perform
-a linear scan of a potentially long list.
+Since specifying a minimal value of 0 for proc_doulongvec_minmax()
+is moot, let's remove these zero values in all defrag units.
 
-Also, note that this potential long list is an attack vector,
-we might consider also using an rb-tree there eventually.
-
+Fixes: 6e00f7dd5e4e ("ipv6: frags: fix /proc/sys/net/ipv6/ip6frag_low_thresh")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Maciej Żenczykowski <maze@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit bf66337140c64c27fa37222b7abca7e49d63fb57)
+(cherry picked from commit 3d23401283e80ceb03f765842787e0e79ff598b7)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |    1 +
- net/ipv4/ip_fragment.c |   35 ++++++++++++++---------------------
- 2 files changed, 15 insertions(+), 21 deletions(-)
+ net/ieee802154/6lowpan/reassembly.c     |    2 --
+ net/ipv4/ip_fragment.c                  |    5 ++---
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    2 --
+ net/ipv6/reassembly.c                   |    4 +---
+ 4 files changed, 3 insertions(+), 10 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -678,6 +678,7 @@ struct sk_buff {
- 		 * UDP receive path is one user.
- 		 */
- 		unsigned long		dev_scratch;
-+		int			ip_defrag_offset;
- 	};
- 	/*
- 	 * This is the control buffer. It is free to use for every
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -411,7 +411,6 @@ err:
+ }
+ 
+ #ifdef CONFIG_SYSCTL
+-static long zero;
+ 
+ static struct ctl_table lowpan_frags_ns_ctl_table[] = {
+ 	{
+@@ -428,7 +427,6 @@ static struct ctl_table lowpan_frags_ns_
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_doulongvec_minmax,
+-		.extra1		= &zero,
+ 		.extra2		= &init_net.ieee802154_lowpan.frags.high_thresh
+ 	},
+ 	{
 --- a/net/ipv4/ip_fragment.c
 +++ b/net/ipv4/ip_fragment.c
-@@ -57,14 +57,6 @@
-  */
- static const char ip_frag_cache_name[] = "ip4-frags";
+@@ -672,7 +672,7 @@ struct sk_buff *ip_check_defrag(struct n
+ EXPORT_SYMBOL(ip_check_defrag);
  
--struct ipfrag_skb_cb
--{
--	struct inet_skb_parm	h;
--	int			offset;
--};
--
--#define FRAG_CB(skb)	((struct ipfrag_skb_cb *)((skb)->cb))
--
- /* Describe an entry in the "incomplete datagrams" queue. */
- struct ipq {
- 	struct inet_frag_queue q;
-@@ -353,13 +345,13 @@ static int ip_frag_queue(struct ipq *qp,
- 	 * this fragment, right?
- 	 */
- 	prev = qp->q.fragments_tail;
--	if (!prev || FRAG_CB(prev)->offset < offset) {
-+	if (!prev || prev->ip_defrag_offset < offset) {
- 		next = NULL;
- 		goto found;
- 	}
- 	prev = NULL;
- 	for (next = qp->q.fragments; next != NULL; next = next->next) {
--		if (FRAG_CB(next)->offset >= offset)
-+		if (next->ip_defrag_offset >= offset)
- 			break;	/* bingo! */
- 		prev = next;
- 	}
-@@ -370,7 +362,7 @@ found:
- 	 * any overlaps are eliminated.
- 	 */
- 	if (prev) {
--		int i = (FRAG_CB(prev)->offset + prev->len) - offset;
-+		int i = (prev->ip_defrag_offset + prev->len) - offset;
+ #ifdef CONFIG_SYSCTL
+-static long zero;
++static int dist_min;
  
- 		if (i > 0) {
- 			offset += i;
-@@ -387,8 +379,8 @@ found:
+ static struct ctl_table ip4_frags_ns_ctl_table[] = {
+ 	{
+@@ -689,7 +689,6 @@ static struct ctl_table ip4_frags_ns_ctl
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_doulongvec_minmax,
+-		.extra1		= &zero,
+ 		.extra2		= &init_net.ipv4.frags.high_thresh
+ 	},
+ 	{
+@@ -705,7 +704,7 @@ static struct ctl_table ip4_frags_ns_ctl
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= &zero
++		.extra1		= &dist_min,
+ 	},
+ 	{ }
+ };
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -63,7 +63,6 @@ struct nf_ct_frag6_skb_cb
+ static struct inet_frags nf_frags;
  
- 	err = -ENOMEM;
+ #ifdef CONFIG_SYSCTL
+-static long zero;
  
--	while (next && FRAG_CB(next)->offset < end) {
--		int i = end - FRAG_CB(next)->offset; /* overlap is 'i' bytes */
-+	while (next && next->ip_defrag_offset < end) {
-+		int i = end - next->ip_defrag_offset; /* overlap is 'i' bytes */
+ static struct ctl_table nf_ct_frag6_sysctl_table[] = {
+ 	{
+@@ -79,7 +78,6 @@ static struct ctl_table nf_ct_frag6_sysc
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_doulongvec_minmax,
+-		.extra1		= &zero,
+ 		.extra2		= &init_net.nf_frag.frags.high_thresh
+ 	},
+ 	{
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -554,7 +554,6 @@ static const struct inet6_protocol frag_
+ };
  
- 		if (i < next->len) {
- 			int delta = -next->truesize;
-@@ -401,7 +393,7 @@ found:
- 			delta += next->truesize;
- 			if (delta)
- 				add_frag_mem_limit(qp->q.net, delta);
--			FRAG_CB(next)->offset += i;
-+			next->ip_defrag_offset += i;
- 			qp->q.meat -= i;
- 			if (next->ip_summed != CHECKSUM_UNNECESSARY)
- 				next->ip_summed = CHECKSUM_NONE;
-@@ -425,7 +417,13 @@ found:
- 		}
- 	}
+ #ifdef CONFIG_SYSCTL
+-static int zero;
  
--	FRAG_CB(skb)->offset = offset;
-+	/* Note : skb->ip_defrag_offset and skb->dev share the same location */
-+	dev = skb->dev;
-+	if (dev)
-+		qp->iif = dev->ifindex;
-+	/* Makes sure compiler wont do silly aliasing games */
-+	barrier();
-+	skb->ip_defrag_offset = offset;
- 
- 	/* Insert this fragment in the chain of fragments. */
- 	skb->next = next;
-@@ -436,11 +434,6 @@ found:
- 	else
- 		qp->q.fragments = skb;
- 
--	dev = skb->dev;
--	if (dev) {
--		qp->iif = dev->ifindex;
--		skb->dev = NULL;
--	}
- 	qp->q.stamp = skb->tstamp;
- 	qp->q.meat += skb->len;
- 	qp->ecn |= ecn;
-@@ -516,7 +509,7 @@ static int ip_frag_reasm(struct ipq *qp,
- 	}
- 
- 	WARN_ON(!head);
--	WARN_ON(FRAG_CB(head)->offset != 0);
-+	WARN_ON(head->ip_defrag_offset != 0);
- 
- 	/* Allocate a new buffer for the datagram. */
- 	ihlen = ip_hdrlen(head);
+ static struct ctl_table ip6_frags_ns_ctl_table[] = {
+ 	{
+@@ -570,8 +569,7 @@ static struct ctl_table ip6_frags_ns_ctl
+ 		.data		= &init_net.ipv6.frags.low_thresh,
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= &zero,
++		.proc_handler	= proc_doulongvec_minmax,
+ 		.extra2		= &init_net.ipv6.frags.high_thresh
+ 	},
+ 	{
 
 
