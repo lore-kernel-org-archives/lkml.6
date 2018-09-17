@@ -2,123 +2,79 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD6FECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E3FECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51521214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:56:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51521214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
+	by mail.kernel.org (Postfix) with ESMTP id A1A24214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:58:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X0OF+EkB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A24214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbeIQOXX (ORCPT
+        id S1727668AbeIQOZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:23:23 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:32074 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbeIQOXX (ORCPT
+        Mon, 17 Sep 2018 10:25:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:32788 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeIQOZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:23:23 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8H8uQst014526;
-        Mon, 17 Sep 2018 17:56:26 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Mon, 17 Sep 2018 17:56:25 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from localhost.localdomain (239.166.151.153.ap.dti.ne.jp [153.151.166.239])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8H8uKNP014481
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 17 Sep 2018 17:56:25 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH v2] arm64: dts: rockchip: add i2s and spdif endpoints of rk3328
-Date:   Mon, 17 Sep 2018 17:55:55 +0900
-Message-Id: <20180917085555.21775-1-katsuhiro@katsuster.net>
-X-Mailer: git-send-email 2.18.0
+        Mon, 17 Sep 2018 10:25:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QkTxYdgDOlRq2zyG+S+QLDOVfmhSN3dXupFwDLvcAKw=; b=X0OF+EkBJPNd38RCKBXMeguNV
+        xl+ep8UdJ6msAMHL6rQFkHSONdMdvDab+gn61vxaSn2tU2fdTPHO31V/CH6V4tsXvxvVtdCuWIKm3
+        EHDbqpFl9SH+47s94FdRZGXbQWMVbEueyQqfVm9CNsqe2vccxnNNUuyhiKlwoK+ao1mHaaptm2B6g
+        rV9e98Xgmwx+SJJOGXQZ92enF1hxHJ6Bx2PFJAZ4WtFagk5vaYlT5P/as9+LKaebdefXaLbP9YbhN
+        Ug3y4bXw4EFHlv4HPZFnt3QDUwzjea467UmGI6DXpYbA4lWykWfkehpW+KiRNfSAaCs6XlPDIUu3J
+        HZ7Aflqqg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g1pMp-0001sZ-9b; Mon, 17 Sep 2018 08:58:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A2CC12058A23D; Mon, 17 Sep 2018 10:58:48 +0200 (CEST)
+Date:   Mon, 17 Sep 2018 10:58:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        mingo@redhat.com, acme@kernel.org, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, dave.hansen@intel.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 5/6] x86/intel_rdt: Use perf infrastructure for
+ measurements
+Message-ID: <20180917085848.GQ24124@hirez.programming.kicks-ass.net>
+References: <cover.1536685533.git.reinette.chatre@intel.com>
+ <e49f32d40c53839c31e1376f11059539afd08f23.1536685533.git.reinette.chatre@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e49f32d40c53839c31e1376f11059539afd08f23.1536685533.git.reinette.chatre@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds port and endpoint of i2s and spdif nodes for rk3328.
-Because to use modern sound card interface such as audio-graph-card.
+On Tue, Sep 11, 2018 at 10:14:36AM -0700, Reinette Chatre wrote:
+> +static int measure_l2_residency(void *_plr)
+> +{
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
----
- arch/arm64/boot/dts/rockchip/rk3328.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> +	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index d3ef6566325e..fd35dbd37ee2 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -179,7 +179,13 @@
- 		clock-names = "i2s_clk", "i2s_hclk";
- 		dmas = <&dmac 11>, <&dmac 12>;
- 		dma-names = "tx", "rx";
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
-+
-+		i2s0_p0: port {
-+			i2s0_p0_0: endpoint {
-+			};
-+		};
- 	};
- 
- 	i2s1: i2s@ff010000 {
-@@ -190,7 +196,13 @@
- 		clock-names = "i2s_clk", "i2s_hclk";
- 		dmas = <&dmac 14>, <&dmac 15>;
- 		dma-names = "tx", "rx";
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
-+
-+		i2s1_p0: port {
-+			i2s1_p0_0: endpoint {
-+			};
-+		};
- 	};
- 
- 	i2s2: i2s@ff020000 {
-@@ -201,7 +213,13 @@
- 		clock-names = "i2s_clk", "i2s_hclk";
- 		dmas = <&dmac 0>, <&dmac 1>;
- 		dma-names = "tx", "rx";
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
-+
-+		i2s2_p0: port {
-+			i2s2_p0_0: endpoint {
-+			};
-+		};
- 	};
- 
- 	spdif: spdif@ff030000 {
-@@ -214,7 +232,13 @@
- 		dma-names = "tx";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spdifm2_tx>;
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
-+
-+		spdif_p0: port {
-+			spdif_p0_0: endpoint {
-+			};
-+		};
- 	};
- 
- 	pdm: pdm@ff040000 {
--- 
-2.18.0
+> +}
+> +
+> +static int measure_l3_residency(void *_plr)
+> +{
 
+> +	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
+
+Not sure it's important, but both sites loose the error return.
