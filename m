@@ -2,88 +2,108 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B309ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37042ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087202098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:28:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087202098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CBCB3214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:28:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ecYAHt+E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBCB3214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbeIQT4H (ORCPT
+        id S1728811AbeIQT4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 15:56:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44418 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbeIQT4H (ORCPT
+        Mon, 17 Sep 2018 15:56:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37471 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbeIQT4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 15:56:07 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92B2EEA3;
-        Mon, 17 Sep 2018 14:28:31 +0000 (UTC)
-Date:   Mon, 17 Sep 2018 16:28:28 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     KY Srinivasan <kys@microsoft.com>
-Cc:     "olaf@aepfle.de" <olaf@aepfle.de>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        vkuznets <vkuznets@redhat.com>
-Subject: Re: [PATCH 2/2] tools: hv: fcopy: set 'error' in case an unknown
- operation was requested
-Message-ID: <20180917142828.GA31799@kroah.com>
-References: <20180917041352.11402-1-kys@linuxonhyperv.com>
- <20180917041455.11455-1-kys@linuxonhyperv.com>
- <20180917041455.11455-2-kys@linuxonhyperv.com>
- <20180917045613.GA25435@kroah.com>
- <MW2PR2101MB11138F9E55814399F152859FA01E0@MW2PR2101MB1113.namprd21.prod.outlook.com>
+        Mon, 17 Sep 2018 15:56:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u12-v6so17517850wrr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 07:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hpdacyBz7Aitu7rQFkryLBnVX+BIbr+xu4zAGh9/7vY=;
+        b=ecYAHt+ENKUPw1PZXPUxeKC0OzWIJObXEB60hMrR8LjMWTV2p1lyyOstztL/KGL7hu
+         blSrS9JKJkRMKfPv4Wv4ZuS05rPnq1rWvSdJiMxcG1j10BxjQVyGtzM38SsEqeWjtn6T
+         Ccya0jnkulnqJedTHFRsTZu2Yr/phXBFAjnXyt895xkzeCn7A/Q9jZ/s1owpOrgPdVSX
+         rbQHsmw8oA4KdWIjRHdbRN7p3thmHTBp4muz89ORbyUuWDvNrNjvWn6bQvKCeIWYY1yb
+         6Mv141yxf02bamJwdKSFP315WHHTVofk/YCBP9hsOhCXvOT/VRBlUgehqhCeyoZ98B+k
+         1QeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hpdacyBz7Aitu7rQFkryLBnVX+BIbr+xu4zAGh9/7vY=;
+        b=aySKST7wzHcMcFbs+u4LbDLkFba2EhBULSuWT5N9dvI9K4q9LG5hUzdChKL06IidQa
+         e1yCOQeMCvvBpjxVpQq0upfSiZtAE+b67lp5eIaK7ZdAqmlrPU5nuJ53ZuwDdIYBd5u3
+         vJysnMNVnxpl861RUg5CK/P0NOZRU2qwGAT//EwstW8W5ad98QS0pMiOU8Cs4F+nYzKj
+         J8x3gggFmb+jsSVQEdCuk044NZNVYjbysPxDZJ3PjmD1RQZ1F8H32coySNgC16GZREgr
+         fa5EmWACS259JenFK/GASzwh7Jo2sY3XZEYrBfZIl+OcGlnACnjenKSOvrzZtTX9azIG
+         ktgQ==
+X-Gm-Message-State: APzg51DVS2MOdisidUgFTCdqWARkLxIc11SvwH0eTBPyouvEaXDSbBCU
+        ihwGUkFxmij3nACzEVkFxsF6KoEfRMVVUEG0Taiwdr3vJ8c=
+X-Google-Smtp-Source: ANB0VdYJGmKgwmLl1ksmnigkZZm1b6NnYE+T1nBZRS4fJ78zD/QJn3uhXI3PNqldGs6fr3Fb1j8oxwxbTUnLn6mUkYk=
+X-Received: by 2002:adf:c554:: with SMTP id s20-v6mr18260318wrf.46.1537194513352;
+ Mon, 17 Sep 2018 07:28:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MW2PR2101MB11138F9E55814399F152859FA01E0@MW2PR2101MB1113.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <alpine.DEB.2.21.1809101533330.1292@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1809101536410.1292@nanos.tec.linutronix.de>
+ <20180910133902.GB21593@infradead.org> <alpine.DEB.2.21.1809101544560.1292@nanos.tec.linutronix.de>
+ <20180910134915.GB30774@infradead.org> <CAAhSdy1be_ibiowifBdgBZjbHuFU=CR4rZXQDwQghVYkex5bMg@mail.gmail.com>
+ <20180910161328.GA13171@infradead.org> <CAAhSdy2Y-XTZ12i5aV+SzraMZP1YQBhAArpER-YssPcBJNOPOA@mail.gmail.com>
+ <20180910163543.GA13052@infradead.org> <CAAhSdy2PSLjrtmSbkJ4w-v-zWm2hjii3XL6HE5Pe7u3wz4BmZA@mail.gmail.com>
+ <20180917141436.GB2821@infradead.org>
+In-Reply-To: <20180917141436.GB2821@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 17 Sep 2018 19:58:21 +0530
+Message-ID: <CAAhSdy1gD3tZLmBzfpJV1qQKsG4GKgLkoBC7v5Kycw8KX+YeLg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] irqchip: RISC-V Local Interrupt Controller Driver
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 02:16:48PM +0000, KY Srinivasan wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Greg KH <gregkh@linuxfoundation.org>
-> > Sent: Sunday, September 16, 2018 9:56 PM
-> > To: KY Srinivasan <kys@microsoft.com>
-> > Cc: linux-kernel@vger.kernel.org; devel@linuxdriverproject.org;
-> > olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com; Stephen
-> > Hemminger <sthemmin@microsoft.com>; Michael Kelley (EOSG)
-> > <Michael.H.Kelley@microsoft.com>; vkuznets <vkuznets@redhat.com>
-> > Subject: Re: [PATCH 2/2] tools: hv: fcopy: set 'error' in case an unknown
-> > operation was requested
-> > 
-> > On Mon, Sep 17, 2018 at 04:14:55AM +0000, kys@linuxonhyperv.com wrote:
-> > > From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > >
-> > > 'error' variable is left uninitialized in case we see an unknown operation.
-> > > As we don't immediately return and proceed to pwrite() we need to set it
-> > > to something, HV_E_FAIL sounds good enough.
-> > >
-> > > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> > > ---
-> > >  tools/hv/hv_fcopy_daemon.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > 
-> > No need to backport for stable?
-> Thanks for pointing this out. Should I resubmit with the stable tag?
+On Mon, Sep 17, 2018 at 7:44 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, Sep 10, 2018 at 10:08:58PM +0530, Anup Patel wrote:
+> > > They could in theory IFF someone actually get the use case through
+> > > the riscv privileged spec working group.
+> >
+> > Their is no point in having each and every possible local interrupts
+> > defined by RISC-V spec because some of these will be CPU
+> > implementation specific in which case these local interrupts will
+> > be described in platform specific DT passed to Linux.
+>
+> Again, to legally have implementation specific local interrupt types
+> you'll first need to convice the spec to change the status for those
+> fields from reserved to implementation specific.
 
-I can do it... :)
+I agree, this needs to be first clarified in RISC-V spec. May be this is
+a good topic for discussion in any upcoming RISC-V meetup.
 
+Until then anyone can try these patches from riscv_intc_v2 branch of
+https://github.com/avpatel/linux
+
+Regards,
+Anup
