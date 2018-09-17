@@ -2,77 +2,124 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A717ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06206ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5EB52088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:14:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ipshkYID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5EB52088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD852088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD852088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbeIQSmF (ORCPT
+        id S1728466AbeIQSmS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:42:05 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:42413 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbeIQSmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:42:05 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id a4947330;
-        Mon, 17 Sep 2018 12:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=1ym2pWLMVwmT5x0pyZWK555yauM=; b=ipshkY
-        ID3hMlLQe+Loadmxl8HGrJBWrNL0M83Qbz0W+TD6/BRpGBvoYPputUUepMyr5mkS
-        kOxFlzgaUKWl3f4c69a3ZKaDrpK2r+LkRE8yfooQvYi7qo5L0PyffxZxkrftbnJk
-        +NcgYj1rOjgedJJHsdjxE18bktdI04w6VvKifnyWqIlHBDRORbBqmgwAQ6WbBWbv
-        16pI87iI/A45kF9Id2LPvPLMfIplP7at+nLOafsJZCOHK6umJw8btwTl8eSf34QG
-        bIH3K/IO4RzJEcFXqUW8xl69PojfRy5o4HkRm3gcJejWr3X5B4ApyY4xtFJlIpfB
-        F1PZvvB6j0reIIBQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ef8ce5b5 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Mon, 17 Sep 2018 12:57:18 +0000 (UTC)
-Received: by mail-ot1-f53.google.com with SMTP id u20-v6so11190181otk.10;
-        Mon, 17 Sep 2018 06:14:44 -0700 (PDT)
-X-Gm-Message-State: APzg51D03fu55zuC73gxj3mCzDf8qnb2YQcImVN3u5BbLTQVR393fDm0
-        OgGNBNH+F6rgY9FHiktHhTauDfRGFZgcgb8diGk=
-X-Google-Smtp-Source: ANB0VdYlkw16CQKJJ+tnoyJ6fR6iHfKFpRmYvSBK17B4k+tTWhTz5DlUAv3FF6YoBimgNqGefzs3YAyUd3aXNSL7wic=
-X-Received: by 2002:a9d:2dc8:: with SMTP id g66-v6mr12036495otb.311.1537190083420;
- Mon, 17 Sep 2018 06:14:43 -0700 (PDT)
+        Mon, 17 Sep 2018 14:42:18 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33207 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbeIQSmS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 14:42:18 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 8-v6so18892234oip.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 06:15:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p9PMOYqPrpHyJUT0mhYQxiZ8NhIMBPq/AjMIdWpPYSM=;
+        b=WFGKdaLq2h7gH8Y6l2exg64ZLPivqHShyOlaXRligAxCsA7AEXjWR3gzr0q7x8wIb9
+         gQdN/FLi1299D3XVKl+Bv12RWPq2RpXpVrX6ud42eixsAwYxw4UcRHOl6wvwX61AId+A
+         pO2HBtq4JEDxA7luSbVjfku98EbJV4/vra8Jqqvo1+iYm1I+tIX5D/+bAjjtYDraKdbd
+         oZhAOgJcEvHLKvchOr1JVUZqewC6zjWEB6TzjVaImgnXvbhc7WzOOybhfPUucDYz5Gko
+         n1xfHjQTvaq09ZJKnNz6pWRIL2x9fiZKGULmsvQD6wbY0IK6F8dtHYtNCJ8QCBAeDKYF
+         5sBg==
+X-Gm-Message-State: APzg51CGtPTAAx7g06fjnYH2fiHljGUpVSRjYvOY8TaXtFYbqwe+zBfN
+        /B7/rBDU57biwYlx1pTLA9rJ8vjm0T68+I8eXYFdHA==
+X-Google-Smtp-Source: ANB0Vdb5DAKtPBwLoOq8CQ+NSDWcWmvKKOM3Ckf+W0d8+paPGpzs/wqGoCrNN4MTwNeDs3ofSixqlf0Rh8RVkjkgJ2c=
+X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr16927836oie.68.1537190100562;
+ Mon, 17 Sep 2018 06:15:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180911010838.8818-1-Jason@zx2c4.com> <20180911010838.8818-2-Jason@zx2c4.com>
- <20180912061433.GA8484@ip-172-31-15-78> <CAHmME9pmgu_xWJ0rvdS4RhzwjKPiNdkQ9nc6mqTNeb6A8xT8Eg@mail.gmail.com>
- <20180913050301.GA26367@ip-172-31-15-78>
-In-Reply-To: <20180913050301.GA26367@ip-172-31-15-78>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 17 Sep 2018 15:14:32 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pGCwoS25c7KM+bHAzn5P+nquiwyoLsY-_Nu67RVd6Giw@mail.gmail.com>
-Message-ID: <CAHmME9pGCwoS25c7KM+bHAzn5P+nquiwyoLsY-_Nu67RVd6Giw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 01/17] asm: simd context helper API
-To:     kevin@guarana.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org
+Received: by 2002:a4a:554b:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 06:14:59
+ -0700 (PDT)
+In-Reply-To: <20180917130629.nugwsgcsuoda6qf6@techsingularity.net>
+References: <CAE4VaGC+FcE4cTUwzTLuCRd8rnd-=MhSZHfjKstiRTKcYq-39g@mail.gmail.com>
+ <20180907125649.GA3995@linux.vnet.ibm.com> <20180907131923.GB24106@hirez.programming.kicks-ass.net>
+ <20180907134420.GD3995@linux.vnet.ibm.com> <20180907135235.GE24106@hirez.programming.kicks-ass.net>
+ <CAE4VaGBeTy-du_tThkr3w-r2KbYW8m+sRcpDPn9sYeENUy_x4g@mail.gmail.com>
+ <CAE4VaGDoxOQEhPYtVzEkNdrnFQ=Lnjj2is71ZYUBn_csUreoNA@mail.gmail.com> <20180917130629.nugwsgcsuoda6qf6@techsingularity.net>
+From:   Jirka Hladky <jhladky@redhat.com>
+Date:   Mon, 17 Sep 2018 15:14:59 +0200
+Message-ID: <CAE4VaGBBR9V1RvM2xXqbkOxA=GVtxV4AgoKs5SG5z0c+8AkMKQ@mail.gmail.com>
+Subject: Re: [SCHEDULER] Performance drop in 4.19 compared to 4.18 kernel
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Jakub Ra??ek" <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kkolakow@redhat.com" <kkolakow@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Kevin,
+Resending in the plain text mode.
 
-I found numerous other advantages in doing it the way you suggested
-(which also helped squash some bugs), and so this will be part of v5.
-Thanks for the suggestion.
+> I'm travelling at the moment but when I get back, I'll see what's in the
+> tip tree with respect to Srikar's patches and then rebase the fast-migration
+> patches on top and reconfirm they still behave as expected. Assuming
+> they do, I'll resend them.
 
-Regards,
-Jason
+
+Sounds great, thank you!
+
+If you want me to retest the rebased patch set, just let me know, we
+would be more than happy to run the tests on our side.
+￼
+Jirka
+
+On Mon, Sep 17, 2018 at 3:06 PM, Mel Gorman <mgorman@techsingularity.net> wrote:
+> On Fri, Sep 14, 2018 at 04:50:20PM +0200, Jirka Hladky wrote:
+>> Hi Peter and Srikar,
+>>
+>> > I have bounced the 5 patches to you, (one of the 6 has not been applied by
+>> > Peter) so I have skipped that.
+>> > They can also be fetched from
+>> > http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com
+>>
+>> I'm sorry for the delay, we have finally the results for the above
+>> kernel. The performance results look good compared to 4.19 vanilla and
+>> are about the same as Mel's sched-numa-fast-crossnode-v1r12 patch set
+>> for 4.18:
+>>
+>> Compared to kernel-4.19.0-0.rc1.1
+>>
+>>   * Improvement upto 20% for SPECjbb2005, SPECjvm2008 benchmarks
+>>   * Improvement upto 50% for stream benchmark
+>>   * Improvement upto 100% for the NAS benchmark (sp_C subtest, 8
+>> threads on 4 NUMA system with 4x E5-4610 v2 @ 2.30GHz, 64 cores in
+>> total)
+>>
+>> When I compare it against Mel's patchset
+>> (git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
+>> sched-numa-fast-crossnode-v1r12)
+>>
+>>   * Mel's kernel is about 15% faster for stream benchmarks
+>>   * The other benchmarks show very similar results with both kernels
+>>
+>> Mel's patchset eliminates NUMA migration rate limits, this is
+>> presumbly the reason for the good stream results.
+>>
+>> Do you have any update when the current patchset could be merged into
+>> the upstream kernel?
+>>
+>
+> I'm travelling at the moment but when I get back, I'll see what's in the
+> tip tree with respect to Srikar's patches and then rebase the fast-migration
+> patches on top and reconfirm they still behave as expected. Assuming
+> they do, I'll resend them.
