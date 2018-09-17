@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62205ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C64EECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AAF2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AAF2146D
+	by mail.kernel.org (Postfix) with ESMTP id 392882146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392882146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732368AbeIREks (ORCPT
+        id S1732381AbeIREkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:40:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50508 "EHLO
+        Tue, 18 Sep 2018 00:40:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50522 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731765AbeIREkr (ORCPT
+        with ESMTP id S1731765AbeIREkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:40:47 -0400
+        Tue, 18 Sep 2018 00:40:51 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C376707;
-        Mon, 17 Sep 2018 23:11:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4971C9D;
+        Mon, 17 Sep 2018 23:11:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, rodia@autistici.org,
+        stable@vger.kernel.org, Sunil K Pandey <sunil.k.pandey@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Don Zickus <dzickus@redhat.com>, Joe Mario <jmario@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 087/158] perf c2c report: Fix crash for empty browser
-Date:   Tue, 18 Sep 2018 00:41:57 +0200
-Message-Id: <20180917211715.229961689@linuxfoundation.org>
+Subject: [PATCH 4.18 088/158] perf evlist: Fix error out while applying initial delay and LBR
+Date:   Tue, 18 Sep 2018 00:41:58 +0200
+Message-Id: <20180917211715.287489145@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -58,76 +57,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit 73978332572ccf5e364c31e9a70ba953f8202b46 ]
+[ Upstream commit 95035c5e167ae6e740b1ddd30210ae0eaf39a5db ]
 
-'perf c2c' scans read/write accesses and tries to find false sharing
-cases, so when the events it wants were not asked for or ended up not
-taking place, we get no histograms.
+'perf record' will error out if both --delay and LBR are applied.
 
-So do not try to display entry details if there's not any. Currently
-this ends up in crash:
+For example:
 
-  $ perf c2c report # then press 'd'
-  perf: Segmentation fault
-  $
-
-Committer testing:
-
-Before:
-
-Record a perf.data file without events of interest to 'perf c2c report',
-then call it and press 'd':
-
-  # perf record sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.001 MB perf.data (6 samples) ]
-  # perf c2c report
-  perf: Segmentation fault
-  -------- backtrace --------
-  perf[0x5b1d2a]
-  /lib64/libc.so.6(+0x346df)[0x7fcb566e36df]
-  perf[0x46fcae]
-  perf[0x4a9f1e]
-  perf[0x4aa220]
-  perf(main+0x301)[0x42c561]
-  /lib64/libc.so.6(__libc_start_main+0xe9)[0x7fcb566cff29]
-  perf(_start+0x29)[0x42c999]
+  # perf record -D 1000 -a -e cycles -j any -- sleep 2
+  Error:
+  dummy:HG: PMU Hardware doesn't support sampling/overflow-interrupts.
+  Try 'perf stat'
   #
 
-After the patch the segfault doesn't take place, a follow up patch to
-tell the user why nothing changes when 'd' is pressed would be good.
+A dummy event is added implicitly for initial delay, which has the same
+configurations as real sampling events. The dummy event is a software
+event. If LBR is configured, perf must error out.
 
-Reported-by: rodia@autistici.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+The dummy event will only be used to track PERF_RECORD_MMAP while perf
+waits for the initial delay to enable the real events. The BRANCH_STACK
+bit can be safely cleared for the dummy event.
+
+After applying the patch:
+
+  # perf record -D 1000 -a -e cycles -j any -- sleep 2
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 1.054 MB perf.data (828 samples) ]
+  #
+
+Reported-by: Sunil K Pandey <sunil.k.pandey@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Don Zickus <dzickus@redhat.com>
-Cc: Joe Mario <jmario@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: f1c5fd4d0bb9 ("perf c2c report: Add TUI cacheline browser")
-Link: http://lkml.kernel.org/r/20180724062008.26126-1-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/1531145722-16404-1-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-c2c.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/evsel.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2349,6 +2349,9 @@ static int perf_c2c__browse_cacheline(st
- 	" s             Toggle full length of symbol and source line columns \n"
- 	" q             Return back to cacheline list \n";
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -848,6 +848,12 @@ static void apply_config_terms(struct pe
+ 	}
+ }
  
-+	if (!he)
-+		return 0;
++static bool is_dummy_event(struct perf_evsel *evsel)
++{
++	return (evsel->attr.type == PERF_TYPE_SOFTWARE) &&
++	       (evsel->attr.config == PERF_COUNT_SW_DUMMY);
++}
 +
- 	/* Display compact version first. */
- 	c2c.symbol_full = false;
+ /*
+  * The enable_on_exec/disabled value strategy:
+  *
+@@ -1086,6 +1092,14 @@ void perf_evsel__config(struct perf_evse
+ 		else
+ 			perf_evsel__reset_sample_bit(evsel, PERIOD);
+ 	}
++
++	/*
++	 * For initial_delay, a dummy event is added implicitly.
++	 * The software event will trigger -EOPNOTSUPP error out,
++	 * if BRANCH_STACK bit is set.
++	 */
++	if (opts->initial_delay && is_dummy_event(evsel))
++		perf_evsel__reset_sample_bit(evsel, BRANCH_STACK);
+ }
  
+ static int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads)
 
 
