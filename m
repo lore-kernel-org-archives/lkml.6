@@ -2,102 +2,100 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F1EECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F95ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3B5214DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 959E520867
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 17:58:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QqKEe1ER"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3B5214DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="gr7dV53D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959E520867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbeIQXZq (ORCPT
+        id S1728401AbeIQX01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 19:25:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59088 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbeIQXZq (ORCPT
+        Mon, 17 Sep 2018 19:26:27 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37084 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbeIQX01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 19:25:46 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HHs9OJ128930;
-        Mon, 17 Sep 2018 17:57:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=Bq3Dv7WvshUpIPYxkw9jvdBU40mGWOQA/v/A/QmMhg8=;
- b=QqKEe1ERBGDLQQb85Ix2lcdKyJThsvD8fhf7c2tAaOy2/TNkwmwWzbLuyxcZb06PRHiL
- JKTxrSPulO4lAFwNL2pSiwLZ0Z2qRf0oCl+Vz4vK8cNPQJV9Z4Kz5iYgSGx3/9ha7ajt
- tSIiqG8D7aaHOgdHnvH5CSF29Ch9wE9eeS4wMXChPxlivntqQuSm5Lzfu0JayruJR1ZF
- XRPXfekvGUNf0nMpkpOh24IxYQmjxQrqKKx19fo5XJ/suQcD/XUWAorrf8cOcATb2QRE
- XBemZiF0oSc2/lrINuHZ6Ms+XPhYh+Q39mfXRE1qpG2x6jQwvjjUUrcBzsc2FWGUxZtl Ag== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2mgt1pfvwf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 17:57:15 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8HHvFiM008467
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 17:57:15 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8HHvEYQ008974;
-        Mon, 17 Sep 2018 17:57:14 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Sep 2018 10:57:14 -0700
-From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>
-To:     Doug Ledford <dledford@redhat.com>, yishaih@mellanox.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jgg@ziepe.ca
-Cc:     jackm@dev.mellanox.co.il
-Subject: [PATCH 1/2] IB/mlx4: Enable debug print of SMPs
-Date:   Mon, 17 Sep 2018 19:56:57 +0200
-Message-Id: <20180917175658.1261435-2-Haakon.Bugge@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180917175658.1261435-1-Haakon.Bugge@oracle.com>
-References: <20180917175658.1261435-1-Haakon.Bugge@oracle.com>
+        Mon, 17 Sep 2018 19:26:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bRBNSyPR+T/G5t9FUDkO/vuDboGwXdjK3VIcgjCLdDI=; b=gr7dV53DDcKvQ6WfKNItvVnma
+        2qEzn7HHKTgMkh2a0cWqwYf02vHrdCDWLzQCMYgztmBbh0qRdtWO94GSHexjYyhrTuuV8RPJ0s1km
+        JS/hgk5Qr9WDCQXZeF0MIgM0cCBNgqISKgA8rxvsi1Tj8N41R7orEnBx0OzcSjG06hm8c=;
+Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g1xmV-0008Tk-Mg; Mon, 17 Sep 2018 17:57:55 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 74BE7440078; Mon, 17 Sep 2018 18:57:53 +0100 (BST)
+Date:   Mon, 17 Sep 2018 10:57:53 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: spi/spi-pxa2xx: add PXA2xx SSP SPI
+ Controller
+Message-ID: <20180917175753.GE2471@sirena.org.uk>
+References: <20180917113559.11101-1-lkundrak@v3.sk>
+ <20180917113559.11101-2-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=712
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809170178
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7LkOrbQMr4cezO2T"
+Content-Disposition: inline
+In-Reply-To: <20180917113559.11101-2-lkundrak@v3.sk>
+X-Cookie: Universe, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IB Subnet Management Packets (SMPs) were excluded from debug prints.
 
-Fixed by enabling print even on QP0 MADs.
+--7LkOrbQMr4cezO2T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
----
- drivers/infiniband/hw/mlx4/mad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Sep 17, 2018 at 01:35:55PM +0200, Lubomir Rintel wrote:
+> This is the SPI controller found on Marvel MMP2 and perhaps more
+> platforms.
 
-diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
-index e5466d786bb1..1718715cc094 100644
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -807,7 +807,7 @@ static int ib_process_mad(struct ib_device *ibdev, int mad_flags, u8 port_num,
- 	int err;
- 	struct ib_port_attr pattr;
- 
--	if (in_wc && in_wc->qp->qp_num) {
-+	if (in_wc && in_wc->qp) {
- 		pr_debug("received MAD: slid:%d sqpn:%d "
- 			"dlid_bits:%d dqpn:%d wc_flags:0x%x, cls %x, mtd %x, atr %x\n",
- 			in_wc->slid, in_wc->src_qp,
--- 
-2.14.3
+I'm missing patches 2 and 5 from this series.  What's going on with
+them, are there any dependencies?
 
+> Changes since v1:
+> - s/ssp@d4035000/spi@d4035000/
+
+As covered in SubmittingPatches please put inter-version changelogs
+after the --- so they don't end up in the commits.
+
+--7LkOrbQMr4cezO2T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluf6yAACgkQJNaLcl1U
+h9DOQAf8Cv3fHKVpMtxvJzFX3pBXWcxF+8T6rJK1pzP5vPMEtdwL+liUyN2xbcyn
+sa3gE6JVmJ5EdBSFX+GiAw0iCPobbIlTV+k4a1ggJIAuRM94LD/cIgcCbSxFW8/S
+wskVlYdpdBlc2zis+99q7LAGVFnvbdQOe58PU4ZHRzlWSL3BGRitwL0lVrSvm3Yn
+AK3AT+EO4/U9gPntJDnNHlEZFdPXEA+ji7Y1OFrx3x54QgTxjlXSnY/1MT2tlb6q
+WUTtrcWBVVijOU3pZPUmgQTBEdekclIbjrfJZsZiIdcGBC5Msd1R6QP/yvp0tMGL
+radg15LAoOSaw66F8Qf0lOMaG0lZzQ==
+=g2nQ
+-----END PGP SIGNATURE-----
+
+--7LkOrbQMr4cezO2T--
