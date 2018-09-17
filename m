@@ -2,226 +2,113 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9482AECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C648ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35E832146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:39:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35E832146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id CF81B2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:40:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uOghUlH6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF81B2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbeIRFJZ (ORCPT
+        id S1728582AbeIRFKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:09:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725849AbeIRFJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:09:24 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C5972088F;
-        Mon, 17 Sep 2018 23:39:42 +0000 (UTC)
-Date:   Mon, 17 Sep 2018 19:39:40 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>
-Subject: Re: [PATCH 5/6] arm64/io: Add header for instrumentation of io
- operations
-Message-ID: <20180917193940.3d68ef88@gandalf.local.home>
-In-Reply-To: <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
-        <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 18 Sep 2018 01:10:35 -0400
+Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:38965 "EHLO
+        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbeIRFKf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 01:10:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537227655; bh=1xTiVgLZrE4AKSCW6kvUVMKw8bOMVjK/n/crsoP6FZs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=uOghUlH6hFxRzddS2Vx9nja3zM28UuxyeT4fN+v3b5w/zCmC9ZPqELJoqMIQ+FN6+lmfCoDMbIW5H6jMa+5S1p4O5AVAJPQY3BEU/OIasmZZwqrx66LZqpunBx970RpNmdv1KPYqBb8Q5z3fILEwtvu4fTlSmizNpAYqWZXiL0GBL0YXpecfCvbDL7ajTQs+bmfxptjce/QskbnnZj7tmnA/XhvOwq4hsQNoiFwpI7kQFRWfjejQ3K6yLZzImLMWLzToA3O0QmV8E+X2rKp3o7WvRCTfav6GS81uLXoXRoKMlrCkv+kAsEkiaQNwHr67s+ZwmbU7UfD/Rvah0VD01g==
+X-YMail-OSG: KwATkgUVM1kIDjDZHbemFx6dABinmcfBj9Na.AhrAPcu4mK_62O7abCcZ.B0KsT
+ NGw5r9D2jDK_3pZKtN8Yr7M_xfNVkCWjflp4ZP90e5LGhlpJnoVY.31FOVc5kFORQBcPGiL80_p9
+ 8FcYuQ9Jc09KdYRu8CMmOqTHankOc4VsH54htDNGmq10mDM6ICXv8on8RWfxrv.e98gwktEOHf13
+ uW5GeuChwAuBUiDl2ZPAC0bn9IGBci3ZSna5XXvr6XLGZyPAthiJFD0tieuYAZtuuEzRTFQMoBP8
+ Z87VMtrmQrGJsn_8wYGBtFzgDDa4HJv_vPNE4W2CgUliVDK84.3iihdc1nOlXZWA_aUxLYOeuc6i
+ pBXHJucYCuP6QSTA3RWsn7LZ9L9CawUVdaFE.ovcZysDgKqJ.hF_kn9V2wUN.qn1WSeBVUgiXw9N
+ HJPZCw_xtdu_oCgBafekchRClhRhfzYnObXQgc802LGeWssREebApq_4MnKYRyluJ0OPsZCYxLhx
+ T83_E5SS2X87MgMA8aNa5XSAUIL0ELpXaxXwGTbAs3gNKdMGdz_yKOwlVZXhezd6LXZw2RLKu_st
+ iF4VTPyoHqZH2.Ux5bBqTyV6gkRRRunLggrC1jNNhOnknkBBkbiPGh_MyLrMeRLVkbsCzxEU6OLY
+ GntMNfIVN_0mx_mScqDqf_9tJy40XbiQ9QXbyE6YX6H1GXPtbotnicHbvin2QrQT3Mcbg7fjuBmc
+ 35ijwBJfU1IC4Z8S4H43c.2FIRtvW0rlo8EKP5SHJ8zUXLRb9lTDXRtHy73WEqtWv5y.UNyrFTUk
+ zs1c362s9SkZVMI_47jSoF_lRlBn3j2qgno3F.Kqu2YXnLVvIqr6CN3T3tGEpn.mCaZKixwVUkGW
+ z.zV8QgRHxSyXo0aqz4prJ8g9MyIh3eKiD0Nc4jO1g4H2uaJsnf0SCTlC1mJ4XwMUcHiO8QeA5zw
+ JHvJ3uNJVwAY2ao81iroiQrmw7ZJ91gqEy7wU2_QuhC9aAAcfxj0xo6c_Wh0VeO86WcqvLwq1M9M
+ Gks4pGftLJQHWqID8gQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Mon, 17 Sep 2018 23:40:55 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e917b0489f2593a57538db83364356ca;
+          Mon, 17 Sep 2018 23:40:54 +0000 (UTC)
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+To:     Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+References: <20180916003059.1046-1-keescook@chromium.org>
+ <20180916003059.1046-17-keescook@chromium.org>
+ <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+ <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+ <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com>
+ <CAGXu5jJ71RLGh0nDgOaN3vCXFGE0poXFU2Gb9o+20aO+AEdOvw@mail.gmail.com>
+ <8f0bd39b-29a6-325d-4558-d9f484249c22@schaufler-ca.com>
+ <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+ <53377892-695f-6336-8574-54c7aa0a4201@schaufler-ca.com>
+ <7ecfffc3-d2a4-3ff7-4bf5-db3029d73c59@canonical.com>
+ <fbdc2a75-8364-c743-f9c3-9dcd2570c569@schaufler-ca.com>
+ <e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
+ <a51a4d34-7077-bfbe-5979-00e79680f514@digikod.net>
+ <CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
+ <060150b2-4bb4-bdcb-760a-5aa5e1ade381@canonical.com>
+ <CAGXu5j+haqMgKxkH12M3O358oBR-jU0uWTZSrCrm462mtgf26A@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ddb2a534-0845-55c1-329c-70adcc3847b8@schaufler-ca.com>
+Date:   Mon, 17 Sep 2018 16:40:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAGXu5j+haqMgKxkH12M3O358oBR-jU0uWTZSrCrm462mtgf26A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  9 Sep 2018 01:57:06 +0530
-Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+On 9/17/2018 4:28 PM, Kees Cook wrote:
+> On Mon, Sep 17, 2018 at 4:26 PM, John Johansen
+> <john.johansen@canonical.com> wrote:
+>> On 09/17/2018 04:20 PM, Kees Cook wrote:
+>>> On Mon, Sep 17, 2018 at 4:10 PM, Mickaël Salaün <mic@digikod.net> wrote:
+>>>> Landlock, because it target unprivileged users, should only be called
+>>>> after all other major (access-control) LSMs. The admin or distro must
+>>>> not be able to change that order in any way. This constraint doesn't
+>>>> apply to current LSMs, though.
+>>> Good point! It will be easy to add LSM_ORDER_LAST, though, given the
+>>> machinery introduced in this series.
+>>>
+>> And when we have two LSMs that want to use that?
+> We'll cross that bridge when we come to it, but perhaps "last
+> exclusive"? (lsm.enable/disable to choose)
 
-> The new asm-generic/io-instrumented.h will keep arch code
-> clean and separate from instrumented version which traces
-> io register accesses. This instrumented header can later
-> be included in arm as well for tracing io register accesses.
-> 
-
-Looks good to me.
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> Suggested-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> ---
->  arch/arm64/include/asm/io.h           | 25 ++++++---------
->  include/asm-generic/io-instrumented.h | 45 +++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+), 16 deletions(-)
->  create mode 100644 include/asm-generic/io-instrumented.h
-> 
-> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-> index 35b2e50f17fb..768a6a8c5778 100644
-> --- a/arch/arm64/include/asm/io.h
-> +++ b/arch/arm64/include/asm/io.h
-> @@ -36,32 +36,27 @@
->  /*
->   * Generic IO read/write.  These perform native-endian accesses.
->   */
-> -#define __raw_writeb __raw_writeb
-> -static inline void __raw_writeb(u8 val, volatile void __iomem *addr)
-> +static inline void arch_raw_writeb(u8 val, volatile void __iomem *addr)
->  {
->  	asm volatile("strb %w0, [%1]" : : "rZ" (val), "r" (addr));
->  }
->  
-> -#define __raw_writew __raw_writew
-> -static inline void __raw_writew(u16 val, volatile void __iomem *addr)
-> +static inline void arch_raw_writew(u16 val, volatile void __iomem *addr)
->  {
->  	asm volatile("strh %w0, [%1]" : : "rZ" (val), "r" (addr));
->  }
->  
-> -#define __raw_writel __raw_writel
-> -static inline void __raw_writel(u32 val, volatile void __iomem *addr)
-> +static inline void arch_raw_writel(u32 val, volatile void __iomem *addr)
->  {
->  	asm volatile("str %w0, [%1]" : : "rZ" (val), "r" (addr));
->  }
->  
-> -#define __raw_writeq __raw_writeq
-> -static inline void __raw_writeq(u64 val, volatile void __iomem *addr)
-> +static inline void arch_raw_writeq(u64 val, volatile void __iomem *addr)
->  {
->  	asm volatile("str %x0, [%1]" : : "rZ" (val), "r" (addr));
->  }
->  
-> -#define __raw_readb __raw_readb
-> -static inline u8 __raw_readb(const volatile void __iomem *addr)
-> +static inline u8 arch_raw_readb(const volatile void __iomem *addr)
->  {
->  	u8 val;
->  	asm volatile(ALTERNATIVE("ldrb %w0, [%1]",
-> @@ -71,8 +66,7 @@ static inline u8 __raw_readb(const volatile void __iomem *addr)
->  	return val;
->  }
->  
-> -#define __raw_readw __raw_readw
-> -static inline u16 __raw_readw(const volatile void __iomem *addr)
-> +static inline u16 arch_raw_readw(const volatile void __iomem *addr)
->  {
->  	u16 val;
->  
-> @@ -83,8 +77,7 @@ static inline u16 __raw_readw(const volatile void __iomem *addr)
->  	return val;
->  }
->  
-> -#define __raw_readl __raw_readl
-> -static inline u32 __raw_readl(const volatile void __iomem *addr)
-> +static inline u32 arch_raw_readl(const volatile void __iomem *addr)
->  {
->  	u32 val;
->  	asm volatile(ALTERNATIVE("ldr %w0, [%1]",
-> @@ -94,8 +87,7 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
->  	return val;
->  }
->  
-> -#define __raw_readq __raw_readq
-> -static inline u64 __raw_readq(const volatile void __iomem *addr)
-> +static inline u64 arch_raw_readq(const volatile void __iomem *addr)
->  {
->  	u64 val;
->  	asm volatile(ALTERNATIVE("ldr %0, [%1]",
-> @@ -193,6 +185,7 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
->  #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
->  #define iowrite64be(v,p)	({ __iowmb(); __raw_writeq((__force __u64)cpu_to_be64(v), p); })
->  
-> +#include <asm-generic/io-instrumented.h>
->  #include <asm-generic/io.h>
->  
->  /*
-> diff --git a/include/asm-generic/io-instrumented.h b/include/asm-generic/io-instrumented.h
-> new file mode 100644
-> index 000000000000..7b050e2487ed
-> --- /dev/null
-> +++ b/include/asm-generic/io-instrumented.h
-> @@ -0,0 +1,45 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_GENERIC_IO_INSTRUMENTED_H
-> +#define _ASM_GENERIC_IO_INSTRUMENTED_H
-> +
-> +#if defined(CONFIG_TRACING_EVENTS_IO)
-> +#include <linux/tracepoint-defs.h>
-> +
-> +extern struct tracepoint __tracepoint_io_write;
-> +extern struct tracepoint __tracepoint_io_read;
-> +#define io_tracepoint_active(t) static_key_false(&(t).key)
-> +extern void do_trace_io_write(const char *type, void *addr);
-> +extern void do_trace_io_read(const char *type, void *addr);
-> +#else
-> +#define io_tracepoint_active(t) false
-> +static inline void do_trace_io_write(const char *type, void *addr) {}
-> +static inline void do_trace_io_read(const char *type, void *addr) {}
-> +#endif /* CONFIG_TRACING_EVENTS_IO */
-> +
-> +#define __raw_write(v, a, _l)	({						\
-> +	volatile void __iomem *_a = (a);					\
-> +	if (io_tracepoint_active(__tracepoint_io_write))			\
-> +		do_trace_io_write(__stringify(write##_l), (void __force *)(_a));\
-> +	arch_raw_write##_l((v), _a);						\
-> +	})
-> +
-> +#define __raw_writeb(v, a)	__raw_write((v), a, b)
-> +#define __raw_writew(v, a)	__raw_write((v), a, w)
-> +#define __raw_writel(v, a)	__raw_write((v), a, l)
-> +#define __raw_writeq(v, a)	__raw_write((v), a, q)
-> +
-> +#define __raw_read(a, _l, _t)    ({						\
-> +	_t __a;									\
-> +	const volatile void __iomem *_a = (a);					\
-> +	if (io_tracepoint_active(__tracepoint_io_read))				\
-> +		do_trace_io_read(__stringify(read##_l), (void __force *)(_a));	\
-> +	__a = arch_raw_read##_l(_a);						\
-> +	__a;									\
-> +	})
-> +
-> +#define __raw_readb(a)	__raw_read((a), b, u8)
-> +#define __raw_readw(a)	__raw_read((a), w, u16)
-> +#define __raw_readl(a)	__raw_read((a), l, u32)
-> +#define __raw_readq(a)	__raw_read((a), q, u64)
-> +
-> +#endif /* _ASM_GENERIC_IO_INSTRUMENTED_H */
+If we define restrictions on use of LSM_ORDER_LAST like we have
+for LSM_ORDER_FIRST (only for capabilities) before anyone starts
+abusing it we may be OK. Since an LSM_ORDER_LAST has to know that
+it can't count on getting called (a non-last module may return -EACCES)
+I don't see any way that having multiple LSM_ORDER_LAST modules in
+any given order would be a real problem. Of course, a module could be
+doing state management that *really* requires it be last, but that
+would be a badly designed module and someone sensible would NAK it.
 
