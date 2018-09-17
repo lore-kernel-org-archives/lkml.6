@@ -2,209 +2,155 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF50AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FEBECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E9B2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:43:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D8DAm25o";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oPMeRMKP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E9B2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 056B62147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 19:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 056B62147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbeIRBMf (ORCPT
+        id S1728261AbeIRBPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 21:12:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57846 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeIRBMf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 21:12:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 21F1960C54; Mon, 17 Sep 2018 19:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537213428;
-        bh=9Vd6kliHS+GxDvROhrELPpl3K9gR/Xr9YdSczQC2Np4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=D8DAm25oyq2HsQEQqrgIVKZTckbKMMwgXv39rV6BZ3Yo39YGimPeJEJZPx1eqPYBB
-         DgPdEO3rc3fA0lIO8UwRJ/bpvQPCqBzGY1ex6Upbm+Y57Q0IAfkRoj8ck1aFZNfKQp
-         L+uoEfmjMTegKeRmkn0nh24IEcBXLWmghJmA8JLA=
-Received: from [192.168.43.47] (unknown [27.59.117.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E2D50602A7;
-        Mon, 17 Sep 2018 19:43:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537213427;
-        bh=9Vd6kliHS+GxDvROhrELPpl3K9gR/Xr9YdSczQC2Np4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oPMeRMKPEizLi0RgMV10g9nadOTKmkZyuF/3XEfKLO9oIWzDd9zyi7vrbgccI3UjA
-         eztVTSmwRTZFQuyEcEj3Di7zWqpSAIMQGf+oUpmYk3VU/ZEpicJq0jOLTM8MprM+kU
-         tTk4N7RiqD60rORSZRntqS4xTVmokZSCiRi9kY20=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2D50602A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 2/6] pstore: Add event tracing support
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Colin Cross <ccross@android.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <444d7b13-2653-ba0e-e9e6-a448fded2a77@codeaurora.org>
- <153720590027.119890.15984895820368075914@swboyd.mtv.corp.google.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <03d47d84-a237-a94e-04ee-4447d8620697@codeaurora.org>
-Date:   Tue, 18 Sep 2018 01:13:30 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Sep 2018 21:15:49 -0400
+Received: from mout.gmx.net ([212.227.15.18]:39513 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727052AbeIRBPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 21:15:49 -0400
+Received: from [192.168.20.60] ([92.116.177.82]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lm3bl-1fTCpS03MX-00ZcTK; Mon, 17
+ Sep 2018 21:46:55 +0200
+Subject: Re: [RFC] parisc64: change __kernel_suseconds_t to match glibc
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>
+Cc:     y2038@lists.linaro.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180913160010.905798-1-arnd@arndb.de>
+From:   Helge Deller <deller@gmx.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
+ xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
+ y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
+ +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
+ KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
+ OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
+ AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
+ UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
+ +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
+ iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
+ 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
+ vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
+ zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
+ +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
+ UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
+ T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
+ gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
+ BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
+ 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
+ kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
+ lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
+ ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
+ KrhlU0uMP9QTB5WAUvxvGy8=
+Message-ID: <de79d285-7cbc-e547-547b-cf3e0627950d@gmx.de>
+Date:   Mon, 17 Sep 2018 21:46:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <153720590027.119890.15984895820368075914@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180913160010.905798-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:wHfSp2tS6CVUa0kL11aWOzZZW3M/vP47S39ZWQ/tgh6VpGr1IJm
+ VKKcRwqmElosb8PlLBSYvtB0g+sPZiLFiDDBvyyQjQctCd8hl96YCTQpyOvB4XFs6ysUQ48
+ lyct2EMkCTEHVazvZq5ioM5GIdMCiQdnWtpl7o9AKr2Rdny+TZx67vJ8z8fSPxx1Y7o2TNt
+ 8XxRi3iS0TH9zX+qa8KAw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Qb5KmUFI7xY=:nYvV6ug1BgqHRh8ikULvWY
+ O2p5tX6mnoP0LtD0kgh2OXlM5ttoIwVEbZakOiBe8imr648JOrGDYcyr2oqTUEGx4u01/Uwyf
+ 854fLH4lTONZtUvC8DyO3SZNplsqLcXndE0JKn51YqQTHOkH00vvqPZlJfKG17TetPgnabL0V
+ zCAkig2fG+9O5H4PAyXgSb2nmAGJPvhJbuwgPFtNtpHd+wCglwwgWZho9CQqsLXl5sOyvf87I
+ 3XKMgc+htsWTT1UX2yVPLgFPyj4nc95quwCk20xpA19NT/q09bVViuXwgBr+NfZoOMoLD2EvZ
+ /dhcbFrGqQ794ptixfCkP2/xxmSyvM0WCv4mKvDxI884bWD2BIvGOlMe3OVl6kJIosZ/JuvuS
+ nTS68LaJQEm5UaXpHBflPJCi5hwCfDDUA7u4Pa7VykzrzzJe4p9jf8z8BJBfgZ1kTq1xjoJaC
+ iFXydO3yWX/vUbISzHl8U+GfJeSFkZ6zpGSD0I9PyuWs6bFE4JX37VK1AWMncuNO7erCBnJj/
+ /qjwCo9bUProkF5OtqZCmrODM3h1xwzwLCeZsr7zyCuR9Rz6ymYfQ2jSJwTwQR2i+54GV3UL9
+ imVxHYf1xY7UGJva5JasyNya91uS8sWmklPX/aJXZFRaIGAtm51tOJySiigOFNSRM/QMZ/SkC
+ W8CbwyUUdi8L8kL4ek/5cgmgdEE2zgB3EJKJH817fUgmiYP0MgCm/QqJjVVkAZdjfJOQbSfNt
+ jjEtc/d8pco+0CNXglppMVv+o4+jxsT0bg0tCtDZ16O0wNDaOQwoLsocLYFTcDLR+3zzMer/H
+ siBbg9MBfY5aGLoAI1TyXVG0ZR8GXXo9/uekbFSPdP+APn6+l8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/2018 11:08 PM, Stephen Boyd wrote:
-> Quoting Sai Prakash Ranjan (2018-09-11 03:46:01)
->> On 9/9/2018 1:57 AM, Sai Prakash Ranjan wrote:
->>> +void notrace pstore_event_call(struct trace_event_buffer *fbuffer)
->>> +{
->>> +     struct trace_iterator *iter;
->>> +     struct trace_seq *s;
->>> +     struct trace_event_call *event_call;
->>> +     struct pstore_record record;
->>> +     struct trace_event *event;
->>> +     struct seq_buf *seq;
->>> +     unsigned long flags;
->>> +
->>> +     if (!psinfo)
->>> +             return;
->>> +
->>> +     if (unlikely(oops_in_progress))
->>> +             return;
->>> +
->>> +     pstore_record_init(&record, psinfo);
->>> +     record.type = PSTORE_TYPE_EVENT;
->>> +
->>> +     iter = kmalloc(sizeof(*iter), GFP_KERNEL);
->>> +     if (!iter)
->>> +             return;
->>> +
->>> +     event_call = fbuffer->trace_file->event_call;
->>> +     if (!event_call || !event_call->event.funcs ||
->>> +         !event_call->event.funcs->trace)
->>> +             goto fail_event;
->>> +
->>> +     event = &fbuffer->trace_file->event_call->event;
->>> +
->>> +     spin_lock_irqsave(&psinfo->buf_lock, flags);
->>> +
->>> +     trace_seq_init(&iter->seq);
->>> +     iter->ent = fbuffer->entry;
->>> +     event_call->event.funcs->trace(iter, 0, event);
->>> +     trace_seq_putc(&iter->seq, 0);
->>> +
->>> +     if (seq->size > psinfo->bufsize)
->>> +             seq->size = psinfo->bufsize;
->>> +
->>> +     s = &iter->seq;
->>> +     seq = &s->seq;
->>> +
->>> +     record.buf = (char *)(seq->buffer);
->>> +     record.size = seq->len;
->>> +     psinfo->write(&record);
->>> +
->>> +     spin_unlock_irqrestore(&psinfo->buf_lock, flags);
->>> +
->>> +fail_event:
->>> +     kfree(iter);
->>> +}
->>> +
->>>
->>
->> When tracing sched events on sdm845 mtp, I hit below bug repeatedly.
->> Seems like pstore_event_call can be called in atomic context.
->> I will respin the below fix in next version of the patch.
->> Reviews on other parts would be appreciated, thanks.
->>
->> diff --git a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
->> index d47dc93ac098..a497cf782ee8 100644
->> --- a/fs/pstore/ftrace.c
->> +++ b/fs/pstore/ftrace.c
->> @@ -73,6 +73,7 @@ void notrace pstore_event_call(struct
->> trace_event_buffer *fbuffer)
->>           struct trace_event *event;
->>           struct seq_buf *seq;
->>           unsigned long flags;
->> +       gfp_t gfpflags;
->>
->>           if (!psinfo)
->>                   return;
->> @@ -83,7 +84,9 @@ void notrace pstore_event_call(struct
->> trace_event_buffer *fbuffer)
->>           pstore_record_init(&record, psinfo);
->>           record.type = PSTORE_TYPE_EVENT;
->>
->> -       iter = kmalloc(sizeof(*iter), GFP_KERNEL);
->> +       gfpflags = (in_atomic() || irqs_disabled()) ? GFP_ATOMIC :
->> GFP_KERNEL;
->> +
->
+Hi Arnd,
 
-Hi Stephen
+On 13.09.2018 17:59, Arnd Bergmann wrote:
+> There are only two 64-bit architecture ports that have a 32-bit
+> suseconds_t: sparc64 and parisc64. I've encountered a number of problems
+> with this, while trying to get a proper 64-bit time_t working on 32-bit
+> architectures. Having a 32-bit suseconds_t combined with a 64-bit time_t
+> means that we get extra padding in data structures that may leak kernel
+> stack data to user space, and it breaks all code that assumes that
+> timespec and timeval have the same layout.
+> 
+> While we can't change sparc64, it seems that glibc on parisc64 has always
+> set suseconds_t to 'long', and the current version would give incorrect
+> results for gettimeofday() and many other interfaces: timestamps passed
+> from user space into the kernel result in tv_usec being always zero
+> (the lower bits contain the intended value but are ignored) while data
+> passed from the kernel to user space contains either zeroes or random
+> data in tv_usec.
 
-Thanks for the comments.
+Should this wrong behavior be visible with 32-bit userspace or
+with 64-bit userspace (or both)?
+I didn't noticed such wrong behavior yet.
 
-> Do you need to allocate at all? Can you throw the iter on the stack?
+Can you suggest some test programs to verify?
+LTP seems to be correct.
+ 
+> Based on that, it seems best to change the user API in the kernel in
+> an incompatible way to match what glibc expects.
+
+Basically that sounds the right way to go, but as said before,
+I didn't see such issues.
+
+> Note that the distros I could find (gentoo and debian) all just
+> have 32-bit user space, which does not suffer from this problem.
+
+That's correct.
+Kernel can be 32- or 64-bit, but userspace is currentl 32-bit only.
+
+So, breaking any 64-bit userspace is OK, since we don't have it yet.
+Breaking 32-bit userspace needs some thoughts...
+
+Helge
+
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/parisc/include/uapi/asm/posix_types.h | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/arch/parisc/include/uapi/asm/posix_types.h b/arch/parisc/include/uapi/asm/posix_types.h
+> index 2785632c85e7..8dce56f5dcee 100644
+> --- a/arch/parisc/include/uapi/asm/posix_types.h
+> +++ b/arch/parisc/include/uapi/asm/posix_types.h
+> @@ -16,9 +16,6 @@ typedef unsigned short		__kernel_mode_t;
+>  typedef unsigned short		__kernel_ipc_pid_t;
+>  #define __kernel_ipc_pid_t __kernel_ipc_pid_t
+>  
+> -typedef int			__kernel_suseconds_t;
+> -#define __kernel_suseconds_t __kernel_suseconds_t
+> -
+>  typedef long long		__kernel_off64_t;
+>  typedef unsigned long long	__kernel_ino64_t;
+>  
 > 
 
-Yes since we need to copy the contents to pstore buffer.
-
-> Using in_atomic() and irqs_disabled() to figure out if an atomic or a
-> non-atomic allocation should be used is not a good solution.
-> 
-
-I took reference from a similar use by graph_trace_open() which can be 
-called in atomic context via ftrace_dump(). I am open to correct this if 
-there is some other way.
-
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
