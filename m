@@ -2,117 +2,82 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A179DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB80ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 663B52088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663B52088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 771DF214DC
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 16:42:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771DF214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbeIQWIN (ORCPT
+        id S1728688AbeIQWKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 18:08:13 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:42656 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728502AbeIQWIN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:08:13 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id cgg31y00o3XaVaC06gg3sV; Mon, 17 Sep 2018 18:40:04 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g1wZ9-0006b8-D9; Mon, 17 Sep 2018 18:40:03 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1g1wZ9-0004xh-AI; Mon, 17 Sep 2018 18:40:03 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v4 0/2] vfio: platform: Add generic reset controller support
-Date:   Mon, 17 Sep 2018 18:39:53 +0200
-Message-Id: <20180917163955.19023-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 17 Sep 2018 18:10:46 -0400
+Received: from sauhun.de ([88.99.104.3]:37546 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727736AbeIQWKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 18:10:46 -0400
+Received: from localhost (i577B9641.versanet.de [87.123.150.65])
+        by pokefinder.org (Postfix) with ESMTPSA id F09992CE416;
+        Mon, 17 Sep 2018 18:42:35 +0200 (CEST)
+Date:   Mon, 17 Sep 2018 18:42:35 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Korsgaard <peter@korsgaard.com>
+Cc:     Federico Vaga <federico.vaga@cern.ch>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Korsgaard <jacmet@sunsite.dk>
+Subject: Re: i2c:ocores: fixes and polling mechanism
+Message-ID: <20180917164235.GB1082@kunai>
+References: <20180625161303.7991-1-federico.vaga@cern.ch>
+ <5011687.103nMUzm2u@harkonnen>
+ <20180812153400.GA1010@kunai>
+ <8760022x77.fsf@dell.be.48ers.dk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Content-Disposition: inline
+In-Reply-To: <8760022x77.fsf@dell.be.48ers.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
 
-This patch series implements generic reset controller support for
-vfio-platform, for devices that are connected to an SoC-internal reset
-controller and can be reset in a generic way.  This avoids having to
-write/change a vfio-specific reset driver for each and every device to be
-passed-through to a guest.
+--7iMSBzlTiPOCCT2k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It consists of two patches:
-  - The first patch enhances the reset controller subsystem to add support
-    for dedicated resets.
-    This addresses the issue that even reset_control_get_exclusive() does
-    not guarantee that we have an exclusive wire between the device and
-    the reset controller.
-  - The second patch enhances vfio-platform to add generic reset controller
-    support.
 
-Changes compared to v3:
-  - Add Reviewed-by,
-  - New patch "reset: Add support for dedicated reset controls",
-  - Use new RFC reset_control_get_dedicated() instead of
-    of_reset_control_get_exclusive(), to (a) make it more generic, and
-    (b) make sure the reset returned is really a dedicated reset, and
-    does not affect other devices,
-  - Drop vfio-platform reset leak fix, which has been applied.
+> Thanks! I'll take a look at the patches now.
 
-Changes compared to v2:
-  - Add Reviewed-by,
-  - Merge similar checks in vfio_platform_has_reset().
+Ping :)
 
-Changes compared to v1:
-  - Add Reviewed-by,
-  - Don't store error values in vdev->reset_control,
-  - Use of_reset_control_get_exclusive() instead of
-    __of_reset_control_get(),
-  - Improve description.
 
-This has been tested on R-Car H3/Salvator-XS:
-  - SATA can be exported, as it has a dedicated reset,
-  - PWM1 cannot, as its reset is shared with all other PWM modules:
-    "VFIO: No reset function found for device e6e31000.pwm".
+--7iMSBzlTiPOCCT2k
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for your comments!
+-----BEGIN PGP SIGNATURE-----
 
-Geert Uytterhoeven (2):
-  [RFC] reset: Add support for dedicated reset controls
-  [RFC] vfio: platform: Add generic reset controller support
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluf2XsACgkQFA3kzBSg
+KbaiSBAAgCGWJXLkvzG545mw40PHCWZVFWPxGRDYen9W9uDLpmQkFEVZNbq5pflp
+/K3vN95jHYeHn4P1ixQ+hHQE2gJfBNaK0u++tlSqEYFoAo7gGApIh4ooeCeWS1fo
+mPBoQXHYNuvSDewzQsVp4j9RWt2rubvOmQUNvNltMqnNAb/LAj7RUccUAm4IM2tx
+xC24hLqmDCWIQrvNkfb5T9tp7ssBdOiJ6pga1e8InNyM5PYAEx/kgqtPM/w21udg
+NGrPQnUktlbSzrFQIAsncXK/ZpadERvxVre0K5nTZ6wRPWfj+3l7o49BJtCTgTWR
+hrDdjfJIA2WCJgbHsJOoTDdByqdUCFRje/8STRmLsndSjLLgCU8xQBP+4c4LMyXk
+mWnBfUqexw/3BH4fnEJRzagEa67p/4deI6tMPkfQDXkujZ2wZAYyzF8sm/u/z6HX
+lc9tgOep1TFxcEDzBd2/BtuqxZnz4BeQBsdARQVFAnlbmRebK9fCWlbY8RVgizqJ
+ucsJhb8FMtm67jsImbXsOSocPXdSsMeo4iXwMUTpr3cyCiv8C8q0hX+IMQBmcJd7
+9nLNtiSxtSf/oKFpSzgjZoUgUVZYTrRQfb+lXUUuJ6tVOIeZcKuNP6bjnb3VbDmp
+goo4f5xd6qGrmloQV5XOaTjye/g1FZ2NxCpSOW72PAT8fCvKekk=
+=gJye
+-----END PGP SIGNATURE-----
 
- drivers/reset/core.c                          | 76 ++++++++++++++++---
- drivers/vfio/platform/vfio_platform_common.c  | 20 ++++-
- drivers/vfio/platform/vfio_platform_private.h |  1 +
- include/linux/reset.h                         | 60 ++++++++++-----
- 4 files changed, 126 insertions(+), 31 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--7iMSBzlTiPOCCT2k--
