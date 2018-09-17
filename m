@@ -2,153 +2,145 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07729ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EF9ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A353F208AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADA92208AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="iI+wewJ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A353F208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="pRgfh248"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA92208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbeIQI4d (ORCPT
+        id S1729648AbeIQI4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:56:33 -0400
-Received: from mail-bn3nam01on0109.outbound.protection.outlook.com ([104.47.33.109]:29664
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:56:36 -0400
+Received: from mail-sn1nam02on0079.outbound.protection.outlook.com ([104.47.36.79]:26118
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729322AbeIQI1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:27:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
+        id S1729322AbeIQI4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:56:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZmFrpV2WDNm/SsN0mZ9D/HPBuTvGGXqNJYpAhsE3b5Y=;
- b=iI+wewJ9IYbG+hNvGtwRuZzI32tpakLJmUx8OnpmfE+LGwd25P40GDW4330KWpcqPaz/dn9tkVhLnVj24SrxuRyjXOdXW0GOZubV8wT7cW60MlW9oKtT13tg7RkOMUPCvLCRsBJbdQe7Q4l4xybQpY0aE7N2z3NastK6ImNwweY=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0502.namprd21.prod.outlook.com (10.172.122.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.7; Mon, 17 Sep 2018 03:01:59 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:01:59 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Kamal Heib <kamalheib1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 077/136] staging: mt7621-eth: Fix memory leak in
- mtk_add_mac() error path
-Thread-Topic: [PATCH AUTOSEL 4.18 077/136] staging: mt7621-eth: Fix memory
- leak in mtk_add_mac() error path
-Thread-Index: AQHUTjKpJgUtZtfbl0e+EMADu7UAuQ==
-Date:   Mon, 17 Sep 2018 03:01:00 +0000
-Message-ID: <20180917030006.245495-77-alexander.levin@microsoft.com>
-References: <20180917030006.245495-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0502;6:ghs6YXSRxfowqFmOHRvcaHYKdCME/BbbZvJXXWNVOMsTLc3/3MaLvEJuv796wcdUxEUOSmzQYBWzpLUTqNE1bZU5pLRpA7FVTDgb/lt8PDe9hV4G/80RtZt8c+KU1zmjKN7nOfz8SwgIl71WaBOo49WKx75zRIQ9HR0nxYwTD+cagxg+C47//efxaxa5Ip0LCqsEwpuMx2WXNzgwAdXiQyqdN95mpfXkGnHHNDkRTQjeG72cTxHLpDfEZ9FB8K8pbjxF5YO253HdNAm1lLYNFxSkwa+QkH26pD0XVFRswddU3U4HFQEmWU6zsrmHFISgW2//Htz0PxgCQEvsy6xrJj6nWcuUAuwAaYsNd2wPxswA8GlSkVhK52GB03j/dB8HOit6iddDg9iwKR4fZTdjO0d0JW11rJD/Xj/k3bMIWMuFzKWmdUYF5sfZvtw/bpdGYsTtUf+0y1gtKqnWFTPCEw==;5:lNnC6I0yIAeLkv1Od+gA3SF7EMV6QGTM0ss03wbW3rqT6GzCVuAWcIumDyFoU/KMFnGo/2jUGpbVfXwIwetDlT93buRIfhYYM3eMMoJnAayyLLaNFa/TnPV9mz1jUyArJyUrlVE5HsUM7EK540OaBYiNId4AsZAq8FjqnYiHDag=;7:5r59wiLthcQ6iKB0sFhJUxLZV+GGMqHLCAUDN+5y73CqzgT6hmx1vY4ByqqyoSIPc1D9gzOSH95pNvEyleEHy0uJ6kcMkb2mOYEzSVzoyIDW4xFcZQ7V83Y2pK54QP1uh3Ri8VtP6+uETnfXUoKJg6mXvIYLIIy+YFGrRUvnX503rVGjpK0cHMn5pfebXpceQydRhK1SCLrIRg1ykoi2Vhz4b+9R69fDrdXPBBtXqzbpAeklPtbjRpNenXo7SDBV
-x-ms-office365-filtering-correlation-id: 7264fcfc-5709-4380-5d2c-08d61c49ef34
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0502;
-x-ms-traffictypediagnostic: CY4PR21MB0502:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB05024DBE5B9FABA57A67DCE1FB1E0@CY4PR21MB0502.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(2017102700009)(2017102701064)(6040522)(2401047)(5005006)(8121501046)(2017102702064)(20171027021009)(20171027022009)(20171027023009)(20171027024009)(20171027025009)(20171027026009)(2017102703076)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0502;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0502;
-x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(366004)(376002)(189003)(199004)(86362001)(2616005)(99286004)(5660300001)(575784001)(1076002)(6116002)(3846002)(6666003)(10290500003)(39060400002)(2900100001)(72206003)(68736007)(8676002)(22452003)(26005)(217873002)(86612001)(486006)(76176011)(66066001)(102836004)(2906002)(476003)(14444005)(186003)(256004)(6506007)(446003)(11346002)(36756003)(316002)(5250100002)(6512007)(97736004)(2501003)(107886003)(110136005)(54906003)(6486002)(8936002)(53936002)(81156014)(81166006)(10090500001)(25786009)(305945005)(7736002)(105586002)(106356001)(478600001)(4326008)(14454004)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0502;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: LsBSiaVcbdicC44cFVHlOVNvU+fO55nf0aJ+lpHZpNHQVPSHWBZgmcFwRkkZjS2ECDzefb2nY/EzjkjXD/te6ENcvGw3YFOIAV0wqfE3jf5o4rhrR3V5TezsjENLEzFoWCcc9y0x/YuicaOs9dxdNvUMkuxEJycXG0r0+gxwY25ijlQQNHiLe4wIqnUc8CazdKdR7c5Q7MtzSKpO44Lgf4XH2UYxjdWcJzRrQGgGDyOwcR0zuMs+Qm14D73rjZ/MMv/kXSfNNLubJ6rJCHEbD/6BFRH5+7oS39vhkaEMsWcAAzUKsmf5I2rLFmYuAQ6dLLc/1s/h3KgY6xmpntXo1ibF8b3uReQDNiCIZYi/wSI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ bh=4cmwYGxLe8gg4jOzWNSNzOrWo3eIpy4vFF+AovXAqzg=;
+ b=pRgfh248Y1WXP81Drsixp2Ry+32krFJuu0KCqUn2q27fDiOuInnaS3aV92TKTZx7JAT8LEiIgHPfJEcqFZsY77aGuvSZcfuBa/C+IDhq8fcnPzMEjvjMASa3AJEA13fv3PariRAqTvmZ/cjS2dEJvLYs1nxXlgqAyzM+MsS6cUU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ SN1PR0301MB1583.namprd03.prod.outlook.com (2a01:111:e400:5232::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.17; Mon, 17 Sep
+ 2018 03:31:08 +0000
+Date:   Mon, 17 Sep 2018 11:27:41 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/3] dt-bindings: i2c: designware: add optional gpio
+ recovery properties
+Message-ID: <20180917112741.7c3d6514@xhacker.debian>
+In-Reply-To: <20180917112633.252c591c@xhacker.debian>
+References: <20180917112633.252c591c@xhacker.debian>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7264fcfc-5709-4380-5d2c-08d61c49ef34
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:01:00.3387
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0502
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: KAWPR01CA0081.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::17) To SN1PR0301MB1583.namprd03.prod.outlook.com
+ (2a01:111:e400:5232::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2c88991-7ec0-429b-08c2-08d61c4e032e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN1PR0301MB1583;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;3:mPDPau0y29rZUlJt+N8ZhA8EenMHAQsiUSspVCLLxrfNMgHLf/RG/r5xyDVDY+xm5qe/DJCnmiO+Wo4QjDcKtyphL0B/+9mj+ZKL+QOUP/PchIjnV7aN2M/hb/oeXerh/3xA12TnsMUOFiY7AW9IjuppFYAF+tIOhT2lxw6yRM+VDdhW047XhTUpAuEcZ4VaODs8iVJI9bcItUFE3NpFlJv47itQsyX0JulNAjQluAt1XhX8ZMCGO5s8MhPOZk/F;25:0Hrzt3Bv2lvK1I8HnAwY0tuqTyzZlLnlmoDP8DNNxZZlrjQrJM59+IJTdQdocycgJyrIBSxKNHEmf2EHFQ7j6OhlJg3TFgjuGISe/uLEdGIUBmUXSRh0plgR4ECWmpWkf/mfvKzBXP4Bcs/oUCOHPvXWII4ufZbQuwaaRrKsfJ0JN17mxsVl5QU3ofOGDJqGNhDs7FFqw2joscqsvLRCvhpn/o4LeUBNujMjx2NedGYTBxajsOg4LZa9f7OX/F+V8IskXXTG/PpkvtiYQV1MdefiXunhxT5NNZCRaI7XVKK88IONWMgXoc2PdIUxrYhuEoK17qUAPyBpaxyzoKfC9g==;31:1ZcZAfVZ304gLiIBw++iB1W4dTQDmicsxIM1JdkujFM29c9RuOQ2IhOVoqDhearhuUPs8KFusOSPEsLyPXQFKLSZ5bA27l4oqEJ8pqao2l3IWA+xRThMJp6mhMc6QTGsxlagyDuWepbhXyMrerLNAOhDqmNTWBVX7TIkcSZO7pQtshm5pPEkq7mWTTBcn6jm659ifS0d1+3V27NC7yS1YG36r7eSaMDWAVuAAovVMik=
+X-MS-TrafficTypeDiagnostic: SN1PR0301MB1583:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;20:2gZ+zzX13EU5NJL8z9wlo5Df4DvPnmmusaHTQoL5f1ksPgktJZD9+wAsOyBT5HyE2TDqt/kkLJBlskjcLgKwmLSQFVbZ6lrzaDiBkLGoXyCce+qgh4z0w/PRkP67/FPROQ2bvyuqWilLIHB+scMUtpx33P8ivLG0/bkyS2RFrI/lUMFXOs32h7msvvTbUoyqfQRYQzGfbbM1XDoGAAxBTKrgnl+DSuDiPBo60dt+PqrGBGJYkY6A4+5tIRs5LOhrh+QV0k84gr/EHLphABSc3cPf0ZzV972t4ey3X6AsV0Ta0UAwg3OB5N6vKNR17J2Yrg6KUEjIS1SluhHilICddJcIyTppue/jDMdl/Gw9tLm3jhv1kd6RG/HW2bO81I1HLzwIM56sZF4bE4BKtdajNQ0ZMi9D0BJ6Su2of2YF+hI7Eu4UnqgxUxCvOYpDWiO+Psy8/rgrBg3fHV3Mg9XOcCt44DeS/4Tlca47tnAdLpcHj/fsEfMuEgpQhoBJP2tf;4:hHBiEgA+g1aPzbrJ3OM8089llxDcZkYVSck/HCuuTgOA+VbfvHF5yUbIeKRhy7FGHQGLOoXzNMkx48DSMKlNHsQdWazANQO88DrxATZq2jBgN3fGPSiXZiU3TJjdraHBcRUv89nO8kte4bL5YPAFwk1tKuMbsi5FhIcyl0Ly0fDmeFf6dkjjOxszZK5KwmgaJpqBwW3m7VOz78O0S/PH17BgOJz4Vgnh6rrc7xAYtZCwV+FrPFRs2iePviSWcFK/HAl8UAQgmsQ1im1RKB3qog==
+X-Microsoft-Antispam-PRVS: <SN1PR0301MB1583CF823D4B6E268A8EA1F0ED1E0@SN1PR0301MB1583.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699050);SRVR:SN1PR0301MB1583;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0301MB1583;
+X-Forefront-PRVS: 0798146F16
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39850400004)(376002)(346002)(136003)(199004)(189003)(3846002)(53936002)(6116002)(446003)(11346002)(478600001)(8676002)(68736007)(50226002)(81156014)(23726003)(8936002)(33896004)(2906002)(50466002)(97736004)(72206003)(81166006)(26005)(16526019)(4326008)(25786009)(52116002)(7696005)(76176011)(186003)(6666003)(86362001)(7736002)(47776003)(386003)(6506007)(5660300001)(956004)(66066001)(106356001)(9686003)(55016002)(230700001)(305945005)(476003)(575784001)(110136005)(54906003)(105586002)(1076002)(486006)(316002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0301MB1583;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR0301MB1583;23:/Vz2RVQAmiwXjY2T5SWk0AbgXlURS7UzxQkleg8?=
+ =?us-ascii?Q?CnWKPTHfL5+JEpTso8nmjKhitGvEMd4rteo85k5jgLkPChs/SFsBkCEre1wU?=
+ =?us-ascii?Q?BT0v3QJmOhaogeuK4N7FtUWLuKwMQHCbx0KBzK9mnMX5pH1j1vJsHS6KA5bt?=
+ =?us-ascii?Q?rivA6Z9oSVKNloS/jKRD7NCx6+LV0fL+5nXpxG9wcYfTEMNy5w70ci7GAHbR?=
+ =?us-ascii?Q?h6CFCYLkfp0Of4hGBhkIeAV+gaiOIwG4SrV86jxl+zt2aMY+2ojzrWYQozah?=
+ =?us-ascii?Q?Ov0rS0H0d5CyvEUpm4lts9bfmbK82nn4s22cdV400r/clNGGzgqHHK5nf4bK?=
+ =?us-ascii?Q?j5y+F03GcrPlwc2ACr72xY/5d3xifE6gUTHKFDMcYWkgGXbuDcLTiL6N4N1z?=
+ =?us-ascii?Q?5FkpeBiBibZQyBNeBrTknjjAD3tVjnQTz23Nn4huZgCAdMy/lUeD6DmRsIJU?=
+ =?us-ascii?Q?7x3CHBDSsIFGzy+r6doqiSeioP5zXsxNZOa81lMrh+YPSiI16zPsZRjiWUih?=
+ =?us-ascii?Q?GhR0rmQp6LolZYAsDr6pHzH/vJ4R7zpjpgz09G6TNPBNN3MvLRT5d4q3tLVU?=
+ =?us-ascii?Q?y2nAvmWgaIvlqYjWU1f1xJb7Oz/kn7CoEFti3WeqzETHwhLIDKMy6YmSQqSt?=
+ =?us-ascii?Q?CoXhXaYqWOOcer8xWbbiO4L11RmcGbwQYZV5ghNYBFqKKUIKYGCcq8jyjk6S?=
+ =?us-ascii?Q?JsD5vpmtG/H6oQHtWDpoHfivDUmJvRcoaNBT89/mUvNkXfFf4O1wkRkOpjL+?=
+ =?us-ascii?Q?XAOFSns1dJ4ovnF0WwOI1g/UbPWDUK4dBXwicBDCnQSBThRNL/DGin5HvzUk?=
+ =?us-ascii?Q?w5oLL7unGWURhQsGFHFFX/bK0H8Qe2cIgv32dKRgja2TEe5xFrsoL72p/+Rj?=
+ =?us-ascii?Q?/kWlbM6ZwWhWuwSxNLWQXQN/J5Gw4dkE/1EZiEr/nHFd3apWi5sjrhSiTkCt?=
+ =?us-ascii?Q?3goN8vD7j3qNPsreRTZJr+1mv4J7mzIs80rt3PmVgJya+E78Ac4erYy3Og40?=
+ =?us-ascii?Q?rt3b2wR0K8c56JqhooTwi3lecAodhi+1/IBX6UNkGKWp/6nTg1miZ9uAJ04U?=
+ =?us-ascii?Q?sMSNnGfu4oMeHRRic8LHpAbuzNYAvrkhGoBTUvjB3VHv+KpYilZZwM/n28t/?=
+ =?us-ascii?Q?/Ju8o4uCwRXDLXWhsYWeu40h8EHIGRyGp3w0zN0ZXxVcAW2JBCh47NDYS/py?=
+ =?us-ascii?Q?AL4t9tIsVSuV0gmD1XCyUeMJby4KJN8xJhWgKPn7MIIimAs2VSnWZN1VBZPp?=
+ =?us-ascii?Q?qaSkqpRKlPWQlCitdS+6EEd5njsQMPqbM5bVoB58q?=
+X-Microsoft-Antispam-Message-Info: 2e0p0HSzftuzt+A80ZDXERUpJHEaSf+a6Bc81BSWIQQp0/CZ70K7Nh9+RGvobWy9RUlR18eESwCIlCeU54pMTKmCHNNRYEI89PTbjZ0qrGQRLi5r0GJp4qCBa6RHVlHF17u418vbv0lUnJEJHhE3boX3XrBBknn6+p9D2SiVFnV0BHM6azaa/ARmFNCw7uVwLIMLqDy4NjUlQRurgpYykVyI35XlCSIT0Exc8TyjnW45s6NOqOsaqvQ48sEctFufQCIRSld2IV5jGBswDNgtI7mkgH7BLiw5/KgIAKId7LP036PYtZfiV2oHF8M4pbin1956KG6gdGIYr2Sf2DGMD0U4t2ywCQ9N/br9yPXMLts=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0301MB1583;6:6BYu8PalkvYd7oPnBhb/OA+m7+yqc4aofF/3Ue2nOb5CEKrTYxU9mF/ajQCJc0/yCmcs0S7o3MLpXw8cNa++sezbXOzkn3AxWSiGDitUUROZCIcQZk6IQIC/LO09k2KJpDpyfpo29+uirxZ1Zvz4qoyGxDzf2wXYrDsnMxL+3C7LBmALURPAtuuuHxzAhv3+pygmGCSpZOaSQGGiXZGqNVRcOTQrzuoQ9iEXabRzYo6kv+ExWHL/t9BjXHxUPtO/swcbOzKvREKIAZHpzARWgD8lMAdHtdRwJ4K2YDh6diimxa7tmsaYB1nWPq4mzyWZrOoiFfPHH7rndMp9W7RMhQFvepBw/LBC7tKh5uYWrHgSNm+0gQwknw8cWIuoPwXHgSMlaupyumpE5ZSN0pF7a1arCKmdElWm7/wgPQ0WSA9IYjvUZPFF1khGjls6Fiet626AlDWydoGMD0FJXAlH/Q==;5:/eTVLFSrzDmam8uxJlsc62gzT/NsU4vhVWDzJ7rtH5dkPce0iaWoxe5zc6kdme9ZPvedaitwER0f8G67ncYeAY7/2BM0xgOjHA69nxl1fn8fFymcOwzBK0Ym8xD9r5UPwVb3WUNvcHOvA2rdbSwxlgIkRhIhPm053dQqfuoOLTY=;7:LRvdwo7KiJnEbih1nFHSQUVSEbTxCAaIMSLLcJLOZBGmfoh3uvKl1dHGHzTAWaXYQJ2hB2A3eQ5sVrBmnHlfGnCBmUCIEIcnGFJT6hzvpFjuLv6RR1R7q0FWBxPufxCEymubk2nV2go30SK3JHYKxxFaVArR6hY9igMat9wc+paR0mqvrqeN+byG7PRKVwrJn/NpCuHaACe5W3haWY3UJ3Kv7gdZkT1GBDlHRGSXoDU+OFwZmP0Il7X82xsGdhiB
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 03:31:08.7634 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2c88991-7ec0-429b-08c2-08d61c4e032e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0301MB1583
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamal Heib <kamalheib1@gmail.com>
+Document the scl-gpios and sda-gpios properties for bus recovery.
 
-[ Upstream commit 85e1d42663a0c163002961d2685be952067b0dc2 ]
-
-Fix memory leak in error path of mtk_add_mac() by make sure to free
-the allocated netdev.
-
-Fixes: e3cbf478f846 ('staging: mt7621-eth: add the drivers core files')
-Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- drivers/staging/mt7621-eth/mtk_eth_soc.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/i2c/i2c-designware.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/mt7621-eth/mtk_eth_soc.c b/drivers/staging/mt7=
-621-eth/mtk_eth_soc.c
-index 2c7a2e666bfb..381d9d270bf5 100644
---- a/drivers/staging/mt7621-eth/mtk_eth_soc.c
-+++ b/drivers/staging/mt7621-eth/mtk_eth_soc.c
-@@ -2012,8 +2012,10 @@ static int mtk_add_mac(struct mtk_eth *eth, struct d=
-evice_node *np)
- 		mac->hw_stats =3D devm_kzalloc(eth->dev,
- 					     sizeof(*mac->hw_stats),
- 					     GFP_KERNEL);
--		if (!mac->hw_stats)
--			return -ENOMEM;
-+		if (!mac->hw_stats) {
-+			err =3D -ENOMEM;
-+			goto free_netdev;
-+		}
- 		spin_lock_init(&mac->hw_stats->stats_lock);
- 		mac->hw_stats->reg_offset =3D id * MTK_STAT_OFFSET;
- 	}
-@@ -2037,7 +2039,8 @@ static int mtk_add_mac(struct mtk_eth *eth, struct de=
-vice_node *np)
- 	err =3D register_netdev(eth->netdev[id]);
- 	if (err) {
- 		dev_err(eth->dev, "error bringing up device\n");
--		return err;
-+		err =3D -ENOMEM;
-+		goto free_netdev;
- 	}
- 	eth->netdev[id]->irq =3D eth->irq;
- 	netif_info(eth, probe, eth->netdev[id],
-@@ -2045,6 +2048,10 @@ static int mtk_add_mac(struct mtk_eth *eth, struct d=
-evice_node *np)
- 		   eth->netdev[id]->base_addr, eth->netdev[id]->irq);
-=20
- 	return 0;
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+index fbb0a6d8b964..1d6a6a8061ba 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
+@@ -20,6 +20,10 @@ Optional properties :
+  - i2c-sda-falling-time-ns : should contain the SDA falling time in nanoseconds.
+    This value which is by default 300ns is used to compute the tHIGH period.
+ 
++ - scl-gpios: specify the gpio of the SCL line for gpio recovery
 +
-+free_netdev:
-+	free_netdev(eth->netdev[id]);
-+	return err;
- }
-=20
- static int mtk_probe(struct platform_device *pdev)
---=20
-2.17.1
++ - sda-gpios: specify the gpio of the SDA line for gpio recovery
++
+ Examples :
+ 
+ 	i2c@f0000 {
+@@ -42,6 +46,8 @@ Examples :
+ 		i2c-sda-hold-time-ns = <300>;
+ 		i2c-sda-falling-time-ns = <300>;
+ 		i2c-scl-falling-time-ns = <300>;
++		scl-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++		sda-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+ 	i2c@1120000 {
+-- 
+2.19.0
+
