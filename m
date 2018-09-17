@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A990ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B309ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D669214DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D669214DD
+	by mail.kernel.org (Postfix) with ESMTP id 57FD12146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:00:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FD12146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729949AbeIRE3s (ORCPT
+        id S1729959AbeIRE3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48048 "EHLO
+        Tue, 18 Sep 2018 00:29:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIRE3q (ORCPT
+        with ESMTP id S1727559AbeIRE3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:46 -0400
+        Tue, 18 Sep 2018 00:29:50 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 379C5C77;
-        Mon, 17 Sep 2018 23:00:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8204FC77;
+        Mon, 17 Sep 2018 23:00:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 008/126] SMB3: Backup intent flag missing for directory opens with backupuid mounts
-Date:   Tue, 18 Sep 2018 00:40:56 +0200
-Message-Id: <20180917211704.813030971@linuxfoundation.org>
+        stable@vger.kernel.org, Filippo Sironi <sironi@amazon.de>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>, prarit@redhat.com
+Subject: [PATCH 4.14 017/126] x86/microcode: Update the new microcode revision unconditionally
+Date:   Tue, 18 Sep 2018 00:41:05 +0200
+Message-Id: <20180917211705.818051135@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -51,102 +52,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Filippo Sironi <sironi@amazon.de>
 
-commit 5e19697b56a64004e2d0ff1bb952ea05493c088f upstream.
+commit 8da38ebaad23fe1b0c4a205438676f6356607cfc upstream.
 
-When "backup intent" is requested on the mount (e.g. backupuid or
-backupgid mount options), the corresponding flag needs to be set
-on opens of directories (and files) but was missing in some
-places causing access denied trying to enumerate and backup
-servers.
+Handle the case where microcode gets loaded on the BSP's hyperthread
+sibling first and the boot_cpu_data's microcode revision doesn't get
+updated because of early exit due to the siblings sharing a microcode
+engine.
 
-Fixes kernel bugzilla #200953
-https://bugzilla.kernel.org/show_bug.cgi?id=200953
+For that, simply write the updated revision on all CPUs unconditionally.
 
-Reported-and-tested-by: <whh@rubrik.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: prarit@redhat.com
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1533050970-14385-1-git-send-email-sironi@amazon.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c   |    2 ++
- fs/cifs/smb2ops.c |   25 ++++++++++++++++++++-----
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c   |   22 +++++++++++++---------
+ arch/x86/kernel/cpu/microcode/intel.c |   13 ++++++++-----
+ 2 files changed, 21 insertions(+), 14 deletions(-)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -467,6 +467,8 @@ cifs_sfu_type(struct cifs_fattr *fattr,
- 	oparms.cifs_sb = cifs_sb;
- 	oparms.desired_access = GENERIC_READ;
- 	oparms.create_options = CREATE_NOT_DIR;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options |= CREATE_OPEN_BACKUP_INTENT;
- 	oparms.disposition = FILE_OPEN;
- 	oparms.path = path;
- 	oparms.fid = &fid;
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -385,7 +385,10 @@ smb2_is_path_accessible(const unsigned i
- 	oparms.tcon = tcon;
- 	oparms.desired_access = FILE_READ_ATTRIBUTES;
- 	oparms.disposition = FILE_OPEN;
--	oparms.create_options = 0;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
-+	else
-+		oparms.create_options = 0;
- 	oparms.fid = &fid;
- 	oparms.reconnect = false;
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -504,6 +504,7 @@ static enum ucode_state apply_microcode_
+ 	struct microcode_amd *mc_amd;
+ 	struct ucode_cpu_info *uci;
+ 	struct ucode_patch *p;
++	enum ucode_state ret;
+ 	u32 rev, dummy;
  
-@@ -534,7 +537,10 @@ smb2_query_eas(const unsigned int xid, s
- 	oparms.tcon = tcon;
- 	oparms.desired_access = FILE_READ_EA;
- 	oparms.disposition = FILE_OPEN;
--	oparms.create_options = 0;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
-+	else
-+		oparms.create_options = 0;
- 	oparms.fid = &fid;
- 	oparms.reconnect = false;
+ 	BUG_ON(raw_smp_processor_id() != cpu);
+@@ -521,9 +522,8 @@ static enum ucode_state apply_microcode_
  
-@@ -613,7 +619,10 @@ smb2_set_ea(const unsigned int xid, stru
- 	oparms.tcon = tcon;
- 	oparms.desired_access = FILE_WRITE_EA;
- 	oparms.disposition = FILE_OPEN;
--	oparms.create_options = 0;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
-+	else
-+		oparms.create_options = 0;
- 	oparms.fid = &fid;
- 	oparms.reconnect = false;
+ 	/* need to apply patch? */
+ 	if (rev >= mc_amd->hdr.patch_id) {
+-		c->microcode = rev;
+-		uci->cpu_sig.rev = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
+ 	}
  
-@@ -1215,7 +1224,10 @@ smb2_query_dir_first(const unsigned int
- 	oparms.tcon = tcon;
- 	oparms.desired_access = FILE_READ_ATTRIBUTES | FILE_READ_DATA;
- 	oparms.disposition = FILE_OPEN;
--	oparms.create_options = 0;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
-+	else
-+		oparms.create_options = 0;
- 	oparms.fid = fid;
- 	oparms.reconnect = false;
+ 	if (__apply_microcode_amd(mc_amd)) {
+@@ -531,17 +531,21 @@ static enum ucode_state apply_microcode_
+ 			cpu, mc_amd->hdr.patch_id);
+ 		return UCODE_ERROR;
+ 	}
+-	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+-		mc_amd->hdr.patch_id);
  
-@@ -1491,7 +1503,10 @@ smb2_query_symlink(const unsigned int xi
- 	oparms.tcon = tcon;
- 	oparms.desired_access = FILE_READ_ATTRIBUTES;
- 	oparms.disposition = FILE_OPEN;
--	oparms.create_options = 0;
-+	if (backup_cred(cifs_sb))
-+		oparms.create_options = CREATE_OPEN_BACKUP_INTENT;
-+	else
-+		oparms.create_options = 0;
- 	oparms.fid = &fid;
- 	oparms.reconnect = false;
+-	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+-	c->microcode = mc_amd->hdr.patch_id;
++	rev = mc_amd->hdr.patch_id;
++	ret = UCODE_UPDATED;
++
++	pr_info("CPU%d: new patch_level=0x%08x\n", cpu, rev);
++
++out:
++	uci->cpu_sig.rev = rev;
++	c->microcode	 = rev;
  
+ 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+ 	if (c->cpu_index == boot_cpu_data.cpu_index)
+-		boot_cpu_data.microcode = mc_amd->hdr.patch_id;
++		boot_cpu_data.microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -795,6 +795,7 @@ static enum ucode_state apply_microcode_
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_intel *mc;
++	enum ucode_state ret;
+ 	static int prev_rev;
+ 	u32 rev;
+ 
+@@ -817,9 +818,8 @@ static enum ucode_state apply_microcode_
+ 	 */
+ 	rev = intel_get_microcode_revision();
+ 	if (rev >= mc->hdr.rev) {
+-		uci->cpu_sig.rev = rev;
+-		c->microcode = rev;
+-		return UCODE_OK;
++		ret = UCODE_OK;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -848,14 +848,17 @@ static enum ucode_state apply_microcode_
+ 		prev_rev = rev;
+ 	}
+ 
++	ret = UCODE_UPDATED;
++
++out:
+ 	uci->cpu_sig.rev = rev;
+-	c->microcode = rev;
++	c->microcode	 = rev;
+ 
+ 	/* Update boot_cpu_data's revision too, if we're on the BSP: */
+ 	if (c->cpu_index == boot_cpu_data.cpu_index)
+ 		boot_cpu_data.microcode = rev;
+ 
+-	return UCODE_UPDATED;
++	return ret;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
 
 
