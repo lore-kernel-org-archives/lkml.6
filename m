@@ -2,144 +2,144 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90737ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A165AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367072146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F1282146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 21:08:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xbpeTQBb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367072146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DYqwMV66"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1282146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbeIRCfG (ORCPT
+        id S1728502AbeIRCh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 22:35:06 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43140 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbeIRCfG (ORCPT
+        Mon, 17 Sep 2018 22:37:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42718 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728202AbeIRCh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 22:35:06 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HL4J4k072181;
-        Mon, 17 Sep 2018 21:05:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=IWKHzgQHjytR3xTEyVS8uF3QhBxCmkQl9MzyPuQArg4=;
- b=xbpeTQBbdMdrkyZCv3neQVTrcwvgKYhP3Mj7FBK3y4urd/vDbem7p3Qlm4cFIF2imhuL
- 7Mc+jrmLHxXeigEr1VXJGAcDZ2eW5WknM089hgcYTrPRRLpGc60yX35z8pIm/9ikC/bp
- XMb6AnfYaMZnAhX237Cu0ylD3IFrpI3/m4Xqq2wUyFkE+pj7uuCmdYKhCZAtqgivjKJe
- tAljefS8YzBtfwQuyOa2LDEi+5lfFPofNuzG07FEHkl6M3HGKZVIFHwm1EJ1bGXCgA3a
- HGz/Tvm4boxn0TBPfk9oV7xIpstcX41Vp+v90CBHnYVOkFQqVIWwqOBsLBdaofAdbh7Y Vg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2mgsgtgu6w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 21:05:43 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8HL5aIa013013
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 21:05:37 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8HL5aHM005158;
-        Mon, 17 Sep 2018 21:05:36 GMT
-Received: from [10.132.91.175] (/10.132.91.175)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Sep 2018 14:05:36 -0700
-Subject: Re: [RFC PATCH 2/2] pipe: use pipe busy wait
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, dhaval.giani@oracle.com,
-        steven.sistare@oracle.com
-References: <20180830202458.32579-1-subhra.mazumdar@oracle.com>
- <20180830202458.32579-3-subhra.mazumdar@oracle.com>
- <20180907122557.GY24106@hirez.programming.kicks-ass.net>
-From:   Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <304ffc06-1ab9-19d5-d5ca-e63e2abe2900@oracle.com>
-Date:   Mon, 17 Sep 2018 14:05:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Sep 2018 22:37:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g23-v6so7983420plq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 14:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ghJwUjV6tbM+kp4hb+91uM3gpdooa8rCPZVG8PR1RtE=;
+        b=DYqwMV663/GU+yd6ty107gL2LoqVrer7+3dqIW9mdR1Cy0PlAVqxow+Kd4thj64q1p
+         5peDyfnyTOQbvCSzMkU0Wr6uZujvfXUQnoh5rdjsB0OpKNCVhcsOuRcTwGb1wFZHUQAa
+         rKMNUeD+XyEIvr1PU4XborP8gD8WPyeKMJgEvhdiWq+3SMWp2M4VY8WTOx+j+/SX50QR
+         WCq4X80gXzJp8vLJSXfCI8li4vyEX0ulQi9sGdQGDLZVlPHYGrVzd4uPinXtU5Lr+rlg
+         LVa025lK/4UKD8Dy8VrJ+Ztc45zMLy0Doo4VXZUInVawRPonbL5RYMpd4q7F0sbVKCii
+         64ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ghJwUjV6tbM+kp4hb+91uM3gpdooa8rCPZVG8PR1RtE=;
+        b=NtSNaut3+vWP8XIoM/bbV76elH40hzNiSL/CWkvNMMtu25CYM0iM7/GGq2S7vU4Zl+
+         aRxZOjuLONnqRdessQfP719tdv1n71hRmyKl1pLk769Ayu4QVQ1YeV3B3iZY8BZFjSuR
+         y9bIWZshm3M/jGZVbNro775P1G7U89FLR/Jes4NhCd0J12+n16e0RapMPqS3YINYbFbt
+         J5NK6PpTwRTZ/LApYzsUSjOtUTlKYJMYwxQfDQqqVmPcJBJdCDTrZkU8OGkeJZX7busi
+         sDGaApzoX6MuWLHgVFLmD/v0oBxNEn/BZKamhaY+BFu6tDH1AkbEmM3LdbgsfD1VmK5b
+         FVZw==
+X-Gm-Message-State: APzg51Cu3vbdYLNrmLo57OET1c6fkL57R+m80kf+qKVcQm2cQeYWDqTF
+        dq9wXTQAQb20fi/pDSehb5bWOg==
+X-Google-Smtp-Source: ANB0Vdb6JuxWXezyWLZlFk8G5VNEQ7t0GVaDSCYMA3C+jk0+sENHUD38JD+0v42h5CGnm/OaqT/e6w==
+X-Received: by 2002:a17:902:6f16:: with SMTP id w22-v6mr26786221plk.127.1537218506039;
+        Mon, 17 Sep 2018 14:08:26 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id g25-v6sm26899123pfd.23.2018.09.17.14.08.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Sep 2018 14:08:25 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g20kq-0008C8-OV; Mon, 17 Sep 2018 15:08:24 -0600
+Date:   Mon, 17 Sep 2018 15:08:24 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Walker, Benjamin" <benjamin.walker@intel.com>
+Cc:     "Howell, Seth" <seth.howell@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "monis@mellanox.com" <monis@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dledford@redhat.com" <dledford@redhat.com>
+Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Message-ID: <20180917210824.GF11367@ziepe.ca>
+References: <20180814223303.83556-1-seth.howell@intel.com>
+ <20180815225021.GB31799@ziepe.ca>
+ <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
+ <20180816180126.GB10507@ziepe.ca>
+ <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
+ <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180907122557.GY24106@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809170209
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 17, 2018 at 08:38:16PM +0000, Walker, Benjamin wrote:
+> On Mon, 2018-08-20 at 14:32 -0700, Howell, Seth wrote:
+> > Hi Jason,
+> > 
+> > I apologize for the few days of radio silence on this one. I was able to apply
+> > your patch on my local configuration and can confirm that it fixes the issue
+> > of send with invalidate being improperly mapped between a user-space process
+> > and the kernel rxe driver.
+> > 
+> > Thanks again for your time and help.
+> > 
+> > Seth Howell
+> > 
+> > From: linux-rdma-owner@vger.kernel.org [mailto:
+> > linux-rdma-owner@vger.kernel.org] On Behalf Of Jason Gunthorpe
+> > Sent: Thursday, August 16, 2018 11:01 AM
+> > To: Howell, Seth <seth.howell@intel.com>
+> > Cc: Walker, Benjamin <benjamin.walker@intel.com>; Doug Ledford <
+> > dledford@redhat.com>; linux-rdma@vger.kernel.org; linux-kernel@vger.kernel.org
+> > ; Moni Shoua <monis@mellanox.com>
+> > Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+> > 
+> > On Wed, Aug 15, 2018 at 11:27:36PM +0000, Howell, Seth wrote:
+> > 
+> > > Thank you for taking the time to review this issue. The patch you 
+> > > submitted will definitely fix the problem I was facing.
+> > 
+> > Can you test it to be certain?
+> > 
+> > Thanks,
+> > Jason
+> 
+> We've recently run into this same issue on i40iw, which appears to make the same
+> mistake of using the kernel version of the enum instead of the userspace
+> version. 
 
+Confused by this?? i40iw_upost_send does not handle the kernel numbers
+at all, as far as I can see? How does it develop a kernel dependency??
 
-On 09/07/2018 05:25 AM, Peter Zijlstra wrote:
-> On Thu, Aug 30, 2018 at 01:24:58PM -0700, subhra mazumdar wrote:
->> +void pipe_busy_wait(struct pipe_inode_info *pipe)
->> +{
->> +	unsigned long wait_flag = pipe->pipe_wait_flag;
->> +	unsigned long start_time = pipe_busy_loop_current_time();
->> +
->> +	pipe_unlock(pipe);
->> +	preempt_disable();
->> +	for (;;) {
->> +		if (pipe->pipe_wait_flag > wait_flag) {
->> +			preempt_enable();
->> +			pipe_lock(pipe);
->> +			return;
->> +		}
->> +		if (pipe_busy_loop_timeout(pipe, start_time))
->> +			break;
->> +		cpu_relax();
->> +	}
->> +	preempt_enable();
->> +	pipe_lock(pipe);
->> +	if (pipe->pipe_wait_flag > wait_flag)
->> +		return;
->> +	pipe_wait(pipe);
->> +}
->> +
->> +void wake_up_busy_poll(struct pipe_inode_info *pipe)
->> +{
->> +	pipe->pipe_wait_flag++;
->> +}
-> Why not just busy wait on current->state ? A little something like:
->
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index bdc5d3c0977d..8d9f1c95ff99 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -106,6 +106,7 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
->   void pipe_wait(struct pipe_inode_info *pipe)
->   {
->   	DEFINE_WAIT(wait);
-> +	u64 start;
->   
->   	/*
->   	 * Pipes are system-local resources, so sleeping on them
-> @@ -113,7 +114,15 @@ void pipe_wait(struct pipe_inode_info *pipe)
->   	 */
->   	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
->   	pipe_unlock(pipe);
-> -	schedule();
-> +
-> +	preempt_disable();
-> +	start = local_clock();
-> +	while (!need_resched() && current->state != TASK_RUNNING &&
-> +			(local_clock() - start) < pipe->poll_usec)
-> +		cpu_relax();
-> +	schedule_preempt_disabled();
-> +	preempt_enable();
-> +
->   	finish_wait(&pipe->wait, &wait);
->   	pipe_lock(pipe);
->   }
-This will make the current thread always spin and block as it itself does
-the state change to TASK_RUNNING in finish_wait.
+> What's the current status here? Can it be merged? I just checked and
+> do not see it merged to Linux master.
+
+Oh! This apparently got lost, thanks for bringing it up again.
+
+> Running a user-space NVMe-oF target with RDMA and a recent Linux kernel
+> initiator is not currently possible on rxe or i40iw because it requires send
+> with invalidate support.
+
+Okay, but i40iw doesn't seem to support send with invalidate at all in
+userspace?
+
+i40iw_upost_send() swithces on opcode, doesn't handle SEND_INV and
+then blows up in the default clause - how does this patch make any
+difference???
+
+Jason
