@@ -6,172 +6,161 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025C1ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 498B8ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73172147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E164B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ImpZ3ONa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73172147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="O4UGoLjL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E164B2147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbeIQUSw (ORCPT
+        id S1728986AbeIQUTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:18:52 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40746 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728158AbeIQUSw (ORCPT
+        Mon, 17 Sep 2018 16:19:37 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33096 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728158AbeIQUTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:18:52 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x26-v6so13838674lfi.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 07:51:10 -0700 (PDT)
+        Mon, 17 Sep 2018 16:19:37 -0400
+Received: by mail-pg1-f194.google.com with SMTP id s7-v6so7800068pgc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 07:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OxqryL9iXOL37JnZMrEHvO8DFYjQmv5awHEdDAfZjo4=;
-        b=ImpZ3ONafhMfd15iWxMDoQiFJ+ODVb816P9yKrsjtIGEwZ/zX9hiGU0VLz9BQZ78Qb
-         lilhIP2DUJaPgDtW+betV0sRxhNysF+68X02AkjyGrtQVb7jg83Xz9tLH6Gr7ZyxT7q6
-         OQ5UBfgnmrihRU9Jvz85onwafLy/j+v1r06RzJx2lnBe/o1nRM04ovK2NQfsweWiekut
-         x1Dr5uep+xQmNlO62J/BtabTe3U0BdK24xadOoPDErYcNHTK29+20ersM1LplNyqe6EG
-         EDNj3D0Ga8kSZa25vK9z0IC6wDNhAEy9MZ0wKByr+kNJNAGwqbrg/C2jqY0gRQieMeOj
-         +T/g==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zVO0ChGdPzl3gJQigOdGLQOx7051Qh59m/s8Em3/q88=;
+        b=O4UGoLjLzbYady2lVqaPJm/gZ8XirVADVWw4q66sr3oTCNoXYx/DNK2SnxlOwBEMkm
+         RgUWmGNOupBzDK9NCLuFTIjnvRtwxaZeRJk2gAMVpB6ycDvkassglc0IdA8y7nH4qQAX
+         lKmGm9tCrQ3UR/+JDqS7AaSgvXNigBFdESAwaKsJj6rnCUCizoGBPqaiXSS/KFA6sOsr
+         h/nBAv8lCB8TOb0L95dBVIUQNRpgJaS9aopRdcJHAZx57kWs9Nu0eJq1w4tmIxPxO/Od
+         ML1hz6xL/a9rYdMzJREuZQw8flHUhj4zzD7HIzE85TSWi3QsOGtlM4D46owqb+cYdqtD
+         VBFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OxqryL9iXOL37JnZMrEHvO8DFYjQmv5awHEdDAfZjo4=;
-        b=ePvJ3NcZOWfzPcJkLz0LjV7UigPP0BJY4Juz3NqM0QhyN72P5YOTtGWdi5mSoBSpK/
-         2oRzV30DzyQut0od30rd+CkgjjFHGLp1ZpZFyedD0Myy6dy0o0CGCf7vAzBktFrGyDUu
-         SL4hF1Ons8xAVUxaPvfgOzercGoNnBVjJCKVfFUojRVyAfQqcQ4Se0T264LYwnAJFUAM
-         IKZwpJgMoXZHLuBRS8dIK/6TKKc5I6DSzt71YiHo9pgN+uODk3kO6aDUeU6RtymN67cN
-         /lGuIlpOeqGYH6CtqcZiW5YKdGBgZlMU0a4oeazaVV6Z6chMzqmUwkzlj+GTpaBDNq9j
-         x6wQ==
-X-Gm-Message-State: APzg51BGIE3B/LKjuFh2KL56V1ed1Ao5MWdg/Qev2x15Z5rQbeXvzOis
-        YgwJpOZujIQsNW8GdI2Xer6jWULpWXySeo4cT0og
-X-Google-Smtp-Source: ANB0VdZbSCHdGPY8Yf5wVSX1Xh0kTpEj2eVuHB9rgehXFAptEQXCRswtZSoNqBDEZUkRCpbZ/CMg7Idqd/Eh7UkFTVY=
-X-Received: by 2002:a19:d789:: with SMTP id q9-v6mr4209264lfi.27.1537195869250;
- Mon, 17 Sep 2018 07:51:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-2-omosnace@redhat.com>
- <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com> <CAFqZXNuir-8TE7WUHYhw5t446THO=sCjOXv+WAxNDs79e6OTWQ@mail.gmail.com>
-In-Reply-To: <CAFqZXNuir-8TE7WUHYhw5t446THO=sCjOXv+WAxNDs79e6OTWQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Sep 2018 10:50:57 -0400
-Message-ID: <CAHC9VhQ8dRTzC8vBsUOm8o4LQxVRiwgkSb23xEZwSDfsXhY3uw@mail.gmail.com>
-Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
-To:     omosnace@redhat.com
-Cc:     linux-audit@redhat.com, rgb@redhat.com, sgrubb@redhat.com,
-        mlichvar@redhat.com, john.stultz@linaro.org, tglx@linutronix.de,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zVO0ChGdPzl3gJQigOdGLQOx7051Qh59m/s8Em3/q88=;
+        b=nSvZOHjnES55O027aSi3h+y3c9zTd6afh/FP672hg4Va5/W84a4ikyR3DIdexQsw/s
+         pmIqOkkMRXxAyn1kpzli7OlbhQV74DYS3HDkeeWXZOKh58aWhxBWA7jpWw3AL8C+8Ro0
+         Npymk/EZ5SrMqI72tTGI9EjuvX7yGly/eiBEXUauvBev26sBx6R5GPoNHRQRM3XqemMV
+         G1iFp5id5MmGiUmwx1E7mYPtFBFTq9JgoAEy/VMfmCfe0MbCHkGYelX/KU97QXzadIt8
+         k2FhWVEvx4zT5oGfgUPSxZ0+0MDtvYEQs7GtmvbVHsO3ehNLrcZPK+kzApLfCO68MqSn
+         cbGA==
+X-Gm-Message-State: APzg51Dszfm0eXKj0vIn+U2ri2lFn4QZxA++km2x7yL0Cnwk6tiVE96q
+        in2uWDNp+5ZQ4FmSAk9rsk6BIg==
+X-Google-Smtp-Source: ANB0VdZBX+8QrjJMeDd+EYdEDEWLIad4VyzoR4Lni9KkIYEjX+mUPB1oqgKPCV3hS2XI7AmYimNULg==
+X-Received: by 2002:a63:d645:: with SMTP id d5-v6mr23905035pgj.450.1537195916593;
+        Mon, 17 Sep 2018 07:51:56 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:d8c5:6393:c455:3e7? ([2601:646:c200:7429:d8c5:6393:c455:3e7])
+        by smtp.gmail.com with ESMTPSA id b203-v6sm23084768pfb.174.2018.09.17.07.51.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 07:51:55 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15G77)
+In-Reply-To: <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
+Date:   Mon, 17 Sep 2018 07:51:54 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <35BC21D7-01F4-4F91-A7E9-8D15DE5B95D6@amacapital.net>
+References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com> <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net> <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com> <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 8:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> On Fri, Sep 14, 2018 at 5:19 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Aug 24, 2018 at 8:00 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > This patch adds two auxiliary record types that will be used to annotate
-> > > the adjtimex SYSCALL records with the NTP/timekeeping values that have
-> > > been changed.
-> > >
-> > > Next, it adds two functions to the audit interface:
-> > >  - audit_tk_injoffset(), which will be called whenever a timekeeping
-> > >    offset is injected by a syscall from userspace,
-> > >  - audit_ntp_adjust(), which will be called whenever an NTP internal
-> > >    variable is changed by a syscall from userspace.
-> > >
-> > > Quick reference for the fields of the new records:
-> > >     AUDIT_TIME_INJOFFSET
-> > >         sec - the 'seconds' part of the offset
-> > >         nsec - the 'nanoseconds' part of the offset
-> > >     AUDIT_TIME_ADJNTPVAL
-> > >         op - which value was adjusted:
-> > >             offset - corresponding to the time_offset variable
-> > >             freq   - corresponding to the time_freq variable
-> > >             status - corresponding to the time_status variable
-> > >             adjust - corresponding to the time_adjust variable
-> > >             tick   - corresponding to the tick_usec variable
-> > >             tai    - corresponding to the timekeeping's TAI offset
-> >
-> > I understand that reusing "op" is tempting, but the above aren't
-> > really operations, they are state variables which are being changed.
->
-> I remember Steve (or was it Richard?) convincing me at one of the
-> meetings that "op" is the right filed name to use, despite it not
-> being a name for an operation... But I don't really care, I'm okay
-> with changing it to e.g. "var" as Richard suggests later in this
-> thread.
 
-As I said before, this seems like an abuse of the "op" field.
 
-> > Using the CONFIG_CHANGE record as a basis, I wonder if we are better
-> > off with something like the following:
-> >
-> >  type=TIME_CHANGE <var>=<value_new> old=<value_old>
-> >
-> > ... you might need to preface the variable names with something like
-> > "ntp_" or "offset_".  You'll notice I'm also suggesting we use a
-> > single record type here; is there any reason why two records types are
-> > required?
->
-> There are actually two reasons:
-> 1. The injected offset is a timespec64, so it consists of two integer
-> values (and it would be weird to produce two records for it, since IMO
-> it is conceptually still a single variable).
-> 2. In all other cases the variable is reset to the (possibly
-> transformed) input value, while in this case the input value is added
-> directly to the system time. This can be viewed as a kind of variable
-> too, but it would be weird to report old and new value for it, since
-> its value flows with time.
->
-> Plus, when I look at:
-> type=TIME_INJOFFSET [...]: sec=-16 nsec=124887145
->
-> I can immediately see that the time was shifted back by 16-something
-> seconds, while when I look at something like:
->
-> type=TIME_CHANGE [...]: var=time_sec new=1537185685 old=1537185701
-> type=TIME_CHANGE [...]: var=time_nsec new=664373417 old=789260562
->
-> I can just see some big numbers that I need to do math with before I
-> get an idea of what is the magnitude (or sign) of the change.
+> On Sep 16, 2018, at 10:26 PM, Ard Biesheuvel <ard.biesheuvel@linaro.org> w=
+rote:
 
-Okay, with that in mind, perhaps when recording the offset values we
-omit the "old" values (arguably that doesn't make much sense here) and
-keep the sec/nsec split:
+>=20
+> As far as I can tell (i.e., as a user not a network dev), WireGuard is
+> an excellent piece of code, and I would like to see it merged. I also
+> think there is little disagreement about the quality of the proposed
+> algorithm implementations and the usefulness of having a set of easy
+> to use solid crypto primitives in addition to or complementing the
+> current crypto API.
+>=20
+> I do have some concerns over how the code is organized though:
+>=20
+> * simd_relax() is currently not called by the crypto routines
+> themselves. This means that the worst case scheduling latency is
+> unbounded, which is unacceptable for the -rt kernel. The worst case
+> scheduling latency should never be proportional to the input size.
+> (Apologies for not spotting that earlier)
+>=20
+> * Using a cute name for the crypto library [that will end up being the
+> preferred choice for casual use only] may confuse people, given that
+> we have lots of code in crypto/ already. I'd much prefer using, e.g.,
+> crypto/lib and crypto/api (regardless of where the arch specific
+> pieces live)
+>=20
+> * I'd prefer the arch specific pieces to live under arch, but I can
+> live with keeping them in a single place, as long as the arch
+> maintainers have some kind of jurisdiction over them. I also think
+> there should be some overlap between the maintainership
+> responsibilities of the two generic pieces (api and lib).
+>=20
+> * (Nit) The GCC command line -include'd .h files contain variable and
+> function definitions so they are actually .c files.
 
-type=TIME_CHANGE [...]: offset_sec=<X> offset_nsec=<Y>
+Hmm. I would suggest just getting rid of the -include magic entirely.  The r=
+esulting ifdef will be more comprehensible.
 
-... and for all others we stick with:
 
-type=TIME_CHANGE [...]: ntp_<VAR>=<NEWVAL> old=<OLD_VAL>
+> * The current organization of the code puts all available (for the
+> arch) versions of all routines into a single module, which can only be
+> built in once we update random.c to use Zinc's chacha20 routines. This
+> bloats the core kernel (which is a huge deal for embedded systems that
+> have very strict boot requirements). It also makes it impossible to
+> simply blacklist a module if you, for instance, prefer to use the
+> [potentially more power efficient] scalar code over the SIMD code when
+> using a distro kernel.
 
-... and if that results in multiple TIME_CHANGE records for a given
-event, that's fine with me.
+I think the module organization needs to change. It needs to be possible to h=
+ave chacha20 built in but AES or whatever as a module.
 
-> > A reminder that we need tests for these new records and a RFE page on the wiki:
-> >
-> > * https://github.com/linux-audit/audit-testsuite
->
-> I was going to start working on this once the format issues are
-> settled. (Although I probably should have kept the RFC in the subject
-> until then...)
->
-> > * https://github.com/linux-audit/audit-kernel/wiki
->
-> I admit I forgot about this duty, but again I would like to wait for
-> the discussions to settle before writing that up.
+>=20
+> [To summarize the 4 points above, I'd much rather see a more
+> conventional organization where different parts are provided by
+> different modules. I don't think the argument that inlining is needed
+> for performance is actually valid, given that we have branch
+> predictors and static keys, and the arch SIMD code is built as
+> separate object files anyway]
 
-That is fine, do it in whatever order works best for you, just
-understand that I'm probably not going to merge patches like this
-until I see both documentation and tests.
+I might have agreed before Spectre :(. Unfortunately, unless we do some magi=
+c, I think the code would look something like:
 
--- 
-paul moore
-www.paul-moore.com
+if (static_branch_likely(have_simd)) arch_chacha20();
+
+...where arch_chacha20 is a *pointer*. And that will generate a retpoline an=
+d run very, very slowly.  (I just rewrote some of the x86 entry code to elim=
+inate one retpoline. I got a 5% speedup on some tests according to the kbuil=
+d bot.)
+
+So, if we really wanted modules, we=E2=80=99d need a new dynamic patching me=
+chanism.
+
+I would suggest instead adding two boot (or debugfs) options:
+
+simd=3Doff: disables simd_get using a static branch.
+
+crypto_chacha20_nosimd: Does what it sounds like.
