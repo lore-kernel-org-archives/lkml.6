@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97785ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F06ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49F7F2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D55E2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 20:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="N6wKiEyi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F7F2147A
+	dkim=pass (2048-bit key) header.d=omnibond-com.20150623.gappssmtp.com header.i=@omnibond-com.20150623.gappssmtp.com header.b="CJs15299"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D55E2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeIRBkj (ORCPT
+        id S1728683AbeIRBkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 21:40:39 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34913 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbeIRBkU (ORCPT
+        Mon, 17 Sep 2018 21:40:15 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37102 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728620AbeIRBkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 21:40:20 -0400
-Received: by mail-qk1-f194.google.com with SMTP id f62-v6so9745829qke.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:11:28 -0700 (PDT)
+        Mon, 17 Sep 2018 21:40:13 -0400
+Received: by mail-qk1-f195.google.com with SMTP id f17-v6so9734443qkh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 13:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=omnibond-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AN23acl7MBlWbUdXlKJ9Ub8VMLUatWLEGH8rlJK2EFc=;
-        b=N6wKiEyiW5H7Be8IKzBubf9LxL8a9CK2M+DEiHizSckc7egw4S/FD3EBQA56QjDH/V
-         j3CM282jnsgOyVftt/wqzRaqJUuOyQxdX/i/jwB0VYD853950IeVaaskivQOEc9vxcOD
-         DM9kPXztJP7Q1kNT+JYowmPPzm5m5u+YjvQa9DOmbdT5uP5bJAerwGvpWf74OCA6c+Tb
-         CirbVHlhbPY0hvRP1lrleULAjWfg2RrrQct6kuv1vY1KodMFD26b4YxWgupjn4P76Djz
-         a9/Ny+y6RlIQC1EZVN3AxOc9TlHbIt0K4ZL2cmZuvndsav1vFJV8iL9SEAXcImy0INa+
-         eTxg==
+        bh=jGYyVedwO3w6KnNhLC98dG+SgDExz6zEusY6F4HPlCE=;
+        b=CJs15299ukjfn6R2Z8XW4Q/QWKpiLJauHDS5nb6/Yo+VM3mXC5P9DXAAYIayUu0Ib2
+         Cc33W8jZ6ld3aoJW0l506vzcHBPHg40YNKeOBDah/L5amz73/gPFAWtHpixavz+Vkfr/
+         aWQYXRJCNOkTDe9sSDtviKOx3HWOlv6/qKqqq8mc8vTz+QgZ/nGZjT2cn6E+Ym6+zXC8
+         jQ5eawPA30cTNEDBbbNbadPd8AEA132V0tvPFPeVqBXKrPCISzo46L0QLYWYa3Ek6Epn
+         0/+C/0B4BLQskee4xXFNkZ5RmyUC9Fvh9OWlJvXEjya9lDSm4zTIEC4GnJbkDXXVfF/r
+         ChBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AN23acl7MBlWbUdXlKJ9Ub8VMLUatWLEGH8rlJK2EFc=;
-        b=lHqoJhrXDxi92P9oB2tS1zcBX3yq96JFR6dTHHPsnAWnVbK824CsrXJXCVIWCzVgOC
-         9RTLF+SPvLL0wlKE38rhQ8uTLmAbiRM/ij3GiOMYApc2QKrSdyC6BCYS64ke3D54Ju3l
-         VerZXGt/OZ/p0WKoPeTgRX5VGO9k4BE+o2VSR4uVfdhn4/vSW6lc23GfW/CWQpx8g5rk
-         7SIHYsd9QLo+yq2TptDHRxeiuKPv0rbhO3AhKkbaeeI4qpN690WR/CiwKtK1uFOs53Fm
-         gkJBj7fSEIewHy8YC0qOo7+zBuHrXOJcftraqbIEYqlX8Guc7ML2gTMqEYvCbIe0cV0u
-         tJIQ==
-X-Gm-Message-State: APzg51BzvGJXYDH2uGWmzR0yrK2sllzd4qhkRxqeFvBYi3eDnV4qfoIj
-        m+f2s20EsoWB1f8Nq37LhMxCDzMBHYct+j0L
-X-Google-Smtp-Source: ANB0Vdak9pnBYpV09M8ox+zSVmamAStn6HMS6lV+NE/Pn7LpnVTC8zBFRn1zU4+YkItR/c3Jb0r55A==
-X-Received: by 2002:ae9:e414:: with SMTP id q20-v6mr17860689qkc.305.1537215087199;
-        Mon, 17 Sep 2018 13:11:27 -0700 (PDT)
+        bh=jGYyVedwO3w6KnNhLC98dG+SgDExz6zEusY6F4HPlCE=;
+        b=of7cq6hLwTYlXUP+ygBb8p6mSduBYNkyHrPUN5d9tNnpV1B3a/emo/snmG5PRg87Y2
+         q3aGtw29flUnxGYF1SSe3avlVpPvXf8dwkbyWVKwgJ2iveDxKq0p2GUppiPZsLhwX7FZ
+         lNiZFV0KACScTQ0rRwToBPKMiGxEPYVzh3x0Ors3uoCRuoGFb3rGzUq3GxbQR951ekgA
+         6px98UhKu/fxnOt9IuXfuWpTWYzDJH1vqkvKnBNd6Tzylx8vvcFWw1GPgW6h1q2fQAv4
+         go8aePDPNqTcg087iorfMV++WrK/X/mrHYMWpUlMob5x3yqGp20+587kHJ+p/5W5BEPj
+         yULA==
+X-Gm-Message-State: APzg51CB92OwhpeOkMpLBbklDRS6IFHJ5bzOxsSYwk+UBCHIMlzAmmnR
+        kOaSNGwgkrs0gIfDjt0Tf81jhfOWjV6C1j4a
+X-Google-Smtp-Source: ANB0VdZ1UdVIw/JZvL/nI1VlCyqpLS9/L2Qkt7fKnKna39YMn/hiHwMFrW+KxSQmnX8HgMVjMvDJKQ==
+X-Received: by 2002:a37:d402:: with SMTP id l2-v6mr17993045qki.86.1537215081014;
+        Mon, 17 Sep 2018 13:11:21 -0700 (PDT)
 Received: from ip-172-31-22-34.ec2.internal (ec2-18-215-252-133.compute-1.amazonaws.com. [18.215.252.133])
-        by smtp.gmail.com with ESMTPSA id n8-v6sm11053480qtk.38.2018.09.17.13.11.26
+        by smtp.gmail.com with ESMTPSA id n8-v6sm11053480qtk.38.2018.09.17.13.11.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 13:11:26 -0700 (PDT)
+        Mon, 17 Sep 2018 13:11:20 -0700 (PDT)
 From:   Martin Brandenburg <martin@omnibond.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         devel@lists.orangefs.org
 Cc:     Martin Brandenburg <martin@omnibond.com>
-Subject: [PATCH 16/17] orangefs: use kmem_cache for orangefs_write_request
-Date:   Mon, 17 Sep 2018 20:10:53 +0000
-Message-Id: <20180917201054.3530-17-martin@omnibond.com>
+Subject: [PATCH 10/17] orangefs: service ops done for writeback are not killable
+Date:   Mon, 17 Sep 2018 20:10:47 +0000
+Message-Id: <20180917201054.3530-11-martin@omnibond.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917201054.3530-1-martin@omnibond.com>
 References: <20180917201054.3530-1-martin@omnibond.com>
@@ -78,173 +78,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Martin Brandenburg <martin@omnibond.com>
 ---
- fs/orangefs/inode.c           | 10 +++++-----
- fs/orangefs/orangefs-cache.c  | 24 ++++++++++++++++++++++--
- fs/orangefs/orangefs-kernel.h |  6 ++++--
- fs/orangefs/orangefs-mod.c    | 10 +++++-----
- 4 files changed, 36 insertions(+), 14 deletions(-)
+ fs/orangefs/orangefs-kernel.h |  1 +
+ fs/orangefs/orangefs-utils.c  |  2 +-
+ fs/orangefs/waitqueue.c       | 18 ++++++++++--------
+ 3 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index efb00cd50b61..178734920e45 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -66,7 +66,7 @@ static int orangefs_writepage_locked(struct page *page,
- 		ret = 0;
- 		if (wr) {
- 			ClearPagePrivate(page);
--			kfree(wr);
-+			wr_release(wr);
- 		}
- 	}
- 	end_page_writeback(page);
-@@ -126,7 +126,7 @@ static int update_wr(struct page *page, loff_t pos, unsigned len, int mwrite)
- 		else
- 			wr->len = wr->pos + wr->len - wr->pos;
- 	} else {
--		wr = kmalloc(sizeof *wr, GFP_KERNEL);
-+		wr = wr_alloc();
- 		if (wr) {
- 			wr->pos = pos;
- 			wr->len = len;
-@@ -272,7 +272,7 @@ static void orangefs_invalidatepage(struct page *page,
- /* XXX prove */
- 		if (offset == 0 && length == PAGE_SIZE) {
- 			ClearPagePrivate(page);
--			kfree(wr);
-+			wr_release(wr);
- 		} else if (wr->pos - page_offset(page) < offset &&
- 		    wr->pos - page_offset(page) + wr->len > offset + length) {
- 			wbc.range_start = page_file_offset(page);
-@@ -284,7 +284,7 @@ static void orangefs_invalidatepage(struct page *page,
- 					return;
- 			} else {
- 				ClearPagePrivate(page);
--				kfree(wr);
-+				wr_release(wr);
- 			}
- 		} else if (wr->pos - page_offset(page) < offset &&
- 		    wr->pos - page_offset(page) + wr->len <= offset + length) {
-@@ -299,7 +299,7 @@ static void orangefs_invalidatepage(struct page *page,
- 			 * entire write range is to be invalidated.
- 			 */
- 			ClearPagePrivate(page);
--			kfree(wr);
-+			wr_release(wr);
- 		}
- 	}
- 	return;
-diff --git a/fs/orangefs/orangefs-cache.c b/fs/orangefs/orangefs-cache.c
-index 3b6982bf6bcf..cfb405ca8aa5 100644
---- a/fs/orangefs/orangefs-cache.c
-+++ b/fs/orangefs/orangefs-cache.c
-@@ -16,8 +16,9 @@ static DEFINE_SPINLOCK(next_tag_value_lock);
- 
- /* a cache for orangefs upcall/downcall operations */
- static struct kmem_cache *op_cache;
-+static struct kmem_cache *wr_cache;
- 
--int op_cache_initialize(void)
-+int orangefs_caches_initialize(void)
- {
- 	op_cache = kmem_cache_create("orangefs_op_cache",
- 				     sizeof(struct orangefs_kernel_op_s),
-@@ -34,12 +35,21 @@ int op_cache_initialize(void)
- 	spin_lock(&next_tag_value_lock);
- 	next_tag_value = 100;
- 	spin_unlock(&next_tag_value_lock);
-+
-+	wr_cache = kmem_cache_create("orangefs_wr_cache",
-+	    sizeof(struct orangefs_write_request), 0, ORANGEFS_CACHE_CREATE_FLAGS, NULL);
-+	if (!wr_cache) {
-+		gossip_err("Cannot create orangefs_wr_cache\n");
-+		return -ENOMEM;
-+	}
-+
- 	return 0;
- }
- 
--int op_cache_finalize(void)
-+int orangefs_caches_finalize(void)
- {
- 	kmem_cache_destroy(op_cache);
-+	kmem_cache_destroy(wr_cache);
- 	return 0;
- }
- 
-@@ -162,3 +172,13 @@ void op_release(struct orangefs_kernel_op_s *orangefs_op)
- 		gossip_err("NULL pointer in op_release\n");
- 	}
- }
-+
-+struct orangefs_write_request *wr_alloc(void)
-+{
-+	return kmem_cache_zalloc(wr_cache, GFP_KERNEL);
-+}
-+
-+void wr_release(struct orangefs_write_request *wr)
-+{
-+	kmem_cache_free(wr_cache, wr);
-+}
 diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-index 2e9726d1de7d..256851bab7a5 100644
+index 9fe60d086e2d..cdb08e51a4b1 100644
 --- a/fs/orangefs/orangefs-kernel.h
 +++ b/fs/orangefs/orangefs-kernel.h
-@@ -311,11 +311,13 @@ static inline int match_handle(struct orangefs_khandle resp_handle,
- /*
-  * defined in orangefs-cache.c
+@@ -441,6 +441,7 @@ extern const struct dentry_operations orangefs_dentry_operations;
+ #define ORANGEFS_OP_CANCELLATION  4   /* this is a cancellation */
+ #define ORANGEFS_OP_NO_MUTEX      8   /* don't acquire request_mutex */
+ #define ORANGEFS_OP_ASYNC         16  /* Queue it, but don't wait */
++#define ORANGEFS_OP_WRITEBACK     32
+ 
+ int service_operation(struct orangefs_kernel_op_s *op,
+ 		      const char *op_name,
+diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
+index a4fac527f85d..9221c4a3398e 100644
+--- a/fs/orangefs/orangefs-utils.c
++++ b/fs/orangefs/orangefs-utils.c
+@@ -430,7 +430,7 @@ int orangefs_inode_setattr(struct inode *inode)
+ 	spin_unlock(&inode->i_lock);
+ 
+ 	ret = service_operation(new_op, __func__,
+-	    get_interruptible_flag(inode));
++	    get_interruptible_flag(inode) | ORANGEFS_OP_WRITEBACK);
+ 	gossip_debug(GOSSIP_UTILS_DEBUG,
+ 	    "orangefs_inode_setattr: returning %d\n", ret);
+ 	if (ret)
+diff --git a/fs/orangefs/waitqueue.c b/fs/orangefs/waitqueue.c
+index 0729d2645d6a..beafc33d57be 100644
+--- a/fs/orangefs/waitqueue.c
++++ b/fs/orangefs/waitqueue.c
+@@ -19,7 +19,7 @@
+ 
+ static int wait_for_matching_downcall(struct orangefs_kernel_op_s *op,
+ 		long timeout,
+-		bool interruptible)
++		int flags)
+ 			__acquires(op->lock);
+ static void orangefs_clean_up_interrupted_operation(struct orangefs_kernel_op_s *op)
+ 	__releases(op->lock);
+@@ -143,9 +143,7 @@ int service_operation(struct orangefs_kernel_op_s *op,
+ 	if (!(flags & ORANGEFS_OP_NO_MUTEX))
+ 		mutex_unlock(&orangefs_request_mutex);
+ 
+-	ret = wait_for_matching_downcall(op, timeout,
+-					 flags & ORANGEFS_OP_INTERRUPTIBLE);
+-
++	ret = wait_for_matching_downcall(op, timeout, flags);
+ 	gossip_debug(GOSSIP_WAIT_DEBUG,
+ 		     "%s: wait_for_matching_downcall returned %d for %p\n",
+ 		     __func__,
+@@ -319,10 +317,12 @@ static void
   */
--int op_cache_initialize(void);
--int op_cache_finalize(void);
-+int orangefs_caches_initialize(void);
-+int orangefs_caches_finalize(void);
- struct orangefs_kernel_op_s *op_alloc(__s32 type);
- void orangefs_new_tag(struct orangefs_kernel_op_s *op);
- char *get_opname_string(struct orangefs_kernel_op_s *new_op);
-+struct orangefs_write_request *wr_alloc(void);
-+void wr_release(struct orangefs_write_request *);
+ static int wait_for_matching_downcall(struct orangefs_kernel_op_s *op,
+ 		long timeout,
+-		bool interruptible)
++		int flags)
+ 			__acquires(op->lock)
+ {
+ 	long n;
++	int writeback = flags & ORANGEFS_OP_WRITEBACK,
++	    interruptible = flags & ORANGEFS_OP_INTERRUPTIBLE;
  
- int orangefs_inode_cache_initialize(void);
- int orangefs_inode_cache_finalize(void);
-diff --git a/fs/orangefs/orangefs-mod.c b/fs/orangefs/orangefs-mod.c
-index 85ef87245a87..c7373e682653 100644
---- a/fs/orangefs/orangefs-mod.c
-+++ b/fs/orangefs/orangefs-mod.c
-@@ -87,13 +87,13 @@ static int __init orangefs_init(void)
- 		slot_timeout_secs = 0;
+ 	/*
+ 	 * There's a "schedule_timeout" inside of these wait
+@@ -330,10 +330,12 @@ static int wait_for_matching_downcall(struct orangefs_kernel_op_s *op,
+ 	 * user process that needs something done and is being
+ 	 * manipulated by the client-core process.
+ 	 */
+-	if (interruptible)
++	if (writeback)
++		n = wait_for_completion_io_timeout(&op->waitq, timeout);
++	else if (!writeback && interruptible)
+ 		n = wait_for_completion_interruptible_timeout(&op->waitq,
+-							      timeout);
+-	else
++								      timeout);
++	else /* !writeback && !interruptible but compiler complains */
+ 		n = wait_for_completion_killable_timeout(&op->waitq, timeout);
  
- 	/* initialize global book keeping data structures */
--	ret = op_cache_initialize();
-+	ret = orangefs_caches_initialize();
- 	if (ret < 0)
- 		goto out;
- 
- 	ret = orangefs_inode_cache_initialize();
- 	if (ret < 0)
--		goto cleanup_op;
-+		goto cleanup_caches;
- 
- 	orangefs_htable_ops_in_progress =
- 	    kcalloc(hash_table_size, sizeof(struct list_head), GFP_KERNEL);
-@@ -172,8 +172,8 @@ static int __init orangefs_init(void)
- cleanup_inode:
- 	orangefs_inode_cache_finalize();
- 
--cleanup_op:
--	op_cache_finalize();
-+cleanup_caches:
-+	orangefs_caches_finalize();
- 
- out:
- 	return ret;
-@@ -194,7 +194,7 @@ static void __exit orangefs_exit(void)
- 		BUG_ON(!list_empty(&orangefs_htable_ops_in_progress[i]));
- 
- 	orangefs_inode_cache_finalize();
--	op_cache_finalize();
-+	orangefs_caches_finalize();
- 
- 	kfree(orangefs_htable_ops_in_progress);
- 
+ 	spin_lock(&op->lock);
 -- 
 2.19.0
 
