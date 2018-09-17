@@ -2,80 +2,174 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F3DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6856AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08CFA2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:59:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="c7be5jsq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08CFA2147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A96F20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:59:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A96F20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeIQU1L (ORCPT
+        id S1729148AbeIQU12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:27:11 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:44037 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726885AbeIQU1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:27:11 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 7b2c01c1;
-        Mon, 17 Sep 2018 14:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=VgULI4ABLTWlhWCYmFeM3uz9LB4=; b=c7be5j
-        sqaOuTZPB6WELnPWn8QPO5XWJrH2oGZ7ZaVf2pJZpQvodMbiXTw+7IMEpORQKWt7
-        /xaP2jgi1cuSVPvaSI7WX8/jW110+aASYsEfBT4F0zh7iSB8p8/rmjhlVrylhHSK
-        1TAgvldymhXdJZVZZi3o+52ge8bHTYEIuS1ULmfZ4P4RrN/F5FztHZYKoMazQfhS
-        7IAYPA8tOaDI6er2Zv4xypMX+V3yncPBI7QEbjqz8hSeDHsJEb1LTnYeLogOcqMv
-        xEtaOeNQFcK6Wu7FuVMJTa07NaxXVCG50GtBpDw9tMfQ4HoKlDAjCGLp36/5ALPT
-        oNKLnUoXP1lrhhcQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e164a898 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Mon, 17 Sep 2018 14:41:57 +0000 (UTC)
-Received: by mail-ot1-f51.google.com with SMTP id v44-v6so11593219ote.13;
-        Mon, 17 Sep 2018 07:59:23 -0700 (PDT)
-X-Gm-Message-State: APzg51B3k18eSiD86coBlH89fL32cPe7f7g5SWWuAq1/poKoePqqs4rp
-        QNALw6bR10VU9WScHpIeJ4p/SviFi+RIM8lUr98=
-X-Google-Smtp-Source: ANB0Vdax+p1BsGkvV+AdLShsUZOJgAgHQX2CuOy8FiBSrDy8udBmI5Q2Pfv96/WHkOP4Y1NYs/g65k8sn9CBd7+N+Hg=
-X-Received: by 2002:a9d:6554:: with SMTP id q20-v6mr13071230otl.209.1537196362779;
- Mon, 17 Sep 2018 07:59:22 -0700 (PDT)
+        Mon, 17 Sep 2018 16:27:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726885AbeIQU12 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 16:27:28 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8HExLgt125168
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 10:59:45 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mjbu5frwg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 10:59:44 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Mon, 17 Sep 2018 15:59:42 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Sep 2018 15:59:40 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8HExdd3524672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Sep 2018 14:59:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF51E4203F;
+        Mon, 17 Sep 2018 17:59:27 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A97D42042;
+        Mon, 17 Sep 2018 17:59:27 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.180])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 17 Sep 2018 17:59:27 +0100 (BST)
+Date:   Mon, 17 Sep 2018 17:59:36 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Pintu Kumar <pintu.ping@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: KSM not working in 4.9 Kernel
+References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
+ <20180916153237.GC15699@rapoport-lnx>
+ <CAOuPNLj0HyC+yzwTpN-EWpzHTJ58u7pBfOja1MyweF4pbct1eQ@mail.gmail.com>
+ <20180917043724.GA12866@rapoport-lnx>
+ <CAOuPNLidXFHgkBmwOPj_xFkU_OpLaXbpJg04Le7MPxu8cYg_RQ@mail.gmail.com>
+ <CAOuPNLj+4pMnEy5EyZmzDWszqMb_PQb3q7t_hvG_50BTz1He2Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
- <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
- <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
- <CAHmME9ohGPTX-fkhP6zaWdx3SbkiqO5kWkWE-bDk=pm-nUqYvw@mail.gmail.com> <8937D6B1-D21C-4C47-8A89-A466CDB6FB04@amacapital.net>
-In-Reply-To: <8937D6B1-D21C-4C47-8A89-A466CDB6FB04@amacapital.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 17 Sep 2018 16:59:11 +0200
-X-Gmail-Original-Message-ID: <CAHmME9phB0iruUT0CDDzxkaVuW_Uvs0GL-+zOiTTXiDz+ARe4g@mail.gmail.com>
-Message-ID: <CAHmME9phB0iruUT0CDDzxkaVuW_Uvs0GL-+zOiTTXiDz+ARe4g@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOuPNLj+4pMnEy5EyZmzDWszqMb_PQb3q7t_hvG_50BTz1He2Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18091714-0008-0000-0000-0000027262C8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091714-0009-0000-0000-000021DAB34F
+Message-Id: <20180917145936.GA20945@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809170151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 4:54 PM Andy Lutomirski <luto@amacapital.net> wrote:
-> Ard, what do you think?  I think it would
-> be nice, but if the authors of that assembly are convinced it should be replaced, then this step is optional IMO.
+On Mon, Sep 17, 2018 at 05:25:27PM +0530, Pintu Kumar wrote:
+> On Mon, Sep 17, 2018 at 11:46 AM Pintu Kumar <pintu.ping@gmail.com> wrote:
+> > > > But still no effect.
+> > > > And I checked LTP test cases. It almost doing the same thing.
+> > > >
+> > > > I observed that [ksmd] thread is not waking up at all.
+> > > > I gave some print inside it, but I could never saw that prints coming.
+> > > > I could not find it running either in top command during the operation.
+> > > > Is there anything needs to be done, to wakw up ksmd?
+> > > > I already set: echo 1 > /sys/kernel/mm/ksm.
+> > >
+> > > It should be echo 1 > /sys/kernel/mm/ksm/run
+> > >
+> >
+> > Oh yes, sorry for the typo.
+> > I tried the same, but still ksm is not getting invoked.
+> > Could someone confirm if KSM was working in 4.9 kernel?
+> >
+> 
+> Ok, it's working now. I have to explicitly stop the ksm thread to see
+> the statistics.
+> Also there was some internal patch that was setting vm_flags to
+> VM_MERGABLE thus causing ksm_advise call to return.
+> 
+> # echo 1 > /sys/kernel/mm/ksm/run
+> # ./malloc-test.out &
+> # echo 0 > /sys/kernel/mm/ksm/run
+> 
+> ~ # grep -H '' /sys/kernel/mm/ksm/*
+> /sys/kernel/mm/ksm/full_scans:105
+> /sys/kernel/mm/ksm/pages_shared:1
+> /sys/kernel/mm/ksm/pages_sharing:999
+> /sys/kernel/mm/ksm/pages_to_scan:100
+> /sys/kernel/mm/ksm/pages_unshared:0
+> /sys/kernel/mm/ksm/pages_volatile:0
+> /sys/kernel/mm/ksm/run:0
+> /sys/kernel/mm/ksm/sleep_millisecs:20
+> 
+> 
+> However, I have one doubt.
+> Is the above data correct, for the below program?
 
-I just spent several hours reworking everything for ChaCha. That was
-the easy one. Poly1305 will be much harder. Work in progress, I guess,
-but erf it's rough.
+You have 1 shared page and 999 additional references to that page
+ 
+> int main(int argc, char *argv[])
+> {
+>         int i, n, size, ret;
+>         char *buffer;
+>         void *addr;
+> 
+>         n = 10;
+>         size = 100 * getpagesize();
+>         for (i = 0; i < n; i++) {
+>                 buffer = (char *)malloc(size);
+>                 memset(buffer, 0xff, size);
+>                 madvise(buffer, size, MADV_MERGEABLE);o
+
+This madvise() call should fail because buffer won't be page aligned
+
+>                 addr =  mmap(NULL, size,
+>                            PROT_READ | PROT_EXEC | PROT_WRITE,
+> MAP_PRIVATE | MAP_ANONYMOUS,
+>                            -1, 0);
+>                 memset(addr, 0xff, size);
+>                 ret = madvise(addr, size, MADV_MERGEABLE);
+>                 if (ret < 0) {
+>                         fprintf(stderr, "madvise failed: ret: %d,
+> reason: %s\n", ret, strerror(errno));
+>                 }
+>                 usleep(500);
+>         }
+>         printf("Done....press ^C\n");
+> 
+>         pause();
+> 
+>         return 0;
+> }
+> 
+> 
+> Thanks,
+> Pintu
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
