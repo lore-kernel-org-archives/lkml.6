@@ -7,51 +7,54 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D51ECE564
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 926E9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787F42147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B7F2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:01:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QkPI+H+2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787F42147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="D8+ZTqv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B7F2147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbeIQI1G (ORCPT
+        id S1729190AbeIQI1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:27:06 -0400
-Received: from mail-by2nam03on0108.outbound.protection.outlook.com ([104.47.42.108]:58413
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        Mon, 17 Sep 2018 04:27:11 -0400
+Received: from mail-bn3nam01on0109.outbound.protection.outlook.com ([104.47.33.109]:29664
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726110AbeIQI1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:27:05 -0400
+        id S1726110AbeIQI1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:27:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/RLzObtBMekgQjqvblilnajSfXOBOwCFJ7HmDakS8NU=;
- b=QkPI+H+2I30KosLxqCHyWAKmbvswe0AhQOMgwCNcevR6jGGCBB6HgCOBaBU31cgOEv4b3OwTt/fApuuBn0tuiaaZNjvuXHi258WajSgIWt4rGWQZ4a1oNqShlKVwgRo/kqqzAYpAF7/NDE3UEdEDfxXmIlmSyy3Ga4oafSD87p8=
+ bh=9JaEh0FSzaAUmrolHlBBVfEj0hhTrNaLPCf5XBtwNws=;
+ b=D8+ZTqv744uxtkN1jFx26iusG+rYrzRkzXT2E2BjCMKaMDlqu/qGNwUr/myx3opqC/j/xCXqi/XE4a//aSb3FT79NHjek3nS5XG9fP9stHPUeWh+nU+SOeBwVpqfH4IUIZopkufvWOv85u6Lv0QsMEi5frBdtYRjYkQty5g44LY=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0502.namprd21.prod.outlook.com (10.172.122.12) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.7; Mon, 17 Sep 2018 03:01:48 +0000
+ 15.20.1164.7; Mon, 17 Sep 2018 03:01:51 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:01:48 +0000
+ 03:01:51 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Peter Rosin <peda@axentia.se>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+CC:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Eva Rachel Retuya <eraretuya@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 063/136] mtd: rawnand: atmel: add module param to
- avoid using dma
-Thread-Topic: [PATCH AUTOSEL 4.18 063/136] mtd: rawnand: atmel: add module
- param to avoid using dma
-Thread-Index: AQHUTjKkJiRd+3m2jUW1g3G5BItKZw==
-Date:   Mon, 17 Sep 2018 03:00:51 +0000
-Message-ID: <20180917030006.245495-63-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 064/136] iio: accel: adxl345: convert address
+ field usage in iio_chan_spec
+Thread-Topic: [PATCH AUTOSEL 4.18 064/136] iio: accel: adxl345: convert
+ address field usage in iio_chan_spec
+Thread-Index: AQHUTjKkLWgC6WYKyU+WhWX3bOcqzQ==
+Date:   Mon, 17 Sep 2018 03:00:52 +0000
+Message-ID: <20180917030006.245495-64-alexander.levin@microsoft.com>
 References: <20180917030006.245495-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +63,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0502;6:mgEbVTJClll3GzMs/VwPPxy424C9MWXn+gMivvAJyjT4M5OiGX1SCdKGDEC7NDcOS9Gx7bbEgSz6eO8xdHos0eRSHFuv6WuBt0Hzt0P++O5J62Yyap7hjH9YHTbQnvCUSbWnlgroYC5Lbxr7HsOGIflgMJ7VrCD1f2JR8MQvxqOftmRueCzz6CPp/dKvsMJ3WGHqMrXEMyWt0Gp2SBvVK2lEk61l+/32uPjAzG47aVG7tLFQKlgcAaM01FPqZc0Tz3Xh9NB4h+uOD+eksh8T6vvJrfKroK796/xIokvpPfD+CwEHGstY71Jc9t6g5ruM3elCT6UifeOBaxkifWmhVmFN8Z+t0IsCfGQqePSCGevaq46O5dI+bV9AB2vVCuLj4FCHwg9NzQNpp53JIAac1NyUcwZqKnycEHwmY2/pIjJF1E22UoDNlpSETgWIjkv0LR22D6b4cLAaMn9NgivukA==;5:11qsORZQUpKc+XlsnAB+PZFO1whAFWCP2dqTKMA0YQPmY7pmV1jIy6TwdxEf6yRU6T0tLM/dGOcuU72V7Fdhuu6ZzomiRk5wdlzDnI+9uLnzW2+8f0A+8RKczYCVGt2Dht5loW/6914yZ5u95FTvzDkLTKz3rOxs8CCAi/uqskI=;7:ibFbg2ZVBRhyCcc+1APa+nW0+gFYDmsLXd1jGkP/TuOMHSzc2MTDzG9/nQQqdloMK3DObG4ZYOpeMxm9wEhb7BAglUXm67W+kMAnwlKbq5XMPlD0Xo3uFRwtsZBZxc6uhY4vIFxcemqQRvTt45gu7LLaVVp73uDWJQueEwjOfyHFuAe9OQaubxUNCYMZa9TgGD2Dfka2FKQbf5a6Adkh7F5eDcu9QibXsY8j+iZtyVPUxL919WKptqUCvyINrymH
-x-ms-office365-filtering-correlation-id: 0392a1b3-519e-4051-2191-08d61c49e8fe
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0502;6:xf4ryxGoWD/+aJUx8nshOIr1PL9e36rAfFzUTGQbXQcOI27tAbv92y7pvUJez13XmuxO+cVsQZ+ZfcXs0I4oChcrnmIHUyiuCEemU79UCkQwydxpL2hNrgkalbHOEdcpXza4stzQxYn0Gwl0NhpwvxIR86uoNK0DIaaUpVMLHRU0bi0tq8IdNquDDs10iiiUoyejpUIEEXxOr8jrdlP2n/aeq0i3Td9Wve/K53Az55v7AopcgzD+4HICp+05+M/a5P6GWee9hzDrZqDKHg/Zs14XoqBbB7MVm7YG/lUbicX5EQF8q5aJCv9yaEMm1O48IFJpUI/AnVJ8JxmCd/JmrDNt21XZsg+GUsUn25cj03NjA6tvpUiQxgS9Vb5KRkFP002QaIbZKk513TsRbusd1CqT3lwlltxir8Pw1hoEK7RxobsstG2PfZ47KBdBXGeYnXoU8BTly40zdSdYPPBcpA==;5:Wgp+Sg39j+8aEk7kRKwQfqZfIrbUpb6pNyfNiNPl4Q+51kD08rn5JXsecS6SP9qglLVsJopGyzHVpqsdh7zEa9GhtTVPdN0A/ApU+OfKoZUYS7ETPxHpLq5JR/Xj/gvTgsEPsNyL8/MO2yBkTyYdgq9Bwmjp6gbQ82kai9bBmJA=;7:rwzR3ThCK55YyVxjxKEHbzYN+wJzolSExP/Jz5KFw60cln+IRDIE1QwV/slp17tMMydC/rN0GCkkIlw2DT7of4y4o5kKI3bjzyXQ+eB8Ykv4BOq7U7Lfq5sknD6oublpkORzAKupNM/hAWOvG1/zZUjWRF7kydPbD8n161D5qFR7cKX+GEZ/wIHOyzEH1nE7AVaGC89rfjzs1x8XQo9+/CRxAr7SLsyeHH0CJqObFySpdziDXaUeHuAiMPY5gWfp
+x-ms-office365-filtering-correlation-id: 2073186b-63a0-413a-4788-08d61c49eaab
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0502;
 x-ms-traffictypediagnostic: CY4PR21MB0502:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0502EAF774B60505CE24EC8DFB1E0@CY4PR21MB0502.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0502336F2D0E926FE95C39FBFB1E0@CY4PR21MB0502.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158)(50582790962513)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(2017102700009)(2017102701064)(6040522)(2401047)(5005006)(8121501046)(2017102702064)(20171027021009)(20171027022009)(20171027023009)(20171027024009)(20171027025009)(20171027026009)(2017102703076)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0502;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0502;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(366004)(376002)(189003)(199004)(86362001)(2616005)(99286004)(5660300001)(1076002)(6116002)(3846002)(6666003)(10290500003)(2900100001)(72206003)(68736007)(8676002)(22452003)(26005)(217873002)(86612001)(486006)(76176011)(66066001)(102836004)(2906002)(476003)(14444005)(186003)(256004)(6506007)(446003)(11346002)(36756003)(316002)(5250100002)(6512007)(97736004)(2501003)(107886003)(110136005)(54906003)(6486002)(8936002)(53936002)(81156014)(81166006)(10090500001)(25786009)(305945005)(7736002)(105586002)(106356001)(478600001)(4326008)(14454004)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0502;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(366004)(376002)(189003)(199004)(86362001)(2616005)(99286004)(5660300001)(575784001)(1076002)(6116002)(3846002)(10290500003)(39060400002)(2900100001)(72206003)(68736007)(8676002)(22452003)(26005)(217873002)(86612001)(486006)(76176011)(66066001)(102836004)(2906002)(476003)(14444005)(186003)(256004)(6506007)(446003)(11346002)(36756003)(316002)(5250100002)(6512007)(97736004)(2501003)(107886003)(110136005)(54906003)(6486002)(8936002)(53936002)(81156014)(81166006)(10090500001)(25786009)(305945005)(7736002)(105586002)(106356001)(478600001)(4326008)(14454004)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0502;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: z2AOP3E/NXLD9E2UtAsSe1kgdPNYFjWQ4j2e6NM/KlitlnWTnmnamHIdnWEPCrQ7LRFAVtD2locmPQv5YIsnNghku9TDsX4F4FyJTcZNZYC8vFZ15mXTCeJ50kHoUIJfVzYSdeL1zr39tRimd2F713CvX9JvE85PbXYvL+A8Tipg8Qvrrc+3ewAhcfDoSTFAiELLQCp1fQFEaBaR0B4Kb8ZgdWCUKEjRRFIFxQ/3Ays2lGOmDguYZ4L2h16bRn1lvp7pwjlWKp1y0RaeGDIfsWgg9XrTyqQmRd/8CvGdxPOsy/A8kXS7XujKQmPriEXyu3vD52VEkuukEzn2l3v2aysaLwhqot7iPNyYDOXxDEc=
+x-microsoft-antispam-message-info: CY1DPrM+aRtT1SgbciqES61kMfB9SAn1COvmraoCjMSvkqpcO8eGNf6oOUaEQ5JkQxF/MS9vZH8kzBFtbG7NU4qvggTYaWJy+HNo3oajC6RvQ6oIwDLMcMQ+vOwLnswHFCN9gz82MuL+2dbLTsMRtFHxL4hqv4RMCckcb7zt+DrTb5u/o8WpHjTuj71+0iht9AQy3Vg0QZ2bbfYGQLebBpngLMndNGEMz6ZRjACQmhcL2cqPsoVhRga/o69XfpenvSUOtXe959rMQRc/Oiw3VrtIQTzoLAeRdhUQt3V0rBjG87Z8DUNZ0c66Zn1z7VGSL+G6YeSmHbznKCbGnz86QTQOwrgI9z8aqBeLiK9EvYE=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0392a1b3-519e-4051-2191-08d61c49e8fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:51.4951
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2073186b-63a0-413a-4788-08d61c49eaab
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:52.1826
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,49 +96,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-[ Upstream commit efc6362c6f8c1e74b340e2611f1b35e7d557ce7b ]
+[ Upstream commit 9048f1f18a70a01eaa3c8e7166fdb2538929d780 ]
 
-On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
-flash accesses have a tendency to cause display disturbances. Add a
-module param to disable DMA from the NAND controller, since that fixes
-the display problem for me.
+Currently the address field in iio_chan_spec is filled with an accel
+data register address for the corresponding axis.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+In preparation for adding calibration offset support, this sets the
+address field to the index of accel data registers instead of the actual
+register address.
+
+This change makes it easier to access both accel registers and
+calibration offset registers with fewer lines of code as these are
+located in X-axis, Y-axis, Z-axis order.
+
+Cc: Eva Rachel Retuya <eraretuya@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/iio/accel/adxl345_core.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nan=
-d/raw/atmel/nand-controller.c
-index 12f6753d47ae..e686fe73159e 100644
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -129,6 +129,11 @@
- #define DEFAULT_TIMEOUT_MS			1000
- #define MIN_DMA_LEN				128
+diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_c=
+ore.c
+index 7251d0e63d74..98080e05ac6d 100644
+--- a/drivers/iio/accel/adxl345_core.c
++++ b/drivers/iio/accel/adxl345_core.c
+@@ -21,6 +21,8 @@
+ #define ADXL345_REG_DATAX0		0x32
+ #define ADXL345_REG_DATAY0		0x34
+ #define ADXL345_REG_DATAZ0		0x36
++#define ADXL345_REG_DATA_AXIS(index)	\
++	(ADXL345_REG_DATAX0 + (index) * sizeof(__le16))
 =20
-+static bool atmel_nand_avoid_dma __read_mostly;
-+
-+MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
-+module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);
-+
- enum atmel_nand_rb_type {
- 	ATMEL_NAND_NO_RB,
- 	ATMEL_NAND_NATIVE_RB,
-@@ -1977,7 +1982,7 @@ static int atmel_nand_controller_init(struct atmel_na=
-nd_controller *nc,
- 		return ret;
- 	}
+ #define ADXL345_POWER_CTL_MEASURE	BIT(3)
+ #define ADXL345_POWER_CTL_STANDBY	0x00
+@@ -47,19 +49,19 @@ struct adxl345_data {
+ 	u8 data_range;
+ };
 =20
--	if (nc->caps->has_dma) {
-+	if (nc->caps->has_dma && !atmel_nand_avoid_dma) {
- 		dma_cap_mask_t mask;
+-#define ADXL345_CHANNEL(reg, axis) {					\
++#define ADXL345_CHANNEL(index, axis) {					\
+ 	.type =3D IIO_ACCEL,						\
+ 	.modified =3D 1,							\
+ 	.channel2 =3D IIO_MOD_##axis,					\
+-	.address =3D reg,							\
++	.address =3D index,						\
+ 	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),			\
+ 	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),		\
+ }
 =20
- 		dma_cap_zero(mask);
+ static const struct iio_chan_spec adxl345_channels[] =3D {
+-	ADXL345_CHANNEL(ADXL345_REG_DATAX0, X),
+-	ADXL345_CHANNEL(ADXL345_REG_DATAY0, Y),
+-	ADXL345_CHANNEL(ADXL345_REG_DATAZ0, Z),
++	ADXL345_CHANNEL(0, X),
++	ADXL345_CHANNEL(1, Y),
++	ADXL345_CHANNEL(2, Z),
+ };
+=20
+ static int adxl345_read_raw(struct iio_dev *indio_dev,
+@@ -67,7 +69,7 @@ static int adxl345_read_raw(struct iio_dev *indio_dev,
+ 			    int *val, int *val2, long mask)
+ {
+ 	struct adxl345_data *data =3D iio_priv(indio_dev);
+-	__le16 regval;
++	__le16 accel;
+ 	int ret;
+=20
+ 	switch (mask) {
+@@ -77,12 +79,13 @@ static int adxl345_read_raw(struct iio_dev *indio_dev,
+ 		 * ADXL345_REG_DATA(X0/Y0/Z0) contain the least significant byte
+ 		 * and ADXL345_REG_DATA(X0/Y0/Z0) + 1 the most significant byte
+ 		 */
+-		ret =3D regmap_bulk_read(data->regmap, chan->address, &regval,
+-				       sizeof(regval));
++		ret =3D regmap_bulk_read(data->regmap,
++				       ADXL345_REG_DATA_AXIS(chan->address),
++				       &accel, sizeof(accel));
+ 		if (ret < 0)
+ 			return ret;
+=20
+-		*val =3D sign_extend32(le16_to_cpu(regval), 12);
++		*val =3D sign_extend32(le16_to_cpu(accel), 12);
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val =3D 0;
 --=20
 2.17.1
