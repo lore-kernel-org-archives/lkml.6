@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99992ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D18AECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AAF1214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAF1214AB
+	by mail.kernel.org (Postfix) with ESMTP id 1E4D4214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4D4214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbeIREeT (ORCPT
+        id S1730934AbeIREeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:34:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49210 "EHLO
+        Tue, 18 Sep 2018 00:34:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49220 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbeIREeT (ORCPT
+        with ESMTP id S1730358AbeIREeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:34:19 -0400
+        Tue, 18 Sep 2018 00:34:23 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18601C03;
-        Mon, 17 Sep 2018 23:04:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF800C77;
+        Mon, 17 Sep 2018 23:04:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "netdev@vger.kernel.org, stable@vger.kernel.org, edumazet@google.com,
-        Nikolay Borisov" <kernel@kyup.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nikolay Borisov <kernel@kyup.com>
-Subject: [PATCH 4.14 098/126] ipv6: export ip6 fragments sysctl to unprivileged users
-Date:   Tue, 18 Sep 2018 00:42:26 +0200
-Message-Id: <20180917211710.344524676@linuxfoundation.org>
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 081/126] partitions/aix: fix usage of uninitialized lv_info and lvname structures
+Date:   Tue, 18 Sep 2018 00:42:09 +0200
+Message-Id: <20180917211709.445047330@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -55,35 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-IPv4 was changed in commit 52a773d645e9 ("net: Export ip fragment
-sysctl to unprivileged users")
+[ Upstream commit 14cb2c8a6c5dae57ee3e2da10fa3db2b9087e39e ]
 
-The only sysctl that is not per-netns is not used :
-ip6frag_secret_interval
+The if-block that sets a successful return value in aix_partition()
+uses 'lvip[].pps_per_lv' and 'n[].name' potentially uninitialized.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Nikolay Borisov <kernel@kyup.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit 18dcbe12fe9fca0ab825f7eff993060525ac2503)
+For example, if 'numlvs' is zero or alloc_lvn() fails, neither is
+initialized, but are used anyway if alloc_pvd() succeeds after it.
+
+So, make the alloc_pvd() call conditional on their initialization.
+
+This has been hit when attaching an apparently corrupted/stressed
+AIX LUN, misleading the kernel to pr_warn() invalid data and hang.
+
+    [...] partition (null) (11 pp's found) is not contiguous
+    [...] partition (null) (2 pp's found) is not contiguous
+    [...] partition (null) (3 pp's found) is not contiguous
+    [...] partition (null) (64 pp's found) is not contiguous
+
+Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/reassembly.c |    4 ----
- 1 file changed, 4 deletions(-)
+ block/partitions/aix.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -649,10 +649,6 @@ static int __net_init ip6_frags_ns_sysct
- 		table[1].data = &net->ipv6.frags.low_thresh;
- 		table[1].extra2 = &net->ipv6.frags.high_thresh;
- 		table[2].data = &net->ipv6.frags.timeout;
--
--		/* Don't export sysctls to unprivileged users */
--		if (net->user_ns != &init_user_ns)
--			table[0].procname = NULL;
+--- a/block/partitions/aix.c
++++ b/block/partitions/aix.c
+@@ -178,7 +178,7 @@ int aix_partition(struct parsed_partitio
+ 	u32 vgda_sector = 0;
+ 	u32 vgda_len = 0;
+ 	int numlvs = 0;
+-	struct pvd *pvd;
++	struct pvd *pvd = NULL;
+ 	struct lv_info {
+ 		unsigned short pps_per_lv;
+ 		unsigned short pps_found;
+@@ -232,10 +232,11 @@ int aix_partition(struct parsed_partitio
+ 				if (lvip[i].pps_per_lv)
+ 					foundlvs += 1;
+ 			}
++			/* pvd loops depend on n[].name and lvip[].pps_per_lv */
++			pvd = alloc_pvd(state, vgda_sector + 17);
+ 		}
+ 		put_dev_sector(sect);
  	}
- 
- 	hdr = register_net_sysctl(net, "net/ipv6", table);
+-	pvd = alloc_pvd(state, vgda_sector + 17);
+ 	if (pvd) {
+ 		int numpps = be16_to_cpu(pvd->pp_count);
+ 		int psn_part1 = be32_to_cpu(pvd->psn_part1);
 
 
