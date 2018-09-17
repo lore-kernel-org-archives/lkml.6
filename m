@@ -2,144 +2,296 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB889ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4367ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B417214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:37:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B417214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 78E8F214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E8F214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbeIQODw (ORCPT
+        id S1728235AbeIQOIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:03:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727166AbeIQODw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:03:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5905C04D319;
-        Mon, 17 Sep 2018 08:37:28 +0000 (UTC)
-Received: from [10.36.117.82] (ovpn-117-82.ams2.redhat.com [10.36.117.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7172417CE3;
-        Mon, 17 Sep 2018 08:37:22 +0000 (UTC)
-Subject: Re: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-References: <20180912133353.20595-1-bigeasy@linutronix.de>
- <20180912133353.20595-5-bigeasy@linutronix.de>
- <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
- <20180914203501.qibhpmueosvkr74w@linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a239e97a-d1a1-388e-5db9-10758c33d702@redhat.com>
-Date:   Mon, 17 Sep 2018 10:37:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Sep 2018 10:08:14 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12165 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727329AbeIQOIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:08:14 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 919565DA796FB;
+        Mon, 17 Sep 2018 16:41:45 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 17 Sep
+ 2018 16:41:37 +0800
+Date:   Mon, 17 Sep 2018 16:39:40 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Joerg Roedel <joro@8bytes.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
+        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180917083940.GE207969@Turing-Arch-b>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180917014244.GA27596@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180914203501.qibhpmueosvkr74w@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 17 Sep 2018 08:37:28 +0000 (UTC)
+In-Reply-To: <20180917014244.GA27596@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> I think you can go a step further and exclude PKRU state from
->> copy_kernel_to_fpregs altogether; you just use RDPKRU/WRPKRU.  This also
->> means you don't need to call __fpregs_* functions in write_pkru.
+On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
+> Date: Sun, 16 Sep 2018 21:42:44 -0400
+> From: Jerome Glisse <jglisse@redhat.com>
+> To: Kenneth Lee <nek.in.cn@gmail.com>
+> CC: Jonathan Corbet <corbet@lwn.net>, Herbert Xu
+>  <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
+>  Joerg Roedel <joro@8bytes.org>, Alex Williamson
+>  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
+>  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
+>  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
+>  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
+>  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
+>  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+>  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+>  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
+>  Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
+> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+> User-Agent: Mutt/1.10.1 (2018-07-13)
+> Message-ID: <20180917014244.GA27596@redhat.com>
 > 
-> something like this then? It looks like kvm excludes PKRU from
-> xsave/xrestore, too. This wouldn't be required then
+> So i want to summarize issues i have as this threads have dig deep into
+> details. For this i would like to differentiate two cases first the easy
+> one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
 
-Yes, that's why the subject caught my eye!  In fact, the reason for KVM
-to do so is either the opposite as your patch (it wants to call WRPKRU
-_after_ XRSTOR, not before) or the same (it wants to keep the userspace
-PKRU loaded for as long as possible), depending on how you look at it.
+Thank you very much for the summary.
 
-> . This is (again)
-> untested since I have no box with this PKRU feature. This only available
-> on Intel's Xeon Scalable, right?
-
-It is available on QEMU too (the slower JIT thing without KVM, i.e. use
-/usr/bin/qemu-system-x86_64 instead of /usr/bin/qemu-kvm or /usr/bin/kvm).
-
-> -	if (preload)
-> -		__fpregs_load_activate(new_fpu, cpu);
-> +	if (!preload)
-> +		return;
-> +
-> +	__fpregs_load_activate(new_fpu, cpu);
-> +
-> +#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-> +	/* Protection keys need to be in place right at context switch time. */
-> +	if (boot_cpu_has(X86_FEATURE_OSPKE)) {
-> +		if (new_fpu->pkru != __read_pkru())
-> +			__write_pkru(new_fpu->pkru);
-> +	}
-> +#endif
-
-I think this would be before the "if (preload)"?
+> In both cases your objectives as i understand them:
 > 
->  	if (boot_cpu_has(X86_FEATURE_OSPKE))
-> -		copy_init_pkru_to_fpregs();
-> +		pkru_set_init_value();
->  }
->  
+> [R1]- expose a common user space API that make it easy to share boiler
+>       plate code accross many devices (discovering devices, opening
+>       device, creating context, creating command queue ...).
+> [R2]- try to share the device as much as possible up to device limits
+>       (number of independant queues the device has)
+> [R3]- minimize syscall by allowing user space to directly schedule on the
+>       device queue without a round trip to the kernel
+> 
+> I don't think i missed any.
+> 
+> 
+> (1) Device with SVA/SVM
+> 
+> For that case it is easy, you do not need to be in VFIO or part of any
+> thing specific in the kernel. There is no security risk (modulo bug in
+> the SVA/SVM silicon). Fork/exec is properly handle and binding a process
+> to a device is just couple dozen lines of code.
+> 
 
-Likewise, move this to fpu__clear and outside "if
-(static_cpu_has(X86_FEATURE_FPU))"?
+This is right...logically. But the kernel has no clear definition about "Device
+with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
+boiler plate.
 
-Also, a __read_pkru() seems to be missing in switch_fpu_prepare.
+VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
+one. If we add that support within VFIO, which solve most of the problem of
+SVA/SVM, it will save a lot of work in the future.
 
-Thanks,
+I think this is the key confliction between us. So could Alex please say
+something here? If the VFIO is going to take this into its scope, we can try
+together to solve all the problem on the way. If it it is not, it is also
+simple, we can just go to another way to fulfill this part of requirements even
+we have to duplicate most of the code.
 
-Paolo
+Another point I need to emphasis here: because we have to replace the hardware
+queue when fork, so it won't be very simple even in SVA/SVM case.
+
+> 
+> (2) Device does not have SVA/SVM (or it is disabled)
+> 
+> You want to still allow device to be part of your framework. However
+> here i see fundamentals securities issues and you move the burden of
+> being careful to user space which i think is a bad idea. We should
+> never trus the userspace from kernel space.
+> 
+> To keep the same API for the user space code you want a 1:1 mapping
+> between device physical address and process virtual address (ie if
+> device access device physical address A it is accessing the same
+> memory as what is backing the virtual address A in the process.
+> 
+> Security issues are on two things:
+> [I1]- fork/exec, a process who opened any such device and created an
+>       active queue can transfer without its knowledge control of its
+>       commands queue through COW. The parent map some anonymous region
+>       to the device as a command queue buffer but because of COW the
+>       parent can be the first to copy on write and thus the child can
+>       inherit the original pages that are mapped to the hardware.
+>       Here parent lose control and child gain it.
+
+This is indeed an issue. But it remains an issue only if you continue to use the
+queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
+user space.
+
+From some perspectives, I think the issue can be solved by iommu_notifier. For
+example, when the process is fork-ed, we can set the mapped device mmio space as
+COW for the child process, so a new queue can be created and set to the same
+state as the parent's if the space is accessed. Then we can have two separated
+queues for both the parent and the child. The memory part can be done in the
+same way.
+
+The thing is, the same strategy can be applied to VFIO without changing its
+original feature.
+
+> 
+> [I2]- Because of [R3] you want to allow userspace to schedule commands
+>       on the device without doing an ioctl and thus here user space
+>       can schedule any commands to the device with any address. What
+>       happens if that address have not been mapped by the user space
+>       is undefined and in fact can not be defined as what each IOMMU
+>       does on invalid address access is different from IOMMU to IOMMU.
+> 
+>       In case of a bad IOMMU, or simply an IOMMU improperly setup by
+>       the kernel, this can potentialy allow user space to DMA anywhere.
+
+I don't think this is an issue. If you cannot trust IOMMU and proper setup of
+IOMMU in kernel, you cannot trust anything. And the whole VFIO framework is
+untrustable.
+
+> 
+> [I3]- By relying on GUP in VFIO you are not abiding by the implicit
+>       contract (at least i hope it is implicit) that you should not
+>       try to map to the device any file backed vma (private or share).
+> 
+>       The VFIO code never check the vma controlling the addresses that
+>       are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
+>       user space can provide file backed range.
+> 
+>       I am guessing that the VFIO code never had any issues because its
+>       number one user is QEMU and QEMU never does that (and that's good
+>       as no one should ever do that).
+> 
+>       So if process does that you are opening your self to serious file
+>       system corruption (depending on file system this can lead to total
+>       data loss for the filesystem).
+> 
+>       Issue is that once you GUP you never abide to file system flushing
+>       which write protect the page before writing to the disk. So
+>       because the page is still map with write permission to the device
+>       (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
+>       write to the page while it is in the middle of being written back
+>       to disk. Consult your nearest file system specialist to ask him
+>       how bad that can be.
+
+Same as I2, it is an issue, but the problem can be solved in VFIO if we really
+take it in the scope of VFIO.
+
+> 
+> [I4]- Design issue, mdev design As Far As I Understand It is about
+>       sharing a single device to multiple clients (most obvious case
+>       here is again QEMU guest). But you are going against that model,
+>       in fact AFAIUI you are doing the exect opposite. When there is
+>       no SVA/SVM you want only one mdev device that can not be share.
+
+Wait. It is NOT "I want only one mdev device when there is no SVA/SVM", it is "I
+can support only one mdev when there is no PASID support for the IOMMU".
+
+> 
+>       So this is counter intuitive to the mdev existing design. It is
+>       not about sharing device among multiple users but about giving
+>       exclusive access to the device to one user.
+> 
+> 
+> 
+> All the reasons above is why i believe a different model would serve
+> you and your user better. Below is a design that avoids all of the
+> above issues and still delivers all of your objectives with the
+> exceptions of the third one [R3] when there is no SVA/SVM.
+> 
+> 
+> Create a subsystem (very much boiler plate code) which allow device to
+> register themself against (very much like what you do in your current
+> patchset but outside of VFIO).
+> 
+> That subsystem will create a device file for each registered system and
+> expose a common API (ie set of ioctl) for each of those device files.
+> 
+> When user space create a queue (through an ioctl after opening the device
+> file) the kernel can return -EBUSY if all the device queue are in use,
+> or create a device queue and return a flag like SYNC_ONLY for device that
+> do not have SVA/SVM.
+> 
+> For device with SVA/SVM at the time the process create a queue you bind
+> the process PASID to the device queue. From there on the userspace can
+> schedule commands and use the device without going to kernel space.
+
+As mentioned previously, this is not enough for fork scenario.
+
+> 
+> For device without SVA/SVM you create a fake queue that is just pure
+> memory is not related to the device. From there on the userspace must
+> call an ioctl every time it wants the device to consume its queue
+> (hence why the SYNC_ONLY flag for synchronous operation only). The
+> kernel portion read the fake queue expose to user space and copy
+> commands into the real hardware queue but first it properly map any
+> of the process memory needed for those commands to the device and
+> adjust the device physical address with the one it gets from dma_map
+> API.
+> 
+
+But in this way, we will lost most of the benefit of avoiding syscall.
+
+> With that model it is "easy" to listen to mmu_notifier and to abide by
+> them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
+> issue by only mapping a fake device queue to userspace.
+> 
+> So yes with that models it means that every device that wish to support
+> the non SVA/SVM case will have to do extra work (ie emulate its command
+> queue in software in the kernel). But by doing so, you support an
+> unlimited number of process on your device (ie all the process can share
+> one single hardware command queues or multiple hardware queues).
+
+If I can do this, I will not need WarpDrive at all:(
+
+> 
+> The big advantages i see here is that the process do not have to worry
+> about doing something wrong. You are protecting yourself and your user
+> from stupid mistakes.
+> 
+> 
+> I hope this is useful to you.
+> 
+
+Anyway, I will try to address the problem you mentioned in next version, and
+make both options (on-VFIO or off-VFIO) are available. Thanks.
+
+> Cheers,
+> Jérôme
+
+
+Cheers
+-- 
+			-Kenneth(Hisilicon)
+
