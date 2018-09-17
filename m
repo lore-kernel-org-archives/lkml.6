@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D5DECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEB5ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06072214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06072214AB
+	by mail.kernel.org (Postfix) with ESMTP id 0FB952146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB952146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbeIREln (ORCPT
+        id S1732561AbeIRElq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:41:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50688 "EHLO
+        Tue, 18 Sep 2018 00:41:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50696 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728850AbeIREln (ORCPT
+        with ESMTP id S1728850AbeIRElq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:41:43 -0400
+        Tue, 18 Sep 2018 00:41:46 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37FF3707;
-        Mon, 17 Sep 2018 23:12:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7DECC707;
+        Mon, 17 Sep 2018 23:12:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Helen Chao <helen.chao@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Bill Baker <bill.baker@oracle.com>,
+        Calum Mackay <calum.mackay@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 075/158] iwlwifi: pcie: dont access periphery registers when not available
-Date:   Tue, 18 Sep 2018 00:41:45 +0200
-Message-Id: <20180917211714.734842045@linuxfoundation.org>
+Subject: [PATCH 4.18 102/158] nfs: Referrals not inheriting proto setting from parent
+Date:   Tue, 18 Sep 2018 00:42:12 +0200
+Message-Id: <20180917211716.020387022@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,91 +55,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Calum Mackay <calum.mackay@oracle.com>
 
-[ Upstream commit f98ad635c097c29339b7a7d6947173000485893d ]
+[ Upstream commit 23a88ade7131aa259c532ab17685c76de562242b ]
 
-The periphery can't be accessed before we set the
-INIT_DONE bit which initializes the device.
+Commit 530ea4219231 ("nfs: Referrals should use the same proto setting
+as their parent") encloses the fix with #ifdef CONFIG_SUNRPC_XPRT_RDMA.
 
-A previous patch added a reconfiguration of the MSI-X
-tables upon resume, but at that point in the flow,
-INIT_DONE wasn't set. Since the reconfiguration of the
-MSI-X tables require periphery access, it failed.
+CONFIG_SUNRPC_XPRT_RDMA is a tristate option, so it should be tested
+with #if IS_ENABLED().
 
-The difference between WoWLAN and without WoWLAN is that
-in WoWLAN, iwl_trans_pcie_d3_suspend clears the INIT_DONE
-without clearing the STATUS_DEVICE_ENABLED bit in the
-software status. Because of that, the resume code thinks
-that the device is enabled, but the INIT_DONE bit has been
-cleared.
-
-To fix this, don't reconfigure the MSI-X tables in case
-WoWLAN is enabled. It will be done in
-iwl_trans_pcie_d3_resume anyway.
-
-Fixes: 52848a79b9d2 ("iwlwifi: pcie: reconfigure MSI-X HW on resume")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 530ea4219231 ("nfs: Referrals should use the same proto setting as their parent")
+Reported-by: Helen Chao <helen.chao@oracle.com>
+Tested-by: Helen Chao <helen.chao@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Reviewed-by: Bill Baker <bill.baker@oracle.com>
+Signed-off-by: Calum Mackay <calum.mackay@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c   |    4 ++++
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c |   24 ++++++++++++------------
- 2 files changed, 16 insertions(+), 12 deletions(-)
+ fs/nfs/nfs4client.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@ -1003,6 +1003,10 @@ static int iwl_pci_resume(struct device
- 	if (!trans->op_mode)
- 		return 0;
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -1127,7 +1127,7 @@ struct nfs_server *nfs4_create_referral_
+ 	nfs_server_copy_userdata(server, parent_server);
  
-+	/* In WOWLAN, let iwl_trans_pcie_d3_resume do the rest of the work */
-+	if (test_bit(STATUS_DEVICE_ENABLED, &trans->status))
-+		return 0;
-+
- 	/* reconfigure the MSI-X mapping to get the correct IRQ for rfkill */
- 	iwl_pcie_conf_msix_hw(trans_pcie);
+ 	/* Get a client representation */
+-#ifdef CONFIG_SUNRPC_XPRT_RDMA
++#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
+ 	rpc_set_port(data->addr, NFS_RDMA_PORT);
+ 	error = nfs4_set_client(server, data->hostname,
+ 				data->addr,
+@@ -1139,7 +1139,7 @@ struct nfs_server *nfs4_create_referral_
+ 				parent_client->cl_net);
+ 	if (!error)
+ 		goto init_server;
+-#endif	/* CONFIG_SUNRPC_XPRT_RDMA */
++#endif	/* IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA) */
  
---- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
-@@ -1539,18 +1539,6 @@ static int iwl_trans_pcie_d3_resume(stru
+ 	rpc_set_port(data->addr, NFS_PORT);
+ 	error = nfs4_set_client(server, data->hostname,
+@@ -1153,7 +1153,7 @@ struct nfs_server *nfs4_create_referral_
+ 	if (error < 0)
+ 		goto error;
  
- 	iwl_pcie_enable_rx_wake(trans, true);
- 
--	/*
--	 * Reconfigure IVAR table in case of MSIX or reset ict table in
--	 * MSI mode since HW reset erased it.
--	 * Also enables interrupts - none will happen as
--	 * the device doesn't know we're waking it up, only when
--	 * the opmode actually tells it after this call.
--	 */
--	iwl_pcie_conf_msix_hw(trans_pcie);
--	if (!trans_pcie->msix_enabled)
--		iwl_pcie_reset_ict(trans);
--	iwl_enable_interrupts(trans);
--
- 	iwl_set_bit(trans, CSR_GP_CNTRL,
- 		    BIT(trans->cfg->csr->flag_mac_access_req));
- 	iwl_set_bit(trans, CSR_GP_CNTRL,
-@@ -1568,6 +1556,18 @@ static int iwl_trans_pcie_d3_resume(stru
- 		return ret;
- 	}
- 
-+	/*
-+	 * Reconfigure IVAR table in case of MSIX or reset ict table in
-+	 * MSI mode since HW reset erased it.
-+	 * Also enables interrupts - none will happen as
-+	 * the device doesn't know we're waking it up, only when
-+	 * the opmode actually tells it after this call.
-+	 */
-+	iwl_pcie_conf_msix_hw(trans_pcie);
-+	if (!trans_pcie->msix_enabled)
-+		iwl_pcie_reset_ict(trans);
-+	iwl_enable_interrupts(trans);
-+
- 	iwl_pcie_set_pwr(trans, false);
- 
- 	if (!reset) {
+-#ifdef CONFIG_SUNRPC_XPRT_RDMA
++#if IS_ENABLED(CONFIG_SUNRPC_XPRT_RDMA)
+ init_server:
+ #endif
+ 	error = nfs_init_server_rpcclient(server, parent_server->client->cl_timeout, data->authflavor);
 
 
