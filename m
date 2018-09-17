@@ -6,58 +6,61 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF12AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8015ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85035214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:58:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85035214C2
+	by mail.kernel.org (Postfix) with ESMTP id 7F2902147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 14:58:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2902147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729116AbeIQUZ4 (ORCPT
+        id S1729132AbeIQU0I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 16:25:56 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45678 "EHLO
+        Mon, 17 Sep 2018 16:26:08 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45688 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbeIQUZ4 (ORCPT
+        with ESMTP id S1726885AbeIQU0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 16:25:56 -0400
+        Mon, 17 Sep 2018 16:26:08 -0400
 Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C878E144A2347;
-        Mon, 17 Sep 2018 07:58:13 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 07:58:13 -0700 (PDT)
-Message-Id: <20180917.075813.1145409055019392182.davem@davemloft.net>
-To:     nicolas.ferre@microchip.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, claudiu.beznea@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] net: macb: disable scatter-gather for macb on sama5d3
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id ECDB7144A234A;
+        Mon, 17 Sep 2018 07:58:25 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 07:58:25 -0700 (PDT)
+Message-Id: <20180917.075825.1597877157605714597.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     perex@perex.cz, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: hp100: fix always-true check for link up state
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180914154811.12090-1-nicolas.ferre@microchip.com>
-References: <20180914154811.12090-1-nicolas.ferre@microchip.com>
+In-Reply-To: <20180914163953.20734-1-colin.king@canonical.com>
+References: <20180914163953.20734-1-colin.king@canonical.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Sep 2018 07:58:14 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Sep 2018 07:58:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Date: Fri, 14 Sep 2018 17:48:10 +0200
+From: Colin King <colin.king@canonical.com>
+Date: Fri, 14 Sep 2018 17:39:53 +0100
 
-> Create a new configuration for the sama5d3-macb new compatibility string.
-> This configuration disables scatter-gather because we experienced lock down
-> of the macb interface of this particular SoC under very high load.
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> The operation ~(p100_inb(VG_LAN_CFG_1) & HP100_LINK_UP) returns a value
+> that is always non-zero and hence the wait for the link to drop always
+> terminates prematurely.  Fix this by using a logical not operator instead
+> of a bitwise complement.  This issue has been in the driver since
+> pre-2.6.12-rc2.
+> 
+> Detected by CoverityScan, CID#114157 ("Logical vs. bitwise operator")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Applied, but are you really sure it isn't just some bug in the driver
-or somesuch?
+Applied and queued up for -stable.
