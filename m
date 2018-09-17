@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D18AECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A472ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E4D4214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4D4214D5
+	by mail.kernel.org (Postfix) with ESMTP id 46089214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46089214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbeIREeX (ORCPT
+        id S1730944AbeIREe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:34:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49220 "EHLO
+        Tue, 18 Sep 2018 00:34:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbeIREeX (ORCPT
+        with ESMTP id S1730207AbeIREeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:34:23 -0400
+        Tue, 18 Sep 2018 00:34:25 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF800C77;
-        Mon, 17 Sep 2018 23:04:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6B26C03;
+        Mon, 17 Sep 2018 23:04:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mfo@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 081/126] partitions/aix: fix usage of uninitialized lv_info and lvname structures
-Date:   Tue, 18 Sep 2018 00:42:09 +0200
-Message-Id: <20180917211709.445047330@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 099/126] rhashtable: add schedule points
+Date:   Tue, 18 Sep 2018 00:42:27 +0200
+Message-Id: <20180917211710.401950636@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -53,58 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mfo@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 14cb2c8a6c5dae57ee3e2da10fa3db2b9087e39e ]
+Rehashing and destroying large hash table takes a lot of time,
+and happens in process context. It is safe to add cond_resched()
+in rhashtable_rehash_table() and rhashtable_free_and_destroy()
 
-The if-block that sets a successful return value in aix_partition()
-uses 'lvip[].pps_per_lv' and 'n[].name' potentially uninitialized.
-
-For example, if 'numlvs' is zero or alloc_lvn() fails, neither is
-initialized, but are used anyway if alloc_pvd() succeeds after it.
-
-So, make the alloc_pvd() call conditional on their initialization.
-
-This has been hit when attaching an apparently corrupted/stressed
-AIX LUN, misleading the kernel to pr_warn() invalid data and hang.
-
-    [...] partition (null) (11 pp's found) is not contiguous
-    [...] partition (null) (2 pp's found) is not contiguous
-    [...] partition (null) (3 pp's found) is not contiguous
-    [...] partition (null) (64 pp's found) is not contiguous
-
-Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
-Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit ae6da1f503abb5a5081f9f6c4a6881de97830f3e)
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/partitions/aix.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ lib/rhashtable.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/block/partitions/aix.c
-+++ b/block/partitions/aix.c
-@@ -178,7 +178,7 @@ int aix_partition(struct parsed_partitio
- 	u32 vgda_sector = 0;
- 	u32 vgda_len = 0;
- 	int numlvs = 0;
--	struct pvd *pvd;
-+	struct pvd *pvd = NULL;
- 	struct lv_info {
- 		unsigned short pps_per_lv;
- 		unsigned short pps_found;
-@@ -232,10 +232,11 @@ int aix_partition(struct parsed_partitio
- 				if (lvip[i].pps_per_lv)
- 					foundlvs += 1;
- 			}
-+			/* pvd loops depend on n[].name and lvip[].pps_per_lv */
-+			pvd = alloc_pvd(state, vgda_sector + 17);
- 		}
- 		put_dev_sector(sect);
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -364,6 +364,7 @@ static int rhashtable_rehash_table(struc
+ 		err = rhashtable_rehash_chain(ht, old_hash);
+ 		if (err)
+ 			return err;
++		cond_resched();
  	}
--	pvd = alloc_pvd(state, vgda_sector + 17);
- 	if (pvd) {
- 		int numpps = be16_to_cpu(pvd->pp_count);
- 		int psn_part1 = be32_to_cpu(pvd->psn_part1);
+ 
+ 	/* Publish the new table pointer. */
+@@ -1073,6 +1074,7 @@ void rhashtable_free_and_destroy(struct
+ 		for (i = 0; i < tbl->size; i++) {
+ 			struct rhash_head *pos, *next;
+ 
++			cond_resched();
+ 			for (pos = rht_dereference(*rht_bucket(tbl, i), ht),
+ 			     next = !rht_is_a_nulls(pos) ?
+ 					rht_dereference(pos->next, ht) : NULL;
 
 
