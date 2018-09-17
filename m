@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EECECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E871EECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49291214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98031214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 09:51:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UzUC516K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49291214C2
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bSmW/ddO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98031214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeIQPSE (ORCPT
+        id S1728266AbeIQPSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 11:18:04 -0400
+        Mon, 17 Sep 2018 11:18:07 -0400
 Received: from mail-he1eur01on0064.outbound.protection.outlook.com ([104.47.0.64]:36864
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725757AbeIQPSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 11:18:02 -0400
+        id S1727444AbeIQPSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 11:18:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M7LEBYYERyl8uAN1XZ2vuufzbdRNxTStgPhAECOFjXc=;
- b=UzUC516KlOmos++dxVYkLLFmnOMBTsC8opQRqip0AtuwwCrfeY0jKLOpJEokPKoAXSvYhG2RnNmfbcGvdDkVD8gC1NQk/ZG6iFiR0hA+Pc3V1pCHKDjLffLVvhTXEfq90MJLb1vK+Ik4z/jcfIjXDW6FdoUhVhXn88bZSprBy6Q=
+ bh=1PJSwVRpLRLfnV/rSncU2/z18aKpidicxCVR/4Cmsu0=;
+ b=bSmW/ddOCC6kLRUyZOQapYEFBcRhEu0xQRiEQWb4g9nSqFDFYFUZI1vPc1RqLOCsr9hZS/zoFBlZMLYUWuaDrTTJHHLwtXox7TsPFDk0XNrwnRxRhOTkxFzkQWJvoEn5MdSPDzg83fN8/es7qN6R5qdM91/vktI88i9pr61fujk=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
 Received: from idcbfarm.ap.freescale.net (14.143.30.134) by
  DB5PR04MB1030.eurprd04.prod.outlook.com (2a01:111:e400:510c::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1122.19; Mon, 17 Sep
- 2018 09:50:31 +0000
+ 2018 09:50:37 +0000
 From:   Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 To:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
         marek.vasut@gmail.com, linux-spi@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     robh@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         linux-arm-kernel@lists.infradead.org, computersforpeace@gmail.com,
         frieder.schrempf@exceet.de, linux-kernel@vger.kernel.org,
         Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v2 2/5] dt-bindings: spi: add binding file for NXP FlexSPI controller
-Date:   Mon, 17 Sep 2018 15:18:27 +0530
-Message-Id: <1537177710-9379-3-git-send-email-yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v2 3/5] arm64: dts: lx2160a: add FlexSPI node property
+Date:   Mon, 17 Sep 2018 15:18:28 +0530
+Message-Id: <1537177710-9379-4-git-send-email-yogeshnarayan.gaur@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537177710-9379-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 References: <1537177710-9379-1-git-send-email-yogeshnarayan.gaur@nxp.com>
@@ -57,50 +57,51 @@ X-Originating-IP: [14.143.30.134]
 X-ClientProxiedBy: SG2PR06CA0201.apcprd06.prod.outlook.com (2603:1096:4:1::33)
  To DB5PR04MB1030.eurprd04.prod.outlook.com (2a01:111:e400:510c::16)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 20152c99-b117-49aa-7513-08d61c83050b
+X-MS-Office365-Filtering-Correlation-Id: b478c1a8-af34-4be2-813a-08d61c8308a8
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1030;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;3:3l+qIqnQOzUmIKwG6lude8xDLUAFL53t8IwedLTaGOy2TxJ5c71I907SFVUIGa+k0GMTnKBcxKCT4yBRlxAsD8nM/LzseDoQwWDEQjG3YJSR4zzsZtp4iOlSFFTB92B8a9eitWAKxRcG7ut0x3NP3T2ffhmFADL8qXuKfZlXaJf3Xng8N/KaA+5vJiY+J7HV/d0kaVBn1+CEarxJ1/dl93yCLHdOpU+RWah1UoaquHe84sBlrPt55nAt5lzlUV1U;25:vYvCRIkMSeNIsrRpswo3EQP/fB6+68H70a8MxwQHB9t/q0I+Gez13RDENTjm6ayCnA+kwpqXXjLEaerXWAy905Qa22KhmRTLcoyzxkVqMQ4hZGITZ5PVDw0OvPNTSFvvdCYhJfDWrRapd2pMMmIStdVi6yIFO8q3PUYMN/7EcavDztp5NCIWkAkFe4kmFe4S+o9WlIPlzBIG9iC592iXD7KuJdxjMmA120F++XLYwPar0FKi2Wt4masIr9s6qhRpg60L/OQyMYiROe2uwaZaZSX0NwXPcao8p8GenAeiCX4/5g6xMjj3ZHySZK7wulA7oX/nNZVtfLCSJ3/Td8mdXg==;31:tnW6gHO66DJpmruiy7r6gbbCcPJglEWQ+ynxZTJixPsPOlvNbPjcz4Yiro4WQD15t2p+yAgdUPhbH++ngVEu2jDzDeUq4nJxrxPwbLL/vA5t+RR0rG330T5ZSMRb4E088MSFWX/b+8iXodOiYmtnjYxHkp5ttzUUXlkTt7XKduYZ9fQ6cVfjn1QF9ZdNyuWfX25Reb9b/HEkVwW+Q7gvf3Vru1DW9m6TnG/YWWC5xPw=
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;3:qn4nloV5zHqRhK3nY4LNjB9ijAWCywaOkG3vd+/BGrJzbo67n2cI6ATNa77dc/nheXDXM1fYD+FKyPQvzoSnUDZOMunN2RdTkvH2CFR9Dn1HlcIRNlP+GTZjWuSiktsQ3xSF2QGbxnuM5Jn6pphAKlSKPAWkhRGfMKIYoIluvePsHv15lruIJy0Pd0PWPV5kTF7iQ2sPqpH0u0Alae3QlMnfAVzJJR1wo3LG3LEyEsMtl3zJxNHrd5ldyIInD7CV;25:i16+PjKwhTLyxKRxf/BRvPvGoFO93jpahfSV6MQkgp7Sa6vO2bPVaed1aV7SzgcqI8bFxY6P5irZA4PanV5ev+HgSnY/Bw/J4MqqG55Hnjdu5mBPqwx/7UC1Cq/6eExcBqI3Yt2c7B8C4gn8cV9oTNQ6eRwGgTJt+LdbIfihOkXNSDGYnqQVnAwr0kF0oURYnvbpdbjJ6xLeEQflZrojZSLuhPfQJyzmdHwcS5GnsV0A7ZuGUzrc9aUgWbxyCwBGwvZQJaWqhKbx9mgsJpkKsoAaJ2eqwo1QlV3W827Yt68VX9g9m2spg+KzeRgzkTtmlF08Q/cafXCPmL4sSK0ABQ==;31:c7jH0T75v2SpF0Tamf4Xwxe76hMZrcDMzkuMRojY9I5aSUs/iuPGQnk8Eto+YNcCe/x+aZ12afGtYrvm/5dW7DnDRDJMYrMK+i7IHP3i/tZuLZuQBMElRgVc406dn+7TqKNEd/BVoTR/FsdfTBfYdj/o/1Rex9ybDAt4BNIhJ0KX5BbcGd5wy3Yoe6HVDiVZOXyJ/fpreaEK21c92CIEA3mJtrxYJzW9+q4Yt8cu6ok=
 X-MS-TrafficTypeDiagnostic: DB5PR04MB1030:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;20:jmhswYeWF2wBFPT33fa1Ef4L9FgumKldlZDdZuRn6aZH0WOTfIYP+9OPIXH8NG6t7K9nbXjWURN1Owblai86fh1R5R6liD23kAzWPIgymRYmAWzN6lbCDR3k5x80U1Hod8MqUNlEwrs082YxxH9o+anReWPhl/6P17jGtmvrGYGJ9kBwzvzHSEQ6JONrrn1syTEzyx2GSpVAHYKDbQC+ejvjEPRWYsV9sFLS+bogXNC9QSYPx9J2EDJ0pLEfn4MdVeAIlflwhCcGMWzi+FSKbNGuiZYj0+9bj5q0zZ7TKPmhSnN0t6JjUoj3WzF6pZKXuzZeZr937Df21jOO4MD98sLEQ/9PtK/LJ9hyUI3ZFePL3EiBbiSCY9BrLrVb6yA1IYuFoNSOnEwhqUiD8s012VLNPB3zXrNLm1OWNuHCtH+Jbk7D9Z+gw24uwFk3w3CP/7Z4FfYCIBiOG67fjFz+ScYcytFBYEl2Mlg4Ztj8cyq+7lkzl9cskrWwLvjBjgPj;4:2YE/hsvG/4FQaTIgql8xaJvzTSHffadlKPn16kaEODlZM5/RW2IID9ppO3iW23GaepO9EelVjTEHVePA1y1DMOrUxQj+rWiithpgOBX/s8ka/FBVTc8V7YWIdbZ+C0U6KSn0KUVu9aDwC/Tt3qx0OWJ2Vovv8xdQFWzO8J/oREXRm32OxwPzHEp9x4tfRRKyik9I4m3Oj+XW5UQRYzuGNGeBiYhJPMc0KFjHAEbsLye0FmcO3XD7qbCZyrWkgGQH+/gZwmVV27sb3nRHvydgShISu1jp+8p9zdrR1Rfp4K0MFAp2ur1UoR9Zr3Anm/MA
-X-Microsoft-Antispam-PRVS: <DB5PR04MB10300AF7C6D5D1D17950F9DA991E0@DB5PR04MB1030.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;20:uU4F35sf9Kj2mXAdMe4h8g8h3zId9FOrM2rQi2pNo5o9yrX24EnWVeoUuHF+GFC/4CXkHweUF9kKeRqdvTgZ9S/KoHRTkvZpoDGZuCUmfDZ3g/I7YHJydp+O04De68oxemWZ8wqPlDT/QHbxRipnSOMmWc5VPXnA+/lPHSB8Cvvmr32Iru/xcQMk/zvfE9irY5Z3YzZiJS7CRFKkYAEBJ74MkR5H9xzkGMyBEXlW6Uynoxg+VuRrG7ZOMz8C06Am30PDvJBkN/bL+WZyR/Hau2Y3aJJ6b3ag31o7KflMZa7WNnmGcx97bD4DFCAoH0TGSgVmG9ZaAkQl4bt80tFU2SQ3en2fV4Q8/sZy7StOB8z68tjSy1CTNKcAYGCP3Y3wMHi33bHCXGzXXdTrCTVKUChz2SB48paDaykTX0dKHpml6hSfLCbK22Ph2XewNeSB1dBPvxAM/n4D7xno/qRX89T53LO55KtVvcZiZ58E3Y4XpU6k3Aj+7YV5u9qw0znP;4:7ivCC/Pt4tmeG0KrD/qkUv0I0Ucd6xBBTMYhvhBu1y6PJFbKebe0xpmEhBw5iBf4il8c4esL5GhrJJoDmQ9EzXCwmJEKfKjxzbcragqXLXjPuhJONEwaNdMrUvh38R5qcXGLOrplh6mhLhtHLqhEfnKSuyb3ReYu2zwH6hFiF1Oz5a41BTej4BhcYUGVd5cDX7yiNLVsHnxz/moakLISddjf0x00XUkyEIboROB30Ivl5mOOxQFa0KvN1RqgiyukbjnabWoAWe7VUG5jeQOiLXJANyzR+ioGFAXQH1XwBVzDX/j/BbsJePkHsslLgUsb
+X-Microsoft-Antispam-PRVS: <DB5PR04MB1030CE5401A2B70B2C11B604991E0@DB5PR04MB1030.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699050);SRVR:DB5PR04MB1030;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1030;
 X-Forefront-PRVS: 0798146F16
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(106356001)(7416002)(26005)(66066001)(386003)(47776003)(316002)(305945005)(6506007)(55236004)(6512007)(6666003)(86362001)(81156014)(186003)(68736007)(6486002)(50226002)(16526019)(105586002)(8936002)(16586007)(51416003)(478600001)(76176011)(52116002)(53936002)(97736004)(8676002)(81166006)(36756003)(5660300001)(7736002)(48376002)(3846002)(39060400002)(476003)(25786009)(4326008)(956004)(446003)(11346002)(2906002)(2616005)(486006)(6116002)(5009440100003)(50466002)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1030;H:idcbfarm.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(376002)(396003)(346002)(189003)(199004)(106356001)(7416002)(26005)(66066001)(386003)(47776003)(316002)(305945005)(6506007)(55236004)(6512007)(6666003)(86362001)(81156014)(186003)(68736007)(6486002)(50226002)(16526019)(105586002)(8936002)(16586007)(51416003)(478600001)(76176011)(52116002)(53936002)(97736004)(8676002)(81166006)(36756003)(5660300001)(7736002)(48376002)(3846002)(39060400002)(476003)(25786009)(4326008)(956004)(446003)(11346002)(14444005)(2906002)(2616005)(486006)(6116002)(5009440100003)(50466002)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1030;H:idcbfarm.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1030;23:3P3xbeMYRS20KLC0jSvPmDVc9AGij4g60X3k7JQVA?=
- =?us-ascii?Q?OE+C/rOMD9ur2huazQd/Mcs2329vGByLMoPutrNO+zXG0ARC1xBKSMtVlzwu?=
- =?us-ascii?Q?4TWP3aIlfW6f7myeeKYJBl6NJexOFn6HUc+z3/zYuJ2qoiRwBzEB4yroDbAT?=
- =?us-ascii?Q?YoPw0WhGyP4EdYT5xDrrDCov2mgKP26szUvKV9GEfMv+D0JLVSJMOh9c70Cr?=
- =?us-ascii?Q?wRAncQVwyXqAWfXMbFBfgbBMbKq6iPbdqGRtLZGqsTcm+x8s6wlD2s8auwO+?=
- =?us-ascii?Q?foa/AJd8vxtH2Ytj1msCPko1+4ZphD1vbSLwRuUk1DEusqJACJqxDWIToxVx?=
- =?us-ascii?Q?l6FTHl0cFwl4TgEAUtE6cDNsK/m0LO0nB8GWp7WpbR30q/5Y4+Tm9butBH3S?=
- =?us-ascii?Q?AOZzXUQNHa7rA1yGiZqXHWVrRdjIC4R+DS7FwCJdBy8mUHsS7vUKQKuGUpti?=
- =?us-ascii?Q?wbWKSsGHzatZMtW5nJTBCUuxGAOhVGEGeF0DC3vsJfnjeqSgyMk5haolDzUj?=
- =?us-ascii?Q?DXvtPNmbx2i4dFdJdfq6ez6Xr08/qtW9vDi5IxZR3dn/8ODxE74IjGu8NJKz?=
- =?us-ascii?Q?AVNFxIZVwYzoaMZm1W68yeDWsHvLp/pC4y4vU97+CXl3GVl5ZpDK2sYAv766?=
- =?us-ascii?Q?LscRKr160/UVcRJc0TcFoWLlbtGuNLWAQSwQW3yRIgBahjMEFoS3LX2eSi2e?=
- =?us-ascii?Q?dGpfdBnZVW2rAh8g/+cP3bpl+gQEeD1V8ej1K0QxIoNi2c2oeAIjFWjN0ppY?=
- =?us-ascii?Q?Z9Z34AjGCpf3OAm/1SvYTvNOplOuA+kUB2I1els0snzGXreBiuBGZxsC/9I6?=
- =?us-ascii?Q?yrNZAA2FXHBcSQYFAsSFqbAVm2LTtgK8CL8Kpyqid9Q8vQrP+96rqMneYmGg?=
- =?us-ascii?Q?QSA0YGW9ikD0clOiN6+4ncasyxP0lye7UE1RBBYscfHHOYGAlC5ICKoV44r7?=
- =?us-ascii?Q?Jc/M2a6L5jN+0FsonoUjYdYc8dW5e6Hl7qf1a8V8CcOQNci315bxg7SP9OJH?=
- =?us-ascii?Q?ImyH3TnGNvp7j+GJ7bJKhDKQbOsL08EGmpl59WqvTsLZpgxVcuUW77rrUG53?=
- =?us-ascii?Q?LHDnheoP5CWTrOzcBsQnbq906B2RUx9Ct+NOA0+rdbF4wlmZNS0DoxPe/kqu?=
- =?us-ascii?Q?EqLJEyyPVzYOB8xFCEe140wGn1P8ish1u30FuZicN/GKDx6yXdie24VUrfWv?=
- =?us-ascii?Q?CllX4BVYsuST/zdRjszUD1O0+N9DlbBAkj9KvOQslEVW2/sSwYAoL0qO1WXp?=
- =?us-ascii?Q?Nb13tyNxTTCS1y/2LEVbARDkzIPD7VPrcNrIe6/?=
-X-Microsoft-Antispam-Message-Info: /nH4Hxho+k1kkWc5iJkdzdBtCOsOE/FpyQbV0LyxcA6UKAeFuVThLAcNOK6zZ0feNs+rh8x/i8C6l0807QcAIq2djId2pz3KAMVOewiHeoX41W+USlqB919W0Zq/2EPO/rksferefn5ChRAK6BEsurQ6HlUoE99sRDJE31I/sFi5YR18dGjf6gXnzuROCaN8Xu9bS71VPWIBUDc6Wh4bZW0myrahNUiMFuSRy/EdhA+9+2MF2Zb+W1fJwD4Xq61/h9EsYy3DhpvZmAGhJ9f11XFEzC9T2ULgZhI2bTEU1wM7oV4VWLk6dTEFo0XzT036faQFtJXct7kGNfDTF85qWd9QUS2VhZTxlQkTJflh2mE=
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;6:YZ11aqiv6U1oRYy0Ayn50E6KRVdUkzL8LC2+gbARbP7MbMHA6ZFRAN8nttSZX75uJMNQ95uEOJDfpYRFPwvNt9/enTxrx3KT1GU7jlkQLDr2xXajHf/p/Yq2KL2UWPKUmHKMssrLnI0xYDy6sEjtPkuMGXlikZgWqKIH9apj3aNr30VT8nsXBCDIvtbPY3isxsa1rBiYjPF+BPA/pGXDVgc3pM0NNjIC6MfwSSa4LVqlr4h1B5rOlWHHDI3Egmncz3p3/EEuyWE57RFztfZQPK6omcg6hzAuDCNtnqspRunPZSmsD5mbZpUBEGFiPID4ebQ7oREErKOPI6B9ZdB4eVnrQ5j9ZbuW84Hn6fQ5GiuZxoEbmpJjGYiSX4ID7Rc5SWz8EZRdqbk5mjIy/T/7jx56TurlNdAZNh8EsOEsXI0Y4OvctGjg7HeBKtP7w1d37XB+b1QTBlaibHag3I9Y8w==;5:niAu8N6Is23hpjYIuMbcwMMiNbUw/zBSIkHVhMaNwTEgrLtc9TrEewvbHwvpaaZDJOpYYPmyGa8TbOM8bSFM7iEEcrsm/49EZansnTVHJpoRvpwn5QsHsSOGBbI5cvJ5JtRgGGvuTp5tLjQxULyRdhNG47/X2yDszmkwivi/DKg=;7:wnyjE1489OrGKG3BZUNZQyXECoJ1m7OeFKfAa81am25CMw/DGDMsNupjkq1ntIr9eRUq+mPS/A84oSfG/eEIZGl6sfs67suxc48T6EH96KOJA/NL+bWivnNRLkaiUXKL7nh8JtMuBMDQgTevzdvbJqP68Qgto/UgaoL6ig6HN9WtFAJq/vsfcqbEMSz8BjQMolldaLOjm9bWxvN/+QGFF73TtoxKV7/uGOGp1nCMgE9RYygbPxUZv0hBWuL+l82m
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1030;23:NcV07NytYluLcHiLZ2SGN3kInVKwefeOOw6NFCPJA?=
+ =?us-ascii?Q?itn5dUruI0TrYFzyMglIrBFUXyz7wR4klyRbTT93Sv9a+L3ymzHbl5DpUthM?=
+ =?us-ascii?Q?sMxpJ8N+ergmgiJGdv929hTyRcYdr3jtRl1jrpJ4M4D5Bzw1P5AgEWdCabtU?=
+ =?us-ascii?Q?5TaFBc/PUbCM/PxmfuUvcCm0jjH9kFKmkHezRP0tmZ47YTdB5KQC7UD9lYaV?=
+ =?us-ascii?Q?3W0ymM+265oy6zWNQ3avx/D0zZRceEtePEuR5IG2ufplgLjy5271nEWeQQUM?=
+ =?us-ascii?Q?K2yDZC0uEJk4SONpqEEomo09fnopLgC5mq2cy/8KY0R8J9mWbIdVpkeUVrJD?=
+ =?us-ascii?Q?v7Ths20j1ZDYVsCYtHX2z53XanXNYOfIp98iaaKSn0s/sLMUlvh1JA3hZ5IE?=
+ =?us-ascii?Q?4TgKHZ2zgGiSiRNbswrtgB61cBqHqV60ZQHq2wci9/FhV5uLi7ZFG2DzeR/E?=
+ =?us-ascii?Q?H2W2nUjHSfsFe06lbMTr4RyAtHi/XnooXBKhRenn+m4QnFiCi/miuDRXlUat?=
+ =?us-ascii?Q?KDzqVZMI8aor7RepzrbkHJ/tqzRXZVY9mRtuJcEzE10Y6/PQOceBSuMDp7xX?=
+ =?us-ascii?Q?GSnGE0KgB8aMlgD1BCM6oBZNNvYmvhUbUz4OP4Rj0TvjDd6a93aHVQte4MD5?=
+ =?us-ascii?Q?YryB0z6B9J7Xeh2VlvuAxaWxOXGSMY7VSOLeJM21SIx7IGcNLxW+QDi5psNx?=
+ =?us-ascii?Q?0GBf/Kn9CQdNA4hsAtzcWthNRV32C8ps9VGuD9eimyIXRJdbqN3SdSXlbyp5?=
+ =?us-ascii?Q?gK+//4a7g+vZkvpih+ubBRzv/ynsA9f7bPehQvoBBO2b8WbIMZxWRlI5Aoe7?=
+ =?us-ascii?Q?IEQqw2nuQmtfSvtGgYbzHX5OfEkgYmX9nxgHraNFx+B8nZGDoYKo0TKCufx8?=
+ =?us-ascii?Q?tFH9805p39W404QViBDmNFEDnRBtd5s/qH24d7aR6EczhKaO6AYrNb++6Ves?=
+ =?us-ascii?Q?bOVYEl12TsxhyFhwgcv+Do+C/Y1c/8SVF/XQt3va9oxICbFJxy80W+CozslJ?=
+ =?us-ascii?Q?r9Wz0jPNWvFbjw29MSClQnEok7qvlOgLFDNG2jaGxnJZ7kCQGSpCV19mVPMa?=
+ =?us-ascii?Q?i4T5czISjcsdzkCQpHHEDfiDtIFbDxsYI/j3jiPOK/1PaQE2tCnnty5pVE1N?=
+ =?us-ascii?Q?j0iSgpVPAzZIevOGY/82GnaD24k92i6oL7FjvFUAX/kfhcNkvkGyyliFaUCp?=
+ =?us-ascii?Q?K/HFxkvfnhOvBBQB+0B1A+Xpziya6hQvQ3dn7XH1mzim+CSCEooj/g/zRe9K?=
+ =?us-ascii?Q?kMn4vjXdL5wiwy42UdA7KPClzBQyQq0O6XufoZ6qBqc0WX18zWGeI296QRRh?=
+ =?us-ascii?B?dz09?=
+X-Microsoft-Antispam-Message-Info: SRTVHzEEEtAG7jqQQJfStyCgHezJmV5wsh8GZqZoK7uY9bNd9ViKxEYNovsYULZh4DqifAN+EvKwuzakNZLArhWbKLmii5XxORmrImtwD4BOfuNwrHzRHjx39rWVgoSkFmVzAa+zWl6C2AHjYIqWm4zFl0CJSaGXni6gyMp7e1QS6vjA49OEl4lbvpW7m48O2XiXXizQf9eM+upP6Iu0fDDg5kP8HUbHegGmh7LuTvY2VApUk0RIM9yOdmXc+KrKsWAQQdCqoprwUCU1tKKG1QI75uixmYNdMMsr0SuOD1fpclgsDl1B1ilVWNU3DgE4eWNxiBBX9dkGhQbRjjrWvYsmUQJSsyAkK+jVyrgC9FA=
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1030;6:C8U9aA5vcwAuE879Z+I0ar9P6IIi8GJnurbKspsDqo2JWCAbmjPGMsj9AGtMTujHdcUIu80vFjSWVmb3JVETg1Azr4FU0kCBpe9NCbaOaE0CUubN2m9ZqZmyUftL2K65V1wDDESDSUu5xyek0mopRfOeAHWPvK4PkygqRwd7VkGgADNiZvJdlyEHxJKUx2KoBF7KQ2RjPWD73D56EAxUKST5Qt4yp9X/fAeHHqblE/lUN8avCSkIRYIa3fhQx+nWFcUUye9+32lGqfCnho0YM+pnerz5enSeVUPx7gHhpCHdzmQIiRnzjv79UCylHtvgNibwo9QslagYTJFfUxC6P9G36bpdSQ84L9w8tYbV7pFdooJFVHQJhmqaPlbxR4lncEDPPZhcCI9RE+bH/V/xnWPIXLGv7D/jfTohmQsbrTeiPG5e/etyGk61ypVIXN4NxajGiAGUY5S6DcaA+UTTDg==;5:avSlOvMjeBlcfrPKBti4be4Y3ZYNZzPXDPNUnaD/aQT4NQmspCDf4CNCg1lHPd+ajyg+1HvnWpkHWf6570uSGDfzI691E14Roa2/wuUPt66R8GRohXq/0XrtaB21Vs1XW68NeeBqHqGvFrtFSzzIpgmlVPFIINENjose+gt6E5E=;7:sHJOFjJdDUFd98371Mjkx8dCO7mLqWGYpGStLvoZDkCxa5h5glQ0AtMM2Kdv5AhJMexZLOuyg3fLrbDSL2ITQIFI85mN8/q6/Nae8fHgtB+qDWm4D9gU10fpk6+fiEWHxjDbIxMVC2P3QIUkSPgr42rLImgoA6unH6UT/1znS23zEc6SBGENoF25G38ugcoZTprqKE2NOxNE8GeOGpYdAMmNUdPN3xGJJUj+MMfveMzsEeZyYXmWnIknhwhqcY9t
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 09:50:31.7935
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2018 09:50:37.8559
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20152c99-b117-49aa-7513-08d61c83050b
+X-MS-Exchange-CrossTenant-Network-Message-Id: b478c1a8-af34-4be2-813a-08d61c8308a8
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1030
@@ -109,65 +110,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding file for NXP FlexSPI controller
+Add fspi node property for LX2160A SoC for FlexSPI driver.
+Property added for the FlexSPI controller and for the connected
+slave device for the LX2160ARDB target.
+This is having two SPI-NOR flash device, mt35xu512aba, connected
+at CS0 and CS1.
 
 Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 ---
 Changes for v2:
-- Incorporated Rob review comments.
+- Incorporated Shawn review comments.
 
- .../devicetree/bindings/spi/spi-nxp-fspi.txt       | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 22 ++++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 12 ++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt b/Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
-new file mode 100644
-index 0000000..94b5203
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
-@@ -0,0 +1,42 @@
-+* NXP Flex Serial Peripheral Interface (FSPI)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+index 70fad20..a320b37 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+@@ -32,6 +32,28 @@
+ 	status = "okay";
+ };
+ 
++&fspi {
++	status = "okay";
 +
-+Required properties:
-+  - compatible : Should be "nxp,lx2160a-fspi"
-+  - reg :        First contains the register location and length,
-+                 Second contains the memory mapping address and length
-+  - reg-names :  Should contain the resource reg names:
-+                 - fspi_base: configuration register address space
-+                 - fspi_mmap: memory mapped address space
-+  - interrupts : Should contain the interrupt for the device
-+
-+Optional properties:
-+  - big-endian : See common-properties.txt.
-+
-+Required SPI slave node properties:
-+  - reg :        There are two buses (A and B) with two chip selects each.
-+                 This encodes to which bus and CS the flash is connected:
-+                 - <0>: Bus A, CS 0
-+                 - <1>: Bus A, CS 1
-+                 - <2>: Bus B, CS 0
-+                 - <3>: Bus B, CS 1
-+
-+Example showing the usage of two SPI NOR slave devices on bus A:
-+
-+fspi@0: flexspi@20c0000 {
-+	compatible = "nxp,lx2160a-fspi";
-+	reg = <0x0 0x20c0000 0x0 0x10000>, <0x0 0x20000000 0x0 0x10000000>;
-+	reg-names = "fspi_base", "fspi_mmap";
-+	interrupts = <0 25 0x4>; /* Level high type */
-+	clocks = <&clockgen 4 3>, <&clockgen 4 3>;
-+	clock-names = "fspi_en", "fspi";
-+
-+	flash@0: mt35xu512aba@0 {
++	mt35xu512aba0: flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "spansion,m25p80";
++		m25p,fast-read;
++		spi-max-frequency = <20000000>;
 +		reg = <0>;
-+		....
 +	};
 +
-+	flash@1: mt35xu512aba@1 {
++	mt35xu512aba1: flash@1 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "spansion,m25p80";
++		m25p,fast-read;
++		spi-max-frequency = <20000000>;
 +		reg = <1>;
-+		....
 +	};
 +};
++
+ &i2c0 {
+ 	status = "okay";
+ 	pca9547@77 {
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index e35e494..bd2d606 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -568,5 +568,17 @@
+ 			timeout-sec = <30>;
+ 		};
+ 
++		fspi: flexspi@20c0000 {
++			compatible = "nxp,lx2160a-fspi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x20c0000 0x0 0x10000>,
++				<0x0 0x20000000 0x0 0x10000000>;
++			reg-names = "fspi_base", "fspi_mmap";
++			interrupts = <0 25 0x4>; /* Level high type */
++			clocks = <&clockgen 4 3>, <&clockgen 4 3>;
++			clock-names = "fspi_en", "fspi";
++			status = "disabled";
++		};
+ 	};
+ };
 -- 
 2.7.4
 
