@@ -2,104 +2,154 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1313ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E34ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83AC52146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83AC52146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B48B42146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:34:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ocYQzWyz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48B42146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbeIRD7Z (ORCPT
+        id S1726660AbeIREDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 23:59:25 -0400
-Received: from mga11.intel.com ([192.55.52.93]:48229 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728202AbeIRD7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 23:59:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 15:30:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,387,1531810800"; 
-   d="scan'208";a="75093269"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga006.jf.intel.com with ESMTP; 17 Sep 2018 15:29:19 -0700
-Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 17 Sep 2018 15:29:19 -0700
-Received: from orsmsx151.amr.corp.intel.com ([169.254.7.211]) by
- ORSMSX156.amr.corp.intel.com ([169.254.8.73]) with mapi id 14.03.0319.002;
- Mon, 17 Sep 2018 15:29:19 -0700
-From:   "Walker, Benjamin" <benjamin.walker@intel.com>
-To:     "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC:     "Howell, Seth" <seth.howell@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "monis@mellanox.com" <monis@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Index: AQHUNB7X7okyqfuXp0e3kpEuk2f+WqTB4cuAgAAKaQCAATczAIAGhGQAgCvyAwCAAAhxAIAAFpgA
-Date:   Mon, 17 Sep 2018 22:29:18 +0000
-Message-ID: <0df4e4958250fd6cdb978005ace970c877269535.camel@intel.com>
-References: <20180814223303.83556-1-seth.howell@intel.com>
-         <20180815225021.GB31799@ziepe.ca>
-         <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
-         <20180816180126.GB10507@ziepe.ca>
-         <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
-         <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
-         <20180917210824.GF11367@ziepe.ca>
-In-Reply-To: <20180917210824.GF11367@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.18.124.203]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EC10D2F9C618D64C8BE902C1CBC3771D@intel.com>
-Content-Transfer-Encoding: base64
+        Tue, 18 Sep 2018 00:03:48 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39264 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeIREDs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 00:03:48 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h4-v6so272073edi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 15:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ljM8VDjifPXTYQpHOjUd7Si1xgCriPj9wcI3wqoAR8c=;
+        b=ocYQzWyzZd8A9nU8Iywxxsl87iZ3oHSR85pxYSiPa+rxPyrNF0ZmAKfnzOD4IuuwfW
+         XPbVHYzG3ODUsWUSUny+TgzIL32dHWKUwMmfbKjN4k3o6uNOcpn34AAhMY0aXQIojFXQ
+         NwVYPryYLyI7mqd5LhlbF+sTvcWTJtHZq6jP0QCWZgmehwr732BP79UHjoy8youP7o2E
+         RAKmRpaSHTnADEJhdUaNM93ObfVcjoQ/70aFLONw+ITbjLXW/UGN6p+r1x8zcBkp3qhu
+         jftZ5QiFpRdVmqIKSKeeV3cbIshLZniC2nOk2orA8ACKyacAHoAF3lI922wukMCpCDDV
+         7+6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ljM8VDjifPXTYQpHOjUd7Si1xgCriPj9wcI3wqoAR8c=;
+        b=LiHOqRIWHFq1+RzFIOOmvfaeuRG3efI2kUAqLylLABZk39sbK2DF1Ynk/7aiid3O8T
+         8qFgcNir+PbNiBCjTwXqrX2waTJ/n65ubZNOQxKegHM2mDCFLyDAgjYLxFh3l2V3gL4A
+         +eha0Xb7EIWAFxBszwP2uv8UH75z7VbrbLqz+Mi6Et01jRIGMrTnh98cQesMz/85DkK6
+         CClmbKRgvGns/0UYbW5qONw75+ox3fxKM6U8BEoTglYFlskK527n3Uq8UGbfj3/GgKfQ
+         b8O/cySBPOx5vsABct+i0lS/F5ZlLBMSSrGXbjCtYigoyAphCbd0/nz3uFuKq7ipVcrG
+         nZgw==
+X-Gm-Message-State: APzg51AhNQBmJLc0mqk+a0Jqq1HMdDj0YNYq/FNK70smCAeUV7/l8qPf
+        YNy9kSnyGJEA85328wce5JyOtGKTsznkf62Nwrc=
+X-Google-Smtp-Source: ANB0Vdb659TkXfUvzyx1M1xQSI9uhshUTM1GAic66SR3T5IC8m2Q7a0yJKToNZWYJk4TJ1DliI0PPc7VZELKDW5cDsA=
+X-Received: by 2002:a50:ad5a:: with SMTP id z26-v6mr48144246edc.142.1537223666853;
+ Mon, 17 Sep 2018 15:34:26 -0700 (PDT)
 MIME-Version: 1.0
+References: <cover.1536517047.git.lukas@wunner.de> <76fccab34a66023c08b71a864a9fea77daac9742.1536517047.git.lukas@wunner.de>
+ <20180910093333.GI14465@lahna.fi.intel.com> <20180913085826.GC14465@lahna.fi.intel.com>
+In-Reply-To: <20180913085826.GC14465@lahna.fi.intel.com>
+From:   Andreas Noever <andreas.noever@gmail.com>
+Date:   Tue, 18 Sep 2018 00:34:16 +0200
+Message-ID: <CAMxnaaXbkWysZ2JbPTL7gmhq_MS5Ba1PJrzsXndjodH4X9WJOw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] MAINTAINERS: Add Lukas Wunner as co-maintainer of thunderbolt
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Michael Jamet <michael.jamet@intel.com>, YehezkelShB@gmail.com,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA5LTE3IGF0IDE1OjA4IC0wNjAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
-DQo+IE9uIE1vbiwgU2VwIDE3LCAyMDE4IGF0IDA4OjM4OjE2UE0gKzAwMDAsIFdhbGtlciwgQmVu
-amFtaW4gd3JvdGU6DQo+ID4gV2UndmUgcmVjZW50bHkgcnVuIGludG8gdGhpcyBzYW1lIGlzc3Vl
-IG9uIGk0MGl3LCB3aGljaCBhcHBlYXJzIHRvIG1ha2UgdGhlDQo+ID4gc2FtZQ0KPiA+IG1pc3Rh
-a2Ugb2YgdXNpbmcgdGhlIGtlcm5lbCB2ZXJzaW9uIG9mIHRoZSBlbnVtIGluc3RlYWQgb2YgdGhl
-IHVzZXJzcGFjZQ0KPiA+IHZlcnNpb24uIA0KPiANCj4gQ29uZnVzZWQgYnkgdGhpcz8/IGk0MGl3
-X3Vwb3N0X3NlbmQgZG9lcyBub3QgaGFuZGxlIHRoZSBrZXJuZWwgbnVtYmVycw0KPiBhdCBhbGws
-IGFzIGZhciBhcyBJIGNhbiBzZWU/IEhvdyBkb2VzIGl0IGRldmVsb3AgYSBrZXJuZWwgZGVwZW5k
-ZW5jeT8/DQo+IA0KPiA+IFdoYXQncyB0aGUgY3VycmVudCBzdGF0dXMgaGVyZT8gQ2FuIGl0IGJl
-IG1lcmdlZD8gSSBqdXN0IGNoZWNrZWQgYW5kDQo+ID4gZG8gbm90IHNlZSBpdCBtZXJnZWQgdG8g
-TGludXggbWFzdGVyLg0KPiANCj4gT2ghIFRoaXMgYXBwYXJlbnRseSBnb3QgbG9zdCwgdGhhbmtz
-IGZvciBicmluZ2luZyBpdCB1cCBhZ2Fpbi4NCj4gDQo+ID4gUnVubmluZyBhIHVzZXItc3BhY2Ug
-TlZNZS1vRiB0YXJnZXQgd2l0aCBSRE1BIGFuZCBhIHJlY2VudCBMaW51eCBrZXJuZWwNCj4gPiBp
-bml0aWF0b3IgaXMgbm90IGN1cnJlbnRseSBwb3NzaWJsZSBvbiByeGUgb3IgaTQwaXcgYmVjYXVz
-ZSBpdCByZXF1aXJlcyBzZW5kDQo+ID4gd2l0aCBpbnZhbGlkYXRlIHN1cHBvcnQuDQo+IA0KPiBP
-a2F5LCBidXQgaTQwaXcgZG9lc24ndCBzZWVtIHRvIHN1cHBvcnQgc2VuZCB3aXRoIGludmFsaWRh
-dGUgYXQgYWxsIGluDQo+IHVzZXJzcGFjZT8NCj4gDQo+IGk0MGl3X3Vwb3N0X3NlbmQoKSBzd2l0
-aGNlcyBvbiBvcGNvZGUsIGRvZXNuJ3QgaGFuZGxlIFNFTkRfSU5WIGFuZA0KPiB0aGVuIGJsb3dz
-IHVwIGluIHRoZSBkZWZhdWx0IGNsYXVzZSAtIGhvdyBkb2VzIHRoaXMgcGF0Y2ggbWFrZSBhbnkN
-Cj4gZGlmZmVyZW5jZT8/Pw0KDQpJdCBhcHBlYXJzIEkndmUgcmVhZCB0aGUgZXJyb3IgbWVzc2Fn
-ZSBpbmNvcnJlY3RseSBhbmQgd2FzIGxvb2tpbmcgYXQgdGhlIGtlcm5lbA0KdmVyc2lvbiAoaTQw
-aXdfcG9zdF9zZW5kKSBhcyBvcHBvc2VkIHRvIHRoZSB1c2VyIHZlcnNpb24gKGk0MGl3X3Vwb3N0
-X3NlbmQpLg0KSW5kZWVkLCB0aGUgTklDIGRvZXMgbm90IHN1cHBvcnQgU0VORF9XVElIX0lOVkFM
-IGF0IGFsbCBpbiB0aGF0IGZ1bmN0aW9uLiBUaGUNCk5JQyBkb2VzIHN1cHBvcnQgU0VORF9XSVRI
-X0lOVkFMIGluIHRoZSBrZXJuZWwgaTQwaXdfcG9zdF9zZW5kLg0KDQpXaGF0IGlzIHRoZSBjb3Jy
-ZWN0IHdheSBmb3IgYSB1c2VyIHNwYWNlIGFwcGxpY2F0aW9uIHRvIGNoZWNrIHdoZXRoZXIgYSBO
-SUMNCnN1cHBvcnRzIFNFTkRfV0lUSF9JTlZBTD8gV2UgYXJlIGN1cnJlbnRseSBleGFtaW5pbmcg
-dGhlIGRldmljZV9jYXBfZmxhZ3MgaW4gdGhlDQpzdHJ1Y3R1cmUgcmV0dXJuZWQgYnkgaWJ2X3F1
-ZXJ5X2RldmljZS4gU3BlY2lmaWNhbGx5LCB3ZSdyZSBsb29raW5nIGF0DQpJQlZfREVWSUNFX01F
-TV9NR1RfRVhURU5TSU9OUy4gSG93ZXZlciwgZm9yIGk0MGl3LCB0aGF0IGZsYWcgaXMgc2V0LiBJ
-J20NCmNvbmNlcm5lZCB0aGF0IHRoZSBmZWF0dXJlIHN1cHBvcnQgZmxhZ3MgYXJlIGNvbW1vbiBi
-ZXR3ZWVuIHVzZXIgc3BhY2UgYW5kIHRoZQ0Ka2VybmVsLCBidXQgdGhlIGFjdHVhbCBzdXBwb3J0
-IGRpZmZlcnMgaW4gdGhpcyBjYXNlLg0KDQpUaGFua3MsDQpCZW4NCg0KPiANCj4gSmFzb24NCg0K
+On Thu, Sep 13, 2018 at 11:00 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Mon, Sep 10, 2018 at 12:33:33PM +0300, Mika Westerberg wrote:
+> > Hi Lukas,
+> >
+> > I'm including Greg here in case I've done something wrong as a maintainer.
+> > Since I've only maintained Thunderbolt quite short time, it may be that
+> > I've done mistakes but certainly I did not deliberately try to make life of
+> > people developing this for older Apple systems harder.
+>
+> Greg did not yell at me (yet) so I guess I'm doing OK :)
+>
+> > On Sun, Sep 09, 2018 at 11:42:01PM +0200, Lukas Wunner wrote:
+> > > Andreas Noever has let it be known off-list already a while ago that he
+> > > currently cannot spare as much time for Thunderbolt development as he'd
+> > > like.  As a result the driver's development has become dominated by
+> > > Intel.
+> >
+> > I was not aware of this. Althought Andreas has not commented much
+> > lately, I thought he is still looking after our changes. I hope he still
+> > is :)
+> >
+> > > I would like to step up as co-maintainer to provide additional checks
+> > > and balances and prevent the driver from degenerating into an Intel-only
+> > > show.  A number of things really irk me:
+> >
+> > I don't have anything against this but at the same time I'm afraid it
+> > might lead to a situation where the Thunderbolt driver evolution gets
+> > stopped into its tracks because of unnecessary fighting over each patch
+> > and change which does not benefit Linux kernel in general.
+>
+> I think we have enough maintainers in this subsystem:
+As mentioned by Lukas I'm currently quite preoccupied with other commitments
+and have not done much more than skimming the incoming patches (especially
+those touching the Intel part - as I trust you know what you are doing there :))
+If there is concern over too many maintainers then please give my spot to Lukas.
+Since I no longer use my MacBook regularly my ability to effectively
+test stuff is
+quite limited anyways.
+
+Thanks,
+Andreas
+
+
+>   Andreas - Apple hardware
+>   Michael and me - Intel
+>   Yehezkel - Microsoft
+>
+> But I think we can make you a dedicated reviewer. This should make sure
+> you get to review all the patches touching this subsystem.
+>
+> However, first I would like to get confirmation from Andreas that he
+> approves this.
+Signed-off-by: Andreas Noever <andreas.noever@gmail.com>
+
+>
+> I also would like that anyone submitting patches to this subsystem do
+> not get bad feelings during the review but instead possible issues and
+> improvement suggestions are written in such way that the submitter feels
+> his work is valued (even if not always correct).
+>
+> This is especially important when a random Intel (well, or Apple)
+> engineer submits a patch, say fixing a typo in a comment of some data
+> structure. There is no point starting to demand that the specific
+> register meaning needs to be disclosed. I've said this before but I or
+> any other Intel engineer do not have any power over when the spec is
+> released or any other related matter (like disclosing registers) and I
+> really don't want that every single patch review starts with demanding
+> people to disclose something extra. After all they are just trying to
+> improve the driver which is good for Linux.
+>
+> If Andreas approves this, please send a patch adding you as a reviewer
+> and I'll apply it. Just please write the changelog in good will without
+> any personal frustration as those will be recorded forever in the kernel
+> history and you never know in future who you are working for.
+>
+> From my point of view, I welcome you on board as good reviewer :)
