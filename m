@@ -2,109 +2,193 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1509ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBD1ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B10214C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B10214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 54594214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:34:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54594214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeIQOAD (ORCPT
+        id S1728229AbeIQOBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 10:00:03 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57898 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727946AbeIQOAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 10:00:03 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1A4FEE88EFB61;
-        Mon, 17 Sep 2018 16:33:38 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
- 16:33:38 +0800
-Date:   Mon, 17 Sep 2018 09:33:25 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     David Lechner <david@lechnology.com>
-CC:     Jonathan Cameron <jic23@kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        "Lars-Peter Clausen" <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Mark Brown" <broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] iio: adc: ti-ads7950: use SPI_CS_WORD to reduce
- CPU usage
-Message-ID: <20180917093325.00006e24@huawei.com>
-In-Reply-To: <b8b6201c-3574-d383-e3e8-9f162206e505@lechnology.com>
-References: <20180913003920.30600-1-david@lechnology.com>
-        <20180913003920.30600-4-david@lechnology.com>
-        <20180916124110.4edfad9d@archlinux>
-        <b8b6201c-3574-d383-e3e8-9f162206e505@lechnology.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+        Mon, 17 Sep 2018 10:01:18 -0400
+Received: from mga02.intel.com ([134.134.136.20]:57231 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727863AbeIQOBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 10:01:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2018 01:34:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,384,1531810800"; 
+   d="scan'208";a="264134086"
+Received: from shbuild888.sh.intel.com ([10.239.146.239])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Sep 2018 01:34:52 -0700
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>
+Cc:     Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v2] x86/mm: Expand static page table for fixmap space
+Date:   Mon, 17 Sep 2018 16:39:52 +0800
+Message-Id: <20180917083952.27589-1-feng.tang@intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Sep 2018 11:24:16 -0500
-David Lechner <david@lechnology.com> wrote:
+We met a kernel panic when enabling earlycon, which is due to
+the fixmap address of earlycon is not statically setup.
 
-> On 09/16/2018 06:41 AM, Jonathan Cameron wrote:
-> > On Wed, 12 Sep 2018 19:39:19 -0500
-> > David Lechner <david@lechnology.com> wrote:
-> >   
-> >> This changes how the SPI message for the triggered buffer is setup in
-> >> the TI ADS7950 A/DC driver. By using the SPI_CS_WORD flag, we can read
-> >> multiple samples in a single SPI transfer. If the SPI controller
-> >> supports DMA transfers, we can see a significant reduction in CPU usage.
-> >>
-> >> For example, on an ARM9 system running at 456MHz reading just 4 channels
-> >> at 100Hz: before this change, top shows the CPU usage of the IRQ thread
-> >> of this driver to be ~7.7%. After this change, the CPU usage drops to
-> >> ~3.8%.
-> >>
-> >> Signed-off-by: David Lechner <david@lechnology.com>  
-> > 
-> > Hi David,
-> > 
-> > I've managed to forget why we are changing any of the endian related code
-> > at all.  The change SPI_CS_WORD result in changes between words which is
-> > fine but it doesn't change any ordering within words?  So as such why
-> > do we no longer need to do the big endian conversions?
-> >   
-> 
-> The big-endian stuff was cargo culted from another driver when this driver
-> was originally written. It used an SPI word size of 8 bits and big-endian
-> byte ordering to effectively emulate 16 bit words.
-> 
-> Now, in order to inject a CS toggle between each word, we need to use the
-> correct word size, otherwise we would get a CS toggle half way through
-> each word 16-bit. The SPI subsystem uses CPU byte ordering for multi-byte
-> words. So, the data we get back from the SPI is going to be CPU endian now
-> no matter what. Converting that to big endian will just add overhead on
-> little endian systems.
+Currently the static fixmap setup in head_64.S only covers 2M
+virtual address space, while it acutually could be in 4M space
+with different kernel configurations.
 
-Cool. Thanks for the explanation.  If you are rerolling put that in the
-patch description.
+So increase the static space to 4M for now by defining FIXMAP_PMD_NUM
+to 2, and add a build time check for future possible overflow so that
+the macro could be increased accordingly.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+---
+ arch/x86/include/asm/fixmap.h     |  3 +++
+ arch/x86/include/asm/pgtable_64.h |  3 ++-
+ arch/x86/kernel/head_64.S         | 16 ++++++++++++----
+ arch/x86/mm/pgtable.c             | 10 ++++++++++
+ arch/x86/xen/mmu_pv.c             |  7 +++++--
+ 5 files changed, 32 insertions(+), 7 deletions(-)
 
-I'm kind of assuming Mark will want to take this through the SPI tree
-if he is happy with it.
-
-Mark, shout if you want to do it another way.
-
-Thanks,
-
-Jonathan
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index e203169..ffaa0fa 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -14,6 +14,9 @@
+ #ifndef _ASM_X86_FIXMAP_H
+ #define _ASM_X86_FIXMAP_H
+ 
++/* Put here to be accessble for assembly code like head_64.S */
++#define FIXMAP_PMD_NUM	2
++
+ #ifndef __ASSEMBLY__
+ #include <linux/kernel.h>
+ #include <asm/acpi.h>
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index ce2b590..9c85b54 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -14,6 +14,7 @@
+ #include <asm/processor.h>
+ #include <linux/bitops.h>
+ #include <linux/threads.h>
++#include <asm/fixmap.h>
+ 
+ extern p4d_t level4_kernel_pgt[512];
+ extern p4d_t level4_ident_pgt[512];
+@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
+ extern pmd_t level2_kernel_pgt[512];
+ extern pmd_t level2_fixmap_pgt[512];
+ extern pmd_t level2_ident_pgt[512];
+-extern pte_t level1_fixmap_pgt[512];
++extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
+ extern pgd_t init_top_pgt[];
+ 
+ #define swapper_pg_dir init_top_pgt
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 15ebc2f..a3618cf 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -24,6 +24,7 @@
+ #include "../entry/calling.h"
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
++#include <asm/fixmap.h>
+ 
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/asm-offsets.h>
+@@ -445,13 +446,20 @@ NEXT_PAGE(level2_kernel_pgt)
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+ 
+ NEXT_PAGE(level2_fixmap_pgt)
+-	.fill	506,8,0
+-	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+-	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+-	.fill	5,8,0
++	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
++	pgtno = 0
++	.rept (FIXMAP_PMD_NUM)
++	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
++		+ _PAGE_TABLE_NOENC;
++	pgtno = pgtno + 1
++	.endr
++	/* 6 MB reserved space + a 2MB hole */
++	.fill	4,8,0
+ 
+ NEXT_PAGE(level1_fixmap_pgt)
++	.rept (FIXMAP_PMD_NUM)
+ 	.fill	512,8,0
++	.endr
+ 
+ #undef PMDS
+ 
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index ae39455..a4052b1 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -637,6 +637,16 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
+ {
+ 	unsigned long address = __fix_to_virt(idx);
+ 
++#ifdef CONFIG_X86_64
++       /*
++	* In arch/x86/kernel/head_64.S, the static page table has
++	* been setup for fixmap. Add a sanity compiling check
++	* whether fixmap space has exceeded the capacity.
++	*/
++	BUILD_BUG_ON(__end_of_permanent_fixed_addresses
++			> (FIXMAP_PMD_NUM * PTRS_PER_PMD));
++#endif
++
+ 	if (idx >= __end_of_fixed_addresses) {
+ 		BUG();
+ 		return;
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 2fe5c9b..74c4e17 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1907,7 +1907,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
+ 	/* L3_k[511] -> level2_fixmap_pgt */
+ 	convert_pfn_mfn(level3_kernel_pgt);
+ 
+-	/* L3_k[511][506] -> level1_fixmap_pgt */
++	/* L3_k[507, 508 - FIXMAP_PMD_NUM] -> level1_fixmap_pgt */
+ 	convert_pfn_mfn(level2_fixmap_pgt);
+ 
+ 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
+@@ -1952,7 +1952,10 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
+ 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
+ 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
+-	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
++
++	for (i = 0; i < FIXMAP_PMD_NUM; i++)
++		set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
++				PAGE_KERNEL_RO);
+ 
+ 	/* Pin down new L4 */
+ 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
+-- 
+2.7.4
 
