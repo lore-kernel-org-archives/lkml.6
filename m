@@ -2,129 +2,124 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E91ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC69ECE564
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633042146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633042146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B9182146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9182146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbeIRE2x (ORCPT
+        id S1729796AbeIRE2y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:28:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:36866 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729026AbeIRE2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:28:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C8EE7A9;
-        Mon, 17 Sep 2018 15:59:26 -0700 (PDT)
-Received: from [192.168.100.242] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73E2A3F5C0;
-        Mon, 17 Sep 2018 15:59:25 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] ACPI/PPTT: Handle architecturally unknown cache
- types
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        gregkh@linuxfoundation.org, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vkilari@codeaurora.org
-References: <1536942489-4018-1-git-send-email-jhugo@codeaurora.org>
- <1536942489-4018-3-git-send-email-jhugo@codeaurora.org>
- <71208e0e-fba9-ad6c-7578-a53fd1aa3f40@arm.com>
- <0a40d4e5-8b5b-dc6c-17e3-d6f02e396b2d@codeaurora.org>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <4b50b3e9-55d7-67c7-dbaf-8bd7d7fb23a5@arm.com>
-Date:   Mon, 17 Sep 2018 17:59:19 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 18 Sep 2018 00:28:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47874 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeIRE2y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 00:28:54 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C211C03;
+        Mon, 17 Sep 2018 22:59:25 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 47/70] f2fs: fix to skip GC if type in SSA and SIT is inconsistent
+Date:   Tue, 18 Sep 2018 00:42:20 +0200
+Message-Id: <20180917211652.931467998@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
+References: <20180917211649.099135838@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <0a40d4e5-8b5b-dc6c-17e3-d6f02e396b2d@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-On 09/17/2018 05:46 PM, Jeffrey Hugo wrote:
-> On 9/17/2018 10:17 AM, Sudeep Holla wrote:
->>
->>
->> On 14/09/18 17:28, Jeffrey Hugo wrote:
->>> The type of a cache might not be specified by architectural 
->>> mechanisms (ie
->>> system registers), but its type might be specified in the PPTT.  In this
->>> case, we should populate the type of the cache, rather than leave it
->>> undefined.
->>>
->>> This fixes the issue where the cacheinfo driver will not populate sysfs
->>> for such caches, resulting in the information missing from utilities 
->>> like
->>> lstopo and lscpu, thus degrading the user experience.
->>>
->>> Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology 
->>> Table parsing)
->>> Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
->>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>> ---
->>>   drivers/acpi/pptt.c | 15 +++++++++++----
->>>   1 file changed, 11 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->>> index d1e26cb..bb00ed9 100644
->>> --- a/drivers/acpi/pptt.c
->>> +++ b/drivers/acpi/pptt.c
->>> @@ -402,11 +402,18 @@ static void update_cache_properties(struct 
->>> cacheinfo *this_leaf,
->>>           }
->>>       }
->>>       /*
->>> -     * If the above flags are valid, and the cache type is NOCACHE
->>> -     * update the cache type as well.
->>> +     * If cache type is NOCACHE, then the cache hasn't been specified
->>> +     * via other mechanisms.  Update the type if either the cache has
->>> +     * been fully specified in PPTT, or a cache type has been provided.
->>> +     *
->>> +     * Note, we assume such caches are unified based on conventional 
->>> system
->>> +     * design and known examples.  Significant work is required 
->>> elsewhere to
->>> +     * fully support data/instruction only type caches which are only
->>> +     * specified in PPTT.
->>>        */
->>> -    if (this_leaf->type == CACHE_TYPE_NOCACHE &&
->>> -        valid_flags == PPTT_CHECKED_ATTRIBUTES)
->>> +    if ((this_leaf->type == CACHE_TYPE_NOCACHE) &&
->>> +        (valid_flags == PPTT_CHECKED_ATTRIBUTES ||
->>> +         found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID))
->>>           this_leaf->type = CACHE_TYPE_UNIFIED;
->>
->> I thought I did mention that we can drop the valid_flags altogether
->> unless Jeremy has reasons not to.
->>
-> 
-> You suggested that perhaps that could be the case.  It seemed like an 
-> open question to me.  I'm at Linaro Connect without access to the device 
-> this week, so I guess someone has roughly a week to chime in that the 
-> valid flags should be kept, otherwise I'll try a v3 with them removed.
-> 
+------------------
 
-The point of the valid_flags/CHECKED_ATTRIBUTE was to help assure that a 
-minimum set of attributes were being provided by the firmware. If we are 
-going to reset the CACHE_TYPE, then we might as well remove the 
-valid_flag/CHECKED_ATTRIBUTE counts as it can be easily bypassed.
+From: Chao Yu <yuchao0@huawei.com>
 
-So, yes please, remove the valid_flags with this change.
+[ Upstream commit 10d255c3540239c7920f52d2eb223756e186af56 ]
 
-Thanks,
+If segment type in SSA and SIT is inconsistent, we will encounter below
+BUG_ON during GC, to avoid this panic, let's just skip doing GC on such
+segment.
+
+The bug is triggered with image reported in below link:
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200223
+
+[  388.060262] ------------[ cut here ]------------
+[  388.060268] kernel BUG at /home/y00370721/git/devf2fs/gc.c:989!
+[  388.061172] invalid opcode: 0000 [#1] SMP
+[  388.061773] Modules linked in: f2fs(O) bluetooth ecdh_generic xt_tcpudp iptable_filter ip_tables x_tables lp ttm drm_kms_helper drm intel_rapl sb_edac crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel fb_sys_fops ppdev aes_x86_64 syscopyarea crypto_simd sysfillrect parport_pc joydev sysimgblt glue_helper parport cryptd i2c_piix4 serio_raw mac_hid btrfs hid_generic usbhid hid raid6_pq psmouse pata_acpi floppy
+[  388.064247] CPU: 7 PID: 4151 Comm: f2fs_gc-7:0 Tainted: G           O    4.13.0-rc1+ #26
+[  388.065306] Hardware name: Xen HVM domU, BIOS 4.1.2_115-900.260_ 11/06/2015
+[  388.066058] task: ffff880201583b80 task.stack: ffffc90004d7c000
+[  388.069948] RIP: 0010:do_garbage_collect+0xcc8/0xcd0 [f2fs]
+[  388.070766] RSP: 0018:ffffc90004d7fc68 EFLAGS: 00010202
+[  388.071783] RAX: ffff8801ed227000 RBX: 0000000000000001 RCX: ffffea0007b489c0
+[  388.072700] RDX: ffff880000000000 RSI: 0000000000000001 RDI: ffffea0007b489c0
+[  388.073607] RBP: ffffc90004d7fd58 R08: 0000000000000003 R09: ffffea0007b489dc
+[  388.074619] R10: 0000000000000000 R11: 0052782ab317138d R12: 0000000000000018
+[  388.075625] R13: 0000000000000018 R14: ffff880211ceb000 R15: ffff880211ceb000
+[  388.076687] FS:  0000000000000000(0000) GS:ffff880214fc0000(0000) knlGS:0000000000000000
+[  388.083277] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  388.084536] CR2: 0000000000e18c60 CR3: 00000001ecf2e000 CR4: 00000000001406e0
+[  388.085748] Call Trace:
+[  388.086690]  ? find_next_bit+0xb/0x10
+[  388.088091]  f2fs_gc+0x1a8/0x9d0 [f2fs]
+[  388.088888]  ? lock_timer_base+0x7d/0xa0
+[  388.090213]  ? try_to_del_timer_sync+0x44/0x60
+[  388.091698]  gc_thread_func+0x342/0x4b0 [f2fs]
+[  388.092892]  ? wait_woken+0x80/0x80
+[  388.094098]  kthread+0x109/0x140
+[  388.095010]  ? f2fs_gc+0x9d0/0x9d0 [f2fs]
+[  388.096043]  ? kthread_park+0x60/0x60
+[  388.097281]  ret_from_fork+0x25/0x30
+[  388.098401] Code: ff ff 48 83 e8 01 48 89 44 24 58 e9 27 f8 ff ff 48 83 e8 01 e9 78 fc ff ff 48 8d 78 ff e9 17 fb ff ff 48 83 ef 01 e9 4d f4 ff ff <0f> 0b 66 0f 1f 44 00 00 0f 1f 44 00 00 55 48 89 e5 41 56 41 55
+[  388.100864] RIP: do_garbage_collect+0xcc8/0xcd0 [f2fs] RSP: ffffc90004d7fc68
+[  388.101810] ---[ end trace 81c73d6e6b7da61d ]---
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/f2fs/gc.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -877,7 +877,13 @@ static int do_garbage_collect(struct f2f
+ 			goto next;
+ 
+ 		sum = page_address(sum_page);
+-		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
++		if (type != GET_SUM_TYPE((&sum->footer))) {
++			f2fs_msg(sbi->sb, KERN_ERR, "Inconsistent segment (%u) "
++				"type [%d, %d] in SSA and SIT",
++				segno, type, GET_SUM_TYPE((&sum->footer)));
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			goto next;
++		}
+ 
+ 		/*
+ 		 * this is to avoid deadlock:
+
 
