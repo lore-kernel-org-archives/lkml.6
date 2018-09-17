@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A075EECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14249ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B9E2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B9E2146D
+	by mail.kernel.org (Postfix) with ESMTP id C9E84214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:14:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E84214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732993AbeIREoC (ORCPT
+        id S1733004AbeIREoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:44:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51194 "EHLO
+        Tue, 18 Sep 2018 00:44:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51206 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728925AbeIREoB (ORCPT
+        with ESMTP id S1728925AbeIREoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:44:01 -0400
+        Tue, 18 Sep 2018 00:44:05 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F743C9D;
-        Mon, 17 Sep 2018 23:14:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 529E0C49;
+        Mon, 17 Sep 2018 23:14:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Michael Ira Krufky <mkrufky@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 141/158] media: em28xx: Fix DualHD disconnect oops
-Date:   Tue, 18 Sep 2018 00:42:51 +0200
-Message-Id: <20180917211717.644985923@linuxfoundation.org>
+Subject: [PATCH 4.18 142/158] f2fs: avoid potential deadlock in f2fs_sbi_store
+Date:   Tue, 18 Sep 2018 00:42:52 +0200
+Message-Id: <20180917211717.685282408@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,93 +52,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 20cdcaf903298d54b834daedf65a2ddef70cae0a ]
+[ Upstream commit a1933c09ef84c2fd187e05b560ddc6e1267d6508 ]
 
-During the duplication of em28xx state for the second tuner pair
-a pointer to alt_max_pkt_size_isoc is copied. During tear down
-the second tuner is destroyed first and kfrees alt_max_pkt_size_isoc,
-then the first tuner is destroyed and kfrees it again. The property
-should only be kfree'd if the tuner is PRIMARY_TS.
+[  155.018460] ======================================================
+[  155.021431] WARNING: possible circular locking dependency detected
+[  155.024339] 4.18.0-rc3+ #5 Tainted: G           OE
+[  155.026879] ------------------------------------------------------
+[  155.029783] umount/2901 is trying to acquire lock:
+[  155.032187] 00000000c4282f1f (kn->count#130){++++}, at: kernfs_remove+0x1f/0x30
+[  155.035439]
+[  155.035439] but task is already holding lock:
+[  155.038892] 0000000056e4307b (&type->s_umount_key#41){++++}, at: deactivate_super+0x33/0x50
+[  155.042602]
+[  155.042602] which lock already depends on the new lock.
+[  155.042602]
+[  155.047465]
+[  155.047465] the existing dependency chain (in reverse order) is:
+[  155.051354]
+[  155.051354] -> #1 (&type->s_umount_key#41){++++}:
+[  155.054768]        f2fs_sbi_store+0x61/0x460 [f2fs]
+[  155.057083]        kernfs_fop_write+0x113/0x1a0
+[  155.059277]        __vfs_write+0x36/0x180
+[  155.061250]        vfs_write+0xbe/0x1b0
+[  155.063179]        ksys_write+0x55/0xc0
+[  155.065068]        do_syscall_64+0x60/0x1b0
+[  155.067071]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  155.069529]
+[  155.069529] -> #0 (kn->count#130){++++}:
+[  155.072421]        __kernfs_remove+0x26f/0x2e0
+[  155.074452]        kernfs_remove+0x1f/0x30
+[  155.076342]        kobject_del.part.5+0xe/0x40
+[  155.078354]        f2fs_put_super+0x12d/0x290 [f2fs]
+[  155.080500]        generic_shutdown_super+0x6c/0x110
+[  155.082655]        kill_block_super+0x21/0x50
+[  155.084634]        kill_f2fs_super+0x9c/0xc0 [f2fs]
+[  155.086726]        deactivate_locked_super+0x3f/0x70
+[  155.088826]        cleanup_mnt+0x3b/0x70
+[  155.090584]        task_work_run+0x93/0xc0
+[  155.092367]        exit_to_usermode_loop+0xf0/0x100
+[  155.094466]        do_syscall_64+0x162/0x1b0
+[  155.096312]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  155.098603]
+[  155.098603] other info that might help us debug this:
+[  155.098603]
+[  155.102418]  Possible unsafe locking scenario:
+[  155.102418]
+[  155.105134]        CPU0                    CPU1
+[  155.107037]        ----                    ----
+[  155.108910]   lock(&type->s_umount_key#41);
+[  155.110674]                                lock(kn->count#130);
+[  155.113010]                                lock(&type->s_umount_key#41);
+[  155.115608]   lock(kn->count#130);
 
-[  354.888560] ------------[ cut here ]------------
-[  354.888562] kernel BUG at mm/slub.c:296!
-[  354.888574] invalid opcode: 0000 [#1] SMP NOPTI
-[  354.888869] CPU: 1 PID: 19 Comm: kworker/1:0 Not tainted 4.18.0-rc1+ #20
-[  354.889140] Hardware name: MSI MS-7A39/B350M GAMING PRO (MS-7A39), BIOS 2.G0 04/27/2018
-[  354.889408] Workqueue: usb_hub_wq hub_event
-[  354.889679] RIP: 0010:__slab_free+0x217/0x370
-[  354.889942] Code: bb c0 e8 07 41 38 c7 72 39 48 83 c4 70 5b 41 5a 41 5c 41 5d 41 5e 41 5f 5d 49 8d 62 f8 c3 f3 90 49 8b 04 24 a8 01 75 f6 eb 82 <0f> 0b 44 89 45 80 48 89 4d 88 e8 aa fa ff ff 85 c0 74 cc e9 b7 fe
-[  354.890598] RSP: 0018:ffffb84c41a4fad0 EFLAGS: 00010246
-[  354.890934] RAX: ffff948646e85150 RBX: ffff948646e85150 RCX: ffff948646e85150
-[  354.891280] RDX: 00000000820001d9 RSI: fffffa8fd01ba140 RDI: ffff94865e807c00
-[  354.891649] RBP: ffffb84c41a4fb70 R08: 0000000000000001 R09: ffffffffc059ce21
-[  354.892025] R10: ffff948646e85150 R11: 0000000000000001 R12: fffffa8fd01ba140
-[  354.892403] R13: ffff948646e85150 R14: ffff94865e807c00 R15: ffff94864c92e0a0
-[  354.892780] FS:  0000000000000000(0000) GS:ffff94865ec40000(0000) knlGS:0000000000000000
-[  354.893150] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  354.893530] CR2: 00007f4e476da950 CR3: 000000040112c000 CR4: 00000000003406e0
-[  354.893917] Call Trace:
-[  354.894315]  ? __dev_printk+0x3c/0x80
-[  354.894695]  ? _dev_info+0x64/0x80
-[  354.895082]  ? em28xx_free_device+0x41/0x50 [em28xx]
-[  354.895464]  kfree+0x17a/0x190
-[  354.895852]  ? kfree+0x17a/0x190
-[  354.896310]  em28xx_free_device+0x41/0x50 [em28xx]
-[  354.896698]  em28xx_usb_disconnect+0xfa/0x110 [em28xx]
-[  354.897083]  usb_unbind_interface+0x7a/0x270
-[  354.897475]  device_release_driver_internal+0x17c/0x250
-[  354.897864]  device_release_driver+0x12/0x20
-[  354.898252]  bus_remove_device+0xec/0x160
-[  354.898639]  device_del+0x13d/0x320
-[  354.899018]  ? usb_remove_ep_devs+0x1f/0x30
-[  354.899392]  usb_disable_device+0x9e/0x270
-[  354.899772]  usb_disconnect+0x92/0x2a0
-[  354.900149]  hub_event+0x98e/0x1650
-[  354.900519]  ? sched_clock_cpu+0x11/0xa0
-[  354.900890]  process_one_work+0x167/0x3f0
-[  354.901251]  worker_thread+0x4d/0x460
-[  354.901610]  kthread+0x105/0x140
-[  354.901964]  ? rescuer_thread+0x360/0x360
-[  354.902318]  ? kthread_associate_blkcg+0xa0/0xa0
-[  354.902672]  ret_from_fork+0x22/0x40
-[  354.903024] Modules linked in: rc_hauppauge em28xx_rc rc_core si2157 lgdt3306a i2c_mux em28xx_dvb dvb_core videobuf2_vmalloc videobuf2_memops videobuf2_common snd_hda_codec_hdmi nls_iso8859_1 edac_mce_amd kvm crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi aesni_intel snd_seq_midi_event aes_x86_64 snd_rawmidi crypto_simd em28xx cryptd glue_helper asix tveeprom usbnet snd_seq v4l2_common mii videodev snd_seq_device media input_leds snd_timer joydev ccp k10temp wmi_bmof snd soundcore mac_hid sch_fq_codel parport_pc ppdev lp parport ip_tables x_tables vfio_pci vfio_virqfd irqbypass vfio_iommu_type1 vfio nouveau mxm_wmi video i2c_algo_bit ttm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops i2c_piix4 drm ahci libahci
-[  354.905129]  wmi gpio_amdpt gpio_generic hid_generic usbhid hid
-[  354.908140] ---[ end trace c230d02716298c34 ]---
-[  354.908145] RIP: 0010:__slab_free+0x217/0x370
-[  354.908147] Code: bb c0 e8 07 41 38 c7 72 39 48 83 c4 70 5b 41 5a 41 5c 41 5d 41 5e 41 5f 5d 49 8d 62 f8 c3 f3 90 49 8b 04 24 a8 01 75 f6 eb 82 <0f> 0b 44 89 45 80 48 89 4d 88 e8 aa fa ff ff 85 c0 74 cc e9 b7 fe
-[  354.908183] RSP: 0018:ffffb84c41a4fad0 EFLAGS: 00010246
-[  354.908186] RAX: ffff948646e85150 RBX: ffff948646e85150 RCX: ffff948646e85150
-[  354.908189] RDX: 00000000820001d9 RSI: fffffa8fd01ba140 RDI: ffff94865e807c00
-[  354.908191] RBP: ffffb84c41a4fb70 R08: 0000000000000001 R09: ffffffffc059ce21
-[  354.908193] R10: ffff948646e85150 R11: 0000000000000001 R12: fffffa8fd01ba140
-[  354.908195] R13: ffff948646e85150 R14: ffff94865e807c00 R15: ffff94864c92e0a0
-[  354.908198] FS:  0000000000000000(0000) GS:ffff94865ec40000(0000) knlGS:0000000000000000
-[  354.908201] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  354.908203] CR2: 00007f4e476da950 CR3: 000000016b20a000 CR4: 00000000003406e0
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Michael Ira Krufky <mkrufky@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/em28xx/em28xx-cards.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/sysfs.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-cards.c
-+++ b/drivers/media/usb/em28xx/em28xx-cards.c
-@@ -3376,7 +3376,9 @@ void em28xx_free_device(struct kref *ref
- 	if (!dev->disconnected)
- 		em28xx_release_resources(dev);
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -287,8 +287,10 @@ static ssize_t f2fs_sbi_store(struct f2f
+ 	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
+ 					a->struct_type == GC_THREAD);
  
--	kfree(dev->alt_max_pkt_size_isoc);
-+	if (dev->ts == PRIMARY_TS)
-+		kfree(dev->alt_max_pkt_size_isoc);
-+
- 	kfree(dev);
- }
- EXPORT_SYMBOL_GPL(em28xx_free_device);
+-	if (gc_entry)
+-		down_read(&sbi->sb->s_umount);
++	if (gc_entry) {
++		if (!down_read_trylock(&sbi->sb->s_umount))
++			return -EAGAIN;
++	}
+ 	ret = __sbi_store(a, sbi, buf, count);
+ 	if (gc_entry)
+ 		up_read(&sbi->sb->s_umount);
 
 
