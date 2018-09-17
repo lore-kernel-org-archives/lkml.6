@@ -2,86 +2,109 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AFFECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4F8ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6374F2088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:55:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W7LjctBA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6374F2088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4376B2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 15:57:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4376B2088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeIQVXy (ORCPT
+        id S1728186AbeIQVZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 17:23:54 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46973 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbeIQVXy (ORCPT
+        Mon, 17 Sep 2018 17:25:54 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44081 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbeIQVZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 17:23:54 -0400
-Received: by mail-io1-f68.google.com with SMTP id y12-v6so11849490ioj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 08:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rfuZKy81n9rWCLRCSZWeJXli7aIUYtbRaihXaoimp8c=;
-        b=W7LjctBAj6w6kb038IwvP42j+6nGkfXQyQZMiQZ5Bw23DBN+RlXKAKcBkn7l917/QX
-         Q1KF9xDiIVYUS3h5g5KnN+RvYwnOaV3WWsocG9St2Pqz1LOSqeCmJc4tim1bmZSa8i01
-         lbDRyY6TfSGDzeOyhymjQ7mp+E7ZsndVYjTbw=
+        Mon, 17 Sep 2018 17:25:54 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s10-v6so13324663edb.11;
+        Mon, 17 Sep 2018 08:57:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rfuZKy81n9rWCLRCSZWeJXli7aIUYtbRaihXaoimp8c=;
-        b=kPsyJ1wOCgGYAr+oPuQvJUcf/uflpi+R7RcBWGkU0/vnBFw8P272UZYAhJPEN/zZJ4
-         5FYUpIZbHStrbDkH0rjaCXYiEfEKwU+VVsLkh3K/Sv3+WnYrV1bkR/fUNHyXYdjtz9ph
-         sqbKlKLlfW4ghrRAUOoZKTDXcsJBDO+Vm6JPmCs425SVpHODP6p0pdmdAIzrd0/Ahe35
-         I0p3Hbq0a7TWK+noQ6dRbzdVM38e2c53gzD8XNZu2wxCnoX1PAtG/Y0KI4HKiYKeFiwB
-         Gh/87+mTW3ioOe99mvLsBj1YFny0jZd2sm1CmcR5GIkwWLeuY/QXDvRRB7kTDivHpcBq
-         h6Lg==
-X-Gm-Message-State: APzg51AZ/7pEr5SZW+r5WlW4QdexI+xIn0CDbG6HX8cZA1s3DQK2UiAW
-        SdBhlsdCoK31+Xrns3Wk6l7lbsB35kWmOT1Lp+FZIw==
-X-Google-Smtp-Source: ANB0Vdbk7C3nLKGPnBy+6BfLiunYY1aIJaBSk1ngsNBXSeQUHm5EvePEOrxKVDQgIp2d+LZ0yAkFMAwARC3Wg3xQJUM=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr21093287iof.304.1537199756747;
- Mon, 17 Sep 2018 08:55:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=daFVwhPYBGLcjCqqVG2rfioaWFKkqTf3dToL7Iu9tyU=;
+        b=JChuBEWACm1tAKuJQW7pgiiWNtmCfI7CEL//3w/1To1yKt9VYFZ3SZ7VbDOzZGe053
+         eFMNnS3YYtDhP8qJBA9ME6dppZT3/WmiT9vahqaYMHa7ZAtecbNyEAk8tU9ZwZ34KVh2
+         ViFDOAEqPgIaS0EqnGcct2JOOzW7AVw7o1y3o2lviE0WFd8cGb0wJetJ+BG2jO8TvhjH
+         bG6FjDlFJ/oUaCwH/vJlX/n9FxEIsB2u4xpGx+wnPNl/NaJ3pOg1QV+9Ovqqwfkt5P14
+         0rCABnG4tEHYQrUiceyFusmwyVIRNlTeo7pZgNWos6LCewokiXG3Jeqz3nDQF5AVA3PO
+         Bx8w==
+X-Gm-Message-State: APzg51C3rVzHafJFdace8qZTAgPwAAz1StIHyvxsOjL60SuLoI/+t9nU
+        mbpu6HtxwGmDT6SscgHXKdc=
+X-Google-Smtp-Source: ANB0VdbWlyh2nEPKkWqGYBgn+bNVSijsZJX+PlZwZBP1ye+6d71wsKMwGvFBOwNuX2rEQXDcidfU8Q==
+X-Received: by 2002:a50:ca83:: with SMTP id x3-v6mr41884140edh.287.1537199874436;
+        Mon, 17 Sep 2018 08:57:54 -0700 (PDT)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id o22-v6sm14466271edc.90.2018.09.17.08.57.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Sep 2018 08:57:53 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 17:57:49 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
+ as unstable
+Message-ID: <20180917155749.i6jx7k4vo32y56kd@kozik-lap>
+References: <20180830180205.18121-1-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20180913133704.15739-1-ricardo.ribalda@gmail.com>
- <CACRpkdYgC7Z79c3swKE=ZwEUfVTC+oijKOqo5HwVdXLOsTT8Mg@mail.gmail.com> <CAPybu_3aaCyw9e4FJpu2r7QbGUVzDrjPmfo4oSue1Ncu0jkLGQ@mail.gmail.com>
-In-Reply-To: <CAPybu_3aaCyw9e4FJpu2r7QbGUVzDrjPmfo4oSue1Ncu0jkLGQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 17 Sep 2018 08:55:42 -0700
-Message-ID: <CACRpkdaY2T_MEDERnAhDfmYfhzdjpSx6x+K+r9X=krpAnR3TCA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Free the last requested descriptor
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180830180205.18121-1-krzk@kernel.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 3:14 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+On Thu, Aug 30, 2018 at 08:02:05PM +0200, Krzysztof Kozlowski wrote:
+> Samsung Exynos SoCs and boards related bindings evolved since the initial
+> introduction, but initially the bindings were minimal and a bit incomplete
+> (they never described all the hardware modules available in the SoCs).
+> Since then some significant (not fully compatible) changes have been
+> already committed a few times (like gpio replaced by pinctrl, display ddc,
+> mfc reserved memory, some core clocks added to various hardware modules,
+> added more required nodes).
+> 
+> On the other side there are no boards which have device tree embedded in
+> the bootloader. Device tree blob is always compiled from the kernel tree
+> and updated together with the kernel image.
+> 
+> Thus to avoid further adding a bunch of workarounds for old/missing
+> bindings, make development of new platforms easier and allow to make
+> cleanup of the existing code and device tree files, lets mark some
+> Samsung Exynos SoC platform bindings as unstable. This means that
+> bindings can may change at any time and users should use the dtb file
+> compiled from the same kernel source tree as the kernel image.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> [krzk: Explicitly list unstable bindings instead of marking entire
+> Exynos]
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
 
-> Just a heads-up
->
-> I haven't seem the patch on your kernel tree at
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/refs/heads
->
-> it is probably on your computer tree, but I wanted to make sure the
-> patch is not lost in the wind :P
+Applied.
 
-I was just travelling, it's in there now and pushed for next!
+Best regards,
+Krzysztof
 
-Yours,
-Linus Walleij
