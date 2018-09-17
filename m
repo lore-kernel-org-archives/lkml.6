@@ -3,38 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F23FECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFCFECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9E22088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9E22088F
+	by mail.kernel.org (Postfix) with ESMTP id 1A14F2088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A14F2088F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbeIREVb (ORCPT
+        id S1729306AbeIREVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:21:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45216 "EHLO
+        Tue, 18 Sep 2018 00:21:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIREVa (ORCPT
+        with ESMTP id S1726275AbeIREVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:21:30 -0400
+        Tue, 18 Sep 2018 00:21:34 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 873EDCB2;
-        Mon, 17 Sep 2018 22:52:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B09BDCAC;
+        Mon, 17 Sep 2018 22:52:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kbuild test robot <lkp@intel.com>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.4 47/56] vmw_balloon: include asm/io.h
-Date:   Tue, 18 Sep 2018 00:42:20 +0200
-Message-Id: <20180917213829.869753480@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Greg Hackmann <ghackmann@google.com>
+Subject: [PATCH 4.4 48/56] netfilter: x_tables: avoid stack-out-of-bounds read in xt_copy_counters_from_user
+Date:   Tue, 18 Sep 2018 00:42:21 +0200
+Message-Id: <20180917213829.913321616@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917213827.913122591@linuxfoundation.org>
 References: <20180917213827.913122591@linuxfoundation.org>
@@ -52,29 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Eric Dumazet <edumazet@google.com>
 
-Fix a build error due to missing virt_to_phys()
+commit e466af75c074e76107ae1cd5a2823e9c61894ffb upstream.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Fixes: f0a1bf29d821b ("vmw_balloon: fix inflation with batching")
-Cc: stable@vger.kernel.org
-Cc: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+syzkaller reports an out of bound read in strlcpy(), triggered
+by xt_copy_counters_from_user()
+
+Fix this by using memcpy(), then forcing a zero byte at the last position
+of the destination, as Florian did for the non COMPAT code.
+
+Fixes: d7591f0c41ce ("netfilter: x_tables: introduce and use xt_copy_counters_from_user")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Willem de Bruijn <willemb@google.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/misc/vmw_balloon.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -45,6 +45,7 @@
- #include <linux/seq_file.h>
- #include <linux/vmw_vmci_defs.h>
- #include <linux/vmw_vmci_api.h>
-+#include <linux/io.h>
- #include <asm/hypervisor.h>
+---
+ net/netfilter/x_tables.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -876,7 +876,7 @@ void *xt_copy_counters_from_user(const v
+ 		if (copy_from_user(&compat_tmp, user, sizeof(compat_tmp)) != 0)
+ 			return ERR_PTR(-EFAULT);
  
- MODULE_AUTHOR("VMware, Inc.");
+-		strlcpy(info->name, compat_tmp.name, sizeof(info->name));
++		memcpy(info->name, compat_tmp.name, sizeof(info->name) - 1);
+ 		info->num_counters = compat_tmp.num_counters;
+ 		user += sizeof(compat_tmp);
+ 	} else
+@@ -889,9 +889,9 @@ void *xt_copy_counters_from_user(const v
+ 		if (copy_from_user(info, user, sizeof(*info)) != 0)
+ 			return ERR_PTR(-EFAULT);
+ 
+-		info->name[sizeof(info->name) - 1] = '\0';
+ 		user += sizeof(*info);
+ 	}
++	info->name[sizeof(info->name) - 1] = '\0';
+ 
+ 	size = sizeof(struct xt_counters);
+ 	size *= info->num_counters;
 
 
