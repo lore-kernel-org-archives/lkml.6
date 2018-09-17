@@ -2,209 +2,156 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B20ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 01:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C85ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 01:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A2702147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 01:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2702147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AF2BD2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 01:44:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EdRnIwwK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2BD2147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeIQHHz (ORCPT
+        id S1728188AbeIQHJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 03:07:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56644 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeIQHHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 03:07:54 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EC621308212D;
-        Mon, 17 Sep 2018 01:42:52 +0000 (UTC)
-Received: from redhat.com (ovpn-121-3.rdu2.redhat.com [10.10.121.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8874530912F4;
-        Mon, 17 Sep 2018 01:42:46 +0000 (UTC)
-Date:   Sun, 16 Sep 2018 21:42:44 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <nek.in.cn@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180917014244.GA27596@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180903005204.26041-1-nek.in.cn@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 17 Sep 2018 01:42:53 +0000 (UTC)
+        Mon, 17 Sep 2018 03:09:37 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45717 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbeIQHJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 03:09:36 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x26-v6so6849516pge.12
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Sep 2018 18:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=3Za/D6q5EE8j4Je9C2TsJ4Mq0pq4Urup0pyYfH1BTl4=;
+        b=EdRnIwwKuB78Br0QgzgmjIXcBp0LliB+RoEH9RgvdoT5KWM90yfcBkXDYNb1ALSKmJ
+         aHdgbmCdSYmI+qu1cPFHoxipEuNTTwQ0kmvdfuxh+SN+TTlRTK/9FhUGNugwD/kTue5B
+         FC3/0i7srADRGP+fZSRrMSql+rFwSHlJRUcy4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3Za/D6q5EE8j4Je9C2TsJ4Mq0pq4Urup0pyYfH1BTl4=;
+        b=OPUuzB9WFGjpCuY3MAQbtIKYAkPikeK4F9CR+NK8N3mLRejT8663O/slcmXIIaAF1l
+         JmqQYjTMRzQ/2Io8zXanIW8jOh26lnAYA7UopIiAGVzEVajxTFjKKzPn1lJjY4z+kOE2
+         QuF1j7qYz7e198ka7jzy7zu6/c27fcNgtuCQaz/s0q2Ha8eBV5ACiF3YO6ZBejzn29gQ
+         uhVPhFTW/K/rIXrdg0od/8xAxi5IR7BOLhrKH2fsrMMNyO6VRJgfybe8y29Uz7an6ZMr
+         7Sfv+ftxjOs4ps4BKkz55FTWt8EwOkuz07BiqjWoFFczdl4AwI/aJnOosQkH0idajcp5
+         DNVQ==
+X-Gm-Message-State: APzg51Acked56LkY+eh4tkSNeDKKy1nqzGYvrX6qD+LtaNhBokyTAcfI
+        9gH3qao7l35gfKIQw2kHDfM45OTFPw0=
+X-Google-Smtp-Source: ANB0VdbRpZj4Aw4nJZ2TDbdhiANHiiMoHo97L82V2KePw9saPMd614GwDsO+sIP3D+vpbdKC9updvw==
+X-Received: by 2002:a63:bd41:: with SMTP id d1-v6mr21588431pgp.309.1537148674258;
+        Sun, 16 Sep 2018 18:44:34 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm25606256pgh.60.2018.09.16.18.44.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 16 Sep 2018 18:44:33 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     Wei Li <liwei213@huawei.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [RFC][PATCH] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
+Date:   Sun, 16 Sep 2018 18:44:25 -0700
+Message-Id: <1537148665-30592-1-git-send-email-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So i want to summarize issues i have as this threads have dig deep into
-details. For this i would like to differentiate two cases first the easy
-one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-In both cases your objectives as i understand them:
+From: Wei Li <liwei213@huawei.com>
 
-[R1]- expose a common user space API that make it easy to share boiler
-      plate code accross many devices (discovering devices, opening
-      device, creating context, creating command queue ...).
-[R2]- try to share the device as much as possible up to device limits
-      (number of independant queues the device has)
-[R3]- minimize syscall by allowing user space to directly schedule on the
-      device queue without a round trip to the kernel
+Hynix ufs has deviations on hi36xx platform which will result in
+ufs bursts transfer failures.
 
-I don't think i missed any.
+To fix the problem, the Hynix device must set the register
+VS_DebugSaveConfigTime to 0x10, which will set time reference
+for SaveConfigTime is 250 ns. The time reference for SaveConfigTime
+is 40 ns by default.
 
+Feedback would be greatly appreciated!
 
-(1) Device with SVA/SVM
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Wei Li <liwei213@huawei.com>
+Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+[jstultz: Forward ported from older code, slight tweak to commit message]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+ drivers/scsi/ufs/ufs-hisi.c   | 9 +++++++++
+ drivers/scsi/ufs/ufs_quirks.h | 6 ++++++
+ drivers/scsi/ufs/ufshcd.c     | 2 ++
+ 3 files changed, 17 insertions(+)
 
-For that case it is easy, you do not need to be in VFIO or part of any
-thing specific in the kernel. There is no security risk (modulo bug in
-the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-to a device is just couple dozen lines of code.
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 46df707..452e19f 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -20,6 +20,7 @@
+ #include "unipro.h"
+ #include "ufs-hisi.h"
+ #include "ufshci.h"
++#include "ufs_quirks.h"
+ 
+ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
+ {
+@@ -390,6 +391,14 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
+ 
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ {
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
++		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
++		/* VS_DebugSaveConfigTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
++		/* sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
++	}
++
+ 	/* update */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
+ 	/* PA_TxSkip */
+diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
+index 71f73d1..5d2dfdb 100644
+--- a/drivers/scsi/ufs/ufs_quirks.h
++++ b/drivers/scsi/ufs/ufs_quirks.h
+@@ -131,4 +131,10 @@ struct ufs_dev_fix {
+  */
+ #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
+ 
++/*
++ * Some UFS devices require VS_DebugSaveConfigTime is 0x10,
++ * enabling this quirk ensure this.
++ */
++#define UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME	(1 << 9)
++
+ #endif /* UFS_QUIRKS_H_ */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 9d5d2ca..3389e36 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -230,6 +230,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
+ 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
++	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
++		UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
+ 
+ 	END_FIX
+ };
+-- 
+2.7.4
 
-
-(2) Device does not have SVA/SVM (or it is disabled)
-
-You want to still allow device to be part of your framework. However
-here i see fundamentals securities issues and you move the burden of
-being careful to user space which i think is a bad idea. We should
-never trus the userspace from kernel space.
-
-To keep the same API for the user space code you want a 1:1 mapping
-between device physical address and process virtual address (ie if
-device access device physical address A it is accessing the same
-memory as what is backing the virtual address A in the process.
-
-Security issues are on two things:
-[I1]- fork/exec, a process who opened any such device and created an
-      active queue can transfer without its knowledge control of its
-      commands queue through COW. The parent map some anonymous region
-      to the device as a command queue buffer but because of COW the
-      parent can be the first to copy on write and thus the child can
-      inherit the original pages that are mapped to the hardware.
-      Here parent lose control and child gain it.
-
-[I2]- Because of [R3] you want to allow userspace to schedule commands
-      on the device without doing an ioctl and thus here user space
-      can schedule any commands to the device with any address. What
-      happens if that address have not been mapped by the user space
-      is undefined and in fact can not be defined as what each IOMMU
-      does on invalid address access is different from IOMMU to IOMMU.
-
-      In case of a bad IOMMU, or simply an IOMMU improperly setup by
-      the kernel, this can potentialy allow user space to DMA anywhere.
-
-[I3]- By relying on GUP in VFIO you are not abiding by the implicit
-      contract (at least i hope it is implicit) that you should not
-      try to map to the device any file backed vma (private or share).
-
-      The VFIO code never check the vma controlling the addresses that
-      are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
-      user space can provide file backed range.
-
-      I am guessing that the VFIO code never had any issues because its
-      number one user is QEMU and QEMU never does that (and that's good
-      as no one should ever do that).
-
-      So if process does that you are opening your self to serious file
-      system corruption (depending on file system this can lead to total
-      data loss for the filesystem).
-
-      Issue is that once you GUP you never abide to file system flushing
-      which write protect the page before writing to the disk. So
-      because the page is still map with write permission to the device
-      (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
-      write to the page while it is in the middle of being written back
-      to disk. Consult your nearest file system specialist to ask him
-      how bad that can be.
-
-[I4]- Design issue, mdev design As Far As I Understand It is about
-      sharing a single device to multiple clients (most obvious case
-      here is again QEMU guest). But you are going against that model,
-      in fact AFAIUI you are doing the exect opposite. When there is
-      no SVA/SVM you want only one mdev device that can not be share.
-
-      So this is counter intuitive to the mdev existing design. It is
-      not about sharing device among multiple users but about giving
-      exclusive access to the device to one user.
-
-
-
-All the reasons above is why i believe a different model would serve
-you and your user better. Below is a design that avoids all of the
-above issues and still delivers all of your objectives with the
-exceptions of the third one [R3] when there is no SVA/SVM.
-
-
-Create a subsystem (very much boiler plate code) which allow device to
-register themself against (very much like what you do in your current
-patchset but outside of VFIO).
-
-That subsystem will create a device file for each registered system and
-expose a common API (ie set of ioctl) for each of those device files.
-
-When user space create a queue (through an ioctl after opening the device
-file) the kernel can return -EBUSY if all the device queue are in use,
-or create a device queue and return a flag like SYNC_ONLY for device that
-do not have SVA/SVM.
-
-For device with SVA/SVM at the time the process create a queue you bind
-the process PASID to the device queue. From there on the userspace can
-schedule commands and use the device without going to kernel space.
-
-For device without SVA/SVM you create a fake queue that is just pure
-memory is not related to the device. From there on the userspace must
-call an ioctl every time it wants the device to consume its queue
-(hence why the SYNC_ONLY flag for synchronous operation only). The
-kernel portion read the fake queue expose to user space and copy
-commands into the real hardware queue but first it properly map any
-of the process memory needed for those commands to the device and
-adjust the device physical address with the one it gets from dma_map
-API.
-
-With that model it is "easy" to listen to mmu_notifier and to abide by
-them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
-issue by only mapping a fake device queue to userspace.
-
-So yes with that models it means that every device that wish to support
-the non SVA/SVM case will have to do extra work (ie emulate its command
-queue in software in the kernel). But by doing so, you support an
-unlimited number of process on your device (ie all the process can share
-one single hardware command queues or multiple hardware queues).
-
-The big advantages i see here is that the process do not have to worry
-about doing something wrong. You are protecting yourself and your user
-from stupid mistakes.
-
-
-I hope this is useful to you.
-
-Cheers,
-Jérôme
