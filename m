@@ -2,105 +2,120 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9153EECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8FCECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5B1214C5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:25:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u1yyOBdX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5B1214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E554A214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 12:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E554A214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeIQRw4 (ORCPT
+        id S1728517AbeIQRyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 13:52:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37428 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeIQRwz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 13:52:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1jNEWI/9YA3I1o68vOITxMUbkb4Jd883mgsbBf36sUU=; b=u1yyOBdXnls2RnNTWvt+7F5Oes
-        01K3qeER++WIkEg6xm+o0wVPweYV8EWsn2GyuhPqtaygYQD7iTN283M/9aNP7H1qekaCra0nYyqG9
-        WrL95aMLFmqdLIl350RP4s4dYkKvlHlKpamCrHRLzygI/hdAQaSkbrKoc30d2JMrOOFmGAOUhOEMN
-        XHcK780Yuu/8GlPNDWNM3VBTkEdC+ZyJ1p7zskNrXsCLzzby3Nr5XfdgNOo+XoD0V4jEm/qi0k6qG
-        uaJWlmrxnLRsQrV9LFnk21XAetgaYYn8AH/frQKWE7VBcL/arLef6m/QcXrLZUvGZwWkC/gFGtkG0
-        2NQevgwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g1sax-0003eE-LJ; Mon, 17 Sep 2018 12:25:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3F64A2058A23E; Mon, 17 Sep 2018 14:25:38 +0200 (CEST)
-Date:   Mon, 17 Sep 2018 14:25:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [RFC 00/60] Coscheduling for Linux
-Message-ID: <20180917122538.GT24124@hirez.programming.kicks-ass.net>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
+        Mon, 17 Sep 2018 13:54:19 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:23471 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726826AbeIQRyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 13:54:19 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42DQNk3ndBz9ttCP;
+        Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0MYFMlEue0Tc; Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42DQNk3HRsz9ttBj;
+        Mon, 17 Sep 2018 14:27:02 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CE9F88B7A0;
+        Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 8TcXA_9GMHyX; Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9C90B8B79C;
+        Mon, 17 Sep 2018 14:27:11 +0200 (CEST)
+Subject: Re: [PATCH] powerpc: fix csum_ipv6_magic() on little endian platforms
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Xin Long <lucien.xin@gmail.com>, benh@kernel.crashing.org,
+        paulus@samba.org, jishi@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+References: <3c4cddf185438cc7200908b4f971a8e6ed7472fd.1536558233.git.christophe.leroy@c-s.fr>
+ <CADvbK_c+VVoC=tcX4z-NbX6xGHfkzzNuBXoMHFJfZdiBMzX3+w@mail.gmail.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <76289d79-0e7e-7b22-2364-0b5777f42c8b@c-s.fr>
+Date:   Mon, 17 Sep 2018 14:27:11 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CADvbK_c+VVoC=tcX4z-NbX6xGHfkzzNuBXoMHFJfZdiBMzX3+w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 06:25:44PM +0200, Jan H. Sch�nherr wrote:
+Hi Michael,
 
-> Assuming, there is a cgroup-less solution that can prevent simultaneous
-> execution of tasks on a core, when they're not supposed to. How would you
-> tell the scheduler, which tasks these are?
-
-Specifically for L1TF I hooked into/extended KVM's preempt_notifier
-registration interface, which tells us which tasks are VCPUs and to
-which VM they belong.
-
-But if we want to actually expose this to userspace, we can either do a
-prctl() or extend struct sched_attr.
-
-> >> 1. Execute parallel applications that rely on active waiting or synchronous
-> >>    execution concurrently with other applications.
-> >>
-> >>    The prime example in this class are probably virtual machines. Here,
-> >>    coscheduling is an alternative to paravirtualized spinlocks, pause loop
-> >>    exiting, and other techniques with its own set of advantages and
-> >>    disadvantages over the other approaches.
-> > 
-> > Note that in order to avoid PLE and paravirt spinlocks and paravirt
-> > tlb-invalidate you have to gang-schedule the _entire_ VM, not just SMT
-> > siblings.
-> > 
-> > Now explain to me how you're going to gang-schedule a VM with a good
-> > number of vCPU threads (say spanning a number of nodes) and preserving
-> > the rest of CFS without it turning into a massive trainwreck?
+Le 10/09/2018 à 16:28, Xin Long a écrit :
+> On Mon, Sep 10, 2018 at 2:09 PM Christophe Leroy
+> <christophe.leroy@c-s.fr> wrote:
+>>
+>> On little endian platforms, csum_ipv6_magic() keeps len and proto in
+>> CPU byte order. This generates a bad results leading to ICMPv6 packets
+>> from other hosts being dropped by powerpc64le platforms.
+>>
+>> In order to fix this, len and proto should be converted to network
+>> byte order ie bigendian byte order. However checksumming 0x12345678
+>> and 0x56341278 provide the exact same result so it is enough to
+>> rotate the sum of len and proto by 1 byte.
+>>
+>> PPC32 only support bigendian so the fix is needed for PPC64 only
+>>
+>> Fixes: e9c4943a107b ("powerpc: Implement csum_ipv6_magic in assembly")
+>> Reported-by: Jianlin Shi <jishi@redhat.com>
+>> Reported-by: Xin Long <lucien.xin@gmail.com>
+>> Cc: <stable@vger.kernel.org> # 4.18+
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   arch/powerpc/lib/checksum_64.S | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/arch/powerpc/lib/checksum_64.S b/arch/powerpc/lib/checksum_64.S
+>> index 886ed94b9c13..2a68c43e13f5 100644
+>> --- a/arch/powerpc/lib/checksum_64.S
+>> +++ b/arch/powerpc/lib/checksum_64.S
+>> @@ -443,6 +443,9 @@ _GLOBAL(csum_ipv6_magic)
+>>          addc    r0, r8, r9
+>>          ld      r10, 0(r4)
+>>          ld      r11, 8(r4)
+>> +#ifndef CONFIG_CPU_BIG_ENDIAN
+>> +       rotldi  r5, r5, 8
+>> +#endif
+>>          adde    r0, r0, r10
+>>          add     r5, r5, r7
+>>          adde    r0, r0, r11
+>> --
+>> 2.13.3
+>>
+> Tested-by: Xin Long <lucien.xin@gmail.com>
 > 
-> You probably don't -- for the same reason, why it is a bad idea to give
-> an endless loop realtime priority. It's just a bad idea. As I said in the
-> text you quoted: coscheduling comes with its own set of advantages and
-> disadvantages. Just because you find one example, where it is a bad idea,
-> doesn't make it a bad thing in general.
 
-Well, you mentioned it as an alternative to paravirt spinlocks -- I'm
-saying that co-scheduling cannot do that, you need full featured
-gang-scheduling for that.
+Could you take this fix for 4.19 ?
+
+Unless someone takes it through the netdev tree ?
+
+Thanks
+Christophe
