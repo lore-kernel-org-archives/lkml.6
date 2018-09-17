@@ -2,148 +2,131 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160F2ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE199ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE3E214DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F18214C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 18:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="hJOFE9c4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE3E214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AXvoZLmL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F18214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728290AbeIRAZk (ORCPT
+        id S1728317AbeIRA1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 20:25:40 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:41876 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727375AbeIRAZj (ORCPT
+        Mon, 17 Sep 2018 20:27:45 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:56145 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727375AbeIRA1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 20:25:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HFkPIiS3GJ6HInmMVUsTkdcwicZMxBQKnnzDZF2/Qq0=; b=hJOFE9c4g2xtyE0UBiDeCMIe+
-        uk+4TFXt3ur9UCvffioZnMqAUav3E30uO97rwS1l8UDjnQAYitQFZTOT2mox2Lx+e9+Mkw58m/KUA
-        JJ0AlEB8a38iz1VjD3nJEa8MTmwY01ETL32h674P1T96MX6IHbw11HHYl+quKmVCT1qMM=;
-Received: from pd9e2f8fa.dip0.t-ipconnect.de ([217.226.248.250] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g1yhe-0007yO-7i; Mon, 17 Sep 2018 20:56:58 +0200
-Date:   Mon, 17 Sep 2018 20:56:34 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     kishon@ti.com, lee.jones@linaro.org, daniel.thompson@linaro.org,
-        wsa@the-dreams.de, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH RESEND] phy: phy-twl4030-usb: fix denied runtime access
-Message-ID: <20180917205634.6a320cad@aktux>
-In-Reply-To: <20180917175131.GA104770@dtor-ws>
-References: <20180917052254.12336-1-andreas@kemnade.info>
-        <20180917175131.GA104770@dtor-ws>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 17 Sep 2018 20:27:44 -0400
+Received: by mail-it0-f66.google.com with SMTP id d10-v6so12632091itj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 11:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=imbl7D6svXjMEDV1aM57VNbFqhmwF/aRo2PktqskJuQ=;
+        b=AXvoZLmLgMAkSSLph5qhphHZPpuXzsVeA+LJnEioxD2i9DbxIbUMZ7oU/I7T0KAQEG
+         HWB1T5bqUEG6VEPGD8GTee4MqYcfAMZDmQMxszQ63t59biirUoMKxrO6CjKf06sp/Y29
+         31Ek95BboUhSTqFMKjwriT0NMBhJ9uZWh6ReIvNYjgx2ol0Jf65rxmWDhRCWG1KSpGDw
+         kL0TazrHkDS+H/6Qe2mUoUvzEKLIwdVDHBJ1tqpcOuZwFrqJfXvfQFN1AqhqOzHCwdod
+         W29fkyw6sKhsiW2nMQDhZQxSuMFgVI0isAvsI8NrMiWsYdFKU43eWaSd1nQfPhmE+dl3
+         J3KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=imbl7D6svXjMEDV1aM57VNbFqhmwF/aRo2PktqskJuQ=;
+        b=he4ZByf26zony/jesgLY6vS1WRJFOP6F6yZw6zmBLw8qL9gSn+huqIoYCDmVIbAHEj
+         wyHHijMZTA1//UVGD2QVeth91ByeALz3zzkkgeg6gwPbxElCMTAn7ixcaiygG6a1yT6d
+         YmIlGCbC4LPVzPPQI/n2axj7sdWgs/CcRwtmzUKJLpVrH9nznnHo8ArX8WuM2m7maGon
+         rs5dJw5RVyz4gdI60zGOjugzz4dTXGkQlcMUK9ZD1ZA2WQ3T4P9cOoKV8EqHPJ43PwS2
+         Fq/eI3aVfltyiuepVCgV21DzsPzUoaIyAhtxeJqlbAv5GpVdA3a808DQcWNIyLOVxqDy
+         5I5w==
+X-Gm-Message-State: APzg51DfW1jL1QOAT0X25fEodm8A0HZRWfKPzHiELk3Y8VrFj22DZwkW
+        1qWDjYhQ9OC7gRS4tbk2FJ5fbq3afCYDDgTqKcUNQA==
+X-Google-Smtp-Source: ANB0VdaS1EoKzdL952x3zxcMxZ9kKbrRdhvkgUNLHKzjLC0aaZXkL32ZLULEnBXIBEItyZhiP7MBWrW3iJZ02RUaX8s=
+X-Received: by 2002:a24:be8f:: with SMTP id i137-v6mr14019760itf.113.1537210746324;
+ Mon, 17 Sep 2018 11:59:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_BaF6VuUb2T=xBhucJeMtCQ"; protocol="application/pgp-signature"
+Received: by 2002:a02:c54e:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 11:59:05
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+adO3n4Nb4XOPyXdt43DbYjb=Kz6__tPTmb1CX=00qNSQ@mail.gmail.com>
+References: <cover.1535462971.git.andreyknvl@google.com> <6cd298a90d02068969713f2fd440eae21227467b.1535462971.git.andreyknvl@google.com>
+ <CACT4Y+adO3n4Nb4XOPyXdt43DbYjb=Kz6__tPTmb1CX=00qNSQ@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 17 Sep 2018 20:59:05 +0200
+Message-ID: <CAAeHK+w+Znw-t_wd29PO5B+pNegS3wqzS1mUVCmfrgdCXpavWw@mail.gmail.com>
+Subject: Re: [PATCH v6 07/18] khwasan: add tag related helper functions
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_BaF6VuUb2T=xBhucJeMtCQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 12, 2018 at 6:21 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
 
-Hi Dmitry,
+>> +void *khwasan_preset_slub_tag(struct kmem_cache *cache, const void *addr)
+>
+> Can't we do this in the existing kasan_init_slab_obj() hook? It looks
+> like it should do exactly this -- allow any one-time initialization
+> for objects. We could extend it to accept index and return a new
+> pointer.
+> If that does not work for some reason, I would try to at least unify
+> the hook for slab/slub, e.g. pass idx=-1 from slub and then use
+> random_tag().
+> It also seems that we do preset tag for slab multiple times (from
+> slab_get_obj()). Using kasan_init_slab_obj() should resolve this too
+> (hopefully we don't call it multiple times).
 
-On Mon, 17 Sep 2018 10:51:31 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> Hi Andreas,
->=20
-> On Mon, Sep 17, 2018 at 07:22:54AM +0200, Andreas Kemnade wrote:
-> > When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
-> > the counter will be incremented but the resume callback not called,
-> > so enumeration and charging will not start properly.
-> > To avoid that happen, wait and try again later.
-> >=20
-> > Practically this happens when the device is woken up from suspend by
-> > plugging in usb.
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  drivers/phy/ti/phy-twl4030-usb.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >=20
-> > diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-twl4=
-030-usb.c
-> > index a44680d64f9b..1f3cf4e48383 100644
-> > --- a/drivers/phy/ti/phy-twl4030-usb.c
-> > +++ b/drivers/phy/ti/phy-twl4030-usb.c
-> > @@ -552,6 +552,15 @@ static irqreturn_t twl4030_usb_irq(int irq, void *=
-_twl)
-> > =20
-> >  	status =3D twl4030_usb_linkstat(twl);
-> > =20
-> > +	/* we might get here too early when runtime is not ready yet
-> > +	 * and we will get an EACCESS later, so try again later
-> > +	 */ =20
->=20
-> How exactly can this happen? What disables (and later re-enables)
-> runtime PM?=20
-If the whole resume process is started by plugging in usb, the
-interrupt will be triggered still in the resume process so that=20
-runtime resume is not yet possible, pm_runtime_get_sync() returns
-EACCESS
-
-> How can we guarantee that the interrupt will be
-> re-triggered?
->=20
-The interrupt will not be re-triggered but the handler will be
-called at some other places...
-
-> > +	if (!pm_runtime_enabled(twl->dev)) {
-> > +		cancel_delayed_work(&twl->id_workaround_work);
-> > +		schedule_delayed_work(&twl->id_workaround_work, HZ);
-> > +		return IRQ_HANDLED;
-> > +	}
-> > +
-... for example by this delayed work which is already there.
-
-Regards,
-Andreas
-
---Sig_/_BaF6VuUb2T=xBhucJeMtCQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAluf+OIACgkQfb1qx03i
-kyRQxRAAp2oiba12dAqVJ0koPsr4bVmUmFxie9a7uIHvqLPGYyWKqcjqhQ26BX/d
-+SjniI1RzTuybPRP4+lp/cvl96BHVRJmSj4yMku+oE42BC4JcIX1+v3uTif9oNZ7
-io2vF/U/q1cVMLL0NCYLBBIL8K3d51SIBAeHdzD2jGWCcbTlly1zyUR/f15NdKlp
-5DJDLcfbLFWpl5zZPac3aKz51ZR6fmqCeKqDdY6vrH1TRXOJpGLiZbtCsO0oGzGj
-44wfo0g0FMOiaQ676HLlc49VFJzvArmWI0Q3EPdiyYA9fLbLq7mQwHtGF7FPNf3F
-LjShqq0VKYR4QCzTt7qF2Lw8OiVwz7PtRn8j4etwd4czdQS6MKztFZxsilN2qzi3
-GekY8iqQYqYqVPXSA25zhkSirEnWIbY6xwMkRJwQu7axfff3Y851rR3jl3M/Ef+y
-GEnkCXJIUKenOtZl5T9bqep22FBcq2YO6mHdBIjuK6tW+bYJt5yVmfyBp5lPHMd4
-HmwekF2e+XkJhcw8SJ4ELjGQbI+PQ4W4qo8Aqc2wjxXnL55tELpGSlcB53y3JLog
-MTNcoB6D837mjjd5NO4lZRTZSp8BfQcDh8jM4DEb9/cpnHon0h+zW/4DRyjjeyE5
-rdaMm1RkBPhwIAR0vvGtUYlxCot6QNycF+Lx8xIzIYJFEv4gXi4=
-=l+nW
------END PGP SIGNATURE-----
-
---Sig_/_BaF6VuUb2T=xBhucJeMtCQ--
+The issue is that SLAB stores freelist as an array of indexes instead
+of using an actual linked list like SLUB. So you can't store the tag
+in the pointer while the object is in the freelist, since there's no
+pointer. And, technically, we don't preset tags for SLAB, we just use
+the id as the tag every time a pointer is used, so perhaps we should
+rename the callback. As to unifying the callbacks, sure, we can do
+that.
