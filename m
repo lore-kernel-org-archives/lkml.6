@@ -2,71 +2,86 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3C9ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8607BECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825292088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:13:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825292088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 400272088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 13:14:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPBRAaKL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400272088F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbeIQSkv (ORCPT
+        id S1728343AbeIQSlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 14:40:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52440 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726865AbeIQSkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 14:40:51 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DAB7556A72109;
-        Mon, 17 Sep 2018 21:13:29 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Mon, 17 Sep 2018
- 21:13:24 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <akpm@linux-foundation.org>, <mgorman@techsingularity.net>,
-        <vbabka@suse.cz>, <jack@suse.cz>, <rppt@linux.vnet.ibm.com>,
-        <dan.j.williams@intel.com>, <shakeelb@google.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] mm: swap: remove duplicated include from swap.c
-Date:   Mon, 17 Sep 2018 21:13:08 +0800
-Message-ID: <20180917131308.16420-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Mon, 17 Sep 2018 14:41:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726865AbeIQSlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 14:41:22 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02D47214D5;
+        Mon, 17 Sep 2018 13:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537190045;
+        bh=wFuk1DTq3XdS8jqqRNZ7TiKnxtrStG2OBFzBPtw5lWo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gPBRAaKLk1PNJ/KRut0qwi3aad1CuFEDEGxEciTo5rDERPFC+z2Aa1BwPg1xFksgY
+         xi799XOXbPAJV1h1gqHbP2h/4vXEz2PU+v+ip5RPN/JAr1AK1tyFJgz24A1kdFAKVk
+         +PDluEruBHvQnu3AYPUF2JR/sihjcqW60iY0ckBk=
+Received: by mail-wr1-f44.google.com with SMTP id s14-v6so17254695wrw.6;
+        Mon, 17 Sep 2018 06:14:04 -0700 (PDT)
+X-Gm-Message-State: APzg51DM3xsOLv/Xowa20TzJpCSqblz/uXP3ObpKhCqyE9qJMgkvKO+X
+        ++GT3s0FYJAXtx8cqHVVZi1369FtZ+dlbGMTJgg=
+X-Google-Smtp-Source: ANB0VdbqjkAcewnHgmaGM52B29t2QLTKSmXYAoUt1QsCwtelHJR/xvVNejMgiNCJiVX0Oqo73z3FPXafbn192xa51xM=
+X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr19065687wrx.226.1537190043402;
+ Mon, 17 Sep 2018 06:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+References: <CGME20180913075859eucas1p2bba2f5ab32fea5c4f832abaacaed6c8b@eucas1p2.samsung.com>
+ <1536825522-6027-1-git-send-email-c.manszewski@samsung.com> <20180913075859eucas1p2bba2f5ab32fea5c4f832abaacaed6c8b~T5q_dx0q42420924209eucas1p2D@eucas1p2.samsung.com>
+In-Reply-To: <20180913075859eucas1p2bba2f5ab32fea5c4f832abaacaed6c8b~T5q_dx0q42420924209eucas1p2D@eucas1p2.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 17 Sep 2018 15:13:52 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPe_y7gvgAYAdewtdwhWb=bwk2ni8=_p89ps5Ge6i+pJfg@mail.gmail.com>
+Message-ID: <CAJKOXPe_y7gvgAYAdewtdwhWb=bwk2ni8=_p89ps5Ge6i+pJfg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] crypto: s5p-sss: Minor code cleanup
+To:     c.manszewski@samsung.com
+Cc:     linux-crypto@vger.kernel.org, vz@mleia.com,
+        k.konieczny@partner.samsung.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include linux/memremap.h
+Thanks Christoph for patches!
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- mm/swap.c | 1 -
- 1 file changed, 1 deletion(-)
+On Thu, 13 Sep 2018 at 09:59, Christoph Manszewski
+<c.manszewski@samsung.com> wrote:
+>
+> Modifications in s5p-sss.c:
+>
+> - remove unnecessary 'goto' statements,
+>
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 26fc9b5..87a54c8 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -29,7 +29,6 @@
- #include <linux/cpu.h>
- #include <linux/notifier.h>
- #include <linux/backing-dev.h>
--#include <linux/memremap.h>
- #include <linux/memcontrol.h>
- #include <linux/gfp.h>
- #include <linux/uio.h>
--- 
-2.7.0
+No need of empty lines here.
 
+> - change uint_8 and uint_32 to u8 and u32 types,
 
+Please add rationale for this, e.g.: "for consistency in the driver
+and making code shorter".
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
