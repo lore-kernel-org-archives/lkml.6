@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA99ECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C75ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322B92146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322B92146F
+	by mail.kernel.org (Postfix) with ESMTP id 3E15C2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E15C2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731507AbeIREhA (ORCPT
+        id S1731515AbeIREhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:37:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49762 "EHLO
+        Tue, 18 Sep 2018 00:37:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbeIREg7 (ORCPT
+        with ESMTP id S1727344AbeIREhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:36:59 -0400
+        Tue, 18 Sep 2018 00:37:02 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9E96C49;
-        Mon, 17 Sep 2018 23:07:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DB1DC49;
+        Mon, 17 Sep 2018 23:07:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 019/158] btrfs: fix qgroup_free wrong num_bytes in btrfs_subvolume_reserve_metadata
-Date:   Tue, 18 Sep 2018 00:40:49 +0200
-Message-Id: <20180917211711.708123020@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.18 002/158] i2c: i801: fix DNVs SMBCTRL register offset
+Date:   Tue, 18 Sep 2018 00:40:32 +0200
+Message-Id: <20180917211710.572864339@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -51,79 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-commit a5b7f4295eeae8b05ca91f6d145cd8773b08de9e upstream.
+commit 851a15114895c5bce163a6f2d57e0aa4658a1be4 upstream.
 
-After btrfs_qgroup_reserve_meta_prealloc(), num_bytes will be assigned
-again by btrfs_calc_trans_metadata_size(). Once block_rsv fails, we
-can't properly free the num_bytes of the previous qgroup_reserve. Use a
-separate variable to store the num_bytes of the qgroup_reserve.
+DNV's iTCO is slightly different with SMBCTRL sitting at a different
+offset when compared to all other devices. Let's fix so that we can
+properly use iTCO watchdog.
 
-Delete the comment for the qgroup_reserved that does not exist and add a
-comment about use_global_rsv.
-
-Fixes: c4c129db5da8 ("btrfs: drop unused parameter qgroup_reserved")
-CC: stable@vger.kernel.org # 4.18+
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 84d7f2ebd70d ("i2c: i801: Add support for Intel DNV")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/i2c/busses/i2c-i801.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -5935,7 +5935,7 @@ void btrfs_trans_release_chunk_metadata(
-  * root: the root of the parent directory
-  * rsv: block reservation
-  * items: the number of items that we need do reservation
-- * qgroup_reserved: used to return the reserved size in qgroup
-+ * use_global_rsv: allow fallback to the global block reservation
-  *
-  * This function is used to reserve the space for snapshot/subvolume
-  * creation and deletion. Those operations are different with the
-@@ -5945,10 +5945,10 @@ void btrfs_trans_release_chunk_metadata(
-  * the space reservation mechanism in start_transaction().
-  */
- int btrfs_subvolume_reserve_metadata(struct btrfs_root *root,
--				     struct btrfs_block_rsv *rsv,
--				     int items,
-+				     struct btrfs_block_rsv *rsv, int items,
- 				     bool use_global_rsv)
- {
-+	u64 qgroup_num_bytes = 0;
- 	u64 num_bytes;
- 	int ret;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
-@@ -5956,12 +5956,11 @@ int btrfs_subvolume_reserve_metadata(str
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -139,6 +139,7 @@
  
- 	if (test_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags)) {
- 		/* One for parent inode, two for dir entries */
--		num_bytes = 3 * fs_info->nodesize;
--		ret = btrfs_qgroup_reserve_meta_prealloc(root, num_bytes, true);
-+		qgroup_num_bytes = 3 * fs_info->nodesize;
-+		ret = btrfs_qgroup_reserve_meta_prealloc(root,
-+				qgroup_num_bytes, true);
- 		if (ret)
- 			return ret;
--	} else {
--		num_bytes = 0;
- 	}
+ #define SBREG_BAR		0x10
+ #define SBREG_SMBCTRL		0xc6000c
++#define SBREG_SMBCTRL_DNV	0xcf000c
  
- 	num_bytes = btrfs_calc_trans_metadata_size(fs_info, items);
-@@ -5973,8 +5972,8 @@ int btrfs_subvolume_reserve_metadata(str
- 	if (ret == -ENOSPC && use_global_rsv)
- 		ret = btrfs_block_rsv_migrate(global_rsv, rsv, num_bytes, 1);
+ /* Host status bits for SMBPCISTS */
+ #define SMBPCISTS_INTS		BIT(3)
+@@ -1396,7 +1397,11 @@ static void i801_add_tco(struct i801_pri
+ 	spin_unlock(&p2sb_spinlock);
  
--	if (ret && num_bytes)
--		btrfs_qgroup_free_meta_prealloc(root, num_bytes);
-+	if (ret && qgroup_num_bytes)
-+		btrfs_qgroup_free_meta_prealloc(root, qgroup_num_bytes);
+ 	res = &tco_res[ICH_RES_MEM_OFF];
+-	res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
++	if (pci_dev->device == PCI_DEVICE_ID_INTEL_DNV_SMBUS)
++		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL_DNV;
++	else
++		res->start = (resource_size_t)base64_addr + SBREG_SMBCTRL;
++
+ 	res->end = res->start + 3;
+ 	res->flags = IORESOURCE_MEM;
  
- 	return ret;
- }
 
 
