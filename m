@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3916AECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2565ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F03DF2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03DF2146F
+	by mail.kernel.org (Postfix) with ESMTP id 63BFA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:59:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63BFA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729857AbeIRE3O (ORCPT
+        id S1729868AbeIRE3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:29:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47952 "EHLO
+        Tue, 18 Sep 2018 00:29:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbeIRE3N (ORCPT
+        with ESMTP id S1727559AbeIRE3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:29:13 -0400
+        Tue, 18 Sep 2018 00:29:16 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5665BC77;
-        Mon, 17 Sep 2018 22:59:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AF43C03;
+        Mon, 17 Sep 2018 22:59:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 53/70] net: dcb: For wild-card lookups, use priority -1, not 0
-Date:   Tue, 18 Sep 2018 00:42:26 +0200
-Message-Id: <20180917211653.367933798@linuxfoundation.org>
+Subject: [PATCH 4.9 44/70] gpio: ml-ioh: Fix buffer underwrite on probe error path
+Date:   Tue, 18 Sep 2018 00:42:17 +0200
+Message-Id: <20180917211652.748078853@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -53,72 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
-[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
+[ Upstream commit 4bf4eed44bfe288f459496eaf38089502ef91a79 ]
 
-The function dcb_app_lookup walks the list of specified DCB APP entries,
-looking for one that matches a given criteria: ifindex, selector,
-protocol ID and optionally also priority. The "don't care" value for
-priority is set to 0, because that priority has not been allowed under
-CEE regime, which predates the IEEE standardization.
+If ioh_gpio_probe() fails on devm_irq_alloc_descs() then chip may point
+to any element of chip_save array, so reverse iteration from pointer chip
+may become chip_save[-1] and gpiochip_remove() will operate with wrong
+memory.
 
-Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
-considers zero a wild card, attempts to add an APP entry with priority 0
-fail when other entries exist for a given ifindex / selector / PID
-triplet.
+The patch fix the error path of ioh_gpio_probe() to correctly bypass
+chip_save array.
 
-Fix by changing the wild-card value to -1.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dcb/dcbnl.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-ml-ioh.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/dcb/dcbnl.c
-+++ b/net/dcb/dcbnl.c
-@@ -1764,7 +1764,7 @@ static struct dcb_app_type *dcb_app_look
- 		if (itr->app.selector == app->selector &&
- 		    itr->app.protocol == app->protocol &&
- 		    itr->ifindex == ifindex &&
--		    (!prio || itr->app.priority == prio))
-+		    ((prio == -1) || itr->app.priority == prio))
- 			return itr;
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -495,9 +495,10 @@ err_irq_alloc_descs:
+ 
+ 	chip = chip_save;
+ err_gpiochip_add:
++	chip = chip_save;
+ 	while (--i >= 0) {
+-		chip--;
+ 		gpiochip_remove(&chip->gpio);
++		chip++;
  	}
- 
-@@ -1799,7 +1799,8 @@ u8 dcb_getapp(struct net_device *dev, st
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio = itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
- 
-@@ -1827,7 +1828,8 @@ int dcb_setapp(struct net_device *dev, s
- 
- 	spin_lock_bh(&dcb_lock);
- 	/* Search for existing match and replace */
--	if ((itr = dcb_app_lookup(new, dev->ifindex, 0))) {
-+	itr = dcb_app_lookup(new, dev->ifindex, -1);
-+	if (itr) {
- 		if (new->priority)
- 			itr->app.priority = new->priority;
- 		else {
-@@ -1860,7 +1862,8 @@ u8 dcb_ieee_getapp_mask(struct net_devic
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio |= 1 << itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
+ 	kfree(chip_save);
  
 
 
