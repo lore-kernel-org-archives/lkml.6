@@ -2,40 +2,40 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D98ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04040ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079FA2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079FA2146F
+	by mail.kernel.org (Postfix) with ESMTP id AF6A02146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:09:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6A02146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731906AbeIREix (ORCPT
+        id S1731917AbeIREi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:38:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50092 "EHLO
+        Tue, 18 Sep 2018 00:38:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50108 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeIREiw (ORCPT
+        with ESMTP id S1729124AbeIREiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:38:52 -0400
+        Tue, 18 Sep 2018 00:38:55 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7511DC49;
-        Mon, 17 Sep 2018 23:09:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA58C49;
+        Mon, 17 Sep 2018 23:09:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Reza Arbab <arbab@linux.ibm.com>,
-        Alistair Popple <alistair@popple.id.au>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Christoph Hellwig <hch@lst.de>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 052/158] powerpc/powernv: Fix concurrency issue with npu->mmio_atsd_usage
-Date:   Tue, 18 Sep 2018 00:41:22 +0200
-Message-Id: <20180917211713.645904681@linuxfoundation.org>
+Subject: [PATCH 4.18 053/158] powerpc/4xx: Fix error return path in ppc4xx_msi_probe()
+Date:   Tue, 18 Sep 2018 00:41:23 +0200
+Message-Id: <20180917211713.689436697@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,51 +53,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Reza Arbab <arbab@linux.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 9eab9901b015f489199105c470de1ffc337cfabb ]
+[ Upstream commit 6e0495c2e8ac39b1aad0a4588fe64413ce9028c0 ]
 
-We've encountered a performance issue when multiple processors stress
-{get,put}_mmio_atsd_reg(). These functions contend for
-mmio_atsd_usage, an unsigned long used as a bitmask.
+An arbitrary error in ppc4xx_msi_probe() quite likely results in a
+crash similar to the following, seen after dma_alloc_coherent()
+returned an error.
 
-The accesses to mmio_atsd_usage are done using test_and_set_bit_lock()
-and clear_bit_unlock(). As implemented, both of these will require
-a (successful) stwcx to that same cache line.
+  Unable to handle kernel paging request for data at address 0x00000000
+  Faulting instruction address: 0xc001bff0
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  BE Canyonlands
+  Modules linked in:
+  CPU: 0 PID: 1 Comm: swapper Tainted: G        W
+  4.18.0-rc6-00010-gff33d1030a6c #1
+  NIP:  c001bff0 LR: c001c418 CTR: c01faa7c
+  REGS: cf82db40 TRAP: 0300   Tainted: G        W
+  (4.18.0-rc6-00010-gff33d1030a6c)
+  MSR:  00029000 <CE,EE,ME>  CR: 28002024  XER: 00000000
+  DEAR: 00000000 ESR: 00000000
+  GPR00: c001c418 cf82dbf0 cf828000 cf8de400 00000000 00000000 000000c4 000000c4
+  GPR08: c0481ea4 00000000 00000000 000000c4 22002024 00000000 c00025e8 00000000
+  GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 c0492380 0000004a
+  GPR24: 00029000 0000000c 00000000 cf8de410 c0494d60 c0494d60 cf8bebc0 00000001
+  NIP [c001bff0] ppc4xx_of_msi_remove+0x48/0xa0
+  LR [c001c418] ppc4xx_msi_probe+0x294/0x3b8
+  Call Trace:
+  [cf82dbf0] [00029000] 0x29000 (unreliable)
+  [cf82dc10] [c001c418] ppc4xx_msi_probe+0x294/0x3b8
+  [cf82dc70] [c0209fbc] platform_drv_probe+0x40/0x9c
+  [cf82dc90] [c0208240] driver_probe_device+0x2a8/0x350
+  [cf82dcc0] [c0206204] bus_for_each_drv+0x60/0xac
+  [cf82dcf0] [c0207e88] __device_attach+0xe8/0x160
+  [cf82dd20] [c02071e0] bus_probe_device+0xa0/0xbc
+  [cf82dd40] [c02050c8] device_add+0x404/0x5c4
+  [cf82dd90] [c0288978] of_platform_device_create_pdata+0x88/0xd8
+  [cf82ddb0] [c0288b70] of_platform_bus_create+0x134/0x220
+  [cf82de10] [c0288bcc] of_platform_bus_create+0x190/0x220
+  [cf82de70] [c0288cf4] of_platform_bus_probe+0x98/0xec
+  [cf82de90] [c0449650] __machine_initcall_canyonlands_ppc460ex_device_probe+0x38/0x54
+  [cf82dea0] [c0002404] do_one_initcall+0x40/0x188
+  [cf82df00] [c043daec] kernel_init_freeable+0x130/0x1d0
+  [cf82df30] [c0002600] kernel_init+0x18/0x104
+  [cf82df40] [c000c23c] ret_from_kernel_thread+0x14/0x1c
+  Instruction dump:
+  90010024 813d0024 2f890000 83c30058 41bd0014 48000038 813d0024 7f89f800
+  409d002c 813e000c 57ea103a 3bff0001 <7c69502e> 2f830000 419effe0 4803b26d
+  ---[ end trace 8cf551077ecfc42a ]---
 
-What we end up with is thread A, attempting to unlock, being slowed by
-other threads repeatedly attempting to lock. A's stwcx instructions
-fail and retry because the memory reservation is lost every time a
-different thread beats it to the punch.
+Fix it up. Specifically,
 
-There may be a long-term way to fix this at a larger scale, but for
-now resolve the immediate problem by gating our call to
-test_and_set_bit_lock() with one to test_bit(), which is obviously
-implemented without using a store.
+- Return valid error codes from ppc4xx_setup_pcieh_hw(), have it clean
+  up after itself, and only access hardware after all possible error
+  conditions have been handled.
+- Use devm_kzalloc() instead of kzalloc() in ppc4xx_msi_probe()
 
-Fixes: 1ab66d1fbada ("powerpc/powernv: Introduce address translation services for Nvlink2")
-Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
-Acked-by: Alistair Popple <alistair@popple.id.au>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/npu-dma.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/4xx/msi.c |   51 ++++++++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 21 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/npu-dma.c
-+++ b/arch/powerpc/platforms/powernv/npu-dma.c
-@@ -437,8 +437,9 @@ static int get_mmio_atsd_reg(struct npu
- 	int i;
+--- a/arch/powerpc/platforms/4xx/msi.c
++++ b/arch/powerpc/platforms/4xx/msi.c
+@@ -146,13 +146,19 @@ static int ppc4xx_setup_pcieh_hw(struct
+ 	const u32 *sdr_addr;
+ 	dma_addr_t msi_phys;
+ 	void *msi_virt;
++	int err;
  
- 	for (i = 0; i < npu->mmio_atsd_count; i++) {
--		if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
--			return i;
-+		if (!test_bit(i, &npu->mmio_atsd_usage))
-+			if (!test_and_set_bit_lock(i, &npu->mmio_atsd_usage))
-+				return i;
+ 	sdr_addr = of_get_property(dev->dev.of_node, "sdr-base", NULL);
+ 	if (!sdr_addr)
+-		return -1;
++		return -EINVAL;
+ 
+-	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
+-	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
++	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
++	if (!msi_data)
++		return -EINVAL;
++
++	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
++	if (!msi_mask)
++		return -EINVAL;
+ 
+ 	msi->msi_dev = of_find_node_by_name(NULL, "ppc4xx-msi");
+ 	if (!msi->msi_dev)
+@@ -160,30 +166,30 @@ static int ppc4xx_setup_pcieh_hw(struct
+ 
+ 	msi->msi_regs = of_iomap(msi->msi_dev, 0);
+ 	if (!msi->msi_regs) {
+-		dev_err(&dev->dev, "of_iomap problem failed\n");
+-		return -ENOMEM;
++		dev_err(&dev->dev, "of_iomap failed\n");
++		err = -ENOMEM;
++		goto node_put;
+ 	}
+ 	dev_dbg(&dev->dev, "PCIE-MSI: msi register mapped 0x%x 0x%x\n",
+ 		(u32) (msi->msi_regs + PEIH_TERMADH), (u32) (msi->msi_regs));
+ 
+ 	msi_virt = dma_alloc_coherent(&dev->dev, 64, &msi_phys, GFP_KERNEL);
+-	if (!msi_virt)
+-		return -ENOMEM;
++	if (!msi_virt) {
++		err = -ENOMEM;
++		goto iounmap;
++	}
+ 	msi->msi_addr_hi = upper_32_bits(msi_phys);
+ 	msi->msi_addr_lo = lower_32_bits(msi_phys & 0xffffffff);
+ 	dev_dbg(&dev->dev, "PCIE-MSI: msi address high 0x%x, low 0x%x\n",
+ 		msi->msi_addr_hi, msi->msi_addr_lo);
+ 
++	mtdcri(SDR0, *sdr_addr, upper_32_bits(res.start));	/*HIGH addr */
++	mtdcri(SDR0, *sdr_addr + 1, lower_32_bits(res.start));	/* Low addr */
++
+ 	/* Progam the Interrupt handler Termination addr registers */
+ 	out_be32(msi->msi_regs + PEIH_TERMADH, msi->msi_addr_hi);
+ 	out_be32(msi->msi_regs + PEIH_TERMADL, msi->msi_addr_lo);
+ 
+-	msi_data = of_get_property(dev->dev.of_node, "msi-data", NULL);
+-	if (!msi_data)
+-		return -1;
+-	msi_mask = of_get_property(dev->dev.of_node, "msi-mask", NULL);
+-	if (!msi_mask)
+-		return -1;
+ 	/* Program MSI Expected data and Mask bits */
+ 	out_be32(msi->msi_regs + PEIH_MSIED, *msi_data);
+ 	out_be32(msi->msi_regs + PEIH_MSIMK, *msi_mask);
+@@ -191,6 +197,12 @@ static int ppc4xx_setup_pcieh_hw(struct
+ 	dma_free_coherent(&dev->dev, 64, msi_virt, msi_phys);
+ 
+ 	return 0;
++
++iounmap:
++	iounmap(msi->msi_regs);
++node_put:
++	of_node_put(msi->msi_dev);
++	return err;
+ }
+ 
+ static int ppc4xx_of_msi_remove(struct platform_device *dev)
+@@ -209,7 +221,6 @@ static int ppc4xx_of_msi_remove(struct p
+ 		msi_bitmap_free(&msi->bitmap);
+ 	iounmap(msi->msi_regs);
+ 	of_node_put(msi->msi_dev);
+-	kfree(msi);
+ 
+ 	return 0;
+ }
+@@ -223,18 +234,16 @@ static int ppc4xx_msi_probe(struct platf
+ 
+ 	dev_dbg(&dev->dev, "PCIE-MSI: Setting up MSI support...\n");
+ 
+-	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
+-	if (!msi) {
+-		dev_err(&dev->dev, "No memory for MSI structure\n");
++	msi = devm_kzalloc(&dev->dev, sizeof(*msi), GFP_KERNEL);
++	if (!msi)
+ 		return -ENOMEM;
+-	}
+ 	dev->dev.platform_data = msi;
+ 
+ 	/* Get MSI ranges */
+ 	err = of_address_to_resource(dev->dev.of_node, 0, &res);
+ 	if (err) {
+ 		dev_err(&dev->dev, "%pOF resource error!\n", dev->dev.of_node);
+-		goto error_out;
++		return err;
  	}
  
- 	return -ENOSPC;
+ 	msi_irqs = of_irq_count(dev->dev.of_node);
+@@ -243,7 +252,7 @@ static int ppc4xx_msi_probe(struct platf
+ 
+ 	err = ppc4xx_setup_pcieh_hw(dev, res, msi);
+ 	if (err)
+-		goto error_out;
++		return err;
+ 
+ 	err = ppc4xx_msi_init_allocator(dev, msi);
+ 	if (err) {
+@@ -256,7 +265,7 @@ static int ppc4xx_msi_probe(struct platf
+ 		phb->controller_ops.setup_msi_irqs = ppc4xx_setup_msi_irqs;
+ 		phb->controller_ops.teardown_msi_irqs = ppc4xx_teardown_msi_irqs;
+ 	}
+-	return err;
++	return 0;
+ 
+ error_out:
+ 	ppc4xx_of_msi_remove(dev);
 
 
