@@ -6,57 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41CEECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC12ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 859622146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:02:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859622146F
+	by mail.kernel.org (Postfix) with ESMTP id 6B3422146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3422146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbeIREcZ (ORCPT
+        id S1730521AbeIREc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:32:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48604 "EHLO
+        Tue, 18 Sep 2018 00:32:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeIREcY (ORCPT
+        with ESMTP id S1726987AbeIREc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:32:24 -0400
+        Tue, 18 Sep 2018 00:32:27 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4ECFC03;
-        Mon, 17 Sep 2018 23:02:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D58FC49;
+        Mon, 17 Sep 2018 23:02:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "David H. Gutteridge" <dhgutteridge@sympatico.ca>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, joro@8bytes.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 063/126] x86/mm: Remove in_nmi() warning from vmalloc_fault()
-Date:   Tue, 18 Sep 2018 00:41:51 +0200
-Message-Id: <20180917211708.511655650@linuxfoundation.org>
+Subject: [PATCH 4.14 046/126] perf tools: Allow overriding MAX_NR_CPUS at compile time
+Date:   Tue, 18 Sep 2018 00:41:34 +0200
+Message-Id: <20180917211707.646988170@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
 References: <20180917211703.481236999@linuxfoundation.org>
@@ -74,63 +55,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 6863ea0cda8725072522cd78bda332d9a0b73150 ]
+[ Upstream commit 21b8732eb4479b579bda9ee38e62b2c312c2a0e5 ]
 
-It is perfectly okay to take page-faults, especially on the
-vmalloc area while executing an NMI handler. Remove the
-warning.
+After update of kernel, the perf tool doesn't run anymore on my 32MB RAM
+powerpc board, but still runs on a 128MB RAM board:
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+  ~# strace perf
+  execve("/usr/sbin/perf", ["perf"], [/* 12 vars */]) = -1 ENOMEM (Cannot allocate memory)
+  --- SIGSEGV {si_signo=SIGSEGV, si_code=SI_KERNEL, si_addr=0} ---
+  +++ killed by SIGSEGV +++
+  Segmentation fault
+
+objdump -x shows that .bss section has a huge size of 24Mbytes:
+
+ 27 .bss          016baca8  101cebb8  101cebb8  001cd988  2**3
+
+With especially the following objects having quite big size:
+
+  10205f80 l     O .bss	00140000     runtime_cycles_stats
+  10345f80 l     O .bss	00140000     runtime_stalled_cycles_front_stats
+  10485f80 l     O .bss	00140000     runtime_stalled_cycles_back_stats
+  105c5f80 l     O .bss	00140000     runtime_branches_stats
+  10705f80 l     O .bss	00140000     runtime_cacherefs_stats
+  10845f80 l     O .bss	00140000     runtime_l1_dcache_stats
+  10985f80 l     O .bss	00140000     runtime_l1_icache_stats
+  10ac5f80 l     O .bss	00140000     runtime_ll_cache_stats
+  10c05f80 l     O .bss	00140000     runtime_itlb_cache_stats
+  10d45f80 l     O .bss	00140000     runtime_dtlb_cache_stats
+  10e85f80 l     O .bss	00140000     runtime_cycles_in_tx_stats
+  10fc5f80 l     O .bss	00140000     runtime_transaction_stats
+  11105f80 l     O .bss	00140000     runtime_elision_stats
+  11245f80 l     O .bss	00140000     runtime_topdown_total_slots
+  11385f80 l     O .bss	00140000     runtime_topdown_slots_retired
+  114c5f80 l     O .bss	00140000     runtime_topdown_slots_issued
+  11605f80 l     O .bss	00140000     runtime_topdown_fetch_bubbles
+  11745f80 l     O .bss	00140000     runtime_topdown_recovery_bubbles
+
+This is due to commit 4d255766d28b1 ("perf: Bump max number of cpus
+to 1024"), because many tables are sized with MAX_NR_CPUS
+
+This patch gives the opportunity to redefine MAX_NR_CPUS via
+
+  $ make EXTRA_CFLAGS=-DMAX_NR_CPUS=1
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1532533683-5988-2-git-send-email-joro@8bytes.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20170922112043.8349468C57@po15668-vm-win7.idsi0.si.c-s.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/fault.c |    2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/perf.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -317,8 +317,6 @@ static noinline int vmalloc_fault(unsign
- 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
- 		return -1;
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -24,7 +24,9 @@ static inline unsigned long long rdclock
+ 	return ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+ }
  
--	WARN_ON_ONCE(in_nmi());
--
- 	/*
- 	 * Synchronize this task's top level page-table
- 	 * with the 'reference' page table.
++#ifndef MAX_NR_CPUS
+ #define MAX_NR_CPUS			1024
++#endif
+ 
+ extern const char *input_name;
+ extern bool perf_host, perf_guest;
 
 
