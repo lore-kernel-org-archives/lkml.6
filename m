@@ -2,126 +2,200 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B14CECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BADECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16515214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:44:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HyX5ccqZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16515214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E938F214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:48:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E938F214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbeIRFNp (ORCPT
+        id S1728481AbeIRFRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:13:45 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33951 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeIRFNp (ORCPT
+        Tue, 18 Sep 2018 01:17:53 -0400
+Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:59874 "EHLO
+        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbeIRFRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:13:45 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d19-v6so56783pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 16:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wNDjIwP5itxgfriEtEmggE/dklly17J93UY94fgR/Vg=;
-        b=HyX5ccqZe3nApkJeLuwFSfbflqVhLs3X7d25Rglq7AfAhs8/NCEMex9Z6jx5EuOe/v
-         INWDUHRRyBRnqHstCMQkZoJ+ojbacAFsktcP7cJiEJXr8JCeFfYMYBDj+90QuPdaZATn
-         5QTfXXN/7BGdkDU0omRnoDlJOz8xNbXbtYkag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wNDjIwP5itxgfriEtEmggE/dklly17J93UY94fgR/Vg=;
-        b=N1SPxJnDhwEr9IKIquQdrAwJoobDY9dPBpKIY0AiFsirCG5utIaN4TQv50E65GOqN7
-         iPXFnW2rXPcmJ5F599Eed73MDJe5R2uxjSlfTDdUNzsK1OhVHPoDuZQM2a4uhwrQeTTY
-         DlkV4pFP9QsKCVtWMdqgAlNGk4/IkN+Bih4Xkrc+Yee4L4taZxf0UZuKw5WGFisb9nkN
-         76egU+6VdjEUlz1A+iuvnnkksERyYJjFO82CnpjToWP9O7JjmXogeykpFHz/OExpdz0q
-         R1vCK5FN9TnyTSUNSdes3rYEP4j8qeaMxqVrL9ZVJvVRBrfoaaqpfvBlfZDtGzhxSiLs
-         rajQ==
-X-Gm-Message-State: APzg51CUCdn4rhtJib2EDZ/01G0uEB3p4vGl7ArUGhmWTsbKp9R7zeaq
-        cuXoXu9FzFBzir1b0MT+aMhyyA==
-X-Google-Smtp-Source: ANB0VdY2UI+pVaUlnjn13FB73Ur8jBhHGH3YLcQGz3gF7L7T96V/nFNLF4Yy2ht4Yr2a/zg3/MuyMg==
-X-Received: by 2002:a62:c60e:: with SMTP id m14-v6mr28238935pfg.40.1537227844915;
-        Mon, 17 Sep 2018 16:44:04 -0700 (PDT)
-Received: from holly.lan ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id w72-v6sm38471672pfa.26.2018.09.17.16.44.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Sep 2018 16:44:03 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 16:44:00 -0700
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
-        christoffer.dall@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-Subject: Re: [PATCH v5 03/27] arm64: alternative: Apply alternatives early in
- boot process
-Message-ID: <20180917234400.ctq3w2u6fi5s5coj@holly.lan>
-References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
- <1535471497-38854-4-git-send-email-julien.thierry@arm.com>
- <3becf020-b230-beb8-b304-d8097377f234@arm.com>
- <78781d82-e5c4-c590-6c0c-e7d2db456bf9@arm.com>
+        Tue, 18 Sep 2018 01:17:53 -0400
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id w8HNlAap016240
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Sep 2018 01:47:10 +0200
+Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id w8HNl9Vg098442
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
+        Tue, 18 Sep 2018 01:47:09 +0200
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+References: <20180916003059.1046-1-keescook@chromium.org>
+ <20180916003059.1046-17-keescook@chromium.org>
+ <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+ <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+ <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com>
+ <CAGXu5jJ71RLGh0nDgOaN3vCXFGE0poXFU2Gb9o+20aO+AEdOvw@mail.gmail.com>
+ <8f0bd39b-29a6-325d-4558-d9f484249c22@schaufler-ca.com>
+ <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+ <53377892-695f-6336-8574-54c7aa0a4201@schaufler-ca.com>
+ <7ecfffc3-d2a4-3ff7-4bf5-db3029d73c59@canonical.com>
+ <fbdc2a75-8364-c743-f9c3-9dcd2570c569@schaufler-ca.com>
+ <e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
+ <a51a4d34-7077-bfbe-5979-00e79680f514@digikod.net>
+ <CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
+ <3a90fe88-d74a-2c2c-c949-cabcaad2e1da@schaufler-ca.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mic@digikod.net; prefer-encrypt=mutual; keydata=
+ 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
+ fzQh4n77RjVFnCHFbtPhnyvGdQQ=
+Message-ID: <968ac661-ad5d-c6e2-1587-971b6dceaaea@digikod.net>
+Date:   Tue, 18 Sep 2018 01:47:00 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78781d82-e5c4-c590-6c0c-e7d2db456bf9@arm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <3a90fe88-d74a-2c2c-c949-cabcaad2e1da@schaufler-ca.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="MQD5brET8fBkYBEGoHor5EemXZ3fVhHK8"
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 05:49:09PM +0100, Julien Thierry wrote:
-> > > +	__apply_alternatives(&region, false, boot_capabilities);
-> > > +}
-> > > +
-> > >   #ifdef CONFIG_MODULES
-> > >   void apply_alternatives_module(void *start, size_t length)
-> > >   {
-> > 
-> > > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> > > index 3bc1c8b..0d1e41e 100644
-> > > --- a/arch/arm64/kernel/cpufeature.c
-> > > +++ b/arch/arm64/kernel/cpufeature.c
-> > > @@ -52,6 +52,8 @@
-> > >   DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
-> > >   EXPORT_SYMBOL(cpu_hwcaps);
-> > > +unsigned long boot_capabilities;
-> > > +
-> > >   /*
-> > >    * Flag to indicate if we have computed the system wide
-> > >    * capabilities based on the boot time active CPUs. This
-> > > @@ -1375,6 +1377,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-> > >   		if (!cpus_have_cap(caps->capability) && caps->desc)
-> > >   			pr_info("%s %s\n", info, caps->desc);
-> > >   		cpus_set_cap(caps->capability);
-> > 
-> > Hmm, the bitmap behind cpus_set_cap() is what cpus_have_cap() in
-> > __apply_alternatives() looks at. If you had a call to __apply_alternatives after
-> > update_cpu_capabilities(SCOPE_BOOT_CPU), but before any others, it would only
-> > apply those alternatives...
-> > 
-> > (I don't think there is a problem re-applying the same alternative, but I
-> > haven't checked).
-> > 
-> 
-> Interesting idea. If someone can confirm that patching alternatives twice is
-> safe, I think it would make things simpler.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--MQD5brET8fBkYBEGoHor5EemXZ3fVhHK8
+Content-Type: multipart/mixed; boundary="fbmmtKBkvr9TISfPg738SCAuxgPlVPKMb";
+ protected-headers="v1"
+From: =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To: Casey Schaufler <casey@schaufler-ca.com>,
+ Kees Cook <keescook@chromium.org>
+Cc: John Johansen <john.johansen@canonical.com>,
+ James Morris <jmorris@namei.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>,
+ "Schaufler, Casey" <casey.schaufler@intel.com>,
+ LSM <linux-security-module@vger.kernel.org>,
+ LKLM <linux-kernel@vger.kernel.org>
+Message-ID: <968ac661-ad5d-c6e2-1587-971b6dceaaea@digikod.net>
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+References: <20180916003059.1046-1-keescook@chromium.org>
+ <20180916003059.1046-17-keescook@chromium.org>
+ <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+ <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+ <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com>
+ <CAGXu5jJ71RLGh0nDgOaN3vCXFGE0poXFU2Gb9o+20aO+AEdOvw@mail.gmail.com>
+ <8f0bd39b-29a6-325d-4558-d9f484249c22@schaufler-ca.com>
+ <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+ <53377892-695f-6336-8574-54c7aa0a4201@schaufler-ca.com>
+ <7ecfffc3-d2a4-3ff7-4bf5-db3029d73c59@canonical.com>
+ <fbdc2a75-8364-c743-f9c3-9dcd2570c569@schaufler-ca.com>
+ <e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
+ <a51a4d34-7077-bfbe-5979-00e79680f514@digikod.net>
+ <CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
+ <3a90fe88-d74a-2c2c-c949-cabcaad2e1da@schaufler-ca.com>
+In-Reply-To: <3a90fe88-d74a-2c2c-c949-cabcaad2e1da@schaufler-ca.com>
 
-Early versions of this patch applied the alternatives twice. I never
-noticed any problems with double patching (second time round it will
-write out code that is identical to what is already there so it is
-merely inefficient rather than unsafe.
+--fbmmtKBkvr9TISfPg738SCAuxgPlVPKMb
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
 
-Daniel.
+On 9/18/18 01:30, Casey Schaufler wrote:
+> On 9/17/2018 4:20 PM, Kees Cook wrote:
+>> On Mon, Sep 17, 2018 at 4:10 PM, Micka=C3=ABl Sala=C3=BCn <mic@digikod=
+=2Enet> wrote:
+>>> Landlock, because it target unprivileged users, should only be called=
+
+>>> after all other major (access-control) LSMs. The admin or distro must=
+
+>>> not be able to change that order in any way. This constraint doesn't
+>>> apply to current LSMs, though.
+>=20
+> What harm would it cause for Landlock to get called before SELinux?
+> I certainly see why it seems like it ought to get called after, but
+> would it really make a difference?
+
+If an unprivileged process is able to infer some properties of a file
+being requested (thanks to one of its eBPF program doing checks on this
+process accesses), whereas this file access would be denied by a
+privileged LSM, then there is a side channel attack allowing this
+process to indirectly get information otherwise inaccessible.
+
+In other words, an unprivileged process should not be allowed to sneak
+itself (via an eBPF program) before SELinux for instance. SELinux should
+be able to block such information gathering the same way it can block a
+fstat(2) requested by a process.
+
+
+--fbmmtKBkvr9TISfPg738SCAuxgPlVPKMb--
+
+--MQD5brET8fBkYBEGoHor5EemXZ3fVhHK8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEUysCyY8er9Axt7hqIt7+33O9apUFAlugPPQACgkQIt7+33O9
+apW/xwf5AeglZ2k3GwtczcaJhg5xurIyke5PHV9hegMuAQNupTmunAUI3LTppbTK
+WnPR4i32JUZ3qHhpSDJe9Ul9AaCbG8xtECnw0aGOTL8wJu4IJOzl/xcktDzK1KC4
+7VNW6QVdhT4glvP49AwrgExUmr1MXSIHVPSqQH0vaCieEVu3mTws+onHPwx/uqwJ
+msEtQSBTy1QP0B8IIQFpiJ2pQChhCz+axIcAcPLBLkeoBLfqL0SPilj2MwkgeqMT
+kTjGZOg4C6npnVkYF91nvos51eDY8sBbD9ygTQkLhTBZEOv9cah+sKKVsPLQvOXO
+kFIvsnSX0EuYeQ2I2Bfs0RZ6GySZUw==
+=AcNp
+-----END PGP SIGNATURE-----
+
+--MQD5brET8fBkYBEGoHor5EemXZ3fVhHK8--
