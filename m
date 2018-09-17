@@ -2,127 +2,98 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6425BECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D140ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150282088F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ziUKo8o/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150282088F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E3922088F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:53:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3922088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbeIREWf (ORCPT
+        id S1729536AbeIREWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:22:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43802 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbeIREWf (ORCPT
+        Tue, 18 Sep 2018 00:22:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45436 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728874AbeIREWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:22:35 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8HMnELc146812;
-        Mon, 17 Sep 2018 22:52:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=6cwOTq3UQ6q7QNDO3eCSq9fJk8XMVfycexIgWuLK3N8=;
- b=ziUKo8o/EYjUgRdbunfDQ2LYazEn8hfkd8gBBeASIq1GxfD9RCIuhlVBlDRGtPaibchl
- gQ1+C3XiSQBof2u88rsiNA6NC6s6DNNElD12WyJYljCFr1yikw5EJ0xyYkRNHHCabtQO
- tA+gmPk4LHLaKmxx6uyQQZxipdP/dfqpT8w058MhJ2JRFzy9k3tbZ7xBZSK/t4cKFtCU
- OPjZTJr5mdc05dOCFACmRqWwo2wwxvBbdjbUaFzyP3urrjzOKylRllXNtm821Xb9jhGN
- 0DajC6ntep/yLyWf52iGYQnViIRaYdQ+YdNGBAEY4cx+sAVS1Qav9YkD8em2KREXt1AK pA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mgsgth5s6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 22:52:51 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8HMqpw2022174
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Sep 2018 22:52:51 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8HMqncw019014;
-        Mon, 17 Sep 2018 22:52:49 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Sep 2018 15:52:48 -0700
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, jgross@suse.com, dunlapg@umich.edu,
-        "Dr. Greg Wettstein" <greg@wind.enjellic.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] tpm: Restore functionality to xen vtpm driver.
-Date:   Mon, 17 Sep 2018 18:53:33 -0400
-Message-Id: <20180917225333.10426-1-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809170226
+        Tue, 18 Sep 2018 00:22:38 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A71EFCB2;
+        Mon, 17 Sep 2018 22:53:12 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@suse.com>, Jia He <hejianet@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 17/70] mm: remove seemingly spurious reclaimability check from laptop_mode gating
+Date:   Tue, 18 Sep 2018 00:41:50 +0200
+Message-Id: <20180917211650.585857675@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
+References: <20180917211649.099135838@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dr. Greg Wettstein" <greg@wind.enjellic.com>
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Functionality of the xen-tpmfront driver was lost secondary to
-the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-("xenbus_client: Extend interface to support multi-page ring").
+------------------
 
-In this commit pointer to location of where the shared page address
-is stored was being passed to the xenbus_grant_ring() function rather
-then the address of the shared page itself. This resulted in a situation
-where the driver would attach to the vtpm-stubdom but any attempt
-to send a command to the stub domain would timeout.
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-A diagnostic finding for this regression is the following error
-message being generated when the xen-tpmfront driver probes for a
-device:
+commit 047d72c30eedcb953222810f1e7dcaae663aa452 upstream.
 
-<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+Commit 1d82de618ddd ("mm, vmscan: make kswapd reclaim in terms of
+nodes") allowed laptop_mode=1 to start writing not just when the
+priority drops to DEF_PRIORITY - 2 but also when the node is
+unreclaimable.
 
-<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-the timeouts
+That appears to be a spurious change in this patch as I doubt the series
+was tested with laptop_mode, and neither is that particular change
+mentioned in the changelog.  Remove it, it's still recent.
 
-This fix is relevant to all kernels from 4.1 forward which is the
-release in which multi-page xenbus support was introduced.
+Link: http://lkml.kernel.org/r/20170228214007.5621-4-hannes@cmpxchg.org
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Jia He <hejianet@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Daniel De Graaf formulated the fix by code inspection after the
-regression point was located.
-
-Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
-
-[boris: Updated commit message, added Fixes tag]
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # v4.1+
 ---
- drivers/char/tpm/xen-tpmfront.c | 2 +-
+ mm/vmscan.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 911475d36800..b150f87f38f5 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_device *dev, struct tpm_private *priv)
- 		return -ENOMEM;
- 	}
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3301,7 +3301,7 @@ static int balance_pgdat(pg_data_t *pgda
+ 		 * If we're getting trouble reclaiming, start doing writepage
+ 		 * even in laptop mode.
+ 		 */
+-		if (sc.priority < DEF_PRIORITY - 2 || !pgdat_reclaimable(pgdat))
++		if (sc.priority < DEF_PRIORITY - 2)
+ 			sc.may_writepage = 1;
  
--	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-+	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
- 
--- 
-2.17.1
+ 		/* Call soft limit reclaim before calling shrink_node. */
+
 
