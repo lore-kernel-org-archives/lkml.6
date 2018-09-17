@@ -7,51 +7,53 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA791ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF647ECE565
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AFA02147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66B1D21508
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 03:00:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Sy6gXxv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFA02147A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="pB0GdbN8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66B1D21508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeIQIZb (ORCPT
+        id S1728429AbeIQIZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 04:25:31 -0400
+        Mon, 17 Sep 2018 04:25:33 -0400
 Received: from mail-eopbgr710124.outbound.protection.outlook.com ([40.107.71.124]:62784
         "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728249AbeIQIZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 04:25:29 -0400
+        id S1728249AbeIQIZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 04:25:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oVu5Twqq8v6HHGa6+8qqorDvW59ogy6Em7efJ+BRGsk=;
- b=Sy6gXxv4H70VkgIcKw/Gu4TUd5i8KJkFCdtBEkdBEGIKPoazJ0TQQFXPWA8qlXWYQUAi8h6A3CQ020OBRQDpRRM1IU2VnxBhbY+PjMj309ig4GpQpAFczj6dXxvQhI3rLAUxYEqYj4Wd4orcgvTAzXPTRT9iA55pi8+TiWHOnHw=
+ bh=qZ3tu63yEnoJ/cWz5uo2MRNbaNfYoIVZFFPYP+wPmZU=;
+ b=pB0GdbN8yIRd381BGQLKGdtviP1C2YQkD/FQWwJubROhLcAnft15B7kxaM/FhBsH7hBzqgu0BKhA3t6a6rDMRi9KgMc3AAzeCVVFUEYIKu0FuRs4JcLmWB24du7DY6xnBLjdHvmXFcwgLXKZ4PBfh0NWvuUv2ySnLQeZm1kjWKA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0134.namprd21.prod.outlook.com (10.173.189.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.11; Mon, 17 Sep 2018 03:00:13 +0000
+ 15.20.1164.11; Mon, 17 Sep 2018 03:00:15 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Mon, 17 Sep 2018
- 03:00:13 +0000
+ 03:00:15 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+CC:     Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 004/136] misc: ibmvmc: Use GFP_ATOMIC under spin
- lock
-Thread-Topic: [PATCH AUTOSEL 4.18 004/136] misc: ibmvmc: Use GFP_ATOMIC under
- spin lock
-Thread-Index: AQHUTjKNWJnEwc/ivkuXptovYTVuTQ==
-Date:   Mon, 17 Sep 2018 03:00:13 +0000
-Message-ID: <20180917030006.245495-4-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 007/136] net: hns3: Fix for mailbox message
+ truncated problem
+Thread-Topic: [PATCH AUTOSEL 4.18 007/136] net: hns3: Fix for mailbox message
+ truncated problem
+Thread-Index: AQHUTjKOdmHBLKnwcEiTabQAzGnZBA==
+Date:   Mon, 17 Sep 2018 03:00:15 +0000
+Message-ID: <20180917030006.245495-7-alexander.levin@microsoft.com>
 References: <20180917030006.245495-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180917030006.245495-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,30 +62,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0134;6:obzKyMJ1TCqVhgPAImyUmv6zgeyhgI0cdKE9f3vhxN/rifWyCm6JnbZ0PQZWkTZS7mZTOGbZeHc3IXhqzWvYpfX+6q/8GBs3JIOhaVUsDYj9zY7or38ZWEmEAN9TP90OA0MkVup/O54iqb8q47aCW/3bDU4fTX9n9hdBU1TpGppSSc1m8ziYCmMpEPi7x6ArfhJ3iByV1dWBiPr1JJeDE3J5umd6E3GAAnocL613l+kKMolbAeFtquW4Ff3a4rqldW6gHG9bYyWJ7/Btk7o2JAUqFn1ZRqZj53+u1ZCo1wITweIhb8WcNBBRIiHZ6IQCGyCcUU+U9yF2J8tSZ0YrAJAhovbdJqM4sxRunuAgtrK7ga38UXFvZeqBTNqLtTU3TB3GocfpMSEsRpyKGRTeHRHhzFu2yinQZLP2Qs6xoSl+2awbHc4LAEZVoAJMcJXbvtHw+sbHnlxhjE+X+y9faw==;5:+Sq684vsGMSViA4l4RczES4RXBVdIct+JORg7AZXwqM1MOdjgFkV1tDeMYvVgmTqpXMni7dPZgkl2yanTa7rC+DYYnm3WL+q7WDzxhyWPH6t7ykFwwAiK4X5K2KNHFMxDvGL+g8f0X0W74abmS4w5UuPRy8tkycAAJdlTX8kLes=;7:3sZLQ2QySpTmyfsYWomsm+H8n9Mvc9pjCNGEkXa6Js0WVxJFNUVHCWZP9+f08kQ2Igs6kpXxoNrdD4sdx/g/kIfX9qyPLYkG0lPRZHkrlkCwe+xxQ0hwTcH1kIPUYoNYs/4EcMeGwzbPLWqkVlq/m+lMl6H2VdOb/DdEeBiVOjJQE1PSaqqsDUL2b6ffvkSCvO99+S4flD5j244tW7HicDY8bB/i4LVOmeOQ5wRZjvZekg6EBH/3T5UDbF0Md94v
-x-ms-office365-filtering-correlation-id: b29b4b8b-9e7e-4126-6334-08d61c49b02c
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0134;6:1PXBt1taRPsYxp2jW6LvR9iXOZkCCnZbJ5xYQ1GAKCEwwUIxNmEoT6mGaQJngTtf4d+wQSMr8k29oLpT5v5HdYl9xkDlztIcbCfy2sVJDYj6OIj7mmRefrvNOclzaHKh6U2PMPzxFyjHFLIWledQWyKo+CyBf1T0WH6FpLcFu+4QGlCrWrwAjPGyQ0d9nkEA37BgBKFRmWw6UD1honZ4R5DaLd8Hs2HQl6Ko2vObo81LZVnTkFF6ytvpGJr0iGGRF5vNrl2p4cGU0oQQ07crtr/+Z27TLXOkvI+5N1TI6u+CMKSvHFfuFgrmLVpgEKhMh2Ua1UeG7LrSKalmgDiOphxwuuQ6n27B5d3jblIR3rcsHmSmBmTq+DfgMcV/HC8bozB8ODIwxprlcCqof1JgNnsFWngl9EV7qpsMqR7BKc5wcqOytgv34TmwdXjwWAsmxpWT+cYKFPGG2TcZMTsoHg==;5:2D6P6LVBDsGg7aWaPOq3S1uoJR+7YqMIDMve0aF6zy/7LbKB5f0yp+s+clNvxsNXritvL/3JfIBVuQdkgRbuUJqLQpmGhvvlSGkZ32DIapAxSwXYTekx+DtVefFYkZ8cSdr7BpCq3k2iS5DaRk9F6AliEehgiqIgLdM18dHoXW8=;7:jnljaGESpTiERckKsnkmm8MKnjyrsyGBeIKSeTDNYk37uQsHXQfUGKAvidEMTT0rKBYHqiMc8JQFrNBlQTdoOXrTyTjlWYvwCFMkjk+irZdAIedCze+xW/QPcWv9D6jKC+TdDvCAMzW9Vdsqxg16FKU3qwuezz05pYC8j59LLDAh6F6qDvcDprWuDlxIHbYaebrlRndLhFrzSGuYIpWC5JqKxC2aOYoAAyXQ1//bvl8F4MKntJ43fFupgEV3lIkK
+x-ms-office365-filtering-correlation-id: 1e47af3f-6b18-4d20-8f41-08d61c49b15d
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0134;
 x-ms-traffictypediagnostic: CY4PR21MB0134:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB01340254B9B0352BA07AF787FB1E0@CY4PR21MB0134.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(50582790962513)(104084551191319)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB013473FF861B7713C705CB48FB1E0@CY4PR21MB0134.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(50582790962513)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0134;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0134;
 x-forefront-prvs: 0798146F16
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(346002)(39860400002)(136003)(199004)(189003)(6506007)(10090500001)(14454004)(99286004)(76176011)(68736007)(6512007)(4326008)(25786009)(217873002)(107886003)(72206003)(22452003)(256004)(14444005)(36756003)(54906003)(110136005)(8676002)(6486002)(97736004)(10290500003)(6116002)(11346002)(26005)(7736002)(86612001)(5660300001)(86362001)(53936002)(316002)(486006)(476003)(2900100001)(5250100002)(105586002)(102836004)(305945005)(106356001)(66066001)(81166006)(81156014)(1076002)(2501003)(2906002)(6436002)(8936002)(446003)(478600001)(2616005)(186003)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0134;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(346002)(39860400002)(136003)(199004)(189003)(6506007)(10090500001)(14454004)(99286004)(76176011)(68736007)(6512007)(4326008)(25786009)(217873002)(15650500001)(107886003)(72206003)(22452003)(256004)(14444005)(36756003)(54906003)(110136005)(8676002)(6486002)(97736004)(10290500003)(6116002)(11346002)(26005)(7736002)(86612001)(5660300001)(86362001)(575784001)(53936002)(316002)(486006)(476003)(2900100001)(5250100002)(105586002)(102836004)(305945005)(106356001)(66066001)(81166006)(81156014)(1076002)(2501003)(2906002)(6436002)(8936002)(446003)(478600001)(2616005)(186003)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0134;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: MpGDGJJEwReHjZG+yTq/V+LHMNQsMipel/XtPauGxQpEqmh08heEzuF/CaJ95RFVAFmqJuVyjjdvsAXTYmpUAJ2Xhj/zsotISuRgcq74ED30iqfnjMjQzmpoEGaJMLlWbafx1ui2paYNTniJ5eBOcVQ+X7Ikh6oeKx9mo4W2T+I29mHlx3BzI6MFn4Iqh/4Jm8RIpFuuivLFML4rtTfZkUq82RUp8gJ+VrJXqWM+vxAIEbwaRU4LiADJ9Rh/aZG5zCdf1nQJnfVQOLX5CN/LfbSMLB1CZLyuqa0zX9KGql00xb5+4HA0KANifvz/2WPvj8Y5+F7+1LOGbD6cxnUL/gcGmeNP3hPEq2bm/D8Y6G4=
+x-microsoft-antispam-message-info: 5XmDRAVBKIDy9wHaXJCkszMQNbTRayM0VoqITMwooAsXyKp4PHTbzk7yQ7ld49Mf14ihLuSrVlaCIQWgtxn9t4rH4qI1nKithyorDeohxy/A9ekf1RB7tOQmNz923DSjnLKdKAHGxl8DTfhCeJEqZIqHkkpNRujc3IPtfg4YakCrUWyEMQT3rZwCaaAbjaO7p+WC7w595JlER871uDr1LVNCUEU1P0+Kk+f3iWzuy//kqzM9+wEd9yGOPLiv2eyDIqP56FW5q0A639zVrt29yd5tPV0msiJyQxaxY5ubrXESESjplO+PLeTdDH5UOc0TKY+h/lAVkoRrO//U3mQG2n2ilr1gTmgsRBIXasmxrUc=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b29b4b8b-9e7e-4126-6334-08d61c49b02c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:13.2455
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e47af3f-6b18-4d20-8f41-08d61c49b15d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2018 03:00:15.2767
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,36 +95,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
-[ Upstream commit 97b715b62e5b4c6edb75d023f556fd09a46cb4e1 ]
+[ Upstream commit ead5bd4d35c0a14d5ce1474177718c678dff5205 ]
 
-The function alloc_dma_buffer() is called from ibmvmc_add_buffer(),
-in which a spin lock be held here, so we should use GFP_ATOMIC when
-a lock is held.
+The payload of mailbox message is 16 byte and the value of
+HCLGE_MBX_MAX_ARQ_MSG_SIZE is 8. A message truncated problem will
+happen when mailbox message is converted to ARQ message. This patch
+replaces HCLGE_MBX_MAX_ARQ_MSG_SIZE with the size of ARQ message in
+hclgevf_mbx_handler to fix this problem.
 
-Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: b11a0bb231f3 ("net: hns3: Add mailbox support to VF driver")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/misc/ibmvmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
-index fb83d1375638..8f82bb9d11e2 100644
---- a/drivers/misc/ibmvmc.c
-+++ b/drivers/misc/ibmvmc.c
-@@ -273,7 +273,7 @@ static void *alloc_dma_buffer(struct vio_dev *vdev, siz=
-e_t size,
- 			      dma_addr_t *dma_handle)
- {
- 	/* allocate memory */
--	void *buffer =3D kzalloc(size, GFP_KERNEL);
-+	void *buffer =3D kzalloc(size, GFP_ATOMIC);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c b/dri=
+vers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
+index b598c06af8e0..cd246f906150 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
+@@ -208,7 +208,8 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
 =20
- 	if (!buffer) {
- 		*dma_handle =3D 0;
+ 			/* tail the async message in arq */
+ 			msg_q =3D hdev->arq.msg_q[hdev->arq.tail];
+-			memcpy(&msg_q[0], req->msg, HCLGE_MBX_MAX_ARQ_MSG_SIZE);
++			memcpy(&msg_q[0], req->msg,
++			       HCLGE_MBX_MAX_ARQ_MSG_SIZE * sizeof(u16));
+ 			hclge_mbx_tail_ptr_move_arq(hdev->arq);
+ 			hdev->arq.count++;
+=20
 --=20
 2.17.1
