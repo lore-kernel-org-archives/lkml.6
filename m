@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686C7ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9DD1ECE562
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F2E2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F2E2146D
+	by mail.kernel.org (Postfix) with ESMTP id A8F8E2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:15:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F8E2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387412AbeIREpS (ORCPT
+        id S2387424AbeIREpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:45:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51472 "EHLO
+        Tue, 18 Sep 2018 00:45:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732623AbeIREpR (ORCPT
+        with ESMTP id S1732623AbeIREpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:45:17 -0400
+        Tue, 18 Sep 2018 00:45:21 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE9C3C49;
-        Mon, 17 Sep 2018 23:15:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5541C9D;
+        Mon, 17 Sep 2018 23:15:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 153/158] MIPS: WARN_ON invalid DMA cache maintenance, not BUG_ON
-Date:   Tue, 18 Sep 2018 00:43:03 +0200
-Message-Id: <20180917211718.162315334@linuxfoundation.org>
+Subject: [PATCH 4.18 144/158] mfd: rave-sp: Initialize flow control and parity of the port
+Date:   Tue, 18 Sep 2018 00:42:54 +0200
+Message-Id: <20180917211717.768089606@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211710.383360696@linuxfoundation.org>
 References: <20180917211710.383360696@linuxfoundation.org>
@@ -53,46 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@imgtec.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-[ Upstream commit d4da0e97baea8768b3d66ccef3967bebd50dfc3b ]
+[ Upstream commit 6c450bdf13ebe110821a74960936cec936edae49 ]
 
-If a driver causes DMA cache maintenance with a zero length then we
-currently BUG and kill the kernel. As this is a scenario that we may
-well be able to recover from, WARN & return in the condition instead.
+Relying on serial port defaults for flow control and parity can result
+in complete breakdown of communication with RAVE SP on some platforms
+where defaults are not what we need them to be. One such case is
+VF610-base ZII SPU3 board (not supported upstream). To avoid this
+problem in the future, add code to explicitly configure both.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Patchwork: https://patchwork.linux-mips.org/patch/14623/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/mm/c-r4k.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/mfd/rave-sp.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -835,7 +835,8 @@ static void r4k_flush_icache_user_range(
- static void r4k_dma_cache_wback_inv(unsigned long addr, unsigned long size)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size == 0);
-+	if (WARN_ON(size == 0))
-+		return;
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -776,6 +776,13 @@ static int rave_sp_probe(struct serdev_d
+ 		return ret;
  
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
-@@ -871,7 +872,8 @@ static void r4k_dma_cache_wback_inv(unsi
- static void r4k_dma_cache_inv(unsigned long addr, unsigned long size)
- {
- 	/* Catch bad driver code */
--	BUG_ON(size == 0);
-+	if (WARN_ON(size == 0))
-+		return;
+ 	serdev_device_set_baudrate(serdev, baud);
++	serdev_device_set_flow_control(serdev, false);
++
++	ret = serdev_device_set_parity(serdev, SERDEV_PARITY_NONE);
++	if (ret) {
++		dev_err(dev, "Failed to set parity\n");
++		return ret;
++	}
  
- 	preempt_disable();
- 	if (cpu_has_inclusive_pcaches) {
+ 	ret = rave_sp_get_status(sp);
+ 	if (ret) {
 
 
