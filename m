@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05C9ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B064ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB33214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB33214AB
+	by mail.kernel.org (Postfix) with ESMTP id 1B2C2214C5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 22:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B2C2214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbeIRE1O (ORCPT
+        id S1729475AbeIRE1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:27:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47242 "EHLO
+        Tue, 18 Sep 2018 00:27:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47332 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeIRE1N (ORCPT
+        with ESMTP id S1726759AbeIRE1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:27:13 -0400
+        Tue, 18 Sep 2018 00:27:17 -0400
 Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A15F8BC6;
-        Mon, 17 Sep 2018 22:57:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E170CC7D;
+        Mon, 17 Sep 2018 22:57:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 42/70] Bluetooth: hidp: Fix handling of strncpy for hid->name information
-Date:   Tue, 18 Sep 2018 00:42:15 +0200
-Message-Id: <20180917211652.586128884@linuxfoundation.org>
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Moni Shoua <monis@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sean Hefty <sean.hefty@intel.com>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 10/70] IB/rxe: do not copy extra stack memory to skb
+Date:   Tue, 18 Sep 2018 00:41:43 +0200
+Message-Id: <20180917211650.034412121@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180917211649.099135838@linuxfoundation.org>
 References: <20180917211649.099135838@linuxfoundation.org>
@@ -52,45 +57,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Kees Cook <keescook@chromium.org>
 
-[ Upstream commit b3cadaa485f0c20add1644a5c877b0765b285c0c ]
+commit 4c93496f18ce5044d78e4f7f9e018682a4f44b3d upstream.
 
-This fixes two issues with setting hid->name information.
+This fixes a over-read condition detected by FORTIFY_SOURCE for this
+line:
 
-  CC      net/bluetooth/hidp/core.o
-In function ‘hidp_setup_hid’,
-    inlined from ‘hidp_session_dev_init’ at net/bluetooth/hidp/core.c:815:9,
-    inlined from ‘hidp_session_new’ at net/bluetooth/hidp/core.c:953:8,
-    inlined from ‘hidp_connection_add’ at net/bluetooth/hidp/core.c:1366:8:
-net/bluetooth/hidp/core.c:778:2: warning: ‘strncpy’ output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
-  strncpy(hid->name, req->name, sizeof(req->name) - 1);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
 
-  CC      net/bluetooth/hidp/core.o
-net/bluetooth/hidp/core.c: In function ‘hidp_setup_hid’:
-net/bluetooth/hidp/core.c:778:38: warning: argument to ‘sizeof’ in ‘strncpy’ call is the same expression as the source; did you mean to use the size of the destination? [-Wsizeof-pointer-memaccess]
-  strncpy(hid->name, req->name, sizeof(req->name));
-                                      ^
+The error was:
 
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  In file included from ./include/linux/bitmap.h:8:0,
+                   from ./include/linux/cpumask.h:11,
+                   from ./include/linux/mm_types_task.h:13,
+                   from ./include/linux/mm_types.h:4,
+                   from ./include/linux/kmemcheck.h:4,
+                   from ./include/linux/skbuff.h:18,
+                   from drivers/infiniband/sw/rxe/rxe_resp.c:34:
+  In function 'memcpy',
+      inlined from 'send_atomic_ack.constprop' at drivers/infiniband/sw/rxe/rxe_resp.c:998:2,
+      inlined from 'acknowledge' at drivers/infiniband/sw/rxe/rxe_resp.c:1026:3,
+      inlined from 'rxe_responder' at drivers/infiniband/sw/rxe/rxe_resp.c:1286:10:
+  ./include/linux/string.h:309:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+      __read_overflow2();
+
+Daniel Micay noted that struct rxe_pkt_info is 32 bytes on 32-bit
+architectures, but skb->cb is still 64.  The memcpy() over-reads 32
+bytes.  This fixes it by zeroing the unused bytes in skb->cb.
+
+Link: http://lkml.kernel.org/r/1497903987-21002-5-git-send-email-keescook@chromium.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Moni Shoua <monis@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Sean Hefty <sean.hefty@intel.com>
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bluetooth/hidp/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -774,7 +774,7 @@ static int hidp_setup_hid(struct hidp_se
- 	hid->version = req->version;
- 	hid->country = req->country;
+---
+ drivers/infiniband/sw/rxe/rxe_resp.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -978,7 +978,9 @@ static int send_atomic_ack(struct rxe_qp
+ 	free_rd_atomic_resource(qp, res);
+ 	rxe_advance_resp_resource(qp);
  
--	strncpy(hid->name, req->name, sizeof(req->name) - 1);
-+	strncpy(hid->name, req->name, sizeof(hid->name));
+-	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
++	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(ack_pkt));
++	memset((unsigned char *)SKB_TO_PKT(skb) + sizeof(ack_pkt), 0,
++	       sizeof(skb->cb) - sizeof(ack_pkt));
  
- 	snprintf(hid->phys, sizeof(hid->phys), "%pMR",
- 		 &l2cap_pi(session->ctrl_sock->sk)->chan->src);
+ 	res->type = RXE_ATOMIC_MASK;
+ 	res->atomic.skb = skb;
 
 
