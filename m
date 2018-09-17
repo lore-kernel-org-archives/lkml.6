@@ -2,88 +2,81 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A472ECE563
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078A1ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46089214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46089214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id ADDB8214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 23:05:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADDB8214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbeIREe0 (ORCPT
+        id S1730957AbeIREe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 00:34:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49232 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730207AbeIREeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 00:34:25 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D6B26C03;
-        Mon, 17 Sep 2018 23:04:56 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 099/126] rhashtable: add schedule points
-Date:   Tue, 18 Sep 2018 00:42:27 +0200
-Message-Id: <20180917211710.401950636@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
-References: <20180917211703.481236999@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 18 Sep 2018 00:34:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730207AbeIREe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 00:34:27 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BF992146F;
+        Mon, 17 Sep 2018 23:04:55 +0000 (UTC)
+Date:   Mon, 17 Sep 2018 19:04:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>, robh@kernel.org
+Subject: Re: [PATCH 2/6] pstore: Add event tracing support
+Message-ID: <20180917190454.3cfbe7e3@gandalf.local.home>
+In-Reply-To: <141901b8-0a9a-2e7a-f7a4-cdefd157f4c6@codeaurora.org>
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+        <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
+        <141901b8-0a9a-2e7a-f7a4-cdefd157f4c6@codeaurora.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Sun, 16 Sep 2018 12:37:52 +0530
+Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
 
-------------------
+> Hi,
+> 
+> Anyone here?
 
-From: Eric Dumazet <edumazet@google.com>
+You also just caught me from coming back from a trip. I'm looking at
+your patches now.
 
-Rehashing and destroying large hash table takes a lot of time,
-and happens in process context. It is safe to add cond_resched()
-in rhashtable_rehash_table() and rhashtable_free_and_destroy()
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-(cherry picked from commit ae6da1f503abb5a5081f9f6c4a6881de97830f3e)
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- lib/rhashtable.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -364,6 +364,7 @@ static int rhashtable_rehash_table(struc
- 		err = rhashtable_rehash_chain(ht, old_hash);
- 		if (err)
- 			return err;
-+		cond_resched();
- 	}
- 
- 	/* Publish the new table pointer. */
-@@ -1073,6 +1074,7 @@ void rhashtable_free_and_destroy(struct
- 		for (i = 0; i < tbl->size; i++) {
- 			struct rhash_head *pos, *next;
- 
-+			cond_resched();
- 			for (pos = rht_dereference(*rht_bucket(tbl, i), ht),
- 			     next = !rht_is_a_nulls(pos) ?
- 					rht_dereference(pos->next, ht) : NULL;
-
-
+-- Steve
