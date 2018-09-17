@@ -2,77 +2,126 @@ Return-Path: <SRS0=ZHI1=L7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A671EECE562
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333C4ECE563
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0E1214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B0E1214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D231A214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Sep 2018 08:33:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ktm7yXBR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D231A214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbeIQN7V (ORCPT
+        id S1728251AbeIQN7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Sep 2018 09:59:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47082 "EHLO mx1.redhat.com"
+        Mon, 17 Sep 2018 09:59:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727329AbeIQN7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Sep 2018 09:59:21 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728208AbeIQN7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Sep 2018 09:59:39 -0400
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 407C8C0587DF;
-        Mon, 17 Sep 2018 08:32:59 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 33408308BDA0;
-        Mon, 17 Sep 2018 08:32:57 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx() in kvm_hv_flush_tlb()
-References: <20180822101832.31763-1-vkuznets@redhat.com>
-        <20180822101832.31763-4-vkuznets@redhat.com>
-        <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com>
-Date:   Mon, 17 Sep 2018 10:32:55 +0200
-In-Reply-To: <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com> (Paolo
-        Bonzini's message of "Fri, 14 Sep 2018 19:33:34 +0200")
-Message-ID: <87r2hs7cco.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32685214C5;
+        Mon, 17 Sep 2018 08:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537173196;
+        bh=o0eFfszP9XkyenL4n/Hq4csmafg4rf3AjxTbCYSxC0s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ktm7yXBRulTF4bXxIW/dmBiBAQiYyL0KPSWgGMqlhhg05/oUqMq5aSzbQ6OYSE4gG
+         IL5IlNwMMnutKQrlArs+xz622UxpBNxtflEmEyUxbqLcCBpkEHvOrqEB5aDXYfMq7E
+         JXLS3j2ePD3gOci7kAnbU1q7RYWInyGHX9zlx62Q=
+Received: by mail-wr1-f43.google.com with SMTP id k5-v6so16305962wre.10;
+        Mon, 17 Sep 2018 01:33:16 -0700 (PDT)
+X-Gm-Message-State: APzg51AiB6mU9Jn2qNqVQ7MG4awgn/qrRllU69iO7efbyTA9ay45qbYe
+        3gcqk/+JN871XlO+yzY42wJpCfzZxC0xWX4BkdQ=
+X-Google-Smtp-Source: ANB0VdboPmEqUAE+R0STUw1tY9h5+oZTknBfqB2uZaTf6mh6L0ezji/Q7IOk0uJ9Zuwj/i/RC3nbMo/BLcXN8oTcDAU=
+X-Received: by 2002:adf:b726:: with SMTP id l38-v6mr16128742wre.115.1537173194591;
+ Mon, 17 Sep 2018 01:33:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 17 Sep 2018 08:32:59 +0000 (UTC)
+References: <20180907215446.15160-1-sed@free.fr> <b97d7ccc921572ca5d783584eea1de04341ab02f.camel@perches.com>
+ <4cf38559-b00d-ede4-def5-7cd832d8a506@free.fr>
+In-Reply-To: <4cf38559-b00d-ede4-def5-7cd832d8a506@free.fr>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 17 Sep 2018 10:33:03 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdvDrWOEkj3kEJ2KhHqp7NVmLeMTVdwB8suH8PWQXf-Pg@mail.gmail.com>
+Message-ID: <CAJKOXPdvDrWOEkj3kEJ2KhHqp7NVmLeMTVdwB8suH8PWQXf-Pg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: s3c24xx: formatting cleanup in mach-mini2440.c
+To:     sed@free.fr
+Cc:     joe@perches.com, kgene@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
-> On 22/08/2018 12:18, Vitaly Kuznetsov wrote:
->> VP_INDEX almost always matches VCPU id and get_vcpu_by_vpidx() is fast,
->> use it instead of traversing full vCPU list every time.
+On Thu, 13 Sep 2018 at 22:24, Cedric Roux <sed@free.fr> wrote:
 >
-> ... but if it doesn't, the algorithm is now quadratic, isn't i?
+> Hi,
+>
+> On 09/12/2018 09:21 PM, Joe Perches wrote:
+> > On Fri, 2018-09-07 at 23:54 +0200, Cedric Roux wrote:
+> >> Running:
+> >>     scripts/checkpatch.pl -f arch/arm/mach-s3c24xx/mach-mini2440.c
+> >> revealed several errors and warnings.
+> >>
+> >> They were all removed, except one which is an #if 0 around the declaration
+> >> of a gpio pin. This needs some more investigation and I prefer to let it
+> >> here. This is not some dead code.
+> > []
+> >> diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+> > []
+> >> @@ -674,17 +680,17 @@ static void __init mini2440_init(void)
+> >>              mini2440_fb_info.displays =
+> >>                      &mini2440_lcd_cfg[features.lcd_index];
+> >>
+> >> -            printk(KERN_INFO "MINI2440: LCD");
+> >> +            pr_info("MINI2440: LCD");
+> >
+> > OK
+> >
+> >>              for (li = 0; li < ARRAY_SIZE(mini2440_lcd_cfg); li++)
+> >>                      if (li == features.lcd_index)
+> >> -                            printk(" [%d:%dx%d]", li,
+> >> +                            pr_info(" [%d:%dx%d]", li,
+> >>                                      mini2440_lcd_cfg[li].width,
+> >>                                      mini2440_lcd_cfg[li].height);
+> >
+> > pr_cont
+> >
+> >>                      else
+> >> -                            printk(" %d:%dx%d", li,
+> >> +                            pr_info(" %d:%dx%d", li,
+> >
+> > pr_cont
+> >
+> >>                                      mini2440_lcd_cfg[li].width,
+> >>                                      mini2440_lcd_cfg[li].height);
+> >> -            printk("\n");
+> >> +            pr_info("\n");
+> >
+> > pr_cont
+> >
+> > So only the first printk should use pr_info().
+> > The subsequent printk uses should use pr_cont()
+>
+> at this point, I don't know what to do.
+>
+> Should I resubmit the patches? Or is it in the hands of
+> Krzysztof (krzk@kernel.org)? I would say a git rebase -i
+> is enough to edit the patch and this rebase is obviously
+> not to be done by me, but I don't know the process.
 
-Yes,
+Can you send a incremental fix for this, restoring the original
+continued printks?
 
-I even had an implementation with a logarythmic search back in v2 but
-we had a discussion with Roman and he convinced me this is an overkill
-and not currently required. It seems that with Qemu this is true indeed,
-vp_index always matches vcpu is but in case some other userspace decides
-to break this unwritten rule users may experience significant slowdown.
-
--- 
-  Vitaly
+Best regards,
+Krzysztof
