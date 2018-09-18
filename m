@@ -2,140 +2,152 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2BCC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B35ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B95214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE1921471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="WPxjjq7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B95214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MO667b/n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE1921471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbeIRTpk (ORCPT
+        id S1729799AbeIRTpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:45:40 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34569 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeIRTpj (ORCPT
+        Tue, 18 Sep 2018 15:45:54 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33194 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbeIRTpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:45:39 -0400
-Received: by mail-ed1-f66.google.com with SMTP id u1-v6so2066977eds.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:12:52 -0700 (PDT)
+        Tue, 18 Sep 2018 15:45:54 -0400
+Received: by mail-yb1-f196.google.com with SMTP id y9-v6so872016ybh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:13:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bZCyrFXpOWSaRIcXLoBiVVGz+PK5DesZTR7fOYTyRYg=;
-        b=WPxjjq7fJuRhdLZ2p4mF1avsYLh/ANN1LuKyFP/G5otZzYh167EHgDUGEbZl5VzB01
-         //Rdp+DVmqDQwIOoSbW4Hb+mzBJ+Pjkf5uiNFPkIX6PxSFHcRST7TbZfuWXr4bus9x47
-         QMdzGq6K2PDDfLWKrzSlJjvjPlvsm4hAdlmy7DNp/9gO9DlcpOv/Mk/mAFPAZgMePq0s
-         6TlxTRZnf4jHZBt1U89ItpvnpJNlcZahkToI7v9a471YF/kWd5y+bDUuZH/k9KN9+zVD
-         F0ze95SMTlSfP/7grgVySPdLlUZhT32O9gddZ5K+QJqlfbuSSrz0fZ5e5XkRzUeboZcI
-         XZiQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hac5pA7WjfhQS3IltEqWiih/FiZdrS6bVORPC4vEDLA=;
+        b=MO667b/np5AysEkSuTzWmBwvHGCHU6fnsr6hLjVt07LPN2HrfU1Tl6C3Gk2hKwkRS+
+         tGC//NDv1/qQkURyIn+lAXD4dSisb2u1CAbUHo1lhhJ879T21yXelrKbD6dySMDntEPK
+         cJfC6CIGQouuDn/SDvJn9ZEfbj3lFOzyeIXt8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bZCyrFXpOWSaRIcXLoBiVVGz+PK5DesZTR7fOYTyRYg=;
-        b=YXay+MC0oV9egKM9tE0n7ik5p/NFVl9HE3ztqFVM6IMdH6IwEIYjIuZVNA+lfwNYPz
-         IK+oYNUILrbzE87fGIOna47ApQahdZYJ3ALIXzEN+bNYQvxGq/6sVdkP2eijbhJfNQ6j
-         tVMA+Y0AhljbwGCXGnXRs38JxmqFh9WvZEepldV5ep3dWkvgLxF0/H1bKDUQuxAGHTMO
-         GSuHzwOGFTYwkbGiIc9s9v1xbhQFe4jFOwmQxCbhxVhTHQD3Mgo5az5tDR9YqHxTBTMF
-         hFelOziFhZXSexxemukphT2ko3U85oI9fhkOKGrOav7jYxYP+w8F/5aOSUuYUMYVhRov
-         wZvA==
-X-Gm-Message-State: APzg51Dg26rQ7pwpl3fFEcyW/3ysUGRiVL2mnoqZxrCIsp+c8flH5hH2
-        5dTyJCoPdhnsRWIUD6cGT2IQOQ==
-X-Google-Smtp-Source: ANB0VdYamSOOM0zlhmHF4+ud2YOQ6THHcQq1ZWsKVW9Ig9TZxFHAX9vcweQmAR6JNMDDJqjFab1kxQ==
-X-Received: by 2002:a50:898b:: with SMTP id g11-v6mr29335962edg.82.1537279971312;
-        Tue, 18 Sep 2018 07:12:51 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id s7-v6sm167453eda.19.2018.09.18.07.12.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 07:12:50 -0700 (PDT)
-Message-ID: <1537279969.21380.3.camel@arista.com>
-Subject: Re: [PATCHv5 2/7] tty/ldsem: Wake up readers after timed out
- down_write()
-From:   Dmitry Safonov <dima@arista.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jiri Slaby <jslaby@suse.com>
-Date:   Tue, 18 Sep 2018 15:12:49 +0100
-In-Reply-To: <20180918134347.GD23431@kroah.com>
-References: <20180917235258.5719-1-dima@arista.com>
-         <20180917235258.5719-3-dima@arista.com> <20180918134347.GD23431@kroah.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hac5pA7WjfhQS3IltEqWiih/FiZdrS6bVORPC4vEDLA=;
+        b=Qn6m4LaB88ijN//GAKPebVauOVgapStVQaQC6tYvxL9kYSVXrFw05xw4iDfqtP+v8u
+         AXmTO1yvw3oUfJ4l0rRutIP5SDamDqz/I7mULHBDevTlOru9Vpqb1WYuhA8lD95E3Wrs
+         UB3oUoLa27Im08IqrLTeQdSbAQxkTJ1x1kGhQOPy0IToPXhdIPqmN3P0C5OIF2c2Q5QQ
+         vKGdWc9GI9J7eGj+hDwEyMkqVN3g4hIYeRJVoRBKb0FO3DIBotoUlG04V/k7j8s4GQsM
+         QtY1xU2SBA9K/poP4/yyJudMTBmQoNPhX8kwUWHFy4U3ZEGVfwqCOcWWcWnwSgT4udO9
+         FmCw==
+X-Gm-Message-State: APzg51Cjr3kqRyFv9eoJttWi2qMgZhg1tf1Y0YAjj2pwZB4IUsUhgsTY
+        TYP7luLF58Hm+FFSPawWn7sKpv5FYi+xVl2AniDSgQ==
+X-Google-Smtp-Source: ANB0VdYfNYyllvLEXmIeZLqJt4DpW+JgS9MWYqLAjPKKgCjJuhFb9aaMbtfw7YRYDAYBgTNwLfa9pqbYekqUZKNiq6k=
+X-Received: by 2002:a25:9702:: with SMTP id d2-v6mr13290148ybo.77.1537279986498;
+ Tue, 18 Sep 2018 07:13:06 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 07:13:06
+ -0700 (PDT)
+In-Reply-To: <20180917171720.wda5qrl7hyyacmwl@pburton-laptop>
+References: <1536914314-5026-1-git-send-email-firoz.khan@linaro.org> <20180917171720.wda5qrl7hyyacmwl@pburton-laptop>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 18 Sep 2018 19:43:06 +0530
+Message-ID: <CALxhOngEqaA6sNKG_eRTTgnjj94vM2OftbpgHPEXMZ0Yv_nC2w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] System call table generation support
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On 17 September 2018 at 22:47, Paul Burton <paul.burton@mips.com> wrote:
+> Hi Firoz,
+>
+> On Fri, Sep 14, 2018 at 02:08:31PM +0530, Firoz Khan wrote:
+>> The purpose of this patch series is:
+>> 1. We can easily add/modify/delete system call by changing entry
+>> in syscall.tbl file. No need to manually edit many files.
+>>
+>> 2. It is easy to unify the system call implementation across all
+>> the architectures.
+>>
+>> The system call tables are in different format in all architecture
+>> and it will be difficult to manually add or modify the system calls
+>> in the respective files manually. To make it easy by keeping a script
+>> and which'll generate the header file and syscall table file so this
+>> change will unify them across all architectures.
+>
+> Interesting :)
+>
+> I actually started on something similar recently with the goals of
+> reducing the need to adjust both asm/unistd.h & the syscall entry tables
+> when adding syscalls, clean up asm/unistd.h a bit & make it
+> easier/cleaner to add support for nanoMIPS & the P32 ABI.
+>
+> My branch still needed some work but it's here if you're interested:
+>
+>     git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git wip-mips-syscalls
+>
+>     https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/log/?h=wip-mips-syscalls
+>
+> There are some differences:
+>
+>   - I'd placed syscall numbers the 3 current MIPS ABIs in one table,
+>     rather than splitting it up. I can see pros & cons to both though so
+>     I'm not tied to having a single all-encompassing table.
+>
+>   - I'd mostly inferred the entry point names from the syscall names,
+>     only specifying them where they differ. Again I'm not particularly
+>     tied to this.
+>
+>   - I'd made asm/unistd.h behave like asm-generic/unistd.h with the
+>     __SYSCALL() macro, where you generate separate syscall_table_*
+>     headers. I'm fine with that too.
+>
+> So I'm pretty happy to go with your series, though I agree with Arnd on
+> the ABI/file naming & the missing syscalls that were added in the 4.18
+> cycle. We probably need to provide mipsmt_sys_sched_[gs]etaffinity as
+> aliases to sys_sched_[gs]etaffinity when CONFIG_MIPS_MT_FPAFF isn't
+> enabled in order to fix the issue the kbuild test robot reported.
+>
+> But I'm looking forward to v2 :)
+>
+> Thanks,
+>     Paul
 
-On Tue, 2018-09-18 at 15:43 +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 18, 2018 at 12:52:53AM +0100, Dmitry Safonov wrote:
-> > ldsem_down_read() will sleep if there is pending writer in the
-> > queue.
-> > If the writer times out, readers in the queue should be woken up,
-> > otherwise they may miss a chance to acquire the semaphore until the
-> > last
-> > active reader will do ldsem_up_read().
-> > 
-> > There was a couple of reports where there was one active reader and
-> > other readers soft locked up:
-> >   Showing all locks held in the system:
-> >   2 locks held by khungtaskd/17:
-> >    #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
-> >    #1:  (tasklist_lock){.+.+..}, at:
-> > debug_show_all_locks+0x72/0x2d3
-> >   2 locks held by askfirst/123:
-> >    #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
-> >    #1:  (&ldata->atomic_read_lock){+.+...}, at:
-> > n_tty_read+0x115/0xbe4
-> > 
-> > Prevent readers wait for active readers to release ldisc semaphore.
-> > 
-> > Link: lkml.kernel.org/r/<20171121132855.ajdv4k6swzhvktl6@wfg-t540p.
-> > sh.intel.com>
-> > Link: lkml.kernel.org/r/<20180907045041.GF1110@shao2-debian>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Jiri Slaby <jslaby@suse.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > Signed-off-by: Dmitry Safonov <dima@arista.com>
-> > ---
-> 
-> Why isn't this ok for the stable trees?
+Thanks for your comments :)
 
-I guess it is ok for stables, but I would prefer to have an ack from
-Peter before that.
+We're planning to come up with a generic script for system call table
+generation across all the architecture. So certain things I have to keep
+same across  all the architecture.
 
-Peter, could you look if my analysis and fix are proper?
-I'll fill more confident about it going to stables if it had your ack.
+Having a single script is always our plan for long run. But I have to keep a
+separate versions for the start so each architecture can be handled  in one
+series. Which would make easier to merge in the initial version.
 
--- 
-Thanks,
-             Dmitry
+we could probably add it to scripts/*.sh first, but that requires more
+coordination between the architectures.
+
+- Firoz
