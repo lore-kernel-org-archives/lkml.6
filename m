@@ -2,424 +2,182 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091A0ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDC4ECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB0F8214FF
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:27:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0F8214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 586E321471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:28:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bgF3RFii"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586E321471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbeIRO7S (ORCPT
+        id S1729611AbeIRPAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:59:18 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:41137 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728657AbeIRO7S (ORCPT
+        Tue, 18 Sep 2018 11:00:23 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34366 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728657AbeIRPAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:59:18 -0400
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id DDE7B20012;
-        Tue, 18 Sep 2018 09:27:28 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 11:27:27 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: renesas,rzn1-pinctrl:
- documentation
-Message-ID: <20180918092727.GN16851@w540>
-References: <20180917163609.30457-1-phil.edworthy@renesas.com>
- <20180917163609.30457-2-phil.edworthy@renesas.com>
+        Tue, 18 Sep 2018 11:00:22 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180918092836euoutp01c6fd5248464f386d8121d46fdabcacef~VdHo99isr1507515075euoutp01B
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 09:28:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180918092836euoutp01c6fd5248464f386d8121d46fdabcacef~VdHo99isr1507515075euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1537262916;
+        bh=BBH8ASxraAOXNthsJaNx2YBtg8L/mOwF6+wVYtjm1tU=;
+        h=Subject:To:From:Date:In-Reply-To:References:From;
+        b=bgF3RFiiZQ/SsxLpSUeAudA4E8EV+egsVNbTDmQzQo3PbroJzNFGeOjPbZJqTxGfF
+         KrVAnzim6qjNUZrCE7nh6yq0mO0xFxLoRWdDNjljNA4BkTUFAGHR2p+O9I4Gjncwyu
+         3JvmlJfA/k+16Gn2renR8+WfwJxXKpo5rsbQPC+U=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180918092835eucas1p1282c25a90853ca6519e6b61278bbff38~VdHob-pr32656326563eucas1p1Q;
+        Tue, 18 Sep 2018 09:28:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id DB.50.04441.345C0AB5; Tue, 18
+        Sep 2018 10:28:35 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180918092834eucas1p1ebdbc3051a7ca8bbacec26b955689784~VdHnT_5yZ0331203312eucas1p1U;
+        Tue, 18 Sep 2018 09:28:34 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20180918092834eusmtrp2f8add3de38d892970fb796146d680343~VdHnDOD7t1060910609eusmtrp2F;
+        Tue, 18 Sep 2018 09:28:34 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-c3-5ba0c54321e9
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 8F.B6.04128.145C0AB5; Tue, 18
+        Sep 2018 10:28:34 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180918092833eusmtip2c2bbc41f7fff2f411c41f08c81ff8bf2~VdHmsYSFn0905909059eusmtip21;
+        Tue, 18 Sep 2018 09:28:33 +0000 (GMT)
+Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing cma to command
+ line
+To:     zhe.he@windriver.com, hch@lst.de, robin.murphy@arm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Tue, 18 Sep 2018 11:28:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="PtLnLSExlPr13a2X"
-Content-Disposition: inline
-In-Reply-To: <20180917163609.30457-2-phil.edworthy@renesas.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1537154660-296740-1-git-send-email-zhe.he@windriver.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7djPc7rORxdEG5y4L2yxcvVRJosF+60t
+        Lu+aw2Zx8MMTVovlu4wcWD3WzFvD6DH5xnJGj903G9g8Pm+S81i/ZStTAGsUl01Kak5mWWqR
+        vl0CV8aCH+cZC74KVKxq7GNsYNzL28XIySEhYCLRvL+HpYuRi0NIYAWjxKdf/6GcL4wSP96f
+        YIdwPjNKrNh5gQmm5eS/h1CJ5YwSnXM2sYMkhATeM0qc/VIBYgsLBEl8vnEWLC4iUCNx9dBd
+        VhCbTcBQouttFxuIzSKgKrHlwAWgGg4OUYEYid+7rEHCvAKCEidnPmEBsTkF3CSWXVgONoZZ
+        QF5i+9s5zBC2uMStJ/OZQG6QEOhnl1iz/RsjRHOZxPaFzewQh7pIXH45mRXCFpZ4dXwLVFxG
+        4v9OmOZmRon2GbPYIZweRomtc3awQVRZSxw+fpEV5DpmAU2J9bv0IcKOEq83/2IDCUsI8Enc
+        eCsIcRCfxKRt05khwrwSHW1CENVqErOOr4Nbe/DCJWYI20Piz/kFjBMYFWcheXkWkjdnIXlz
+        FsINCxhZVjGKp5YW56anFhvmpZbrFSfmFpfmpesl5+duYgSmmtP/jn/awfj1UtIhRgEORiUe
+        3gUL5kcLsSaWFVfmHmKU4GBWEuHlzFkQLcSbklhZlVqUH19UmpNafIhRmoNFSZyXTystWkgg
+        PbEkNTs1tSC1CCbLxMEp1cCY0rtD4fNP7awJ+irBqqdPR7wzOlb99oBBjIhNPsNH8UPR+ROZ
+        n1RxcCny8b5VPPMrPe9apci9o88PKeWV8M0+3KrQWvtt69RHT1j3/pj80Hen0JQvc3VdJTwP
+        icR2n7qdbO16Q0Hf7P4czk7pmj2+3JpVJyPEzigbvT15SnnzyWmvzk9Y7yauxFKckWioxVxU
+        nAgAFnOQ2TEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCIsWRmVeSWpSXmKPExsVy+t/xe7pORxdEGxz7xWixcvVRJosF+60t
+        Lu+aw2Zx8MMTVovlu4wcWD3WzFvD6DH5xnJGj903G9g8Pm+S81i/ZStTAGuUnk1RfmlJqkJG
+        fnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsaCH+cZC74KVKxq7GNs
+        YNzL28XIySEhYCJx8t9D9i5GLg4hgaWMEmc/7mCESMhInJzWwAphC0v8udbFBmILCbxllLh4
+        ygHEFhYIkvh84yw7iC0iUCMx/xxEvZDATEaJSbfA6tkEDCW63kL08grYSUy8fQbMZhFQldhy
+        4AJYr6hAjMTRyS1QNYISJ2c+YQGxOQXcJJZdWA5WwyxgJjFv80NmCFteYvvbOVC2uMStJ/OZ
+        JjAKzkLSPgtJyywkLbOQtCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRGEPbjv3cAgyL
+        d8GHGAU4GJV4eH8smh8txJpYVlyZe4hRgoNZSYSXM2dBtBBvSmJlVWpRfnxRaU5q8SFGU6Dn
+        JjJLiSbnA+M7ryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QD48qj
+        2gsO2DuZLg28oSfDuOnwuWvN709FhmZHHTnCZx7/8F2DZF3w+dNtr0u0P65sCV6/8Pw1jvdr
+        k6LkZ4hxf9vhmay+7XcWP9PuqVWzC57tSf10f/4jN5etQd6P+3+tb/we4x1me6jp28vXS0SX
+        shff0T/5NYzf64rDybV9Kt+2z/T2C1S39VJiKc5INNRiLipOBABHZVTqtwIAAA==
+Message-Id: <20180918092834eucas1p1ebdbc3051a7ca8bbacec26b955689784~VdHnT_5yZ0331203312eucas1p1U@eucas1p1.samsung.com>
+X-CMS-MailID: 20180918092834eucas1p1ebdbc3051a7ca8bbacec26b955689784
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180917032603epcas4p4da3674e558c4704622f58b133e7fe5ce
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180917032603epcas4p4da3674e558c4704622f58b133e7fe5ce
+References: <CGME20180917032603epcas4p4da3674e558c4704622f58b133e7fe5ce@epcas4p4.samsung.com>
+        <1537154660-296740-1-git-send-email-zhe.he@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi
 
---PtLnLSExlPr13a2X
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Phil,
-   thanks for the update. This looks much better :)
-
-On Mon, Sep 17, 2018 at 05:36:07PM +0100, Phil Edworthy wrote:
-> The Renesas RZ/N1 device family PINCTRL node description.
+On 2018-09-17 05:24, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
 >
-> Based on a patch originally written by Michel Pollet at Renesas.
+> early_cma does not check input argument before passing it to
+> simple_strtoull. The argument would be a NULL pointer if "cma", without
+> its value, is set in command line and thus causes the following panic.
 >
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> PANIC: early exception 0xe3 IP 10:ffffffffa3e9db8d error 0 cr2 0x0
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #7
+> [    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
+> ...
+> [    0.000000] Call Trace:
+> [    0.000000]  simple_strtoull+0x29/0x70
+> [    0.000000]  memparse+0x26/0x90
+> [    0.000000]  early_cma+0x17/0x6a
+> [    0.000000]  do_early_param+0x57/0x8e
+> [    0.000000]  parse_args+0x208/0x320
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_options+0x29/0x2d
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_param+0x36/0x4d
+> [    0.000000]  setup_arch+0x336/0x99e
+> [    0.000000]  start_kernel+0x6f/0x4e6
+> [    0.000000]  x86_64_start_reservations+0x24/0x26
+> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+> [    0.000000]  secondary_startup_64+0xa4/0xb0
+>
+> This patch adds a check to prevent the panic.
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Cc: stable@vger.kernel.org
+> Cc: hch@lst.de
+> Cc: m.szyprowski@samsung.com
+> Cc: robin.murphy@arm.com
+
+Thanks for the fix.
+
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
 > ---
-> v3:
->  - Use standard bindings
->  - Change the way the functions are defined so it is easy to check
->    against the hardware numbering.
->  - Add functions for the MDIO source peripheral instead of using
->    virtual pins.
+>   kernel/dma/contiguous.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
 >
-> v2:
->  - Change filename to generic rzn1, instead of device specific.
->  - Add "renesas,rzn1-pinctrl" compatible fallback string.
->  - Example register size corrected.
->  - Typos fixed.
->  - Changes suggested by Jacopo Mondi.
->  - rzn1-pinctrl.h squashed into this as requested by Rob Herring.
-> ---
->  .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 129 ++++++++++++++++
->  include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 ++++++++++++++++++
->  2 files changed, 270 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
->  create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> new file mode 100644
-> index 000000000000..203131ed8d2a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-> @@ -0,0 +1,129 @@
-> +Renesas RZ/N1 SoC Pinctrl node description.
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index 286d823..b2a8790 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -49,7 +49,11 @@ static phys_addr_t limit_cmdline;
+>   
+>   static int __init early_cma(char *p)
+>   {
+> -	pr_debug("%s(%s)\n", __func__, p);
+> +	if (!p) {
+> +		pr_err("Config string not provided\n");
+> +		return -EINVAL;
+> +	}
 > +
-> +Pin controller node
-> +-------------------
-> +Required properties:
-> +- compatible: SoC-specific compatible string "renesas,<soc-specific>-pinctrl"
-> +  followed by "renesas,rzn1-pinctrl" as fallback. The SoC-specific compatible
-> +  strings must be one of:
-> +	"renesas,r9a06g032-pinctrl" for RZ/N1D
-> +	"renesas,r9a06g033-pinctrl" for RZ/N1S
-> +- reg: Address base and length of the memory area where the pin controller
-> +  hardware is mapped to.
-> +- clocks: phandles for the clock, see the description of clock-names below.
-> +- clock-names: Contains the name of the clock:
-> +    "bus", the bus clock, sometimes described as pclk, for register accesses.
+>   	size_cmdline = memparse(p, &p);
+>   	if (*p != '@')
+>   		return 0;
 
-If that's the only clock, the clock name is optional. If you drop it,
-then please mention that the only phandle in 'clocks' refers to the
-"bus" clock.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> +
-> +Example:
-> +	pinctrl: pin-controller@40067000 {
-> +	    compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-> +	    reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-> +	    clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> +	    clock-names = "bus";
-> +	};
-> +
-> +Sub-nodes
-> +---------
-> +
-> +The child nodes of the pin controller node describe a pin multiplexing
-> +function or a GPIO controller alternatively.
-> +
-> +- Pin multiplexing sub-nodes:
-> +  A pin multiplexing sub-node describes how to configure a set of
-> +  (or a single) pin in some desired alternate function mode.
-> +  A single sub-node may define several pin configurations.
-> +  Please refer to pinctrl-bindings.txt to get to know more on generic
-> +  pin properties usage.
-> +
-> +  The allowed generic formats for a pin multiplexing sub-node are the
-> +  following ones:
-> +
-> +  node-1 {
-> +      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> +      GENERIC_PINCONFIG;
-> +  };
-> +
-> +  node-2 {
-> +      sub-node-1 {
-> +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> +          GENERIC_PINCONFIG;
-> +      };
-> +
-> +      sub-node-2 {
-> +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> +          GENERIC_PINCONFIG;
-> +      };
-> +
-> +      ...
-> +
-> +      sub-node-n {
-> +          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> +          GENERIC_PINCONFIG;
-> +      };
-> +  };
-> +
-> +  Use the second format when pins part of the same logical group need to have
-> +  different generic pin configuration flags applied.
-> +
-> +  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
-> +  of the most external one.
-> +
-> +  Eg.
-> +
-> +  client-1 {
-> +      ...
-> +      pinctrl-0 = <&node-1>;
-> +      ...
-> +  };
-> +
-> +  client-2 {
-> +      ...
-> +      pinctrl-0 = <&node-2>;
-> +      ...
-> +  };
-> +
-> +  Required properties:
-> +    - pinmux:
-> +      integer array representing pin number and pin multiplexing configuration.
-> +      When a pin has to be configured in alternate function mode, use this
-> +      property to identify the pin by its global index, and provide its
-> +      alternate function configuration number along with it.
-> +      When multiple pins are required to be configured as part of the same
-> +      alternate function they shall be specified as members of the same
-> +      argument list of a single "pinmux" property.
-> +      Integers values in the "pinmux" argument list are assembled as:
-> +      (PIN | MUX_FUNC << 8)
-> +      where PIN directly corresponds to the pl_gpio pin number and MUX_FUNC is
-> +      one of the alternate function identifiers defined in:
-> +      <include/dt-bindings/pinctrl/rzn1-pinctrl.h>
-
-You have a macro for assembling pin and mux functions, do you think it
-is worth mentioning it here?
-
-> +      These identifiers collapse the IO Multiplex Configuration Level 1 and
-> +      Level 2 numbers that are detailed in the hardware reference manual into a
-> +      single number. The identifiers for Level 2 are simply offset by 10.
-> +      Additional identifiers are provided to specify the MDIO source peripheral.
-
-As we discussed offline, I don't see that much value in mentioning
-details about the pinmuxing levels, as this is driver internal stuff
-that reflects on which set of registers to use depending on the muxing
-'level'. I understand though that as the SoC manual mentions levels,
-you may want to refer to them. Up to you....
-
-> +
-> +  Example:
-> +  A serial communication interface with a TX output pin and an RX input pin.
-> +
-> +  &pinctrl {
-> +	pins_uart0: pins_uart0 {
-> +		pinmux = <
-> +			RZN1_MUX(103, UART0_I)	/* UART0_TXD */
-> +			RZN1_MUX(104, UART0_I)	/* UART0_RXD */
-> +		>;
-> +	};
-> +  };
-> +
-> +  Example 2:
-> +  Here we set the pull up on the RXD pin of the UART.
-> +
-> +  &pinctrl {
-> +	pins_uart0: pins_uart0 {
-> +		pins_uart6_tx {
-> +			pinmux = <RZN1_MUX(103, UART0_I)>;	/* UART0_TXD */
-> +		};
-> +		pins_uart6_rx {
-> +			pinmux = <RZN1_MUX(104, UART0_I)>;	/* UART0_RXD */
-> +			bias-pull-up;
-> +		};
-> +	};
-> +  };
-
-I like this version much more. With those minor issues clarified (up
-to you to decide how to handle them) please add my:
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Cheers
-   j
-
-
-> diff --git a/include/dt-bindings/pinctrl/rzn1-pinctrl.h b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-> new file mode 100644
-> index 000000000000..40369ee36e6a
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/rzn1-pinctrl.h
-> @@ -0,0 +1,141 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Defines macros and constants for Renesas RZ/N1 pin controller pin
-> + * muxing functions.
-> + */
-> +#ifndef __DT_BINDINGS_RZN1_PINCTRL_H
-> +#define __DT_BINDINGS_RZN1_PINCTRL_H
-> +
-> +#define RZN1_MUX(_gpio, _func) \
-> +	(((RZN1_FUNC_##_func) << 8) | (_gpio))
-> +
-> +/*
-> + * Given the different levels of muxing on the SoC, it was decided to
-> + * 'linearize' them into one numerical space. So mux level 1, 2 and the MDIO
-> + * muxes are all represented by one single value.
-> + *
-> + * You can derive the hardware value pretty easily too, as
-> + * 0...9   are Level 1
-> + * 10...71 are Level 2. The Level 2 mux will be set to this
-> + *         value - RZN1_FUNC_L2_OFFSET, and the Level 1 mux will be
-> + *         set accordingly.
-> + * 72...103 are for the 2 MDIO muxes.
-> + */
-> +#define RZN1_FUNC_HIGHZ				0
-> +#define RZN1_FUNC_0L				1
-> +#define RZN1_FUNC_CLK_ETH_MII_RGMII_RMII	2
-> +#define RZN1_FUNC_CLK_ETH_NAND			3
-> +#define RZN1_FUNC_QSPI				4
-> +#define RZN1_FUNC_SDIO				5
-> +#define RZN1_FUNC_LCD				6
-> +#define RZN1_FUNC_LCD_E				7
-> +#define RZN1_FUNC_MSEBIM			8
-> +#define RZN1_FUNC_MSEBIS			9
-> +#define RZN1_FUNC_L2_OFFSET			10	/* I'm Special */
-> +
-> +#define RZN1_FUNC_HIGHZ1			(RZN1_FUNC_L2_OFFSET + 0)
-> +#define RZN1_FUNC_ETHERCAT			(RZN1_FUNC_L2_OFFSET + 1)
-> +#define RZN1_FUNC_SERCOS3			(RZN1_FUNC_L2_OFFSET + 2)
-> +#define RZN1_FUNC_SDIO_E			(RZN1_FUNC_L2_OFFSET + 3)
-> +#define RZN1_FUNC_ETH_MDIO			(RZN1_FUNC_L2_OFFSET + 4)
-> +#define RZN1_FUNC_ETH_MDIO_E1			(RZN1_FUNC_L2_OFFSET + 5)
-> +#define RZN1_FUNC_USB				(RZN1_FUNC_L2_OFFSET + 6)
-> +#define RZN1_FUNC_MSEBIM_E			(RZN1_FUNC_L2_OFFSET + 7)
-> +#define RZN1_FUNC_MSEBIS_E			(RZN1_FUNC_L2_OFFSET + 8)
-> +#define RZN1_FUNC_RSV				(RZN1_FUNC_L2_OFFSET + 9)
-> +#define RZN1_FUNC_RSV_E				(RZN1_FUNC_L2_OFFSET + 10)
-> +#define RZN1_FUNC_RSV_E1			(RZN1_FUNC_L2_OFFSET + 11)
-> +#define RZN1_FUNC_UART0_I			(RZN1_FUNC_L2_OFFSET + 12)
-> +#define RZN1_FUNC_UART0_I_E			(RZN1_FUNC_L2_OFFSET + 13)
-> +#define RZN1_FUNC_UART1_I			(RZN1_FUNC_L2_OFFSET + 14)
-> +#define RZN1_FUNC_UART1_I_E			(RZN1_FUNC_L2_OFFSET + 15)
-> +#define RZN1_FUNC_UART2_I			(RZN1_FUNC_L2_OFFSET + 16)
-> +#define RZN1_FUNC_UART2_I_E			(RZN1_FUNC_L2_OFFSET + 17)
-> +#define RZN1_FUNC_UART0				(RZN1_FUNC_L2_OFFSET + 18)
-> +#define RZN1_FUNC_UART0_E			(RZN1_FUNC_L2_OFFSET + 19)
-> +#define RZN1_FUNC_UART1				(RZN1_FUNC_L2_OFFSET + 20)
-> +#define RZN1_FUNC_UART1_E			(RZN1_FUNC_L2_OFFSET + 21)
-> +#define RZN1_FUNC_UART2				(RZN1_FUNC_L2_OFFSET + 22)
-> +#define RZN1_FUNC_UART2_E			(RZN1_FUNC_L2_OFFSET + 23)
-> +#define RZN1_FUNC_UART3				(RZN1_FUNC_L2_OFFSET + 24)
-> +#define RZN1_FUNC_UART3_E			(RZN1_FUNC_L2_OFFSET + 25)
-> +#define RZN1_FUNC_UART4				(RZN1_FUNC_L2_OFFSET + 26)
-> +#define RZN1_FUNC_UART4_E			(RZN1_FUNC_L2_OFFSET + 27)
-> +#define RZN1_FUNC_UART5				(RZN1_FUNC_L2_OFFSET + 28)
-> +#define RZN1_FUNC_UART5_E			(RZN1_FUNC_L2_OFFSET + 29)
-> +#define RZN1_FUNC_UART6				(RZN1_FUNC_L2_OFFSET + 30)
-> +#define RZN1_FUNC_UART6_E			(RZN1_FUNC_L2_OFFSET + 31)
-> +#define RZN1_FUNC_UART7				(RZN1_FUNC_L2_OFFSET + 32)
-> +#define RZN1_FUNC_UART7_E			(RZN1_FUNC_L2_OFFSET + 33)
-> +#define RZN1_FUNC_SPI0_M			(RZN1_FUNC_L2_OFFSET + 34)
-> +#define RZN1_FUNC_SPI0_M_E			(RZN1_FUNC_L2_OFFSET + 35)
-> +#define RZN1_FUNC_SPI1_M			(RZN1_FUNC_L2_OFFSET + 36)
-> +#define RZN1_FUNC_SPI1_M_E			(RZN1_FUNC_L2_OFFSET + 37)
-> +#define RZN1_FUNC_SPI2_M			(RZN1_FUNC_L2_OFFSET + 38)
-> +#define RZN1_FUNC_SPI2_M_E			(RZN1_FUNC_L2_OFFSET + 39)
-> +#define RZN1_FUNC_SPI3_M			(RZN1_FUNC_L2_OFFSET + 40)
-> +#define RZN1_FUNC_SPI3_M_E			(RZN1_FUNC_L2_OFFSET + 41)
-> +#define RZN1_FUNC_SPI4_S			(RZN1_FUNC_L2_OFFSET + 42)
-> +#define RZN1_FUNC_SPI4_S_E			(RZN1_FUNC_L2_OFFSET + 43)
-> +#define RZN1_FUNC_SPI5_S			(RZN1_FUNC_L2_OFFSET + 44)
-> +#define RZN1_FUNC_SPI5_S_E			(RZN1_FUNC_L2_OFFSET + 45)
-> +#define RZN1_FUNC_SGPIO0_M			(RZN1_FUNC_L2_OFFSET + 46)
-> +#define RZN1_FUNC_SGPIO1_M			(RZN1_FUNC_L2_OFFSET + 47)
-> +#define RZN1_FUNC_GPIO				(RZN1_FUNC_L2_OFFSET + 48)
-> +#define RZN1_FUNC_CAN				(RZN1_FUNC_L2_OFFSET + 49)
-> +#define RZN1_FUNC_I2C				(RZN1_FUNC_L2_OFFSET + 50)
-> +#define RZN1_FUNC_SAFE				(RZN1_FUNC_L2_OFFSET + 51)
-> +#define RZN1_FUNC_PTO_PWM			(RZN1_FUNC_L2_OFFSET + 52)
-> +#define RZN1_FUNC_PTO_PWM1			(RZN1_FUNC_L2_OFFSET + 53)
-> +#define RZN1_FUNC_PTO_PWM2			(RZN1_FUNC_L2_OFFSET + 54)
-> +#define RZN1_FUNC_PTO_PWM3			(RZN1_FUNC_L2_OFFSET + 55)
-> +#define RZN1_FUNC_PTO_PWM4			(RZN1_FUNC_L2_OFFSET + 56)
-> +#define RZN1_FUNC_DELTA_SIGMA			(RZN1_FUNC_L2_OFFSET + 57)
-> +#define RZN1_FUNC_SGPIO2_M			(RZN1_FUNC_L2_OFFSET + 58)
-> +#define RZN1_FUNC_SGPIO3_M			(RZN1_FUNC_L2_OFFSET + 59)
-> +#define RZN1_FUNC_SGPIO4_S			(RZN1_FUNC_L2_OFFSET + 60)
-> +#define RZN1_FUNC_MAC_MTIP_SWITCH		(RZN1_FUNC_L2_OFFSET + 61)
-> +
-> +#define RZN1_FUNC_MDIO_OFFSET			(RZN1_FUNC_L2_OFFSET + 62)
-> +
-> +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> +#define RZN1_FUNC_MDIO0_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 0)
-> +#define RZN1_FUNC_MDIO0_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 1)
-> +#define RZN1_FUNC_MDIO0_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 2)
-> +#define RZN1_FUNC_MDIO0_ECAT			(RZN1_FUNC_MDIO_OFFSET + 3)
-> +#define RZN1_FUNC_MDIO0_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 4)
-> +#define RZN1_FUNC_MDIO0_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 5)
-> +#define RZN1_FUNC_MDIO0_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 6)
-> +#define RZN1_FUNC_MDIO0_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 7)
-> +/* These are MDIO0 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> +#define RZN1_FUNC_MDIO0_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 8)
-> +#define RZN1_FUNC_MDIO0_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 9)
-> +#define RZN1_FUNC_MDIO0_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 10)
-> +#define RZN1_FUNC_MDIO0_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 11)
-> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 12)
-> +#define RZN1_FUNC_MDIO0_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 13)
-> +#define RZN1_FUNC_MDIO0_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 14)
-> +#define RZN1_FUNC_MDIO0_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 15)
-> +
-> +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO function */
-> +#define RZN1_FUNC_MDIO1_HIGHZ			(RZN1_FUNC_MDIO_OFFSET + 16)
-> +#define RZN1_FUNC_MDIO1_GMAC0			(RZN1_FUNC_MDIO_OFFSET + 17)
-> +#define RZN1_FUNC_MDIO1_GMAC1			(RZN1_FUNC_MDIO_OFFSET + 18)
-> +#define RZN1_FUNC_MDIO1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 19)
-> +#define RZN1_FUNC_MDIO1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 20)
-> +#define RZN1_FUNC_MDIO1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 21)
-> +#define RZN1_FUNC_MDIO1_HWRTOS			(RZN1_FUNC_MDIO_OFFSET + 22)
-> +#define RZN1_FUNC_MDIO1_SWITCH			(RZN1_FUNC_MDIO_OFFSET + 23)
-> +/* These are MDIO1 peripherals for the RZN1_FUNC_ETH_MDIO_E1 function */
-> +#define RZN1_FUNC_MDIO1_E1_HIGHZ		(RZN1_FUNC_MDIO_OFFSET + 24)
-> +#define RZN1_FUNC_MDIO1_E1_GMAC0		(RZN1_FUNC_MDIO_OFFSET + 25)
-> +#define RZN1_FUNC_MDIO1_E1_GMAC1		(RZN1_FUNC_MDIO_OFFSET + 26)
-> +#define RZN1_FUNC_MDIO1_E1_ECAT			(RZN1_FUNC_MDIO_OFFSET + 27)
-> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO0		(RZN1_FUNC_MDIO_OFFSET + 28)
-> +#define RZN1_FUNC_MDIO1_E1_S3_MDIO1		(RZN1_FUNC_MDIO_OFFSET + 29)
-> +#define RZN1_FUNC_MDIO1_E1_HWRTOS		(RZN1_FUNC_MDIO_OFFSET + 30)
-> +#define RZN1_FUNC_MDIO1_E1_SWITCH		(RZN1_FUNC_MDIO_OFFSET + 31)
-> +
-> +#define RZN1_FUNC_MAX				(RZN1_FUNC_MDIO_OFFSET + 32)
-> +
-> +#endif /* __DT_BINDINGS_RZN1_PINCTRL_H */
-> --
-> 2.17.1
->
-
---PtLnLSExlPr13a2X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJboMT/AAoJEHI0Bo8WoVY8Rt4QAKfXPRRJgPVrt0CB02M6CZXL
-OBXsC7NByWyKnAUQH7f+klTTSfsT/+QV/sY4S36kfXj3Ryr1pkq8dJko82Fe0+iP
-/aZVN+eHMmL9GiO78mpnDOJlZjACX1xVW5NdBp3l50Y9IGAWuDcQzD+Vdp0qaNUM
-6fv1HrQ8+bhdI+P2AtxV9xGmBZBUtHU6zFS7OnMpCxYjfbWjwV5p6IuycVrG4PDp
-VmtW53LjBSn+CCXKBnXXkDhYHR3irDH/Gacmd96QnUxzoEfTxSTuWOuZs2dmROum
-CzwXbJoxOI4R2HNhLrfOD5Rbt7ikVjOdpajzp1TmE98ISs+EPID8McLRV8ju4Rj4
-hOPqDuLYZ9e1B+kOM+RaS+aGJAKJsJtvyTNLa1T/i4s7NLaKiN5etBsHyvoLBUt2
-3pF7yDrcV4aLELjxqkeZdjf8c0KzLKpzoLeDTeJGk7Ujl0651Fb+Cm1f7lPz1kcc
-8Hp+FtdAstwLWFDZpudizsrJEKVgircqd6wHPB9T7MsvNwQuEvM2N5yqfGMiAe+r
-cAh93AlAzYLZFozVd5t0bMvdnV6JsAmdjpHhVfqfH7UV8YHmdrp9LN3AFM9JacCU
-3TIKGnXWjY8INQZ9XU/vjrRJ48kF+xYKJXXgoAQY6TNcA62GE6PB08q0xhIWJ5UX
-Nc6HT1vBg/D2Q66X/xCz
-=siDm
------END PGP SIGNATURE-----
-
---PtLnLSExlPr13a2X--
