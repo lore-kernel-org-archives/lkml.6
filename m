@@ -2,132 +2,152 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F00BECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E38C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E322521508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD06421508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kNg2o/oD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E322521508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HHdwjMsh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD06421508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbeIRW5c (ORCPT
+        id S1730478AbeIRW6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:57:32 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60376 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeIRW5c (ORCPT
+        Tue, 18 Sep 2018 18:58:06 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44654 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730146AbeIRW6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:57:32 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8IHNrm7099022;
-        Tue, 18 Sep 2018 17:23:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=oNjT/CssCft+lfrD33PKmJxbLB75Mxm5ibNy+kACNOs=;
- b=kNg2o/oDbz2W1X96iTlUickLrqGbpYSf2cDvQozqDf/I5vp0sRoxHNpjJUGZiiiznTJ9
- GkdohuMZgTwffKrqccgYT2F0UIMa+K0Exfy3JRYrpY9fTxnNhYyy7QHlrtTR+8DyFjjL
- HtfxSYVwhm1hCoM0JH3bD/qTArz35Qs71Q9D96SmG0clm4Jam1Jx9ID0bnC6nsGwW8Ob
- lN6xPOpIfRofNuAq7EpFBHDrfjWK5UAmo7K1/2rSJ3DyspbgBnnO+NezrBrJj2ocLXbW
- jAn/sO7WxJqoiNFRCu0yT+s8qClmDGuULG6ViQ2ZfgS1yyLmp6rkYYinyclAqnBOGg+M 2Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2mgsgtp37v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Sep 2018 17:23:52 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8IHNq18022817
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Sep 2018 17:23:52 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8IHNpHb002757;
-        Tue, 18 Sep 2018 17:23:51 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Sep 2018 10:23:51 -0700
-Subject: Re: [PATCH] xen: issue warning message when out of grant maptrack
- entries
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20180918093200.17499-1-jgross@suse.com>
- <f75e7a31-eef9-e444-0440-f46c3cd111fa@oracle.com>
- <b1245f25-d780-a560-c78d-4d393ee4a8e4@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <d6c018a6-ec1b-c9bf-08b8-39d381b8a4f3@oracle.com>
-Date:   Tue, 18 Sep 2018 13:25:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 18 Sep 2018 18:58:06 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so1354209pgp.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 10:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QFO829D5xhR+ZdLGyEW5lo0+ywypKe64BGYOpjFtu2w=;
+        b=HHdwjMshQID9Ezw1gA3vh3icPqIBT+ZDlOjxmV56XzvRLzTWSMmxH2X64KSGnlJmc5
+         4hwOBuASbm6eG1jczYrWN//Gyd6B0GsDNQ1v5JTqIlJLsfzWvh2MrVAZikyMl+hFVPjg
+         81uQ4YS9Jz1EJXxDFJpz06NK08AtGtBh0K6Bo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QFO829D5xhR+ZdLGyEW5lo0+ywypKe64BGYOpjFtu2w=;
+        b=dW4dMYjExCER5nyD8mpYRID9D+utdM0wA1bt1T2rSyY/hHuB8KdM/AvTp7tt5VhBXr
+         smnWW5S92vHWp/jfReUGgi4Tsz6TDA+Ll20MRsuwQLC/y5FgPc1GgT5wnKR1VynsV3eL
+         9H0iNYXea5KvYkTHUzEe8e4GU03jYPT6lVggai2wlYOUAtgObAeME7LavjnzPWYozdiu
+         o2peNxJL5Qfqzoh6XtN6Ru+UajW/a11qF5Teko/j0lyyvL9C0kbj0wvt0ZNIQ1HGTdXq
+         o9uLcSlaDaUWlpJKQu8qeIkrI27oZGJfv7DXf/bTdzgDSapyf7qesWKP6CozPAPuvwha
+         EpmQ==
+X-Gm-Message-State: APzg51DkPvOVYNt+pnFdtsYIsM85GM7WLhr/l+Nn/fN1gLFnnvY/a5AT
+        1w/MuK/QUa6JStnz3LDZL4JFQw==
+X-Google-Smtp-Source: ANB0Vda1PzA40ebHt4bvNbyVzPhL0QOITJ6sDxVtp/k82VB3Qu4eCpQdwZr6vi0c8e/2XNgKOkTu5Q==
+X-Received: by 2002:a63:fb57:: with SMTP id w23-v6mr28691407pgj.441.1537291470458;
+        Tue, 18 Sep 2018 10:24:30 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id m20-v6sm44404115pfg.61.2018.09.18.10.24.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 10:24:29 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 10:24:27 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Manoj Gupta <manojgupta@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tty/sysrq: Make local variable 'killer' in
+ sysrq_handle_crash() global
+Message-ID: <20180918172427.GO22824@google.com>
+References: <20180917213304.44476-1-mka@chromium.org>
+ <a75e8a5d-25d0-83b8-6f7c-b80e69985b60@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <b1245f25-d780-a560-c78d-4d393ee4a8e4@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=989
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809180171
+Content-Disposition: inline
+In-Reply-To: <a75e8a5d-25d0-83b8-6f7c-b80e69985b60@suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/18 1:17 PM, Juergen Gross wrote:
->
-> The loop is running until the end, so i == count for the call of kmap_ops().
+On Tue, Sep 18, 2018 at 08:11:33AM +0200, Jiri Slaby wrote:
+> On 09/17/2018, 11:33 PM, Matthias Kaehlcke wrote:
+> > sysrq_handle_crash() dereferences a NULL pointer on purpose to force
+> > an exception, the local variable 'killer' is assigned to NULL and
+> > dereferenced later. Clang detects the NULL pointer dereference at compile
+> > time and emits a BRK instruction (on arm64) instead of the expected NULL
+> > pointer exception. Change 'killer' to a global variable (and rename it
+> > to 'sysrq_killer' to avoid possible clashes) to prevent Clang from
+> > detecting the condition. By default global variables are initialized
+> > with zero/NULL in C, therefore an explicit initialization is not needed.
+> > 
+> > Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> > Suggested-by: Evan Green <evgreen@chromium.org>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/tty/sysrq.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> > index 06ed20dd01ba..49fa8e758690 100644
+> > --- a/drivers/tty/sysrq.c
+> > +++ b/drivers/tty/sysrq.c
+> > @@ -132,10 +132,10 @@ static struct sysrq_key_op sysrq_unraw_op = {
+> >  #define sysrq_unraw_op (*(struct sysrq_key_op *)NULL)
+> >  #endif /* CONFIG_VT */
+> >  
+> > +char *sysrq_killer;
+> > +
+> >  static void sysrq_handle_crash(int key)
+> >  {
+> > -	char *killer = NULL;
+> > -
+> >  	/* we need to release the RCU read lock here,
+> >  	 * otherwise we get an annoying
+> >  	 * 'BUG: sleeping function called from invalid context'
+> > @@ -144,7 +144,7 @@ static void sysrq_handle_crash(int key)
+> >  	rcu_read_unlock();
+> >  	panic_on_oops = 1;	/* force panic */
+> >  	wmb();
+> > -	*killer = 1;
+> > +	*sysrq_killer = 1;
+> 
+> Just because a static analyzer is wrong? Oh wait, even compiler is
+> wrong. At least make it a static global. Or what about OPTIMIZER_HIDE_VAR?
 
-OK, so I can't read code.
+With a static global the compiler still can know that the value is
+constant.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Anyway, our compiler folks raised concerns that the variable could
+still be identified as constant with Link Time Optimization (LTO)
+enabled, so this patch isn't a good solution.
+
+On the positive side the compiler engs don't expect the NULL pointer
+access being optimized away with -fno-delete-null-pointer-checks
+enabled, which recently landed in upstream LLVM.
+
+I confirmed that with -fno-delete-null-pointer-checks Clang does not
+emit 'brk' in this case and the kernel crashes with a NULL pointer
+exception when this code path is triggered.
+
+Seems we can forget about this patch, though we might still want to
+replace the forced crash with a panic() as mentioned in this thread.
+
+Thanks
+
+m.
+
+
 
