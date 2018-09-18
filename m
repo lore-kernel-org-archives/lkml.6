@@ -2,102 +2,111 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D1BECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7611C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB72214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:46:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="fmpERQBY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB72214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 3BB45214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB45214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729928AbeIRUTU (ORCPT
+        id S1729937AbeIRUUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:19:20 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39067 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729695AbeIRUTU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:19:20 -0400
-Received: by mail-it0-f66.google.com with SMTP id h1-v6so3340694itj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AK+SJRqXre6VfyJm5g10BZL2PVfKGqFxI51i5FhjIBg=;
-        b=fmpERQBYo8C5NZ1F7KtWiBu3TmN4EtPPmylGGTMdV5FHUKJFD5A7J3/TSLa75KMcdw
-         M7ZdEyH/TpP689QTxAwplGt/vLXMfirMW7CFFfjb2dMJotovTaSLlxWHUaQ2TwBf8Yop
-         xKLtpy3uPq06tEFPiYy4IHQlmf4pv0UaxqYDfnq2tJBQriXEzZ+ktQUzcCz/EbPzUjUh
-         sW68+W42iYUz36YdprGHE8zyST/ojmZudonBgfcG2ktHXiVdtFFfdin0UMuODJm0LL7u
-         UbPJWdEgLp9nHYeHBWjdyUMaZmCvjrBNM/2TmRv5R2SeIcqxysXvIOqpg8QspCDLr3wi
-         sdVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AK+SJRqXre6VfyJm5g10BZL2PVfKGqFxI51i5FhjIBg=;
-        b=k2masieTiUUDVFZoe6PrLcyWOL63eo+h+hxxGNmiTRsPZvqespWFzIRuoEOBtPUoXH
-         MWvCfBZRnC5Mm9YZmg3EOzTjp9qSdKtiE1bge+SgWDuF+lIbW2PFRpjWYVHSEjagnQtC
-         1sEAVGiu17ERlTenFxZwB51b5ZTHpGuED3rM5fzrg2FdC8cNFXhLvRwWEPW1/O1i88Wt
-         9fZYTJ1O8mV5kD7VDQDEiQSENt2GiNYMOpMRWiQzX41pO5crc2vkg7e72pCUR0RssjpY
-         nPKaGDrdHIh+TkqeANTkqaa/Eoh6Cfd0Au4Qr7e0O6izKyfZOG1SDzmC4vhtE8sVc0Do
-         SGnA==
-X-Gm-Message-State: APzg51AVYw8ynu5R9nx8MDES9gFrc7W3nOcwDmT1HtoRdH4XY1I4IPnr
-        k/2YKpb9Ik28F4KRmJLeQFwLsw==
-X-Google-Smtp-Source: ANB0VdbllpSDI62u0EI1WUSFKDls98XU3HnHSXlruPPqYVjlOaSq3CBRzpPNO9+WVsv27QdL5aK1aA==
-X-Received: by 2002:a24:ca84:: with SMTP id k126-v6mr17702400itg.27.1537281984678;
-        Tue, 18 Sep 2018 07:46:24 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm6327193iop.1.2018.09.18.07.46.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 07:46:24 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g2HGh-0003QC-8o; Tue, 18 Sep 2018 08:46:23 -0600
-Date:   Tue, 18 Sep 2018 08:46:23 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kamal Heib <kamalheib1@gmail.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Denis Lunev <den@virtuozzo.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: Re: [PATCH 0/4] IB: decrease large contigous allocation
-Message-ID: <20180918144623.GI11367@ziepe.ca>
-References: <1537275826-27247-1-git-send-email-jan.dakinevich@virtuozzo.com>
+        Tue, 18 Sep 2018 16:20:32 -0400
+Received: from mga11.intel.com ([192.55.52.93]:24746 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726737AbeIRUUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:20:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 07:47:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,390,1531810800"; 
+   d="scan'208";a="89823059"
+Received: from xuting-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.29.10])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Sep 2018 07:47:10 -0700
+Subject: Re: [LKP] [ipc] 61224adcd2: general_protection_fault:#[##]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Rong Chen <rong.a.chen@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <9df6256f-dcf3-ee6f-dd9d-b7efe2f539e6@intel.com>
+ <1dac87f5-fa47-eaf2-ef34-945365e0b2c3@intel.com>
+ <7c403b7d-0f60-68ea-d058-cb56d3fece75@intel.com>
+ <20180913010517.GB7632@shao2-debian>
+ <23069.1536838121@warthog.procyon.org.uk>
+ <7969.1537252241@warthog.procyon.org.uk>
+ <9189.1537255398@warthog.procyon.org.uk>
+ <9499.1537266023@warthog.procyon.org.uk>
+From:   Li Zhijian <zhijianx.li@intel.com>
+Message-ID: <3905bb1b-c691-0c8b-490f-599e7a0d561b@intel.com>
+Date:   Tue, 18 Sep 2018 22:47:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537275826-27247-1-git-send-email-jan.dakinevich@virtuozzo.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <9499.1537266023@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 04:03:42PM +0300, Jan Dakinevich wrote:
-> The size of mlx4_ib_device became too large to be allocated as whole contigous 
-> block of memory. Currently it takes about 55K. On architecture with 4K page it 
-> means 3rd order.
-> 
-> This patch series makes an attempt to split mlx4_ib_device into several parts 
-> and allocate them with less expensive kvzalloc
 
-Why split it up? Any reason not to just allocate the whole thing with
-kvzalloc?
+On 9/18/2018 6:20 PM, David Howells wrote:
+> Li Zhijian <zhijianx.li@intel.com> wrote:
+>
+>> this is not expected.
+>> could you list/home/dhowells/.lkp/cache
+> final_initrd  initrd-concatenated  lkp/  lkp-x86_64-ad88cb1a437a_.cgz  osimage/
+>
+> Note that ~/.lkp is a symlink to somewhere that I don't mind clobbering.
+>
+> Does this assume that I'm running on some particular OS other than Fedora?
 
-Jason
+sorry, i cannot reproduce your issue on debian and ubuntu
+
+1. please type following command to verify the lkp-src
+$ gzip -dc /home/dhowells/.lkp/cache/lkp-x86_64-ad88cb1a437a_.cgz | cpio -t
+
+it should have something like
+lizhijian@ivb44:~$ gzip -dc .lkp/cache/lkp-x86_64-ebf5822e1818_.cgz | cpio -t | head
+lkp
+lkp/lkp
+lkp/lkp/src
+lkp/lkp/src/COPYING
+lkp/lkp/src/Gemfile
+lkp/lkp/src/Makefile
+lkp/lkp/src/README.md
+lkp/lkp/src/Rakefile
+lkp/lkp/src/_config.yml
+lkp/lkp/src/allot
+
+2. remove this file and try again with following changes
+lizhijian@ivb44:/lkp-qemu/lkp-tests$ git diff
+diff --git a/pack/lkp-src b/pack/lkp-src
+index 793084cb..ca8717e9 100755
+--- a/pack/lkp-src
++++ b/pack/lkp-src
+@@ -1,5 +1,5 @@
+  #!/bin/bash
+-
++set -x
+  LKP_SRC=${LKP_SRC:-/lkp/$USER/src}
+  export ARCH=${arch:-x86_64}
+  LKP_USER=${LKP_USER:-$USER}
+
+
+
+Thanks
+  
+
+>
+> David
