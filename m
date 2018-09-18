@@ -2,146 +2,101 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862ACECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B385ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F951206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DBD2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KERJEpCV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F951206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyjAbxjc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3DBD2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbeIRMIK (ORCPT
+        id S1728914AbeIRMJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:08:10 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:44331 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbeIRMIK (ORCPT
+        Tue, 18 Sep 2018 08:09:47 -0400
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:53162 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbeIRMJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:08:10 -0400
-Received: by mail-yb1-f196.google.com with SMTP id s8-v6so349995ybo.11
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 23:37:02 -0700 (PDT)
+        Tue, 18 Sep 2018 08:09:47 -0400
+Received: by mail-wm1-f47.google.com with SMTP id y139-v6so1093836wmc.2;
+        Mon, 17 Sep 2018 23:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QTVTvub5qrtIsSt9FdOr+BP7p/59TzS5tBZwi4OIrgc=;
-        b=KERJEpCVAolATTAI5rVq3JQsSqzreYOkfHEZMNmBNSvipT4zUp2dfsREJKmMQzKCVg
-         tik6sU6TzN3ysz4D/THbL9DGis0FomF08EAC0rZyR0pS7GIy2JErPsToJwx2QlgwWBdA
-         bHDcrVB9wb6J2Kmy6ZDFYl4flGnMQXG7pELi0=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AnljPYMHxT5UmbwaUjgsD3wP4F5nvqVkUzZa08aUWFo=;
+        b=OyjAbxjc1Oz6xH3si+7/oYRgMkTaqEV7FI1vyaah6jrF3DWh2PjyXac4a99qEAFmk9
+         A2oYRq4ogDYpFRt5PebtJi+A4Jbp8SP9AT0PdLa25U8d8QiGyZdm2MJK895BmXGd9i3/
+         uH2GSU/CHQuQFMlha9f+dRwxfz45zTV9+Rhi2+hk/WsoradgN5wTFv5gK+BmU++VvHIV
+         Ii3qquoYqki6daIN45S9Jch8xjuvY06feOmFvgQj2YF31BKoXbBw5sOKpHrHdT/1BLKM
+         w6gW5tssEYiyiSiSgQWQMszUnzfAcVPQ72/pkV5FMtdU7fgjgWBSsy3TIcdXY3PLquhk
+         Sxxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QTVTvub5qrtIsSt9FdOr+BP7p/59TzS5tBZwi4OIrgc=;
-        b=i/pc7Y4AgcgqrFg97NU2B4tytWxMw4TDZnbnrDwUbIQTf8iegT8XfQhuZ8BJrUfDBK
-         cOAc5+13Zwx2iUyt8jThbq+YIAdasOzShx+gjFMcVlMDev5uDNTM3VqnILo7Vp8o564s
-         LDKTpHnQdLk5UFiQ/fjg5ONJ8ViEACwYR7ha4NnqyISqnQ5/RZiFGwO13jknNuvF1dqg
-         o4B1Xx+v8Wwnm364qIFM/RkFgFgf2KQHO97lFGqW/3zw7il4vCRIVDzbcy/tx5vfR/4n
-         qOjsNAZhbyqcYccKTEtaLJ1yDQEa4+Qbq/kJpB0CpPDbzWGo5z3Y7RJSHxUncW6Q+iTK
-         qQFw==
-X-Gm-Message-State: APzg51A2OX78ZyhbMCDVpG/zJZxHeEvM1Y3zyrw8lJlHStIo3aTynyNJ
-        aqCoU8L756GL61F7AMaxPHiQ7FAOwZdz2Zz1Z2eLvg==
-X-Google-Smtp-Source: ANB0VdZB/QJvm1fJKtZz59FWfsfcxfdRZm9R5q712AaEdpwxxqmKRSiL1o6D6B62Wn/YRSU0BTHX0eiPCXKuOBwWsfs=
-X-Received: by 2002:a25:e548:: with SMTP id c69-v6mr11731496ybh.393.1537252621844;
- Mon, 17 Sep 2018 23:37:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 23:37:01
- -0700 (PDT)
-In-Reply-To: <f1e95c4d-4f02-263d-7f35-cc87bc657fbb@xilinx.com>
-References: <1533792466-4227-1-git-send-email-firoz.khan@linaro.org>
- <1533792466-4227-2-git-send-email-firoz.khan@linaro.org> <f1e95c4d-4f02-263d-7f35-cc87bc657fbb@xilinx.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 18 Sep 2018 12:07:01 +0530
-Message-ID: <CALxhOnho6av7nZja_MN4akQuVj1hVq753ZYgRM8fbKkL2rHzQw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] microblaze: Replace NR_syscalls macro from asm/unistd.h
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AnljPYMHxT5UmbwaUjgsD3wP4F5nvqVkUzZa08aUWFo=;
+        b=SZCW3dv05m+bf03bxIdB/tVOKwzeASwEgDzC/fi4MY4qsqV/N6cqsJl6F4b6JWFsGU
+         jH/yHcvg+KZ1kl92gcDG+j5kyO4cWV/yG0jieR3d8Ctxe0qVf+MpNS/0Q8jefEovM8Xu
+         1umblhIryKGMgXySKSf/xPewsEA7LKdQzrKasJD9O8F+PkBJKCSDjMq0oFNncZzByk80
+         Hfmh1tG1GjvQXZVQ7wmoKJ4dVKTxri4nHmcjS+E79yYGTR9CkTz3UrK5a8d0BwkdVgbc
+         SoRh9/eaiszfs/uDdJoIibqQ7aRpaTAqGTxhfbrr93+NHs320hgX2VuWSpLNRyA+FLlJ
+         hIzQ==
+X-Gm-Message-State: APzg51CKtUNOjXrBZKOvVXq1PKFO1DmA5HGVBCCq9EEMCAuBUdgGHm2C
+        TjmD0Pvk5jjZ/lmrhcFOBO0=
+X-Google-Smtp-Source: ANB0VdbaqbKFbw7Nns66xplNr6vS619FjuRSEjTcSyosoDrLeFJjeOJ0wZDjIoEP6E7/II3UUQm3Rg==
+X-Received: by 2002:a1c:8291:: with SMTP id e139-v6mr13367791wmd.39.1537252717964;
+        Mon, 17 Sep 2018 23:38:37 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x204-v6sm956245wmg.27.2018.09.17.23.38.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Sep 2018 23:38:37 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 08:38:34 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org, douly.fnst@cn.fujitsu.com,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: Re: [tip:sched/core] sched/fair: Remove #ifdefs from
+ scale_rt_capacity()
+Message-ID: <20180918063834.GA72834@gmail.com>
+References: <1532001606-6689-1-git-send-email-vincent.guittot@linaro.org>
+ <tip-2e62c4743adc4c7bfcbc1f45118fc7bec58cf30a@git.kernel.org>
+ <20180915114657.GA63704@gmail.com>
+ <CAKfTPtD-vAw9=aDS83eEB56JOPV74R-oG1LAKKPXkDfxPDt1vw@mail.gmail.com>
+ <20180915122956.GA12378@gmail.com>
+ <CAKfTPtCSJLRjmLDHAOTBjOPg8HQyGhmwsk71bNSnz0tOqbwkyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCSJLRjmLDHAOTBjOPg8HQyGhmwsk71bNSnz0tOqbwkyw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 August 2018 at 12:18, Michal Simek <michal.simek@xilinx.com> wrote:
-> On 9.8.2018 07:27, Firoz Khan wrote:
->> __NR_syscalls macro holds the number of system call exist in this
->> architecture. This macro is currently the part of asm/unistd.h file.
->> We have change the value of __NR_syscalls, if we add or delete a
->> system call.
->>
->> One of the patch in this patch series has a script which will
->> generate a uapi header based on syscall.tbl file. The syscall.tbl
->> file contains the number of system call information. So we have
->> two option to update __NR_syscalls value.
->>
->> 1. Update __NR_syscalls in asm/unistd.h manually by counting the
->>    no.of system calls. No need to update __NR_syscalls untill
->>    we either add a new system call or delete an existing system
->>    call.
->>
->> 2. We can keep this feature it above mentioned script, that'll
->>    count the number of syscalls and keep it in a generated file.
->>    In this case we don't need to explicitly update __NR_syscalls
->>    in asm/unistd.h file.
->>
->> The 2nd option will be the recommended one. For that, I moved the
->> NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
->> name also changed form NR_syscalls to __NR_syscalls for making the
->> name convention same across all architecture. While __NR_syscalls
->> isn't strictly part of the uapi, having it as part of the generated
->> header to simplifies the implementation.
->
-> This macro was in unistd.h in past but it was moved out because it was
-> causing problem with strace.
->
-> commit 40c2702a02b755e0183b702778331b351f3be20c
-> Author:     Michal Simek <michal.simek@xilinx.com>
-> AuthorDate: Mon Jul 8 09:50:24 2013 +0200
-> Commit:     Michal Simek <michal.simek@xilinx.com>
-> CommitDate: Wed Jul 10 07:32:09 2013 +0200
->
->     microblaze: Move __NR_syscalls from uapi
->
->
-> That's why I don't think this is the right thing to do.
-> I have grepped strace and glibc and none is using this macro that's why
-> I think it shouldn't be exported via uapi.
 
+* Vincent Guittot <vincent.guittot@linaro.org> wrote:
 
-Thanks for you reply :)
-Sorry for the delayed response :(
+> > I.e. this needs to be sorted out and done properly, the concerns you voice are simply a side
+> > effect of this having been done badly.
+> 
+> Ok. I'm going to prepare a patchset to fix all these points.
 
-I would like to keep __NR_syscalls macro to uapi header in order to simplify
-the system call table generation script. Otherwise the __NR_syscalls
-macro need to update manually. That become a problem.
+Thanks!
 
-Please check the below implementation in uapi file make sense?
-It is an easy workaround to leave __NR_syscalls macro in uapi/asm/unistd.h
-and enclose it in #ifdef __KERNEL__
-
-...
-...
-#define __NR_pkey_free  397
-#define __NR_statx      398
-
-#ifdef __KERNEL__
-#define __NR_syscalls   399
-#endif
-...
-...
-
-- Firoz
+	Ingo
