@@ -2,540 +2,142 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEBAECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F6AECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3692521471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3692521471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9884A2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:28:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mDP40efc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9884A2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbeIRN6j (ORCPT
+        id S1729366AbeIROAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 09:58:39 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:47646 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727317AbeIRN6j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 09:58:39 -0400
-X-Greylist: delayed 368 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Sep 2018 09:58:38 EDT
-X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
-   d="scan'208";a="8965750"
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 18 Sep 2018 01:20:59 -0700
-Received: from westreach.qualcomm.com ([10.228.196.125])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 18 Sep 2018 01:20:57 -0700
-Received: by westreach.qualcomm.com (Postfix, from userid 467151)
-        id 3BBBC1EE8; Tue, 18 Sep 2018 04:20:57 -0400 (EDT)
-From:   Oza Pawandeep <poza@codeaurora.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Wei Zhang <wzhang@fb.com>, linux-kernel@vger.kernel.org
-Cc:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH] PCI/AER: Clear uncorrectable error status for device
-Date:   Tue, 18 Sep 2018 04:20:29 -0400
-Message-Id: <1537258829-15763-1-git-send-email-poza@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 18 Sep 2018 10:00:14 -0400
+Received: from mail-eopbgr10061.outbound.protection.outlook.com ([40.107.1.61]:34933
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726759AbeIROAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 10:00:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kw1/PUZzXJs8xDaUcRCILQudSZ2Tyxjn0p8HCLIURD8=;
+ b=mDP40efcY3g/qwc64zVjpqBeXlOfCTv/Gsi/nm82mtNT++9aoq6xm9sy1mygMRDzJbe0pV/BI/gHwVcaLNwKomnasAYNCi9VCRqq/vNfHxshRcSi40yncrDdvhqTXFeqguiWLwWP4rSclA3iGQHkNWFZlXdKm6L/COmI4Rc3Yko=
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com (10.161.109.144) by
+ VI1PR04MB1357.eurprd04.prod.outlook.com (10.163.166.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Tue, 18 Sep 2018 08:28:23 +0000
+Received: from VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::2098:afc:1023:6534]) by VI1PR04MB1038.eurprd04.prod.outlook.com
+ ([fe80::2098:afc:1023:6534%5]) with mapi id 15.20.1143.017; Tue, 18 Sep 2018
+ 08:28:23 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Frieder Schrempf <frieder.schrempf@exceet.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Topic: [PATCH v2 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Index: AQHUTmvfC0oHQrtTJUq+OAlmHVuv6qT0WOOAgAFbqYCAAAA64A==
+Date:   Tue, 18 Sep 2018 08:28:23 +0000
+Message-ID: <VI1PR04MB1038A85DC36665244DF2104A991D0@VI1PR04MB1038.eurprd04.prod.outlook.com>
+References: <1537177710-9379-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1537177710-9379-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <20180917133751.453ea6ed@bbrezillon>
+ <9529c765-cb3b-02f9-df15-4f79cfa48e47@exceet.de>
+In-Reply-To: <9529c765-cb3b-02f9-df15-4f79cfa48e47@exceet.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1357;6:6/g3T00Zv9M1CRB57NHHhxcNx/sM2qQ6Gusm9C4Wo2kt9r68IxgVdzWBt0c/jyeFH4/Sib6hUSNtZ6YCTGVXnB6gofLHi8tgzm8ZUkb4pqUMK44qgr0uI9LZxy31iHAHmY+rTOwZSdF2JlcDA2uQnnSR8zSZ549Fk1Tiod5RBsWisMjZHr903ivP8zBLH4l2Ha+Z6Kg4tLS8Cb7GJzGAmplCleTyWUWxp/Og/hqs0Jn4YY7guS7blKSVZ8h4ra4Tc1DnjpwHkeJ+5tFhUnY7kfKuCD0k0vOSks7ku3WQinEBXzuuhyBymolYD/d1Qm8kfMX3ogVMwTwr5W6CoUUbsoWCw7NHzqKN2qPB9t/fnVQhohhaWFTnhNAg7Ax1rFZtQJoCjoKPSH/xeFhgqqV3E/GQV2aJP8d+m8Q44ruuv6hEKmfoLGTWmgZlJsz+TKE+WYaXq0iVmOqmYZQy+JhTRA==;5:79/TQPMKBGbnXFu58lRo80ZcOqHa9uYHqhdYA9ZYHrPq28QbHimXIwIbTjwwdXUzNeXSpItlmaf0jYmoqU3RdvuRyvEF4UMngevHPzZJ+hVMhPjagybyC8DDoZojDbPqia4GIaFsFbhsGGHrUeqsrJrKpLfY2aluIiycPyQWd60=;7:Mdzal7/IeDMUYbys6aEFA7YWfMFht9Vo/r04xz5EKzglGx67vn8/+doKRvLyvB7xSprhu7Xc087IWRZYv5UmqaMy5S4DZ2TzbG3YNhb7jO7DqVj6xKjwir0BrBNTEdGloHm8XDIUKXT9PfLoKTIm6AsxWDOgfkEbiVh19VBa9qreoCT0ZzBSJImC8c0dkixMM967dh4fmdzADfjBeO/QwCYXbYQQDyj8TH4llea0cIEUyBhupMg/zLbEN9vsGzmg
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3bacb0ad-f05c-461a-7c15-08d61d40b2e8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1357;
+x-ms-traffictypediagnostic: VI1PR04MB1357:
+x-microsoft-antispam-prvs: <VI1PR04MB1357C8656A941C150DF4D6D5991D0@VI1PR04MB1357.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699050);SRVR:VI1PR04MB1357;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1357;
+x-forefront-prvs: 0799B1B2D7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(39860400002)(136003)(13464003)(189003)(199004)(6116002)(55236004)(76176011)(99286004)(7696005)(26005)(478600001)(11346002)(316002)(53936002)(54906003)(6506007)(486006)(476003)(86362001)(68736007)(446003)(110136005)(102836004)(93886005)(97736004)(186003)(256004)(9686003)(53546011)(7416002)(5660300001)(6436002)(105586002)(7736002)(305945005)(4326008)(5250100002)(2900100001)(81166006)(8936002)(106356001)(33656002)(6246003)(2906002)(229853002)(39060400002)(66066001)(74316002)(81156014)(25786009)(14454004)(3846002)(8676002)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1357;H:VI1PR04MB1038.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: n3wROqtdDUy3N6TedwDqbfp+pFxgABJxhqbEQd3teTfyb0qZRxg/vdx290C+YETsuAtykd+fjAqNbTeuuayBiVkmzvzYudbe0RuTwc62YRL38F1Udn3cFqpibWjEbB1mIU6CDTUm9M+gZkXuVdGhVfoCfurix6YpMcRvVUiUXW+qqn68qHKhRa69yVhnyk0Y96WIMDjjylKORomm256thwFCrYY1XHH3zeDVQiTG4MteivSW/T4nCY/ia+C1yAqv36GX/k4itLK310B8/cVUTnB9g1DC1nxN3VJyFB34rLWqNh64gayuzogTK7Dcriu5PPnksIrnbvENhLu0km+OXZMyMekDNArfwpJR/JW2JZE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bacb0ad-f05c-461a-7c15-08d61d40b2e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 08:28:23.4321
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1357
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI based device drivers handles ERR_NONFATAL  by registering
-pci_error_handlers. some of the drivers clear AER uncorrectable status
-in slot_reset while some in resume.
-
-Drivers should not have responsibility of clearing the AER status, instead
-shall be done by error and recovery framework defined in err.c
-
-Clear the status while resuming, after reset_link was successful.
-
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-
-diff --git a/drivers/crypto/qat/qat_common/adf_aer.c b/drivers/crypto/qat/qat_common/adf_aer.c
-index da8a2d3..61ded36 100644
---- a/drivers/crypto/qat/qat_common/adf_aer.c
-+++ b/drivers/crypto/qat/qat_common/adf_aer.c
-@@ -198,7 +198,6 @@ static pci_ers_result_t adf_slot_reset(struct pci_dev *pdev)
- 		pr_err("QAT: Can't find acceleration device\n");
- 		return PCI_ERS_RESULT_DISCONNECT;
- 	}
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	if (adf_dev_aer_schedule_reset(accel_dev, ADF_DEV_RESET_SYNC))
- 		return PCI_ERS_RESULT_DISCONNECT;
- 
-diff --git a/drivers/dma/ioat/init.c b/drivers/dma/ioat/init.c
-index 4fa4c06..80c475f 100644
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1267,12 +1267,6 @@ static pci_ers_result_t ioat_pcie_error_slot_reset(struct pci_dev *pdev)
- 		pci_wake_from_d3(pdev, false);
- 	}
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		dev_err(&pdev->dev,
--			"AER uncorrect error status clear failed: %#x\n", err);
--	}
--
- 	return result;
- }
- 
-diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
-index baf7c32..38bc804 100644
---- a/drivers/infiniband/hw/hfi1/pcie.c
-+++ b/drivers/infiniband/hw/hfi1/pcie.c
-@@ -655,7 +655,6 @@ pci_resume(struct pci_dev *pdev)
- 	struct hfi1_devdata *dd = pci_get_drvdata(pdev);
- 
- 	dd_dev_info(dd, "HFI1 resume function called\n");
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	/*
- 	 * Running jobs will fail, since it's asynchronous
- 	 * unlike sysfs-requested reset.   Better than
-diff --git a/drivers/infiniband/hw/qib/qib_pcie.c b/drivers/infiniband/hw/qib/qib_pcie.c
-index 5ac7b31..30595b3 100644
---- a/drivers/infiniband/hw/qib/qib_pcie.c
-+++ b/drivers/infiniband/hw/qib/qib_pcie.c
-@@ -597,7 +597,6 @@ qib_pci_resume(struct pci_dev *pdev)
- 	struct qib_devdata *dd = pci_get_drvdata(pdev);
- 
- 	qib_devinfo(pdev, "QIB resume function called\n");
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	/*
- 	 * Running jobs will fail, since it's asynchronous
- 	 * unlike sysfs-requested reset.   Better than
-diff --git a/drivers/net/ethernet/atheros/alx/main.c b/drivers/net/ethernet/atheros/alx/main.c
-index 567ee54..0d0b6a4 100644
---- a/drivers/net/ethernet/atheros/alx/main.c
-+++ b/drivers/net/ethernet/atheros/alx/main.c
-@@ -1960,8 +1960,6 @@ static pci_ers_result_t alx_pci_error_slot_reset(struct pci_dev *pdev)
- 	if (!alx_reset_mac(hw))
- 		rc = PCI_ERS_RESULT_RECOVERED;
- out:
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	rtnl_unlock();
- 
- 	return rc;
-diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
-index 122fdb8..bbb2471 100644
---- a/drivers/net/ethernet/broadcom/bnx2.c
-+++ b/drivers/net/ethernet/broadcom/bnx2.c
-@@ -8793,13 +8793,6 @@ static pci_ers_result_t bnx2_io_slot_reset(struct pci_dev *pdev)
- 	if (!(bp->flags & BNX2_FLAG_AER_ENABLED))
- 		return result;
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		dev_err(&pdev->dev,
--			"pci_cleanup_aer_uncorrect_error_status failed 0x%0x\n",
--			 err); /* non-fatal, continue */
--	}
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 5b1ed24..cfb6c89 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -14379,14 +14379,6 @@ static pci_ers_result_t bnx2x_io_slot_reset(struct pci_dev *pdev)
- 
- 	rtnl_unlock();
- 
--	/* If AER, perform cleanup of the PCIe registers */
--	if (bp->flags & AER_ENABLED) {
--		if (pci_cleanup_aer_uncorrect_error_status(pdev))
--			BNX2X_ERR("pci_cleanup_aer_uncorrect_error_status failed\n");
--		else
--			DP(NETIF_MSG_HW, "pci_cleanup_aer_uncorrect_error_status succeeded\n");
--	}
--
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 176fc9f..b4d1db9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -9076,13 +9076,6 @@ static pci_ers_result_t bnxt_io_slot_reset(struct pci_dev *pdev)
- 
- 	rtnl_unlock();
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		dev_err(&pdev->dev,
--			"pci_cleanup_aer_uncorrect_error_status failed 0x%0x\n",
--			 err); /* non-fatal, continue */
--	}
--
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index dd04a2f..b6c1478a 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -4721,7 +4721,6 @@ static pci_ers_result_t eeh_slot_reset(struct pci_dev *pdev)
- 	pci_set_master(pdev);
- 	pci_restore_state(pdev);
- 	pci_save_state(pdev);
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 
- 	if (t4_wait_dev_ready(adap->regs) < 0)
- 		return PCI_ERS_RESULT_DISCONNECT;
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 8f75500..c274006 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -6063,7 +6063,6 @@ static pci_ers_result_t be_eeh_reset(struct pci_dev *pdev)
- 	if (status)
- 		return PCI_ERS_RESULT_DISCONNECT;
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	be_clear_error(adapter, BE_CLEAR_ALL);
- 	return PCI_ERS_RESULT_RECOVERED;
- }
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 3ba0c90..7cd2332 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -6854,8 +6854,6 @@ static pci_ers_result_t e1000_io_slot_reset(struct pci_dev *pdev)
- 		result = PCI_ERS_RESULT_RECOVERED;
- 	}
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_pci.c b/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-index 15071e4..55138d6 100644
---- a/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k_pci.c
-@@ -2462,8 +2462,6 @@ static pci_ers_result_t fm10k_io_slot_reset(struct pci_dev *pdev)
- 		result = PCI_ERS_RESULT_RECOVERED;
- 	}
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index c944bd1..ae6aef2 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -14245,14 +14245,6 @@ static pci_ers_result_t i40e_pci_error_slot_reset(struct pci_dev *pdev)
- 			result = PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		dev_info(&pdev->dev,
--			 "pci_cleanup_aer_uncorrect_error_status failed 0x%0x\n",
--			 err);
--		/* non-fatal, continue */
--	}
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index c77fda0..786b973 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -8991,7 +8991,6 @@ static pci_ers_result_t igb_io_slot_reset(struct pci_dev *pdev)
- 	struct igb_adapter *adapter = netdev_priv(netdev);
- 	struct e1000_hw *hw = &adapter->hw;
- 	pci_ers_result_t result;
--	int err;
- 
- 	if (pci_enable_device_mem(pdev)) {
- 		dev_err(&pdev->dev,
-@@ -9015,14 +9014,6 @@ static pci_ers_result_t igb_io_slot_reset(struct pci_dev *pdev)
- 		result = PCI_ERS_RESULT_RECOVERED;
- 	}
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		dev_err(&pdev->dev,
--			"pci_cleanup_aer_uncorrect_error_status failed 0x%0x\n",
--			err);
--		/* non-fatal, continue */
--	}
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 3e87dbb..a2f8ce9 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -10864,8 +10864,6 @@ static pci_ers_result_t ixgbe_io_error_detected(struct pci_dev *pdev,
- 			/* Free device reference count */
- 			pci_dev_put(vfdev);
- 		}
--
--		pci_cleanup_aer_uncorrect_error_status(pdev);
- 	}
- 
- 	/*
-@@ -10935,13 +10933,6 @@ static pci_ers_result_t ixgbe_io_slot_reset(struct pci_dev *pdev)
- 		result = PCI_ERS_RESULT_RECOVERED;
- 	}
- 
--	err = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (err) {
--		e_dev_err("pci_cleanup_aer_uncorrect_error_status "
--			  "failed 0x%0x\n", err);
--		/* non-fatal, continue */
--	}
--
- 	return result;
- }
- 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-index 8259e83..d0d276c 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_main.c
-@@ -1790,11 +1790,6 @@ static pci_ers_result_t netxen_io_slot_reset(struct pci_dev *pdev)
- 	return err ? PCI_ERS_RESULT_DISCONNECT : PCI_ERS_RESULT_RECOVERED;
- }
- 
--static void netxen_io_resume(struct pci_dev *pdev)
--{
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--}
--
- static void netxen_nic_shutdown(struct pci_dev *pdev)
- {
- 	struct netxen_adapter *adapter = pci_get_drvdata(pdev);
-@@ -3490,7 +3485,6 @@ netxen_free_ip_list(struct netxen_adapter *adapter, bool master)
- static const struct pci_error_handlers netxen_err_handler = {
- 	.error_detected = netxen_io_error_detected,
- 	.slot_reset = netxen_io_slot_reset,
--	.resume = netxen_io_resume,
- };
- 
- static struct pci_driver netxen_driver = {
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index 569d54e..635ac73 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -4232,7 +4232,6 @@ static void qlcnic_83xx_io_resume(struct pci_dev *pdev)
- {
- 	struct qlcnic_adapter *adapter = pci_get_drvdata(pdev);
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	if (test_and_clear_bit(__QLCNIC_AER, &adapter->state))
- 		qlcnic_83xx_aer_start_poll_work(adapter);
- }
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-index 2d38d1a..6b3ea53 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-@@ -3975,7 +3975,6 @@ static void qlcnic_82xx_io_resume(struct pci_dev *pdev)
- 	u32 state;
- 	struct qlcnic_adapter *adapter = pci_get_drvdata(pdev);
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	state = QLC_SHARED_REG_RD32(adapter, QLCNIC_CRB_DEV_STATE);
- 	if (state == QLCNIC_DEV_READY && test_and_clear_bit(__QLCNIC_AER,
- 							    &adapter->state))
-diff --git a/drivers/net/ethernet/sfc/efx.c b/drivers/net/ethernet/sfc/efx.c
-index ad4a354..72c63ee 100644
---- a/drivers/net/ethernet/sfc/efx.c
-+++ b/drivers/net/ethernet/sfc/efx.c
-@@ -3843,13 +3843,6 @@ static pci_ers_result_t efx_io_slot_reset(struct pci_dev *pdev)
- 		status =  PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
--	rc = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (rc) {
--		netif_err(efx, hw, efx->net_dev,
--		"pci_cleanup_aer_uncorrect_error_status failed (%d)\n", rc);
--		/* Non-fatal error. Continue. */
--	}
--
- 	return status;
- }
- 
-diff --git a/drivers/net/ethernet/sfc/falcon/efx.c b/drivers/net/ethernet/sfc/falcon/efx.c
-index dd5530a..1b394ea 100644
---- a/drivers/net/ethernet/sfc/falcon/efx.c
-+++ b/drivers/net/ethernet/sfc/falcon/efx.c
-@@ -3194,13 +3194,6 @@ static pci_ers_result_t ef4_io_slot_reset(struct pci_dev *pdev)
- 		status =  PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
--	rc = pci_cleanup_aer_uncorrect_error_status(pdev);
--	if (rc) {
--		netif_err(efx, hw, efx->net_dev,
--		"pci_cleanup_aer_uncorrect_error_status failed (%d)\n", rc);
--		/* Non-fatal error. Continue. */
--	}
--
- 	return status;
- }
- 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index fc33804..9f9ff21 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2678,7 +2678,6 @@ static void nvme_error_resume(struct pci_dev *pdev)
- 	struct nvme_dev *dev = pci_get_drvdata(pdev);
- 
- 	flush_work(&dev->ctrl.reset_work);
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- }
- 
- static const struct pci_error_handlers nvme_err_handler = {
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 44598dc..81d65bf 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -265,6 +265,8 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 		 * The error is non fatal so the bus is ok; just invoke
- 		 * the callback for the function that logged the error.
- 		 */
-+		if (cb == report_resume)
-+			pci_cleanup_aer_uncorrect_error_status(dev);
- 		cb(dev, &result_data);
- 	}
- 
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index 0444357..1bcdd50 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -2055,8 +2055,6 @@ static void aac_pci_resume(struct pci_dev *pdev)
- 	struct scsi_device *sdev = NULL;
- 	struct aac_dev *aac = (struct aac_dev *)shost_priv(shost);
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	if (aac_adapter_ioremap(aac, aac->base_size)) {
- 
- 		dev_err(&pdev->dev, "aacraid: ioremap failed\n");
-diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
-index 818d185..ed7ed15 100644
---- a/drivers/scsi/be2iscsi/be_main.c
-+++ b/drivers/scsi/be2iscsi/be_main.c
-@@ -5518,7 +5518,6 @@ static pci_ers_result_t beiscsi_eeh_reset(struct pci_dev *pdev)
- 		return PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
-diff --git a/drivers/scsi/bfa/bfad.c b/drivers/scsi/bfa/bfad.c
-index bd7e6a6f..911efc9 100644
---- a/drivers/scsi/bfa/bfad.c
-+++ b/drivers/scsi/bfa/bfad.c
-@@ -1569,8 +1569,6 @@ bfad_pci_slot_reset(struct pci_dev *pdev)
- 		if (pci_set_dma_mask(bfad->pcidev, DMA_BIT_MASK(32)) != 0)
- 			goto out_disable_device;
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	if (restart_bfa(bfad) == -1)
- 		goto out_disable_device;
- 
-diff --git a/drivers/scsi/csiostor/csio_init.c b/drivers/scsi/csiostor/csio_init.c
-index ed2dae6..66b230b 100644
---- a/drivers/scsi/csiostor/csio_init.c
-+++ b/drivers/scsi/csiostor/csio_init.c
-@@ -1102,7 +1102,6 @@ csio_pci_slot_reset(struct pci_dev *pdev)
- 	pci_set_master(pdev);
- 	pci_restore_state(pdev);
- 	pci_save_state(pdev);
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 
- 	/* Bring HW s/m to ready state.
- 	 * but don't resume IOs.
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 52cae87..305ea062 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -11331,10 +11331,6 @@ lpfc_io_resume_s3(struct pci_dev *pdev)
- 
- 	/* Bring device online, it will be no-op for non-fatal error resume */
- 	lpfc_online(phba);
--
--	/* Clean up Advanced Error Reporting (AER) if needed */
--	if (phba->hba_flag & HBA_AER_ENABLED)
--		pci_cleanup_aer_uncorrect_error_status(pdev);
- }
- 
- /**
-@@ -12146,10 +12142,6 @@ lpfc_io_resume_s4(struct pci_dev *pdev)
- 		/* Bring the device back online */
- 		lpfc_online(phba);
- 	}
--
--	/* Clean up Advanced Error Reporting (AER) if needed */
--	if (phba->hba_flag & HBA_AER_ENABLED)
--		pci_cleanup_aer_uncorrect_error_status(pdev);
- }
- 
- /**
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index b8d131a..602f659 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -10965,7 +10965,6 @@ scsih_pci_resume(struct pci_dev *pdev)
- 
- 	pr_info(MPT3SAS_FMT "PCI error: resume callback!!\n", ioc->name);
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	mpt3sas_base_start_watchdog(ioc);
- 	scsi_unblock_requests(ioc->shost);
- }
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index e881fce..5fc1a49 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -6823,8 +6823,6 @@ qla2xxx_pci_resume(struct pci_dev *pdev)
- 		    "The device failed to resume I/O from slot/link_reset.\n");
- 	}
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
--
- 	ha->flags.eeh_busy = 0;
- }
- 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 0e13349..ab3a924 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -9824,7 +9824,6 @@ qla4xxx_pci_resume(struct pci_dev *pdev)
- 		     __func__);
- 	}
- 
--	pci_cleanup_aer_uncorrect_error_status(pdev);
- 	clear_bit(AF_EEH_BUSY, &ha->flags);
- }
- 
--- 
-2.7.4
-
+SGkgRnJpZWRlciwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGcmll
+ZGVyIFNjaHJlbXBmIFttYWlsdG86ZnJpZWRlci5zY2hyZW1wZkBleGNlZXQuZGVdDQo+IFNlbnQ6
+IFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCAxOjUyIFBNDQo+IFRvOiBCb3JpcyBCcmV6aWxs
+b24gPGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbT47IFlvZ2VzaCBOYXJheWFuIEdhdXINCj4g
+PHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KPiBDYzogbGludXgtbXRkQGxpc3RzLmluZnJh
+ZGVhZC5vcmc7IG1hcmVrLnZhc3V0QGdtYWlsLmNvbTsgbGludXgtDQo+IHNwaUB2Z2VyLmtlcm5l
+bC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyByb2JoQGtlcm5lbC5vcmc7DQo+IG1h
+cmsucnV0bGFuZEBhcm0uY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBsaW51eC1hcm0tDQo+IGtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBjb21wdXRlcnNmb3JwZWFjZUBnbWFpbC5jb207IGxp
+bnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIg
+MS81XSBzcGk6IHNwaS1tZW06IEFkZCBkcml2ZXIgZm9yIE5YUCBGbGV4U1BJIGNvbnRyb2xsZXIN
+Cj4gDQo+IEhpIEJvcmlzLCBZb2dlc2gsDQo+IA0KPiBPbiAxNy4wOS4yMDE4IDEzOjM3LCBCb3Jp
+cyBCcmV6aWxsb24gd3JvdGU6DQo+ID4gSGkgWW9nZXNoLA0KPiA+DQo+ID4gT24gTW9uLCAxNyBT
+ZXAgMjAxOCAxNToxODoyNiArMDUzMA0KPiA+IFlvZ2VzaCBHYXVyIDx5b2dlc2huYXJheWFuLmdh
+dXJAbnhwLmNvbT4gd3JvdGU6DQo+ID4NCj4gPj4gKw0KPiA+PiArCS8qDQo+ID4+ICsJICogUi9X
+IGZ1bmN0aW9ucyBmb3IgYmlnLSBvciBsaXR0bGUtZW5kaWFuIHJlZ2lzdGVyczoNCj4gPj4gKwkg
+KiBUaGUgRlNQSSBjb250cm9sbGVyJ3MgZW5kaWFubmVzcyBpcyBpbmRlcGVuZGVudCBvZg0KPiA+
+PiArCSAqIHRoZSBDUFUgY29yZSdzIGVuZGlhbm5lc3MuIFNvIGZhciwgYWx0aG91Z2ggdGhlIENQ
+VQ0KPiA+PiArCSAqIGNvcmUgaXMgbGl0dGxlLWVuZGlhbiB0aGUgRlNQSSBjb250cm9sbGVyIGNh
+biB1c2UNCj4gPj4gKwkgKiBiaWctZW5kaWFuIG9yIGxpdHRsZS1lbmRpYW4uDQo+ID4+ICsJICov
+DQo+ID4+ICsJaWYgKG9mX3Byb3BlcnR5X3JlYWRfYm9vbChucCwgImJpZy1lbmRpYW4iKSkgew0K
+PiA+PiArCQlmLT53cml0ZSA9IGZzcGlfd3JpdGVsX2JlOw0KPiA+PiArCQlmLT5yZWFkID0gZnNw
+aV9yZWFkbF9iZTsNCj4gPj4gKwl9IGVsc2Ugew0KPiA+PiArCQlmLT53cml0ZSA9IGZzcGlfd3Jp
+dGVsOw0KPiA+PiArCQlmLT5yZWFkID0gZnNwaV9yZWFkbDsNCj4gPj4gKwl9DQo+ID4NCj4gPiBI
+bSwgaXNuJ3QgaXQgc29tZXRoaW5nIHlvdSBjYW4gZXh0cmFjdCBmcm9tIHRoZSBjb21wYXRpYmxl
+IHN0cmluZz8gSSdkDQo+ID4gcmF0aGVyIG5vdCBhbGxvdyB1c2VycyB0byBzZXQgdGhhdCBpbiB0
+aGVpciBEVCBpZiBpdCdzIG5vdCBzb21ldGhpbmcNCj4gPiB5b3UgY2FuIGNoYW5nZS4NCj4gDQo+
+IFRoaXMgd2FzIGNvcGllZCBmcm9tIHRoZSBRU1BJIGRyaXZlciwgYnV0IEkgdGhpbmsgQm9yaXMg
+aXMgcmlnaHQuIFRoaXMgc2VlbXMgdG8gYmUgYQ0KPiBmaXhlZCBTT0Mtc3BlY2lmaWMgc2V0dGlu
+ZyBhbmQgd2Ugc2hvdWxkbid0IHNldCBpdCBpbiB0aGUgRFQuIFRoaXMgYXBwbGllcyB0byBRU1BJ
+DQo+IGFuZCBGU1BJIGFsaWtlLg0KPiANCg0KWWVzLCBpdCBjYW4gYmUgbW9kaWZpZWQuIEluc3Rl
+YWQgb2YgcmVhZGluZyBlbmRpYW5uZXNzIHByb3BlcnR5IGZyb20gZGV2aWNlIHRyZWUgY2FuIGJl
+IG1vdmVkIHRvIHRoZSBwbGF0Zm9ybSBzdHJ1Y3R1cmUgbnhwX2ZzcGlfZGV2dHlwZV9kYXRhIHdo
+aWNoIGlzIGxpbmtlZCB3aXRoIHRoZSBjb21wYXRpYmxlIHN0cmluZw0KeyAuY29tcGF0aWJsZSA9
+ICJueHAsbHgyMTYwYS1mc3BpIiwgLmRhdGEgPSAodm9pZCAqKSZseDIxNjBhX2RhdGEsIH0NCg0K
+VGhhbmtzLg0KDQpXb3VsZCBzZW5kIHRoZSBjaGFuZ2VzIGluIG5leHQgdmVyc2lvbi4NCg0KLS0N
+ClJlZ2FyZHMsDQpZb2dlc2ggR2F1ci4NCg0KPiBSZWdhcmRzLA0KPiBGcmllZGVyDQo+IA0KPiA+
+DQo+ID4gUmVnYXJkcywNCj4gPg0KPiA+IEJvcmlzDQo+ID4NCg==
