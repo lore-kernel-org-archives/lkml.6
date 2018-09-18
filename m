@@ -5,67 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A16ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE332ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4668214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850D7214C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6NCvhRN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4668214C5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrqAzBQX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850D7214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbeIRGSC (ORCPT
+        id S1729514AbeIRGR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:18:02 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47033 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeIRGSA (ORCPT
+        Tue, 18 Sep 2018 02:17:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:47030 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbeIRGR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:18:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id b129-v6so94380pga.13;
-        Mon, 17 Sep 2018 17:48:06 -0700 (PDT)
+        Tue, 18 Sep 2018 02:17:57 -0400
+Received: by mail-pg1-f195.google.com with SMTP id b129-v6so94335pga.13;
+        Mon, 17 Sep 2018 17:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UXrwtXVoYP6FYwFbk7hnJYf0IXCoVIxfi4PArWLBiD4=;
-        b=Z6NCvhRNigWiw13uGK69CU+GOsyJ6JRZEObwgss8AFL912Qf5U9/v8C2jA4e7aPPtp
-         5P4xAtQaemGRtzRWUTBKcfVbUdpMWvYwhXIAOpWSpc/WzqTB2eUFjIA9UbLXbnjnl3Z0
-         NUZEye9qAb37MpFso1uLpQuaOqfWiZZpCnRIjKbjrTrN5TTDf1vEf1MbdSsCt98ur0V+
-         zalJ5LPZU/A6PojKodG11NqIrZewX5DfyKce603eRgcTwx4u58HqoE1keFhJTty78BYf
-         4l2sp7QtQCSS4NE4H5X9aoEtyKI0NVoF+d2aNKXcgF0V5TVtmXUioUwuT1A3AHh5kj/X
-         NQ+w==
+        bh=RGr4r8GexPsIaQ1Kf4tDzDfD+BK7SJUhhOLQe4lCNHQ=;
+        b=JrqAzBQXzqzRm8CAvx2CoJlW68eG/pfc9S84gG/1VU9EB8xswSmtIWVo3aLEC89ouJ
+         zi8JjMixw09X1+Joy/A44Jm6XnEkqjWiq/o2tXSFJb7AbqWp8G7reRk73/7SepPafu3A
+         0CxSob0Wrept/M1+UO5oLQfNrD1qGtIdgyXKVNzBmf63nbRkOPi2EaTfm8UDhTHV98FF
+         IgHFa4oH5jGUtgXJ0Sp4vw0W7PdDRuP974DMWquDl1I6U88f0Jzx+iYswKVJig7wjFWD
+         bXn5A/quemrPLr/8M805/kFR0sfbVg8kgInJCCAGdbvN8sWT4RyGQrexgdLlNeEAhBzz
+         aZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UXrwtXVoYP6FYwFbk7hnJYf0IXCoVIxfi4PArWLBiD4=;
-        b=b1h/a3jK7bzPWObK2VDmszAkU4b0cv2EjTCK5ohJmqIiyHHK8Z1YX1Vfqmq/FS7JMv
-         +OMlE3km2Wr/2LQXReEy46Mz6Qcb0qTKeCmAJ/K7A7lp+x7ExiwqrBMAZuJf145djf9P
-         ovqpH/ssgHXzRNJKc0UoG6Xut78MjNMVCbVc1fpiqP5zTy6pvgK74O5W3l/9xSx+O6hl
-         +TaMzXJ8DCzxQfQFVBHB5nuz6e52rca+4SHeak0r+X9ZRtetbiplBaUvR0/MsLkuxwtF
-         Yc8oLDsgNpV+xqtz0rubyTr6LaVuDV/+ErRRihOfa3IojCzWJehHidvwhAT1bfZhYJpl
-         MToA==
-X-Gm-Message-State: APzg51DCSe1UQxLJOUEYeIKaChVxpsDh7ok4jyzyytqqBKeMtzWCIvPu
-        kTxF9gB6Xn/ovq9ysgN2XFW8KHlA
-X-Google-Smtp-Source: ANB0VdZ0DhUm0ch+CQpWjyWqnQiR8qONN4dC610U1HN47NYz1nvlUjPeE2e5pjxS33NECVdOnypqMA==
-X-Received: by 2002:a63:f902:: with SMTP id h2-v6mr25541742pgi.154.1537231685874;
-        Mon, 17 Sep 2018 17:48:05 -0700 (PDT)
+        bh=RGr4r8GexPsIaQ1Kf4tDzDfD+BK7SJUhhOLQe4lCNHQ=;
+        b=kd+jLS/sU8QCjmMhXjBea1yTv+o+Kuztp6bioCrnvQDuz6moB0VaU4d/PDdf4hTh7Q
+         dpIaktQSrAXS6hd9UhZ9WuB4bOT9K4S7/A6YW3cTbQrnjsSqGez/0A95U6GeGyo6cneN
+         EFMhxHuSC8zF/VNRBA4W9eGkrTcoZuUUmfEFKXCJy5lFng+Lsce/QuasRuduUkROyFl/
+         XxbZzdV1crsa1NNdj6UegWuCgWBII0dbSgRZNbfKIu9P1JmWKF2yNT/kdiTS6sgojdhL
+         7tUoly8Eitqjhj37VX/CvtiDeOMaB6tYWICLSKbY5BZ7XeDUVVT5R977SVdaZGON6B4/
+         rLBg==
+X-Gm-Message-State: APzg51B6RPBFxvlpZU3gLQzgxvsYWbz5D1AEyg//6Q01n5nyh+Buwh9X
+        NmWO3G4enyLKAE6kJGPmj3/IhHCf
+X-Google-Smtp-Source: ANB0VdZ8ncM130KU6cbc0qtp46dPwEBlk+lBV8vC8EoObvpLh4G0NqK0TnsYz9uNUL5o4Niii9f60w==
+X-Received: by 2002:a63:d74f:: with SMTP id w15-v6mr25579512pgi.306.1537231683097;
+        Mon, 17 Sep 2018 17:48:03 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.48.04
+        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.48.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 17:48:04 -0700 (PDT)
+        Mon, 17 Sep 2018 17:48:01 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 20/20] Input: iforce - use unaligned accessors, where appropriate
-Date:   Mon, 17 Sep 2018 17:47:32 -0700
-Message-Id: <20180918004732.9875-20-dmitry.torokhov@gmail.com>
+Subject: [PATCH 18/20] Input: iforce - drop bus type from iforce structure
+Date:   Mon, 17 Sep 2018 17:47:30 -0700
+Message-Id: <20180918004732.9875-18-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
 References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
@@ -76,92 +75,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of open-coding conversion from/to little-endian, let's
-use proper accessors.
+It is not needed anymore as behavior is controlled by the transport
+operations set up for given device.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/input/joystick/iforce/iforce-main.c    |  7 ++++---
- drivers/input/joystick/iforce/iforce-packets.c | 12 ++++++++----
- 2 files changed, 12 insertions(+), 7 deletions(-)
+ drivers/input/joystick/iforce/iforce-serio.c | 1 -
+ drivers/input/joystick/iforce/iforce-usb.c   | 1 -
+ drivers/input/joystick/iforce/iforce.h       | 5 -----
+ 3 files changed, 7 deletions(-)
 
-diff --git a/drivers/input/joystick/iforce/iforce-main.c b/drivers/input/joystick/iforce/iforce-main.c
-index 5cb3e80f4e0d..d696b0b653b6 100644
---- a/drivers/input/joystick/iforce/iforce-main.c
-+++ b/drivers/input/joystick/iforce/iforce-main.c
-@@ -21,6 +21,7 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-  */
+diff --git a/drivers/input/joystick/iforce/iforce-serio.c b/drivers/input/joystick/iforce/iforce-serio.c
+index c73d988cbc92..277522d0f324 100644
+--- a/drivers/input/joystick/iforce/iforce-serio.c
++++ b/drivers/input/joystick/iforce/iforce-serio.c
+@@ -214,7 +214,6 @@ static int iforce_serio_connect(struct serio *serio, struct serio_driver *drv)
+ 	iforce = &iforce_serio->iforce;
  
-+#include <asm/unaligned.h>
- #include "iforce.h"
+ 	iforce->xport_ops = &iforce_serio_xport_ops;
+-	iforce->bus = IFORCE_232;
  
- MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>, Johann Deneux <johann.deneux@gmail.com>");
-@@ -286,17 +287,17 @@ int iforce_init_device(struct device *parent, u16 bustype,
-  */
+ 	iforce_serio->serio = serio;
+ 	serio_set_drvdata(serio, iforce_serio);
+diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
+index d85258b50be2..ae2dd5b5a416 100644
+--- a/drivers/input/joystick/iforce/iforce-usb.c
++++ b/drivers/input/joystick/iforce/iforce-usb.c
+@@ -234,7 +234,6 @@ static int iforce_usb_probe(struct usb_interface *intf,
+ 	iforce = &iforce_usb->iforce;
  
- 	if (!iforce_get_id_packet(iforce, 'M', buf, &len) || len < 3)
--		input_dev->id.vendor = (buf[2] << 8) | buf[1];
-+		input_dev->id.vendor = get_unaligned_le16(buf + 1);
- 	else
- 		dev_warn(&iforce->dev->dev, "Device does not respond to id packet M\n");
+ 	iforce->xport_ops = &iforce_usb_xport_ops;
+-	iforce->bus = IFORCE_USB;
  
- 	if (!iforce_get_id_packet(iforce, 'P', buf, &len) || len < 3)
--		input_dev->id.product = (buf[2] << 8) | buf[1];
-+		input_dev->id.product = get_unaligned_le16(buf + 1);
- 	else
- 		dev_warn(&iforce->dev->dev, "Device does not respond to id packet P\n");
+ 	iforce_usb->usbdev = dev;
+ 	iforce_usb->intf = intf;
+diff --git a/drivers/input/joystick/iforce/iforce.h b/drivers/input/joystick/iforce/iforce.h
+index 180de7a3f3a1..3e91cc381488 100644
+--- a/drivers/input/joystick/iforce/iforce.h
++++ b/drivers/input/joystick/iforce/iforce.h
+@@ -38,10 +38,6 @@
  
- 	if (!iforce_get_id_packet(iforce, 'B', buf, &len) || len < 3)
--		iforce->device_memory.end = (buf[2] << 8) | buf[1];
-+		iforce->device_memory.end = get_unaligned_le16(buf + 1);
- 	else
- 		dev_warn(&iforce->dev->dev, "Device does not respond to id packet B\n");
+ #define IFORCE_MAX_LENGTH	16
  
-diff --git a/drivers/input/joystick/iforce/iforce-packets.c b/drivers/input/joystick/iforce/iforce-packets.c
-index 976ec1c7cf15..76c4475740ab 100644
---- a/drivers/input/joystick/iforce/iforce-packets.c
-+++ b/drivers/input/joystick/iforce/iforce-packets.c
-@@ -21,6 +21,7 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-  */
+-/* iforce::bus */
+-#define IFORCE_232	1
+-#define IFORCE_USB	2
+-
+ #define IFORCE_EFFECTS_MAX	32
  
-+#include <asm/unaligned.h>
- #include "iforce.h"
+ /* Each force feedback effect is made of one core effect, which can be
+@@ -105,7 +101,6 @@ struct iforce {
+ 	struct input_dev *dev;		/* Input device interface */
+ 	struct iforce_device *type;
+ 	const struct iforce_xport_ops *xport_ops;
+-	int bus;
  
- static struct {
-@@ -175,8 +176,10 @@ void iforce_process_packet(struct iforce *iforce,
- 	switch (packet_id) {
- 
- 	case 0x01:	/* joystick position data */
--		input_report_abs(dev, ABS_X, (__s16) (((__s16)data[1] << 8) | data[0]));
--		input_report_abs(dev, ABS_Y, (__s16) (((__s16)data[3] << 8) | data[2]));
-+		input_report_abs(dev, ABS_X,
-+				 (__s16) get_unaligned_le16(data));
-+		input_report_abs(dev, ABS_Y,
-+				 (__s16) get_unaligned_le16(data + 2));
- 		input_report_abs(dev, ABS_THROTTLE, 255 - data[4]);
- 
- 		if (len >= 8 && test_bit(ABS_RUDDER ,dev->absbit))
-@@ -188,7 +191,8 @@ void iforce_process_packet(struct iforce *iforce,
- 		break;
- 
- 	case 0x03:	/* wheel position data */
--		input_report_abs(dev, ABS_WHEEL, (__s16) (((__s16)data[1] << 8) | data[0]));
-+		input_report_abs(dev, ABS_WHEEL,
-+				 (__s16) get_unaligned_le16(data));
- 		input_report_abs(dev, ABS_GAS,   255 - data[2]);
- 		input_report_abs(dev, ABS_BRAKE, 255 - data[3]);
- 
-@@ -214,7 +218,7 @@ void iforce_process_packet(struct iforce *iforce,
- 		}
- 
- 		for (j = 3; j < len; j += 2)
--			mark_core_as_ready(iforce, data[j] | (data[j + 1] << 8));
-+			mark_core_as_ready(iforce, get_unaligned_le16(data + j));
- 
- 		break;
- 	}
+ 	spinlock_t xmit_lock;
+ 	/* Buffer used for asynchronous sending of bytes to the device */
 -- 
 2.19.0.397.gdd90340f6a-goog
 
