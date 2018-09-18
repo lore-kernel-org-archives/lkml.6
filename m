@@ -2,98 +2,106 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C43BECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC18ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BEE52088F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D17214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IJX7nSbt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BEE52088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GbF/XWK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D17214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeIRHXl (ORCPT
+        id S1728481AbeIRHZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 03:23:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:40009 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeIRHXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 03:23:41 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42DmHG2M6wz9sBJ;
-        Tue, 18 Sep 2018 11:53:30 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537235610;
-        bh=YV0Ujyq/ReIUS8bUPtBmIUnifnvGxSWwcCj07ctpV4A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=IJX7nSbtDf3gYg4IG4iqWudouTeNdBNmDNrDnDJ2ADHXOgeNxARuYsfXJVB8/Vpmr
-         6yWXKWTElCIvNuk/iHF3Mlz2nryNinsZ4X3lxN5RTWjmUxUmsKQJWSGu0cN+lPT6Gi
-         1g6QRJL/CLsBIOyU3DKEbQ/DiDkbBn3s6kaOxnIGPya7/04GMcK4HYfmDnm7zyFpy3
-         nKh9jzdJeb3gdVwcmgt5jgDKETm8oEfBSt8kCv9l2L+Uv/KYgZArqNMq9jr+yUn+pT
-         yKVgJ64b/LARbksSq1QkFCp0TmUrugltzQcKD8CtAN40doOynT3l3TQCeQImytaZrU
-         zX5N6tdqhTmqA==
-Date:   Tue, 18 Sep 2018 11:53:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alasdair G Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warning after merge of the device-mapper tree
-Message-ID: <20180918115329.61fe2b2d@canb.auug.org.au>
+        Tue, 18 Sep 2018 03:25:34 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35398 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbeIRHZd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 03:25:33 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j9-v6so353280otl.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 18:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=PDgkR5lgd0P1pd/DomTxnOnMi2SGfT6/lbvhCFAe+vI=;
+        b=GbF/XWK98rQR0rts1vC6J63ppDi1yYUReCvTsZOg/T1tF1mtEAo+miK94aRmsKVwkU
+         VzbaAJnuz9Q/2PK26z4b/H+3TRP1qiKNwERSrz0YHtp7KGNMbGFgGNoV938yWM+Vm3ST
+         1/+APD+f2uxoilCFflpn7aVG3k4i04JaGW9Ao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=PDgkR5lgd0P1pd/DomTxnOnMi2SGfT6/lbvhCFAe+vI=;
+        b=Mg1mQl5iOe6UiOvx1VoriLwl8OHiIOFPlisGfuEqbSC2Qt4bkB/471shI7pBNbMJ2d
+         MJcB8e0E34HCYWKn6Pql12y2zS45I8qFSrS8tHYuy//nvyvKHgxCJA29cTQJpY8+ft65
+         fj1sbZoJb0veYje8F+z4m225SgauaUbxnwBbCpCDxQCVZRanM8DbngvHhd/ZNhmgnS+4
+         lXr5Q+Odtr4k02inbiFGugKPte0z0fFKUN7dHCsjBmasLzs+6T7i7MYLOQzY82QTNpdU
+         nEeUgdgWNJ9LoeSLWmfLp9wD8g2J7ISK3Tigqz38d/D33xn3B2yjfdY9BeCNA/C3+5r+
+         fH5g==
+X-Gm-Message-State: APzg51AfOwuforEAoGXn2ktVp+a3j8RKu0zEHU82C6gD3w2hzdKZvIDV
+        JD5kzaoSiJ17EEWsLcqwU9O8SKuJ65lkbAXtFehDAQ==
+X-Google-Smtp-Source: ANB0VdZCCKiC9ZOQqsbcwAB2mznnaNZpO2jFgM+1l9GI3rPsLZJg48zXbglL6tnvSoWJ5ukmVh+VjgItaH0N2J6R2z4=
+X-Received: by 2002:a9d:7395:: with SMTP id j21-v6mr14982917otk.203.1537235725791;
+ Mon, 17 Sep 2018 18:55:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0F8rWZGdeNDm_jTVnFBIBuh"; protocol="application/pgp-signature"
+Received: by 2002:a9d:20e3:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 18:55:05
+ -0700 (PDT)
+In-Reply-To: <20180917104144.19188-19-suzuki.poulose@arm.com>
+References: <20180917104144.19188-1-suzuki.poulose@arm.com> <20180917104144.19188-19-suzuki.poulose@arm.com>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Tue, 18 Sep 2018 02:55:05 +0100
+Message-ID: <CAFEAcA8eWYkzwFYHyP49dasK-NDVbbm=6DbEFNNPq9ZAdUM7JQ@mail.gmail.com>
+Subject: Re: [PATCH v5 18/18] kvm: arm64: Allow tuning the physical address
+ size for VM
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Dave P Martin <dave.martin@arm.com>, julien.grall@arm.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0F8rWZGdeNDm_jTVnFBIBuh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 17 September 2018 at 11:41, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -122,6 +122,14 @@ the default trap & emulate implementation (which changes the virtual
+>  memory layout to fit in user mode), check KVM_CAP_MIPS_VZ and use the
+>  flag KVM_VM_MIPS_VZ.
+>
+> +To configure the physical address space size for a VM (IPA size) on arm64,
+> +check KVM_CAP_ARM_VM_PHYS_SHIFT (which returns the maximum limit for the
+> +IPA shift) and use KVM_VM_TYPE_ARM_PHYS_SHIFT(PHYS_SHIFT). Bits[7-0] of the
+> +machine type has been reserved for specifying the PHYS_SHIFT.
+> +The supported range is [32...IPA_LIMIT], where IPA_LIMIT could be
+> +identified by checking KVM_CAP_ARM_VM_PHYS_SHIFT. For backward compatibility
+> +a value of 0 selects 40bits.
+> +
 
-Hi all,
+Given this as the API documentation, I don't think I could figure out
+what I as a userspace user of it need to do without looking at the
+kernel code. Could I ask you to expand it so that it is a bit less
+terse and a bit more detailed? (For instance, what is a PHYS_SHIFT
+and why do I have to specify it rather than just telling the kernel
+I want a 48 bit guest address space?)
 
-After merging the device-mapper tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
-
-drivers/md/dm-mpath.c: In function 'parse_path':
-drivers/md/dm-mpath.c:891:24: warning: assignment discards 'const' qualifie=
-r from pointer target type [-Wdiscarded-qualifiers]
-  attached_handler_name =3D scsi_dh_attached_handler_name(q, GFP_KERNEL);
-                        ^
-
-Introduced by commit
-
-  b8505ba97e0a ("dm mpath: fix attached_handler_name leak and dangling hw_h=
-andler_name pointer")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0F8rWZGdeNDm_jTVnFBIBuh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlugWpkACgkQAVBC80lX
-0Gw4JQgAm1Fh/wfZzO8aZTg0NfCsAr6WBjAbJoERqzRHSsICXKTlSWswaymlgFn/
-NnxnR1f7QMsL3tRPuCa6ag+viBIrHmDyTeCxYo0/9yfnw56JLTrlar3Vg0aprzAT
-TXK0Qp3kwf6HM6C3DiNZST3V/COupvPs/z9wzUpfFfRIk/OWI5m3vECts4A6WUSn
-wDSoiBYls2r7a9N8xp85YhEzTTd6/Xg2cNddEnCRUqSUXy1Aa/Na9Aae2XLCYdAx
-QWyRmR8PcH2lMAJXS/dxxyHwCrhqGUKzTkNy9gnwbJ9uU09K2aQLtxnGFFV4kzV1
-X+6FCdBus3cdU/HVs1Dmi4sda0DmEg==
-=SyQF
------END PGP SIGNATURE-----
-
---Sig_/0F8rWZGdeNDm_jTVnFBIBuh--
+thanks
+-- PMM
