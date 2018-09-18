@@ -2,191 +2,311 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D15ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D12C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7818E2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8968421508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OKow2PfI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7818E2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="t3dFhzxn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8968421508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbeIRVuf (ORCPT
+        id S1730218AbeIRVuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:50:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55210 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729905AbeIRVue (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:50:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Mime-Version:Content-Type:References:
-        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jzy//enKDB6MeshMYimD0JQJNOitae8oPtsO/kIgsyg=; b=OKow2PfIG978/GXUvCdNYd+4m
-        Mi4xqf/4hQEOkF3V+ZIb43gdkbuthskLYwrd9cHpX1tOumNDciQI2/ES4yFT2r7nBCoAsLLGHqMRh
-        hvcGwV5WiagV+f+g/rwE/LpBSf+YwQTkyjIum0txikgUe+yLpclh64tSLZ0zt8BmI7Vu1Sycjv7BU
-        boP7YTgVoGrG1u4Tc9jfd1mMaxkj8C31Y8743ROpWiG2v41wTFJ+qUMPktkxM1Qf+b0UPRqAcl3cS
-        N53DKv9FRgXYxJVQjd8OEXTuZ2J2q0HHMjqtJs0G7UMC01J/25XsAVUCAL6D61Gjm4qzNC6eePUq/
-        zwzR/SBrg==;
-Received: from [2001:8b0:10b:1:786a:113:d72e:bf66] (helo=u3832b3a9db3152.ant.amazon.com)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2Iga-0003wW-QZ; Tue, 18 Sep 2018 16:17:13 +0000
-Message-ID: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
-Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Denis Kenzior <denkenz@gmail.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 18 Sep 2018 17:17:10 +0100
-In-Reply-To: <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-References: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
-         <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-         <1537253993.20009.62.camel@infradead.org>
-         <14067.1537285833@warthog.procyon.org.uk>
-         <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-Content-Type: multipart/signed; micalg="sha-256";
-        protocol="application/x-pkcs7-signature";
-        boundary="=-+XvU9eJhKhtXJISCdPm3"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 18 Sep 2018 17:50:39 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:57805 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729905AbeIRVui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:50:38 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 969c1c50;
+        Tue, 18 Sep 2018 15:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:in-reply-to:references:mime-version
+        :content-transfer-encoding; s=mail; bh=6XJAmAJXiMuSq7obqnoIs3uJf
+        70=; b=t3dFhzxn9EpTk4OG/wGgxFcPPp/aEP8cUjnjTFwLDRsYCfYw86YrKppBr
+        xMuIhwKwFhuxTPVRc4W1YvZ/v6QDdLW/xonLyhoe737FOH/0HjoX/Tgvis1cm5ZG
+        jc4k/+z64DBJhI56D2cufSdLrZH7iwxqQscSsa0aQ6Wefkpzu0aHUb6PRco9ZD2G
+        5sBJUsrfUVyDgqd3VVt3F/QI/INanCS7W9QFf0ErhjONDthBBApVcZW+DfYymJCx
+        VmycJQq/HLh1hwnav0bjcIbW6nfMmzJ4ht51uq0ZzbeEhZSX8eVy+eVnfV32/0gX
+        joUQuZ2LpPX7KC5aonukRl6nhJ8VA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 336ba126 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Tue, 18 Sep 2018 15:59:41 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Subject: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
+Date:   Tue, 18 Sep 2018 18:16:28 +0200
+Message-Id: <20180918161646.19105-3-Jason@zx2c4.com>
+In-Reply-To: <20180918161646.19105-1-Jason@zx2c4.com>
+References: <20180918161646.19105-1-Jason@zx2c4.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Zinc stands for "Zinc Is Neat Crypto" or "Zinc as IN Crypto" or maybe
+just "Zx2c4's INsane Cryptolib." It's also short, easy to type, and
+plays nicely with the recent trend of naming crypto libraries after
+elements. The guiding principle is "don't overdo it". It's less of a
+library and more of a directory tree for organizing well-curated direct
+implementations of cryptography primitives.
 
---=-+XvU9eJhKhtXJISCdPm3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Zinc is a new cryptography API that is much more minimal and lower-level
+than the current one. It intends to complement it and provide a basis
+upon which the current crypto API might build, as the provider of
+software implementations of cryptographic primitives. It is motivated by
+three primary observations in crypto API design:
 
-On Tue, 2018-09-18 at 00:24 -0500, Denis Kenzior wrote:
-> Hi David,
->=20
-> On 09/18/2018 10:50 AM, David Howells wrote:
-> > Denis Kenzior <denkenz@gmail.com> wrote:
-> >=20
-> > >     openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
-> > >                       -out /tmp/privkey.2048.der
-> >=20
-> > You can use "... -out - | ..." instead.
->=20
-> Aha! okay, that is even more elegant.  Your openssl-fu is better than=20
-> mine :)
+  * Highly composable "cipher modes" and related abstractions from
+    90s cryptographers did not turn out to be as terrific an idea as
+    hoped, leading to a host of API misuse problems.
 
-'grep -v ^----- | base64 -d' also works most of the time :)
+  * Most programmers are afraid of crypto code, and so prefer to
+    integrate it into libraries in a highly abstracted manner, so as to
+    shield themselves from implementation details. Cryptographers, on
+    the other hand, prefer simple direct implementations, which they're
+    able to verify for high assurance and optimize in accordance with
+    their expertise.
 
-You are passing the raw DER to the kernel in both cases, right? And the
-kernel just happens to know that if it receives a bare OCTET-STRING
-it's supposed to treat it as a TPMv1.2 key?=20
---=-+XvU9eJhKhtXJISCdPm3
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+  * Overly abstracted and flexible cryptography APIs lead to a host of
+    dangerous problems and performance issues. The kernel is in the
+    business usually not of coming up with new uses of crypto, but
+    rather implementing various constructions, which means it essentially
+    needs a library of primitives, not a highly abstracted enterprise-ready
+    pluggable system, with a few particular exceptions.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA5MTgxNjE3MTFaMC8GCSqG
-SIb3DQEJBDEiBCCFIzam0S/YAqXViwh4sRTU6EUSKQCtS5D0kQxPUioH4TCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAGYgsKZDdRnd
-lMb79UTA9ooLeDjZO0Yk1YwzO+xCFPAxMtRFaYnSAQw26BGQeRJt+pJjeAZmk328a32+96/tAz9w
-O/Mj3I1RkuQ6bMkW5QHSTzo3CBGe0Q+gxzHDCNZg4dw2QO/+dp1Lw+7f3azEFu2o1hHXTuSdyqjq
-as0ZqNSt+N/3f4FoHALdZh9Tr0VESsUoH/3rSwYp6inSNdJQzRFWbRI0hi8nk5tSMNfjB3Qc1VM0
-w3zd054xoGuEPtEDNBQYAcMZtfqSr7rkpnHiAiIuOC+8tawAVGqqI22cpaNfUixIiwWZH+nyI9wm
-qKbuoEWM6273BibUt3guIdoA9O4AAAAAAAA=
+This last observation has seen itself play out several times over and
+over again within the kernel:
 
+  * The perennial move of actual primitives away from crypto/ and into
+    lib/, so that users can actually call these functions directly with
+    no overhead and without lots of allocations, function pointers,
+    string specifier parsing, and general clunkiness. For example:
+    sha256, chacha20, siphash, sha1, and so forth live in lib/ rather
+    than in crypto/. Zinc intends to stop the cluttering of lib/ and
+    introduce these direct primitives into their proper place, lib/zinc/.
 
---=-+XvU9eJhKhtXJISCdPm3--
+  * An abundance of misuse bugs with the present crypto API that have
+    been very unpleasant to clean up.
+
+  * A hesitance to even use cryptography, because of the overhead and
+    headaches involved in accessing the routines.
+
+Zinc goes in a rather different direction. Rather than providing a
+thoroughly designed and abstracted API, Zinc gives you simple functions,
+which implement some primitive, or some particular and specific
+construction of primitives. It is not dynamic in the least, though one
+could imagine implementing a complex dynamic dispatch mechanism (such as
+the current crypto API) on top of these basic functions. After all,
+dynamic dispatch is usually needed for applications with cipher agility,
+such as IPsec, dm-crypt, AF_ALG, and so forth, and the existing crypto
+API will continue to play that role. However, Zinc will provide a non-
+haphazard way of directly utilizing crypto routines in applications
+that do have neither the need nor desire for abstraction and dynamic
+dispatch.
+
+It also organizes the implementations in a simple, straight-forward,
+and direct manner, making it enjoyable and intuitive to work on.
+Rather than moving optimized assembly implementations into arch/, it
+keeps them all together in lib/zinc/, making it simple and obvious to
+compare and contrast what's happening. This is, notably, exactly what
+the lib/raid6/ tree does, and that seems to work out rather well. It's
+also the pattern of most successful crypto libraries. The architecture-
+specific glue-code is made a part of each translation unit, rather than
+being in a separate one, so that generic and architecture-optimized code
+are combined at compile-time, and incompatibility branches compiled out by
+the optimizer.
+
+All implementations have been extensively tested and fuzzed, and are
+selected for their quality, trustworthiness, and performance. Wherever
+possible and performant, formally verified implementations are used,
+such as those from HACL* [1] and Fiat-Crypto [2]. The routines also take
+special care to zero out secrets using memzero_explicit (and future work
+is planned to have gcc do this more reliably and performantly with
+compiler plugins). The performance of the selected implementations is
+state-of-the-art and unrivaled on a broad array of hardware, though of
+course we will continue to fine tune these to the hardware demands
+needed by kernel contributors. Each implementation also comes with
+extensive self-tests and crafted test vectors, pulled from various
+places such as Wycheproof [9].
+
+Regularity of function signatures is important, so that users can easily
+"guess" the name of the function they want. Though, individual
+primitives are oftentimes not trivially interchangeable, having been
+designed for different things and requiring different parameters and
+semantics, and so the function signatures they provide will directly
+reflect the realities of the primitives' usages, rather than hiding it
+behind (inevitably leaky) abstractions. Also, in contrast to the current
+crypto API, Zinc functions can work on stack buffers, and can be called
+with different keys, without requiring allocations or locking.
+
+SIMD is used automatically when available, though some routines may
+benefit from either having their SIMD disabled for particular
+invocations, or to have the SIMD initialization calls amortized over
+several invocations of the function, and so Zinc utilizes function
+signatures enabling that in conjunction with the recently introduced
+simd_context_t.
+
+More generally, Zinc provides function signatures that allow just what
+is required by the various callers. This isn't to say that users of the
+functions will be permitted to pollute the function semantics with weird
+particular needs, but we are trying very hard not to overdo it, and that
+means looking carefully at what's actually necessary, and doing just that,
+and not much more than that. Remember: practicality and cleanliness rather
+than over-zealous infrastructure.
+
+Zinc provides also an opening for the best implementers in academia to
+contribute their time and effort to the kernel, by being sufficiently
+simple and inviting. In discussing this commit with some of the best and
+brightest over the last few years, there are many who are eager to
+devote rare talent and energy to this effort.
+
+Following the merging of this, I expect for the primitives that
+currently exist in lib/ to work their way into lib/zinc/, after intense
+scrutiny of each implementation, potentially replacing them with either
+formally-verified implementations, or better studied and faster
+state-of-the-art implementations.
+
+Also following the merging of this, I expect for the old crypto API
+implementations to be ported over to use Zinc for their software-based
+implementations.
+
+As Zinc is simply library code, its config options are un-menued, with
+the exception of CONFIG_ZINC_DEBUG, which enables various selftests and
+BUG_ONs.
+
+[1] https://github.com/project-everest/hacl-star
+[2] https://github.com/mit-plv/fiat-crypto
+[3] https://cr.yp.to/ecdh.html
+[4] https://cr.yp.to/chacha.html
+[5] https://cr.yp.to/snuffle/xsalsa-20081128.pdf
+[6] https://cr.yp.to/mac.html
+[7] https://blake2.net/
+[8] https://tools.ietf.org/html/rfc8439
+[9] https://github.com/google/wycheproof
+
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Samuel Neves <sneves@dei.uc.pt>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+---
+ MAINTAINERS       |  8 ++++++++
+ lib/Kconfig       |  2 ++
+ lib/Makefile      |  2 ++
+ lib/zinc/Kconfig  | 32 ++++++++++++++++++++++++++++++++
+ lib/zinc/Makefile |  4 ++++
+ 5 files changed, 48 insertions(+)
+ create mode 100644 lib/zinc/Kconfig
+ create mode 100644 lib/zinc/Makefile
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4327777dce57..5967c737f3ce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16170,6 +16170,14 @@ Q:	https://patchwork.linuxtv.org/project/linux-media/list/
+ S:	Maintained
+ F:	drivers/media/dvb-frontends/zd1301_demod*
+ 
++ZINC CRYPTOGRAPHY LIBRARY
++M:	Jason A. Donenfeld <Jason@zx2c4.com>
++M:	Samuel Neves <sneves@dei.uc.pt>
++S:	Maintained
++F:	lib/zinc/
++F:	include/zinc/
++L:	linux-crypto@vger.kernel.org
++
+ ZPOOL COMPRESSED PAGE STORAGE API
+ M:	Dan Streetman <ddstreet@ieee.org>
+ L:	linux-mm@kvack.org
+diff --git a/lib/Kconfig b/lib/Kconfig
+index a3928d4438b5..3e6848269c66 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -485,6 +485,8 @@ config GLOB_SELFTEST
+ 	  module load) by a small amount, so you're welcome to play with
+ 	  it, but you probably don't need it.
+ 
++source "lib/zinc/Kconfig"
++
+ #
+ # Netlink attribute parsing support is select'ed if needed
+ #
+diff --git a/lib/Makefile b/lib/Makefile
+index ca3f7ebb900d..571d28d3f143 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -214,6 +214,8 @@ obj-$(CONFIG_PERCPU_TEST) += percpu_test.o
+ 
+ obj-$(CONFIG_ASN1) += asn1_decoder.o
+ 
++obj-y += zinc/
++
+ obj-$(CONFIG_FONT_SUPPORT) += fonts/
+ 
+ obj-$(CONFIG_PRIME_NUMBERS) += prime_numbers.o
+diff --git a/lib/zinc/Kconfig b/lib/zinc/Kconfig
+new file mode 100644
+index 000000000000..4e2e59126a67
+--- /dev/null
++++ b/lib/zinc/Kconfig
+@@ -0,0 +1,32 @@
++config ZINC_DEBUG
++	bool "Zinc cryptography library debugging and self-tests"
++	help
++	  This builds a series of self-tests for the Zinc crypto library, which
++	  help diagnose any cryptographic algorithm implementation issues that
++	  might be at the root cause of potential bugs. It also adds various
++	  debugging traps.
++
++	  Unless you're developing and testing cryptographic routines, or are
++	  especially paranoid about correctness on your hardware, you may say
++	  N here.
++
++config ZINC_ARCH_ARM
++	def_bool y
++	depends on ARM && !64BIT
++
++config ZINC_ARCH_ARM64
++	def_bool y
++	depends on ARM64 && 64BIT
++
++config ZINC_ARCH_X86_64
++	def_bool y
++	depends on X86_64 && 64BIT
++	depends on !UML
++
++config ZINC_ARCH_MIPS
++	def_bool y
++	depends on MIPS && CPU_MIPS32_R2 && !64BIT
++
++config ZINC_ARCH_MIPS64
++	def_bool y
++	depends on MIPS && 64BIT
+diff --git a/lib/zinc/Makefile b/lib/zinc/Makefile
+new file mode 100644
+index 000000000000..83dfd63988c0
+--- /dev/null
++++ b/lib/zinc/Makefile
+@@ -0,0 +1,4 @@
++ccflags-y := -O3
++ccflags-y += -Wframe-larger-than=$(if (CONFIG_KASAN),16384,8192)
++ccflags-y += -D'pr_fmt(fmt)="zinc: " fmt'
++ccflags-$(CONFIG_ZINC_DEBUG) += -DDEBUG
+-- 
+2.19.0
 
