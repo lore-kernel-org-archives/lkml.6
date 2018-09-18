@@ -2,99 +2,75 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B07BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02672C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2DF214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:16:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2DF214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id A43AC20867
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:19:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A43AC20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeISBup (ORCPT
+        id S1730252AbeISBxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 21:50:45 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:57975 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729736AbeISBup (ORCPT
+        Tue, 18 Sep 2018 21:53:30 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58670 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729732AbeISBx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 21:50:45 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id E1424300168B5;
-        Tue, 18 Sep 2018 22:16:31 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id B70DC6F164; Tue, 18 Sep 2018 22:16:31 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 22:16:31 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Chris Mason <clm@fb.com>, Dan Williams <dan.j.williams@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Olof Johansson <olof@lxom.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Code of Conduct: Let's revamp it.
-Message-ID: <20180918201631.as5zjjkldtkduwll@wunner.de>
-References: <20180917114852.hzo36b2fewdzqc4t@wunner.de>
- <20180917122430.GA3320@kroah.com>
+        Tue, 18 Sep 2018 21:53:29 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2MSo-0001yN-O5; Tue, 18 Sep 2018 22:19:14 +0200
+Date:   Tue, 18 Sep 2018 22:19:14 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org
+Subject: Re: [REVIEW][PATCH 03/20] signal/x86: Move MCE error reporting out
+ of force_sig_info_fault
+In-Reply-To: <20180918000546.12552-3-ebiederm@xmission.com>
+Message-ID: <alpine.DEB.2.21.1809182217000.1468@nanos.tec.linutronix.de>
+References: <87y3bzk6yv.fsf@xmission.com> <20180918000546.12552-3-ebiederm@xmission.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917122430.GA3320@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 02:24:30PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Sep 17, 2018 at 01:48:52PM +0200, Lukas Wunner wrote:
-> > On Sun, Sep 16, 2018 at 12:22:43PM -0700, Linus Torvalds wrote:
-> > > +Scope
-> > > +=====
-> > > +
-> > > +This Code of Conduct applies both within project spaces and in public
-> > > +spaces when an individual is representing the project or its community.
-> > > +Examples of representing a project or community include using an
-> > > +official project e-mail address, posting via an official social media
-> > > +account, or acting as an appointed representative at an online or
-> > > +offline event. Representation of a project may be further defined and
-> > > +clarified by project maintainers.
-> > 
-> > Seriously though, I read this to know what I need to be aware of but oddly
-> > the language of this paragraph says it doesn't apply to me:  I'm not using
-> > an official project e-mail address nor an official social media account,
-> > nor has anyone appointed me as representative.  I can live with that, I'm
-> > just wondering what the benefit of a document is that only seems to apply
-> > to a tiny fraction of the community.
-> 
-> I do not think you are reading the document correctly.  As an example,
-> it should cover any emails sent to this list.  That is not a "tiny
-> fraction" by my last count :)
+On Tue, 18 Sep 2018, Eric W. Biederman wrote:
+>  #ifdef CONFIG_MEMORY_FAILURE
+>  	if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
+> +		unsigned lsb = 0;
 
-You may want to make that more explicit in the document.
+Newline between variable declaration and code please.
 
-The document appears to be geared towards smaller projects with
-official project e-mail addresses handed out to a group and it
-specifies dos and don'ts for members of that group when they have
-their project hat on.
+>  		printk(KERN_ERR
+>  	"MCE: Killing %s:%d due to hardware memory corruption fault at %lx\n",
+>  			tsk->comm, tsk->pid, address);
 
-However in the kernel community there's a large continuum with
-Linus and those who send him pulls on one end of the spectrum,
-and random folks writing on the mailing lists or bugzillas at
-the other end.  The further we get to the latter end, the more
-menthal gymnastics are necessary (at least for me) to consider
-the document applicable to them, given the restrictions laid
-out in the "Scope" paragraph.
+Can you please convert that to pr_err() while at it?
 
-Just my 2 cents anyway.
+> -		code = BUS_MCEERR_AR;
+> +		if (fault & VM_FAULT_HWPOISON_LARGE)
+> +			lsb = hstate_index_to_shift(VM_FAULT_GET_HINDEX(fault));
+> +		if (fault & VM_FAULT_HWPOISON)
+> +			lsb = PAGE_SHIFT;
+> +		force_sig_mceerr(BUS_MCEERR_AR, (void __user *)address, lsb, tsk);
+> +		return;
+>  	}
 
-Thanks,
+With that fixed:
 
-Lukas
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
