@@ -2,99 +2,111 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4B3C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C69ECE560
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B8B92086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1734E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkqICS9i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8B92086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SgS+yRsB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1734E2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbeIRSWw (ORCPT
+        id S1729675AbeIRSXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:22:52 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35572 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeIRSWv (ORCPT
+        Tue, 18 Sep 2018 14:23:16 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:48788 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeIRSXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:22:51 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o63-v6so743255yba.2;
-        Tue, 18 Sep 2018 05:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sHgSJeeOMenDm6xzNoGJlsQeGafPsgRMMcbY9Iz2RtA=;
-        b=FkqICS9ieZdE85/1WKFK5DCj6IW3xalQxM6QqXJK2zzwn1tFSWP9vUqcn3Nkh4xPnE
-         aoe1DVnYBpOHmRCTeSB444lS12VDXaNRhWWYwrKZFbWgY1r+WwQFt+kPKlt0D6TGNuOm
-         Sb0C8z5R4QuIQmgXcSsNUmJhogCuW8nWoNTJOm3TaiZb2B9NE8Rlx1rM8fQmrPCM+n5C
-         QmdGJW0S4s6pnvh79N/c2JN9rNoynwLx8XgacwcQd4wP0Sk8beSrMAKdF5YB9avpDCDP
-         VHJR2WXKOQ6fredU2JDNMbIh2Vp328XaERIJastyGs3n8SU7fnT3bk2vbB+aQEwuMzTf
-         5doA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sHgSJeeOMenDm6xzNoGJlsQeGafPsgRMMcbY9Iz2RtA=;
-        b=NFz6Kf00yOgdJsRVKJChazTbRUzbafKMDfohheub8Wwas6rUn2VpezYagX+VfQ4YZf
-         dVlNdUzt9f2mwiocw5gxqPQu7G3yGs5sXc0F+8mUSYPeeDkr2cIMuqVs1+DCPphyHRzy
-         psbVwcr6rdIP+h4XDMUgz94q3vRwmh7IDxfzvlstgywZRC8lb9eUEo562+vEd4c/hKMr
-         ecBFUdPW+u48jRlm0vdFkO28IlV7egyNADwFrsyS00cP6nyXZQ40LksBV0a6t+fKynyW
-         Orf8fkdo0V3d0+lVBJhBwMmoSZ9rgk3nAFP9u7cYzwW7PdtUFBfxxQ+m9963Vw2Dixiv
-         ltYw==
-X-Gm-Message-State: APzg51C5iCPBu8hPuO2WDXM8Jij1vvV465ieVln5LpmPL9os21/GxfCk
-        m2VFLm33EW7O2e49YTt58PE=
-X-Google-Smtp-Source: ANB0VdbrxB9BVTuPEyOQ1Su/kru2cMTgP9rkEEzpzu9p7QmS+hM1BxRTLAqKumTiLNpDnDT14fAgUw==
-X-Received: by 2002:a25:5942:: with SMTP id n63-v6mr12794146ybb.116.1537275024584;
-        Tue, 18 Sep 2018 05:50:24 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:6613])
-        by smtp.gmail.com with ESMTPSA id o128-v6sm816689ywe.110.2018.09.18.05.50.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 05:50:23 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 05:50:21 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/4] lib/percpu-refcount: introduce percpu_ref_resurge()
-Message-ID: <20180918125021.GB902964@devbig004.ftw2.facebook.com>
-References: <20180918101946.13329-1-ming.lei@redhat.com>
- <20180918101946.13329-3-ming.lei@redhat.com>
+        Tue, 18 Sep 2018 14:23:16 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8ICoYcm081153;
+        Tue, 18 Sep 2018 07:50:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537275034;
+        bh=O7EKDdwIQBHnLDyLN/Zy+KvOEWj2cz/mJNxJGwkRLv8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=SgS+yRsBLaaO2QHNoBBMPcWSBocFHL1aGemdiO0jzCjEW556oMTZbzzFa7EU+PTa6
+         CQyXQlwcCogmbTLCFMu73/ji9XryRnRCdLOGoultS6j5VGT4CefZdtUMvb5r+AeM7s
+         q3d/0flbausYYK8BZukUSLEG5V6/1R49viu0pFCQ=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8ICoYOp016126;
+        Tue, 18 Sep 2018 07:50:34 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 18
+ Sep 2018 07:50:34 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 18 Sep 2018 07:50:34 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8ICoYZd028471;
+        Tue, 18 Sep 2018 07:50:34 -0500
+Subject: Re: [PATCH 2/3] ARM: dts: am335x: add support for Moxa UC-2101 open
+ platform
+To:     =?UTF-8?B?U1ogTGluICjmnpfkuIrmmbop?= <SZ.Lin@moxa.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        =?UTF-8?B?V2VzIEh1YW5nICjpu4Pmt7XmsrMp?= <Wes.Huang@moxa.com>,
+        =?UTF-8?B?RmVybyBKRCBaaG91ICjlkajkv4rpgZQp?= <FeroJD.Zhou@moxa.com>
+References: <20180830040929.23357-1-sz.lin@moxa.com>
+ <20180830040929.23357-3-sz.lin@moxa.com>
+ <47ebc8e6-b1cb-e040-8533-06eec05b4edd@ti.com>
+ <TY2PR0101MB252666FF7718C84A4261682FE21E0@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <2c14acd7-6443-f9c9-d2e4-c86544e39ff3@ti.com>
+Date:   Tue, 18 Sep 2018 07:50:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918101946.13329-3-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <TY2PR0101MB252666FF7718C84A4261682FE21E0@TY2PR0101MB2526.apcprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 06:19:44PM +0800, Ming Lei wrote:
-> Now percpu_ref_reinit() can only be done on one percpu refcounter when it
-> drops zero. And the limit shouldn't be so strict, and it is quite
-> straightforward that we can do it when the refcount doesn't drop zero
-> because it is at atomic mode.
+
+
+On 09/17/2018 01:53 AM, SZ Lin (林上智) wrote:
+> Hi,
 > 
-> This patch introduces percpu_ref_resurge() in which the above limit is
-> relaxed, so we may avoid extra change[1] for NVMe timeout's requirement.
+>> -----Original Message-----
+>> From: Grygorii Strashko [mailto:grygorii.strashko@ti.com]
+> 
+> <snip>
+> 
+>>
+>> Pls, use phy-handle instead of phy_id here and in the next patch.
+> 
+> Thanks for the reminder, I will use phy-handle in next version.
+> 
+> Furthermore, the property of "phy-handle" doesn't work properly in 4.4.y-stable kernel.
+> I've fixed it and sent the backport patches to 4.4.y-stable [1][2][3][4].
+> 
+> [1] https://www.spinics.net/lists/stable/msg256121.html
+> [2] https://www.spinics.net/lists/stable/msg256124.html
+> [3] https://www.spinics.net/lists/stable/msg256131.html
+> [4] https://www.spinics.net/lists/stable/msg256749.html
+> 
 
-For now,
-
-Nacked-by: Tejun Heo <tj@kernel.org>
-
-Please see the original discussion thread.
-
-Thanks.
+Thank you.
 
 -- 
-tejun
+regards,
+-grygorii
