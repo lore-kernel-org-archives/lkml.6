@@ -2,186 +2,92 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CC3ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4266CECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5480F20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5480F20C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id D7B9320C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y/x1eyy7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B9320C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbeIRQbK (ORCPT
+        id S1729829AbeIRQb4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 12:31:10 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55570 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729632AbeIRQ26 (ORCPT
+        Tue, 18 Sep 2018 12:31:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54652 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729285AbeIRQb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 12:28:58 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8IAsMjZ004541;
-        Tue, 18 Sep 2018 12:56:13 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mgryf0w56-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 18 Sep 2018 12:56:13 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BC22531;
-        Tue, 18 Sep 2018 10:56:12 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6E7392A9D;
-        Tue, 18 Sep 2018 10:56:12 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:12 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:12 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 03/27] mmc: mmci: convert dma_setup callback to return an int
-Date:   Tue, 18 Sep 2018 12:55:20 +0200
-Message-ID: <1537268144-21152-4-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
-References: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
+        Tue, 18 Sep 2018 12:31:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XXw5MMSAslYRw1sdTAgtXUe+a2iOZUaK+WDjFgJtZbI=; b=Y/x1eyy7T9I0kzXWwJnniAG5v
+        eaVjL+TDDUscbDjzFQCPFBtXIOzifH9rYfICgRhbY8uy9lfLYZ37U6RlNLadwzJDh8AB4+a3kq8w2
+        ytgzGRjN4JrJIMWnfzHhGRxBy2igzuZqeLekqt16cFVNUiGwuJ1J2gL0Tc1VXrY8aLeIPm0ROvk4T
+        gKgTAzsa09TlGmWKRoiaArXPEcN2Zb3JWd4CYFuQ1Cp2ZYuqLdlWcm0CboJyigoBeXsHKXy+qUhOA
+        ioq+COXPd6xINMbNH6zDDJE9k3Afdxorb1RMa4QAXQQo5rNykmEiYw3WzrrZ38DJDXi0NNOpmFIKd
+        OElGdxw3w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2DjL-00043N-4K; Tue, 18 Sep 2018 10:59:43 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 65DB4202C1A38; Tue, 18 Sep 2018 12:59:39 +0200 (CEST)
+Date:   Tue, 18 Sep 2018 12:59:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        konrad.wilk@oracle.com, x86@kernel.org, dwmw@amazon.co.uk,
+        tglx@linutronix.de, Srinivas REDDY Eeda <srinivas.eeda@oracle.com>,
+        bp@suse.de, hpa@zytor.com, dhaval.giani@oracle.com
+Subject: Re: [PATCH] x86/speculation: Use AMD specific retpoline for inline
+ asm on AMD
+Message-ID: <20180918105939.GK24106@hirez.programming.kicks-ass.net>
+References: <87411705-893f-46d3-b899-b09ed9fa8d1b@default>
+ <20180918095015.GE19234@hirez.programming.kicks-ass.net>
+ <3fcc1453-1618-9a79-71c9-5eede0023775@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3fcc1453-1618-9a79-71c9-5eede0023775@oracle.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On Tue, Sep 18, 2018 at 06:31:07PM +0800, Zhenzhong Duan wrote:
+> On 2018/9/18 17:50, Peter Zijlstra wrote:
+> > On Mon, Sep 17, 2018 at 10:17:30PM -0700, Zhenzhong Duan wrote:
+> > > -#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
+> > > +#elif defined(CONFIG_RETPOLINE)
+> > 
+> > This doesn't make any sense..
+> This change is used for x86_64 to have minimal Retpoline support when
+> CONFIG_RETPOLINE is defined but RETPOLINE isn't defined, or I missed
+> something?
 
-This patch converts dma_setup callback to return an integer
-This patch is needed to prepare sdmmc variant with internal dma
+No it doesn't.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c          | 16 +++++++++++-----
- drivers/mmc/host/mmci.h          |  2 +-
- drivers/mmc/host/mmci_qcom_dml.c |  6 ++++--
- 3 files changed, 16 insertions(+), 8 deletions(-)
+#if defined(X86_64) && defined(RETPOLINE)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 7d22cb9..077d4a7 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -415,7 +415,7 @@ static void mmci_init_sg(struct mmci_host *host, struct mmc_data *data)
-  * no custom DMA interfaces are supported.
-  */
- #ifdef CONFIG_DMA_ENGINE
--static void mmci_dma_setup(struct mmci_host *host)
-+static int mmci_dma_setup(struct mmci_host *host)
- {
- 	const char *rxname, *txname;
- 
-@@ -466,7 +466,9 @@ static void mmci_dma_setup(struct mmci_host *host)
- 	}
- 
- 	if (host->ops && host->ops->dma_setup)
--		host->ops->dma_setup(host);
-+		return host->ops->dma_setup(host);
-+
-+	return 0;
- }
- 
- /*
-@@ -515,7 +517,7 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
- 	u32 status;
- 	int i;
- 
--	if (!__dma_inprogress(dmae))
-+	if (!__dma_inprogress(host))
- 		return;
- 
- 	/* Wait up to 1ms for the DMA to complete */
-@@ -741,8 +743,10 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
- static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
- {
- }
--static inline void mmci_dma_setup(struct mmci_host *host)
-+
-+static inline int mmci_dma_setup(struct mmci_host *host)
- {
-+	return 0;
- }
- 
- static inline void mmci_dma_release(struct mmci_host *host)
-@@ -1796,7 +1800,9 @@ static int mmci_probe(struct amba_device *dev,
- 		 amba_rev(dev), (unsigned long long)dev->res.start,
- 		 dev->irq[0], dev->irq[1]);
- 
--	mmci_dma_setup(host);
-+	ret = mmci_dma_setup(host);
-+	if (ret)
-+		goto clk_disable;
- 
- 	pm_runtime_set_autosuspend_delay(&dev->dev, 50);
- 	pm_runtime_use_autosuspend(&dev->dev);
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index f1ec066..312ad5c 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -273,7 +273,7 @@ struct variant_data {
- 
- /* mmci variant callbacks */
- struct mmci_host_ops {
--	void (*dma_setup)(struct mmci_host *host);
-+	int (*dma_setup)(struct mmci_host *host);
- };
- 
- struct mmci_host_next {
-diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index be3fab5..1bb59cf 100644
---- a/drivers/mmc/host/mmci_qcom_dml.c
-+++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -119,7 +119,7 @@ static int of_get_dml_pipe_index(struct device_node *np, const char *name)
- }
- 
- /* Initialize the dml hardware connected to SD Card controller */
--static void qcom_dma_setup(struct mmci_host *host)
-+static int qcom_dma_setup(struct mmci_host *host)
- {
- 	u32 config;
- 	void __iomem *base;
-@@ -131,7 +131,7 @@ static void qcom_dma_setup(struct mmci_host *host)
- 
- 	if (producer_id < 0 || consumer_id < 0) {
- 		host->variant->qcom_dml = false;
--		return;
-+		return -EINVAL;
- 	}
- 
- 	base = host->base + DML_OFFSET;
-@@ -175,6 +175,8 @@ static void qcom_dma_setup(struct mmci_host *host)
- 
- 	/* Make sure dml initialization is finished */
- 	mb();
-+
-+	return 0;
- }
- 
- static struct mmci_host_ops qcom_variant_ops = {
--- 
-2.7.4
+ /* x86_64 retpoline goes here */
 
+#elif defined(RETPOLINE)
+
+ /* !x86_64 retpoline goes here */
+
+#else
+
+ /* !retpoline goes here
+
+#endif
