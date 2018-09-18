@@ -2,106 +2,81 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ED3C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88608C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE94421471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:54:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BNiWQ1mO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE94421471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4BA7D20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA7D20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730356AbeISC3R (ORCPT
+        id S1730564AbeISC3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:29:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729736AbeISC3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:29:17 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD2B520880;
-        Tue, 18 Sep 2018 20:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537304096;
-        bh=F1WH/U6bPk8Uvpvs8aklRFpZaEnNChdYNexZU3P97UM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BNiWQ1mOnOF6KFsqWYggtlqq3AJjPc6UR5M7e1ZVHiUPNh0+vqUgt4AIYcJoEMfSP
-         s2aqqg0JWT2l40Fy43Q0Ep6U+4aCeLNc0VaSfY7Dajdx9MbD+QGehw5b25zb5eWpW0
-         aCeXOPXVgZbJt1zTs3CTzYDOQ4gBVZ5/yvnkqmRo=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id F2413140260; Tue, 18 Sep 2018 17:54:50 -0300 (-03)
-Date:   Tue, 18 Sep 2018 17:54:50 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH 09/48] perf tools: Make copyfile_offset global
-Message-ID: <20180918205450.GA311@kernel.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <20180913125450.21342-10-jolsa@kernel.org>
+        Tue, 18 Sep 2018 22:29:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58827 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729736AbeISC3b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 22:29:31 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2N1Y-00032s-SC; Tue, 18 Sep 2018 22:55:08 +0200
+Date:   Tue, 18 Sep 2018 22:55:08 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org
+Subject: Re: [REVIEW][PATCH 00/20] siginfo cleanups for x86
+In-Reply-To: <87y3bzk6yv.fsf@xmission.com>
+Message-ID: <alpine.DEB.2.21.1809182253220.1468@nanos.tec.linutronix.de>
+References: <87y3bzk6yv.fsf@xmission.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913125450.21342-10-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Sep 13, 2018 at 02:54:11PM +0200, Jiri Olsa escreveu:
-> It will be used outside of util object in following patches.
-
-Had to add fcntl.h to have loff_t to fix the build in some systems,
-moved the prototype closer to the other copyfile_ prefixed functions in
-util.h.
-
-- Arnaldo
- 
-> Link: http://lkml.kernel.org/n/tip-xgiypvcrmc12u7czcrc27en2@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/util/util.c | 2 +-
->  tools/perf/util/util.h | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
+On Tue, 18 Sep 2018, Eric W. Biederman wrote:
+> I have been slowly going thought and reworking the arch specific
+> functions that generate siginfo.  The problems I have been addressing
+> is that using siginfo directly is error prone.  Using siginfo directly
+> makes it easy to leave fields initialized, and get confused about
+> which fields need to be filled in.
 > 
-> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-> index eac5b858a371..093352e93d50 100644
-> --- a/tools/perf/util/util.c
-> +++ b/tools/perf/util/util.c
-> @@ -221,7 +221,7 @@ static int slow_copyfile(const char *from, const char *to, struct nsinfo *nsi)
->  	return err;
->  }
->  
-> -static int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
-> +int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
->  {
->  	void *ptr;
->  	loff_t pgoff;
-> diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-> index dc58254a2b69..7fc171b20671 100644
-> --- a/tools/perf/util/util.h
-> +++ b/tools/perf/util/util.h
-> @@ -80,4 +80,6 @@ void perf_set_multithreaded(void);
->  #endif
->  #endif
->  
-> +int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
-> +
->  #endif /* GIT_COMPAT_UTIL_H */
-> -- 
-> 2.17.1
+> To address this I have added a series of helper functions to
+> kernel/signal.c, that are specific to exactly one use of struct siginfo
+> and take the parameters they need.
+> 
+> To use these functions the x86 signal handling needs some cleanups but
+> the net result appears to be less code that is easier to follow.
+> 
+> If while looking over these patches you see anything please let me know.
+
+Only nitpicks.
+
+> I don't think I missed something but to err is human.
+
+I went through the changes a couple of times, but failed to spot
+something. Was pleasure to read that set!
+
+> Likewise if you would like to merge these patches via the tip tree
+> let me know.  Otherwise after the review is complete I plan on merging
+> these into my siginfo tree.  At this point I believe all of the
+> prerequisite patches are merged so it should not make a difference.
+
+Works either way. Ingo?
+
+Thanks,
+
+	tglx
