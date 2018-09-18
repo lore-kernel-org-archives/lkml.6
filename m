@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D92ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115BCECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324A321471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B45EB20867
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="droE+RCR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324A321471
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eux/cD8a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45EB20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729398AbeIRNjO (ORCPT
+        id S1729438AbeIRNjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 09:39:14 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37811 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728952AbeIRNjN (ORCPT
+        Tue, 18 Sep 2018 09:39:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53781 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729361AbeIRNjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 09:39:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n11-v6so1543556wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 01:07:45 -0700 (PDT)
+        Tue, 18 Sep 2018 09:39:15 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b19-v6so1368896wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 01:07:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=deehyEj+k13wwPLIW0YCKCR+71RrJ/a2PfzRJgDLb4A=;
-        b=droE+RCRjk734fWUvdponn6zNGFbTHHHL/ImfD5NhKYfQ9d8kwprqIcKtKnQtaqzkN
-         zAvModU/hceb7yJNt0/dD/t0sohOLqksMlD1D4clOenqpuXXDylDqSh/dyg6MCMByNwB
-         DTAhDaxDAY4S16TOL1se3FtLBTWRJDUgLCS/S+rCOSiZoXF1Xze19dyi0I1wJP49vR9G
-         KMfDBRsny3r2lwsbelxI7gRDy/BE+3AuC2eUrone8Dp7NKtVNBTvShUA2doO7LpZ5flI
-         B/10d4whdiZj9xVe1al6m3dWEZvCTwH3S4M95DM9smFp1uPAIm1z98iRhVXKtGgYYuYa
-         haIQ==
+        bh=A67bVtHbnVNiPPU1tA7dK6iWxKgLQonn0EiJ9UuUc9k=;
+        b=eux/cD8adtg8EpfzNvTbGuEva8AaI2WXHYbP0WIozUgLo6BpMkIlnveKCoGPcxNb0l
+         2fYSHdchWYS18op8WXaJ+fSe29GmFKEOe/PzX3WO6X4CyOybwsFKYZTl0rN7Zi6lvWLV
+         xITDH8aeQcitM+VQ4w5uT4zRBbixNcRSVhfaKb0MeXoiyCRUDshxzi8T+U0mMrXBxDh9
+         atkvKhHQmH7JoZpn0R5c9VG83a9Rb8crUE8jL4PFeAQVwRCDx/P7HPQYgVyaMgru1rlW
+         4Skiv71CBYRE5SeE7aPthTmrLWqhWs3o2/kLiU/zAo/PEis4DzW7YSZUwyKLBO0329Qr
+         o8jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=deehyEj+k13wwPLIW0YCKCR+71RrJ/a2PfzRJgDLb4A=;
-        b=ab/beA5WtpOwRTOL4Eijc1tu+GYv8/mYS386uKvuR+vYt33EKetxfwFXDAYCPSo7IP
-         JDDNfYUaods68nFISRpDJeoFIJSrh3p/JMLCmg2tng4mi3W/RVJ1OyOVuZGtVBu8xmso
-         OAel2HsbeoofyjNrCpDFjRjfImlCdBLu7/q8JzzxLykMyaTOCZRk7d2WeX4EFc8HK0Ud
-         oU0yf+v+6ycNWY7m+76tBwDE9Y0ZNOXB3wE8NTrxo7LttIN0SBlW8DCE+cNQsTsYDdm9
-         0bQHsQj7AIKEJUiNno3oOo3xb38kJ9oaYYInoAva58SUOYQsXJ96t+ooBlUgDu0D2aPX
-         mP7Q==
-X-Gm-Message-State: APzg51B/s2xyoTA7oW8/5Cj/vLLAY9o9g1NO6E8q3r+5+5OUL9YynP7C
-        4+81ME2AvfivJd+8/e8fbpg=
-X-Google-Smtp-Source: ANB0VdY/B/EemV6+P6Oh0nNkjpCHTa/prgFh2oRJA1kYKK1M/9/GpEPoo7lCRsmPEPvylhv4o8iaFQ==
-X-Received: by 2002:a1c:3a08:: with SMTP id h8-v6mr13682017wma.126.1537258064525;
-        Tue, 18 Sep 2018 01:07:44 -0700 (PDT)
+        bh=A67bVtHbnVNiPPU1tA7dK6iWxKgLQonn0EiJ9UuUc9k=;
+        b=TM8Kx0mYmA6eoFF39KVZ/ULbISs8+yqhbC/ENwdDtd1DUYy4aPXAFnArRljKRnVU8/
+         P907LIJRcAUCsmCiE6TeC4jFb0oIMuHtSyXzRaABbuxzNa6JRwJeXLsxQtFa1k6r0tZF
+         f+h8PKQP7Jo9dGARG7CtXSMmJb/wmWpcbRwB6gVDEO3nMQyWBWCNWKz+2OGK/7niqkIl
+         Cb4Jr/vWvv3TFSoBS/SD7MklOOdJovJjBfncjP8tRQL791+dksVTIPFyqulEFLFbAAvH
+         z4FVDHcgx2Kemd7eONxgqdgpF3/cf+TN3I2ZfHa1rp7g5WjzW+cTd2QEq9oT56gGNjpt
+         +gVA==
+X-Gm-Message-State: APzg51B9rfZsT58sOj2J/faW6NHssN4z7/nf+pfxtSBO1aSFtamheN7i
+        AmfbUqjoDwUAbJMrFg+9XQY=
+X-Google-Smtp-Source: ANB0VdbHRAqWLm4wjbPFHY3z4l9O/KoDCCyq3d++febr1Mz2owSH4UDlJGWbfQJWdC62SUMET00+9A==
+X-Received: by 2002:a1c:5f85:: with SMTP id t127-v6mr13555011wmb.16.1537258066028;
+        Tue, 18 Sep 2018 01:07:46 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id r140-v6sm1386869wmd.7.2018.09.18.01.07.43
+        by smtp.gmail.com with ESMTPSA id r140-v6sm1386869wmd.7.2018.09.18.01.07.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 01:07:43 -0700 (PDT)
+        Tue, 18 Sep 2018 01:07:45 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 6/8] staging: rtl8188eu: add missing spaces around operators
-Date:   Tue, 18 Sep 2018 10:07:09 +0200
-Message-Id: <20180918080711.21594-6-straube.linux@gmail.com>
+Subject: [PATCH v2 7/8] staging: rtl8188eu: fix lines over 80 characters
+Date:   Tue, 18 Sep 2018 10:07:10 +0200
+Message-Id: <20180918080711.21594-7-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180918080711.21594-1-straube.linux@gmail.com>
 References: <20180918080711.21594-1-straube.linux@gmail.com>
@@ -76,73 +76,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing spaces around '|', '-', and '&' to follow kernel coding
-style. Reported by checkpatch.
+Wrap lines over 80 characters where appropriate to
+clear checkpatch warnings.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_ioctl_set.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_ioctl_set.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-index db983f15ddd6..d6d6a232c4ec 100644
+index d6d6a232c4ec..c291d3a0fdcc 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-@@ -141,7 +141,7 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
- 	else if (check_fwstate(pmlmepriv, _FW_UNDER_LINKING))
- 		goto release_mlme_lock;
+@@ -339,7 +339,8 @@ u8 rtw_set_802_11_infrastructure_mode(struct adapter *padapter,
+ 		    check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))
+ 			rtw_free_assoc_resources(padapter);
  
--	if (check_fwstate(pmlmepriv, _FW_LINKED|WIFI_ADHOC_MASTER_STATE)) {
-+	if (check_fwstate(pmlmepriv, _FW_LINKED | WIFI_ADHOC_MASTER_STATE)) {
- 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("set_bssid: _FW_LINKED||WIFI_ADHOC_MASTER_STATE\n"));
+-		if (*pold_state == Ndis802_11Infrastructure || *pold_state == Ndis802_11IBSS) {
++		if (*pold_state == Ndis802_11Infrastructure ||
++		    *pold_state == Ndis802_11IBSS) {
+ 			if (check_fwstate(pmlmepriv, _FW_LINKED))
+ 				rtw_indicate_disconnect(padapter); /* will clr Linked_state; before this function, we must have checked whether  issue dis-assoc_cmd or not */
+ 	       }
+@@ -444,7 +445,8 @@ u8 rtw_set_802_11_authentication_mode(struct adapter *padapter, enum ndis_802_11
+ 	int res;
+ 	u8 ret;
  
- 		if (!memcmp(&pmlmepriv->cur_network.network.MacAddress, bssid, ETH_ALEN)) {
-@@ -225,7 +225,7 @@ u8 rtw_set_802_11_ssid(struct adapter *padapter, struct ndis_802_11_ssid *ssid)
- 	else if (check_fwstate(pmlmepriv, _FW_UNDER_LINKING))
- 		goto release_mlme_lock;
+-	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("set_802_11_auth.mode(): mode =%x\n", authmode));
++	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_,
++		 ("set_802_11_auth.mode(): mode =%x\n", authmode));
  
--	if (check_fwstate(pmlmepriv, _FW_LINKED|WIFI_ADHOC_MASTER_STATE)) {
-+	if (check_fwstate(pmlmepriv, _FW_LINKED | WIFI_ADHOC_MASTER_STATE)) {
- 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_,
- 			 ("set_ssid: _FW_LINKED||WIFI_ADHOC_MASTER_STATE\n"));
+ 	psecuritypriv->ndisauthtype = authmode;
  
-@@ -409,14 +409,14 @@ u8 rtw_set_802_11_bssid_list_scan(struct adapter *padapter, struct ndis_802_11_s
- 		goto exit;
- 	}
+@@ -497,7 +499,8 @@ u8 rtw_set_802_11_add_wep(struct adapter *padapter, struct ndis_802_11_wep *wep)
+ 		 ("rtw_set_802_11_add_wep:before memcpy, wep->KeyLength = 0x%x wep->KeyIndex = 0x%x  keyid =%x\n",
+ 		 wep->KeyLength, wep->KeyIndex, keyid));
  
--	if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY|_FW_UNDER_LINKING) ||
-+	if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY | _FW_UNDER_LINKING) ||
- 	    pmlmepriv->LinkDetectInfo.bBusyTraffic) {
- 		/*  Scan or linking is in progress, do nothing. */
- 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("%s fail since fw_state = %x\n", __func__, get_fwstate(pmlmepriv)));
- 		res = true;
+-	memcpy(&psecuritypriv->dot11DefKey[keyid].skey[0], &wep->KeyMaterial, wep->KeyLength);
++	memcpy(&psecuritypriv->dot11DefKey[keyid].skey[0],
++	       &wep->KeyMaterial, wep->KeyLength);
  
- 		if (check_fwstate(pmlmepriv,
--				  _FW_UNDER_SURVEY|_FW_UNDER_LINKING))
-+				  _FW_UNDER_SURVEY | _FW_UNDER_LINKING))
- 			RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("\n###_FW_UNDER_SURVEY|_FW_UNDER_LINKING\n\n"));
- 		else
- 			RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("\n###pmlmepriv->sitesurveyctrl.traffic_busy == true\n\n"));
-@@ -550,8 +550,8 @@ u16 rtw_get_cur_max_rate(struct adapter *adapter)
- 	    !check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE))
+ 	psecuritypriv->dot11DefKeylen[keyid] = wep->KeyLength;
+ 
+@@ -551,7 +554,8 @@ u16 rtw_get_cur_max_rate(struct adapter *adapter)
  		return 0;
  
--	if (pmlmeext->cur_wireless_mode & (WIRELESS_11_24N|WIRELESS_11_5N)) {
--		p = rtw_get_ie(&pcur_bss->ies[12], _HT_CAPABILITY_IE_, &ht_ielen, pcur_bss->ie_length-12);
-+	if (pmlmeext->cur_wireless_mode & (WIRELESS_11_24N | WIRELESS_11_5N)) {
-+		p = rtw_get_ie(&pcur_bss->ies[12], _HT_CAPABILITY_IE_, &ht_ielen, pcur_bss->ie_length - 12);
+ 	if (pmlmeext->cur_wireless_mode & (WIRELESS_11_24N | WIRELESS_11_5N)) {
+-		p = rtw_get_ie(&pcur_bss->ies[12], _HT_CAPABILITY_IE_, &ht_ielen, pcur_bss->ie_length - 12);
++		p = rtw_get_ie(&pcur_bss->ies[12], _HT_CAPABILITY_IE_,
++			       &ht_ielen, pcur_bss->ie_length - 12);
  		if (p && ht_ielen > 0) {
  			/* cur_bwmod is updated by beacon, pmlmeinfo is updated by association response */
  			bw_40MHz = (pmlmeext->cur_bwmode && (HT_INFO_HT_PARAM_REC_TRANS_CHNL_WIDTH & pmlmeinfo->HT_info.infos[0])) ? 1 : 0;
-@@ -569,7 +569,7 @@ u16 rtw_get_cur_max_rate(struct adapter *adapter)
+@@ -568,7 +572,8 @@ u16 rtw_get_cur_max_rate(struct adapter *adapter)
+ 			);
  		}
  	} else {
- 		while (pcur_bss->SupportedRates[i] != 0 && pcur_bss->SupportedRates[i] != 0xFF) {
--			rate = pcur_bss->SupportedRates[i]&0x7F;
-+			rate = pcur_bss->SupportedRates[i] & 0x7F;
+-		while (pcur_bss->SupportedRates[i] != 0 && pcur_bss->SupportedRates[i] != 0xFF) {
++		while (pcur_bss->SupportedRates[i] != 0 &&
++		       pcur_bss->SupportedRates[i] != 0xFF) {
+ 			rate = pcur_bss->SupportedRates[i] & 0x7F;
  			if (rate > max_rate)
  				max_rate = rate;
- 			i++;
 -- 
 2.19.0
 
