@@ -2,85 +2,74 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EF9ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41737C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7BB620867
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:27:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BB620867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 0367220867
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0367220867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeIRM67 (ORCPT
+        id S1729049AbeIRM72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:58:59 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:41056 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbeIRM67 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:58:59 -0400
-X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
-   d="scan'208";a="20888123"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Sep 2018 00:27:40 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch02.mchp-main.com
- (10.10.76.38) with Microsoft SMTP Server id 14.3.352.0; Tue, 18 Sep 2018
- 00:27:39 -0700
-Subject: Re: linux-next: manual merge of the staging tree with the at91 tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
-        Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>
-References: <20180918131238.2838bedd@canb.auug.org.au>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <982f3fea-27f7-2349-51dc-24e34ef7176e@microchip.com>
-Date:   Tue, 18 Sep 2018 09:27:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 08:59:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33159 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727228AbeIRM72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 08:59:28 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0A676F5A2409E;
+        Tue, 18 Sep 2018 15:28:07 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 18 Sep 2018 15:28:04 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <michael.chan@broadcom.com>, <davem@davemloft.net>,
+        <vasundhara-v.volam@broadcom.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCHv3] net: bnxt: Fix a uninitialized variable warning.
+Date:   Tue, 18 Sep 2018 15:15:44 +0800
+Message-ID: <1537254944-41068-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20180918131238.2838bedd@canb.auug.org.au>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/09/2018 at 05:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->    MAINTAINERS
-> 
-> between commit:
-> 
->    5ae2f1f30197 ("MAINTAINERS: move former ATMEL entries to proper MICROCHIP locatioat91n")
-> 
-> from the at91 tree and commit:
-> 
->    010de20412fc ("MAINTAINERS: Add entry for mcp3911 ADC driver")
-> 
-> from the staging tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Fix the following compile warning:
 
-Resolution looks good to me.
+drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c:49:5: warning: nvm_param.dir_type may be used uninitialized in this function [-Wmaybe-uninitialized]
+  if (nvm_param.dir_type == BNXT_NVM_PORT_CFG)
 
-Thanks. Best regards,
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+index f3b9fbc..790c684 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_devlink.c
+@@ -46,6 +46,9 @@ static int bnxt_hwrm_nvm_req(struct bnxt *bp, u32 param_id, void *msg,
+ 		}
+ 	}
+ 
++	if (i == ARRAY_SIZE(nvm_params))
++		return -EOPNOTSUPP;
++
+ 	if (nvm_param.dir_type == BNXT_NVM_PORT_CFG)
+ 		idx = bp->pf.port_id;
+ 	else if (nvm_param.dir_type == BNXT_NVM_FUNC_CFG)
 -- 
-Nicolas Ferre
+1.7.12.4
+
