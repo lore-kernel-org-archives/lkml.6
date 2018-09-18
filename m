@@ -2,115 +2,270 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B59E4ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FA7ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796652146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:19:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796652146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7500B214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7500B214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbeISCxp (ORCPT
+        id S1730543AbeISCy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:53:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43678 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbeISCxp (ORCPT
+        Tue, 18 Sep 2018 22:54:27 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46062 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729902AbeISCy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:53:45 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5853111E7;
-        Tue, 18 Sep 2018 21:19:18 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 14:19:17 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     <zhe.he@windriver.com>
-Cc:     <mhocko@suse.com>, <vbabka@suse.cz>, <pasha.tatashin@oracle.com>,
-        <mgorman@techsingularity.net>, <aaron.lu@intel.com>,
-        <osalvador@suse.de>, <iamjoonsoo.kim@lge.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/page_alloc: Fix panic caused by passing
- debug_guardpage_minorder or kernelcore to command line
-Message-Id: <20180918141917.2cb16b01c122dbe1ead2f657@linux-foundation.org>
-In-Reply-To: <1537284788-428784-1-git-send-email-zhe.he@windriver.com>
-References: <1537284788-428784-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Sep 2018 22:54:27 -0400
+Received: by mail-ot1-f65.google.com with SMTP id a19-v6so3516213otl.12;
+        Tue, 18 Sep 2018 14:20:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J7/KYRLfEV3qA6WcQYfnbUj4a0vCZE8kpKBaCZ0ZlCI=;
+        b=rBFg4i8RB26atuswVTqJfnSpX3gBR3lFGrJPjwkbGkQ5N6FnkCiZfo7lHuFs0F8tgN
+         9/35ksSuuxAWyglAMZMWtYbATxm4Vg7SzEpNIwUuvOfFpxFJ7wqRmaB6VHTbdJANYt+L
+         WWEvLPJ0RXYFKBEUJc18lSQ63uhdU5n+rN1Soa3quCSgUsLTGrvkNbe65M+6+69tPDXU
+         OAMzEmj8bZgIFYNA6lw2O6scz1NaIj1fFZUdLm0AbQFLu2pGB6okQ/nPXEDsdHLsdRjk
+         zhCSHDRr7oK3yPPJ/D4sy6mYfkqER6R77mrYiJbExq/wsmXea0Ukzlu0Gox5UDnpuLGO
+         UZow==
+X-Gm-Message-State: APzg51ABbU/wQDtRbSEAyRECZKDxZ1wxqCxAfrMFY/1/GFnMjZXZwfeG
+        jsF1NF2O8vcqYsuAs9m6jB33SWRn+vxuSSmMRy8=
+X-Google-Smtp-Source: ANB0Vdb6YghbmB4NmpcwsT4CPrBPrj1VqAdQazAISfhQL3P/wX2blaRy2qJRP5I3jUuKPcvc5OD6PYx/LFxaTYNS+9Q=
+X-Received: by 2002:a9d:2645:: with SMTP id a63-v6mr16350869otb.270.1537305599711;
+ Tue, 18 Sep 2018 14:19:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180918114822.21926-1-david@redhat.com> <20180918114822.21926-3-david@redhat.com>
+In-Reply-To: <20180918114822.21926-3-david@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 18 Sep 2018 23:19:48 +0200
+Message-ID: <CAJZ5v0htjOEJp=FH1Hnr=xp8AL7BJA72uaF__78AC97GYCmFFQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/6] mm/memory_hotplug: make add_memory() take the device_hotplug_lock
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, nfont@linux.vnet.ibm.com,
+        jallen@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>, osalvador@suse.de,
+        malat@debian.org, pavel.tatashin@microsoft.com,
+        yasu.isimatu@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Sep 2018 23:33:08 +0800 <zhe.he@windriver.com> wrote:
-
-> From: He Zhe <zhe.he@windriver.com>
-> 
-> debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
-> input argument before using it. The argument would be a NULL pointer if
-> "debug_guardpage_minorder" or "kernelcore", without its value, is set in
-> command line and thus causes the following panic.
-> 
-> PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-> [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
-> ...
-> [    0.000000] Call Trace:
-> [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
-> [    0.000000]  do_early_param+0x57/0x8e
-> [    0.000000]  parse_args+0x208/0x320
-> [    0.000000]  ? rdinit_setup+0x30/0x30
-> [    0.000000]  parse_early_options+0x29/0x2d
-> [    0.000000]  ? rdinit_setup+0x30/0x30
-> [    0.000000]  parse_early_param+0x36/0x4d
-> [    0.000000]  setup_arch+0x336/0x99e
-> [    0.000000]  start_kernel+0x6f/0x4ee
-> [    0.000000]  x86_64_start_reservations+0x24/0x26
-> [    0.000000]  x86_64_start_kernel+0x6f/0x72
-> [    0.000000]  secondary_startup_64+0xa4/0xb0
-
-From my quick reading, more than half of the __setup handlers in mm/
-will crash in the same way if misused in this fashion.
-
-> This patch adds a check to prevent the panic and adds KBUILD_MODNAME to
-> prints.
-
-So a better solution might be to add a check into the calling code
-(presumably in init/main.c) to print a warning if we have kernel
-command line arguments such as "kernelcore=".  That way, users will see
-the warning immediately before the oops and will know how to fix things
-up.
-
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -14,6 +14,8 @@
->   *          (lots of bits borrowed from Ingo Molnar & Andrew Morton)
->   */
->  
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+On Tue, Sep 18, 2018 at 1:48 PM David Hildenbrand <david@redhat.com> wrote:
+>
+> add_memory() currently does not take the device_hotplug_lock, however
+> is aleady called under the lock from
+>         arch/powerpc/platforms/pseries/hotplug-memory.c
+>         drivers/acpi/acpi_memhotplug.c
+> to synchronize against CPU hot-remove and similar.
+>
+> In general, we should hold the device_hotplug_lock when adding memory
+> to synchronize against online/offline request (e.g. from user space) -
+> which already resulted in lock inversions due to device_lock() and
+> mem_hotplug_lock - see 30467e0b3be ("mm, hotplug: fix concurrent memory
+> hot-add deadlock"). add_memory()/add_memory_resource() will create memory
+> block devices, so this really feels like the right thing to do.
+>
+> Holding the device_hotplug_lock makes sure that a memory block device
+> can really only be accessed (e.g. via .online/.state) from user space,
+> once the memory has been fully added to the system.
+>
+> The lock is not held yet in
+>         drivers/xen/balloon.c
+>         arch/powerpc/platforms/powernv/memtrace.c
+>         drivers/s390/char/sclp_cmd.c
+>         drivers/hv/hv_balloon.c
+> So, let's either use the locked variants or take the lock.
+>
+> Don't export add_memory_resource(), as it once was exported to be used
+> by XEN, which is never built as a module. If somebody requires it, we
+> also have to export a locked variant (as device_hotplug_lock is never
+> exported).
+>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+> Cc: John Allen <jallen@linux.vnet.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  .../platforms/pseries/hotplug-memory.c        |  2 +-
+>  drivers/acpi/acpi_memhotplug.c                |  2 +-
+>  drivers/base/memory.c                         |  9 ++++++--
+>  drivers/xen/balloon.c                         |  3 +++
+>  include/linux/memory_hotplug.h                |  1 +
+>  mm/memory_hotplug.c                           | 22 ++++++++++++++++---
+>  6 files changed, 32 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> index b3f54466e25f..2e6f41dc103a 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> @@ -702,7 +702,7 @@ static int dlpar_add_lmb(struct drmem_lmb *lmb)
+>         nid = memory_add_physaddr_to_nid(lmb->base_addr);
+>
+>         /* Add the memory */
+> -       rc = add_memory(nid, lmb->base_addr, block_sz);
+> +       rc = __add_memory(nid, lmb->base_addr, block_sz);
+>         if (rc) {
+>                 dlpar_remove_device_tree_lmb(lmb);
+>                 return rc;
+> diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+> index 811148415993..8fe0960ea572 100644
+> --- a/drivers/acpi/acpi_memhotplug.c
+> +++ b/drivers/acpi/acpi_memhotplug.c
+> @@ -228,7 +228,7 @@ static int acpi_memory_enable_device(struct acpi_memory_device *mem_device)
+>                 if (node < 0)
+>                         node = memory_add_physaddr_to_nid(info->start_addr);
+>
+> -               result = add_memory(node, info->start_addr, info->length);
+> +               result = __add_memory(node, info->start_addr, info->length);
+>
+>                 /*
+>                  * If the memory block has been used by the kernel, add_memory()
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 817320c7c4c1..40cac122ec73 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -519,15 +519,20 @@ memory_probe_store(struct device *dev, struct device_attribute *attr,
+>         if (phys_addr & ((pages_per_block << PAGE_SHIFT) - 1))
+>                 return -EINVAL;
+>
+> +       ret = lock_device_hotplug_sysfs();
+> +       if (ret)
+> +               goto out;
 > +
->  #include <linux/stddef.h>
->  #include <linux/mm.h>
->  #include <linux/swap.h>
-> @@ -630,6 +632,11 @@ static int __init debug_guardpage_minorder_setup(char *buf)
+>         nid = memory_add_physaddr_to_nid(phys_addr);
+> -       ret = add_memory(nid, phys_addr,
+> -                        MIN_MEMORY_BLOCK_SIZE * sections_per_block);
+> +       ret = __add_memory(nid, phys_addr,
+> +                          MIN_MEMORY_BLOCK_SIZE * sections_per_block);
+>
+>         if (ret)
+>                 goto out;
+>
+>         ret = count;
+>  out:
+> +       unlock_device_hotplug();
+>         return ret;
+>  }
+>
+> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+> index e12bb256036f..6bab019a82b1 100644
+> --- a/drivers/xen/balloon.c
+> +++ b/drivers/xen/balloon.c
+> @@ -395,7 +395,10 @@ static enum bp_state reserve_additional_memory(void)
+>          * callers drop the mutex before trying again.
+>          */
+>         mutex_unlock(&balloon_mutex);
+> +       /* add_memory_resource() requires the device_hotplug lock */
+> +       lock_device_hotplug();
+>         rc = add_memory_resource(nid, resource, memhp_auto_online);
+> +       unlock_device_hotplug();
+>         mutex_lock(&balloon_mutex);
+>
+>         if (rc) {
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 1f096852f479..ffd9cd10fcf3 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -324,6 +324,7 @@ static inline void __remove_memory(int nid, u64 start, u64 size) {}
+>  extern void __ref free_area_init_core_hotplug(int nid);
+>  extern int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
+>                 void *arg, int (*func)(struct memory_block *, void *));
+> +extern int __add_memory(int nid, u64 start, u64 size);
+>  extern int add_memory(int nid, u64 start, u64 size);
+>  extern int add_memory_resource(int nid, struct resource *resource, bool online);
+>  extern int arch_add_memory(int nid, u64 start, u64 size,
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index b8b1bd970322..ef5444145c88 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1111,7 +1111,12 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+>         return device_online(&mem->dev);
+>  }
+>
+> -/* we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG */
+> +/*
+> + * NOTE: The caller must call lock_device_hotplug() to serialize hotplug
+> + * and online/offline operations (triggered e.g. by sysfs).
+> + *
+> + * we are OK calling __meminit stuff here - we have CONFIG_MEMORY_HOTPLUG
+> + */
+>  int __ref add_memory_resource(int nid, struct resource *res, bool online)
 >  {
->  	unsigned long res;
->  
-> +	if (!buf) {
-> +		pr_err("Config string not provided\n");
+>         u64 start, size;
+> @@ -1180,9 +1185,9 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>         mem_hotplug_done();
+>         return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(add_memory_resource);
+>
+> -int __ref add_memory(int nid, u64 start, u64 size)
+> +/* requires device_hotplug_lock, see add_memory_resource() */
+> +int __ref __add_memory(int nid, u64 start, u64 size)
+>  {
+>         struct resource *res;
+>         int ret;
+> @@ -1196,6 +1201,17 @@ int __ref add_memory(int nid, u64 start, u64 size)
+>                 release_memory_resource(res);
+>         return ret;
+>  }
+> +
+> +int add_memory(int nid, u64 start, u64 size)
+> +{
+> +       int rc;
+> +
+> +       lock_device_hotplug();
+> +       rc = __add_memory(nid, start, size);
+> +       unlock_device_hotplug();
+> +
+> +       return rc;
+> +}
+>  EXPORT_SYMBOL_GPL(add_memory);
+>
+>  #ifdef CONFIG_MEMORY_HOTREMOVE
+> --
 
-If were going to do it this way, we should tell the operator which
-argument was bad.  pr_err("kernel option debug_guardpage_minorder
-requires an argument").
-
-And then perhaps we should just let the kernel crash anyway.  That
-seems better than hoping that the user will notice that line in the
-logs one day.  
-
-And note that the preceding two paragraphs will produce the same result
-as my do-it-in-init/main.c suggestion!
-
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
