@@ -2,113 +2,68 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CFAECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BD6ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7343A21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QZvfXCoY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7343A21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A1EC1214DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:52:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EC1214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbeIRVZM (ORCPT
+        id S1730153AbeIRVZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:25:12 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44483 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbeIRVZM (ORCPT
+        Tue, 18 Sep 2018 17:25:16 -0400
+Received: from www62.your-server.de ([213.133.104.62]:42015 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729249AbeIRVZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:25:12 -0400
-Received: by mail-io1-f67.google.com with SMTP id 75-v6so1946646iou.11
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=loYmR8xi2ZI4YXOMV9gPrpZIADUK+hdQL3j3v5Sf3jo=;
-        b=QZvfXCoYXKaYeHMXJdFGMjKg5krvxjUcGBbB5MzC8ojge1fB1UWRd+XKiALL1mzmOM
-         U049GfHQ8Cj0I2FjMyBLdQAueR4eLXcdeP06UCE2SDv/54llz/e9Cw1Dw80+4hXW35/I
-         wS76erwqcglLHllem8Ahm/OcsnUEdL0BDOoZ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=loYmR8xi2ZI4YXOMV9gPrpZIADUK+hdQL3j3v5Sf3jo=;
-        b=H8c3RnaKB8h8btVagS6UMfqIOZ6O0HOObqb+ao+lPnxp7boXeHDADjQZ4UPmGV1ccn
-         BEkleLy055Wx2GZ1YY9WXm5TshIxP5dl9IJaQ+ra6aIutCggBW9ZWHkJb60/jbe3fQPJ
-         nqGOPQl5dNLPSF5nvUPDdvwcrctrX8xkjnD8ebo4cc8amnVLPFMH6VaycTB0FYxm5H+k
-         tbUdsgRx1ajAS+H1U7JBEQieI737oOzAN70+BCz8+eoCabbMjo7jHdrgQP+VgDLz7Xay
-         Rltd3VaerqKvmJORuTe2BqJoCfGw1QOEN4DZr4whpUU1/MIDfjohUMdF77UjTTWRpHZ1
-         vWUw==
-X-Gm-Message-State: APzg51Amzxxta5/C6HQ8GIkc3r77oXjZ4/f7HSDMtvh1Hxc51Hu/aVsN
-        bUtjMOd4rbTvUZYZ2fIrx++98ZB6fdI9cJeChBvo3Q==
-X-Google-Smtp-Source: ANB0VdaXEQIMskAyYraPcK6BGH6kw7QRy6GOWxGBtj3xDl8kLaaPnt2Rdtj5FY2nY0KxX0SG7C/aBJyT2dg1usaFiVg=
-X-Received: by 2002:a6b:ba86:: with SMTP id k128-v6mr24869185iof.170.1537285920786;
- Tue, 18 Sep 2018 08:52:00 -0700 (PDT)
+        Tue, 18 Sep 2018 17:25:14 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2IIC-00082L-5A; Tue, 18 Sep 2018 17:52:00 +0200
+Received: from [178.197.249.15] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2IIB-000Mos-UO; Tue, 18 Sep 2018 17:52:00 +0200
+Subject: Re: [PATCH bpf-next] samples/bpf: remove duplicated includes
+To:     Y Song <ys114321@gmail.com>, yuehaibing@huawei.com
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+References: <20180918014534.26128-1-yuehaibing@huawei.com>
+ <CAH3MdRWv7AV3xDHpCLwiFV6hvDGedtUUODmpjju68aMqVkMA8A@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <978be6b0-64b1-a2a7-9641-194a9ab27f5f@iogearbox.net>
+Date:   Tue, 18 Sep 2018 17:51:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 08:52:00
- -0700 (PDT)
-In-Reply-To: <20180916043825.23247-2-stefan@agner.ch>
-References: <20180916043825.23247-1-stefan@agner.ch> <20180916043825.23247-2-stefan@agner.ch>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 18 Sep 2018 08:52:00 -0700
-Message-ID: <CAKv+Gu8xkeKb1-ce_hNCcXLrdj+qdi2DsXWPUuAiZQY1Rz+rmw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] crypto: arm/crc32 - avoid warning when compiling with Clang
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAH3MdRWv7AV3xDHpCLwiFV6hvDGedtUUODmpjju68aMqVkMA8A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/24952/Tue Sep 18 15:13:17 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15 September 2018 at 21:38, Stefan Agner <stefan@agner.ch> wrote:
-> The table id (second) argument to MODULE_DEVICE_TABLE is often
-> referenced otherwise. This is not the case for CPU features. This
-> leads to a warning when building the kernel with Clang:
->   arch/arm/crypto/crc32-ce-glue.c:239:33: warning: variable
->     'crc32_cpu_feature' is not needed and will not be emitted
->     [-Wunneeded-internal-declaration]
->   static const struct cpu_feature crc32_cpu_feature[] = {
->                                   ^
->
-> Avoid warnings by using __maybe_unused, similar to commit 1f318a8bafcf
-> ("modules: mark __inittest/__exittest as __maybe_unused").
->
-> Fixes: 2a9faf8b7e43 ("crypto: arm/crc32 - enable module autoloading based on CPU feature bits")
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+On 09/18/2018 06:48 AM, Y Song wrote:
+> On Mon, Sep 17, 2018 at 6:46 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>>
+>> Remove duplicated includes.
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> 
+> Acked-by: Yonghong Song <yhs@fb.com>
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-> ---
->  arch/arm/crypto/crc32-ce-glue.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/crypto/crc32-ce-glue.c b/arch/arm/crypto/crc32-ce-glue.c
-> index 96e62ec105d0..cd9e93b46c2d 100644
-> --- a/arch/arm/crypto/crc32-ce-glue.c
-> +++ b/arch/arm/crypto/crc32-ce-glue.c
-> @@ -236,7 +236,7 @@ static void __exit crc32_pmull_mod_exit(void)
->                                   ARRAY_SIZE(crc32_pmull_algs));
->  }
->
-> -static const struct cpu_feature crc32_cpu_feature[] = {
-> +static const struct cpu_feature __maybe_unused crc32_cpu_feature[] = {
->         { cpu_feature(CRC32) }, { cpu_feature(PMULL) }, { }
->  };
->  MODULE_DEVICE_TABLE(cpu, crc32_cpu_feature);
-> --
-> 2.19.0
->
+Applied to bpf-next, thanks!
