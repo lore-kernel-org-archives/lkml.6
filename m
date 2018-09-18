@@ -2,264 +2,118 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC38BECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7FDECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF832083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:00:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF832083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E159E2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E159E2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbeIRIbI convert rfc822-to-8bit (ORCPT
+        id S1729040AbeIRIbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 04:31:08 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:54720 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeIRIbI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 04:31:08 -0400
-Received: from localhost (unknown [104.240.4.228])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7A87E100A4B75;
-        Mon, 17 Sep 2018 20:00:41 -0700 (PDT)
-Date:   Mon, 17 Sep 2018 20:00:40 -0700 (PDT)
-Message-Id: <20180917.200040.1595079540584326114.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Sep 2018 20:00:41 -0700 (PDT)
+        Tue, 18 Sep 2018 04:31:46 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:6421 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728720AbeIRIbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 04:31:46 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 81E23E1D9BF53;
+        Tue, 18 Sep 2018 11:01:15 +0800 (CST)
+Received: from DGGEMM527-MBS.china.huawei.com ([169.254.5.129]) by
+ DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0399.000;
+ Tue, 18 Sep 2018 11:01:13 +0800
+From:   Nixiaoming <nixiaoming@huawei.com>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Steve Grubb <sgrubb@redhat.com>
+CC:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] fanotify reports the thread id of the event trigger
+Thread-Topic: [PATCH v2] fanotify reports the thread id of the event trigger
+Thread-Index: AQHUTpfuO8h5GU9em0yW7M1mbnoXxaT0GT8AgAE/CbA=
+Date:   Tue, 18 Sep 2018 03:01:13 +0000
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A7B97FA@DGGEMM527-MBS.china.huawei.com>
+References: <20180917141950.111841-1-nixiaoming@huawei.com>
+ <CAOQ4uxj_o9FP8EH9_=TX=Tv9WDfExykrni7OjE3992YZrJDpZg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj_o9FP8EH9_=TX=Tv9WDfExykrni7OjE3992YZrJDpZg@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.88.168]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Various fixes, all over the place:
-
-1) OOB data generation fix in bluetooth, from Matias Karhumaa.
-
-2) BPF BTF boundary calculation fix, from Martin KaFai Lau.
-
-3) Don't bug on excessive frags, to be compatible in situations mixing
-   older and newer kernels on each end.  From Juergen Gross.
-
-4) Scheduling in RCU fix in hv_netvsc, from Stephen Hemminger.
-
-5) Zero keying information in TLS layer before freeing copies
-   of them, from Sabrina Dubroca.
-
-6) Fix NULL deref in act_sample, from Davide Caratti.
-
-7) Orphan SKB before GRO in veth to prevent crashes with XDP,
-   from Toshiaki Makita.
-
-8) Fix use after free in ip6_xmit, from Eric Dumazet.
-
-9) Fix VF mac address regression in bnxt_en, from Micahel Chan.
-
-10) Fix MSG_PEEK behavior in TLS layer, from Daniel Borkmann.
-
-11) Programming adjustments to r8169 which fix not being to enter deep
-    sleep states on some machines, from Kai-Heng Feng and Hans de
-    Goede.
-
-12) Fix DST_NOCOUNT flag handling for ipv6 routes, from Peter
-    Oskolkov.
-
-Please pull, thanks a lot!
-
-The following changes since commit 7428b2e5d0b195f2a5e40f91d2b41a8503fcfe68:
-
-  Merge tag 'drm-fixes-2018-09-12' of git://anongit.freedesktop.org/drm/drm (2018-09-12 17:36:47 -1000)
-
-are available in the Git repository at:
-
-  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to 30bfd93062814d6767e452a8f5ddcd97f7e38c7e:
-
-  net/ipv6: do not copy dst flags on rt init (2018-09-17 19:42:14 -0700)
-
-----------------------------------------------------------------
-Alexei Starovoitov (1):
-      bpf/verifier: disallow pointer subtraction
-
-Andrew Lunn (1):
-      net: dsa: mv88e6xxx: Fix ATU Miss Violation
-
-Antoine Tenart (1):
-      net: mvpp2: let phylink manage the carrier state
-
-Bjørn Mork (1):
-      qmi_wwan: set DTR for modems in forced USB2 mode
-
-Colin Ian King (1):
-      net: hp100: fix always-true check for link up state
-
-Cong Wang (1):
-      net_sched: notify filter deletion when deleting a chain
-
-Corentin Labbe (1):
-      net: ethernet: ti: add missing GENERIC_ALLOCATOR dependency
-
-Daniel Borkmann (1):
-      tls: fix currently broken MSG_PEEK behavior
-
-David S. Miller (7):
-      Merge branch 'tls-don-t-leave-keys-in-kernel-memory'
-      Merge branch 'for-upstream' of git://git.kernel.org/.../bluetooth/bluetooth
-      Merge branch 'udp-add-missing-check-on-edumx-rx-path'
-      Merge git://git.kernel.org/.../bpf/bpf
-      Merge branch 'hv_netvsc-associate-VF-and-PV-device-by-serial-number'
-      Revert "kcm: remove any offset before parsing messages"
-      Merge branch 'r8169-clk-fixes'
-
-Davide Caratti (1):
-      net/sched: act_sample: fix NULL dereference in the data path
-
-Dominique Martinet (1):
-      kcm: remove any offset before parsing messages
-
-Eric Dumazet (1):
-      ipv6: fix possible use-after-free in ip6_xmit()
-
-Guillaume Nault (1):
-      pppoe: fix reception of frames with no mac header
-
-Hans de Goede (3):
-      clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
-      r8169: Get and enable optional ether_clk clock
-      clk: x86: Stop marking clocks as CLK_IS_CRITICAL
-
-Hermes Zhang (1):
-      Bluetooth: hci_ldisc: Free rw_semaphore on close
-
-Johan Hedberg (1):
-      Bluetooth: SMP: Fix trying to use non-existent local OOB data
-
-Johannes Berg (1):
-      socket: fix struct ifreq size in compat ioctl
-
-Jongsung Kim (1):
-      stmmac: fix valid numbers of unicast filter entries
-
-Juergen Gross (1):
-      xen/netfront: don't bug in case of too many frags
-
-Kai-Heng Feng (2):
-      r8169: Align ASPM/CLKREQ setting function with vendor driver
-      r8169: enable ASPM on RTL8106E
-
-Martin KaFai Lau (1):
-      bpf: btf: Fix end boundary calculation for type section
-
-Matias Karhumaa (1):
-      Bluetooth: Use correct tfm to generate OOB data
-
-Michael Chan (1):
-      bnxt_en: Fix VF mac address regression.
-
-Nicolas Ferre (2):
-      net: macb: disable scatter-gather for macb on sama5d3
-      ARM: dts: at91: add new compatibility string for macb on sama5d3
-
-Paolo Abeni (2):
-      udp4: fix IP_CMSG_CHECKSUM for connected sockets
-      udp6: add missing checks on edumux packet processing
-
-Peter Oskolkov (1):
-      net/ipv6: do not copy dst flags on rt init
-
-Roopa Prabhu (1):
-      net: rtnl_configure_link: fix dev flags changes arg to __dev_notify_flags
-
-Sabrina Dubroca (3):
-      tls: don't copy the key out of tls12_crypto_info_aes_gcm_128
-      tls: zero the crypto information from tls_context before freeing
-      tls: clear key material from kernel memory when do_tls_setsockopt_conf fails
-
-Stephen Hemminger (3):
-      hv_netvsc: fix schedule in RCU context
-      PCI: hv: support reporting serial number as slot information
-      hv_netvsc: pair VF based on serial number
-
-Toke Høiland-Jørgensen (1):
-      gso_segment: Reset skb->mac_len after modifying network header
-
-Toshiaki Makita (1):
-      veth: Orphan skb before GRO
-
-Tushar Dave (1):
-      bpf: use __GFP_COMP while allocating page
-
-Vasily Khoruzhick (1):
-      neighbour: confirm neigh entries when ARP packet is received
-
-Willy Tarreau (1):
-      net/appletalk: fix minor pointer leak to userspace in SIOCFINDIPDDPRT
-
-Xin Long (1):
-      ipv6: use rt6_info members when dst is set in rt6_fill_node
-
-zhong jiang (1):
-      net: ethernet: Fix a unused function warning.
-
- Documentation/devicetree/bindings/net/macb.txt        |  1 +
- arch/arm/boot/dts/sama5d3_emac.dtsi                   |  2 +-
- drivers/bluetooth/hci_ldisc.c                         |  2 ++
- drivers/clk/x86/clk-pmc-atom.c                        | 18 +++++++++++-------
- drivers/net/appletalk/ipddp.c                         |  8 ++++++--
- drivers/net/dsa/mv88e6xxx/global1.h                   |  2 +-
- drivers/net/dsa/mv88e6xxx/global1_atu.c               |  2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c             |  9 +++++++--
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c       |  9 +++++----
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.h       |  2 +-
- drivers/net/ethernet/cadence/macb_main.c              |  8 ++++++++
- drivers/net/ethernet/hp/hp100.c                       |  2 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c       | 21 ++++++---------------
- drivers/net/ethernet/microchip/lan743x_main.c         |  6 +++---
- drivers/net/ethernet/realtek/r8169.c                  | 40 +++++++++++++++++++++++++++++++++++++++-
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |  5 ++---
- drivers/net/ethernet/ti/Kconfig                       |  1 +
- drivers/net/hyperv/netvsc.c                           |  3 +++
- drivers/net/hyperv/netvsc_drv.c                       | 67 ++++++++++++++++++++++++++++++++++++-------------------------------
- drivers/net/ppp/pppoe.c                               |  3 +++
- drivers/net/usb/qmi_wwan.c                            | 14 +++++++-------
- drivers/net/veth.c                                    |  4 ++--
- drivers/net/xen-netfront.c                            |  8 +++++++-
- drivers/pci/controller/pci-hyperv.c                   | 37 +++++++++++++++++++++++++++++++++++++
- include/net/tls.h                                     | 19 +++++++++----------
- kernel/bpf/btf.c                                      |  2 +-
- kernel/bpf/verifier.c                                 |  2 +-
- net/bluetooth/smp.c                                   | 16 +++++++++++++---
- net/core/filter.c                                     |  3 ++-
- net/core/neighbour.c                                  | 13 ++++++++-----
- net/core/rtnetlink.c                                  |  2 +-
- net/ipv4/af_inet.c                                    |  1 +
- net/ipv4/udp.c                                        | 49 ++++++++++++++++++++++++++-----------------------
- net/ipv6/ip6_offload.c                                |  1 +
- net/ipv6/ip6_output.c                                 |  6 ++----
- net/ipv6/route.c                                      | 44 ++++++++++++++++++++++++++++++--------------
- net/ipv6/udp.c                                        | 65 +++++++++++++++++++++++++++++++++++++----------------------------
- net/sched/act_sample.c                                |  2 +-
- net/sched/cls_api.c                                   |  2 ++
- net/socket.c                                          | 22 ++++++++++++++--------
- net/tls/tls_device.c                                  |  6 +++---
- net/tls/tls_device_fallback.c                         |  2 +-
- net/tls/tls_main.c                                    | 22 ++++++++++++++++------
- net/tls/tls_sw.c                                      | 21 +++++++++++++--------
- tools/testing/selftests/net/tls.c                     | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
- 45 files changed, 422 insertions(+), 201 deletions(-)
+T24gTW9uLCBTZXAgMTcsIDIwMTggMTE6NTEgUE0gQW1pciBHb2xkc3RlaW4gPGFtaXI3M2lsQGdt
+YWlsLmNvbT4gd3JvdGU6DQo+T24gTW9uLCBTZXAgMTcsIDIwMTggYXQgNjowNSBQTSBuaXhpYW9t
+aW5nIDxuaXhpYW9taW5nQGh1YXdlaS5jb20+IHdyb3RlOg0KPj4NCj4+IEluIG9yZGVyIHRvIGlk
+ZW50aWZ5IHdoaWNoIHRocmVhZCB0cmlnZ2VyZWQgdGhlIGV2ZW50IGluIHRoZQ0KPj4gbXVsdGkt
+dGhyZWFkZWQgcHJvZ3JhbSwgYWRkIHRoZSBGQU5fRVZFTlRfSU5GT19USUQgdGFnIGluIGZhbm90
+aWZ5X2luaXQNCj4NCj5BY2NvcmRpbmcgdG8gY29kZSBhbmQgbWFuIHBhZ2UgdGhpcyBpcyBhICdm
+bGFnJyBub3QgYSAndGFnJw0KPlBsZWFzZSBzdGljayB0byBleGlzdGluZyB0ZXJtaW5vbG9neS4N
+Cj4NClRoYW5rIHlvdSBmb3IgeW91ciBndWlkYW5jZSwgSSB3aWxsIGNvcnJlY3QgaXQgaW4gYSBs
+YXRlciBwYXRjaC4NCg0KPj4gdG8gc2VsZWN0IHdoZXRoZXIgdG8gcmVwb3J0IHRoZSBldmVudCBj
+cmVhdG9yJ3MgdGhyZWFkIGlkIGluZm9ybWF0aW9uLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IG5p
+eGlhb21pbmcgPG5peGlhb21pbmdAaHVhd2VpLmNvbT4NCi4uLi4uLi4NCj4+IEBAIC02OTMsOSAr
+NjkzLDkgQEAgU1lTQ0FMTF9ERUZJTkUyKGZhbm90aWZ5X2luaXQsIHVuc2lnbmVkIGludCwgZmxh
+Z3MsIHVuc2lnbmVkIGludCwgZXZlbnRfZl9mbGFncykNCj4+ICAgICAgICAgICAgICAgICByZXR1
+cm4gLUVQRVJNOw0KPj4NCj4+ICAjaWZkZWYgQ09ORklHX0FVRElUU1lTQ0FMTA0KPj4gLSAgICAg
+ICBpZiAoZmxhZ3MgJiB+KEZBTl9BTExfSU5JVF9GTEFHUyB8IEZBTl9FTkFCTEVfQVVESVQpKQ0K
+Pj4gKyAgICAgICBpZiAoZmxhZ3MgJiB+KEZBTl9BTExfSU5JVF9GTEFHUyB8IEZBTl9FTkFCTEVf
+QVVESVQgfCBGQU5fRVZFTlRfSU5GT19USUQpKQ0KPj4gICNlbHNlDQo+PiAtICAgICAgIGlmIChm
+bGFncyAmIH5GQU5fQUxMX0lOSVRfRkxBR1MpDQo+PiArICAgICAgIGlmIChmbGFncyAmIH4oRkFO
+X0FMTF9JTklUX0ZMQUdTIHwgRkFOX0VWRU5UX0lORk9fVElEKSkNCj4NCj5Ob3QgdGhpcyB3YXku
+IFlvdSBuZWVkIHRvIGFkZCBGQU5fRVZFTlRfSU5GT19USUQgdG8gRkFOX0FMTF9JTklUX0ZMQUdT
+Lg0KVGhhbmsgeW91IGZvciB5b3VyIGd1aWRhbmNlLCBJIHdpbGwgY29ycmVjdCBpdCBpbiBhIGxh
+dGVyIHBhdGNoLg0KDQo+DQo+PiAgI2VuZGlmDQo+PiAgICAgICAgICAgICAgICAgcmV0dXJuIC1F
+SU5WQUw7DQo+Pg0KPj4gQEAgLTczMSw2ICs3MzEsNyBAQCBTWVNDQUxMX0RFRklORTIoZmFub3Rp
+ZnlfaW5pdCwgdW5zaWduZWQgaW50LCBmbGFncywgdW5zaWduZWQgaW50LCBldmVudF9mX2ZsYWdz
+KQ0KPj4gICAgICAgICB9DQo+Pg0KPj4gICAgICAgICBncm91cC0+ZmFub3RpZnlfZGF0YS51c2Vy
+ID0gdXNlcjsNCj4+ICsgICAgICAgZ3JvdXAtPmZhbm90aWZ5X2RhdGEuc2hvdWxkX3JlcG9ydF90
+aWQgPSAoZmxhZ3MgJiBGQU5fRVZFTlRfSU5GT19USUQpID8gdHJ1ZSA6IGZhbHNlOw0KPg0KPlBs
+ZWFzZSBkcm9wICI/IHRydWUgOiBmYWxzZSIgaXRzIG5vdCBuZWVkZWQuDQo+DQo+PiAgICAgICAg
+IGF0b21pY19pbmMoJnVzZXItPmZhbm90aWZ5X2xpc3RlbmVycyk7DQo+PiAgICAgICAgIGdyb3Vw
+LT5tZW1jZyA9IGdldF9tZW1fY2dyb3VwX2Zyb21fbW0oY3VycmVudC0+bW0pOw0KPj4NCj4+IGRp
+ZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Zzbm90aWZ5X2JhY2tlbmQuaCBiL2luY2x1ZGUvbGlu
+dXgvZnNub3RpZnlfYmFja2VuZC5oDQo+PiBpbmRleCBiOGY0MTgyLi40NGM2NTlmIDEwMDY0NA0K
+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9mc25vdGlmeV9iYWNrZW5kLmgNCj4+ICsrKyBiL2luY2x1
+ZGUvbGludXgvZnNub3RpZnlfYmFja2VuZC5oDQo+PiBAQCAtMTkzLDYgKzE5Myw3IEBAIHN0cnVj
+dCBmc25vdGlmeV9ncm91cCB7DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBp
+bnQgbWF4X21hcmtzOw0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHVzZXJfc3Ry
+dWN0ICp1c2VyOw0KPj4gICAgICAgICAgICAgICAgICAgICAgICAgYm9vbCBhdWRpdDsNCj4+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGJvb2wgc2hvdWxkX3JlcG9ydF90aWQ7DQo+DQo+Rm9yIGJy
+ZXZpdHkgSSB3b3VsZCBjYWxsIHRoYXQgcmVwb3J0X3RpZCwgYnV0IG5vdCBpbnNpc3RpbmcuDQo+
+DQoNCldoZXRoZXIgaXQgaXMgYmV0dGVyIHRvIGNoYW5nZSB0byAidW5zaWduZWQgaW50IGZsYWdz
+Ig0KU2F2ZSAiZ3JvdXAtPmZhbm90aWZ5X2RhdGEuZmxhZ3M9ZmxhZ3M7IiBpbiAiZmFub3RpZnlf
+aW5pdCINCkRldGVybWluZSB3aGV0aGVyICJncm91cC0+ZmFub3RpZnlfZGF0YS5mbGFncyIgY29u
+dGFpbnMgIkZBTl9FVkVOVF9JTkZPX1RJRCIgaW4gImZhbm90aWZ5X2FsbG9jX2V2ZW50IjsNCg0K
+QXQgdGhlIHNhbWUgdGltZSwgaWYgdGhlcmUgYXJlIG90aGVyIGZsYWdzIHRoYXQgbmVlZCB0byBi
+ZSB1c2VkIGxhdGVyLCB0aGVyZSBpcyBubyBuZWVkIHRvIGFkZCBuZXcgbWVtYmVycy4NCg0KQnkg
+dGhlIHdheSwgd2hldGhlciBvciBub3QgImJvb2wgYXVkaXQiIGNhbiBhbHNvIGJlIGluY2x1ZGVk
+IGJ5IGZsYWdzDQoNCnRoYW5rcw0KDQoNCj4+ICAgICAgICAgICAgICAgICB9IGZhbm90aWZ5X2Rh
+dGE7DQo+PiAgI2VuZGlmIC8qIENPTkZJR19GQU5PVElGWSAqLw0KPj4gICAgICAgICB9Ow0KPj4g
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9mYW5vdGlmeS5oIGIvaW5jbHVkZS91YXBp
+L2xpbnV4L2Zhbm90aWZ5LmgNCj4+IGluZGV4IDc0MjQ3OTEuLjRlYmE0MWMgMTAwNjQ0DQo+PiAt
+LS0gYS9pbmNsdWRlL3VhcGkvbGludXgvZmFub3RpZnkuaA0KPj4gKysrIGIvaW5jbHVkZS91YXBp
+L2xpbnV4L2Zhbm90aWZ5LmgNCj4+IEBAIC0xOCw2ICsxOCw3IEBADQo+Pg0KPj4gICNkZWZpbmUg
+RkFOX09ORElSICAgICAgICAgICAgICAweDQwMDAwMDAwICAgICAgLyogZXZlbnQgb2NjdXJyZWQg
+YWdhaW5zdCBkaXIgKi8NCj4+DQo+PiArI2RlZmluZSBGQU5fRVZFTlRfSU5GT19USUQgICAgIDB4
+MDIwMDAwMDAgICAgICAvKiByZXBvcnRzIHRoZSB0aHJlYWQgaWQgb2YgdGhlIGV2ZW50IHRyaWdn
+ZXIgKi8NCj4NCj5UaGF0IGlzIG5vdCB0aGUgcmlnaHQgcGxhY2Ugbm9yIHRoZSBzZW5zaWJsZSB2
+YWx1ZSBmb3IgdGhpcyBmbGFnLCBidXQgdGhpczoNCj4NCj4jZGVmaW5lIEZBTl9VTkxJTUlURURf
+UVVFVUUgICAgIDB4MDAwMDAwMTANCj4jZGVmaW5lIEZBTl9VTkxJTUlURURfTUFSS1MgICAgIDB4
+MDAwMDAwMjANCj4jZGVmaW5lIEZBTl9FTkFCTEVfQVVESVQgICAgICAgIDB4MDAwMDAwNDANCj4r
+I2RlZmluZSBGQU5fRVZFTlRfSU5GT19USUQgICAgIDB4MDAwMDAwODANCj4NCj5UaGFua3MsDQo+
+QW1pci4NCj4NCg==
