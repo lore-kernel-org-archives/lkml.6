@@ -6,179 +6,76 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45980ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3467DECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB45E214DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB45E214DD
+	by mail.kernel.org (Postfix) with ESMTP id E07E821522
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07E821522
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeISDFF (ORCPT
+        id S1730511AbeISDFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:05:05 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:56760 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730295AbeISDFE (ORCPT
+        Tue, 18 Sep 2018 23:05:06 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:1294 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730308AbeISDFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:05:04 -0400
+        Tue, 18 Sep 2018 23:05:05 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 18 Sep 2018 14:30:32 -0700
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 18 Sep 2018 14:30:10 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 76FCFB0C09;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 68925B0BFC;
         Tue, 18 Sep 2018 17:30:35 -0400 (EDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        Nadav Amit <namit@vmware.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, <linux-kbuild@vger.kernel.org>
-Subject: [PATCH v8 02/10] Makefile: Prepare for using macros for inline asm
-Date:   Tue, 18 Sep 2018 14:28:39 -0700
-Message-ID: <20180918212847.199085-3-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>, Chris Zankel <chris@zankel.net>,
+        <linux-xtensa@linux-xtensa.org>
+Subject: [PATCH v8 01/10] xtensa: defining LINKER_SCRIPT for the linker script
+Date:   Tue, 18 Sep 2018 14:28:38 -0700
+Message-ID: <20180918212847.199085-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918212847.199085-1-namit@vmware.com>
 References: <20180918212847.199085-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using macros for inline assembly improves both readability and
-compilation decisions that are distorted by big assembly blocks that use
-alternative sections. Compile macros.S and use it to assemble all C
-files. Currently, only x86 will use it.
+Defining the LINKER_SCRIPT when building the linker script as being done
+in other architectures. This is required for the next Makefile changes
+would otherwise break things.
 
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: linux-xtensa@linux-xtensa.org
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- Makefile                 |  9 +++++++--
- arch/x86/Makefile        | 11 +++++++++--
- arch/x86/kernel/macros.S |  7 +++++++
- scripts/Kbuild.include   |  4 +++-
- scripts/mod/Makefile     |  2 ++
- 5 files changed, 28 insertions(+), 5 deletions(-)
- create mode 100644 arch/x86/kernel/macros.S
+ arch/xtensa/kernel/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index f03a1e062503..af5dba613533 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1071,7 +1071,7 @@ scripts: scripts_basic asm-generic gcc-plugins $(autoksyms_h)
- # version.h and scripts_basic is processed / created.
+diff --git a/arch/xtensa/kernel/Makefile b/arch/xtensa/kernel/Makefile
+index 91907590d183..8dff506caf07 100644
+--- a/arch/xtensa/kernel/Makefile
++++ b/arch/xtensa/kernel/Makefile
+@@ -35,8 +35,8 @@ sed-y = -e ':a; s/\*(\([^)]*\)\.text\.unlikely/*(\1.literal.unlikely .{text}.unl
+ 	-e 's/\.{text}/.text/g'
  
- # Listed in dependency order
--PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
-+PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+ quiet_cmd__cpp_lds_S = LDS     $@
+-cmd__cpp_lds_S = $(CPP) $(cpp_flags) -P -C -Uxtensa -D__ASSEMBLY__ $<    \
+-                 | sed $(sed-y) >$@
++cmd__cpp_lds_S = $(CPP) $(cpp_flags) -P -C -Uxtensa -D__ASSEMBLY__ \
++		 -DLINKER_SCRIPT $< | sed $(sed-y) >$@
  
- # prepare3 is used to check if we are building in a separate output directory,
- # and if so do:
-@@ -1094,7 +1094,9 @@ prepare2: prepare3 outputmakefile asm-generic
- prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
- 	$(cmd_crmodverdir)
- 
--archprepare: archheaders archscripts prepare1 scripts_basic
-+macroprepare: prepare1 archmacros
-+
-+archprepare: archheaders archscripts macroprepare scripts_basic
- 
- prepare0: archprepare gcc-plugins
- 	$(Q)$(MAKE) $(build)=.
-@@ -1162,6 +1164,9 @@ archheaders:
- PHONY += archscripts
- archscripts:
- 
-+PHONY += archmacros
-+archmacros:
-+
- PHONY += __headers
- __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
- 	$(Q)$(MAKE) $(build)=scripts build_unifdef
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 8f6e7eb8ae9f..944fa3bc9376 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -214,8 +214,8 @@ ifdef CONFIG_X86_64
- KBUILD_LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
- endif
- 
--# Speed up the build
--KBUILD_CFLAGS += -pipe
-+# We cannot use -pipe flag since we give an additional .s file to the compiler
-+#KBUILD_CFLAGS += -pipe
- # Workaround for a gcc prelease that unfortunately was shipped in a suse release
- KBUILD_CFLAGS += -Wno-sign-compare
- #
-@@ -237,6 +237,13 @@ archscripts: scripts_basic
- archheaders:
- 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
- 
-+archmacros:
-+	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
-+
-+ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
-+export ASM_MACRO_FLAGS
-+KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
-+
- ###
- # Kernel objects
- 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-new file mode 100644
-index 000000000000..cfc1c7d1a6eb
---- /dev/null
-+++ b/arch/x86/kernel/macros.S
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * This file includes headers whose assembly part includes macros which are
-+ * commonly used. The macros are precompiled into assmebly file which is later
-+ * assembled together with each compiled file.
-+ */
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index ce53639a864a..8aeb60eb6ee3 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -115,7 +115,9 @@ __cc-option = $(call try-run,\
- 
- # Do not attempt to build with gcc plugins during cc-option tests.
- # (And this uses delayed resolution so the flags will be up to date.)
--CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
-+# In addition, do not include the asm macros which are built later.
-+CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
-+CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
- 
- # cc-option
- # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
-diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
-index 42c5d50f2bcc..a5b4af47987a 100644
---- a/scripts/mod/Makefile
-+++ b/scripts/mod/Makefile
-@@ -4,6 +4,8 @@ OBJECT_FILES_NON_STANDARD := y
- hostprogs-y	:= modpost mk_elfconfig
- always		:= $(hostprogs-y) empty.o
- 
-+CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
-+
- modpost-objs	:= modpost.o file2alias.o sumversion.o
- 
- devicetable-offsets-file := devicetable-offsets.h
+ $(obj)/vmlinux.lds: $(src)/vmlinux.lds.S FORCE
+ 	$(call if_changed_dep,_cpp_lds_S)
 -- 
 2.17.1
 
