@@ -2,134 +2,94 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFCBC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 770FEC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64EF42150E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CF22206B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0uNsreN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EF42150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="QIvFDyOX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF22206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbeIRWmy (ORCPT
+        id S1730395AbeIRWnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:42:54 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:50185 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730075AbeIRWmy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:42:54 -0400
-Received: by mail-it0-f68.google.com with SMTP id j81-v6so4338180ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 10:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pUKdOE3Y16h6545zaISUxKO9AusnuLo4zm5dn+P7adE=;
-        b=C0uNsreNAMljFxjNIys+dCasy4mqL6VgTLuydxYwxb066BXxAiZscXj+AFbzomIbsu
-         m9bczDEEE07ZNmYj7GaHnzYEFZeeM6qeilHPnkzNq8KqMnNJNLHC0VzsfFmmjoQaECiE
-         UtUk2GB0FyHFvKKYGwfqbJrEKZk9HqNH0Owbt3tqGua2TplKRrGSBwv7S5HSd+TeE8DR
-         EjaiDgQiNvKyemuiH1P5sf7KPRWW+qqOTzgMBuofUd6yLZ3o43Hs8QWmsdIw1tkUa+J1
-         kmZ4gbgLZxW7JiBmONHre5OPejBQPX4GjwTrxaOvZW51atc7sjTMGP2dfPV7CoyjNzr2
-         JRSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pUKdOE3Y16h6545zaISUxKO9AusnuLo4zm5dn+P7adE=;
-        b=q994gbdgTigwPAZFxKo110cqNXYSnTzKbndNICTgAKSafZ679eVBjQ5AZ6GC28Nzr+
-         6WyheAmhoAsc686PWA/ouMBq3dQy2cmHgBEg0gHH8ZnhRMqkCQkwsYwjo/scbw8DgaPe
-         czBzbJRsaQy3ptfSNuczizbGnyJ2W8x9fYslZ1oi5kDZwTL/CzcqUUPT5Y0g2gggYYGG
-         gAuPFHgSQCXiRFYybLrlrLdLIRvi7NlC5a1jMDi9JkN+ErQ19sSs+4/eAb9LjdoBiDUZ
-         ix6duRX3rgHWAtKwNXLhk2TUxj+UFMk1eTSCr9iIPU/16s0bdylOdu3FQ41y49BE5a/n
-         Gffg==
-X-Gm-Message-State: APzg51CrVhCzUp2KlzVB5+bkU9rdJVc1+kpqpAO4Od4TGZh3ElEnai3K
-        TAKNNSD6mxdY2kXDRd7MvP+87K65ytZ6lyo3am547A==
-X-Google-Smtp-Source: ANB0VdYVAEeWxZzFwgNruJ8fgTBcMGjdKxGatm1f24qFQHg4mPHEPk93xmFXw+rRSvSQp/4IthRz1nC0MUZEng8uj8E=
-X-Received: by 2002:a02:9962:: with SMTP id d31-v6mr28144620jak.1.1537290562857;
- Tue, 18 Sep 2018 10:09:22 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:c54e:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 10:09:22
- -0700 (PDT)
-In-Reply-To: <CACT4Y+aJ36LGLG=TVOGQoJ+fB4Xc9CjdxAs8KZpUm3AsNEoHFw@mail.gmail.com>
-References: <cover.1535462971.git.andreyknvl@google.com> <19d757c2cafc277f0143a8ac34e179061f3487f5.1535462971.git.andreyknvl@google.com>
- <CACT4Y+aJ36LGLG=TVOGQoJ+fB4Xc9CjdxAs8KZpUm3AsNEoHFw@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 18 Sep 2018 19:09:22 +0200
-Message-ID: <CAAeHK+xBX4X0oxhjOrjJfwdqcvU80VPhUsi38mEczzHRb01Wew@mail.gmail.com>
-Subject: Re: [PATCH v6 06/18] khwasan, arm64: untag virt address in
- __kimg_to_phys and _virt_addr_is_linear
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
+        Tue, 18 Sep 2018 18:43:03 -0400
+Received: from vern.gendns.com ([206.190.152.46]:51313 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730140AbeIRWnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:43:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=FZaLJFqELgHmbFLyzRwtlf7BQZspCL+RovxK1SpYuwo=; b=QIvFDyOXobeZG0tJ7OSa+5juAd
+        nvQQFWON6vLUkdm8IPnqXBBByB2iRIwW9oXENJCbxcsm609jyiQj32tbf/j2buRfKQ0lCD3LKS4kp
+        +0JQc1GlIvdeQ76Jk8r6E/Fg0tSyvWfkXRIv8UUxmagyWvvLSJNBXJi1NE5CYlqw5V/NVPvZnOBqd
+        22eYXLKyo9pFeDk+9Lro8YVaPAyt+7haJXJ4GFmESzsRoVmZlSb5chXYxvvJ4okGk1/ByEEa4giJt
+        HkdCFE6nbwtUOVO6BMsHaUc8EdwYzOm8tYbJKhGlUuFxbMnGAqfAzo1XEvB7NVO4VF+lOZTfa7m5Z
+        6UCx+fww==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:37876 helo=freyr.lechnology.com)
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1g2JVA-0074xZ-Go; Tue, 18 Sep 2018 13:09:28 -0400
+From:   David Lechner <david@lechnology.com>
+To:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org
+Cc:     David Lechner <david@lechnology.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] spi: SPI_CS_WORD followup
+Date:   Tue, 18 Sep 2018 12:08:47 -0500
+Message-Id: <20180918170850.2749-1-david@lechnology.com>
+X-Mailer: git-send-email 2.17.1
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 6:33 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+This is a followup to the series "spi: introduce SPI_CS_WORD mode flag" [1] to
+address some review comments.
 
->> +#ifdef CONFIG_KASAN_HW
->> +#define KASAN_TAG_SHIFTED(tag)         ((unsigned long)(tag) << 56)
->> +#define KASAN_SET_TAG(addr, tag)       (((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
->> +                                               KASAN_TAG_SHIFTED(tag))
->> +#define KASAN_RESET_TAG(addr)          KASAN_SET_TAG(addr, 0xff)
->> +#endif
->> +
->
->
-> Wouldn't it be better to
-> #define KASAN_RESET_TAG(addr) addr
-> when CONFIG_KASAN_HW is not enabled, and then not duplicate the macros
-> below? That's what we do in kasan.h for all hooks.
-> I see that a subsequent patch duplicates yet another macro in this
-> file. While we could use:
->
-> #define __kimg_to_phys(addr)   (KASAN_RESET_TAG(addr) - kimage_voffset)
->
-> with and without kasan. Duplicating them increases risk that somebody
-> will change only the non-kasan version but forget kasan version.
+- The first two patches handle the case for GPIO CS
+- The last patch is the IIO patch from the previous series with an expanded
+  commit message.
 
-Will do in v7.
+
+[1]: https://lore.kernel.org/lkml/20180913003920.30600-1-david@lechnology.com/
+
+David Lechner (3):
+  spi: always use software fallback for SPI_CS_WORD when using cs_gio
+  spi: spi-davinci: Don't error when SPI_CS_WORD and cs_gpio
+  iio: adc: ti-ads7950: use SPI_CS_WORD to reduce CPU usage
+
+ drivers/iio/adc/ti-ads7950.c | 53 +++++++++++++++++++++---------------
+ drivers/spi/spi-davinci.c    |  3 --
+ drivers/spi/spi.c            |  6 ++--
+ 3 files changed, 35 insertions(+), 27 deletions(-)
+
+-- 
+2.17.1
+
