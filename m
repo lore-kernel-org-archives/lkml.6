@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8382DECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8425AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433BB214DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44CFA2150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pmVGcxVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433BB214DD
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii/zoK+d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CFA2150B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeISAIT (ORCPT
+        id S1730299AbeISAIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:08:19 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38350 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729695AbeISAIT (ORCPT
+        Tue, 18 Sep 2018 20:08:22 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42038 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729695AbeISAIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:08:19 -0400
-Received: by mail-qk1-f193.google.com with SMTP id g197-v6so1583928qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 11:34:28 -0700 (PDT)
+        Tue, 18 Sep 2018 20:08:21 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g13-v6so1578971qki.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 11:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jG5q+w+jia4LVZmLh/Y3sw0OtNBQnHl7yEt82spNsXE=;
-        b=pmVGcxVfo1cm6b1HYZFu6hw8WsP+wz/7+dZv60J7m2yPCEVBMVgx+ku/EdITOovL0O
-         Y0y28IBoLYCnXjADmMKJyNyDH8J+0Yi9CfC7FnuPtf28XHGXywnGNRCtwMCV838EZ69x
-         kANbWgP08JgeEpmaDzQbxHCZqB2fZab4DIXBkccAubO8YfnfgIvQpPvVd+oPQGX4S0UM
-         zjbukxRHTIAahVl5Rvt6rWCW1M7+e4pFhUNYx/RpzUcYOXfQ/qRKDK7g6Qz+LIwdeOwE
-         vaHous1wrCxmnsxqhS9OTUS+FBdISb9V0IDdNFcsBJmv3oez+DkqO0dD0XFupzZzTNsB
-         WCLQ==
+        bh=zRn06kbT8q3Tf1HvriDrhmv9JTsI4Ym8MxflvOoI6ME=;
+        b=ii/zoK+dtY6/RYUgmBFffkOVeGSKLb09K1tMSut0CliLv4i9f1BjoGjKIEDPh3BABx
+         /fPUQcM0WV8nG2tnWYqPBoRRTwbWodtMVhtlLMH6XhdzTp02vmTvp+BUGbTNGFZ4mjas
+         +jlW4PTaisnk5O3c1TADkd2dwNbhCHWR4wS1tneQY75vryK/FHkQDzWCZ6CTH3vLrQ6B
+         FgnnvFLebtYSEKr5PvzVBrYRrIG0pHuVyf2a5Pq6LNU8OSmV+rsGbaRnpZ1LSMFzl8Fy
+         Qf3j+clNtdrV46XQBfFUFjwuLeVrplsrV2a0n/sbtNEyWNVYsIYAKGKFTduH5tuoaogJ
+         0JxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jG5q+w+jia4LVZmLh/Y3sw0OtNBQnHl7yEt82spNsXE=;
-        b=damxQqZEVM6azaywGugrH1tiim5cne9EAyBWJUJguAc5DuRyHeJ0EvFbZ523UoQwOI
-         wvel10vtlCAMcdR8aD5Rjzptpmqm81g78QfcRPYnja9gVim3qIueVfgJ2fnedlaQ8kyZ
-         nRnnOs4lvdwWvTv94H1mwn3MtWcp/woUvLAOtrr+6TwYr+ppbnPT/DRsLRO3Q5TDVKbc
-         lr7Tr4HPfbr9G217yA0nxJDyNWfmsp2P0RDCmByICCqv6x8F8qX40Wpzl22Ijtapac4i
-         B0+QOtzgxsXpqdgH9Obi/VCrUvoTB02wGMgBYGjptO3MrbwaxM8b9//sASlhZpx+q8uu
-         GR9g==
-X-Gm-Message-State: APzg51DyrIqaFKM1pv5bqslL/D+yoyfYZO5+wqfsxz1nK33R7oWoxiOx
-        jW8DDeS7T0saH2UpAbxdG48=
-X-Google-Smtp-Source: ANB0VdbXIRlQT+6iLJXY2V1aDV9tOx8Q5Lmjmwi4G0sYrl+/5tSGNbUf2zGi/vgwU1VxtWykls5G2w==
-X-Received: by 2002:a37:a0c2:: with SMTP id j185-v6mr21756418qke.67.1537295667794;
-        Tue, 18 Sep 2018 11:34:27 -0700 (PDT)
+        bh=zRn06kbT8q3Tf1HvriDrhmv9JTsI4Ym8MxflvOoI6ME=;
+        b=mAXKKn77nqbP0uq8wYsrwF0HPpS3zF/hZS71fDVYqULCd4FIjvB3P52TvJWtKQXf7g
+         tsiIs+0KjSlzXcmYlpuHHOvAhuQ6fG0ah/NgSfKiCl8Nf5JSnrejChveGi95eF1+OM/K
+         3iHCc78dXTcFZZDgZGUYZaUbaewX875rrogOG7MROBOYzC+4Dqkbvt897FUjp9YJeTqQ
+         fZj4k0315Dqj8jDECF/JrvrEr+njGK4fwzwxAwlaFAnVeU7nXK/H5XTKoWfomJsWP4CV
+         CwZs7T+s63uMQdCyd4aeB+lO0kFP1uoZYMvstSMGIHC8QdEEH3kNq9aC4tf3aqzQJRUs
+         +PhA==
+X-Gm-Message-State: APzg51AtOw8c73MsLf5FWKWe7DuWWoSMVsbCOmRdQN9cGuPrWMY+99rB
+        dwclG3gPdZqF9WVwe6uB72w=
+X-Google-Smtp-Source: ANB0VdbrXfa+h8exmz6P5ZNtDuMxP+TDS57XQXFO93/i8+6AlIuRwp542aQvQu/ckLf19JLzPKejDA==
+X-Received: by 2002:a37:cf48:: with SMTP id e69-v6mr21738925qkj.293.1537295669945;
+        Tue, 18 Sep 2018 11:34:29 -0700 (PDT)
 Received: from localhost.localdomain ([2605:a000:1316:4273:719d:df26:b0cf:931a])
-        by smtp.googlemail.com with ESMTPSA id m15-v6sm13819101qki.1.2018.09.18.11.34.26
+        by smtp.googlemail.com with ESMTPSA id m15-v6sm13819101qki.1.2018.09.18.11.34.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 18 Sep 2018 11:34:27 -0700 (PDT)
+        Tue, 18 Sep 2018 11:34:29 -0700 (PDT)
 From:   Connor McAdams <conmanx360@gmail.com>
 Cc:     conmanx360@gmail.com, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Alastair Bridgewater <alastair.bridgewater@gmail.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/15] ALSA: hda/ca0132 - Define new verbs and control params
-Date:   Tue, 18 Sep 2018 14:33:29 -0400
-Message-Id: <1537295625-8082-2-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 02/15] ALSA: hda/ca0132 - Add quirk for Sound BlasterX AE-5
+Date:   Tue, 18 Sep 2018 14:33:30 -0400
+Message-Id: <1537295625-8082-3-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537295625-8082-1-git-send-email-conmanx360@gmail.com>
 References: <1537295625-8082-1-git-send-email-conmanx360@gmail.com>
@@ -77,78 +77,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch defines some new verbs found from reverse engineering of the
-onboard 8051 CPU, and a control param found there as well. This clears
-up usage of these verbs in other parts of the driver, and removes their
-usage where they're now known to be unnecessary.
+This patch adds the PCI subsys ID quirk for the Sound BlasterX AE-5.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 0166a3d..cd93c86 100644
+index cd93c86..81bbec1 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -685,6 +685,9 @@ enum hda_cmd_vendor_io {
- 	VENDOR_CHIPIO_DATA_LOW               = 0x300,
- 	VENDOR_CHIPIO_DATA_HIGH              = 0x400,
+@@ -1009,6 +1009,7 @@ enum {
+ 	QUIRK_SBZ,
+ 	QUIRK_R3DI,
+ 	QUIRK_R3D,
++	QUIRK_AE5,
+ };
  
-+	VENDOR_CHIPIO_8051_WRITE_DIRECT      = 0x500,
-+	VENDOR_CHIPIO_8051_READ_DIRECT       = 0xD00,
-+
- 	VENDOR_CHIPIO_GET_PARAMETER          = 0xF00,
- 	VENDOR_CHIPIO_STATUS                 = 0xF01,
- 	VENDOR_CHIPIO_HIC_POST_READ          = 0x702,
-@@ -692,6 +695,9 @@ enum hda_cmd_vendor_io {
+ static const struct hda_pintbl alienware_pincfgs[] = {
+@@ -1081,6 +1082,7 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1458, 0xA026, "Gigabyte G1.Sniper Z97", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA036, "Gigabyte GA-Z170X-Gaming 7", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1102, 0x0013, "Recon3D", QUIRK_R3D),
++	SND_PCI_QUIRK(0x1102, 0x0051, "Sound Blaster AE-5", QUIRK_AE5),
+ 	{}
+ };
  
- 	VENDOR_CHIPIO_8051_DATA_WRITE        = 0x707,
- 	VENDOR_CHIPIO_8051_DATA_READ         = 0xF07,
-+	VENDOR_CHIPIO_8051_PMEM_READ         = 0xF08,
-+	VENDOR_CHIPIO_8051_IRAM_WRITE        = 0x709,
-+	VENDOR_CHIPIO_8051_IRAM_READ         = 0xF09,
- 
- 	VENDOR_CHIPIO_CT_EXTENSIONS_ENABLE   = 0x70A,
- 	VENDOR_CHIPIO_CT_EXTENSIONS_GET      = 0xF0A,
-@@ -798,6 +804,12 @@ enum control_param_id {
- 	 * impedance is selected*/
- 	CONTROL_PARAM_PORTD_160OHM_GAIN        = 10,
- 
-+	/*
-+	 * This control param name was found in the 8051 memory, and makes
-+	 * sense given the fact the AE-5 uses it and has the ASI flag set.
-+	 */
-+	CONTROL_PARAM_ASI                      = 23,
-+
- 	/* Stream Control */
- 
- 	/* Select stream with the given ID */
-@@ -7140,11 +7152,6 @@ static void sbz_pre_dsp_setup(struct hda_codec *codec)
- 	writel(0x00820680, spec->mem_base + 0x01C);
- 	writel(0x00820680, spec->mem_base + 0x01C);
- 
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfc);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfd);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfe);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xff);
--
- 	chipio_write(codec, 0x18b0a4, 0x000000c2);
- 
- 	snd_hda_codec_write(codec, 0x11, 0,
-@@ -7153,12 +7160,6 @@ static void sbz_pre_dsp_setup(struct hda_codec *codec)
- 
- static void r3d_pre_dsp_setup(struct hda_codec *codec)
- {
--
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfc);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfd);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfe);
--	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xff);
--
- 	chipio_write(codec, 0x18b0a4, 0x000000c2);
- 
- 	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
 -- 
 2.7.4
 
