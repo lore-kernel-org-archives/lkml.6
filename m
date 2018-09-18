@@ -2,69 +2,140 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F40F5ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91963ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5810D20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:09:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5810D20C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DEBC21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:11:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Wlb3trhV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEBC21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbeIRIkI (ORCPT
+        id S1728746AbeIRIl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 04:40:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12599 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbeIRIkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 04:40:08 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 024F15FF642D2;
-        Tue, 18 Sep 2018 11:09:37 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 11:09:31 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <LinoSanfilippo@gmx.de>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: ethernet: slicoss: remove duplicated include from slic.h
-Date:   Tue, 18 Sep 2018 11:09:14 +0800
-Message-ID: <20180918030914.23592-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 18 Sep 2018 04:41:57 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:33536 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbeIRIl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 04:41:57 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 112FA5C05D1;
+        Tue, 18 Sep 2018 05:11:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1537240286;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X2tLV6SYZVQXTTN+sxElDRLhxwYJAer6ny7FcOZAFOI=;
+        b=Wlb3trhVxtQrC5HvyPNhBCtw3VWhlGCWBfP7fY7mJmFjpi18GWCVlg80m0T6rxyUWhTFFv
+        7pF5JJXOhrwClTrGcPpnJ2i3P+5Hb+ff73aEAteiH/Hmaepw72jQpVVxK5YBQfO7jHDKNS
+        F4H4b4M1BAzzeuDfsDVPdkfdlI4+tZA=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 17 Sep 2018 20:11:26 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kbuild: allow to use GCC toolchain not in Clang search
+ path
+In-Reply-To: <CAK7LNASz4zabEdjO2AVscWbqGyjpEBE6Li7busC_sbYkuuJ7tQ@mail.gmail.com>
+References: <20180918023157.23951-1-stefan@agner.ch>
+ <CAK7LNASz4zabEdjO2AVscWbqGyjpEBE6Li7busC_sbYkuuJ7tQ@mail.gmail.com>
+Message-ID: <db3a6d4ab976c12bfe90354ac370d541@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated include.
+On 17.09.2018 20:06, Masahiro Yamada wrote:
+> Hi Stefan,
+> 
+> 2018-09-18 11:31 GMT+09:00 Stefan Agner <stefan@agner.ch>:
+>> When using a GCC cross toolchain which is not in a compiled in
+>> Clang search path, Clang reverts to the system assembler and
+>> linker. This leads to assembler or linker errors, depending on
+>> which tool is first used for a given architecture.
+>>
+>> It seems that Clang is not searching $PATH for a matching
+>> assembler or linker.
+> 
+> 
+> The current code passes the absolute path of toolchains
+> to --gcc-toolchain option.
+> In my understanding, this is enough for Clang
+> to find the proper linker and the assembler.
+> 
+> 
+> Why is the --prefix option also needed ?
+> 
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/alacritech/slic.h | 1 -
- 1 file changed, 1 deletion(-)
+It seems that Clang makes a difference between "toolchain" and search path for toolchain binaries.
 
-diff --git a/drivers/net/ethernet/alacritech/slic.h b/drivers/net/ethernet/alacritech/slic.h
-index d0c388c..3add305 100644
---- a/drivers/net/ethernet/alacritech/slic.h
-+++ b/drivers/net/ethernet/alacritech/slic.h
-@@ -8,7 +8,6 @@
- #include <linux/spinlock_types.h>
- #include <linux/dma-mapping.h>
- #include <linux/pci.h>
--#include <linux/netdevice.h>
- #include <linux/list.h>
- #include <linux/u64_stats_sync.h>
- 
--- 
-2.7.0
+Without this patch building fails for the described use case, see the github link for more context.
+
+--
+Stefan
 
 
+> 
+> Am I missing something?
+> 
+> 
+> 
+>> Make sure that Clang picks up the correct assembler or linker by
+>> passing the cross compilers bin directory as search path.
+>>
+>> This allows to use Clang provided by distributions with GCC
+>> toolchains not in /usr/bin.
+>>
+>> Link: https://github.com/ClangBuiltLinux/linux/issues/78
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>> Nick, I removed your Reviewed-by since I had to change variable
+>> assignment slightly...
+>>
+>>  Makefile | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Makefile b/Makefile
+>> index 4d5c883a98e5..d5de2db4b549 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -495,13 +495,15 @@ endif
+>>  ifeq ($(cc-name),clang)
+>>  ifneq ($(CROSS_COMPILE),)
+>>  CLANG_TARGET   := --target=$(notdir $(CROSS_COMPILE:%-=%))
+>> -GCC_TOOLCHAIN  := $(realpath $(dir $(shell which $(LD)))/..)
+>> +GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+>> +CLANG_PREFIX   := --prefix=$(GCC_TOOLCHAIN_DIR)
+>> +GCC_TOOLCHAIN  := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+>>  endif
+>>  ifneq ($(GCC_TOOLCHAIN),)
+>>  CLANG_GCC_TC   := --gcc-toolchain=$(GCC_TOOLCHAIN)
+>>  endif
+>> -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+>> -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+>> +KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+>> +KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+>>  KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+>>  KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+>>  endif
+>> --
+>> 2.19.0
+>>
