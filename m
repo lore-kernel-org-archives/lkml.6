@@ -2,121 +2,124 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F95ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E17ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21AD521508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:56:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrFQ/1Dc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AD521508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF1D21508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF1D21508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeISAaW (ORCPT
+        id S1729538AbeISAdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:30:22 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46611 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeISAaV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:30:21 -0400
-Received: by mail-qk1-f193.google.com with SMTP id j7-v6so1598679qkd.13;
-        Tue, 18 Sep 2018 11:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=F0zuSQLTrcmgA2kajWrC/u60uTaz8F14+gDbJzTJhsc=;
-        b=JrFQ/1Dcusm9572tqEOcMht2LkJn5iCbkJ9/nG4kKpKOhANbC3EV9LFkBIV3+XtX8Z
-         AGggYSGLrAK4zHWWb0w7+bPgyb6ICUOV88yvBAwwXswEMYkHpCYGe5vTjJ+mR6GsCAkZ
-         SZ8hVvpS2Kuc2B967wype96/BvIl590bmN+BLfUhUo3RY1+kasEY7zDzbwRDa9MIGQXP
-         Y37gqUeKtZ7JcBWHlV7yb2B2Jd/tzbIaHNxWUszRuzm1Udnqfie+G+hRICR7fMUr8bYg
-         ZpIvaIeU1IdliLE3JOmTgkPHZro3b9jwGHQ8B5I5DaJJrDFmU7V0hZRHB6c/GgDie9fd
-         XMww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=F0zuSQLTrcmgA2kajWrC/u60uTaz8F14+gDbJzTJhsc=;
-        b=UnuGaK40bkrewxkaLMSYey7FSI8+OlN+UzW92c9RHGOAArn6TljXTLWJSDNP2SfMKk
-         sPwQRe/TTYouXdN6XkCDrkdnE4SOSk2q21rvvpf/0ex+yihYvFLe4Xadi89uv/86pIi9
-         ueHez3Vg7FhOHCDYftZ7LDt8ni8cXiEpaIzbDp+2mjsLBmQLHz3Kj4/T34AqBf6RPRHK
-         2TF3efnzi+zAQaKTrL4T0B5/yKc11tGd2DwzdxNHXtgkhpAOolhkRHxZU91C4xIZRwld
-         KJJPUboQFHCwz2tF0hdTMkmNUDz7glAAOROJDp7NbcI9Q1zxJOZifsoJPr1iaYC+ThhE
-         q6uA==
-X-Gm-Message-State: APzg51BMSicatIgDnxoA7VQWkGQSbVmLtdXnn5ch/NTtx81te5TzeKhW
-        au/yVPaz6u8cncGufLvkpKnCiFJsyYY+GxVVZDumtySL
-X-Google-Smtp-Source: ANB0VdZF90toZYA9dQ+MXsq5G+AIQ0JYUou09DgsblAE/l08fCyNvd6ZHbewyuKL2yT+AaGUWWZYh4UvaOsD6aka4a0=
-X-Received: by 2002:ae9:ed4b:: with SMTP id c72-v6mr20560584qkg.54.1537296984973;
- Tue, 18 Sep 2018 11:56:24 -0700 (PDT)
+        Tue, 18 Sep 2018 20:33:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51900 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728605AbeISAdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:33:44 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AFF333082145;
+        Tue, 18 Sep 2018 18:59:47 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-3.gru2.redhat.com [10.97.112.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58DD31001F56;
+        Tue, 18 Sep 2018 18:59:46 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 6A40C10BD; Tue, 18 Sep 2018 15:59:44 -0300 (BRT)
+Date:   Tue, 18 Sep 2018 15:59:44 -0300
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     =?iso-8859-1?Q?J=E9r=E9mie?= Galarneau 
+        <jeremie.galarneau@efficios.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, lkml <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: Re: [PATCH] perf tools: Initialize perf_data_file fd field
+Message-ID: <20180918185944.GA2695@redhat.com>
+References: <20180829201648.19588-1-jeremie.galarneau@efficios.com>
+ <20180905160918.GB29759@krava>
+ <CA+jJMxvHN0-=vByU0=mdnDZJ0BsfCAf240ShQ=Obm1J=Nd=mpQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 11:56:04
- -0700 (PDT)
-In-Reply-To: <20180918173428.GA21591@kroah.com>
-References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
- <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com> <20180918173428.GA21591@kroah.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 18 Sep 2018 20:56:04 +0200
-Message-ID: <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-sparse@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+jJMxvHN0-=vByU0=mdnDZJ0BsfCAf240ShQ=Obm1J=Nd=mpQ@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 18 Sep 2018 18:59:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Em Tue, Sep 18, 2018 at 02:07:41PM -0400, Jérémie Galarneau escreveu:
+> Hi Arnaldo,
+> 
+> Anything I can do to help you with this patch?
 
-On Tue, Sep 18, 2018 at 7:34 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Sep 18, 2018 at 06:55:42PM +0200, Miguel Ojeda wrote:
->> The naked attribute is supported by at least gcc >= 4.6 (for ARM,
->> which is the only current user), gcc >= 8 (for x86), clang >= 3.1
->> and icc >= 13. See https://godbolt.org/z/350Dyc
->>
->> Therefore, move it out of compiler-gcc.h so that the definition
->> is shared by all compilers.
->>
->> This also fixes Clang support for ARM32 --- 815f0ddb346c
->> ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
->
-> So, with this applied, does clang really build an arm32 kernel
-> successfully?  No other problem at all?  And this isn't really a
-> regression, arm32 never really worked with clang yet, right?
->
+Thanks for the reminder, will apply.
 
-To recap a bit: these two patches come from the "Compiler Attributes"
-series which is meant as a general improvement. Since Linus/Andrew/you
-didn't comment on whether you wanted or not this for 4.19, we are
-assuming they would go in for 4.20. However, Stefan/Nick/... wanted
-this for 4.19 instead, they asked me to extract these patches two
-separately for 4.19. I let them comment further on the status of Clang
-on arm32.
-
-I am going to send a v5 of the entire series without these two
-patches, based on -rc4 (or -next, which one do you prefer? I would say
-these patches should be applied early in the -next branches, so that
-everyone is ready for the change, given it "touches" every translation
-unit).
-
-Cheers,
-Miguel
+- Arnaldo
+ 
+> Thanks,
+> Jérémie
+> 
+> On 5 September 2018 at 12:09, Jiri Olsa <jolsa@redhat.com> wrote:
+> > On Wed, Aug 29, 2018 at 04:16:48PM -0400, Jérémie Galarneau wrote:
+> >> Building the perf CTF converter fails with gcc 4.8.4
+> >> on Ubuntu 14.04 with the following error:
+> >>
+> >> error: missing initializer for field ‘fd’ of ‘struct perf_data_file’
+> >> [-Werror=missing-field-initializers]
+> >>
+> >> Per 4b838b0d and the ensuing discussion on the mailing
+> >> list, it appears that this affects other distributions
+> >> and gcc versions.
+> >>
+> >> Signed-off-by: Jérémie Galarneau <jeremie.galarneau@efficios.com>
+> >
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> >
+> > thanks,
+> > jirka
+> >
+> >> Cc: Jiri Olsa <jolsa@kernel.org>
+> >> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >> Cc: Peter Zijlstra <peterz@infradead.org>
+> >> Cc: Ingo Molnar <mingo@redhat.com>
+> >> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> >> ---
+> >>  tools/perf/util/data-convert-bt.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
+> >> index abd38abf1d91..f75d4aa612c5 100644
+> >> --- a/tools/perf/util/data-convert-bt.c
+> >> +++ b/tools/perf/util/data-convert-bt.c
+> >> @@ -1578,7 +1578,7 @@ int bt_convert__perf2ctf(const char *input, const char *path,
+> >>  {
+> >>       struct perf_session *session;
+> >>       struct perf_data data = {
+> >> -             .file.path = input,
+> >> +             .file      = { .path = input, .fd = -1 },
+> >>               .mode      = PERF_DATA_MODE_READ,
+> >>               .force     = opts->force,
+> >>       };
+> >> --
+> >> 2.18.0
+> >>
+> 
+> 
+> 
+> -- 
+> Jérémie Galarneau
+> EfficiOS Inc.
+> http://www.efficios.com
