@@ -2,154 +2,121 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3740BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D82AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F5720C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37BF020C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oz+VWzus"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F5720C0E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjSh2GtI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BF020C0E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeIRWB4 (ORCPT
+        id S1730278AbeIRWCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:01:56 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45832 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbeIRWB4 (ORCPT
+        Tue, 18 Sep 2018 18:02:00 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39404 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbeIRWCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:01:56 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p52-v6so2421870eda.12;
-        Tue, 18 Sep 2018 09:28:35 -0700 (PDT)
+        Tue, 18 Sep 2018 18:02:00 -0400
+Received: by mail-ot1-f66.google.com with SMTP id c12-v6so2613700otl.6;
+        Tue, 18 Sep 2018 09:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qIA8zOCECTcKows+uTc5YbM8xE143Bi/O52cX3iDyNE=;
-        b=oz+VWzusYi8UAUgSVCOwiDoyCEwUN0nvLpJHuGhmZR8kTv/r4i00ry9TKuFrHQ4O3g
-         K2ClUs8l9MkiCxwiTCx9iaUGfybEmvMIys81oZW7aXqgxRv1kWVbzxu9eAEN9M1lIP3U
-         oN/Jd6mHZQdNHuvlY2Qy/3TF2pFo1cFXDpToFe/DFaIdcU/soob/P4bGP1myurV53XiA
-         ZLCZSgbZ0rns8roAaE1nIdvz+dXslYg3cHIQASamRFdvo0naPxKHXWW5hQKn0mvhRzWB
-         OyYR4TL2YT/J3nVhuTboXq10S8Yb8KgCq5uAA+1bvdnSwQdVT4Sx1d8fim4J6TOx2I47
-         oMPw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sycfl4Qu134g5AA/VseYN5xXSyE8MlcSoCyRotftmfk=;
+        b=cjSh2GtIZhrAs8RUyYDHgPCzn2PM6dRXrStr06QdSF65ylP1eLKDnSj7b9RwAu2rTc
+         vcXjyBbqs04S+nimk4riEib5xQ3cE/nVRvLErTUKLk5ENAyNqqa+zShG6r+EvE8mIE+r
+         r51bojoFgsyBz3qC0+bajqiHjF0cTJMMmXenuI8O/A0QbPmL6AdE1y2HcGR4uT7Zf4g2
+         6GOFunS3k3X7eWCyoV8lUnkbZNdUaScVVzHsQKmSzTzn3MQXrScAAAXLM13NkJe8m5mv
+         RU6BTJG/BTBxLXMylDAQ9ZL1Yzu9fgnk+5tAB5YoQXzTdPVJwk0t6mhUaqjH9tbKIFNe
+         lnYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qIA8zOCECTcKows+uTc5YbM8xE143Bi/O52cX3iDyNE=;
-        b=nume5z7FhTI/7AgTpKMpPPqUH9P+jPT7C0xDFTzwoSYwjTt+M/V7wBK4+DC2qI1yOB
-         QWIl0YbQBIFZg47CX+hVwPmgWgyjPxyhcNoPGzYtYPa3H3/yEGkBfy8EoxpP59DspP+I
-         7H6moN+um1HC8gLp3VqEJJsWivVRLXAA6DrVj9X8ud362vIL+OhczsldcSlDDzLzrXHa
-         i2i5GPCAJzFazYj79jwTm/+5tCh3q1rpWVxhV94ARksC4fX3Rsd1dJuh2fPMoxkrloiC
-         Zw6f02IRDqb4kiE4q9pL0oYXTBKy+zNGE77USFNPMCaEkTxeSPZOs3XUtpJMKGp6fQTX
-         5Tnw==
-X-Gm-Message-State: APzg51AOqv4j5cvF1AVoxgPrw5/zo+1k5fSmdKQ7wLWNNShG84LkUAu/
-        roEupxFiqiNhUMxZPMOqJBEPLd+l335YJCG3zvc=
-X-Google-Smtp-Source: ANB0VdZBx2+0BRU9q7OrIol1tipNauIGabRJEWxzeOXUPydO7Pi8iK5IaUqx4HsoqCdE4OM5As9qdmHerEIJe1LsqZo=
-X-Received: by 2002:a50:fa0a:: with SMTP id b10-v6mr2397687edq.138.1537288114083;
- Tue, 18 Sep 2018 09:28:34 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sycfl4Qu134g5AA/VseYN5xXSyE8MlcSoCyRotftmfk=;
+        b=hXPSsKCe6429ub5KLo63RT/EiQIQmllfosi8IRJqt5lJiQr5HN6xur365StjHehp90
+         5ZLf4T8fuVNiVYAswrVXEQCfeI72tqkm726Mad++N/hyLwV01LWDeyIwK9l9HlXJDJjt
+         ZNTlfjSwvMqpQ0+0xHyMKjgrVGNaH4fFSMBJ6ifLClDVXj/snf89VBEg4hnc+0Olvivp
+         rIS/etClhvDwRydLZgMU1kSXKDE/7aHKKg/3Xe3S2L7kH1ArY0oK4ocW4qB94ukygs1D
+         0bTM6/DdxFWtPJ07AZ3atWRfaFD4HRYN1i1oZNeZYcZ7sJpJ6TzbAvvCJRF2/MblIbQu
+         9q5Q==
+X-Gm-Message-State: APzg51CO2ZTw+NEsWPEP3qo5s7Nc0VyzrFv1Z8uWdgTPg1oapKCslbCX
+        bcWohZIumAMak4OgOiAsXR+fbv/m
+X-Google-Smtp-Source: ANB0VdaFt8cjsOFNDFkHmKrOwUGgE1hRwSLjlPPXMLqyOi4z1PtQEkxR/qN2g2JhPkTuBa/1aSodGQ==
+X-Received: by 2002:a9d:1422:: with SMTP id h31-v6mr16037767oth.41.1537288119163;
+        Tue, 18 Sep 2018 09:28:39 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id t141-v6sm9768252oif.18.2018.09.18.09.28.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Sep 2018 09:28:38 -0700 (PDT)
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+To:     David Woodhouse <dwmw2@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+ <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+ <1537253993.20009.62.camel@infradead.org>
+ <14067.1537285833@warthog.procyon.org.uk>
+ <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+ <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <2c5a34af-c2ae-b98c-e5d3-d89462ad3a20@gmail.com>
+Date:   Tue, 18 Sep 2018 00:41:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20180918151235.4284275f@canb.auug.org.au> <0dc91212-54e8-d2f0-a4e3-30a468c20b8d@infradead.org>
- <a1129d67-97e3-8f10-c938-0de72fee9377@iogearbox.net>
-In-Reply-To: <a1129d67-97e3-8f10-c938-0de72fee9377@iogearbox.net>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Tue, 18 Sep 2018 12:28:04 -0400
-Message-ID: <CAF=yD-Kv7ig9UEo8Ci3eZOV=spa9cbGA5Mfa5Too8TgUzVA3fA@mail.gmail.com>
-Subject: Re: linux-next: Tree for Sep 18 (kernel/bpf/syscall)
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     rdunlap@infradead.org, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Petar Penkov <ppenkov@google.com>,
-        Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 11:44 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->
-> [ Cc Petar and Willem ]
->
-> On 09/18/2018 05:37 PM, Randy Dunlap wrote:
-> > On 9/17/18 10:12 PM, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Changes since 20180913:
-> >
-> > on i386 or x86_64: (in 6 of 20 randconfigs)
-> >
-> > kernel/bpf/syscall.o: In function `__x64_sys_bpf':
-> > syscall.c:(.text+0x3278): undefined reference to `skb_flow_dissector_bpf_prog_attach'
-> > syscall.c:(.text+0x3310): undefined reference to `skb_flow_dissector_bpf_prog_detach'
-> > kernel/bpf/syscall.o:(.rodata+0x3f0): undefined reference to `flow_dissector_prog_ops'
-> > kernel/bpf/verifier.o:(.rodata+0x250): undefined reference to `flow_dissector_verifier_ops'
-> >
-> > Full randconfig file is attached.
->
-> Looks like we need a wrapper for these, config had:
->
-> # CONFIG_NET is not set
+Hi David,
 
-Thanks for forwarding the report.
+On 09/18/2018 11:17 AM, David Woodhouse wrote:
+> On Tue, 2018-09-18 at 00:24 -0500, Denis Kenzior wrote:
+>> Hi David,
+>>
+>> On 09/18/2018 10:50 AM, David Howells wrote:
+>>> Denis Kenzior <denkenz@gmail.com> wrote:
+>>>
+>>>>      openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
+>>>>                        -out /tmp/privkey.2048.der
+>>>
+>>> You can use "... -out - | ..." instead.
+>>
+>> Aha! okay, that is even more elegant.  Your openssl-fu is better than
+>> mine :)
+> 
+> 'grep -v ^----- | base64 -d' also works most of the time :)
+> 
+> You are passing the raw DER to the kernel in both cases, right? And the
+> kernel just happens to know that if it receives a bare OCTET-STRING
+> it's supposed to treat it as a TPMv1.2 key?
+> 
 
-For the functions, I think we can use a similar static inline stub as
-used e.g., for bpf_map_offload_map_alloc.
+Short answer: right.
 
-The _ops references are from a macro that includes linux/bpf_types.h,
-so indeed a CONFIG looks needed.
+Long answer: The kernel runs all the registered parsers until all fail 
+or one of them recognizes the format.  All the currently supported 
+asymmetric key formats are DER based, e.g. PKCS8, PKCS7, TPM-1.2, etc. 
+All these have a very specific DER structure with the TPM-1.2 being the 
+simplest format.
 
-I need to look it over before I send out, but tentative patch:
-
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index 22083712dd18..f57fa5a6be8f 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -32,7 +32,9 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_LIRC_MODE2, lirc_mode2)
- #ifdef CONFIG_INET
- BPF_PROG_TYPE(BPF_PROG_TYPE_SK_REUSEPORT, sk_reuseport)
- #endif
-+#ifdef CONFIG_NET
- BPF_PROG_TYPE(BPF_PROG_TYPE_FLOW_DISSECTOR, flow_dissector)
-+#endif
-
- BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
- BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index ce0e863f02a2..d26a21f10cec 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -1194,10 +1194,23 @@ void skb_flow_dissector_init(struct
-flow_dissector *flow_dissector,
-                             const struct flow_dissector_key *key,
-                             unsigned int key_count);
-
-+#if defined(CONFIG_NET) && defined(CONFIG_BPF_SYSCALL)
- int skb_flow_dissector_bpf_prog_attach(const union bpf_attr *attr,
-                                       struct bpf_prog *prog);
-
- int skb_flow_dissector_bpf_prog_detach(const union bpf_attr *attr);
-+#else
-+static inline int skb_flow_dissector_bpf_prog_attach(const union
-bpf_attr *attr,
-+                                                    struct bpf_prog *prog)
-+{
-+       return -EOPNOTSUPP;
-+}
-+
-+static inline int skb_flow_dissector_bpf_prog_detach(const union
-bpf_attr *attr)
-+{
-+       return -EOPNOTSUPP;
-+}
-+#endif
+Regards,
+-Denis
