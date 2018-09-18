@@ -2,298 +2,306 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D75C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8A7ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03062146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03062146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 437112146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437112146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730188AbeIRT7O (ORCPT
+        id S1730207AbeIRT7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:59:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730104AbeIRT7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:59:13 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A5CF93002303;
-        Tue, 18 Sep 2018 14:26:23 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 239BD53B27;
-        Tue, 18 Sep 2018 14:26:19 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v2 12/20] dma-iommu: Implement NESTED_MSI cookie
-Date:   Tue, 18 Sep 2018 16:24:49 +0200
-Message-Id: <20180918142457.3325-13-eric.auger@redhat.com>
-In-Reply-To: <20180918142457.3325-1-eric.auger@redhat.com>
-References: <20180918142457.3325-1-eric.auger@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 18 Sep 2018 14:26:24 +0000 (UTC)
+        Tue, 18 Sep 2018 15:59:17 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39755 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730133AbeIRT7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:59:16 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B3D3A5E13F5CD;
+        Tue, 18 Sep 2018 22:26:20 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
+ 2018 22:26:13 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 2/8] staging: erofs: clean up z_erofs_map_blocks_iter
+Date:   Tue, 18 Sep 2018 22:25:34 +0800
+Message-ID: <1537280740-122019-3-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
+References: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Up to now, when the type was UNMANAGED, we used to
-allocate IOVA pages within a range provided by the user.
-This does not work in nested mode.
+This patch mainly introduces `vle_map_blocks_iter_ctx' to clean up
+z_erofs_map_blocks_iter and vle_get_logical_extent_head.
 
-If both the host and the guest are exposed with SMMUs, each
-would allocate an IOVA. The guest allocates an IOVA (gIOVA)
-to map onto the guest MSI doorbell (gDB). The Host allocates
-another IOVA (hIOVA) to map onto the physical doorbell (hDB).
+It changes the return value of `vle_get_logical_extent_head' to int
+for the later error handing. In addition, it also renames `pcn' to
+`pblk' since only `pblk' exists in erofs compression ondisk format.
 
-So we end up with 2 unrelated mappings, at S1 and S2:
-         S1             S2
-gIOVA    ->     gDB
-               hIOVA    ->    hDB
-
-The PCI device would be programmed with hIOVA.
-
-iommu_dma_bind_doorbell allows to pass gIOVA/gDB to the host
-so that gIOVA can be used by the host instead of re-allocating
-a new IOVA. That way the host can create the following nested
-mapping:
-
-         S1           S2
-gIOVA    ->    gDB    ->    hDB
-
-this time, the PCI device will be programmed with the gIOVA MSI
-doorbell which is correctly map through the 2 stages.
-
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
+ drivers/staging/erofs/unzip_vle.c | 140 +++++++++++++++++++++-----------------
+ 1 file changed, 78 insertions(+), 62 deletions(-)
 
-v1 -> v2:
-- unmap stage2 on put()
----
- drivers/iommu/dma-iommu.c | 97 +++++++++++++++++++++++++++++++++++++--
- include/linux/dma-iommu.h | 11 +++++
- 2 files changed, 105 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 511ff9a1d6d9..53444c3e8f2f 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -37,12 +37,14 @@
- struct iommu_dma_msi_page {
- 	struct list_head	list;
- 	dma_addr_t		iova;
-+	dma_addr_t		ipa;
- 	phys_addr_t		phys;
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index d16e3dc..1e89ff6 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -1410,6 +1410,13 @@ static int z_erofs_vle_normalaccess_readpages(
+ 	.readpages = z_erofs_vle_normalaccess_readpages,
  };
  
- enum iommu_dma_cookie_type {
- 	IOMMU_DMA_IOVA_COOKIE,
- 	IOMMU_DMA_MSI_COOKIE,
-+	IOMMU_DMA_NESTED_MSI_COOKIE,
- };
- 
- struct iommu_dma_cookie {
-@@ -109,14 +111,17 @@ EXPORT_SYMBOL(iommu_get_dma_cookie);
-  *
-  * Users who manage their own IOVA allocation and do not want DMA API support,
-  * but would still like to take advantage of automatic MSI remapping, can use
-- * this to initialise their own domain appropriately. Users should reserve a
-+ * this to initialise their own domain appropriately. Users may reserve a
-  * contiguous IOVA region, starting at @base, large enough to accommodate the
-  * number of PAGE_SIZE mappings necessary to cover every MSI doorbell address
-- * used by the devices attached to @domain.
-+ * used by the devices attached to @domain. The other way round is to provide
-+ * usable iova pages through the iommu_dma_bind_doorbell API (nested stages
-+ * use case)
-  */
- int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
- {
- 	struct iommu_dma_cookie *cookie;
-+	int nesting, ret;
- 
- 	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
- 		return -EINVAL;
-@@ -124,7 +129,12 @@ int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
- 	if (domain->iova_cookie)
- 		return -EEXIST;
- 
--	cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
-+	ret =  iommu_domain_get_attr(domain, DOMAIN_ATTR_NESTING, &nesting);
-+	if (!ret && nesting)
-+		cookie = cookie_alloc(IOMMU_DMA_NESTED_MSI_COOKIE);
-+	else
-+		cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
-+
- 	if (!cookie)
- 		return -ENOMEM;
- 
-@@ -145,6 +155,7 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
- {
- 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
- 	struct iommu_dma_msi_page *msi, *tmp;
-+	bool s2_unmap = false;
- 
- 	if (!cookie)
- 		return;
-@@ -152,7 +163,15 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
- 	if (cookie->type == IOMMU_DMA_IOVA_COOKIE && cookie->iovad.granule)
- 		put_iova_domain(&cookie->iovad);
- 
-+	if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE)
-+		s2_unmap = true;
-+
- 	list_for_each_entry_safe(msi, tmp, &cookie->msi_page_list, list) {
-+		if (s2_unmap && msi->phys) {
-+			size_t size = cookie_msi_granule(cookie);
-+
-+			WARN_ON(iommu_unmap(domain, msi->ipa, size) != size);
-+		}
- 		list_del(&msi->list);
- 		kfree(msi);
- 	}
-@@ -161,6 +180,50 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
- }
- EXPORT_SYMBOL(iommu_put_dma_cookie);
- 
-+/**
-+ * iommu_dma_bind_doorbell - Allows to provide a usable IOVA page
-+ * @domain: domain handle
-+ * @binding: IOVA/IPA binding
-+ *
-+ * In nested stage use case, the user can provide IOVA/IPA bindings
-+ * corresponding to a guest MSI stage 1 mapping. When the host needs
-+ * to map its own MSI doorbells, it can use the IPA as stage 2 input
-+ * and map it onto the physical MSI doorbell.
++/*
++ * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
++ * ---
++ * VLE compression mode attempts to compress a number of logical data into
++ * a physical cluster with a fixed size.
++ * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
 + */
-+int iommu_dma_bind_doorbell(struct iommu_domain *domain,
-+			    struct iommu_guest_msi_binding *binding)
-+{
-+	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-+	struct iommu_dma_msi_page *msi;
-+	dma_addr_t ipa, iova;
-+	size_t size;
+ #define __vle_cluster_advise(x, bit, bits) \
+ 	((le16_to_cpu(x) >> (bit)) & ((1 << (bits)) - 1))
+ 
+@@ -1465,90 +1472,96 @@ static int z_erofs_vle_normalaccess_readpages(
+ 	return erofs_blkoff(iloc(sbi, vi->nid) + ofs);
+ }
+ 
+-/*
+- * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
+- * ---
+- * VLE compression mode attempts to compress a number of logical data into
+- * a physical cluster with a fixed size.
+- * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
+- */
+-static erofs_off_t vle_get_logical_extent_head(
+-	struct inode *inode,
+-	struct page **page_iter,
+-	void **kaddr_iter,
+-	unsigned int lcn,	/* logical cluster number */
+-	erofs_blk_t *pcn,
+-	unsigned int *flags)
++struct vle_map_blocks_iter_ctx {
++	struct inode *inode;
++	struct super_block *sb;
++	unsigned int clusterbits;
 +
-+	if (!cookie)
-+		return -EINVAL;
++	struct page **mpage_ret;
++	void **kaddr_ret;
++};
 +
-+	if (cookie->type != IOMMU_DMA_NESTED_MSI_COOKIE)
-+		return -EINVAL;
++static int
++vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
++			    unsigned int lcn,	/* logical cluster number */
++			    unsigned long long *ofs,
++			    erofs_blk_t *pblk,
++			    unsigned int *flags)
+ {
+-	/* for extent meta */
+-	struct page *page = *page_iter;
+-	erofs_blk_t blkaddr = vle_extent_blkaddr(inode, lcn);
++	const unsigned int clustersize = 1 << ctx->clusterbits;
++	const erofs_blk_t mblk = vle_extent_blkaddr(ctx->inode, lcn);
++	struct page *mpage = *ctx->mpage_ret;	/* extent metapage */
 +
-+	size = 1 << binding->granule;
-+	iova = binding->iova & ~(phys_addr_t)(size - 1);
-+	ipa = binding->gpa & ~(phys_addr_t)(size - 1);
+ 	struct z_erofs_vle_decompressed_index *di;
+-	unsigned long long ofs;
+-	struct super_block *const sb = inode->i_sb;
+-	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
+-	const unsigned int clustersize = 1 << clusterbits;
+-	unsigned int delta0;
+-
+-	if (page->index != blkaddr) {
+-		kunmap_atomic(*kaddr_iter);
+-		unlock_page(page);
+-		put_page(page);
++	unsigned int cluster_type, delta0;
+ 
+-		page = erofs_get_meta_page_nofail(sb, blkaddr, false);
+-		*page_iter = page;
+-		*kaddr_iter = kmap_atomic(page);
++	if (mpage->index != mblk) {
++		kunmap_atomic(*ctx->kaddr_ret);
++		unlock_page(mpage);
++		put_page(mpage);
 +
-+	list_for_each_entry(msi, &cookie->msi_page_list, list) {
-+		if (msi->iova == iova)
-+			return 0; /* this page is already registered */
-+	}
++		mpage = erofs_get_meta_page_nofail(ctx->sb, mblk, false);
++		*ctx->mpage_ret = mpage;
++		*ctx->kaddr_ret = kmap_atomic(mpage);
+ 	}
+ 
+-	di = *kaddr_iter + vle_extent_blkoff(inode, lcn);
+-	switch (vle_cluster_type(di)) {
++	di = *ctx->kaddr_ret + vle_extent_blkoff(ctx->inode, lcn);
 +
-+	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
-+	if (!msi)
-+		return -ENOMEM;
-+
-+	msi->iova = iova;
-+	msi->ipa = ipa;
-+	list_add(&msi->list, &cookie->msi_page_list);
++	cluster_type = vle_cluster_type(di);
++	switch (cluster_type) {
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
+ 		delta0 = le16_to_cpu(di->di_u.delta[0]);
+ 		DBG_BUGON(!delta0);
+ 		DBG_BUGON(lcn < delta0);
+ 
+-		ofs = vle_get_logical_extent_head(inode,
+-			page_iter, kaddr_iter,
+-			lcn - delta0, pcn, flags);
+-		break;
++		return vle_get_logical_extent_head(ctx,
++			lcn - delta0, ofs, pblk, flags);
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
+ 		*flags ^= EROFS_MAP_ZIPPED;
++		/* fallthrough */
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
+ 		/* clustersize should be a power of two */
+-		ofs = ((u64)lcn << clusterbits) +
++		*ofs = ((u64)lcn << ctx->clusterbits) +
+ 			(le16_to_cpu(di->di_clusterofs) & (clustersize - 1));
+-		*pcn = le32_to_cpu(di->di_u.blkaddr);
++		*pblk = le32_to_cpu(di->di_u.blkaddr);
+ 		break;
+ 	default:
+ 		BUG_ON(1);
+ 	}
+-	return ofs;
 +	return 0;
-+}
-+EXPORT_SYMBOL(iommu_dma_bind_doorbell);
-+
- /**
-  * iommu_dma_get_resv_regions - Reserved region driver helper
-  * @dev: Device from iommu_get_resv_regions()
-@@ -846,6 +909,34 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
- 		if (msi_page->phys == msi_addr)
- 			return msi_page;
- 
-+	/*
-+	 * In nested stage mode, we do not allocate an MSI page in
-+	 * a range provided by the user. Instead, IOVA/IPA bindings are
-+	 * individually provided. We reuse thise IOVAs to build the
-+	 * IOVA -> IPA -> MSI PA nested stage mapping.
-+	 */
-+	if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE) {
-+		list_for_each_entry(msi_page, &cookie->msi_page_list, list)
-+			if (!msi_page->phys) { /* this binding is free to use */
-+				dma_addr_t ipa = msi_page->ipa;
-+				int ret;
-+
-+				msi_page->phys = msi_addr;
-+
-+				/* do the stage 2 mapping */
-+				ret = iommu_map(domain, ipa, msi_addr, size,
-+						IOMMU_MMIO | IOMMU_WRITE);
-+				if (ret) {
-+					pr_warn("MSI S2 mapping failed (%d)\n",
-+						ret);
-+					return NULL;
-+				}
-+				return msi_page;
-+			}
-+		pr_warn("%s no MSI binding found\n", __func__);
-+		return NULL;
-+	}
-+
- 	msi_page = kzalloc(sizeof(*msi_page), GFP_ATOMIC);
- 	if (!msi_page)
- 		return NULL;
-diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-index e8ca5e654277..324745eef644 100644
---- a/include/linux/dma-iommu.h
-+++ b/include/linux/dma-iommu.h
-@@ -24,6 +24,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/iommu.h>
- #include <linux/msi.h>
-+#include <uapi/linux/iommu.h>
- 
- int iommu_dma_init(void);
- 
-@@ -74,12 +75,15 @@ int iommu_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
- /* The DMA API isn't _quite_ the whole story, though... */
- void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg);
- void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
-+int iommu_dma_bind_doorbell(struct iommu_domain *domain,
-+			    struct iommu_guest_msi_binding *binding);
- 
- #else
- 
- struct iommu_domain;
- struct msi_msg;
- struct device;
-+struct iommu_guest_msi_binding;
- 
- static inline int iommu_dma_init(void)
- {
-@@ -104,6 +108,13 @@ static inline void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg)
- {
  }
  
-+static inline int
-+iommu_dma_bind_doorbell(struct iommu_domain *domain,
-+			struct iommu_guest_msi_binding *binding)
-+{
-+	return -ENODEV;
-+}
-+
- static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+ int z_erofs_map_blocks_iter(struct inode *inode,
+ 	struct erofs_map_blocks *map,
+ 	struct page **mpage_ret, int flags)
  {
- }
++	void *kaddr;
++	const struct vle_map_blocks_iter_ctx ctx = {
++		.inode = inode,
++		.sb = inode->i_sb,
++		.clusterbits = EROFS_I_SB(inode)->clusterbits,
++		.mpage_ret = mpage_ret,
++		.kaddr_ret = &kaddr
++	};
++	const unsigned int clustersize = 1 << ctx.clusterbits;
++	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
++	const bool initial = !map->m_llen;
++
+ 	/* logicial extent (start, end) offset */
+ 	unsigned long long ofs, end;
+-	struct z_erofs_vle_decompressed_index *di;
+-	erofs_blk_t e_blkaddr, pcn;
+-	unsigned int lcn, logical_cluster_ofs, cluster_type;
++	unsigned int lcn;
+ 	u32 ofs_rem;
++
++	/* initialize `pblk' to keep gcc from printing foolish warnings */
++	erofs_blk_t mblk, pblk = 0;
+ 	struct page *mpage = *mpage_ret;
+-	void *kaddr;
+-	bool initial;
+-	struct super_block *const sb = inode->i_sb;
+-	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
+-	const unsigned int clustersize = 1 << clusterbits;
++	struct z_erofs_vle_decompressed_index *di;
++	unsigned int cluster_type, logical_cluster_ofs;
+ 	int err = 0;
+ 
+-	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
+-	initial = !map->m_llen;
+-
+ 	/* when trying to read beyond EOF, leave it unmapped */
+ 	if (unlikely(map->m_la >= inode->i_size)) {
+-		BUG_ON(!initial);
++		DBG_BUGON(!initial);
+ 		map->m_llen = map->m_la + 1 - inode->i_size;
+ 		map->m_la = inode->i_size;
+ 		map->m_flags = 0;
+@@ -1561,16 +1574,16 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 	ofs = map->m_la + map->m_llen;
+ 
+ 	/* clustersize should be power of two */
+-	lcn = ofs >> clusterbits;
++	lcn = ofs >> ctx.clusterbits;
+ 	ofs_rem = ofs & (clustersize - 1);
+ 
+-	e_blkaddr = vle_extent_blkaddr(inode, lcn);
++	mblk = vle_extent_blkaddr(inode, lcn);
+ 
+-	if (mpage == NULL || mpage->index != e_blkaddr) {
++	if (!mpage || mpage->index != mblk) {
+ 		if (mpage != NULL)
+ 			put_page(mpage);
+ 
+-		mpage = erofs_get_meta_page_nofail(sb, e_blkaddr, false);
++		mpage = erofs_get_meta_page_nofail(ctx.sb, mblk, false);
+ 		*mpage_ret = mpage;
+ 	} else {
+ 		lock_page(mpage);
+@@ -1580,8 +1593,8 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 	kaddr = kmap_atomic(mpage);
+ 	di = kaddr + vle_extent_blkoff(inode, lcn);
+ 
+-	debugln("%s, lcn %u e_blkaddr %u e_blkoff %u", __func__, lcn,
+-		e_blkaddr, vle_extent_blkoff(inode, lcn));
++	debugln("%s, lcn %u mblk %u e_blkoff %u", __func__, lcn,
++		mblk, vle_extent_blkoff(inode, lcn));
+ 
+ 	err = vle_decompressed_index_clusterofs(&logical_cluster_ofs,
+ 						clustersize, di);
+@@ -1608,13 +1621,13 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		/* fallthrough */
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
+ 		if (ofs_rem == logical_cluster_ofs) {
+-			pcn = le32_to_cpu(di->di_u.blkaddr);
++			pblk = le32_to_cpu(di->di_u.blkaddr);
+ 			goto exact_hitted;
+ 		}
+ 
+ 		if (ofs_rem > logical_cluster_ofs) {
+ 			ofs = (u64)lcn * clustersize | logical_cluster_ofs;
+-			pcn = le32_to_cpu(di->di_u.blkaddr);
++			pblk = le32_to_cpu(di->di_u.blkaddr);
+ 			break;
+ 		}
+ 
+@@ -1629,9 +1642,12 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		/* fallthrough */
+ 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
+ 		/* get the correspoinding first chunk */
+-		ofs = vle_get_logical_extent_head(inode, mpage_ret,
+-			&kaddr, lcn, &pcn, &map->m_flags);
++		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
++						  &pblk, &map->m_flags);
+ 		mpage = *mpage_ret;
++
++		if (unlikely(err))
++			goto unmap_out;
+ 		break;
+ 	default:
+ 		errln("unknown cluster type %u at offset %llu of nid %llu",
+@@ -1644,7 +1660,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ exact_hitted:
+ 	map->m_llen = end - ofs;
+ 	map->m_plen = clustersize;
+-	map->m_pa = blknr_to_addr(pcn);
++	map->m_pa = blknr_to_addr(pblk);
+ 	map->m_flags |= EROFS_MAP_MAPPED;
+ unmap_out:
+ 	kunmap_atomic(kaddr);
 -- 
-2.17.1
+1.9.1
 
