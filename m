@@ -4,61 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3699ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCC7C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 557552146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E837E2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:44:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OQ642pAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557552146D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DVEYA85b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E837E2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbeISBRg (ORCPT
+        id S1730174AbeISBSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 21:17:36 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45247 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbeISBRf (ORCPT
+        Tue, 18 Sep 2018 21:18:48 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51966 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeISBSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 21:17:35 -0400
-Received: by mail-io1-f66.google.com with SMTP id e12-v6so2550007iok.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:43:30 -0700 (PDT)
+        Tue, 18 Sep 2018 21:18:47 -0400
+Received: by mail-it0-f65.google.com with SMTP id e14-v6so5054814itf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Zp/prRIqX6uqNKhny7UXEwgjhvksawDmeFnFpvf7LwQ=;
-        b=OQ642pAlwGBsrCSFDUTUCQE/65Sb26ekCpkWi8yIuBxJ36nY1eioRaq1eP2vWXzd9a
-         P/R6LoCJBc6wEvoY0ol1V0baabPi3pqUz3ntqmpkljclzarwGTk97/CIzixz4Vgs5Jx0
-         86K7V0NRKuksPAr2j/tX8reRQ98/Vw5/qRQp4=
+        bh=/H8qBgtT035gSAsyyDJ8PgFoseo6V4cXU/JwEevFZf4=;
+        b=DVEYA85b9L6+S/OX4Q5rrdB5f3HzhB4QdQkS7De6doBdH/UPva5iGYUbktsftOo9bI
+         QBSo9exava3k81kVYd6scSYJFiFWbxulm2+t1u0tJNPBHUeEXHplblJROu1B1Hkjn0XJ
+         E1CTc6PHvx+YiV8t16tZINL2p9M/rKK18PNCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zp/prRIqX6uqNKhny7UXEwgjhvksawDmeFnFpvf7LwQ=;
-        b=mdlPUjJ9dPaYEGmr/TvBZbDs2wl+jbiQp0yJCQzKQs5IPgFVBK4V7Nd2U0SVfMNK79
-         lLH0xbHJFKJuyHa8BI2E7XDsfFuuiq2xkbrMZNDdZQLOhqU5O9i8dnIoCOwawa7hdjKZ
-         LrAbbwlaYhfK547/B9PgELOTBJbfCPkpO8dgXvMtzSH6jMd7ki+ISPG62+2pSDm5ibXY
-         wfEfYCIaNTEff3/pmbTuxQWFgk2W2JNEYFyGDhNnao9LuwCs8pbyR4omjWa46PuXNSal
-         JdepAC6Rby97W48GHCG3GzCCdX3cF8Qym5I6VFpg16Msfs47S1y6+rttSY6o/e/NqFNw
-         TgbQ==
-X-Gm-Message-State: APzg51By1CCIYebAEUjgy+W2FLcocanlHJe00Q9ltWmqWEIExFLc9CY8
-        F416U0XX9MBHncQjC5SpB7fDDbAbwSFqpVaSZxXKYQ==
-X-Google-Smtp-Source: ANB0Vdar3ZP2ZAIvnblCtYde2JpF5jcD8gt+6YqjMVSj5HfTwcXWbXrKGfT1BS8zh7TXdWrcnxwM/KImj2bfdmijS44=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr26009430iof.304.1537299810400;
- Tue, 18 Sep 2018 12:43:30 -0700 (PDT)
+        bh=/H8qBgtT035gSAsyyDJ8PgFoseo6V4cXU/JwEevFZf4=;
+        b=at+bdqoajzVmZHE3CUat8WULlMNlUbu4Q4uqS3ZRi8XieWy40/vGCpNIBc7q9yIviy
+         QKHXsiCE/4LbJc4xX11KZ2yWtZnvFtBsSDtxMQ8s+UvUMGHeQF0sQ0/4n14iInvrnH9T
+         c2YnJ1fNJEcJk+zAFtq04clSxeSTupJDyh9w6hZCEEtMesjnf2GVN0FGS6RfLkKwUY7r
+         2IFX/InaU2zTnATLJvd+CfdMq420UNF8RrDaRHgKTe3RZQIId2lWkBPHfbjDMcZUb9a8
+         eMWtSQZJXgPITENheAI+6rt8iRDmbFplKYcxPNqpg+7SO51h4w2yygfMFpCQ9Ju7Hph2
+         oXjw==
+X-Gm-Message-State: APzg51BpCHUlu2iJ/IXrX5QsJWHyRhaVKNNdHlX1vUwAgpF3a2PDEtx9
+        L+HA7/U9x8g/587NGtu6Zn8JtNu1skmm/R8qDbzy7w==
+X-Google-Smtp-Source: ANB0VdayDdPOmOvTxTMYFtEV5PlMe6yTKoJmQjw74X2slE5bmEI4JOOFYMbiIiv4RAnBhN26neDTGwryzB54SpqTfD0=
+X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr29061650jab.87.1537299882235;
+ Tue, 18 Sep 2018 12:44:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1536404280.git.sean.wang@mediatek.com> <d43dc09d7ef45940ee14ecf546e939e39315a28f.1536404280.git.sean.wang@mediatek.com>
-In-Reply-To: <d43dc09d7ef45940ee14ecf546e939e39315a28f.1536404280.git.sean.wang@mediatek.com>
+References: <cover.1536404280.git.sean.wang@mediatek.com> <8afc61bff2a4146731e5696f440c0eeaaf0ea341.1536404280.git.sean.wang@mediatek.com>
+In-Reply-To: <8afc61bff2a4146731e5696f440c0eeaaf0ea341.1536404280.git.sean.wang@mediatek.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 18 Sep 2018 12:43:17 -0700
-Message-ID: <CACRpkdabZop+9L5Hq9pCrYmHXug_qpm6QZV99HdnBh_ecXLnVw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/22] pinctrl: mediatek: extend struct
- mtk_pin_field_calc to pinctrl-mtk-common-v2.c
+Date:   Tue, 18 Sep 2018 12:44:29 -0700
+Message-ID: <CACRpkdaLx_gxGMqumbRKVQA5asB0w+WA5nPgETiq6xQ=QzYJig@mail.gmail.com>
+Subject: Re: [PATCH v2 04/22] pinctrl: mediatek: extend struct mtk_pin_desc to pinctrl-mtk-common-v2.c
 To:     Sean Wang <sean.wang@mediatek.com>
 Cc:     "moderated list:ARM/Mediatek SoC support" 
         <linux-mediatek@lists.infradead.org>,
@@ -72,25 +71,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 8, 2018 at 4:08 AM <sean.wang@mediatek.com> wrote:
+On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
 
 > From: Sean Wang <sean.wang@mediatek.com>
 >
-> This patch adds members sz_reg fixed in struct mtk_pin_field_calc
+> This patch introduces a data structure mtk_pin_desc, which is used to
+> provide information per pin characteristic such as driving current,
+> eint number and a driving index, that is used to lookup table describing
+> the details about the groups of driving current by which the pin is able
+> to adjust the driving strength so that the driver could get the
+> appropriate driving group when calls .pin_config_get()/set().
 >
-> - The 'fixed' is used to represent the consecutive pins share the same
-> bits within the same register with the 1st pin so that it can largely
-> reduce the entry size a bit.
->
-> - The 'sz_reg' is used to indicate the range of bits we use in a register
->   that may vary by SoC
->
-> The above changes make the code more generic and this is useful as there
-> might be other existing or future chips all use the same logic to access
-> their register set and then being a little more abstract could help in the
-> long run.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Ryder.Lee <ryder.lee@mediatek.com>
 > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
 Patch applied.
