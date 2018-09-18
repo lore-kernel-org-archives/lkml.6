@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E331ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F41DECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B4420880
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B4420880
+	by mail.kernel.org (Postfix) with ESMTP id 1CC0620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:55:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC0620880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbeISC3n (ORCPT
+        id S1730691AbeISC3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:29:43 -0400
-Received: from shell.v3.sk ([90.176.6.54]:55201 "EHLO shell.v3.sk"
+        Tue, 18 Sep 2018 22:29:51 -0400
+Received: from shell.v3.sk ([90.176.6.54]:55186 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730633AbeISC3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:29:42 -0400
+        id S1730567AbeISC3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 22:29:40 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CFA8FB9486;
-        Tue, 18 Sep 2018 22:55:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id AA543B9482;
+        Tue, 18 Sep 2018 22:55:17 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ycmeRM13sAFi; Tue, 18 Sep 2018 22:55:06 +0200 (CEST)
+        with ESMTP id dZYY7oXIN0ax; Tue, 18 Sep 2018 22:55:08 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 573A1B9485;
-        Tue, 18 Sep 2018 22:55:06 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3270DB9483;
+        Tue, 18 Sep 2018 22:55:08 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Qw1UVS-M0d-9; Tue, 18 Sep 2018 22:55:05 +0200 (CEST)
+        with ESMTP id Z5rW_3el6Bo0; Tue, 18 Sep 2018 22:55:06 +0200 (CEST)
 Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D78F7B9483;
-        Tue, 18 Sep 2018 22:55:04 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id A2A27B9487;
+        Tue, 18 Sep 2018 22:55:05 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Haojian Zhuang <haojian.zhuang@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 1/4] dt-bindings: mrvl,mmp-timer: add clock
-Date:   Tue, 18 Sep 2018 22:54:52 +0200
-Message-Id: <20180918205455.25464-2-lkundrak@v3.sk>
+Subject: [PATCH v2 3/4] ARM: mmp2: initialize clocks before the timer
+Date:   Tue, 18 Sep 2018 22:54:54 +0200
+Message-Id: <20180918205455.25464-4-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918205455.25464-1-lkundrak@v3.sk>
 References: <20180918205455.25464-1-lkundrak@v3.sk>
@@ -60,36 +60,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The timer needs the timer clock to be enabled, otherwise it stops
-ticking.
+The timer shall enable its clock.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v1:
-- Made the clock optional, to keep compatibility with DTs without it
+ arch/arm/mach-mmp/mmp2-dt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt b/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
-index 9a6e251462e7..b8f02c663521 100644
---- a/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/mrvl,mmp-timer.txt
-@@ -5,9 +5,13 @@ Required properties:
- - reg : Address and length of the register set of timer controller.
- - interrupts : Should be the interrupt number.
+diff --git a/arch/arm/mach-mmp/mmp2-dt.c b/arch/arm/mach-mmp/mmp2-dt.c
+index 0341359b24a4..50c5e8b5be3d 100644
+--- a/arch/arm/mach-mmp/mmp2-dt.c
++++ b/arch/arm/mach-mmp/mmp2-dt.c
+@@ -26,8 +26,8 @@ static void __init mmp_init_time(void)
+ #ifdef CONFIG_CACHE_TAUROS2
+ 	tauros2_init(0);
+ #endif
+-	mmp_dt_init_timer();
+ 	of_clk_init(NULL);
++	mmp_dt_init_timer();
+ }
  
-+Optional properties:
-+- clocks : Should contain a single entry describing the clock input.
-+
- Example:
- 	timer0: timer@d4014000 {
- 		compatible = "mrvl,mmp-timer";
- 		reg = <0xd4014000 0x100>;
- 		interrupts = <13>;
-+		clocks = <&coreclk 2>;
- 	};
+ static const char *const mmp2_dt_board_compat[] __initconst = {
 -- 
 2.17.1
 
