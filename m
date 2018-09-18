@@ -2,246 +2,146 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFF0ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD479ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8B4D2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70AF12146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:07:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WHVP1Mv3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B4D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZTSYh8P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AF12146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729404AbeIROh7 (ORCPT
+        id S1729441AbeIROjI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:37:59 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:42083 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728645AbeIROh6 (ORCPT
+        Tue, 18 Sep 2018 10:39:08 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33413 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbeIROjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:37:58 -0400
-Received: by mail-yw1-f68.google.com with SMTP id n207-v6so469033ywn.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 02:06:18 -0700 (PDT)
+        Tue, 18 Sep 2018 10:39:08 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b97-v6so696698plb.0;
+        Tue, 18 Sep 2018 02:07:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=RAHJL0lGoWq6uWnB1ukyuHe+h39naM7YH9rnMFt9+Qc=;
-        b=WHVP1Mv3C+P6QPGYITdxqnu9lCmDIfL3gru/kX3xrzaj9SrnwBMNF25a3rkMU+e9qU
-         ub67R23G6prBJnFU+sKmEsEZfLIEfpmoSbJLNiGcMVSEuN4QhfBKy4hghbeLnavSA6jS
-         xjvLwVFxAUeRPB37bWCmUmrvahzRsvDuzWB2M=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2jEOzF87Ru52EyxyRjGnfagIOT+pdY0ttzfdlRdRZM8=;
+        b=iZTSYh8PSMkvh2o4lRv96P8yganz98hlvBEyCCSWZ+le8FaCxW8IBOX2TiT+cClw1W
+         vLaai41JMGIkaSzSLs68wqavfwWmLD9Jcz0Xen/45qiWtfjq4RqliELqGia51asmfNYI
+         3pCSKLQZ8rx4JEkESMHc4ut7eUt17q5ltqCXucOBcirZQojwBo4amcxrZ8IS92q2EzT+
+         wn0KEKweBEqRZfberQ1SuKRrHGn/YUH/crrhN7lkT6xdmU07ZWNPFovf0PkNjTME17S0
+         HW/z9aovkzxabJ5ssXwKuFWJkyJ95lR6ovqZ3XUbZR+eE04OlDToslu9erXsUnE1bX0c
+         cXcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=RAHJL0lGoWq6uWnB1ukyuHe+h39naM7YH9rnMFt9+Qc=;
-        b=Kw2qT7F6MGvBszEdqbsqELYBW+sCOhcpcd6LDFKKcrBp4Z+kzVG4Mu5mqr00odcqzh
-         NBTvsUM2YFW/usMNosuWBvt4Uzktzx8wDC+4ixlQ0iq1a8nIB3juPT7A8PyO21koH+VT
-         Xv3Ya+3pk4BdA68p24T0kETO5CyqKQ33bADw4hlSCYIK9MvqJZX/Q4AFT5To2qMpP8IE
-         OZu7IIJYUQOUbeOrdUlgpJenCON0Gbh4Tv1CJ9n6SV+Qm8I6PF85Igi5yWidTjaK5Eez
-         iTbnXhHMu2tK5gPrh/KmX3jYXYmyQNhv6sab7p0XmxYXLvNT64j2F7MVZtYwIKicKTMR
-         j+yw==
-X-Gm-Message-State: APzg51B2QMOoG8FIuZRnvOocQVI1twl95aLzFFAkqC4uYfosUSRWaL/7
-        1lsyG4htyXWZ0R0GrM1uxvgyWfuw4cu/ZqI8OJ4nbg==
-X-Google-Smtp-Source: ANB0VdbQw+eG3cAJSb4elsk2HehX2KlQODxMheZlG1hVegZzVnK/yPMNb+Zs3CGXpjfx9uuHVgdLIGuEZd06LkNDN04=
-X-Received: by 2002:a81:3b88:: with SMTP id i130-v6mr11338726ywa.82.1537261577574;
- Tue, 18 Sep 2018 02:06:17 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2jEOzF87Ru52EyxyRjGnfagIOT+pdY0ttzfdlRdRZM8=;
+        b=FpVqP8cpfUev7tEMShEY8EOdg6aKJRJZ8TaefeSE7DvEUQDMsbSgSnNecuc3r09Pqn
+         Q8YbO/yBNtksDh9y4Fdqnx3xCDsMDLdKkhaKOQH8KHfTMHJyHypph9kjaD6VxBgQEOyb
+         T0pBPMtKEl4iOPj+4HQ54cH5Oih5pN9aAOao0rektEIQXkhpd/J6sYJ/flM62qUh6GrK
+         Zsl6SnM89a0MwOuLTNyp3foy07KM2yFq4N/0LQs+1a2BYINT6cN9lkkLmiSQb5xVnNYT
+         vNuD0iynUkpEA6anKTKvBdZkDgBmN0IJv0ZRHmus6LHtdwX2slaiHEuSA1Knn3ipDr1v
+         IzEg==
+X-Gm-Message-State: APzg51A3YuRYVn3GcuOytPokNrql5PkEKysqscGBQVhQgi8oX24jMfq5
+        KPHwHlHkn7KpoK73fOsH/Rs=
+X-Google-Smtp-Source: ANB0VdawJo1IV9c4ALx2EMdygLZJPJt+WJrIVyntOYX1tF7ShcZ46hHf4a7RKfj3sR9BXWZ9b7jOsA==
+X-Received: by 2002:a17:902:710c:: with SMTP id a12-v6mr28907239pll.310.1537261647852;
+        Tue, 18 Sep 2018 02:07:27 -0700 (PDT)
+Received: from localhost ([110.70.59.176])
+        by smtp.gmail.com with ESMTPSA id y64-v6sm18979403pgd.65.2018.09.18.02.07.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 02:07:26 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 18:07:22 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 14/33] vfs: Implement a filesystem superblock
+ creation/configuration context [ver #11]
+Message-ID: <20180918090722.GA463@jagdpanzerIV>
+References: <20180911220743.GA13208@roeck-us.net>
+ <20180911174641.GA15149@roeck-us.net>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <153313714181.13253.304098108512966976.stgit@warthog.procyon.org.uk>
+ <27113.1536702746@warthog.procyon.org.uk>
+ <32382.1536707855@warthog.procyon.org.uk>
+ <20180911235403.GA10107@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 02:06:17
- -0700 (PDT)
-In-Reply-To: <20180810153852.720e2143@gandalf.local.home>
-References: <1533793005-4525-2-git-send-email-firoz.khan@linaro.org>
- <201808092020.H3Qhfo8m%fengguang.wu@intel.com> <20180810153852.720e2143@gandalf.local.home>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 18 Sep 2018 14:36:17 +0530
-Message-ID: <CALxhOngjRE12Agy-JmB6+0HAhUW6VdpOjpMU_bVEjCwEn0Nemg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] sh: Rename NR_syscalls macro to __NR_syscalls
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911235403.GA10107@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 August 2018 at 01:08, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu, 9 Aug 2018 20:58:58 +0800
-> kbuild test robot <lkp@intel.com> wrote:
->
->> Hi Firoz,
->>
->> Thank you for the patch! Yet something to improve:
->>
->> [auto build test ERROR on linus/master]
->> [also build test ERROR on v4.18-rc8 next-20180808]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Firoz-Khan/sh-Rename-NR_syscalls-macro-to-__NR_syscalls/20180809-171759
->> config: sh-allmodconfig (attached as .config)
->> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->> reproduce:
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         GCC_VERSION=7.2.0 make.cross ARCH=sh
->>
->> All errors (new ones prefixed by >>):
->>
->>    In file included from kernel/trace/trace_selftest_dynamic.c:3:0:
->> >> kernel/trace/trace.h:243:53: error: 'NR_syscalls' undeclared here (not in a function); did you mean '__NR_syscalls'?
->>      struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
->>                                                         ^~~~~~~~~~~
->>                                                         __NR_syscalls
->> --
->>    In file included from kernel/trace/trace_output.h:6:0,
->>                     from kernel/trace/trace_syscalls.c:12:
->> >> kernel/trace/trace.h:243:53: error: 'NR_syscalls' undeclared here (not in a function); did you mean '__NR_syscalls'?
->>      struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
->>                                                         ^~~~~~~~~~~
->>                                                         __NR_syscalls
->
-> Most archs have a:
->
-> #define NR_syscalls __NR_syscalls
+Hi,
 
-Thanks for your reply!
-Sorry for the delayed response :(
+On (09/11/18 16:54), Guenter Roeck wrote:
+> On Wed, Sep 12, 2018 at 12:17:35AM +0100, David Howells wrote:
+> > Guenter Roeck <linux@roeck-us.net> wrote:
+> > 
+> > > [    8.507672] RIP: 0010:reconfigure_super+0x47/0x210
+> > 
+> > Can you tell me the file and line this corresponds to?
+> > 
+> I don't know, but some debugging shows that fc->ops == NULL.
 
-Yes. I'll add this change in the next version of the patch series.
+This NULL derefs linux-next.
 
-- Firoz
+Emergency (sysrq remount/reboot):
 
->
->>    In file included from include/linux/smp.h:11:0,
->>                     from include/linux/tracepoint.h:17,
->>                     from include/trace/syscall.h:5,
->>                     from kernel/trace/trace_syscalls.c:2:
->>    kernel/trace/trace_syscalls.c:559:23: warning: 'enabled_perf_exit_syscalls' defined but not used [-Wunused-variable]
->>     static DECLARE_BITMAP(enabled_perf_exit_syscalls, NR_syscalls);
->>                           ^
->>    include/linux/types.h:11:16: note: in definition of macro 'DECLARE_BITMAP'
->>      unsigned long name[BITS_TO_LONGS(bits)]
->>                    ^~~~
->>    kernel/trace/trace_syscalls.c:558:23: warning: 'enabled_perf_enter_syscalls' defined but not used [-Wunused-variable]
->>     static DECLARE_BITMAP(enabled_perf_enter_syscalls, NR_syscalls);
->>                           ^
->>    include/linux/types.h:11:16: note: in definition of macro 'DECLARE_BITMAP'
->>      unsigned long name[BITS_TO_LONGS(bits)]
->>                    ^~~~
->>
->> vim +243 kernel/trace/trace.h
->>
->> 490901078 Steven Rostedt (Red Hat  2015-09-24  196)
->> bc0c38d13 Steven Rostedt           2008-05-12  197  /*
->> bc0c38d13 Steven Rostedt           2008-05-12  198   * The trace array - an array of per-CPU trace arrays. This is the
->> bc0c38d13 Steven Rostedt           2008-05-12  199   * highest level data structure that individual tracers deal with.
->> bc0c38d13 Steven Rostedt           2008-05-12  200   * They have on/off state as well:
->> bc0c38d13 Steven Rostedt           2008-05-12  201   */
->> bc0c38d13 Steven Rostedt           2008-05-12  202  struct trace_array {
->> ae63b31e4 Steven Rostedt           2012-05-03  203    struct list_head        list;
->> 277ba0446 Steven Rostedt           2012-08-03  204    char                    *name;
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  205)   struct trace_buffer     trace_buffer;
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  206) #ifdef CONFIG_TRACER_MAX_TRACE
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  207)   /*
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  208)    * The max_buffer is used to snapshot the trace when a maximum
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  209)    * latency is reached, or when the user initiates a snapshot.
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  210)    * Some tracers will use this to store a maximum trace while
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  211)    * it continues examining live traces.
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  212)    *
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  213)    * The buffers for the max_buffer are set up the same as the trace_buffer
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  214)    * When a snapshot is taken, the buffer of the max_buffer is swapped
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  215)    * with the buffer of the trace_buffer and the buffers are reset for
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  216)    * the trace_buffer so the tracing can continue.
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  217)    */
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  218)   struct trace_buffer     max_buffer;
->> 45ad21ca5 Steven Rostedt (Red Hat  2013-03-05  219)   bool                    allocated_snapshot;
->> f971cc9aa Steven Rostedt (Red Hat  2016-09-07  220) #endif
->> f971cc9aa Steven Rostedt (Red Hat  2016-09-07  221) #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
->> 6d9b3fa5e Steven Rostedt (Red Hat  2014-01-14  222)   unsigned long           max_latency;
->> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  223) #endif
->> 490901078 Steven Rostedt (Red Hat  2015-09-24  224)   struct trace_pid_list   __rcu *filtered_pids;
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  225)   /*
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  226)    * max_lock is used to protect the swapping of buffers
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  227)    * when taking a max snapshot. The buffers themselves are
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  228)    * protected by per_cpu spinlocks. But the action of the swap
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  229)    * needs its own lock.
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  230)    *
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  231)    * This is defined as a arch_spinlock_t in order to help
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  232)    * with performance when lockdep debugging is enabled.
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  233)    *
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  234)    * It is also used in other places outside the update_max_tr
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  235)    * so it needs to be defined outside of the
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  236)    * CONFIG_TRACER_MAX_TRACE.
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  237)    */
->> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  238)   arch_spinlock_t         max_lock;
->> 499e54705 Steven Rostedt           2012-02-22  239    int                     buffer_disabled;
->> 12ab74ee0 Steven Rostedt           2012-08-08  240  #ifdef CONFIG_FTRACE_SYSCALLS
->> 12ab74ee0 Steven Rostedt           2012-08-08  241    int                     sys_refcount_enter;
->> 12ab74ee0 Steven Rostedt           2012-08-08  242    int                     sys_refcount_exit;
->> 7f1d2f821 Steven Rostedt (Red Hat  2015-05-05 @243)   struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
->> 7f1d2f821 Steven Rostedt (Red Hat  2015-05-05  244)   struct trace_event_file __rcu *exit_syscall_files[NR_syscalls];
->> 12ab74ee0 Steven Rostedt           2012-08-08  245  #endif
->> 2b6080f28 Steven Rostedt           2012-05-11  246    int                     stop_count;
->> 2b6080f28 Steven Rostedt           2012-05-11  247    int                     clock_id;
->> 37aea98b8 Steven Rostedt (Red Hat  2015-09-30  248)   int                     nr_topts;
->> 065e63f95 Steven Rostedt (VMware   2017-08-31  249)   bool                    clear_trace;
->> 2b6080f28 Steven Rostedt           2012-05-11  250    struct tracer           *current_trace;
->> 983f938ae Steven Rostedt (Red Hat  2015-09-30  251)   unsigned int            trace_flags;
->> 9a38a8856 Steven Rostedt (Red Hat  2015-09-30  252)   unsigned char           trace_flags_index[TRACE_FLAGS_MAX_SIZE];
->> ae63b31e4 Steven Rostedt           2012-05-03  253    unsigned int            flags;
->> 2b6080f28 Steven Rostedt           2012-05-11  254    raw_spinlock_t          start_lock;
->> ae63b31e4 Steven Rostedt           2012-05-03  255    struct dentry           *dir;
->> 2b6080f28 Steven Rostedt           2012-05-11  256    struct dentry           *options;
->> 2b6080f28 Steven Rostedt           2012-05-11  257    struct dentry           *percpu_dir;
->> ae63b31e4 Steven Rostedt           2012-05-03  258    struct dentry           *event_dir;
->> 37aea98b8 Steven Rostedt (Red Hat  2015-09-30  259)   struct trace_options    *topts;
->> ae63b31e4 Steven Rostedt           2012-05-03  260    struct list_head        systems;
->> ae63b31e4 Steven Rostedt           2012-05-03  261    struct list_head        events;
->> 3dd809536 Steven Rostedt (VMware   2018-05-09  262)   struct trace_event_file *trace_marker_file;
->> ccfe9e42e Alexander Z Lam          2013-08-08  263    cpumask_var_t           tracing_cpumask; /* only trace on set CPUs */
->> a695cb581 Steven Rostedt (Red Hat  2013-03-06  264)   int                     ref;
->> f20a58062 Steven Rostedt (Red Hat  2013-11-07  265) #ifdef CONFIG_FUNCTION_TRACER
->> f20a58062 Steven Rostedt (Red Hat  2013-11-07  266)   struct ftrace_ops       *ops;
->> 345ddcc88 Steven Rostedt (Red Hat  2016-04-22  267)   struct trace_pid_list   __rcu *function_pids;
->> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  268) #ifdef CONFIG_DYNAMIC_FTRACE
->> 673feb9d7 Steven Rostedt (VMware   2017-06-23  269)   /* All of these are protected by the ftrace_lock */
->> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  270)   struct list_head        func_probes;
->> 673feb9d7 Steven Rostedt (VMware   2017-06-23  271)   struct list_head        mod_trace;
->> 673feb9d7 Steven Rostedt (VMware   2017-06-23  272)   struct list_head        mod_notrace;
->> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  273) #endif
->> f20a58062 Steven Rostedt (Red Hat  2013-11-07  274)   /* function tracing enabled */
->> f20a58062 Steven Rostedt (Red Hat  2013-11-07  275)   int                     function_enabled;
->> f20a58062 Steven Rostedt (Red Hat  2013-11-07  276) #endif
->> 00b414529 Tom Zanussi              2018-01-15  277    int                     time_stamp_abs_ref;
->> 067fe038e Tom Zanussi              2018-01-15  278    struct list_head        hist_vars;
->> bc0c38d13 Steven Rostedt           2008-05-12  279  };
->> bc0c38d13 Steven Rostedt           2008-05-12  280
->>
->> :::::: The code at line 243 was first introduced by commit
->> :::::: 7f1d2f8210195c8c309d424a77dbf06a6d2186f4 tracing: Rename ftrace_event_file to trace_event_file
->>
->> :::::: TO: Steven Rostedt (Red Hat) <rostedt@goodmis.org>
->> :::::: CC: Steven Rostedt <rostedt@goodmis.org>
->>
->> ---
->> 0-DAY kernel test infrastructure                Open Source Technology Center
->> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->
+emergency_remount()
+ do_emergency_remount()
+  do_emergency_remount_callback()
+   reconfigure_super()
+
+At fc->ops dereference:
+
+ 981         if (fc->ops->reconfigure) {
+		^^^^^^^^^
+ 982                 retval = fc->ops->reconfigure(fc);
+ 983                 if (retval == 0) {
+ 984                         security_sb_reconfigure(fc);
+
+
+So the check either better be
+
+	if (fc->ops && fc->ops->reconfigure)
+
+Or, we need to set ->ops properly. But I'm not sure if invoking
+->init_fs_context() from emergency-reboot path is going to work
+well all the time.
+
+---
+
+ fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/super.c b/fs/super.c
+index efb0567c8389..e2e03c47c817 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1017,6 +1017,7 @@ int reconfigure_super(struct fs_context *fc)
+ static void do_emergency_remount_callback(struct super_block *sb)
+ {
+ 	struct fs_context fc = {
++		.ops		= &legacy_fs_context_ops,
+ 		.purpose	= FS_CONTEXT_FOR_EMERGENCY_RO,
+ 		.fs_type	= sb->s_type,
+ 		.root		= sb->s_root,
+
+---
+
+	-ss
