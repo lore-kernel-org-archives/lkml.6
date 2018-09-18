@@ -2,163 +2,100 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E4BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8180C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69C221471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69C221471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C58E21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:56:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qk91i5x+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C58E21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbeIRU3B (ORCPT
+        id S1729932AbeIRU3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:29:01 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:39198 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbeIRU3B (ORCPT
+        Tue, 18 Sep 2018 16:29:35 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39229 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbeIRU3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:29:01 -0400
-Received: by mail-io1-f69.google.com with SMTP id x5-v6so2392078ioa.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:56:03 -0700 (PDT)
+        Tue, 18 Sep 2018 16:29:34 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i190-v6so1169672pgc.6;
+        Tue, 18 Sep 2018 07:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=FKweYO7fZdKSAU3XQSy4ZysbS9vlz1ltI7XFyATohRI=;
+        b=qk91i5x+A8T5lWEufl0tAZzj5k5vfbkX5k+cGDBZYys+szGpV5Nw+I2dmPGHH9uw+B
+         3ts6zYRTSVKHZzhrCedFuW6w+V/iHnlX+cs6M9b4EEB6j+m308iDFKJm5E3/rfd7Waed
+         tMZ6EVBuXVrAPq9f35jsEJA7qpgtPPw47RvLsYnPtRM4E1oM5Re4W7BOTDlk/WQCjqSJ
+         sV2ikuS09ka/ekK0wug9UNRcCpvAi7px0sg+a17DCwAINhE1To9KjVyZVezhkciRYZJv
+         O2nYNkekrEQU+EW8KCc582QoXahLwNn73QWJFEqP9MimpS8wK+EGJEy14hFfKB74wLDk
+         bvNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=of4iIq8p5WPq10biYqf43LSKCVhopMp7hvZZ+hxigJI=;
-        b=gQeXzlwNYysrGNwGFk9Ox9pV3YRRClbNszfDYOl3E9E5iWStIDj4HK1LMUfMa+lKYU
-         aNLFmHe3Po6D1sZ46jWfhVKueucjtqJiA9w+WqjFldfXdnfwGFO0N4wUBM0aZtHns3z+
-         huPQhx3zy053Gfh8rlP100OPElLi+p8GArhPTvwMRBknkLR9BYRGKe3T2YJ4d31IrXEn
-         hX5kvTbbs47CQcfL8yDfSyncLlfRqDGKXLCuIde99N2V6FauMia8xvnWOqNA0eMRMckV
-         tzpGYQEFr0eLpUhcJvLKFySvJh9aUriTC9ho0P0O1BHX25Scgopqwgg6M7YK9k1f5w/J
-         xgzw==
-X-Gm-Message-State: APzg51CuhqhMYcPUz7b2oKeGIlb2v+VxKftn+bCpi4qaMtOlpqaKB7Dk
-        Kfz2k/iBmcMZiERPd2uH4KhPMrNNx+Sb86KGGu2E6Vb3cVbc
-X-Google-Smtp-Source: ANB0VdbG8nKXMiKKHBF/1qKdOt+J/J532YwWy/PYZlGU2EsUfMZXAdDR2gy6E2Zd1z/6cs7VyWzIxn/G0wBp17c5QXTQjEIm5NN1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=FKweYO7fZdKSAU3XQSy4ZysbS9vlz1ltI7XFyATohRI=;
+        b=Zs/sH24TP9vGiKDmEoNKH4OtbZrlQu916pXcuUfLHZSD4BoGNyFXaZleMoIx8859lX
+         JftyfH4MNkeqaxaVst+5hawGfa63HlcZm9xQGOXxgsiULk1akV3z/9OW+TsW1GF32XB6
+         RHJI7SPSQdELiBXUKYiDyjuYKpa81DYeIHsib0UYTK3o1lKynO17Zx4EQJDvn6nqZrAX
+         rj4lHOR/CCudm0gTeAUdJRmeOLFqM7jlzmJxmLtOYETiOknbcS/2Mg3Yn4MgmBfoOZ2r
+         Gods1uTuXXwolU+z/llu4tbRzXV9Ps3DhR22NLyeb4Belyeg1wBBmIHYoSpw6NmXNMc0
+         vvQA==
+X-Gm-Message-State: APzg51CTF43VXatj6Mr2ZXctP3C8tJEvXpRmr+sAAcg/EYJ5goNOdPSd
+        W/GwygR2wx5grpFTl3O/qrUGwj1w
+X-Google-Smtp-Source: ANB0Vdbw+cjAL4nldXA2LjpXeFLwLSdlTkJQtE55CrD4VYF3efDVP6f2NgHP/qxd24YPvfyFGbmOVQ==
+X-Received: by 2002:a62:219b:: with SMTP id o27-v6mr31184741pfj.235.1537282596532;
+        Tue, 18 Sep 2018 07:56:36 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.16.36])
+        by smtp.gmail.com with ESMTPSA id u184-v6sm35677292pgd.46.2018.09.18.07.56.34
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Sep 2018 07:56:35 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 20:29:46 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     adobriyan@gmail.com, ganeshgr@chelsio.com,
+        rahul.lakkireddy@chelsio.com, davem@davemloft.net,
+        akpm@linux-foundation.org, arnd@arndb.de, willy@infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs/proc/vmcore.c: Convert to use vmf_error()
+Message-ID: <20180918145945.GA11392@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-X-Received: by 2002:a24:f902:: with SMTP id l2-v6mr14959021ith.4.1537282563098;
- Tue, 18 Sep 2018 07:56:03 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 07:56:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000017d92b0576267d0f@google.com>
-Subject: kernel BUG at include/linux/page-flags.h:LINE!
-From:   syzbot <syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com>
-To:     ak@linux.intel.com, akpm@linux-foundation.org, dhowells@redhat.com,
-        jack@suse.cz, jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mawilcox@microsoft.com,
-        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This code can be replaced with vmf_error() inline function.
 
-syzbot found the following crash on:
-
-HEAD commit:    c0747ad363ff Merge tag 'linux-kselftest-4.19-rc5' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1483a8c9400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=5373a556df9f9fec7e90
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at include/linux/page-flags.h:273!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9734 Comm: kworker/u4:1 Not tainted 4.19.0-rc4+ #18
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: writeback wb_workfn (flush-7:4)
-RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
-RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
-RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
-Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8  
-56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25  
-e2 ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
-RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
-RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
-kobject: 'loop0' (00000000d6ad330d): kobject_uevent_env
-R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
-R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6134b6cc90 CR3: 00000001cc363000 CR4: 00000000001406e0
-kobject: 'loop0' (00000000d6ad330d): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  page_endio+0x67c/0xb60 mm/filemap.c:1260
-  mpage_end_io+0x144/0x1e0 fs/mpage.c:54
-  bio_endio+0x5d2/0xb80 block/bio.c:1774
-  generic_make_request_checks+0x5f6/0x26c0 block/blk-core.c:2347
-  generic_make_request+0x2bd/0x15a0 block/blk-core.c:2401
-  submit_bio+0xba/0x460 block/blk-core.c:2566
-  mpage_bio_submit fs/mpage.c:66 [inline]
-  __mpage_writepage+0x1515/0x1d30 fs/mpage.c:627
-  write_cache_pages+0xd8e/0x1e50 mm/page-writeback.c:2239
-  mpage_writepages+0x14c/0x320 fs/mpage.c:730
-  fat_writepages+0x24/0x30 fs/fat/inode.c:198
-  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2340
-  __writeback_single_inode+0x20a/0x1620 fs/fs-writeback.c:1323
-  writeback_sb_inodes+0x71f/0x11d0 fs/fs-writeback.c:1587
-  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1656
-  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1765
-  wb_check_start_all fs/fs-writeback.c:1889 [inline]
-  wb_do_writeback fs/fs-writeback.c:1915 [inline]
-  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1949
-  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-Modules linked in:
-kobject: 'loop5' (0000000003a73ee3): kobject_uevent_env
-kobject: 'loop5' (0000000003a73ee3): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
----[ end trace b1bf6d33e16c103c ]---
-RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
-RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
-RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
-Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8  
-56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25  
-e2 ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
-RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
-kobject: 'loop2' (0000000001c28b7c): kobject_uevent_env
-RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
-kobject: 'loop2' (0000000001c28b7c): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
-R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-kobject: 'loop3' (0000000091672ed1): kobject_uevent_env
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kobject: 'loop3' (0000000091672ed1): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-CR2: 0000001b3202d000 CR3: 00000001cad9f000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/proc/vmcore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index cbde728..89c6f94 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -401,7 +401,7 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+ 		if (rc < 0) {
+ 			unlock_page(page);
+ 			put_page(page);
+-			return (rc == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
++			return vmf_error(rc);
+ 		}
+ 		SetPageUptodate(page);
+ 	}
+-- 
+1.9.1
+
