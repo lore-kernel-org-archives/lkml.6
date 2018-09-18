@@ -2,220 +2,151 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40728C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D95AECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8759214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8759214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 11930214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZicL4k21"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11930214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbeIRVJb (ORCPT
+        id S1730079AbeIRVKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:09:31 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22174 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729661AbeIRVJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:09:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 08:36:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,390,1531810800"; 
-   d="scan'208";a="258284682"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 18 Sep 2018 08:36:22 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 693321AA; Tue, 18 Sep 2018 18:36:21 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rajat Jain <rajatja@google.com>, casey.g.bowman@intel.com,
-        matthew.s.atwood@intel.com,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: intel: Do pin translation in other GPIO operations as well
-Date:   Tue, 18 Sep 2018 18:36:21 +0300
-Message-Id: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 18 Sep 2018 17:10:23 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44687 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728912AbeIRVKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:10:22 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 36-v6so2413141oth.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=JsrlVcbNVbTpEC2TzUJQc63GNzsnC4B85kVDGV7b4/w=;
+        b=ZicL4k217qmklNsegG3Avst8OpsT+k2BOunljLhi8F4x0O9ve+3STyBKnVkUzJtLV4
+         jbTlah1iIaXGGGOuL4HYEN90t61aCs66XlAyyFpHF66WzAtOxJfhBCqQavM/lLETCiet
+         sm0OnLx1/M8o0rpdOAZYUqWmLkQKL+iVmyF1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=JsrlVcbNVbTpEC2TzUJQc63GNzsnC4B85kVDGV7b4/w=;
+        b=FU8kjILRtimF08R1M6uXk6LnbFKa/6WbYPzo0xthgLW3JWjuujn8uCad9G1xjoIKk7
+         oMAyAPxCYw29NY4/2sAQhj4BwxxXiScEbGX/USyFzXNonx9bYyibGbLEpfxsZI/e8G5x
+         r7BBCmgG3lmtvuScyQ4fYeQ4n25NzHvwv7nDGTrKd4uogSZm5NTAYB6oDaZaQVDAU6+T
+         TFa+bl6RfxxNnStA8Tg/r3uHfv3bS1ees0aJ4K34auGZ9juC0P0X66thJ6sk5RoKT1A2
+         1jMXlwDZKd+oIOEUJ/EDZSvjsMANgF+pYbixan1gkmIPW6fBTLWcdiSd/IQdB7lwI8q3
+         1Kqg==
+X-Gm-Message-State: APzg51CqDjp5F+9hkqAWiXiBVAklBYqNr/iXYwHIQXtB4xypyV9wHBB7
+        7zwxiySHxf9WZlwCFFk7PrRY119NdA/ulvzLcGgGVw==
+X-Google-Smtp-Source: ANB0VdYXZMI5O5Dgv7x4/+athkOLGZgNwJAf+hrFdfJBGiLbjBC8B3fxQYs7lZYDbcg0Y1DVgmbIpmb639oBg/Gt/CY=
+X-Received: by 2002:a9d:32c3:: with SMTP id u61-v6mr15570740otb.173.1537285035759;
+ Tue, 18 Sep 2018 08:37:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:20e3:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 08:36:55
+ -0700 (PDT)
+In-Reply-To: <218b64d5-741d-97ef-8aae-bc0a2ac3e56c@arm.com>
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-19-suzuki.poulose@arm.com> <CAFEAcA8eWYkzwFYHyP49dasK-NDVbbm=6DbEFNNPq9ZAdUM7JQ@mail.gmail.com>
+ <218b64d5-741d-97ef-8aae-bc0a2ac3e56c@arm.com>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Tue, 18 Sep 2018 16:36:55 +0100
+Message-ID: <CAFEAcA8qjJJ0FkQj4yBMKFrwNFiJj3Q4FBi4GbnK2PN3B3J-mg@mail.gmail.com>
+Subject: Re: [PATCH v5 18/18] kvm: arm64: Allow tuning the physical address
+ size for VM
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Dave P Martin <dave.martin@arm.com>, julien.grall@arm.com,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some reason I thought GPIOLIB handles translation from GPIO ranges
-to pinctrl pins but it turns out not to be the case. This means that
-when GPIOs operations are performed for a pin controller having a custom
-GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
-used internally.
+On 18 September 2018 at 16:16, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> Hi Peter,
+>
+> On 18/09/2018 02:55, Peter Maydell wrote:
+>>
+>> On 17 September 2018 at 11:41, Suzuki K Poulose <suzuki.poulose@arm.com>
+>> wrote:
+>>>
+>>> --- a/Documentation/virtual/kvm/api.txt
+>>> +++ b/Documentation/virtual/kvm/api.txt
+>>> @@ -122,6 +122,14 @@ the default trap & emulate implementation (which
+>>> changes the virtual
+>>>   memory layout to fit in user mode), check KVM_CAP_MIPS_VZ and use the
+>>>   flag KVM_VM_MIPS_VZ.
+>>>
+>>> +To configure the physical address space size for a VM (IPA size) on
+>>> arm64,
+>>> +check KVM_CAP_ARM_VM_PHYS_SHIFT (which returns the maximum limit for the
+>>> +IPA shift) and use KVM_VM_TYPE_ARM_PHYS_SHIFT(PHYS_SHIFT). Bits[7-0] of
+>>> the
+>>> +machine type has been reserved for specifying the PHYS_SHIFT.
+>>> +The supported range is [32...IPA_LIMIT], where IPA_LIMIT could be
+>>> +identified by checking KVM_CAP_ARM_VM_PHYS_SHIFT. For backward
+>>> compatibility
+>>> +a value of 0 selects 40bits.
+>>> +
+>>
+>>
+>> Given this as the API documentation, I don't think I could figure out
+>> what I as a userspace user of it need to do without looking at the
+>> kernel code. Could I ask you to expand it so that it is a bit less
+>> terse and a bit more detailed? (For instance, what is a PHYS_SHIFT
+>> and why do I have to specify it rather than just telling the kernel
+>> I want a 48 bit guest address space?)
+>
+>
+> Thanks for the feedback.  I acknowledge that the documentation is not
+> quite clear for a userspace user. How about:
+>
+> "To configure the physical address space size for a VM (IPA size) on arm64,
+> check KVM_CAP_ARM_VM_IPA_SIZE and use KVM_VM_TYPE_ARM_IPA_SIZE(IPA_Bits)
+> as the argument to KVM_CREATE_VM, where IPA_Bits is the maximum width of
+> any physical address used by the VM. The IPA_Bits is encoded in Bits[7-0]
+> of the machine type, and must be one of { 0, 32, ... , Host_IPA_Limit },
+> where :
+> 1) IPA_Bits = 0 implies 40bits IPA (for backward compatibility)
+> 2) Host_IPA_Limit is the maximum limit for IPA_Bits on the host, which is
+>    dependent on the CPU capability and the host kernel configuration.
+>    This can be detected by checking the extension KVM_CAP_ARM_VM_IPA_SIZE
+> "
 
-Fix this in the same way we did for lock/unlock IRQ operations and
-translate the GPIO number to pin before using it.
+I think this is still somewhat confusing. In particular, you're
+describing both the "ask the kernel what it supports" API and
+the "tell the kernel what we want" API in a single sentence
+("...check KVM_CAP_ARM_VM_IPA_SIZE and use KVM_VM_TYPE_ARM_IPA_SIZE...").
+There isn't a length limit on documentation, so why not describe
+them both clearly in separate sentences?
 
-Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-Reported-by: Rajat Jain <rajatja@google.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 111 +++++++++++++++-----------
- 1 file changed, 63 insertions(+), 48 deletions(-)
+Also, can I use any IPA value between 32 and Host_IPA_Limit, or
+are only certain values in that range supported (if so, which)?
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 62b009b27eda..ec8dafc94694 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -747,13 +747,63 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
- 	.owner = THIS_MODULE,
- };
- 
-+/**
-+ * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-+ * @pctrl: Pinctrl structure
-+ * @offset: GPIO offset from gpiolib
-+ * @commmunity: Community is filled here if not %NULL
-+ * @padgrp: Pad group is filled here if not %NULL
-+ *
-+ * When coming through gpiolib irqchip, the GPIO offset is not
-+ * automatically translated to pinctrl pin number. This function can be
-+ * used to find out the corresponding pinctrl pin.
-+ */
-+static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
-+			     const struct intel_community **community,
-+			     const struct intel_padgroup **padgrp)
-+{
-+	int i;
-+
-+	for (i = 0; i < pctrl->ncommunities; i++) {
-+		const struct intel_community *comm = &pctrl->communities[i];
-+		int j;
-+
-+		for (j = 0; j < comm->ngpps; j++) {
-+			const struct intel_padgroup *pgrp = &comm->gpps[j];
-+
-+			if (pgrp->gpio_base < 0)
-+				continue;
-+
-+			if (offset >= pgrp->gpio_base &&
-+			    offset < pgrp->gpio_base + pgrp->size) {
-+				int pin;
-+
-+				pin = pgrp->base + offset - pgrp->gpio_base;
-+				if (community)
-+					*community = comm;
-+				if (padgrp)
-+					*padgrp = pgrp;
-+
-+				return pin;
-+			}
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
- {
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
-+
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return -EINVAL;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return -EINVAL;
- 
-@@ -770,8 +820,13 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	unsigned long flags;
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
-+
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return;
- 
-@@ -790,8 +845,13 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
- 	void __iomem *reg;
- 	u32 padcfg0;
-+	int pin;
- 
--	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
-+	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
-+	if (pin < 0)
-+		return -EINVAL;
-+
-+	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
- 	if (!reg)
- 		return -EINVAL;
- 
-@@ -827,51 +887,6 @@ static const struct gpio_chip intel_gpio_chip = {
- 	.set_config = gpiochip_generic_config,
- };
- 
--/**
-- * intel_gpio_to_pin() - Translate from GPIO offset to pin number
-- * @pctrl: Pinctrl structure
-- * @offset: GPIO offset from gpiolib
-- * @commmunity: Community is filled here if not %NULL
-- * @padgrp: Pad group is filled here if not %NULL
-- *
-- * When coming through gpiolib irqchip, the GPIO offset is not
-- * automatically translated to pinctrl pin number. This function can be
-- * used to find out the corresponding pinctrl pin.
-- */
--static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
--			     const struct intel_community **community,
--			     const struct intel_padgroup **padgrp)
--{
--	int i;
--
--	for (i = 0; i < pctrl->ncommunities; i++) {
--		const struct intel_community *comm = &pctrl->communities[i];
--		int j;
--
--		for (j = 0; j < comm->ngpps; j++) {
--			const struct intel_padgroup *pgrp = &comm->gpps[j];
--
--			if (pgrp->gpio_base < 0)
--				continue;
--
--			if (offset >= pgrp->gpio_base &&
--			    offset < pgrp->gpio_base + pgrp->size) {
--				int pin;
--
--				pin = pgrp->base + offset - pgrp->gpio_base;
--				if (community)
--					*community = comm;
--				if (padgrp)
--					*padgrp = pgrp;
--
--				return pin;
--			}
--		}
--	}
--
--	return -EINVAL;
--}
--
- static int intel_gpio_irq_reqres(struct irq_data *d)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--- 
-2.18.0
+> note: I have renamed the KVM_CAP_ARM_VM_PHYS_SHIFT =>
+> KVM_CAP_ARM_VM_IPA_SIZE
+> above and can update the code, if the latter is better.
 
+I think the new name is definitely clearer, thanks.
+
+-- PMM
