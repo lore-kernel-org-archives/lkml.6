@@ -7,61 +7,58 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB78DECE563
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6025FECE563
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF4C214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D787214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="O9QMwZON"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF4C214AB
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Alr1psU/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D787214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeIRIt4 (ORCPT
+        id S1729531AbeIRIuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 04:49:56 -0400
-Received: from mail-eopbgr1300125.outbound.protection.outlook.com ([40.107.130.125]:61168
+        Tue, 18 Sep 2018 04:50:03 -0400
+Received: from mail-hk2apc01on0106.outbound.protection.outlook.com ([104.47.124.106]:53890
         "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729423AbeIRItz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 04:49:55 -0400
+        id S1728944AbeIRIuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 04:50:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zpIPv/V/Z1U0u7suhhmsouyDUzvd8/Tksq9AFaxt5oU=;
- b=O9QMwZONkjbWgfcAMiF0nImtACn10TutKk6qkaAqOS/wo8j7kls07QPNajFKrJIasaOl3QXBUfqAC7SOzFkJSgUVlM4xDQkr0iZlKJC95niPXmSlyrxq9BSGiLO/0CtdtjXfmKL8Xr3poFWwevEdDGwKtPBZR7bbhaG8Ju6eqcQ=
+ bh=vkM1XDOasZe08xhGjYX+1tcGXbLIMOabyyqCPCQ98DY=;
+ b=Alr1psU/56krQQ/mxuG52UYd6U7QdCmiov+7RmK34m8Kao4/e+9gJgCELEM922mTxFg7m6ufku6WKTV9aSjoJ7Y/fbJ1c0MKdu60K8wFFs8s7PLvB2IArxeOh3C4PwY5miZsRNmmTbhdbZKK8jYLCIC9LTepep/K68KIZ1FEMYg=
 Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM (52.133.156.18) by
- HK0P153MB0130.APCP153.PROD.OUTLOOK.COM (52.133.156.19) with Microsoft SMTP
+ HK0P153MB0115.APCP153.PROD.OUTLOOK.COM (52.133.156.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.5; Tue, 18 Sep 2018 03:19:21 +0000
+ 15.20.1185.6; Tue, 18 Sep 2018 03:19:27 +0000
 Received: from HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
  ([fe80::8584:ad93:130a:6267]) by HK0P153MB0129.APCP153.PROD.OUTLOOK.COM
  ([fe80::8584:ad93:130a:6267%3]) with mapi id 15.20.1185.006; Tue, 18 Sep 2018
- 03:19:21 +0000
+ 03:19:27 +0000
 From:   Tianyu Lan <Tianyu.Lan@microsoft.com>
 CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
         vkuznets <vkuznets@redhat.com>,
         Jork Loeser <Jork.Loeser@microsoft.com>
-Subject: [PATCH V2 11/13] x86/Hyper-v: Add trace in the
- hyperv_nested_flush_guest_mapping_range()
-Thread-Topic: [PATCH V2 11/13] x86/Hyper-v: Add trace in the
- hyperv_nested_flush_guest_mapping_range()
-Thread-Index: AQHUTv5k8hBuJTz2+U+LsPtdlD58xA==
-Date:   Tue, 18 Sep 2018 03:19:21 +0000
-Message-ID: <20180918031754.113013-12-Tianyu.Lan@microsoft.com>
+Subject: [PATCH V2 12/13] KVM/VMX: Change hv flush logic when ept tables are
+ mismatched.
+Thread-Topic: [PATCH V2 12/13] KVM/VMX: Change hv flush logic when ept tables
+ are mismatched.
+Thread-Index: AQHUTv5nZuQOhoZncE6SlYYnklW2+w==
+Date:   Tue, 18 Sep 2018 03:19:27 +0000
+Message-ID: <20180918031754.113013-13-Tianyu.Lan@microsoft.com>
 References: <20180918031754.113013-1-Tianyu.Lan@microsoft.com>
 In-Reply-To: <20180918031754.113013-1-Tianyu.Lan@microsoft.com>
 Accept-Language: en-US
@@ -72,86 +69,82 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Tianyu.Lan@microsoft.com; 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK0P153MB0130;6:me6fND9SX0PQWlu+Kb4frP1GLN2+Gzz77BFsGH0hoHSODBrh8Xh5cTfG/bicPf44n7rTxrJijA0n59Qe6XXxguLanqUGvCY/QTd8seqyfi+w/yZcG0jPflEtJFWaAB9ULfcnG1sinDkisQHyYMHyRjbJsvq9gHk9qBxWx5y/pTItqPDUuXEQ4vtfrek9VXJxlUWYyG4du5kD7xFEfl2oMdmRRC3Lyr2dS3fW9rQA0ZQ2fhYJhajyFHqUmHjSbScSBTAIrHh+3DQFQ/nc6cYLxmpqiYVDpSf2osUZSj5eg1HDEtzZcQTmyefSwTHXUehbtOd8OwznePnwxS5m3LLfmyfVPNXX0kw8BA2k1b0Ue2nt7tsPsrENrr6pvgUpJDzXEnR3SoF1NK8SwKIH62myqRD5YnVcrOq6wz/z3POV3zlUQLuk5IC/miYPV3L8ix+fPz3MXojzP3M+b7/YQk7PXQ==;5:BFTk9oykttLP7hU/34LlkTIGifkn3ULIKTsyv7MNzXldorgEnWqIPWP/2Ul4/OsPovfRahQew6hf/SNzlXxSZIKgeTEHy5IACsGJzQ3b4COm4PBNeaA2g0sftJnImAai/YGR1jEJqnv7RKi3aez9Gys1/gaVNPBxGkr7DAKB8Os=;7:sQ7XV+fVXLw4387SCkfIpLc/ssP9RdWywH1g7k9OMRU5yi0btaiVlmJCsLE2Mv26fOMtrXAbbtghu2wBuDuunf418wStwOxi1aZh7LgdiLzfthXoJR7P9ABG+gUWX9Lbytawh3vwxWvwNSlmQwqId1hRzXHkR6p1pj1juZu8yThmiJ/8vkkc5PSjgHIGqlMwjtXQcvEs2DK5wl7Fdo8+Cs+BX87wdT1T08PdAzkLQQi+mP4Mbbe49lTihCc3nDbI
-x-ms-office365-filtering-correlation-id: a20b54de-01aa-4f83-6e2f-08d61d158736
+x-microsoft-exchange-diagnostics: 1;HK0P153MB0115;6:l1fLj0YGB/F5BUTqVz7QxitxqO8jsnzLbHYrKGd7uMKnT9gIK5CG/cgLHnUpB49rlgg8ZaBjY/V6OZFm4bTOHjid9aes8wEOnCup61nHaHqmbFccXAMsvBKHbEeicENx74iDqGzV+QnrYJJ7iwCtRNhxNjITy1M1pAj1iBw4ENouWic0LA3Sy3JlMFwqj1bws7woAAWtY85uuI4jkKMzkUK0LHStkBZSsHTnjj73ltKh5PQfAjaCwjhonEv1TMCjx7rRq29uwVz71l3rndOi2NJuan6V5EGi1KPy3Iz/sGcuq77W+u6jpKRuLQ1kPh6seOM/TdZtDQVrPOcYquUdysoIP/Otb0c8R55F4zbzsLtQnsAcOLCE98JLvaszq5ZXPuTIuQFmBdRBg5CpvRcTLf1yEX1JW7rZT2ubLTldVduDT3s4PK+TqHgu40NWp7HczP6WaFKpgjPXkDF9nBNZ6Q==;5:FbWW8CEu7iM4o1k2dDMMSOLfFCMTCtb6oxkTxvDBChBbW9KRR3yMMqALVkRc/MNgBOEETQXGsyvz0FbeArcAiHTae7wB48Y6pHDzP7aN++eWCgCWfAqDVNYKnY6hvc7WKynlkmXzhxy0x33jAWLzmTfYsqVcSB9nlh5ZaGpaU5c=;7:FlUUcfcYjew815MpjPGB+J9QFUVJvvqSJUF2tj3ilwNnkjQ21UhjMWIBDdn/L4bhkF/CWWcNRlIFoC6pV82XMuTsPgWUXBGJlEzLxd9fT2XrYiNOmfVnr2SFpMKfg8HnSHzXOuSko7XomRGBnhMY6969L7fmFFgnxWu2X2d/LgA4cVWx/7Myaj1EjxFc7DwBhQ1ncASqd9IGGzXFgYc6BIVcvoNbFb7C4Di29fRre5QFsJLcCq7FxrZEyvOKvs0q
+x-ms-office365-filtering-correlation-id: 26724774-7440-4894-643e-08d61d158a8b
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0130;
-x-ms-traffictypediagnostic: HK0P153MB0130:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HK0P153MB0115;
+x-ms-traffictypediagnostic: HK0P153MB0115:
 x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <HK0P153MB0130CF620E8E3B0CB5B0B097921D0@HK0P153MB0130.APCP153.PROD.OUTLOOK.COM>
+x-microsoft-antispam-prvs: <HK0P153MB01154AF9BF198ACB11EBCDA0921D0@HK0P153MB0115.APCP153.PROD.OUTLOOK.COM>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:HK0P153MB0130;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0130;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:HK0P153MB0115;BCL:0;PCL:0;RULEID:;SRVR:HK0P153MB0115;
 x-forefront-prvs: 0799B1B2D7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(366004)(396003)(136003)(199004)(189003)(6486002)(36756003)(59246006)(68736007)(25786009)(2900100001)(5660300001)(22452003)(11346002)(53936002)(316002)(446003)(305945005)(5250100002)(107886003)(109986005)(86362001)(7736002)(476003)(2616005)(7416002)(86612001)(486006)(14454004)(256004)(6512007)(72206003)(8936002)(4326008)(6506007)(478600001)(97736004)(26005)(3846002)(102836004)(8676002)(6116002)(10090500001)(81156014)(6436002)(81166006)(106356001)(76176011)(2906002)(105586002)(1076002)(1671002)(54906003)(66066001)(99286004)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0130;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39860400002)(346002)(136003)(199004)(189003)(97736004)(59246006)(316002)(6436002)(22452003)(6486002)(5660300001)(2900100001)(10090500001)(2906002)(6512007)(7736002)(305945005)(5250100002)(54906003)(25786009)(99286004)(4326008)(72206003)(10290500003)(478600001)(8936002)(105586002)(106356001)(109986005)(107886003)(81156014)(81166006)(76176011)(14454004)(6506007)(66066001)(68736007)(36756003)(86612001)(1671002)(26005)(256004)(486006)(14444005)(1076002)(53936002)(8676002)(446003)(11346002)(2616005)(476003)(102836004)(86362001)(3846002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:HK0P153MB0115;H:HK0P153MB0129.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: u3Qz5WWKulTdDuB0hKzNESsFhlg09RpHHgj9NH5G7vPIDshvM/DSgi2p57i+fFLK46LvamnHbEVwyZEePwUdf8aIVQOdvPLy0ugLmZ5/PjoR+vgaM6vemahUUSYdROi+FfhS5yrh+FS3TwnRf0H2RvMP4x0TT08nHiCcnRF1N/ryc2U0QI/il7BVO5jUHs9HTljmLCfABriIjfNUzqTEkubfttW5lQPyCKcmgQZHbXKiK4cxedyVyaMPEbURyJaxCQQMV02RAxdCXkGTD6wPsve8PcPDOKN+/6Q+0dxIAgggNUWkjEe13BRAgS5fBGoBkjYs4w7ZWJg/yC1LFA1uryNi0hINuDhTBnfX6gG03/4=
+x-microsoft-antispam-message-info: j6K/FpT3vvxK645q/Kh4V16ABUPGKZvZhFAFFRnRQoGH1EKzgyu0lduuXSN5naAMQE/Ij7dINyDXl2eArC20z2FKCHeZWIK3ShcE8qn7/WplxDW1LbDmZWhPyMxIWCX8k5x4RTUPdcDaJVHd4Bl6F7Q7+H4Yo2Njpw0HkU9q7n1wk80alzY6Ei+PKmTY2CITgCdn0nSD7B0c+0iCCxZ/qrqB9TppHxsC0BgDPYE2dvmy3esYX3jvw7m047u/mX24CYRpB5/DbImb40aB2Fcjw8/NybNqqt2AOfUoN7XaVwfNDgrbWs/rBxfTIQnST5SK1qXhERug6NORYFPowyLgy/MtUKaB/RFvWQNSAC+3lHQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a20b54de-01aa-4f83-6e2f-08d61d158736
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 03:19:21.5330
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26724774-7440-4894-643e-08d61d158a8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 03:19:27.1140
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0130
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0P153MB0115
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to trace log in the hyperv_nested_flush_
-guest_mapping_range().
+If ept table pointers are mismatched, flushing tlb for each vcpus via
+hv flush interface still helps to reduce vmexits which are triggered
+by IPI and INEPT emulation.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
- arch/x86/hyperv/nested.c            |  1 +
- arch/x86/include/asm/trace/hyperv.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ arch/x86/kvm/vmx.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
-index 40ddbfd54573..ae7181c6ede4 100644
---- a/arch/x86/hyperv/nested.c
-+++ b/arch/x86/hyperv/nested.c
-@@ -154,6 +154,7 @@ int hyperv_flush_guest_mapping_range(u64 as, struct hyp=
-erv_tlb_range *range)
- 	else
- 		ret =3D status;
- fault:
-+	trace_hyperv_nested_flush_guest_mapping_range(as, ret);
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 533a327372c8..2869c3e78168 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1557,7 +1557,8 @@ static void check_ept_pointer_match(struct kvm *kvm)
+=20
+ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ {
+-	int ret;
++	struct kvm_vcpu *vcpu;
++	int ret =3D -ENOTSUPP, i;
+=20
+ 	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+=20
+@@ -1565,14 +1566,14 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+ 		check_ept_pointer_match(kvm);
+=20
+ 	if (to_kvm_vmx(kvm)->ept_pointers_match !=3D EPT_POINTERS_MATCH) {
+-		ret =3D -ENOTSUPP;
+-		goto out;
++		kvm_for_each_vcpu(i, vcpu, kvm)
++			ret |=3D hyperv_flush_guest_mapping(
++				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer);
++	} else {
++		ret =3D hyperv_flush_guest_mapping(
++				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+ 	}
+=20
+-	ret =3D hyperv_flush_guest_mapping(
+-			to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer);
+-
+-out:
+ 	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
  	return ret;
  }
- EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping_range);
-diff --git a/arch/x86/include/asm/trace/hyperv.h b/arch/x86/include/asm/tra=
-ce/hyperv.h
-index 2e6245a023ef..ace464f09681 100644
---- a/arch/x86/include/asm/trace/hyperv.h
-+++ b/arch/x86/include/asm/trace/hyperv.h
-@@ -42,6 +42,20 @@ TRACE_EVENT(hyperv_nested_flush_guest_mapping,
- 	    TP_printk("address space %llx ret %d", __entry->as, __entry->ret)
- 	);
-=20
-+TRACE_EVENT(hyperv_nested_flush_guest_mapping_range,
-+	    TP_PROTO(u64 as, int ret),
-+	    TP_ARGS(as, ret),
-+
-+	    TP_STRUCT__entry(
-+		    __field(u64, as)
-+		    __field(int, ret)
-+		    ),
-+	    TP_fast_assign(__entry->as =3D as;
-+			   __entry->ret =3D ret;
-+		    ),
-+	    TP_printk("address space %llx ret %d", __entry->as, __entry->ret)
-+	);
-+
- TRACE_EVENT(hyperv_send_ipi_mask,
- 	    TP_PROTO(const struct cpumask *cpus,
- 		     int vector),
 --=20
 2.14.4
