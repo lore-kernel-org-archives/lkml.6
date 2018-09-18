@@ -2,135 +2,146 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC150ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862ACECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 827DD206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 827DD206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F951206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KERJEpCV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F951206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbeIRMHN (ORCPT
+        id S1728880AbeIRMIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:07:13 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40811 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727202AbeIRMHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:07:13 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5BEF39CBBC8A4;
-        Tue, 18 Sep 2018 14:36:03 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 14:35:54 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <dougmill@linux.vnet.ibm.com>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <tlfalcon@linux.vnet.ibm.com>,
-        <jallen@linux.vnet.ibm.com>, <ivan@de.ibm.com>,
-        <chunkeey@gmail.com>, <keescook@chromium.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: ibm: fix return type of ndo_start_xmit function
-Date:   Tue, 18 Sep 2018 14:35:47 +0800
-Message-ID: <20180918063547.25644-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 18 Sep 2018 08:08:10 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44331 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbeIRMIK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 08:08:10 -0400
+Received: by mail-yb1-f196.google.com with SMTP id s8-v6so349995ybo.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 23:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QTVTvub5qrtIsSt9FdOr+BP7p/59TzS5tBZwi4OIrgc=;
+        b=KERJEpCVAolATTAI5rVq3JQsSqzreYOkfHEZMNmBNSvipT4zUp2dfsREJKmMQzKCVg
+         tik6sU6TzN3ysz4D/THbL9DGis0FomF08EAC0rZyR0pS7GIy2JErPsToJwx2QlgwWBdA
+         bHDcrVB9wb6J2Kmy6ZDFYl4flGnMQXG7pELi0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QTVTvub5qrtIsSt9FdOr+BP7p/59TzS5tBZwi4OIrgc=;
+        b=i/pc7Y4AgcgqrFg97NU2B4tytWxMw4TDZnbnrDwUbIQTf8iegT8XfQhuZ8BJrUfDBK
+         cOAc5+13Zwx2iUyt8jThbq+YIAdasOzShx+gjFMcVlMDev5uDNTM3VqnILo7Vp8o564s
+         LDKTpHnQdLk5UFiQ/fjg5ONJ8ViEACwYR7ha4NnqyISqnQ5/RZiFGwO13jknNuvF1dqg
+         o4B1Xx+v8Wwnm364qIFM/RkFgFgf2KQHO97lFGqW/3zw7il4vCRIVDzbcy/tx5vfR/4n
+         qOjsNAZhbyqcYccKTEtaLJ1yDQEa4+Qbq/kJpB0CpPDbzWGo5z3Y7RJSHxUncW6Q+iTK
+         qQFw==
+X-Gm-Message-State: APzg51A2OX78ZyhbMCDVpG/zJZxHeEvM1Y3zyrw8lJlHStIo3aTynyNJ
+        aqCoU8L756GL61F7AMaxPHiQ7FAOwZdz2Zz1Z2eLvg==
+X-Google-Smtp-Source: ANB0VdZB/QJvm1fJKtZz59FWfsfcxfdRZm9R5q712AaEdpwxxqmKRSiL1o6D6B62Wn/YRSU0BTHX0eiPCXKuOBwWsfs=
+X-Received: by 2002:a25:e548:: with SMTP id c69-v6mr11731496ybh.393.1537252621844;
+ Mon, 17 Sep 2018 23:37:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 23:37:01
+ -0700 (PDT)
+In-Reply-To: <f1e95c4d-4f02-263d-7f35-cc87bc657fbb@xilinx.com>
+References: <1533792466-4227-1-git-send-email-firoz.khan@linaro.org>
+ <1533792466-4227-2-git-send-email-firoz.khan@linaro.org> <f1e95c4d-4f02-263d-7f35-cc87bc657fbb@xilinx.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 18 Sep 2018 12:07:01 +0530
+Message-ID: <CALxhOnho6av7nZja_MN4akQuVj1hVq753ZYgRM8fbKkL2rHzQw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] microblaze: Replace NR_syscalls macro from asm/unistd.h
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
-
-Found by coccinelle.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/ibm/ehea/ehea_main.c | 2 +-
- drivers/net/ethernet/ibm/emac/core.c      | 7 ++++---
- drivers/net/ethernet/ibm/ibmvnic.c        | 4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/ibm/ehea/ehea_main.c b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-index ba580bf..88128d3 100644
---- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
-+++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-@@ -2038,7 +2038,7 @@ static void ehea_xmit3(struct sk_buff *skb, struct net_device *dev,
- 	dev_consume_skb_any(skb);
- }
- 
--static int ehea_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t ehea_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct ehea_port *port = netdev_priv(dev);
- 	struct ehea_swqe *swqe;
-diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
-index 7410a1d..5107c94 100644
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -1409,7 +1409,7 @@ static inline u16 emac_tx_csum(struct emac_instance *dev,
- 	return 0;
- }
- 
--static inline int emac_xmit_finish(struct emac_instance *dev, int len)
-+static inline netdev_tx_t emac_xmit_finish(struct emac_instance *dev, int len)
- {
- 	struct emac_regs __iomem *p = dev->emacp;
- 	struct net_device *ndev = dev->ndev;
-@@ -1436,7 +1436,7 @@ static inline int emac_xmit_finish(struct emac_instance *dev, int len)
- }
- 
- /* Tx lock BH */
--static int emac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t emac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct emac_instance *dev = netdev_priv(ndev);
- 	unsigned int len = skb->len;
-@@ -1494,7 +1494,8 @@ static inline int emac_xmit_split(struct emac_instance *dev, int slot,
- }
- 
- /* Tx lock BH disabled (SG version for TAH equipped EMACs) */
--static int emac_start_xmit_sg(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t
-+emac_start_xmit_sg(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct emac_instance *dev = netdev_priv(ndev);
- 	int nr_frags = skb_shinfo(skb)->nr_frags;
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index 4f0daf6..a8369ad 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1428,7 +1428,7 @@ static int ibmvnic_xmit_workarounds(struct sk_buff *skb,
- 	return 0;
- }
- 
--static int ibmvnic_xmit(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t ibmvnic_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct ibmvnic_adapter *adapter = netdev_priv(netdev);
- 	int queue_num = skb_get_queue_mapping(skb);
-@@ -1452,7 +1452,7 @@ static int ibmvnic_xmit(struct sk_buff *skb, struct net_device *netdev)
- 	u64 *handle_array;
- 	int index = 0;
- 	u8 proto = 0;
--	int ret = 0;
-+	netdev_tx_t ret = NETDEV_TX_OK;
- 
- 	if (adapter->resetting) {
- 		if (!netif_subqueue_stopped(netdev, skb))
--- 
-1.8.3.1
+On 9 August 2018 at 12:18, Michal Simek <michal.simek@xilinx.com> wrote:
+> On 9.8.2018 07:27, Firoz Khan wrote:
+>> __NR_syscalls macro holds the number of system call exist in this
+>> architecture. This macro is currently the part of asm/unistd.h file.
+>> We have change the value of __NR_syscalls, if we add or delete a
+>> system call.
+>>
+>> One of the patch in this patch series has a script which will
+>> generate a uapi header based on syscall.tbl file. The syscall.tbl
+>> file contains the number of system call information. So we have
+>> two option to update __NR_syscalls value.
+>>
+>> 1. Update __NR_syscalls in asm/unistd.h manually by counting the
+>>    no.of system calls. No need to update __NR_syscalls untill
+>>    we either add a new system call or delete an existing system
+>>    call.
+>>
+>> 2. We can keep this feature it above mentioned script, that'll
+>>    count the number of syscalls and keep it in a generated file.
+>>    In this case we don't need to explicitly update __NR_syscalls
+>>    in asm/unistd.h file.
+>>
+>> The 2nd option will be the recommended one. For that, I moved the
+>> NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
+>> name also changed form NR_syscalls to __NR_syscalls for making the
+>> name convention same across all architecture. While __NR_syscalls
+>> isn't strictly part of the uapi, having it as part of the generated
+>> header to simplifies the implementation.
+>
+> This macro was in unistd.h in past but it was moved out because it was
+> causing problem with strace.
+>
+> commit 40c2702a02b755e0183b702778331b351f3be20c
+> Author:     Michal Simek <michal.simek@xilinx.com>
+> AuthorDate: Mon Jul 8 09:50:24 2013 +0200
+> Commit:     Michal Simek <michal.simek@xilinx.com>
+> CommitDate: Wed Jul 10 07:32:09 2013 +0200
+>
+>     microblaze: Move __NR_syscalls from uapi
+>
+>
+> That's why I don't think this is the right thing to do.
+> I have grepped strace and glibc and none is using this macro that's why
+> I think it shouldn't be exported via uapi.
 
 
+Thanks for you reply :)
+Sorry for the delayed response :(
+
+I would like to keep __NR_syscalls macro to uapi header in order to simplify
+the system call table generation script. Otherwise the __NR_syscalls
+macro need to update manually. That become a problem.
+
+Please check the below implementation in uapi file make sense?
+It is an easy workaround to leave __NR_syscalls macro in uapi/asm/unistd.h
+and enclose it in #ifdef __KERNEL__
+
+...
+...
+#define __NR_pkey_free  397
+#define __NR_statx      398
+
+#ifdef __KERNEL__
+#define __NR_syscalls   399
+#endif
+...
+...
+
+- Firoz
