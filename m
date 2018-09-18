@@ -2,101 +2,79 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7A1ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3479ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4162F2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4162F2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 78EAE2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78EAE2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbeIRTNQ (ORCPT
+        id S1729732AbeIRTOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:13:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42956 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728413AbeIRTNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:13:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6563520734; Tue, 18 Sep 2018 15:40:35 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1120E206DE;
-        Tue, 18 Sep 2018 15:40:25 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 15:40:25 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: atmel: Fix potential NULL pointer
- dereference
-Message-ID: <20180918154025.55137b03@bbrezillon>
-In-Reply-To: <20180918133317.GA17358@embeddedor.com>
-References: <20180918133317.GA17358@embeddedor.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 18 Sep 2018 15:14:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39202 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbeIRTOd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:14:33 -0400
+Received: from localhost (unknown [147.67.4.98])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A4C48E2;
+        Tue, 18 Sep 2018 13:41:53 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 15:41:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Nathan March <nathan@gt.net>,
+        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rong, Chen" <rong.a.chen@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Jiri Slaby <jslaby@suse.cz>, Jiri Slaby <jslaby@suse.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCHv5 1/7] tty: Drop tty->count on tty_reopen() failure
+Message-ID: <20180918134150.GC23431@kroah.com>
+References: <20180917235258.5719-1-dima@arista.com>
+ <20180917235258.5719-2-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917235258.5719-2-dima@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-
-On Tue, 18 Sep 2018 08:33:17 -0500
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-
-> There is a potential execution path in which function
-> of_find_compatible_node() returns NULL. In such a case,
-> we end up having a NULL pointer dereference when accessing
-> pointer *nfc_np* in function of_clk_get().
+On Tue, Sep 18, 2018 at 12:52:52AM +0100, Dmitry Safonov wrote:
+> In case of tty_ldisc_reinit() failure, tty->count should be decremented
+> back, otherwise we will never release_tty().
+> Tetsuo reported that it fixes noisy warnings on tty release like:
+>   pts pts4033: tty_release: tty->count(10529) != (#fd's(7) + #kopen's(0))
 > 
-> So, we better don't take any chances and fix this by null
-> checking pointer *nfc_np* before calling of_clk_get().
+> Fixes: commit 892d1fa7eaae ("tty: Destroy ldisc instance on hangup")
 > 
-> Addresses-Coverity-ID: 1473052 ("Dereference null return value")
 
-Can you add a Fixes tag here?
+Minor nit, no need to have "commit" in this line, it's implied.
 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/mtd/nand/raw/atmel/nand-controller.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> index a38633a..ffa0c6b6 100644
-> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-> @@ -2035,6 +2035,11 @@ atmel_hsmc_nand_controller_legacy_init(struct atmel_hsmc_nand_controller *nc)
->  	nfc_np = of_find_compatible_node(dev->of_node, NULL,
->  					 "atmel,sama5d3-nfc");
->  
+Also, no need to put an extra line here either.
 
-Can you drop this blank line?
+I'll queue this patch up now, have some question about the rest...
 
-> +	if (!nfc_np) {
-> +		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	nc->clk = of_clk_get(nfc_np, 0);
->  	if (IS_ERR(nc->clk)) {
->  		ret = PTR_ERR(nc->clk);
+thanks,
 
-Thanks,
-
-Boris
+greg k-h
