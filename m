@@ -2,103 +2,73 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B56ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E3FECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A462083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KUlKwsfh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A462083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CE4572083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4572083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728859AbeIRMp3 (ORCPT
+        id S1728952AbeIRMqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:45:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48136 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbeIRMp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:45:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dmzhEnzn6h3pnRO3qMTM9dFGf6vgxoIx8BWFtp8vKMc=; b=KUlKwsfhcA9NPZv9o7zzJGjzm
-        2uu2O2GAmQodIsMPZT4oJGCFgx28lid3nh8qiu0JLQQTXT0bht/SANd+tXFmdygnHwBlogthpDzSw
-        NCTokEOjdjRC0rsxgCdhX8aHCP9O6LIHFqC68DjVEXnm7qHOcpOqlGlPJSJzRnh9K6TttIKQ8wlbX
-        j/bzXekDWKRYw+M20R0DTzBMHTCA4Lm+1v6H3YoM/cXJN57KBjObnXUxD6dG20cE/vCIhiUEuXCoj
-        HSnG532QmE10GdDZfICkc9D8DlIgPUgFrSRy+0GAzs56xC62ydreN6/Y7GG1nt87Uva6ULn9twspc
-        RkOzTBQ2w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2AD5-0000AG-La; Tue, 18 Sep 2018 07:14:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 21E70202C1A36; Tue, 18 Sep 2018 09:14:10 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 09:14:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Bin Yang <bin.yang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-Subject: Re: [patch V3 08/11] x86/mm/cpa: Add sanity check for existing
- mappings
-Message-ID: <20180918071410.GH24106@hirez.programming.kicks-ass.net>
-References: <20180917142906.384767038@linutronix.de>
- <20180917143546.331408643@linutronix.de>
+        Tue, 18 Sep 2018 08:46:10 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727140AbeIRMqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 08:46:09 -0400
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 4E43432DA515;
+        Tue, 18 Sep 2018 08:14:50 +0100 (IST)
+Received: from [10.204.65.145] (10.204.65.145) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
+ 2018 08:14:47 +0100
+Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+ <20180905114202.7757-4-roberto.sassu@huawei.com>
+ <20180916123749.GF5040@linux.intel.com>
+ <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+ <20180917211622.GC6716@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+Date:   Tue, 18 Sep 2018 09:14:43 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917143546.331408643@linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180917211622.GC6716@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.145]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 04:29:14PM +0200, Thomas Gleixner wrote:
-> +static void split_set_pte(struct cpa_data *cpa, pte_t *pte, unsigned long pfn,
-> +			  pgprot_t ref_prot, unsigned long address,
-> +			  unsigned long size)
-> +{
-> +	unsigned int npg = PFN_DOWN(size);
-> +	pgprot_t prot;
-> +
-> +	/*
-> +	 * If try_preserve_large_page() discovered an inconsistent mapping,
+On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
+> On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
+>> This code has the same behavior of tpm2_get_pcr_allocation(). If some
+>> banks are not used, set the algorithm of the first unused to
+>> TPM_ALG_ERROR.
+> 
+> My point is that maybe it would sense to use zero for that in order
+> to make code a bit simpler.
 
-You just renamed that thing.. :-)
+Wouldn't be better to compare data with the same type? Since the alg_id
+structure member stores an algorithm, it should be fine to compare its
+value with an algorithm.
 
-> +	 * remove the invalid protection in the split mapping.
-> +	 */
-> +	if (!cpa->force_static_prot)
-> +		goto set;
-> +
-> +	prot = static_protections(ref_prot, address, pfn, npg, CPA_PROTECT);
-> +
-> +	if (pgprot_val(prot) == pgprot_val(ref_prot))
-> +		goto set;
-> +
-> +	/*
-> +	 * If this is splitting a PMD, fix it up. PUD splits cannot be
-> +	 * fixed trivially as that would require to rescan the newly
-> +	 * installed PMD mappings after returning from split_large_page()
-> +	 * so an eventual further split can allocate the necessary PTE
-> +	 * pages. Warn for now and revisit it in case this actually
-> +	 * happens.
-> +	 */
-> +	if (size == PAGE_SIZE)
-> +		ref_prot = prot;
-> +	else
-> +		pr_warn_once("CPA: Cannot fixup static protections for PUD split\n");
-> +set:
-> +	set_pte(pte, pfn_pte(pfn, ref_prot));
-> +}
+No problem to change that, but probably I should modify also
+tpm_pcr_extend().
+
+Roberto
