@@ -4,60 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F174ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 473D1C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BEB206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0D532146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BZNwD8Nl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BEB206B5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eBpqO+Nm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D532146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730206AbeISB1v (ORCPT
+        id S1729975AbeISBbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 21:27:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40020 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728657AbeISB1v (ORCPT
+        Tue, 18 Sep 2018 21:31:07 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52869 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729538AbeISBbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 21:27:51 -0400
-Received: by mail-io1-f68.google.com with SMTP id l14-v6so2590955iob.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:53:43 -0700 (PDT)
+        Tue, 18 Sep 2018 21:31:06 -0400
+Received: by mail-it0-f68.google.com with SMTP id h3-v6so5083756ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:56:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VjYnkbmR1Z9NYRQCtEbaSJVib+5z4bPly2Q7QOe/Hgg=;
-        b=BZNwD8NlNpxwXZGiR5347+NQwWZL607iJ0I+JLD/66e/do0A7jop3hl4+OvteU62BK
-         mFOEe9sNPVOjTNdQs4P8yJ2q9RPx8z7rfj7WwhwhsrN0IITOEaF7p7v5i1fE1misUnQJ
-         mo90h0Sjq6s8v2bwIPGGr0M6Cp0SI2U1Wzn3Q=
+        bh=MmDLZJU+og8oY+kReLl5bOixoOX55wnLybK/AmCVRMA=;
+        b=eBpqO+NmdPCOgvcs3qs1491nfWepbfHVNGWGNVlOguQkbVpux09S/6UggDsVTuPZWf
+         ohiopDs1CUx0UkSmct8EMU8ixPZMyo6J5jcu8Jo2WDJLzax9y7SWSMN6KZ3d60qTAtdc
+         ZJi8hfbDgao+xOJXQsVp1Jiz4UJze7Qj4Azao=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VjYnkbmR1Z9NYRQCtEbaSJVib+5z4bPly2Q7QOe/Hgg=;
-        b=Q+F8aVvDIApBAPXwGJdJ48werYN1MFyaHFmoaPB7TtAP8HmIoU2PVkq2SvjsnQZVUh
-         oNzNCOKima7lAZ+kRypXT5tt8JgSowiWuTE6xphjXjf5b3062H37krDkuF8sco+xOSLs
-         OKjNDR8qmA0kXQBwZNAUanLaoAKUBqpnKx0h+9uWHEkTHl5ewsh18vAHB+8Jp1sjpoOs
-         8rOm75Dv3fewBWNCrYYQ9AlRU87kCiH6gXWvTHDuWJc2TW9hRgMnoYiCEa1LYY9iUf1V
-         jLH1YSfnS8YqDd10+P1WzpXfq2KyP8Sq18nPY8VvJHJTxIqjTaalc3iN9udCcEngIM3F
-         OfwQ==
-X-Gm-Message-State: APzg51AJbd3xk9sqLfXRecnNZdMoX9J6mT7UXjyjApZCBzsnwWxiT07K
-        /jaE7Ebx6I6BCci/X0toYtEbgo4aauEBdhWQ2oGpcw==
-X-Google-Smtp-Source: ANB0VdYwGal6rjz2AA2y2fKEx967ARiiMOkU/bi8NJ6VbfQr7wWrFd6V8apFvVkDIq6lD30AMBb3MxQV1cELcL0yIV4=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr26036977iof.304.1537300423661;
- Tue, 18 Sep 2018 12:53:43 -0700 (PDT)
+        bh=MmDLZJU+og8oY+kReLl5bOixoOX55wnLybK/AmCVRMA=;
+        b=Xv10WsWzvjjKnNPKyhcLsE6Q/LUQHiVaSGL1X+c1tcH4fsmVD5+mvDv/FbzuFHsU+U
+         4npW95TkgE9eUhQd/hd+U48nTvvKthjZZTJn2KmbuF9DgQObBNywdHDFWrxGC7IYEPIP
+         TxqIwu7101/BNNjiKILmVHyzF9j2hp7oTruaFPpaFN0J1VeRsjho97sAsXB81rxymg/w
+         7m6rgSiqEArBq6nxpj2kvSNN7j6UCcoayf3KYKsT1hylJZW38DcmtxulG/BTiAQ7Brfp
+         xLrXym/48OYmvw0iCdi0s5owH4JVxe40SZDD+ToJeSJ5sinynOyn9bl6+jJXE3hPAE8N
+         FzuQ==
+X-Gm-Message-State: APzg51A8Uc2XpRfZwoyubU7GavoFpxHsfXafp9VtWsdneBNVIryGsZus
+        7EgOoCZZRS9e7ODg56bnBB1OFhwpyRlYg7TbjQAhbg==
+X-Google-Smtp-Source: ANB0VdYpenMvi0EgJ4LJs3RKW4QZUiaFcF4cbNIwA47UPuJM3gd44v/7VG425iGw7bSb2O7CR8qmyh4uP9y4f376ohw=
+X-Received: by 2002:a24:7605:: with SMTP id z5-v6mr6782129itb.62.1537300618362;
+ Tue, 18 Sep 2018 12:56:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1536404280.git.sean.wang@mediatek.com> <f7d9fa1721c8d75509682a20c014ceb461495f1c.1536404280.git.sean.wang@mediatek.com>
-In-Reply-To: <f7d9fa1721c8d75509682a20c014ceb461495f1c.1536404280.git.sean.wang@mediatek.com>
+References: <cover.1536404280.git.sean.wang@mediatek.com> <8c4a741e7ed695d85844a1a550b956d767661b44.1536404280.git.sean.wang@mediatek.com>
+In-Reply-To: <8c4a741e7ed695d85844a1a550b956d767661b44.1536404280.git.sean.wang@mediatek.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 18 Sep 2018 12:53:30 -0700
-Message-ID: <CACRpkdaRy9xmqX9F=fijFoa19UkUG9xd0=uZhawmz-e2jhhTfg@mail.gmail.com>
-Subject: Re: [PATCH v2 13/22] pinctrl: mediatek: use pin descriptor all in pinctrl-mtk-common-v2.c
+Date:   Tue, 18 Sep 2018 12:56:45 -0700
+Message-ID: <CACRpkdZbXDv2um0jbGWu8OY38sdJg_1ApqDQcj1GXJ5P_E-tuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/22] pinctrl: mediatek: add multiple register bases
+ support to pinctrl-mtk-common-v2.c
 To:     Sean Wang <sean.wang@mediatek.com>
 Cc:     "moderated list:ARM/Mediatek SoC support" 
         <linux-mediatek@lists.infradead.org>,
@@ -74,8 +75,9 @@ On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
 
 > From: Sean Wang <sean.wang@mediatek.com>
 >
-> all use pin descriptor instead in pinctrl-mtk-common-v2.c for the
-> consistency and extensibility.
+> Certain SoC own multiple register base for accessing each pin groups,
+> it's easy to be done with extend struct mtk_pin_field_calc to support
+> the kind of SoC such as MT8183.
 >
 > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
