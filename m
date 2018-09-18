@@ -6,126 +6,216 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE21ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40728C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E35214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E35214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id E8759214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8759214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730072AbeIRVJL (ORCPT
+        id S1730077AbeIRVJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:09:11 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:44718 "EHLO mail5.wrs.com"
+        Tue, 18 Sep 2018 17:09:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22174 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729661AbeIRVJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:09:11 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8IFXLdt009250
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 18 Sep 2018 08:33:32 -0700
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 18 Sep 2018 08:33:11 -0700
-From:   <zhe.he@windriver.com>
-To:     <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
-        <pasha.tatashin@oracle.com>, <mgorman@techsingularity.net>,
-        <aaron.lu@intel.com>, <osalvador@suse.de>,
-        <iamjoonsoo.kim@lge.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <zhe.he@windriver.com>
-Subject: [PATCH] mm/page_alloc: Fix panic caused by passing debug_guardpage_minorder or kernelcore to command line
-Date:   Tue, 18 Sep 2018 23:33:08 +0800
-Message-ID: <1537284788-428784-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1729661AbeIRVJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:09:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 08:36:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,390,1531810800"; 
+   d="scan'208";a="258284682"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga005.jf.intel.com with ESMTP; 18 Sep 2018 08:36:22 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 693321AA; Tue, 18 Sep 2018 18:36:21 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rajat Jain <rajatja@google.com>, casey.g.bowman@intel.com,
+        matthew.s.atwood@intel.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: intel: Do pin translation in other GPIO operations as well
+Date:   Tue, 18 Sep 2018 18:36:21 +0300
+Message-Id: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+For some reason I thought GPIOLIB handles translation from GPIO ranges
+to pinctrl pins but it turns out not to be the case. This means that
+when GPIOs operations are performed for a pin controller having a custom
+GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
+used internally.
 
-debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
-input argument before using it. The argument would be a NULL pointer if
-"debug_guardpage_minorder" or "kernelcore", without its value, is set in
-command line and thus causes the following panic.
+Fix this in the same way we did for lock/unlock IRQ operations and
+translate the GPIO number to pin before using it.
 
-PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-[    0.000000] RIP: 0010:parse_option_str+0x11/0x90
-...
-[    0.000000] Call Trace:
-[    0.000000]  cmdline_parse_kernelcore+0x19/0x41
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4ee
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
-
-This patch adds a check to prevent the panic and adds KBUILD_MODNAME to
-prints.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: stable@vger.kernel.org
-Cc: akpm@linux-foundation.org
-Cc: mhocko@suse.com
-Cc: vbabka@suse.cz
-Cc: pasha.tatashin@oracle.com
-Cc: mgorman@techsingularity.net
-Cc: aaron.lu@intel.com
-Cc: osalvador@suse.de
-Cc: iamjoonsoo.kim@lge.com
+Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+Reported-by: Rajat Jain <rajatja@google.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- mm/page_alloc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/pinctrl/intel/pinctrl-intel.c | 111 +++++++++++++++-----------
+ 1 file changed, 63 insertions(+), 48 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 89d2a2a..d4cda06 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -14,6 +14,8 @@
-  *          (lots of bits borrowed from Ingo Molnar & Andrew Morton)
-  */
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 62b009b27eda..ec8dafc94694 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -747,13 +747,63 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
+ 	.owner = THIS_MODULE,
+ };
  
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++/**
++ * intel_gpio_to_pin() - Translate from GPIO offset to pin number
++ * @pctrl: Pinctrl structure
++ * @offset: GPIO offset from gpiolib
++ * @commmunity: Community is filled here if not %NULL
++ * @padgrp: Pad group is filled here if not %NULL
++ *
++ * When coming through gpiolib irqchip, the GPIO offset is not
++ * automatically translated to pinctrl pin number. This function can be
++ * used to find out the corresponding pinctrl pin.
++ */
++static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
++			     const struct intel_community **community,
++			     const struct intel_padgroup **padgrp)
++{
++	int i;
 +
- #include <linux/stddef.h>
- #include <linux/mm.h>
- #include <linux/swap.h>
-@@ -630,6 +632,11 @@ static int __init debug_guardpage_minorder_setup(char *buf)
- {
- 	unsigned long res;
- 
-+	if (!buf) {
-+		pr_err("Config string not provided\n");
-+		return -EINVAL;
++	for (i = 0; i < pctrl->ncommunities; i++) {
++		const struct intel_community *comm = &pctrl->communities[i];
++		int j;
++
++		for (j = 0; j < comm->ngpps; j++) {
++			const struct intel_padgroup *pgrp = &comm->gpps[j];
++
++			if (pgrp->gpio_base < 0)
++				continue;
++
++			if (offset >= pgrp->gpio_base &&
++			    offset < pgrp->gpio_base + pgrp->size) {
++				int pin;
++
++				pin = pgrp->base + offset - pgrp->gpio_base;
++				if (community)
++					*community = comm;
++				if (padgrp)
++					*padgrp = pgrp;
++
++				return pin;
++			}
++		}
 +	}
 +
- 	if (kstrtoul(buf, 10, &res) < 0 ||  res > MAX_ORDER / 2) {
- 		pr_err("Bad debug_guardpage_minorder value\n");
- 		return 0;
-@@ -6952,6 +6959,11 @@ static int __init cmdline_parse_core(char *p, unsigned long *core,
-  */
- static int __init cmdline_parse_kernelcore(char *p)
- {
-+	if (!p) {
-+		pr_err("Config string not provided\n");
-+		return -EINVAL;
-+	}
++	return -EINVAL;
++}
 +
- 	/* parse kernelcore=mirror */
- 	if (parse_option_str(p, "mirror")) {
- 		mirrored_kernelcore = true;
+ static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+ 	void __iomem *reg;
+ 	u32 padcfg0;
++	int pin;
++
++	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
++	if (pin < 0)
++		return -EINVAL;
+ 
+-	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
++	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+ 	if (!reg)
+ 		return -EINVAL;
+ 
+@@ -770,8 +820,13 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	unsigned long flags;
+ 	void __iomem *reg;
+ 	u32 padcfg0;
++	int pin;
++
++	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
++	if (pin < 0)
++		return;
+ 
+-	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
++	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+ 	if (!reg)
+ 		return;
+ 
+@@ -790,8 +845,13 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+ 	void __iomem *reg;
+ 	u32 padcfg0;
++	int pin;
+ 
+-	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
++	pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
++	if (pin < 0)
++		return -EINVAL;
++
++	reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+ 	if (!reg)
+ 		return -EINVAL;
+ 
+@@ -827,51 +887,6 @@ static const struct gpio_chip intel_gpio_chip = {
+ 	.set_config = gpiochip_generic_config,
+ };
+ 
+-/**
+- * intel_gpio_to_pin() - Translate from GPIO offset to pin number
+- * @pctrl: Pinctrl structure
+- * @offset: GPIO offset from gpiolib
+- * @commmunity: Community is filled here if not %NULL
+- * @padgrp: Pad group is filled here if not %NULL
+- *
+- * When coming through gpiolib irqchip, the GPIO offset is not
+- * automatically translated to pinctrl pin number. This function can be
+- * used to find out the corresponding pinctrl pin.
+- */
+-static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
+-			     const struct intel_community **community,
+-			     const struct intel_padgroup **padgrp)
+-{
+-	int i;
+-
+-	for (i = 0; i < pctrl->ncommunities; i++) {
+-		const struct intel_community *comm = &pctrl->communities[i];
+-		int j;
+-
+-		for (j = 0; j < comm->ngpps; j++) {
+-			const struct intel_padgroup *pgrp = &comm->gpps[j];
+-
+-			if (pgrp->gpio_base < 0)
+-				continue;
+-
+-			if (offset >= pgrp->gpio_base &&
+-			    offset < pgrp->gpio_base + pgrp->size) {
+-				int pin;
+-
+-				pin = pgrp->base + offset - pgrp->gpio_base;
+-				if (community)
+-					*community = comm;
+-				if (padgrp)
+-					*padgrp = pgrp;
+-
+-				return pin;
+-			}
+-		}
+-	}
+-
+-	return -EINVAL;
+-}
+-
+ static int intel_gpio_irq_reqres(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
 -- 
-2.7.4
+2.18.0
 
