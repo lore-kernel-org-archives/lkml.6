@@ -2,93 +2,175 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8725ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78059C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7E0214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:45:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7E0214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 320AF2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:45:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320AF2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbeIRTRu (ORCPT
+        id S1729860AbeIRTRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:17:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41772 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727207AbeIRTRu (ORCPT
+        Tue, 18 Sep 2018 15:17:51 -0400
+Received: from gateway36.websitewelcome.com ([192.185.187.5]:17736 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728065AbeIRTRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:17:50 -0400
-Received: from localhost (unknown [147.67.4.98])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D244FD2A;
-        Tue, 18 Sep 2018 13:43:49 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 15:43:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCHv5 2/7] tty/ldsem: Wake up readers after timed out
- down_write()
-Message-ID: <20180918134347.GD23431@kroah.com>
-References: <20180917235258.5719-1-dima@arista.com>
- <20180917235258.5719-3-dima@arista.com>
+        Tue, 18 Sep 2018 15:17:51 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 1E2DD400C8765
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:50:30 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2GJ5gR5UoBcCX2GJIgpsWn; Tue, 18 Sep 2018 08:45:09 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.49.176] (port=39150 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1g2GJ3-001CHR-OI; Tue, 18 Sep 2018 08:44:45 -0500
+Subject: Re: [PATCH] mtd: rawnand: atmel: Fix potential NULL pointer
+ dereference
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180918133317.GA17358@embeddedor.com>
+ <20180918154025.55137b03@bbrezillon>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <8c4ca9db-70bb-b4cc-32c8-55e28b514ddd@embeddedor.com>
+Date:   Tue, 18 Sep 2018 08:44:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917235258.5719-3-dima@arista.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180918154025.55137b03@bbrezillon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.176
+X-Source-L: No
+X-Exim-ID: 1g2GJ3-001CHR-OI
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.49.176]:39150
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 26
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:52:53AM +0100, Dmitry Safonov wrote:
-> ldsem_down_read() will sleep if there is pending writer in the queue.
-> If the writer times out, readers in the queue should be woken up,
-> otherwise they may miss a chance to acquire the semaphore until the last
-> active reader will do ldsem_up_read().
-> 
-> There was a couple of reports where there was one active reader and
-> other readers soft locked up:
->   Showing all locks held in the system:
->   2 locks held by khungtaskd/17:
->    #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
->    #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
->   2 locks held by askfirst/123:
->    #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
->    #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
-> 
-> Prevent readers wait for active readers to release ldisc semaphore.
-> 
-> Link: lkml.kernel.org/r/<20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com>
-> Link: lkml.kernel.org/r/<20180907045041.GF1110@shao2-debian>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
+Hi Boris,
 
-Why isn't this ok for the stable trees?
+On 9/18/18 8:40 AM, Boris Brezillon wrote:
+> Hi Gustavo,
+> 
+> On Tue, 18 Sep 2018 08:33:17 -0500
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> 
+>> There is a potential execution path in which function
+>> of_find_compatible_node() returns NULL. In such a case,
+>> we end up having a NULL pointer dereference when accessing
+>> pointer *nfc_np* in function of_clk_get().
+>>
+>> So, we better don't take any chances and fix this by null
+>> checking pointer *nfc_np* before calling of_clk_get().
+>>
+>> Addresses-Coverity-ID: 1473052 ("Dereference null return value")
+> 
+> Can you add a Fixes tag here?
+> 
 
-thanks,
+Yep.
 
-greg k-h
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/mtd/nand/raw/atmel/nand-controller.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+>> index a38633a..ffa0c6b6 100644
+>> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+>> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+>> @@ -2035,6 +2035,11 @@ atmel_hsmc_nand_controller_legacy_init(struct atmel_hsmc_nand_controller *nc)
+>>  	nfc_np = of_find_compatible_node(dev->of_node, NULL,
+>>  					 "atmel,sama5d3-nfc");
+>>  
+> 
+> Can you drop this blank line?
+> 
+
+OK. Sure thing.
+
+I'll send v2 shortly.
+
+Thanks for the feedback.
+--
+Gustavo
