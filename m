@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B96ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB516ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643CD21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643CD21471
+	by mail.kernel.org (Postfix) with ESMTP id 8099420C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:57:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8099420C0E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbeIRQ3r (ORCPT
+        id S1729979AbeIRQ3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 12:29:47 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:11771 "EHLO
+        Tue, 18 Sep 2018 12:29:51 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55698 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728657AbeIRQ3q (ORCPT
+        by vger.kernel.org with ESMTP id S1729945AbeIRQ3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 12:29:46 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8IArgqb016081;
-        Tue, 18 Sep 2018 12:56:25 +0200
+        Tue, 18 Sep 2018 12:29:49 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8IAsLKw004527;
+        Tue, 18 Sep 2018 12:56:37 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mgq75s954-1
+        by mx08-00178001.pphosted.com with ESMTP id 2mgryf0w8a-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 18 Sep 2018 12:56:25 +0200
+        Tue, 18 Sep 2018 12:56:37 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1BE5934;
-        Tue, 18 Sep 2018 10:56:25 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EDA9D2A9F;
-        Tue, 18 Sep 2018 10:56:24 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:24 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A9AA831;
+        Tue, 18 Sep 2018 10:56:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6D7F82AA2;
+        Tue, 18 Sep 2018 10:56:36 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
+ 2018 12:56:36 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:24 +0200
+ 2018 12:56:35 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -54,9 +54,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 15/27] mmc: mmci: add set_clk/pwrreg callbacks
-Date:   Tue, 18 Sep 2018 12:55:32 +0200
-Message-ID: <1537268144-21152-16-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V2 23/27] mmc: mmci: add variant property to request a reset
+Date:   Tue, 18 Sep 2018 12:55:40 +0200
+Message-ID: <1537268144-21152-24-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
 References: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
@@ -72,81 +72,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch adds set_clkreg and set_pwrreg callbacks
-at mmci_host_ops to allow to call specific variant.
-extends visibility of mmci_write_clk/pwrreg functions
-to be used into specific file variant.
+Some variants could require a reset.
+STM32 sdmmc variant needs to reset hardware block
+during the power cycle procedure (for re-initialization)
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c | 16 ++++++++++++----
- drivers/mmc/host/mmci.h |  5 +++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/mmc/mmci.txt | 2 ++
+ drivers/mmc/host/mmci.c                        | 9 +++++++++
+ drivers/mmc/host/mmci.h                        | 4 ++++
+ 3 files changed, 15 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/mmc/mmci.txt b/Documentation/devicetree/bindings/mmc/mmci.txt
+index 03796cf..e952707 100644
+--- a/Documentation/devicetree/bindings/mmc/mmci.txt
++++ b/Documentation/devicetree/bindings/mmc/mmci.txt
+@@ -11,6 +11,8 @@ Required properties:
+ - compatible             : contains "arm,pl18x", "arm,primecell".
+ - vmmc-supply            : phandle to the regulator device tree node, mentioned
+                            as the VCC/VDD supply in the eMMC/SD specs.
++depend of variant:
++- resets                 : phandle to internal reset line.
+ 
+ Optional properties:
+ - arm,primecell-periphid : contains the PrimeCell Peripheral ID, it overrides
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 1593942..9d93fe7 100644
+index b1d5bc5..6b3c33f 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -252,7 +252,7 @@ static void mmci_reg_delay(struct mmci_host *host)
- /*
-  * This must be called with host->lock held
-  */
--static void mmci_write_clkreg(struct mmci_host *host, u32 clk)
-+void mmci_write_clkreg(struct mmci_host *host, u32 clk)
- {
- 	if (host->clk_reg != clk) {
- 		host->clk_reg = clk;
-@@ -263,7 +263,7 @@ static void mmci_write_clkreg(struct mmci_host *host, u32 clk)
- /*
-  * This must be called with host->lock held
-  */
--static void mmci_write_pwrreg(struct mmci_host *host, u32 pwr)
-+void mmci_write_pwrreg(struct mmci_host *host, u32 pwr)
- {
- 	if (host->pwr_reg != pwr) {
- 		host->pwr_reg = pwr;
-@@ -1543,8 +1543,16 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+@@ -37,6 +37,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/types.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/reset.h>
  
- 	spin_lock_irqsave(&host->lock, flags);
+ #include <asm/div64.h>
+ #include <asm/io.h>
+@@ -1854,6 +1855,14 @@ static int mmci_probe(struct amba_device *dev,
  
--	mmci_set_clkreg(host, ios->clock);
--	mmci_write_pwrreg(host, pwr);
-+	if (host->ops && host->ops->set_clkreg)
-+		host->ops->set_clkreg(host, ios->clock);
-+	else
-+		mmci_set_clkreg(host, ios->clock);
+ 	dev_dbg(mmc_dev(mmc), "clocking block at %u Hz\n", mmc->f_max);
+ 
++	if (variant->reset) {
++		host->rst = devm_reset_control_get_exclusive(&dev->dev, NULL);
++		if (IS_ERR(host->rst)) {
++			ret = PTR_ERR(host->rst);
++			goto clk_disable;
++		}
++	}
 +
-+	if (host->ops && host->ops->set_pwrreg)
-+		host->ops->set_pwrreg(host, pwr);
-+	else
-+		mmci_write_pwrreg(host, pwr);
-+
- 	mmci_reg_delay(host);
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
+ 	/* Get regulators and the supported OCR mask */
+ 	ret = mmc_regulator_get_supply(mmc);
+ 	if (ret)
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index d14010e..2d0e00d 100644
+index 7fd89b7..2d46a08 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -284,6 +284,8 @@ struct mmci_host_ops {
- 	int (*dma_start)(struct mmci_host *host, unsigned int *datactrl);
- 	void (*dma_finalize)(struct mmci_host *host, struct mmc_data *data);
- 	void (*dma_error)(struct mmci_host *host);
-+	void (*set_clkreg)(struct mmci_host *host, unsigned int desired);
-+	void (*set_pwrreg)(struct mmci_host *host, unsigned int pwr);
- };
+@@ -247,6 +247,7 @@ struct mmci_host;
+  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
+  *	       register.
+  * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
++ * @reset: true if variant has need reset signal.
+  */
+ struct variant_data {
+ 	unsigned int		clkreg;
+@@ -285,6 +286,7 @@ struct variant_data {
+ 	bool			qcom_dml;
+ 	bool			reversed_irq_handling;
+ 	bool			mmcimask1;
++	bool			reset;
+ 	unsigned int		irq_pio_mask;
+ 	u32			start_err;
+ 	u32			opendrain;
+@@ -318,6 +320,8 @@ struct mmci_host {
+ 	struct clk		*clk;
+ 	bool			singleirq;
  
- struct mmci_host {
-@@ -332,6 +334,9 @@ struct mmci_host {
- 	s32			next_cookie;
- };
- 
-+void mmci_write_clkreg(struct mmci_host *host, u32 clk);
-+void mmci_write_pwrreg(struct mmci_host *host, u32 pwr);
++	struct reset_control	*rst;
 +
- void qcom_variant_init(struct mmci_host *host);
- void mmci_variant_init(struct mmci_host *host);
+ 	spinlock_t		lock;
  
+ 	unsigned int		mclk;
 -- 
 2.7.4
 
