@@ -2,132 +2,222 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6BFECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F03ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46AAC20867
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46AAC20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 072CD204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:50:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hv6U7hn0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072CD204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbeIRMOJ (ORCPT
+        id S1727846AbeIRMVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:14:09 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34673 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeIRMOI (ORCPT
+        Tue, 18 Sep 2018 08:21:40 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46225 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeIRMVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:14:08 -0400
-Received: by mail-ua1-f66.google.com with SMTP id r15-v6so398063uao.1;
-        Mon, 17 Sep 2018 23:42:59 -0700 (PDT)
+        Tue, 18 Sep 2018 08:21:40 -0400
+Received: by mail-yb1-f196.google.com with SMTP id y20-v6so355727ybi.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 23:50:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8Ms/YbFKnS4bxMhBs4PIsFP8hZqQhBYkgx9GUHIEixA=;
+        b=hv6U7hn0kWoWblvgFRg/gONjU385qwpG7W3jVklAXCV87I4KtLzodC4+z/tZvu8zAO
+         1oFtBsURKYGRbmAITmXsi+6KQDxp0AVV1+KrA8DleRYOljBf1muJRGSW337epkj0RGv9
+         Ihm0eEDrqitRRQWUq5ZeWb68TM9CREO4k1X2c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=iNoAjmhp2G0kbgnysrFXj9ugy+nKM9XMk6ayeODfdtk=;
-        b=dIRrA4z62RaP6DT1OpTeUcczPc1LvREylCToEvvln7LWIpJFltAhnj0JYarFvWb8XO
-         4vU/xqCf6KKFAOQgrlDFxxkxF/uwysm5FdERL+1N29CwfB5ViLANBreUyqSk2fTO3bfO
-         I5f6rE+WgkjlPnb12IbF8jbSwTdIf2azFEakVvCnlKuS0cKQRxHuCYKdySasq551LCLF
-         njNcnYll4XrrQQqWlsWrWX7V8MYMb/lT4CGDNAjbNpI5i+q0bXGfMhHVUWDoTmauCZFM
-         ai6EPHsAIhpBtHgI6vbqAAZpiVNUnCpGTvXoaApbkpk4UL+RJIQ0GeO69viKp4ivp3TW
-         c6cg==
-X-Gm-Message-State: APzg51DzOTzN29BblrBO0SEPSmMT+kyEhX6KV9eczhRuO2XXhsSxXUyM
-        RCuwnBJ+dKS7RFZT0xJ6iS+xawIhlUEf/pah9fJn0eC8
-X-Google-Smtp-Source: ANB0VdaFuPfR0yXbQDvrBpdfMBgTHr50VuQOuuDQ3UETtHzwIN9lg5gNf1iwe9krj6uH277sNGGXYDiZD7I/jYzB5t8=
-X-Received: by 2002:ab0:51ac:: with SMTP id g41-v6mr8710953uaa.155.1537252978630;
- Mon, 17 Sep 2018 23:42:58 -0700 (PDT)
+        bh=8Ms/YbFKnS4bxMhBs4PIsFP8hZqQhBYkgx9GUHIEixA=;
+        b=Ug5PL7LfmgDwF2LyHFViVLJAJFyBMF86oY//EaI3b89ySJ/zSjVrQb6B6GUedr1duS
+         aNAfyzyjTVbyqZCaHqtoyT4s8riva+MYqaE6jA6WLK9GvH0h6YUHclkh6MFZPp42yzZg
+         F1klPGfI7mjajKJ5r46aOUxfg+x2j07nmn62TygXt+NYg3PIh3xMxXnPeGGnYm6Ud84J
+         RZeYP2qlHJVEnbnd+lCyk/B9SS+bPlC1iXFEHE6eo1poS4CS8fQsl9qA9sMHHBFc8EBn
+         ErVuCCt10MK4v+4az2qTLzrHgSQ/fJkonwWrk99g9MdVChzp2szxtKlQPfGz6vBbN9Pj
+         +blw==
+X-Gm-Message-State: APzg51Cnb1uwYoawG/vOOqy5S3SJQ6GeXMjJkbPuzsRfUykThdfor1K+
+        AUrXBu72Y7vQ/h7+fpHpodBgMG4hGbuWN+XWbwKaqg==
+X-Google-Smtp-Source: ANB0VdZbwVOB8Vqq6Osqa2C++ggyff7V5zR/q0m5vpbC3tPyMj50W3vLyTsegMz277yPpYBAsM7tMFEnp4SoGroQnJo=
+X-Received: by 2002:a25:9702:: with SMTP id d2-v6mr12442006ybo.77.1537253428599;
+ Mon, 17 Sep 2018 23:50:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180917163955.19023-1-geert+renesas@glider.be> <20180917163955.19023-2-geert+renesas@glider.be>
-In-Reply-To: <20180917163955.19023-2-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 18 Sep 2018 08:42:46 +0200
-Message-ID: <CAMuHMdXUsOuYwe0jbC1bCSHMp=Rcu-a_oYOz9f8q3LNxNiO1JQ@mail.gmail.com>
-Subject: Re: [PATCH/RFC v4 1/2] reset: Add support for dedicated reset controls
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 23:50:28
+ -0700 (PDT)
+In-Reply-To: <80094eae-05b8-a96f-b631-cc3b81e0e425@xilinx.com>
+References: <1533792466-4227-1-git-send-email-firoz.khan@linaro.org>
+ <1533792466-4227-3-git-send-email-firoz.khan@linaro.org> <80094eae-05b8-a96f-b631-cc3b81e0e425@xilinx.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 18 Sep 2018 12:20:28 +0530
+Message-ID: <CALxhOnjxc0kQYDEkkOvRCS99dMMpV9jQJNP4yLhtNr3VO3KJVg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] microblaze: Added system call table generation support
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 6:40 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> In some SoCs multiple hardware blocks may share a reset control.
-> The existing reset control API for shared resets will only assert such a
-> reset when the drivers for all hardware blocks agree.
-> The existing exclusive reset control API still allows to assert such a
-> reset, but that impacts all other hardware blocks sharing the reset.
+On 9 August 2018 at 12:35, Michal Simek <michal.simek@xilinx.com> wrote:
+> On 9.8.2018 07:27, Firoz Khan wrote:
+>> The system call tables are in different format in all
+>> architecture and it will be difficult to manually add or
+>> modify the system calls in the respective files. To make
+>> it easy by keeping a script and which'll generate the
+>> header file and syscall table file so this change will
+>> unify them across all architectures.
+>>
+>> The system call table generation script is added in
+>> syscalls directory which contain the script to generate
+>> both uapi header file system call table generation file
+>> and syscall.tbl file which'll be the input for the scripts.
+>>
+>> syscall.tbl contains the list of available system calls
+>> along with system call number and corresponding entry point.
+>> Add a new system call in this architecture will be possible
+>> by adding new entry in the syscall.tbl file.
+>>
+>> Adding a new table entry consisting of:
+>>         - System call number.
+>>         - ABI.
+>>         - System call name.
+>>         - Entry point name.
+>>
+>> syscallhdr.sh and syscalltbl.sh will generate uapi header-
+>> unistd.h and syscall_table.h files respectively. File
+>> syscall_table.h is included by syscall.S - the real system
+>> call table. Both .sh files will parse the content syscall.tbl
+>> to generate the header and table files.
+>>
+>> ARM, s390 and x86 architecuture does have the similar support.
+>> I leverage their implementation to come up with a generic
+>> solution. And this is the ground work for y2038 issue. We need
+>> to change 52 system call implementation and this work will
+>> reduce the effort by simply modify 52 entries in syscall.tbl.
+>>
+>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+>> ---
+>>  arch/microblaze/kernel/syscalls/Makefile      |  37 +++
+>>  arch/microblaze/kernel/syscalls/syscall.tbl   | 404 ++++++++++++++++++++++++++
+>>  arch/microblaze/kernel/syscalls/syscallhdr.sh |  33 +++
+>>  arch/microblaze/kernel/syscalls/syscalltbl.sh |  28 ++
+>>  4 files changed, 502 insertions(+)
+>>  create mode 100644 arch/microblaze/kernel/syscalls/Makefile
+>>  create mode 100644 arch/microblaze/kernel/syscalls/syscall.tbl
+>>  create mode 100644 arch/microblaze/kernel/syscalls/syscallhdr.sh
 >
-> Sometimes a driver needs to reset a specific hardware block, and be 100%
-> sure it has no impact on other hardware blocks.  This is e.g. the case
-> for virtualization with device pass-through, where the host wants to
-> reset any exported device before and after exporting it for use by the
-> guest, for isolation.
+> it is interesting that arm and x86 scripts and they are "almost" the
+> same. Is there any plan to put these script to generic location instead
+> of keeping the same copy in architecture?
+
+Having a single script is always our plan for long run. But I have to keep a
+separate versions for the start so each architecture can be handled  in one
+series. Which would make easier to merge in the initial version.
+
+we could probably add it to scripts/*.sh first, but that requires more
+coordination between the architectures.
+
 >
-> Hence a new flag for dedicated resets is added to the internal methods,
-> with a new public reset_control_get_dedicated() method, to obtain an
-> exclusive handle to a reset that is dedicated to one specific hardware
-> block.
+> fileguard name contains hardcoded macro prefix where in arm there is
+> uapi detection. The same should be done architecture and sholdn't matter
+> if you define macro with or without value.
+
+Yes. As I told in my cover letter, I leverage x86/arm/s390 architecture
+implementation to come up with a generic solution. For the fileguard,
+I took x86 implementation as reference.
+
 >
-> This supports both DT-based and lookup-based reset controls.
+>>  create mode 100644 arch/microblaze/kernel/syscalls/syscalltbl.sh
+>>
+>> diff --git a/arch/microblaze/kernel/syscalls/Makefile b/arch/microblaze/kernel/syscalls/Makefile
+>> new file mode 100644
+>> index 0000000..7624044
+>> --- /dev/null
+>> +++ b/arch/microblaze/kernel/syscalls/Makefile
+>> @@ -0,0 +1,37 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +out := arch/$(SRCARCH)/include/generated/asm
+>> +uapi := arch/$(SRCARCH)/include/generated/uapi/asm
+>> +
+>> +_dummy := $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)') \
+>> +       $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
+>> +
+>> +syscall := $(srctree)/$(src)/syscall.tbl
+>> +
+>> +syshdr := $(srctree)/$(src)/syscallhdr.sh
+>> +systbl := $(srctree)/$(src)/syscalltbl.sh
+>> +
+>> +quiet_cmd_syshdr = SYSHDR  $@
+>> +      cmd_syshdr = $(CONFIG_SHELL) '$(syshdr)' '$<' '$@'  \
+>> +                '$(syshdr_abi_$(basetarget))'          \
+>> +                '$(syshdr_pfx_$(basetarget))'          \
+>> +                '$(syshdr_offset_$(basetarget))'
+>> +
+>> +quiet_cmd_systbl = SYSTBL  $@
+>> +      cmd_systbl = $(CONFIG_SHELL) '$(systbl)' '$<' '$@'  \
+>> +                '$(systbl_abi_$(basetarget))'
+>> +
+>> +$(uapi)/unistd_32.h: $(syscall) $(syshdr)
+>> +     $(call if_changed,syshdr)
+>> +
+>> +$(out)/syscall_table.h: $(syscall) $(systbl)
+>> +     $(call if_changed,systbl)
+>> +
+>> +uapisyshdr-y                 += unistd_32.h
+>> +syshdr-y                     += syscall_table.h
+>> +
+>> +targets      += $(uapisyshdr-y) $(syshdr-y)
+>> +
+>> +PHONY += all
+>> +all: $(addprefix $(uapi)/,$(uapisyshdr-y))
+>> +all: $(addprefix $(out)/,$(syshdr-y))
+>> +     @:
+>> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+>> new file mode 100644
+>> index 0000000..219d940
+>> --- /dev/null
+>> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+>> @@ -0,0 +1,404 @@
+>> +#
+>> +# Linux system call numbers and entry vectors
+>> +#
+>> +# The format is:
+>> +# <number> <abi> <name> <entry point>
+>> +#
+>> +# The abi is always common for this file.
+>> +#
+>> +0       common  restart_syscall                 sys_restart_syscall
+>> +1       common  exit                            sys_exit
+>> +2       common  fork                            sys_fork
+>> +3       common  read                            sys_read
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v4:
->   - New.
->
-> Notes:
->   - Dedicated lookup-based reset controls were not tested,
+> Arm(and partially s390) are using tabs for indentation. Any reason not
+> to use it here too?
+Sorry for this. My editor has a different setting for tab indentation.
+I'll fix this
+one while post the next patch series.
 
-And untested code is buggy...
+FYI, I have a list of this need to improve, those I'll correct in the
+next version
+of the patch series.
 
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-
-> @@ -541,9 +575,25 @@ __reset_controller_by_name(const char *name)
->         return NULL;
->  }
->
-> +static bool __reset_is_dedicated(const struct reset_control_lookup *lookup)
-> +{
-> +       const struct reset_control_lookup *lookup2;
-> +
-> +       list_for_each_entry(lookup, &reset_lookup_list, list) {
-
-... as the list_for_each() should use "lookup2" instead of "lookup" (warning
-reported by kbuild robot).
-
-> +               if (lookup2 == lookup)
-> +                       continue;
-> +
-> +               if (lookup2->provider == lookup->provider &&
-> +                   lookup2->index == lookup->index)
-> +                       return false;
-> +       }
-> +
-> +       return true;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- Firoz
