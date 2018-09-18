@@ -2,112 +2,95 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE1EC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586C8ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD66021471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:36:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="hECrc/DX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Lti/NopC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD66021471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E4AF20858
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:36:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E4AF20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbeIRNHg (ORCPT
+        id S1729368AbeIRNHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 09:07:36 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44301 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729147AbeIRNHg (ORCPT
+        Tue, 18 Sep 2018 09:07:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39800 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729147AbeIRNHi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 09:07:36 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3F35021C48;
-        Tue, 18 Sep 2018 03:36:15 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 18 Sep 2018 03:36:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=6eZXh48KsgjguqWNJja+Ky/BDj4RhSTiWvNicU3oWok=; b=hECrc/DX
-        4nzYFUHz/LlCi+3mehe5ZSiJaEMwz6pNOzzeZPKPhyjJoPnwwAOtLovRpJf50vFm
-        VF18HTebU7ucI63bDX3jae6xxzwGWf3h4LTlMr/bxToJiNptzNLi0Q9y/jNeELeV
-        8kU9grmJagZg6pJ05F2d4iRq9B9VZkII1erOxt8cido426uX9kAMpQ/dKGw/F9A6
-        RlR7fUnOuhhEaYRg+0gD7uGBYs1xygtn4RG/Ry3G8RuKk60NDjVffPd8crtKz9Ht
-        Ze4hoT2z5T9nArUGqazoAeb61mZdrpUQ5e0HI0ngCBc5sMFc35WhkGOSz0n8vlB3
-        icPhwWDTfQYy/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=6eZXh48KsgjguqWNJja+Ky/BDj4Rh
-        STiWvNicU3oWok=; b=Lti/NopCL81bekbkFnj6SGmvnvI5Y65XoFlZQIDrqyKt7
-        d9O4Ix+o5EauLvQoCXNX75h657ghKkkZU4zFiXM65RMcGgpI+BWuGKlNdkGp/+2A
-        8nlTuugeAWlrEAltguWCpkqbCspHzYPU3ZWwc+Ku/jENEycJWzIqGxvfLj6U1I8n
-        JMI+wWRCzgMb9BL6pxE7RHzPnQOZBTrLCmx+H88t/qQpt0M2bwOUU9vqsf6sky7w
-        zhRnMOOXATNTQqXsgcKt6EJrnm64iGTbjjPaqtGqXcGxn9c1zuLkO6CxXJ1y5xQ+
-        /Gt7DFaCHvm8hGHrIm1Ugk4UHQS1AwXoiFxh6xD9Q==
-X-ME-Proxy: <xmx:7qqgW2IogrYus3C1Ux7x_90V7cZDsZAMEf7iNG16xh0ykapVhMs-Mg>
-    <xmx:7qqgW-UzVBCuZj39WI9N2ltV9h4BzX5GSlhjZ_rPzaclNymXyOnSxA>
-    <xmx:7qqgW4gfcC91fOeIvRLxvndKO1kAzSIrBUzWIuIG_jBYwnT4WrEejg>
-    <xmx:7qqgW58aONowXfAnlCVtQR9YUZQ02fhopve-LG8uqt6B_yXMAyMPBA>
-    <xmx:7qqgWyAb-lsvNd3c8bJQna6iBjZHNSYkUBkMdjPvE_zIbzYGfTglWQ>
-    <xmx:76qgW8ScggIQXAympDwRek4fTByP7Q9DwyAdOn_M8JBR_EOJucYkqA>
-X-ME-Sender: <xms:7qqgW630nRt1HAnuzCPR5seitWsMtD11DCjXyzDR2YeCmMyYoiXUoQ>
+        Tue, 18 Sep 2018 09:07:38 -0400
 Received: from localhost (unknown [147.67.4.98])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C5AC1E454E;
-        Tue, 18 Sep 2018 03:36:13 -0400 (EDT)
-Date:   Tue, 18 Sep 2018 09:30:21 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Nicolas Ferre <nicolas.ferre@atmel.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>
-Subject: Re: linux-next: manual merge of the staging tree with the at91 tree
-Message-ID: <20180918073020.GB4067@kroah.com>
-References: <20180918131238.2838bedd@canb.auug.org.au>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1604CAE;
+        Tue, 18 Sep 2018 07:36:16 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 09:31:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT] Networking
+Message-ID: <20180918073135.GC4067@kroah.com>
+References: <20180917.200040.1595079540584326114.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180918131238.2838bedd@canb.auug.org.au>
+In-Reply-To: <20180917.200040.1595079540584326114.davem@davemloft.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 01:12:38PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Sep 17, 2018 at 08:00:40PM -0700, David Miller wrote:
 > 
-> Today's linux-next merge of the staging tree got a conflict in:
+> Various fixes, all over the place:
 > 
->   MAINTAINERS
+> 1) OOB data generation fix in bluetooth, from Matias Karhumaa.
 > 
-> between commit:
+> 2) BPF BTF boundary calculation fix, from Martin KaFai Lau.
 > 
->   5ae2f1f30197 ("MAINTAINERS: move former ATMEL entries to proper MICROCHIP locatioat91n")
+> 3) Don't bug on excessive frags, to be compatible in situations mixing
+>    older and newer kernels on each end.  From Juergen Gross.
 > 
-> from the at91 tree and commit:
+> 4) Scheduling in RCU fix in hv_netvsc, from Stephen Hemminger.
 > 
->   010de20412fc ("MAINTAINERS: Add entry for mcp3911 ADC driver")
+> 5) Zero keying information in TLS layer before freeing copies
+>    of them, from Sabrina Dubroca.
 > 
-> from the staging tree.
+> 6) Fix NULL deref in act_sample, from Davide Caratti.
 > 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> 7) Orphan SKB before GRO in veth to prevent crashes with XDP,
+>    from Toshiaki Makita.
+> 
+> 8) Fix use after free in ip6_xmit, from Eric Dumazet.
+> 
+> 9) Fix VF mac address regression in bnxt_en, from Micahel Chan.
+> 
+> 10) Fix MSG_PEEK behavior in TLS layer, from Daniel Borkmann.
+> 
+> 11) Programming adjustments to r8169 which fix not being to enter deep
+>     sleep states on some machines, from Kai-Heng Feng and Hans de
+>     Goede.
+> 
+> 12) Fix DST_NOCOUNT flag handling for ipv6 routes, from Peter
+>     Oskolkov.
+> 
+> Please pull, thanks a lot!
+> 
+> The following changes since commit 7428b2e5d0b195f2a5e40f91d2b41a8503fcfe68:
+> 
+>   Merge tag 'drm-fixes-2018-09-12' of git://anongit.freedesktop.org/drm/drm (2018-09-12 17:36:47 -1000)
+> 
+> are available in the Git repository at:
+> 
+>   gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/net.git 
 
-Looks good to me.
+Process question, any reason why you don't use signed tags?  I noticed
+that you didn't use them in the past, just curious.
+
+thanks,
 
 greg k-h
