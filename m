@@ -2,90 +2,330 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1CBC04ABA
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF68C04ABA
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6882086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:38:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fbJoFM63"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6882086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C8002086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:38:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8002086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbeIRTKy (ORCPT
+        id S1729865AbeIRTK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:10:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:53496 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727207AbeIRTKx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:10:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p0rsKkkMM1fWB2KKGf3W9qkuVQvLMIK38763629zTxs=; b=fbJoFM63l2pCC7CrQWNFh4T/CG
-        ZLliht3mJPzU+bg3ntEsNQ3Yy26od+xAelI8+5hM5nqq4XlTpwhM8IRtI95CGFWKVtDEEAZJ8r+V1
-        zhXlc0ebBC1JbVmIAobGFqvonS5rUcEDKDS0AcPElJzZ4dVuTKBsH1g/1NnHvC6T0AtzLf1Z6upma
-        HlxlG8DhZPEdze7s9GGVP8Ls8LV2XOXuSn+Yd0yFf6fggZ1ywP0bgg/ovzzuAbI5s7bfolVYG59ET
-        FFHGYQ/O0yLsJRaYjSRuBlczvsDRgGUEbW/rJUoq2zw/lbgzuYGkdlD3So5VV9W7m7xjYCpYPQvWm
-        LiTFd0kQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2GCd-00030z-2j; Tue, 18 Sep 2018 13:38:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 64CE5202C1A38; Tue, 18 Sep 2018 15:38:05 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 15:38:05 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: Task group cleanups and optimizations (was: Re: [RFC 00/60]
- Coscheduling for Linux)
-Message-ID: <20180918133805.GN24106@hirez.programming.kicks-ass.net>
-References: <20180907214047.26914-1-jschoenh@amazon.de>
- <20180914111251.GC24106@hirez.programming.kicks-ass.net>
- <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
- <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
- <20180917094844.GR24124@hirez.programming.kicks-ass.net>
- <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 18 Sep 2018 15:10:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729836AbeIRTK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:10:57 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB8013082E24;
+        Tue, 18 Sep 2018 13:38:19 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42A293091327;
+        Tue, 18 Sep 2018 13:38:15 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DAFAB9B313; Tue, 18 Sep 2018 15:38:13 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Kirti Wankhede <kwankhede@nvidia.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 2/2] vfio: add edid support to mbochs sample driver
+Date:   Tue, 18 Sep 2018 15:38:13 +0200
+Message-Id: <20180918133813.1845-3-kraxel@redhat.com>
+In-Reply-To: <20180918133813.1845-1-kraxel@redhat.com>
+References: <20180918133813.1845-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 18 Sep 2018 13:38:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 03:22:13PM +0200, Jan H. Schönherr wrote:
-> On 09/17/2018 11:48 AM, Peter Zijlstra wrote:
-> > On Sat, Sep 15, 2018 at 10:48:20AM +0200, Jan H. Schönherr wrote:
-> >> On 09/14/2018 06:25 PM, Jan H. Schönherr wrote:
-> > 
-> >>> b) ability to move CFS RQs between CPUs: someone changed the affinity of
-> >>>    a cpuset? No problem, just attach the runqueue with all the tasks elsewhere.
-> >>>    No need to touch each and every task.
-> > 
-> > Can't do that, tasks might have individual constraints that are tighter
-> > than the cpuset.
-> 
-> AFAIK, changing the affinity of a cpuset overwrites the individual affinities of tasks
-> within them. Thus, it shouldn't be an issue.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ samples/vfio-mdev/mbochs.c | 115 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 96 insertions(+), 19 deletions(-)
 
-No, it only shrinks the set. Also nothing stops you calling
-sched_setaffinity() once you're inside the cpuset. The only contraint is
-that your mask is a subset of the cpuset mask.
+diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+index 2535c3677c..4e72d36ff3 100644
+--- a/samples/vfio-mdev/mbochs.c
++++ b/samples/vfio-mdev/mbochs.c
+@@ -71,11 +71,17 @@
+ #define MBOCHS_NAME		  "mbochs"
+ #define MBOCHS_CLASS_NAME	  "mbochs"
+ 
++#define MBOCHS_EDID_REGION_INDEX  VFIO_PCI_NUM_REGIONS
++#define MBOCHS_NUM_REGIONS        (MBOCHS_EDID_REGION_INDEX+1)
++
+ #define MBOCHS_CONFIG_SPACE_SIZE  0xff
+ #define MBOCHS_MMIO_BAR_OFFSET	  PAGE_SIZE
+ #define MBOCHS_MMIO_BAR_SIZE	  PAGE_SIZE
+-#define MBOCHS_MEMORY_BAR_OFFSET  (MBOCHS_MMIO_BAR_OFFSET + \
++#define MBOCHS_EDID_OFFSET	  (MBOCHS_MMIO_BAR_OFFSET +	\
+ 				   MBOCHS_MMIO_BAR_SIZE)
++#define MBOCHS_EDID_SIZE	  PAGE_SIZE
++#define MBOCHS_MEMORY_BAR_OFFSET  (MBOCHS_EDID_OFFSET + \
++				   MBOCHS_EDID_SIZE)
+ 
+ #define STORE_LE16(addr, val)	(*(u16 *)addr = val)
+ #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
+@@ -95,16 +101,24 @@ MODULE_PARM_DESC(mem, "megabytes available to " MBOCHS_NAME " devices");
+ static const struct mbochs_type {
+ 	const char *name;
+ 	u32 mbytes;
++	u32 max_x;
++	u32 max_y;
+ } mbochs_types[] = {
+ 	{
+ 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_1,
+ 		.mbytes = 4,
++		.max_x  = 800,
++		.max_y  = 600,
+ 	}, {
+ 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_2,
+ 		.mbytes = 16,
++		.max_x  = 1920,
++		.max_y  = 1440,
+ 	}, {
+ 		.name	= MBOCHS_CLASS_NAME "-" MBOCHS_TYPE_3,
+ 		.mbytes = 64,
++		.max_x  = 0,
++		.max_y  = 0,
+ 	},
+ };
+ 
+@@ -115,6 +129,11 @@ static struct cdev	mbochs_cdev;
+ static struct device	mbochs_dev;
+ static int		mbochs_used_mbytes;
+ 
++struct vfio_region_info_ext {
++	struct vfio_region_info          base;
++	struct vfio_region_info_cap_type type;
++};
++
+ struct mbochs_mode {
+ 	u32 drm_format;
+ 	u32 bytepp;
+@@ -144,13 +163,13 @@ struct mdev_state {
+ 	u32 memory_bar_mask;
+ 	struct mutex ops_lock;
+ 	struct mdev_device *mdev;
+-	struct vfio_device_info dev_info;
+ 
+ 	const struct mbochs_type *type;
+ 	u16 vbe[VBE_DISPI_INDEX_COUNT];
+ 	u64 memsize;
+ 	struct page **pages;
+ 	pgoff_t pagecount;
++	struct vfio_region_gfx_edid edid_region;
+ 
+ 	struct list_head dmabufs;
+ 	u32 active_id;
+@@ -342,10 +361,22 @@ static void handle_mmio_read(struct mdev_state *mdev_state, u16 offset,
+ 			     char *buf, u32 count)
+ {
+ 	struct device *dev = mdev_dev(mdev_state->mdev);
++	struct vfio_region_gfx_edid *edid;
+ 	u16 reg16 = 0;
+ 	int index;
+ 
+ 	switch (offset) {
++	case 0x000 ... 0x3ff: /* edid block */
++		edid = &mdev_state->edid_region;
++		if (offset + count > sizeof(edid->edid_blob))
++			goto unhandled;
++		if (edid->link_state != VFIO_DEVICE_GFX_LINK_STATE_UP ||
++		    offset >= edid->edid_size) {
++			memset(buf, 0, count);
++			break;
++		}
++		memcpy(buf, edid->edid_blob + offset, count);
++		break;
+ 	case 0x500 ... 0x515: /* bochs dispi interface */
+ 		if (count != 2)
+ 			goto unhandled;
+@@ -365,6 +396,28 @@ static void handle_mmio_read(struct mdev_state *mdev_state, u16 offset,
+ 	}
+ }
+ 
++static void handle_edid_write(struct mdev_state *mdev_state, u16 offset,
++			      char *buf, u32 count)
++{
++	char *region = (void *)&mdev_state->edid_region;
++
++	if (offset < offsetof(typeof(mdev_state->edid_region), link_state))
++		return;
++	if (offset + count > sizeof(mdev_state->edid_region))
++		return;
++	memcpy(region + offset, buf, count);
++}
++
++static void handle_edid_read(struct mdev_state *mdev_state, u16 offset,
++			     char *buf, u32 count)
++{
++	char *region = (void *)&mdev_state->edid_region;
++
++	if (offset + count > sizeof(mdev_state->edid_region))
++		return;
++	memcpy(buf, region + offset, count);
++}
++
+ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ 			   loff_t pos, bool is_write)
+ {
+@@ -384,13 +437,23 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ 			memcpy(buf, (mdev_state->vconfig + pos), count);
+ 
+ 	} else if (pos >= MBOCHS_MMIO_BAR_OFFSET &&
+-		   pos + count <= MBOCHS_MEMORY_BAR_OFFSET) {
++		   pos + count <= (MBOCHS_MMIO_BAR_OFFSET +
++				   MBOCHS_MMIO_BAR_SIZE)) {
+ 		pos -= MBOCHS_MMIO_BAR_OFFSET;
+ 		if (is_write)
+ 			handle_mmio_write(mdev_state, pos, buf, count);
+ 		else
+ 			handle_mmio_read(mdev_state, pos, buf, count);
+ 
++	} else if (pos >= MBOCHS_EDID_OFFSET &&
++		   pos + count <= (MBOCHS_EDID_OFFSET +
++				   MBOCHS_EDID_SIZE)) {
++		pos -= MBOCHS_EDID_OFFSET;
++		if (is_write)
++			handle_edid_write(mdev_state, pos, buf, count);
++		else
++			handle_edid_read(mdev_state, pos, buf, count);
++
+ 	} else if (pos >= MBOCHS_MEMORY_BAR_OFFSET &&
+ 		   pos + count <=
+ 		   MBOCHS_MEMORY_BAR_OFFSET + mdev_state->memsize) {
+@@ -471,6 +534,8 @@ static int mbochs_create(struct kobject *kobj, struct mdev_device *mdev)
+ 	mdev_state->next_id = 1;
+ 
+ 	mdev_state->type = type;
++	mdev_state->edid_region.max_xres = type->max_x;
++	mdev_state->edid_region.max_yres = type->max_y;
+ 	mbochs_create_config_space(mdev_state);
+ 	mbochs_reset(mdev);
+ 
+@@ -932,16 +997,16 @@ static int mbochs_dmabuf_export(struct mbochs_dmabuf *dmabuf)
+ }
+ 
+ static int mbochs_get_region_info(struct mdev_device *mdev,
+-				  struct vfio_region_info *region_info,
+-				  u16 *cap_type_id, void **cap_type)
++				  struct vfio_region_info_ext *ext)
+ {
++	struct vfio_region_info *region_info = &ext->base;
+ 	struct mdev_state *mdev_state;
+ 
+ 	mdev_state = mdev_get_drvdata(mdev);
+ 	if (!mdev_state)
+ 		return -EINVAL;
+ 
+-	if (region_info->index >= VFIO_PCI_NUM_REGIONS)
++	if (region_info->index >= MBOCHS_NUM_REGIONS)
+ 		return -EINVAL;
+ 
+ 	switch (region_info->index) {
+@@ -964,6 +1029,20 @@ static int mbochs_get_region_info(struct mdev_device *mdev,
+ 		region_info->flags  = (VFIO_REGION_INFO_FLAG_READ  |
+ 				       VFIO_REGION_INFO_FLAG_WRITE);
+ 		break;
++	case MBOCHS_EDID_REGION_INDEX:
++		ext->base.argsz = sizeof(*ext);
++		ext->base.offset = MBOCHS_EDID_OFFSET;
++		ext->base.size = MBOCHS_EDID_SIZE;
++		ext->base.flags = (VFIO_REGION_INFO_FLAG_READ  |
++				   VFIO_REGION_INFO_FLAG_WRITE |
++				   VFIO_REGION_INFO_FLAG_CAPS);
++		ext->base.cap_offset = offsetof(typeof(*ext), type);
++		ext->type.header.id = VFIO_REGION_INFO_CAP_TYPE;
++		ext->type.header.version = 1;
++		ext->type.header.next = 0;
++		ext->type.type = VFIO_REGION_TYPE_PCI_GFX;
++		ext->type.subtype = VFIO_REGION_SUBTYPE_GFX_EDID;
++		break;
+ 	default:
+ 		region_info->size   = 0;
+ 		region_info->offset = 0;
+@@ -984,7 +1063,7 @@ static int mbochs_get_device_info(struct mdev_device *mdev,
+ 				  struct vfio_device_info *dev_info)
+ {
+ 	dev_info->flags = VFIO_DEVICE_FLAGS_PCI;
+-	dev_info->num_regions = VFIO_PCI_NUM_REGIONS;
++	dev_info->num_regions = MBOCHS_NUM_REGIONS;
+ 	dev_info->num_irqs = VFIO_PCI_NUM_IRQS;
+ 	return 0;
+ }
+@@ -1084,7 +1163,7 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 			unsigned long arg)
+ {
+ 	int ret = 0;
+-	unsigned long minsz;
++	unsigned long minsz, outsz;
+ 	struct mdev_state *mdev_state;
+ 
+ 	mdev_state = mdev_get_drvdata(mdev);
+@@ -1106,8 +1185,6 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 		if (ret)
+ 			return ret;
+ 
+-		memcpy(&mdev_state->dev_info, &info, sizeof(info));
+-
+ 		if (copy_to_user((void __user *)arg, &info, minsz))
+ 			return -EFAULT;
+ 
+@@ -1115,24 +1192,24 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 	}
+ 	case VFIO_DEVICE_GET_REGION_INFO:
+ 	{
+-		struct vfio_region_info info;
+-		u16 cap_type_id = 0;
+-		void *cap_type = NULL;
++		struct vfio_region_info_ext info;
+ 
+-		minsz = offsetofend(struct vfio_region_info, offset);
++		minsz = offsetofend(typeof(info), base.offset);
+ 
+ 		if (copy_from_user(&info, (void __user *)arg, minsz))
+ 			return -EFAULT;
+ 
+-		if (info.argsz < minsz)
++		outsz = info.base.argsz;
++		if (outsz < minsz)
++			return -EINVAL;
++		if (outsz > sizeof(info))
+ 			return -EINVAL;
+ 
+-		ret = mbochs_get_region_info(mdev, &info, &cap_type_id,
+-					   &cap_type);
++		ret = mbochs_get_region_info(mdev, &info);
+ 		if (ret)
+ 			return ret;
+ 
+-		if (copy_to_user((void __user *)arg, &info, minsz))
++		if (copy_to_user((void __user *)arg, &info, outsz))
+ 			return -EFAULT;
+ 
+ 		return 0;
+@@ -1148,7 +1225,7 @@ static long mbochs_ioctl(struct mdev_device *mdev, unsigned int cmd,
+ 			return -EFAULT;
+ 
+ 		if ((info.argsz < minsz) ||
+-		    (info.index >= mdev_state->dev_info.num_irqs))
++		    (info.index >= VFIO_PCI_NUM_IRQS))
+ 			return -EINVAL;
+ 
+ 		ret = mbochs_get_irq_info(mdev, &info);
+-- 
+2.9.3
+
