@@ -2,267 +2,135 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DD2ECE560
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B629AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8754721471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3601D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="zHCb64pA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8754721471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rjf4sMVV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3601D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbeIRRXl (ORCPT
+        id S1729416AbeIRRZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:23:41 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35667 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeIRRXk (ORCPT
+        Tue, 18 Sep 2018 13:25:23 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46658 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeIRRZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:23:40 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so1778104wre.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 04:51:24 -0700 (PDT)
+        Tue, 18 Sep 2018 13:25:23 -0400
+Received: by mail-yw1-f66.google.com with SMTP id j131-v6so623157ywc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 04:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=IsEpiKwLKtaKM30im3Lwy5+CeTSbjToZcd6BM396Pos=;
-        b=zHCb64pA3dNYB69QmJZTGx03XLmaZOXDRaea0YPJ6qYu7DfQJVoc5E+IISsQTXAgpE
-         ZCrHbZUhheuYC3dtgynmaxuBCPV5MF2NMvrzs8YuhivpiEr5j43p1PplXFF0TyLNvfJX
-         vHeRgLFGslavEhd3dNmQOFPDdoaYH/qHklHM63bJtnFQ3vOdlIE1e55y5JS+nAIVe7Yn
-         5z8djZR/eDEyxYH1eZuHYVE2PKt6FcQIal1zJDLkFoDyDUS98vMKVCxXiUzWrTZQylYZ
-         Xd9gXLr28d9NcTXgXmUpxsbSVJdKKei2cJazQJ+MmL6KzKe21+7RJhioA8DKl5orxb5w
-         3smA==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/aldVDZj9z2Yd95UlkwZPHy3lcAeyT9c+NA0CgjhlPU=;
+        b=Rjf4sMVV3DbCqyYRL4g8IeVGkL+F9oftgfXPOrviRL3AEbgs4yxrbOCmb39DghqvUQ
+         wSBv9Tv0mX1DYD0nBfRdTdzeEhXxS/Nv1/C+u6aMnATssBfvRj9CnjKuv6qlTYA56oCd
+         y8JG/eXYA+0nIRsqgmKNiftutMNdLW6WRgrGI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references;
-        bh=IsEpiKwLKtaKM30im3Lwy5+CeTSbjToZcd6BM396Pos=;
-        b=p94KfltBnZj0YrqJMPE86Nw/xgRriVThz6J2pGczpQlBgCa0o9A586sIgTIifc6XCV
-         xpA2kCkhw1dSqlsz39+iyybyn3iFztt3LScfNh5Gel8OCaObQp1X1Ld9jBbIvEveIreK
-         pnnfbA5z6KB7bv2p+QFNbYS6rI/Ex+xw84n2tobwan8AU7nmj++sRHtafLlqkHARXglb
-         3z4d2Nz+C9I6GeLI34skPandGDvyw4EAVP6uX+JhJPlQo/Vki0K2D+DA7FgskBHIqjIx
-         2rNLA+VCzFNzB5ccad6QYPmrEe9w+WI4LoYHOW4GvYz3/r8din2cCEs62ue4SKP+9V6Y
-         hyLw==
-X-Gm-Message-State: APzg51A7TOd/NG3IyaLtV4na/oovLYBwflyPZkpzws03N7YcIa2u+YuX
-        fzNL9va3lBATXNcMEeclcvjx4UM3g1+tow==
-X-Google-Smtp-Source: ANB0VdYwznrnBn1WYynuJ0yk2ncEHsf5JXLmMWa7+OO8qYlzvB5w1s5Zrl2hAU2jKob7gKXvyPl+Bg==
-X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr23723307wrf.206.1537271483862;
-        Tue, 18 Sep 2018 04:51:23 -0700 (PDT)
-Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id v46-v6sm23261958wrc.63.2018.09.18.04.51.23
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 18 Sep 2018 04:51:23 -0700 (PDT)
-From:   Michal Simek <michal.simek@xilinx.com>
-To:     linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/2] serial: uartps: Change uart ID port allocation
-Date:   Tue, 18 Sep 2018 13:51:20 +0200
-Message-Id: <f3eda25d9143251778b96a945b7c2975d503c6e1.1537271478.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <6b07b21f60dcf07e1f6d6e39bae1f3750c4aa804.1537271478.git.michal.simek@xilinx.com>
-References: <6b07b21f60dcf07e1f6d6e39bae1f3750c4aa804.1537271478.git.michal.simek@xilinx.com>
-In-Reply-To: <6b07b21f60dcf07e1f6d6e39bae1f3750c4aa804.1537271478.git.michal.simek@xilinx.com>
-References: <6b07b21f60dcf07e1f6d6e39bae1f3750c4aa804.1537271478.git.michal.simek@xilinx.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/aldVDZj9z2Yd95UlkwZPHy3lcAeyT9c+NA0CgjhlPU=;
+        b=uD3fF7bNbYAr3iDvaDWUwzFidhVgxGgFhpbYpqWQ+fTINFUovcv6iq6fZMRDCGm4pd
+         2X+laLzDS3ZPjZlR0IGfazcFtQNSsI5LLqOmx1VNZX45RcJSQVhT91D6r7hyhjaKx0Qg
+         xgzzkurDclgd7E/fYfSTaHd78+Mv3+nu/9VF3wZen09MK2dAE4dnJnRtEnta7IvI/VH8
+         Q1Y+ESXW3LsxuSQmbjmFx+bJjUWPsiI7rAYoso6a0mWH/GF07xSQDcqLixOSKFsr8fjk
+         abzh6p6agKrvUr0R+11GpfGIVqeAymvwPkteHAm2UtIyS345u2V/7xB08HHIrdiBELvT
+         yMyg==
+X-Gm-Message-State: APzg51A9g8sY0KzQ2GNKnGgVuA2nFADchuHHIqEaMGdgRdNv3eaqK+ZX
+        CB6dpZ/bqzjI3bxdAvbnWrFPYb1EuIw8Sxn9dxPjDw==
+X-Google-Smtp-Source: ANB0VdZg9v1Xtk5H0ZfQ/Z+/g93xD34hlgLVAjVYxFPBlJ9oJWt4Pb0K2SzYmBJRHPsqXtnbfjow5N+rful/Rbd4DgU=
+X-Received: by 2002:a81:21c1:: with SMTP id h184-v6mr7711317ywh.367.1537271588219;
+ Tue, 18 Sep 2018 04:53:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 04:53:07
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a1JCnSPi+D+CozhqL0dS9WwXtONDHp4=Kg5kCHrpdYwrw@mail.gmail.com>
+References: <1536036087-15260-1-git-send-email-firoz.khan@linaro.org>
+ <1536036087-15260-2-git-send-email-firoz.khan@linaro.org> <CAK8P3a1JCnSPi+D+CozhqL0dS9WwXtONDHp4=Kg5kCHrpdYwrw@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 18 Sep 2018 17:23:07 +0530
+Message-ID: <CALxhOngCL4DEcMD7NaxbUiksByzoxaaozzZGPmB0JFziFEWojw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] sparc: Move __IGNORE* entries to non uapi header
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Miller <davem@davemloft.net>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For IPs which have alias algorightm all the time using that alias and
-minor number. It means serial20 alias ends up as ttyPS20.
+On 6 September 2018 at 20:58, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Sep 4, 2018 at 6:42 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+>> +++ b/arch/sparc/include/uapi/asm/unistd.h
+>> @@ -15,12 +15,6 @@
+>>  #ifndef _UAPI_SPARC_UNISTD_H
+>>  #define _UAPI_SPARC_UNISTD_H
+>>
+>> -#ifndef __32bit_syscall_numbers__
+>> -#ifndef __arch64__
+>> -#define __32bit_syscall_numbers__
+>> -#endif
+>> -#endif
+>
+> This is certainly required in the uapi header as of this patch,
+> without it all the numbers are wrong when you include the
+> file from user space.
+>
+> I suppose it can be removed later once the header is replaced
+> with the two generated versions,
 
-If alias is not setup for probed IP instance the first unused position is
-used but that needs to be checked if it is really empty because another
-instance doesn't need to be probed at that time. of_alias_get_alias_list()
-fills alias bitmap which exactly shows which ID is free.
-If alias pointing to different not compatible IP, it is free to use.
+The script will generate 2 versions, ie, unistd_32.h and unistd_64.h.
+Please give few more pointer here.
 
-cdns_get_id() call is placed below structure allocation to simplify
-error path.
+>
+>> -/* Bitmask values returned from kern_features system call.  */
+>> -#define KERN_FEATURE_MIXED_MODE_STACK  0x00000001
+>
+> I'm fairly sure this also needs to remain in the uapi/asm/unistd.h header
+> as a start, so that user space can call the sys_kern_features() system
+> call and interpret its result when only the first patch is applied.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+Sure. I'll update in the next patch series. Thanks!
 
-Changes in v2:
-- Add handle of return value from of_alias_get_alias_list
-
-Needs to be applied on the top of
-https://lkml.org/lkml/2018/9/3/404
-https://lkml.org/lkml/2018/9/3/400 (minor that's why just in case)
-
----
- drivers/tty/serial/xilinx_uartps.c | 109 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 96 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 71c032744dae..f77200a0f461 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -30,7 +30,6 @@
- #define CDNS_UART_TTY_NAME	"ttyPS"
- #define CDNS_UART_NAME		"xuartps"
- #define CDNS_UART_MAJOR		0	/* use dynamic node allocation */
--#define CDNS_UART_NR_PORTS	2
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
- #define CDNS_UART_REGISTER_SPACE	0x1000
- 
-@@ -1370,6 +1369,88 @@ static int __maybe_unused cdns_runtime_resume(struct device *dev)
- };
- MODULE_DEVICE_TABLE(of, cdns_uart_of_match);
- 
-+/*
-+ * Maximum number of instances without alias IDs but if there is alias
-+ * which target "< MAX_UART_INSTANCES" range this ID can't be used.
-+ */
-+#define MAX_UART_INSTANCES	32
-+
-+/* Stores static aliases list */
-+static DECLARE_BITMAP(alias_bitmap, MAX_UART_INSTANCES);
-+static int alias_bitmap_initialized;
-+
-+/* Stores actual bitmap of allocated IDs with alias IDs together */
-+static DECLARE_BITMAP(bitmap, MAX_UART_INSTANCES);
-+/* Protect bitmap operations to have unique IDs */
-+static DEFINE_MUTEX(bitmap_lock);
-+
-+static int cdns_get_id(struct platform_device *pdev)
-+{
-+	int id, ret;
-+
-+	mutex_lock(&bitmap_lock);
-+
-+	/* Alias list is stable that's why get alias bitmap only once */
-+	if (!alias_bitmap_initialized) {
-+		ret = of_alias_get_alias_list(cdns_uart_of_match, "serial",
-+					      alias_bitmap, MAX_UART_INSTANCES);
-+		if (ret)
-+			return ret;
-+
-+		alias_bitmap_initialized++;
-+	}
-+
-+	/* Make sure that alias ID is not taken by instance without alias */
-+	bitmap_or(bitmap, bitmap, alias_bitmap, MAX_UART_INSTANCES);
-+
-+	dev_dbg(&pdev->dev, "Alias bitmap: %*pb\n",
-+		MAX_UART_INSTANCES, bitmap);
-+
-+	/* Look for a serialN alias */
-+	id = of_alias_get_id(pdev->dev.of_node, "serial");
-+	if (id < 0) {
-+		dev_warn(&pdev->dev,
-+			 "No serial alias passed. Using the first free id\n");
-+
-+		/*
-+		 * Start with id 0 and check if there is no serial0 alias
-+		 * which points to device which is compatible with this driver.
-+		 * If alias exists then try next free position.
-+		 */
-+		id = 0;
-+
-+		for (;;) {
-+			dev_info(&pdev->dev, "Checking id %d\n", id);
-+			id = find_next_zero_bit(bitmap, MAX_UART_INSTANCES, id);
-+
-+			/* No free empty instance */
-+			if (id == MAX_UART_INSTANCES) {
-+				dev_err(&pdev->dev, "No free ID\n");
-+				mutex_unlock(&bitmap_lock);
-+				return -EINVAL;
-+			}
-+
-+			dev_dbg(&pdev->dev, "The empty id is %d\n", id);
-+			/* Check if ID is empty */
-+			if (!test_and_set_bit(id, bitmap)) {
-+				/* Break the loop if bit is taken */
-+				dev_dbg(&pdev->dev,
-+					"Selected ID %d allocation passed\n",
-+					id);
-+				break;
-+			}
-+			dev_dbg(&pdev->dev,
-+				"Selected ID %d allocation failed\n", id);
-+			/* if taking bit fails then try next one */
-+			id++;
-+		}
-+	}
-+
-+	mutex_unlock(&bitmap_lock);
-+
-+	return id;
-+}
-+
- /**
-  * cdns_uart_probe - Platform driver probe
-  * @pdev: Pointer to the platform device structure
-@@ -1403,21 +1484,17 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	if (!cdns_uart_uart_driver)
- 		return -ENOMEM;
- 
--	/* Look for a serialN alias */
--	cdns_uart_data->id = of_alias_get_id(pdev->dev.of_node, "serial");
-+	cdns_uart_data->id = cdns_get_id(pdev);
- 	if (cdns_uart_data->id < 0)
--		cdns_uart_data->id = 0;
--
--	if (cdns_uart_data->id >= CDNS_UART_NR_PORTS) {
--		dev_err(&pdev->dev, "Cannot get uart_port structure\n");
--		return -ENODEV;
--	}
-+		return cdns_uart_data->id;
- 
- 	/* There is a need to use unique driver name */
- 	driver_name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s%d",
- 				     CDNS_UART_NAME, cdns_uart_data->id);
--	if (!driver_name)
--		return -ENOMEM;
-+	if (!driver_name) {
-+		rc = -ENOMEM;
-+		goto err_out_id;
-+	}
- 
- 	cdns_uart_uart_driver->owner = THIS_MODULE;
- 	cdns_uart_uart_driver->driver_name = driver_name;
-@@ -1446,7 +1523,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	rc = uart_register_driver(cdns_uart_uart_driver);
- 	if (rc < 0) {
- 		dev_err(&pdev->dev, "Failed to register driver\n");
--		return rc;
-+		goto err_out_id;
- 	}
- 
- 	cdns_uart_data->cdns_uart_driver = cdns_uart_uart_driver;
-@@ -1587,7 +1664,10 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(cdns_uart_data->pclk);
- err_out_unregister_driver:
- 	uart_unregister_driver(cdns_uart_data->cdns_uart_driver);
--
-+err_out_id:
-+	mutex_lock(&bitmap_lock);
-+	clear_bit(cdns_uart_data->id, bitmap);
-+	mutex_unlock(&bitmap_lock);
- 	return rc;
- }
- 
-@@ -1610,6 +1690,9 @@ static int cdns_uart_remove(struct platform_device *pdev)
- #endif
- 	rc = uart_remove_one_port(cdns_uart_data->cdns_uart_driver, port);
- 	port->mapbase = 0;
-+	mutex_lock(&bitmap_lock);
-+	clear_bit(cdns_uart_data->id, bitmap);
-+	mutex_unlock(&bitmap_lock);
- 	clk_disable_unprepare(cdns_uart_data->uartclk);
- 	clk_disable_unprepare(cdns_uart_data->pclk);
- 	pm_runtime_disable(&pdev->dev);
--- 
-1.9.1
-
+>
+>> -#ifdef __32bit_syscall_numbers__
+>> -/* Sparc 32-bit only has the "setresuid32", "getresuid32" variants,
+>> - * it never had the plain ones and there is no value to adding those
+>> - * old versions into the syscall table.
+>> - */
+>> -#define __IGNORE_setresuid
+>> -#define __IGNORE_getresuid
+>> -#define __IGNORE_setresgid
+>> -#define __IGNORE_getresgid
+>> -#endif
+>> -
+>> -/* Sparc doesn't have protection keys. */
+>> -#define __IGNORE_pkey_mprotect
+>> -#define __IGNORE_pkey_alloc
+>> -#define __IGNORE_pkey_free
+>> -
+>
+> This part is fine.
+>
+>       Arnd
