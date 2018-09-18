@@ -2,161 +2,73 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38679ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F712ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE6220C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE6220C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E182B2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:45:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E182B2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbeIRHIf (ORCPT
+        id S1728438AbeIRHPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 03:08:35 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12170 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728703AbeIRHIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 03:08:35 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7A589C5882D11;
-        Tue, 18 Sep 2018 09:38:29 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 09:38:27 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180911201546.56566-1-jaegeuk@kernel.org>
- <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
- <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
- <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
- <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
- <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
- <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
- <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
- <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
- <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
- <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
-Date:   Tue, 18 Sep 2018 09:38:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Tue, 18 Sep 2018 03:15:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53776 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeIRHPK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 03:15:10 -0400
+Received: from localhost (unknown [104.240.4.228])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6AC9C14621320;
+        Mon, 17 Sep 2018 18:45:05 -0700 (PDT)
+Date:   Mon, 17 Sep 2018 18:45:02 -0700 (PDT)
+Message-Id: <20180917.184502.447385458615284933.davem@davemloft.net>
+To:     asmadeus@codewreck.org
+Cc:     doronrk@fb.com, tom@quantonium.net, davejwatson@fb.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180912053642.GA2912@nautica>
+References: <1536657703-27577-1-git-send-email-asmadeus@codewreck.org>
+        <20180912053642.GA2912@nautica>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Sep 2018 18:45:05 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/18 9:19, Jaegeuk Kim wrote:
-> On 09/13, Chao Yu wrote:
->> On 2018/9/13 3:54, Jaegeuk Kim wrote:
->>> On 09/12, Chao Yu wrote:
->>>> On 2018/9/12 9:40, Chao Yu wrote:
->>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
->>>>>> On 09/12, Chao Yu wrote:
->>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
->>>>>>>> On 09/11, Jaegeuk Kim wrote:
->>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
->>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
->>>>>>>>>>> can recover it based on previous user information.
->>>>>>>>>>
->>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
->>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
->>>>>>>>>> same?
->>>>>>>>>
->>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
->>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
->>>>>>>>> fsck after roll-forward recovery.
->>>>>>>>>
->>>>>>>>> Anyway, let me test again without this patch for a while.
->>>>>>>>
->>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
->>>>>>>
->>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
->>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
->>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
->>>>>>> may was corrupted/inconsistent. Right?
->>>>>
->>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
->>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
->>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
->>>>> detected by fsck, I guess there is bug in v8.
->>>>
->>>> In v8, there are two cases we didn't guarantee quota file's consistence:
->>>> 1. flush time in block_operation exceed a threshold.
->>>> 2. dquot subsystem error occurs.
->>>>
->>>> For above case, fsck should repair the quota file by default.
->>>
->>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
->>> during the recovery. So, we have something missing in the recovery in terms
->>> of quota updates.
->>
->> Yeah, I checked the code, just found one suspected place:
->>
->> find_fsync_dnodes()
->>  - f2fs_recover_inode_page
->>   - inc_valid_node_count
->>    - dquot_reserve_block  dquot info is not initialized now
->>  - add_fsync_inode
->>   - dquot_initialize
->>
->> I think we should reserve block for inode block after dquot_initialize(), can
->> you confirm this?
-> 
-> Let me test this.
-> 
->>From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Mon, 17 Sep 2018 18:14:41 -0700
-> Subject: [PATCH] f2fs: count inode block for recovered files
-> 
-> If a new file is recovered, we missed to reserve its inode block.
+From: Dominique Martinet <asmadeus@codewreck.org>
+Date: Wed, 12 Sep 2018 07:36:42 +0200
 
-I remember, in order to keep line with other filesystem, unlike on-disk, we
-have to keep backward compatibilty, in memory we don't account block number
-for f2fs' inode block, but only account inode number for it, so here like
-we did in inc_valid_node_count(), we don't need to do this.
-
-Can you test v9 first? I didn't encounter quota corruption with your
-testcase right now. Will check it in cell phone environment.
-
+> Dominique Martinet wrote on Tue, Sep 11, 2018:
+>> Hmm, while trying to benchmark this, I sometimes got hangs in
+>> kcm_wait_data() for the last packet somehow?
+>> The sender program was done (exited (zombie) so I assumed the sender
+>> socket flushed), but the receiver was in kcm_wait_data in kcm_recvmsg
+>> indicating it parsed a header but there was no skb to peek at?
+>> But the sock is locked so this shouldn't be racy...
+>> 
+>> I can get it fairly often with this patch and small messages with an
+>> offset, but I think it's just because the pull changes some timing - I
+>> can't hit it with just the clone, and I can hit it with a pull without
+>> clone as well.... And I don't see how pulling a cloned skb can impact
+>> the original socket, but I'm a bit fuzzy on this.
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/recovery.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 56d34193a74b..bff5cf730e13 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
->  		err = dquot_alloc_inode(inode);
->  		if (err)
->  			goto err_out;
-> +		err = dquot_reserve_block(inode, 1);
-> +		if (err) {
-> +			dquot_drop(inode);
-> +			goto err_out;
-> +		}
->  	}
->  
->  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
-> 
+> This is weird, I cannot reproduce at all without that pull, even if I
+> add another delay there instead of the pull, so it's not just timing...
 
+I really can't apply this patch until you resolve this.
+
+It is weird, given your description, though...
