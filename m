@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B61C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05686ECE560
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4969221471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4969221471
+	by mail.kernel.org (Postfix) with ESMTP id B76A720858
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76A720858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbeIRSE4 (ORCPT
+        id S1729701AbeIRSE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Sep 2018 14:04:56 -0400
-Received: from mga17.intel.com ([192.55.52.151]:17588 "EHLO mga17.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:17587 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729679AbeIRSE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:04:56 -0400
+        id S1729646AbeIRSEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:04:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 05:32:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
-   d="scan'208";a="73947676"
+   d="scan'208";a="73947667"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
   by orsmga007.jf.intel.com with ESMTP; 18 Sep 2018 05:32:32 -0700
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 7655D30027C; Tue, 18 Sep 2018 05:32:31 -0700 (PDT)
+        id 61160301A71; Tue, 18 Sep 2018 05:32:31 -0700 (PDT)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
         linux-kernel@vger.kernel.org, kim.phillips@arm.com,
         Andi Kleen <ak@linux.intel.com>
-Subject: [PATCH v5 8/9] tools, perf, script: Implement --graph-function
-Date:   Tue, 18 Sep 2018 05:32:13 -0700
-Message-Id: <20180918123214.26728-9-andi@firstfloor.org>
+Subject: [PATCH v5 5/9] perf, tools, script: Print DSO for callindent
+Date:   Tue, 18 Sep 2018 05:32:10 -0700
+Message-Id: <20180918123214.26728-6-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918123214.26728-1-andi@firstfloor.org>
 References: <20180918123214.26728-1-andi@firstfloor.org>
@@ -51,247 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Add a ftrace style --graph-function argument to perf script that allows
-to print itrace function calls only below a given function. This
-makes it easier to find the code of interest in a large trace.
+Now that we don't need to print the IP/ADDR for callindent the DSO
+is also not printed. It's useful for some cases, so add an own DSO
+printout for callindent for the case when IP/ADDR is not enabled.
 
-% perf record -e intel_pt//k -a sleep 1
-% perf script --graph-function group_sched_in --call-trace
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])          group_sched_in
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              event_sched_in.isra.107
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_event_set_state.part.71
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_time
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_disable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_log_itrace_start
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_userpage
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          calc_timer_values
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_cpu
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          arch_perf_update_userpage
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              __fentry__
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              using_native_sched_clock
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_stable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_enable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])          group_sched_in
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])              event_sched_in.isra.107
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_event_set_state.part.71
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                      perf_event_update_time
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_pmu_disable
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_log_itrace_start
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                      perf_event_update_userpage
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          calc_timer_values
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              sched_clock_cpu
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          arch_perf_update_userpage
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              __fentry__
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              using_native_sched_clock
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              sched_clock_stable
+Before:
 
-v2: Remove debug printout
+% perf script --itrace=cr -F +callindent,-ip,-sym,-symoff,-addr
+         swapper     0 [000]  3377.917072:          1   branches: pt_config
+         swapper     0 [000]  3377.917072:          1   branches:     pt_config
+         swapper     0 [000]  3377.917072:          1   branches:     pt_event_add
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_enable
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_void
+         swapper     0 [000]  3377.917072:          1   branches:     event_sched_in.isra.107
+         swapper     0 [000]  3377.917072:          1   branches:     __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches:     perf_pmu_nop_int
+         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches:     event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches:     group_sched_in
+
+After:
+
+         swapper     0 [000]  3377.917072:          1   branches: ([unknown])   pt_config
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_config
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       pt_event_add
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_enable
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_void
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_sched_in.isra.107
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       perf_pmu_nop_int
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       event_filter_match
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])       group_sched_in
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           __x86_indirect_thunk_rax
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           perf_pmu_nop_txn
+         swapper     0 [000]  3377.917072:          1   branches: ([kernel.kallsyms])           event_sched_in.isra.107
+
+(in the kernel case of course it's not very useful, but it's important
+with user programs where symbols are not unique)
+
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/Documentation/perf-script.txt |  4 +
- tools/perf/builtin-script.c              | 96 +++++++++++++++++++-----
- tools/perf/util/symbol.h                 |  3 +-
- tools/perf/util/thread.h                 |  2 +
- 4 files changed, 86 insertions(+), 19 deletions(-)
+ tools/perf/builtin-script.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 805baabd238e..a2b37ce48094 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -397,6 +397,10 @@ include::itrace.txt[]
- --call-ret-trace::
- 	Show call and return stream for intel_pt traces.
- 
-+--graph-function::
-+	For itrace only show specified functions and their callees for
-+	itrace. Multiple functions can be separated by comma.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-script-perl[1],
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 7e531f6b1d7a..3b73c3226141 100644
+index 1f9ed909ae3e..57df6f7cff28 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -1105,6 +1105,35 @@ static int perf_sample__fprintf_addr(struct perf_sample *sample,
- 	return printed;
- }
- 
-+static const char *resolve_branch_sym(struct perf_sample *sample,
-+				      struct perf_evsel *evsel,
-+				      struct thread *thread,
-+				      struct addr_location *al,
-+				      u64 *ip)
-+{
-+	struct addr_location addr_al;
-+	struct perf_event_attr *attr = &evsel->attr;
-+	const char *name = NULL;
-+
-+	if (sample->flags & (PERF_IP_FLAG_CALL | PERF_IP_FLAG_TRACE_BEGIN)) {
-+		if (sample_addr_correlates_sym(attr)) {
-+			thread__resolve(thread, &addr_al, sample);
-+			if (addr_al.sym)
-+				name = addr_al.sym->name;
-+			else
-+				*ip = sample->addr;
-+		} else {
-+			*ip = sample->addr;
-+		}
-+	} else if (sample->flags & (PERF_IP_FLAG_RETURN | PERF_IP_FLAG_TRACE_END)) {
-+		if (al->sym)
-+			name = al->sym->name;
-+		else
-+			*ip = sample->ip;
-+	}
-+	return name;
-+}
-+
- static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 					   struct perf_evsel *evsel,
- 					   struct thread *thread,
-@@ -1112,7 +1141,6 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- {
- 	struct perf_event_attr *attr = &evsel->attr;
- 	size_t depth = thread_stack__depth(thread);
--	struct addr_location addr_al;
+@@ -1116,6 +1116,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
  	const char *name = NULL;
  	static int spacing;
  	int len = 0;
-@@ -1126,22 +1154,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 	if (thread->ts && sample->flags & PERF_IP_FLAG_RETURN)
- 		depth += 1;
++	int dlen = 0;
+ 	u64 ip = 0;
  
--	if (sample->flags & (PERF_IP_FLAG_CALL | PERF_IP_FLAG_TRACE_BEGIN)) {
--		if (sample_addr_correlates_sym(attr)) {
--			thread__resolve(thread, &addr_al, sample);
--			if (addr_al.sym)
--				name = addr_al.sym->name;
--			else
--				ip = sample->addr;
--		} else {
--			ip = sample->addr;
--		}
--	} else if (sample->flags & (PERF_IP_FLAG_RETURN | PERF_IP_FLAG_TRACE_END)) {
--		if (al->sym)
--			name = al->sym->name;
--		else
--			ip = sample->ip;
--	}
-+	name = resolve_branch_sym(sample, evsel, thread, al, &ip);
- 
- 	if (PRINT_FIELD(DSO) && !(PRINT_FIELD(IP) || PRINT_FIELD(ADDR))) {
- 		dlen += fprintf(fp, "(");
-@@ -1629,6 +1642,47 @@ static void perf_sample__fprint_metric(struct perf_script *script,
+ 	/*
+@@ -1142,6 +1143,12 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ 			ip = sample->ip;
  	}
+ 
++	if (PRINT_FIELD(DSO) && !(PRINT_FIELD(IP) || PRINT_FIELD(ADDR))) {
++		dlen += fprintf(fp, "(");
++		dlen += map__fprintf_dsoname(al->map, fp);
++		dlen += fprintf(fp, ")\t");
++	}
++
+ 	if (name)
+ 		len = fprintf(fp, "%*s%s", (int)depth * 4, "", name);
+ 	else if (ip)
+@@ -1160,7 +1167,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ 	if (len < spacing)
+ 		len += fprintf(fp, "%*s", spacing - len, "");
+ 
+-	return len;
++	return len + dlen;
  }
  
-+static bool show_event(struct perf_sample *sample,
-+		       struct perf_evsel *evsel,
-+		       struct thread *thread,
-+		       struct addr_location *al)
-+{
-+	int depth = thread_stack__depth(thread);
-+
-+	if (!symbol_conf.graph_function)
-+		return true;
-+
-+	if (thread->filter) {
-+		if (depth <= thread->filter_entry_depth) {
-+			thread->filter = false;
-+			return false;
-+		}
-+		return true;
-+	} else {
-+		const char *s = symbol_conf.graph_function;
-+		u64 ip;
-+		const char *name = resolve_branch_sym(sample, evsel, thread, al,
-+				&ip);
-+		unsigned nlen;
-+
-+		if (!name)
-+			return false;
-+		nlen = strlen(name);
-+		while (*s) {
-+			unsigned len = strcspn(s, ",");
-+			if (nlen == len && !strncmp(name, s, len)) {
-+				thread->filter = true;
-+				thread->filter_entry_depth = depth;
-+				return true;
-+			}
-+			s += len;
-+			if (*s == ',')
-+				s++;
-+		}
-+		return false;
-+	}
-+}
-+
- static void process_event(struct perf_script *script,
- 			  struct perf_sample *sample, struct perf_evsel *evsel,
- 			  struct addr_location *al,
-@@ -1643,6 +1697,9 @@ static void process_event(struct perf_script *script,
- 	if (output[type].fields == 0)
- 		return;
- 
-+	if (!show_event(sample, evsel, thread, al))
-+		return;
-+
- 	++es->samples;
- 
- 	perf_sample__fprintf_start(sample, thread, evsel,
-@@ -3218,6 +3275,8 @@ int cmd_script(int argc, const char **argv)
- 			"Decode calls from from itrace", parse_call_trace),
- 	OPT_CALLBACK_OPTARG(0, "call-ret-trace", &itrace_synth_opts, NULL, NULL,
- 			"Decode calls and returns from itrace", parse_callret_trace),
-+	OPT_STRING(0, "graph-function", &symbol_conf.graph_function, "symbol[,symbol...]",
-+			"Only print symbols and callees with --call-trace/--call-ret-trace"),
- 	OPT_STRING(0, "stop-bt", &symbol_conf.bt_stop_list_str, "symbol[,symbol...]",
- 		   "Stop display of callgraph at these symbols"),
- 	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
-@@ -3473,7 +3532,8 @@ int cmd_script(int argc, const char **argv)
- 	script.session = session;
- 	script__setup_sample_type(&script);
- 
--	if (output[PERF_TYPE_HARDWARE].fields & PERF_OUTPUT_CALLINDENT)
-+	if ((output[PERF_TYPE_HARDWARE].fields & PERF_OUTPUT_CALLINDENT) ||
-+	    symbol_conf.graph_function)
- 		itrace_synth_opts.thread_stack = true;
- 
- 	session->itrace_synth_opts = &itrace_synth_opts;
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index f25fae4b5743..d726a8a7bb1b 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -123,7 +123,8 @@ struct symbol_conf {
- 	const char	*vmlinux_name,
- 			*kallsyms_name,
- 			*source_prefix,
--			*field_sep;
-+			*field_sep,
-+			*graph_function;
- 	const char	*default_guest_vmlinux_name,
- 			*default_guest_kallsyms,
- 			*default_guest_modules;
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 07606aa6998d..36c09a9904e6 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -42,6 +42,8 @@ struct thread {
- 	void				*addr_space;
- 	struct unwind_libunwind_ops	*unwind_libunwind_ops;
- #endif
-+	bool			filter;
-+	int			filter_entry_depth;
- };
- 
- struct machine;
+ static int perf_sample__fprintf_insn(struct perf_sample *sample,
 -- 
 2.17.1
 
