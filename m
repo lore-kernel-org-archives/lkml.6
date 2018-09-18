@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F318EECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86917ECE563
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0803214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34CFC214C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nko+JCW8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0803214D5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKYzLolW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34CFC214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729216AbeIRGRh (ORCPT
+        id S1729260AbeIRGRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:17:37 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39288 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729070AbeIRGRg (ORCPT
+        Tue, 18 Sep 2018 02:17:40 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35700 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729070AbeIRGRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:17:36 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w14-v6so103509plp.6;
-        Mon, 17 Sep 2018 17:47:43 -0700 (PDT)
+        Tue, 18 Sep 2018 02:17:38 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g2-v6so111909plo.2;
+        Mon, 17 Sep 2018 17:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=I+6YNMxcg8OUbqbH0Mt0mHDfm7vio0fVTRA9D6WdfA0=;
-        b=nko+JCW8qRpn1h8QgWy72A9JJZSFlA7W4KXj0ywB/6KcH0CFxKIVA8aS5s/HfSHa9U
-         KZXbhnXshlOa35Cw8Ap9Dhg1mMd9Yw8S0aM2QY0XnQm065rfos8xyQnQCX+D0I3Bt17S
-         dKdOvt8OMLqWjho+sbFiy5IQlec5fixrceo0TUFuN4HrK+Dw+FNOpM79pITqjTPnA8rP
-         yqYA4iw0fiH13lj/RHqi75v1G7Byus97+otIhIpYpDlUwig1MgTiShggcwuAeGzCHQT1
-         GaIH+HarH22K2BZTWkZZ+yZGd+VtPpU+Bf1/pbd3t4fIw0L/F5nhmpBvpJ7wV+GSaWzk
-         4zmQ==
+        bh=ptHpG94iG8JdtUK1/m7tAxhwZpuHN0rNhGhfBTFsAvc=;
+        b=RKYzLolWwan4vuO4GKC1pQNY8McACKheEYxMbc0L+io2IckRAdzriZJgzg45kxn6pr
+         v8a7lm8w4dj1AkE4NS9vphKa6qzYUB+u8yurYKIEz+pasSsaqK0+ztpQvAjF+UwDcHJe
+         OjhSerr41DVlBz3/ePO/+rrRrnGz6e0rBB6sSeIGeS3BlVZ/KbdTJe+HAjL0JetKbJHm
+         7VBMkt/lGABgOoW2Y3/9yce0bEz+VvccydHKpgrW1JV7FB3HXSg7F+nhUVGu7xyY7be0
+         lkmJFJN9WSYItX97/MOclTecyUfQ8rOMSEEXpwL87rSXwbYS/DPDp3Cr2WzHNBQk97Ip
+         g7iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I+6YNMxcg8OUbqbH0Mt0mHDfm7vio0fVTRA9D6WdfA0=;
-        b=P2Xo8rwCTSAuNXj01VCmoWNRhbD3uupKqvNYBrKdeAk5sQLzSrKVPYwGwBrRp0Xb6f
-         xXdfuP7Ja2/X7BGIrZ7AwfWPeB08GjC/yPr+cC3SNJhGknzG0OCfrXSUSPlhfdltT5LC
-         gx2jITbS5zj0EYWKOvCeJc4cYrrOlKS5kKf/astEwRU3zf4w+MRvQd87+mUIwsMDPhJo
-         OufO4w3/LW9k9vtZAhfhgmXCzM+RWAZSS5zwm4HMFLobdiLfg5qLWa2lD8UGGr+M/X40
-         u9P8GKXJ+KsZ1u4a5byuaHj6Xspi4iWKI0DyVp7anSIdJKhu6N68ce1/lzmkQ5Z4kMJO
-         SvwA==
-X-Gm-Message-State: APzg51A07n3Q3EviNmgxKnSCId6T2YDbwxF2yKJQteJYfexpi7H4kuH3
-        mjNKTOhpXILAet5bdn7PZ7v8CTjQ
-X-Google-Smtp-Source: ANB0VdYhmuoeiZUTpzdVDaDwe55QOF4PqbkPs1CkeBT3VuyWJ4jOzP99TmXFNgwpFveEken7PNB0oQ==
-X-Received: by 2002:a17:902:402:: with SMTP id 2-v6mr26631501ple.277.1537231662492;
-        Mon, 17 Sep 2018 17:47:42 -0700 (PDT)
+        bh=ptHpG94iG8JdtUK1/m7tAxhwZpuHN0rNhGhfBTFsAvc=;
+        b=XvEuTmi6Judfcyd7XYlF21rnxHCyyk6ITAH3AvqkrbinEpkUedYpA1NxmoEwXkvGlE
+         8SQ5l9ZX7RKiA79dqher/Dz9QW9XEZmVpj6VXdKNjywgA5fIwi74BFEB/jCw+8MOQVFc
+         oTgBa7cKbBQ3l4kPhoGE8TLjyqDnEi77dwdzwWkoveAxfzkjiahVebbj4mZCPhmHj4ov
+         D8sTfZ61j5A0IOapxs2fii6XSzfdy5d3mrYxhRjA4Hbi0q2YsR3L/kY+0IdzeIN8uKoo
+         rP515G7JkY1thkK5LZLhY+dtZBLGS/LAqOsYOJoEWuRxHrrHqfzrGnTMxDfCKl3lExF0
+         cd8w==
+X-Gm-Message-State: APzg51A6ZxSAiQC09WcCSEULZ+dK2j/WoG7575zlhqHYtETuyxIRqToS
+        Pqja/BllwQk0rDeQTarLg1TbqyBQ
+X-Google-Smtp-Source: ANB0VdbtAML6YP93rw61DspBR096C7IEhVrAorlv+W04DchUhXKzD9JPMfTIdgvDGqP5jcMrzLvT7A==
+X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr27311411plc.118.1537231664425;
+        Mon, 17 Sep 2018 17:47:44 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.40
+        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 17:47:40 -0700 (PDT)
+        Mon, 17 Sep 2018 17:47:42 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 05/20] Input: iforce - introduce start and stop io transport ops
-Date:   Mon, 17 Sep 2018 17:47:17 -0700
-Message-Id: <20180918004732.9875-5-dmitry.torokhov@gmail.com>
+Subject: [PATCH 06/20] Input: iforce - add bus type and parent arguments to iforce_init_device()
+Date:   Mon, 17 Sep 2018 17:47:18 -0700
+Message-Id: <20180918004732.9875-6-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
 References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
@@ -75,131 +75,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add start_io() and stop_io() transport methods so that core
-does not have to know the details.
+Note that the parent device for the USB-connected controllers is now
+USB interface instead of USB device.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/input/joystick/iforce/iforce-main.c  | 25 ++------------------
- drivers/input/joystick/iforce/iforce-serio.c | 13 ++++++++++
- drivers/input/joystick/iforce/iforce-usb.c   | 17 +++++++++++++
- drivers/input/joystick/iforce/iforce.h       |  2 ++
- 4 files changed, 34 insertions(+), 23 deletions(-)
+ drivers/input/joystick/iforce/iforce-main.c  | 19 ++++---------------
+ drivers/input/joystick/iforce/iforce-serio.c |  2 +-
+ drivers/input/joystick/iforce/iforce-usb.c   |  2 +-
+ drivers/input/joystick/iforce/iforce.h       |  3 ++-
+ 4 files changed, 8 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/input/joystick/iforce/iforce-main.c b/drivers/input/joystick/iforce/iforce-main.c
-index 58d5cfe46526..4401ca4a4c38 100644
+index 4401ca4a4c38..894769d03df3 100644
 --- a/drivers/input/joystick/iforce/iforce-main.c
 +++ b/drivers/input/joystick/iforce/iforce-main.c
-@@ -185,15 +185,7 @@ static int iforce_open(struct input_dev *dev)
+@@ -221,7 +221,8 @@ static void iforce_close(struct input_dev *dev)
+ 	iforce->xport_ops->stop_io(iforce);
+ }
+ 
+-int iforce_init_device(struct iforce *iforce)
++int iforce_init_device(struct device *parent, u16 bustype,
++		       struct iforce *iforce)
  {
- 	struct iforce *iforce = input_get_drvdata(dev);
- 
--	switch (iforce->bus) {
--#ifdef CONFIG_JOYSTICK_IFORCE_USB
--		case IFORCE_USB:
--			iforce->irq->dev = iforce->usbdev;
--			if (usb_submit_urb(iforce->irq, GFP_KERNEL))
--				return -EIO;
--			break;
--#endif
--	}
-+	iforce->xport_ops->start_io(iforce);
- 
- 	if (test_bit(EV_FF, dev->evbit)) {
- 		/* Enable force feedback */
-@@ -226,20 +218,7 @@ static void iforce_close(struct input_dev *dev)
- 			!test_bit(IFORCE_XMIT_RUNNING, iforce->xmit_flags));
- 	}
+ 	struct input_dev *input_dev;
+ 	struct ff_device *ff;
+@@ -243,20 +244,8 @@ int iforce_init_device(struct iforce *iforce)
+  * Input device fields.
+  */
  
 -	switch (iforce->bus) {
 -#ifdef CONFIG_JOYSTICK_IFORCE_USB
 -	case IFORCE_USB:
--		usb_kill_urb(iforce->irq);
--		usb_kill_urb(iforce->out);
--		usb_kill_urb(iforce->ctrl);
+-		input_dev->id.bustype = BUS_USB;
+-		input_dev->dev.parent = &iforce->usbdev->dev;
 -		break;
 -#endif
 -#ifdef CONFIG_JOYSTICK_IFORCE_232
 -	case IFORCE_232:
--		//TODO: Wait for the last packets to be sent
+-		input_dev->id.bustype = BUS_RS232;
+-		input_dev->dev.parent = &iforce->serio->dev;
 -		break;
 -#endif
 -	}
-+	iforce->xport_ops->stop_io(iforce);
- }
++	input_dev->id.bustype = bustype;
++	input_dev->dev.parent = parent;
  
- int iforce_init_device(struct iforce *iforce)
+ 	input_set_drvdata(input_dev, iforce);
+ 
 diff --git a/drivers/input/joystick/iforce/iforce-serio.c b/drivers/input/joystick/iforce/iforce-serio.c
-index eca2f6eca7f0..afc7521b430d 100644
+index afc7521b430d..b5dea273f98e 100644
 --- a/drivers/input/joystick/iforce/iforce-serio.c
 +++ b/drivers/input/joystick/iforce/iforce-serio.c
-@@ -83,9 +83,22 @@ static int iforce_serio_get_id(struct iforce *iforce, u8 *packet)
- 	return -(iforce->edata[0] != packet[0]);
- }
+@@ -183,7 +183,7 @@ static int iforce_serio_connect(struct serio *serio, struct serio_driver *drv)
+ 	if (err)
+ 		goto fail1;
  
-+static int iforce_serio_start_io(struct iforce *iforce)
-+{
-+	/* No special handling required */
-+	return 0;
-+}
-+
-+static void iforce_serio_stop_io(struct iforce *iforce)
-+{
-+	//TODO: Wait for the last packets to be sent
-+}
-+
- static const struct iforce_xport_ops iforce_serio_xport_ops = {
- 	.xmit		= iforce_serio_xmit,
- 	.get_id		= iforce_serio_get_id,
-+	.start_io	= iforce_serio_start_io,
-+	.stop_io	= iforce_serio_stop_io,
- };
+-	err = iforce_init_device(iforce);
++	err = iforce_init_device(&serio->dev, BUS_RS232, iforce);
+ 	if (err)
+ 		goto fail2;
  
- static void iforce_serio_write_wakeup(struct serio *serio)
 diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
-index f7eeaad92602..10b583b5fc82 100644
+index 10b583b5fc82..824df4273774 100644
 --- a/drivers/input/joystick/iforce/iforce-usb.c
 +++ b/drivers/input/joystick/iforce/iforce-usb.c
-@@ -103,9 +103,26 @@ static int iforce_usb_get_id(struct iforce *iforce, u8 *packet)
- 	return -(iforce->edata[0] != packet[0]);
- }
+@@ -229,7 +229,7 @@ static int iforce_usb_probe(struct usb_interface *intf,
+ 	usb_fill_control_urb(iforce->ctrl, dev, usb_rcvctrlpipe(dev, 0),
+ 			(void*) &iforce->cr, iforce->edata, 16, iforce_usb_ctrl, iforce);
  
-+static int iforce_usb_start_io(struct iforce *iforce)
-+{
-+	if (usb_submit_urb(iforce->irq, GFP_KERNEL))
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+static void iforce_usb_stop_io(struct iforce *iforce)
-+{
-+	usb_kill_urb(iforce->irq);
-+	usb_kill_urb(iforce->out);
-+	usb_kill_urb(iforce->ctrl);
-+}
-+
- static const struct iforce_xport_ops iforce_usb_xport_ops = {
- 	.xmit		= iforce_usb_xmit,
- 	.get_id		= iforce_usb_get_id,
-+	.start_io	= iforce_usb_start_io,
-+	.stop_io	= iforce_usb_stop_io,
- };
+-	err = iforce_init_device(iforce);
++	err = iforce_init_device(&intf->dev, BUS_USB, iforce);
+ 	if (err)
+ 		goto fail;
  
- static void iforce_usb_irq(struct urb *urb)
 diff --git a/drivers/input/joystick/iforce/iforce.h b/drivers/input/joystick/iforce/iforce.h
-index f6636230be31..c020d61eccf2 100644
+index c020d61eccf2..3ee9245a415b 100644
 --- a/drivers/input/joystick/iforce/iforce.h
 +++ b/drivers/input/joystick/iforce/iforce.h
-@@ -98,6 +98,8 @@ struct iforce;
- struct iforce_xport_ops {
- 	void (*xmit)(struct iforce *iforce);
- 	int (*get_id)(struct iforce *iforce, u8* id);
-+	int (*start_io)(struct iforce *iforce);
-+	void (*stop_io)(struct iforce *iforce);
- };
+@@ -156,7 +156,8 @@ static inline int iforce_get_id_packet(struct iforce *iforce, u8* id)
  
- struct iforce {
+ /* Public functions */
+ /* iforce-main.c */
+-int iforce_init_device(struct iforce *iforce);
++int iforce_init_device(struct device *parent, u16 bustype,
++		       struct iforce *iforce);
+ 
+ /* iforce-packets.c */
+ int iforce_control_playback(struct iforce*, u16 id, unsigned int);
 -- 
 2.19.0.397.gdd90340f6a-goog
 
