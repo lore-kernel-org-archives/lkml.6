@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BFEECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDFFECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9690B21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9690B21471
+	by mail.kernel.org (Postfix) with ESMTP id 47BB0206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BB0206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbeIRPKO (ORCPT
+        id S1729600AbeIRPLU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:10:14 -0400
+        Tue, 18 Sep 2018 11:11:20 -0400
 Received: from mga01.intel.com ([192.55.52.88]:59397 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729794AbeIRPKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729807AbeIRPKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Sep 2018 11:10:13 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 02:38:25 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 02:38:23 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
-   d="scan'208";a="71724188"
+   d="scan'208";a="71724181"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Sep 2018 02:38:23 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 18 Sep 2018 02:38:21 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -40,9 +40,9 @@ Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v3 13/20] tpm: add tpm_auto_startup into tpm-interface
-Date:   Tue, 18 Sep 2018 12:34:52 +0300
-Message-Id: <20180918093459.19165-14-tomas.winkler@intel.com>
+Subject: [PATCH v3 12/20] tpm: move pcr extend code to tpm2-cmd.c
+Date:   Tue, 18 Sep 2018 12:34:51 +0300
+Message-Id: <20180918093459.19165-13-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180918093459.19165-1-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
@@ -51,79 +51,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add wrapper tpm_auto_startup() to tpm-interface.c
-instead of open coded decision between tpm 1.2 and tpm 2.0
-in tpm-chip.c
+Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
+by tpm-interface.c. It wraps the original open code
+implementation. The original original tpm2_pcr_extend() function
+is renamed and made static, called only from new tpm2_pcr_extend()
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
-V3: new in the series
+V3: fix commit message
+ drivers/char/tpm/tpm-interface.c | 24 +++++-------------------
+ drivers/char/tpm/tpm.h           |  3 +--
+ drivers/char/tpm/tpm1-cmd.c      |  1 +
+ drivers/char/tpm/tpm2-cmd.c      | 24 ++++++++++++++++++++++--
+ 4 files changed, 29 insertions(+), 23 deletions(-)
 
- drivers/char/tpm/tpm-chip.c      | 11 +++--------
- drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
- drivers/char/tpm/tpm.h           |  1 +
- 3 files changed, 19 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 46caadca916a..32db84683c40 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -451,14 +451,9 @@ int tpm_chip_register(struct tpm_chip *chip)
- {
- 	int rc;
- 
--	if (chip->ops->flags & TPM_OPS_AUTO_STARTUP) {
--		if (chip->flags & TPM_CHIP_FLAG_TPM2)
--			rc = tpm2_auto_startup(chip);
--		else
--			rc = tpm1_auto_startup(chip);
--		if (rc)
--			return rc;
--	}
-+	rc = tpm_auto_startup(chip);
-+	if (rc)
-+		return rc;
- 
- 	tpm_sysfs_add_device(chip);
- 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 54e2cc592bd9..a8f8e0bcb434 100644
+index 3a2eef9e8665..54e2cc592bd9 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -520,6 +520,21 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- }
- EXPORT_SYMBOL_GPL(tpm_send);
+@@ -481,31 +481,17 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+ {
+ 	int rc;
+-	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+-	u32 count = 0;
+-	int i;
  
-+int tpm_auto_startup(struct tpm_chip *chip)
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		memset(digest_list, 0, sizeof(digest_list));
+-
+-		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+-			digest_list[i].alg_id = chip->active_banks[i];
+-			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+-			count++;
+-		}
+-
+-		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+-		tpm_put_ops(chip);
+-		return rc;
+-	}
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_pcr_extend(chip, pcr_idx, hash);
++	else
++		rc = tpm1_pcr_extend(chip, pcr_idx, hash,
++				     "attempting extend a PCR value");
+ 
+-	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+-			     "attempting extend a PCR value");
+ 	tpm_put_ops(chip);
+ 	return rc;
+ }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index fa88102a0cab..f0963a0a8acd 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -592,8 +592,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests);
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index f93776621e49..90e5bc1720ad 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -466,6 +466,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 
+ 	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
+ 			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
++
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 333631eab4c7..b0b714309440 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -178,8 +178,8 @@ struct tpm2_null_auth_area {
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  */
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+-		    struct tpm2_digest *digests)
++static int __tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
++			     struct tpm2_digest *digests)
+ {
+ 	struct tpm_buf buf;
+ 	struct tpm2_null_auth_area auth_area;
+@@ -225,6 +225,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+ 	return rc;
+ }
+ 
++int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
 +{
 +	int rc;
++	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
++	u32 count = 0;
++	unsigned int i;
 +
-+	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
-+		return 0;
++	memset(digest_list, 0, sizeof(digest_list));
++	for (i = 0; i < ARRAY_SIZE(chip->active_banks); i++) {
++		if (chip->active_banks[i] == TPM2_ALG_ERROR)
++			break;
++		digest_list[i].alg_id = chip->active_banks[i];
++		memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
++		count++;
++	}
 +
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+		rc = tpm2_auto_startup(chip);
-+	else
-+		rc = tpm1_auto_startup(chip);
-+
++	rc = __tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
 +	return rc;
 +}
 +
- /*
-  * We are about to suspend. Save the TPM state
-  * so that it can be restored.
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f0963a0a8acd..4ccffbb56864 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -541,6 +541,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 			 size_t min_rsp_body_length, unsigned int flags,
- 			 const char *desc);
- int tpm_get_timeouts(struct tpm_chip *);
-+int tpm_auto_startup(struct tpm_chip *chip);
  
- int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
- int tpm1_do_selftest(struct tpm_chip *chip);
+ struct tpm2_get_random_out {
+ 	__be16 size;
 -- 
 2.14.4
 
