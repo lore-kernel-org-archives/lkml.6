@@ -2,262 +2,100 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459DCECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBEA7ECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD0BF20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0BF20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 739DD20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:16:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739DD20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbeIRPrg (ORCPT
+        id S1729353AbeIRPsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:47:36 -0400
-Received: from www62.your-server.de ([213.133.104.62]:37507 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbeIRPrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:47:36 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2D2b-0000rr-Ps; Tue, 18 Sep 2018 12:15:33 +0200
-Received: from [178.197.249.15] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2D2b-000JZv-Jd; Tue, 18 Sep 2018 12:15:33 +0200
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-From:   Daniel Borkmann <daniel@iogearbox.net>
-To:     Vakul Garg <vakul.garg@nxp.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        davejwatson@fb.com, doronrk@fb.com
-References: <20180918101107.74d8689a@canb.auug.org.au>
- <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
- <DB7PR04MB42522B223D4E04F5DA519A8B8B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
- <236589cd-b55d-1ceb-f236-36f9135f794e@iogearbox.net>
- <DB7PR04MB4252D31B8E79B789CC507D248B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
- <5959dad0-dd02-1c3d-2487-13a69f8c507b@iogearbox.net>
-Message-ID: <d5eee0d9-c270-3ce7-5fcd-5f94b713dc3b@iogearbox.net>
-Date:   Tue, 18 Sep 2018 12:15:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 18 Sep 2018 11:48:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727161AbeIRPso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:48:44 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 856488553D;
+        Tue, 18 Sep 2018 10:16:50 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F17BC2C8C3;
+        Tue, 18 Sep 2018 10:16:42 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 18:16:37 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH 0/3] blk-mq: allow to unfreeze queue when io isn't drained
+Message-ID: <20180918101636.GA13212@ming.t460p>
+References: <20180918101310.13154-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5959dad0-dd02-1c3d-2487-13a69f8c507b@iogearbox.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24951/Tue Sep 18 10:16:39 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918101310.13154-1-ming.lei@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 18 Sep 2018 10:16:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 11:53 AM, Daniel Borkmann wrote:
-> On 09/18/2018 11:32 AM, Vakul Garg wrote:
->>> -----Original Message-----
->>> From: Daniel Borkmann <daniel@iogearbox.net>
->>> Sent: Tuesday, September 18, 2018 2:57 PM
->>> To: Vakul Garg <vakul.garg@nxp.com>; Stephen Rothwell
->>> <sfr@canb.auug.org.au>; David Miller <davem@davemloft.net>;
->>> Networking <netdev@vger.kernel.org>
->>> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
->>> Mailing List <linux-kernel@vger.kernel.org>
->>> Subject: Re: linux-next: manual merge of the net-next tree with the net tree
->>>
->>> On 09/18/2018 11:10 AM, Vakul Garg wrote:
->>>>> -----Original Message-----
->>>>> From: Daniel Borkmann <daniel@iogearbox.net>
->>>>> Sent: Tuesday, September 18, 2018 2:14 PM
->>>>> To: Stephen Rothwell <sfr@canb.auug.org.au>; David Miller
->>>>> <davem@davemloft.net>; Networking <netdev@vger.kernel.org>
->>>>> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux
->>>>> Kernel Mailing List <linux-kernel@vger.kernel.org>; Vakul Garg
->>>>> <vakul.garg@nxp.com>
->>>>> Subject: Re: linux-next: manual merge of the net-next tree with the
->>>>> net tree
->>>>>
->>>>> On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Today's linux-next merge of the net-next tree got a conflict in:
->>>>>>
->>>>>>   tools/testing/selftests/net/tls.c
->>>>>>
->>>>>> between commit:
->>>>>>
->>>>>>   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
->>>>>>
->>>>>> from the net tree and commit:
->>>>>>
->>>>>>   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning
->>>>>> across multiple records")
->>>>>>
->>>>>> from the net-next tree.
->>>>>>
->>>>>> I fixed it up (see below) and can carry the fix as necessary. This
->>>>>> is now fixed as far as linux-next is concerned, but any non trivial
->>>>>> conflicts should be mentioned to your upstream maintainer when your
->>>>>> tree is submitted for merging.  You may also want to consider
->>>>>> cooperating with the maintainer of the conflicting tree to minimise
->>>>>> any particularly complex conflicts.
->>>>>
->>>>> The test from 50c6b58a814d supersedes the one from c2ad647c6442 so
->>>>> the recv_peek_large_buf_mult_recs could be removed; latter was also
->>>>> not working correctly due to this bug.
->>>>
->>>> Why remove recv_peek_large_buf_mult_recs if its correct?
->>>> Why not the newly added one which achieves the same thing?
->>>
->>> Hmm, not quite, on net-next kernel, the recv_peek_large_buf_mult_recs fails
->>> every time I invoke the tls test suite:
->>>
->>> # ./tls
->>> [==========] Running 28 tests from 2 test cases.
->>> [ RUN      ] tls.sendfile
->>> [       OK ] tls.sendfile
->>> [ RUN      ] tls.send_then_sendfile
->>> [       OK ] tls.send_then_sendfile
->>> [ RUN      ] tls.recv_max
->>> [       OK ] tls.recv_max
->>> [ RUN      ] tls.recv_small
->>> [       OK ] tls.recv_small
->>> [ RUN      ] tls.msg_more
->>> [       OK ] tls.msg_more
->>> [ RUN      ] tls.sendmsg_single
->>> [       OK ] tls.sendmsg_single
->>> [ RUN      ] tls.sendmsg_large
->>> [       OK ] tls.sendmsg_large
->>> [ RUN      ] tls.sendmsg_multiple
->>> [       OK ] tls.sendmsg_multiple
->>> [ RUN      ] tls.sendmsg_multiple_stress
->>> [       OK ] tls.sendmsg_multiple_stress
->>> [ RUN      ] tls.splice_from_pipe
->>> [       OK ] tls.splice_from_pipe
->>> [ RUN      ] tls.splice_from_pipe2
->>> [       OK ] tls.splice_from_pipe2
->>> [ RUN      ] tls.send_and_splice
->>> [       OK ] tls.send_and_splice
->>> [ RUN      ] tls.splice_to_pipe
->>> [       OK ] tls.splice_to_pipe
->>> [ RUN      ] tls.recvmsg_single
->>> [       OK ] tls.recvmsg_single
->>> [ RUN      ] tls.recvmsg_single_max
->>> [       OK ] tls.recvmsg_single_max
->>> [ RUN      ] tls.recvmsg_multiple
->>> [       OK ] tls.recvmsg_multiple
->>> [ RUN      ] tls.single_send_multiple_recv
->>> [       OK ] tls.single_send_multiple_recv
->>> [ RUN      ] tls.multiple_send_single_recv
->>> [       OK ] tls.multiple_send_single_recv
->>> [ RUN      ] tls.recv_partial
->>> [       OK ] tls.recv_partial
->>> [ RUN      ] tls.recv_nonblock
->>> [       OK ] tls.recv_nonblock
->>> [ RUN      ] tls.recv_peek
->>> [       OK ] tls.recv_peek
->>> [ RUN      ] tls.recv_peek_multiple
->>> [       OK ] tls.recv_peek_multiple
->>> [ RUN      ] tls.recv_peek_large_buf_mult_recs
->>> tls.c:524:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str,
->>> buf, len) (18446744073709551595) == 0 (0)
->>> tls.recv_peek_large_buf_mult_recs: Test failed at step #8
->>> [     FAIL ] tls.recv_peek_large_buf_mult_recs
->>> [ RUN      ] tls.pollin
->>> [       OK ] tls.pollin
->>> [ RUN      ] tls.poll_wait
->>> [       OK ] tls.poll_wait
->>> [ RUN      ] tls.blocking
->>> [       OK ] tls.blocking
->>> [ RUN      ] tls.nonblocking
->>> [       OK ] tls.nonblocking
->>> [ RUN      ] tls.control_msg
->>> [       OK ] tls.control_msg
->>> [==========] 27 / 28 tests passed.
->>> [  FAILED  ]
->>>
->>> Here's what the recvfrom() with MSG_PEEK sees:
->>>
->>> [pid  2602] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3 [pid  2602]
->>> socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 4 [pid  2602] bind(4,
->>> {sa_family=AF_INET, sin_port=htons(0), sin_addr=inet_addr("0.0.0.0")}, 16) =
->>> 0
->>> [pid  2602] listen(4, 10)               = 0
->>> [pid  2602] getsockname(4, {sa_family=AF_INET, sin_port=htons(41483),
->>> sin_addr=inet_addr("0.0.0.0")}, [16]) = 0 [pid  2602] connect(3,
->>> {sa_family=AF_INET, sin_port=htons(41483), sin_addr=inet_addr("0.0.0.0")},
->>> 16) = 0 [pid  2602] setsockopt(3, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4)
->>> = 0 [pid  2602] setsockopt(3, 0x11a /* SOL_?? */, 1,
->>> "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
->>> 40) = 0 [pid  2602] accept(4, {sa_family=AF_INET, sin_port=htons(46290),
->>> sin_addr=inet_addr("127.0.0.1")}, [16]) = 5 [pid  2602] setsockopt(5,
->>> SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0 [pid  2602] setsockopt(5,
->>> 0x11a /* SOL_?? */, 2,
->>> "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
->>> 40) = 0
->>> [pid  2602] close(4)                    = 0
->>> [pid  2602] sendto(3, "test_read_peek", 14, 0, NULL, 0) = 14 [pid  2602]
->>> sendto(3, "_mult_recs\0", 11, 0, NULL, 0) = 11 [pid  2602] recvfrom(5,
->>> "test_read_peektest_read_peektest"..., 64, MSG_PEEK, NULL, NULL) = 64
->>> [pid  2602] write(2, "tls.c:526:tls.recv_peek_large_bu"...,
->>> 112tls.c:526:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str,
->>> buf, len) (18446744073709551595) == 0 (0)
->>> ) = 112
->>> [pid  2602] close(3)                    = 0
->>> [pid  2602] close(5)                    = 0
->>> [pid  2602] exit_group(8)               = ?
->>>
->>> Reason for the "test_read_peektest_read_peektest[...]" is because
->>> MSG_PEEK cannot call tls_sw_advance_skb(), since the skb is sitting there
->>> that needs to be consumed for non-MSG_PEEK case, and only then we can
->>> advance it.
->>
->> I general, my plan was to modify the tls_sw_recvmsg() to trigger as many 
->> decryption as possible as required by requested user space PEEK size.
->> This would have required creating a pending list of decrypted records in tls_tx context.
+On Tue, Sep 18, 2018 at 06:13:07PM +0800, Ming Lei wrote:
+> Hi,
 > 
-> Right, had been thinking the same though for a fix in -net it would have been
-> way too intrusive, hence the 50c6b58a814d ("tls: fix currently broken MSG_PEEK
-> behavior") to avoid looping the same record which is clearly a bug. Wondering
-> if DaveW's original rationale was to avoid accumulating too many records in the
-> kernel since we would need to unpause strparser and keep processing the deeper
-> we peek.
+> The 1st patch introduces percpu_ref_resurge() for implementing
+> blk_mq_unfreeze_queue_no_drain_io().
 > 
->>> Could you elaborate on where you ever had this test succeeding? With nxp
->>> accelerator?
->>  
->> I never had this test succeeding. I pointed the problem to Dave Watson sometime
->> back (found during code reading). 
->>
->> To make sure that this bug does not slip out, I simply submitted a test case to keep
->> reminding ourselves that we need to fix it sometime.
+> The 2nd patch introdces blk_mq_unfreeze_queue_no_drain_io() for
+> cases in which queue can be unfreeze without draininig IO.
 > 
-> Ok, I think usually tests assert current kernel behavior to make sure any changes
-> coming in don't accidentally break expectations from applications as opposed to
-> future tests that still need fixing, but I guess I'm fine either way how to resolve
-> the conflict; leaving it up to DaveM. Thanks for clarifying!
+> The 3rd patch applies blk_mq_unfreeze_queue_no_drain_io() to
+> NVMe PCI timeout, so that IO hang may be avoided inside
+> nvme_reset_work() when new IO timeout is triggered. 
+> 
+> Part of idea is from Jianchao's early work:
+> 
+> https://marc.info/?l=linux-kernel&m=153612052611020&w=2
+> 
+> Ming Lei (3):
+>   lib/percpu-refcount: introduce percpu_ref_resurge()
+>   blk-mq: introduce blk_mq_unfreeze_queue_no_drain_io
+>   nvme: don't drain IO in nvme_reset_work()
+> 
+>  block/blk-mq.c                  | 25 ++++++++++++++--
+>  drivers/nvme/host/core.c        | 12 +++++---
+>  drivers/nvme/host/nvme.h        |  2 +-
+>  drivers/nvme/host/pci.c         |  3 +-
+>  include/linux/blk-mq.h          |  1 +
+>  include/linux/percpu-refcount.h |  1 +
+>  lib/percpu-refcount.c           | 63 ++++++++++++++++++++++++++++++++++-------
+>  7 files changed, 87 insertions(+), 20 deletions(-)
+> 
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Jianchao Wang <jianchao.w.wang@oracle.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: linux-block@vger.kernel.org
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: linux-nvme@lists.infradead.org
+> Cc: Keith Busch <keith.busch@intel.com>
+> 
 
-By the way, full commit message from c2ad647c6442 said:
+Ooops, there is one extra patch missed.
 
-  selftests/tls: Add test for recv(PEEK) spanning across multiple records
-
-  Added test case to receive multiple records with a single recvmsg()
-  operation with a MSG_PEEK set.
-
-From reading it, the expectation would normally be that the test case would
-succeed for the author, I think in future such things definitely need to be
-better clarified in the commit log to avoid confusion for others.
+Please ignore this series.
 
 Thanks,
-Daniel
+Ming
