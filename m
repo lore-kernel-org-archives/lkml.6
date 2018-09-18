@@ -2,245 +2,396 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDC7ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327DAECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182EA20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:00:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="X52pU1CK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 182EA20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id BF9E620685
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9E620685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeIRLbk (ORCPT
+        id S1728649AbeIRLdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 07:31:40 -0400
-Received: from mail-by2nam01on0042.outbound.protection.outlook.com ([104.47.34.42]:10304
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Tue, 18 Sep 2018 07:33:21 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57754 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726414AbeIRLbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 07:31:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JoCDdnUkD7o5IrNl3TI40egmg9e0KqbSrhA98FhS5cM=;
- b=X52pU1CKRTtLbA+YyFPTiFLK7gZAJ+/smOZhnpaAZHFsO/Zc4jOzxZKTptsdxA2V/VFmSQhvplek7h/ZnVFBcJUfX69672SIXzlNxSc33qTVJUYMQ32t6RBVECVReUEypdCtppnyQYAkYEUP5ROhI4myAWlqPFqMR62pRpULMZQ=
-Received: from DM5PR12CA0006.namprd12.prod.outlook.com (2603:10b6:4:1::16) by
- BN4PR12MB0739.namprd12.prod.outlook.com (2a01:111:e400:59bc::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1143.18; Tue, 18 Sep
- 2018 06:00:20 +0000
-Received: from CO1NAM03FT041.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::207) by DM5PR12CA0006.outlook.office365.com
- (2603:10b6:4:1::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1143.15 via Frontend
- Transport; Tue, 18 Sep 2018 06:00:14 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=permerror action=none
- header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV02.amd.com (165.204.84.17) by
- CO1NAM03FT041.mail.protection.outlook.com (10.152.81.163) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
- 15.20.1164.13 via Frontend Transport; Tue, 18 Sep 2018 06:00:13 +0000
-Received: from [10.237.40.91] (10.34.1.3) by SATLEXCHOV02.amd.com
- (10.181.40.72) with Microsoft SMTP Server (TLS) id 14.3.389.1; Tue, 18 Sep
- 2018 01:00:10 -0500
-Subject: Re: [PATCH] list: introduce list_bulk_move_tail helper
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <amd-gfx@lists.freedesktop.org>
-References: <20180917120834.13993-1-christian.koenig@amd.com>
-From:   "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>
-Message-ID: <84fbcd38-8433-1e87-e6e9-90dcb96168a9@amd.com>
-Date:   Tue, 18 Sep 2018 14:00:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727228AbeIRLdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 07:33:21 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6DF132E813496;
+        Tue, 18 Sep 2018 14:02:16 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
+ 2018 14:02:10 +0800
+Date:   Tue, 18 Sep 2018 14:00:14 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Joerg Roedel" <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        <linux-crypto@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Zaibo Xu" <xuzaibo@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180918060014.GF207969@Turing-Arch-b>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180917014244.GA27596@redhat.com>
+ <20180917083940.GE207969@Turing-Arch-b>
+ <20180917123744.GA3605@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917120834.13993-1-christian.koenig@amd.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.34.1.3]
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(2980300002)(428003)(189003)(199004)(486006)(77096007)(97736004)(68736007)(186003)(305945005)(7736002)(16526019)(6116002)(58126008)(110136005)(426003)(356003)(16576012)(316002)(53546011)(53936002)(446003)(47776003)(336012)(6666003)(26005)(229853002)(36756003)(3846002)(65956001)(64126003)(65806001)(126002)(476003)(50466002)(86362001)(23676004)(76176011)(11346002)(81166006)(2616005)(6246003)(8676002)(65826007)(39060400002)(81156014)(2201001)(67846002)(8936002)(105586002)(106466001)(31696002)(478600001)(2870700001)(104016004)(5660300001)(2906002)(31686004)(72206003)(2486003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN4PR12MB0739;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT041;1:kWza2C8I4FeW0lIkzG8x+jM+TzO16vgp62Vx7Lf/bt7oeETawawGfUyh4Ao2euo+Mf/IdPG4RKs13cpCnXy3SO8HprunQ1pxtIZqRniIUJranq+PEetR410SgjCLPWro
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bef3cdda-4d56-442b-98b8-08d61d2c003d
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN4PR12MB0739;
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0739;3:xUOKWEby9bM11sZ+9jQ07G8s6Nbgyzz9aUyBeqcYMOuj/sTwaSNNs4xH4SS3zfjlbgUNPQLSUjcKHTkQCfgYQAWnKwxSeRzhVdFNyU2HHXIOKHt7DhSsbg45HQQoV60apP0+gbO47e87n849oEBst8nrdwvEi/r/TaJ1KHy4hfg8DXg7KVVnPEbbIQCNaEhH6pM6t8o5kgqWQ3m0zTnHKSfvkfTDovKIwLN8MdvReb8oQ3s8Od93Lx323ev/e0waI6cpNGJX8CNw3bQWFOOWROtTfOyLFeQ0qcodPcHmj3lt77Aa2TWQ0T/aVqB4H9aO/ACSWWtXCbOQ40ms1byTzaAOAHlCqgkISLql4ARG/E0=;25:gvoVyyKSQrvOx0tiqW/NUSvNoH94W/Np+IxpO3gmP7UldOWt7YOKO0bXMP3OfVd/sdHpDdiAFEO0thG1/wH0utRlFfAQg2LJuVpZhp7mI2nLFpvfCKdGnM8bveUTbbGrs6WnljjjBgnUTLGiw9gg92d+k1xFnP5I380TXPTuV2k1vv/oxGKJcA/Ix0waDb9zlcrliy7PkHIE+4q/SSePu6J9FW7V77LLCsd8BtzEvTwS2yIGaWqgCx5SjAwN5qXBlFXkZOzG4KGBEubJRztsNv2yIKxL2UDN9rMU7qXBzewh4R3MvFMx171GaNdy95yDOci3+li7WedgGTmDA/f6tg==
-X-MS-TrafficTypeDiagnostic: BN4PR12MB0739:
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0739;31:nnPbJJ8vN/yVjuhBB+Yl7ATnBA3ct1kGfwEzLQ2SEKXqn0OLYeY+miTC9gcqPpghaOHT4548R/CsjFm7Im2KW0p2IhQx08g02Eh3xBuYjxog0O908YsAzmLs+xdpXsrsBEfu0IZgVGY0hUXS41GRH98tdWv/JMtxpdu57Z34Z1wNBOT14X5lWdJxCI0eyrS8FzZxLEzafe4BaZc7p0zixVbt80qilP5VAtjX021CM7o=;20:q/U59oBTLaehC/yMC0np2U6nC91QEzTg21Rj3jkSMC61QrrpQbio+UJ2gDaoQ27LjciHoVzU8Oy1iafeMIQn9E49j58YRkooS1zOwlVmVvmnmsNOK8D1eUBkeA7uxlZSTZAbokg4msi9DmbEAWwPGFECYSs5A6ia/l4H3UpOQeOOs1KP2C8aZZtv0R0lrzI99LwlgYa/8b0xqU/44+ktafldiB5FKZzmC9aCL72hE7T5EZov4J3JS98VnlJnqiS4Ma0tJU9p+JJFTohTcdvmwf6TMmUzr+Gn/mhRF1krJLyEc0NvU/PxrT+OGDnO4/Crkp/I52fsQhHah6U5IuLuZ9wcK7dr40Uqcy8BfLK65INua5d7hnfr9nOsg6FxBdQxu7+v62SmR/x2YYNbWyiY53ptrifgM4YcBVI6Q5DVIFXH+XHI3/EXzaesWVQo8EDB+KsdyE8uEjDVToSZy9XABNerl/SRC1pWj9O8Wc4EvYOO+kjIvXcMTP2GgG0kQsL6
-X-Microsoft-Antispam-PRVS: <BN4PR12MB0739D04DA23FAC57FED3E4A1FF1D0@BN4PR12MB0739.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231355)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:BN4PR12MB0739;BCL:0;PCL:0;RULEID:;SRVR:BN4PR12MB0739;
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0739;4:54wSIHKnz+gKVqRIITTpfPOJ0UAjPHrfom8ZDa3jOzsAvaQ4+cZnkAretir2Aw74VtxC7sE9WyipoylPCHp3Zhl5pfh5bpSXqH4Yi6FIesSotZGu0CQEL7+jvkeQIebajKLjAYuyGvLL5yWw6Zd+Q92XDTyRIPQbWG8GKPrF0OeHsbjEBmZj9rLZzGTUJl2SPnF6RJQE3oKlw6db9J1Lqtl9GEVL7iOq0R1M0doHC1Y2P7j0cAIWj24ZZVpHOW4GALb7xoGFjQMDmkDjEXOky4W3jb1QZd+jREQnRjucLmpBufNMoXlBF6QCcmHtR5oB
-X-Forefront-PRVS: 0799B1B2D7
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjRQUjEyTUIwNzM5OzIzOmxlUmhOUC91a3ZTOFNWcisvVWdBTGRsZjZE?=
- =?utf-8?B?V2VpZzhhQzZVRnRNRGV6bmhBWVJXaE8wQVZKRHZsTHkzYThEeUxLV2hqVlRx?=
- =?utf-8?B?aHNFakxiVk94ZENQYlZrdVFaS1hUUDhUcEhEUGVDMFd1T0NaNURzclBQVG4v?=
- =?utf-8?B?a0p2US85bkZTckQxeTNYRjBzeWRpeWh4VENwZTY5WVFyb1ZoeEVFVWNxVk5E?=
- =?utf-8?B?MEhUUGUwNkozczYwOHllTXJJazhhdG8yZXArNlZneUFmcG5mQURuTXhwUEJD?=
- =?utf-8?B?dk5XMWdKRG8rOENYNFBWTExrVkRvQ1hobWdXOWxOZXZmNThPdWszVzRacVNQ?=
- =?utf-8?B?aW80T1E3cjZsdVhEc0ppUDdtbXZjYmVzNEpFUnZPeDBYT01FU3A5M0JTQ0RG?=
- =?utf-8?B?T2xKYVJBb1hPVDhMMm9OejZUeURSTWl2ZmVsWm5BK0s2RkNjL2Rtd2NHeWlp?=
- =?utf-8?B?ei9Gc291eDFROS9tQm96MlNIaHNoM0xYa0VJTVU1MiswcU9ycmlIa0djRlkw?=
- =?utf-8?B?RnIvc05XWU9oU2VqR0NSbDd5KzQ5UmpjRys5bTlJYkdVaG9VZ2RmUlZLVWZ3?=
- =?utf-8?B?K2crMUwyY3pJS1pwSkhoOWl4YU1UcnlETUlKOFhiWC9TNHVEV1dMalRVSDNO?=
- =?utf-8?B?TU5peDA4ZGJxQktLbk5RL3FZbVRjN2hrb0xhWk1saHV3UDluTy9OKzlCR3py?=
- =?utf-8?B?WEdNdE0zQlRzWjdwTUtJR3ZuUUNBQ1VHcWtKZlR6bS9EVU84QzRjRUd2dTM2?=
- =?utf-8?B?QmM4WkliT2sxamNWU1J1UXkvZ3MwdFV0Mm43U2srd1poRlBEc0dUZFBRU29r?=
- =?utf-8?B?c2Z5bUZ0Z21GK2t1akVWQW9BU1pmWk83R3k0RVU0M2dIV0Y1aURIMTlJZVYv?=
- =?utf-8?B?UmVpRVdLeE1oa0RuSlUyZ0xNN0Vyb3M4WTgxRFZJUkY3VCtoVHlXOWpFNlQw?=
- =?utf-8?B?bU1FakVPY1R0TGdiZ1ptL2Jsd3VjdE9GUjQxSDhLR25qdEFoZGRoUHNuMlJQ?=
- =?utf-8?B?Nm8vaGlqWmhtS1BXM3I5RVNhdmgwYXQ1ZFlsQnNPUkE1YitMd2NjczhseFFw?=
- =?utf-8?B?eS8zNmZLU2hGbmlKeTZpMGpNeGtYd3F5ZS9RaEk1ZU5zUDRPNEd5aWQzaVZZ?=
- =?utf-8?B?b3oyTUVYQ3FXZ3ZkSUlmeHJMVUtlTS8rRjVqNTZzOU04ank3OUFlS3dnK1hV?=
- =?utf-8?B?QytmTmtxQzhQc1F6RFpLbjI2RWlIcVlVWkJGbHN5bGd1Sk84Z2dGS1lpMFhj?=
- =?utf-8?B?clUzTW4wWVQ1aytaL3dUR1ZvTEE2L2xJMU1OVHBhQ2xWbXJnWjRlNWNPVURx?=
- =?utf-8?B?NFIwTXZkWmcrRWZ3WlhJaUIvZzF3b3JkVFFXazBXRUl1MDRwWEU4eGxXM2Yy?=
- =?utf-8?B?MDJqRGVLTnA2OElqNjFCUlM1clNRLzJWUWJXQjlmUkg4QjJsalVOWWFtS1Rs?=
- =?utf-8?B?cGI2T0NGZlRtL0I5WHZXU1pYVndhKzhEZ09mNi95dXNwdnJGTE1JQ3dLZ2Fj?=
- =?utf-8?B?Nm91cVJTVUdPSU1mbUQ4MmVNdWJNOXIwbk0ya09qRUlsRmg4OWVkck1NRjFl?=
- =?utf-8?B?eUdpb1R6aTVUZXZkSzEvdHNJRU1RMThXN2FKMWdBUCtlWlBpTGZKaHlsL3Vs?=
- =?utf-8?B?V2h3eXR1bmlXWWxDc2pQT3FHZHNkS3dXWVFLeXBQRVcxN1ZRN1FLZWl6bEhX?=
- =?utf-8?B?WVVYR3FVOXFrNUdrWHkyRGlBRFpzR3NqenRBWDBYdmo5Z0xydDMyQVNYN0xs?=
- =?utf-8?B?WG5LRzArWnFTbWJsVFVsT21PTHdWU2RVZ3h6bDlvUXVDdTY0UEtWUnRQQ0V1?=
- =?utf-8?B?djYyTy9VcTNyUHZhTERvbmhLQ3ZTWmJzOGQyRDNsMkZYbVA0V0xQR3g0K2hn?=
- =?utf-8?B?N282K1J1UElzQTJUUVdsOXUvYk1QbE1zclZjanAzY3p5SmZQVjcwbXJQRkhm?=
- =?utf-8?B?YzFERDc5M0h3PT0=?=
-X-Microsoft-Antispam-Message-Info: ZbEpwNB0nD0ut1aujIJWXaWfHY+qjKnBqKqkHiroCGkDmvnxSMEUl3EIfnsAFMhEOIpaPW1YgRfod4tbfZN0IomCl/0EAXB24xtv2jSYmaJcgmlyXoPhKXWiXmfVfXCkXQysNHIgpTwr2k/FidtNMZ3h1e7gF/U8BNWlz2qTlc6+g86ovr9Mq1oHbrJj1swH7eDp0au3EijPH6FlrEr+ySbYkRCHgiIZDVUCcNkVLhnTuWqgrbFW4py3AXOBjrcr/EXy6V8xABV+z5WNB8mmllY7XWJonw0HPsmUtNR62q4ww/sVgQ418I3r9re5l7k5PoslwGafc8WLES44EuOSTpSgAB6p6MpZpL0U8xSBdmc=
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0739;6:7hjwt3lvapAXmLugBQ01qT1V9B1icU620J6MLg5HhE0abrIvIDVM4e9EUnpaZMlIqU3IFA3eHPYQ9PUYOZoEGcq/gMXLnsZMSOg3wCSLoJhkOA/dS13/12TXhnayDzIIZTA03Q3II/Y4fmP/IjXhYfySNTdX1fh43V2kLLXMYtZ5jCJMvQYcIRXKjrBjPaz/l2t/4T2PiQdJ84nhGG4UP1dLPr4MYeo54XEeRwAirwILEJN0YUwsShxUfSOzwT0HbElImjBJCXh6tcce481pCxhPRfiZSK0nX2SgsuQxfRoHJEP+8Nd72uZBuAUx+t2P12u2MYPiy8vqDhhtSubgaZ000Iuf+cVzXqWDRwEqtmeoIFJmk88ejiQV3xN+MAiii/UbwdWH+/YUTmjMrNdyFaOQuuotwOAO3pRNWPOqyd7h8DUoSbOCrAAA4MSnFIsSen1gq3IU2XktQpwfbvzOhw==;5:XGsXOTygW6PwSIiESPtxT0/DIss5yMoGbrhsFBg9AHVZC2JDJwSomuVwUj8+yM48+vN5WZMwwbslXvsrEuq5iGSkJZb6FN5YSZKcV2LPvHpKmQAUNSrdY0DvwVWSp9Z+XozjN7g5PadQXBU2TQvN4arZ/YN+p2SDHhlZwKD/3pM=;7:0NzuLLdfQp5Yp6DmRO3RaOCdTNudRsFulT8TfsCITlwt+F8QLgwgK1wdmhE/+8207q4u1sXeRNBIhpvDF+ZbO6FJ744L9nUcybfEMKHNvsGIO8yU9dL9W5nrC4N8emKOCNIBpLL5wpCNWJgWVRj6MRnLJHXRhYzNLN6tyDZ2qsVWsYWKWZX1iD6UdRFZR28HifLVADfmnY7I+UOdbEYz+v6CEI2hjtSxO7CtNckSfZOaa5emAMMFYSoFhqSAxwip
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0739;20:13y2O/TqvCcBxmxruhq+2poJ038uTvMepgTOVFBw65VV3fV1XprdRbx8CXuoTTP181ArYndkZC5hlT2/YrqwyMAX6a2E/3jQJVk6pqQlGhK3ZHwuEFPHFhzbYYU8ITqIscVZTWLjl3CoPBXl1koWcI47uz6sjIg89BHSD2RbqmoeJLNtN8UUv/G6LydZhdqP/sxwrywZPz01ZPCvFVLbAkO3qdnsBpl7sz0SmzVi2npWwu/hiWHKwM9gNCPv/HVC
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2018 06:00:13.5708
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bef3cdda-4d56-442b-98b8-08d61d2c003d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN4PR12MB0739
+In-Reply-To: <20180917123744.GA3605@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/17/2018 08:08 PM, Christian KÃ¶nig wrote:
-> Move all entries between @first and including @last before @head.
->
-> This is useful for LRU lists where a whole block of entries should be
-> moved to the end of the list.
->
-> Used as a band aid in TTM, but better placed in the common list headers.
->
-> Signed-off-by: Christian KÃ¶nig <christian.koenig@amd.com>
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-> ---
->   drivers/gpu/drm/ttm/ttm_bo.c | 25 +++++--------------------
->   include/linux/list.h         | 23 +++++++++++++++++++++++
->   2 files changed, 28 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
-> index b2a33bf1ef10..26b889f86670 100644
-> --- a/drivers/gpu/drm/ttm/ttm_bo.c
-> +++ b/drivers/gpu/drm/ttm/ttm_bo.c
-> @@ -247,20 +247,6 @@ void ttm_bo_move_to_lru_tail(struct ttm_buffer_object *bo,
->   }
->   EXPORT_SYMBOL(ttm_bo_move_to_lru_tail);
->   
-> -static void ttm_list_move_bulk_tail(struct list_head *list,
-> -				    struct list_head *first,
-> -				    struct list_head *last)
-> -{
-> -	first->prev->next = last->next;
-> -	last->next->prev = first->prev;
-> -
-> -	list->prev->next = first;
-> -	first->prev = list->prev;
-> -
-> -	last->next = list;
-> -	list->prev = last;
-> -}
-> -
->   void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
->   {
->   	unsigned i;
-> @@ -276,8 +262,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
->   		reservation_object_assert_held(pos->last->resv);
->   
->   		man = &pos->first->bdev->man[TTM_PL_TT];
-> -		ttm_list_move_bulk_tail(&man->lru[i], &pos->first->lru,
-> -					&pos->last->lru);
-> +		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-> +				    &pos->last->lru);
->   	}
->   
->   	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
-> @@ -291,8 +277,8 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
->   		reservation_object_assert_held(pos->last->resv);
->   
->   		man = &pos->first->bdev->man[TTM_PL_VRAM];
-> -		ttm_list_move_bulk_tail(&man->lru[i], &pos->first->lru,
-> -					&pos->last->lru);
-> +		list_bulk_move_tail(&man->lru[i], &pos->first->lru,
-> +				    &pos->last->lru);
->   	}
->   
->   	for (i = 0; i < TTM_MAX_BO_PRIORITY; ++i) {
-> @@ -306,8 +292,7 @@ void ttm_bo_bulk_move_lru_tail(struct ttm_lru_bulk_move *bulk)
->   		reservation_object_assert_held(pos->last->resv);
->   
->   		lru = &pos->first->bdev->glob->swap_lru[i];
-> -		ttm_list_move_bulk_tail(lru, &pos->first->swap,
-> -					&pos->last->swap);
-> +		list_bulk_move_tail(lru, &pos->first->swap, &pos->last->swap);
->   	}
->   }
->   EXPORT_SYMBOL(ttm_bo_bulk_move_lru_tail);
-> diff --git a/include/linux/list.h b/include/linux/list.h
-> index de04cc5ed536..edb7628e46ed 100644
-> --- a/include/linux/list.h
-> +++ b/include/linux/list.h
-> @@ -183,6 +183,29 @@ static inline void list_move_tail(struct list_head *list,
->   	list_add_tail(list, head);
->   }
->   
-> +/**
-> + * list_bulk_move_tail - move a subsection of a list to its tail
-> + * @head: the head that will follow our entry
-> + * @first: first entry to move
-> + * @last: last entry to move, can be the same as first
-> + *
-> + * Move all entries between @first and including @last before @head.
-> + * All three entries must belong to the same linked list.
-> + */
-> +static inline void list_bulk_move_tail(struct list_head *head,
-> +				       struct list_head *first,
-> +				       struct list_head *last)
-> +{
-> +	first->prev->next = last->next;
-> +	last->next->prev = first->prev;
-> +
-> +	head->prev->next = first;
-> +	first->prev = head->prev;
-> +
-> +	last->next = head;
-> +	head->prev = last;
-> +}
-> +
->   /**
->    * list_is_last - tests whether @list is the last entry in list @head
->    * @list: the entry to test
+On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
+> Date: Mon, 17 Sep 2018 08:37:45 -0400
+> From: Jerome Glisse <jglisse@redhat.com>
+> To: Kenneth Lee <liguozhu@hisilicon.com>
+> CC: Kenneth Lee <nek.in.cn@gmail.com>, Herbert Xu
+>  <herbert@gondor.apana.org.au>, kvm@vger.kernel.org, Jonathan Corbet
+>  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg
+>  Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org, Sanjay Kumar
+>  <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
+>  iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+>  linuxarm@huawei.com, Alex Williamson <alex.williamson@redhat.com>, Thomas
+>  Gleixner <tglx@linutronix.de>, linux-crypto@vger.kernel.org, Zhou Wang
+>  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
+>  Zaibo Xu <xuzaibo@huawei.com>, "David S . Miller" <davem@davemloft.net>,
+>  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
+> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+> User-Agent: Mutt/1.10.1 (2018-07-13)
+> Message-ID: <20180917123744.GA3605@redhat.com>
+> 
+> On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
+> > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
+> > > So i want to summarize issues i have as this threads have dig deep into
+> > > details. For this i would like to differentiate two cases first the easy
+> > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
+> > 
+> > Thank you very much for the summary.
+> > 
+> > > In both cases your objectives as i understand them:
+> > > 
+> > > [R1]- expose a common user space API that make it easy to share boiler
+> > >       plate code accross many devices (discovering devices, opening
+> > >       device, creating context, creating command queue ...).
+> > > [R2]- try to share the device as much as possible up to device limits
+> > >       (number of independant queues the device has)
+> > > [R3]- minimize syscall by allowing user space to directly schedule on the
+> > >       device queue without a round trip to the kernel
+> > > 
+> > > I don't think i missed any.
+> > > 
+> > > 
+> > > (1) Device with SVA/SVM
+> > > 
+> > > For that case it is easy, you do not need to be in VFIO or part of any
+> > > thing specific in the kernel. There is no security risk (modulo bug in
+> > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
+> > > to a device is just couple dozen lines of code.
+> > > 
+> > 
+> > This is right...logically. But the kernel has no clear definition about "Device
+> > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
+> > boiler plate.
+> > 
+> > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
+> > one. If we add that support within VFIO, which solve most of the problem of
+> > SVA/SVM, it will save a lot of work in the future.
+> 
+> You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
+> all do the SVA/SVM setup in couple dozen lines and i failed to see how it
+> would require any more than that in your case.
+> 
+> 
+> > I think this is the key confliction between us. So could Alex please say
+> > something here? If the VFIO is going to take this into its scope, we can try
+> > together to solve all the problem on the way. If it it is not, it is also
+> > simple, we can just go to another way to fulfill this part of requirements even
+> > we have to duplicate most of the code.
+> > 
+> > Another point I need to emphasis here: because we have to replace the hardware
+> > queue when fork, so it won't be very simple even in SVA/SVM case.
+> 
+> I am assuming hardware queue can only be setup by the kernel and thus
+> you are totaly safe forkwise as the queue is setup against a PASID and
+> the child does not bind to any PASID and you use VM_DONTCOPY on the
+> mmap of the hardware MMIO queue because you should really use that flag
+> for that.
+> 
+> 
+> > > (2) Device does not have SVA/SVM (or it is disabled)
+> > > 
+> > > You want to still allow device to be part of your framework. However
+> > > here i see fundamentals securities issues and you move the burden of
+> > > being careful to user space which i think is a bad idea. We should
+> > > never trus the userspace from kernel space.
+> > > 
+> > > To keep the same API for the user space code you want a 1:1 mapping
+> > > between device physical address and process virtual address (ie if
+> > > device access device physical address A it is accessing the same
+> > > memory as what is backing the virtual address A in the process.
+> > > 
+> > > Security issues are on two things:
+> > > [I1]- fork/exec, a process who opened any such device and created an
+> > >       active queue can transfer without its knowledge control of its
+> > >       commands queue through COW. The parent map some anonymous region
+> > >       to the device as a command queue buffer but because of COW the
+> > >       parent can be the first to copy on write and thus the child can
+> > >       inherit the original pages that are mapped to the hardware.
+> > >       Here parent lose control and child gain it.
+> > 
+> > This is indeed an issue. But it remains an issue only if you continue to use the
+> > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
+> > user space.
+> 
+> Trusting user space is a no go from my point of view.
+
+Can we dive deeper on this? Maybe we have different understanding on "Trusting
+user space". As my understanding, "trusting user space" means "no matter what
+the user process does, it should only hurt itself and anything give to it, no
+the kernel and the other process".
+
+In our case, we create a channel between a process and the hardware. The process
+can do whateven it like to its own memory the channel itself. It won't hurt the
+other process and the kernel. And if the process fork a child and give the
+channel to the child, it should the freedom on those resource remain within the
+parent and the child. We are not trust another else.
+
+So do you refer to something else here?
+
+> 
+> 
+> > From some perspectives, I think the issue can be solved by iommu_notifier. For
+> > example, when the process is fork-ed, we can set the mapped device mmio space as
+> > COW for the child process, so a new queue can be created and set to the same
+> > state as the parent's if the space is accessed. Then we can have two separated
+> > queues for both the parent and the child. The memory part can be done in the
+> > same way.
+> 
+> The mmap of mmio space for the queue is not an issue just use VM_DONTCOPY
+> for it. Issue is with COW and IOMMU mapping of pages and this can not be
+> solve in your model.
+> 
+> > The thing is, the same strategy can be applied to VFIO without changing its
+> > original feature.
+> 
+> No it can not it would break existing VFIO contract (which only should be
+> use against private anonymous vma).
+> 
+> > 
+> > > 
+> > > [I2]- Because of [R3] you want to allow userspace to schedule commands
+> > >       on the device without doing an ioctl and thus here user space
+> > >       can schedule any commands to the device with any address. What
+> > >       happens if that address have not been mapped by the user space
+> > >       is undefined and in fact can not be defined as what each IOMMU
+> > >       does on invalid address access is different from IOMMU to IOMMU.
+> > > 
+> > >       In case of a bad IOMMU, or simply an IOMMU improperly setup by
+> > >       the kernel, this can potentialy allow user space to DMA anywhere.
+> > 
+> > I don't think this is an issue. If you cannot trust IOMMU and proper setup of
+> > IOMMU in kernel, you cannot trust anything. And the whole VFIO framework is
+> > untrustable.
+> 
+> VFIO device is usualy restricted to trusted user and other device that
+> do DMA do various checks to make sure user space can not abuse them, the
+> assumption i have always seen so far is to not trust that IOMMU will do
+> all the work. So exposing user space access to device with DMA capabilities
+> should be done carefuly IMHO.
+> 
+> To be thorough list of potential bugs i am concern about:
+>     - IOMMU hardware bug
+>     - IOMMU does not isolate device after too many fail attempt
+>     - firmware setup the IOMMU in some unsafe way and linux kernel does
+>       not catch that (like passthrough on error or when there is no
+>       entry for the PA which i am told is a thing for debug)
+>     - bug in the linux IOMMU kernel driver
+> 
+> 
+> 
+> > > 
+> > > [I3]- By relying on GUP in VFIO you are not abiding by the implicit
+> > >       contract (at least i hope it is implicit) that you should not
+> > >       try to map to the device any file backed vma (private or share).
+> > > 
+> > >       The VFIO code never check the vma controlling the addresses that
+> > >       are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
+> > >       user space can provide file backed range.
+> > > 
+> > >       I am guessing that the VFIO code never had any issues because its
+> > >       number one user is QEMU and QEMU never does that (and that's good
+> > >       as no one should ever do that).
+> > > 
+> > >       So if process does that you are opening your self to serious file
+> > >       system corruption (depending on file system this can lead to total
+> > >       data loss for the filesystem).
+> > > 
+> > >       Issue is that once you GUP you never abide to file system flushing
+> > >       which write protect the page before writing to the disk. So
+> > >       because the page is still map with write permission to the device
+> > >       (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
+> > >       write to the page while it is in the middle of being written back
+> > >       to disk. Consult your nearest file system specialist to ask him
+> > >       how bad that can be.
+> > 
+> > Same as I2, it is an issue, but the problem can be solved in VFIO if we really
+> > take it in the scope of VFIO.
+> 
+> Except it can not be solve without breaking VFIO. If you use mmu_notifier
+> it means that the the IOMMU mapping can vanish at _any_ time and because
+> you allow user space to directly schedule work on the hardware command
+> queue than you do not have any synchronization point to use.
+> 
+> When notifier calls you must stop all hardware access and wait for any
+> pending work that might still dereference affected range. Finaly you can
+> restore mapping only once the notifier is done. AFAICT this would break
+> all existing VFIO user.
+> 
+> So solving that for your case it means you would have to:
+> warp_invalidate_range_callback() {
+>     - take some lock to protect against restore
+>     - unmap the command queue (zap_range) from userspace to stop further
+>       commands
+>     - wait for any pending commands on the hardware to complete
+>     - clear all IOMMU mappings for the range
+>     - put_pages()
+>     - drop restore lock
+>     return to let invalidation complete its works
+> }
+> 
+> warp_restore() {
+>     // This is call by the page fault handler on the command queue mapped
+>     // to user space.
+>     - take restore lock
+>     - go over all IOMMU mapping and restore them (GUP)
+>     - remap command queue to userspace
+>     - drop restore lock
+> }
+> 
+> This model does not work for VFIO existing users AFAICT.
+> 
+> 
+> > > [I4]- Design issue, mdev design As Far As I Understand It is about
+> > >       sharing a single device to multiple clients (most obvious case
+> > >       here is again QEMU guest). But you are going against that model,
+> > >       in fact AFAIUI you are doing the exect opposite. When there is
+> > >       no SVA/SVM you want only one mdev device that can not be share.
+> > 
+> > Wait. It is NOT "I want only one mdev device when there is no SVA/SVM", it is "I
+> > can support only one mdev when there is no PASID support for the IOMMU".
+> 
+> Except you can support more than one user when no SVA/SVM with the model
+> i outlined below.
+> 
+> 
+> > > 
+> > >       So this is counter intuitive to the mdev existing design. It is
+> > >       not about sharing device among multiple users but about giving
+> > >       exclusive access to the device to one user.
+> > > 
+> > > 
+> > > 
+> > > All the reasons above is why i believe a different model would serve
+> > > you and your user better. Below is a design that avoids all of the
+> > > above issues and still delivers all of your objectives with the
+> > > exceptions of the third one [R3] when there is no SVA/SVM.
+> > > 
+> > > 
+> > > Create a subsystem (very much boiler plate code) which allow device to
+> > > register themself against (very much like what you do in your current
+> > > patchset but outside of VFIO).
+> > > 
+> > > That subsystem will create a device file for each registered system and
+> > > expose a common API (ie set of ioctl) for each of those device files.
+> > > 
+> > > When user space create a queue (through an ioctl after opening the device
+> > > file) the kernel can return -EBUSY if all the device queue are in use,
+> > > or create a device queue and return a flag like SYNC_ONLY for device that
+> > > do not have SVA/SVM.
+> > > 
+> > > For device with SVA/SVM at the time the process create a queue you bind
+> > > the process PASID to the device queue. From there on the userspace can
+> > > schedule commands and use the device without going to kernel space.
+> > 
+> > As mentioned previously, this is not enough for fork scenario.
+> 
+> It is for every existing user of SVA/SVM so i fail to see why it would
+> be any different in your case. Note that they all use VM_DONTCOPY flag
+> on the queue mapped to userspace.
+> 
+> 
+> > > For device without SVA/SVM you create a fake queue that is just pure
+> > > memory is not related to the device. From there on the userspace must
+> > > call an ioctl every time it wants the device to consume its queue
+> > > (hence why the SYNC_ONLY flag for synchronous operation only). The
+> > > kernel portion read the fake queue expose to user space and copy
+> > > commands into the real hardware queue but first it properly map any
+> > > of the process memory needed for those commands to the device and
+> > > adjust the device physical address with the one it gets from dma_map
+> > > API.
+> > > 
+> > 
+> > But in this way, we will lost most of the benefit of avoiding syscall.
+> 
+> Yes but only when there is SVA/SVM. What i am trying to stress is that
+> there is no sane way to mirror user space address space onto device
+> without mmu_notifier so short of that this model where you have to
+> syscall to schedules thing on the hardware is the easiest thing to do.
+> 
+> 
+> > > With that model it is "easy" to listen to mmu_notifier and to abide by
+> > > them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
+> > > issue by only mapping a fake device queue to userspace.
+> > > 
+> > > So yes with that models it means that every device that wish to support
+> > > the non SVA/SVM case will have to do extra work (ie emulate its command
+> > > queue in software in the kernel). But by doing so, you support an
+> > > unlimited number of process on your device (ie all the process can share
+> > > one single hardware command queues or multiple hardware queues).
+> > 
+> > If I can do this, I will not need WarpDrive at all:(
+> 
+> This is only needed if you wish to support non SVA/SVM, shifting the
+> burden to the kernel is always the thing to do especially if they are
+> legitimate security concerns.
+
+For the other part, please give me some more time to write some test code and
+come back to the discussino. Thank you.
+
+Cheers
+
+> 
+> 
+> Cheers,
+> Jérôme
+
+-- 
+			-Kenneth(Hisilicon)
 
