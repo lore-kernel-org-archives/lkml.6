@@ -2,228 +2,137 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08303ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC74CC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B5A214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B5A214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B8F02146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8F02146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730400AbeIRUAN (ORCPT
+        id S1729859AbeIRUAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:00:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37447 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729447AbeIRUAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:00:12 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A4445F783;
-        Tue, 18 Sep 2018 14:27:22 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B542978DDB;
-        Tue, 18 Sep 2018 14:27:09 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v2 20/20] iommu/smmuv3: Report non recoverable faults
-Date:   Tue, 18 Sep 2018 16:24:57 +0200
-Message-Id: <20180918142457.3325-21-eric.auger@redhat.com>
-In-Reply-To: <20180918142457.3325-1-eric.auger@redhat.com>
-References: <20180918142457.3325-1-eric.auger@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Sep 2018 14:27:22 +0000 (UTC)
+        Tue, 18 Sep 2018 16:00:41 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12608 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727228AbeIRUAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:00:40 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6B120B032BB3D;
+        Tue, 18 Sep 2018 22:27:46 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
+ 2018 22:27:38 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 5/8] staging: erofs: complete error handing of z_erofs_do_read_page
+Date:   Tue, 18 Sep 2018 22:27:25 +0800
+Message-ID: <1537280848-122331-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
+References: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a stage 1 related fault event is read from the event queue,
-let's propagate it to potential external fault listeners, ie. users
-who registered a fault handler.
+This patch completes error handing code of z_erofs_do_read_page.
+PG_error will be set when some read error happens, therefore
+z_erofs_onlinepage_endio will unlock this page without setting
+PG_uptodate.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Chao Yu <yucxhao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/iommu/arm-smmu-v3.c | 124 ++++++++++++++++++++++++++++++++----
- 1 file changed, 113 insertions(+), 11 deletions(-)
+ drivers/staging/erofs/unzip_vle.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index d9d300ab62a5..948fc82fc4ce 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -178,6 +178,26 @@
- #define ARM_SMMU_PRIQ_IRQ_CFG1		0xd8
- #define ARM_SMMU_PRIQ_IRQ_CFG2		0xdc
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 3296538..08c424c 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -611,7 +611,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
  
-+/* Events */
-+#define ARM_SMMU_EVT_F_UUT		0x01
-+#define ARM_SMMU_EVT_C_BAD_STREAMID	0x02
-+#define ARM_SMMU_EVT_F_STE_FETCH	0x03
-+#define ARM_SMMU_EVT_C_BAD_STE		0x04
-+#define ARM_SMMU_EVT_F_BAD_ATS_TREQ	0x05
-+#define ARM_SMMU_EVT_F_STREAM_DISABLED	0x06
-+#define ARM_SMMU_EVT_F_TRANSL_FORBIDDEN	0x07
-+#define ARM_SMMU_EVT_C_BAD_SUBSTREAMID	0x08
-+#define ARM_SMMU_EVT_F_CD_FETCH		0x09
-+#define ARM_SMMU_EVT_C_BAD_CD		0x0a
-+#define ARM_SMMU_EVT_F_WALK_EABT	0x0b
-+#define ARM_SMMU_EVT_F_TRANSLATION	0x10
-+#define ARM_SMMU_EVT_F_ADDR_SIZE	0x11
-+#define ARM_SMMU_EVT_F_ACCESS		0x12
-+#define ARM_SMMU_EVT_F_PERMISSION	0x13
-+#define ARM_SMMU_EVT_F_TLB_CONFLICT	0x20
-+#define ARM_SMMU_EVT_F_CFG_CONFLICT	0x21
-+#define ARM_SMMU_EVT_E_PAGE_REQUEST	0x24
-+
- /* Common MSI config fields */
- #define MSI_CFG0_ADDR_MASK		GENMASK_ULL(51, 2)
- #define MSI_CFG2_SH			GENMASK(5, 4)
-@@ -343,6 +363,11 @@
- #define EVTQ_MAX_SZ_SHIFT		7
+ 	enum z_erofs_page_type page_type;
+ 	unsigned int cur, end, spiltted, index;
+-	int err;
++	int err = 0;
  
- #define EVTQ_0_ID			GENMASK_ULL(7, 0)
-+#define EVTQ_0_SUBSTREAMID		GENMASK_ULL(31, 12)
-+#define EVTQ_0_STREAMID			GENMASK_ULL(63, 32)
-+#define EVTQ_1_S2			GENMASK_ULL(39, 39)
-+#define EVTQ_1_CLASS			GENMASK_ULL(40, 41)
-+#define EVTQ_3_FETCH_ADDR		GENMASK_ULL(51, 3)
+ 	/* register locked file pages as online pages in pack */
+ 	z_erofs_onlinepage_init(page);
+@@ -638,12 +638,11 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 	if (unlikely(err))
+ 		goto err_out;
  
- /* PRI queue */
- #define PRIQ_ENT_DWORDS			2
-@@ -1250,7 +1275,6 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
- 	return 0;
+-	/* deal with hole (FIXME! broken now) */
+ 	if (unlikely(!(map->m_flags & EROFS_MAP_MAPPED)))
+ 		goto hitted;
+ 
+ 	DBG_BUGON(map->m_plen != 1 << sbi->clusterbits);
+-	BUG_ON(erofs_blkoff(map->m_pa));
++	DBG_BUGON(erofs_blkoff(map->m_pa));
+ 
+ 	err = z_erofs_vle_work_iter_begin(builder, sb, map, &fe->owned_head);
+ 	if (unlikely(err))
+@@ -688,7 +687,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 
+ 		err = z_erofs_vle_work_add_page(builder,
+ 			newpage, Z_EROFS_PAGE_TYPE_EXCLUSIVE);
+-		if (!err)
++		if (likely(!err))
+ 			goto retry;
+ 	}
+ 
+@@ -699,9 +698,10 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 
+ 	/* FIXME! avoid the last relundant fixup & endio */
+ 	z_erofs_onlinepage_fixup(page, index, true);
+-	++spiltted;
+ 
+-	/* also update nr_pages and increase queued_pages */
++	/* bump up the number of spiltted parts of a page */
++	++spiltted;
++	/* also update nr_pages */
+ 	work->nr_pages = max_t(pgoff_t, work->nr_pages, index + 1);
+ next_part:
+ 	/* can be used for verification */
+@@ -711,16 +711,18 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 	if (end > 0)
+ 		goto repeat;
+ 
++out:
+ 	/* FIXME! avoid the last relundant fixup & endio */
+ 	z_erofs_onlinepage_endio(page);
+ 
+ 	debugln("%s, finish page: %pK spiltted: %u map->m_llen %llu",
+ 		__func__, page, spiltted, map->m_llen);
+-	return 0;
++	return err;
+ 
++	/* if some error occurred while processing this page */
+ err_out:
+-	/* TODO: the missing error handing cases */
+-	return err;
++	SetPageError(page);
++	goto out;
  }
  
--__maybe_unused
- static struct arm_smmu_master_data *
- arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
- {
-@@ -1276,24 +1300,102 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
- 	return master;
- }
- 
-+static void arm_smmu_report_event(struct arm_smmu_device *smmu, u64 *evt)
-+{
-+	u64 fetch_addr = FIELD_GET(EVTQ_3_FETCH_ADDR, evt[3]);
-+	u32 sid = FIELD_GET(EVTQ_0_STREAMID, evt[0]);
-+	bool s1 = !FIELD_GET(EVTQ_1_S2, evt[1]);
-+	u8 type = FIELD_GET(EVTQ_0_ID, evt[0]);
-+	struct arm_smmu_master_data *master;
-+	struct iommu_fault_event event;
-+	bool propagate = true;
-+	u64 addr = evt[2];
-+	int i;
-+
-+	master = arm_smmu_find_master(smmu, sid);
-+	if (WARN_ON(!master))
-+		return;
-+
-+	event.fault.type = IOMMU_FAULT_DMA_UNRECOV;
-+
-+	switch (type) {
-+	case ARM_SMMU_EVT_C_BAD_STREAMID:
-+		event.fault.reason = IOMMU_FAULT_REASON_SOURCEID_INVALID;
-+		break;
-+	case ARM_SMMU_EVT_F_STREAM_DISABLED:
-+	case ARM_SMMU_EVT_C_BAD_SUBSTREAMID:
-+		event.fault.reason = IOMMU_FAULT_REASON_PASID_INVALID;
-+		break;
-+	case ARM_SMMU_EVT_F_CD_FETCH:
-+		event.fault.reason = IOMMU_FAULT_REASON_PASID_FETCH;
-+		break;
-+	case ARM_SMMU_EVT_F_WALK_EABT:
-+		event.fault.reason = IOMMU_FAULT_REASON_WALK_EABT;
-+		event.fault.addr = addr;
-+		event.fault.fetch_addr = fetch_addr;
-+		propagate = s1;
-+		break;
-+	case ARM_SMMU_EVT_F_TRANSLATION:
-+		event.fault.reason = IOMMU_FAULT_REASON_PTE_FETCH;
-+		event.fault.addr = addr;
-+		event.fault.fetch_addr = fetch_addr;
-+		propagate = s1;
-+		break;
-+	case ARM_SMMU_EVT_F_PERMISSION:
-+		event.fault.reason = IOMMU_FAULT_REASON_PERMISSION;
-+		event.fault.addr = addr;
-+		propagate = s1;
-+		break;
-+	case ARM_SMMU_EVT_F_ACCESS:
-+		event.fault.reason = IOMMU_FAULT_REASON_ACCESS;
-+		event.fault.addr = addr;
-+		propagate = s1;
-+		break;
-+	case ARM_SMMU_EVT_C_BAD_STE:
-+		event.fault.reason = IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY;
-+		break;
-+	case ARM_SMMU_EVT_C_BAD_CD:
-+		event.fault.reason = IOMMU_FAULT_REASON_BAD_PASID_ENTRY;
-+		break;
-+	case ARM_SMMU_EVT_F_ADDR_SIZE:
-+		event.fault.reason = IOMMU_FAULT_REASON_OOR_ADDRESS;
-+		propagate = s1;
-+		break;
-+	case ARM_SMMU_EVT_F_STE_FETCH:
-+		event.fault.reason = IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH;
-+		event.fault.fetch_addr = fetch_addr;
-+		break;
-+	/* End of addition */
-+	case ARM_SMMU_EVT_E_PAGE_REQUEST:
-+	case ARM_SMMU_EVT_F_TLB_CONFLICT:
-+	case ARM_SMMU_EVT_F_CFG_CONFLICT:
-+	case ARM_SMMU_EVT_F_BAD_ATS_TREQ:
-+	case ARM_SMMU_EVT_F_TRANSL_FORBIDDEN:
-+	case ARM_SMMU_EVT_F_UUT:
-+	default:
-+		event.fault.reason = IOMMU_FAULT_REASON_UNKNOWN;
-+	}
-+	/* only propagate the error if it relates to stage 1 */
-+	if (s1)
-+		iommu_report_device_fault(master->dev, &event);
-+
-+	dev_info(smmu->dev, "event 0x%02x received:\n", type);
-+	for (i = 0; i < EVTQ_ENT_DWORDS; ++i) {
-+		dev_info(smmu->dev, "\t0x%016llx\n",
-+			 (unsigned long long)evt[i]);
-+	}
-+}
-+
- /* IRQ and event handlers */
- static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
- {
--	int i;
- 	struct arm_smmu_device *smmu = dev;
- 	struct arm_smmu_queue *q = &smmu->evtq.q;
- 	u64 evt[EVTQ_ENT_DWORDS];
- 
- 	do {
--		while (!queue_remove_raw(q, evt)) {
--			u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
--
--			dev_info(smmu->dev, "event 0x%02x received:\n", id);
--			for (i = 0; i < ARRAY_SIZE(evt); ++i)
--				dev_info(smmu->dev, "\t0x%016llx\n",
--					 (unsigned long long)evt[i]);
--
--		}
-+		while (!queue_remove_raw(q, evt))
-+			arm_smmu_report_event(smmu, evt);
- 
- 		/*
- 		 * Not much we can do on overflow, so scream and pretend we're
+ static void z_erofs_vle_unzip_kickoff(void *ptr, int bios)
 -- 
-2.17.1
+1.9.1
 
