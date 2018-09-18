@@ -2,176 +2,195 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A887ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA2EECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C742150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21DE121473
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 03:12:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P/Jz/L/e";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P/Jz/L/e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C742150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W9dgsVKL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DE121473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbeIRImZ (ORCPT
+        id S1729040AbeIRInM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 04:42:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52996 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeIRImY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 04:42:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 92B5A60C61; Tue, 18 Sep 2018 03:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537240314;
-        bh=N4Ku4hLfDN9oA/nZfGR2YEM8dFpL6CROoIGqpdUqFzc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=P/Jz/L/ekwv7wxob4vHSxF5kuNTcvsNHSOBBdq/6iHsCV87802AYJawHg6GZKYtaM
-         VjU1tNBK3bGMxRYZ1+ZM8D3MPg5OF2l+T7HWMFUV9A/nZWcQQKYOd1mY0dgra+2I3P
-         Fr5YR6xWYwfi3rWqZW+mrdtACocU9xAgtrvEe5uA=
-Received: from mail-qt0-f171.google.com (mail-qt0-f171.google.com [209.85.216.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 18 Sep 2018 04:43:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:54035 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728655AbeIRInM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 04:43:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EB127608BF;
-        Tue, 18 Sep 2018 03:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537240314;
-        bh=N4Ku4hLfDN9oA/nZfGR2YEM8dFpL6CROoIGqpdUqFzc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=P/Jz/L/ekwv7wxob4vHSxF5kuNTcvsNHSOBBdq/6iHsCV87802AYJawHg6GZKYtaM
-         VjU1tNBK3bGMxRYZ1+ZM8D3MPg5OF2l+T7HWMFUV9A/nZWcQQKYOd1mY0dgra+2I3P
-         Fr5YR6xWYwfi3rWqZW+mrdtACocU9xAgtrvEe5uA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB127608BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f171.google.com with SMTP id r37-v6so457656qtc.0;
-        Mon, 17 Sep 2018 20:11:53 -0700 (PDT)
-X-Gm-Message-State: APzg51BX7fo9MQsxjlJXx5gXUCecVhdE0tCKmmv3rUdE1Nr7OICHCq+W
-        v+tu0BMVWvLgYzxwgJfpQ9plQeoGN5wvu40l7MM=
-X-Google-Smtp-Source: ANB0VdZbJqgui1M05QH1MJURtMwL6ofWbF/mIASXOCHcoP5m2Pr0K2Rr4WMb4tBlIXl29OmBVKWj0G1Dnwr2Ri6ZRyk=
-X-Received: by 2002:a0c:ada8:: with SMTP id w37-v6mr20149984qvc.107.1537240313215;
- Mon, 17 Sep 2018 20:11:53 -0700 (PDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Dp2b04yjz9sCP;
+        Tue, 18 Sep 2018 13:12:38 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537240361;
+        bh=0z9xYhWAgxx/D2oqZTlyYD4Egu84LuJ7vvQs3L3Xfm4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=W9dgsVKLkLELCRrx/l/ZxAsbrYqQ1AcD1UuTpveTQBKP1g0tpdl3t0/7pSKbwPOpp
+         GmD0sASlNh1Pfi15gWAsI0oABw5MoDnByrvJ9L/CExYpx7LLNdM2Pht00jnJLm7Zyl
+         /Otw11MvvR1TwncrAM3+QNR2z7qElifI9SHUgiHUnBMZeCQ4JJ3qbTVLW2sYKyodpn
+         q7fEZdTTgE+F2hlsWuCOwUMpjNu18eb/QG8J8frsknIQa0Ejs/Khq5q6xUqowbJYxR
+         DAD+5P1sytAUR6auhGg6w9dIKPJR4D9CTU/bvvcxzntHwBknZ5N6rcwAx0Uu1MxnYM
+         34sStkWs1Sa8Q==
+Date:   Tue, 18 Sep 2018 13:12:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Nicolas Ferre <nicolas.ferre@atmel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Kent Gustavsson <kent@minoris.se>
+Subject: linux-next: manual merge of the staging tree with the at91 tree
+Message-ID: <20180918131238.2838bedd@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180830144541.17740-1-vivek.gautam@codeaurora.org>
- <20180830144541.17740-3-vivek.gautam@codeaurora.org> <CAAFQd5B7YR03Jm1upOg2nsaKOb1iDD7-WGo-qx7S8m-nounCvA@mail.gmail.com>
- <3ccc3690-dc9d-56e7-e2d1-62e73a189bff@codeaurora.org> <CAAFQd5DMDWEeBU=fg6arye3pXnrCqOA4tDtMSGutXk7vSz-EtQ@mail.gmail.com>
- <CAFp+6iE3+qn6-gpXEzxfoP5yPMARmUcJNn0AZk-kA2AreTLnng@mail.gmail.com>
-In-Reply-To: <CAFp+6iE3+qn6-gpXEzxfoP5yPMARmUcJNn0AZk-kA2AreTLnng@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 18 Sep 2018 08:41:41 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iHnHj_PkPFBUSTdJTW57K51wLqSEw6VOMKxAVo7O+ms9g@mail.gmail.com>
-Message-ID: <CAFp+6iHnHj_PkPFBUSTdJTW57K51wLqSEw6VOMKxAVo7O+ms9g@mail.gmail.com>
-Subject: Re: [PATCH v16 2/5] iommu/arm-smmu: Invoke pm_runtime during probe,
- add/remove device
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PVGMmhdyduetp4fvNQ4zjyq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+--Sig_/PVGMmhdyduetp4fvNQ4zjyq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 7, 2018 at 3:52 PM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->
-> On Fri, Sep 7, 2018 at 3:22 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> >
-> > On Fri, Sep 7, 2018 at 6:38 PM Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> > >
-> > > Hi Tomasz,
-> > >
-> > >
-> > > On 9/7/2018 2:46 PM, Tomasz Figa wrote:
-> > > > Hi Vivek,
-> > > >
-> > > > On Thu, Aug 30, 2018 at 11:46 PM Vivek Gautam
-> > > > <vivek.gautam@codeaurora.org> wrote:
-> > > >> From: Sricharan R <sricharan@codeaurora.org>
-> > > >>
-> > > >> The smmu device probe/remove and add/remove master device callbacks
-> > > >> gets called when the smmu is not linked to its master, that is without
-> > > >> the context of the master device. So calling runtime apis in those places
-> > > >> separately.
-> > > >> Global locks are also initialized before enabling runtime pm as the
-> > > >> runtime_resume() calls device_reset() which does tlb_sync_global()
-> > > >> that ultimately requires locks to be initialized.
-> > > >>
-> > > >> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > > >> [vivek: Cleanup pm runtime calls]
-> > > >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > > >> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > > >> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > >> ---
-> > > >>   drivers/iommu/arm-smmu.c | 89 +++++++++++++++++++++++++++++++++++++++++++-----
-> > > >>   1 file changed, 81 insertions(+), 8 deletions(-)
-> > > > [snip]
-> > > >> @@ -2215,10 +2281,17 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
-> > > >>          if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
-> > > >>                  dev_err(&pdev->dev, "removing device with active domains!\n");
-> > > >>
-> > > >> +       arm_smmu_rpm_get(smmu);
-> > > >>          /* Turn the thing off */
-> > > >>          writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-> > > >> +       arm_smmu_rpm_put(smmu);
-> > > >> +
-> > > >> +       if (pm_runtime_enabled(smmu->dev))
-> > > >> +               pm_runtime_force_suspend(smmu->dev);
-> > > >> +       else
-> > > >> +               clk_bulk_disable(smmu->num_clks, smmu->clks);
-> > > >>
-> > > >> -       clk_bulk_disable_unprepare(smmu->num_clks, smmu->clks);
-> > > >> +       clk_bulk_unprepare(smmu->num_clks, smmu->clks);
-> > > > Aren't we missing pm_runtime_disable() here? We'll have the enable
-> > > > count unbalanced if the driver is removed and probed again.
-> > >
-> > > pm_runtime_force_suspend() does a pm_runtime_disable() also if i am not
-> > > wrong.
-> > > And, as mentioned in a previous thread [1], we were seeing a warning
-> > > which we avoided
-> > > by keeping force_suspend().
-> > >
-> > > [1] https://lkml.org/lkml/2018/7/8/124
-> >
-> > I see, thanks. I didn't realize that pm_runtime_force_suspend()
-> > already disables runtime PM indeed. Sorry for the noise.
->
-> Hi Tomasz,
-> No problem. Thanks for looking back at it.
->
-> Hi Robin,
-> If you are fine with this series, then can you please consider giving
-> Reviewed-by, so that we are certain that this series will go in the next merge
-> window.
-> Thanks
+Hi all,
 
-Gentle ping.
-You ack will be very helpful in letting Will pull this series for 4.20.
-Thanks.
+Today's linux-next merge of the staging tree got a conflict in:
 
-Best regards
-Vivek
+  MAINTAINERS
 
+between commit:
 
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+  5ae2f1f30197 ("MAINTAINERS: move former ATMEL entries to proper MICROCHIP=
+ locatioat91n")
+
+from the at91 tree and commit:
+
+  010de20412fc ("MAINTAINERS: Add entry for mcp3911 ADC driver")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 0d01245ef7b4,7f77f2c837a8..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -9539,72 -9582,14 +9554,80 @@@ L:	netdev@vger.kernel.or
+  S:	Maintained
+  F:	drivers/net/ethernet/microchip/lan743x_*
+ =20
+ +MICROCHIP LCDFB DRIVER
+ +M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ +L:	linux-fbdev@vger.kernel.org
+ +S:	Maintained
+ +F:	drivers/video/fbdev/atmel_lcdfb.c
+ +F:	include/video/atmel_lcdc.h
+ +
++ MICROCHIP / ATMEL MCP3911 ADC DRIVER
++ M:	Marcus Folkesson <marcus.folkesson@gmail.com>
++ M:	Kent Gustavsson <kent@minoris.se>
++ L:	linux-iio@vger.kernel.org
++ S:	Supported
++ F:	drivers/iio/adc/mcp3911.c
++ F:	Documentation/devicetree/bindings/iio/adc/mcp3911.txt
++=20
+ +MICROCHIP MMC/SD/SDIO MCI DRIVER
+ +M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+ +S:	Maintained
+ +F:	drivers/mmc/host/atmel-mci.c
+ +
+ +MICROCHIP NAND DRIVER
+ +M:	Tudor Ambarus <tudor.ambarus@microchip.com>
+ +L:	linux-mtd@lists.infradead.org
+ +S:	Supported
+ +F:	drivers/mtd/nand/raw/atmel/*
+ +F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
+ +
+ +MICROCHIP PWM DRIVER
+ +M:	Claudiu Beznea <claudiu.beznea@microchip.com>
+ +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ +L:	linux-pwm@vger.kernel.org
+ +S:	Supported
+ +F:	drivers/pwm/pwm-atmel.c
+ +F:	Documentation/devicetree/bindings/pwm/atmel-pwm.txt
+ +
+ +MICROCHIP SAMA5D2-COMPATIBLE ADC DRIVER
+ +M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+ +M:	Eugen Hristev <eugen.hristev@microchip.com>
+ +L:	linux-iio@vger.kernel.org
+ +S:	Supported
+ +F:	drivers/iio/adc/at91-sama5d2_adc.c
+ +F:	Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+ +F:	include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+ +
+ +MICROCHIP SAMA5D2-COMPATIBLE SHUTDOWN CONTROLLER
+ +M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ +S:	Supported
+ +F:	drivers/power/reset/at91-sama5d2_shdwc.c
+ +
+ +MICROCHIP SPI DRIVER
+ +M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ +S:	Supported
+ +F:	drivers/spi/spi-atmel.*
+ +
+ +MICROCHIP SSC DRIVER
+ +M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ +S:	Supported
+ +F:	drivers/misc/atmel-ssc.c
+ +F:	include/linux/atmel-ssc.h
+ +
+ +MICROCHIP TIMER COUNTER (TC) AND CLOCKSOURCE DRIVERS
+ +M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ +S:	Supported
+ +F:	drivers/misc/atmel_tclib.c
+ +F:	drivers/clocksource/tcb_clksrc.c
+ +
+ +MICROCHIP USBA UDC DRIVER
+ +M:	Cristian Birsan <cristian.birsan@microchip.com>
+ +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ +S:	Supported
+ +F:	drivers/usb/gadget/udc/atmel_usba_udc.*
+ +
+  MICROCHIP USB251XB DRIVER
+  M:	Richard Leitner <richard.leitner@skidata.com>
+  L:	linux-usb@vger.kernel.org
+
+--Sig_/PVGMmhdyduetp4fvNQ4zjyq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlugbSYACgkQAVBC80lX
+0Gyjlgf9EQBmHue1/UulNgRvJjC/Ik0nAPMZ7gPR/1cc34+IQRepuISnGw94dsLN
+La6Im9fnJY1Yn2OcaQV9nf7ODw7DTeNB5TZrZ1aErTrNcuUnRm2YZhucfD8auNyI
+lG7Y5jm0PPBL/uVYHHpnklGB3f7vM0ptLQhfxO5dljsIWPbKfI1OcoTym3KMxNOz
+2kaNR6jgaZ7YyrPvblkMEzjPpm6w/5WHjp+g+HsWLOAise/5O0e8/Y190hcLAmNp
+zoEL1rniQZLtLXdGzR8HqQRPtOeDGmNojM6nY1cEgBRvPb2CVpma4E5Fxga8UQTX
+vt9BM4JlIbvGOeIOhQPVp6oCpgUENQ==
+=GIWb
+-----END PGP SIGNATURE-----
+
+--Sig_/PVGMmhdyduetp4fvNQ4zjyq--
