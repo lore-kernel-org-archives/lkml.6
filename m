@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14118C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809B8ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4BC720C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1257F21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lOBpaKVV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BC720C0E
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TdmMEjn1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1257F21471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbeISCbi (ORCPT
+        id S1730461AbeISCcN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:31:38 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39462 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbeISCbi (ORCPT
+        Tue, 18 Sep 2018 22:32:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42209 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729693AbeISCcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:31:38 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v77-v6so3151988lfa.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:57:15 -0700 (PDT)
+        Tue, 18 Sep 2018 22:32:13 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f1-v6so3018106ljc.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jB6RL8+Z+NwqOFMrULgkVHbxD0RTu2PpTpuDGL+xMos=;
-        b=lOBpaKVVHtop/ez5WihIP+6FO9zAlseVUt+PW6+3elEcFgdk3OcqeHG4Wct3g0XEJ9
-         I/ex58pwJh1TtdA2YJFNHeSkgE2vVY4U5UcHpugpABFkY5tbPIwbdSE1rZbLA9EUG3Zy
-         PkMQqOXOIgbIVLJWtrNxCz9CoVkqGndTaRgfI=
+        bh=/2QjD39YllfNmmCFb12oPBzC0EYIqSe9VVN6FzHG3lI=;
+        b=TdmMEjn1gPrfv0HzetJ7zczhQVgwZ/Op7ielDAC+pnk6DiBDBPPDqrO3Lds7SEDuix
+         MmtMTqyWeIgVNykh2Tkn/P7HVgQM9NtT5jTXPMkxcXRP1elGAqkBsrXLUhLpWEJQGvxd
+         9MD10LOTFuG9mDAxzsCiiZJAOPAjDBYuYtVoQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jB6RL8+Z+NwqOFMrULgkVHbxD0RTu2PpTpuDGL+xMos=;
-        b=gSV1JqOLB11IOx2XIOVLIaF+LukLrrIgz2NF0C34j7I1oo41igswWH3XP/AzyPU+zm
-         SFRrthUosi/GUWfUn0pFu1raMsM5jJLl+fs0Tayf2/GI66b1OiFgKcasZIyyHSg/cPeS
-         MMmHiC3mm2jO2t5oz2Ah5jFXbAj6HIsH5g+X1PNRM3P/WAKp0ruUcL82ZDe5UeOQIHXr
-         m2T6pGYqeKgWB7bbh6XJf40qEkpoO4UJbSUoz+YUNtmTuRDX8d9rUKQC+zmUwguz02C0
-         AFMDuPN6A2nqKoqfhmd/uzZnAPOqArUneTF4blk7qMV27wZlF6Tcigu8R8YTOcZLW/Px
-         fs/Q==
-X-Gm-Message-State: APzg51DrH+LDsTANqkDpbotq2tdwSGeR+jX4sCRdNy7yvaAJqSmEFF16
-        xhCOAbAIHo/3GpEcsskQhTGWZghMoNA=
-X-Google-Smtp-Source: ANB0VdasDxMffnI0YZEb90HjvfbxKSVED9fnsKix+gQRMifjEVPue0gtcQaxREQE0zINjRyQr+zFLQ==
-X-Received: by 2002:a19:1709:: with SMTP id n9-v6mr12020188lfi.74.1537304234759;
-        Tue, 18 Sep 2018 13:57:14 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id g16-v6sm665298lfb.5.2018.09.18.13.57.14
+        bh=/2QjD39YllfNmmCFb12oPBzC0EYIqSe9VVN6FzHG3lI=;
+        b=Nhjh9l7Z5F68eZ9M2VWMXacEtu4KxS6I33agO1OTA8okdYeu/P8Vbp7bfFxSekeiC5
+         UOXaTw3Wly0y68HLFBgZ+gvm1/M70IVM9eMtdeMG25uTLlezb70CHpxuoKm1Dk0KY/SU
+         UrLQTLQfAc1HRhjbgXNi/2iEh53rMYhCCJsYG5BuhZcvL6Z6Ta5GxWQ1Bp3syK44lgD8
+         Xffyeu/FECFuN624wFcAmwpcmbU9Jmcnv2ukf2R1LzwBXKx+vI49gCzqg3oSJA7duofU
+         D3BeRy53rG1Ig3ySzx7XnbCx30tciaV0xIwFg7zcXKNXmz6o9qKX9VfnfMjy6SsS8RLa
+         LAKA==
+X-Gm-Message-State: APzg51CtJuJ03Ba3QgCqh23YzE0HNGVzev4cj5eYVw9tVelP+Ed99Rfm
+        vQTZBGZfsvN0X30KfzuFDmfjS1wPwWI=
+X-Google-Smtp-Source: ANB0VdYkaqrGrugRm9hrbCcodU36A3azuVOfe/Pv6n+BEGZ1Uk+cO07iE8Kw1BRmCueggLXkt9M7wA==
+X-Received: by 2002:a2e:2f19:: with SMTP id v25-v6mr2848170ljv.113.1537304269315;
+        Tue, 18 Sep 2018 13:57:49 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id c198-v6sm659668lfg.95.2018.09.18.13.57.47
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 13:57:14 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id j19-v6so3037037ljc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:57:14 -0700 (PDT)
-X-Received: by 2002:a2e:4584:: with SMTP id s126-v6mr19188203lja.60.1537304234133;
- Tue, 18 Sep 2018 13:57:14 -0700 (PDT)
+        Tue, 18 Sep 2018 13:57:48 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id s12-v6so3046268ljj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:57:47 -0700 (PDT)
+X-Received: by 2002:a2e:8103:: with SMTP id d3-v6mr18563758ljg.3.1537304267476;
+ Tue, 18 Sep 2018 13:57:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <1536918159-311-1-git-send-email-sayalil@codeaurora.org> <1536918159-311-3-git-send-email-sayalil@codeaurora.org>
-In-Reply-To: <1536918159-311-3-git-send-email-sayalil@codeaurora.org>
+References: <1536918159-311-1-git-send-email-sayalil@codeaurora.org> <1536918159-311-2-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1536918159-311-2-git-send-email-sayalil@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 18 Sep 2018 13:56:36 -0700
-X-Gmail-Original-Message-ID: <CAE=gft5Hfstqe38daPAGncjZjdnfL-+Fv7QGSvLtBWc7BFzwPg@mail.gmail.com>
-Message-ID: <CAE=gft5Hfstqe38daPAGncjZjdnfL-+Fv7QGSvLtBWc7BFzwPg@mail.gmail.com>
-Subject: Re: [PATCH V13 2/2] scsi: ufs: Add configfs support for UFS provisioning
+Date:   Tue, 18 Sep 2018 13:57:09 -0700
+X-Gmail-Original-Message-ID: <CAE=gft7UFMSyJrZ36iNay-nt6jywzucd4MOeAcErEJg9vpRhwQ@mail.gmail.com>
+Message-ID: <CAE=gft7UFMSyJrZ36iNay-nt6jywzucd4MOeAcErEJg9vpRhwQ@mail.gmail.com>
+Subject: Re: [PATCH V13 1/2] scsi: ufs: set the device reference clock setting
 To:     sayali <sayalil@codeaurora.org>
 Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
         vivek.gautam@codeaurora.org,
@@ -87,158 +87,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Sep 14, 2018 at 2:43 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
 >
-> This patch adds configfs support to provision UFS device at
-> runtime. This feature can be primarily useful in factory or
-> assembly line as some devices may be required to be configured
-> multiple times during initial system development phase.
-> Configuration Descriptors can be written multiple times until
-> bConfigDescrLock attribute is zero.
+> From: Subhash Jadavani <subhashj@codeaurora.org>
 >
-> Configuration descriptor buffer consists of Device and Unit
-> descriptor configurable parameters which are parsed from vendor
-> specific provisioning file and then passed via configfs node at
-> runtime to provision ufs device.
-> CONFIG_CONFIGFS_FS and CONFIG_UFS_PROVISION needs to be enabled
-> for using this feature.
+> UFS host supplies the reference clock to UFS device and UFS device
+> specification allows host to provide one of the 4 frequencies (19.2 MHz,
+> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+> device reference clock frequency setting in the device based on what
+> frequency it is supplying to UFS device.
 >
-> Usage:
-> 1) To read current configuration descriptor with index X
->    (where index X can be 0/1/2/3) :
->    cat /config/<device_name>/ufs_config_desc_X
->
-> 2) To write configuration descriptor with index X :
->    echo <config_desc_buf> > /config/<device_name>/ufs_config_desc_X
->
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
 > Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
-...
-> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-> new file mode 100644
-> index 0000000..84ccb1a
-> --- /dev/null
-> +++ b/drivers/scsi/ufs/ufs-configfs.c
-> @@ -0,0 +1,237 @@
-...
-> +static ssize_t ufs_config_desc_0_show(struct config_item *item, char *buf)
+>  drivers/scsi/ufs/ufs.h           | 14 +++++++
+>  drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+>  drivers/scsi/ufs/ufshcd.c        | 90 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h        |  2 +
+>  4 files changed, 108 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index 14e5bf7..a2e76b1 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -378,6 +378,20 @@ enum query_opcode {
+>         UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
+>  };
+>
+> +/* bRefClkFreq attribute values */
+> +enum ufs_ref_clk_freq {
+> +       REF_CLK_FREQ_19_2_MHZ   = 0,
+> +       REF_CLK_FREQ_26_MHZ     = 1,
+> +       REF_CLK_FREQ_38_4_MHZ   = 2,
+> +       REF_CLK_FREQ_52_MHZ     = 3,
+> +       REF_CLK_FREQ_INVAL      = -1,
+> +};
+> +
+> +struct ufs_ref_clk {
+> +       u32 freq_hz;
+> +       enum ufs_ref_clk_freq val;
+> +};
+> +
+>  /* Query response result code */
+>  enum {
+>         QUERY_RESULT_SUCCESS                    = 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> index e82bde0..0953563 100644
+> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> @@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>         pm_runtime_set_active(&pdev->dev);
+>         pm_runtime_enable(&pdev->dev);
+>
+> +       ufshcd_parse_dev_ref_clk_freq(hba);
+> +
+>         ufshcd_init_lanes_per_dir(hba);
+>
+>         err = ufshcd_init(hba, mmio_base, irq);
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index c5b1bf1..e01cdc0 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+>         hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+>  }
+>
+> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
+> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
+> +       {26000000, REF_CLK_FREQ_26_MHZ},
+> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
+> +       {52000000, REF_CLK_FREQ_52_MHZ},
+> +       {0, REF_CLK_FREQ_INVAL},
+> +};
+> +
+> +static inline enum ufs_ref_clk_freq
+> +ufs_get_bref_clk_from_hz(u32 freq)
 > +{
-> +       return ufs_config_desc_show(item, buf, 0);
+> +       int i = 0;
+> +
+> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
+> +               if (!ufs_ref_clk_freqs[i].freq_hz)
+> +                       return REF_CLK_FREQ_INVAL;
+> +               i++;
+> +       }
+> +
+> +       return ufs_ref_clk_freqs[i].val;
 > +}
 > +
-> +static ssize_t ufs_config_desc_0_store(struct config_item *item,
-> +                                      const char *buf, size_t count)
+> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
 > +{
-> +       return ufshcd_desc_configfs_store(item, buf, count, 0);
+> +       struct device *dev = hba->dev;
+> +       struct device_node *np = dev->of_node;
+> +       struct clk *refclk = NULL;
+> +       u32 freq = 0;
+> +
+> +       if (!np)
+> +               return;
+> +
+> +       refclk = of_clk_get_by_name(np, "ref_clk");
+> +       if (!refclk)
+> +               return;
+> +
+> +       freq = clk_get_rate(refclk);
+> +
+> +       hba->dev_ref_clk_freq =
+> +               ufs_get_bref_clk_from_hz(freq);
+> +
+> +       if (hba->dev_ref_clk_freq == REF_CLK_FREQ_INVAL)
+> +               dev_err(hba->dev,
+> +               "%s: invalid ref_clk setting = %d\n",
+> +               __func__, freq);
 > +}
 > +
-> +static ssize_t ufs_config_desc_1_show(struct config_item *item, char *buf)
+> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
 > +{
-> +       return ufs_config_desc_show(item, buf, 1);
-> +}
+> +       int err, ref_clk = -1;
+> +       u32 freq = hba->dev_ref_clk_freq;
 > +
-> +static ssize_t ufs_config_desc_1_store(struct config_item *item,
-> +                                      const char *buf, size_t count)
-> +{
-> +       return ufshcd_desc_configfs_store(item, buf, count, 1);
-> +}
+> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
 > +
-> +static ssize_t ufs_config_desc_2_show(struct config_item *item, char *buf)
-> +{
-> +       return ufs_config_desc_show(item, buf, 2);
-> +}
+> +       if (err) {
+> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+> +                        __func__, err);
+> +               goto out;
+> +       }
 > +
-> +static ssize_t ufs_config_desc_2_store(struct config_item *item,
-> +                                      const char *buf, size_t count)
-> +{
-> +       return ufshcd_desc_configfs_store(item, buf, count, 2);
-> +}
+> +       if (ref_clk == hba->dev_ref_clk_freq)
+> +               goto out; /* nothing to update */
 > +
-> +static ssize_t ufs_config_desc_3_show(struct config_item *item, char *buf)
-> +{
-> +       return ufs_config_desc_show(item, buf, 3);
-> +}
+> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
 > +
-> +static ssize_t ufs_config_desc_3_store(struct config_item *item,
-> +                                      const char *buf, size_t count)
-> +{
-> +       return ufshcd_desc_configfs_store(item, buf, count, 3);
-> +}
+> +       if (err) {
+> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
+> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+> +               goto out;
+> +       }
+> +       /*
+> +        * It is good to print this out here to debug any later failures
+> +        * related to gear switch.
+> +        */
+> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
+> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
 > +
 
-The copypasta above and below is not my favorite, but I suppose it's
-either this or wrap it all up in a macro that you stamp down 4 times.
-I'm not sure if that's really any cleaner, so I guess this is fine.
+The comment above doesn't add any value in my opinion. Other than that:
 
-> +static struct configfs_attribute ufshcd_attr_provision_0 = {
-> +       .ca_name        = "ufs_config_desc_0",
-> +       .ca_mode        = 0644,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_config_desc_0_show,
-> +       .store          = ufs_config_desc_0_store,
-> +};
-> +
-> +static struct configfs_attribute ufshcd_attr_provision_1 = {
-> +       .ca_name        = "ufs_config_desc_1",
-> +       .ca_mode        = 0644,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_config_desc_1_show,
-> +       .store          = ufs_config_desc_1_store,
-> +};
-> +
-> +static struct configfs_attribute ufshcd_attr_provision_2 = {
-> +       .ca_name        = "ufs_config_desc_2",
-> +       .ca_mode        = 0644,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_config_desc_2_show,
-> +       .store          = ufs_config_desc_2_store,
-> +};
-> +
-> +static struct configfs_attribute ufshcd_attr_provision_3 = {
-> +       .ca_name        = "ufs_config_desc_3",
-> +       .ca_mode        = 0644,
-> +       .ca_owner       = THIS_MODULE,
-> +       .show           = ufs_config_desc_3_show,
-> +       .store          = ufs_config_desc_3_store,
-> +};
-> +
-> +static struct configfs_attribute *ufshcd_attrs[] = {
-> +       &ufshcd_attr_provision_0,
-> +       &ufshcd_attr_provision_1,
-> +       &ufshcd_attr_provision_2,
-> +       &ufshcd_attr_provision_3,
-> +       NULL,
-> +};
-> +
-> +static struct config_item_type ufscfg_type = {
-> +       .ct_attrs       = ufshcd_attrs,
-> +       .ct_owner       = THIS_MODULE,
-> +};
-> +
-> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-> +{
-> +       int ret;
-> +       struct config_item *cg_item;
-> +       struct configfs_subsystem *subsys;
-> +
-> +       cg_item = &hba->subsys.su_group.cg_item;
-> +       sprintf(cg_item->ci_namebuf, "%s", name);
-
-CONFIGFS_ITEM_NAME_LEN is only 20. Is there anything preventing the
-device name passed in here from being longer than that? You'd have a
-nasty overrun on your hands if not. Maybe snprintf here?
-
-> +       cg_item->ci_type = &ufscfg_type;
-> +
-> +       subsys = &hba->subsys;
-> +       config_group_init(&subsys->su_group);
-> +       mutex_init(&subsys->su_mutex);
-> +       ret = configfs_register_subsystem(subsys);
-> +       if (ret)
-> +               pr_err("Error %d while registering subsystem %s\n",
-> +                      ret,
-> +                      subsys->su_group.cg_item.ci_namebuf);
-> +}
-> +
-> +void ufshcd_configfs_exit(struct ufs_hba *hba)
-> +{
-> +       configfs_unregister_subsystem(&hba->subsys);
-> +}
+Reviewed-by: Evan Green <evgreen@chromium.org>
