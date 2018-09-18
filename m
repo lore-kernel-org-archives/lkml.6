@@ -2,147 +2,336 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD974ECE560
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B9DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6636B2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:52:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6636B2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 04F512086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:52:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F512086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeIRSYb convert rfc822-to-8bit (ORCPT
+        id S1729710AbeIRSYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Sep 2018 14:24:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41515 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727846AbeIRSYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59184 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727252AbeIRSYb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Sep 2018 14:24:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 64A1920737; Tue, 18 Sep 2018 14:52:01 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F30FB206FF;
-        Tue, 18 Sep 2018 14:52:00 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 14:52:01 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Frieder Schrempf <frieder.schrempf@exceet.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/5] spi: spi-mem: Add driver for NXP FlexSPI
- controller
-Message-ID: <20180918145201.68adcb8d@bbrezillon>
-In-Reply-To: <VI1PR04MB1038EDE4B2F5AFC5B0FDE8DF991D0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-References: <1537177710-9379-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <1537177710-9379-2-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <9a80752f-2db3-bf76-fbf4-e5efaa3974d7@exceet.de>
-        <VI1PR04MB1038EDE4B2F5AFC5B0FDE8DF991D0@VI1PR04MB1038.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ICnfxj015901
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:52:02 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mk0b3kw11-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:52:01 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Tue, 18 Sep 2018 13:51:59 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Sep 2018 13:51:56 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ICpucI65470638
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Sep 2018 12:51:56 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 591CDAE045;
+        Tue, 18 Sep 2018 15:51:04 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3756AAE051;
+        Tue, 18 Sep 2018 15:51:04 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 18 Sep 2018 15:51:04 +0100 (BST)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 2247)
+        id 7BB5220F340; Tue, 18 Sep 2018 14:51:55 +0200 (CEST)
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, npiggin@gmail.com,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 1/2] asm-generic/tlb: introduce HAVE_MMU_GATHER_NO_GATHER
+Date:   Tue, 18 Sep 2018 14:51:50 +0200
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180918125151.31744-1-schwidefsky@de.ibm.com>
+References: <20180918125151.31744-1-schwidefsky@de.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18091812-0012-0000-0000-000002AA4DFD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091812-0013-0000-0000-000020DEA70B
+Message-Id: <20180918125151.31744-2-schwidefsky@de.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809180130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yogesh,
+Add the Kconfig option HAVE_MMU_GATHER_NO_GATHER to the generic
+mmu_gather code. If the option is set the mmu_gather will not
+track individual pages for delayed page free anymore. A platform
+that enables the option needs to provide its own implementation
+of the __tlb_remove_page_size function to free pages.
 
-On Tue, 18 Sep 2018 11:34:18 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+---
+ arch/Kconfig              |   3 ++
+ include/asm-generic/tlb.h |   9 +++-
+ mm/mmu_gather.c           | 114 +++++++++++++++++++++++++++-------------------
+ 3 files changed, 77 insertions(+), 49 deletions(-)
 
-> > 
-> > Do we really need all those macros for registers and modes, that
-> > aren't even used in the driver? I don't know what the common
-> > practice is, but to me it seems like removing all the unused macros
-> > would make the driver much smaller and more readable.
-> >   
-> We don't need all Macros currently, but can be needed in future and
-> then have to add again. Generally, we add them all so that in future
-> don't have to dig in datasheet to add basic register details.
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 053c44703539..edb338b66f16 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -368,6 +368,9 @@ config HAVE_RCU_TABLE_INVALIDATE
+ config HAVE_MMU_GATHER_PAGE_SIZE
+ 	bool
+ 
++config HAVE_MMU_GATHER_NO_GATHER
++	bool
++
+ config ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	bool
+ 
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index 21c751cd751e..9e714e1b6695 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -179,6 +179,7 @@ extern void tlb_remove_table(struct mmu_gather *tlb, void *table);
+ 
+ #endif
+ 
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
+ /*
+  * If we can't allocate a page to make a big batch of page pointers
+  * to work on, then just handle a few from the on-stack structure.
+@@ -203,6 +204,10 @@ struct mmu_gather_batch {
+  */
+ #define MAX_GATHER_BATCH_COUNT	(10000UL/MAX_GATHER_BATCH)
+ 
++extern bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page,
++				   int page_size);
++#endif
++
+ /*
+  * struct mmu_gather is an opaque type used by the mm code for passing around
+  * any data needed by arch specific code for tlb_remove_page.
+@@ -249,6 +254,7 @@ struct mmu_gather {
+ 
+ 	unsigned int		batch_count;
+ 
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
+ 	struct mmu_gather_batch *active;
+ 	struct mmu_gather_batch	local;
+ 	struct page		*__pages[MMU_GATHER_BUNDLE];
+@@ -256,6 +262,7 @@ struct mmu_gather {
+ #ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+ 	unsigned int page_size;
+ #endif
++#endif
+ };
+ 
+ void arch_tlb_gather_mmu(struct mmu_gather *tlb,
+@@ -264,8 +271,6 @@ void tlb_flush_mmu(struct mmu_gather *tlb);
+ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 			 unsigned long start, unsigned long end, bool force);
+ void tlb_flush_mmu_free(struct mmu_gather *tlb);
+-extern bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page,
+-				   int page_size);
+ 
+ static inline void __tlb_adjust_range(struct mmu_gather *tlb,
+ 				      unsigned long address,
+diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+index 2d5e617131f6..6d5d812a040b 100644
+--- a/mm/mmu_gather.c
++++ b/mm/mmu_gather.c
+@@ -13,6 +13,8 @@
+ 
+ #ifdef HAVE_GENERIC_MMU_GATHER
+ 
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++
+ static bool tlb_next_batch(struct mmu_gather *tlb)
+ {
+ 	struct mmu_gather_batch *batch;
+@@ -41,6 +43,63 @@ static bool tlb_next_batch(struct mmu_gather *tlb)
+ 	return true;
+ }
+ 
++static void tlb_batch_pages_flush(struct mmu_gather *tlb)
++{
++	struct mmu_gather_batch *batch;
++
++	for (batch = &tlb->local; batch && batch->nr; batch = batch->next) {
++		free_pages_and_swap_cache(batch->pages, batch->nr);
++		batch->nr = 0;
++	}
++	tlb->active = &tlb->local;
++}
++
++static void tlb_batch_list_free(struct mmu_gather *tlb)
++{
++	struct mmu_gather_batch *batch, *next;
++
++	for (batch = tlb->local.next; batch; batch = next) {
++		next = batch->next;
++		free_pages((unsigned long)batch, 0);
++	}
++	tlb->local.next = NULL;
++}
++
++/* __tlb_remove_page
++ *	Must perform the equivalent to __free_pte(pte_get_and_clear(ptep)), while
++ *	handling the additional races in SMP caused by other CPUs caching valid
++ *	mappings in their TLBs. Returns the number of free page slots left.
++ *	When out of page slots we must call tlb_flush_mmu().
++ *returns true if the caller should flush.
++ */
++bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_size)
++{
++	struct mmu_gather_batch *batch;
++
++	VM_BUG_ON(!tlb->end);
++
++#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
++	VM_WARN_ON(tlb->page_size != page_size);
++#endif
++
++	batch = tlb->active;
++	/*
++	 * Add the page and check if we are full. If so
++	 * force a flush.
++	 */
++	batch->pages[batch->nr++] = page;
++	if (batch->nr == batch->max) {
++		if (!tlb_next_batch(tlb))
++			return true;
++		batch = tlb->active;
++	}
++	VM_BUG_ON_PAGE(batch->nr > batch->max, page);
++
++	return false;
++}
++
++#endif
++
+ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 				unsigned long start, unsigned long end)
+ {
+@@ -48,12 +107,15 @@ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 
+ 	/* Is it from 0 to ~0? */
+ 	tlb->fullmm     = !(start | (end+1));
++
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
+ 	tlb->need_flush_all = 0;
+ 	tlb->local.next = NULL;
+ 	tlb->local.nr   = 0;
+ 	tlb->local.max  = ARRAY_SIZE(tlb->__pages);
+ 	tlb->active     = &tlb->local;
+ 	tlb->batch_count = 0;
++#endif
+ 
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ 	tlb->batch = NULL;
+@@ -67,16 +129,12 @@ void arch_tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ 
+ void tlb_flush_mmu_free(struct mmu_gather *tlb)
+ {
+-	struct mmu_gather_batch *batch;
+-
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ 	tlb_table_flush(tlb);
+ #endif
+-	for (batch = &tlb->local; batch && batch->nr; batch = batch->next) {
+-		free_pages_and_swap_cache(batch->pages, batch->nr);
+-		batch->nr = 0;
+-	}
+-	tlb->active = &tlb->local;
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++	tlb_batch_pages_flush(tlb);
++#endif
+ }
+ 
+ void tlb_flush_mmu(struct mmu_gather *tlb)
+@@ -92,8 +150,6 @@ void tlb_flush_mmu(struct mmu_gather *tlb)
+ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 		unsigned long start, unsigned long end, bool force)
+ {
+-	struct mmu_gather_batch *batch, *next;
+-
+ 	if (force) {
+ 		__tlb_reset_range(tlb);
+ 		__tlb_adjust_range(tlb, start, end - start);
+@@ -103,45 +159,9 @@ void arch_tlb_finish_mmu(struct mmu_gather *tlb,
+ 
+ 	/* keep the page table cache within bounds */
+ 	check_pgt_cache();
+-
+-	for (batch = tlb->local.next; batch; batch = next) {
+-		next = batch->next;
+-		free_pages((unsigned long)batch, 0);
+-	}
+-	tlb->local.next = NULL;
+-}
+-
+-/* __tlb_remove_page
+- *	Must perform the equivalent to __free_pte(pte_get_and_clear(ptep)), while
+- *	handling the additional races in SMP caused by other CPUs caching valid
+- *	mappings in their TLBs. Returns the number of free page slots left.
+- *	When out of page slots we must call tlb_flush_mmu().
+- *returns true if the caller should flush.
+- */
+-bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_size)
+-{
+-	struct mmu_gather_batch *batch;
+-
+-	VM_BUG_ON(!tlb->end);
+-
+-#ifdef CONFIG_HAVE_MMU_GATHER_PAGE_SIZE
+-	VM_WARN_ON(tlb->page_size != page_size);
++#ifndef CONFIG_HAVE_MMU_GATHER_NO_GATHER
++	tlb_batch_list_free(tlb);
+ #endif
+-
+-	batch = tlb->active;
+-	/*
+-	 * Add the page and check if we are full. If so
+-	 * force a flush.
+-	 */
+-	batch->pages[batch->nr++] = page;
+-	if (batch->nr == batch->max) {
+-		if (!tlb_next_batch(tlb))
+-			return true;
+-		batch = tlb->active;
+-	}
+-	VM_BUG_ON_PAGE(batch->nr > batch->max, page);
+-
+-	return false;
+ }
+ 
+ #endif /* HAVE_GENERIC_MMU_GATHER */
+-- 
+2.16.4
 
-I guess it's just a matter of taste, but I also prefer when all regs are
-defined even if not all of them are used.
-
-[...]
-
-> > 
-> > You are only considering 3 and 4 byte long addresses, which is fine
-> > for NOR chips, but the SPI mem interface allows to connect other
-> > chips like SPI NAND which also use 1 byte addresses.
-> > 
-> > In the QSPI driver Boris worked around this restriction by using
-> > LUT_MODE instead of LUT_ADDRESS.
-> > 
-> > Does this restriction also exist for FSPI?  
-> 
-> Yes, I have seen that implementation and first tries with that same
-> logic, using LUT_MODE instead of LUT_ADDR, but didn’t work for the
-> FlexSPI controller.
-> 
-> In this controller, we are having separate LUT_XX for RowAddress and
-> ColumnAddress. For case of the Nand flash, we need to program both
-> RowAddress and ColumnAddress in single LUT sequence.
-
-Hm, I don't get it. LUT_MODE was just a way to pass raw data on the I/O
-bus, so the row vs column thing has no meaning in this case, and the
-offset withing the QSPI AHB range should just be ignored.
-
-> 
-> IMO, when support needs to be added for NAND flash, then slight
-> modification can be done in the logic. As per my discussion with
-> controller validation guys, needs to send 16-bit addrlen for
-> RowAddress, LUT_ADDR (0x2) Addrlen can vary for the column-address
-> and needs to be programmed for sequence LUT_CADDR_SDR (0x3)
-
-And that's again flash specific details leaking into the spi-mem layer,
-which I'd like to avoid (as repeated many times before).
-
-> > 
-> > You are using the remapping procedure as in the QSPI NOR driver.
-> > The original purpose was to start with a rather small mapping size
-> > and increase it when a larger memory device is used.
-> > 
-> > At the same time you use the logic from the QSPI SPI mem driver,
-> > that adjusts the data.nbytes of each read op to a maximum of
-> > ahb_buf_size in nxp_fspi_adjust_op_size().
-> > This is the logic that Boris introduced for the QSPI driver until
-> > we replace it with something like dirmap.
-> > 
-> > Unless there is something I missed, this means the ramapping is
-> > useless and it's enough to reserve memory with the fixed size of
-> > ahb_buf_size. 
-> 
-> My concern was for performance and that's why has done remap for the
-> 4MB buffer size so that if any subsequent Read request would come
-> within the range then don’t have to perform remap and can just
-> directly do memcpy()
-> 
-> I would re-visit again and see if getting any issue in doing direct
-> memcpy() instead of remap. We need to perform AHB buffer invalidation
-> when using controller in both IP(write, erase etc) and AHB (read)
-> mode.
-
-Then you should really review my dirmap proposal instead of trying to
-hack things directly into your driver. The only reason I did no send a
-new version of the dirmap patchset is because I got no reviews from
-people that might need it, so please have a look at it, try to
-implement a backend for your controller, and let me know if you face
-any issues or think things should be done differently.
-
-Thanks,
-
-Boris
