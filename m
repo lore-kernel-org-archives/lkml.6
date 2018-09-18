@@ -2,175 +2,120 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DB0ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2967C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 103512146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103512146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id ACDC621471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:58:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdsTrw30"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDC621471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbeISDcV (ORCPT
+        id S1730499AbeISDdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:32:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41310 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729736AbeISDcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:32:20 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ILrvR2118446
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 17:57:43 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mk9bc8r0m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 17:57:43 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Tue, 18 Sep 2018 15:57:42 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Sep 2018 15:57:38 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8ILvZHp52035634
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Sep 2018 14:57:35 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 84661C605D;
-        Tue, 18 Sep 2018 15:57:35 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D770C6055;
-        Tue, 18 Sep 2018 15:57:32 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Sep 2018 15:57:32 -0600 (MDT)
-Subject: Re: [PATCH v10 11/26] s390: vfio-ap: implement mediated device open
- callback
-To:     Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <0ba9647d-76d8-1a6c-bed0-fadd0af496cc@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Tue, 18 Sep 2018 17:57:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 18 Sep 2018 23:33:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726821AbeISDdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 23:33:32 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5753B2146D;
+        Tue, 18 Sep 2018 21:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537307935;
+        bh=JlVG88e+3giRnmFhujpHOm8iBLLgnTekXuXVYFxGgWU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EdsTrw30w65b6/LOug3lxt9NlRJG7J8s4nayZmunHa4IWg1poSyFFtQVD+2QrqeSp
+         dNmrYuzKNoKzjkppbvjaj8UYKEu0YZilQUKx3AdejXF74r3UWLkbxBfZeUlFAz10hX
+         uZqeSVUJaei5mWbS7+v4eWIzONg4wsVv6q7Zh0aI=
+Date:   Tue, 18 Sep 2018 16:58:54 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error handling
+Message-ID: <20180918215854.GH13616@bhelgaas-glaptop.roam.corp.google.com>
+References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <0ba9647d-76d8-1a6c-bed0-fadd0af496cc@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18091821-0004-0000-0000-0000148C5153
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009730; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01090282; UDB=6.00563240; IPR=6.00870303;
- MB=3.00023372; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-18 21:57:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091821-0005-0000-0000-000088DB4F20
-Message-Id: <bc642c76-09e2-586e-b512-55f1679beb0c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809180215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 01:00 PM, Halil Pasic wrote:
->
-> On 09/12/2018 09:43 PM, Tony Krowiak wrote:
->> +/**
->> + * vfio_ap_mdev_open_once
->> + *
->> + * @matrix_mdev: a mediated matrix device
->> + *
->> + * Return 0 if no other mediated matrix device has been opened for the
->> + * KVM guest assigned to @matrix_mdev; otherwise, returns an error.
->> + */
->> +static int vfio_ap_mdev_open_once(struct ap_matrix_mdev *matrix_mdev,
->> +				  struct kvm *kvm)
->> +{
->> +	struct ap_matrix_mdev *m;
->> +
->> +	mutex_lock(&matrix_dev->lock);
->> +
->> +	list_for_each_entry(m, &matrix_dev->mdev_list, node) {
->> +		if ((m != matrix_mdev) && (m->kvm == kvm)) {
->> +			mutex_unlock(&matrix_dev->lock);
->> +			return -EPERM;
->> +		}
->> +	}
->> +
->> +	mutex_unlock(&matrix_dev->lock);
->> +
->> +	return 0;
->> +}
->> +
->> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
->> +				       unsigned long action, void *data)
->> +{
->> +	int ret;
->> +	struct ap_matrix_mdev *matrix_mdev;
->> +
->> +	if (action != VFIO_GROUP_NOTIFY_SET_KVM)
->> +		return NOTIFY_OK;
->> +
->> +	matrix_mdev = container_of(nb, struct ap_matrix_mdev, group_notifier);
->> +
->> +	if (!data) {
->> +		matrix_mdev->kvm = NULL;
->> +		return NOTIFY_OK;
->> +	}
->> +
->> +	ret = vfio_ap_mdev_open_once(matrix_mdev, data);
-> This could be racy. Two threads doing vfio_ap_mdev_group_notifier()
-> can first get 0 here in a sense that there is no such kvm in the list,
-> and then both set the very same kvm three lines below. Which would
-> result in what we are trying to prevent.
->
-> Also vfio_ap_mdev_open_once() does not seem like an appropriate name
-> any more. If we were to do the matrix_mdev->kvm = kvm in there we could
-> call it something like vfio_ap_mdev_set_kvm().
+On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> The original PCI error recovery functionality was for the powerpc-specific
+> IBM EEH feature.  PCIe subsequently added some similar features, including
+> AER and DPC, that can be used on any architecture.
+> 
+> We want the generic PCI core error handling support to work with all of
+> these features.  Driver error recovery callbacks should be independent of
+> which feature the platform provides.
+> 
+> Add the generic PCI core error recovery files to the powerpc EEH
+> MAINTAINERS entry so the powerpc folks will be copied on changes to the
+> generic PCI error handling strategy.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-I'm moving the matrix-mdev->kvm = kvm inside the mutex lock in
-vfio_ap_mdev_open_once() ... also renaming it to vfio_ap_mdev_set_kvm().
+I applied the following to for-linus for v4.19.  Russell, if you want
+to be removed, let me know and I'll do that.
 
->
->> +	if (ret)
->> +		return NOTIFY_DONE;
->> +
->> +	matrix_mdev->kvm = data;
->> +
->> +	ret = kvm_ap_validate_crypto_setup(matrix_mdev->kvm);
->> +	if (ret)
->> +		return ret;
->> +
->> +	vfio_ap_mdev_copy_masks(matrix_mdev);
->> +
->> +	return NOTIFY_OK;
->> +}
+commit 3fed0e04026c
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Wed Sep 12 11:55:26 2018 -0500
 
+    MAINTAINERS: Update PPC contacts for PCI core error handling
+    
+    The original PCI error recovery functionality was for the powerpc-specific
+    IBM EEH feature.  PCIe subsequently added some similar features, including
+    AER and DPC, that can be used on any architecture.
+    
+    We want the generic PCI core error handling support to work with all of
+    these features.  Driver error recovery callbacks should be independent of
+    which feature the platform provides.
+    
+    Add the generic PCI core error recovery files to the powerpc EEH
+    MAINTAINERS entry so the powerpc folks will be copied on changes to the
+    generic PCI error handling strategy.
+    
+    Add Sam and Oliver as maintainers for this area.
+    
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ece30f15777..f23244003836 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11203,8 +11203,14 @@ F:	tools/pci/
+ 
+ PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
+ M:	Russell Currey <ruscur@russell.cc>
++M:	Sam Bobroff <sbobroff@linux.ibm.com>
++M:	Oliver O'Halloran <oliveroh@au1.ibm.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Supported
++F:	Documentation/PCI/pci-error-recovery.txt
++F:	drivers/pci/pcie/aer.c
++F:	drivers/pci/pcie/dpc.c
++F:	drivers/pci/pcie/err.c
+ F:	Documentation/powerpc/eeh-pci-error-recovery.txt
+ F:	arch/powerpc/kernel/eeh*.c
+ F:	arch/powerpc/platforms/*/eeh*.c
