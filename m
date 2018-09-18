@@ -2,196 +2,246 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4CAECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFF0ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2E9206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B4D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:06:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fhqyy4PN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aRfbGmNH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F2E9206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WHVP1Mv3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B4D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729207AbeIROgu (ORCPT
+        id S1729404AbeIROh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:36:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38868 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbeIROgu (ORCPT
+        Tue, 18 Sep 2018 10:37:59 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42083 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728645AbeIROh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:36:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8FC7C6079B; Tue, 18 Sep 2018 09:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537261509;
-        bh=PHsZK+MijwtJPD4jb+RPqsAGR1DCK2kHKauuH9LQ9ao=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fhqyy4PNgABH4kPH65Smu2RD90y556/1Ih8Wi/vyj+I4/LnxFQLKdmOR+051Vakgl
-         omkMwFaNKIsBua9cEBO9WZ3hmyKywK5Scv37QufyWyKULMPNPXlwQbwVwwWNRh/qRB
-         puvDHB8cVhFMIRamzlpQRG+gvEMFr6Mt2R2XLyH8=
-Received: from [10.79.129.80] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 91E12607F7;
-        Tue, 18 Sep 2018 09:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537261508;
-        bh=PHsZK+MijwtJPD4jb+RPqsAGR1DCK2kHKauuH9LQ9ao=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aRfbGmNHcfndjEIVUidsp5ZC5Gy+85RtAiDSkSVguTPbd1KoUmf+5vQh6Ky02RWy7
-         fWkqrZ+cF+tRaNtb0hLmKNAm/pWMZM/WzifrfU+IBbhmx1Dax3VRWSBAkyi0Hfseue
-         WQuXy5vSWD1akWzoaHIb95QsvNX/zon/ip8rbIDU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91E12607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH] tty/sysrq: Make local variable 'killer' in
- sysrq_handle_crash() global
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.cz>, Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Manoj Gupta <manojgupta@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org
-References: <20180917213304.44476-1-mka@chromium.org>
- <a75e8a5d-25d0-83b8-6f7c-b80e69985b60@suse.cz>
- <ebea1697-cf33-675b-172c-3e80303a9ee9@codeaurora.org>
- <20180918072037.GA4442@kroah.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <ccc91067-9718-8eb8-c197-b9c560daa5ce@codeaurora.org>
-Date:   Tue, 18 Sep 2018 14:35:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 10:37:58 -0400
+Received: by mail-yw1-f68.google.com with SMTP id n207-v6so469033ywn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 02:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=RAHJL0lGoWq6uWnB1ukyuHe+h39naM7YH9rnMFt9+Qc=;
+        b=WHVP1Mv3C+P6QPGYITdxqnu9lCmDIfL3gru/kX3xrzaj9SrnwBMNF25a3rkMU+e9qU
+         ub67R23G6prBJnFU+sKmEsEZfLIEfpmoSbJLNiGcMVSEuN4QhfBKy4hghbeLnavSA6jS
+         xjvLwVFxAUeRPB37bWCmUmrvahzRsvDuzWB2M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=RAHJL0lGoWq6uWnB1ukyuHe+h39naM7YH9rnMFt9+Qc=;
+        b=Kw2qT7F6MGvBszEdqbsqELYBW+sCOhcpcd6LDFKKcrBp4Z+kzVG4Mu5mqr00odcqzh
+         NBTvsUM2YFW/usMNosuWBvt4Uzktzx8wDC+4ixlQ0iq1a8nIB3juPT7A8PyO21koH+VT
+         Xv3Ya+3pk4BdA68p24T0kETO5CyqKQ33bADw4hlSCYIK9MvqJZX/Q4AFT5To2qMpP8IE
+         OZu7IIJYUQOUbeOrdUlgpJenCON0Gbh4Tv1CJ9n6SV+Qm8I6PF85Igi5yWidTjaK5Eez
+         iTbnXhHMu2tK5gPrh/KmX3jYXYmyQNhv6sab7p0XmxYXLvNT64j2F7MVZtYwIKicKTMR
+         j+yw==
+X-Gm-Message-State: APzg51B2QMOoG8FIuZRnvOocQVI1twl95aLzFFAkqC4uYfosUSRWaL/7
+        1lsyG4htyXWZ0R0GrM1uxvgyWfuw4cu/ZqI8OJ4nbg==
+X-Google-Smtp-Source: ANB0VdbQw+eG3cAJSb4elsk2HehX2KlQODxMheZlG1hVegZzVnK/yPMNb+Zs3CGXpjfx9uuHVgdLIGuEZd06LkNDN04=
+X-Received: by 2002:a81:3b88:: with SMTP id i130-v6mr11338726ywa.82.1537261577574;
+ Tue, 18 Sep 2018 02:06:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180918072037.GA4442@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 02:06:17
+ -0700 (PDT)
+In-Reply-To: <20180810153852.720e2143@gandalf.local.home>
+References: <1533793005-4525-2-git-send-email-firoz.khan@linaro.org>
+ <201808092020.H3Qhfo8m%fengguang.wu@intel.com> <20180810153852.720e2143@gandalf.local.home>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Tue, 18 Sep 2018 14:36:17 +0530
+Message-ID: <CALxhOngjRE12Agy-JmB6+0HAhUW6VdpOjpMU_bVEjCwEn0Nemg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] sh: Rename NR_syscalls macro to __NR_syscalls
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/2018 12:50 PM, Greg Kroah-Hartman wrote:
-> On Tue, Sep 18, 2018 at 12:28:39PM +0530, Sai Prakash Ranjan wrote:
->> On 9/18/2018 11:41 AM, Jiri Slaby wrote:
->>> On 09/17/2018, 11:33 PM, Matthias Kaehlcke wrote:
->>>> sysrq_handle_crash() dereferences a NULL pointer on purpose to force
->>>> an exception, the local variable 'killer' is assigned to NULL and
->>>> dereferenced later. Clang detects the NULL pointer dereference at compile
->>>> time and emits a BRK instruction (on arm64) instead of the expected NULL
->>>> pointer exception. Change 'killer' to a global variable (and rename it
->>>> to 'sysrq_killer' to avoid possible clashes) to prevent Clang from
->>>> detecting the condition. By default global variables are initialized
->>>> with zero/NULL in C, therefore an explicit initialization is not needed.
->>>>
->>>> Reported-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>>> Suggested-by: Evan Green <evgreen@chromium.org>
->>>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
->>>> ---
->>>>    drivers/tty/sysrq.c | 6 +++---
->>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
->>>> index 06ed20dd01ba..49fa8e758690 100644
->>>> --- a/drivers/tty/sysrq.c
->>>> +++ b/drivers/tty/sysrq.c
->>>> @@ -132,10 +132,10 @@ static struct sysrq_key_op sysrq_unraw_op = {
->>>>    #define sysrq_unraw_op (*(struct sysrq_key_op *)NULL)
->>>>    #endif /* CONFIG_VT */
->>>> +char *sysrq_killer;
->>>> +
->>>>    static void sysrq_handle_crash(int key)
->>>>    {
->>>> -	char *killer = NULL;
->>>> -
->>>>    	/* we need to release the RCU read lock here,
->>>>    	 * otherwise we get an annoying
->>>>    	 * 'BUG: sleeping function called from invalid context'
->>>> @@ -144,7 +144,7 @@ static void sysrq_handle_crash(int key)
->>>>    	rcu_read_unlock();
->>>>    	panic_on_oops = 1;	/* force panic */
->>>>    	wmb();
->>>> -	*killer = 1;
->>>> +	*sysrq_killer = 1;
->>>
->>> Just because a static analyzer is wrong? Oh wait, even compiler is
->>> wrong. At least make it a static global. Or what about OPTIMIZER_HIDE_VAR?
->>>
+On 11 August 2018 at 01:08, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 9 Aug 2018 20:58:58 +0800
+> kbuild test robot <lkp@intel.com> wrote:
+>
+>> Hi Firoz,
 >>
->> static global does not work, clang still inserts brk. As for
->> OPTIMIZE_HIDE_VAR, it seems to work.
->> But, I dont think it is defined for clang in which case it defaults to using
->> barrier(). There is already one wmb(), so will it be right?
-> 
-> Ick, why is this needed at all?  Why are we trying to "roll our own
-> panic" in this code?
-> 
+>> Thank you for the patch! Yet something to improve:
+>>
+>> [auto build test ERROR on linus/master]
+>> [also build test ERROR on v4.18-rc8 next-20180808]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Firoz-Khan/sh-Rename-NR_syscalls-macro-to-__NR_syscalls/20180809-171759
+>> config: sh-allmodconfig (attached as .config)
+>> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+>> reproduce:
+>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         # save the attached .config to linux build tree
+>>         GCC_VERSION=7.2.0 make.cross ARCH=sh
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>    In file included from kernel/trace/trace_selftest_dynamic.c:3:0:
+>> >> kernel/trace/trace.h:243:53: error: 'NR_syscalls' undeclared here (not in a function); did you mean '__NR_syscalls'?
+>>      struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
+>>                                                         ^~~~~~~~~~~
+>>                                                         __NR_syscalls
+>> --
+>>    In file included from kernel/trace/trace_output.h:6:0,
+>>                     from kernel/trace/trace_syscalls.c:12:
+>> >> kernel/trace/trace.h:243:53: error: 'NR_syscalls' undeclared here (not in a function); did you mean '__NR_syscalls'?
+>>      struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
+>>                                                         ^~~~~~~~~~~
+>>                                                         __NR_syscalls
+>
+> Most archs have a:
+>
+> #define NR_syscalls __NR_syscalls
 
-Hi Greg, do you mean like why there is a killer var at all or why this 
-change is required?
+Thanks for your reply!
+Sorry for the delayed response :(
 
-Below are some additional info about this issue:
+Yes. I'll add this change in the next version of the patch series.
 
-CLANG generated:
+- Firoz
 
-   ffffff800842bc1c <sysrq_handle_crash>:
-   ffffff800842bc1c:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
-   ffffff800842bc20:       910003fd        mov     x29, sp
-   ffffff800842bc24:       97f1a34e        bl      ffffff800809495c 
-<_mcount>
-   ffffff800842bc28:       97f38876        bl      ffffff800810de00 
-<__rcu_read_unlock>
-   ffffff800842bc2c:       f0006888        adrp    x8, ffffff800913e000 
-<reset_devices>
-   ffffff800842bc30:       320003e9        orr     w9, wzr, #0x1
-   ffffff800842bc34:       b9091109        str     w9, [x8,#2320]
-   ffffff800842bc38:       d5033e9f        dsb     st
-   ffffff800842bc3c:       d4200020        brk     #0x1          <----
-
-
-GCC generated:
-
-ffffff8008452f60 <sysrq_handle_crash>:
-ffffff8008452f60:       a9bf7bfd        stp     x29, x30, [sp,#-16]!
-ffffff8008452f64:       910003fd        mov     x29, sp
-ffffff8008452f68:       aa1e03e0        mov     x0, x30
-ffffff8008452f6c:       97f1078c        bl      ffffff8008094d9c <_mcount>
-ffffff8008452f70:       97f2f2cc        bl      ffffff800810faa0 
-<__rcu_read_unlock>
-ffffff8008452f74:       900067e1        adrp    x1, ffffff800914e000 
-<reset_devices>
-ffffff8008452f78:       52800020        mov     w0, #0x1 
-        // #1
-ffffff8008452f7c:       b9096820        str     w0, [x1,#2408]
-ffffff8008452f80:       d5033e9f        dsb     st
-ffffff8008452f84:       d2800001        mov     x1, #0x0 
-        // #0
-ffffff8008452f88:       39000020        strb    w0, [x1]
-ffffff8008452f8c:       a8c17bfd        ldp     x29, x30, [sp],#16
-ffffff8008452f90:       d65f03c0        ret
-
-Trigger sysrq crash:
-
-localhost ~ # echo c > /proc/sysrq-trigger
-  [   78.320401] sysrq: SysRq : Trigger a crash
-  [   78.324752] Unexpected kernel BRK exception at EL1
-  [   78.329691] Unhandled debug exception: ptrace BRK handler 
-(0xf2000001) at 0x000000000e25c368
-  [   78.338384] Internal error: : 0 [#1] PREEMPT SMP
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+>
+>>    In file included from include/linux/smp.h:11:0,
+>>                     from include/linux/tracepoint.h:17,
+>>                     from include/trace/syscall.h:5,
+>>                     from kernel/trace/trace_syscalls.c:2:
+>>    kernel/trace/trace_syscalls.c:559:23: warning: 'enabled_perf_exit_syscalls' defined but not used [-Wunused-variable]
+>>     static DECLARE_BITMAP(enabled_perf_exit_syscalls, NR_syscalls);
+>>                           ^
+>>    include/linux/types.h:11:16: note: in definition of macro 'DECLARE_BITMAP'
+>>      unsigned long name[BITS_TO_LONGS(bits)]
+>>                    ^~~~
+>>    kernel/trace/trace_syscalls.c:558:23: warning: 'enabled_perf_enter_syscalls' defined but not used [-Wunused-variable]
+>>     static DECLARE_BITMAP(enabled_perf_enter_syscalls, NR_syscalls);
+>>                           ^
+>>    include/linux/types.h:11:16: note: in definition of macro 'DECLARE_BITMAP'
+>>      unsigned long name[BITS_TO_LONGS(bits)]
+>>                    ^~~~
+>>
+>> vim +243 kernel/trace/trace.h
+>>
+>> 490901078 Steven Rostedt (Red Hat  2015-09-24  196)
+>> bc0c38d13 Steven Rostedt           2008-05-12  197  /*
+>> bc0c38d13 Steven Rostedt           2008-05-12  198   * The trace array - an array of per-CPU trace arrays. This is the
+>> bc0c38d13 Steven Rostedt           2008-05-12  199   * highest level data structure that individual tracers deal with.
+>> bc0c38d13 Steven Rostedt           2008-05-12  200   * They have on/off state as well:
+>> bc0c38d13 Steven Rostedt           2008-05-12  201   */
+>> bc0c38d13 Steven Rostedt           2008-05-12  202  struct trace_array {
+>> ae63b31e4 Steven Rostedt           2012-05-03  203    struct list_head        list;
+>> 277ba0446 Steven Rostedt           2012-08-03  204    char                    *name;
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  205)   struct trace_buffer     trace_buffer;
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  206) #ifdef CONFIG_TRACER_MAX_TRACE
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  207)   /*
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  208)    * The max_buffer is used to snapshot the trace when a maximum
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  209)    * latency is reached, or when the user initiates a snapshot.
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  210)    * Some tracers will use this to store a maximum trace while
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  211)    * it continues examining live traces.
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  212)    *
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  213)    * The buffers for the max_buffer are set up the same as the trace_buffer
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  214)    * When a snapshot is taken, the buffer of the max_buffer is swapped
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  215)    * with the buffer of the trace_buffer and the buffers are reset for
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  216)    * the trace_buffer so the tracing can continue.
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  217)    */
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  218)   struct trace_buffer     max_buffer;
+>> 45ad21ca5 Steven Rostedt (Red Hat  2013-03-05  219)   bool                    allocated_snapshot;
+>> f971cc9aa Steven Rostedt (Red Hat  2016-09-07  220) #endif
+>> f971cc9aa Steven Rostedt (Red Hat  2016-09-07  221) #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+>> 6d9b3fa5e Steven Rostedt (Red Hat  2014-01-14  222)   unsigned long           max_latency;
+>> 12883efb6 Steven Rostedt (Red Hat  2013-03-05  223) #endif
+>> 490901078 Steven Rostedt (Red Hat  2015-09-24  224)   struct trace_pid_list   __rcu *filtered_pids;
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  225)   /*
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  226)    * max_lock is used to protect the swapping of buffers
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  227)    * when taking a max snapshot. The buffers themselves are
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  228)    * protected by per_cpu spinlocks. But the action of the swap
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  229)    * needs its own lock.
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  230)    *
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  231)    * This is defined as a arch_spinlock_t in order to help
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  232)    * with performance when lockdep debugging is enabled.
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  233)    *
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  234)    * It is also used in other places outside the update_max_tr
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  235)    * so it needs to be defined outside of the
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  236)    * CONFIG_TRACER_MAX_TRACE.
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  237)    */
+>> 0b9b12c1b Steven Rostedt (Red Hat  2014-01-14  238)   arch_spinlock_t         max_lock;
+>> 499e54705 Steven Rostedt           2012-02-22  239    int                     buffer_disabled;
+>> 12ab74ee0 Steven Rostedt           2012-08-08  240  #ifdef CONFIG_FTRACE_SYSCALLS
+>> 12ab74ee0 Steven Rostedt           2012-08-08  241    int                     sys_refcount_enter;
+>> 12ab74ee0 Steven Rostedt           2012-08-08  242    int                     sys_refcount_exit;
+>> 7f1d2f821 Steven Rostedt (Red Hat  2015-05-05 @243)   struct trace_event_file __rcu *enter_syscall_files[NR_syscalls];
+>> 7f1d2f821 Steven Rostedt (Red Hat  2015-05-05  244)   struct trace_event_file __rcu *exit_syscall_files[NR_syscalls];
+>> 12ab74ee0 Steven Rostedt           2012-08-08  245  #endif
+>> 2b6080f28 Steven Rostedt           2012-05-11  246    int                     stop_count;
+>> 2b6080f28 Steven Rostedt           2012-05-11  247    int                     clock_id;
+>> 37aea98b8 Steven Rostedt (Red Hat  2015-09-30  248)   int                     nr_topts;
+>> 065e63f95 Steven Rostedt (VMware   2017-08-31  249)   bool                    clear_trace;
+>> 2b6080f28 Steven Rostedt           2012-05-11  250    struct tracer           *current_trace;
+>> 983f938ae Steven Rostedt (Red Hat  2015-09-30  251)   unsigned int            trace_flags;
+>> 9a38a8856 Steven Rostedt (Red Hat  2015-09-30  252)   unsigned char           trace_flags_index[TRACE_FLAGS_MAX_SIZE];
+>> ae63b31e4 Steven Rostedt           2012-05-03  253    unsigned int            flags;
+>> 2b6080f28 Steven Rostedt           2012-05-11  254    raw_spinlock_t          start_lock;
+>> ae63b31e4 Steven Rostedt           2012-05-03  255    struct dentry           *dir;
+>> 2b6080f28 Steven Rostedt           2012-05-11  256    struct dentry           *options;
+>> 2b6080f28 Steven Rostedt           2012-05-11  257    struct dentry           *percpu_dir;
+>> ae63b31e4 Steven Rostedt           2012-05-03  258    struct dentry           *event_dir;
+>> 37aea98b8 Steven Rostedt (Red Hat  2015-09-30  259)   struct trace_options    *topts;
+>> ae63b31e4 Steven Rostedt           2012-05-03  260    struct list_head        systems;
+>> ae63b31e4 Steven Rostedt           2012-05-03  261    struct list_head        events;
+>> 3dd809536 Steven Rostedt (VMware   2018-05-09  262)   struct trace_event_file *trace_marker_file;
+>> ccfe9e42e Alexander Z Lam          2013-08-08  263    cpumask_var_t           tracing_cpumask; /* only trace on set CPUs */
+>> a695cb581 Steven Rostedt (Red Hat  2013-03-06  264)   int                     ref;
+>> f20a58062 Steven Rostedt (Red Hat  2013-11-07  265) #ifdef CONFIG_FUNCTION_TRACER
+>> f20a58062 Steven Rostedt (Red Hat  2013-11-07  266)   struct ftrace_ops       *ops;
+>> 345ddcc88 Steven Rostedt (Red Hat  2016-04-22  267)   struct trace_pid_list   __rcu *function_pids;
+>> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  268) #ifdef CONFIG_DYNAMIC_FTRACE
+>> 673feb9d7 Steven Rostedt (VMware   2017-06-23  269)   /* All of these are protected by the ftrace_lock */
+>> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  270)   struct list_head        func_probes;
+>> 673feb9d7 Steven Rostedt (VMware   2017-06-23  271)   struct list_head        mod_trace;
+>> 673feb9d7 Steven Rostedt (VMware   2017-06-23  272)   struct list_head        mod_notrace;
+>> 04ec7bb64 Steven Rostedt (VMware   2017-04-05  273) #endif
+>> f20a58062 Steven Rostedt (Red Hat  2013-11-07  274)   /* function tracing enabled */
+>> f20a58062 Steven Rostedt (Red Hat  2013-11-07  275)   int                     function_enabled;
+>> f20a58062 Steven Rostedt (Red Hat  2013-11-07  276) #endif
+>> 00b414529 Tom Zanussi              2018-01-15  277    int                     time_stamp_abs_ref;
+>> 067fe038e Tom Zanussi              2018-01-15  278    struct list_head        hist_vars;
+>> bc0c38d13 Steven Rostedt           2008-05-12  279  };
+>> bc0c38d13 Steven Rostedt           2008-05-12  280
+>>
+>> :::::: The code at line 243 was first introduced by commit
+>> :::::: 7f1d2f8210195c8c309d424a77dbf06a6d2186f4 tracing: Rename ftrace_event_file to trace_event_file
+>>
+>> :::::: TO: Steven Rostedt (Red Hat) <rostedt@goodmis.org>
+>> :::::: CC: Steven Rostedt <rostedt@goodmis.org>
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
