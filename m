@@ -2,165 +2,77 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F957C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF0D4ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0FB12083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FB12083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 4152D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="TZaGu0+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4152D2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729049AbeIRMqk (ORCPT
+        id S1729096AbeIRMqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:46:40 -0400
-Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:50968 "EHLO
-        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbeIRMqk (ORCPT
+        Tue, 18 Sep 2018 08:46:55 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38942 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbeIRMqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:46:40 -0400
-Received: from ydin.reaktio.net (reaktio.net [85.76.255.15])
-        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 55B0330066;
-        Tue, 18 Sep 2018 10:15:19 +0300 (EEST)
-Received: by ydin.reaktio.net (Postfix, from userid 1001)
-        id 5405F36C0F8; Tue, 18 Sep 2018 10:15:19 +0300 (EEST)
-Date:   Tue, 18 Sep 2018 10:15:19 +0300
-From:   Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Jan Beulich <JBeulich@suse.com>, Juergen Gross <jgross@suse.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, xen-devel@lists.xenproject.org,
-        roger.pau@citrix.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        George Dunlap <george.dunlap@eu.citrix.com>
-Subject: Re: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
- flr/slot/bus reset with 'reset' SysFS attribute
-Message-ID: <20180918071519.GG18222@reaktio.net>
-References: <20171207222145.9769-1-Govinda.Tatti@Oracle.COM>
- <20171207222145.9769-3-Govinda.Tatti@Oracle.COM>
- <5A2A6AB10200007800195D4F@prv-mh.provo.novell.com>
- <8a3bc517-1255-4547-d244-5c400e44cc77@Oracle.COM>
- <f19dbb09-ef22-2cf4-fb38-2a7c42b5dc48@Oracle.COM>
- <5A377E020200007800197FFA@prv-mh.provo.novell.com>
- <559ffd12-b541-8a69-60bd-fbe10e3dc159@oracle.com>
- <20180916114306.GF18222@reaktio.net>
- <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
+        Tue, 18 Sep 2018 08:46:54 -0400
+Received: by mail-it0-f68.google.com with SMTP id h1-v6so1741973itj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 00:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2YMxDF7+AE1gCn1zhaZyneij8DexxE4cDYgVMlG1SP8=;
+        b=TZaGu0+hryWweu2C0DgLrEvFZrErOsFN59KPmf2T3YU4WHJegNVNyXAzZvbXfBBBsl
+         02IjMNnxP/VOPf9NOFDNudu405YgJ0H1kaL1R5WGyQx9PKnP2jjpA5Ad1aTRlFU6Pr/b
+         4SdeQlkGYcRP2KL7TzS0MRjwml+vetngHI4sQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2YMxDF7+AE1gCn1zhaZyneij8DexxE4cDYgVMlG1SP8=;
+        b=Ya1f9A4fmlDbuYdBCCoNAOm+2Nf+p8xZdMIDFTe+618mSiW9dBqnqr0eKkRqBz7p7+
+         Bpm9/IS4HGcTprtTS4XtRQLDP39TSVKvoROBJxS3XsAao7OS+DQ3JTkaKW6LLOOKhoc6
+         7Om1/Hu07kZZNkhuxW0kObdfVGCVCWK/27tzJuYBYjwtLi3kp3hgZNEFQ6p9ObJtb3fu
+         PVsXHDuesruc+qRVt2IVtJdv3bR3klo+jNZyBv7z+3ucXbrEFGjsZPc+03yhsrEqw8XA
+         7AP209rFljo5PU1pvdinUdfV/eB5PVTjntcPjIzS8EVO8LeTHl9bmrr7S9fQJf1VnsP8
+         QfFw==
+X-Gm-Message-State: APzg51A+MwMNjoQ7gICOwBSLvpLVNYAgy7ye8CpcIV0WWClB9cL5wejo
+        TjJv59O8gE44PRralg9EuqpAQ2w3CYPSISIbNT9bPw==
+X-Google-Smtp-Source: ANB0VdZVKfEMyTR9Ty+pcbu2ezA7OMFlhRxlxTsxQt/Od40Be0YPn4p3OwhYwP1aJLgLRJuhRlx+Y9c3nVJAdVaE1+s=
+X-Received: by 2002:a24:aa08:: with SMTP id b8-v6mr15704926itf.49.1537254938086;
+ Tue, 18 Sep 2018 00:15:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a02:996e:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 00:15:37
+ -0700 (PDT)
+In-Reply-To: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
+References: <20180907074640.27348-1-linux@rasmusvillemoes.dk>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date:   Tue, 18 Sep 2018 09:15:37 +0200
+Message-ID: <CAKwiHFh9rcY1UZiTy1z+SXJ1gkdrZ2M6BA438fdGeqfBvagDyw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] string: make kmemdup_nul take and return void*, not char*
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 7 September 2018 at 09:46, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
+> This allows kmemdup_nul to be used in cases where the source pointer is
+> not a char* or const char*, but the result should nevertheless have a
+> nul char after the memcpy'ed data.
 
-On Mon, Sep 17, 2018 at 02:06:02PM -0400, Boris Ostrovsky wrote:
-> On 9/16/18 7:43 AM, Pasi Kärkkäinen wrote:
-> > Hi,
-> >
-> > On Mon, Dec 18, 2017 at 12:32:11PM -0500, Boris Ostrovsky wrote:
-> >> On 12/18/2017 02:36 AM, Jan Beulich wrote:
-> >>>>>> On 15.12.17 at 20:52, <Govinda.Tatti@Oracle.COM> wrote:
-> >>>>>>> +static int pcistub_device_reset(struct pci_dev *dev)
-> >>>>>>> +{
-> >>>>>>> +	struct xen_pcibk_dev_data *dev_data;
-> >>>>>>> +	bool slot = false, bus = false;
-> >>>>>>> +	struct pcistub_args arg = {};
-> >>>>>>> +
-> >>>>>>> +	if (!dev)
-> >>>>>>> +		return -EINVAL;
-> >>>>>>> +
-> >>>>>>> +	dev_dbg(&dev->dev, "[%s]\n", __func__);
-> >>>>>>> +
-> >>>>>>> +	/* First check and try FLR */
-> >>>>>>> +	if (pcie_has_flr(dev)) {
-> >>>>>>> +		dev_dbg(&dev->dev, "resetting %s device using FLR\n",
-> >>>>>>> +			pci_name(dev));
-> >>>>>>> +		pcie_flr(dev);
-> >>>>>> The lack of error check here puzzled me, but I see the function
-> >>>>>> indeed returns void right now. I think the prereq patch should
-> >>>>>> change this along with exporting the function - you really don't
-> >>>>>> want the device to be handed to a guest when the FLR timed
-> >>>>>> out.
-> >>>>> We will change pcie_flr() to return error code. I will make this change
-> >>>>> in the next version of this patch.
-> >>>> I exchanged some emails with Bjorn/Christoph and it looks like Christoph
-> >>>> as some planto restructure pcie flr specific functions but I don't know
-> >>>> the exact time-frame. For now,I am planning to use existing pcie_flr()
-> >>>> after checking FLR capability. We will switchto revised pcie_flr() once
-> >>>> it is available.
-> >>>>
-> >>>> I hope you are fine with this approach. Please let me know. Thanks.
-> >>> I've seen that other discussion. I don't think the change here
-> >>> should be done prior to the error reporting being put in place,
-> >>> for security reasons. But in the end it'll be Konrad as the
-> >>> maintainer to judge.
-> >>>
-> >>> Or wait, looks like there's some confusion in ./MAINTAINERS:
-> >>> Konrad is listed as maintainer for "XEN PCI SUBSYSTEM", but the
-> >>> list of files doesn't include pciback. So it would instead be Boris
-> >>> or Jürgen to give you a final word.
-> >>
-> >> This is now 4.16 material so we can at least wait until closer to
-> >> opening of the merge window when we may have the PCI updates. (And I
-> >> just noticed that you responded to Christoph.)
-> >>
-> >> Besides, we don't want to make kernel changes until the interface is
-> >> settled (i.e the toolstack changes are accepted).
-> >>
-> > It seems Govinda's email address is giving an error, so I assume someone else needs to pick up this pciback 'reset' feature.
-> > Is it likely someone else from Oracle can/will pick up and refresh this patch, with the review comments addressed?
-> 
-> 
-> Govinda is no longer at Oracle.
-> 
-
-Yep, thought so. Removed from CC list.
-
-
-> What about the toolstack changes? Have they been accepted? I vaguely
-> recall there was a discussion about those changes but don't remember how
-> it ended.
-> 
-
-I don't think toolstack/libxl patch has been applied yet either.
-
-
-"[PATCH V1 0/1] Xen/Tools: PCI reset using 'reset' SysFS attribute":
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg00664.html
-
-"[PATCH V1 1/1] Xen/libxl: Perform PCI reset using 'reset' SysFS attribute":
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg00663.html
-
-George asked for some clarifications:
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg01044.html
-https://lists.xen.org/archives/html/xen-devel/2017-12/msg01116.html
-
-> 
-> -boris
-> 
-
-
-Thanks,
-
--- Pasi
-
-> 
-> >
-> >
-> > Meanwhile the pcie_has_flr() has been exported in upstream Linux kernel, so that's already available for use now.
-> >
-> > "PCI: Export pcie_has_flr()":
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2d2917f7747805a1f4188672f308d82a8ba01700
-> >
-> >
-> >
-> 
+ping
