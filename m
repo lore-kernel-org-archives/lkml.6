@@ -2,182 +2,260 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07CDECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B796C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5880021508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5880021508
+	by mail.kernel.org (Postfix) with ESMTP id ACC00214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC00214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbeIRWab (ORCPT
+        id S1730489AbeIRWae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:30:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59692 "EHLO pegase1.c-s.fr"
+        Tue, 18 Sep 2018 18:30:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:26505 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbeIRWab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:30:31 -0400
+        id S1729984AbeIRWad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:30:33 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42F8Kq1CS8z9ttFr;
-        Tue, 18 Sep 2018 18:57:03 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 42F8Ks0vmqz9ttFt;
+        Tue, 18 Sep 2018 18:57:05 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id r5VarUXfathp; Tue, 18 Sep 2018 18:57:03 +0200 (CEST)
+        with ESMTP id nUlo90jUtMVK; Tue, 18 Sep 2018 18:57:05 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42F8Kq0QpLz9ttFp;
-        Tue, 18 Sep 2018 18:57:03 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42F8Ks0NJlz9ttFp;
+        Tue, 18 Sep 2018 18:57:05 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 13DC78B80B;
-        Tue, 18 Sep 2018 18:57:03 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0BC148B7F9;
+        Tue, 18 Sep 2018 18:57:05 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id uQS6pnpyK1vj; Tue, 18 Sep 2018 18:57:02 +0200 (CEST)
+        with ESMTP id Lal9I77aI5-m; Tue, 18 Sep 2018 18:57:04 +0200 (CEST)
 Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C346F8B7F9;
-        Tue, 18 Sep 2018 18:57:02 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A84C38B80B;
+        Tue, 18 Sep 2018 18:57:04 +0200 (CEST)
 Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 8796E7192E; Tue, 18 Sep 2018 16:57:02 +0000 (UTC)
-Message-Id: <cover.1537288312.git.christophe.leroy@c-s.fr>
+        id 80BA47192E; Tue, 18 Sep 2018 16:57:04 +0000 (UTC)
+Message-Id: <45a2b1768f0537ae963d16aeceb856817ae63f1c.1537288312.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1537288312.git.christophe.leroy@c-s.fr>
+References: <cover.1537288312.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 00/20] Implement use of HW assistance on TLB table walk on 8xx
+Subject: [PATCH v4 01/20] Revert "powerpc/8xx: Use L1 entry APG to handle
+ _PAGE_ACCESSED for CONFIG_SWAP"
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         aneesh.kumar@linux.vnet.ibm.com
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 18 Sep 2018 16:57:02 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 16:57:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this serie is to implement hardware assistance for TLB table walk
-on the 8xx.
+This reverts commit 4f94b2c7462d9720b2afa7e8e8d4c19446bb31ce.
 
-First part switches to patch_site instead of patch_instruction,
-as it makes the code clearer and avoids pollution with global symbols.
+That commit was buggy, as it used rlwinm instead of rlwimi.
+Instead of fixing that bug, we revert the previous commit in order to
+reduce the dependency between L1 entries and L2 entries
 
-Optimise access to perf counters (hence reduce number of registers used)
+Fixes: 4f94b2c7462d9 ("powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for CONFIG_SWAP")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/mmu-8xx.h | 34 +++++-----------------------
+ arch/powerpc/kernel/head_8xx.S     | 45 +++++++++++++++++++++++---------------
+ arch/powerpc/mm/8xx_mmu.c          |  2 +-
+ 3 files changed, 34 insertions(+), 47 deletions(-)
 
-Second part implements HW assistance in TLB routines.
-
-Last part is to make L1 entries and L2 entries independant. For that,
-we need to alter ioremap functions in order to handle GUARD attribute
-at the PGD/PMD level.
-
-Tested successfully on 8xx.
-
-This serie applies after the two following series:
-- [v2 00/24] ban the use of _PAGE_XXX flags outside platform specific code (https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=65376)
-- [v2,1/4] powerpc/mm: enable the use of page table cache of order 0 (https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=60777)
-
-Successfull compilation on kisskb (v4)
-http://kisskb.ellerman.id.au/kisskb/branch/chleroy/head/cfdf3349e3877df4cbfa9193ad1f4f4e4ada52de/
-
-Successfull compilation on following defconfigs (v3):
-ppc64_defconfig
-ppc64e_defconfig
-
-Successfull compilation on following defconfigs (v2):
-ppc64_defconfig
-ppc64e_defconfig
-pseries_defconfig
-pmac32_defconfig
-linkstation_defconfig
-corenet32_smp_defconfig
-ppc40x_defconfig
-storcenter_defconfig
-ppc44x_defconfig
-
-Changes in v4:
- - Reordered the serie to put at the end the modifications which makes
-   L1 and L2 entries independant.
- - No modifications to ppc64 ioremap (we still have an opportunity to
-   merge them, for a future patch serie)
- - 8xx code modified to use patch_site instead of patch_instruction
-   to get a clearer code and avoid object pollution with global symbols
- - Moved perf counters in first 32kb of memory to optimise access
- - Split the big bang to HW assistance in several steps:
-   1. Temporarily removes support of 16k pages and 512k hugepages
-   2. Change TLB routines to use HW assistance for 4k pages and 8M hugepages
-   3. Add back support for 512k hugepages
-   4. Add back support for 16k pages (using pte_fragment as page tables are still 4k)
-
-Changes in v3:
- - Fixed an issue in the 09/14 when CONFIG_PIN_TLB_TEXT was not enabled
- - Added performance measurement in the 09/14 commit log
- - Rebased on latest 'powerpc/merge' tree, which conflicted with 13/14
-
-Changes in v2:
- - Removed the 3 first patchs which have been applied already
- - Fixed compilation errors reported by Michael
- - Squashed the commonalisation of ioremap functions into a single patch
- - Fixed the use of pte_fragment
- - Added a patch optimising perf counting of TLB misses and instructions
-
-Christophe Leroy (20):
-  Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for
-    CONFIG_SWAP"
-  powerpc/code-patching: add a helper to get the address of a patch_site
-  powerpc/8xx: Use patch_site for memory setup patching
-  powerpc/8xx: Use patch_site for perf counters setup
-  powerpc/8xx: Move SW perf counters in first 32kb of memory
-  powerpc/8xx: Temporarily disable 16k pages and 512k hugepages
-  powerpc/mm: Use hardware assistance in TLB handlers on the 8xx
-  powerpc/mm: Enable 512k hugepage support with HW assistance on the 8xx
-  powerpc/8xx: don't use r12/SPRN_SPRG_SCRATCH2 in TLB Miss handlers
-  powerpc/8xx: regroup TLB handler routines
-  powerpc/mm: don't use pte_alloc_one_kernel() before slab is available
-  powerpc/mm: inline pte_alloc_one() and pte_alloc_one_kernel() in PPC32
-  powerpc/book3s32: Remove CONFIG_BOOKE dependent code
-  powerpc/mm: Move pte_fragment_alloc() to a common location
-  powerpc/mm: Avoid useless lock with single page fragments
-  powerpc/mm: Extend pte_fragment functionality to nohash/32
-  powerpc/8xx: Remove PTE_ATOMIC_UPDATES
-  powerpc/mm: reintroduce 16K pages with HW assistance on 8xx
-  powerpc/nohash32: allow setting GUARDED attribute in the PMD directly
-  powerpc/8xx: set GUARDED attribute in the PMD directly
-
- arch/powerpc/include/asm/book3s/32/pgalloc.h |  28 +-
- arch/powerpc/include/asm/book3s/32/pgtable.h |  16 +-
- arch/powerpc/include/asm/code-patching.h     |   5 +
- arch/powerpc/include/asm/hugetlb.h           |   4 +-
- arch/powerpc/include/asm/mmu-40x.h           |   1 +
- arch/powerpc/include/asm/mmu-44x.h           |   1 +
- arch/powerpc/include/asm/mmu-8xx.h           |  44 +--
- arch/powerpc/include/asm/mmu-book3e.h        |   1 +
- arch/powerpc/include/asm/mmu_context.h       |   2 +-
- arch/powerpc/include/asm/nohash/32/pgalloc.h |  43 ++-
- arch/powerpc/include/asm/nohash/32/pgtable.h |  45 ++-
- arch/powerpc/include/asm/nohash/32/pte-8xx.h |   6 +-
- arch/powerpc/include/asm/nohash/pgtable.h    |   4 +
- arch/powerpc/include/asm/page.h              |   6 +-
- arch/powerpc/include/asm/pgtable-types.h     |   4 +
- arch/powerpc/include/asm/pgtable.h           |   8 +
- arch/powerpc/kernel/head_8xx.S               | 425 +++++++++++----------------
- arch/powerpc/mm/8xx_mmu.c                    |  29 +-
- arch/powerpc/mm/Makefile                     |   7 +-
- arch/powerpc/mm/dump_linuxpagetables.c       |  21 +-
- arch/powerpc/mm/hugetlbpage.c                |  13 +
- arch/powerpc/mm/mem.c                        |   7 +
- arch/powerpc/mm/mmu_context.c                |   1 -
- arch/powerpc/mm/mmu_context_book3s64.c       |  67 -----
- arch/powerpc/mm/mmu_context_nohash.c         |   1 +
- arch/powerpc/mm/pgtable-book3s64.c           |  85 ------
- arch/powerpc/mm/pgtable-frag.c               | 176 +++++++++++
- arch/powerpc/mm/pgtable_32.c                 | 103 ++++---
- arch/powerpc/perf/8xx-pmu.c                  |  27 +-
- arch/powerpc/platforms/Kconfig.cputype       |   3 +
- 30 files changed, 620 insertions(+), 563 deletions(-)
- create mode 100644 arch/powerpc/mm/pgtable-frag.c
-
+diff --git a/arch/powerpc/include/asm/mmu-8xx.h b/arch/powerpc/include/asm/mmu-8xx.h
+index 4f547752ae79..193f53116c7a 100644
+--- a/arch/powerpc/include/asm/mmu-8xx.h
++++ b/arch/powerpc/include/asm/mmu-8xx.h
+@@ -34,20 +34,12 @@
+  * respectively NA for All or X for Supervisor and no access for User.
+  * Then we use the APG to say whether accesses are according to Page rules or
+  * "all Supervisor" rules (Access to all)
+- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
+- * When that bit is not set access is done iaw "all user"
+- * which means no access iaw page rules.
+- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
+- * 0x => No access => 11 (all accesses performed as user iaw page definition)
+- * 10 => No user => 01 (all accesses performed according to page definition)
+- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
++ * Therefore, we define 2 APG groups. lsb is _PMD_USER
++ * 0 => No user => 01 (all accesses performed according to page definition)
++ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
+  * We define all 16 groups so that all other bits of APG can take any value
+  */
+-#ifdef CONFIG_SWAP
+-#define MI_APG_INIT	0xf4f4f4f4
+-#else
+ #define MI_APG_INIT	0x44444444
+-#endif
+ 
+ /* The effective page number register.  When read, contains the information
+  * about the last instruction TLB miss.  When MI_RPN is written, bits in
+@@ -115,20 +107,12 @@
+  * Supervisor and no access for user and NA for ALL.
+  * Then we use the APG to say whether accesses are according to Page rules or
+  * "all Supervisor" rules (Access to all)
+- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
+- * When that bit is not set access is done iaw "all user"
+- * which means no access iaw page rules.
+- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
+- * 0x => No access => 11 (all accesses performed as user iaw page definition)
+- * 10 => No user => 01 (all accesses performed according to page definition)
+- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
++ * Therefore, we define 2 APG groups. lsb is _PMD_USER
++ * 0 => No user => 01 (all accesses performed according to page definition)
++ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
+  * We define all 16 groups so that all other bits of APG can take any value
+  */
+-#ifdef CONFIG_SWAP
+-#define MD_APG_INIT	0xf4f4f4f4
+-#else
+ #define MD_APG_INIT	0x44444444
+-#endif
+ 
+ /* The effective page number register.  When read, contains the information
+  * about the last instruction TLB miss.  When MD_RPN is written, bits in
+@@ -180,12 +164,6 @@
+  */
+ #define SPRN_M_TW	799
+ 
+-/* APGs */
+-#define M_APG0		0x00000000
+-#define M_APG1		0x00000020
+-#define M_APG2		0x00000040
+-#define M_APG3		0x00000060
+-
+ #ifdef CONFIG_PPC_MM_SLICES
+ #include <asm/nohash/32/slice.h>
+ #define SLICE_ARRAY_SIZE	(1 << (32 - SLICE_LOW_SHIFT - 1))
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index 134a573a9f2d..12c92a483fb1 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -353,13 +353,14 @@ _ENTRY(ITLBMiss_cmp)
+ #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
+ 	mtcr	r12
+ #endif
+-
+-#ifdef CONFIG_SWAP
+-	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
+-#endif
+ 	/* Load the MI_TWC with the attributes for this "segment." */
+ 	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
+ 
++#ifdef CONFIG_SWAP
++	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
++	and	r11, r11, r10
++	rlwimi	r10, r11, 0, _PAGE_PRESENT
++#endif
+ 	li	r11, RPN_PATTERN | 0x200
+ 	/* The Linux PTE won't go exactly into the MMU TLB.
+ 	 * Software indicator bits 20 and 23 must be clear.
+@@ -470,14 +471,22 @@ _ENTRY(DTLBMiss_jmp)
+ 	 * above.
+ 	 */
+ 	rlwimi	r11, r10, 0, _PAGE_GUARDED
+-#ifdef CONFIG_SWAP
+-	/* _PAGE_ACCESSED has to be set. We use second APG bit for that, 0
+-	 * on that bit will represent a Non Access group
+-	 */
+-	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
+-#endif
+ 	mtspr	SPRN_MD_TWC, r11
+ 
++	/* Both _PAGE_ACCESSED and _PAGE_PRESENT has to be set.
++	 * We also need to know if the insn is a load/store, so:
++	 * Clear _PAGE_PRESENT and load that which will
++	 * trap into DTLB Error with store bit set accordinly.
++	 */
++	/* PRESENT=0x1, ACCESSED=0x20
++	 * r11 = ((r10 & PRESENT) & ((r10 & ACCESSED) >> 5));
++	 * r10 = (r10 & ~PRESENT) | r11;
++	 */
++#ifdef CONFIG_SWAP
++	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
++	and	r11, r11, r10
++	rlwimi	r10, r11, 0, _PAGE_PRESENT
++#endif
+ 	/* The Linux PTE won't go exactly into the MMU TLB.
+ 	 * Software indicator bits 24, 25, 26, and 27 must be
+ 	 * set.  All other Linux PTE bits control the behavior
+@@ -637,8 +646,8 @@ InstructionBreakpoint:
+  */
+ DTLBMissIMMR:
+ 	mtcr	r12
+-	/* Set 512k byte guarded page and mark it valid and accessed */
+-	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID | M_APG2
++	/* Set 512k byte guarded page and mark it valid */
++	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID
+ 	mtspr	SPRN_MD_TWC, r10
+ 	mfspr	r10, SPRN_IMMR			/* Get current IMMR */
+ 	rlwinm	r10, r10, 0, 0xfff80000		/* Get 512 kbytes boundary */
+@@ -656,8 +665,8 @@ _ENTRY(dtlb_miss_exit_2)
+ 
+ DTLBMissLinear:
+ 	mtcr	r12
+-	/* Set 8M byte page and mark it valid and accessed */
+-	li	r11, MD_PS8MEG | MD_SVALID | M_APG2
++	/* Set 8M byte page and mark it valid */
++	li	r11, MD_PS8MEG | MD_SVALID
+ 	mtspr	SPRN_MD_TWC, r11
+ 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
+ 	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
+@@ -675,8 +684,8 @@ _ENTRY(dtlb_miss_exit_3)
+ #ifndef CONFIG_PIN_TLB_TEXT
+ ITLBMissLinear:
+ 	mtcr	r12
+-	/* Set 8M byte page and mark it valid,accessed */
+-	li	r11, MI_PS8MEG | MI_SVALID | M_APG2
++	/* Set 8M byte page and mark it valid */
++	li	r11, MI_PS8MEG | MI_SVALID
+ 	mtspr	SPRN_MI_TWC, r11
+ 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
+ 	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
+@@ -960,7 +969,7 @@ initial_mmu:
+ 	ori	r8, r8, MI_EVALID	/* Mark it valid */
+ 	mtspr	SPRN_MI_EPN, r8
+ 	li	r8, MI_PS8MEG /* Set 8M byte page */
+-	ori	r8, r8, MI_SVALID | M_APG2	/* Make it valid, APG 2 */
++	ori	r8, r8, MI_SVALID	/* Make it valid */
+ 	mtspr	SPRN_MI_TWC, r8
+ 	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
+ 	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
+@@ -987,7 +996,7 @@ initial_mmu:
+ 	ori	r8, r8, MD_EVALID	/* Mark it valid */
+ 	mtspr	SPRN_MD_EPN, r8
+ 	li	r8, MD_PS512K | MD_GUARDED	/* Set 512k byte page */
+-	ori	r8, r8, MD_SVALID | M_APG2	/* Make it valid and accessed */
++	ori	r8, r8, MD_SVALID	/* Make it valid */
+ 	mtspr	SPRN_MD_TWC, r8
+ 	mr	r8, r9			/* Create paddr for TLB */
+ 	ori	r8, r8, MI_BOOTINIT|0x2 /* Inhibit cache -- Cort */
+diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
+index 36484a2ef915..fee599cf3bc3 100644
+--- a/arch/powerpc/mm/8xx_mmu.c
++++ b/arch/powerpc/mm/8xx_mmu.c
+@@ -79,7 +79,7 @@ void __init MMU_init_hw(void)
+ 	for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
+ 		mtspr(SPRN_MD_CTR, ctr | (i << 8));
+ 		mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
+-		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID | M_APG2);
++		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
+ 		mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
+ 		addr += LARGE_PAGE_SIZE_8M;
+ 		mem -= LARGE_PAGE_SIZE_8M;
 -- 
 2.13.3
 
