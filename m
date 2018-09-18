@@ -2,752 +2,191 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F6AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D15ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D242086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7818E2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TAEl1KP8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55D242086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OKow2PfI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7818E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbeIRVub (ORCPT
+        id S1730180AbeIRVuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:50:31 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:57805 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729905AbeIRVua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:50:30 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d6bcef4b;
-        Tue, 18 Sep 2018 15:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references:mime-version
-        :content-transfer-encoding; s=mail; bh=C0M0FBRy/R/2jtFa7ztVN45t2
-        iU=; b=TAEl1KP8w4TzT2YAWpfwBheAkL3oNyI6Oe43XKwJp4jh1bPOBiUEn7Itb
-        EsnB8H6N3vEZ3M/GE6fpOwGDTpDk3nKbIrn466fz4rxdC3mVG0zSiEIWLtS8NKS1
-        ssAHFVObhF4bKK1Yfu64/XiBXebh1KepIImwUFB03rKvfOPaAMAMrPAyfkkX6tWe
-        GKbYOafBZFWfE+rVDhQ4OQxkTfGt90u8FlouLbeQfMKohqN+GlVLJ8yHvLqQpdTg
-        rUqxHt03xMlPOqxb3kJXa0OSQV267yXuH02qDm15S14OUo64M83bO1JTkbzFAAFO
-        7umpe6rkSSXc6Yql9w1ORPqy23hAQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id dba90f81 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Tue, 18 Sep 2018 15:59:31 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org
-Subject: [PATCH net-next v5 01/20] asm: simd context helper API
-Date:   Tue, 18 Sep 2018 18:16:27 +0200
-Message-Id: <20180918161646.19105-2-Jason@zx2c4.com>
-In-Reply-To: <20180918161646.19105-1-Jason@zx2c4.com>
-References: <20180918161646.19105-1-Jason@zx2c4.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 18 Sep 2018 17:50:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55210 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729905AbeIRVue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:50:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Mime-Version:Content-Type:References:
+        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jzy//enKDB6MeshMYimD0JQJNOitae8oPtsO/kIgsyg=; b=OKow2PfIG978/GXUvCdNYd+4m
+        Mi4xqf/4hQEOkF3V+ZIb43gdkbuthskLYwrd9cHpX1tOumNDciQI2/ES4yFT2r7nBCoAsLLGHqMRh
+        hvcGwV5WiagV+f+g/rwE/LpBSf+YwQTkyjIum0txikgUe+yLpclh64tSLZ0zt8BmI7Vu1Sycjv7BU
+        boP7YTgVoGrG1u4Tc9jfd1mMaxkj8C31Y8743ROpWiG2v41wTFJ+qUMPktkxM1Qf+b0UPRqAcl3cS
+        N53DKv9FRgXYxJVQjd8OEXTuZ2J2q0HHMjqtJs0G7UMC01J/25XsAVUCAL6D61Gjm4qzNC6eePUq/
+        zwzR/SBrg==;
+Received: from [2001:8b0:10b:1:786a:113:d72e:bf66] (helo=u3832b3a9db3152.ant.amazon.com)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2Iga-0003wW-QZ; Tue, 18 Sep 2018 16:17:13 +0000
+Message-ID: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Denis Kenzior <denkenz@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 18 Sep 2018 17:17:10 +0100
+In-Reply-To: <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+References: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+         <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+         <1537253993.20009.62.camel@infradead.org>
+         <14067.1537285833@warthog.procyon.org.uk>
+         <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+Content-Type: multipart/signed; micalg="sha-256";
+        protocol="application/x-pkcs7-signature";
+        boundary="=-+XvU9eJhKhtXJISCdPm3"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes it's useful to amortize calls to XSAVE/XRSTOR and the related
-FPU/SIMD functions over a number of calls, because FPU restoration is
-quite expensive. This adds a simple header for carrying out this pattern:
 
-    simd_context_t simd_context;
+--=-+XvU9eJhKhtXJISCdPm3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-    simd_get(&simd_context);
-    while ((item = get_item_from_queue()) != NULL) {
-        encrypt_item(item, simd_context);
-        simd_relax(&simd_context);
-    }
-    simd_put(&simd_context);
+On Tue, 2018-09-18 at 00:24 -0500, Denis Kenzior wrote:
+> Hi David,
+>=20
+> On 09/18/2018 10:50 AM, David Howells wrote:
+> > Denis Kenzior <denkenz@gmail.com> wrote:
+> >=20
+> > >     openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
+> > >                       -out /tmp/privkey.2048.der
+> >=20
+> > You can use "... -out - | ..." instead.
+>=20
+> Aha! okay, that is even more elegant.  Your openssl-fu is better than=20
+> mine :)
 
-The relaxation step ensures that we don't trample over preemption, and
-the get/put API should be a familiar paradigm in the kernel.
+'grep -v ^----- | base64 -d' also works most of the time :)
 
-On the other end, code that actually wants to use SIMD instructions can
-accept this as a parameter and check it via:
+You are passing the raw DER to the kernel in both cases, right? And the
+kernel just happens to know that if it receives a bare OCTET-STRING
+it's supposed to treat it as a TPMv1.2 key?=20
+--=-+XvU9eJhKhtXJISCdPm3
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-   void encrypt_item(struct item *item, simd_context_t *simd_context)
-   {
-       if (item->len > LARGE_FOR_SIMD && simd_use(simd_context))
-           wild_simd_code(item);
-       else
-           boring_scalar_code(item);
-   }
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA5MTgxNjE3MTFaMC8GCSqG
+SIb3DQEJBDEiBCCFIzam0S/YAqXViwh4sRTU6EUSKQCtS5D0kQxPUioH4TCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAGYgsKZDdRnd
+lMb79UTA9ooLeDjZO0Yk1YwzO+xCFPAxMtRFaYnSAQw26BGQeRJt+pJjeAZmk328a32+96/tAz9w
+O/Mj3I1RkuQ6bMkW5QHSTzo3CBGe0Q+gxzHDCNZg4dw2QO/+dp1Lw+7f3azEFu2o1hHXTuSdyqjq
+as0ZqNSt+N/3f4FoHALdZh9Tr0VESsUoH/3rSwYp6inSNdJQzRFWbRI0hi8nk5tSMNfjB3Qc1VM0
+w3zd054xoGuEPtEDNBQYAcMZtfqSr7rkpnHiAiIuOC+8tawAVGqqI22cpaNfUixIiwWZH+nyI9wm
+qKbuoEWM6273BibUt3guIdoA9O4AAAAAAAA=
 
-The actual XSAVE happens during simd_use (and only on the first time),
-so that if the context is never actually used, no performance penalty is
-hit.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Samuel Neves <sneves@dei.uc.pt>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-arch@vger.kernel.org
----
- arch/alpha/include/asm/Kbuild      |  5 ++-
- arch/arc/include/asm/Kbuild        |  1 +
- arch/arm/include/asm/simd.h        | 63 ++++++++++++++++++++++++++++++
- arch/arm64/include/asm/simd.h      | 51 +++++++++++++++++++++---
- arch/c6x/include/asm/Kbuild        |  3 +-
- arch/h8300/include/asm/Kbuild      |  3 +-
- arch/hexagon/include/asm/Kbuild    |  1 +
- arch/ia64/include/asm/Kbuild       |  1 +
- arch/m68k/include/asm/Kbuild       |  1 +
- arch/microblaze/include/asm/Kbuild |  1 +
- arch/mips/include/asm/Kbuild       |  1 +
- arch/nds32/include/asm/Kbuild      |  7 ++--
- arch/nios2/include/asm/Kbuild      |  1 +
- arch/openrisc/include/asm/Kbuild   |  7 ++--
- arch/parisc/include/asm/Kbuild     |  1 +
- arch/powerpc/include/asm/Kbuild    |  3 +-
- arch/riscv/include/asm/Kbuild      |  3 +-
- arch/s390/include/asm/Kbuild       |  3 +-
- arch/sh/include/asm/Kbuild         |  1 +
- arch/sparc/include/asm/Kbuild      |  1 +
- arch/um/include/asm/Kbuild         |  3 +-
- arch/unicore32/include/asm/Kbuild  |  1 +
- arch/x86/include/asm/simd.h        | 44 ++++++++++++++++++++-
- arch/xtensa/include/asm/Kbuild     |  1 +
- include/asm-generic/simd.h         | 20 ++++++++++
- include/linux/simd.h               | 28 +++++++++++++
- 26 files changed, 234 insertions(+), 21 deletions(-)
- create mode 100644 arch/arm/include/asm/simd.h
- create mode 100644 include/linux/simd.h
-
-diff --git a/arch/alpha/include/asm/Kbuild b/arch/alpha/include/asm/Kbuild
-index 0580cb8c84b2..07b2c1025d34 100644
---- a/arch/alpha/include/asm/Kbuild
-+++ b/arch/alpha/include/asm/Kbuild
-@@ -2,14 +2,15 @@
- 
- 
- generic-y += compat.h
-+generic-y += current.h
- generic-y += exec.h
- generic-y += export.h
- generic-y += fb.h
- generic-y += irq_work.h
-+generic-y += kprobes.h
- generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
- generic-y += preempt.h
- generic-y += sections.h
-+generic-y += simd.h
- generic-y += trace_clock.h
--generic-y += current.h
--generic-y += kprobes.h
-diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
-index feed50ce89fa..a7f4255f1649 100644
---- a/arch/arc/include/asm/Kbuild
-+++ b/arch/arc/include/asm/Kbuild
-@@ -22,6 +22,7 @@ generic-y += parport.h
- generic-y += pci.h
- generic-y += percpu.h
- generic-y += preempt.h
-+generic-y += simd.h
- generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += user.h
-diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
-new file mode 100644
-index 000000000000..263950dd69cb
---- /dev/null
-+++ b/arch/arm/include/asm/simd.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <linux/simd.h>
-+#ifndef _ASM_SIMD_H
-+#define _ASM_SIMD_H
-+
-+#ifdef CONFIG_KERNEL_MODE_NEON
-+#include <asm/neon.h>
-+
-+static __must_check inline bool may_use_simd(void)
-+{
-+	return !in_interrupt();
-+}
-+
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+	*ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		kernel_neon_end();
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
-+	if (!(*ctx & HAVE_FULL_SIMD))
-+		return false;
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		return true;
-+	kernel_neon_begin();
-+	*ctx |= HAVE_SIMD_IN_USE;
-+	return true;
-+}
-+
-+#else
-+
-+static __must_check inline bool may_use_simd(void)
-+{
-+	return false;
-+}
-+
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
-+	return false;
-+}
-+#endif
-+
-+#endif /* _ASM_SIMD_H */
-diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-index 6495cc51246f..a45ff1600040 100644
---- a/arch/arm64/include/asm/simd.h
-+++ b/arch/arm64/include/asm/simd.h
-@@ -1,11 +1,10 @@
--/*
-- * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
-+/* SPDX-License-Identifier: GPL-2.0
-  *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published
-- * by the Free Software Foundation.
-+ * Copyright (C) 2017 Linaro Ltd. <ard.biesheuvel@linaro.org>
-+ * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-  */
- 
-+#include <linux/simd.h>
- #ifndef __ASM_SIMD_H
- #define __ASM_SIMD_H
- 
-@@ -16,6 +15,8 @@
- #include <linux/types.h>
- 
- #ifdef CONFIG_KERNEL_MODE_NEON
-+#include <asm/neon.h>
-+#include <asm/simd.h>
- 
- DECLARE_PER_CPU(bool, kernel_neon_busy);
- 
-@@ -40,9 +41,47 @@ static __must_check inline bool may_use_simd(void)
- 		!this_cpu_read(kernel_neon_busy);
- }
- 
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+	*ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		kernel_neon_end();
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
-+	if (!(*ctx & HAVE_FULL_SIMD))
-+		return false;
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		return true;
-+	kernel_neon_begin();
-+	*ctx |= HAVE_SIMD_IN_USE;
-+	return true;
-+}
-+
- #else /* ! CONFIG_KERNEL_MODE_NEON */
- 
--static __must_check inline bool may_use_simd(void) {
-+static __must_check inline bool may_use_simd(void)
-+{
-+	return false;
-+}
-+
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
- 	return false;
- }
- 
-diff --git a/arch/c6x/include/asm/Kbuild b/arch/c6x/include/asm/Kbuild
-index 33a2c94fed0d..22f3d8333c74 100644
---- a/arch/c6x/include/asm/Kbuild
-+++ b/arch/c6x/include/asm/Kbuild
-@@ -5,8 +5,8 @@ generic-y += compat.h
- generic-y += current.h
- generic-y += device.h
- generic-y += div64.h
--generic-y += dma.h
- generic-y += dma-mapping.h
-+generic-y += dma.h
- generic-y += emergency-restart.h
- generic-y += exec.h
- generic-y += extable.h
-@@ -30,6 +30,7 @@ generic-y += pgalloc.h
- generic-y += preempt.h
- generic-y += segment.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += tlbflush.h
- generic-y += topology.h
- generic-y += trace_clock.h
-diff --git a/arch/h8300/include/asm/Kbuild b/arch/h8300/include/asm/Kbuild
-index a5d0b2991f47..f5c2f12d593e 100644
---- a/arch/h8300/include/asm/Kbuild
-+++ b/arch/h8300/include/asm/Kbuild
-@@ -8,8 +8,8 @@ generic-y += current.h
- generic-y += delay.h
- generic-y += device.h
- generic-y += div64.h
--generic-y += dma.h
- generic-y += dma-mapping.h
-+generic-y += dma.h
- generic-y += emergency-restart.h
- generic-y += exec.h
- generic-y += extable.h
-@@ -39,6 +39,7 @@ generic-y += preempt.h
- generic-y += scatterlist.h
- generic-y += sections.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += sizes.h
- generic-y += spinlock.h
- generic-y += timex.h
-diff --git a/arch/hexagon/include/asm/Kbuild b/arch/hexagon/include/asm/Kbuild
-index dd2fd9c0d292..217d4695fd8a 100644
---- a/arch/hexagon/include/asm/Kbuild
-+++ b/arch/hexagon/include/asm/Kbuild
-@@ -29,6 +29,7 @@ generic-y += rwsem.h
- generic-y += sections.h
- generic-y += segment.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += sizes.h
- generic-y += topology.h
- generic-y += trace_clock.h
-diff --git a/arch/ia64/include/asm/Kbuild b/arch/ia64/include/asm/Kbuild
-index 557bbc8ba9f5..41c5ebdf79e5 100644
---- a/arch/ia64/include/asm/Kbuild
-+++ b/arch/ia64/include/asm/Kbuild
-@@ -4,6 +4,7 @@ generic-y += irq_work.h
- generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
- generic-y += preempt.h
-+generic-y += simd.h
- generic-y += trace_clock.h
- generic-y += vtime.h
- generic-y += word-at-a-time.h
-diff --git a/arch/m68k/include/asm/Kbuild b/arch/m68k/include/asm/Kbuild
-index a4b8d3331a9e..73898dd1a4d0 100644
---- a/arch/m68k/include/asm/Kbuild
-+++ b/arch/m68k/include/asm/Kbuild
-@@ -19,6 +19,7 @@ generic-y += mm-arch-hooks.h
- generic-y += percpu.h
- generic-y += preempt.h
- generic-y += sections.h
-+generic-y += simd.h
- generic-y += spinlock.h
- generic-y += topology.h
- generic-y += trace_clock.h
-diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
-index 569ba9e670c1..7a877eea99d3 100644
---- a/arch/microblaze/include/asm/Kbuild
-+++ b/arch/microblaze/include/asm/Kbuild
-@@ -25,6 +25,7 @@ generic-y += parport.h
- generic-y += percpu.h
- generic-y += preempt.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += syscalls.h
- generic-y += topology.h
- generic-y += trace_clock.h
-diff --git a/arch/mips/include/asm/Kbuild b/arch/mips/include/asm/Kbuild
-index 58351e48421e..e8868e0fb2c3 100644
---- a/arch/mips/include/asm/Kbuild
-+++ b/arch/mips/include/asm/Kbuild
-@@ -16,6 +16,7 @@ generic-y += qrwlock.h
- generic-y += qspinlock.h
- generic-y += sections.h
- generic-y += segment.h
-+generic-y += simd.h
- generic-y += trace_clock.h
- generic-y += unaligned.h
- generic-y += user.h
-diff --git a/arch/nds32/include/asm/Kbuild b/arch/nds32/include/asm/Kbuild
-index dbc4e5422550..603c1d020620 100644
---- a/arch/nds32/include/asm/Kbuild
-+++ b/arch/nds32/include/asm/Kbuild
-@@ -7,14 +7,14 @@ generic-y += bug.h
- generic-y += bugs.h
- generic-y += checksum.h
- generic-y += clkdev.h
--generic-y += cmpxchg.h
- generic-y += cmpxchg-local.h
-+generic-y += cmpxchg.h
- generic-y += compat.h
- generic-y += cputime.h
- generic-y += device.h
- generic-y += div64.h
--generic-y += dma.h
- generic-y += dma-mapping.h
-+generic-y += dma.h
- generic-y += emergency-restart.h
- generic-y += errno.h
- generic-y += exec.h
-@@ -46,14 +46,15 @@ generic-y += sections.h
- generic-y += segment.h
- generic-y += serial.h
- generic-y += shmbuf.h
-+generic-y += simd.h
- generic-y += sizes.h
- generic-y += stat.h
- generic-y += switch_to.h
- generic-y += timex.h
- generic-y += topology.h
- generic-y += trace_clock.h
--generic-y += xor.h
- generic-y += unaligned.h
- generic-y += user.h
- generic-y += vga.h
- generic-y += word-at-a-time.h
-+generic-y += xor.h
-diff --git a/arch/nios2/include/asm/Kbuild b/arch/nios2/include/asm/Kbuild
-index 8fde4fa2c34f..571a9d9ad107 100644
---- a/arch/nios2/include/asm/Kbuild
-+++ b/arch/nios2/include/asm/Kbuild
-@@ -33,6 +33,7 @@ generic-y += preempt.h
- generic-y += sections.h
- generic-y += segment.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += spinlock.h
- generic-y += topology.h
- generic-y += trace_clock.h
-diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
-index eb87cd8327c8..5e9f2f4c4d39 100644
---- a/arch/openrisc/include/asm/Kbuild
-+++ b/arch/openrisc/include/asm/Kbuild
-@@ -28,12 +28,13 @@ generic-y += module.h
- generic-y += pci.h
- generic-y += percpu.h
- generic-y += preempt.h
--generic-y += qspinlock_types.h
--generic-y += qspinlock.h
--generic-y += qrwlock_types.h
- generic-y += qrwlock.h
-+generic-y += qrwlock_types.h
-+generic-y += qspinlock.h
-+generic-y += qspinlock_types.h
- generic-y += sections.h
- generic-y += segment.h
-+generic-y += simd.h
- generic-y += string.h
- generic-y += switch_to.h
- generic-y += topology.h
-diff --git a/arch/parisc/include/asm/Kbuild b/arch/parisc/include/asm/Kbuild
-index 2013d639e735..97970b4d05ab 100644
---- a/arch/parisc/include/asm/Kbuild
-+++ b/arch/parisc/include/asm/Kbuild
-@@ -17,6 +17,7 @@ generic-y += percpu.h
- generic-y += preempt.h
- generic-y += seccomp.h
- generic-y += segment.h
-+generic-y += simd.h
- generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += user.h
-diff --git a/arch/powerpc/include/asm/Kbuild b/arch/powerpc/include/asm/Kbuild
-index 3196d227e351..64290f48e733 100644
---- a/arch/powerpc/include/asm/Kbuild
-+++ b/arch/powerpc/include/asm/Kbuild
-@@ -4,7 +4,8 @@ generic-y += irq_regs.h
- generic-y += irq_work.h
- generic-y += local64.h
- generic-y += mcs_spinlock.h
-+generic-y += msi.h
- generic-y += preempt.h
- generic-y += rwsem.h
-+generic-y += simd.h
- generic-y += vtime.h
--generic-y += msi.h
-diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-index efdbe311e936..6669b7374c0a 100644
---- a/arch/riscv/include/asm/Kbuild
-+++ b/arch/riscv/include/asm/Kbuild
-@@ -5,9 +5,9 @@ generic-y += compat.h
- generic-y += cputime.h
- generic-y += device.h
- generic-y += div64.h
--generic-y += dma.h
- generic-y += dma-contiguous.h
- generic-y += dma-mapping.h
-+generic-y += dma.h
- generic-y += emergency-restart.h
- generic-y += errno.h
- generic-y += exec.h
-@@ -46,6 +46,7 @@ generic-y += setup.h
- generic-y += shmbuf.h
- generic-y += shmparam.h
- generic-y += signal.h
-+generic-y += simd.h
- generic-y += socket.h
- generic-y += sockios.h
- generic-y += stat.h
-diff --git a/arch/s390/include/asm/Kbuild b/arch/s390/include/asm/Kbuild
-index e3239772887a..7a26dc6ce815 100644
---- a/arch/s390/include/asm/Kbuild
-+++ b/arch/s390/include/asm/Kbuild
-@@ -7,9 +7,9 @@ generated-y += unistd_nr.h
- generic-y += asm-offsets.h
- generic-y += cacheflush.h
- generic-y += device.h
-+generic-y += div64.h
- generic-y += dma-contiguous.h
- generic-y += dma-mapping.h
--generic-y += div64.h
- generic-y += emergency-restart.h
- generic-y += export.h
- generic-y += fb.h
-@@ -22,6 +22,7 @@ generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
- generic-y += preempt.h
- generic-y += rwsem.h
-+generic-y += simd.h
- generic-y += trace_clock.h
- generic-y += unaligned.h
- generic-y += word-at-a-time.h
-diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
-index 6a5609a55965..8e64ff35a933 100644
---- a/arch/sh/include/asm/Kbuild
-+++ b/arch/sh/include/asm/Kbuild
-@@ -16,6 +16,7 @@ generic-y += percpu.h
- generic-y += preempt.h
- generic-y += rwsem.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += sizes.h
- generic-y += trace_clock.h
- generic-y += xor.h
-diff --git a/arch/sparc/include/asm/Kbuild b/arch/sparc/include/asm/Kbuild
-index 410b263ef5c8..72b9e08fb350 100644
---- a/arch/sparc/include/asm/Kbuild
-+++ b/arch/sparc/include/asm/Kbuild
-@@ -17,5 +17,6 @@ generic-y += msi.h
- generic-y += preempt.h
- generic-y += rwsem.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += trace_clock.h
- generic-y += word-at-a-time.h
-diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
-index b10dde6cb793..d37288b08dd2 100644
---- a/arch/um/include/asm/Kbuild
-+++ b/arch/um/include/asm/Kbuild
-@@ -16,15 +16,16 @@ generic-y += io.h
- generic-y += irq_regs.h
- generic-y += irq_work.h
- generic-y += kdebug.h
-+generic-y += kprobes.h
- generic-y += mcs_spinlock.h
- generic-y += mm-arch-hooks.h
- generic-y += param.h
- generic-y += pci.h
- generic-y += percpu.h
- generic-y += preempt.h
-+generic-y += simd.h
- generic-y += switch_to.h
- generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += word-at-a-time.h
- generic-y += xor.h
--generic-y += kprobes.h
-diff --git a/arch/unicore32/include/asm/Kbuild b/arch/unicore32/include/asm/Kbuild
-index bfc7abe77905..98a908720bbd 100644
---- a/arch/unicore32/include/asm/Kbuild
-+++ b/arch/unicore32/include/asm/Kbuild
-@@ -27,6 +27,7 @@ generic-y += preempt.h
- generic-y += sections.h
- generic-y += segment.h
- generic-y += serial.h
-+generic-y += simd.h
- generic-y += sizes.h
- generic-y += syscalls.h
- generic-y += topology.h
-diff --git a/arch/x86/include/asm/simd.h b/arch/x86/include/asm/simd.h
-index a341c878e977..4aad7f158dcb 100644
---- a/arch/x86/include/asm/simd.h
-+++ b/arch/x86/include/asm/simd.h
-@@ -1,4 +1,11 @@
--/* SPDX-License-Identifier: GPL-2.0 */
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <linux/simd.h>
-+#ifndef _ASM_SIMD_H
-+#define _ASM_SIMD_H
- 
- #include <asm/fpu/api.h>
- 
-@@ -10,3 +17,38 @@ static __must_check inline bool may_use_simd(void)
- {
- 	return irq_fpu_usable();
- }
-+
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+#if !defined(CONFIG_UML)
-+	*ctx = may_use_simd() ? HAVE_FULL_SIMD : HAVE_NO_SIMD;
-+#else
-+	*ctx = HAVE_NO_SIMD;
-+#endif
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+#if !defined(CONFIG_UML)
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		kernel_fpu_end();
-+#endif
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
-+#if !defined(CONFIG_UML)
-+	if (!(*ctx & HAVE_FULL_SIMD))
-+		return false;
-+	if (*ctx & HAVE_SIMD_IN_USE)
-+		return true;
-+	kernel_fpu_begin();
-+	*ctx |= HAVE_SIMD_IN_USE;
-+	return true;
-+#else
-+	return false;
-+#endif
-+}
-+
-+#endif /* _ASM_SIMD_H */
-diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
-index 82c756431b49..7950f359649d 100644
---- a/arch/xtensa/include/asm/Kbuild
-+++ b/arch/xtensa/include/asm/Kbuild
-@@ -24,6 +24,7 @@ generic-y += percpu.h
- generic-y += preempt.h
- generic-y += rwsem.h
- generic-y += sections.h
-+generic-y += simd.h
- generic-y += topology.h
- generic-y += trace_clock.h
- generic-y += word-at-a-time.h
-diff --git a/include/asm-generic/simd.h b/include/asm-generic/simd.h
-index d0343d58a74a..b3dd61ac010e 100644
---- a/include/asm-generic/simd.h
-+++ b/include/asm-generic/simd.h
-@@ -1,5 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- 
-+#include <linux/simd.h>
-+#ifndef _ASM_SIMD_H
-+#define _ASM_SIMD_H
-+
- #include <linux/hardirq.h>
- 
- /*
-@@ -13,3 +17,19 @@ static __must_check inline bool may_use_simd(void)
- {
- 	return !in_interrupt();
- }
-+
-+static inline void simd_get(simd_context_t *ctx)
-+{
-+	*ctx = HAVE_NO_SIMD;
-+}
-+
-+static inline void simd_put(simd_context_t *ctx)
-+{
-+}
-+
-+static __must_check inline bool simd_use(simd_context_t *ctx)
-+{
-+	return false;
-+}
-+
-+#endif /* _ASM_SIMD_H */
-diff --git a/include/linux/simd.h b/include/linux/simd.h
-new file mode 100644
-index 000000000000..33bba21012ff
---- /dev/null
-+++ b/include/linux/simd.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (C) 2015-2018 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#ifndef _SIMD_H
-+#define _SIMD_H
-+
-+typedef enum {
-+	HAVE_NO_SIMD = 1 << 0,
-+	HAVE_FULL_SIMD = 1 << 1,
-+	HAVE_SIMD_IN_USE = 1 << 31
-+} simd_context_t;
-+
-+#include <linux/sched.h>
-+#include <asm/simd.h>
-+
-+static inline void simd_relax(simd_context_t *ctx)
-+{
-+#ifdef CONFIG_PREEMPT
-+	if ((*ctx & HAVE_SIMD_IN_USE) && need_resched()) {
-+		simd_put(ctx);
-+		simd_get(ctx);
-+	}
-+#endif
-+}
-+
-+#endif /* _SIMD_H */
--- 
-2.19.0
+--=-+XvU9eJhKhtXJISCdPm3--
 
