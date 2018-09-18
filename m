@@ -2,193 +2,218 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27079ECE560
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EC2C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D6521471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C07822086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:18:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcqPBo6T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D6521471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="sWcffnma";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="qdPV5oHi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07822086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeIRSsp (ORCPT
+        id S1729665AbeIRSv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729546AbeIRSso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:48:44 -0400
-Received: from [192.168.0.101] (unknown [49.77.217.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FEE92086B;
-        Tue, 18 Sep 2018 13:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537276570;
-        bh=5MTF6CurZuvhWtTEdcjKVmz69aivmdhO27jG4Dn0Uq4=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=hcqPBo6TBVq4b/4444yNyuLg+iA13LlQ73LAH+dBCEsZ1g7UbJXGwA9Ct2raIWM3Q
-         V9zUbK+AW1M9d09J6ztfam6aRCljFjJhsGR5jkbajNt80ClmDF6Q4tZiPVIiyHWR3z
-         2MY1SyXHyKgjs6whktOB+DyXL88k1p80WQE5Dzdg=
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: avoid f2fs_bug_on if
- f2fs_get_meta_page_nofail got EIO
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180918021805.85032-1-jaegeuk@kernel.org>
- <20180918021805.85032-2-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <4ac0b893-7437-c5f3-e710-64156df09ced@kernel.org>
-Date:   Tue, 18 Sep 2018 21:16:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180918021805.85032-2-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        Tue, 18 Sep 2018 14:51:29 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:36218 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728718AbeIRSv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:51:29 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8IDDYd7024643;
+        Tue, 18 Sep 2018 06:18:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=uge2ZgNW70hyfnuN17wUsIggDHH39DKwjkrr2Gorujs=;
+ b=sWcffnmayqnzvWC3ymooCmgcsq4FuxKqxoUG1XFzJ3RjAQBvIwuFHAxGjrcLzDjMtmlB
+ TXgoGgAEGXx2jkYCbvnCoMAn4aLb0Poc3VJOqCtOd/jORZnXDHDnmAhQ68uuNaSxWSki
+ qVOjFOhaVEtUlGydqa017xQhvVxilC5gMFSns8iF8oB6DTeG0aBshRpa540WA8tDPizu
+ o1cZdiG4PeTZC2vW7/nm480prXMwQ1qbN4v1sS8Py8Wbx2pSuUwKgi35SZ8KYsNAuw12
+ T3WryCq3E1CtPtkqLQnYRMUU2z94O5b23Drpaa0SdrOFeiFtbf3zsKZTEDslK4xwPHGn oA== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=dkos@cadence.com
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp0022.outbound.protection.outlook.com [207.46.163.22])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2mgwnv72d7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 18 Sep 2018 06:18:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uge2ZgNW70hyfnuN17wUsIggDHH39DKwjkrr2Gorujs=;
+ b=qdPV5oHiymlgXrqLixsAZtdcANcDTxHDMcN31bxwlFg88sfUl4G3sUqlPsFqj+tOHlYyhexK0dZWcyWWwOS8jKSRapGBjdwo+71i6/Rw56YdnfqKUDku5CWCeoV10nyDoIVcMwVUzrT95cug4BNhPKesMVk7oW3o0zm5S0gbljQ=
+Received: from CO2PR07MB2551.namprd07.prod.outlook.com (10.166.201.14) by
+ CO2PR07MB2566.namprd07.prod.outlook.com (10.166.201.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Tue, 18 Sep 2018 13:18:08 +0000
+Received: from CO2PR07MB2551.namprd07.prod.outlook.com
+ ([fe80::4141:269b:f160:2dfd]) by CO2PR07MB2551.namprd07.prod.outlook.com
+ ([fe80::4141:269b:f160:2dfd%4]) with mapi id 15.20.1143.017; Tue, 18 Sep 2018
+ 13:18:08 +0000
+From:   Damian Kos <dkos@cadence.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Lukasz Tyrala <ltyrala@cadence.com>,
+        Scott Telford <stelford@cadence.com>,
+        Artur Jedrysek <jartur@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>
+Subject: RE: [PATCH v3 0/5] drm: add support for Cadence MHDP DPI/DP bridge.
+Thread-Topic: [PATCH v3 0/5] drm: add support for Cadence MHDP DPI/DP bridge.
+Thread-Index: AQHUPrl4RuV2nw6NZEamtE4X6JbKdaTuPgSAgAAo67A=
+Date:   Tue, 18 Sep 2018 13:18:07 +0000
+Message-ID: <CO2PR07MB255198B0CC8CD7DEA742C556CD1D0@CO2PR07MB2551.namprd07.prod.outlook.com>
+References: <1535451894-2518-1-git-send-email-dkos@cadence.com>
+ <11916444.D1tlAhbW8U@phil>
+In-Reply-To: <11916444.D1tlAhbW8U@phil>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcZGtvc1xhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUtNmI4NGJhMjllMzViXG1zZ3NcbXNnLTRiYzk4OGRmLWJiNDUtMTFlOC04NzFjLWNjMmY3MTZkYzIzZFxhbWUtdGVzdFw0YmM5ODhlMS1iYjQ1LTExZTgtODcxYy1jYzJmNzE2ZGMyM2Rib2R5LnR4dCIgc3o9IjMzNDEiIHQ9IjEzMTgxNzUwMjk0MzU3NzAyMyIgaD0iSCtad00xTStiVDN1MURESEcrZThya3Z5YktRPSIgaWQ9IiIgYmw9IjAiIGJvPSIxIi8+PC9tZXRhPg==
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR07MB2566;20:9jXDlg4Aj6OffKd10cAzPFeNMH6kOUl2ybPORhF062twxDnmHdztngUObPVmr0DcRVUGpSDEusaORxS0N0Ddh2wUpFxXJ2pQYkI18w4suQq9lDHfhzKlvbTtPmqZhLvTJo+Zd6kJNAclFfBfIqIoKZu0CmI7kZPDJYQ8tF4u3XTsmk8pbYHpXyTlMmYlaMerzoHcehAZvAGNS6+97ltRQSXxZt+u4bVFbd6gfrBx4mPZkMB1BnHVfIq+mSKHc+N3
+x-ms-office365-filtering-correlation-id: aa15ca7d-40da-4fa1-a51f-08d61d692ce9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CO2PR07MB2566;
+x-ms-traffictypediagnostic: CO2PR07MB2566:
+x-microsoft-antispam-prvs: <CO2PR07MB25668612778A626536A03963CD1D0@CO2PR07MB2566.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(217544274631240)(7411616537696)(72806322054110)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699050);SRVR:CO2PR07MB2566;BCL:0;PCL:0;RULEID:;SRVR:CO2PR07MB2566;
+x-forefront-prvs: 0799B1B2D7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(376002)(366004)(39860400002)(13464003)(36092001)(199004)(189003)(486006)(5660300001)(11346002)(8676002)(476003)(107886003)(86362001)(66066001)(74316002)(26005)(2906002)(186003)(6506007)(7416002)(446003)(2900100001)(53546011)(305945005)(6246003)(256004)(76176011)(102836004)(8936002)(68736007)(81166006)(9686003)(316002)(25786009)(6916009)(99286004)(7736002)(7696005)(81156014)(6436002)(6116002)(3846002)(4326008)(55016002)(53936002)(97736004)(5250100002)(14454004)(54906003)(33656002)(105586002)(106356001)(478600001)(229853002)(21314002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2566;H:CO2PR07MB2551.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: i6BWz11BOTQ5SfbJVACjzWRPJb97LIV35NePHStWfhQP8y2Mdx6FAf6m3fn1o/EKWs+2plgSPGIHRmNw4u267YRo3geeJtoA88qstnY+P+UWZMDfv9urRP98l1iKh92SGTJUnnx+2GYgBuQf7MJLowEi1NQXcY/9Ud6Jr3hEssBCgDN6Jn2RfmAKWqlQzhbS1D2/+RRnUD7XrZMVFf/2sbsr+WwMpntIFItAZTChiFl3gOHiPhd75J3usV5XeHaRdeFmx+F/t5t1PltiHPi32xVRfT4rBGYi9PQrUNR7G/nbcWH2tWMfy1Kua37vZLyPGzMKAgaW+ldvt7P2MsiOfoMCldJuG2+JcwlId+gN5xk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa15ca7d-40da-4fa1-a51f-08d61d692ce9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 13:18:07.9082
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2566
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
+ a:mx-sanjose5.Cadence.COM include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1809180134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/18 10:18, Jaegeuk Kim wrote:
-> This patch avoids BUG_ON when f2fs_get_meta_page_nofail got EIO during
-> xfstests/generic/475.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/checkpoint.c |  2 +-
->  fs/f2fs/gc.c         |  2 ++
->  fs/f2fs/node.c       | 12 ++++++++++--
->  fs/f2fs/recovery.c   |  2 ++
->  fs/f2fs/segment.c    |  3 +++
->  5 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 01e0d8f5bbbe..6ce3cb6502dd 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -121,7 +121,7 @@ struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
->  			goto retry;
->  
->  		f2fs_stop_checkpoint(sbi, false);
-> -		f2fs_bug_on(sbi, 1);
-> +		return NULL;
+Got it.
 
-How about propagate PTR_ERR(page) to caller?
+-depends on EXTCON=3Dy || (EXTCON=3Dm && DRM_ROCKCHIP=3Dm)
++depends on DRM_ROCKCHIP=3Dm
++select EXTCON
 
->  	}
->  
->  	return page;
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 4bcc8a59fdef..d049865887cf 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1070,6 +1070,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
->  	/* reference all summary page */
->  	while (segno < end_segno) {
->  		sum_page = f2fs_get_sum_page(sbi, segno++);
-> +		if (!sum_page)
-> +			return -EIO;
+Damian
+-----Original Message-----
+From: Heiko Stuebner <heiko@sntech.de>=20
+Sent: Thursday, September 13, 2018 14:32
+To: Damian Kos <dkos@cadence.com>
+Cc: David Airlie <airlied@linux.ie>; Rob Herring <robh+dt@kernel.org>; Mark=
+ Rutland <mark.rutland@arm.com>; Archit Taneja <architt@codeaurora.org>; An=
+drzej Hajda <a.hajda@samsung.com>; Laurent Pinchart <Laurent.pinchart@ideas=
+onboard.com>; Gustavo Padovan <gustavo@padovan.org>; Maarten Lankhorst <maa=
+rten.lankhorst@linux.intel.com>; Sean Paul <sean@poorly.run>; Sandy Huang <=
+hjc@rock-chips.com>; Quentin Schulz <quentin.schulz@bootlin.com>; dri-devel=
+@lists.freedesktop.org; devicetree@vger.kernel.org; linux-kernel@vger.kerne=
+l.org; linux-arm-kernel@lists.infradead.org; linux-rockchip@lists.infradead=
+.org; Przemyslaw Gaj <pgaj@cadence.com>; Lukasz Tyrala <ltyrala@cadence.com=
+>; Scott Telford <stelford@cadence.com>; Artur Jedrysek <jartur@cadence.com=
+>; Piotr Sroka <piotrs@cadence.com>
+Subject: Re: [PATCH v3 0/5] drm: add support for Cadence MHDP DPI/DP bridge=
+.
 
-Well, for large section, we need to release all referenced sum page by
-f2fs_put_page().
+EXTERNAL MAIL
 
->  		unlock_page(sum_page);
->  	}
->  
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fa2381c0bc47..b3595522c35b 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -126,6 +126,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
->  
->  	/* get current nat block page with lock */
->  	src_page = get_current_nat_page(sbi, nid);
-> +	if (!src_page)
-> +		return NULL;
->  	dst_page = f2fs_grab_meta_page(sbi, dst_off);
->  	f2fs_bug_on(sbi, PageDirty(src_page));
->  
-> @@ -2265,8 +2267,12 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
->  						nm_i->nat_block_bitmap)) {
->  			struct page *page = get_current_nat_page(sbi, nid);
->  
-> -			ret = scan_nat_page(sbi, page, nid);
-> -			f2fs_put_page(page, 1);
-> +			if (page) {
-> +				ret = scan_nat_page(sbi, page, nid);
-> +				f2fs_put_page(page, 1);
-> +			} else {
-> +				ret = -EIO;
-> +			}
->  
->  			if (ret) {
->  				up_read(&nm_i->nat_tree_lock);
 
-Should propagate the error to f2fs_alloc_nid()?
+Am Dienstag, 28. August 2018, 12:24:43 CEST schrieb Damian Kos:
+> Hello!
+>=20
+> This is the series of patches that will add support for the Cadence's=20
+> DPI/DP bridge. Please note that this is a preliminary version of the=20
+> driver and there will be more patches in the future with updates, fixes a=
+nd improvements.
+> Please keep that in mind when looking at FIXME/TODO/XXX comments.
+>=20
+> Initially, MHDP driver was developed as a DRM bridge driver and was=20
+> planed to be placed in drivers/gpu/drm/bridge/mhdp.c.  However, there=20
+> was already a driver for Cadence's DP controller developed by=20
+> RockChip, but that driver uses the different DRM framework and looks like=
+ a part of a bigger system.
+> Both controllers (including firmware) are quite different internally=20
+> (MST/FEC/DSC support, link training done by driver, additional=20
+> commands, IRQ's
+> etc.) but they have similar register map, except for Framer/Streamer=20
+> (which is noticeably different), so they appear similar.
+>=20
+> The following patches contain:
+> - Moving common code to drivers/gpu/drm/bridge/cdns-mhdp-common.* and
+>   modifying it a bit (mostly new prefixes for functions and data types) s=
+o it
+>   can be used by two, higher level, drivers.
+> - Modifying existing RockChip's DP driver to use the common code after ch=
+anges
+>   made to it (use the new cdns_mhdp_device structure and new function nam=
+es).
+> - Modifying DRM helpers a bit. Some are required for new driver, some are
+>   updates from DP 1.2 to 1.3 or 1.4.
+> - Adding documentation for device tree bindings.
+> - Adding preliminary Cadence DPI/DP bridge driver.
+>=20
+> Some of the things that will be added later on include (but are not=20
+> limited
+> to):
+> - Support for Cadence SD0801 PHY (PHY's driver should be on the way by=20
+> now)
+> - MST support
+> - DSC support
+> - FEC support
+> - HDCP support
 
-> @@ -2724,6 +2730,8 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  		down_write(&curseg->journal_rwsem);
->  	} else {
->  		page = get_next_nat_page(sbi, start_nid);
-> +		if (!page)
-> +			return;
+with te Kconfig issue in patch5 fixed, this series tested on
+rk3288 (analogix-dp) and rk3399 (analogix-dp + cadence-dp) Everything seems=
+ to work that worked before.
 
-Ditto, propagate such error to write_checkpoint()?
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
->  		nat_blk = page_address(page);
->  		f2fs_bug_on(sbi, !nat_blk);
->  	}
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 56d34193a74b..a3dce16bfd6c 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -355,6 +355,8 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
->  	}
->  
->  	sum_page = f2fs_get_sum_page(sbi, segno);
-> +	if (!sum_page)
-> +		return -EIO;
->  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
->  	sum = sum_node->entries[blkoff];
->  	f2fs_put_page(sum_page, 1);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index aa96a371aaf8..cfc9eb492da1 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2487,6 +2487,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type)
->  	__next_free_blkoff(sbi, curseg, 0);
->  
->  	sum_page = f2fs_get_sum_page(sbi, new_segno);
-> +	f2fs_bug_on(sbi, !sum_page);
 
-Well, next time we may panic here...
-
-In product, for EIO case, usually we just reboot cell phone directly to avoid
-potential data loss later.
-
-So I just set DEFAULT_RETRY_IO_COUNT to 32 temporarily to pass xfstest IO error
-injection cases.
-
-Thanks,
-
->  	sum_node = (struct f2fs_summary_block *)page_address(sum_page);
->  	memcpy(curseg->sum_blk, sum_node, SUM_ENTRY_SIZE);
->  	f2fs_put_page(sum_page, 1);
-> @@ -3971,6 +3972,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
->  
->  			se = &sit_i->sentries[start];
->  			page = get_current_sit_page(sbi, start);
-> +			if (!page)
-> +				return err;
->  			sit_blk = (struct f2fs_sit_block *)page_address(page);
->  			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
->  			f2fs_put_page(page, 1);
-> 
