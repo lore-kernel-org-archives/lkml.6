@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D07ECE560
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D038C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F6E2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBC9B2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:04:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="TzxqDIPc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F6E2086E
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="cJZMPWyg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC9B2086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbeIRSgb (ORCPT
+        id S1729815AbeIRSgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:36:31 -0400
+        Tue, 18 Sep 2018 14:36:35 -0400
 Received: from mail-eopbgr20093.outbound.protection.outlook.com ([40.107.2.93]:10848
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729746AbeIRSga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:36:30 -0400
+        id S1729197AbeIRSge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:36:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1huPHcyZca1VRLaLMf6QNOZEy5zXI/fLCza7yuO/VVE=;
- b=TzxqDIPcPtsO5YAXsVLfsSJVKl+9hp4+tvB2nBpHXbWnAhihHbYpQML05Wyv6uc7BFTwySIe7tiffF32q4k8t7/vaquJc3GIw211F1twzkq5HRyh5bCx8bjLowm6gBuVmwooaZhdd1DsE1jwXuhmyXupLeGJk2nRWUszXMaWM0g=
+ bh=jyJCviY4A6ZQ/mHUB9xmkNUI/NTWK9qDZLpb83A1nlQ=;
+ b=cJZMPWyg/rdcf8gU0EioOTYbijIaF0sQDRSgXUwSKPxYt+6giFbyeXIyfUp0GlVhQ34t1w7BNbF7AeQe20vmtnjqmKINoNrQ6+d8dLZr42dg4hZR3UbcJVkBvGI6aHQERpgLGlZkUz5M6/CqO+A6gJ/1VDYbdPQJDHhw44WeKrE=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=jan.dakinevich@virtuozzo.com; 
 Received: from work.sw.ru (185.231.240.5) by
  VI1PR08MB2782.eurprd08.prod.outlook.com (2603:10a6:802:19::15) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Tue, 18 Sep 2018 13:03:51 +0000
+ 15.20.1143.18; Tue, 18 Sep 2018 13:03:53 +0000
 From:   Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
         Yishai Hadas <yishaih@mellanox.com>,
@@ -51,9 +51,9 @@ To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
 Cc:     Denis Lunev <den@virtuozzo.com>,
         Konstantin Khorenko <khorenko@virtuozzo.com>,
         Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Subject: [PATCH 2/4] IB/mlx4: move iboe field aside from mlx4_ib_dev
-Date:   Tue, 18 Sep 2018 16:03:44 +0300
-Message-Id: <1537275826-27247-3-git-send-email-jan.dakinevich@virtuozzo.com>
+Subject: [PATCH 3/4] IB/mlx4: move pkeys field aside from mlx4_ib_dev
+Date:   Tue, 18 Sep 2018 16:03:45 +0300
+Message-Id: <1537275826-27247-4-git-send-email-jan.dakinevich@virtuozzo.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1537275826-27247-1-git-send-email-jan.dakinevich@virtuozzo.com>
 References: <1537275826-27247-1-git-send-email-jan.dakinevich@virtuozzo.com>
@@ -64,51 +64,51 @@ X-ClientProxiedBy: VI1P18901CA0005.EURP189.PROD.OUTLOOK.COM
  (2603:10a6:801::15) To VI1PR08MB2782.eurprd08.prod.outlook.com
  (2603:10a6:802:19::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 40516efd-c640-4723-0fb0-08d61d672f2e
+X-MS-Office365-Filtering-Correlation-Id: 73ac78f0-0164-423f-de39-08d61d672fff
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;3:O/61PNzu3sO12G1oGfrjHBqqMd7ENeegyzOqqImhGqMvq2/HSzh0QFinAVbAvcuw9jcEc2h9rY17RsESxdQg3A0MkN6BB07v/f4kABAnIa2Q/UkH+he50A9MxnmDlnBqV55ZkVsk7EyrLtamiu3Vbz+piFq+N+Q3q3TkiH74ckz09F4L3L47ZxKu6UsASNqy4Bp2GkAZidMgqeSRZyKuyabhIuEm7gmu9deu1hqFBBdSScngTgA3AUVIS+DtjMyq;25:kMhpghOz54CuzfWFGaaSBmuMe6QX0TSqJ40I/zDo2ZnRL0BMMUxaet+jIetDmYdXqLimk9VGz7eKRV6YuML3fhKERX84MjDjRzqxHQG2+AhUipgltsL8YbJalKyCaw5gPcerdj9ja4wNYhnOR/9iOyeAZV35BiZ0EmgvHlvlr5XC6947Oy+Uj88P8NS9HdRg7AVf4CUcB8y/E/j++TrHbBtjdqLwkokU4GqxozDoxN3EBp+XHzZksf9iH+RoCvfQjmk/zH21lfOMKr9myolNvsiJR8NNcbcnjkYUbhQ1gc0CXAReMotLzi/rktyYtSpqLAvt/TzTK8/05pybS4c3Vw==;31:irdtAdDAJCHRL8aMPFTtAGI3GPi1efyZorLjJrFC0uGZyxppFYko7rJQmsijxmabo7AQnjjYEim00LIc7z2DW4FiHQPppONOSITud8Ee+TlK8OrjGQ8hkitp2fg0WGYkHLZ/kR0V+eU3zQL6TYu4I9ReuNkiqsOOS+DoapJx6NSaWqqJc187s2UqCq4FY/uBrDY1GFVJh07lJzm9azAKxyLnaSPmMEtBhBffILIIVxE=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;3:BjkfbF65l7dUSHKGhtPGZ/JYFIC6v80mQ2gwXgG9NNyB52Q1PvBZVXx0Z6bTeSTICndebrlSzsGqFieig+BHAaT5z5ZmzHzBAe5/gMWCbxGQj9BpG8frX2XuewXHwUdBEJjOcP9IkIZ1CRltpnsWzeudVLtGCZs0Wcv3rGm2jyh6kSfiKTp0o4f7KYA7oJnbnK2A5rQAwMSc4wHtBnzV5p/B/0AWDT9f04AU7HLW3WqCw8NstnpU/kbUa7oXIiCz;25:CQuR/etJEo2o/LWKQkZTBcbXifSnDumoK/+Bx/yneZAaE1jNm8AmOSEqjOD4ynxjcXSt6kbnHDzGvoSAPpJGa6UlsV2bXr1p5pR+z2RZANuB6aD7GiwmdzsjwIs3ZUSDAw5/Ir//6vWJkO0mjFJcx8FsyPbYGP1l6xwe4P1Rmzbalimsb8FFWNPS/SBBAXC5W2j7MsN+9WVI+lF0thAHc1X3wjEf0Fm3JgSaAmdalTdFuvDkX3o31ApHCnMnDvaRK5wzLeST4FbgNfsHYwuy7GxqWROTm8Y2pcXO+cUNkl9l2GP28CCZsZyVGDMc4W0HEaUC6tNtkXF8gQ+yl6jtiQ==;31:Gbz7mu/Rh4Rz6utBRafp0Q06xT+FxVb7P/Po9c0SsQCLKyq0YaTRmtLAuwE8cnff4IiLxu9pjJGJiHQWWjfQ/HxMAlD3ceD7kMv/z/e/zouNbvztcYeMglu0zP0e7DW69/vyvFRSEkXR5+0JAFDrdY7nsGR5qf80A8o+qtMVjM7PMYqST9WhiOgohsHn/uU9Mwe8ZBmMRDhnjJGQJoqZofngGRgCZ1mX2Z3F7rQRe28=
 X-MS-TrafficTypeDiagnostic: VI1PR08MB2782:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;20:RJ7kTLx+Q1Iyh3+7Mz+y4wKAaZbS7goe5V2h4rl/XGqUJg0ZFcr0IvZWQHtS3PlTruilP9LLKAEbcpveoVzWSVMBaFP/nVG1Y0gX18ANRkLX09Usq/w1SYO1EiKwsDD1Nz8h/ou5jtFGN+u3wpg4wIOXprHL2ISqGdi/CqygoFWEzj5paOktNYGVd1XRhWCOwS3WxRQ7t+luSNUB0W108F1tKpn7SdiQYYGrfYmgW1Mo5XheQyomlpA4nmkymBgSm/dzpdWfuo00nd8tFUpeAhc/NMhLBPHw9UeH3I4c4gXgvXDt5MrqZYbZoNNrGTdVEitPzcvvB6jB82i9crrtYf44t6eK5IMMCWRsC/JXj7yYFS50H8r+SnavKSfokJWimu7AQdOLepRHUxwb3cXFyygvZlIeQukWGntMbTND8Q6dHIWYy7OsP3A1wkhmIUAQ5hyOWVShxu7XYNMJNIhJh+cONrl2S9OHzvgYeF4u3phS3npNFOwMBRZHedhMfoG4;4:mOXh1m0K/odqeoGsMuSjti6XzraI2JlPYcZpa51GzMQrG2Or12pF/dglFb15x6cz/mvJKN0j5haC/PsKn2FH5TQ9yaIn+UP09BhcftoWy/g70UKLnG6t7W+1yKiycrNFVd/Jd0bkfiyDrQMvopr8K1tHCrAJW1eI7rh7P6TwZp7mw3cpMSdtf2fIcXg5skBpRrKIS5/oaGvr01h7KQpqnoqTTZnk6P1tJqiqCZcvOFlANYklhfTVXmk/xt/93cQg7EYBhJr9vykSifAx1R8MSQ==
-X-Microsoft-Antispam-PRVS: <VI1PR08MB27821FCDBFB195D4A0AFDF078A1D0@VI1PR08MB2782.eurprd08.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;20:R472toj/+9I/kp7QrBu5vs0y96DlO+CxXXwlu0SegnTMOlgGZlKjscYHO542GC1CqHMc9fWgwZ/tRNLEUL04ypXyaOXp8bk3SmDZYErGH2mw515/C4dgwW5E070RlYCnS9CgZMG4cZD44mVGVzdH38YJQaK/Of5/AcQw5/tJAbw668mixV3lp/xW4+N7KVXIMG3axhJqpa+oqBhGabPG4PvBnXAQ1LB6uo/Vt4mI9SkyIp3nAcLPLcz7q2FZKCrCqI/NELjh5gt5H1qJJaWfuZ0lHn193G1gJ6v4kkr/5fFIXiqU0PiNBvNd6g+hmfj+pNlP9qTaIqjRJ4VkU5YK9g+H2Me4uN6gjStEcB7IDvw4WCWSH/aTqyGbdFDnduogCIixoXLR7Tffv+Z4zDlnimdyGq8sOVuleAy50fXkf8ukt4R/AcM3Vvq2Nxtl3plRqgEpuT7P0SXXQmSNPQCq6e5D0ycZIlmj3sxiOpAwKkU/cfop2J67lqyGREYS091l;4:sXlbuHl1q5N0Atk68m0yqNzHSPTh2DuISVPgpwFUX51DL1ibIVFb/w8I+hWkexPVqaQQF+VKAtCki35ChRT695VweEYsayuejefHHhjdJCZ6CcrZQXGEmFP3jR7IIN8rYFf9sgl+OskE+BlrvNFX+y/OSuc4N+pmQWPdmdsirOJqvY15tXtW3yARBoMBNFWo3iT69CGoHMi5hbo6a05P4g8QNB9bOHuWSX8x5QE7CM9PBTFHPi0wywF4gJKY4mAoYsgkQdvgzzwZcvr8+Yp6KA==
+X-Microsoft-Antispam-PRVS: <VI1PR08MB278241036AA481635EDCEB908A1D0@VI1PR08MB2782.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:VI1PR08MB2782;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB2782;
 X-Forefront-PRVS: 0799B1B2D7
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(136003)(39850400004)(376002)(189003)(199004)(3846002)(486006)(16526019)(44832011)(7736002)(26005)(68736007)(39060400002)(6116002)(54906003)(186003)(53416004)(81166006)(305945005)(16586007)(7416002)(107886003)(66066001)(2616005)(106356001)(956004)(8676002)(50466002)(8936002)(478600001)(446003)(105586002)(11346002)(476003)(110136005)(81156014)(5660300001)(6486002)(6512007)(14444005)(69596002)(97736004)(4326008)(76176011)(25786009)(47776003)(52116002)(316002)(2906002)(50226002)(386003)(6506007)(48376002)(36756003)(6666003)(86362001)(51416003)(53936002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB2782;H:work.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(136003)(39850400004)(376002)(189003)(199004)(3846002)(486006)(16526019)(44832011)(7736002)(26005)(68736007)(39060400002)(6116002)(54906003)(186003)(53416004)(81166006)(305945005)(16586007)(7416002)(107886003)(66066001)(2616005)(106356001)(956004)(8676002)(50466002)(8936002)(478600001)(446003)(105586002)(11346002)(476003)(110136005)(81156014)(5660300001)(6486002)(6512007)(69596002)(97736004)(4326008)(76176011)(25786009)(47776003)(52116002)(316002)(2906002)(50226002)(386003)(6506007)(48376002)(36756003)(6666003)(86362001)(51416003)(53936002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB2782;H:work.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB2782;23:Z61D0YCxYjmESuLIjBuAwOchXTsdjln9Hcx4ickCQ?=
- =?us-ascii?Q?j8ckBkECAUQbHd+jmd9revzBveVgNY1WeUtrwRFYfYYnV7JKnHDhsR9aRP69?=
- =?us-ascii?Q?mmQwG1JDoooMCiejeJdcEYb8WD84gr64vcvqnOBDoSWoSZHtNPIxCDaDJlCN?=
- =?us-ascii?Q?qpmF+/qan59vNEHZ4GgQQOLR60PyakX/LzEUrXADoWvto3+JJx7fBxdUR9iu?=
- =?us-ascii?Q?CEBkyW9MbNGvFKdlL9HfldfSKgujxmPph+DD2RtnhQqug+sIy1SMHBFbSSIb?=
- =?us-ascii?Q?t/DxXqeIFNBKBoyoMBwIeSQdR1kB8PZDn5sXetthIoMHuevLDGd5KSS8nL0Q?=
- =?us-ascii?Q?bBve3M9r9JOldYsFxWiVA88kLmJK0F9XOTnsXc3UElckZ+1JJoJv1i8PUbfp?=
- =?us-ascii?Q?v+0AZ+ZRVVhURp0q2WBYQIS2FUITh6N3XOOPiLe04OBhlyl98uFcMDee+VY6?=
- =?us-ascii?Q?mdmBgyE4KIIrbmK+318qiNYy705K+fcM8yw8ToIjnsrStsLJA5uc5wp7Umf0?=
- =?us-ascii?Q?EE9yKoBfoH+50TRbSuPPS2vfzn6KPLPOUH6mCAZERQreTozM4k9ARHe2G/Y7?=
- =?us-ascii?Q?gkNg9JSyZOdgplg1+sqJtvlXgoVTsj7JmkihmbEa6cYvWiWLszkBOxOsE9fc?=
- =?us-ascii?Q?HNPzmwyVFxOicvD6D/6m1/dfwhwtEjbN7cvOyW7ewF35pcOOU/fkVkC0b71d?=
- =?us-ascii?Q?6Wf5/3ALjjtOZRo4d/Dvy25bSd42LXL3CzSdtqZYpVNjJeSidUjj/GFGk5/W?=
- =?us-ascii?Q?XZ+gRERhYSZbrI4avzHWE8HRR+Qepcyy+a5JfZntgOXYdECS1/8dDgzyUfBq?=
- =?us-ascii?Q?9oNC7hYIPHTTWyhfNNHyJbEfQ5WzmeunMqsecaAGGUPoaMAX5OkHHeEz7Ttm?=
- =?us-ascii?Q?U3eFX9sCBIac9RWtK01QyFSWxOCu8oCXFwQumdBlvRbpXOgfgXiYt7JUmDv2?=
- =?us-ascii?Q?l2botg487oziUfGslrQ7wwkuI15Exv3Tofhu2r20V4HzFGZDXZQhkjuu1R6R?=
- =?us-ascii?Q?lcTtgZeuhL9rXlJNC182c8P0mKkW6OJsH/PL5s9FnTYzDMBeZosTIwx6mTm2?=
- =?us-ascii?Q?C8dtij9G1U2/yMu5SoRaWhkwwMBKKXlv3iJqP+jOes7ecvg1F9PsVRHpw7++?=
- =?us-ascii?Q?VK2GsHYK4XJsZTcBd85qt36ayU0cYLAIECSiWrABKlEQh6+Ng4wR7776P3WJ?=
- =?us-ascii?Q?atXorERrF95URkr1p4qJzBCvvs5E1qooXLnBjmXfcIocdSk5FkcyL7roW+Dx?=
- =?us-ascii?Q?EYEq/P+ZoEREmFrbaMlFg8d8itp5R+FZ8E6Gfx3ZeZQ+2QKuJJ9QkHcIKqEz?=
- =?us-ascii?Q?eE3FfwMs+6msPUAHy0q7LnAJFRlgPbinmSNGMBC1DKcZXhbmo/ohShqjndXe?=
- =?us-ascii?Q?KGMMnTts05M8hUEL3Iup6PeVlw=3D?=
-X-Microsoft-Antispam-Message-Info: bD2otbvMajgXGDym+j0i5JmchVMG+M/V+6IF2UZ+d8I92J8eTgcd7TN0NGH5uBy6qcVhsThJ6IoE+noIOspJtic8InLQL/iY7guyX4b1C5qB3ON+sU8mZEGrRwhJ5Q6g99Hnpcxtyj1Omc+Z5NSFf01zTOI4UrZomx3s7RDR0DriZAX2EcP6SL3Bi8Vzjf4Mh+TTQvVzE6P1cClwk+8vwNlKL7Wu7AQ4kmowSsPMO1X6mS0vH1irEoMrERkBeM52i1unj2zenPR34COSt8lxD+4yBWGPikP0FW9X+8buSOr4nQyfiU80i2lirurv7UVTW4WJKnZxGl9DctILXNxe3HJf/yIahO1POMA69lhE8V8=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;6:zQlzDHXFoeEXDTjCy4D0zsGnXyXBEaAk7T0vKRKZOTmGto6qIy+8i3XL89VRdyzD+3qcR/DOOLKJMzt5geBbmQC5cHYfjMy643jsk3iloiHc74mG0nefqEc7fkpfJSPoz+WQfNCK0SKG3jvCNTd+seKMguCItcDZ7KZ59DVsmB4+mNXq4NlUwQA0RMeFuTFpGG771ge9nq6/G3PohvTYOZdJ0rxE1SXqyf2UxIrlg1rUK/RsdiAdKxGNf8fQ5GdzXJA7PmE56TZotxdR5wTKA+nBX+p0p4aNfCTDC+GI4IjRNY4O6IueZ4ogYEnIW3DERssIsbt6WwyCKpeZxQp/nm42zKP90JLRaz8awgmDPvEWcCqOACOU5Uy+dN6LKr8RotgkYxb++7g2HvTu5JxDQ8f7nth098EovMWmYuxBr1F/v9vZbzmJniGYfHo24wBAsKz3eTXqBjAHdyURQanSlg==;5:uKhHHikQKM2BeOBLKRlsAeVbOngvw/HQdsjU0KWHxLehf5SiNEu1vjhBH0suyYj3scfXBDrAVN9V89kP5WZLY251S2TMHKwHCGKrb3ozL++o9Ld6KsbQzS7JSrQoiF2syKoXuZi8w82/nYFJ9IGNsg2r4Hh5a8ZlPqy1s3991sY=;7:WK7GR7qX5LEYbxarjOdDo6SXPc/PgE6ylcPF+BifcLz1sCuMePqSXcixPU8BMQmXLjF0WID3XE/hTvDNElqjlyboCU3zFc/xXzZd0IroWdN9YP1ImcEjHSYKiRCysmgGLT6x55AedJB+w5/E2ZnrTN9oHP4ANvQYNlS77cj5TLfHL0vR1PzKQcqx9MX0H5Yr+hlgwsyAvg0f+ZXQ0gH1NyvugTpvwrh5IJpa9fPwsa39lNUqRZM2+XykOYc6/eft
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB2782;23:MHynDaTl+tzz6hRTveA7+U2hOO5MiFabytm65bBnb?=
+ =?us-ascii?Q?5xbRP92lnw+HK1fDQGbmiyav5dcKnW7m7msdVp+IFpr2fhpRHspXXS/snAsM?=
+ =?us-ascii?Q?bH62nGKj04mLQEeXm2Wh8QJiABeIXu7nfIC+7mCX++m1xTTbpQXGoGt/DDAb?=
+ =?us-ascii?Q?PyiIFMK+rg5elQHd8YBrCVl9htIsiYfJfeV168Iwu6ivEJRAxBYji2Cxf5Zo?=
+ =?us-ascii?Q?0FKvv6ONRwOGhW8d8Vg9Ck2H3Z8/QlI4ktJKl/8xoCwy3aEa3RCgk+uMJeO+?=
+ =?us-ascii?Q?wj/b/uUNsCxZp1E7QL8jLX75CZSEIYRjPXOLUhzwFOyWf06k2HydTPIE9kOs?=
+ =?us-ascii?Q?KvKKhLtLHtXwb72zy/1xsZukaJ48Bm8tS+54AwqhO5PfuEPh6cl7oD65PEEe?=
+ =?us-ascii?Q?W2W8JiH9za2Y9whc/2ioLfR9cZQI7zwkfVSsZSd87Sg07IcmDwPf7rYxYQTV?=
+ =?us-ascii?Q?HUyx5N8T1K5jFHU/HQ4WpyWYLgLQzFvpZW92oHMaJdmCTxImxP+U/2Jig+ID?=
+ =?us-ascii?Q?oy1o7DdeMMZzEWX1V/8dDbfAJuuF0WBTjoskoUcqNGMJDobJqQERmXDbtO94?=
+ =?us-ascii?Q?xcJOL6YUonJrhZt5ZaMxf55QUQ8/Jr4P7l+7WEEBp8Ae794CXswkEZHfajPy?=
+ =?us-ascii?Q?Pg9vxSyvOvbZlZYA7cOMPjIJyUqc47cS+JMBlrU+Cdn2jjO5hatkPrDqm286?=
+ =?us-ascii?Q?qSV4fhCPmRpkmSY53ZqZZv+d1RW9wKWUQ4jYYcJcQONGTWaFayq0sTDFjU7I?=
+ =?us-ascii?Q?iebkd0ecluf3XPoCIyIhTX5PorVXtBoyrrRyQk8aLtNzZ5dWVZSFNYf8a+BM?=
+ =?us-ascii?Q?RtB4uzdU4XBVZYVQyEE0RTn++gM0KLi1ffj0KAGQXV93ILzMFwSOXn+vWQ2G?=
+ =?us-ascii?Q?KbopBDaRYqQQDHWp6nV0QZP64vtzCMobAwtYqmbzNyUrh5SLqeWEcVwmHJ0G?=
+ =?us-ascii?Q?mGIp8StK0ECdzBIUD9a9s0Z8r9GmU0ogcfQ6mMCHOndHlNdqEHfh/ZbMbXuO?=
+ =?us-ascii?Q?3W8bDnNZHXOn1zfXD9bVM1agGjYRcg/oBAtajI7J/WVoJ3R00kT4skomt8TF?=
+ =?us-ascii?Q?zAQ1snUWz7XRfbvXXVh/rvZfpjr43Yv1nTum86M0dUk27lYEhUmvbvaiQn9W?=
+ =?us-ascii?Q?pBQ40Hih3ybsO6r7FjskpRy6ZOV9DZUHQ7NrHYvRD8bsHCA3kpsu7bUnKkE+?=
+ =?us-ascii?Q?4cnTHc0srUkaMldZ9tDXkNpd4Mp705zPZDVGIijhJcDCT5S9DVoV+CtaTICP?=
+ =?us-ascii?Q?QVf6IbFUGMYGXNxl2ZDoLdwCrn07GTO4ZZfBgpz1sQY9pVcoK2KxE4r/zwNr?=
+ =?us-ascii?Q?WvHOQun36SuRFm5td6bjrdRbsYUvty6vgc+CIfEN3d34ZGFyBg43C0zZZfRZ?=
+ =?us-ascii?Q?hBdFQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: L2gP3iQ/lp6T6ijybymEtxP55HDNu0KD92g0qs+RdcKraE/b2xO8KtgD61fPMtL0ElHv/ass2+agvQo4WKmFyMlGRo3OKauSjEpSMxdaGOaIayYVOfpUiQP9lI1j8mUHSpYzbgco1QW0fw7DnACwwgRhDv1vniWpDtpF6Wa8G+IAZq+Xl6O/oxJK4T+6fU/8CL7qahPEYuy9LMN04DSMYGiaRRJFQPAINLG9LDq5blE/UqxsJ3XUtBbbSnLJtWAp1o/+BhOELxN7iPtaPMTcP/6aT61OcFgbz4Blkm08D0o8lbYV1oXA1UuBNG30DTWf5nugzvpFAJiK5IZuSW7mp+q097Ea3O5JREgopSzzSPs=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;6:0NlizPgMyCY18BRjMtrnlE4QFAmvpQ5MZAZjDO5gWNrbPNwBGbbsEMyDMeHNKNU3URN0L4j+wwRx0kIDlwD8wA4vNrMRwrdoxWScRBwfOiqnPH1SAnCmeFsumr6K8t0oPVkEC7HFo0ufWJL/50PEqZd/IyN7qjWJjo78JpH3jYOcBmSaJpmp7g9bblQvLgAZRbmRXCYuqR1rK7bxcbmQ8vXBXtf8GZ0Njoi+UFaVGo/TSAr+hebVj/qGHZZf1uIi7ufbJxBZL//GYloYqRgS/+X6aRKLAu1G6/I7bielomcLk4qH9SQmMHsbeJEsnj4yJ8zSn62IBcUyI+wKzouwojRmnZA8ebUaie8IIJeQnUj3BRfkQSgA6a+fcsgzWa01I8660ApMeQrroXP8csXEoTx2Yldq76XDmJAboQfp3ZEIa72JwL4DsEtUvD3WSyKM6/ZWF7s2n66l4cUkDNUTlA==;5:2nCvy46F/N5XD/TNCfR3bq6929R4Hx/LWg18UwyzVe751rdCYtpAJMW163DBkfnoYmMz8dCxBkxqTgKSwSrqkkPqypcZLCsU07aHibyIZEPNs+RMzKyk8Rp9IVfAQWmOgD9jm5wFu05LQXQ/scAC/oMg3GwzrLNPW1N57pdiKZY=;7:ZF7D941GaL3LVmMpGC3srQVbY1MCNf3y8BcmOm6uK8Wz3Gy/2oYYVujmXI8YKxmvKqJhVUPI7RXzvKMs95AGbKwZ927stqPmQf+iW5rvHUpGz7NOrZbcl0OjffVNfLkElo2LH4Dv7Vbm/wEV5doJGAq0uss9P7qv3NTUz8EFezsIpEX0yyTW+oN/X1RXeBjfngGR2TCZXUbOv9DGduKKp55kIqXuhrrcqs3JSEnZKsekupxkACSzXkJLQMVrmwia
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;20:XWnzl8Lrr/mBoYK+1uFe0OY6SjKo27LEmrKC+scKpFjPYvi6D20gdF8ra/hb+PhI3f6raUR4P9yLfJ0cWhfONSSoAq03nUy1D8MoIgWFR1reaIBjTPFbTP+nJ+Rd5qrLmM1ZsbeGcd2d6iWWBKzL++iASL66sTIUjifSbYFQ2+U=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2782;20:DshjPV4/KsEEL0FHXZflFE3LiUzMM+Sz9Lz36CCv7GwsddhwGhzBuv92GtskwRemYHrhz2MtRQ2kSE+G0UVEIVRb1p594PsNZD7F8bPiIhzBrzgFzfwMnW/aHVUj0+WPCh8EEg+LsAmcC1zi1WZBj9noeMzAptorV9JfCC88Dnc=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2018 13:03:51.9576 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40516efd-c640-4723-0fb0-08d61d672f2e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2018 13:03:53.3638 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73ac78f0-0164-423f-de39-08d61d672fff
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2782
@@ -117,246 +117,253 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the 1st patch of 3 of the work for decreasing size
+This is the 2nd patch of 3 of the work for decreasing size
 of mlx4_ib_dev.
 
-The field takes about 8K and could be safely allocated with kvzalloc.
+The field takes about 36K and could be safely allocated with kvzalloc.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 ---
- drivers/infiniband/hw/mlx4/main.c    | 65 ++++++++++++++++++++++--------------
- drivers/infiniband/hw/mlx4/mlx4_ib.h |  3 +-
- drivers/infiniband/hw/mlx4/qp.c      |  4 +--
- 3 files changed, 44 insertions(+), 28 deletions(-)
+ drivers/infiniband/hw/mlx4/mad.c     | 18 +++++++++---------
+ drivers/infiniband/hw/mlx4/main.c    | 11 ++++++++---
+ drivers/infiniband/hw/mlx4/mlx4_ib.h |  2 +-
+ drivers/infiniband/hw/mlx4/sysfs.c   | 30 +++++++++++++++---------------
+ 4 files changed, 33 insertions(+), 28 deletions(-)
 
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index e5466d7..3eceb46 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -268,9 +268,9 @@ static void smp_snoop(struct ib_device *ibdev, u8 port_num, const struct ib_mad
+ 				pr_debug("PKEY[%d] = x%x\n",
+ 					 i + bn*32, be16_to_cpu(base[i]));
+ 				if (be16_to_cpu(base[i]) !=
+-				    dev->pkeys.phys_pkey_cache[port_num - 1][i + bn*32]) {
++				    dev->pkeys->phys_pkey_cache[port_num - 1][i + bn*32]) {
+ 					pkey_change_bitmap |= (1 << i);
+-					dev->pkeys.phys_pkey_cache[port_num - 1][i + bn*32] =
++					dev->pkeys->phys_pkey_cache[port_num - 1][i + bn*32] =
+ 						be16_to_cpu(base[i]);
+ 				}
+ 			}
+@@ -348,7 +348,7 @@ static void __propagate_pkey_ev(struct mlx4_ib_dev *dev, int port_num,
+ 				continue;
+ 			for (ix = 0;
+ 			     ix < dev->dev->caps.pkey_table_len[port_num]; ix++) {
+-				if (dev->pkeys.virt2phys_pkey[slave][port_num - 1]
++				if (dev->pkeys->virt2phys_pkey[slave][port_num - 1]
+ 				    [ix] == i + 32 * block) {
+ 					err = mlx4_gen_pkey_eqe(dev->dev, slave, port_num);
+ 					pr_debug("propagate_pkey_ev: slave %d,"
+@@ -455,10 +455,10 @@ static int find_slave_port_pkey_ix(struct mlx4_ib_dev *dev, int slave,
+ 	unassigned_pkey_ix = dev->dev->phys_caps.pkey_phys_table_len[port] - 1;
+ 
+ 	for (i = 0; i < dev->dev->caps.pkey_table_len[port]; i++) {
+-		if (dev->pkeys.virt2phys_pkey[slave][port - 1][i] == unassigned_pkey_ix)
++		if (dev->pkeys->virt2phys_pkey[slave][port - 1][i] == unassigned_pkey_ix)
+ 			continue;
+ 
+-		pkey_ix = dev->pkeys.virt2phys_pkey[slave][port - 1][i];
++		pkey_ix = dev->pkeys->virt2phys_pkey[slave][port - 1][i];
+ 
+ 		ret = ib_get_cached_pkey(&dev->ib_dev, port, pkey_ix, &slot_pkey);
+ 		if (ret)
+@@ -546,7 +546,7 @@ int mlx4_ib_send_to_slave(struct mlx4_ib_dev *dev, int slave, u8 port,
+ 			return -EINVAL;
+ 		tun_pkey_ix = pkey_ix;
+ 	} else
+-		tun_pkey_ix = dev->pkeys.virt2phys_pkey[slave][port - 1][0];
++		tun_pkey_ix = dev->pkeys->virt2phys_pkey[slave][port - 1][0];
+ 
+ 	dqpn = dev->dev->phys_caps.base_proxy_sqpn + 8 * slave + port + (dest_qpt * 2) - 1;
+ 
+@@ -1382,11 +1382,11 @@ int mlx4_ib_send_to_wire(struct mlx4_ib_dev *dev, int slave, u8 port,
+ 	if (dest_qpt == IB_QPT_SMI) {
+ 		src_qpnum = 0;
+ 		sqp = &sqp_ctx->qp[0];
+-		wire_pkey_ix = dev->pkeys.virt2phys_pkey[slave][port - 1][0];
++		wire_pkey_ix = dev->pkeys->virt2phys_pkey[slave][port - 1][0];
+ 	} else {
+ 		src_qpnum = 1;
+ 		sqp = &sqp_ctx->qp[1];
+-		wire_pkey_ix = dev->pkeys.virt2phys_pkey[slave][port - 1][pkey_index];
++		wire_pkey_ix = dev->pkeys->virt2phys_pkey[slave][port - 1][pkey_index];
+ 	}
+ 
+ 	send_qp = sqp->qp;
+@@ -1840,7 +1840,7 @@ static int create_pv_sqp(struct mlx4_ib_demux_pv_ctx *ctx,
+ 					      &attr.pkey_index);
+ 	if (ret || !create_tun)
+ 		attr.pkey_index =
+-			to_mdev(ctx->ib_dev)->pkeys.virt2phys_pkey[ctx->slave][ctx->port - 1][0];
++			to_mdev(ctx->ib_dev)->pkeys->virt2phys_pkey[ctx->slave][ctx->port - 1][0];
+ 	attr.qkey = IB_QP1_QKEY;
+ 	attr.port_num = ctx->port;
+ 	ret = ib_modify_qp(tun_qp->qp, &attr, qp_attr_mask_INIT);
 diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-index 0bbeaaa..1e3bb67 100644
+index 1e3bb67..8ba0103 100644
 --- a/drivers/infiniband/hw/mlx4/main.c
 +++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -249,7 +249,7 @@ static int mlx4_ib_update_gids(struct gid_entry *gids,
- static int mlx4_ib_add_gid(const struct ib_gid_attr *attr, void **context)
- {
- 	struct mlx4_ib_dev *ibdev = to_mdev(attr->device);
--	struct mlx4_ib_iboe *iboe = &ibdev->iboe;
-+	struct mlx4_ib_iboe *iboe = ibdev->iboe;
- 	struct mlx4_port_gid_table   *port_gid_table;
- 	int free = -1, found = -1;
- 	int ret = 0;
-@@ -327,7 +327,7 @@ static int mlx4_ib_del_gid(const struct ib_gid_attr *attr, void **context)
- {
- 	struct gid_cache_context *ctx = *context;
- 	struct mlx4_ib_dev *ibdev = to_mdev(attr->device);
--	struct mlx4_ib_iboe *iboe = &ibdev->iboe;
-+	struct mlx4_ib_iboe *iboe = ibdev->iboe;
- 	struct mlx4_port_gid_table   *port_gid_table;
- 	int ret = 0;
- 	int hw_update = 0;
-@@ -382,7 +382,7 @@ static int mlx4_ib_del_gid(const struct ib_gid_attr *attr, void **context)
- int mlx4_ib_gid_index_to_real_index(struct mlx4_ib_dev *ibdev,
- 				    const struct ib_gid_attr *attr)
- {
--	struct mlx4_ib_iboe *iboe = &ibdev->iboe;
-+	struct mlx4_ib_iboe *iboe = ibdev->iboe;
- 	struct gid_cache_context *ctx = NULL;
- 	struct mlx4_port_gid_table   *port_gid_table;
- 	int real_index = -EINVAL;
-@@ -742,7 +742,7 @@ static int eth_link_query_port(struct ib_device *ibdev, u8 port,
- {
- 
- 	struct mlx4_ib_dev *mdev = to_mdev(ibdev);
--	struct mlx4_ib_iboe *iboe = &mdev->iboe;
-+	struct mlx4_ib_iboe *iboe = mdev->iboe;
- 	struct net_device *ndev;
- 	enum ib_mtu tmp;
- 	struct mlx4_cmd_mailbox *mailbox;
-@@ -1415,11 +1415,11 @@ int mlx4_ib_add_mc(struct mlx4_ib_dev *mdev, struct mlx4_ib_qp *mqp,
- 	if (!mqp->port)
- 		return 0;
- 
--	spin_lock_bh(&mdev->iboe.lock);
--	ndev = mdev->iboe.netdevs[mqp->port - 1];
-+	spin_lock_bh(&mdev->iboe->lock);
-+	ndev = mdev->iboe->netdevs[mqp->port - 1];
- 	if (ndev)
- 		dev_hold(ndev);
--	spin_unlock_bh(&mdev->iboe.lock);
-+	spin_unlock_bh(&mdev->iboe->lock);
- 
- 	if (ndev) {
- 		ret = 1;
-@@ -2078,11 +2078,11 @@ static int mlx4_ib_mcg_detach(struct ib_qp *ibqp, union ib_gid *gid, u16 lid)
- 	mutex_lock(&mqp->mutex);
- 	ge = find_gid_entry(mqp, gid->raw);
- 	if (ge) {
--		spin_lock_bh(&mdev->iboe.lock);
--		ndev = ge->added ? mdev->iboe.netdevs[ge->port - 1] : NULL;
-+		spin_lock_bh(&mdev->iboe->lock);
-+		ndev = ge->added ? mdev->iboe->netdevs[ge->port - 1] : NULL;
- 		if (ndev)
- 			dev_hold(ndev);
--		spin_unlock_bh(&mdev->iboe.lock);
-+		spin_unlock_bh(&mdev->iboe->lock);
- 		if (ndev)
- 			dev_put(ndev);
- 		list_del(&ge->list);
-@@ -2373,7 +2373,7 @@ static void mlx4_ib_update_qps(struct mlx4_ib_dev *ibdev,
- 	new_smac = mlx4_mac_to_u64(dev->dev_addr);
- 	read_unlock(&dev_base_lock);
- 
--	atomic64_set(&ibdev->iboe.mac[port - 1], new_smac);
-+	atomic64_set(&ibdev->iboe->mac[port - 1], new_smac);
- 
- 	/* no need for update QP1 and mac registration in non-SRIOV */
- 	if (!mlx4_is_mfunc(ibdev->dev))
-@@ -2429,7 +2429,7 @@ static void mlx4_ib_scan_netdevs(struct mlx4_ib_dev *ibdev,
- 
- 	ASSERT_RTNL();
- 
--	iboe = &ibdev->iboe;
-+	iboe = ibdev->iboe;
- 
- 	spin_lock_bh(&iboe->lock);
- 	mlx4_foreach_ib_transport_port(port, ibdev->dev) {
-@@ -2453,13 +2453,13 @@ static int mlx4_ib_netdev_event(struct notifier_block *this,
- 				unsigned long event, void *ptr)
- {
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
--	struct mlx4_ib_dev *ibdev;
-+	struct mlx4_ib_iboe *iboe;
- 
- 	if (!net_eq(dev_net(dev), &init_net))
- 		return NOTIFY_DONE;
- 
--	ibdev = container_of(this, struct mlx4_ib_dev, iboe.nb);
--	mlx4_ib_scan_netdevs(ibdev, dev, event);
-+	iboe = container_of(this, struct mlx4_ib_iboe, nb);
-+	mlx4_ib_scan_netdevs(iboe->parent, dev, event);
- 
- 	return NOTIFY_DONE;
- }
-@@ -2589,6 +2589,14 @@ static void get_fw_ver_str(struct ib_device *device, char *str)
- 		 (int) dev->dev->caps.fw_ver & 0xffff);
- }
- 
-+static void mlx4_ib_release(struct ib_device *device)
-+{
-+	struct mlx4_ib_dev *ibdev = container_of(device, struct mlx4_ib_dev,
-+						 ib_dev);
-+
-+	kvfree(ibdev->iboe);
-+}
-+
- static void *mlx4_ib_add(struct mlx4_dev *dev)
- {
- 	struct mlx4_ib_dev *ibdev;
-@@ -2619,7 +2627,14 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 		return NULL;
+@@ -2477,12 +2477,12 @@ static void init_pkeys(struct mlx4_ib_dev *ibdev)
+ 				for (i = 0;
+ 				     i < ibdev->dev->phys_caps.pkey_phys_table_len[port];
+ 				     ++i) {
+-					ibdev->pkeys.virt2phys_pkey[slave][port - 1][i] =
++					ibdev->pkeys->virt2phys_pkey[slave][port - 1][i] =
+ 					/* master has the identity virt2phys pkey mapping */
+ 						(slave == mlx4_master_func_num(ibdev->dev) || !i) ? i :
+ 							ibdev->dev->phys_caps.pkey_phys_table_len[port] - 1;
+ 					mlx4_sync_pkey_table(ibdev->dev, slave, port, i,
+-							     ibdev->pkeys.virt2phys_pkey[slave][port - 1][i]);
++							     ibdev->pkeys->virt2phys_pkey[slave][port - 1][i]);
+ 				}
+ 			}
+ 		}
+@@ -2491,7 +2491,7 @@ static void init_pkeys(struct mlx4_ib_dev *ibdev)
+ 			for (i = 0;
+ 			     i < ibdev->dev->phys_caps.pkey_phys_table_len[port];
+ 			     ++i)
+-				ibdev->pkeys.phys_pkey_cache[port-1][i] =
++				ibdev->pkeys->phys_pkey_cache[port-1][i] =
+ 					(i) ? 0 : 0xFFFF;
+ 		}
  	}
+@@ -2595,6 +2595,7 @@ static void mlx4_ib_release(struct ib_device *device)
+ 						 ib_dev);
  
--	iboe = &ibdev->iboe;
-+	ibdev->ib_dev.release		= mlx4_ib_release;
-+
-+	ibdev->iboe = kvzalloc(sizeof(struct mlx4_ib_iboe), GFP_KERNEL);
-+	if (!ibdev->iboe)
+ 	kvfree(ibdev->iboe);
++	kvfree(ibdev->pkeys);
+ }
+ 
+ static void *mlx4_ib_add(struct mlx4_dev *dev)
+@@ -2636,6 +2637,10 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
+ 	ibdev->iboe->parent = ibdev;
+ 	iboe = ibdev->iboe;
+ 
++	ibdev->pkeys = kvzalloc(sizeof(struct pkey_mgt), GFP_KERNEL);
++	if (!ibdev->pkeys)
 +		goto err_dealloc;
 +
-+	ibdev->iboe->parent = ibdev;
-+	iboe = ibdev->iboe;
- 
  	if (mlx4_pd_alloc(dev, &ibdev->priv_pdn))
  		goto err_dealloc;
-@@ -2948,10 +2963,10 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
- 	return ibdev;
  
- err_notif:
--	if (ibdev->iboe.nb.notifier_call) {
--		if (unregister_netdevice_notifier(&ibdev->iboe.nb))
-+	if (ibdev->iboe->nb.notifier_call) {
-+		if (unregister_netdevice_notifier(&ibdev->iboe->nb))
- 			pr_warn("failure unregistering notifier\n");
--		ibdev->iboe.nb.notifier_call = NULL;
-+		ibdev->iboe->nb.notifier_call = NULL;
- 	}
- 	flush_workqueue(wq);
- 
-@@ -3073,10 +3088,10 @@ static void mlx4_ib_remove(struct mlx4_dev *dev, void *ibdev_ptr)
- 	mlx4_ib_mad_cleanup(ibdev);
- 	ib_unregister_device(&ibdev->ib_dev);
- 	mlx4_ib_diag_cleanup(ibdev);
--	if (ibdev->iboe.nb.notifier_call) {
--		if (unregister_netdevice_notifier(&ibdev->iboe.nb))
-+	if (ibdev->iboe->nb.notifier_call) {
-+		if (unregister_netdevice_notifier(&ibdev->iboe->nb))
- 			pr_warn("failure unregistering notifier\n");
--		ibdev->iboe.nb.notifier_call = NULL;
-+		ibdev->iboe->nb.notifier_call = NULL;
- 	}
- 
- 	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
-@@ -3218,9 +3233,9 @@ static void handle_bonded_port_state_event(struct work_struct *work)
- 	struct ib_event ibev;
- 
- 	kfree(ew);
--	spin_lock_bh(&ibdev->iboe.lock);
-+	spin_lock_bh(&ibdev->iboe->lock);
- 	for (i = 0; i < MLX4_MAX_PORTS; ++i) {
--		struct net_device *curr_netdev = ibdev->iboe.netdevs[i];
-+		struct net_device *curr_netdev = ibdev->iboe->netdevs[i];
- 		enum ib_port_state curr_port_state;
- 
- 		if (!curr_netdev)
-@@ -3234,7 +3249,7 @@ static void handle_bonded_port_state_event(struct work_struct *work)
- 		bonded_port_state = (bonded_port_state != IB_PORT_ACTIVE) ?
- 			curr_port_state : IB_PORT_ACTIVE;
- 	}
--	spin_unlock_bh(&ibdev->iboe.lock);
-+	spin_unlock_bh(&ibdev->iboe->lock);
- 
- 	ibev.device = &ibdev->ib_dev;
- 	ibev.element.port_num = 1;
 diff --git a/drivers/infiniband/hw/mlx4/mlx4_ib.h b/drivers/infiniband/hw/mlx4/mlx4_ib.h
-index e10dccc..2996c61 100644
+index 2996c61..2b5a9b2 100644
 --- a/drivers/infiniband/hw/mlx4/mlx4_ib.h
 +++ b/drivers/infiniband/hw/mlx4/mlx4_ib.h
-@@ -524,6 +524,7 @@ struct mlx4_ib_iboe {
- 	atomic64_t		mac[MLX4_MAX_PORTS];
- 	struct notifier_block 	nb;
- 	struct mlx4_port_gid_table gids[MLX4_MAX_PORTS];
-+	struct mlx4_ib_dev     *parent;
- };
+@@ -608,7 +608,7 @@ struct mlx4_ib_dev {
+ 	struct kobject	       *ports_parent;
+ 	struct kobject	       *dev_ports_parent[MLX4_MFUNC_MAX];
+ 	struct mlx4_ib_iov_port	iov_ports[MLX4_MAX_PORTS];
+-	struct pkey_mgt		pkeys;
++	struct pkey_mgt	       *pkeys;
+ 	unsigned long *ib_uc_qpns_bitmap;
+ 	int steer_qpn_count;
+ 	int steer_qpn_base;
+diff --git a/drivers/infiniband/hw/mlx4/sysfs.c b/drivers/infiniband/hw/mlx4/sysfs.c
+index e219093..a5b4592a 100644
+--- a/drivers/infiniband/hw/mlx4/sysfs.c
++++ b/drivers/infiniband/hw/mlx4/sysfs.c
+@@ -447,12 +447,12 @@ static ssize_t show_port_pkey(struct mlx4_port *p, struct port_attribute *attr,
+ 		container_of(attr, struct port_table_attribute, attr);
+ 	ssize_t ret = -ENODEV;
  
- struct pkey_mgt {
-@@ -600,7 +601,7 @@ struct mlx4_ib_dev {
+-	if (p->dev->pkeys.virt2phys_pkey[p->slave][p->port_num - 1][tab_attr->index] >=
++	if (p->dev->pkeys->virt2phys_pkey[p->slave][p->port_num - 1][tab_attr->index] >=
+ 	    (p->dev->dev->caps.pkey_table_len[p->port_num]))
+ 		ret = sprintf(buf, "none\n");
+ 	else
+ 		ret = sprintf(buf, "%d\n",
+-			      p->dev->pkeys.virt2phys_pkey[p->slave]
++			      p->dev->pkeys->virt2phys_pkey[p->slave]
+ 			      [p->port_num - 1][tab_attr->index]);
+ 	return ret;
+ }
+@@ -476,8 +476,8 @@ static ssize_t store_port_pkey(struct mlx4_port *p, struct port_attribute *attr,
+ 		 idx < 0)
+ 		return -EINVAL;
  
- 	struct mutex		cap_mask_mutex;
- 	bool			ib_active;
--	struct mlx4_ib_iboe	iboe;
-+	struct mlx4_ib_iboe    *iboe;
- 	struct mlx4_ib_counters counters_table[MLX4_MAX_PORTS];
- 	int		       *eq_table;
- 	struct kobject	       *iov_parent;
-diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
-index 6dd3cd2..853ef6f 100644
---- a/drivers/infiniband/hw/mlx4/qp.c
-+++ b/drivers/infiniband/hw/mlx4/qp.c
-@@ -1868,7 +1868,7 @@ static int handle_eth_ud_smac_index(struct mlx4_ib_dev *dev,
- 	u64 u64_mac;
- 	int smac_index;
+-	p->dev->pkeys.virt2phys_pkey[p->slave][p->port_num - 1]
+-				    [tab_attr->index] = idx;
++	p->dev->pkeys->virt2phys_pkey[p->slave][p->port_num - 1]
++				     [tab_attr->index] = idx;
+ 	mlx4_sync_pkey_table(p->dev->dev, p->slave, p->port_num,
+ 			     tab_attr->index, idx);
+ 	err = mlx4_gen_pkey_eqe(p->dev->dev, p->slave, p->port_num);
+@@ -687,7 +687,7 @@ static int add_port(struct mlx4_ib_dev *dev, int port_num, int slave)
+ 	if (ret)
+ 		goto err_free_gid;
  
--	u64_mac = atomic64_read(&dev->iboe.mac[qp->port - 1]);
-+	u64_mac = atomic64_read(&dev->iboe->mac[qp->port - 1]);
+-	list_add_tail(&p->kobj.entry, &dev->pkeys.pkey_port_list[slave]);
++	list_add_tail(&p->kobj.entry, &dev->pkeys->pkey_port_list[slave]);
+ 	return 0;
  
- 	context->pri_path.sched_queue = MLX4_IB_DEFAULT_SCHED_QUEUE | ((qp->port - 1) << 6);
- 	if (!qp->pri.smac && !qp->pri.smac_port) {
-@@ -2926,7 +2926,7 @@ static int fill_gid_by_hw_index(struct mlx4_ib_dev *ibdev, u8 port_num,
- 				int index, union ib_gid *gid,
- 				enum ib_gid_type *gid_type)
- {
--	struct mlx4_ib_iboe *iboe = &ibdev->iboe;
-+	struct mlx4_ib_iboe *iboe = ibdev->iboe;
- 	struct mlx4_port_gid_table *port_gid_table;
- 	unsigned long flags;
+ err_free_gid:
+@@ -716,19 +716,19 @@ static int register_one_pkey_tree(struct mlx4_ib_dev *dev, int slave)
  
+ 	get_name(dev, name, slave, sizeof name);
+ 
+-	dev->pkeys.device_parent[slave] =
++	dev->pkeys->device_parent[slave] =
+ 		kobject_create_and_add(name, kobject_get(dev->iov_parent));
+ 
+-	if (!dev->pkeys.device_parent[slave]) {
++	if (!dev->pkeys->device_parent[slave]) {
+ 		err = -ENOMEM;
+ 		goto fail_dev;
+ 	}
+ 
+-	INIT_LIST_HEAD(&dev->pkeys.pkey_port_list[slave]);
++	INIT_LIST_HEAD(&dev->pkeys->pkey_port_list[slave]);
+ 
+ 	dev->dev_ports_parent[slave] =
+ 		kobject_create_and_add("ports",
+-				       kobject_get(dev->pkeys.device_parent[slave]));
++				       kobject_get(dev->pkeys->device_parent[slave]));
+ 
+ 	if (!dev->dev_ports_parent[slave]) {
+ 		err = -ENOMEM;
+@@ -748,7 +748,7 @@ static int register_one_pkey_tree(struct mlx4_ib_dev *dev, int slave)
+ 
+ err_add:
+ 	list_for_each_entry_safe(p, t,
+-				 &dev->pkeys.pkey_port_list[slave],
++				 &dev->pkeys->pkey_port_list[slave],
+ 				 entry) {
+ 		list_del(&p->entry);
+ 		mport = container_of(p, struct mlx4_port, kobj);
+@@ -760,9 +760,9 @@ static int register_one_pkey_tree(struct mlx4_ib_dev *dev, int slave)
+ 	kobject_put(dev->dev_ports_parent[slave]);
+ 
+ err_ports:
+-	kobject_put(dev->pkeys.device_parent[slave]);
++	kobject_put(dev->pkeys->device_parent[slave]);
+ 	/* extra put for the device_parent create_and_add */
+-	kobject_put(dev->pkeys.device_parent[slave]);
++	kobject_put(dev->pkeys->device_parent[slave]);
+ 
+ fail_dev:
+ 	kobject_put(dev->iov_parent);
+@@ -793,7 +793,7 @@ static void unregister_pkey_tree(struct mlx4_ib_dev *device)
+ 
+ 	for (slave = device->dev->persist->num_vfs; slave >= 0; --slave) {
+ 		list_for_each_entry_safe(p, t,
+-					 &device->pkeys.pkey_port_list[slave],
++					 &device->pkeys->pkey_port_list[slave],
+ 					 entry) {
+ 			list_del(&p->entry);
+ 			port = container_of(p, struct mlx4_port, kobj);
+@@ -804,8 +804,8 @@ static void unregister_pkey_tree(struct mlx4_ib_dev *device)
+ 			kobject_put(device->dev_ports_parent[slave]);
+ 		}
+ 		kobject_put(device->dev_ports_parent[slave]);
+-		kobject_put(device->pkeys.device_parent[slave]);
+-		kobject_put(device->pkeys.device_parent[slave]);
++		kobject_put(device->pkeys->device_parent[slave]);
++		kobject_put(device->pkeys->device_parent[slave]);
+ 		kobject_put(device->iov_parent);
+ 	}
+ }
 -- 
 2.1.4
 
