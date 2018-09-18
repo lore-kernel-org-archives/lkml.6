@@ -2,136 +2,100 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9498C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54437C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73520206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3E220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:36:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOJbcxsX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73520206B5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWGTVMyU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3E220877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730072AbeISBEn (ORCPT
+        id S1730099AbeISBKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 21:04:43 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38734 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729234AbeISBEn (ORCPT
+        Tue, 18 Sep 2018 21:10:36 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45747 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728952AbeISBKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 21:04:43 -0400
-Received: by mail-pg1-f194.google.com with SMTP id t84-v6so1516392pgb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:30:40 -0700 (PDT)
+        Tue, 18 Sep 2018 21:10:35 -0400
+Received: by mail-io1-f68.google.com with SMTP id e12-v6so2533408iok.12
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 12:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xi8jRQBEwQF8lgdORjPfsCnEPFBSZxipoHoEMjNvXXs=;
-        b=GOJbcxsXmsulwfiz95PM8rXxOhS9IfbwG/GaBgyxkxygRsqjVKv8+jGkp/Hi6GMayP
-         61myYHkxMdGeajcSujNpAQBq9N42tj0QLV+f52Mql0CbxSh0DlgrSHn8UBffrMPdtauE
-         t8sFlWlYylhtGiBZ4iFyRzmyG5DJWmWScO7gw=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5HaziqBy+V5QAZXa4Q7VGsDF3kW7/En5g9KsvupesJY=;
+        b=jWGTVMyUHtBGifUGbaBtQ6fxfngOpNDBku9aD2LSLsvC+z2fCujXoVsuTMakyBmMss
+         vRgpdsO2jN3YuqTiOZZ2wCTbehKGe7EKEO7l2hAzYgSWj4b/REm7Nt8M9QSYs7MeKtdv
+         G3+boB+D3WcCTRISBlKUAqHSXo89Y2Fmagffs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xi8jRQBEwQF8lgdORjPfsCnEPFBSZxipoHoEMjNvXXs=;
-        b=uH1iU3PUBroHJ45woSAoLQrruF97pP1lyiTmJyw73l8jnxX3yp/ZY6zSI0dp2FNKGs
-         52OFciOviUWrog4RCN9GRsBKvCATFO5SrSexbT+E2c5LD64Pz/1pHTkdl1nWubln65f7
-         vLp2zRelPaB9mF+dDf/qUyCKF5mje/EiEfemu3vafJxWBO2OjJn7g7sLTsl/IqfvaXX9
-         wcWscRsPms5J2h9QBZtadwO9k5M8ipzzju40mLd8nDr2wmXPRHnToxiUp4l1267/Yo+d
-         1wqN+SIKSSnvC38PcvUg9CVshJK5O3WNhmbUZ1Y6AbJPZi7Yh1u8ywWAwOFG0U2c2EOM
-         uSyw==
-X-Gm-Message-State: APzg51Dn3zIAIDeyAZkl38ABJLIpvZR2vGWOf+EuUIBEnwfbBEw7mpUn
-        O8NhFAlukyIvcrPKtoWfsUyumg==
-X-Google-Smtp-Source: ANB0Vdb5Q9IkvcfHAgVK27A27csTVXRrGL/BTAkSK60tBax9H4Ycw75xZp+JAO4pYoDm7AcB0VFADA==
-X-Received: by 2002:a62:3a08:: with SMTP id h8-v6mr32253737pfa.61.1537299039967;
-        Tue, 18 Sep 2018 12:30:39 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m26-v6sm35049738pfi.102.2018.09.18.12.30.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 12:30:39 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 12:34:48 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 07/16] thermal: tsens: Pass register offsets as
- private data
-Message-ID: <20180918193448.GA1367@tuxbook-pro>
-References: <cover.1536744310.git.amit.kucheria@linaro.org>
- <dccdcf386d8d5298a77ec31cde699852cc4409c5.1536744310.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5HaziqBy+V5QAZXa4Q7VGsDF3kW7/En5g9KsvupesJY=;
+        b=Gc1M2QItubWQmgcubcx1QBHy1nK9nFDd24+9EQhOyD8oA1DyWzMb2DBXwvBYz5Uxpl
+         v8J06J2FGCFV2qBGjrnAlwcZMnOJBpjX0cuELl0gaILXsGsYkYZemNMDX2mMCjzYX0nD
+         EzKsi1zKwm0T7fHx9Rf8c/qpl0fp5NqbjplqfmyTzQohs3nlL+ywf/IekYlpmzTbNGQw
+         oNYYB5odg4+XhV/YyT3EOU+tWIC1sFEXg0UYMfKIFMYeHcL9rFmoHIJbvSupxcYaVD6Q
+         6+OWcUcUnKjjqbAfJDkJqvvvC7dRpaK8d+Y8aUGTQbHhFB2GHu2OqCihrjQezgTjqMpJ
+         6sWg==
+X-Gm-Message-State: APzg51AfxIwboqk6SKpRI8cAu1rQc84IY3QBGLshwPKfLXvhJ5jvRFnn
+        q8HLHVQeUNPVSlKF4ATx8zEcZg1LSZ6QPiWQb7fPzg==
+X-Google-Smtp-Source: ANB0VdZzt9LRMvJbjFSirKTr54diA9EZk/pyQVexkhnKLL3IEgyL3QfRmU8eXiXqfir+0FCUwFLpm/8dCiQ7N1rRHR8=
+X-Received: by 2002:a6b:4006:: with SMTP id k6-v6mr14464585ioa.277.1537299391905;
+ Tue, 18 Sep 2018 12:36:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dccdcf386d8d5298a77ec31cde699852cc4409c5.1536744310.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1536404280.git.sean.wang@mediatek.com> <75d8f8c745d60b49ee1ec60de7f776ef51f97f79.1536404280.git.sean.wang@mediatek.com>
+In-Reply-To: <75d8f8c745d60b49ee1ec60de7f776ef51f97f79.1536404280.git.sean.wang@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 18 Sep 2018 12:36:18 -0700
+Message-ID: <CACRpkdaLc8i0QtpqsBJVLmcRewahRWKqkr5vys8_w0Ld0gEc7w@mail.gmail.com>
+Subject: Re: [PATCH v2 01/22] pinctrl: mediatek: add pinctrl-mtk-common-v2 for
+ all MediaTek pinctrls
+To:     Sean Wang <sean.wang@mediatek.com>
+Cc:     "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12 Sep 02:52 PDT 2018, Amit Kucheria wrote:
-> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-> index 9a8e8f7b4ae1..f1ec9bbe4717 100644
-> --- a/drivers/thermal/qcom/tsens.c
-> +++ b/drivers/thermal/qcom/tsens.c
-> @@ -144,6 +144,9 @@ static int tsens_probe(struct platform_device *pdev)
->  		else
->  			tmdev->sensor[i].hw_id = i;
->  	}
-> +	for (i = 0; i < REG_ARRAY_SIZE; i++) {
-> +		tmdev->reg_offsets[i] = data->reg_offsets[i];
-> +	}
+On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
 
-Unnecessary {}
+> From: Sean Wang <sean.wang@mediatek.com>
+>
+> Irregular register arrangement and distinct logic access from various
+> MediaTek SoCs would cause pinctrl-mtk-common to bloat and really hard to
+> maintain in the future so that the patch creates pinctrl-mtk-common-v2
+> based on the core of mt7622-pinctrl.
+>
+> The goals pinctrl-mtk-common-v2 want to achieve are to hopefully support
+> all of MediaTek SoCs, and two kinds of dt-bindings being supported,
+> Linux generic pinctrl dt-binding mt7622 supports and MediaTek per-pin
+> dt-binding the other SoCs support the MT8183 and MT6765 incline to make
+> use of.
+>
+> The patch starts to refactor MT7622 pinctrl driver first with splitting
+> out these portable ways from there such as table-based register operation
+> and drive strength control that is common in both kinds of driver.
+>
+> Signed-off-by: Ryder.Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
->  
->  	if (!tmdev->ops || !tmdev->ops->init || !tmdev->ops->get_temp)
->  		return -EINVAL;
-> diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-> index b9c4bcf255fa..7b7feee5dc46 100644
-> --- a/drivers/thermal/qcom/tsens.h
-> +++ b/drivers/thermal/qcom/tsens.h
-> @@ -48,15 +48,23 @@ struct tsens_ops {
->  	int (*get_trend)(struct tsens_device *, int, enum thermal_trend *);
->  };
->  
-> +enum reg_list {
-> +	SROT_CTRL_OFFSET,
-> +
-> +	REG_ARRAY_SIZE,
-> +};
-> +
->  /**
->   * struct tsens_data - tsens instance specific data
->   * @num_sensors: Max number of sensors supported by platform
->   * @ops: operations the tsens instance supports
->   * @hw_ids: Subset of sensors ids supported by platform, if not the first n
-> + * @reg_offsets: Register offsets for commonly used registers
+Patch applied, had to use some fuzzing and removed a <linux/gpio.h>
+include that was not used.
 
-Order doesn't match struct.
-
->   */
->  struct tsens_data {
->  	const u32		num_sensors;
->  	const struct tsens_ops	*ops;
-> +	const u16		reg_offsets[REG_ARRAY_SIZE];
->  	unsigned int		*hw_ids;
->  };
-
-Except of that you have my:
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+Yours,
+Linus Walleij
