@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C6BECE563
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A74ECE563
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B994206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:40:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B994206B7
+	by mail.kernel.org (Postfix) with ESMTP id 613F820685
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:40:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613F820685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbeIRMLk (ORCPT
+        id S1729469AbeIRMLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:11:40 -0400
+        Tue, 18 Sep 2018 08:11:41 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36971 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729385AbeIRMLj (ORCPT
+        by vger.kernel.org with ESMTP id S1729410AbeIRMLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:11:39 -0400
+        Tue, 18 Sep 2018 08:11:40 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Mon, 17 Sep 2018 23:39:56 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 2FC404084F;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 83EEB40963;
         Mon, 17 Sep 2018 23:40:20 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH 12/19] vmw_balloon: general style cleanup
-Date:   Mon, 17 Sep 2018 23:38:46 -0700
-Message-ID: <20180918063853.198332-13-namit@vmware.com>
+Subject: [PATCH 19/19] vmw_balloon: split refused pages
+Date:   Mon, 17 Sep 2018 23:38:53 -0700
+Message-ID: <20180918063853.198332-20-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918063853.198332-1-namit@vmware.com>
 References: <20180918063853.198332-1-namit@vmware.com>
@@ -48,120 +48,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change all the remaining return values to int to avoid mistakes. Reduce
-indentation when possible.
+The hypervisor might refuse to inflate pages. While the balloon driver
+handles this scenario correctly, a refusal to inflate a 2MB pages might
+cause the same page to be allocated again later just for its inflation
+to be refused again. This wastes energy and time.
+
+To avoid this situation we split the 2MB page to 4KB pages, and then try
+to inflate each one individually. Most of the 4KB pages out of the 2MB
+should be inflated successfully, and we are likely to prevent the
+scenario of repeated refused inflation.
 
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 39 ++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ drivers/misc/vmw_balloon.c | 61 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 50 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 50b53213822c..cf5e41dd7048 100644
+index 890423453ad6..010cbe305136 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -475,10 +475,9 @@ vmballoon_cmd(struct vmballoon *b, unsigned long cmd, unsigned long arg1,
-  * Send "start" command to the host, communicating supported version
-  * of the protocol.
-  */
--static bool vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
-+static int vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
- {
- 	unsigned long status, capabilities;
--	bool success;
+@@ -231,6 +231,7 @@ static DEFINE_STATIC_KEY_FALSE(balloon_stat_enabled);
+ struct vmballoon_ctl {
+ 	struct list_head pages;
+ 	struct list_head refused_pages;
++	struct list_head prealloc_pages;
+ 	unsigned int n_refused_pages;
+ 	unsigned int n_pages;
+ 	enum vmballoon_page_size_type page_size;
+@@ -618,15 +619,25 @@ static int vmballoon_alloc_page_list(struct vmballoon *b,
+ 	unsigned int i;
  
- 	status = __vmballoon_cmd(b, VMW_BALLOON_CMD_START, req_caps, 0,
- 				 &capabilities);
-@@ -486,14 +485,12 @@ static bool vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
- 	switch (status) {
- 	case VMW_BALLOON_SUCCESS_WITH_CAPABILITIES:
- 		b->capabilities = capabilities;
--		success = true;
- 		break;
- 	case VMW_BALLOON_SUCCESS:
- 		b->capabilities = VMW_BALLOON_BASIC_CMDS;
--		success = true;
- 		break;
- 	default:
--		success = false;
-+		return -EIO;
+ 	for (i = 0; i < req_n_pages; i++) {
+-		if (ctl->page_size == VMW_BALLOON_2M_PAGE)
+-			page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
++		/*
++		 * First check if we happen to have pages that were allocated
++		 * before. This happens when 2MB page rejected during inflation
++		 * by the hypervisor, and then split into 4KB pages.
++		 */
++		if (!list_empty(&ctl->prealloc_pages)) {
++			page = list_first_entry(&ctl->prealloc_pages,
++						struct page, lru);
++			list_del(&page->lru);
++		} else {
++			if (ctl->page_size == VMW_BALLOON_2M_PAGE)
++				page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
+ 					   __GFP_NOMEMALLOC, HPAGE_PMD_ORDER);
+-		else
+-			page = balloon_page_alloc();
++			else
++				page = balloon_page_alloc();
+ 
+-		/* Update statistics */
+-		vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
+-					 ctl->page_size);
++			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
++						 ctl->page_size);
++		}
+ 
+ 		if (page) {
+ 			/* Success. Add the page to the list and continue. */
+@@ -870,7 +881,8 @@ static void vmballoon_release_page_list(struct list_head *page_list,
+ 		__free_pages(page, HPAGE_PMD_ORDER * page_size);
  	}
  
- 	/*
-@@ -507,26 +504,29 @@ static bool vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
- 		b->max_page_size = VMW_BALLOON_2M_PAGE;
- 
- 
--	return success;
-+	return 0;
+-	*n_pages = 0;
++	if (n_pages)
++		*n_pages = 0;
  }
  
--/*
+ 
+@@ -999,6 +1011,30 @@ static void vmballoon_dequeue_page_list(struct vmballoon *b,
+ 	*n_pages = i;
+ }
+ 
 +/**
-+ * vmballoon_send_guest_id - communicate guest type to the host.
++ * vmballoon_split_refused_pages() - Split the 2MB refused pages to 4k.
 + *
-+ * @b: pointer to the balloon.
++ * If inflation of 2MB pages was denied by the hypervisor, it is likely to be
++ * due to one or few 4KB pages. These 2MB pages may keep being allocated and
++ * then being refused. To prevent this case, this function splits the refused
++ * pages into 4KB pages and adds them into @prealloc_pages list.
 + *
-  * Communicate guest type to the host so that it can adjust ballooning
-  * algorithm to the one most appropriate for the guest. This command
-  * is normally issued after sending "start" command and is part of
-  * standard reset sequence.
-+ *
-+ * Return: zero on success or appropriate error code.
-  */
--static bool vmballoon_send_guest_id(struct vmballoon *b)
-+static int vmballoon_send_guest_id(struct vmballoon *b)
- {
- 	unsigned long status;
++ * @ctl: pointer for the %struct vmballoon_ctl, which defines the operation.
++ */
++static void vmballoon_split_refused_pages(struct vmballoon_ctl *ctl)
++{
++	struct page *page, *tmp;
++	int i, order = HPAGE_PMD_ORDER * ctl->page_size;
++
++	list_for_each_entry_safe(page, tmp, &ctl->refused_pages, lru) {
++		list_del(&page->lru);
++		split_page(page, order);
++		for (i = 0; i < (1 << order); i++)
++			list_add(&page[i].lru, &ctl->prealloc_pages);
++	}
++	ctl->n_refused_pages = 0;
++}
++
+ /**
+  * vmballoon_inflate() - Inflate the balloon towards its target size.
+  *
+@@ -1010,6 +1046,7 @@ static void vmballoon_inflate(struct vmballoon *b)
+ 	struct vmballoon_ctl ctl = {
+ 		.pages = LIST_HEAD_INIT(ctl.pages),
+ 		.refused_pages = LIST_HEAD_INIT(ctl.refused_pages),
++		.prealloc_pages = LIST_HEAD_INIT(ctl.prealloc_pages),
+ 		.page_size = b->max_page_size,
+ 		.op = VMW_BALLOON_INFLATE
+ 	};
+@@ -1057,10 +1094,10 @@ static void vmballoon_inflate(struct vmballoon *b)
+ 				break;
  
- 	status = vmballoon_cmd(b, VMW_BALLOON_CMD_GUEST_ID,
- 			       VMW_BALLOON_GUEST_ID, 0);
+ 			/*
+-			 * Ignore errors from locking as we now switch to 4k
+-			 * pages and we might get different errors.
++			 * Split the refused pages to 4k. This will also empty
++			 * the refused pages list.
+ 			 */
+-			vmballoon_release_refused_pages(b, &ctl);
++			vmballoon_split_refused_pages(&ctl);
+ 			ctl.page_size--;
+ 		}
  
--	if (status == VMW_BALLOON_SUCCESS)
--		return true;
--
--	return false;
-+	return status == VMW_BALLOON_SUCCESS ? 0 : -EIO;
+@@ -1074,6 +1111,8 @@ static void vmballoon_inflate(struct vmballoon *b)
+ 	 */
+ 	if (ctl.n_refused_pages != 0)
+ 		vmballoon_release_refused_pages(b, &ctl);
++
++	vmballoon_release_page_list(&ctl.prealloc_pages, NULL, ctl.page_size);
  }
  
  /**
-@@ -1200,8 +1200,15 @@ static void vmballoon_vmci_cleanup(struct vmballoon *b)
- 	}
- }
- 
--/*
-- * Initialize vmci doorbell, to get notified as soon as balloon changes
-+/**
-+ * vmballoon_vmci_init - Initialize vmci doorbell.
-+ *
-+ * @b: pointer to the balloon.
-+ *
-+ * Return: zero on success or when wakeup command not supported. Error-code
-+ * otherwise.
-+ *
-+ * Initialize vmci doorbell, to get notified as soon as balloon changes.
-  */
- static int vmballoon_vmci_init(struct vmballoon *b)
- {
-@@ -1263,7 +1270,7 @@ static void vmballoon_reset(struct vmballoon *b)
- 	/* free all pages, skipping monitor unlock */
- 	vmballoon_pop(b);
- 
--	if (!vmballoon_send_start(b, VMW_BALLOON_CAPABILITIES))
-+	if (vmballoon_send_start(b, VMW_BALLOON_CAPABILITIES))
- 		return;
- 
- 	if ((b->capabilities & VMW_BALLOON_BATCHED_CMDS) != 0) {
-@@ -1287,7 +1294,7 @@ static void vmballoon_reset(struct vmballoon *b)
- 	if (error)
- 		pr_err("failed to initialize vmci doorbell\n");
- 
--	if (!vmballoon_send_guest_id(b))
-+	if (vmballoon_send_guest_id(b))
- 		pr_err("failed to send guest ID to the host\n");
- 
- 	up_write(&b->conf_sem);
 -- 
 2.17.1
 
