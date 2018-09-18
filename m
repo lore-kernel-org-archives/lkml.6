@@ -2,103 +2,134 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6A6C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AA8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C66721471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C66721471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 416822146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:43:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HH7RaU/F";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ql2UZ88g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416822146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbeIRSMc (ORCPT
+        id S1729546AbeIRSQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:12:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12605 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729501AbeIRSMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:12:32 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7E35AC0980175;
-        Tue, 18 Sep 2018 20:40:04 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 20:39:58 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: avoid GC causing encrypted file corrupted
-Date:   Tue, 18 Sep 2018 20:39:53 +0800
-Message-ID: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
+        Tue, 18 Sep 2018 14:16:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48018 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeIRSQN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:16:13 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4330260C62; Tue, 18 Sep 2018 12:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537274627;
+        bh=AdFz8Dq/rJtM5HBiHHS1QBGmj0TBz83NM5heV51BdVY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HH7RaU/FJ5atIZfKXydSiCbKkwlf/FrF/xKTAwP2UGCY3ZfxiGGl8C4mboyOwNa6W
+         b7zN2orcmHwPz64c08NzAqbYmOE6KKh0mo/OWupDKp8igrifuRMcqrIGR/YWJLK42n
+         UqcEADlbejpBha5fdRdFK2ieQ66ctcjEMcIJhCPg=
+Received: from [10.79.129.80] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A02676079B;
+        Tue, 18 Sep 2018 12:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537274625;
+        bh=AdFz8Dq/rJtM5HBiHHS1QBGmj0TBz83NM5heV51BdVY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ql2UZ88g6fLwyQdDUP3L61AcS6oSrh2snhBQamDoZXMwjWJpnzkcybsOqup9yfgSx
+         kcecv4vK4cJz5SyWUWdIWreeLPbcjzYC4jZAWRzqHcrpcn5WeS8ZjLl6UZiFJc8XI5
+         sJkHanDcwhkSf8S45qVCFWXuG6P1FkV9Xj0z8VWI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A02676079B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 5/6] arm64/io: Add header for instrumentation of io
+ operations
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>, mark.rutland@arm.com,
+        robin.murphy@arm.com
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <20180917193940.3d68ef88@gandalf.local.home>
+ <c6470671-3abf-c296-586e-cca5131cc437@codeaurora.org>
+ <20180918114727.GE16498@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <b3bc8d9b-9199-655e-bc62-4e37760fca14@codeaurora.org>
+Date:   Tue, 18 Sep 2018 18:13:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180918114727.GE16498@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The encrypted file may be corrupted by GC in following case:
+On 9/18/2018 5:17 PM, Will Deacon wrote:
+> On Tue, Sep 18, 2018 at 12:40:57PM +0530, Sai Prakash Ranjan wrote:
+>> On 9/18/2018 5:09 AM, Steven Rostedt wrote:
+>>> On Sun,  9 Sep 2018 01:57:06 +0530
+>>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+>>>
+>>>> The new asm-generic/io-instrumented.h will keep arch code
+>>>> clean and separate from instrumented version which traces
+>>>> io register accesses. This instrumented header can later
+>>>> be included in arm as well for tracing io register accesses.
+>>>>
+>>>
+>>> Looks good to me.
+>>>
+>>> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>
+>>> -- Steve
+>>
+>> Thanks for the ack Steve.
+>>
+>> @Will/Mark/Robin Let me know if you have any review comments, thanks.
+> 
+> As I said before, the arm64 bits looks fine to me. I just don't really want
+> to Ack the thing because the patch also contains the asm-generic changes.
+> 
+> Will
+> 
 
-Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
-Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
-segment 2,
+Ok thank you. Is there anyone else whom I should add for asm-generic?
 
-Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
-
-Before page 1 is written back and if segment 2 become a victim, then
-page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
-during the GC process of Time 2, f2fs should wait for page 1 written back
-before reading it, or move_data_block will read a garbage block from
-blkaddr B since page is not written back to blkaddr B yet.
-
-Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
-ra_data_block to read encrypted block, but it forgets to add
-f2fs_wait_on_page_writeback to avoid racing between GC and flush.
-
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/gc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a4c1a41..c55fb62 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
- 	fio.page = page;
- 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
- 
-+	/*
-+	 * don't cache encrypted data into meta inode until previous dirty
-+	 * data were writebacked to avoid racing between GC and flush.
-+	 */
-+	f2fs_wait_on_page_writeback(page, DATA, true);
-+
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-+
- 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
- 					dn.data_blkaddr,
- 					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-@@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	 */
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-+
- 	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
- 	if (err)
- 		goto put_out;
 -- 
-1.8.5.2
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
