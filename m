@@ -2,112 +2,85 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132BBECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCC0C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF8DF21508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8DF21508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6BB7F2150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwVfAiN5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB7F2150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeISA2O (ORCPT
+        id S1730017AbeISA2m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:28:14 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33769 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeISA2O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:28:14 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9C6088072A; Tue, 18 Sep 2018 20:54:16 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 20:54:15 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Numan =?utf-8?B?RGVtaXJkw7bEn2Vu?= <if.gnu.linux@gmail.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net
-Subject: Re: PROBLEM: Keyboard not responding after resuming from
- suspend/hibernate
-Message-ID: <20180918185415.GC4501@amd>
-References: <20180831215121.1b1f66bf@korsan.localdomain>
- <20180903115313.3cd38b1e@korsan.localdomain>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0vzXIDBeUiKkjNJl"
-Content-Disposition: inline
-In-Reply-To: <20180903115313.3cd38b1e@korsan.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 18 Sep 2018 20:28:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727660AbeISA2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:28:42 -0400
+Received: from devnote (unknown [209.121.128.187])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CB5021508;
+        Tue, 18 Sep 2018 18:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537296886;
+        bh=GSmh9UyAf+AKP8uvYor/5rVSoh/afcwGNeJC9IkyNxQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JwVfAiN5I0xgD7FR3Yh4wp2NogUtlkf3veie8MJbwtEawpqmu0knP8UdyLSY+5mQJ
+         XDeIqAr2Kh2/XSe9LZaKp2rChpdnmK31pqSgnPJMfIaten333YLO352X9PEQa0O8vD
+         yT6dJz5gWuGd96TEHEcev8XDGxwq/DAt2SncuSyc=
+Date:   Wed, 19 Sep 2018 03:54:46 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v4 8/8] trace: Add alternative synthetic event trace
+ action syntax
+Message-Id: <20180919035446.4fb6b856ab51229984eb2736@kernel.org>
+In-Reply-To: <95e91d682061a3a43ea293b20ff4beea755b945a.1536605847.git.tom.zanussi@linux.intel.com>
+References: <cover.1536605847.git.tom.zanussi@linux.intel.com>
+        <95e91d682061a3a43ea293b20ff4beea755b945a.1536605847.git.tom.zanussi@linux.intel.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tom,
 
---0vzXIDBeUiKkjNJl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 10 Sep 2018 14:10:46 -0500
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-On Mon 2018-09-03 11:53:51, Numan Demird=C3=B6=C4=9Fen wrote:
-> Fri, 31 Aug 2018 21:51:21 +0300 tarihinde
-> Numan Demird=C3=B6=C4=9Fen <if.gnu.linux@gmail.com> yazd=C4=B1:
->=20
-> >If I put laptop to suspend or hibernate by closing lid, power
-> >manager or any other method and then I resume/wake up laptop, keyboard
-> >is not responding. My laptop is a Sony Vaio VPCEH2F1E.=20
-> >
-> >Steps to produce bug:
-> >1. Boot
-> >2. Put laptop to sleep
-> >3. Resume
-> >
-> >What I expect to happen: Keyboard responds to key press.
-> >What happens: Keyboard does not respond but mouse and trackball are
-> >working.
-> >
-> >git bisect point 9d659ae14b545c4296e812c70493bfdc999b5c1c as the first
-> >bad commit.
-> >
-> >Bad commit link:
-> >https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=
-=3D9d659ae14b545c4296e812c70493bfdc999b5c1c
-> >
->=20
-> I tried some kernel parameters related to i8042 driver:
->=20
-> i8042.debug=3D1 i8042.reset=3D1	keyboard not working
-> i8042.debug=3D1 i8042.kbdreset=3D1	keyboard not working
-> i8042.debug=3D1 i8042.nomux=3D1	keyboard not working
-> i8042.debug=3D1 i8042.noaux=3D1	keyboard working, but touchpad not
-> working
->=20
-> On some rare occasions, keyboard responds to key press but  it remains
-> pressed forever even if I stop pressing it.
->=20
-> dmesg output after rebooting with i8042.debug=3D1 i8042.noaux=3D1
-> parameters:
+> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> 
+> Add a 'trace(synthetic_event_name, params)' alternative to
+> synthetic_event_name(params).
+> 
+> Currently, the syntax used for generating synthetic events is to
+> invoke synthetic_event_name(params) i.e. use the synthetic event name
+> as a function call.
+> 
+> Users requested a new form that more explicitly shows that the
+> synthetic event is in effect being traced.  In this version, a new
+> 'trace()' keyword is used, and the synthetic event name is passed in
+> as the first argument.
 
-You may want to cc linux-input people. See the maintainers.
+Hmm, what is the advantage of adding this new form?
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Thanks,
 
---0vzXIDBeUiKkjNJl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluhSdcACgkQMOfwapXb+vLxLwCgucNLmKILEiZrBD8/aLwTzDny
-oZwAn0DSfg3ewt7MLcx9uXWvR8zHU+QL
-=w1qP
------END PGP SIGNATURE-----
-
---0vzXIDBeUiKkjNJl--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
