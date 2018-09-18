@@ -2,59 +2,136 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D601ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0FBECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DBE214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:43:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DBE214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id EF72C214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:45:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ck5hVqgq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF72C214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbeIRVQP (ORCPT
+        id S1729911AbeIRVSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:16:15 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:34730 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728912AbeIRVQP (ORCPT
+        Tue, 18 Sep 2018 17:18:42 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50729 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729447AbeIRVSm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:16:15 -0400
-Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:b5c5:ae11:3e54:6a07])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 977C8146F1C8C;
-        Tue, 18 Sep 2018 08:43:06 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 08:43:03 -0700 (PDT)
-Message-Id: <20180918.084303.775939207191106360.davem@davemloft.net>
-To:     gregkh@linuxfoundation.org
-Cc:     akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT] Networking
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180918073135.GC4067@kroah.com>
-References: <20180917.200040.1595079540584326114.davem@davemloft.net>
-        <20180918073135.GC4067@kroah.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Sep 2018 08:43:06 -0700 (PDT)
+        Tue, 18 Sep 2018 17:18:42 -0400
+Received: by mail-it0-f66.google.com with SMTP id j81-v6so3913373ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=G39LeE3j89pOeDp3MlZsLrw2HaAfCPU7/f1VOjS6b4I=;
+        b=Ck5hVqgqbrrpb+24RXExvL0YlH+GoMxdJ17SyWcTIYCPfU4F0vfX+ox/33kzkiROfF
+         +ADvndyKfq+DMzjD4aVCmZDUNHaAJ8bJD/xN43sMCxSfFAIJJQZeELDTM2QhMnwFvxvD
+         l3AfCWGLMRJc+QtuVne9O6spJJbiF1OOUUuOSzL6cHPb8kXLxn9g9bDKf5RurG6y3oXD
+         HHj6ct35HM59mjgYXMxyW+xvy6TpMArp9OvY61klIvaOVc+coYUD6gPMzsnYHK0xAgNP
+         YYLwXQaDTxP+aVmBRrs5/7j3/xaa54yshIorHpbDGPmZedrNqGqvNpgAS5FvjGUwpJKg
+         AxQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=G39LeE3j89pOeDp3MlZsLrw2HaAfCPU7/f1VOjS6b4I=;
+        b=WLFU+JNZEd4CBoJNFdW9aoKRIWs40yLBDJ8uae2sHw4SEcig2P3Guf+gTy6ALWJ9ly
+         RoxVVr5ynx6rNJbrOH3Lrtu4118UZnYFUwgewGn6/ViLo90tZkcMGpt6829cFqTqqM6z
+         Yg1zLVpV79dcK8w4jgUS6Jd4IQHKq1xvOcj5wwGWBOjEoQ1sw4dWnz2NcjWXEM3NFaq7
+         aRhJeb4v4r7tjFyEUUnsj0E+Hai4X+wUFndJtY7KZnGq5DfYacooDnwjkhxZZT5aIm7N
+         rnhMQJpZjfUUDfryoqb8ZWs3GbcXFbI+SStvBh5Ocvgaqpi9Gh4RUEZKbEaatCc58B4m
+         2wcg==
+X-Gm-Message-State: APzg51DisqlL9Gr3EQgb5/TUWUSY/6VDDw0+Bv5fME76irja9IB0TCCV
+        bTMKkgbJ6j5UhmYMLCemNE4/ISMGlo3iIn400t8AWg==
+X-Google-Smtp-Source: ANB0VdaHaepZAaqjLoWrQ8SoCHpVOxP8PA/aubJWtZA7UY6iOrQCoVT2MZXTHCI0Xn7uVldkY9bAR0C41LfkiBOOZds=
+X-Received: by 2002:a24:d286:: with SMTP id z128-v6mr16414275itf.14.1537285532139;
+ Tue, 18 Sep 2018 08:45:32 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 08:45:11
+ -0700 (PDT)
+In-Reply-To: <CAAeHK+w+Znw-t_wd29PO5B+pNegS3wqzS1mUVCmfrgdCXpavWw@mail.gmail.com>
+References: <cover.1535462971.git.andreyknvl@google.com> <6cd298a90d02068969713f2fd440eae21227467b.1535462971.git.andreyknvl@google.com>
+ <CACT4Y+adO3n4Nb4XOPyXdt43DbYjb=Kz6__tPTmb1CX=00qNSQ@mail.gmail.com> <CAAeHK+w+Znw-t_wd29PO5B+pNegS3wqzS1mUVCmfrgdCXpavWw@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 18 Sep 2018 17:45:11 +0200
+Message-ID: <CACT4Y+a=tctG9PXkQmaeLtU3cGbBCSA==uwHasX+XzNVB66kcA@mail.gmail.com>
+Subject: Re: [PATCH v6 07/18] khwasan: add tag related helper functions
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg KH <gregkh@linuxfoundation.org>
-Date: Tue, 18 Sep 2018 09:31:35 +0200
+On Mon, Sep 17, 2018 at 8:59 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> On Wed, Sep 12, 2018 at 6:21 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Aug 29, 2018 at 1:35 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+>>> +void *khwasan_preset_slub_tag(struct kmem_cache *cache, const void *addr)
+>>
+>> Can't we do this in the existing kasan_init_slab_obj() hook? It looks
+>> like it should do exactly this -- allow any one-time initialization
+>> for objects. We could extend it to accept index and return a new
+>> pointer.
+>> If that does not work for some reason, I would try to at least unify
+>> the hook for slab/slub, e.g. pass idx=-1 from slub and then use
+>> random_tag().
+>> It also seems that we do preset tag for slab multiple times (from
+>> slab_get_obj()). Using kasan_init_slab_obj() should resolve this too
+>> (hopefully we don't call it multiple times).
+>
+> The issue is that SLAB stores freelist as an array of indexes instead
+> of using an actual linked list like SLUB. So you can't store the tag
+> in the pointer while the object is in the freelist, since there's no
+> pointer. And, technically, we don't preset tags for SLAB, we just use
+> the id as the tag every time a pointer is used, so perhaps we should
+> rename the callback. As to unifying the callbacks, sure, we can do
+> that.
 
-> Process question, any reason why you don't use signed tags?  I noticed
-> that you didn't use them in the past, just curious.
-
-I just never have, and the last key I had signed by people is probably
-expired by now.
-
-No actual reason.
+As per offline discussion: potentially we can use
+kasan_init_slab_obj() if we add tag in kmalloc hook by using
+obj_to_idx().
