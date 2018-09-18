@@ -2,71 +2,70 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10AEECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 02:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDBBECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 02:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 816C520693
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 02:45:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 816C520693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 147A720693
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 02:47:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147A720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeIRIQO (ORCPT
+        id S1728953AbeIRIR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 04:16:14 -0400
-Received: from nautica.notk.org ([91.121.71.147]:37146 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbeIRIQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 04:16:14 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 437F5C009; Tue, 18 Sep 2018 04:45:51 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 04:45:36 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     doronrk@fb.com, tom@quantonium.net, davejwatson@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
-Message-ID: <20180918024536.GA2061@nautica>
-References: <20180912053642.GA2912@nautica>
- <20180917.184502.447385458615284933.davem@davemloft.net>
- <20180918015723.GA26300@nautica>
- <20180917.194059.1970452340378032090.davem@davemloft.net>
+        Tue, 18 Sep 2018 04:17:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12597 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726414AbeIRIR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 04:17:28 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 39432CD0152D2;
+        Tue, 18 Sep 2018 10:46:51 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
+ 10:46:43 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <Ariel.Elior@cavium.com>,
+        <everest-linux-l2@cavium.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 3/4] qed: remove duplicated include from qed_cxt.c
+Date:   Tue, 18 Sep 2018 10:46:27 +0800
+Message-ID: <20180918024627.10320-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180917.194059.1970452340378032090.davem@davemloft.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller wrote on Mon, Sep 17, 2018:
-> Remind me, is there actually any way for the bpf programs run in this
-> situation to even _see_ strp_msg(skb)->offset at all?
+Remove duplicated include.
 
-No, they can see it, so it's possible to make a KCM program that works
-right now if you are careful (I'm not sure why the offset within bpf is
-different from the offset in the kernel though, it looks like the bpf
-program skips the qos part of the control buffer)
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> There isn't right?  And the alternate proposal was to add such a
-> facility, right?
-
-The problem is that this isn't documented at all, and I could not find
-any example doing that until Dave gave me one (I couldn't get it to work
-because of the different offset).
-
-The alternate proposal was to just document it, yes.
-
-> Just trying to remember all of the context, maybe it's good
-> information to add to the commit message?
-
-Good idea, I'll add some more explanation there.
-
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+index f1977aa..dc1c1b6 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -40,7 +40,6 @@
+ #include <linux/pci.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+-#include <linux/bitops.h>
+ #include "qed.h"
+ #include "qed_cxt.h"
+ #include "qed_dev_api.h"
 -- 
-Dominique Martinet
+2.7.0
+
+
