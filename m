@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44035C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3F9ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82E020C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82E020C0E
+	by mail.kernel.org (Postfix) with ESMTP id AD8632150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD8632150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730072AbeIRXcu (ORCPT
+        id S1730252AbeIRXdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:32:50 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:45474 "EHLO
+        Tue, 18 Sep 2018 19:33:09 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45535 "EHLO
         out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729695AbeIRXcu (ORCPT
+        with ESMTP id S1729618AbeIRXdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:32:50 -0400
+        Tue, 18 Sep 2018 19:33:09 -0400
 Received: from in01.mta.xmission.com ([166.70.13.51])
         by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1g2KHB-0004Hg-FY; Tue, 18 Sep 2018 11:59:05 -0600
+        id 1g2KHV-0004KC-8U; Tue, 18 Sep 2018 11:59:25 -0600
 Received: from [105.184.227.67] (helo=x220.Home)
         by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1g2KH9-000459-Ve; Tue, 18 Sep 2018 11:59:05 -0600
+        id 1g2KHF-000459-7O; Tue, 18 Sep 2018 11:59:24 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
@@ -40,16 +40,16 @@ Cc:     linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Tue, 18 Sep 2018 19:58:42 +0200
-Message-Id: <20180918175850.4437-1-ebiederm@xmission.com>
+Date:   Tue, 18 Sep 2018 19:58:43 +0200
+Message-Id: <20180918175850.4437-2-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <878t3yitze.fsf@xmission.com>
 References: <878t3yitze.fsf@xmission.com>
-X-XM-SPF: eid=1g2KH9-000459-Ve;;;mid=<20180918175850.4437-1-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+K+59l2DAT5QPEFkH7W1rRn4JCL8LTWfQ=
+X-XM-SPF: eid=1g2KHF-000459-7O;;;mid=<20180918175850.4437-2-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18y14DuFztMg1crilJoYhJ+yNvzzbWGmSg=
 X-SA-Exim-Connect-IP: 105.184.227.67
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 1/9] signal/powerpc: Use force_sig_mceerr as appropriate
+Subject: [REVIEW][PATCH 2/9] signal/powerpc: Remove pkey parameter from __bad_area
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,56 +57,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In do_sigbus isolate the mceerr signaling code and call
-force_sig_mceerr instead of falling through to the force_sig_info that
-works for all of the other signals.
+There are no callers of __bad_area that pass in a pkey parameter so it makes
+no sense to take one.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- arch/powerpc/mm/fault.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ arch/powerpc/mm/fault.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index d51cf5f4e45e..22d7f8748cd7 100644
+index 22d7f8748cd7..e5725fa96a48 100644
 --- a/arch/powerpc/mm/fault.c
 +++ b/arch/powerpc/mm/fault.c
-@@ -158,7 +158,6 @@ static int do_sigbus(struct pt_regs *regs, unsigned long address,
- 		     vm_fault_t fault)
- {
- 	siginfo_t info;
--	unsigned int lsb = 0;
- 
- 	if (!user_mode(regs))
- 		return SIGBUS;
-@@ -171,17 +170,22 @@ static int do_sigbus(struct pt_regs *regs, unsigned long address,
- 	info.si_addr = (void __user *)address;
- #ifdef CONFIG_MEMORY_FAILURE
- 	if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
-+		unsigned int lsb = 0; /* shutup gcc */
-+
- 		pr_err("MCE: Killing %s:%d due to hardware memory corruption fault at %lx\n",
- 			current->comm, current->pid, address);
--		info.si_code = BUS_MCEERR_AR;
-+
-+		if (fault & VM_FAULT_HWPOISON_LARGE)
-+			lsb = hstate_index_to_shift(VM_FAULT_GET_HINDEX(fault));
-+		if (fault & VM_FAULT_HWPOISON)
-+			lsb = PAGE_SHIFT;
-+
-+		force_sig_mceerr(BUS_MCEERR_AR, (void __user *)address, lsb,
-+				 current);
-+		return 0;
- 	}
- 
--	if (fault & VM_FAULT_HWPOISON_LARGE)
--		lsb = hstate_index_to_shift(VM_FAULT_GET_HINDEX(fault));
--	if (fault & VM_FAULT_HWPOISON)
--		lsb = PAGE_SHIFT;
- #endif
--	info.si_addr_lsb = lsb;
- 	force_sig_info(SIGBUS, &info, current);
- 	return 0;
+@@ -124,8 +124,7 @@ static noinline int bad_area_nosemaphore(struct pt_regs *regs, unsigned long add
+ 	return __bad_area_nosemaphore(regs, address, SEGV_MAPERR, 0);
  }
+ 
+-static int __bad_area(struct pt_regs *regs, unsigned long address, int si_code,
+-			int pkey)
++static int __bad_area(struct pt_regs *regs, unsigned long address, int si_code)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 
+@@ -135,12 +134,12 @@ static int __bad_area(struct pt_regs *regs, unsigned long address, int si_code,
+ 	 */
+ 	up_read(&mm->mmap_sem);
+ 
+-	return __bad_area_nosemaphore(regs, address, si_code, pkey);
++	return __bad_area_nosemaphore(regs, address, si_code, 0);
+ }
+ 
+ static noinline int bad_area(struct pt_regs *regs, unsigned long address)
+ {
+-	return __bad_area(regs, address, SEGV_MAPERR, 0);
++	return __bad_area(regs, address, SEGV_MAPERR);
+ }
+ 
+ static int bad_key_fault_exception(struct pt_regs *regs, unsigned long address,
+@@ -151,7 +150,7 @@ static int bad_key_fault_exception(struct pt_regs *regs, unsigned long address,
+ 
+ static noinline int bad_access(struct pt_regs *regs, unsigned long address)
+ {
+-	return __bad_area(regs, address, SEGV_ACCERR, 0);
++	return __bad_area(regs, address, SEGV_ACCERR);
+ }
+ 
+ static int do_sigbus(struct pt_regs *regs, unsigned long address,
 -- 
 2.17.1
 
