@@ -2,157 +2,227 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED242C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C62C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EDE2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:02:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EDE2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F2EE12086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EE12086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729661AbeIRSfR (ORCPT
+        id S1729701AbeIRSfx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:35:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33316 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeIRSfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:35:17 -0400
-Received: from localhost (unknown [147.67.4.98])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43E84C8D;
-        Tue, 18 Sep 2018 13:02:46 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 15:02:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Phil Elwell <phil@raspberrypi.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: [PATCH 1/2] sc16is7xx: Fix for multi-channel stall
-Message-ID: <20180918130243.GA25253@kroah.com>
-References: <1536762716-30673-1-git-send-email-phil@raspberrypi.org>
- <1536762716-30673-2-git-send-email-phil@raspberrypi.org>
+        Tue, 18 Sep 2018 14:35:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbeIRSfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:35:53 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98B163084034;
+        Tue, 18 Sep 2018 13:03:22 +0000 (UTC)
+Received: from redhat.com (ovpn-123-187.rdu2.redhat.com [10.10.123.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C782B89227;
+        Tue, 18 Sep 2018 13:03:16 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 09:03:14 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, kvm@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joerg Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>,
+        Hao Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, iommu@lists.linux-foundation.org,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        linux-accelerators@lists.ozlabs.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180918130314.GA3500@redhat.com>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180917014244.GA27596@redhat.com>
+ <20180917083940.GE207969@Turing-Arch-b>
+ <20180917123744.GA3605@redhat.com>
+ <20180918060014.GF207969@Turing-Arch-b>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1536762716-30673-2-git-send-email-phil@raspberrypi.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180918060014.GF207969@Turing-Arch-b>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 18 Sep 2018 13:03:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:31:55PM +0100, Phil Elwell wrote:
-> The SC16IS752 is a dual-channel device. The two channels are largely
-> independent, but the IRQ signals are wired together as an open-drain,
-> active low signal which will be driven low while either of the
-> channels requires attention, which can be for significant periods of
-> time until operations complete and the interrupt can be acknowledged.
-> In that respect it is should be treated as a true level-sensitive IRQ.
+On Tue, Sep 18, 2018 at 02:00:14PM +0800, Kenneth Lee wrote:
+> On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
+> > On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
+> > > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
+> > > > So i want to summarize issues i have as this threads have dig deep into
+> > > > details. For this i would like to differentiate two cases first the easy
+> > > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
+> > > 
+> > > Thank you very much for the summary.
+> > > 
+> > > > In both cases your objectives as i understand them:
+> > > > 
+> > > > [R1]- expose a common user space API that make it easy to share boiler
+> > > >       plate code accross many devices (discovering devices, opening
+> > > >       device, creating context, creating command queue ...).
+> > > > [R2]- try to share the device as much as possible up to device limits
+> > > >       (number of independant queues the device has)
+> > > > [R3]- minimize syscall by allowing user space to directly schedule on the
+> > > >       device queue without a round trip to the kernel
+> > > > 
+> > > > I don't think i missed any.
+> > > > 
+> > > > 
+> > > > (1) Device with SVA/SVM
+> > > > 
+> > > > For that case it is easy, you do not need to be in VFIO or part of any
+> > > > thing specific in the kernel. There is no security risk (modulo bug in
+> > > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
+> > > > to a device is just couple dozen lines of code.
+> > > > 
+> > > 
+> > > This is right...logically. But the kernel has no clear definition about "Device
+> > > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
+> > > boiler plate.
+> > > 
+> > > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
+> > > one. If we add that support within VFIO, which solve most of the problem of
+> > > SVA/SVM, it will save a lot of work in the future.
+> > 
+> > You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
+> > all do the SVA/SVM setup in couple dozen lines and i failed to see how it
+> > would require any more than that in your case.
+> > 
+> > 
+> > > I think this is the key confliction between us. So could Alex please say
+> > > something here? If the VFIO is going to take this into its scope, we can try
+> > > together to solve all the problem on the way. If it it is not, it is also
+> > > simple, we can just go to another way to fulfill this part of requirements even
+> > > we have to duplicate most of the code.
+> > > 
+> > > Another point I need to emphasis here: because we have to replace the hardware
+> > > queue when fork, so it won't be very simple even in SVA/SVM case.
+> > 
+> > I am assuming hardware queue can only be setup by the kernel and thus
+> > you are totaly safe forkwise as the queue is setup against a PASID and
+> > the child does not bind to any PASID and you use VM_DONTCOPY on the
+> > mmap of the hardware MMIO queue because you should really use that flag
+> > for that.
+> > 
+> > 
+> > > > (2) Device does not have SVA/SVM (or it is disabled)
+> > > > 
+> > > > You want to still allow device to be part of your framework. However
+> > > > here i see fundamentals securities issues and you move the burden of
+> > > > being careful to user space which i think is a bad idea. We should
+> > > > never trus the userspace from kernel space.
+> > > > 
+> > > > To keep the same API for the user space code you want a 1:1 mapping
+> > > > between device physical address and process virtual address (ie if
+> > > > device access device physical address A it is accessing the same
+> > > > memory as what is backing the virtual address A in the process.
+> > > > 
+> > > > Security issues are on two things:
+> > > > [I1]- fork/exec, a process who opened any such device and created an
+> > > >       active queue can transfer without its knowledge control of its
+> > > >       commands queue through COW. The parent map some anonymous region
+> > > >       to the device as a command queue buffer but because of COW the
+> > > >       parent can be the first to copy on write and thus the child can
+> > > >       inherit the original pages that are mapped to the hardware.
+> > > >       Here parent lose control and child gain it.
+> > > 
+> > > This is indeed an issue. But it remains an issue only if you continue to use the
+> > > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
+> > > user space.
+> > 
+> > Trusting user space is a no go from my point of view.
 > 
-> The kernel, however, needs to be able to exit interrupt context in
-> order to use I2C or SPI to access the device registers (which may
-> involve sleeping).  Therefore the interrupt needs to be masked out or
-> paused in some way.
+> Can we dive deeper on this? Maybe we have different understanding on "Trusting
+> user space". As my understanding, "trusting user space" means "no matter what
+> the user process does, it should only hurt itself and anything give to it, no
+> the kernel and the other process".
 > 
-> The usual way to manage sleeping from within an interrupt handler
-> is to use a threaded interrupt handler - a regular interrupt routine
-> does the minimum amount of work needed to triage the interrupt before
-> waking the interrupt service thread. If the threaded IRQ is marked as
-> IRQF_ONESHOT the kernel will automatically mask out the interrupt
-> until the thread runs to completion. The sc16is7xx driver used to
-> use a threaded IRQ, but a patch switched to using a kthread_worker
-> in order to set realtime priorities on the handler thread and for
-> other optimisations. The end result is non-threaded IRQ that
-> schedules some work then returns IRQ_HANDLED, making the kernel
-> think that all IRQ processing has completed.
+> In our case, we create a channel between a process and the hardware. The process
+> can do whateven it like to its own memory the channel itself. It won't hurt the
+> other process and the kernel. And if the process fork a child and give the
+> channel to the child, it should the freedom on those resource remain within the
+> parent and the child. We are not trust another else.
 > 
-> The work-around to prevent a constant stream of interrupts is to
-> mark the interrupt as edge-sensitive rather than level-sensitive,
-> but interpreting an active-low source as a falling-edge source
-> requires care to prevent a total cessation of interrupts. Whereas
-> an edge-triggering source will generate a new edge for every interrupt
-> condition a level-triggering source will keep the signal at the
-> interrupting level until it no longer requires attention; in other
-> words, the host won't see another edge until all interrupt conditions
-> are cleared. It is therefore vital that the interrupt handler does not
-> exit with an outstanding interrupt condition, otherwise the kernel
-> will not receive another interrupt unless some other operation causes
-> the interrupt state on the device to be cleared.
+> So do you refer to something else here?
 > 
-> The existing sc16is7xx driver has a very simple interrupt "thread"
-> (kthread_work job) that processes interrupts on each channel in turn
-> until there are no more. If both channels are active and the first
-> channel starts interrupting while the handler for the second channel
-> is running then it will not be detected and an IRQ stall ensues. This
-> could be handled easily if there was a shared IRQ status register, or
-> a convenient way to determine if the IRQ had been deasserted for any
-> length of time, but both appear to be lacking.
-> 
-> Avoid this problem (or at least make it much less likely to happen)
-> by reducing the granularity of per-channel interrupt processing
-> to one condition per iteration, only exiting the overall loop when
-> both channels are no longer interrupting.
-> 
-> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> ---
->  drivers/tty/serial/sc16is7xx.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> index 243c960..47b4115 100644
-> --- a/drivers/tty/serial/sc16is7xx.c
-> +++ b/drivers/tty/serial/sc16is7xx.c
-> @@ -657,7 +657,7 @@ static void sc16is7xx_handle_tx(struct uart_port *port)
->  		uart_write_wakeup(port);
->  }
->  
-> -static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
-> +static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
->  {
->  	struct uart_port *port = &s->p[portno].port;
->  
-> @@ -666,7 +666,7 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
->  
->  		iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
->  		if (iir & SC16IS7XX_IIR_NO_INT_BIT)
-> -			break;
-> +			return false;
->  
->  		iir &= SC16IS7XX_IIR_ID_MASK;
->  
-> @@ -688,16 +688,23 @@ static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
->  					    port->line, iir);
->  			break;
->  		}
-> -	} while (1);
-> +	} while (0);
-> +	return true;
->  }
->  
->  static void sc16is7xx_ist(struct kthread_work *ws)
->  {
->  	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
-> -	int i;
->  
-> -	for (i = 0; i < s->devtype->nr_uart; ++i)
-> -		sc16is7xx_port_irq(s, i);
-> +	while (1) {
-> +		bool keep_polling = false;
-> +		int i;
-> +
-> +		for (i = 0; i < s->devtype->nr_uart; ++i)
-> +			keep_polling |= sc16is7xx_port_irq(s, i);
-> +		if (!keep_polling)
-> +			break;
 
-This makes me worried, there is no "timeout" now?  What happens if this
-never happens, will you just sit and spin forever?  What prevents that?
+I am refering to COW giving control to the child on to what happens
+in the parent from device point of view. A process hurting itself is
+fine, but if process now has to do special steps to protect from
+its child ie make sure that its childs can not hurt it, then i see
+that as a kernel bug. We can not ask user space process to know about
+all the thousands things that needs to be done to avoid issues with
+each device driver that the process may use (process can be totaly
+ignorant it is using a device if that device is use by a library it
+links to).
 
-thanks,
 
-greg k-h
+Maybe what needs to happen will explain it better. So if userspace
+wants to be secure and protect itself from its child taking over the
+device through COW:
+
+    - parent opened a device and is using it
+
+    ... when parent wants to fork/exec it must:
+
+    - parent _must_ flush device command queue and wait for the
+      device to finish all pending jobs
+
+    - parent _must_ unmap all range mapped to the device
+
+    - parent should first close device file (unless you force set
+      the CLOEXEC flag in the kernel)/it could also just flush
+      but if you are not mapping the device command queue with
+      VM_DONTCOPY then you should really be closing the device
+
+    - now parent can fork/exec
+
+    - parent must force COW ie write at least one byte to _all_
+      pages in the range it wants to use with the device
+
+    - parent re-open the device and re-initialize everything
+
+
+So this is putting quite a burden on a number of steps the parent
+_must_ do in order to keep control of memory exposed to the device.
+Not doing so can potentialy lead (it depends on who does the COW
+first) to the child taking control of memory use by the device,
+memory which was mapped by the parent before the child was created.
+
+Forcing CLOEXEC and VM_DONTCOPY somewhat help to simplify this,
+but you still need to stop, flush, unmap, before fork/exec and then
+re-init everything after.
+
+
+This is only when not using SVA/SVM, SVA/SVM is totaly fine from
+that point of view, no issues whatsoever.
+
+The solution i outlined in previous email do not have that above
+issue either, no need to rely on user space doing that dance.
+
+Cheers,
+Jérôme
