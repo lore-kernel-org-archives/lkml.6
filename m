@@ -2,95 +2,83 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4165ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36307ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5122146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lt26I3wJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5122146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E5BAF2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BAF2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbeIROCw (ORCPT
+        id S1729466AbeIRODd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:02:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48116 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729129AbeIROCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:02:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HG5pVcepxQN629X8V7hoyBkBwLrtFAJyhvA4se7CUsg=; b=Lt26I3wJbL4vC5nE+nKKj2p3d
-        aLx892kRv1tq4P7x9qgJnOdWuGfxbCFIDp6CpIgiW6MYKfVUuvdNxanwaf4GNzmNAWwhSEGTU6nFW
-        dJyQw2iblsI3FoCBpxs8GNyP8kX65OvKxJpYVWDqmF4e3UfAUxvqzS9/mQKGDKDKnry0FTJg6a/Mj
-        RZplKFHpYZmsLx7rMiN/AEuB1GPaNMR/GYEWKwj0vp+oMxHlSbGcCGbZdYWJGBVd0Gd9o5BQ4Nuu+
-        3KmWEukQNr01e4z7N9GN693NH+gOm3PXE8A+0IRS9u6/CKwcvCSWDfcEWzxxZ9TqkJipAU2pzKjsS
-        YNUu0fWZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2BPO-0000vj-Kk; Tue, 18 Sep 2018 08:30:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B48D9202C1A35; Tue, 18 Sep 2018 10:30:55 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 10:30:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-Message-ID: <20180918083055.GJ24106@hirez.programming.kicks-ass.net>
-References: <20180914125006.349747096@linutronix.de>
- <20180914125118.909646643@linutronix.de>
- <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
- <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
- <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de>
+        Tue, 18 Sep 2018 10:03:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59062 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728985AbeIRODd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 10:03:33 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 82D29C3DADECC;
+        Tue, 18 Sep 2018 16:31:56 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 18 Sep 2018 16:31:54 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>, <khc@pm.waw.pl>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: wan: remove redundant include
+Date:   Tue, 18 Sep 2018 16:19:35 +0800
+Message-ID: <1537258775-44025-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 09:52:26AM +0200, Thomas Gleixner wrote:
-> On Mon, 17 Sep 2018, John Stultz wrote:
-> > On Mon, Sep 17, 2018 at 12:25 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > > Also, I'm not entirely convinced that this "last" thing is needed at
-> > > all.  John, what's the scenario under which we need it?
-> > 
-> > So my memory is probably a bit foggy, but I recall that as we
-> > accelerated gettimeofday, we found that even on systems that claimed
-> > to have synced TSCs, they were actually just slightly out of sync.
-> > Enough that right after cycles_last had been updated, a read on
-> > another cpu could come in just behind cycles_last, resulting in a
-> > negative interval causing lots of havoc.
-> > 
-> > So the sanity check is needed to avoid that case.
-> 
-> Your memory serves you right. That's indeed observable on CPUs which
-> lack TSC_ADJUST.
+module.h already contained moduleparam.h,  so it is safe to remove
+the redundant include.
 
-But, if the gtod code can observe this, then why doesn't the code that
-checks the sync?
+The issue is detected with the help of Coccinelle.
+
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/net/wan/c101.c      | 1 -
+ drivers/net/wan/pci200syn.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/net/wan/c101.c b/drivers/net/wan/c101.c
+index 2371e07..91dbbde 100644
+--- a/drivers/net/wan/c101.c
++++ b/drivers/net/wan/c101.c
+@@ -24,7 +24,6 @@
+ #include <linux/string.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+-#include <linux/moduleparam.h>
+ #include <linux/netdevice.h>
+ #include <linux/hdlc.h>
+ #include <linux/delay.h>
+diff --git a/drivers/net/wan/pci200syn.c b/drivers/net/wan/pci200syn.c
+index 4e437c5..1f8a3f7 100644
+--- a/drivers/net/wan/pci200syn.c
++++ b/drivers/net/wan/pci200syn.c
+@@ -27,7 +27,6 @@
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+-#include <linux/moduleparam.h>
+ #include <linux/netdevice.h>
+ #include <linux/hdlc.h>
+ #include <linux/pci.h>
+-- 
+1.7.12.4
+
