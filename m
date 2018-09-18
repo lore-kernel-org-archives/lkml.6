@@ -3,76 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B077ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EAFECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C426120C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C426120C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 32FA620C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FA620C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeIRPiR (ORCPT
+        id S1729207AbeIRPpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:38:17 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57327 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbeIRPiR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:38:17 -0400
-Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g2Cte-0006ey-A2; Tue, 18 Sep 2018 12:06:18 +0200
-Date:   Tue, 18 Sep 2018 12:06:12 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-In-Reply-To: <alpine.DEB.2.21.1809181050020.4167@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1809181204460.4167@nanos.tec.linutronix.de>
-References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de> <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com> <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
- <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de> <20180918083055.GJ24106@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1809181050020.4167@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 18 Sep 2018 11:45:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727228AbeIRPpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:45:14 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D189300272B;
+        Tue, 18 Sep 2018 10:13:21 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BB8C6107304F;
+        Tue, 18 Sep 2018 10:13:17 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 0/3] blk-mq: allow to unfreeze queue when io isn't drained
+Date:   Tue, 18 Sep 2018 18:13:07 +0800
+Message-Id: <20180918101310.13154-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 18 Sep 2018 10:13:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Sep 2018, Thomas Gleixner wrote:
-> On Tue, 18 Sep 2018, Peter Zijlstra wrote:
-> > > Your memory serves you right. That's indeed observable on CPUs which
-> > > lack TSC_ADJUST.
-> > 
-> > But, if the gtod code can observe this, then why doesn't the code that
-> > checks the sync?
-> 
-> Because it depends where the involved CPUs are in the topology. The sync
-> code might just run on the same package an simply not see it. Yes, w/o
-> TSC_ADJUST the TSC sync code can just fail to see the havoc.
+Hi,
 
-Even with TSC adjust the TSC can be slightly off by design on multi-socket
-systems.
+The 1st patch introduces percpu_ref_resurge() for implementing
+blk_mq_unfreeze_queue_no_drain_io().
 
-Thanks,
+The 2nd patch introdces blk_mq_unfreeze_queue_no_drain_io() for
+cases in which queue can be unfreeze without draininig IO.
 
-	tglx
+The 3rd patch applies blk_mq_unfreeze_queue_no_drain_io() to
+NVMe PCI timeout, so that IO hang may be avoided inside
+nvme_reset_work() when new IO timeout is triggered. 
+
+Part of idea is from Jianchao's early work:
+
+https://marc.info/?l=linux-kernel&m=153612052611020&w=2
+
+Ming Lei (3):
+  lib/percpu-refcount: introduce percpu_ref_resurge()
+  blk-mq: introduce blk_mq_unfreeze_queue_no_drain_io
+  nvme: don't drain IO in nvme_reset_work()
+
+ block/blk-mq.c                  | 25 ++++++++++++++--
+ drivers/nvme/host/core.c        | 12 +++++---
+ drivers/nvme/host/nvme.h        |  2 +-
+ drivers/nvme/host/pci.c         |  3 +-
+ include/linux/blk-mq.h          |  1 +
+ include/linux/percpu-refcount.h |  1 +
+ lib/percpu-refcount.c           | 63 ++++++++++++++++++++++++++++++++++-------
+ 7 files changed, 87 insertions(+), 20 deletions(-)
+
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-block@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: linux-nvme@lists.infradead.org
+Cc: Keith Busch <keith.busch@intel.com>
+
+
+-- 
+2.9.5
+
