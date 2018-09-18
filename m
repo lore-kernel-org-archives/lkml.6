@@ -2,86 +2,76 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1068EC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142B8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B979621471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B979621471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id CAB252133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB252133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeISDva (ORCPT
+        id S1728397AbeISDwD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:51:30 -0400
-Received: from sauhun.de ([88.99.104.3]:46150 "EHLO pokefinder.org"
+        Tue, 18 Sep 2018 23:52:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36928 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727987AbeISDva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:51:30 -0400
-Received: from localhost (mue-88-130-102-194.dsl.tropolys.de [88.130.102.194])
-        by pokefinder.org (Postfix) with ESMTPSA id 50C862C0590;
-        Wed, 19 Sep 2018 00:16:47 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 00:16:46 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: Re: [PATCH] i2c: i2c-qcom-geni: Properly handle DMA safe buffers
-Message-ID: <20180918221646.GA970@kunai>
-References: <20180918194126.138455-1-swboyd@chromium.org>
+        id S1728219AbeISDwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 23:52:03 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0CFB53002316;
+        Tue, 18 Sep 2018 22:17:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ECC4430912F4;
+        Tue, 18 Sep 2018 22:17:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180919073826.02370812@canb.auug.org.au>
+References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs tree
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Content-Disposition: inline
-In-Reply-To: <20180918194126.138455-1-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15924.1537309041.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 18 Sep 2018 23:17:21 +0100
+Message-ID: <15925.1537309041@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 18 Sep 2018 22:17:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > After merging the vfs tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > samples/vfs/test-fsinfo.c: In function 'fsinfo':
+> > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
 
+I think the problem is that I haven't allocated system call numbers for any
+arches other than x86 - even the x86 syscall numbers are provisional until the
+patchset is taken upstream.  I'm not sure of the best way to deal with this -
+make the samples dependent on the X86 arch?
 
-> This fixes a problem where the kernel oopses cleaning pages for a buffer
-> that's mapped into the vmalloc space. The pages are returned from
-> request_firmware() and passed down directly to the i2c master to write
-> to the i2c touchscreen device. Mapping vmalloc buffers with
-> dma_map_single() won't work reliably, causing an oops like below:
+> > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
+> >   printf("\tmax file size: %llx\n", f->max_file_size);
 
-Exactly the reason why I implemented I2C_M_DMA_SAFE. Did you also notice
-the helper i2c_get_dma_safe_msg_buf() which you maybe could use for
-len > 32?
+Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
+long.  Is it possible to shift all arches to use unsigned long long for __u64?
 
-
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluheUoACgkQFA3kzBSg
-KbY5lg/+O6lcx0uYmTjDHz7bfAO3QH49D9q7kDhqGBmwkQ1szR0WtXQCF9oOmIKS
-8yytXNLqBhMyijpcBeQ62iNk/FW2f6A7+wYSjsElC7lWmqgGsNtotTJqRVAYDtlK
-5u9BgG3lAC40c7boLNzQ+5/3ivbxP/B+0nmoHcOpE9eRRHobwF87jkvMZILKxiCM
-UgWjpheCWALbYItbkPSiLJTpxq8VtJZAwHNwuKctiPCG6tpQquJ903tBZs7VfAwU
-3AUPhwalNLaK3QaZVwM2RAGW0H0FcCz/TsgpkWFoirGdxvE/wGWXIDe6Uoeet+7U
-e3ltKNKc830tu4V8Tm6YYb2SfYquNbgQmsP2TnOmrqGsyNRZbTZEwIXJ4i8UkuyK
-0Xwyzc23b0uReUF7mztp1p76eWaHl9/Rohk7EFmK9C+jnzg4rhj9WdIrtdxdQ54K
-jwewNdmdkE06YS3x90ngONaONBnEuF0IM5VlKTT53mnFwpQl6ILd8p42qY6LFey9
-lwhRuyhgURHd5GCvCNiNAJa240W26FKZwT96aZQjubPTb45wpYeoJNo8JbPHLB4n
-Juxscuv2/Cf+yXGT4nH8/G8uqQnZfW8gvftGSxDxqevWcb09fIovxnbJqrhqSTuO
-Aw9i6yzFYg+s4tvkQ1fCn6iKHVsaH25J2O2xH57ZnxBxhvb1WAg=
-=UwD6
------END PGP SIGNATURE-----
-
---k+w/mQv8wyuph6w0--
+David
