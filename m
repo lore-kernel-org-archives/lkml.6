@@ -2,148 +2,197 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D57ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE39ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891D12146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:17:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891D12146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 38A412146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:17:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDGXXm2o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A412146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbeIROtB (ORCPT
+        id S1729578AbeIROtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:49:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52144 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726759AbeIROtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:49:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DAB8FB00D;
-        Tue, 18 Sep 2018 09:17:15 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 959631E091E; Tue, 18 Sep 2018 11:17:14 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 11:17:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>, Jan Kara <jack@suse.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Tue, 18 Sep 2018 10:49:24 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51130 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeIROtY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 10:49:24 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s12-v6so1632989wmc.0;
+        Tue, 18 Sep 2018 02:17:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zrG7OFX/9Xt99vtwm6B2QfyZrQOPypuA0sB7U/dKv0A=;
+        b=VDGXXm2oOc5IedZtvJP2AStpk5aDpz9XdNdGasN5qbEaspA5Qdt5BKegSsjnmeTd08
+         wyVUdDY0LoUTMV2mDW3kgY3QVUvMkcQGbtJ6icoi6u66hsgNRRaiNi03ubDuDu/JXpzZ
+         2XXTwC6Od0ZyWG7rRAKW1Yc8hWPrDd+sYyc6XrlqGG7V9LfT/qJHPG2GfpFoOqK5bNhS
+         +nW1aZXykmH6wQhcCFrx3Mn6KIZaNCWqgZU+DlXNyD0z+Ysf3mS3YP/us6WStiFGUy/v
+         TzBW1E8Fj0S2ZolakHUmAkkK7/m0FTY6FHcWQBiaVG0XZsXKm1KE/bqAfU7CcGl/NA0e
+         KGLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zrG7OFX/9Xt99vtwm6B2QfyZrQOPypuA0sB7U/dKv0A=;
+        b=USk5NEKBRkbNTfhXtpTk+CTZxgpSDSaFEHX3+nK1cBv762ld57RGd19VoJXqm+MXq5
+         P+BllqJKKNvzyPUg6lrvnlLqjc87oDOebRxQ5il8STPNf6nnyLgIMgW9SF3eMn6iXrOC
+         UqHX4wO3J8EXWuI4vBQXlr7u6G0VIpoSUuWJj3r8pRbyEKo1z7k8z8+3wS+lpNr+Ht6Q
+         stMf4nkWOhhTmkidPBgehk/5sTvMuE+WNpyRoUufXYXFCVXYTCqJ1JefjlKQ7kyTHraP
+         fS4Whx86AyTBWhUPfTljRrdRcW17Ly134tRTQi+g7T+HU5mbcfAU/C8fRn4zc5GiLI7Q
+         vxjQ==
+X-Gm-Message-State: APzg51BUYMmno1EH7i/yXVZWffE3LWyqe45FpRmTRp1QZZCdHp+Jgrm6
+        SI9g1WkXhg3C7JXT1YJ3kFg=
+X-Google-Smtp-Source: ANB0VdYRW8lhikm/HgqoIkiRLDpK3ER2Fq0Jppgy5WQ4JLlNtTa4d0/XUzQUQ6Dj/ucsTlK6z/GTGQ==
+X-Received: by 2002:a1c:e382:: with SMTP id a124-v6mr14333565wmh.121.1537262259085;
+        Tue, 18 Sep 2018 02:17:39 -0700 (PDT)
+Received: from pi ([185.208.64.4])
+        by smtp.gmail.com with ESMTPSA id 88-v6sm15800593wrf.95.2018.09.18.02.17.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Sep 2018 02:17:38 -0700 (PDT)
+X-Google-Original-Sender: <johan@kernel.org>
+Received: from johan by pi with local (Exim 4.90_1)
+        (envelope-from <johan@pi>)
+        id 1g2C7W-0003XG-Db; Tue, 18 Sep 2018 11:16:34 +0200
+Date:   Tue, 18 Sep 2018 11:16:34 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, bridge@lists.linux-foundation.org,
-        netdev@vger.kernel.org, Ted Tso <tytso@mit.edu>
-Subject: Re: [PATCH] docs: fix some broken documentation references
-Message-ID: <20180918091714.GG10257@quack2.suse.cz>
-References: <6b47bf56b898c48a0dc3cd42283c9e5c7c23367a.1537210894.git.mchehab+samsung@kernel.org>
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: Re: [PATCH v4] USB: serial: ftdi_sio: implement GPIO support for
+ FT-X devices
+Message-ID: <20180918091634.GC3943@localhost>
+References: <20180916175847.3288-1-pados@pados.hu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b47bf56b898c48a0dc3cd42283c9e5c7c23367a.1537210894.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180916175847.3288-1-pados@pados.hu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17-09-18 15:02:34, Mauro Carvalho Chehab wrote:
-> Some documentation files received recent changes and are
-> pointing to wrong places.
+On Sun, Sep 16, 2018 at 07:58:47PM +0200, Karoly Pados wrote:
+> This patch allows using the CBUS pins of FT-X devices as GPIO in CBUS
+> bitbanging mode. There is no conflict between the GPIO and VCP
+> functionality in this mode. Tested on FT230X and FT231X.
 > 
-> Those references can easily fixed with the help of a
-> script:
+> As there is no way to request the current CBUS register configuration
+> from the device, all CBUS pins are set to a known state when the first
+> GPIO is requested. This allows using libftdi to set the GPIO pins
+> before loading this module for UART functionality, a behavior that
+> existing applications might be relying upon (though no specific case
+> is known to the authors of this patch).
 > 
-> 	$ ./scripts/documentation-file-ref-check --fix
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-Looks good to me. Thanks for fixing this up. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+> Signed-off-by: Karoly Pados <pados@pados.hu>
 > ---
->  Documentation/filesystems/dax.txt  | 2 +-
->  Documentation/filesystems/ext2.txt | 2 +-
->  MAINTAINERS                        | 4 ++--
->  net/bridge/Kconfig                 | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/dax.txt b/Documentation/filesystems/dax.txt
-> index 70cb68bed2e8..bc393e0a22b8 100644
-> --- a/Documentation/filesystems/dax.txt
-> +++ b/Documentation/filesystems/dax.txt
-> @@ -75,7 +75,7 @@ exposure of uninitialized data through mmap.
->  
->  These filesystems may be used for inspiration:
->  - ext2: see Documentation/filesystems/ext2.txt
-> -- ext4: see Documentation/filesystems/ext4.txt
-> +- ext4: see Documentation/filesystems/ext4/ext4.rst
->  - xfs:  see Documentation/filesystems/xfs.txt
->  
->  
-> diff --git a/Documentation/filesystems/ext2.txt b/Documentation/filesystems/ext2.txt
-> index 81c0becab225..a45c9fc0747b 100644
-> --- a/Documentation/filesystems/ext2.txt
-> +++ b/Documentation/filesystems/ext2.txt
-> @@ -358,7 +358,7 @@ and are copied into the filesystem.  If a transaction is incomplete at
->  the time of the crash, then there is no guarantee of consistency for
->  the blocks in that transaction so they are discarded (which means any
->  filesystem changes they represent are also lost).
-> -Check Documentation/filesystems/ext4.txt if you want to read more about
-> +Check Documentation/filesystems/ext4/ext4.rst if you want to read more about
->  ext4 and journaling.
->  
->  References
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9989925f658d..078a4cf6d064 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -840,7 +840,7 @@ ANALOG DEVICES INC ADGS1408 DRIVER
->  M:	Mircea Caprioru <mircea.caprioru@analog.com>
->  S:	Supported
->  F:	drivers/mux/adgs1408.c
-> -F:	Documentation/devicetree/bindings/mux/adgs1408.txt
-> +F:	Documentation/devicetree/bindings/mux/adi,adgs1408.txt
->  
->  ANALOG DEVICES INC ADP5061 DRIVER
->  M:	Stefan Popa <stefan.popa@analog.com>
-> @@ -5515,7 +5515,7 @@ W:	http://ext4.wiki.kernel.org
->  Q:	http://patchwork.ozlabs.org/project/linux-ext4/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
->  S:	Maintained
-> -F:	Documentation/filesystems/ext4.txt
-> +F:	Documentation/filesystems/ext4/ext4.rst
->  F:	fs/ext4/
->  
->  Extended Verification Module (EVM)
-> diff --git a/net/bridge/Kconfig b/net/bridge/Kconfig
-> index aa0d3b2f1bb7..3625d6ade45c 100644
-> --- a/net/bridge/Kconfig
-> +++ b/net/bridge/Kconfig
-> @@ -17,7 +17,7 @@ config BRIDGE
->  	  other third party bridge products.
->  
->  	  In order to use the Ethernet bridge, you'll need the bridge
-> -	  configuration tools; see <file:Documentation/networking/bridge.txt>
-> +	  configuration tools; see <file:Documentation/networking/bridge.rst>
->  	  for location. Please read the Bridge mini-HOWTO for more
->  	  information.
->  
-> -- 
-> 2.17.1
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Changelog:
+> - v2: Fix compile error when CONFIG_GPIOLIB is not defined.
+> - v3: Incorporate review feedback.
+> - v4: Include linux/gpio/driver.h unconditionally.
+>       Replace and invert gpio_input with gpio_output.
+>       Make ftdi_gpio_direction_get return 0/1.
+>       Change dev_err msg in ftdi_set_bitmode_req.
+>       Change formatting of error checking in ftdi_gpio_get.
+>       Drop dev_err in ftdi_gpio_set.
+>       Remove some line breaks and empty lines.
+>       Change error handling in ftdi_read_eeprom (and adjust caller).
+>       Replace SIO->FTX in FTDI_SIO_CBUS_MUX_GPIO macro name.
+
+Really nice job with this; looks nice and clean over all. Just a few
+comments below.
+
+> +static int ftx_gpioconf_init(struct usb_serial_port *port)
+> +{
+> +	struct ftdi_private *priv = usb_get_serial_port_data(port);
+> +	struct usb_serial *serial = port->serial;
+> +	const u16 cbus_cfg_addr = 0x1a;
+> +	const u16 cbus_cfg_size = 8;
+
+Looks like you only need to read four bytes.
+
+> +	u8 *cbus_cfg_buf;
+> +	int result;
+> +	u8 i;
+> +
+> +	/* Read a part of device EEPROM */
+> +	cbus_cfg_buf = kmalloc(cbus_cfg_size, GFP_KERNEL);
+> +	if (!cbus_cfg_buf)
+> +		return -ENOMEM;
+> +
+> +	result = ftdi_read_eeprom(serial, cbus_cfg_buf,
+> +				  cbus_cfg_addr, cbus_cfg_size);
+> +	if (result != 0)
+
+result < 0 would be more informative here.
+
+> +		goto out_free;
+> +
+> +	/* Chip-type guessing logic based on libftdi. */
+> +	priv->gc.ngpio = 4;  /* FT230X, FT231X */
+> +	if (le16_to_cpu(serial->dev->descriptor.bcdDevice) != 0x1000)
+> +		priv->gc.ngpio = 1;  /* FT234XD */
+
+As I mentioned in my last mail: I've asked FTDI about this, but I fear
+that FTX234XD has bcdDevice 0x1000 and we may need to just always
+register all four pins after all.
+
+> +	/* Determine which pins are configured for CBUS bitbanging */
+> +	priv->gpio_altfunc = 0xff;
+> +	for (i = 0; i < priv->gc.ngpio; ++i) {
+> +		if (cbus_cfg_buf[i] == FTDI_FTX_CBUS_MUX_GPIO)
+> +			priv->gpio_altfunc &= ~BIT(i);
+> +	}
+> +
+> +out_free:
+> +	kfree(cbus_cfg_buf);
+> +
+> +	return result;
+> +}
+
+> +static void ftdi_gpio_remove(struct usb_serial_port *port)
+> +{
+> +	struct ftdi_private *priv = usb_get_serial_port_data(port);
+> +
+> +	if (priv->gpio_used) {
+> +		/* Remark: Exiting CBUS-mode does not reset pin states too */
+> +		ftdi_exit_cbus_mode(port);
+> +		priv->gpio_used = false;
+> +	}
+
+This should go after deregistration or we have a tiny race window here.
+
+> +	if (priv->gpio_registered) {
+> +		gpiochip_remove(&priv->gc);
+> +		priv->gpio_registered = false;
+> +	}
+> +}
+
+> diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+> index dcd0b6e05baf..6856ccdac9b4 100644
+> --- a/drivers/usb/serial/ftdi_sio.h
+> +++ b/drivers/usb/serial/ftdi_sio.h
+> @@ -35,7 +35,10 @@
+>  #define FTDI_SIO_SET_EVENT_CHAR		6 /* Set the event character */
+>  #define FTDI_SIO_SET_ERROR_CHAR		7 /* Set the error character */
+>  #define FTDI_SIO_SET_LATENCY_TIMER	9 /* Set the latency timer */
+> -#define FTDI_SIO_GET_LATENCY_TIMER	10 /* Get the latency timer */
+> +#define FTDI_SIO_GET_LATENCY_TIMER	0x0a /* Get the latency timer */
+> +#define FTDI_SIO_SET_BITMODE		0x0b /* Set GPIO mode */
+
+Nit: "Set bitbang mode", I think would be more correct here as this
+request is also used to configure the asynchronous bitbang mode, etc.
+
+Thanks,
+Johan
