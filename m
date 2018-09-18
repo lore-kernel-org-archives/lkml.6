@@ -2,183 +2,202 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A117ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA8DECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D6D20676
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D6D20676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 899C320676
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899C320676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbeIRO5w (ORCPT
+        id S1729615AbeIRO6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:57:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59013 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727563AbeIRO5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:57:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42DyKD5Sl0z9ttC9;
-        Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id xCuAA5MR71qZ; Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42DyKD4vjWz9ttBY;
-        Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9D44F8B7E2;
-        Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 5LVO20QicnM5; Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EC178B7E1;
-        Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 158DB718E8; Tue, 18 Sep 2018 09:26:03 +0000 (UTC)
-Message-Id: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/kgdb: add kgdb_arch_set/remove_breakpoint()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 18 Sep 2018 09:26:03 +0000 (UTC)
+        Tue, 18 Sep 2018 10:58:38 -0400
+Received: from www62.your-server.de ([213.133.104.62]:33603 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbeIRO6i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 10:58:38 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2CHM-00067B-8W; Tue, 18 Sep 2018 11:26:44 +0200
+Received: from [178.197.249.15] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2CHM-000XMd-2F; Tue, 18 Sep 2018 11:26:44 +0200
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To:     Vakul Garg <vakul.garg@nxp.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180918101107.74d8689a@canb.auug.org.au>
+ <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
+ <DB7PR04MB42522B223D4E04F5DA519A8B8B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <236589cd-b55d-1ceb-f236-36f9135f794e@iogearbox.net>
+Date:   Tue, 18 Sep 2018 11:26:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <DB7PR04MB42522B223D4E04F5DA519A8B8B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/24951/Tue Sep 18 10:16:39 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Generic implementation fails to remove breakpoints after init
-when CONFIG_STRICT_KERNEL_RWX is selected:
+On 09/18/2018 11:10 AM, Vakul Garg wrote:
+>> -----Original Message-----
+>> From: Daniel Borkmann <daniel@iogearbox.net>
+>> Sent: Tuesday, September 18, 2018 2:14 PM
+>> To: Stephen Rothwell <sfr@canb.auug.org.au>; David Miller
+>> <davem@davemloft.net>; Networking <netdev@vger.kernel.org>
+>> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel
+>> Mailing List <linux-kernel@vger.kernel.org>; Vakul Garg
+>> <vakul.garg@nxp.com>
+>> Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+>>
+>> On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the net-next tree got a conflict in:
+>>>
+>>>   tools/testing/selftests/net/tls.c
+>>>
+>>> between commit:
+>>>
+>>>   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
+>>>
+>>> from the net tree and commit:
+>>>
+>>>   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning
+>>> across multiple records")
+>>>
+>>> from the net-next tree.
+>>>
+>>> I fixed it up (see below) and can carry the fix as necessary. This is
+>>> now fixed as far as linux-next is concerned, but any non trivial
+>>> conflicts should be mentioned to your upstream maintainer when your
+>>> tree is submitted for merging.  You may also want to consider
+>>> cooperating with the maintainer of the conflicting tree to minimise
+>>> any particularly complex conflicts.
+>>
+>> The test from 50c6b58a814d supersedes the one from c2ad647c6442 so the
+>> recv_peek_large_buf_mult_recs could be removed; latter was also not
+>> working correctly due to this bug.
+> 
+> Why remove recv_peek_large_buf_mult_recs if its correct?
+> Why not the newly added one which achieves the same thing?
 
-[   13.251285] KGDB: BP remove failed: c001c338
-[   13.259587] kgdbts: ERROR PUT: end of test buffer on 'do_fork_test' line 8 expected OK got $E14#aa
-[   13.268969] KGDB: re-enter exception: ALL breakpoints killed
-[   13.275099] CPU: 0 PID: 1 Comm: init Not tainted 4.18.0-g82bbb913ffd8 #860
-[   13.282836] Call Trace:
-[   13.285313] [c60e1ba0] [c0080ef0] kgdb_handle_exception+0x6f4/0x720 (unreliable)
-[   13.292618] [c60e1c30] [c000e97c] kgdb_handle_breakpoint+0x3c/0x98
-[   13.298709] [c60e1c40] [c000af54] program_check_exception+0x104/0x700
-[   13.305083] [c60e1c60] [c000e45c] ret_from_except_full+0x0/0x4
-[   13.310845] [c60e1d20] [c02a22ac] run_simple_test+0x2b4/0x2d4
-[   13.316532] [c60e1d30] [c0081698] put_packet+0xb8/0x158
-[   13.321694] [c60e1d60] [c00820b4] gdb_serial_stub+0x230/0xc4c
-[   13.327374] [c60e1dc0] [c0080af8] kgdb_handle_exception+0x2fc/0x720
-[   13.333573] [c60e1e50] [c000e928] kgdb_singlestep+0xb4/0xcc
-[   13.339068] [c60e1e70] [c000ae1c] single_step_exception+0x90/0xac
-[   13.345100] [c60e1e80] [c000e45c] ret_from_except_full+0x0/0x4
-[   13.350865] [c60e1f40] [c000e11c] ret_from_syscall+0x0/0x38
-[   13.356346] Kernel panic - not syncing: Recursive entry to debugger
+Hmm, not quite, on net-next kernel, the recv_peek_large_buf_mult_recs fails
+every time I invoke the tls test suite:
 
-This patch creates powerpc specific version of
-kgdb_arch_set_breakpoint() and kgdb_arch_remove_breakpoint()
-using patch_instruction()
+# ./tls
+[==========] Running 28 tests from 2 test cases.
+[ RUN      ] tls.sendfile
+[       OK ] tls.sendfile
+[ RUN      ] tls.send_then_sendfile
+[       OK ] tls.send_then_sendfile
+[ RUN      ] tls.recv_max
+[       OK ] tls.recv_max
+[ RUN      ] tls.recv_small
+[       OK ] tls.recv_small
+[ RUN      ] tls.msg_more
+[       OK ] tls.msg_more
+[ RUN      ] tls.sendmsg_single
+[       OK ] tls.sendmsg_single
+[ RUN      ] tls.sendmsg_large
+[       OK ] tls.sendmsg_large
+[ RUN      ] tls.sendmsg_multiple
+[       OK ] tls.sendmsg_multiple
+[ RUN      ] tls.sendmsg_multiple_stress
+[       OK ] tls.sendmsg_multiple_stress
+[ RUN      ] tls.splice_from_pipe
+[       OK ] tls.splice_from_pipe
+[ RUN      ] tls.splice_from_pipe2
+[       OK ] tls.splice_from_pipe2
+[ RUN      ] tls.send_and_splice
+[       OK ] tls.send_and_splice
+[ RUN      ] tls.splice_to_pipe
+[       OK ] tls.splice_to_pipe
+[ RUN      ] tls.recvmsg_single
+[       OK ] tls.recvmsg_single
+[ RUN      ] tls.recvmsg_single_max
+[       OK ] tls.recvmsg_single_max
+[ RUN      ] tls.recvmsg_multiple
+[       OK ] tls.recvmsg_multiple
+[ RUN      ] tls.single_send_multiple_recv
+[       OK ] tls.single_send_multiple_recv
+[ RUN      ] tls.multiple_send_single_recv
+[       OK ] tls.multiple_send_single_recv
+[ RUN      ] tls.recv_partial
+[       OK ] tls.recv_partial
+[ RUN      ] tls.recv_nonblock
+[       OK ] tls.recv_nonblock
+[ RUN      ] tls.recv_peek
+[       OK ] tls.recv_peek
+[ RUN      ] tls.recv_peek_multiple
+[       OK ] tls.recv_peek_multiple
+[ RUN      ] tls.recv_peek_large_buf_mult_recs
+tls.c:524:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str, buf, len) (18446744073709551595) == 0 (0)
+tls.recv_peek_large_buf_mult_recs: Test failed at step #8
+[     FAIL ] tls.recv_peek_large_buf_mult_recs
+[ RUN      ] tls.pollin
+[       OK ] tls.pollin
+[ RUN      ] tls.poll_wait
+[       OK ] tls.poll_wait
+[ RUN      ] tls.blocking
+[       OK ] tls.blocking
+[ RUN      ] tls.nonblocking
+[       OK ] tls.nonblocking
+[ RUN      ] tls.control_msg
+[       OK ] tls.control_msg
+[==========] 27 / 28 tests passed.
+[  FAILED  ]
 
-Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/kgdb.h |  5 ++++-
- arch/powerpc/kernel/kgdb.c      | 43 +++++++++++++++++++++++++++++++++--------
- 2 files changed, 39 insertions(+), 9 deletions(-)
+Here's what the recvfrom() with MSG_PEEK sees:
 
-diff --git a/arch/powerpc/include/asm/kgdb.h b/arch/powerpc/include/asm/kgdb.h
-index 9db24e77b9f4..a9e098a3b881 100644
---- a/arch/powerpc/include/asm/kgdb.h
-+++ b/arch/powerpc/include/asm/kgdb.h
-@@ -26,9 +26,12 @@
- #define BREAK_INSTR_SIZE	4
- #define BUFMAX			((NUMREGBYTES * 2) + 512)
- #define OUTBUFMAX		((NUMREGBYTES * 2) + 512)
-+
-+#define BREAK_INSTR		0x7d821008	/* twge r2, r2 */
-+
- static inline void arch_kgdb_breakpoint(void)
- {
--	asm(".long 0x7d821008"); /* twge r2, r2 */
-+	asm(stringify_in_c(.long BREAK_INSTR));
- }
- #define CACHE_FLUSH_IS_SAFE	1
- #define DBG_MAX_REG_NUM     70
-diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
-index 35e240a0a408..59c578f865aa 100644
---- a/arch/powerpc/kernel/kgdb.c
-+++ b/arch/powerpc/kernel/kgdb.c
-@@ -24,6 +24,7 @@
- #include <asm/processor.h>
- #include <asm/machdep.h>
- #include <asm/debug.h>
-+#include <asm/code-patching.h>
- #include <linux/slab.h>
- 
- /*
-@@ -144,7 +145,7 @@ static int kgdb_handle_breakpoint(struct pt_regs *regs)
- 	if (kgdb_handle_exception(1, SIGTRAP, 0, regs) != 0)
- 		return 0;
- 
--	if (*(u32 *) (regs->nip) == *(u32 *) (&arch_kgdb_ops.gdb_bpt_instr))
-+	if (*(u32 *)regs->nip == BREAK_INSTR)
- 		regs->nip += BREAK_INSTR_SIZE;
- 
- 	return 1;
-@@ -441,16 +442,42 @@ int kgdb_arch_handle_exception(int vector, int signo, int err_code,
- 	return -1;
- }
- 
-+int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
-+{
-+	int err;
-+	unsigned int instr;
-+	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
-+
-+	err = probe_kernel_address(addr, instr);
-+	if (err)
-+		return err;
-+
-+	err = patch_instruction(addr, BREAK_INSTR);
-+	if (err)
-+		return -EFAULT;
-+
-+	*(unsigned int *)bpt->saved_instr = instr;
-+
-+	return 0;
-+}
-+
-+int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
-+{
-+	int err;
-+	unsigned int instr = *(unsigned int *)bpt->saved_instr;
-+	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
-+
-+	err = patch_instruction(addr, instr);
-+	if (err)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- /*
-  * Global data
-  */
--struct kgdb_arch arch_kgdb_ops = {
--#ifdef __LITTLE_ENDIAN__
--	.gdb_bpt_instr = {0x08, 0x10, 0x82, 0x7d},
--#else
--	.gdb_bpt_instr = {0x7d, 0x82, 0x10, 0x08},
--#endif
--};
-+struct kgdb_arch arch_kgdb_ops;
- 
- static int kgdb_not_implemented(struct pt_regs *regs)
- {
--- 
-2.13.3
+[pid  2602] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 3
+[pid  2602] socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 4
+[pid  2602] bind(4, {sa_family=AF_INET, sin_port=htons(0), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+[pid  2602] listen(4, 10)               = 0
+[pid  2602] getsockname(4, {sa_family=AF_INET, sin_port=htons(41483), sin_addr=inet_addr("0.0.0.0")}, [16]) = 0
+[pid  2602] connect(3, {sa_family=AF_INET, sin_port=htons(41483), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+[pid  2602] setsockopt(3, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
+[pid  2602] setsockopt(3, 0x11a /* SOL_?? */, 1, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
+[pid  2602] accept(4, {sa_family=AF_INET, sin_port=htons(46290), sin_addr=inet_addr("127.0.0.1")}, [16]) = 5
+[pid  2602] setsockopt(5, SOL_TCP, 0x1f /* TCP_??? */, [7564404], 4) = 0
+[pid  2602] setsockopt(5, 0x11a /* SOL_?? */, 2, "\3\0033\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 40) = 0
+[pid  2602] close(4)                    = 0
+[pid  2602] sendto(3, "test_read_peek", 14, 0, NULL, 0) = 14
+[pid  2602] sendto(3, "_mult_recs\0", 11, 0, NULL, 0) = 11
+[pid  2602] recvfrom(5, "test_read_peektest_read_peektest"..., 64, MSG_PEEK, NULL, NULL) = 64
+[pid  2602] write(2, "tls.c:526:tls.recv_peek_large_bu"..., 112tls.c:526:tls.recv_peek_large_buf_mult_recs:Expected memcmp(test_str, buf, len) (18446744073709551595) == 0 (0)
+) = 112
+[pid  2602] close(3)                    = 0
+[pid  2602] close(5)                    = 0
+[pid  2602] exit_group(8)               = ?
 
+Reason for the "test_read_peektest_read_peektest[...]" is because MSG_PEEK
+cannot call tls_sw_advance_skb(), since the skb is sitting there that needs
+to be consumed for non-MSG_PEEK case, and only then we can advance it.
+
+Could you elaborate on where you ever had this test succeeding? With nxp
+accelerator?
+
+Thanks,
+Daniel
