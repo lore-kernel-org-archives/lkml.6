@@ -2,130 +2,99 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F395ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40F9ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D5420C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D5420C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 4E42120C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:32:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0U0rCge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E42120C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeISEFi (ORCPT
+        id S1727316AbeISEHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 00:05:38 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:43462 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeISEFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 00:05:37 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1g2OWB-0006eh-PZ; Wed, 19 Sep 2018 00:30:51 +0200
-Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
- under high system load
-To:     David Arendt <admin@prnet.org>
-Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
-        netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
-References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
-Date:   Wed, 19 Sep 2018 00:30:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 19 Sep 2018 00:07:00 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46423 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbeISEHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 00:07:00 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so3198764ljj.13;
+        Tue, 18 Sep 2018 15:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kXcrpGfAeVrWonoutAN2Glnmb0uDUIJ3wXTovMQaQDw=;
+        b=F0U0rCgejfgoHdGNlQhaJmvElZQWUbYQC5xhC6+smSIQGvlKx+OkPdN6HNyKx9d2EG
+         BzbLCzRTAc9L3UTf5N3gm5HLzMvGFMzuF5LzmhOZMu+ryY6OgVrNdn94LxzA3LOAV8I/
+         G/CxdIpJzrRwUh6YKqA6yt9uZB2zJAoaN62/igUhlUVna8caoSEp9xKfYg5hWeJjYN+U
+         wpgwVStwbO3lgnmPyd5t7Gqr/CQWWJl2cg8ab15iE+SAbSZWR17icK8xoAfQzXzS9W2J
+         9Tke9w/qRzCFCeuJpCY5aCSk0mnkyPNzXGqxrhGazrPXz1ghKgmeCjFwJ/wFPeB3iEZf
+         OU9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kXcrpGfAeVrWonoutAN2Glnmb0uDUIJ3wXTovMQaQDw=;
+        b=CqG2S8OK1LiaKMYnAbEKhzmE2iH4bsh6YXvmiH575HTxB4Hrju7fUkXewqbww8Qmyv
+         A1NLbvbGsiYLdcbxYiSeFGrHwQdhGszE9T4tl7bw0yw/M8mhKgt/SDtu3OWWXm61o1Wg
+         0o6TkhUa19gBTDJmypQ/qnJmQqGZpvM0bZhYmV+1lGzdZfEHmPBqscJKdMu0xz9p4YMv
+         /Wk780rl4g9pV5ImhlCOMYK5I/X9DFe9JlPX/CrccPMoaUJnC4oW0WsMvYFE0SbesiFm
+         78pHcr3/rap2jigTTEnd9wBYfcKRqgauz574kMnWdZRyo7oqcGF92Kv7Islgc2SuzLmP
+         3r4A==
+X-Gm-Message-State: APzg51AYwHYsdTjmc0Jx5lMvwMWb4rEHzoAtQspbHDwd8ychqFAFoTzy
+        nfbIdKD8XCgz56TaQDYW6TBIeEvZ5f5oQKK/NII=
+X-Google-Smtp-Source: ANB0VdajIGo6TH6yZmhvYmBeXsypQ6Z/TCsbuf4zDyEfze8aRY51pdzBRAwHb1aKGfTYNEwmT3NDm8Lc8IxJwpSnfn8=
+X-Received: by 2002:a2e:93c4:: with SMTP id p4-v6mr3799047ljh.150.1537309934900;
+ Tue, 18 Sep 2018 15:32:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180919082500.74401754@canb.auug.org.au>
+In-Reply-To: <20180919082500.74401754@canb.auug.org.au>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Tue, 18 Sep 2018 15:32:03 -0700
+Message-ID: <CAKdAkRR8NH8FxfRVsB2DCiyh7QVZLisqZgd1ZgHCnGpUO6KP-g@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the input-current tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Drake <drake@endlessm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     linux-next <linux-next@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Sep 18, 2018 at 3:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Dmitry,
+>
+> After merging the input-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
+>
+> Caused by commit
+>
+>   1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2idle is used")
+>
+> I have used the version of input-current from next-20180918 for today.
 
-On 18.09.2018 12:23, David Arendt wrote:
-> Hi,
-> 
-> Today I had the network adapter problems again.
-> So the patch doesn't seem to change anything regarding this problem.
-> This week my time is unfortunately very limited, but I will try to
-> find some time next weekend to look a bit more into the issue.
+Ugh, sorry, I dropped that patch from my tree for now.
 
-If the problem is caused by missing TXCFG_AUTO_FIFO bit in TxConfig,
-as the register difference would suggest, then you can try applying
-the following patch (hack) on top of 4.18.8 that is already patched
-with commit f74dd480cf4e:
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -5043,7 +5043,8 @@
- {
- 	/* Set DMA burst size and Interframe Gap Time */
- 	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
--		(InterFrameGap << TxInterFrameGapShift));
-+		(InterFrameGap << TxInterFrameGapShift)
-+		| TXCFG_AUTO_FIFO);
- }
- 
- static void rtl_set_rx_max_size(struct rtl8169_private *tp)
+Daniel, Rafael, I guess we can't make pm_suspend_via_s2idle() static
+inline, but instead move it into kernel/power/suspend.c and make it
+EXPORT_SYMBOL().
 
-This hack will probably only work properly on RTL_GIGA_MAC_VER_40 or
-later NICs.
+Thanks.
 
-Before running any tests please verify with "ethtool -d enp3s0" that
-TxConfig register now contains 0x4f000f80, as it did in the old,
-working driver version.
-
-If this does not help then a bisection will most likely be needed.
-
-> Thanks in advance,
-> David Arendt
-
-Maciej
+-- 
+Dmitry
