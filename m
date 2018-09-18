@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDC3ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086AAECE568
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA06206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA06206B7
+	by mail.kernel.org (Postfix) with ESMTP id B105C214AB
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B105C214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbeIRPKP (ORCPT
+        id S1729895AbeIRPKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:10:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:59397 "EHLO mga01.intel.com"
+        Tue, 18 Sep 2018 11:10:16 -0400
+Received: from mga01.intel.com ([192.55.52.88]:59400 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729812AbeIRPKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:10:13 -0400
+        id S1729812AbeIRPKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:10:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 02:38:23 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 02:38:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
-   d="scan'208";a="71724162"
+   d="scan'208";a="71724193"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Sep 2018 02:38:14 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 18 Sep 2018 02:38:26 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -40,9 +40,9 @@ Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v3 09/20] tpm: move tpm1 selftest code from tpm-interface tpm1-cmd.c
-Date:   Tue, 18 Sep 2018 12:34:48 +0300
-Message-Id: <20180918093459.19165-10-tomas.winkler@intel.com>
+Subject: [PATCH v3 14/20] tpm: tpm-interface.c drop unused macros
+Date:   Tue, 18 Sep 2018 12:34:53 +0300
+Message-Id: <20180918093459.19165-15-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180918093459.19165-1-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
@@ -51,417 +51,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the tpm1 selftest code functions to tpm1-cmd.c
-and adjust callers to use the new function names.
- 1. tpm_pcr_read_dev to tpm1_pcr_read_dev
- 2. tpm_continue_selftest to tpm1_continue_selftest
- 3. tpm_do_selftest to tpm1_do_selftest
+The code movement left some macros unused.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
-V2-V3: Rebase
+V3: new in the series
 
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-interface.c     | 148 +----------------------------------
- drivers/char/tpm/tpm-sysfs.c         |   2 +-
- drivers/char/tpm/tpm.h               |   4 +-
- drivers/char/tpm/tpm1-cmd.c          | 142 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm_tis_core.c      |   2 +-
- 6 files changed, 150 insertions(+), 150 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index abd675bec88c..64dc560859f2 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -649,7 +649,7 @@ int st33zp24_pm_resume(struct device *dev)
- 	} else {
- 		ret = tpm_pm_resume(dev);
- 		if (!ret)
--			tpm_do_selftest(chip);
-+			tpm1_do_selftest(chip);
- 	}
- 	return ret;
- } /* st33zp24_pm_resume() */
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index c15957fef08f..8396cf6735ec 100644
+index a8f8e0bcb434..358ef5bd601e 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -456,59 +456,6 @@ int tpm_get_timeouts(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm_get_timeouts);
+@@ -33,10 +33,6 @@
  
--#define TPM_ORD_CONTINUE_SELFTEST 83
--#define CONTINUE_SELFTEST_RESULT_SIZE 10
--
--static const struct tpm_input_header continue_selftest_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(10),
--	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
--};
--
--/**
-- * tpm_continue_selftest -- run TPM's selftest
-- * @chip: TPM chip to use
-- *
-- * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
-- * a TPM error code.
-- */
--static int tpm_continue_selftest(struct tpm_chip *chip)
--{
--	int rc;
--	struct tpm_cmd_t cmd;
--
--	cmd.header.in = continue_selftest_header;
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
--			      0, 0, "continue selftest");
--	return rc;
--}
--
--#define TPM_ORDINAL_PCRREAD 21
--#define READ_PCR_RESULT_SIZE 30
--#define READ_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrread_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(14),
--	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
--};
--
--int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
--{
--	int rc;
--	struct tpm_cmd_t cmd;
--
--	cmd.header.in = pcrread_header;
--	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
--			      READ_PCR_RESULT_BODY_SIZE, 0,
--			      "attempting to read a pcr value");
--
--	if (rc == 0)
--		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
--		       TPM_DIGEST_SIZE);
--	return rc;
--}
--
- /**
-  * tpm_is_tpm2 - do we a have a TPM2 chip?
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-@@ -549,10 +496,12 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- 	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
-+
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
- 	else
--		rc = tpm_pcr_read_dev(chip, pcr_idx, res_buf);
-+		rc = tpm1_pcr_read_dev(chip, pcr_idx, res_buf);
-+
- 	tpm_put_ops(chip);
- 	return rc;
- }
-@@ -603,97 +552,6 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_extend);
+ #include "tpm.h"
  
--/**
-- * tpm_do_selftest - have the TPM continue its selftest and wait until it
-- *                   can receive further commands
-- * @chip: TPM chip to use
-- *
-- * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
-- * a TPM error code.
-- */
--int tpm_do_selftest(struct tpm_chip *chip)
--{
--	int rc;
--	unsigned int loops;
--	unsigned int delay_msec = 100;
--	unsigned long duration;
--	u8 dummy[TPM_DIGEST_SIZE];
+-#define TSC_MAX_ORDINAL 12
+-#define TPM_PROTECTED_COMMAND 0x00
+-#define TPM_CONNECTION_COMMAND 0x40
 -
--	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
--
--	loops = jiffies_to_msecs(duration) / delay_msec;
--
--	rc = tpm_continue_selftest(chip);
--	if (rc == TPM_ERR_INVALID_POSTINIT) {
--		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
--		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
--	}
--	/* This may fail if there was no TPM driver during a suspend/resume
--	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
--	 */
--	if (rc)
--		return rc;
--
--	do {
--		/* Attempt to read a PCR value */
--		rc = tpm_pcr_read_dev(chip, 0, dummy);
--
--		/* Some buggy TPMs will not respond to tpm_tis_ready() for
--		 * around 300ms while the self test is ongoing, keep trying
--		 * until the self test duration expires. */
--		if (rc == -ETIME) {
--			dev_info(
--			    &chip->dev, HW_ERR
--			    "TPM command timed out during continue self test");
--			tpm_msleep(delay_msec);
--			continue;
--		}
--
--		if (rc == TPM_ERR_DISABLED || rc == TPM_ERR_DEACTIVATED) {
--			dev_info(&chip->dev,
--				 "TPM is disabled/deactivated (0x%X)\n", rc);
--			/* TPM is disabled and/or deactivated; driver can
--			 * proceed and TPM does handle commands for
--			 * suspend/resume correctly
--			 */
--			return 0;
--		}
--		if (rc != TPM_WARN_DOING_SELFTEST)
--			return rc;
--		tpm_msleep(delay_msec);
--	} while (--loops > 0);
--
--	return rc;
--}
--EXPORT_SYMBOL_GPL(tpm_do_selftest);
--
--/**
-- * tpm1_auto_startup - Perform the standard automatic TPM initialization
-- *                     sequence
-- * @chip: TPM chip to use
-- *
-- * Returns 0 on success, < 0 in case of fatal error.
-- */
--int tpm1_auto_startup(struct tpm_chip *chip)
--{
--	int rc;
--
--	rc = tpm_get_timeouts(chip);
--	if (rc)
--		goto out;
--	rc = tpm_do_selftest(chip);
--	if (rc) {
--		dev_err(&chip->dev, "TPM self test failed\n");
--		goto out;
--	}
--
--	return rc;
--out:
--	if (rc > 0)
--		rc = -ENODEV;
--	return rc;
--}
--
- /**
-  * tpm_send - send a TPM command
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 008515314ae3..861acafd8f29 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -114,7 +114,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- 
- 	num_pcrs = be32_to_cpu(cap.num_pcrs);
- 	for (i = 0; i < num_pcrs; i++) {
--		rc = tpm_pcr_read_dev(chip, i, digest);
-+		rc = tpm1_pcr_read_dev(chip, i, digest);
- 		if (rc)
- 			break;
- 		str += sprintf(str, "PCR-%02d: ", i);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 496a56156e77..fd945fc828b6 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -542,13 +542,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 			 const char *desc);
- int tpm_startup(struct tpm_chip *chip);
- int tpm_get_timeouts(struct tpm_chip *);
--int tpm_do_selftest(struct tpm_chip *chip);
- 
-+int tpm1_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 		    const char *log_msg);
-+int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		    const char *desc, size_t min_cap_length);
- int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-@@ -575,7 +576,6 @@ void tpm_chip_unregister(struct tpm_chip *chip);
- 
- void tpm_sysfs_add_device(struct tpm_chip *chip);
- 
--int tpm_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- 
- #ifdef CONFIG_ACPI
- extern void tpm_add_ppi(struct tpm_chip *chip);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index e7e0528e2e06..3f561736f066 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -525,3 +525,145 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 
- 	return total ? total : -EIO;
- }
-+
-+#define TPM_ORDINAL_PCRREAD 21
-+#define READ_PCR_RESULT_SIZE 30
-+#define READ_PCR_RESULT_BODY_SIZE 20
-+static const struct tpm_input_header pcrread_header = {
-+	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-+	.length = cpu_to_be32(14),
-+	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
-+};
-+
-+int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-+{
-+	int rc;
-+	struct tpm_cmd_t cmd;
-+
-+	cmd.header.in = pcrread_header;
-+	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
-+	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
-+			      READ_PCR_RESULT_BODY_SIZE, 0,
-+			      "attempting to read a pcr value");
-+
-+	if (rc == 0)
-+		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
-+		       TPM_DIGEST_SIZE);
-+	return rc;
-+}
-+
-+#define TPM_ORD_CONTINUE_SELFTEST 83
-+#define CONTINUE_SELFTEST_RESULT_SIZE 10
-+static const struct tpm_input_header continue_selftest_header = {
-+	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-+	.length = cpu_to_be32(10),
-+	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
-+};
-+
-+/**
-+ * tpm_continue_selftest -- run TPM's selftest
-+ * @chip: TPM chip to use
-+ *
-+ * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
-+ * a TPM error code.
-+ */
-+static int tpm1_continue_selftest(struct tpm_chip *chip)
-+{
-+	int rc;
-+	struct tpm_cmd_t cmd;
-+
-+	cmd.header.in = continue_selftest_header;
-+	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
-+			      0, 0, "continue selftest");
-+	return rc;
-+}
-+
-+/**
-+ * tpm1_do_selftest - have the TPM continue its selftest and wait until it
-+ *                   can receive further commands
-+ * @chip: TPM chip to use
-+ *
-+ * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
-+ * a TPM error code.
-+ */
-+int tpm1_do_selftest(struct tpm_chip *chip)
-+{
-+	int rc;
-+	unsigned int loops;
-+	unsigned int delay_msec = 100;
-+	unsigned long duration;
-+	u8 dummy[TPM_DIGEST_SIZE];
-+
-+	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
-+
-+	loops = jiffies_to_msecs(duration) / delay_msec;
-+
-+	rc = tpm1_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
-+	/* This may fail if there was no TPM driver during a suspend/resume
-+	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
-+	 */
-+	if (rc)
-+		return rc;
-+
-+	do {
-+		/* Attempt to read a PCR value */
-+		rc = tpm1_pcr_read_dev(chip, 0, dummy);
-+
-+		/* Some buggy TPMs will not respond to tpm_tis_ready() for
-+		 * around 300ms while the self test is ongoing, keep trying
-+		 * until the self test duration expires.
-+		 */
-+		if (rc == -ETIME) {
-+			dev_info(&chip->dev, HW_ERR "TPM command timed out during continue self test");
-+			tpm_msleep(delay_msec);
-+			continue;
-+		}
-+
-+		if (rc == TPM_ERR_DISABLED || rc == TPM_ERR_DEACTIVATED) {
-+			dev_info(&chip->dev, "TPM is disabled/deactivated (0x%X)\n",
-+				 rc);
-+			/* TPM is disabled and/or deactivated; driver can
-+			 * proceed and TPM does handle commands for
-+			 * suspend/resume correctly
-+			 */
-+			return 0;
-+		}
-+		if (rc != TPM_WARN_DOING_SELFTEST)
-+			return rc;
-+		tpm_msleep(delay_msec);
-+	} while (--loops > 0);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(tpm1_do_selftest);
-+
-+/**
-+ * tpm1_auto_startup - Perform the standard automatic TPM initialization
-+ *                     sequence
-+ * @chip: TPM chip to use
-+ *
-+ * Returns 0 on success, < 0 in case of fatal error.
-+ */
-+int tpm1_auto_startup(struct tpm_chip *chip)
-+{
-+	int rc;
-+
-+	rc = tpm1_get_timeouts(chip);
-+	if (rc)
-+		goto out;
-+	rc = tpm1_do_selftest(chip);
-+	if (rc) {
-+		dev_err(&chip->dev, "TPM self test failed\n");
-+		goto out;
-+	}
-+
-+	return rc;
-+out:
-+	if (rc > 0)
-+		rc = -ENODEV;
-+	return rc;
-+}
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index ced01ec146b5..bf7e49cfa643 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1056,7 +1056,7 @@ int tpm_tis_resume(struct device *dev)
- 	 * an error code but for unknown reason it isn't handled.
- 	 */
- 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
--		tpm_do_selftest(chip);
-+		tpm1_do_selftest(chip);
- 
- 	return 0;
- }
+ /*
+  * Bug workaround - some TPM's don't flush the most
+  * recently changed pcr on suspend, so force the flush
 -- 
 2.14.4
 
