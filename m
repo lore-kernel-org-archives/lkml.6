@@ -2,80 +2,88 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BB5ECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FEEECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BEDF20858
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BEDF20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F37D21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F37D21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeIROLD (ORCPT
+        id S1729509AbeIROPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:11:03 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:56240 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726433AbeIROLC (ORCPT
+        Tue, 18 Sep 2018 10:15:48 -0400
+Received: from www62.your-server.de ([213.133.104.62]:56677 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729129AbeIROPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:11:02 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8I8TYZh031875;
-        Tue, 18 Sep 2018 03:38:35 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2mgyg0vb8v-1;
-        Tue, 18 Sep 2018 03:38:34 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 51103611CE60;
-        Tue, 18 Sep 2018 03:40:29 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Sep 2018
- 09:38:33 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w8I8cVM8007400; Tue,
- 18 Sep 2018 09:38:31 +0100
-Date:   Tue, 18 Sep 2018 09:38:31 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-CC:     <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <oder_chiou@realtek.com>, <bardliao@realtek.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: remove redundant include
-Message-ID: <20180918083831.GL1653@imbe.wolfsonmicro.main>
-References: <1537258584-43853-1-git-send-email-zhongjiang@huawei.com>
+        Tue, 18 Sep 2018 10:15:48 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2Bc7-0000Qs-SS; Tue, 18 Sep 2018 10:44:07 +0200
+Received: from [178.197.249.15] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1g2Bc7-000JWR-N0; Tue, 18 Sep 2018 10:44:07 +0200
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vakul Garg <vakul.garg@nxp.com>
+References: <20180918101107.74d8689a@canb.auug.org.au>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
+Date:   Tue, 18 Sep 2018 10:44:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1537258584-43853-1-git-send-email-zhongjiang@huawei.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=842 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1809180088
+In-Reply-To: <20180918101107.74d8689a@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.1/24950/Tue Sep 18 05:20:31 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 04:16:24PM +0800, zhong jiang wrote:
-> module.h already contained moduleparam.h,  so it is safe to remove
-> the redundant include.
+On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> The issue is detected with the help of Coccinelle.
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
+>   tools/testing/selftests/net/tls.c
+> 
+> between commit:
+> 
+>   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
+> 
+> from the net tree and commit:
+> 
+>   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across multiple records")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-For the Wolfson bits:
-
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+The test from 50c6b58a814d supersedes the one from c2ad647c6442 so the
+recv_peek_large_buf_mult_recs could be removed; latter was also not working
+correctly due to this bug.
 
 Thanks,
-Charles
+Daniel
