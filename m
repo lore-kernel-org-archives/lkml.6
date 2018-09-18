@@ -2,95 +2,161 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B23FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F303C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2058820685
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:30:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2058820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 491E6206B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:31:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BpbgFiO+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491E6206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730201AbeIRWEQ (ORCPT
+        id S1730295AbeIRWEZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:04:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47720 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728982AbeIRWEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:04:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECA947A9;
-        Tue, 18 Sep 2018 09:30:54 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 504B13F5BD;
-        Tue, 18 Sep 2018 09:30:53 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 17:30:50 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     kbuild test robot <fengguang.wu@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: fix ptr_ret.cocci warnings
-Message-ID: <20180918163050.GC31440@e107981-ln.cambridge.arm.com>
-References: <201807120738.oIXXb65q%fengguang.wu@intel.com>
- <20180711233041.GA39597@lkp-sbx04>
- <20180918141838.GA32243@e107981-ln.cambridge.arm.com>
- <20180918144737.GA30386@ulmo>
+        Tue, 18 Sep 2018 18:04:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48990 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728982AbeIRWEZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:04:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sURuNf7o8jwtArH6Wejpqput1UpQqnxdl9Auao8Dr7U=; b=BpbgFiO+q1Ge1fs+V9ylKosOk
+        ILjmoUUEg1YGvO4LZSrV++/rwZMcCnMTBE0NFvZqJhyBjLuT1FVBbvvdsi9e0PHMCDPXPyBEKDuNK
+        Xt3GvEu8TdHTkqVu1EoQPIA1jJh8vJunKzP8MX0GhnoKH9vMNHbL3YN86Ei8QjUtZu5JY=;
+Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g2Itm-0003R8-Np; Tue, 18 Sep 2018 16:30:51 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 7CA10440078; Tue, 18 Sep 2018 17:30:48 +0100 (BST)
+Date:   Tue, 18 Sep 2018 09:30:48 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Leilk Liu <leilk.liu@mediatek.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, yt.shen@mediatek.com
+Subject: Re: [PATCH v3 2/3] spis: mediatek: add spi slave for Mediatek MT2712
+Message-ID: <20180918163048.GN2471@sirena.org.uk>
+References: <1537150762-7072-1-git-send-email-leilk.liu@mediatek.com>
+ <1537150762-7072-3-git-send-email-leilk.liu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="o+ZCuNqY+dEAKBWl"
 Content-Disposition: inline
-In-Reply-To: <20180918144737.GA30386@ulmo>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1537150762-7072-3-git-send-email-leilk.liu@mediatek.com>
+X-Cookie: Universe, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 04:47:37PM +0200, Thierry Reding wrote:
-> On Tue, Sep 18, 2018 at 03:18:38PM +0100, Lorenzo Pieralisi wrote:
-> > On Thu, Jul 12, 2018 at 07:30:41AM +0800, kbuild test robot wrote:
-> > > From: kbuild test robot <fengguang.wu@intel.com>
-> > > 
-> > > drivers/pci/controller/pci-tegra.c:1132:1-3: WARNING: PTR_ERR_OR_ZERO can be used
-> > > 
-> > > 
-> > >  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
-> > > 
-> > > Generated by: scripts/coccinelle/api/ptr_ret.cocci
-> > > 
-> > > Fixes: 6e0832fa432e ("PCI: Collect all native drivers under drivers/pci/controller/")
-> > > CC: Shawn Lin <shawn.lin@rock-chips.com>
-> > > Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-> > > ---
-> > > 
-> > >  pci-tegra.c |    5 +----
-> > >  1 file changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > Thierry,
-> > 
-> > are you OK with this change ? I will remove the Fixes: tag since
-> > this does not fix anything AFAICS.
-> 
-> This has been proposed several times in the past and each time Bjorn and
-> I have agreed that we'd rather not merge that change. I think the
-> original is clearer and allows the code to be more easily extended.
-> 
-> I don't know if there's a way to "whitelist" certain drivers or sub-
-> systems where these kinds of changes are known not to be desired. Or
-> perhaps there's some way to trick coccinelle into not recognizing this
-> particular instance.
-> 
-> Then again, it seems wrong to have to work around over-ambitious
-> semantic patches...
 
-I agree with you and Bjorn, I will drop the patches but you have a
-point. Certainly these patches aren't fixing anything unless I am
-missing something obvious.
+--o+ZCuNqY+dEAKBWl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Lorenzo
+On Mon, Sep 17, 2018 at 10:19:21AM +0800, Leilk Liu wrote:
+
+This looks overall pretty good, a few smallish comments below:
+
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
+
+>  if SPI_SLAVE
+> +config SPI_SLAVE_MT27XX
+> +	tristate "MediaTek SPI slave device"
+> +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> +	help
+> +	  This selects the MediaTek(R) SPI slave device driver.
+> +	  If you want to use MediaTek(R) SPI slave interface,
+> +	  say Y or M here.If you are not sure, say N.
+> +	  SPI slave drivers for Mediatek MT27XX series ARM SoCs.
+> =20
+>  config SPI_SLAVE_TIME
+
+This is a driver not a slave implementation, it should be with the other
+drivers in the Kconfig.  The slave implementations are for the
+functionality that uses the drivers, not the drivers themselves.
+
+> +	/* set the tx/rx endian */
+> +#ifdef __LITTLE_ENDIAN
+> +	reg_val &=3D ~SPIS_TX_ENDIAN;
+> +	reg_val &=3D ~SPIS_RX_ENDIAN;
+> +#else
+> +	reg_val |=3D SPIS_TX_ENDIAN;
+> +	reg_val |=3D SPIS_RX_ENDIAN;
+> +#endif
+> +	writel(reg_val, mdata->base + SPIS_CFG_REG);
+
+This seems weird - it looks like it's changing the endianess of the
+protocol based on the endianness the processor is running in.  What's
+going on here?  I'd expect the driver to be just treating everything as
+a byte stream and letting the protocol driver handle the endianness
+issues, otherwise we might end up with double converions.
+
+> +		xfer->tx_dma =3D dma_map_single(dev, (void *)xfer->tx_buf,
+> +					      xfer->len, DMA_TO_DEVICE);
+
+Why is there a cast to void here?  That's usually a sign that there's a
+type safety issue, the whole point with void is that it's compatible
+with any other pointer.
+
+> +static irqreturn_t mtk_spi_slave_interrupt(int irq, void *dev_id)
+> +{
+> +	struct spi_controller *ctlr =3D dev_id;
+> +	struct mtk_spi_slave *mdata =3D spi_controller_get_devdata(ctlr);
+> +	struct spi_transfer *trans =3D mdata->cur_transfer;
+> +	u32 int_status, reg_val, cnt, remainder;
+> +
+> +	int_status =3D readl(mdata->base + SPIS_IRQ_ST_REG);
+> +	writel(int_status, mdata->base + SPIS_IRQ_CLR_REG);
+> +
+> +	if (!trans)
+> +		return IRQ_HANDLED;
+
+Are you sure that this is the right thing to do if we get a spurious
+interrupt - the normal thing would be to return IRQ_NONE, possibly
+logging a warning as well?
+
+> +	if (int_status & CMD_INVALID_ST)
+> +		dev_err(&ctlr->dev, "cmd invalid\n");
+
+If there's an interrupt that doesn't have any of the interrupt status
+flags set I'd expect to see a warning and probably IRQ_NONE being
+returned.  That way if the interrupt line is shared we work correctly
+and if something goes wrong and the interrupt gets stuck on then the
+core interrupt code's error handling can kick in.
+
+--o+ZCuNqY+dEAKBWl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluhKDcACgkQJNaLcl1U
+h9CQEAf8C+HMOrV3AB7YV2i/5k6xdvpMbOqH1q+eUO4Ct6kJZ9L2EsVgx12Iir3o
+ujpI8qL4DKvYs8RgPjmDc/ktxYyFfeAUaz5AzJUyuGNUgaYhJjXbPtJkBcjpZ9c3
+6He4fx1RWgkol/a4XLc2JBcVv8zqh9ayctLykKujLlOLUKwAvUdqSRH5tzJu7sr0
+evNsuDeuGVHsOSOu1LCPO/MbWql85YL0iEHRZm2PfmYYaVf1TwMQjRjUkiUC7K8R
++4PwwLGJTNgcaePGK9r8apszvbcZwRlO6h0YClZLRp+h1TJpml9OMgXx/Y5roUxV
+CVVo/lYIq+e/4M7oVePEVB0cwGv+ew==
+=aBM1
+-----END PGP SIGNATURE-----
+
+--o+ZCuNqY+dEAKBWl--
