@@ -2,136 +2,72 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62E6C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593E3C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D7521508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:49:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D7521508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BBF22146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BBF22146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730174AbeIRTWh (ORCPT
+        id S1730188AbeIRTWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:22:37 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44109 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729889AbeIRTWg (ORCPT
+        Tue, 18 Sep 2018 15:22:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43172 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729889AbeIRTWj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:22:36 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08053426|-1;CH=green;FP=5048418342381893053|1|1|1|0|-1|-1|-1;HT=e01l07447;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CsTeN26_1537278584;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CsTeN26_1537278584)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Tue, 18 Sep 2018 21:49:44 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
-        robh@kernel.org, sfr@canb.auug.org.au
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arch@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, green.hu@gmail.com,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V7 2/2] dt-bindings: interrupt-controller: C-SKY APB intc
-Date:   Tue, 18 Sep 2018 21:49:40 +0800
-Message-Id: <db9c62a8c722b1ed82044d50091f3099d38ee2f3.1537276735.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537276735.git.ren_guo@c-sky.com>
-References: <cover.1537276735.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1537276735.git.ren_guo@c-sky.com>
-References: <cover.1537276735.git.ren_guo@c-sky.com>
+        Tue, 18 Sep 2018 15:22:39 -0400
+Received: from localhost (unknown [147.67.4.98])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4BFDC03;
+        Tue, 18 Sep 2018 13:49:56 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 15:49:54 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Nathan March <nathan@gt.net>,
+        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rong, Chen" <rong.a.chen@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: Re: [PATCHv5 6/7] tty/ldsem: Add lockdep asserts for ldisc_sem
+Message-ID: <20180918134954.GF23431@kroah.com>
+References: <20180917235258.5719-1-dima@arista.com>
+ <20180917235258.5719-7-dima@arista.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917235258.5719-7-dima@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - Dt-bindings doc about C-SKY apb bus interrupt controller.
+On Tue, Sep 18, 2018 at 12:52:57AM +0100, Dmitry Safonov wrote:
+> Make sure under CONFIG_LOCKDEP that each change to line discipline
+> is done with held write semaphor.
+> Otherwise potential reader will have a good time dereferencing
+> incomplete/uninitialized ldisc.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- .../interrupt-controller/csky,apb-intc.txt         | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+Note, I don't see patch 5/7 here, did it get lost?  Please fix that up
+for the next resend of this series.
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-new file mode 100644
-index 0000000..be7c3d1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
-@@ -0,0 +1,70 @@
-+==============================
-+C-SKY APB Interrupt Controller
-+==============================
-+
-+C-SKY APB Interrupt Controller is a simple soc interrupt controller
-+on the apb bus and we only use it as root irq controller.
-+
-+ - csky,apb-intc is used in a lot of csky fpgas and socs, it support 64 irq nums.
-+ - csky,dual-apb-intc consists of 2 apb-intc and 128 irq nums supported.
-+ - csky,gx6605s-intc is gx6605s soc internal irq interrupt controller, 64 irq nums.
-+
-+=============================
-+intc node bindings definition
-+=============================
-+
-+        Description: Describes APB interrupt controller
-+
-+        PROPERTIES
-+
-+        - compatible
-+                Usage: required
-+                Value type: <string>
-+                Definition: must be "csky,apb-intc"
-+				    "csky,dual-apb-intc"
-+				    "csky,gx6605s-intc"
-+        - #interrupt-cells
-+                Usage: required
-+                Value type: <u32>
-+                Definition: must be <1>
-+	- reg
-+		Usage: required
-+		Value type: <u32 u32>
-+                Definition: <phyaddr size> in soc from cpu view
-+        - interrupt-controller:
-+                Usage: required
-+        - support-pulse-signal:
-+                Usage: select
-+		Description: to support pulse signal flag
-+
-+Examples:
-+---------
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,apb-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+	};
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,apb-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+		support-pulse-signal;
-+	};
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,dual-apb-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+	};
-+
-+	intc: interrupt-controller@500000 {
-+		compatible = "csky,gx6605s-intc";
-+		#interrupt-cells = <1>;
-+		reg = <0x00500000 0x400>;
-+		interrupt-controller;
-+	};
--- 
-2.7.4
+thanks,
 
+greg k-h
