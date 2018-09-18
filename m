@@ -6,179 +6,131 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6489ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C68CECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57DC0214AB
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57DC0214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C0D0920C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D0920C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbeIRPpc (ORCPT
+        id S1729501AbeIRPpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:45:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726768AbeIRPpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:45:32 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 80E01869F8DFC;
-        Tue, 18 Sep 2018 18:13:35 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 18:13:34 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Chao Yu <chao@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
- <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
- <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
- <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
- <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
- <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
- <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
- <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
- <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
- <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
- <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
-Date:   Tue, 18 Sep 2018 18:13:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Tue, 18 Sep 2018 11:45:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbeIRPpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:45:34 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8F25EC05093B;
+        Tue, 18 Sep 2018 10:13:41 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A9F478DCD;
+        Tue, 18 Sep 2018 10:13:37 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ming Lei <ming.lei@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 3/3] nvme: don't drain IO in nvme_reset_work()
+Date:   Tue, 18 Sep 2018 18:13:10 +0800
+Message-Id: <20180918101310.13154-4-ming.lei@redhat.com>
+In-Reply-To: <20180918101310.13154-1-ming.lei@redhat.com>
+References: <20180918101310.13154-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 18 Sep 2018 10:13:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/18 10:05, Jaegeuk Kim wrote:
-> On 09/18, Chao Yu wrote:
->> On 2018/9/18 9:19, Jaegeuk Kim wrote:
->>> On 09/13, Chao Yu wrote:
->>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
->>>>> On 09/12, Chao Yu wrote:
->>>>>> On 2018/9/12 9:40, Chao Yu wrote:
->>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
->>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
->>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
->>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
->>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
->>>>>>>>>>>>> can recover it based on previous user information.
->>>>>>>>>>>>
->>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
->>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
->>>>>>>>>>>> same?
->>>>>>>>>>>
->>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
->>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
->>>>>>>>>>> fsck after roll-forward recovery.
->>>>>>>>>>>
->>>>>>>>>>> Anyway, let me test again without this patch for a while.
->>>>>>>>>>
->>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
->>>>>>>>>
->>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
->>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
->>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
->>>>>>>>> may was corrupted/inconsistent. Right?
->>>>>>>
->>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
->>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
->>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
->>>>>>> detected by fsck, I guess there is bug in v8.
->>>>>>
->>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
->>>>>> 1. flush time in block_operation exceed a threshold.
->>>>>> 2. dquot subsystem error occurs.
->>>>>>
->>>>>> For above case, fsck should repair the quota file by default.
->>>>>
->>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
->>>>> during the recovery. So, we have something missing in the recovery in terms
->>>>> of quota updates.
->>>>
->>>> Yeah, I checked the code, just found one suspected place:
->>>>
->>>> find_fsync_dnodes()
->>>>  - f2fs_recover_inode_page
->>>>   - inc_valid_node_count
->>>>    - dquot_reserve_block  dquot info is not initialized now
->>>>  - add_fsync_inode
->>>>   - dquot_initialize
->>>>
->>>> I think we should reserve block for inode block after dquot_initialize(), can
->>>> you confirm this?
->>>
->>> Let me test this.
->>>
->>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
->>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>> Date: Mon, 17 Sep 2018 18:14:41 -0700
->>> Subject: [PATCH] f2fs: count inode block for recovered files
->>>
->>> If a new file is recovered, we missed to reserve its inode block.
->>
->> I remember, in order to keep line with other filesystem, unlike on-disk, we
->> have to keep backward compatibilty, in memory we don't account block number
->> for f2fs' inode block, but only account inode number for it, so here like
->> we did in inc_valid_node_count(), we don't need to do this.
-> 
-> Okay, I just hit the error again w/o your patch. Another one coming to my mind
-> is that caused by uid/gid change during recovery. Let me try out your patch.
+After the controller is recovered, it isn't necessary to wait for
+completion of all in-flight IO. More importantly, it is easy to trigger
+deadlock if there is new IO timeout triggered.
 
-I guess we should update dquot and inode's uid/gid atomically under
-lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-block@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: linux-nvme@lists.infradead.org
+Cc: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ drivers/nvme/host/core.c | 12 ++++++++----
+ drivers/nvme/host/nvme.h |  2 +-
+ drivers/nvme/host/pci.c  |  3 +--
+ 3 files changed, 10 insertions(+), 7 deletions(-)
 
-v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
-enabled, but w/ normal quota file, I got one regression reported by
-generic/232, I fixed in v10, will do some tests and release it later.
-
-Note that, my fsck can fix corrupted quota file automatically once
-CP_QUOTA_NEED_FSCK_FLAG is set.
-
-Thanks,
-
-> 
->>
->> Can you test v9 first? I didn't encounter quota corruption with your
->> testcase right now. Will check it in cell phone environment.
->>
->>>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/recovery.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index 56d34193a74b..bff5cf730e13 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
->>>  		err = dquot_alloc_inode(inode);
->>>  		if (err)
->>>  			goto err_out;
->>> +		err = dquot_reserve_block(inode, 1);
->>> +		if (err) {
->>> +			dquot_drop(inode);
->>> +			goto err_out;
->>> +		}
->>>  	}
->>>  
->>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
->>>
-> 
-> .
-> 
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index dd8ec1dd9219..cf6a2267d44e 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1203,7 +1203,7 @@ static void nvme_passthru_end(struct nvme_ctrl *ctrl, u32 effects)
+ 	if (effects & NVME_CMD_EFFECTS_LBCC)
+ 		nvme_update_formats(ctrl);
+ 	if (effects & (NVME_CMD_EFFECTS_LBCC | NVME_CMD_EFFECTS_CSE_MASK))
+-		nvme_unfreeze(ctrl);
++		nvme_unfreeze(ctrl, true);
+ 	if (effects & NVME_CMD_EFFECTS_CCC)
+ 		nvme_init_identify(ctrl);
+ 	if (effects & (NVME_CMD_EFFECTS_NIC | NVME_CMD_EFFECTS_NCC))
+@@ -3602,13 +3602,17 @@ void nvme_kill_queues(struct nvme_ctrl *ctrl)
+ }
+ EXPORT_SYMBOL_GPL(nvme_kill_queues);
+ 
+-void nvme_unfreeze(struct nvme_ctrl *ctrl)
++void nvme_unfreeze(struct nvme_ctrl *ctrl, bool check_io_drained)
+ {
+ 	struct nvme_ns *ns;
+ 
+ 	down_read(&ctrl->namespaces_rwsem);
+-	list_for_each_entry(ns, &ctrl->namespaces, list)
+-		blk_mq_unfreeze_queue(ns->queue);
++	list_for_each_entry(ns, &ctrl->namespaces, list) {
++		if  (check_io_drained)
++			blk_mq_unfreeze_queue(ns->queue);
++		else
++			blk_mq_unfreeze_queue_no_drain_io(ns->queue);
++	}
+ 	up_read(&ctrl->namespaces_rwsem);
+ }
+ EXPORT_SYMBOL_GPL(nvme_unfreeze);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index bb4a2003c097..fd56270637d1 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -432,7 +432,7 @@ void nvme_complete_async_event(struct nvme_ctrl *ctrl, __le16 status,
+ void nvme_stop_queues(struct nvme_ctrl *ctrl);
+ void nvme_start_queues(struct nvme_ctrl *ctrl);
+ void nvme_kill_queues(struct nvme_ctrl *ctrl);
+-void nvme_unfreeze(struct nvme_ctrl *ctrl);
++void nvme_unfreeze(struct nvme_ctrl *ctrl, bool check_io_drained);
+ void nvme_wait_freeze(struct nvme_ctrl *ctrl);
+ void nvme_wait_freeze_timeout(struct nvme_ctrl *ctrl, long timeout);
+ void nvme_start_freeze(struct nvme_ctrl *ctrl);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index d668682f91df..1c26a2e92063 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2328,11 +2328,10 @@ static void nvme_reset_work(struct work_struct *work)
+ 		new_state = NVME_CTRL_ADMIN_ONLY;
+ 	} else {
+ 		nvme_start_queues(&dev->ctrl);
+-		nvme_wait_freeze(&dev->ctrl);
+ 		/* hit this only when allocate tagset fails */
+ 		if (nvme_dev_add(dev))
+ 			new_state = NVME_CTRL_ADMIN_ONLY;
+-		nvme_unfreeze(&dev->ctrl);
++		nvme_unfreeze(&dev->ctrl, false);
+ 	}
+ 
+ 	/*
+-- 
+2.9.5
 
