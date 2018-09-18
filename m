@@ -2,111 +2,87 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4949ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 05:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E60ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 05:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDCE2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 05:46:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DDCE2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 9F1182086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 05:48:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="FICJrEFV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1182086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeIRLOP (ORCPT
+        id S1728583AbeIRLTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 07:14:15 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:39967 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbeIRLOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 07:14:15 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42DsNC01kDz9ttC9;
-        Tue, 18 Sep 2018 07:43:07 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 1ir1sIESTdFS; Tue, 18 Sep 2018 07:43:06 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42DsNB6fbYz9ttC0;
-        Tue, 18 Sep 2018 07:43:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 95A938B7C0;
-        Tue, 18 Sep 2018 07:43:17 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id pjOuamxH9lHJ; Tue, 18 Sep 2018 07:43:17 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5690F8B74C;
-        Tue, 18 Sep 2018 07:43:17 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 1A7C96BDA7; Tue, 18 Sep 2018 05:43:17 +0000 (UTC)
-Message-Id: <82bbb913ffd8bdc040a012152ee968cd0c6ccf4e.1537218487.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/makefile: remove check on obsolete GCC versions
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Tue, 18 Sep 2018 07:19:13 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44015 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbeIRLTN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 07:19:13 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 130-v6so367578qkd.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 22:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bivoKUP44ypNPtO2W8tdt9jc/ntKI2F0sh6NsngOSkU=;
+        b=FICJrEFVfK+KZr0fuBNSjrkBR2P5eWH6B8VFdb8/Cq1T/1BzYZV0lOtiExz7muAya0
+         8TCW18aswZqlKJUCYff31MtJBqMGgXDHXmMXD0FNfjv2vwbf4eSrey+THox8/Ciuh/ec
+         eOftrY2L975YMPqtUoLdIgOfP5kqsBQPFZWU8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bivoKUP44ypNPtO2W8tdt9jc/ntKI2F0sh6NsngOSkU=;
+        b=VIAc568Oo6AtYOsfZqSfUhQiwydW3Gx6cbIlzRve565CHe1ZgpsAaM2WnpFdrbza0t
+         OxLumaBgQtBUoN2nDLZzXHxIWsjUBDJm0dLLL8icSDXiwx9Auh7153QGPyrKd7x2M/yW
+         amIBoAMuoQac0Ht9NQHSugV6hIGlWkTyLkiCQXECNd4uKJ8/oUoF4fOepikNXZzJKFzv
+         dmAl576/E671tHM0tzYCTDcKUd0RAWxkPng0tQpxi1pSOFMvaniAktyekYsfa6U1WAUY
+         6EIGNeRnmAP9AklKQKI1MixwWWemMrxaOVQKQM0akaXbva6AhYIrh30cdjnU6w2pHLNB
+         2uZg==
+X-Gm-Message-State: APzg51DW+9ah/PlEsXxkLVlCrF/OjGMHGg95WL/qsMbWVO1ZAgqqML3z
+        FWyJY+fPQXB0E3kBXDAWoX7GzbuM25KAYRUw1FXJXvAG
+X-Google-Smtp-Source: ANB0VdYzfdgj6eCB9zI81JORRdR0WuaC7Xnswt5Wdf1nhKk/D2L1SW+LxHn9Y4RujbEuJoMTZUWjHttltOYQNU+PaKk=
+X-Received: by 2002:a37:ae86:: with SMTP id x128-v6mr19477279qke.25.1537249694340;
+ Mon, 17 Sep 2018 22:48:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <82bbb913ffd8bdc040a012152ee968cd0c6ccf4e.1537218487.git.christophe.leroy@c-s.fr>
+In-Reply-To: <82bbb913ffd8bdc040a012152ee968cd0c6ccf4e.1537218487.git.christophe.leroy@c-s.fr>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 18 Sep 2018 15:18:02 +0930
+Message-ID: <CACPK8XdeT_FF_PHjqOh3e18jDhsFOdECVDd+Z2vWt8pSk5damA@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/makefile: remove check on obsolete GCC versions
+To:     christophe.leroy@c-s.fr
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 18 Sep 2018 05:43:17 +0000 (UTC)
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit cafa0010cd51 ("Raise the minimum required gcc version
-to 4.6"), it is not possible to build kernel with GCC lower than 4.6
+Hey Christophe,
 
-This patch removes checkbin tests addressing older versions of GCC.
+On Tue, 18 Sep 2018 at 15:13, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>
+> Since commit cafa0010cd51 ("Raise the minimum required gcc version
+> to 4.6"), it is not possible to build kernel with GCC lower than 4.6
+>
+> This patch removes checkbin tests addressing older versions of GCC.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Makefile | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+This is the same as Nick's patch:
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 8397c7bd5880..b33083bad840 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -405,35 +405,7 @@ archprepare: checkbin
- TOUT	:= .tmp_gas_check
- 
- # Check gcc and binutils versions:
--# - gcc-3.4 and binutils-2.14 are a fatal combination
--# - Require gcc 4.0 or above on 64-bit
--# - gcc-4.2.0 has issues compiling modules on 64-bit
- checkbin:
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-version)" = "0304" ; then \
--		if ! /bin/echo mftb 5 | $(AS) -v -mppc -many -o $(TOUT) >/dev/null 2>&1 ; then \
--			echo -n '*** ${VERSION}.${PATCHLEVEL} kernels no longer build '; \
--			echo 'correctly with gcc-3.4 and your version of binutils.'; \
--			echo '*** Please upgrade your binutils or downgrade your gcc'; \
--			false; \
--		fi ; \
--	fi
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-version)" -lt "0400" \
--	    && test "x${CONFIG_PPC64}" = "xy" ; then \
--                echo -n "Sorry, GCC v4.0 or above is required to build " ; \
--                echo "the 64-bit powerpc kernel." ; \
--                false ; \
--        fi
--	@if test "$(cc-name)" != "clang" \
--	    && test "$(cc-fullversion)" = "040200" \
--	    && test "x${CONFIG_MODULES}${CONFIG_PPC64}" = "xyy" ; then \
--		echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
--		echo 'kernel with modules enabled.' ; \
--		echo -n '*** Please use a different GCC version or ' ; \
--		echo 'disable kernel modules' ; \
--		false ; \
--	fi
- 	@if test "x${CONFIG_CPU_LITTLE_ENDIAN}" = "xy" \
- 	    && $(LD) --version | head -1 | grep ' 2\.24$$' >/dev/null ; then \
- 		echo -n '*** binutils 2.24 miscompiles weak symbols ' ; \
--- 
-2.13.3
+ https://patchwork.ozlabs.org/patch/969624/
 
+Cheers,
+
+Joel
