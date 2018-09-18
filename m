@@ -6,113 +6,75 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD14BECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F92C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8101D214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8101D214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id ACD1B214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD1B214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbeIRVPu (ORCPT
+        id S1730069AbeIRVQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:15:50 -0400
-Received: from mail.windriver.com ([147.11.1.11]:35721 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728912AbeIRVPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:15:50 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w8IFgaLe001732
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 18 Sep 2018 08:42:36 -0700 (PDT)
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 18 Sep 2018 08:42:36 -0700
-From:   <zhe.he@windriver.com>
-To:     <pmladek@suse.com>, <sergey.senozhatsky@gmail.com>,
-        <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>
-CC:     <zhe.he@windriver.com>
-Subject: [PATCH] printk: Fix panic caused by passing log_buf_len to command line
-Date:   Tue, 18 Sep 2018 23:42:34 +0800
-Message-ID: <1537285354-430044-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 18 Sep 2018 17:16:02 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59090 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728912AbeIRVQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:16:02 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A7D4172264A2F;
+        Tue, 18 Sep 2018 23:42:49 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 18 Sep 2018 23:42:47 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <mchehab@kernel.org>
+CC:     <brad@nextdimension.cc>, <mkrufky@linuxtv.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: dvb-frontends: Use kmemdup instead of duplicating its function
+Date:   Tue, 18 Sep 2018 23:30:28 +0800
+Message-ID: <1537284628-62020-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+kmemdup has implemented the function that kmalloc() + memcpy().
+We prefer to kmemdup rather than code opened implementation.
 
-log_buf_len_setup does not check input argument before passing it to
-simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
-without its value, is set in command line and thus causes the following
-panic.
-
-PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
-...
-[    0.000000] Call Trace:
-[    0.000000]  simple_strtoull+0x29/0x70
-[    0.000000]  memparse+0x26/0x90
-[    0.000000]  log_buf_len_setup+0x17/0x22
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4ee
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
-
-This patch adds a check to prevent the panic, adds KBUILD_MODNAME to
-prints and correct bare use of 'unsigned'.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: stable@vger.kernel.org
-Cc: pmladek@suse.com
-Cc: sergey.senozhatsky@gmail.com
-Cc: rostedt@goodmis.org
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- kernel/printk/printk.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/media/dvb-frontends/lgdt3306a.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 9bf5404..f6d4030 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -16,6 +16,8 @@
-  *	01Mar01 Andrew Morton
-  */
+diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
+index 0e1f5da..abec2e5 100644
+--- a/drivers/media/dvb-frontends/lgdt3306a.c
++++ b/drivers/media/dvb-frontends/lgdt3306a.c
+@@ -2205,15 +2205,13 @@ static int lgdt3306a_probe(struct i2c_client *client,
+ 	struct dvb_frontend *fe;
+ 	int ret;
  
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/tty.h>
-@@ -1048,7 +1050,14 @@ static void __init log_buf_len_update(unsigned size)
- /* save requested log_buf_len since it's too early to process it */
- static int __init log_buf_len_setup(char *str)
- {
--	unsigned size = memparse(str, &str);
-+	unsigned int size;
-+
-+	if (!str) {
-+		pr_err("Config string not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	size = memparse(str, &str);
+-	config = kzalloc(sizeof(struct lgdt3306a_config), GFP_KERNEL);
++	onfig = kmemdup(client->dev.platform_data,
++			sizeof(struct lgdt3306a_config), GFP_KERNEL);
+ 	if (config == NULL) {
+ 		ret = -ENOMEM;
+ 		goto fail;
+ 	}
  
- 	log_buf_len_update(size);
- 
+-	memcpy(config, client->dev.platform_data,
+-			sizeof(struct lgdt3306a_config));
+-
+ 	config->i2c_addr = client->addr;
+ 	fe = lgdt3306a_attach(config, client->adapter);
+ 	if (fe == NULL) {
 -- 
-2.7.4
+1.7.12.4
 
