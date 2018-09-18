@@ -2,111 +2,151 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7611C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF4DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB45214D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB45214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 421DA214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:47:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrkhjAkN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421DA214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbeIRUUc (ORCPT
+        id S1729979AbeIRUUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:20:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:24746 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726737AbeIRUUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:20:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 07:47:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,390,1531810800"; 
-   d="scan'208";a="89823059"
-Received: from xuting-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.29.10])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Sep 2018 07:47:10 -0700
-Subject: Re: [LKP] [ipc] 61224adcd2: general_protection_fault:#[##]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rong Chen <rong.a.chen@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <9df6256f-dcf3-ee6f-dd9d-b7efe2f539e6@intel.com>
- <1dac87f5-fa47-eaf2-ef34-945365e0b2c3@intel.com>
- <7c403b7d-0f60-68ea-d058-cb56d3fece75@intel.com>
- <20180913010517.GB7632@shao2-debian>
- <23069.1536838121@warthog.procyon.org.uk>
- <7969.1537252241@warthog.procyon.org.uk>
- <9189.1537255398@warthog.procyon.org.uk>
- <9499.1537266023@warthog.procyon.org.uk>
-From:   Li Zhijian <zhijianx.li@intel.com>
-Message-ID: <3905bb1b-c691-0c8b-490f-599e7a0d561b@intel.com>
-Date:   Tue, 18 Sep 2018 22:47:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 18 Sep 2018 16:20:37 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54521 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726737AbeIRUUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:20:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c14-v6so2824608wmb.4;
+        Tue, 18 Sep 2018 07:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9MSBn6zthiPKedGRFvLQNbBiyueZmH4r8CLVv4/wodA=;
+        b=mrkhjAkN0+MHkhmvSjCsUKOGYRVOP7dVymflD8NCVhtlPotakbDNGRYTulrxUXD92O
+         fGpCkDIExi15PFVxDcfzNDXDaNj5V4mDizqdCRdEk0/LfbAR1qclAMOlNuXRQt8kgl/d
+         c1y6NlLpuIv09yp49RZ0Sf/WrXNkC78W5QEIon4Cmsrxq63sbYQ6/Htv9Qtz/cau4pZs
+         58ufmW2f0GIy+AOJH4m6yX7SxG7MNt9nVTk3CQOqegw26i9fpwf9yHcFswoPf0Facu2C
+         5Rh3s3HorLAfXmC5E6Sts8LlFp2JUoxA9fxCidQx3qlEPJx6zGerfCHBDmM/UuIOezJ7
+         lhNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9MSBn6zthiPKedGRFvLQNbBiyueZmH4r8CLVv4/wodA=;
+        b=Oqj4w1+ndNn/PwLKP/A65hm0kSODt31aT3pZf4RHUk+xW2UDq5d4kwe8jhTQ645uel
+         tkIMC/6jTzemjMfq56FrxL1GdorYXEbMzkokFdCJZt6mYFOM4tY/8nVr+s2/PHOeNaLB
+         DzZo+WKfc46pc7SaCaHrYQt2uxPcHKt9wNjuWbJDbSJMSgTkY5FnpndfEPzxYEqnAx91
+         fNrbrAXQIhMu3Wxc1GL102/QW7HaobebL7dxALjyyNQ7ILDuFNzXNGZR4LDrnjHglNy4
+         jzHgZhwWQnNvbE6i59eUfhGm9xtiqn+OleRS4v7UvoIZ594F0dKkrrfpF2Lk0nO6La3n
+         9fqQ==
+X-Gm-Message-State: APzg51A440pSf4JPwg6enU9k8yDYrxDoqts92xHosxRqFMIl/esHxMqT
+        T1/A2VNyw5Q3UGqpZRDYfII=
+X-Google-Smtp-Source: ANB0Vdb/Nzo5nOTRkARg9iiclNfolTwJSm1F112SwV6BBx/V53MaNJ7eoVsu06rUlqa1tqACBBBItA==
+X-Received: by 2002:a1c:a187:: with SMTP id k129-v6mr10366492wme.111.1537282059392;
+        Tue, 18 Sep 2018 07:47:39 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id w3-v6sm19915450wrn.16.2018.09.18.07.47.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 07:47:38 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 16:47:37 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     kbuild test robot <fengguang.wu@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: fix ptr_ret.cocci warnings
+Message-ID: <20180918144737.GA30386@ulmo>
+References: <201807120738.oIXXb65q%fengguang.wu@intel.com>
+ <20180711233041.GA39597@lkp-sbx04>
+ <20180918141838.GA32243@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <9499.1537266023@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Disposition: inline
+In-Reply-To: <20180918141838.GA32243@e107981-ln.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 9/18/2018 6:20 PM, David Howells wrote:
-> Li Zhijian <zhijianx.li@intel.com> wrote:
->
->> this is not expected.
->> could you list/home/dhowells/.lkp/cache
-> final_initrd  initrd-concatenated  lkp/  lkp-x86_64-ad88cb1a437a_.cgz  osimage/
->
-> Note that ~/.lkp is a symlink to somewhere that I don't mind clobbering.
->
-> Does this assume that I'm running on some particular OS other than Fedora?
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sorry, i cannot reproduce your issue on debian and ubuntu
+On Tue, Sep 18, 2018 at 03:18:38PM +0100, Lorenzo Pieralisi wrote:
+> On Thu, Jul 12, 2018 at 07:30:41AM +0800, kbuild test robot wrote:
+> > From: kbuild test robot <fengguang.wu@intel.com>
+> >=20
+> > drivers/pci/controller/pci-tegra.c:1132:1-3: WARNING: PTR_ERR_OR_ZERO c=
+an be used
+> >=20
+> >=20
+> >  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> >=20
+> > Generated by: scripts/coccinelle/api/ptr_ret.cocci
+> >=20
+> > Fixes: 6e0832fa432e ("PCI: Collect all native drivers under drivers/pci=
+/controller/")
+> > CC: Shawn Lin <shawn.lin@rock-chips.com>
+> > Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+> > ---
+> >=20
+> >  pci-tegra.c |    5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+>=20
+> Thierry,
+>=20
+> are you OK with this change ? I will remove the Fixes: tag since
+> this does not fix anything AFAICS.
 
-1. please type following command to verify the lkp-src
-$ gzip -dc /home/dhowells/.lkp/cache/lkp-x86_64-ad88cb1a437a_.cgz | cpio -t
+This has been proposed several times in the past and each time Bjorn and
+I have agreed that we'd rather not merge that change. I think the
+original is clearer and allows the code to be more easily extended.
 
-it should have something like
-lizhijian@ivb44:~$ gzip -dc .lkp/cache/lkp-x86_64-ebf5822e1818_.cgz | cpio -t | head
-lkp
-lkp/lkp
-lkp/lkp/src
-lkp/lkp/src/COPYING
-lkp/lkp/src/Gemfile
-lkp/lkp/src/Makefile
-lkp/lkp/src/README.md
-lkp/lkp/src/Rakefile
-lkp/lkp/src/_config.yml
-lkp/lkp/src/allot
+I don't know if there's a way to "whitelist" certain drivers or sub-
+systems where these kinds of changes are known not to be desired. Or
+perhaps there's some way to trick coccinelle into not recognizing this
+particular instance.
 
-2. remove this file and try again with following changes
-lizhijian@ivb44:/lkp-qemu/lkp-tests$ git diff
-diff --git a/pack/lkp-src b/pack/lkp-src
-index 793084cb..ca8717e9 100755
---- a/pack/lkp-src
-+++ b/pack/lkp-src
-@@ -1,5 +1,5 @@
-  #!/bin/bash
--
-+set -x
-  LKP_SRC=${LKP_SRC:-/lkp/$USER/src}
-  export ARCH=${arch:-x86_64}
-  LKP_USER=${LKP_USER:-$USER}
+Then again, it seems wrong to have to work around over-ambitious
+semantic patches...
 
+Thierry
 
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks
-  
+-----BEGIN PGP SIGNATURE-----
 
->
-> David
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluhEAYACgkQ3SOs138+
+s6HSCA/8D3HAVyXRzXB8VImac6wJpL026qaKKkszs5W6STpjFG609Puz9iptCx4d
+7SZXc/48zKgs6KQBW+08IT2QBHY/WWUiZiSu0dq2Q/ldd/uJWd7SN9nb98+EKPOy
+Ckbx6h2l2ZSfqd+l0ViXvNDIcAlR6z/Lu4GOyzeJq+XWL8HSg2xJ1Ht4bfVfK9+0
+RQ0Sxb+M1/ilVcQLd1nfrK/0iPRP132UpASx8NVNlC97l/wrUezUbN942FeMyp7D
+a9j8v4vVmVobQJH0Wko/Uo5bhg1SdFkx3pwnJj2Toj+LhmZklcplHLs5QcjyGljw
+WkFKeWDy2P6WGvKgt8fCPXpK8CxpV+WrZ8/vmFr3Df+F0iqlEQu4yQPXPTb88quq
+0FyUZK1DAPm/VCJWgY7jz19TzNta8kRINbLTXKnNcDKsh4AA3ldoAcmfd57CiC8w
+WkJcPyqbjc+Zxu33lxV2gAL1o18cj58OvYJUbW2jds97Yi0reW1cdA1EYEuO8ZQG
+V2ii1kXvFnpcnAnPIjmUjLG/7FqKF0z5Z5hIPvSsWAr4pLszRsZ2Cj/TaxY/Bnib
+KtwFs+5m1x2VYjwzqe+0dvWENxke1cRyhu2brm2jhzdRkhrpkxwjBQBEG0sB6367
+4pw5tq2uWQv7/03eyFnpfKp0rzRgY+qbOHWz1FYrVPWFkcm0ods=
+=Lanw
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
