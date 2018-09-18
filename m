@@ -2,190 +2,301 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC9DC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166BCECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B834D214DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B834D214DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B890B2150C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptO9NxaV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B890B2150C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbeIRWM2 convert rfc822-to-8bit (ORCPT
+        id S1730316AbeIRWNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:12:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36386 "EHLO mx1.redhat.com"
+        Tue, 18 Sep 2018 18:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729998AbeIRWM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:12:28 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729447AbeIRWNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:13:19 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 593B58666B;
-        Tue, 18 Sep 2018 16:39:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79E417DEE4;
-        Tue, 18 Sep 2018 16:39:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180918090722.GA463@jagdpanzerIV>
-References: <20180918090722.GA463@jagdpanzerIV> <20180911220743.GA13208@roeck-us.net> <20180911174641.GA15149@roeck-us.net> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313714181.13253.304098108512966976.stgit@warthog.procyon.org.uk> <27113.1536702746@warthog.procyon.org.uk> <32382.1536707855@warthog.procyon.org.uk> <20180911235403.GA10107@roeck-us.net>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     dhowells@redhat.com, Guenter Roeck <linux@roeck-us.net>,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 14/33] vfs: Implement a filesystem superblock creation/configuration context [ver #11]
+        by mail.kernel.org (Postfix) with ESMTPSA id B66FA214DD;
+        Tue, 18 Sep 2018 16:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537288795;
+        bh=aS1lsXQi4oxQk01uJzvW5BcpsuXSeALgrttWvssH4uA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ptO9NxaVhdKGub2ShRQGkmmaPHOSATVgQ7HnZrX5GNlWqg1S2GAd2QDbU+S3HvPKh
+         dTB7n7tEmDj0cyc5PFQZqRwy4/pw7wLillfG+Hxhd/+OYAReIQ9ObxARcXDGdvXbLm
+         6cDywER3xCu8fe2gxMPA3c9wGmUSwh0lRAFsSg+s=
+Date:   Tue, 18 Sep 2018 09:39:54 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Sahitya Tummala <stummala@codeaurora.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: add new idle interval timing for discard and gc
+ paths
+Message-ID: <20180918163954.GB91945@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
+ <20180918013039.GD79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180918032516.GD22939@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27018.1537288742.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 18 Sep 2018 17:39:02 +0100
-Message-ID: <27019.1537288742@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 18 Sep 2018 16:39:05 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918032516.GD22939@codeaurora.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think I need to include something like the attached change in this patch.
-Changes also need to be made to proc and cgroup.
+On 09/18, Sahitya Tummala wrote:
+> On Mon, Sep 17, 2018 at 06:30:39PM -0700, Jaegeuk Kim wrote:
+> > On 09/17, Sahitya Tummala wrote:
+> > > This helps to control the frequency of submission of discard and
+> > > GC requests independently, based on the need.
+> > > 
+> > > Suggested-by: Chao Yu <yuchao0@huawei.com>
+> > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > > ---
+> > > v3:
+> > > -don't change gc thread wait_ms in this patch
+> > > -Use the existing function f2fs_time_over() to handle this
+> > > -change f2fs_get_wait_time() to f2fs_time_to_wait()
+> > > 
+> > >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
+> > >  fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
+> > >  fs/f2fs/gc.c                            |  2 +-
+> > >  fs/f2fs/segment.c                       | 14 +++++---------
+> > >  fs/f2fs/super.c                         |  2 ++
+> > >  fs/f2fs/sysfs.c                         |  5 +++++
+> > >  6 files changed, 54 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > index 94a24ae..3ac4177 100644
+> > > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
+> > >  Date:		January 2016
+> > >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> > >  Description:
+> > > -		 Controls the idle timing.
+> > > +		 Controls the idle timing for all paths other than
+> > > +		 discard and gc path.
+> > > +
+> > > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
+> > > +Date:		September 2018
+> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> > > +Description:
+> > > +		 Controls the idle timing for discard path.
+> > > +
+> > > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
+> > > +Date:		September 2018
+> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
+> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
+> > > +Description:
+> > > +		 Controls the idle timing for gc path.
+> > >  
+> > >  What:		/sys/fs/f2fs/<disk>/iostat_enable
+> > >  Date:		August 2017
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index 88b8d50..41e00d3 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -1095,6 +1095,8 @@ enum {
+> > >  enum {
+> > >  	CP_TIME,
+> > >  	REQ_TIME,
+> > > +	DISCARD_TIME,
+> > > +	GC_TIME,
+> > >  	MAX_TIME,
+> > >  };
+> > >  
+> > > @@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+> > >  static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+> > >  {
+> > >  	unsigned long interval = sbi->interval_time[type] * HZ;
+> > > +	unsigned long last_time;
+> > >  
+> > > -	return time_after(jiffies, sbi->last_time[type] + interval);
+> > > +	if (type == CP_TIME)
+> > > +		last_time = sbi->last_time[CP_TIME];
+> > > +	else
+> > > +		last_time = sbi->last_time[REQ_TIME];
+> > 
+> > Why can't we use just this?
+> > 
+> > 	return time_after(jiffies, sbi->last_time[type] + interval);
+> > 
+> 
+> There is no sbi_->last_time[discard_time] and sbi->last_time[gc_time]. Only
+> sbi->interval_time[discard_time] and sbi->interval_time[gc_time] is defined to
+> determine the idle interval time since the last request time, separately for
+> these two paths.
 
-David
----
-commit 1a336480a0f664b3e1988a581bccd4fa10d98764
-Author: David Howells <dhowells@redhat.com>
-Date:   Tue Sep 18 17:25:23 2018 +0100
+If you add enums above, sbi will have last_time slots for DISCARD_TIME/GC_TIME.
+Doesn't it make sense to add the below in f2fs_update_time(), if you want to
+introduce two additional types?
 
-    fix remount
+	/* DISCARD_TIME and GC_TIME are based on REQ_TIME */
+	if (type == REQ_TIME) {
+		sbi->last_time(DISCARD_TIME) = jiffies;
+		sbi->last_time(GC_TIME) = jiffies;
+	}
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index a82679441031..1f36b72e3ee9 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -42,8 +42,6 @@ struct legacy_fs_context {
- 	enum legacy_fs_param	param_type;
- };
- 
--static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
--
- static const struct constant_table common_set_sb_flag[] = {
- 	{ "dirsync",	SB_DIRSYNC },
- 	{ "lazytime",	SB_LAZYTIME },
-@@ -293,7 +291,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
- 		break;
- 	}
- 
--
- 	/* TODO: Make all filesystems support this unconditionally */
- 	init_fs_context = fc->fs_type->init_fs_context;
- 	if (!init_fs_context)
-@@ -662,12 +659,20 @@ const struct fs_context_operations legacy_fs_context_ops = {
-  * Initialise a legacy context for a filesystem that doesn't support
-  * fs_context.
-  */
--static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
-+int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
- {
-+	switch (fc->purpose) {
-+	default:
-+		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
-+					 GFP_KERNEL);
-+		if (!fc->fs_private)
-+			return -ENOMEM;
-+		break;
- 
--	fc->fs_private = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
--	if (!fc->fs_private)
--		return -ENOMEM;
-+	case FS_CONTEXT_FOR_UMOUNT:
-+	case FS_CONTEXT_FOR_EMERGENCY_RO:
-+		break;
-+	}
- 
- 	fc->ops = &legacy_fs_context_ops;
- 	return 0;
-diff --git a/fs/internal.h b/fs/internal.h
-index d25cb82af69d..fc2da60abbcd 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -55,6 +55,7 @@ extern void __init chrdev_init(void);
-  * fs_context.c
-  */
- extern const struct fs_context_operations legacy_fs_context_ops;
-+extern int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
- 
- /*
-  * fsopen.c
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ddb2c3b88cd6..86b60566fcdf 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1429,9 +1429,19 @@ static int do_umount_root(struct super_block *sb)
- 	};
- 
- 	down_write(&sb->s_umount);
--	if (!sb_rdonly(sb))
--		/* Might want to call ->init_fs_context(). */
--		ret = reconfigure_super(&fc);
-+	if (!sb_rdonly(sb)) {
-+		int ret;
-+
-+		if (fc.fs_type->init_fs_context)
-+			ret = fc.fs_type->init_fs_context(&fc, NULL);
-+		else
-+			ret = legacy_init_fs_context(&fc, NULL);
-+
-+		if (ret == 0) {
-+			ret = reconfigure_super(&fc);
-+			fc.ops->free(&fc);
-+		}
-+	}
- 	up_write(&sb->s_umount);
- 	return ret;
- }
-@@ -2396,7 +2406,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
- 
- 	err = security_fs_context_validate(fc);
- 	if (err)
--		return err;
-+		goto err_fc;
- 
- 	down_write(&sb->s_umount);
- 	err = -EPERM;
-diff --git a/fs/super.c b/fs/super.c
-index e00b03249bfa..df8c4cebd000 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1026,12 +1026,20 @@ static void do_emergency_remount_callback(struct super_block *sb)
- 
- 	down_write(&sb->s_umount);
- 	if (sb->s_root && sb->s_bdev && (sb->s_flags & SB_BORN) &&
--	    !sb_rdonly(sb))
--		/* Might want to call ->init_fs_context(). */
-+	    !sb_rdonly(sb)) {
-+		int ret;
-+
-+		if (fc.fs_type->init_fs_context)
-+			ret = fc.fs_type->init_fs_context(&fc, NULL);
-+		else
-+			ret = legacy_init_fs_context(&fc, NULL);
-+
- 		/*
- 		 * What lock protects sb->s_flags??
- 		 */
--		reconfigure_super(&fc);
-+		if (ret == 0)
-+			reconfigure_super(&fc);
-+	}
- 	up_write(&sb->s_umount);
- }
- 
+> 
+> > > +
+> > > +	return time_after(jiffies, last_time + interval);
+> > > +}
+> > > +
+> > > +static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
+> > > +						int type)
+> > > +{
+> > > +	unsigned long interval = sbi->interval_time[type] * HZ;
+> > > +	unsigned int wait_ms = 0;
+> > > +	long delta;
+> > > +
+> > > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+
+Then, we can use *type* instead of REQ_TIME?
+
+> > > +	if (delta > 0)
+> > > +		wait_ms = jiffies_to_msecs(delta);
+> > > +
+> > > +	return wait_ms;
+> > >  }
+> > >  
+> > > -static inline bool is_idle(struct f2fs_sb_info *sbi)
+> > > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+> > >  {
+> > >  	struct block_device *bdev = sbi->sb->s_bdev;
+> > >  	struct request_queue *q = bdev_get_queue(bdev);
+> > > @@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
+> > >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
+> > >  		return false;
+> > >  
+> > > -	return f2fs_time_over(sbi, REQ_TIME);
+> > > +	return f2fs_time_over(sbi, type);
+> > >  }
+> > >  
+> > >  /*
+> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > > index 5c8d004..49e2328 100644
+> > > --- a/fs/f2fs/gc.c
+> > > +++ b/fs/f2fs/gc.c
+> > > @@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
+> > >  		if (!mutex_trylock(&sbi->gc_mutex))
+> > >  			goto next;
+> > >  
+> > > -		if (!is_idle(sbi)) {
+> > > +		if (!is_idle(sbi, GC_TIME)) {
+> > >  			increase_sleep_time(gc_th, &wait_ms);
+> > >  			mutex_unlock(&sbi->gc_mutex);
+> > >  			goto next;
+> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > index 187c848..67cf7e4 100644
+> > > --- a/fs/f2fs/segment.c
+> > > +++ b/fs/f2fs/segment.c
+> > > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+> > >  	else
+> > >  		f2fs_build_free_nids(sbi, false, false);
+> > >  
+> > > -	if (!is_idle(sbi) &&
+> > > +	if (!is_idle(sbi, REQ_TIME) &&
+> > >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+> > >  		return;
+> > >  
+> > > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> > >  		if (dc->state != D_PREP)
+> > >  			goto next;
+> > >  
+> > > -		if (dpolicy->io_aware && !is_idle(sbi)) {
+> > > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
+> > >  			io_interrupted = true;
+> > >  			break;
+> > >  		}
+> > > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > >  			f2fs_bug_on(sbi, dc->state != D_PREP);
+> > >  
+> > >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
+> > > -								!is_idle(sbi)) {
+> > > +						!is_idle(sbi, DISCARD_TIME)) {
+> > >  				io_interrupted = true;
+> > >  				break;
+> > >  			}
+> > > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
+> > >  	struct discard_policy dpolicy;
+> > >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
+> > >  	int issued;
+> > > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
+> > > -	long delta;
+> > >  
+> > >  	set_freezable();
+> > >  
+> > > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
+> > >  			__wait_all_discard_cmd(sbi, &dpolicy);
+> > >  			wait_ms = dpolicy.min_interval;
+> > >  		} else if (issued == -1){
+> > > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
+> > > -			if (delta > 0)
+> > > -				wait_ms = jiffies_to_msecs(delta);
+> > > -			else
+> > > +			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
+> > > +			if (!wait_ms)
+> > >  				wait_ms = dpolicy.mid_interval;
+> > >  		} else {
+> > >  			wait_ms = dpolicy.max_interval;
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index 3106da1..2f67948 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> > >  	sbi->dir_level = DEF_DIR_LEVEL;
+> > >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+> > >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
+> > > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+> > > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+> > >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> > >  
+> > >  	for (i = 0; i < NR_COUNT_TYPE; i++)
+> > > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > > index 81c0e53..0afe99c 100644
+> > > --- a/fs/f2fs/sysfs.c
+> > > +++ b/fs/f2fs/sysfs.c
+> > > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
+> > > +					interval_time[DISCARD_TIME]);
+> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+> > > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+> > >  	ATTR_LIST(dirty_nats_ratio),
+> > >  	ATTR_LIST(cp_interval),
+> > >  	ATTR_LIST(idle_interval),
+> > > +	ATTR_LIST(discard_idle_interval),
+> > > +	ATTR_LIST(gc_idle_interval),
+> > >  	ATTR_LIST(iostat_enable),
+> > >  	ATTR_LIST(readdir_ra),
+> > >  	ATTR_LIST(gc_pin_file_thresh),
+> > > -- 
+> > > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> > > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
+> -- 
+> --
+> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
