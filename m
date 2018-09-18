@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9ACECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F90ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A462146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A462146D
+	by mail.kernel.org (Postfix) with ESMTP id F0D5D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D5D2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbeISD04 (ORCPT
+        id S1730708AbeISD04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Sep 2018 23:26:56 -0400
-Received: from mga14.intel.com ([192.55.52.115]:59611 "EHLO mga14.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:59619 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730473AbeISD0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730461AbeISD0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Sep 2018 23:26:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 14:51:56 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 14:51:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,391,1531810800"; 
-   d="scan'208";a="87270396"
+   d="scan'208";a="87270391"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Sep 2018 14:51:47 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 18 Sep 2018 14:51:44 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Jean Delvare <jdelvare@suse.com>,
@@ -68,11 +68,15 @@ Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
         openbmc@lists.ozlabs.org,
         Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Jason M Biils <jason.m.bills@linux.intel.com>,
+        Milton Miller II <miltonm@us.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Robin Murphy <robin.murphy@arm.com>,
         Ryan Chen <ryan_chen@aspeedtech.com>
-Subject: [PATCH v8 05/12] ARM: dts: aspeed: peci: Add PECI node
-Date:   Tue, 18 Sep 2018 14:51:17 -0700
-Message-Id: <20180918215124.14003-6-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v8 04/12] dt-bindings: Add a document of PECI adapter driver for ASPEED AST24xx/25xx SoCs
+Date:   Tue, 18 Sep 2018 14:51:16 -0700
+Message-Id: <20180918215124.14003-5-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
 References: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
@@ -81,106 +85,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds PECI bus/adapter node of AST24xx/AST25xx into
-aspeed-g4 and aspeed-g5.
+This commit adds a dt-bindings document of PECI adapter driver for ASPEED
+AST24xx/25xx SoCs.
 
-Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Joel Stanley <joel@jms.id.au>
 Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+Cc: Milton Miller II <miltonm@us.ibm.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Robin Murphy <robin.murphy@arm.com>
 Cc: Ryan Chen <ryan_chen@aspeedtech.com>
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
 Reviewed-by: James Feist <james.feist@linux.intel.com>
 Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/aspeed-g4.dtsi | 26 ++++++++++++++++++++++++++
- arch/arm/boot/dts/aspeed-g5.dtsi | 26 ++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+ .../devicetree/bindings/peci/peci-aspeed.txt  | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/peci/peci-aspeed.txt
 
-diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
-index b23a983f95a5..ba31b2f0e0d8 100644
---- a/arch/arm/boot/dts/aspeed-g4.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g4.dtsi
-@@ -29,6 +29,7 @@
- 		serial3 = &uart4;
- 		serial4 = &uart5;
- 		serial5 = &vuart;
-+		peci0 = &peci0;
- 	};
- 
- 	cpus {
-@@ -317,6 +318,13 @@
- 				};
- 			};
- 
-+			peci: bus@1e78b000 {
-+				compatible = "simple-bus";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0x1e78b000 0x60>;
-+			};
+diff --git a/Documentation/devicetree/bindings/peci/peci-aspeed.txt b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
+new file mode 100644
+index 000000000000..cdca73a3b7d8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/peci/peci-aspeed.txt
+@@ -0,0 +1,55 @@
++Device tree configuration for PECI buses on the AST24XX and AST25XX SoCs.
 +
- 			uart2: serial@1e78d000 {
- 				compatible = "ns16550a";
- 				reg = <0x1e78d000 0x20>;
-@@ -360,6 +368,24 @@
- 	};
- };
- 
-+&peci {
-+	peci0: peci-bus@0 {
-+		compatible = "aspeed,ast2400-peci";
-+		reg = <0x0 0x60>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupts = <15>;
-+		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
-+		resets = <&syscon ASPEED_RESET_PECI>;
-+		clock-frequency = <24000000>;
-+		msg-timing = <1>;
-+		addr-timing = <1>;
-+		rd-sampling-point = <8>;
-+		cmd-timeout-ms = <1000>;
-+		status = "disabled";
-+	};
-+};
++Required properties:
++- compatible        : Should be one of:
++			"aspeed,ast2400-peci"
++			"aspeed,ast2500-peci"
++- reg               : Should contain PECI controller registers location and
++		      length.
++- #address-cells    : Should be <1> required to define a client address.
++- #size-cells       : Should be <0> required to define a client address.
++- interrupts        : Should contain PECI controller interrupt.
++- clocks            : Should contain clock source for PECI controller. Should
++		      reference the external oscillator clock in the second
++		      cell.
++- resets            : Should contain phandle to reset controller with the reset
++		      number in the second cell.
++- clock-frequency   : Should contain the operation frequency of PECI controller
++		      in units of Hz.
++		      187500 ~ 24000000
 +
- &i2c {
- 	i2c_ic: interrupt-controller@0 {
- 		#interrupt-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index 87fdc146ff52..c93ab96131e6 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -29,6 +29,7 @@
- 		serial3 = &uart4;
- 		serial4 = &uart5;
- 		serial5 = &vuart;
-+		peci0 = &peci0;
- 	};
- 
- 	cpus {
-@@ -377,6 +378,13 @@
- 				};
- 			};
- 
-+			peci: bus@1e78b000 {
-+				compatible = "simple-bus";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0x1e78b000 0x60>;
-+			};
++Optional properties:
++- msg-timing        : Message timing negotiation period. This value will
++		      determine the period of message timing negotiation to be
++		      issued by PECI controller. The unit of the programmed
++		      value is four times of PECI clock period.
++		      0 ~ 255 (default: 1)
++- addr-timing       : Address timing negotiation period. This value will
++		      determine the period of address timing negotiation to be
++		      issued by PECI controller. The unit of the programmed
++		      value is four times of PECI clock period.
++		      0 ~ 255 (default: 1)
++- rd-sampling-point : Read sampling point selection. The whole period of a bit
++		      time will be divided into 16 time frames. This value will
++		      determine the time frame in which the controller will
++		      sample PECI signal for data read back. Usually in the
++		      middle of a bit time is the best.
++		      0 ~ 15 (default: 8)
++- cmd-timeout-ms    : Command timeout in units of ms.
++		      1 ~ 60000 (default: 1000)
 +
- 			uart2: serial@1e78d000 {
- 				compatible = "ns16550a";
- 				reg = <0x1e78d000 0x20>;
-@@ -420,6 +428,24 @@
- 	};
- };
- 
-+&peci {
++Example:
 +	peci0: peci-bus@0 {
 +		compatible = "aspeed,ast2500-peci";
 +		reg = <0x0 0x60>;
@@ -194,13 +168,7 @@ index 87fdc146ff52..c93ab96131e6 100644
 +		addr-timing = <1>;
 +		rd-sampling-point = <8>;
 +		cmd-timeout-ms = <1000>;
-+		status = "disabled";
 +	};
-+};
-+
- &i2c {
- 	i2c_ic: interrupt-controller@0 {
- 		#interrupt-cells = <1>;
 -- 
 2.18.0
 
