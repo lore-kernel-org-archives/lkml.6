@@ -2,191 +2,127 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834FEECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98051ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8A32088F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:11:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gjTAn8lv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8A32088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4D2BE21502
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:12:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2BE21502
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbeIRFlP (ORCPT
+        id S1728957AbeIRFm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:41:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:40535 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbeIRFlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:41:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Dk1R5qz2z9sBv;
-        Tue, 18 Sep 2018 10:11:23 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537229484;
-        bh=Xq2BnsrY+hNh9j+xEgV++sfiq0oQyxiyjTTepg6ERN0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=gjTAn8lvurr5KMivHL33MeqoUMSk6rzobAHLlltMd/4tDw3A+LFWnAzfCTwJ7Z4h2
-         pHYR0cBJvyWucAB/0tdoARbLtM9uPvGWm9s09iz+AhJQlI/YPc0/xsF065inxFtqwq
-         ziOxnCf1gpYPRfvwZEuoaKUn8ChblJ4EGAHKh2ae7nZDorgvpV6ij8RwLjkm864K94
-         XxKywbIwEjPbCShwimAXMLAuQ6KvJIxScInRTp9ZEBE9MQDJbTw9yFwIvuiD967zT5
-         BU1JBY1Ormey/G0s1yAgYh6bE6b3t+mmSyH7Lyiw71ibCcvDixPSwVukhBOs0iZ6RD
-         oTcbCCWD+XMyg==
-Date:   Tue, 18 Sep 2018 10:11:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Vakul Garg <vakul.garg@nxp.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180918101107.74d8689a@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gk.xrKYo+V8dzSowvoh9sfc"; protocol="application/pgp-signature"
+        Tue, 18 Sep 2018 01:42:28 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:53114 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbeIRFm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 01:42:28 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g23dB-0007Fd-QZ; Mon, 17 Sep 2018 18:12:41 -0600
+Received: from [105.184.227.67] (helo=x220.Home)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g23Zj-0002Qk-UX; Mon, 17 Sep 2018 18:09:08 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Tue, 18 Sep 2018 02:05:45 +0200
+Message-Id: <20180918000546.12552-19-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <87y3bzk6yv.fsf@xmission.com>
+References: <87y3bzk6yv.fsf@xmission.com>
+X-XM-SPF: eid=1g23Zj-0002Qk-UX;;;mid=<20180918000546.12552-19-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18P2EJgSMAdSO55NTiPJercMP+DgBLmKpU=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [REVIEW][PATCH 19/20] signal/x86: Pass pkey by value
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gk.xrKYo+V8dzSowvoh9sfc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Now that si_code == SEGV_PKUERR is the flag indicating that a pkey
+is present there is no longer a need to pass a pointer to a local
+pkey value, instead pkey can be passed more efficiently by value.
 
-Hi all,
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/x86/mm/fault.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Today's linux-next merge of the net-next tree got a conflict in:
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 548396aa03e1..c09a0c2fa614 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -769,7 +769,7 @@ show_signal_msg(struct pt_regs *regs, unsigned long error_code,
+ 
+ static void
+ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+-		       unsigned long address, u32 *pkey, int si_code)
++		       unsigned long address, u32 pkey, int si_code)
+ {
+ 	struct task_struct *tsk = current;
+ 
+@@ -818,7 +818,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 		tsk->thread.trap_nr	= X86_TRAP_PF;
+ 
+ 		if (si_code == SEGV_PKUERR)
+-			force_sig_pkuerr((void __user *)address, *pkey);
++			force_sig_pkuerr((void __user *)address, pkey);
+ 
+ 		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
+ 
+@@ -835,12 +835,12 @@ static noinline void
+ bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 		     unsigned long address)
+ {
+-	__bad_area_nosemaphore(regs, error_code, address, NULL, SEGV_MAPERR);
++	__bad_area_nosemaphore(regs, error_code, address, 0, SEGV_MAPERR);
+ }
+ 
+ static void
+ __bad_area(struct pt_regs *regs, unsigned long error_code,
+-	   unsigned long address, u32 *pkey, int si_code)
++	   unsigned long address, u32 pkey, int si_code)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	/*
+@@ -855,7 +855,7 @@ __bad_area(struct pt_regs *regs, unsigned long error_code,
+ static noinline void
+ bad_area(struct pt_regs *regs, unsigned long error_code, unsigned long address)
+ {
+-	__bad_area(regs, error_code, address, NULL, SEGV_MAPERR);
++	__bad_area(regs, error_code, address, 0, SEGV_MAPERR);
+ }
+ 
+ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+@@ -906,10 +906,10 @@ bad_area_access_error(struct pt_regs *regs, unsigned long error_code,
+ 		 *	     faulted on a pte with its pkey=4.
+ 		 */
+ 		u32 pkey = vma_pkey(vma);
+-		__bad_area(regs, error_code, address, &pkey, SEGV_PKUERR);
++		__bad_area(regs, error_code, address, pkey, SEGV_PKUERR);
+ 	}
+ 	else
+-		__bad_area(regs, error_code, address, NULL, SEGV_ACCERR);
++		__bad_area(regs, error_code, address, 0, SEGV_ACCERR);
+ }
+ 
+ static void
+-- 
+2.17.1
 
-  tools/testing/selftests/net/tls.c
-
-between commit:
-
-  50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
-
-from the net tree and commit:
-
-  c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across mul=
-tiple records")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/net/tls.c
-index 8fdfeafaf8c0,96fc6fe70293..000000000000
---- a/tools/testing/selftests/net/tls.c
-+++ b/tools/testing/selftests/net/tls.c
-@@@ -502,55 -502,28 +502,77 @@@ TEST_F(tls, recv_peek_multiple
-  	EXPECT_EQ(memcmp(test_str, buf, send_len), 0);
-  }
- =20
- +TEST_F(tls, recv_peek_multiple_records)
- +{
- +	char const *test_str =3D "test_read_peek_mult_recs";
- +	char const *test_str_first =3D "test_read_peek";
- +	char const *test_str_second =3D "_mult_recs";
- +	int len;
- +	char buf[64];
- +
- +	len =3D strlen(test_str_first);
- +	EXPECT_EQ(send(self->fd, test_str_first, len, 0), len);
- +
- +	len =3D strlen(test_str_second) + 1;
- +	EXPECT_EQ(send(self->fd, test_str_second, len, 0), len);
- +
- +	len =3D sizeof(buf);
- +	memset(buf, 0, len);
- +	EXPECT_NE(recv(self->cfd, buf, len, MSG_PEEK), -1);
- +
- +	/* MSG_PEEK can only peek into the current record. */
- +	len =3D strlen(test_str_first) + 1;
- +	EXPECT_EQ(memcmp(test_str_first, buf, len), 0);
- +
- +	len =3D sizeof(buf);
- +	memset(buf, 0, len);
- +	EXPECT_NE(recv(self->cfd, buf, len, 0), -1);
- +
- +	/* Non-MSG_PEEK will advance strparser (and therefore record)
- +	 * however.
- +	 */
- +	len =3D strlen(test_str) + 1;
- +	EXPECT_EQ(memcmp(test_str, buf, len), 0);
- +
- +	/* MSG_MORE will hold current record open, so later MSG_PEEK
- +	 * will see everything.
- +	 */
- +	len =3D strlen(test_str_first);
- +	EXPECT_EQ(send(self->fd, test_str_first, len, MSG_MORE), len);
- +
- +	len =3D strlen(test_str_second) + 1;
- +	EXPECT_EQ(send(self->fd, test_str_second, len, 0), len);
- +
- +	len =3D sizeof(buf);
- +	memset(buf, 0, len);
- +	EXPECT_NE(recv(self->cfd, buf, len, MSG_PEEK), -1);
- +
- +	len =3D strlen(test_str) + 1;
- +	EXPECT_EQ(memcmp(test_str, buf, len), 0);
- +}
- +
-+ TEST_F(tls, recv_peek_large_buf_mult_recs)
-+ {
-+ 	char const *test_str =3D "test_read_peek_mult_recs";
-+ 	char const *test_str_first =3D "test_read_peek";
-+ 	char const *test_str_second =3D "_mult_recs";
-+ 	int len;
-+ 	char buf[64];
-+=20
-+ 	len =3D strlen(test_str_first);
-+ 	EXPECT_EQ(send(self->fd, test_str_first, len, 0), len);
-+=20
-+ 	len =3D strlen(test_str_second) + 1;
-+ 	EXPECT_EQ(send(self->fd, test_str_second, len, 0), len);
-+=20
-+ 	len =3D sizeof(buf);
-+ 	memset(buf, 0, len);
-+ 	EXPECT_NE(recv(self->cfd, buf, len, MSG_PEEK), -1);
-+=20
-+ 	len =3D strlen(test_str) + 1;
-+ 	EXPECT_EQ(memcmp(test_str, buf, len), 0);
-+ }
-+=20
-  TEST_F(tls, pollin)
-  {
-  	char const *test_str =3D "test_poll";
-
---Sig_/gk.xrKYo+V8dzSowvoh9sfc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlugQpsACgkQAVBC80lX
-0Gz3EQf/UJDAfYgBYpPjUgDz82f+NRcBqrR/ekZfPvomH1PKo/d6tHibfGRW4VEX
-f1BEF2Qp5z7JmKfqToq6Yv5wqBV+m3Lfk9pn5QkzhPBRLHko/35ia/RubS2GBCYw
-qnyMGZtvA6nX4APzziHLhmWUDJDHrCw+2qAKA3VGWTnfI+DAFed6PdCnUX+jOYVz
-J0Tp1G6JDAWLpQZqKYMjjligl0agrRaLvXbVTw36lhAtuS45BPzpv8kZb+2KK1hU
-tJIAOuK+RB2bT+jl7jn75LhsdVqfkmzgpJc+cGVG2fWJQauZQYXCKym+wc3gZQCw
-qSJfixe1ozp58yU1SLC8Y7Ydwtoirw==
-=Mcd3
------END PGP SIGNATURE-----
-
---Sig_/gk.xrKYo+V8dzSowvoh9sfc--
