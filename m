@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB67ECE563
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB79BECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC44214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77AC6214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:48:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjhfHwhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC44214DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwSXywbR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77AC6214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbeIRGR6 (ORCPT
+        id S1729553AbeIRGR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:17:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34791 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729484AbeIRGRz (ORCPT
+        Tue, 18 Sep 2018 02:17:59 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:47031 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeIRGR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:17:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so119740pfi.1;
-        Mon, 17 Sep 2018 17:48:02 -0700 (PDT)
+        Tue, 18 Sep 2018 02:17:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id b129-v6so94352pga.13;
+        Mon, 17 Sep 2018 17:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tMA4CZejwy/bgOlPy0MmgAKcWO/jJ6UDYO2B4khfCIY=;
-        b=OjhfHwhHHI1JEOwPQkXJdgBHaX78ef9iVrSNNbWtYGEck5nfIsbqXd7nkqcxnh+YLB
-         qfX1aYCpp2hIiOfZz6unjWwZOu1BFof5Tozf7YrGFS8dWf3+W2/RwgjFXufccuRaXYGs
-         mO7ZXsR6ptugY4xn2v/0eVvGOzd1GReeGGToelXYsHWrbVVzAZJw66ctiOkUn+cDWm1C
-         zLF23h/MscKy8Wk9WwTawuq0tZqTV6u1cwT2+kT9MaCQgSbBFAippGHh0s+HL7LOLJGx
-         qqjNGL+J71QarwIYVW8hiWapj8ZgjsJIEgAAZqFTpkavRphz+D80yHU2DEcU8vCCMbtT
-         U0nw==
+        bh=CqGMjCUs/uvCGUwiT2aDuH2Habwf0XsqYCKkMi9e1Fg=;
+        b=bwSXywbRDwDbIzMxWPzc/3CTV+SOiWfrH3g4cDrTA/xGXTo5ZJ+8nXRBN2C3r6V6N5
+         mWFvEim+4O4nmTwJL9TUze3ba9C8jZ/M6RYWwxA+89yuPdCHu7Yk6v5Fg4KobM0s3cMG
+         h5cnjb4DstFGW6reczOzxETqossn5urlwIAGFKF0EiEWljdNqTrNA/pAgsLmC2l/VB5U
+         /4xQA8C41k3eZoP3P9E0rjJDpLmCaXs4w8bo/uNeByNCZiF7/+wwFq+DJ5MSSnjTbOlM
+         zDB+5Qyy0pUgscA1+QnRS7VhuaW4kIjlVFNXlS10KwY+LFme/at8rXsxxibN+PzSou1P
+         G1Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tMA4CZejwy/bgOlPy0MmgAKcWO/jJ6UDYO2B4khfCIY=;
-        b=bGMWBP5sbOWoJDP/Lf8O5Fjz/zilM9nyX6ZDICdBwGtQf4jvjq9FQgxiduMkRV2jUt
-         weqFe5U0iSJNUUgYWDQogDQTJMK5fcnJ72d0v/VmaRcB4az+XFZDkJHV3vdTF+6HHq7U
-         ZtumRKpNhSr/7LOQNDJpH8qM2dPYjF/pdtCZWgzvH0hsPPdRGnpU/tJOvEGS2L8Acp8Y
-         XjCgqSTVGux9cDwCKqnoAopAMIZFY9e5Uz57EVrc/5MjzLuFT9sh88lQH/05S6C7O+dB
-         B+VkSN3yMgykB9LDsOAFVLMzsDh02mbrB5ZTYINI/d+rw6WlEWKhDQ6nn7FKnvfF22QG
-         KAxw==
-X-Gm-Message-State: APzg51CZjQwqaKezX1ggjylahojN7b+BsbVPGo4vawG4sXwXlNZueCE4
-        f8gB8hHE/gz0AzxqpUYeIWi7oE4U
-X-Google-Smtp-Source: ANB0VdYpzVNRZHvQkJtl5f33enpFHLhcxHF6Wq6QX0Ksb8/OeA+hiakmNvh4vs0OkAF5ufhzwIF7zA==
-X-Received: by 2002:a63:a35f:: with SMTP id v31-v6mr25553394pgn.261.1537231681154;
-        Mon, 17 Sep 2018 17:48:01 -0700 (PDT)
+        bh=CqGMjCUs/uvCGUwiT2aDuH2Habwf0XsqYCKkMi9e1Fg=;
+        b=LAau34VQOE6HmDOVcSgIIKB3kJnWwIufFhD8Y26eyFZNWxou1P8Nao+u5+flpB9BVb
+         gWEX72wFNNnapiXlmpz43YDjXceWvQ4wzO/5qfRdDYlv9EMTqhnrf9k9NG6JP5pkPuNc
+         Mhh0NI51PZq26QWYgiLaJ4u+0f94R/O8iQd97L61fXlgFT9GpJWRMF+aRuMwhRxWU85e
+         UiOToSjR7nu/fmS0+D+WPDjAQ+jCu5zIKrXc1cSSgK+lT2iIjKsCtfP6GbDyUeJLdnFN
+         Uc+G5aAYe0CiHqEhq7XmbDez42+M7eqyLnj+ZpnfWfXu3XuWzkwT9FDh35f52IS2HBny
+         h+9w==
+X-Gm-Message-State: APzg51CEQp1Ts8nd+XWMFjdKeGoZavfNSUrIZ/ZjLzRMWzubvxBoLmyX
+        hSBvJe2NKYpqcmG1y1Cj2Rd1tdnF
+X-Google-Smtp-Source: ANB0VdaEwjF6o+Tv3Umj6ZPXN1Xi/VDfVjYtseoiVDbEF880FSZv7k3ozFISxeaYbvNeJPZQlWJ9Vg==
+X-Received: by 2002:a63:2106:: with SMTP id h6-v6mr25155554pgh.161.1537231684502;
+        Mon, 17 Sep 2018 17:48:04 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.59
+        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.48.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 17:47:59 -0700 (PDT)
+        Mon, 17 Sep 2018 17:48:03 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 17/20] Input: only credit entropy when events are generated by a device
-Date:   Mon, 17 Sep 2018 17:47:29 -0700
-Message-Id: <20180918004732.9875-17-dmitry.torokhov@gmail.com>
+Subject: [PATCH 19/20] Input: iforce - drop couple of temps from transport code
+Date:   Mon, 17 Sep 2018 17:47:31 -0700
+Message-Id: <20180918004732.9875-19-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
 References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
@@ -75,60 +75,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we credit entropy (via add_input_randomness()) regardless of
-where an event comes form, a device itself, or an input handler, such as
-evdev (and thus from userspace). While access to event devices is supposed
-to be tightly controlled (one does not want random processes to be able to
-observe or inject keystrokes), developers may use evdev to inject events
-for testing purposes. Let's make sure that such events to not contribute
-to the entropy to keep the pool 'pure' and do not expose developer's
-boxes to not so random data.
+Transport initialization code now deals mostly with transport-specific
+data, so we can drop couple of temporary variables.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/input/input.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/input/joystick/iforce/iforce-serio.c | 7 ++-----
+ drivers/input/joystick/iforce/iforce-usb.c   | 7 ++-----
+ 2 files changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 260f00ebe34d..0126b8bb6afa 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -368,12 +368,15 @@ static int input_get_disposition(struct input_dev *dev,
- }
- 
- static void input_handle_event(struct input_dev *dev,
--			       unsigned int type, unsigned int code, int value)
-+			       unsigned int type, unsigned int code, int value,
-+			       bool can_credit_entropy)
+diff --git a/drivers/input/joystick/iforce/iforce-serio.c b/drivers/input/joystick/iforce/iforce-serio.c
+index 277522d0f324..e7692a38591e 100644
+--- a/drivers/input/joystick/iforce/iforce-serio.c
++++ b/drivers/input/joystick/iforce/iforce-serio.c
+@@ -204,16 +204,13 @@ static irqreturn_t iforce_serio_irq(struct serio *serio,
+ static int iforce_serio_connect(struct serio *serio, struct serio_driver *drv)
  {
- 	int disposition = input_get_disposition(dev, type, code, &value);
+ 	struct iforce_serio *iforce_serio;
+-	struct iforce *iforce;
+ 	int err;
  
--	if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)
-+	if (can_credit_entropy &&
-+	    disposition != INPUT_IGNORE_EVENT && type != EV_SYN) {
- 		add_input_randomness(type, code, value);
-+	}
+ 	iforce_serio = kzalloc(sizeof(*iforce_serio), GFP_KERNEL);
+ 	if (!iforce_serio)
+ 		return -ENOMEM;
  
- 	if ((disposition & INPUT_PASS_TO_DEVICE) && dev->event)
- 		dev->event(dev, type, code, value);
-@@ -434,7 +437,7 @@ void input_event(struct input_dev *dev,
- 	if (is_event_supported(type, dev->evbit, EV_MAX)) {
+-	iforce = &iforce_serio->iforce;
+-
+-	iforce->xport_ops = &iforce_serio_xport_ops;
++	iforce_serio->iforce.xport_ops = &iforce_serio_xport_ops;
  
- 		spin_lock_irqsave(&dev->event_lock, flags);
--		input_handle_event(dev, type, code, value);
-+		input_handle_event(dev, type, code, value, true);
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
- 	}
- }
-@@ -464,7 +467,7 @@ void input_inject_event(struct input_handle *handle,
- 		rcu_read_lock();
- 		grab = rcu_dereference(dev->grab);
- 		if (!grab || grab == handle)
--			input_handle_event(dev, type, code, value);
-+			input_handle_event(dev, type, code, value, false);
- 		rcu_read_unlock();
+ 	iforce_serio->serio = serio;
+ 	serio_set_drvdata(serio, iforce_serio);
+@@ -222,7 +219,7 @@ static int iforce_serio_connect(struct serio *serio, struct serio_driver *drv)
+ 	if (err)
+ 		goto fail1;
  
- 		spin_unlock_irqrestore(&dev->event_lock, flags);
+-	err = iforce_init_device(&serio->dev, BUS_RS232, iforce);
++	err = iforce_init_device(&serio->dev, BUS_RS232, &iforce_serio->iforce);
+ 	if (err)
+ 		goto fail2;
+ 
+diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
+index ae2dd5b5a416..a1e670781441 100644
+--- a/drivers/input/joystick/iforce/iforce-usb.c
++++ b/drivers/input/joystick/iforce/iforce-usb.c
+@@ -208,7 +208,6 @@ static int iforce_usb_probe(struct usb_interface *intf,
+ 	struct usb_host_interface *interface;
+ 	struct usb_endpoint_descriptor *epirq, *epout;
+ 	struct iforce_usb *iforce_usb;
+-	struct iforce *iforce;
+ 	int err = -ENOMEM;
+ 
+ 	interface = intf->cur_altsetting;
+@@ -231,9 +230,7 @@ static int iforce_usb_probe(struct usb_interface *intf,
+ 	if (!iforce_usb->out)
+ 		goto fail;
+ 
+-	iforce = &iforce_usb->iforce;
+-
+-	iforce->xport_ops = &iforce_usb_xport_ops;
++	iforce_usb->iforce.xport_ops = &iforce_usb_xport_ops;
+ 
+ 	iforce_usb->usbdev = dev;
+ 	iforce_usb->intf = intf;
+@@ -248,7 +245,7 @@ static int iforce_usb_probe(struct usb_interface *intf,
+ 			 iforce_usb->data_out, sizeof(iforce_usb->data_out),
+ 			 iforce_usb_out, iforce_usb, epout->bInterval);
+ 
+-	err = iforce_init_device(&intf->dev, BUS_USB, iforce);
++	err = iforce_init_device(&intf->dev, BUS_USB, &iforce_usb->iforce);
+ 	if (err)
+ 		goto fail;
+ 
 -- 
 2.19.0.397.gdd90340f6a-goog
 
