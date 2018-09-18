@@ -2,255 +2,91 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625C9ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C55C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051EB2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:41:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78DD12133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="BknCy2LE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051EB2133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fIZ7bkyQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k/HOSMOH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DD12133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbeISFQf (ORCPT
+        id S1730484AbeISFS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 01:16:35 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36774 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725779AbeISFQe (ORCPT
+        Wed, 19 Sep 2018 01:18:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41564 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbeISFS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 01:16:34 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8INb2fg023894
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:41:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=JriOzuGSBXjp2zfTuinXCfo08czmhOPGUL1rWQK3bQE=;
- b=BknCy2LEWwPMEGkcNTGICi0p13i4SJ+gA8oKFmnqiWTgBP95/lfU9/h0xoe0OJnOzOld
- TxG5qtDmTvm9XKQXZuF4GhWPLkcZQlfAH95NVm+gO98Q0rq1I+38itEiwwb1xY2jXC1w
- 3T8dJ3jguZX++o54RC78DuI8TZI7eYZKfLE= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2mkat5r2m9-14
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:41:35 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.13) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 16:41:30 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- DC20C1715CB7; Tue, 18 Sep 2018 16:41:28 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>
-CC:     <vijaykhemka@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v3] ARM: dts: aspeed: Adding Facebook TiogaPass BMC
-Date:   Tue, 18 Sep 2018 16:41:08 -0700
-Message-ID: <20180918234110.1908926-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Wed, 19 Sep 2018 01:18:27 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8468160BF5; Tue, 18 Sep 2018 23:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537314208;
+        bh=w1Jzx7lLBxguWK4Afp0Vzd0usaACFvGXzO5Qer0jylo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fIZ7bkyQmASqptgOzEh768gu4L8hi7Ei2/AHQt9WobDWOkEPsdRGg+oYD1V4Sb94j
+         gFDcDiCa1gT+FcLzrYaKjuKbriCGmizxTOsnfR+y3s0jkNmHo83cp8id4gWwKsurKn
+         vc6FjzVgvpucNNPR8eY7walzi8FevBVE477SfObw=
+Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vgarodia@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 22466600ED;
+        Tue, 18 Sep 2018 23:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537314207;
+        bh=w1Jzx7lLBxguWK4Afp0Vzd0usaACFvGXzO5Qer0jylo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=k/HOSMOHS8HelP1bYqXbtjpY8oeY1KK7gQ76auF/lu64FXcQAy5GNnqL/rdYXHeci
+         P3YFfjvodboBEGDv0bHS8Ju8Ed2QqM8E/GRQmT1jp/gb9M33sWDdXLtkOC4RMUNGR/
+         xYV98Iwbfe/SwGCfL2gHoiezqonAhiP77sE3c/fU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22466600ED
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, arnd@arndb.de, bjorn.andersson@linaro.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+Subject: [PATCH v9 0/5] Venus updates - PIL
+Date:   Wed, 19 Sep 2018 05:13:07 +0530
+Message-Id: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial introduction of Facebook TiogaPass family equipped with
-Aspeed 2500 BMC SoC. TiogaPass is a x86 server development kit
-with a ASPEED ast2500 BMC manufactured by Facebook.
-Specifically, This adds the tiogapass platform device tree file
-including the flash layout used by the tiogapass BMC machines.
+Stanimir Varbanov (1):
+  venus: firmware: register separate platform_device for firmware loader
 
-This also adds an entry of tiogapass device tree file in Makefile
+Vikash Garodia (4):
+  venus: firmware: add routine to reset ARM9
+  venus: firmware: move load firmware in a separate function
+  venus: firmware: add no TZ boot and shutdown routine
+  dt-bindings: media: Document bindings for venus firmware device
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
----
- arch/arm/boot/dts/Makefile                    |   1 +
- .../dts/aspeed-bmc-facebook-tiogapass.dts     | 146 ++++++++++++++++++
- 2 files changed, 147 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+ .../devicetree/bindings/media/qcom,venus.txt       |  13 +-
+ drivers/media/platform/qcom/venus/core.c           |  24 ++-
+ drivers/media/platform/qcom/venus/core.h           |   6 +
+ drivers/media/platform/qcom/venus/firmware.c       | 234 +++++++++++++++++++--
+ drivers/media/platform/qcom/venus/firmware.h       |  17 +-
+ drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
+ drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
+ 7 files changed, 272 insertions(+), 43 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b5bd3de87c33..1a2db605185a 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1199,6 +1199,7 @@ dtb-$(CONFIG_ARCH_ZX) += zx296702-ad1.dtb
- dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-ast2500-evb.dtb \
- 	aspeed-bmc-arm-centriq2400-rep.dtb \
-+	aspeed-bmc-facebook-tiogapass.dtb \
- 	aspeed-bmc-intel-s2600wf.dtb \
- 	aspeed-bmc-opp-lanyang.dtb \
- 	aspeed-bmc-opp-palmetto.dtb \
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-new file mode 100644
-index 000000000000..050e72df8683
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018 Facebook Inc.
-+// Author: Vijay Khemka <vijaykhemka@fb.com>
-+/dts-v1/;
-+
-+#include "aspeed-g5.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+
-+/ {
-+	model = "Facebook TiogaPass BMC";
-+	compatible = "facebook,tiogapass-bmc", "aspeed,ast2500";
-+	aliases {
-+		serial0 = &uart1;
-+		serial4 = &uart5;
-+	};
-+	chosen {
-+		stdout-path = &uart5;
-+		bootargs = "console=ttyS4,115200 earlyprintk";
-+	};
-+
-+	memory@80000000 {
-+		reg = <0x80000000 0x20000000>;
-+	};
-+};
-+
-+&fmc {
-+	status = "okay";
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+#include "openbmc-flash-layout.dtsi"
-+	};
-+};
-+
-+&spi1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi1_default>;
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "pnor";
-+	};
-+};
-+
-+&uart1 {
-+	// Host Console
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_txd1_default
-+		     &pinctrl_rxd1_default>;
-+};
-+
-+&uart5 {
-+	// BMC Console
-+	status = "okay";
-+};
-+
-+&mac0 {
-+	status = "okay";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii1_default>;
-+	use-ncsi;
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+	//Airmax Conn B, CPU0 PIROM, CPU1 PIROM
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+	//X24 Riser
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+	// Mezz Management SMBus
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+	// SMBus to Board ID EEPROM
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+	// BMC Debug Header
-+};
-+
-+&i2c5 {
-+	status = "okay";
-+  //CPU Voltage regulators
-+};
-+
-+&i2c6 {
-+	status = "okay";
-+	tpm@20 {
-+		compatible = "infineon,slb9645tt";
-+		reg = <0x20>;
-+	};
-+	tmp421@4e {
-+		compatible = "ti,tmp421";
-+		reg = <0x4e>;
-+	};
-+	tmp421@4f {
-+		compatible = "ti,tmp421";
-+		reg = <0x4f>;
-+	};
-+	eeprom@54 {
-+		compatible = "atmel,24c64";
-+		reg = <0x54>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&i2c7 {
-+	status = "okay";
-+  //HSC, AirMax Conn A
-+};
-+
-+&i2c8 {
-+	status = "okay";
-+  //Mezz Sensor SMBus
-+};
-+
-+&i2c9 {
-+	status = "okay";
-+  //USB Debug Connector
-+};
-+
-+&pwm_tacho {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
-+	fan@0 {
-+		reg = <0x00>;
-+		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
-+	};
-+
-+	fan@1 {
-+		reg = <0x00>;
-+		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
-+	};
-+};
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
