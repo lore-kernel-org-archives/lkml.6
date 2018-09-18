@@ -3,75 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142B8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC0C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAB252133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB252133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AF122133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF122133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbeISDwD convert rfc822-to-8bit (ORCPT
+        id S1728414AbeISDyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:52:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728219AbeISDwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:52:03 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0CFB53002316;
-        Tue, 18 Sep 2018 22:17:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ECC4430912F4;
-        Tue, 18 Sep 2018 22:17:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180919073826.02370812@canb.auug.org.au>
-References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs tree
+        Tue, 18 Sep 2018 23:54:02 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:34214 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeISDyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 23:54:01 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g2OL0-0001Zl-QX; Tue, 18 Sep 2018 16:19:18 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g2OKk-0006ye-P2; Tue, 18 Sep 2018 16:19:18 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
+        berrange@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180914105310.6454-1-jlayton@kernel.org>
+        <87a7ohs5ow.fsf@xmission.com> <20180917155948.GA25565@redhat.com>
+Date:   Wed, 19 Sep 2018 00:18:53 +0200
+In-Reply-To: <20180917155948.GA25565@redhat.com> (Oleg Nesterov's message of
+        "Mon, 17 Sep 2018 17:59:48 +0200")
+Message-ID: <87o9cuh2k2.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <15924.1537309041.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 18 Sep 2018 23:17:21 +0100
-Message-ID: <15925.1537309041@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 18 Sep 2018 22:17:23 +0000 (UTC)
+Content-Type: text/plain
+X-XM-SPF: eid=1g2OKk-0006ye-P2;;;mid=<87o9cuh2k2.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+ia9qrzIEiH2Ja050oCQNoqQQz2BVPVBY=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC][PATCH 0/3] exec: Moving unshare_files_struct
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Oleg Nesterov <oleg@redhat.com> writes:
 
-> > After merging the vfs tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > samples/vfs/test-fsinfo.c: In function 'fsinfo':
-> > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
+> On 09/16, Eric W. Biederman wrote:
+>>
+>> Oleg's patch to remove get_files_struct from proc means we don't need
+>> two counts in files_struct.
+>
+> So it seems you agree with this patch at least in general.
 
-I think the problem is that I haven't allocated system call numbers for any
-arches other than x86 - even the x86 syscall numbers are provisional until the
-patchset is taken upstream.  I'm not sure of the best way to deal with this -
-make the samples dependent on the X86 arch?
+I do I think in the context we are looking at things finding a way not
+to need to bump files_struct->count looks like it will simplify a lot of
+things and there are not many cases we need to consider.
 
-> > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
-> >   printf("\tmax file size: %llx\n", f->max_file_size);
+I have been thorough and mentioned the binder case and other case but
+that isn't because I disagree I simply don't want us to overlook weird
+or tricky cases.
 
-Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
-long.  Is it possible to shift all arches to use unsigned long long for __u64?
+It appears that the more often that we look at these bits the better
+a solution we wind up writing.
 
-David
+> OK, if nobody else objects I'll split this patch and send the series
+> tomorrow.
+
+No objection from me.
+
+>> Eric W. Biederman (3):
+>>       exec: Move unshare_files down to avoid locks being dropped on exec.
+>>       exec: Simplify unshare_files
+>>       exec: Remove reset_files_struct
+>
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+
+Eric
