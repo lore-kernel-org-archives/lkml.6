@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A4EECE563
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61208ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A78F206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:41:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A78F206B7
+	by mail.kernel.org (Postfix) with ESMTP id 24330206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:41:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24330206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeIRMLh (ORCPT
+        id S1729305AbeIRMLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:11:37 -0400
+        Tue, 18 Sep 2018 08:11:36 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36971 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729295AbeIRMLg (ORCPT
+        by vger.kernel.org with ESMTP id S1728850AbeIRMLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:11:36 -0400
+        Tue, 18 Sep 2018 08:11:35 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Mon, 17 Sep 2018 23:39:56 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D4AEA40957;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id C472140857;
         Mon, 17 Sep 2018 23:40:19 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH 09/19] vmw_balloon: simplify vmballoon_send_get_target()
-Date:   Mon, 17 Sep 2018 23:38:43 -0700
-Message-ID: <20180918063853.198332-10-namit@vmware.com>
+Subject: [PATCH 07/19] vmw_balloon: treat all refused pages equally
+Date:   Mon, 17 Sep 2018 23:38:41 -0700
+Message-ID: <20180918063853.198332-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918063853.198332-1-namit@vmware.com>
 References: <20180918063853.198332-1-namit@vmware.com>
@@ -48,90 +48,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we want to leave as little as possible on the global balloon
-structure, to avoid possible future races, we want to get rid sysinfo.
-We can actually get the total_ram directly, and simplify the logic of
-vmballoon_send_get_target() a little.
+Currently, when the hypervisor rejects a page during lock operation, the
+VM treats pages differently according to the error-code: in certain
+cases the page is immediately freed, and in others it is put on a
+rejection list and only freed later.
 
-While we are doing that, let's return int and avoid mistakes due to
-bool/int conversions.
+The behavior does not make too much sense. If the page is freed
+immediately it is very likely to be used again in the next batch of
+allocations, and be rejected again.
+
+In addition, for support of compaction and OOM notifiers, we wish to
+separate the logic that communicates with the hypervisor (as well as
+analyzes the status of each page) from the logic that allocates or free
+pages.
+
+Treat all errors the same way, queuing the pages on the refuse list.
+Move to the next allocation size (4k) when too many pages are refused.
+Free the refused pages when moving to the next size to avoid situations
+in which too much memory is waiting to be freed on the refused list.
 
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 35 ++++++++++++++---------------------
- 1 file changed, 14 insertions(+), 21 deletions(-)
+ drivers/misc/vmw_balloon.c | 52 +++++++++++++++++++++-----------------
+ 1 file changed, 29 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index aafd087809e9..17ac066a20fe 100644
+index e1b704d3d5cb..74fff1e314a7 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -223,8 +223,6 @@ struct vmballoon {
- 	struct dentry *dbg_entry;
- #endif
+@@ -542,29 +542,13 @@ static int vmballoon_lock(struct vmballoon *b, unsigned int num_pages,
+ 		/* Error occurred */
+ 		STATS_INC(b->stats.refused_alloc[is_2m_pages]);
  
--	struct sysinfo sysinfo;
--
- 	struct delayed_work dwork;
+-		switch (status) {
+-		case VMW_BALLOON_ERROR_PPN_PINNED:
+-		case VMW_BALLOON_ERROR_PPN_INVALID:
+-			/*
+-			 * Place page on the list of non-balloonable pages
+-			 * and retry allocation, unless we already accumulated
+-			 * too many of them, in which case take a breather.
+-			 */
+-			if (page_size->n_refused_pages
+-					< VMW_BALLOON_MAX_REFUSED) {
+-				list_add(&p->lru, &page_size->refused_pages);
+-				page_size->n_refused_pages++;
+-				break;
+-			}
+-			/* Fallthrough */
+-		case VMW_BALLOON_ERROR_RESET:
+-		case VMW_BALLOON_ERROR_PPN_NOTNEEDED:
+-			vmballoon_free_page(p, is_2m_pages);
+-			break;
+-		default:
+-			/* This should never happen */
+-			WARN_ON_ONCE(true);
+-		}
++		/*
++		 * Place page on the list of non-balloonable pages
++		 * and retry allocation, unless we already accumulated
++		 * too many of them, in which case take a breather.
++		 */
++		list_add(&p->lru, &page_size->refused_pages);
++		page_size->n_refused_pages++;
+ 	}
  
- 	struct vmci_handle vmci_doorbell;
-@@ -353,34 +351,29 @@ static u16 vmballoon_page_size(bool is_2m_page)
- 	return 1;
- }
+ 	return batch_status == VMW_BALLOON_SUCCESS ? 0 : -EIO;
+@@ -711,9 +695,31 @@ static void vmballoon_inflate(struct vmballoon *b)
  
--/*
-- * Retrieve desired balloon size from the host.
-+/**
-+ * vmballoon_send_get_target() - Retrieve desired balloon size from the host.
-+ *
-+ * @b: pointer to the balloon.
-+ *
-+ * Return: zero on success, EINVAL if limit does not fit in 32-bit, as required
-+ * by the host-guest protocol and EIO if an error occurred in communicating with
-+ * the host.
-  */
--static bool vmballoon_send_get_target(struct vmballoon *b)
-+static int vmballoon_send_get_target(struct vmballoon *b)
- {
- 	unsigned long status;
- 	unsigned long limit;
--	u32 limit32;
+ 		vmballoon_add_page(b, num_pages++, page);
+ 		if (num_pages == b->batch_max_pages) {
++			struct vmballoon_page_size *page_size =
++					&b->page_sizes[is_2m_pages];
++
+ 			error = vmballoon_lock(b, num_pages, is_2m_pages);
  
--	/*
--	 * si_meminfo() is cheap. Moreover, we want to provide dynamic
--	 * max balloon size later. So let us call si_meminfo() every
--	 * iteration.
--	 */
--	si_meminfo(&b->sysinfo);
--	limit = b->sysinfo.totalram;
-+	limit = totalram_pages;
- 
- 	/* Ensure limit fits in 32-bits */
--	limit32 = (u32)limit;
--	if (limit != limit32)
--		return false;
-+	if (limit != (u32)limit)
-+		return -EINVAL;
- 
- 	status = vmballoon_cmd(b, VMW_BALLOON_CMD_GET_TARGET, limit, 0);
- 
--	if (status == VMW_BALLOON_SUCCESS)
--		return true;
--
--	return false;
-+	return status == VMW_BALLOON_SUCCESS ? 0 : -EIO;
- }
- 
- static struct page *vmballoon_alloc_page(bool is_2m_page)
-@@ -960,7 +953,7 @@ static void vmballoon_work(struct work_struct *work)
- 	if (b->reset_required)
- 		vmballoon_reset(b);
- 
--	if (vmballoon_send_get_target(b))
-+	if (!vmballoon_send_get_target(b))
- 		change = vmballoon_change(b);
- 
- 	if (change != 0) {
+ 			num_pages = 0;
++
++			/*
++			 * Stop allocating this page size if we already
++			 * accumulated too many pages that the hypervisor
++			 * refused.
++			 */
++			if (page_size->n_refused_pages >=
++			    VMW_BALLOON_MAX_REFUSED) {
++				if (!is_2m_pages)
++					break;
++
++				/*
++				 * Release the refused pages as we move to 4k
++				 * pages.
++				 */
++				vmballoon_release_refused_pages(b, true);
++				is_2m_pages = true;
++			}
++
+ 			if (error)
+ 				break;
+ 		}
 -- 
 2.17.1
 
