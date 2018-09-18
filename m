@@ -2,85 +2,121 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5910ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F95ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AFDB21508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21AD521508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:56:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXL9979S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AFDB21508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrFQ/1Dc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21AD521508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbeISA3N (ORCPT
+        id S1729736AbeISAaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:29:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727660AbeISA3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:29:13 -0400
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEE712150F;
-        Tue, 18 Sep 2018 18:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537296917;
-        bh=1UAUuPG23woTP1GzfubSujcN8HY2LECS7paKjmCXFZ0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CXL9979S0pfugD6ZxPH0qUPkgJDkK5oOtEQ6SRK5A3YsyXT9stLfztQI/Ed/7rNt2
-         IIX6Ns4G5E2ysMCaXrhHviVgSrrUMSvJDlWDabSKnc9lyGSnk1tuYJ1/WxORI71B01
-         EMOzltTWihBBStI+JbILx08F6RDAtsktijEpNSac=
-Received: by mail-qk1-f176.google.com with SMTP id n3-v6so1140639qkn.8;
-        Tue, 18 Sep 2018 11:55:16 -0700 (PDT)
-X-Gm-Message-State: APzg51CbgosLnLI+AhoKBxQHEgdGLXya2p99i8isIkEgaSCrIJY1Hdjw
-        g3HUt7sde+Gg5NH8laMRszze1xz/D/y6wu0Ysw==
-X-Google-Smtp-Source: ANB0Vdb6nvNso2oveAQuhM//DVWoZAYsyw07DNU8Fo+BdI2SkXbrkeCj4TUamRgvfLfKDG3EsR51sWr35H6lijOPv4Q=
-X-Received: by 2002:a37:bec4:: with SMTP id o187-v6mr21197700qkf.326.1537296916057;
- Tue, 18 Sep 2018 11:55:16 -0700 (PDT)
+        Tue, 18 Sep 2018 20:30:22 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46611 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727563AbeISAaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:30:21 -0400
+Received: by mail-qk1-f193.google.com with SMTP id j7-v6so1598679qkd.13;
+        Tue, 18 Sep 2018 11:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=F0zuSQLTrcmgA2kajWrC/u60uTaz8F14+gDbJzTJhsc=;
+        b=JrFQ/1Dcusm9572tqEOcMht2LkJn5iCbkJ9/nG4kKpKOhANbC3EV9LFkBIV3+XtX8Z
+         AGggYSGLrAK4zHWWb0w7+bPgyb6ICUOV88yvBAwwXswEMYkHpCYGe5vTjJ+mR6GsCAkZ
+         SZ8hVvpS2Kuc2B967wype96/BvIl590bmN+BLfUhUo3RY1+kasEY7zDzbwRDa9MIGQXP
+         Y37gqUeKtZ7JcBWHlV7yb2B2Jd/tzbIaHNxWUszRuzm1Udnqfie+G+hRICR7fMUr8bYg
+         ZpIvaIeU1IdliLE3JOmTgkPHZro3b9jwGHQ8B5I5DaJJrDFmU7V0hZRHB6c/GgDie9fd
+         XMww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=F0zuSQLTrcmgA2kajWrC/u60uTaz8F14+gDbJzTJhsc=;
+        b=UnuGaK40bkrewxkaLMSYey7FSI8+OlN+UzW92c9RHGOAArn6TljXTLWJSDNP2SfMKk
+         sPwQRe/TTYouXdN6XkCDrkdnE4SOSk2q21rvvpf/0ex+yihYvFLe4Xadi89uv/86pIi9
+         ueHez3Vg7FhOHCDYftZ7LDt8ni8cXiEpaIzbDp+2mjsLBmQLHz3Kj4/T34AqBf6RPRHK
+         2TF3efnzi+zAQaKTrL4T0B5/yKc11tGd2DwzdxNHXtgkhpAOolhkRHxZU91C4xIZRwld
+         KJJPUboQFHCwz2tF0hdTMkmNUDz7glAAOROJDp7NbcI9Q1zxJOZifsoJPr1iaYC+ThhE
+         q6uA==
+X-Gm-Message-State: APzg51BMSicatIgDnxoA7VQWkGQSbVmLtdXnn5ch/NTtx81te5TzeKhW
+        au/yVPaz6u8cncGufLvkpKnCiFJsyYY+GxVVZDumtySL
+X-Google-Smtp-Source: ANB0VdZF90toZYA9dQ+MXsq5G+AIQ0JYUou09DgsblAE/l08fCyNvd6ZHbewyuKL2yT+AaGUWWZYh4UvaOsD6aka4a0=
+X-Received: by 2002:ae9:ed4b:: with SMTP id c72-v6mr20560584qkg.54.1537296984973;
+ Tue, 18 Sep 2018 11:56:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180913202828.15372-1-robh@kernel.org> <20180913202828.15372-3-robh@kernel.org>
- <f9684222-fae0-c305-d48a-be77ebb985a3@gmail.com>
-In-Reply-To: <f9684222-fae0-c305-d48a-be77ebb985a3@gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 18 Sep 2018 11:55:04 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqLTcLVGCmjTMi8GojomP=VbFQ5EqKcGnOPo=Wwh5Lc_mw@mail.gmail.com>
-Message-ID: <CAL_JsqLTcLVGCmjTMi8GojomP=VbFQ5EqKcGnOPo=Wwh5Lc_mw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] scripts/dtc: Update to upstream version v1.4.7-14-gc86da84d30e4
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 11:56:04
+ -0700 (PDT)
+In-Reply-To: <20180918173428.GA21591@kroah.com>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com> <20180918173428.GA21591@kroah.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 18 Sep 2018 20:56:04 +0200
+Message-ID: <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 14, 2018 at 2:32 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 09/13/18 13:28, Rob Herring wrote:
-> > Major changes are I2C and SPI bus checks, YAML output format (for
-> > future validation), some new libfdt functions, and more libfdt
-> > validation of dtbs.
-> >
-> > The YAML addition adds an optional dependency on libyaml. pkg-config is
-> > used to test for it and pkg-config became a kconfig dependency in 4.18.
->
-> For Ubuntu, the libyaml dependency is provided by the packages:
->
->    libyaml-0-2
->    libyaml-dev
+Hi Greg,
 
-Yes, but as it is not yet required by anything in the kernel I don't
-think that needs to be documented yet. Also, offhand, I don't think we
-generally document in the kernel distro specifics like package names.
+On Tue, Sep 18, 2018 at 7:34 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Sep 18, 2018 at 06:55:42PM +0200, Miguel Ojeda wrote:
+>> The naked attribute is supported by at least gcc >= 4.6 (for ARM,
+>> which is the only current user), gcc >= 8 (for x86), clang >= 3.1
+>> and icc >= 13. See https://godbolt.org/z/350Dyc
+>>
+>> Therefore, move it out of compiler-gcc.h so that the definition
+>> is shared by all compilers.
+>>
+>> This also fixes Clang support for ARM32 --- 815f0ddb346c
+>> ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
+>
+> So, with this applied, does clang really build an arm32 kernel
+> successfully?  No other problem at all?  And this isn't really a
+> regression, arm32 never really worked with clang yet, right?
+>
 
-Rob
+To recap a bit: these two patches come from the "Compiler Attributes"
+series which is meant as a general improvement. Since Linus/Andrew/you
+didn't comment on whether you wanted or not this for 4.19, we are
+assuming they would go in for 4.20. However, Stefan/Nick/... wanted
+this for 4.19 instead, they asked me to extract these patches two
+separately for 4.19. I let them comment further on the status of Clang
+on arm32.
+
+I am going to send a v5 of the entire series without these two
+patches, based on -rc4 (or -next, which one do you prefer? I would say
+these patches should be applied early in the -next branches, so that
+everyone is ready for the change, given it "touches" every translation
+unit).
+
+Cheers,
+Miguel
