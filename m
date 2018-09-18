@@ -2,92 +2,97 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC0C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BA8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF122133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF122133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 4894021471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:25:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="umhHZriq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4894021471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbeISDyC (ORCPT
+        id S1728152AbeISD7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:54:02 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:34214 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeISDyB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:54:01 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2OL0-0001Zl-QX; Tue, 18 Sep 2018 16:19:18 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2OKk-0006ye-P2; Tue, 18 Sep 2018 16:19:18 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        berrange@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180914105310.6454-1-jlayton@kernel.org>
-        <87a7ohs5ow.fsf@xmission.com> <20180917155948.GA25565@redhat.com>
-Date:   Wed, 19 Sep 2018 00:18:53 +0200
-In-Reply-To: <20180917155948.GA25565@redhat.com> (Oleg Nesterov's message of
-        "Mon, 17 Sep 2018 17:59:48 +0200")
-Message-ID: <87o9cuh2k2.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 18 Sep 2018 23:59:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:56283 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727204AbeISD7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 23:59:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42FHcF1MJCz9sBZ;
+        Wed, 19 Sep 2018 08:25:01 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537309501;
+        bh=xRV7qEK0ih3K71eX0hONDJU06F3lSSSPrJzYAG+Aglk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=umhHZriqEvh1z6RqFoEtDczffgPt++O1rKwr1pTOno/05zZDx4vL4wNtl4tTcqbJS
+         W94muNv7I1zJRgXabS4ZtYF7cHgR3eQP3E8RQHZSiK1BlG1opM25oEbIM3HuYL0mK5
+         fkNkNkBf7gn0QNAZFf/8XvVtcjqrBDDeenhSElT2NNLC/HDODXR+4IWR2S/ijzT62e
+         42WZeOxPY5NlJINbE67jTGycA+ZhxMyxiMY1PYF1RaTTzzih4KFOIGkJyr8azYqhRI
+         CaxXWCKwddQNMGTtDfYGWVXTrPusRIjTknTYGt4lbjjtf8daSZhtVxib1M0qw5AlOR
+         jOf0JVBWVxuIQ==
+Date:   Wed, 19 Sep 2018 08:25:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Drake <drake@endlessm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: linux-next: build failure after merge of the input-current tree
+Message-ID: <20180919082500.74401754@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g2OKk-0006ye-P2;;;mid=<87o9cuh2k2.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+ia9qrzIEiH2Ja050oCQNoqQQz2BVPVBY=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC][PATCH 0/3] exec: Moving unshare_files_struct
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xRaItE2eXFCUdrRJ.vQJFjz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 09/16, Eric W. Biederman wrote:
->>
->> Oleg's patch to remove get_files_struct from proc means we don't need
->> two counts in files_struct.
->
-> So it seems you agree with this patch at least in general.
+Hi Dmitry,
 
-I do I think in the context we are looking at things finding a way not
-to need to bump files_struct->count looks like it will simplify a lot of
-things and there are not many cases we need to consider.
+After merging the input-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I have been thorough and mentioned the binder case and other case but
-that isn't because I disagree I simply don't want us to overlook weird
-or tricky cases.
+ERROR: "mem_sleep_current" [drivers/input/serio/i8042.ko] undefined!
 
-It appears that the more often that we look at these bits the better
-a solution we wind up writing.
+Caused by commit
 
-> OK, if nobody else objects I'll split this patch and send the series
-> tomorrow.
+  1685830e59d4 ("Input: i8042 - enable keyboard wakeups by default when s2i=
+dle is used")
 
-No objection from me.
+I have used the version of input-current from next-20180918 for today.
 
->> Eric W. Biederman (3):
->>       exec: Move unshare_files down to avoid locks being dropped on exec.
->>       exec: Simplify unshare_files
->>       exec: Remove reset_files_struct
->
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+--=20
+Cheers,
+Stephen Rothwell
 
-Eric
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluhezwACgkQAVBC80lX
+0Gy9IQf+LCFuj/N2zs1WCqHj0SfLR2b11CueYF3Q2r3o8x3sEf+D+cfmqxWTfNWZ
+z2M0mQQTChh+PDvKzSotSFyvGlgMTff0OUj56aYimUjWsH5UGgRmJ+q5Yo+arRqm
+l32ODxs1ivoWaw+Ja5QlV+A6Cri5ZZt4HySfDVZJdUfRObGCNfLNJTAn2Zcgc3tR
++I9ybvg/gXp3or6aGvN0c9ZH4NSEE5dlrkPmSTRdIkotm+5P9+oU4MOn8+twrwox
+Wq/xD+BGSu4UozipeqgvYKsQh34SJI1C6fv9VY9Ati0ZQVKqzZP/qJTXV7NDkx7P
+ih0dN92qf/BOs5Buq+1mKwQPeE9r7A==
+=Jqy3
+-----END PGP SIGNATURE-----
+
+--Sig_/xRaItE2eXFCUdrRJ.vQJFjz--
