@@ -2,232 +2,79 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A380DECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03F7ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54BF6206B5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="MAThbT6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54BF6206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 85CFF206B5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:09:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CFF206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbeIRWnH (ORCPT
+        id S1730519AbeIRWnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:43:07 -0400
-Received: from vern.gendns.com ([206.190.152.46]:51331 "EHLO vern.gendns.com"
+        Tue, 18 Sep 2018 18:43:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:48180 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730075AbeIRWnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:43:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cSlFvVWH6U6U/psuRrOKjPxI7h3BZARoGVkTWrCfQPc=; b=MAThbT6wRcSApqFDTPfE/mPvX
-        FIACU10+uwGqSK7Iub5L9V/x8cOaJ6cBRkn/Yd83O0UTF25YlcLoEF1ztzQZCNCEcglgZqQwTGrt2
-        XhI0c8yZ2lfOZdes24y58KXRq4BLyTDOf93oDEBOBisCv8Awl2WXdNq9i40c4Kdm5XW0bfaUGAWZH
-        +jSrc3jD/vbdAu4VAqpoGHCFOUt25FdpYs/4Page+M7xsqTZkNKOs9rN0LdTfDOWZQwvq0diPlhxH
-        9iyPOsXBU0U3cj65HGuQt9XZSlcnDsm6c1BemXjbJgOAx5LaSg5F692Q78m+M/pnsiSHMqIGtr7K6
-        WFqrBrERQ==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:37876 helo=freyr.lechnology.com)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1g2JVE-0074xZ-Bf; Tue, 18 Sep 2018 13:09:32 -0400
-From:   David Lechner <david@lechnology.com>
-To:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org
-Cc:     David Lechner <david@lechnology.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] iio: adc: ti-ads7950: use SPI_CS_WORD to reduce CPU usage
-Date:   Tue, 18 Sep 2018 12:08:50 -0500
-Message-Id: <20180918170850.2749-4-david@lechnology.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180918170850.2749-1-david@lechnology.com>
-References: <20180918170850.2749-1-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1730496AbeIRWnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:43:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F11847A9;
+        Tue, 18 Sep 2018 10:09:41 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C1E4D3F5BD;
+        Tue, 18 Sep 2018 10:09:41 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id AC15F1AE1396; Tue, 18 Sep 2018 18:10:00 +0100 (BST)
+Date:   Tue, 18 Sep 2018 18:10:00 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     joro@8bytes.org, thunder.leizhen@huawei.com,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
+        john.garry@huawei.com
+Subject: Re: [PATCH v7 0/6] Add non-strict mode support for iommu-dma
+Message-ID: <20180918171000.GI16498@arm.com>
+References: <cover.1536935328.git.robin.murphy@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1536935328.git.robin.murphy@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes how the SPI message for the triggered buffer is setup in
-the TI ADS7950 A/DC driver. By using the SPI_CS_WORD flag, we can read
-multiple samples in a single SPI transfer. If the SPI controller
-supports DMA transfers, we can see a significant reduction in CPU usage.
+Hi Robin,
 
-For example, on an ARM9 system running at 456MHz reading just 4 channels
-at 100Hz: before this change, top shows the CPU usage of the IRQ thread
-of this driver to be ~7.7%. After this change, the CPU usage drops to
-~3.8%.
+Thanks for turning this around so quickly.
 
-The use of big-endian for the raw data was cargo culted from another
-driver when this driver was originally written. It used an SPI word size
-of 8 bits and big-endian byte ordering to effectively emulate 16 bit
-words.
+On Fri, Sep 14, 2018 at 03:30:18PM +0100, Robin Murphy wrote:
+> Since we'd like to get this polished up and merged and Leizhen has other
+> commitments, here's v7 of the previous series[1] wherein I address all
+> my own feedback :) This is a quick tweak of the v6 I sent yesterday
+> since I figured out slightly too late a much neater way of setting the
+> attribute at the appropriate time.
+> 
+> The principal change is that I've inverted things slightly such that
+> it's now a generic domain attribute controlled by iommu-dma given the
+> necessary support from individual IOMMU drivers. That way we can easily
+> enable other drivers straight away, as I've done for SMMUv2 here (which
+> also allowed me to give it a quick test with MMU-401s on a Juno board).
+> Otherwise it's really just cosmetic cleanup and rebasing onto Will's
+> pending SMMU queue.
 
-Now, in order to inject a CS toggle between each word, we need to use
-the correct word size, otherwise we would get a CS toggle half way
-through each word 16-bit. The SPI subsystem uses CPU byte ordering for
-multi-byte words. So, the data we get back from the SPI is going to be
-CPU endian now no matter what. Converting that to big endian will just
-add overhead on little endian systems so we opt to change the raw data
-format from big endian to CPU endian.
+I've been through and had a look, leaving some small comments on the patches
+themselves. The only part I failed to figure out is how you tie the lifetime
+of the flush queue to the lifetime of the domain so that the timer callback
+can't fire after e.g. the DMA cookie has been freed. How does that work?
 
-There is a small risk that this could break some lazy userspace programs
-that use the raw data without checking the data format. We can address
-this if/when it actually comes up.
+Cheers,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/iio/adc/ti-ads7950.c | 53 +++++++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
-index a5bd5944bc66..0ad63592cc3c 100644
---- a/drivers/iio/adc/ti-ads7950.c
-+++ b/drivers/iio/adc/ti-ads7950.c
-@@ -51,7 +51,7 @@
- 
- struct ti_ads7950_state {
- 	struct spi_device	*spi;
--	struct spi_transfer	ring_xfer[TI_ADS7950_MAX_CHAN + 2];
-+	struct spi_transfer	ring_xfer;
- 	struct spi_transfer	scan_single_xfer[3];
- 	struct spi_message	ring_msg;
- 	struct spi_message	scan_single_msg;
-@@ -65,11 +65,11 @@ struct ti_ads7950_state {
- 	 * DMA (thus cache coherency maintenance) requires the
- 	 * transfer buffers to live in their own cache lines.
- 	 */
--	__be16	rx_buf[TI_ADS7950_MAX_CHAN + TI_ADS7950_TIMESTAMP_SIZE]
-+	u16 rx_buf[TI_ADS7950_MAX_CHAN + 2 + TI_ADS7950_TIMESTAMP_SIZE]
- 							____cacheline_aligned;
--	__be16	tx_buf[TI_ADS7950_MAX_CHAN];
--	__be16			single_tx;
--	__be16			single_rx;
-+	u16 tx_buf[TI_ADS7950_MAX_CHAN + 2];
-+	u16 single_tx;
-+	u16 single_rx;
- 
- };
- 
-@@ -108,7 +108,7 @@ enum ti_ads7950_id {
- 		.realbits = bits,				\
- 		.storagebits = 16,				\
- 		.shift = 12 - (bits),				\
--		.endianness = IIO_BE,				\
-+		.endianness = IIO_CPU,				\
- 	},							\
- }
- 
-@@ -249,23 +249,14 @@ static int ti_ads7950_update_scan_mode(struct iio_dev *indio_dev,
- 	len = 0;
- 	for_each_set_bit(i, active_scan_mask, indio_dev->num_channels) {
- 		cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(i) | st->settings;
--		st->tx_buf[len++] = cpu_to_be16(cmd);
-+		st->tx_buf[len++] = cmd;
- 	}
- 
- 	/* Data for the 1st channel is not returned until the 3rd transfer */
--	len += 2;
--	for (i = 0; i < len; i++) {
--		if ((i + 2) < len)
--			st->ring_xfer[i].tx_buf = &st->tx_buf[i];
--		if (i >= 2)
--			st->ring_xfer[i].rx_buf = &st->rx_buf[i - 2];
--		st->ring_xfer[i].len = 2;
--		st->ring_xfer[i].cs_change = 1;
--	}
--	/* make sure last transfer's cs_change is not set */
--	st->ring_xfer[len - 1].cs_change = 0;
-+	st->tx_buf[len++] = 0;
-+	st->tx_buf[len++] = 0;
- 
--	spi_message_init_with_transfers(&st->ring_msg, st->ring_xfer, len);
-+	st->ring_xfer.len = len * 2;
- 
- 	return 0;
- }
-@@ -281,7 +272,7 @@ static irqreturn_t ti_ads7950_trigger_handler(int irq, void *p)
- 	if (ret < 0)
- 		goto out;
- 
--	iio_push_to_buffers_with_timestamp(indio_dev, st->rx_buf,
-+	iio_push_to_buffers_with_timestamp(indio_dev, &st->rx_buf[2],
- 					   iio_get_time_ns(indio_dev));
- 
- out:
-@@ -298,13 +289,13 @@ static int ti_ads7950_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
- 	mutex_lock(&indio_dev->mlock);
- 
- 	cmd = TI_ADS7950_CR_WRITE | TI_ADS7950_CR_CHAN(ch) | st->settings;
--	st->single_tx = cpu_to_be16(cmd);
-+	st->single_tx = cmd;
- 
- 	ret = spi_sync(st->spi, &st->scan_single_msg);
- 	if (ret)
- 		goto out;
- 
--	ret = be16_to_cpu(st->single_rx);
-+	ret = st->single_rx;
- 
- out:
- 	mutex_unlock(&indio_dev->mlock);
-@@ -378,6 +369,14 @@ static int ti_ads7950_probe(struct spi_device *spi)
- 	const struct ti_ads7950_chip_info *info;
- 	int ret;
- 
-+	spi->bits_per_word = 16;
-+	spi->mode |= SPI_CS_WORD;
-+	ret = spi_setup(spi);
-+	if (ret < 0) {
-+		dev_err(&spi->dev, "Error in spi setup\n");
-+		return ret;
-+	}
-+
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
- 	if (!indio_dev)
- 		return -ENOMEM;
-@@ -398,6 +397,16 @@ static int ti_ads7950_probe(struct spi_device *spi)
- 	indio_dev->num_channels = info->num_channels;
- 	indio_dev->info = &ti_ads7950_info;
- 
-+	/* build spi ring message */
-+	spi_message_init(&st->ring_msg);
-+
-+	st->ring_xfer.tx_buf = &st->tx_buf[0];
-+	st->ring_xfer.rx_buf = &st->rx_buf[0];
-+	/* len will be set later */
-+	st->ring_xfer.cs_change = true;
-+
-+	spi_message_add_tail(&st->ring_xfer, &st->ring_msg);
-+
- 	/*
- 	 * Setup default message. The sample is read at the end of the first
- 	 * transfer, then it takes one full cycle to convert the sample and one
--- 
-2.17.1
-
+Will
