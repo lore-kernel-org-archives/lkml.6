@@ -2,90 +2,90 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FB5C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8178C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957FE21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:17:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957FE21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=s5r6.in-berlin.de
+	by mail.kernel.org (Postfix) with ESMTP id 9432B214FE
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9432B214FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeIRTuN (ORCPT
+        id S1729773AbeIRTvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:50:13 -0400
-Received: from einhorn-mail.in-berlin.de ([217.197.80.20]:59317 "EHLO
-        einhorn-mail.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbeIRTuN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:50:13 -0400
-X-Greylist: delayed 885 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Sep 2018 15:50:10 EDT
-X-Envelope-From: stefanr@s5r6.in-berlin.de
-Received: from authenticated.user (localhost [127.0.0.1]) by einhorn.in-berlin.de  with ESMTPSA id w8IE25iP024816
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Sep 2018 16:02:05 +0200
-Date:   Tue, 18 Sep 2018 16:02:05 +0200
-From:   Stefan Richter <stefanr@s5r6.in-berlin.de>
-To:     Jann Horn <jannh@google.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        linux1394-devel@lists.sourceforge.net,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firewire: nosy: don't read packets bigger than
- requested
-Message-ID: <20180918160205.1e636d40@kant>
-In-Reply-To: <cbf4c05d-94f2-6ef0-0c90-1f5823329bbb@infradead.org>
-References: <20180706151649.31119-1-jannh@google.com>
-        <CAG48ez1etiHmD-e9szTEApia9YhUFomCcZM3Yp9wj9xrDWKmzg@mail.gmail.com>
-        <cbf4c05d-94f2-6ef0-0c90-1f5823329bbb@infradead.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 18 Sep 2018 15:51:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45668 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728065AbeIRTvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:51:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A85C1596;
+        Tue, 18 Sep 2018 07:18:45 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FF783F5BD;
+        Tue, 18 Sep 2018 07:18:43 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 15:18:38 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     kbuild test robot <fengguang.wu@intel.com>,
+        thierry.reding@gmail.com
+Cc:     Shawn Lin <shawn.lin@rock-chips.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: fix ptr_ret.cocci warnings
+Message-ID: <20180918141838.GA32243@e107981-ln.cambridge.arm.com>
+References: <201807120738.oIXXb65q%fengguang.wu@intel.com>
+ <20180711233041.GA39597@lkp-sbx04>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711233041.GA39597@lkp-sbx04>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sep 03 Randy Dunlap wrote:
-> On 09/03/2018 08:55 AM, Jann Horn wrote:
-> > On Fri, Jul 6, 2018 at 5:16 PM Jann Horn <jannh@google.com> wrote:  
-> >> In general, accessing userspace memory beyond the length of the supplied
-> >> buffer in VFS read/write handlers can lead to both kernel memory corruption
-> >> (via kernel_read()/kernel_write(), which can e.g. be triggered via
-> >> sys_splice()) and privilege escalation inside userspace.
-> >>
-> >> Fixes: 286468210d83 ("firewire: new driver: nosy - IEEE 1394 traffic sniffer")
-> >> Signed-off-by: Jann Horn <jannh@google.com>
-[...]
-> >>  drivers/firewire/nosy.c | 5 +++--
-> >>  1 file changed, 3 insertions(+), 2 deletions(-)
-[...]
-> > Ping. I sent this about two months ago, I haven't received a reply,
-> > and from what I can tell, it hasn't landed in any tree so far...
-> >   
+On Thu, Jul 12, 2018 at 07:30:41AM +0800, kbuild test robot wrote:
+> From: kbuild test robot <fengguang.wu@intel.com>
 > 
-> :(
-> I have that same problem with some Firewire documentation patches.
-> I plan to ask someone else to merge my patches.
+> drivers/pci/controller/pci-tegra.c:1132:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+> 
+> 
+>  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> 
+> Generated by: scripts/coccinelle/api/ptr_ret.cocci
+> 
+> Fixes: 6e0832fa432e ("PCI: Collect all native drivers under drivers/pci/controller/")
+> CC: Shawn Lin <shawn.lin@rock-chips.com>
+> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+> ---
+> 
+>  pci-tegra.c |    5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 
-Jann,
+Thierry,
 
-sorry for not responding in July (was buried in other work and been
-effectively absent from maintainership for many months).  And sorry for
-missing your ping in September (it must have been misplaced into the spam
-folder and I apparently overlooked it there).
+are you OK with this change ? I will remove the Fixes: tag since
+this does not fix anything AFAICS.
 
-This week is another one in which I will not be able to check your patch.
-Next week I will have a vacation of sorts and will use it to (a) review
-and merge your patch and (b) clean out my mailbox and update my mail
-sorting filters (long overdue after my mail service provider changed
-backends).
+Lorenzo
 
-Again sorry, and thank you for your extraordinary patience.
--- 
-Stefan Richter
--======---=- =--= =--=-
-http://arcgraph.de/sr/
+> --- a/drivers/pci/controller/pci-tegra.c
+> +++ b/drivers/pci/controller/pci-tegra.c
+> @@ -1129,10 +1129,7 @@ static int tegra_pcie_resets_get(struct
+>  		return PTR_ERR(pcie->afi_rst);
+>  
+>  	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
+> -	if (IS_ERR(pcie->pcie_xrst))
+> -		return PTR_ERR(pcie->pcie_xrst);
+> -
+> -	return 0;
+> +	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
+>  }
+>  
+>  static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
