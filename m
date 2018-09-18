@@ -2,73 +2,165 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E3FECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F957C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4572083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4572083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C0FB12083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:15:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FB12083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbeIRMqK (ORCPT
+        id S1729049AbeIRMqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 08:46:10 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2084 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727140AbeIRMqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 08:46:09 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 4E43432DA515;
-        Tue, 18 Sep 2018 08:14:50 +0100 (IST)
-Received: from [10.204.65.145] (10.204.65.145) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
- 2018 08:14:47 +0100
-Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
- with PCR read
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
- <20180905114202.7757-4-roberto.sassu@huawei.com>
- <20180916123749.GF5040@linux.intel.com>
- <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
- <20180917211622.GC6716@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
-Date:   Tue, 18 Sep 2018 09:14:43 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 08:46:40 -0400
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:50968 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727140AbeIRMqk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 08:46:40 -0400
+Received: from ydin.reaktio.net (reaktio.net [85.76.255.15])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 55B0330066;
+        Tue, 18 Sep 2018 10:15:19 +0300 (EEST)
+Received: by ydin.reaktio.net (Postfix, from userid 1001)
+        id 5405F36C0F8; Tue, 18 Sep 2018 10:15:19 +0300 (EEST)
+Date:   Tue, 18 Sep 2018 10:15:19 +0300
+From:   Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Jan Beulich <JBeulich@suse.com>, Juergen Gross <jgross@suse.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhelgaas@google.com, xen-devel@lists.xenproject.org,
+        roger.pau@citrix.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        George Dunlap <george.dunlap@eu.citrix.com>
+Subject: Re: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
+ flr/slot/bus reset with 'reset' SysFS attribute
+Message-ID: <20180918071519.GG18222@reaktio.net>
+References: <20171207222145.9769-1-Govinda.Tatti@Oracle.COM>
+ <20171207222145.9769-3-Govinda.Tatti@Oracle.COM>
+ <5A2A6AB10200007800195D4F@prv-mh.provo.novell.com>
+ <8a3bc517-1255-4547-d244-5c400e44cc77@Oracle.COM>
+ <f19dbb09-ef22-2cf4-fb38-2a7c42b5dc48@Oracle.COM>
+ <5A377E020200007800197FFA@prv-mh.provo.novell.com>
+ <559ffd12-b541-8a69-60bd-fbe10e3dc159@oracle.com>
+ <20180916114306.GF18222@reaktio.net>
+ <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917211622.GC6716@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.145]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
-> On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
->> This code has the same behavior of tpm2_get_pcr_allocation(). If some
->> banks are not used, set the algorithm of the first unused to
->> TPM_ALG_ERROR.
+Hi,
+
+On Mon, Sep 17, 2018 at 02:06:02PM -0400, Boris Ostrovsky wrote:
+> On 9/16/18 7:43 AM, Pasi Kärkkäinen wrote:
+> > Hi,
+> >
+> > On Mon, Dec 18, 2017 at 12:32:11PM -0500, Boris Ostrovsky wrote:
+> >> On 12/18/2017 02:36 AM, Jan Beulich wrote:
+> >>>>>> On 15.12.17 at 20:52, <Govinda.Tatti@Oracle.COM> wrote:
+> >>>>>>> +static int pcistub_device_reset(struct pci_dev *dev)
+> >>>>>>> +{
+> >>>>>>> +	struct xen_pcibk_dev_data *dev_data;
+> >>>>>>> +	bool slot = false, bus = false;
+> >>>>>>> +	struct pcistub_args arg = {};
+> >>>>>>> +
+> >>>>>>> +	if (!dev)
+> >>>>>>> +		return -EINVAL;
+> >>>>>>> +
+> >>>>>>> +	dev_dbg(&dev->dev, "[%s]\n", __func__);
+> >>>>>>> +
+> >>>>>>> +	/* First check and try FLR */
+> >>>>>>> +	if (pcie_has_flr(dev)) {
+> >>>>>>> +		dev_dbg(&dev->dev, "resetting %s device using FLR\n",
+> >>>>>>> +			pci_name(dev));
+> >>>>>>> +		pcie_flr(dev);
+> >>>>>> The lack of error check here puzzled me, but I see the function
+> >>>>>> indeed returns void right now. I think the prereq patch should
+> >>>>>> change this along with exporting the function - you really don't
+> >>>>>> want the device to be handed to a guest when the FLR timed
+> >>>>>> out.
+> >>>>> We will change pcie_flr() to return error code. I will make this change
+> >>>>> in the next version of this patch.
+> >>>> I exchanged some emails with Bjorn/Christoph and it looks like Christoph
+> >>>> as some planto restructure pcie flr specific functions but I don't know
+> >>>> the exact time-frame. For now,I am planning to use existing pcie_flr()
+> >>>> after checking FLR capability. We will switchto revised pcie_flr() once
+> >>>> it is available.
+> >>>>
+> >>>> I hope you are fine with this approach. Please let me know. Thanks.
+> >>> I've seen that other discussion. I don't think the change here
+> >>> should be done prior to the error reporting being put in place,
+> >>> for security reasons. But in the end it'll be Konrad as the
+> >>> maintainer to judge.
+> >>>
+> >>> Or wait, looks like there's some confusion in ./MAINTAINERS:
+> >>> Konrad is listed as maintainer for "XEN PCI SUBSYSTEM", but the
+> >>> list of files doesn't include pciback. So it would instead be Boris
+> >>> or Jürgen to give you a final word.
+> >>
+> >> This is now 4.16 material so we can at least wait until closer to
+> >> opening of the merge window when we may have the PCI updates. (And I
+> >> just noticed that you responded to Christoph.)
+> >>
+> >> Besides, we don't want to make kernel changes until the interface is
+> >> settled (i.e the toolstack changes are accepted).
+> >>
+> > It seems Govinda's email address is giving an error, so I assume someone else needs to pick up this pciback 'reset' feature.
+> > Is it likely someone else from Oracle can/will pick up and refresh this patch, with the review comments addressed?
 > 
-> My point is that maybe it would sense to use zero for that in order
-> to make code a bit simpler.
+> 
+> Govinda is no longer at Oracle.
+> 
 
-Wouldn't be better to compare data with the same type? Since the alg_id
-structure member stores an algorithm, it should be fine to compare its
-value with an algorithm.
+Yep, thought so. Removed from CC list.
 
-No problem to change that, but probably I should modify also
-tpm_pcr_extend().
 
-Roberto
+> What about the toolstack changes? Have they been accepted? I vaguely
+> recall there was a discussion about those changes but don't remember how
+> it ended.
+> 
+
+I don't think toolstack/libxl patch has been applied yet either.
+
+
+"[PATCH V1 0/1] Xen/Tools: PCI reset using 'reset' SysFS attribute":
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg00664.html
+
+"[PATCH V1 1/1] Xen/libxl: Perform PCI reset using 'reset' SysFS attribute":
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg00663.html
+
+George asked for some clarifications:
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg01044.html
+https://lists.xen.org/archives/html/xen-devel/2017-12/msg01116.html
+
+> 
+> -boris
+> 
+
+
+Thanks,
+
+-- Pasi
+
+> 
+> >
+> >
+> > Meanwhile the pcie_has_flr() has been exported in upstream Linux kernel, so that's already available for use now.
+> >
+> > "PCI: Export pcie_has_flr()":
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2d2917f7747805a1f4188672f308d82a8ba01700
+> >
+> >
+> >
+> 
