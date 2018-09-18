@@ -2,92 +2,68 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,TVD_PH_BODY_ACCOUNTS_PRE,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820B7C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03928ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B8F214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:36:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B8F214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BE3DC214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:36:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3DC214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbeIRUIw (ORCPT
+        id S1729873AbeIRUJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:08:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:46038 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727348AbeIRUIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:08:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3FFD27A9;
-        Tue, 18 Sep 2018 07:35:59 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F37B3F5BD;
-        Tue, 18 Sep 2018 07:35:57 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 15:35:54 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     kbuild test robot <fengguang.wu@intel.com>
-Cc:     Hanjie Lin <hanjie.lin@amlogic.com>, kbuild-all@01.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH] PCI: meson: fix ptr_ret.cocci warnings
-Message-ID: <20180918143554.GC32243@e107981-ln.cambridge.arm.com>
-References: <1534227522-186798-3-git-send-email-hanjie.lin@amlogic.com>
- <20180814114518.GA82641@lkp-ib04>
+        Tue, 18 Sep 2018 16:09:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57778 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeIRUJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:09:01 -0400
+Received: from localhost (unknown [147.67.4.98])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA6BFD71;
+        Tue, 18 Sep 2018 14:36:07 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 16:36:05 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
+        Miao Xie <miaoxie@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2 0/8] staging: erofs: error handing and more tracepoints
+Message-ID: <20180918143605.GA19347@kroah.com>
+References: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180814114518.GA82641@lkp-ib04>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 14, 2018 at 07:45:18PM +0800, kbuild test robot wrote:
-> From: kbuild test robot <fengguang.wu@intel.com>
+On Tue, Sep 18, 2018 at 10:25:32PM +0800, Gao Xiang wrote:
+> change log v2:
+>   - fix a gcc warning reported by Greg for the patch
+>         staging: erofs: clean up z_erofs_map_blocks_iter
 > 
-> drivers/pci/controller/dwc/pci-meson.c:121:1-3: WARNING: PTR_ERR_OR_ZERO can be used
 > 
+> In order to avoid conflicts with cleanup patches, Chao and I think
+> it is better to send reviewed preview patches in the erofs mailing list
+> to the community in time.
 > 
->  Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> So here is reviewed & tested patches right now, which clean up and
+> enhance the error handing and add some tracepoints for decompression.
 > 
-> Generated by: scripts/coccinelle/api/ptr_ret.cocci
-> 
-> Fixes: b43bb00f7533 ("PCI: meson: add the Amlogic Meson PCIe controller driver")
-> CC: Yue Wang <yue.wang@amlogic.com>
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-> ---
-> 
->  pci-meson.c |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> Note that in this patchset, bare use of 'unsigned' and NULL comparison are
+> also fixed compared with the preview patches according to the previous
+> discussion in the staging mailing list.
 
-I have dropped this patch from the PCI patch queue since it was
-taken into account in updated patches versions, thanks for sending
-it.
+Thanks for the resend, looks good.
 
-Thanks,
-Lorenzo
-
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -118,10 +118,7 @@ static int meson_pcie_get_mem(struct pla
->  		return -ENODEV;
->  
->  	mp->mem_res.cfg_base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(mp->mem_res.cfg_base))
-> -		return PTR_ERR(mp->mem_res.cfg_base);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(mp->mem_res.cfg_base);
->  }
->  
->  static int meson_pcie_init_clk(struct meson_pcie *mp)
+greg k-h
