@@ -2,102 +2,181 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF690C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2F0C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8246A206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8246A206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8021C21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8021C21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeIRRTW (ORCPT
+        id S1729611AbeIRRTj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:19:22 -0400
-Received: from foss.arm.com ([217.140.101.70]:43490 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbeIRRTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:19:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A0C71596;
-        Tue, 18 Sep 2018 04:47:09 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2A0253F557;
-        Tue, 18 Sep 2018 04:47:09 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 0861A1AE1181; Tue, 18 Sep 2018 12:47:28 +0100 (BST)
-Date:   Tue, 18 Sep 2018 12:47:27 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>, mark.rutland@arm.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH 5/6] arm64/io: Add header for instrumentation of io
- operations
-Message-ID: <20180918114727.GE16498@arm.com>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <bb322d763aa6c58f036e5209a481c769be92ab9b.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <20180917193940.3d68ef88@gandalf.local.home>
- <c6470671-3abf-c296-586e-cca5131cc437@codeaurora.org>
+        Tue, 18 Sep 2018 13:19:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726768AbeIRRTi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 13:19:38 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8IBiVfR118535
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:47:24 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mjxe8xfag-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:47:24 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Tue, 18 Sep 2018 12:47:22 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Sep 2018 12:47:20 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8IBlJbT57933996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Sep 2018 11:47:19 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB47C11C05E;
+        Tue, 18 Sep 2018 14:47:04 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFE6611C050;
+        Tue, 18 Sep 2018 14:47:02 +0100 (BST)
+Received: from skywalker (unknown [9.85.75.167])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue, 18 Sep 2018 14:47:02 +0100 (BST)
+Received: (nullmailer pid 21085 invoked by uid 1000);
+        Tue, 18 Sep 2018 11:47:16 -0000
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        aneesh.kumar@linux.vnet.ibm.com,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: How to handle PTE tables with non contiguous entries ?
+In-Reply-To: <d1be61a4-8dc7-cfe0-e4e7-82ce5f57ced3@c-s.fr>
+References: <ddc3bb56-4da0-c093-256f-185d4a612b5c@c-s.fr> <87tvmoh4w9.fsf@linux.ibm.com> <d1be61a4-8dc7-cfe0-e4e7-82ce5f57ced3@c-s.fr>
+Date:   Tue, 18 Sep 2018 17:17:16 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6470671-3abf-c296-586e-cca5131cc437@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 18091811-0028-0000-0000-000002FACD87
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091811-0029-0000-0000-000023B4840A
+Message-Id: <87pnxbgh8b.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809180120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:40:57PM +0530, Sai Prakash Ranjan wrote:
-> On 9/18/2018 5:09 AM, Steven Rostedt wrote:
-> >On Sun,  9 Sep 2018 01:57:06 +0530
-> >Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> >
-> >>The new asm-generic/io-instrumented.h will keep arch code
-> >>clean and separate from instrumented version which traces
-> >>io register accesses. This instrumented header can later
-> >>be included in arm as well for tracing io register accesses.
-> >>
-> >
-> >Looks good to me.
-> >
-> >Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> >
-> >-- Steve
-> 
-> Thanks for the ack Steve.
-> 
-> @Will/Mark/Robin Let me know if you have any review comments, thanks.
+Christophe LEROY <christophe.leroy@c-s.fr> writes:
 
-As I said before, the arm64 bits looks fine to me. I just don't really want
-to Ack the thing because the patch also contains the asm-generic changes.
+> Le 17/09/2018 à 11:03, Aneesh Kumar K.V a écrit :
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> 
+>>> Hi,
+>>>
+>>> I'm having a hard time figuring out the best way to handle the following
+>>> situation:
+>>>
+>>> On the powerpc8xx, handling 16k size pages requires to have page tables
+>>> with 4 identical entries.
+>> 
+>> I assume that hugetlb page size? If so isn't that similar to FSL hugetlb
+>> page table layout?
+>
+> No, it is not for 16k hugepage size with a standard page size of 4k.
+>
+> Here I'm trying to handle the case of CONFIG_PPC_16K_PAGES.
+> As of today, it is implemented by using the standard Linux page layout, 
+> ie one PTE entry for each 16k page. This forbids the use the 8xx HW 
+> assistance.
+>
+>> 
+>>>
+>>> Initially I was thinking about handling this by simply modifying
+>>> pte_index() which changing pte_t type in order to have one entry every
+>>> 16 bytes, then replicate the PTE value at *ptep, *ptep+1,*ptep+2 and
+>>> *ptep+3 both in set_pte_at() and pte_update().
+>>>
+>>> However, this doesn't work because many many places in the mm core part
+>>> of the kernel use loops on ptep with single ptep++ increment.
+>>>
+>>> Therefore did it with the following hack:
+>>>
+>>>    /* PTE level */
+>>> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
+>>> +typedef struct { pte_basic_t pte, pte1, pte2, pte3; } pte_t;
+>>> +#else
+>>>    typedef struct { pte_basic_t pte; } pte_t;
+>>> +#endif
+>>>
+>>> @@ -181,7 +192,13 @@ static inline unsigned long pte_update(pte_t *p,
+>>>           : "cc" );
+>>>    #else /* PTE_ATOMIC_UPDATES */
+>>>           unsigned long old = pte_val(*p);
+>>> -       *p = __pte((old & ~clr) | set);
+>>> +       unsigned long new = (old & ~clr) | set;
+>>> +
+>>> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
+>>> +       p->pte = p->pte1 = p->pte2 = p->pte3 = new;
+>>> +#else
+>>> +       *p = __pte(new);
+>>> +#endif
+>>>    #endif /* !PTE_ATOMIC_UPDATES */
+>>>
+>>>    #ifdef CONFIG_44x
+>>>
+>>>
+>>> @@ -161,7 +161,11 @@ static inline void __set_pte_at(struct mm_struct
+>>> *mm, unsigned long addr,
+>>>           /* Anything else just stores the PTE normally. That covers all
+>>> 64-bit
+>>>            * cases, and 32-bit non-hash with 32-bit PTEs.
+>>>            */
+>>> +#if defined(CONFIG_PPC_8xx) && defined(CONFIG_PPC_16K_PAGES)
+>>> +       ptep->pte = ptep->pte1 = ptep->pte2 = ptep->pte3 = pte_val(pte);
+>>> +#else
+>>>           *ptep = pte;
+>>> +#endif
+>>>
+>>>
+>>>
+>>> But I'm not too happy with it as it means pte_t is not a single type
+>>> anymore so passing it from one function to the other is quite heavy.
+>>>
+>>>
+>>> Would someone have an idea of an elegent way to handle that ?
+>>>
+>>> Thanks
+>>> Christophe
+>> 
+>> Why would pte_update bother about updating all the 4 entries?. Can you
+>> help me understand the issue?
+>
+> Because the 8xx HW assistance expects 4 identical entries for each 16k 
+> page, so everytime a PTE is updated the 4 entries have to be updated.
+>
 
-Will
+What you suggested in the original mail is what matches that best isn't it?
+That is a linux pte update involves updating 4 slot. Hence a linux pte
+consist of 4 unsigned long?
+
+-aneesh
+
