@@ -2,130 +2,112 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F97ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70533ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A44214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:46:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="quDj35DM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A44214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2431D214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2431D214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbeIRXUW (ORCPT
+        id S1730537AbeIRXV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:20:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34810 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729583AbeIRXUW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:20:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QETj2pbbYb1+/OERz5MqFx4srnnM7A1YCyErXN1/GH4=; b=quDj35DM6rU7
-        FlNHkXDH8xgSnNhcoMSlNp/3598p9Z+KVdYCU1722e8Q4CvA2H7MX+YWHjlfdt35rMagYCoXbmdS4
-        ToPNe43UlPNSiLpK376NvdDzlg+yTvXuzYyH7e55lq5bMGAtKd7sOsaxWN9boYr+xsw9x1sdPMBsc
-        TPgjo=;
-Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g2K4Q-0003XS-Kd; Tue, 18 Sep 2018 17:45:55 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id AAC6D440078; Tue, 18 Sep 2018 18:45:52 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     David Lechner <david@lechnology.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: always use software fallback for SPI_CS_WORD when using cs_gio" to the spi tree
-In-Reply-To:  <20180918170850.2749-2-david@lechnology.com>
-Message-Id: <20180918174552.AAC6D440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 18 Sep 2018 18:45:52 +0100 (BST)
+        Tue, 18 Sep 2018 19:21:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48754 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729583AbeIRXV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 19:21:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01220ED1;
+        Tue, 18 Sep 2018 10:47:47 -0700 (PDT)
+Received: from [10.119.49.13] (unknown [10.119.49.13])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB1C93F703;
+        Tue, 18 Sep 2018 10:47:44 -0700 (PDT)
+Subject: Re: [PATCH v5 03/27] arm64: alternative: Apply alternatives early in
+ boot process
+To:     Daniel Thompson <daniel.thompson@linaro.org>,
+        Julien Thierry <julien.thierry@arm.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+ <1535471497-38854-4-git-send-email-julien.thierry@arm.com>
+ <3becf020-b230-beb8-b304-d8097377f234@arm.com>
+ <78781d82-e5c4-c590-6c0c-e7d2db456bf9@arm.com>
+ <20180917234400.ctq3w2u6fi5s5coj@holly.lan>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <46463b3d-7ceb-f5a5-4061-e988bfc53a6e@arm.com>
+Date:   Tue, 18 Sep 2018 18:47:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180917234400.ctq3w2u6fi5s5coj@holly.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Daniel, Julien,
 
-   spi: always use software fallback for SPI_CS_WORD when using cs_gio
+On 09/18/2018 12:44 AM, Daniel Thompson wrote:
+> On Wed, Sep 12, 2018 at 05:49:09PM +0100, Julien Thierry wrote:
+>>>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>>>> index 3bc1c8b..0d1e41e 100644
+>>>> --- a/arch/arm64/kernel/cpufeature.c
+>>>> +++ b/arch/arm64/kernel/cpufeature.c
+>>>> @@ -52,6 +52,8 @@
+>>>>    DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+>>>>    EXPORT_SYMBOL(cpu_hwcaps);
+>>>> +unsigned long boot_capabilities;
+>>>> +
+>>>>    /*
+>>>>     * Flag to indicate if we have computed the system wide
+>>>>     * capabilities based on the boot time active CPUs. This
+>>>> @@ -1375,6 +1377,9 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+>>>>    		if (!cpus_have_cap(caps->capability) && caps->desc)
+>>>>    			pr_info("%s %s\n", info, caps->desc);
+>>>>    		cpus_set_cap(caps->capability);
+>>>
+>>> Hmm, the bitmap behind cpus_set_cap() is what cpus_have_cap() in
+>>> __apply_alternatives() looks at. If you had a call to __apply_alternatives after
+>>> update_cpu_capabilities(SCOPE_BOOT_CPU), but before any others, it would only
+>>> apply those alternatives...
+>>>
+>>> (I don't think there is a problem re-applying the same alternative, but I
+>>> haven't checked).
 
-has been applied to the spi tree at
+>> Interesting idea. If someone can confirm that patching alternatives twice is
+>> safe, I think it would make things simpler.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+Sounds good, I think we need to avoid adding a limit to the number of caps.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+The extra-work is inefficient, but if it saves merging those lists as part of this 
+series its probably fine. (we only do this stuff once during boot)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> Early versions of this patch applied the alternatives twice. I never
+> noticed any problems with double patching (second time round it will
+> write out code that is identical to what is already there so it is
+> merely inefficient rather than unsafe.
+
+For the regular kind, I agree. But we've recently grown some fancy dynamic patching 
+where the code is generated at runtime, instead of swapping in an alternative 
+sequence. Details in commit dea5e2a4 ("arm64: alternatives: Add dynamic patching 
+feature"). Its unlikely we would ever apply these twice as they can't have a scope, 
+... and they all look safe.
+
 
 Thanks,
-Mark
 
-From 71388b21569754ecd36eabd66fd9ca8c6d761fed Mon Sep 17 00:00:00 2001
-From: David Lechner <david@lechnology.com>
-Date: Tue, 18 Sep 2018 12:08:48 -0500
-Subject: [PATCH] spi: always use software fallback for SPI_CS_WORD when using
- cs_gio
-
-This modifies the condition for using the software fallback
-implementation for SPI_CS_WORD when the SPI controller is using a GPIO
-for the CS line. When using a GPIO for CS, the hardware implementation
-won't work, so we just enable the software fallback globally in this
-case.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index be73d236919f..a358acdd98d3 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2832,11 +2832,13 @@ static int __spi_validate(struct spi_device *spi, struct spi_message *message)
- 		return -EINVAL;
- 
- 	/* If an SPI controller does not support toggling the CS line on each
--	 * transfer (indicated by the SPI_CS_WORD flag), we can emulate it by
-+	 * transfer (indicated by the SPI_CS_WORD flag) or we are using a GPIO
-+	 * for the CS line, we can emulate the CS-per-word hardware function by
- 	 * splitting transfers into one-word transfers and ensuring that
- 	 * cs_change is set for each transfer.
- 	 */
--	if ((spi->mode & SPI_CS_WORD) && !(ctlr->mode_bits & SPI_CS_WORD)) {
-+	if ((spi->mode & SPI_CS_WORD) && (!(ctlr->mode_bits & SPI_CS_WORD) ||
-+					  gpio_is_valid(spi->cs_gpio))) {
- 		size_t maxsize;
- 		int ret;
- 
--- 
-2.19.0
-
+James
