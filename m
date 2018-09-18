@@ -2,81 +2,233 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD85C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D475ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280C4214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:41:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280C4214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 23306214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:41:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23306214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729873AbeIRVOV (ORCPT
+        id S1729932AbeIRVOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:14:21 -0400
-Received: from www62.your-server.de ([213.133.104.62]:40981 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728912AbeIRVOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:14:21 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2I7d-0007Oz-Dc; Tue, 18 Sep 2018 17:41:05 +0200
-Received: from [178.197.249.15] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2I7d-0007Bm-59; Tue, 18 Sep 2018 17:41:05 +0200
-Subject: Re: linux-next: Tree for Sep 18 (kernel/bpf/syscall)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, ppenkov@google.com,
-        willemb@google.com
-References: <20180918151235.4284275f@canb.auug.org.au>
- <0dc91212-54e8-d2f0-a4e3-30a468c20b8d@infradead.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <a1129d67-97e3-8f10-c938-0de72fee9377@iogearbox.net>
-Date:   Tue, 18 Sep 2018 17:41:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <0dc91212-54e8-d2f0-a4e3-30a468c20b8d@infradead.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24952/Tue Sep 18 15:13:17 2018)
+        Tue, 18 Sep 2018 17:14:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46744 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729885AbeIRVOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:14:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C988C7A9;
+        Tue, 18 Sep 2018 08:41:29 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 607D23F5BD;
+        Tue, 18 Sep 2018 08:41:29 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 16:41:22 +0100
+Message-ID: <86r2hqu82l.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V5 1/3] irqchip: add C-SKY irqchip drivers
+In-Reply-To: <20180918084331.GA10950@guoren>
+References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
+        <86in35mfas.wl-marc.zyngier@arm.com>
+        <20180917020928.GA22452@guoren-Inspiron-7460>
+        <86tvmoz22k.wl-marc.zyngier@arm.com>
+        <20180918084331.GA10950@guoren>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Cc Petar and Willem ]
-
-On 09/18/2018 05:37 PM, Randy Dunlap wrote:
-> On 9/17/18 10:12 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20180913:
+On Tue, 18 Sep 2018 09:43:31 +0100,
+Guo Ren <ren_guo@c-sky.com> wrote:
 > 
-> on i386 or x86_64: (in 6 of 20 randconfigs)
+> On Mon, Sep 17, 2018 at 02:27:31PM +0100, Marc Zyngier wrote:
+> > On Mon, 17 Sep 2018 03:09:29 +0100,
+> > Guo Ren <ren_guo@c-sky.com> wrote:
+> > 
+> > [...]
+> > 
+> > > > > +
+> > > > > +	irq_set_default_host(root_domain);
+> > > > 
+> > > > Please drop this. There is no reason to use this on any modern, DT
+> > > > based architecture.
+> Ok.
 > 
-> kernel/bpf/syscall.o: In function `__x64_sys_bpf':
-> syscall.c:(.text+0x3278): undefined reference to `skb_flow_dissector_bpf_prog_attach'
-> syscall.c:(.text+0x3310): undefined reference to `skb_flow_dissector_bpf_prog_detach'
-> kernel/bpf/syscall.o:(.rodata+0x3f0): undefined reference to `flow_dissector_prog_ops'
-> kernel/bpf/verifier.o:(.rodata+0x250): undefined reference to `flow_dissector_verifier_ops'
+> > > Please let me keep this and in my arch/csky/kernel/smp.c:
+> > > 
+> > > void __init setup_smp_ipi(void)
+> > > {
+> > > 	...
+> > > 	irq_create_mapping(NULL, IPI_IRQ);
+> > >	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
+> > 
+> > This looks quite wrong. Reading the code at
+> > https://lkml.org/lkml/2018/9/12/674, it really looks like you're
+> > assuming that IPI_IRQ will be mapped to a Linux IRQ with the same
+> > number. Nothing could be farther from the truth.
+> Yes, you are right. I should use irq_create_mapping() return value as
+> the arg for request_percpu_irq. It's a stupid bug, thoug it happens to
+> work.
 > 
-> Full randconfig file is attached.
+> > The Linux IRQ is returned as the result of irq_create_mapping, which
+> > you're ignoring. You'd be better off creating this mapping from the
+> > irqchip code, and expose the resulting Linux IRQ to oyu SMP code by
+> > any mean of your choice (such as moving the send_ipi_message into the
+> > irqchip code as well).
+> Ok, see my diff below, is that OK?
+> 
+> --- a/drivers/irqchip/irq-csky-mpintc.c
+> +++ b/drivers/irqchip/irq-csky-mpintc.c
+> @@ -16,6 +16,7 @@
+>  #include <asm/reg_ops.h>
+>  #include <asm/smp.h>
+>  
+> +static struct irq_domain *root_domain;
+>  static void __iomem *INTCG_base;
+>  static void __iomem *INTCL_base;
+>  
+> @@ -46,7 +47,7 @@ static void csky_mpintc_handler(struct pt_regs *regs)
+>  	void __iomem *reg_base = this_cpu_read(intcl_reg);
+>  
+>  	do {
+> -		handle_domain_irq(NULL,
+> +		handle_domain_irq(root_domain,
+>  				  readl_relaxed(reg_base + INTCL_RDYIR),
+>  				  regs);
+>  	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
+> @@ -139,13 +140,17 @@ static void csky_mpintc_send_ipi(const unsigned long *mask, unsigned long irq)
+>  	 */
+>  	writel_relaxed((*mask) << 8 | irq, reg_base + INTCL_SIGR);
+>  }
+> +
+> +static int csky_mpintc_ipi_irq_mapping(void)
+> +{
+> +	return irq_create_mapping(root_domain, IPI_IRQ);
+> +}
+>  #endif
+>  
+>  /* C-SKY multi processor interrupt controller */
+>  static int __init
+>  csky_mpintc_init(struct device_node *node, struct device_node *parent)
+>  {
+> -	struct irq_domain *root_domain;
+>  	unsigned int cpu, nr_irq;
+>  	int ret;
+>  
+> @@ -172,8 +177,6 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+>  	if (!root_domain)
+>  		return -ENXIO;
+>  
+> -	irq_set_default_host(root_domain);
+> -
+>  	/* for every cpu */
+>  	for_each_present_cpu(cpu) {
+>  		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
+> @@ -184,6 +187,8 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+>  
+>  #ifdef CONFIG_SMP
+>  	set_send_ipi(&csky_mpintc_send_ipi);
+> +
+> +	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
+>  #endif
+>  
+>  	return 0;
+> 
+> diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
+> index 9a53abf..fed3a5a 100644
+> --- a/arch/csky/include/asm/smp.h
+> +++ b/arch/csky/include/asm/smp.h
+> @@ -7,6 +7,8 @@
+>  
+>  #ifdef CONFIG_SMP
+>  
+> +#define IPI_IRQ	15
+> +
 
-Looks like we need a wrapper for these, config had:
+It feels really bizarre that the function that maps the interrupt is
+specific to the interrupt controller, and yet the interrupt number is
+defined at the architecture level. I'd expect this to be just as
+interrupt controller specific.
 
-# CONFIG_NET is not set
+>  void __init setup_smp(void);
+>  
+>  void __init setup_smp_ipi(void);
+> @@ -19,6 +21,8 @@ void arch_send_call_function_single_ipi(int cpu);
+>  
+>  void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long));
+>  
+> +void __init set_ipi_irq_mapping(int (*func)(void));
+> +
+>  #define raw_smp_processor_id()	(current_thread_info()->cpu)
+>  
+>  #endif /* CONFIG_SMP */
+> diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
+> index 522c73f..f8343f6 100644
+> --- a/arch/csky/kernel/smp.c
+> +++ b/arch/csky/kernel/smp.c
+> @@ -20,8 +20,6 @@
+>  #include <asm/mmu_context.h>
+>  #include <asm/pgalloc.h>
+>  
+> -#define IPI_IRQ	15
+> -
+>  static struct {
+>  	unsigned long bits ____cacheline_aligned;
+>  } ipi_data[NR_CPUS] __cacheline_aligned;
+> @@ -121,13 +119,23 @@ void __init enable_smp_ipi(void)
+>  	enable_percpu_irq(IPI_IRQ, 0);
+>  }
+>  
+> +static int (*arch_ipi_irq_mapping)(void) = NULL;
+> +
+> +void __init set_ipi_irq_mapping(int (*func)(void))
+> +{
+> +	if (arch_ipi_irq_mapping)
+> +		return;
+> +
+> +	arch_ipi_irq_mapping = func;
+> +}
+> +
+>  void __init setup_smp_ipi(void)
+>  {
+> -	int rc;
+> +	int rc, irq;
+>  
+> -	irq_create_mapping(NULL, IPI_IRQ);
+> +	irq = arch_ipi_irq_mapping();
+
+How about checking the validity of the interrupt and that
+arch_ipi_irq_mapping is actually non-NULL?
+
+>  
+> -	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
+> +	rc = request_percpu_irq(irq, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
+>  	if (rc)
+>  		panic("%s IRQ request failed\n", __func__);
+
+To be honest, I'd tend to question the need for this level of
+abstraction, unless you actually plan for multiple SMP-capable
+interrupt controllers... But at the end of the day, that's your call,
+and the above code looks mostly correct.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
