@@ -2,110 +2,116 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC82ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67FEECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3926020C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:01:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="fkIxkXJH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3926020C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A8C221471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8C221471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbeISCfs (ORCPT
+        id S1730174AbeISClt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:35:48 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:43269 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbeISCfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:35:47 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 8b11e3e3;
-        Tue, 18 Sep 2018 20:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to; s=mail; bh=2FXvB690QsOQefcZErXGaYju0hY=; b=fkIxkXJ
-        HfPqyws9Xc1aUkP9XDBkAp7eE5iKaOLP1Vtc96GRJGOHVtZwcID/L8fHtCvdZtYV
-        uC8RzoMBORgVOCGYiB9DV1LZN4NdVumpjiA6RaXdTYkBAsnr3fWOgRZgOb24s9Sm
-        tN7l/wcMr9cRIzm0xP1kqzkWDpoixQryeGCvAjUTInNm9V8c+msF3kkYeP3jGu3U
-        vtSO4Zmp1NpvhZIusceopw5MpnYpw0iwcyVcwCM4Sd1FI/zUKwBYtiD+2DXLsaxB
-        gibNOS0BgY1HeMl71PCHDFTs8mJuxcZm5KjngOflelbPIgRTJIUR1ps7GcxPiG2w
-        2bcr/rJJnad54EQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c1c54e8d (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Tue, 18 Sep 2018 20:43:46 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 23:01:21 +0200
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH net-next v5 00/20] WireGuard: Secure Network Tunnel
-Message-ID: <20180918210120.GA29812@zx2c4.com>
-References: <20180918161646.19105-1-Jason@zx2c4.com>
- <CAKv+Gu8doWS+BYzqoT7499CJX0hLm1jBSMfVxJoG3wsWFO7t1w@mail.gmail.com>
+        Tue, 18 Sep 2018 22:41:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58861 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbeISClt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 22:41:49 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2NDO-0003Rg-AX; Tue, 18 Sep 2018 23:07:22 +0200
+Date:   Tue, 18 Sep 2018 23:07:21 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Waiman Long <longman@redhat.com>
+cc:     John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] clocksource: Warn if too many missing ticks are
+ detected
+In-Reply-To: <1537295774-17975-1-git-send-email-longman@redhat.com>
+Message-ID: <alpine.DEB.2.21.1809182259110.1468@nanos.tec.linutronix.de>
+References: <1537295774-17975-1-git-send-email-longman@redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8doWS+BYzqoT7499CJX0hLm1jBSMfVxJoG3wsWFO7t1w@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Waiman,
 
-On Tue, Sep 18, 2018 at 11:28:50AM -0700, Ard Biesheuvel wrote:
-> On 18 September 2018 at 09:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >   - While I initially wasn't going to do this for the initial
-> >     patchset, it was just so simple to do: now there's a nosimd
-> >     module parameter that can be used to disable simd instructions
-> >     for debugging and testing, or on weird systems.
-> >
+On Tue, 18 Sep 2018, Waiman Long wrote:
+
+> The clocksource watchdog, when running, is scheduled on all the CPUs in
+> the system sequentially on a round-robin fashion with a period of 0.5s.
+> A bug in the 4.18 kernel is causing missing ticks when nohz_full
+> is specified. Under some circumstances, this causes the watchdog to
+> incorrectly state that the TSC is unstable because of counter overflow
+> in the hpet watchdog clock source after a few minutes delay.
 > 
-> I was going to respond in the other thread but it is probably better
-> to move the discussion here.
+> That particular bug is fixed by the 4.19 commit 7059b36636beab ("sched:
+> idle: Avoid retaining the tick when it has been stopped"). To make it
+> easier to catch this kind of bug in the future, a check is added to see
+> if there is too much delay in the watchdog invocation and print a
+> warning once if it happens.
+
+I like the idea.
+
 > 
-> My concern about the monolithic nature of each algo module is not only
-> about SIMD, and it has nothing to do with weird systems. It has to do
-> with micro-architectural differences which are more common on ARM than
-> on other architectures *, I suppose. But generalizing from that, it
-> has to do with policy which is currently owned by userland and not by
-> the kernel. This will also be important for choosing between the time
-> variant but less safe table based scalar AES and the much slower time
-> invariant version (which is substantially slower, especially on
-> decryption) once we move AES into this library.
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/time/clocksource.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> So a command line option for the kernel is not the solution here. If
-> we can't have separate modules, could we at least have per-module
-> options that put the policy decisions back into userland?
-> 
-> * as an example, the SHA256 NEON code I collaborated on with Andy
-> Polyakov 2 years ago is significantly faster on some cores and not on
-> others
+> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+> index 0e6e97a..2ea5db0 100644
+> --- a/kernel/time/clocksource.c
+> +++ b/kernel/time/clocksource.c
+> @@ -140,6 +140,7 @@ static void inline clocksource_watchdog_unlock(unsigned long *flags)
+>   * Interval: 0.5sec Threshold: 0.0625s
+>   */
+>  #define WATCHDOG_INTERVAL (HZ >> 1)
+> +#define WATCHDOG_INTERNVAL_NS (NSEC_PER_SEC >> 1)
+>  #define WATCHDOG_THRESHOLD (NSEC_PER_SEC >> 4)
+>  
+>  static void clocksource_watchdog_work(struct work_struct *work)
+> @@ -242,6 +243,18 @@ static void clocksource_watchdog(struct timer_list *unused)
+>  		wd_nsec = clocksource_cyc2ns(delta, watchdog->mult,
+>  					     watchdog->shift);
+>  
+> +		/*
+> +		 * When the timer tick is incorrectly stopped on a CPU with
+> +		 * pending events, for example, it is possible that the
+> +		 * clocksource watchdog will stop running for a sufficiently
+> +		 * long enough time to cause overflow in the delta
+> +		 * computation leading to incorrect report of unstable clock
+> +		 * source. So print a warning if there is unusually large
+> +		 * delay (> 0.5s) in the invocation of the watchdog. That
+> +		 * can indicate a hidden bug in the timer tick code.
+> +		 */
+> +		WARN_ON_ONCE(!wd_nsec || wd_nsec > 2*WATCHDOG_INTERNVAL_NS);
 
-Interesting concern. There are micro-architectural quirks on x86 too
-that the current code actually already considers. Notably, we use an
-AVX-512VL path for Skylake-X but an AVX-512F path for Knights Landing
-and Coffee Lake and others, due to thermal throttling when touching the
-zmm registers on Skylake-X. So, in the code, we have it automatically
-select the right thing based on the micro-architecture.
+But this is using the watchdog delta to check. If that wrapped the
+detection is broken.
 
-Is the same thing not possible with ARM? Do you not have access to this
-information already, such that the module can just always do the right
-thing and not require any user intervention?
+I'd rather use watchdog_timer.expires and check against jiffies. That tells
+you how late the timer callback actually is and does not suffer any
+wraparound issues.
 
-If so, that would be ideal. If not (and I'm curious to learn why not
-exactly), then indeed we could add some runtime nobs in /sys/module/
-{algo}/parameters/{nob}, or the like. This would be super easy to do,
-should we ever encounter a situation where we're unable to auto-detect
-the correct thing.
+Thanks,
 
-Regards,
-Jason
+	tglx
+
+
