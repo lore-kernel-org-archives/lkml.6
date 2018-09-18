@@ -2,79 +2,59 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F92C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D601ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD1B214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:42:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD1B214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C4DBE214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:43:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DBE214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730069AbeIRVQC (ORCPT
+        id S1730097AbeIRVQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:16:02 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59090 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728912AbeIRVQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:16:02 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A7D4172264A2F;
-        Tue, 18 Sep 2018 23:42:49 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.399.0; Tue, 18 Sep 2018 23:42:47 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <mchehab@kernel.org>
-CC:     <brad@nextdimension.cc>, <mkrufky@linuxtv.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: dvb-frontends: Use kmemdup instead of duplicating its function
-Date:   Tue, 18 Sep 2018 23:30:28 +0800
-Message-ID: <1537284628-62020-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        Tue, 18 Sep 2018 17:16:15 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34730 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728912AbeIRVQP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:16:15 -0400
+Received: from localhost (unknown [IPv6:2603:3023:50c:85e1:b5c5:ae11:3e54:6a07])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 977C8146F1C8C;
+        Tue, 18 Sep 2018 08:43:06 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 08:43:03 -0700 (PDT)
+Message-Id: <20180918.084303.775939207191106360.davem@davemloft.net>
+To:     gregkh@linuxfoundation.org
+Cc:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180918073135.GC4067@kroah.com>
+References: <20180917.200040.1595079540584326114.davem@davemloft.net>
+        <20180918073135.GC4067@kroah.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Sep 2018 08:43:06 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmemdup has implemented the function that kmalloc() + memcpy().
-We prefer to kmemdup rather than code opened implementation.
+From: Greg KH <gregkh@linuxfoundation.org>
+Date: Tue, 18 Sep 2018 09:31:35 +0200
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/media/dvb-frontends/lgdt3306a.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> Process question, any reason why you don't use signed tags?  I noticed
+> that you didn't use them in the past, just curious.
 
-diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
-index 0e1f5da..abec2e5 100644
---- a/drivers/media/dvb-frontends/lgdt3306a.c
-+++ b/drivers/media/dvb-frontends/lgdt3306a.c
-@@ -2205,15 +2205,13 @@ static int lgdt3306a_probe(struct i2c_client *client,
- 	struct dvb_frontend *fe;
- 	int ret;
- 
--	config = kzalloc(sizeof(struct lgdt3306a_config), GFP_KERNEL);
-+	onfig = kmemdup(client->dev.platform_data,
-+			sizeof(struct lgdt3306a_config), GFP_KERNEL);
- 	if (config == NULL) {
- 		ret = -ENOMEM;
- 		goto fail;
- 	}
- 
--	memcpy(config, client->dev.platform_data,
--			sizeof(struct lgdt3306a_config));
--
- 	config->i2c_addr = client->addr;
- 	fe = lgdt3306a_attach(config, client->adapter);
- 	if (fe == NULL) {
--- 
-1.7.12.4
+I just never have, and the last key I had signed by people is probably
+expired by now.
 
+No actual reason.
