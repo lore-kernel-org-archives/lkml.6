@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D83C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA925C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4C62146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4C62146D
+	by mail.kernel.org (Postfix) with ESMTP id 624D4214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624D4214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729955AbeIRUAv (ORCPT
+        id S1729927AbeIRUBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:00:51 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40364 "EHLO huawei.com"
+        Tue, 18 Sep 2018 16:01:17 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12178 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728681AbeIRUAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:00:50 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 692C9928E355A;
-        Tue, 18 Sep 2018 22:27:56 +0800 (CST)
+        id S1728575AbeIRUBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:01:17 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 22013930114D0;
+        Tue, 18 Sep 2018 22:28:12 +0800 (CST)
 Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
  (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
- 2018 22:27:51 +0800
+ 2018 22:28:03 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>
@@ -35,10 +35,11 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
+        Chen Gong <gongchen4@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 6/8] staging: erofs: avoid magic constants when initializing clusterbits
-Date:   Tue, 18 Sep 2018 22:27:26 +0800
-Message-ID: <1537280848-122331-2-git-send-email-gaoxiang25@huawei.com>
+Subject: [PATCH v2 7/8] staging: erofs: add trace points for reading zipped data
+Date:   Tue, 18 Sep 2018 22:27:27 +0800
+Message-ID: <1537280848-122331-3-git-send-email-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537280848-122331-1-git-send-email-gaoxiang25@huawei.com>
 References: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
@@ -52,32 +53,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently erofs only supports clustersize == blocksize.
-and clustersize == 2^n * blocksize will be supported in the future.
+From: Chen Gong <gongchen4@huawei.com>
 
+This patch adds trace points for reading zipped data.
+
+Signed-off-by: Chen Gong <gongchen4@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/erofs/include/trace/events/erofs.h | 20 ++++++++++++++++++--
+ drivers/staging/erofs/unzip_vle.c                  | 11 +++++++++++
+ 2 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
-index 2109b03..9e42153 100644
---- a/drivers/staging/erofs/super.c
-+++ b/drivers/staging/erofs/super.c
-@@ -116,9 +116,10 @@ static int superblock_read(struct super_block *sb)
- #endif
- 	sbi->islotbits = ffs(sizeof(struct erofs_inode_v1)) - 1;
- #ifdef CONFIG_EROFS_FS_ZIP
--	sbi->clusterbits = 12;
-+	/* TODO: clusterbits should be related to inode */
-+	sbi->clusterbits = blkszbits;
+diff --git a/drivers/staging/erofs/include/trace/events/erofs.h b/drivers/staging/erofs/include/trace/events/erofs.h
+index 5aead93..660c92f 100644
+--- a/drivers/staging/erofs/include/trace/events/erofs.h
++++ b/drivers/staging/erofs/include/trace/events/erofs.h
+@@ -162,7 +162,8 @@
  
--	if (1 << (sbi->clusterbits - 12) > Z_EROFS_CLUSTER_MAX_PAGES)
-+	if (1 << (sbi->clusterbits - PAGE_SHIFT) > Z_EROFS_CLUSTER_MAX_PAGES)
- 		errln("clusterbits %u is not supported on this kernel",
- 			sbi->clusterbits);
+ 	TP_printk("dev = (%d,%d), nid = %llu, la %llu llen %llu flags %s",
+ 		  show_dev_nid(__entry),
+-		  __entry->la, __entry->llen, show_map_flags(__entry->flags))
++		  __entry->la, __entry->llen,
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL")
+ );
+ 
+ DEFINE_EVENT(erofs__map_blocks_enter, erofs_map_blocks_flatmode_enter,
+@@ -172,6 +173,13 @@
+ 	TP_ARGS(inode, map, flags)
+ );
+ 
++DEFINE_EVENT(erofs__map_blocks_enter, z_erofs_map_blocks_iter_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags),
++
++	TP_ARGS(inode, map, flags)
++);
++
+ DECLARE_EVENT_CLASS(erofs__map_blocks_exit,
+ 	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
+ 		 unsigned int flags, int ret),
+@@ -204,7 +212,8 @@
+ 
+ 	TP_printk("dev = (%d,%d), nid = %llu, flags %s "
+ 		  "la %llu pa %llu llen %llu plen %llu mflags %s ret %d",
+-		  show_dev_nid(__entry), show_map_flags(__entry->flags),
++		  show_dev_nid(__entry),
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL",
+ 		  __entry->la, __entry->pa, __entry->llen, __entry->plen,
+ 		  show_mflags(__entry->mflags), __entry->ret)
+ );
+@@ -216,6 +225,13 @@
+ 	TP_ARGS(inode, map, flags, ret)
+ );
+ 
++DEFINE_EVENT(erofs__map_blocks_exit, z_erofs_map_blocks_iter_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags, int ret),
++
++	TP_ARGS(inode, map, flags, ret)
++);
++
+ TRACE_EVENT(erofs_destroy_inode,
+ 	TP_PROTO(struct inode *inode),
+ 
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 08c424c..2b9b313 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -13,6 +13,8 @@
+ #include "unzip_vle.h"
+ #include <linux/prefetch.h>
+ 
++#include <trace/events/erofs.h>
++
+ static struct workqueue_struct *z_erofs_workqueue __read_mostly;
+ static struct kmem_cache *z_erofs_workgroup_cachep __read_mostly;
+ 
+@@ -613,6 +615,8 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 	unsigned int cur, end, spiltted, index;
+ 	int err = 0;
+ 
++	trace_erofs_readpage(page, false);
++
+ 	/* register locked file pages as online pages in pack */
+ 	z_erofs_onlinepage_init(page);
+ 
+@@ -1348,6 +1352,9 @@ static inline int __z_erofs_vle_normalaccess_readpages(
+ 	struct page *head = NULL;
+ 	LIST_HEAD(pagepool);
+ 
++	trace_erofs_readpages(mapping->host, lru_to_page(pages),
++			      nr_pages, false);
++
+ #if (EROFS_FS_ZIP_CACHE_LVL >= 2)
+ 	f.cachedzone_la = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
  #endif
+@@ -1571,6 +1578,8 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 	unsigned int cluster_type, logical_cluster_ofs;
+ 	int err = 0;
+ 
++	trace_z_erofs_map_blocks_iter_enter(inode, map, flags);
++
+ 	/* when trying to read beyond EOF, leave it unmapped */
+ 	if (unlikely(map->m_la >= inode->i_size)) {
+ 		DBG_BUGON(!initial);
+@@ -1689,6 +1698,8 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		__func__, map->m_la, map->m_pa,
+ 		map->m_llen, map->m_plen, map->m_flags);
+ 
++	trace_z_erofs_map_blocks_iter_exit(inode, map, flags, err);
++
+ 	/* aggressively BUG_ON iff CONFIG_EROFS_FS_DEBUG is on */
+ 	DBG_BUGON(err < 0 && err != -ENOMEM);
+ 	return err;
 -- 
 1.9.1
 
