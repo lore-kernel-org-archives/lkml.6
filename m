@@ -2,87 +2,105 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A17ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6B1ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E40B520C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40B520C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id DE08D20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:59:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H32i6pp/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE08D20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbeIRXda (ORCPT
+        id S1730622AbeIRXdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:33:30 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:40084 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729618AbeIRXda (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:33:30 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2KHq-00017b-0V; Tue, 18 Sep 2018 11:59:46 -0600
-Received: from [105.184.227.67] (helo=x220.Home)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2KHo-000459-Vy; Tue, 18 Sep 2018 11:59:45 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Tue, 18 Sep 2018 19:58:47 +0200
-Message-Id: <20180918175850.4437-6-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <878t3yitze.fsf@xmission.com>
-References: <878t3yitze.fsf@xmission.com>
-X-XM-SPF: eid=1g2KHo-000459-Vy;;;mid=<20180918175850.4437-6-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX180GUvZRlUl0rGyvQstPkFbKeMEengxlcA=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 6/9] signal/powerpc: Call force_sig_fault from _exception
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Tue, 18 Sep 2018 19:33:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730421AbeIRXdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 19:33:20 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD7532150B;
+        Tue, 18 Sep 2018 17:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537293576;
+        bh=7vVisbRMCYP1MJO580mq9JPVWUdCtXsngIMmRps12zg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H32i6pp/HWA8GNVd79JqtLIb+3JrO0xowMaLrPQ3Al1VPeamFO9SEE23YrwOBKLvA
+         brgI1mWbEmulvOaCcZ/8lAgCJdhqOag6NA0GeX5WNZnT4q0ToaoQjxvqJ8Sif3/A2Y
+         aurRsQp9YZO8nq/qCp2obE23aCuQP7YHEhMnDS58=
+Date:   Tue, 18 Sep 2018 10:59:36 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: report ENOENT correct in f2fs_rename
+Message-ID: <20180918175936.GF91945@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <f2d06f89-4f84-8492-eeea-e1c07e5104c3@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2d06f89-4f84-8492-eeea-e1c07e5104c3@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The callers of _exception don't need the pkey exception logic because
-they are not processing a pkey exception.  So just call exception_common
-directly and then call force_sig_fault to generate the appropriate siginfo
-and deliver the appropriate signal.
+On 09/18, Chao Yu wrote:
+> On 2018/9/18 10:18, Jaegeuk Kim wrote:
+> > This fixes wrong error report in f2fs_rename.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/namei.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index 98d3ab7c3ce6..d653be777529 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  	struct f2fs_dir_entry *old_entry;
+> >  	struct f2fs_dir_entry *new_entry;
+> >  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
+> > -	int err = -ENOENT;
+> > +	int err;
+> >  
+> >  	if (unlikely(f2fs_cp_error(sbi)))
+> >  		return -EIO;
+> > @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  	if (err)
+> >  		goto out;
+> >  
+> > +	err = -ENOENT;
+> 
+> I didn't get what's the difference after moving initialization of 'err' here...
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- arch/powerpc/kernel/traps.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+One example,
 
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index f6c778b5144f..c38bec51dd84 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -380,7 +380,10 @@ void _exception_pkey(int signr, struct pt_regs *regs, int code, unsigned long ad
- 
- void _exception(int signr, struct pt_regs *regs, int code, unsigned long addr)
- {
--	_exception_pkey(signr, regs, code, addr, 0);
-+	if (!exception_common(signr, regs, code, addr))
-+		return;
-+
-+	force_sig_fault(signr, code, (void __user *)addr, current);
- }
- 
- void system_reset_exception(struct pt_regs *regs)
--- 
-2.17.1
+        old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+        if (!old_entry) {
+                if (IS_ERR(old_page))
+                        err = PTR_ERR(old_page);
 
+--> need to return ENOENT instead of 0.
+
+                goto out;
+        }
+
+> 
+> Thanks,
+> 
+> >  	if (new_inode) {
+> >  		err = dquot_initialize(new_inode);
+> >  		if (err)
+> > 
