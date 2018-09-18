@@ -2,237 +2,133 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA847C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24206ECE560
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF0720858
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:31:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF0720858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DAA1120858
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA1120858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbeIRSEH (ORCPT
+        id S1729634AbeIRSEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:04:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53573 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727756AbeIRSEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:04:07 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4B9C74949850;
-        Tue, 18 Sep 2018 20:31:38 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
- 2018 20:31:29 +0800
-Subject: Re: [PATCH 0/8] staging: erofs: error handing and more tracepoints
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>
-References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
- <20180918111953.GA3585@kroah.com>
- <aab26d0e-f8dc-cc83-46eb-7a93a833eaae@huawei.com>
- <20180918121413.GA499@kroah.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <e940cdaf-faeb-7f60-b5ca-5f4d6af450be@huawei.com>
-Date:   Tue, 18 Sep 2018 20:31:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180918121413.GA499@kroah.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+        Tue, 18 Sep 2018 14:04:54 -0400
+Received: from mga05.intel.com ([192.55.52.43]:21172 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729279AbeIRSEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:04:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 05:32:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,389,1531810800"; 
+   d="scan'208";a="263612514"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Sep 2018 05:32:31 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 7D54030027C; Tue, 18 Sep 2018 05:32:31 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, kim.phillips@arm.com,
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v5 9/9] perf, tools, script: Support total cycles count
+Date:   Tue, 18 Sep 2018 05:32:14 -0700
+Message-Id: <20180918123214.26728-10-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180918123214.26728-1-andi@firstfloor.org>
+References: <20180918123214.26728-1-andi@firstfloor.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Andi Kleen <ak@linux.intel.com>
 
-On 2018/9/18 20:14, Greg Kroah-Hartman wrote:
-> On Tue, Sep 18, 2018 at 08:02:30PM +0800, Gao Xiang wrote:
->> Hi Greg,
->>
->> On 2018/9/18 19:19, Greg Kroah-Hartman wrote:
->>> On Fri, Sep 14, 2018 at 10:40:22PM +0800, Gao Xiang wrote:
->>>> In order to avoid conflicts with cleanup patches, Chao and I think
->>>> it is better to send reviewed preview patches in the erofs mailing list
->>>> to the community in time.
->>>>
->>>> So here is reviewed & tested patches right now, which clean up and
->>>> enhance the error handing and add some tracepoints for decompression.
->>>>
->>>> Note that in this patchset, bare use of 'unsigned' and NULL comparison are
->>>> also fixed compared with the preview patches according to the previous
->>>> discussion in the staging mailing list.
->>>
->>> I applied this, but I need to go delete it as this patch series adds a
->>> build warning to the system:
->>>
->>> In file included from drivers/staging/erofs/unzip_vle.h:16:0,
->>>                  from drivers/staging/erofs/unzip_vle.c:13:
->>> drivers/staging/erofs/unzip_vle.c: In function ‘z_erofs_map_blocks_iter’:
->>> drivers/staging/erofs/internal.h:303:34: warning: ‘pblk’ may be used uninitialized in this function [-Wmaybe-uninitialized]
->>>  #define blknr_to_addr(nr)       ((erofs_off_t)(nr) * EROFS_BLKSIZ)
->>>                                   ^
->>> drivers/staging/erofs/unzip_vle.c:1574:20: note: ‘pblk’ was declared here
->>>   erofs_blk_t mblk, pblk;
->>>                     ^~~~
->>>
->>> Please fix that up and resend.
->>
->> strange... my compiler (4.8.4) and huawei internal CI don't report that,
->> and this patchset has been in Chao's tree for a while, I don't get any report so far...
->>
->> I just looked into that code again and it seems a false warning since
->> 1) this code is heavily running on the products and working fine till now.
->> 2) pblk gets a proper value before unzip_vle.c:1690 map->m_pa = blknr_to_addr(pblk);
->>
->> so I think I need to silence this warning for now and check if there is a really issue....
-> 
-> Don't just silent the warning.  Usually gcc now properly detects where
-> there really is a problem, it should not be a false-positive.  And in
-> looking at the code, it does seem that pblk could not be set if one of
-> the different case statements is taken and then exact_hitted: is jumped
-> to, right?
+For perf script brstackinsn also print a running cycles count.
+This makes it easier to calculate cycle deltas for code sections
+measured with LBRs.
 
-pblk is assigned before each "goto exact_hitted" and "break;" here.
+% perf record -b -a sleep 1
+% perf script -F +brstackinsn
+...
+        _dl_sysdep_start+330:
+        00007eff9f20583a        insn: 75 c4                     # PRED 24 cycles [24]
+        00007eff9f205800        insn: 48 83 e8 03
+        00007eff9f205804        insn: 48 83 f8 1e
+        00007eff9f205808        insn: 77 26
+        00007eff9f20580a        insn: 48 63 04 81
+        00007eff9f20580e        insn: 48 01 c8
+        00007eff9f205811        insn: ff e0                     # MISPRED 31 cycles [7] 0.71 IPC
+        00007eff9f2059c0        insn: 44 8b 62 08
+        00007eff9f2059c4        insn: e9 67 fe ff ff            # PRED 55 cycles [24] 0.04 IPC
+        00007eff9f205830        insn: 48 83 c2 10
+        00007eff9f205834        insn: 48 8b 02
+        00007eff9f205837        insn: 48 85 c0
+        00007eff9f20583a        insn: 75 c4                     # PRED 68 cycles [13] 0.23 IPC
 
-1641         switch (cluster_type) {
-1642         case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
-1643                 if (ofs_rem >= logical_cluster_ofs)
-1644                         map->m_flags ^= EROFS_MAP_ZIPPED;
-1645                 /* fallthrough */
-1646         case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
-1647                 if (ofs_rem == logical_cluster_ofs) {
-1648                         pblk = le32_to_cpu(di->di_u.blkaddr);
-1649                         goto exact_hitted; <--- assigned
-1650                 }
-1651
-1652                 if (ofs_rem > logical_cluster_ofs) {
-1653                         ofs = (u64)lcn * clustersize | logical_cluster_ofs;
-1654                         pblk = le32_to_cpu(di->di_u.blkaddr);
-1655                         break; <--- assigned
-1656                 }
-1657
-1658                 /* logical cluster number should be >= 1 */
-1659                 if (unlikely(!lcn)) {
-1660                         errln("invalid logical cluster 0 at nid %llu",
-1661                                 EROFS_V(inode)->nid);
-1662                         err = -EIO;
-1663                         goto unmap_out;  <--- bypass no need it
-1664                 }
-1665                 end = ((u64)lcn-- * clustersize) | logical_cluster_ofs;
-1666                 /* fallthrough */
-1667         case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
-1668                 /* get the correspoinding first chunk */
-1669                 err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
-1670                                                   &pblk, &map->m_flags);
-1671                 mpage = *mpage_ret;
-1672
-1673                 if (unlikely(err)) {
-1674                         if (mpage)
-1675                                 goto unmap_out; <--- bypass no need it
-1676                         goto out;   <--- bypass no need it
-1677                 }
-1678                 break;           <-- pblk should be assigned in vle_get_logical_extent_head
-                                          if no error occurred in vle_get_logical_extent_head
-1679         default:
-1680                 errln("unknown cluster type %u at offset %llu of nid %llu",
-1681                         cluster_type, ofs, EROFS_V(inode)->nid);
-1682                 err = -EIO;
-1683                 goto unmap_out;   <-- bypass no need it
-1684         }
-1685
-1686         map->m_la = ofs;
-1687 exact_hitted:
-1688         map->m_llen = end - ofs;
-1689         map->m_plen = clustersize;
-1690         map->m_pa = blknr_to_addr(pblk);   <--- pblk is used here
-1691         map->m_flags |= EROFS_MAP_MAPPED;
-1692 unmap_out:
-1693         kunmap_atomic(kaddr);
-1694         unlock_page(mpage);
-1695 out:
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ tools/perf/builtin-script.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-and in vle_get_logical_extent_head
-1493 static int
-1494 vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
-1495                             unsigned int lcn,   /* logical cluster number */
-1496                             unsigned long long *ofs,
-1497                             erofs_blk_t *pblk,
-1498                             unsigned int *flags)
-1499 {
-1500         const unsigned int clustersize = 1 << ctx->clusterbits;
-1501         const erofs_blk_t mblk = vle_extent_blkaddr(ctx->inode, lcn);
-1502         struct page *mpage = *ctx->mpage_ret;   /* extent metapage */
-1503
-1504         struct z_erofs_vle_decompressed_index *di;
-1505         unsigned int cluster_type, delta0;
-1506
-1507         if (mpage->index != mblk) {
-1508                 kunmap_atomic(*ctx->kaddr_ret);
-1509                 unlock_page(mpage);
-1510                 put_page(mpage);
-1511
-1512                 mpage = erofs_get_meta_page(ctx->sb, mblk, false);
-1513                 if (IS_ERR(mpage)) {
-1514                         *ctx->mpage_ret = NULL;
-1515                         return PTR_ERR(mpage);   <--- bypass pblk since err != 0
-1516                 }
-1517                 *ctx->mpage_ret = mpage;
-1518                 *ctx->kaddr_ret = kmap_atomic(mpage);
-1519         }
-1520
-1521         di = *ctx->kaddr_ret + vle_extent_blkoff(ctx->inode, lcn);
-1522
-1523         cluster_type = vle_cluster_type(di);
-1524         switch (cluster_type) {
-1525         case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
-1526                 delta0 = le16_to_cpu(di->di_u.delta[0]);
-1527                 if (unlikely(!delta0 || delta0 > lcn)) {
-1528                         errln("invalid NONHEAD dl0 %u at lcn %u of nid %llu",
-1529                               delta0, lcn, EROFS_V(ctx->inode)->nid);
-1530                         DBG_BUGON(1);
-1531                         return -EIO;   <--- bypass pblk since err != 0
-1532                 }
-1533                 return vle_get_logical_extent_head(ctx,
-1534                         lcn - delta0, ofs, pblk, flags);  <---- recursive call (vle_get_logical_extent_head at most 2 times)
-1535         case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
-1536                 *flags ^= EROFS_MAP_ZIPPED;
-1537                 /* fallthrough */
-1538         case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
-1539                 /* clustersize should be a power of two */
-1540                 *ofs = ((u64)lcn << ctx->clusterbits) +
-1541                         (le16_to_cpu(di->di_clusterofs) & (clustersize - 1));
-1542                 *pblk = le32_to_cpu(di->di_u.blkaddr);
-1543                 break;      <--- assigned
-1544         default:
-1545                 errln("unknown cluster type %u at lcn %u of nid %llu",
-1546                       cluster_type, lcn, EROFS_V(ctx->inode)->nid);
-1547                 DBG_BUGON(1);
-1548                 return -EIO;   <--- bypass pblk since err != 0
-1549         }
-1550         return 0;
-1551 }
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 3b73c3226141..84895c861b84 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -913,7 +913,7 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
+ 
+ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+ 			    struct perf_insn *x, u8 *inbuf, int len,
+-			    int insn, FILE *fp)
++			    int insn, FILE *fp, int *total_cycles)
+ {
+ 	int printed = fprintf(fp, "\t%016" PRIx64 "\t%-30s\t#%s%s%s%s", ip,
+ 			      dump_insn(x, ip, inbuf, len, NULL),
+@@ -922,7 +922,8 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+ 			      en->flags.in_tx ? " INTX" : "",
+ 			      en->flags.abort ? " ABORT" : "");
+ 	if (en->flags.cycles) {
+-		printed += fprintf(fp, " %d cycles", en->flags.cycles);
++		*total_cycles += en->flags.cycles;
++		printed += fprintf(fp, " %d cycles [%d]", *total_cycles, en->flags.cycles);
+ 		if (insn)
+ 			printed += fprintf(fp, " %.2f IPC", (float)insn / en->flags.cycles);
+ 	}
+@@ -979,6 +980,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 	u8 buffer[MAXBB];
+ 	unsigned off;
+ 	struct symbol *lastsym = NULL;
++	int total_cycles = 0;
+ 
+ 	if (!(br && br->nr))
+ 		return 0;
+@@ -999,7 +1001,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 		printed += ip__fprintf_sym(br->entries[nr - 1].from, thread,
+ 					   x.cpumode, x.cpu, &lastsym, attr, fp);
+ 		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
+-					    &x, buffer, len, 0, fp);
++					    &x, buffer, len, 0, fp, &total_cycles);
+ 	}
+ 
+ 	/* Print all blocks */
+@@ -1027,7 +1029,9 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+ 			if (ip == end) {
+-				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
++				printed += ip__fprintf_jump(ip, &br->entries[i],
++						&x, buffer + off, len - off,
++						insn, fp, &total_cycles);
+ 				break;
+ 			} else {
+ 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+-- 
+2.17.1
 
-(I have no clang environment to build kernel yet... :( I will try later, but I have no idea why it happens,
-and it seems a false warning).
-
-Thanks,
-Gao Xiang
-
-> 
-> Or is gcc just being "dumb" here?  What about clang, have you tried
-> building it with that compiler as well?
-> 
-> thanks,
-> 
-> greg k-h
-> 
