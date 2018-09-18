@@ -2,142 +2,91 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 783F8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F52BECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06CC021471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32CEE21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOoimuZW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CC021471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gvovrSQs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CEE21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbeIRUk3 (ORCPT
+        id S1729501AbeIRUmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:40:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45321 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729618AbeIRUk3 (ORCPT
+        Tue, 18 Sep 2018 16:42:38 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42442 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbeIRUmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:40:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 20-v6so2479947wrb.12;
-        Tue, 18 Sep 2018 08:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9bG/SpXvx9wkojMsLQtvP/VSO5oqBDXfqfliofzy+qw=;
-        b=gOoimuZWcF5EVO+1oXXkfWfbJcQANkgG6SSTa8OYIiJWmg8X4May1jQe6OG/DuUD4g
-         wVP4RxBFCD2Fv7uHikmlqhGDbn+yyBZgCU2euxWZx0DBZEamQ9bdfQEjogxgYVY3nWih
-         jyPuMFXmTWRWmm4YFiwBIIgtOCMpy4rbuMalhAwh/Q7dQhK6YFxeVha/8MwrQpoG8bWK
-         o70LPXlcYRAwzbUDBmP88gfhFlQ7IOadQlk2rbgyI8LwblDOCqyw2WDyUB4bxNiCrDED
-         uHNxhZYfCAI+8KrJPop/zJpXpsI6fdY4zsk7vOMZAcxN97tSPoV/g70ITdxGwX3T/M28
-         XJFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9bG/SpXvx9wkojMsLQtvP/VSO5oqBDXfqfliofzy+qw=;
-        b=iI5ABgB7hRLZK90eKxnU0CCeFUSFQB5DOUd63jwDNOs84gXtmMBYKQL8nXTtAtGFOe
-         WzegBvcg5lm+RTuHPgXqgT/mFGpu09Cedcw4Oj3GNbymtYaVCe4oMH8+7rrNu6KGHNdi
-         mzD6c6H69/Mg8x09MnHE6vM4ZOZ4/azAJ7nJVbU03lWeJsgM2dkuh0aJ5n5ZB/JOdtd3
-         m/ZgohoAVosox0348HLqNue+CurPyOTRwWII0J4DaiFrjfPEaK8TCEh8l+g2inpHc+KI
-         /I6Ao46HK8cNyiwEdoajz9B2DMENi1yTO2k2ETT0XdA7YM8VxIiXAuIkG26tRw4N2Bly
-         yrFg==
-X-Gm-Message-State: APzg51ABghzE+kZcpwOMN9mbiJMpgbNnqFxsmRuXjlCQBTFLC1fqlkJT
-        0+3Eboa2Zcs80twRNTl2ybs=
-X-Google-Smtp-Source: ANB0VdapnnQxbH/QBcsIM1xgUnlHzi/YTHYp+XjG0PGMD4D79LT/LOi5L59SEmpuZG9UyhUwAzU8Vw==
-X-Received: by 2002:adf:fb81:: with SMTP id a1-v6mr24983803wrr.219.1537283247146;
-        Tue, 18 Sep 2018 08:07:27 -0700 (PDT)
-Received: from [192.168.10.165] (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.googlemail.com with ESMTPSA id h206-v6sm2696583wmf.25.2018.09.18.08.07.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 08:07:26 -0700 (PDT)
-Subject: Re: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-References: <20180912133353.20595-1-bigeasy@linutronix.de>
- <20180912133353.20595-5-bigeasy@linutronix.de>
- <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com>
- <20180914203501.qibhpmueosvkr74w@linutronix.de>
- <a239e97a-d1a1-388e-5db9-10758c33d702@redhat.com>
- <20180918142701.atfb4ul45k7tl6ew@linutronix.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-Message-ID: <7e9a13f3-93f5-fe4a-20d2-f4f9407bd43b@redhat.com>
-Date:   Tue, 18 Sep 2018 17:07:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 16:42:38 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8IF4koB162109;
+        Tue, 18 Sep 2018 15:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=669eREKKnk6r37HEedNqQHnRGDwd+drMKzScpG9b6s4=;
+ b=gvovrSQs8gaiCtvqTxOn1gxDAh0vBmAVGZVfGSEk3SH1ZI6tRBgdfjxhSK5mydWGGrWx
+ XZo8utEe7sX+g+8DGCVCHXnAmbo8oHNkrhJ53LgZ92l2ofIh+tSFtjvYLd4dExx9K3Dg
+ AVlvDpQi52W+1Rgdc51I8+yA7k0iQ/JgX5kBOqxrBhewBTbHxm43A+cpu0yx3zsYcMH1
+ MJSerPrwjkdAF1I8Rh3aGm6opNUHtFG5CMcO+rD8E8hyaQw0iki0RUg7Z/5SJslb7zez
+ udc0HqeJ9MA2gsiHhmii/evnnH+BYhnWGQ8nFuy/D7UKH3LMBnKHC7bePrYqXomBBEJU fg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mgsgtn7hr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Sep 2018 15:09:28 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8IF9RVT005948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Sep 2018 15:09:28 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8IF9REh025813;
+        Tue, 18 Sep 2018 15:09:27 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Sep 2018 08:09:26 -0700
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, <martin.petersen@oracle.com>,
+        <Don.Brace@microchip.com>, <don.brace@microsemi.com>,
+        <jejb@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] scsi: Use vmemdup_user to replace the open code
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1534164200-28408-1-git-send-email-zhongjiang@huawei.com>
+        <BYAPR11MB28555A88771594AA31AC7596E1390@BYAPR11MB2855.namprd11.prod.outlook.com>
+        <5B7E9CCE.5010007@huawei.com> <5BA11315.4060908@huawei.com>
+Date:   Tue, 18 Sep 2018 11:09:24 -0400
+In-Reply-To: <5BA11315.4060908@huawei.com> (zhong jiang's message of "Tue, 18
+        Sep 2018 23:00:37 +0800")
+Message-ID: <yq11s9qrgez.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180918142701.atfb4ul45k7tl6ew@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9019 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=411
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809180152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/09/2018 16:27, Sebastian Andrzej Siewior wrote:
->> Likewise, move this to fpu__clear and outside "if
->> (static_cpu_has(X86_FEATURE_FPU))"?
-> okay. But if there is no FPU we did not save/restore the pkru value. Is
-> this supposed to be an improvement?
 
-Honestly it just seemed "more correct", but now that I think about it,
-kernel threads should run with PKRU=0.  maybe there's a preexisting bug
-that your patch has the occasion to fix.
+Hi Zhong,
 
-Paolo
+> Can you pick up the patch?
 
->> Also, a __read_pkru() seems to be missing in switch_fpu_prepare.
-> But the value is stored during write_pkru(). So the copy that is saved
-> should be identical to the value that would be read, correct?
-> 
+Please submit SCSI patches to linux-scsi@vger.kernel.org so they get
+tracked in patchwork.
 
+Thank you!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
