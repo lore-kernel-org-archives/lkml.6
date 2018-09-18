@@ -2,368 +2,105 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B646C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2608BC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E0D2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E0D2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id BA9582086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:54:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="dHK1ZXDM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA9582086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730226AbeIRTXC (ORCPT
+        id S1729800AbeIRT04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:23:02 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:54540 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729833AbeIRTXB (ORCPT
+        Tue, 18 Sep 2018 15:26:56 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:41090 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbeIRT0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:23:01 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437672|-1;CH=green;FP=13789591823715256490|1|1|1|0|-1|-1|-1;HT=e02c03303;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CsTc65c_1537278583;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CsTc65c_1537278583)
-          by smtp.aliyun-inc.com(10.147.41.138);
-          Tue, 18 Sep 2018 21:49:43 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
-        robh@kernel.org, sfr@canb.auug.org.au
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arch@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, green.hu@gmail.com,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V7 1/2] irqchip: add C-SKY APB bus interrupt controller
-Date:   Tue, 18 Sep 2018 21:49:39 +0800
-Message-Id: <0f7fc2f4893bbeb07ba4fa8e5c386f7c013c0faf.1537276735.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537276735.git.ren_guo@c-sky.com>
-References: <cover.1537276735.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1537276735.git.ren_guo@c-sky.com>
-References: <cover.1537276735.git.ren_guo@c-sky.com>
+        Tue, 18 Sep 2018 15:26:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1537278852; x=1568814852;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=3PR+VbrDCzNid6wVZkf5NCEEC5jrBB6e77Qbjn32Q4A=;
+  b=dHK1ZXDMWaOnYOWATIPosKpAvpL4nxSHGuXsAaGR6hM4TtsEhI7Cr9mm
+   7XYfnQGlVAO54cfTPOg6rePkQaW4afi2JSZS0ZSmw2aFvkH9Dj2X2TvOV
+   qkyxmMDjrmSIRp0aZzyJ47UI5JFgANHH3TO+xvIsHZl72bYKQ1T5hkfnv
+   s=;
+X-IronPort-AV: E=Sophos;i="5.53,389,1531785600"; 
+   d="scan'208";a="362890027"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Sep 2018 13:54:10 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2b-4ff6265a.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8IDs6eE007894
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Tue, 18 Sep 2018 13:54:08 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w8IDs4Xs006243;
+        Tue, 18 Sep 2018 15:54:04 +0200
+Subject: Re: Task group cleanups and optimizations (was: Re: [RFC 00/60]
+ Coscheduling for Linux)
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20180914111251.GC24106@hirez.programming.kicks-ass.net>
+ <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
+ <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
+ <20180917094844.GR24124@hirez.programming.kicks-ass.net>
+ <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
+ <20180918133805.GN24106@hirez.programming.kicks-ass.net>
+From:   "=?UTF-8?Q?Jan_H._Sch=c3=b6nherr?=" <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <3d49801b-01cd-579b-f731-d6ca7aed985d@amazon.de>
+Date:   Tue, 18 Sep 2018 15:54:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180918133805.GN24106@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - irq-csky-apb-intc is a simple SOC interrupt controller which is
-   used in a lot of C-SKY CPU SOC products.
+On 09/18/2018 03:38 PM, Peter Zijlstra wrote:
+> On Tue, Sep 18, 2018 at 03:22:13PM +0200, Jan H. Schönherr wrote:
+>> AFAIK, changing the affinity of a cpuset overwrites the individual affinities of tasks
+>> within them. Thus, it shouldn't be an issue.
+> 
+> No, it only shrinks the set. Also nothing stops you calling
+> sched_setaffinity() once you're inside the cpuset. The only contraint is
+> that your mask is a subset of the cpuset mask.
 
-Changelog:
- - use "bool ret" instead of "int ret"
- - add support-pulse-signal in irq-csky-apb-intc.c
- - change name with upstream feed-back
- - add INTC_IFR to clear irq-pending
- - remove CSKY_VECIRQ_LEGENCY
- - change to generic irq chip framework
- - add License and Copyright
- - use irq_domain_add_linear instead of leagcy
+I meant setting the affinity of the cpuset *after* setting an individual affinity.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- drivers/irqchip/Kconfig             |   8 ++
- drivers/irqchip/Makefile            |   1 +
- drivers/irqchip/irq-csky-apb-intc.c | 260 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 269 insertions(+)
- create mode 100644 drivers/irqchip/irq-csky-apb-intc.c
+Like this:
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 383e7b7..63b8986 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -371,6 +371,14 @@ config QCOM_PDC
- 	  Power Domain Controller driver to manage and configure wakeup
- 	  IRQs for Qualcomm Technologies Inc (QTI) mobile chips.
- 
-+config CSKY_APB_INTC
-+	bool "C-SKY APB Interrupt Controller"
-+	depends on CSKY
-+	help
-+	  Say yes here to enable C-SKY APB interrupt controller driver used
-+	  by C-SKY single core SOC system. It use mmio map apb-bus to visit
-+	  the controller's register.
-+
- endmenu
- 
- config SIFIVE_PLIC
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index fbd1ec8..5047059 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -87,4 +87,5 @@ obj-$(CONFIG_MESON_IRQ_GPIO)		+= irq-meson-gpio.o
- obj-$(CONFIG_GOLDFISH_PIC) 		+= irq-goldfish-pic.o
- obj-$(CONFIG_NDS32)			+= irq-ativic32.o
- obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
-+obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
-new file mode 100644
-index 0000000..50ece4a
---- /dev/null
-+++ b/drivers/irqchip/irq-csky-apb-intc.c
-@@ -0,0 +1,260 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/module.h>
-+#include <linux/irqdomain.h>
-+#include <linux/irqchip.h>
-+#include <linux/irq.h>
-+#include <linux/interrupt.h>
-+#include <asm/irq.h>
-+#include <asm/io.h>
-+
-+#define INTC_IRQS		64
-+
-+#define CK_INTC_ICR		0x00
-+#define CK_INTC_PEN31_00	0x14
-+#define CK_INTC_PEN63_32	0x2c
-+#define CK_INTC_NEN31_00	0x10
-+#define CK_INTC_NEN63_32	0x28
-+#define CK_INTC_SOURCE		0x40
-+#define CK_INTC_DUAL_BASE	0x100
-+
-+#define GX_INTC_PEN31_00	0x00
-+#define GX_INTC_PEN63_32	0x04
-+#define GX_INTC_NEN31_00	0x40
-+#define GX_INTC_NEN63_32	0x44
-+#define GX_INTC_NMASK31_00	0x50
-+#define GX_INTC_NMASK63_32	0x54
-+#define GX_INTC_SOURCE		0x60
-+
-+static void __iomem *reg_base;
-+static struct irq_domain *root_domain;
-+
-+static int nr_irq = INTC_IRQS;
-+
-+/*
-+ * When controller support pulse signal, the PEN_reg will hold on signal
-+ * without software trigger.
-+ *
-+ * So, to support pulse signal we need to clear IFR_reg and the address of
-+ * IFR_offset is NEN_offset - 8.
-+ */
-+static void irq_ck_mask_set_bit(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
-+	unsigned long ifr = ct->regs.mask - 8;
-+	u32 mask = d->mask;
-+
-+	irq_gc_lock(gc);
-+	*ct->mask_cache |= mask;
-+	irq_reg_writel(gc, *ct->mask_cache, ct->regs.mask);
-+	irq_reg_writel(gc, irq_reg_readl(gc, ifr) & ~mask, ifr);
-+	irq_gc_unlock(gc);
-+}
-+
-+static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
-+			     u32 mask_reg, u32 irq_base)
-+{
-+	struct irq_chip_generic *gc;
-+
-+	gc = irq_get_domain_generic_chip(root_domain, irq_base);
-+	gc->reg_base = reg_base;
-+	gc->chip_types[0].regs.mask = mask_reg;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-+	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+
-+	if (of_find_property(node, "support-pulse-signal", NULL))
-+		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
-+}
-+
-+static inline u32 build_channel_val(u32 idx, u32 magic)
-+{
-+	u32 res;
-+
-+	/*
-+	 * Set the same index for each channel
-+	 */
-+	res = idx | (idx << 8) | (idx << 16) | (idx << 24);
-+
-+	/*
-+	 * Set the channel magic number in descending order.
-+	 * The magic is 0x00010203 for ck-intc
-+	 * The magic is 0x03020100 for gx6605s-intc
-+	 */
-+	return res | magic;
-+}
-+
-+static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
-+{
-+	u32 i;
-+
-+	/* Setup 64 channel slots */
-+	for (i = 0; i < INTC_IRQS; i += 4) {
-+		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
-+	}
-+}
-+
-+static int __init
-+ck_intc_init_comm(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	if (parent) {
-+		pr_err("C-SKY Intc not a root irq controller\n");
-+		return -EINVAL;
-+	}
-+
-+	reg_base = of_iomap(node, 0);
-+	if (!reg_base) {
-+		pr_err("C-SKY Intc unable to map: %p.\n", node);
-+		return -EINVAL;
-+	}
-+
-+	root_domain = irq_domain_add_linear(node, nr_irq, &irq_generic_chip_ops, NULL);
-+	if (!root_domain) {
-+		pr_err("C-SKY Intc irq_domain_add failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(root_domain, 32, 1,
-+					     "csky_intc", handle_level_irq,
-+					     IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN,
-+					     0, 0);
-+	if (ret) {
-+		pr_err("C-SKY Intc irq_alloc_gc failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq, u32 irq_base)
-+{
-+	u32 irq;
-+
-+	if (hwirq == 0) return 0;
-+
-+	while (hwirq) {
-+		irq = __ffs(hwirq);
-+		hwirq &= ~BIT(irq);
-+		handle_domain_irq(root_domain, irq_base + irq, regs);
-+	}
-+
-+	return 1;
-+}
-+
-+/* gx6605s 64 irqs interrupt controller */
-+static void gx_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+
-+	do {
-+		ret  = handle_irq_perbit(regs ,readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
-+		ret |= handle_irq_perbit(regs ,readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
-+	} while(ret);
-+}
-+
-+static int __init
-+gx_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
-+
-+	/* Initial mask reg with all unmasked, becasue we only use enalbe reg */
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
-+	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
-+
-+	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
-+
-+	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
-+
-+	set_handle_irq(gx_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
-+
-+/* C-SKY simple 64 irqs interrupt controller, dual-together could support 128 irqs */
-+static void ck_irq_handler(struct pt_regs *regs)
-+{
-+	bool ret;
-+
-+	do {
-+		/* handle 0 - 31 irqs */
-+		ret  = handle_irq_perbit(regs, readl_relaxed(reg_base + CK_INTC_PEN31_00), 0);
-+		ret |= handle_irq_perbit(regs, readl_relaxed(reg_base + CK_INTC_PEN63_32), 32);
-+
-+		if (nr_irq == INTC_IRQS) continue;
-+
-+		/* handle 64 - 127 irqs */
-+		ret |= handle_irq_perbit(regs,
-+			   readl_relaxed(reg_base + CK_INTC_PEN31_00 + CK_INTC_DUAL_BASE), 64);
-+		ret |= handle_irq_perbit(regs,
-+			   readl_relaxed(reg_base + CK_INTC_PEN63_32 + CK_INTC_DUAL_BASE), 96);
-+	} while(ret);
-+}
-+
-+static int __init
-+ck_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
-+
-+	/* Enable irq intc */
-+	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
-+
-+	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
-+	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
-+
-+	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
-+
-+	set_handle_irq(ck_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_intc, "csky,apb-intc", ck_intc_init);
-+
-+static int __init
-+ck_dual_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret;
-+
-+	/* dual-apb-intc up to 128 irq sources*/
-+	nr_irq = INTC_IRQS * 2;
-+
-+	ret = ck_intc_init(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* Initial enable reg to disable all interrupts */
-+	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
-+	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
-+
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
-+
-+	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(ck_dual_intc, "csky,dual-apb-intc", ck_dual_intc_init);
--- 
-2.7.4
+# mkdir /sys/fs/cgroup/cpuset/test
+# cat /sys/fs/cgroup/cpuset/cpuset.mems > /sys/fs/cgroup/cpuset/test/cpuset.mems
+# cat /sys/fs/cgroup/cpuset/cpuset.cpus > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+# echo $$ > /sys/fs/cgroup/cpuset/test/tasks
+# taskset -c -p 0 $$
+pid 4745's current affinity list: 0-3
+pid 4745's new affinity list: 0
+# echo "0-1" > /sys/fs/cgroup/cpuset/test/cpuset.cpus
+# taskset -c -p $$
+pid 4745's current affinity list: 0,1
+#
 
+The individual affinity of $$ is lost, despite it being a subset.
