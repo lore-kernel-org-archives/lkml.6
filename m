@@ -2,103 +2,97 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D3ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBFFECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AA721471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lnj+GEf9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10AA721471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A290120652
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A290120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbeIROwm (ORCPT
+        id S1729607AbeIROy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:52:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36145 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbeIROwl (ORCPT
+        Tue, 18 Sep 2018 10:54:29 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:42126 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbeIROy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:52:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b11-v6so727076pfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 02:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UBDvynMlQ+CLa//vjhI1FniisjjUmkbIGiogOAJ0pDw=;
-        b=Lnj+GEf9yzZasOKq2IBmSzWeKh+3usnJKw+W6pOgBMnTym8yNxDDX5M98mftWqMotP
-         MJzpXVP8z3QVr1YDlpgLnwTTGblNfxj/m5Aiuwyj0oxlOEUogZNs9QlXVJ2zlUyh0tlI
-         PuPF6i7Dda0C8DWxotLXbKpMmwjGr1+1DenInFQK7EFycQzmh4DSSx/+L+bh7T63TOw1
-         o757FDzKcWffl7hEFRL16v9dnsJDCuzyW4e9PoECh7CZfBy6txaMIS+cD2j/zzhXl8RP
-         Uj2fyTo+b5wRZI0vXfH+GTMpBWuZvta53ov+lepFKIQ0deDTSnxpIxDKu+PSeSnhz9Oy
-         KhpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UBDvynMlQ+CLa//vjhI1FniisjjUmkbIGiogOAJ0pDw=;
-        b=aSI7tDOUNJhgsR20VXCALILq6eikTMVxITEgpiCk+M3Fe8VgTNkVbwMml/H0jxJ+uk
-         DK29P++EhQa5UWbC23du3BpTedeXHL+1qnkjdSMEVt4z/vCwIWouZpm7pqbxXVvNs7GQ
-         BAIfyy9uElioOL1qt0HT3sQkELr8DFBpk17aAVAQZrNbkuakuD1uoHV4E4UOe4/NRAK7
-         usm6cRx55vBIWvXI7oShxs9qx5278Rxc13axqQJzN6dbbYAaceHhYj4kwXyU+Z+cpaey
-         hlIsez2ZJWEyt8MZ1Lw+oeGWhf33OzuCNGIii1q/69n6TIi1f+sdMJ0VxLuhzgb/aUgl
-         D7uQ==
-X-Gm-Message-State: APzg51CLHOHB2jaHF7ruJNkEJfocwBiqbePs2BjX3PBzvRXvXPP+3GtD
-        iFK6huOE4L2+eog1UmpnqmQ=
-X-Google-Smtp-Source: ANB0VdZWO7s/Ow2oeyrreBfrwu0QDN9Kp4/nmeUPKcs2w99dw8tuFFkVklB3c7KT+1APWvQoZwsjyQ==
-X-Received: by 2002:a63:931b:: with SMTP id b27-v6mr27020099pge.143.1537262457428;
-        Tue, 18 Sep 2018 02:20:57 -0700 (PDT)
-Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm29932877pfm.145.2018.09.18.02.20.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 02:20:56 -0700 (PDT)
-From:   Zong Li <zongbox@gmail.com>
-To:     palmer@sifive.com, aou@eecs.berkeley.edu
-Cc:     vincentc@andestech.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, zong@andestech.com
-Subject: [PATCH 5/5] RISC-V: Avoid corrupting the upper 32-bit of phys_addr_t in ioremap
-Date:   Tue, 18 Sep 2018 17:19:17 +0800
-Message-Id: <9fc325660fb1e0ef9133705f7c05784dcc12c0c2.1537260207.git.zongbox@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1537260207.git.zongbox@gmail.com>
-References: <cover.1537260207.git.zongbox@gmail.com>
+        Tue, 18 Sep 2018 10:54:28 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1g2CDE-0004Hs-K6; Tue, 18 Sep 2018 17:22:28 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1g2CD5-0004Z5-JH; Tue, 18 Sep 2018 17:22:19 +0800
+Date:   Tue, 18 Sep 2018 17:22:19 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Alexander Stein <alexander.stein@systec-electronic.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH][RFC] crypto: skcipher: Remove VLA usage
+Message-ID: <20180918092219.kwqb37g6td2xs54f@gondor.apana.org.au>
+References: <20180913182328.GA9812@beast>
+ <CAGXu5jJdqs4Rf=RvRtzQavT0oAtEEWppmjJRFRhLL4iQfCkVnQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJdqs4Rf=RvRtzQavT0oAtEEWppmjJRFRhLL4iQfCkVnQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Chen <vincentc@andestech.com>
+On Mon, Sep 17, 2018 at 10:30:36PM -0700, Kees Cook wrote:
+> On Thu, Sep 13, 2018 at 11:23 AM, Kees Cook <keescook@chromium.org> wrote:
+> > RFC follow-up to https://lkml.kernel.org/r/CAGXu5j+bpLK=EQ9LHkO8V=sdaQwt==6fbGhgn2Vi1E9_WxSGRQ@mail.gmail.com
+> >
+> > The core API changes:
+> >
+> >         struct crypto_sync_skcipher
+> >         crypto_alloc_sync_skcipher()
+> >         crypto_free_sync_skcipher()
+> >         crypto_sync_skcipher_setkey()
+> >         skcipher_request_set_sync_tfm()
+> >         SKCIPHER_REQUEST_ON_STACK type check
+> >
+> > and a single user's refactoring as an example:
+> >
+> >         drivers/crypto/ccp/ccp-crypto.h
+> >         drivers/crypto/ccp/ccp-crypto-aes-xts.c
+> >
+> > Does this look correct? If so, I can continue and do the other 60
+> > instances of SKCIPHER_REQUEST_ON_STACK().
+> 
+> Herbert, how does this look? Should I do the other 60 instances? I'd
+> really like to get this finished up. :)
 
-For 32bit, the upper 32-bit of phys_addr_t will be flushed to zero
-after AND with PAGE_MASK because the data type of PAGE_MASK is
-unsigned long. To fix this problem, the page alignment is done by
-subtracting the page offset instead of AND with PAGE_MASK.
+Hi Kees:
 
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
----
- arch/riscv/mm/ioremap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes I like this.  This looks a lot simpler than I thought it would
+be.
 
-diff --git a/arch/riscv/mm/ioremap.c b/arch/riscv/mm/ioremap.c
-index 70ef272..bd2f2db 100644
---- a/arch/riscv/mm/ioremap.c
-+++ b/arch/riscv/mm/ioremap.c
-@@ -42,7 +42,7 @@ static void __iomem *__ioremap_caller(phys_addr_t addr, size_t size,
- 
- 	/* Page-align mappings */
- 	offset = addr & (~PAGE_MASK);
--	addr &= PAGE_MASK;
-+	addr -= offset;
- 	size = PAGE_ALIGN(size + offset);
- 
- 	area = get_vm_area_caller(size, VM_IOREMAP, caller);
+Thanks!
 -- 
-2.7.4
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
