@@ -2,133 +2,111 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ADCC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D284CECE560
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE522146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:57:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YXjX8G6r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE522146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 858BE2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:59:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858BE2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbeIRR35 (ORCPT
+        id S1729361AbeIRRbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:29:57 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38136 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbeIRR35 (ORCPT
+        Tue, 18 Sep 2018 13:31:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726828AbeIRRbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:29:57 -0400
-Received: by mail-yw1-f65.google.com with SMTP id n21-v6so640944ywh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 04:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=RlK2Au7f7Pw0XN+y1/uWdu8MO+Nry4x3rQoc7bdLLWo=;
-        b=YXjX8G6rpXbfHutJCG3KhruQBW90GtH7pQ9sahNp2HCVaD16B8j9XV/RmEYcrTpgVO
-         cBY6E7EWAF92OCdB3LB2mqOKzfn6WOsLDys1pJKjOgsEh2d8eLXlDtgl/ncNOkb79eHV
-         fBH7SFozD71XS60HDZoGRV3uCCMSA+fbrPZZ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=RlK2Au7f7Pw0XN+y1/uWdu8MO+Nry4x3rQoc7bdLLWo=;
-        b=fJnz8sSToCSWD1IJWwOyO9tSiwd0QmVeY/QyHrPj4YSPOpnkShAYOmWjy+cwZvvXp1
-         yVBpXvOeIEn+y+ciWPY4V7DKDGdNYx8d5gebS3DCIT3Bs5D2v4gcYRIb1EvVVXZ82kJe
-         DmVVlo33d+FcTA3/iSzT8+/c8/Fs/YHisK2sFWRRUVK5gNN5RCj+tmHklKXKVrIhZRv9
-         ksHcfWY50rVnDtsXWs4RJg2R/f8pWTqJKC7CYJ73484GjKG2uSJ5OtQOEiKZJO4xdp75
-         InkEaCjLCdGrTo7AS3/z9iTzgzKE0RK1A8uUieUxH80EGHXBpt3bebpx+rF3HSuN5B5m
-         gJTA==
-X-Gm-Message-State: APzg51AB86XxeAo0HoVg6q56Bz2J5pwbTDxwxQrjkMkHS1mY2uhoEsiY
-        wCe29LTKaiizvYOVvuQeJ4mGdlZH8ss9Ne/A+0h5CQ==
-X-Google-Smtp-Source: ANB0VdZ/0qFOo0U1nAPvrC9VYwTSWTYwpGNRLiSh5mAwbZaAk92J9zyLKhsXK/ju7rFTeHdrlM3T34gGzxYJ+RT2o/Q=
-X-Received: by 2002:a81:1b82:: with SMTP id b124-v6mr12433657ywb.381.1537271860818;
- Tue, 18 Sep 2018 04:57:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 04:57:40
- -0700 (PDT)
-In-Reply-To: <CAK8P3a221wz4iqwoKcof2ioVWzHmUCOwt8Y5cdVPvZEEtHcycQ@mail.gmail.com>
-References: <1536914314-5026-1-git-send-email-firoz.khan@linaro.org>
- <1536914314-5026-3-git-send-email-firoz.khan@linaro.org> <CAK8P3a221wz4iqwoKcof2ioVWzHmUCOwt8Y5cdVPvZEEtHcycQ@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 18 Sep 2018 17:27:40 +0530
-Message-ID: <CALxhOnjxFiWd_rTKnUo4dAYZZgqi_AqVsCj1AB8yHL-KwvMpQQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mips: Add system call table generation support
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 18 Sep 2018 13:31:16 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8IBsIpG099334
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:58:58 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mk0w205bj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:58:58 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Tue, 18 Sep 2018 07:58:57 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Sep 2018 07:58:55 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8IBwsMg46858370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Sep 2018 11:58:54 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F1CEEAE05F;
+        Tue, 18 Sep 2018 07:57:38 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DDC0AE05C;
+        Tue, 18 Sep 2018 07:57:36 -0400 (EDT)
+Received: from skywalker.ibmuc.com (unknown [9.85.75.167])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Sep 2018 07:57:35 -0400 (EDT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, mpe@ellerman.id.au
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH V3 0/2] mm/kvm/vfio/ppc64: Migrate compound pages out of CMA region
+Date:   Tue, 18 Sep 2018 17:28:37 +0530
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 18091811-0068-0000-0000-0000033D1941
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009728; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01090083; UDB=6.00563121; IPR=6.00870103;
+ MB=3.00023366; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-18 11:58:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091811-0069-0000-0000-000045C5F380
+Message-Id: <20180918115839.22154-1-aneesh.kumar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=570 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809180122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 September 2018 at 15:28, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Sep 14, 2018 at 10:39 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->>
->> The system call tables are in different format in all
->> architecture and it will be difficult to manually add or
->> modify the system calls in the respective files. To make
->> it easy by keeping a script and which'll generate the
->> header file and syscall table file so this change will
->> unify them across all architectures.
->>
->> The system call table generation script is added in
->> syscalls directory which contain the script to generate
->> both uapi header file system call table generation file
->> and syscall_32/64.tbl file which'll be the input for the
->> scripts.
->
-> I think it would be best to name the files
-> o32/n64/n32 instead of 32/64/n32
+ppc64 use CMA area for the allocation of guest page table (hash page table). We won't
+be able to start guest if we fail to allocate hash page table. We have observed
+hash table allocation failure because we failed to migrate pages out of CMA region
+because they were pinned. This happen when we are using VFIO. VFIO on ppc64 pins
+the entire guest RAM. If the guest RAM pages get allocated out of CMA region, we
+won't be able to migrate those pages. The pages are also pinned for the lifetime of the
+guest.
 
-This is an easy fix. I'll make it in the next version.
+Currently we support migration of non-compound pages. With THP and with the addition of
+ hugetlb migration we can end up allocating compound pages from CMA region. This
+patch series add support for migrating compound pages. The first path adds the helper
+get_user_pages_cma_migrate() which pin the page making sure we migrate them out of
+CMA region before incrementing the reference count. 
 
->
-> It would also be helpful to mention why the n32/n64
-> files cannot be combined into one nfile here.
+Aneesh Kumar K.V (2):
+  mm: Add get_user_pages_cma_migrate
+  powerpc/mm/iommu: Allow migration of cma allocated pages during
+    mm_iommu_get
 
-Sure.
+ arch/powerpc/mm/mmu_context_iommu.c | 120 ++++++++-----------------
+ include/linux/hugetlb.h             |   2 +
+ include/linux/migrate.h             |   3 +
+ mm/hugetlb.c                        |   4 +-
+ mm/migrate.c                        | 132 ++++++++++++++++++++++++++++
+ 5 files changed, 174 insertions(+), 87 deletions(-)
 
->
->
->> +364     32      pkey_alloc                      sys_pkey_alloc
->> +365     32      pkey_free                       sys_pkey_free
->> +366     32      statx                           sys_statx
->
-> You missed the additon of rseq and io_pgetevetns here.
+-- 
+2.17.1
 
-As I mentioned in the cover letter:
-"I started working system call table generation on 4.17-rc1. I used
-marcin's script - https://github.com/hrw/syscalls-table to generate
-the syscall.tbl file. And this will be the input to the system call
-table generation script. But there are couple system call got add
-in the latest rc release. If run Marcin's script on latest release,
-It will generate a new syscall.tbl. But I still use the old file -
-syscall.tbl and once all review got over I'll update syscall.tbl
-alone w.r.to the tip of the kernel. The impact of this thing, few
-of the system call won't work."
-
-Hopefully, the next version does have this change. Thanks!
-
-- Firoz
