@@ -2,34 +2,34 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21ACECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08303ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B747C2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B747C2146D
+	by mail.kernel.org (Postfix) with ESMTP id A9B5A214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:27:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B5A214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbeIRUAB (ORCPT
+        id S1730400AbeIRUAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:00:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:17989 "EHLO mx1.redhat.com"
+        Tue, 18 Sep 2018 16:00:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37447 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729518AbeIRUAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:00:00 -0400
+        id S1729447AbeIRUAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 16:00:12 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6CF84C04F4D5;
-        Tue, 18 Sep 2018 14:27:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A4445F783;
+        Tue, 18 Sep 2018 14:27:22 +0000 (UTC)
 Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E55D87B00E;
-        Tue, 18 Sep 2018 14:27:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B542978DDB;
+        Tue, 18 Sep 2018 14:27:09 +0000 (UTC)
 From:   Eric Auger <eric.auger@redhat.com>
 To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -39,105 +39,191 @@ To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         will.deacon@arm.com, robin.murphy@arm.com
 Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v2 19/20] vfio: Document nested stage control
-Date:   Tue, 18 Sep 2018 16:24:56 +0200
-Message-Id: <20180918142457.3325-20-eric.auger@redhat.com>
+Subject: [RFC v2 20/20] iommu/smmuv3: Report non recoverable faults
+Date:   Tue, 18 Sep 2018 16:24:57 +0200
+Message-Id: <20180918142457.3325-21-eric.auger@redhat.com>
 In-Reply-To: <20180918142457.3325-1-eric.auger@redhat.com>
 References: <20180918142457.3325-1-eric.auger@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 18 Sep 2018 14:27:10 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Sep 2018 14:27:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New iotcls were introduced to pass information about guest stage1
-to the host through VFIO. Let's document the nested stage control.
+When a stage 1 related fault event is read from the event queue,
+let's propagate it to potential external fault listeners, ie. users
+who registered a fault handler.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
-
 ---
+ drivers/iommu/arm-smmu-v3.c | 124 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 113 insertions(+), 11 deletions(-)
 
-fault reporting is current missing to the picture
-
-v1 -> v2:
-- use the new ioctl names
-- add doc related to fault handling
----
- Documentation/vfio.txt | 60 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
-index f1a4d3c3ba0b..d4611759d306 100644
---- a/Documentation/vfio.txt
-+++ b/Documentation/vfio.txt
-@@ -239,6 +239,66 @@ group and can access them as follows::
- 	/* Gratuitous device reset and go... */
- 	ioctl(device, VFIO_DEVICE_RESET);
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index d9d300ab62a5..948fc82fc4ce 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -178,6 +178,26 @@
+ #define ARM_SMMU_PRIQ_IRQ_CFG1		0xd8
+ #define ARM_SMMU_PRIQ_IRQ_CFG2		0xdc
  
-+IOMMU Dual Stage Control
-+------------------------
++/* Events */
++#define ARM_SMMU_EVT_F_UUT		0x01
++#define ARM_SMMU_EVT_C_BAD_STREAMID	0x02
++#define ARM_SMMU_EVT_F_STE_FETCH	0x03
++#define ARM_SMMU_EVT_C_BAD_STE		0x04
++#define ARM_SMMU_EVT_F_BAD_ATS_TREQ	0x05
++#define ARM_SMMU_EVT_F_STREAM_DISABLED	0x06
++#define ARM_SMMU_EVT_F_TRANSL_FORBIDDEN	0x07
++#define ARM_SMMU_EVT_C_BAD_SUBSTREAMID	0x08
++#define ARM_SMMU_EVT_F_CD_FETCH		0x09
++#define ARM_SMMU_EVT_C_BAD_CD		0x0a
++#define ARM_SMMU_EVT_F_WALK_EABT	0x0b
++#define ARM_SMMU_EVT_F_TRANSLATION	0x10
++#define ARM_SMMU_EVT_F_ADDR_SIZE	0x11
++#define ARM_SMMU_EVT_F_ACCESS		0x12
++#define ARM_SMMU_EVT_F_PERMISSION	0x13
++#define ARM_SMMU_EVT_F_TLB_CONFLICT	0x20
++#define ARM_SMMU_EVT_F_CFG_CONFLICT	0x21
++#define ARM_SMMU_EVT_E_PAGE_REQUEST	0x24
 +
-+Some IOMMUs support 2 stages/levels of translation. "Stage" corresponds to
-+the ARM terminology while "level" corresponds to Intel's VTD terminology. In
-+the following text we use either without distinction.
-+
-+This is useful when the guest is exposed with a virtual IOMMU and some
-+devices are assigned to the guest through VFIO. Then the guest OS can use
-+stage 1 (IOVA -> GPA), while the hypervisor uses stage 2 for VM isolation
-+(GPA -> HPA).
-+
-+The guest gets ownership of the stage 1 page tables and also owns stage 1
-+configuration structures. The hypervisor owns the root configuration structure
-+(for security reason), including stage 2 configuration. This works as long
-+configuration structures and page table format are compatible between the
-+virtual IOMMU and the physical IOMMU.
-+
-+Assuming the HW supports it, this nested mode is selected by choosing the
-+VFIO_TYPE1_NESTING_IOMMU type through:
-+
-+ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1_NESTING_IOMMU);
-+
-+This forces the hypervisor to use the stage 2, leaving stage 1 available for
-+guest usage.
-+
-+Once groups are attached to the container, the guest stage 1 translation
-+configuration data can be passed to VFIO by using
-+
-+ioctl(container, VFIO_IOMMU_BIND_PASID_TABLE, &pasid_table_info);
-+
-+This allows to combine guest stage 1 configuration structure along with
-+hypervisor stage 2 configuration structure. stage 1 configuration structures
-+are dependent on the IOMMU type.
-+
-+As the stage 1 translation is fully delegated to the HW, physical events that
-+may occur (especially translation faults), need to be propagated up to
-+the virtualizer and re-injected into the guest.
-+
-+By calling: ioctl(container, VFIO_IOMMU_SET_FAULT_EVENTFD &fault_config),
-+the virtualizer can register an eventfd. This latter will be signalled
-+whenever an event is detected at physical level. The fault handler,
-+executed at userspace level has to call:
-+ioctl(container, VFIO_IOMMU_GET_FAULT_EVENTS, &fault_info) to retrieve
-+the pending fault events.
-+
-+When the guest invalidates stage 1 related caches, invalidations must be
-+forwarded to the host through
-+ioctl(container, VFIO_IOMMU_CACHE_INVALIDATE, &inv_data);
-+Those invalidations can happen at various granularity levels, page, context, ...
-+
-+The ARM SMMU specification introduces another challenge: MSIs are translated by
-+both the virtual SMMU and the physical SMMU. To build a nested mapping for the
-+IOVA programmed into the assigned device, the guest needs to pass its IOVA/MSI
-+doorbell GPA binding to the host. Then the hypervisor can build a nested stage 2
-+binding eventually translating into the physical MSI doorbell.
-+
-+This is achieved by
-+ioctl(container, VFIO_IOMMU_BIND_MSI, &guest_binding);
-+
- VFIO User API
- -------------------------------------------------------------------------------
+ /* Common MSI config fields */
+ #define MSI_CFG0_ADDR_MASK		GENMASK_ULL(51, 2)
+ #define MSI_CFG2_SH			GENMASK(5, 4)
+@@ -343,6 +363,11 @@
+ #define EVTQ_MAX_SZ_SHIFT		7
  
+ #define EVTQ_0_ID			GENMASK_ULL(7, 0)
++#define EVTQ_0_SUBSTREAMID		GENMASK_ULL(31, 12)
++#define EVTQ_0_STREAMID			GENMASK_ULL(63, 32)
++#define EVTQ_1_S2			GENMASK_ULL(39, 39)
++#define EVTQ_1_CLASS			GENMASK_ULL(40, 41)
++#define EVTQ_3_FETCH_ADDR		GENMASK_ULL(51, 3)
+ 
+ /* PRI queue */
+ #define PRIQ_ENT_DWORDS			2
+@@ -1250,7 +1275,6 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
+ 	return 0;
+ }
+ 
+-__maybe_unused
+ static struct arm_smmu_master_data *
+ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
+ {
+@@ -1276,24 +1300,102 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
+ 	return master;
+ }
+ 
++static void arm_smmu_report_event(struct arm_smmu_device *smmu, u64 *evt)
++{
++	u64 fetch_addr = FIELD_GET(EVTQ_3_FETCH_ADDR, evt[3]);
++	u32 sid = FIELD_GET(EVTQ_0_STREAMID, evt[0]);
++	bool s1 = !FIELD_GET(EVTQ_1_S2, evt[1]);
++	u8 type = FIELD_GET(EVTQ_0_ID, evt[0]);
++	struct arm_smmu_master_data *master;
++	struct iommu_fault_event event;
++	bool propagate = true;
++	u64 addr = evt[2];
++	int i;
++
++	master = arm_smmu_find_master(smmu, sid);
++	if (WARN_ON(!master))
++		return;
++
++	event.fault.type = IOMMU_FAULT_DMA_UNRECOV;
++
++	switch (type) {
++	case ARM_SMMU_EVT_C_BAD_STREAMID:
++		event.fault.reason = IOMMU_FAULT_REASON_SOURCEID_INVALID;
++		break;
++	case ARM_SMMU_EVT_F_STREAM_DISABLED:
++	case ARM_SMMU_EVT_C_BAD_SUBSTREAMID:
++		event.fault.reason = IOMMU_FAULT_REASON_PASID_INVALID;
++		break;
++	case ARM_SMMU_EVT_F_CD_FETCH:
++		event.fault.reason = IOMMU_FAULT_REASON_PASID_FETCH;
++		break;
++	case ARM_SMMU_EVT_F_WALK_EABT:
++		event.fault.reason = IOMMU_FAULT_REASON_WALK_EABT;
++		event.fault.addr = addr;
++		event.fault.fetch_addr = fetch_addr;
++		propagate = s1;
++		break;
++	case ARM_SMMU_EVT_F_TRANSLATION:
++		event.fault.reason = IOMMU_FAULT_REASON_PTE_FETCH;
++		event.fault.addr = addr;
++		event.fault.fetch_addr = fetch_addr;
++		propagate = s1;
++		break;
++	case ARM_SMMU_EVT_F_PERMISSION:
++		event.fault.reason = IOMMU_FAULT_REASON_PERMISSION;
++		event.fault.addr = addr;
++		propagate = s1;
++		break;
++	case ARM_SMMU_EVT_F_ACCESS:
++		event.fault.reason = IOMMU_FAULT_REASON_ACCESS;
++		event.fault.addr = addr;
++		propagate = s1;
++		break;
++	case ARM_SMMU_EVT_C_BAD_STE:
++		event.fault.reason = IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY;
++		break;
++	case ARM_SMMU_EVT_C_BAD_CD:
++		event.fault.reason = IOMMU_FAULT_REASON_BAD_PASID_ENTRY;
++		break;
++	case ARM_SMMU_EVT_F_ADDR_SIZE:
++		event.fault.reason = IOMMU_FAULT_REASON_OOR_ADDRESS;
++		propagate = s1;
++		break;
++	case ARM_SMMU_EVT_F_STE_FETCH:
++		event.fault.reason = IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH;
++		event.fault.fetch_addr = fetch_addr;
++		break;
++	/* End of addition */
++	case ARM_SMMU_EVT_E_PAGE_REQUEST:
++	case ARM_SMMU_EVT_F_TLB_CONFLICT:
++	case ARM_SMMU_EVT_F_CFG_CONFLICT:
++	case ARM_SMMU_EVT_F_BAD_ATS_TREQ:
++	case ARM_SMMU_EVT_F_TRANSL_FORBIDDEN:
++	case ARM_SMMU_EVT_F_UUT:
++	default:
++		event.fault.reason = IOMMU_FAULT_REASON_UNKNOWN;
++	}
++	/* only propagate the error if it relates to stage 1 */
++	if (s1)
++		iommu_report_device_fault(master->dev, &event);
++
++	dev_info(smmu->dev, "event 0x%02x received:\n", type);
++	for (i = 0; i < EVTQ_ENT_DWORDS; ++i) {
++		dev_info(smmu->dev, "\t0x%016llx\n",
++			 (unsigned long long)evt[i]);
++	}
++}
++
+ /* IRQ and event handlers */
+ static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
+ {
+-	int i;
+ 	struct arm_smmu_device *smmu = dev;
+ 	struct arm_smmu_queue *q = &smmu->evtq.q;
+ 	u64 evt[EVTQ_ENT_DWORDS];
+ 
+ 	do {
+-		while (!queue_remove_raw(q, evt)) {
+-			u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
+-
+-			dev_info(smmu->dev, "event 0x%02x received:\n", id);
+-			for (i = 0; i < ARRAY_SIZE(evt); ++i)
+-				dev_info(smmu->dev, "\t0x%016llx\n",
+-					 (unsigned long long)evt[i]);
+-
+-		}
++		while (!queue_remove_raw(q, evt))
++			arm_smmu_report_event(smmu, evt);
+ 
+ 		/*
+ 		 * Not much we can do on overflow, so scream and pretend we're
 -- 
 2.17.1
 
