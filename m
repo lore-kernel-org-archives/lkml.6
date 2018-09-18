@@ -2,47 +2,46 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B5BECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CC3ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12C8820C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C8820C0E
+	by mail.kernel.org (Postfix) with ESMTP id 5480F20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:59:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5480F20C0E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbeIRQbC (ORCPT
+        id S1730024AbeIRQbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 12:31:02 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55563 "EHLO
+        Tue, 18 Sep 2018 12:31:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55570 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729642AbeIRQ26 (ORCPT
+        by vger.kernel.org with ESMTP id S1729632AbeIRQ26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Sep 2018 12:28:58 -0400
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8IAsMQK004533;
-        Tue, 18 Sep 2018 12:56:32 +0200
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8IAsMjZ004541;
+        Tue, 18 Sep 2018 12:56:13 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mgryf0w7y-1
+        by mx08-00178001.pphosted.com with ESMTP id 2mgryf0w56-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 18 Sep 2018 12:56:32 +0200
+        Tue, 18 Sep 2018 12:56:13 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5870531;
-        Tue, 18 Sep 2018 10:56:31 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 391D52A9F;
-        Tue, 18 Sep 2018 10:56:31 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:31 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BC22531;
+        Tue, 18 Sep 2018 10:56:12 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6E7392A9D;
+        Tue, 18 Sep 2018 10:56:12 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
+ 2018 12:56:12 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 12:56:29 +0200
+ 2018 12:56:12 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -55,9 +54,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-mmc@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 20/27] mmc: mmci: add variant property to define irq pio mask
-Date:   Tue, 18 Sep 2018 12:55:37 +0200
-Message-ID: <1537268144-21152-21-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V2 03/27] mmc: mmci: convert dma_setup callback to return an int
+Date:   Tue, 18 Sep 2018 12:55:20 +0200
+Message-ID: <1537268144-21152-4-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
 References: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com>
@@ -73,140 +72,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch allows to define specific pio mask for variants.
-Needed to support the STM32 sdmmc variant which has some bits
-with different meaning (bits: 21,20,13,12,9)
+This patch converts dma_setup callback to return an integer
+This patch is needed to prepare sdmmc variant with internal dma
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/mmc/host/mmci.c | 13 +++++++++++--
- drivers/mmc/host/mmci.h |  5 ++++-
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ drivers/mmc/host/mmci.c          | 16 +++++++++++-----
+ drivers/mmc/host/mmci.h          |  2 +-
+ drivers/mmc/host/mmci_qcom_dml.c |  6 ++++--
+ 3 files changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 761b50f..f61b10b 100644
+index 7d22cb9..077d4a7 100644
 --- a/drivers/mmc/host/mmci.c
 +++ b/drivers/mmc/host/mmci.c
-@@ -62,6 +62,7 @@ static struct variant_data variant_arm = {
- 	.f_max			= 100000000,
- 	.reversed_irq_handling	= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_ROD,
- 	.init			= mmci_variant_init,
-@@ -80,6 +81,7 @@ static struct variant_data variant_arm_extended_fifo = {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_ROD,
- 	.init			= mmci_variant_init,
-@@ -99,6 +101,7 @@ static struct variant_data variant_arm_extended_fifo_hwfc = {
- 	.pwrreg_powerup		= MCI_PWR_UP,
- 	.f_max			= 100000000,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_ROD,
- 	.init			= mmci_variant_init,
-@@ -124,6 +127,7 @@ static struct variant_data variant_u300 = {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_OD,
- 	.init			= mmci_variant_init,
-@@ -150,6 +154,7 @@ static struct variant_data variant_nomadik = {
- 	.pwrreg_clkgate		= true,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_OD,
- 	.init			= mmci_variant_init,
-@@ -182,6 +187,7 @@ static struct variant_data variant_ux500 = {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_OD,
- 	.init			= mmci_variant_init,
-@@ -216,6 +222,7 @@ static struct variant_data variant_ux500v2 = {
- 	.busy_detect_mask	= MCI_ST_BUSYENDMASK,
- 	.pwrreg_nopower		= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_OD,
- 	.init			= mmci_variant_init,
-@@ -232,6 +239,7 @@ static struct variant_data variant_stm32 = {
- 	.cmdreg_lrsp_crc	= MCI_CPSM_RESPONSE | MCI_CPSM_LONGRSP,
- 	.cmdreg_srsp_crc	= MCI_CPSM_RESPONSE,
- 	.cmdreg_srsp		= MCI_CPSM_RESPONSE,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.datalength_bits	= 24,
- 	.datactrl_blocksz	= 11,
- 	.datactrl_dpsm_enable	= MCI_DPSM_ENABLE,
-@@ -268,6 +276,7 @@ static struct variant_data variant_qcom = {
- 	.qcom_fifo		= true,
- 	.qcom_dml		= true,
- 	.mmcimask1		= true,
-+	.irq_pio_mask		= MCI_IRQ_PIO_MASK,
- 	.start_err		= MCI_STARTBITERR,
- 	.opendrain		= MCI_ROD,
- 	.init			= qcom_variant_init,
-@@ -537,7 +546,7 @@ static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
- 	if (host->singleirq) {
- 		unsigned int mask0 = readl(base + MMCIMASK0);
+@@ -415,7 +415,7 @@ static void mmci_init_sg(struct mmci_host *host, struct mmc_data *data)
+  * no custom DMA interfaces are supported.
+  */
+ #ifdef CONFIG_DMA_ENGINE
+-static void mmci_dma_setup(struct mmci_host *host)
++static int mmci_dma_setup(struct mmci_host *host)
+ {
+ 	const char *rxname, *txname;
  
--		mask0 &= ~MCI_IRQ1MASK;
-+		mask0 &= ~variant->irq_pio_mask;
- 		mask0 |= mask;
+@@ -466,7 +466,9 @@ static void mmci_dma_setup(struct mmci_host *host)
+ 	}
  
- 		writel(mask0, base + MMCIMASK0);
-@@ -1430,7 +1439,7 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
- 			if (status & host->mask1_reg)
- 				mmci_pio_irq(irq, dev_id);
+ 	if (host->ops && host->ops->dma_setup)
+-		host->ops->dma_setup(host);
++		return host->ops->dma_setup(host);
++
++	return 0;
+ }
  
--			status &= ~MCI_IRQ1MASK;
-+			status &= ~host->variant->irq_pio_mask;
- 		}
+ /*
+@@ -515,7 +517,7 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
+ 	u32 status;
+ 	int i;
  
- 		/*
+-	if (!__dma_inprogress(dmae))
++	if (!__dma_inprogress(host))
+ 		return;
+ 
+ 	/* Wait up to 1ms for the DMA to complete */
+@@ -741,8 +743,10 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
+ static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
+ {
+ }
+-static inline void mmci_dma_setup(struct mmci_host *host)
++
++static inline int mmci_dma_setup(struct mmci_host *host)
+ {
++	return 0;
+ }
+ 
+ static inline void mmci_dma_release(struct mmci_host *host)
+@@ -1796,7 +1800,9 @@ static int mmci_probe(struct amba_device *dev,
+ 		 amba_rev(dev), (unsigned long long)dev->res.start,
+ 		 dev->irq[0], dev->irq[1]);
+ 
+-	mmci_dma_setup(host);
++	ret = mmci_dma_setup(host);
++	if (ret)
++		goto clk_disable;
+ 
+ 	pm_runtime_set_autosuspend_delay(&dev->dev, 50);
+ 	pm_runtime_use_autosuspend(&dev->dev);
 diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 94ce73c..bb25160 100644
+index f1ec066..312ad5c 100644
 --- a/drivers/mmc/host/mmci.h
 +++ b/drivers/mmc/host/mmci.h
-@@ -186,7 +186,7 @@
- 	MCI_CMDRESPENDMASK | MCI_CMDSENTMASK)
+@@ -273,7 +273,7 @@ struct variant_data {
  
- /* These interrupts are directed to IRQ1 when two IRQ lines are available */
--#define MCI_IRQ1MASK \
-+#define MCI_IRQ_PIO_MASK \
- 	(MCI_RXFIFOHALFFULLMASK | MCI_RXDATAAVLBLMASK | \
- 	 MCI_TXFIFOHALFEMPTYMASK)
+ /* mmci variant callbacks */
+ struct mmci_host_ops {
+-	void (*dma_setup)(struct mmci_host *host);
++	int (*dma_setup)(struct mmci_host *host);
+ };
  
-@@ -239,6 +239,8 @@ struct mmci_host;
-  * @qcom_dml: enables qcom specific dma glue for dma transfers.
-  * @reversed_irq_handling: handle data irq before cmd irq.
-  * @mmcimask1: true if variant have a MMCIMASK1 register.
-+ * @irq_pio_mask: bitmask used to manage interrupt pio transfert in mmcimask
-+ *		  register
-  * @start_err: bitmask identifying the STARTBITERR bit inside MMCISTATUS
-  *	       register.
-  * @opendrain: bitmask identifying the OPENDRAIN bit inside MMCIPOWER register
-@@ -278,6 +280,7 @@ struct variant_data {
- 	bool			qcom_dml;
- 	bool			reversed_irq_handling;
- 	bool			mmcimask1;
-+	unsigned int		irq_pio_mask;
- 	u32			start_err;
- 	u32			opendrain;
- 	void (*init)(struct mmci_host *host);
+ struct mmci_host_next {
+diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
+index be3fab5..1bb59cf 100644
+--- a/drivers/mmc/host/mmci_qcom_dml.c
++++ b/drivers/mmc/host/mmci_qcom_dml.c
+@@ -119,7 +119,7 @@ static int of_get_dml_pipe_index(struct device_node *np, const char *name)
+ }
+ 
+ /* Initialize the dml hardware connected to SD Card controller */
+-static void qcom_dma_setup(struct mmci_host *host)
++static int qcom_dma_setup(struct mmci_host *host)
+ {
+ 	u32 config;
+ 	void __iomem *base;
+@@ -131,7 +131,7 @@ static void qcom_dma_setup(struct mmci_host *host)
+ 
+ 	if (producer_id < 0 || consumer_id < 0) {
+ 		host->variant->qcom_dml = false;
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	base = host->base + DML_OFFSET;
+@@ -175,6 +175,8 @@ static void qcom_dma_setup(struct mmci_host *host)
+ 
+ 	/* Make sure dml initialization is finished */
+ 	mb();
++
++	return 0;
+ }
+ 
+ static struct mmci_host_ops qcom_variant_ops = {
 -- 
 2.7.4
 
