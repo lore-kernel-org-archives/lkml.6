@@ -2,108 +2,163 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1053AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3862C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B80020C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:52:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B80020C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
+	by mail.kernel.org (Postfix) with ESMTP id AFED220C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:53:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OVwy36Bb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFED220C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbeIRW0X (ORCPT
+        id S1730236AbeIRW1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:26:23 -0400
-Received: from zimbra.alphalink.fr ([217.15.80.77]:52508 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729583AbeIRW0X (ORCPT
+        Tue, 18 Sep 2018 18:27:07 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39503 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729926AbeIRW1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:26:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id DB3502B52057;
-        Tue, 18 Sep 2018 18:52:55 +0200 (CEST)
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 7IRdn2atwe1w; Tue, 18 Sep 2018 18:52:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 97C622B52099;
-        Tue, 18 Sep 2018 18:52:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id XFZBZy_CznG4; Tue, 18 Sep 2018 18:52:54 +0200 (CEST)
-Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 5E09E2B52057;
-        Tue, 18 Sep 2018 18:52:54 +0200 (CEST)
-Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
-        id 38DE860205; Tue, 18 Sep 2018 18:52:54 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 18:52:54 +0200
-From:   Guillaume Nault <g.nault@alphalink.fr>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        syzbot+f5f6080811c849739212@syzkaller.appspotmail.com,
-        LKML <linux-kernel@vger.kernel.org>, mostrows@earthlink.net,
-        Networking <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KMSAN: uninit-value in pppoe_rcv
-Message-ID: <20180918165254.GB1473@alphalink.fr>
-References: <0000000000004624c30575a9fd40@google.com>
- <CAG_fn=Vk2HMPCLJV3aj1dt0KkDmksasBRRfKGnCTRHjvQ6OnQg@mail.gmail.com>
- <7424e094-afda-084a-ad80-299f219ced92@gmail.com>
+        Tue, 18 Sep 2018 18:27:07 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so2408546lji.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 09:53:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=QtBPcTtJ+HW704z4/pg6Ly/YUKBlE06KNAZMpoSljys=;
+        b=OVwy36BbR+VB+SH1qmjt7g1eFrJA/8h8zauzU5wFw5YwFUwZu9SpMg7gRiIOpW5iSl
+         CF5tWvcO9mB/Ch3swwT9fLgzTflqhFFBOnyRHyD5tkhBduswSI4FOJA+9PGB2U6Al/rQ
+         pPjIAHMFh979QJZ/t1fS2DFzE0fXTqz2Qdd8E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QtBPcTtJ+HW704z4/pg6Ly/YUKBlE06KNAZMpoSljys=;
+        b=tuYeCZxS/ZPFTXjIKmnU5blZ9Ku+ISfXDGxaQ8eWToTEvsfoSgnOTenyw4JcOgb61W
+         LyFjKlDOYMRKbsVadIUKXPbX/NE67ppTOsV/GL4xOCIQoZFz6P1oc72HepGLslPJfpNQ
+         kwFa2VLmpwU5/8GG0guEbT+irbhflrJKSzakR+mzDLCwCsNXIRxN8M6Dfd35vwfZjMZa
+         HPWSDygi5775liQC2+BFpDH9mNVpQzc4vRZ3kr4PAaDTDe1cLnFQPjw1+p9/mlJxzzeB
+         wxO8oE3cDOnR6/Ms62W4416gwddUqkkfWil/2NeVIK0SvZliacJZbHTve6NEkKZmJQAy
+         83Fw==
+X-Gm-Message-State: APzg51ArW1Im9ypq6ESfmQWm8Fv3Gl0sYXUdwh7eP7vJYSYuk0LoJa9y
+        9NLDKJTefvVP9ubDdHLKxJb57ah49TJpa5ikVAA/HQ==
+X-Google-Smtp-Source: ANB0VdYzaYVDvleY5bCScSpZnMuqOlH+Ad05dToo8moNRhy/9HhuloLDnWdY4M3s39E5WCWcOjvcicIuFnOiNnmwhic=
+X-Received: by 2002:a2e:9e55:: with SMTP id g21-v6mr20463654ljk.116.1537289620006;
+ Tue, 18 Sep 2018 09:53:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7424e094-afda-084a-ad80-299f219ced92@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a19:a20c:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 09:53:38
+ -0700 (PDT)
+In-Reply-To: <20180917211703.481236999@linuxfoundation.org>
+References: <20180917211703.481236999@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 18 Sep 2018 22:23:38 +0530
+Message-ID: <CA+G9fYuSC_RhvMmbH1EUgWhTNT00G_QjsprSetpqte6U6kbahQ@mail.gmail.com>
+Subject: Re: [PATCH 4.14 000/126] 4.14.71-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 06:57:54AM -0700, Eric Dumazet wrote:
-> 
-> 
-> I guess the following patch would fix the issue
-> 
-> (I will submit it more formally)
+On 18 September 2018 at 04:10, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.14.71 release.
+> There are 126 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-Hi Eric,
+> Responses should be made by Wed Sep 19 21:16:12 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.71-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Do you still plan to submit this patch? Otherwise I can take care of it.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.71-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 117adc51b16e0068c963f8c1339a0360ccf29f17
+git describe: v4.14.70-127-g117adc51b16e
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.70-127-g117adc51b16e
+
+No regressions (compared to build v4.14.70)
 
 
-> diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-> index ce61231e96ea5fe27f512fbd0d80d4609997e508..333e967ed968ea3ff2dda25289f7f657263db2b9 100644
-> --- a/drivers/net/ppp/pppoe.c
-> +++ b/drivers/net/ppp/pppoe.c
-> @@ -423,6 +423,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
->         struct pppoe_hdr *ph;
->         struct pppox_sock *po;
->         struct pppoe_net *pn;
-> +       __be16 sid;
->         int len;
->  
->         skb = skb_share_check(skb, GFP_ATOMIC);
-> @@ -434,6 +435,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
->  
->         ph = pppoe_hdr(skb);
->         len = ntohs(ph->length);
-> +       sid = ph->sid;
->  
->         skb_pull_rcsum(skb, sizeof(*ph));
->         if (skb->len < len)
-> @@ -447,7 +449,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
->         /* Note that get_item does a sock_hold(), so sk_pppox(po)
->          * is known to be safe.
->          */
-> -       po = get_item(pn, ph->sid, eth_hdr(skb)->h_source, dev->ifindex);
-> +       po = get_item(pn, sid, eth_hdr(skb)->h_source, dev->ifindex);
->         if (!po)
->                 goto drop;
-> 
-> 
-> 
+Ran 19763 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
