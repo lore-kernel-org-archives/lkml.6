@@ -2,85 +2,80 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCC0C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9718DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB7F2150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwVfAiN5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB7F2150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6158B21508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:54:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6158B21508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbeISA2m (ORCPT
+        id S1730149AbeISA2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:28:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51970 "EHLO mail.kernel.org"
+        Tue, 18 Sep 2018 20:28:48 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58503 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727660AbeISA2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:28:42 -0400
-Received: from devnote (unknown [209.121.128.187])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CB5021508;
-        Tue, 18 Sep 2018 18:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537296886;
-        bh=GSmh9UyAf+AKP8uvYor/5rVSoh/afcwGNeJC9IkyNxQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JwVfAiN5I0xgD7FR3Yh4wp2NogUtlkf3veie8MJbwtEawpqmu0knP8UdyLSY+5mQJ
-         XDeIqAr2Kh2/XSe9LZaKp2rChpdnmK31pqSgnPJMfIaten333YLO352X9PEQa0O8vD
-         yT6dJz5gWuGd96TEHEcev8XDGxwq/DAt2SncuSyc=
-Date:   Wed, 19 Sep 2018 03:54:46 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] trace: Add alternative synthetic event trace
- action syntax
-Message-Id: <20180919035446.4fb6b856ab51229984eb2736@kernel.org>
-In-Reply-To: <95e91d682061a3a43ea293b20ff4beea755b945a.1536605847.git.tom.zanussi@linux.intel.com>
-References: <cover.1536605847.git.tom.zanussi@linux.intel.com>
-        <95e91d682061a3a43ea293b20ff4beea755b945a.1536605847.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730026AbeISA2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:28:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 11:54:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,390,1531810800"; 
+   d="scan'208";a="258334680"
+Received: from kcandir-mobl.ger.corp.intel.com (HELO localhost) ([10.252.51.105])
+  by orsmga005.jf.intel.com with ESMTP; 18 Sep 2018 11:54:34 -0700
+Date:   Tue, 18 Sep 2018 21:54:33 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+Message-ID: <20180918185433.GA9177@linux.intel.com>
+References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+ <20180905114202.7757-4-roberto.sassu@huawei.com>
+ <20180916123749.GF5040@linux.intel.com>
+ <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+ <20180917211622.GC6716@linux.intel.com>
+ <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
-
-On Mon, 10 Sep 2018 14:10:46 -0500
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Tue, Sep 18, 2018 at 09:14:43AM +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
+> > On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
+> > > This code has the same behavior of tpm2_get_pcr_allocation(). If some
+> > > banks are not used, set the algorithm of the first unused to
+> > > TPM_ALG_ERROR.
+> > 
+> > My point is that maybe it would sense to use zero for that in order
+> > to make code a bit simpler.
 > 
-> Add a 'trace(synthetic_event_name, params)' alternative to
-> synthetic_event_name(params).
+> Wouldn't be better to compare data with the same type? Since the alg_id
+> structure member stores an algorithm, it should be fine to compare its
+> value with an algorithm.
 > 
-> Currently, the syntax used for generating synthetic events is to
-> invoke synthetic_event_name(params) i.e. use the synthetic event name
-> as a function call.
+> No problem to change that, but probably I should modify also
+> tpm_pcr_extend().
 > 
-> Users requested a new form that more explicitly shows that the
-> synthetic event is in effect being traced.  In this version, a new
-> 'trace()' keyword is used, and the synthetic event name is passed in
-> as the first argument.
+> Roberto
 
-Hmm, what is the advantage of adding this new form?
+Please do.
 
-Thanks,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+/Jarkko
