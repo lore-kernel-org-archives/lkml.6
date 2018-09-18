@@ -2,222 +2,108 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318F4ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED4BECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D58B92088F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:13:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58B92088F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 65FFD2088F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:14:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WaRrMjzF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FFD2088F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbeIRFnP (ORCPT
+        id S1729180AbeIRFog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 01:43:15 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:33865 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeIRFm3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 01:42:29 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g23dB-0007nz-KP; Mon, 17 Sep 2018 18:12:41 -0600
-Received: from [105.184.227.67] (helo=x220.Home)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g23Ye-0002Qk-Tf; Mon, 17 Sep 2018 18:08:03 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Tue, 18 Sep 2018 02:05:37 +0200
-Message-Id: <20180918000546.12552-11-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <87y3bzk6yv.fsf@xmission.com>
-References: <87y3bzk6yv.fsf@xmission.com>
-X-XM-SPF: eid=1g23Ye-0002Qk-Tf;;;mid=<20180918000546.12552-11-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+skK67AEuNzkTz1uusugkvBBg61oMjW5Q=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 11/20] signal/x86/traps: Simplify trap generation
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Tue, 18 Sep 2018 01:44:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:37455 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726275AbeIRFog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 01:44:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42Dk5K037Pz9sBv;
+        Tue, 18 Sep 2018 10:14:45 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537229686;
+        bh=WNHpN5jTIXLjCtWwiVAzeO1ovQ1FZ4Hn0sZFjl6vO68=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WaRrMjzF/i6XG3SUzfhqpcLBPiBA8svSpofFuIy2I7WloI33QXgoYTHyePwpnPb89
+         Oiykn3xPMZqzoE2e/z8d/PwomlLGfgzY1Xri3280XFFo12XEaQI84Trhd91S/QtwH2
+         EBdplxFTRR3xjve0vNdJrR+2GCJ3D/r4l1ROdnbbWAhteQ6UvE/xyN8CRFCqHL9H9F
+         rCUFJD1dyRnzeSUGT5ovIyraq/TFl92C7+C7mB0D25KbVG4vUtq5ervEq1PWwOVlTS
+         BQIPmb4ISmHjPNtiBT4z1k61T7ZK6kVbvAdqmyFnCTlNoIhIJu1ycnA1aQpBjhRz//
+         mncaIr1GcsDUw==
+Date:   Tue, 18 Sep 2018 10:14:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Henrik Austad <henrik@austad.us>,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: linux-next: manual merge of the net-next tree with the jc_docs tree
+Message-ID: <20180918101444.6466090c@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/klpMMgpWX4ekdlopQM4qc3T"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the DO_ERROR macro to take si_code and si_addr values for a siginfo,
-removing the need for the fill_trap_info function.
+--Sig_/klpMMgpWX4ekdlopQM4qc3T
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Update do_trap to also take the sicode and si_addr values for a sigininfo
-and modify the code to call force_sig when a sicode is not passed in
-and to call force_sig_fault when all of the information is present.
+Hi all,
 
-Making this a more obvious, simpler and less error prone construction.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- arch/x86/kernel/traps.c | 85 ++++++++++++-----------------------------
- 1 file changed, 24 insertions(+), 61 deletions(-)
+  Documentation/networking/00-INDEX
 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 3e4a3172d711..eb54f1964252 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -241,40 +241,9 @@ static void show_signal(struct task_struct *tsk, int signr,
- 	}
- }
- 
--static siginfo_t *fill_trap_info(struct pt_regs *regs, int signr, int trapnr,
--				siginfo_t *info)
--{
--	unsigned long siaddr;
--	int sicode;
--
--	switch (trapnr) {
--	default:
--		return SEND_SIG_PRIV;
--
--	case X86_TRAP_DE:
--		sicode = FPE_INTDIV;
--		siaddr = uprobe_get_trap_addr(regs);
--		break;
--	case X86_TRAP_UD:
--		sicode = ILL_ILLOPN;
--		siaddr = uprobe_get_trap_addr(regs);
--		break;
--	case X86_TRAP_AC:
--		sicode = BUS_ADRALN;
--		siaddr = 0;
--		break;
--	}
--
--	info->si_signo = signr;
--	info->si_errno = 0;
--	info->si_code = sicode;
--	info->si_addr = (void __user *)siaddr;
--	return info;
--}
--
- static void
- do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
--	long error_code, siginfo_t *info)
-+	long error_code, int sicode, void __user *addr)
- {
- 	struct task_struct *tsk = current;
- 
-@@ -284,15 +253,16 @@ do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
- 
- 	show_signal(tsk, signr, "trap ", str, regs, error_code);
- 
--	force_sig_info(signr, info ?: SEND_SIG_PRIV, tsk);
-+	if (!sicode)
-+		force_sig(signr, tsk);
-+	else
-+		force_sig_fault(signr, sicode, addr, tsk);
- }
- NOKPROBE_SYMBOL(do_trap);
- 
- static void do_error_trap(struct pt_regs *regs, long error_code, char *str,
--			  unsigned long trapnr, int signr)
-+	unsigned long trapnr, int signr, int sicode, void __user *addr)
- {
--	siginfo_t info;
--
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- 
- 	/*
-@@ -305,26 +275,26 @@ static void do_error_trap(struct pt_regs *regs, long error_code, char *str,
- 	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, signr) !=
- 			NOTIFY_STOP) {
- 		cond_local_irq_enable(regs);
--		clear_siginfo(&info);
--		do_trap(trapnr, signr, str, regs, error_code,
--			fill_trap_info(regs, signr, trapnr, &info));
-+		do_trap(trapnr, signr, str, regs, error_code, sicode, addr);
- 	}
- }
- 
--#define DO_ERROR(trapnr, signr, str, name)				\
--dotraplinkage void do_##name(struct pt_regs *regs, long error_code)	\
--{									\
--	do_error_trap(regs, error_code, str, trapnr, signr);		\
-+#define IP ((void __user *)uprobe_get_trap_addr(regs))
-+#define DO_ERROR(trapnr, signr, sicode, addr, str, name)		   \
-+dotraplinkage void do_##name(struct pt_regs *regs, long error_code)	   \
-+{									   \
-+	do_error_trap(regs, error_code, str, trapnr, signr, sicode, addr); \
- }
- 
--DO_ERROR(X86_TRAP_DE,     SIGFPE,  "divide error",		divide_error)
--DO_ERROR(X86_TRAP_OF,     SIGSEGV, "overflow",			overflow)
--DO_ERROR(X86_TRAP_UD,     SIGILL,  "invalid opcode",		invalid_op)
--DO_ERROR(X86_TRAP_OLD_MF, SIGFPE,  "coprocessor segment overrun",coprocessor_segment_overrun)
--DO_ERROR(X86_TRAP_TS,     SIGSEGV, "invalid TSS",		invalid_TSS)
--DO_ERROR(X86_TRAP_NP,     SIGBUS,  "segment not present",	segment_not_present)
--DO_ERROR(X86_TRAP_SS,     SIGBUS,  "stack segment",		stack_segment)
--DO_ERROR(X86_TRAP_AC,     SIGBUS,  "alignment check",		alignment_check)
-+DO_ERROR(X86_TRAP_DE,     SIGFPE,  FPE_INTDIV,   IP, "divide error",        divide_error)
-+DO_ERROR(X86_TRAP_OF,     SIGSEGV,          0, NULL, "overflow",            overflow)
-+DO_ERROR(X86_TRAP_UD,     SIGILL,  ILL_ILLOPN,   IP, "invalid opcode",      invalid_op)
-+DO_ERROR(X86_TRAP_OLD_MF, SIGFPE,           0, NULL, "coprocessor segment overrun", coprocessor_segment_overrun)
-+DO_ERROR(X86_TRAP_TS,     SIGSEGV,          0, NULL, "invalid TSS",         invalid_TSS)
-+DO_ERROR(X86_TRAP_NP,     SIGBUS,           0, NULL, "segment not present", segment_not_present)
-+DO_ERROR(X86_TRAP_SS,     SIGBUS,           0, NULL, "stack segment",       stack_segment)
-+DO_ERROR(X86_TRAP_AC,     SIGBUS,  BUS_ADRALN, NULL, "alignment check",     alignment_check)
-+#undef IP
- 
- #ifdef CONFIG_VMAP_STACK
- __visible void __noreturn handle_stack_overflow(const char *message,
-@@ -541,7 +511,7 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
- 	 * up here if the kernel has MPX turned off at compile
- 	 * time..
- 	 */
--	do_trap(X86_TRAP_BR, SIGSEGV, "bounds", regs, error_code, NULL);
-+	do_trap(X86_TRAP_BR, SIGSEGV, "bounds", regs, error_code, 0, NULL);
- }
- 
- dotraplinkage void
-@@ -625,7 +595,7 @@ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
- 		goto exit;
- 
- 	cond_local_irq_enable(regs);
--	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
-+	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, 0, NULL);
- 	cond_local_irq_disable(regs);
- 
- exit:
-@@ -936,20 +906,13 @@ NOKPROBE_SYMBOL(do_device_not_available);
- #ifdef CONFIG_X86_32
- dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code)
- {
--	siginfo_t info;
--
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- 	local_irq_enable();
- 
--	clear_siginfo(&info);
--	info.si_signo = SIGILL;
--	info.si_errno = 0;
--	info.si_code = ILL_BADSTK;
--	info.si_addr = NULL;
- 	if (notify_die(DIE_TRAP, "iret exception", regs, error_code,
- 			X86_TRAP_IRET, SIGILL) != NOTIFY_STOP) {
- 		do_trap(X86_TRAP_IRET, SIGILL, "iret exception", regs, error_code,
--			&info);
-+			ILL_BADSTK, (void __user *)NULL);
- 	}
- }
- #endif
--- 
-2.17.1
+between commit:
 
+  a7ddcea58ae2 ("Drop all 00-INDEX files from Documentation/")
+
+from the jc_docs tree and commit:
+
+  a20625e49dde ("docs: net: Remove TCP congestion document")
+
+from the net-next tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/klpMMgpWX4ekdlopQM4qc3T
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlugQ3QACgkQAVBC80lX
+0GxVfAf/YNLUgt7tJInWBu1JIXC8DPu4YIjBuqgCcLi9Mry7haVJ4T+bxp8adM3Z
+59jsn7vPOBtCjGtlBoDUITlypkZnaDVtVFaSJ0ZTnyfP6ASzJ58nUWZqGWZ1Fw92
+pU9f2D2wScJc1LoaN2Ds8jkB28sVDcWv3raDZ1FesGsoq7oPMZ6NjZZw6I2+tvf3
+So4EQQ9JT64jVzHPd5yVpHvHDBB1ze9wixqsLzdS9KNEbfmUjKVn0lm+AiM7j+tJ
+6nllx8g5GSyyT6HdDLc4daxvunw3Dp1lbn6gtRJJQfxBv7gxbvCj94WJwnGsqo2u
+8zxCU7iG9jFET7jwW22jvF0naa8yVQ==
+=R0rL
+-----END PGP SIGNATURE-----
+
+--Sig_/klpMMgpWX4ekdlopQM4qc3T--
