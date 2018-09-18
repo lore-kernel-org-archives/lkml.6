@@ -2,98 +2,107 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77758ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F710C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E17E214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E17E214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id CCCFA214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:43:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SrzfgejA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCFA214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbeIRXPD (ORCPT
+        id S1730461AbeIRXQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:15:03 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:42195 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729037AbeIRXPC (ORCPT
+        Tue, 18 Sep 2018 19:16:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57062 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729037AbeIRXQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:15:02 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2K00-0001Wd-Dy; Tue, 18 Sep 2018 11:41:20 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g2Jzz-00087y-Ag; Tue, 18 Sep 2018 11:41:20 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     <linux-arch@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Date:   Tue, 18 Sep 2018 19:41:09 +0200
-Message-ID: <878t3yitze.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 18 Sep 2018 19:16:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ksTHndBxmHUoRTdw/O0TdUTimnwj+h8BDdSGJ1wwM4s=; b=SrzfgejAMxKkD3POEwlPgVEgK
+        Yv3+k4LWxxzTASiJfKBwx2/hWfddYn/QtDe0bP/nqrWG9A38t6CXgnacGneQ2IjkHu083RoKW9hJF
+        hLB82gGNisrsr/yl2VK0BKmrIvXNR42Jmgod5tMvdAmxw/F0dSfUR7E7hMaO4M6hn1Dsg=;
+Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g2K1h-0003WG-Sb; Tue, 18 Sep 2018 17:43:06 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id B47EF440078; Tue, 18 Sep 2018 18:43:03 +0100 (BST)
+Date:   Tue, 18 Sep 2018 10:43:03 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: spi/spi-pxa2xx: add PXA2xx SSP SPI
+ Controller
+Message-ID: <20180918174303.GU2471@sirena.org.uk>
+References: <20180917113559.11101-1-lkundrak@v3.sk>
+ <20180917113559.11101-2-lkundrak@v3.sk>
+ <20180917175753.GE2471@sirena.org.uk>
+ <54f5d070c8b0615baa26983e97e2a22401973096.camel@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g2Jzz-00087y-Ag;;;mid=<878t3yitze.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19jzGgeTfH4WJC4sWTs9m1V31HoOdNn/7g=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 0/9] signal/powerpc: siginfo cleanups
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4WCFFtl4AQpQKunj"
+Content-Disposition: inline
+In-Reply-To: <54f5d070c8b0615baa26983e97e2a22401973096.camel@v3.sk>
+X-Cookie: Universe, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-This is the continuation of my work to sort out signaling of exceptions
-with siginfo.  The old functions by passing siginfo resulted in many
-cases of fields of siginfo that were not initialized and then passed to
-userspace, and also resulted in callers getting confused and
-initializing the wrong fields.  My remedy is to have specific functions
-for sending each different kind of signal with siginfo.  Those functions
-take the information needed to fill in siginfo and do the work
-themselves.
+--4WCFFtl4AQpQKunj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is my set of changes to update powerpc to use those functions.
-Along with some refactoring so those functions can be cleanly used.
+On Tue, Sep 18, 2018 at 02:15:12PM +0200, Lubomir Rintel wrote:
+> On Mon, 2018-09-17 at 10:57 -0700, Mark Brown wrote:
 
-Folks please review and double check me.  I think I have kept these
-changes simple and obviously correct but I am human and mess up
-sometimes.
+> > > Changes since v1:
+> > > - s/ssp@d4035000/spi@d4035000/
 
-After these patches have had a chance to be reviewed I plan to merge
-them by my siginfo tree.  If you would rather take them in the powerpc
-tree let me know.   All of the prerequisites should have been merged
-through Linus's tree several releases ago.
+> > As covered in SubmittingPatches please put inter-version changelogs
+> > after the --- so they don't end up in the commits.
 
-Eric W. Biederman (9):
-      signal/powerpc: Use force_sig_mceerr as appropriate
-      signal/powerpc: Remove pkey parameter from __bad_area
-      signal/powerpc: Call _exception_pkey directly from bad_key_fault_exception
-      signal/powerpc: Remove pkey parameter from __bad_area_nosemaphore
-      signal/powerpc: Factor the common exception code into exception_common
-      signal/powerpc: Call force_sig_fault from _exception
-      signal/poewrpc: Specialize _exception_pkey for handling pkey exceptions
-      signal/powerpc: Simplify _exception_pkey by using force_sig_pkuerr
-      signal/powerpc: Use force_sig_fault where appropriate
+> Will do. I was actually not sure about that, so I took a short look at
+> the git log, and it seemed to me that commit messages with the
+> changelogs are quite common.
 
- arch/powerpc/include/asm/bug.h            |  2 +-
- arch/powerpc/kernel/process.c             |  9 +----
- arch/powerpc/kernel/traps.c               | 27 ++++++++-------
- arch/powerpc/mm/fault.c                   | 55 +++++++++++++++++--------------
- arch/powerpc/platforms/cell/spu_base.c    |  4 +--
- arch/powerpc/platforms/cell/spufs/fault.c | 26 +++++----------
- 6 files changed, 57 insertions(+), 66 deletions(-)
+For various reasons the drm subsystem explicitly does the opposite
+thing and it does leak out in other places (eg, when someone does it and
+then it doesn't get fixed up), it's a bit unfortunate that there's some
+divergence here.
 
-Eric
+--4WCFFtl4AQpQKunj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluhOSYACgkQJNaLcl1U
+h9AHkgf/cCVVEd+WCSVik9ryhlUhC1/wAgNrQri8wZDg/H5Ljb+1eVnzdtry1IHU
+7sarVWP9dxDqyBro75/ECWPrB6+JEtOJ890j6eyf/4gpBjqSip0/4AKEBAT8ormp
+wL4CSLpyCQhzOkeOKXVHS5la+tUFvbzcstJnzDl4hT6FoOFEJ3zPnOZOvBw3+HNT
+zbcI3SiHIR+Mpp92Mn+ZhEA8tCDrSUyGMUXYxPlGMIT+0+wYdlubXDWFCQOrPQIm
+VSe+0t7pM5yHPMWDkpUm00mFR3Q0LEGtsMpIAnkxu2yzYQyBC/TtV5ajoCkmqdJN
+XXtDt31ZU8YSXyMeSw7Oh9XLEOdJZA==
+=/CR4
+-----END PGP SIGNATURE-----
+
+--4WCFFtl4AQpQKunj--
