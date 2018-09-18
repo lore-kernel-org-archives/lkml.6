@@ -2,157 +2,176 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C9CECE560
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC0C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396072146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:48:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A5CF2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:49:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CwB/O0Rk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396072146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdNlpDYL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5CF2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbeIRSUi (ORCPT
+        id S1729666AbeIRSVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:20:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54022 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbeIRSUh (ORCPT
+        Tue, 18 Sep 2018 14:21:42 -0400
+Received: from mail-yw1-f52.google.com ([209.85.161.52]:45359 "EHLO
+        mail-yw1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeIRSVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:20:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=meVvnGJ/ZpoQL/RyVdnVPz0EGiXzy8+NhM7Xubw+vZc=; b=CwB/O0Rk0/mhMsG4Ss9xSykid
-        rezVVrmZsi+d2nDNVjTjsGoX+Pik//UmWKbQuGXEbaGIg7hAc+3bqaVm7ckW7fE5dZJqGYV2gH5hx
-        BeQnxjgZJgMcVFlinA5yYWv379Sbq/oKczdwwUuparM0grPp0fwGECh8wzseRg0Ps00sjXr/zhoaZ
-        BeqsVUHvELFaDua75mcP+L54CAEAIDWzBTI+P9A+sfyrrkubrLFLj4Q19sac/Yq9dsuuREkRl/XhU
-        7jzN5a8EpeTkuFApCD+7aEmrwjReh55nF5LMjQ6wsyeHW60k2F3e2BdFmW/sJW/SNlNdbvgmnq0wz
-        41owmMCtA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2FQ9-0004Zu-Vg; Tue, 18 Sep 2018 12:48:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3B42C202C1A35; Tue, 18 Sep 2018 14:48:00 +0200 (CEST)
-Date:   Tue, 18 Sep 2018 14:48:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-Message-ID: <20180918124800.GL24106@hirez.programming.kicks-ass.net>
-References: <20180914125006.349747096@linutronix.de>
- <20180914125118.909646643@linutronix.de>
- <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com>
- <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
- <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de>
- <20180918083055.GJ24106@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1809181050020.4167@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809181204460.4167@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1809181237140.4167@nanos.tec.linutronix.de>
+        Tue, 18 Sep 2018 14:21:41 -0400
+Received: by mail-yw1-f52.google.com with SMTP id p206-v6so692346ywg.12;
+        Tue, 18 Sep 2018 05:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NTGut8/9fAU/AkL2ZQdzd38/N8jqCnc53mU70MNv0+U=;
+        b=FdNlpDYLJbn9Nezh8Af9hqyqtHPbfUnfvk76/6gnEl347NvgT2AjBin9cohBsANKZ2
+         yRqlkQGgL8jRJwgkcikX0GAlZA3QQymKWLQ9jbGFbD26Nyu9Kf0UCQih+4aN3Lana/MZ
+         tgFrIsvzsOChTo4cT/YOQNiY39UpF6RXwCvE9dsB5aHSjKLyh5Zv1684dGCM6ytbJZZ+
+         BqXQyRzHtZ4j3hw82X7xgbvEdGkVXfDZT2KBw7YRymgAtqX3YP7UAyi/GxvvQTk6WFSg
+         4AFruG2PlwebVif47FWTp/1svwM4AlAT5ENTV2DP5rjJLCsMMrc3zpN6oXBLgVVB6rW3
+         +/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NTGut8/9fAU/AkL2ZQdzd38/N8jqCnc53mU70MNv0+U=;
+        b=IWm9wTuW8tRPe2aASzc6cc4PGMJxQDX4oR0o124G98qj/SGdTPpGo6OQpNlMZuGCVK
+         9J3UXwF9U8+3M/7PU4FayLjnfVudUddFehVRGSOsH/oEQTcize65hThigMqO9MqnGiCJ
+         6Ut8fK0GY20fvN9GljoVg7Fqq2W+T21gHRETYGowVtjgMYPCNzxrWOuc8MSGLA2h17T6
+         nblizRmWr8jRlohIizv5tevKPUdKhnDBdoeIySkVrpBYbxVg4Tk3SEHL6ePPAQY6Vc03
+         67Ls50/Hler8fvd/MFnu37XF1oiZkKFN774MDM2EktWtyshvv8C0E6cyxvqldPcOQzQQ
+         SR9A==
+X-Gm-Message-State: APzg51Aq69WS+dHquJHJVIgbUuxCd87zOdYmmj/wN4jE6qPeozrZpBcj
+        zYhFf5EQZgsVj1vQd1gVibs=
+X-Google-Smtp-Source: ANB0VdZiRdL/GH61PlDq8iE8YTipwBYrADCsNuejkkDmTk/5DMlA+YCOcZqBF5hR/8sHVXjXRiSeJw==
+X-Received: by 2002:a81:3507:: with SMTP id c7-v6mr12013182ywa.186.1537274954113;
+        Tue, 18 Sep 2018 05:49:14 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:6613])
+        by smtp.gmail.com with ESMTPSA id w80-v6sm1013931ywd.55.2018.09.18.05.49.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Sep 2018 05:49:12 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 05:49:09 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH] percpu-refcount: relax limit on percpu_ref_reinit()
+Message-ID: <20180918124909.GA902964@devbig004.ftw2.facebook.com>
+References: <20180911134836.GG1100574@devbig004.ftw2.facebook.com>
+ <20180911154540.GA10082@ming.t460p>
+ <20180911154959.GI1100574@devbig004.ftw2.facebook.com>
+ <20180911160532.GB10082@ming.t460p>
+ <20180911163032.GA2966370@devbig004.ftw2.facebook.com>
+ <20180911163443.GD10082@ming.t460p>
+ <20180911163856.GB2966370@devbig004.ftw2.facebook.com>
+ <20180912015247.GA12475@ming.t460p>
+ <20180912155321.GE2966370@devbig004.ftw2.facebook.com>
+ <20180912221139.GB15810@ming.t460p>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1809181237140.4167@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180912221139.GB15810@ming.t460p>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:41:57PM +0200, Thomas Gleixner wrote:
-> On Tue, 18 Sep 2018, Thomas Gleixner wrote:
-> > On Tue, 18 Sep 2018, Thomas Gleixner wrote:
-> > > On Tue, 18 Sep 2018, Peter Zijlstra wrote:
-> > > > > Your memory serves you right. That's indeed observable on CPUs which
-> > > > > lack TSC_ADJUST.
-> > > > 
-> > > > But, if the gtod code can observe this, then why doesn't the code that
-> > > > checks the sync?
-> > > 
-> > > Because it depends where the involved CPUs are in the topology. The sync
-> > > code might just run on the same package an simply not see it. Yes, w/o
-> > > TSC_ADJUST the TSC sync code can just fail to see the havoc.
+Hello, Ming.
+
+Sorry about the delay.
+
+On Thu, Sep 13, 2018 at 06:11:40AM +0800, Ming Lei wrote:
+> > Yeah but what guards ->release() starting to run and then the ref
+> > being switched to percpu mode?  Or maybe that doesn't matter?
+> 
+> OK, we may add synchronize_rcu() just after clearing the DEAD flag in
+> the new introduced helper to avoid the race.
+
+That doesn't make sense to me.  How is synchronize_rcu() gonna change
+anything there?
+
+> > > 4) after the queue is recovered(or the controller is reset successfully), it
+> > > isn't necessary to wait until the refcount drops zero, since it is fine to
+> > > reinit it by clearing DEAD and switching back to percpu mode from atomic mode.
+> > > And waiting for the refcount dropping to zero in the reset handler may trigger
+> > > IO hang if IO timeout happens again during reset.
 > > 
-> > Even with TSC adjust the TSC can be slightly off by design on multi-socket
-> > systems.
+> > Does the recovery need the in-flight commands actually drained or does
+> > it just need to block new issues for a while.  If latter, why is
 > 
-> Here are the gory details:
+> The recovery needn't to drain the in-flight commands actually.
+
+Is it just waiting till confirm_kill is called?  So that new ref is
+not given away?  If synchronization like that is gonna work, the
+percpu ref operations on the reader side must be wrapped in a larger
+critical region, which brings up two issues.
+
+1. Callers of percpu_ref must not depend on what internal
+   synchronization construct percpu_ref uses.  Again, percpu_ref
+   doesn't even use regular RCU.
+
+2. If there is already an outer RCU protection around ref operation,
+   that RCU critical section can and should be used for
+   synchronization, not percpu_ref.
+
+> > percpu_ref even being used?
 > 
->    https://lore.kernel.org/lkml/3c1737210708230408i7a8049a9m5db49e6c4d89ab62@mail.gmail.com/
+> Just for avoiding to invent a new wheel, especially .q_usage_counter
+> has served for this purpose for long time.
+
+It sounds like this was more of an abuse.  So, basically what you want
+is sth like the following.
+
+READER
+
+ rcu_read_lock();
+ if (can_issue_new_commands)
+	issue;
+ else
+	abort;
+ rcu_read_unlock();
+
+WRITER
+
+ can_issue_new_commands = false;
+ synchronize_rcu();
+ // no new command will be issued anymore
+
+Right?  There isn't much wheel to reinvent here and using percpu_ref
+for the above is likely already incorrect due to the different RCU
+type being used.
+
+> > > So what I am trying to propose is the following usage:
+> > > 
+> > > 1) percpu_ref_kill() on .q_usage_counter before recovering the controller for
+> > > preventing new requests from entering queue
+> > 
+> > The way you're describing it, the above part is no different from
+> > having a global bool which gates new issues.
 > 
-> The changelog has an explanation as well.
-> 
->     d8bb6f4c1670 ("x86: tsc prevent time going backwards")
-> 
-> I still have one of the machines which is affected by this.
+> Right, but the global bool has to be checked in fast path, and the sync
 
-Are we sure this isn't a load vs rdtsc reorder? Because if I look at the
-current code:
+That likely bool test isn't gonna cost anything.
 
-notrace static u64 vread_tsc(void)
-{
-	u64 ret = (u64)rdtsc_ordered();
-	u64 last = gtod->cycle_last;
+> between updating the flag and checking it has to be considered. Given
+> blk-mq has already used .q_usage_counter for this purpose, that is why
+> I suggest to scale percpu-refcount to cover this use case.
 
-	if (likely(ret >= last))
-		return ret;
+And the synchronization part should always be considered and is
+already likely wrong.
 
-	/*
-	 * GCC likes to generate cmov here, but this branch is extremely
-	 * predictable (it's just a function of time and the likely is
-	 * very likely) and there's a data dependence, so force GCC
-	 * to generate a branch instead.  I don't barrier() because
-	 * we don't actually need a barrier, and if this function
-	 * ever gets inlined it will generate worse code.
-	 */
-	asm volatile ("");
-	return last;
-}
+Thanks.
 
-That does:
-
-	lfence
-	rdtsc
-	load gtod->cycle_last
-
-Which obviously allows us to observe a cycles_last that is later than
-the rdtsc itself, and thus time can trivially go backwards.
-
-The new code:
-
-		last = gtod->cycle_last;
-		cycles = vgetcyc(gtod->vclock_mode);
-		if (unlikely((s64)cycles < 0))
-			return vdso_fallback_gettime(clk, ts);
-		if (cycles > last)
-			ns += (cycles - last) * gtod->mult;
-
-looks like:
-
-	load gtod->cycle_last
-	lfence
-	rdtsc
-
-which avoids that possibility, the cycle_last load must have completed
-before the rdtsc.
-
-
+-- 
+tejun
