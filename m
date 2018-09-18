@@ -2,111 +2,160 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE72C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B9FC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86FF4214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:21:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Gj1HoET7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86FF4214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id D291B2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D291B2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbeIRTyg (ORCPT
+        id S1729618AbeIRT6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:54:36 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34919 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbeIRTyg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:54:36 -0400
-Received: by mail-ed1-f66.google.com with SMTP id y20-v6so2094747edq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 07:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=blEy1DivUz7GrGajYEkGm20ItTWwhUqnm0A8GVT/Y8c=;
-        b=Gj1HoET7Sc7yCCYb+h3FkycM1rL7xApCr9HB7/78omuxrFzGEE1T5EROKzknHNwwEt
-         Y0VPgsviR2tEuPfAJzi0jkZuFtx87nl+Qnb9RiIeOYDjRWdYW9kjcO5c1+rjNh3EdAUE
-         JgtunXgZZUlKQ2Oh+ZQdvhYQD7Kn7PT8W7XHvEOGVlWVbuQdi1j2k27rTooj+AH8Nj9S
-         mKtSLXVQzIIQW0AqYLXWJUu5ChvqMsRPQBXZevC4psr5+MiumEdOZ8WeGPjno49xjTsD
-         3DTzxvX3WOQnWaY3F33bEXfgERqx2Ethoe2zpfPc2suSfMCEJDvw4gmHKlKGhUZ5s0jS
-         jgEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=blEy1DivUz7GrGajYEkGm20ItTWwhUqnm0A8GVT/Y8c=;
-        b=uew7XJsBgIbTu383z7K7FvItGFLQ78Idaht4yS7rPERtJQ72Lk3iA2v1MbxjMPN2X/
-         +pqjmqiV++zAcaA9tMiKM3eWUz/aLCjvQ5uFLPGaOgwuJ1FuAcU/8rpwJ52cQz8nTd7U
-         GVZNr0IjPpV0q2w3jZe4e39B75pKb9ZR02yrNwh+IjXLv3+oWUrNyLsWG9heAuYnOVtk
-         KxqfGcGA3kdXbJXhITmNV9W1IA423Yjh8CHkcYGEEFzUtpgZwD0qm8vCfwVBYQMolXvh
-         s750o46gIOxaR3nI2vCufZLxxtyyip0Yg1wTOnZ99VoSXB51kTCNN6XsXwNsaL1HkC+y
-         wRWA==
-X-Gm-Message-State: APzg51Dt6/NkhIgxAPdgaSAj+wJMWUyGxzD4rvyvGEqPyZ12j9E/LWbb
-        gopfHQrxYODRvNtcasmXbl+83Q==
-X-Google-Smtp-Source: ANB0VdZrkC6W4bnA3RGn77SmAR5z24GqNwFyfzgAAK1gY2ukCRbcvPshMI/K33ZE9Ih2RMzHPewaNA==
-X-Received: by 2002:a50:93c5:: with SMTP id o63-v6mr51159220eda.154.1537280505956;
-        Tue, 18 Sep 2018 07:21:45 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id g19-v6sm149466edh.22.2018.09.18.07.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 07:21:45 -0700 (PDT)
-Message-ID: <1537280503.21380.8.camel@arista.com>
-Subject: Re: [PATCHv5 6/7] tty/ldsem: Add lockdep asserts for ldisc_sem
-From:   Dmitry Safonov <dima@arista.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?ISO-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jiri Slaby <jslaby@suse.com>
-Date:   Tue, 18 Sep 2018 15:21:43 +0100
-In-Reply-To: <20180918134954.GF23431@kroah.com>
-References: <20180917235258.5719-1-dima@arista.com>
-         <20180917235258.5719-7-dima@arista.com> <20180918134954.GF23431@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Sep 2018 15:58:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727348AbeIRT6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:58:06 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 60E98307D865;
+        Tue, 18 Sep 2018 14:25:16 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 266537B012;
+        Tue, 18 Sep 2018 14:25:06 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [RFC v2 00/20] SMMUv3 Nested Stage Setup
+Date:   Tue, 18 Sep 2018 16:24:37 +0200
+Message-Id: <20180918142457.3325-1-eric.auger@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 18 Sep 2018 14:25:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-18 at 15:49 +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 18, 2018 at 12:52:57AM +0100, Dmitry Safonov wrote:
-> > Make sure under CONFIG_LOCKDEP that each change to line discipline
-> > is done with held write semaphor.
-> > Otherwise potential reader will have a good time dereferencing
-> > incomplete/uninitialized ldisc.
-> 
-> Note, I don't see patch 5/7 here, did it get lost?  Please fix that
-> up
-> for the next resend of this series.
+This series allows a virtualizer to program the nested stage mode.
+This is useful when both the host and the guest are exposed with
+an SMMUv3 and a PCI device is assigned to the guest using VFIO.
 
-Oh yeah, sorry, I've screwed up the Cc tags for that patch:
-https://lore.kernel.org/lkml/20180917235258.5719-6-dima@arista.com/
+In this mode, the physical IOMMU must be programmed to translate
+the two stages: the one set up by the guest (IOVA -> GPA) and the
+one set up by the host VFIO driver as part of the assignment process
+(GPA -> HPA).
 
-Will resend.
+On Intel, this is traditionnaly achieved by combining the 2 stages
+into a single physical stage. However this relies on the capability
+to trap on each guest translation structure update. This is possible
+by using the VTD Caching Mode. Unfortunately the ARM SMMUv3 does
+not offer a similar mechanism.
+
+However, the ARM SMMUv3 architecture supports 2 physical stages! Those
+were devised exactly with that use case in mind. Assuming the HW
+implements both stages (optional), the guest now can use stage 1
+while the host uses stage 2.
+
+This assumes the virtualizer has means to propagate guest settings
+to the host SMMUv3 driver. This series brings this VFIO/IOMMU
+infrastructure.  Those services are:
+- bind the guest stage 1 configuration to the stream table entry
+- propagate guest TLB invalidations
+- bind MSI IOVAs
+- propagate faults collected at physical level up to the virtualizer
+
+This series largely reuses the user API and infrastructure originally
+devised for SVA/SVM and patches submitted by Jacob, Yi Liu, Tianyu in
+[1-3] and Jean-Philippe [4].
+
+This proof of concept also aims at illustrating how this API/infrastructure
+would need to evolve to support this nested stage SMMUv3 use case.
+
+Best Regards
+
+Eric
+
+This series can be found at:
+https://github.com/eauger/linux/tree/v4.19-rc4-2stage-rfc-v2
+
+This was tested on Qualcomm HW featuring SMMUv3 and with adapted QEMU
+vSMMUv3.
+
+References:
+[1] [PATCH v5 00/23] IOMMU and VT-d driver support for Shared Virtual
+    Address (SVA)
+    https://lwn.net/Articles/754331/
+[2] [RFC PATCH 0/8] Shared Virtual Memory virtualization for VT-d
+    (VFIO part)
+    https://lists.linuxfoundation.org/pipermail/iommu/2017-April/021475.html
+[3] [RFC PATCH 0/3] VFIO: Report IOMMU fault event to userspace
+    https://www.spinics.net/lists/kvm/msg145280.html
+[4] [v2,00/40] Shared Virtual Addressing for the IOMMU
+    https://patchwork.ozlabs.org/cover/912129/
+
+History:
+
+v1 -> v2:
+- Added the fault reporting capability
+- asid properly passed on invalidation (fix assignment of multiple
+  devices)
+- see individual change logs for more info
+
+
+Eric Auger (11):
+  iommu: Introduce bind_guest_msi
+  vfio: VFIO_IOMMU_BIND_MSI
+  iommu/smmuv3: Get prepared for nested stage support
+  iommu/smmuv3: Implement bind_pasid_table
+  iommu/smmuv3: Implement cache_invalidate
+  dma-iommu: Implement NESTED_MSI cookie
+  iommu/smmuv3: Implement bind_guest_msi
+  vfio: VFIO_IOMMU_SET_FAULT_EVENTFD
+  vfio: VFIO_IOMMU_GET_FAULT_EVENTS
+  vfio: Document nested stage control
+  iommu/smmuv3: Report non recoverable faults
+
+Jacob Pan (4):
+  iommu: Introduce bind_pasid_table API
+  iommu: introduce device fault data
+  driver core: add per device iommu param
+  iommu: introduce device fault report API
+
+Jean-Philippe Brucker (2):
+  iommu/arm-smmu-v3: Link domains and devices
+  iommu/arm-smmu-v3: Maintain a SID->device structure
+
+Liu, Yi L (3):
+  iommu: Introduce cache_invalidate API
+  vfio: VFIO_IOMMU_BIND_PASID_TABLE
+  vfio: VFIO_IOMMU_CACHE_INVALIDATE
+
+ Documentation/vfio.txt          |  60 ++++
+ drivers/iommu/arm-smmu-v3.c     | 476 ++++++++++++++++++++++++++++++--
+ drivers/iommu/dma-iommu.c       |  97 ++++++-
+ drivers/iommu/iommu.c           | 196 ++++++++++++-
+ drivers/vfio/vfio_iommu_type1.c | 269 ++++++++++++++++++
+ include/linux/device.h          |   3 +
+ include/linux/dma-iommu.h       |  11 +
+ include/linux/iommu.h           | 134 ++++++++-
+ include/uapi/linux/iommu.h      | 237 ++++++++++++++++
+ include/uapi/linux/vfio.h       |  48 ++++
+ 10 files changed, 1501 insertions(+), 30 deletions(-)
+ create mode 100644 include/uapi/linux/iommu.h
 
 -- 
-Thanks,
-             Dmitry
+2.17.1
+
