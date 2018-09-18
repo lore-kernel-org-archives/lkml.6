@@ -2,227 +2,82 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C62C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EFEC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2EE12086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EE12086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 512AB2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:03:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MCXBtDfd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 512AB2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbeIRSfx (ORCPT
+        id S1729726AbeIRSgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:35:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40348 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbeIRSfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:35:53 -0400
-Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 98B163084034;
-        Tue, 18 Sep 2018 13:03:22 +0000 (UTC)
-Received: from redhat.com (ovpn-123-187.rdu2.redhat.com [10.10.123.187])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C782B89227;
-        Tue, 18 Sep 2018 13:03:16 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 09:03:14 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Kenneth Lee <liguozhu@hisilicon.com>
-Cc:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, kvm@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, iommu@lists.linux-foundation.org,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        linux-accelerators@lists.ozlabs.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180918130314.GA3500@redhat.com>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
- <20180917083940.GE207969@Turing-Arch-b>
- <20180917123744.GA3605@redhat.com>
- <20180918060014.GF207969@Turing-Arch-b>
+        Tue, 18 Sep 2018 14:36:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52934 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbeIRSgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 14:36:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bXESdo+U0yN1p4Mnr66KvDvCAQhfwgkW1pRFsysOWIc=; b=MCXBtDfdPvQQcEHuYTGjq9gm8
+        CpAvqOIKxW4VF80TRtlkLsFMJ1bDTJVG7cVRCntGVLZRJEKbWEMvrPH2xXahSmui8cIYkiL72sKci
+        G9qw3+wTMZsJom2KKb4451NvMcg5yA+zK9xBiw9O7Jcz8WfKcgl6ufSP9FFURYEVh8M1HDKLQ1t/A
+        o3xOsuVzYP8yZz/XhbPf8iOV8T4aZv7OZ1gx8sVunHMitpO+ZHJEEbzPsnpABm178f7MO3NmqDzql
+        BI+2gP5LVx59x4BmlQ26K8qwxAO/emP5dqXO8w4U0N2ZfHvNRNLJ9FwNKV/1prqnhmrFkQt9BQWrd
+        YiDPIc4WA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2Few-0002kz-M9; Tue, 18 Sep 2018 13:03:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7B90E202C1A09; Tue, 18 Sep 2018 15:03:16 +0200 (CEST)
+Date:   Tue, 18 Sep 2018 15:03:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        konrad.wilk@oracle.com, x86@kernel.org, dwmw@amazon.co.uk,
+        tglx@linutronix.de, Srinivas REDDY Eeda <srinivas.eeda@oracle.com>,
+        bp@suse.de, hpa@zytor.com, dhaval.giani@oracle.com
+Subject: Re: [PATCH] x86/speculation: Use AMD specific retpoline for inline
+ asm on AMD
+Message-ID: <20180918130316.GP24142@hirez.programming.kicks-ass.net>
+References: <87411705-893f-46d3-b899-b09ed9fa8d1b@default>
+ <20180918095015.GE19234@hirez.programming.kicks-ass.net>
+ <3fcc1453-1618-9a79-71c9-5eede0023775@oracle.com>
+ <20180918105939.GK24106@hirez.programming.kicks-ass.net>
+ <1c6ca05f-094e-03e9-b21a-866aaf80cebb@oracle.com>
+ <20180918130058.GM24106@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180918060014.GF207969@Turing-Arch-b>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 18 Sep 2018 13:03:23 +0000 (UTC)
+In-Reply-To: <20180918130058.GM24106@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 02:00:14PM +0800, Kenneth Lee wrote:
-> On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
-> > On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
-> > > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> > > > So i want to summarize issues i have as this threads have dig deep into
-> > > > details. For this i would like to differentiate two cases first the easy
-> > > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> > > 
-> > > Thank you very much for the summary.
-> > > 
-> > > > In both cases your objectives as i understand them:
-> > > > 
-> > > > [R1]- expose a common user space API that make it easy to share boiler
-> > > >       plate code accross many devices (discovering devices, opening
-> > > >       device, creating context, creating command queue ...).
-> > > > [R2]- try to share the device as much as possible up to device limits
-> > > >       (number of independant queues the device has)
-> > > > [R3]- minimize syscall by allowing user space to directly schedule on the
-> > > >       device queue without a round trip to the kernel
-> > > > 
-> > > > I don't think i missed any.
-> > > > 
-> > > > 
-> > > > (1) Device with SVA/SVM
-> > > > 
-> > > > For that case it is easy, you do not need to be in VFIO or part of any
-> > > > thing specific in the kernel. There is no security risk (modulo bug in
-> > > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> > > > to a device is just couple dozen lines of code.
-> > > > 
-> > > 
-> > > This is right...logically. But the kernel has no clear definition about "Device
-> > > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
-> > > boiler plate.
-> > > 
-> > > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
-> > > one. If we add that support within VFIO, which solve most of the problem of
-> > > SVA/SVM, it will save a lot of work in the future.
-> > 
-> > You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
-> > all do the SVA/SVM setup in couple dozen lines and i failed to see how it
-> > would require any more than that in your case.
-> > 
-> > 
-> > > I think this is the key confliction between us. So could Alex please say
-> > > something here? If the VFIO is going to take this into its scope, we can try
-> > > together to solve all the problem on the way. If it it is not, it is also
-> > > simple, we can just go to another way to fulfill this part of requirements even
-> > > we have to duplicate most of the code.
-> > > 
-> > > Another point I need to emphasis here: because we have to replace the hardware
-> > > queue when fork, so it won't be very simple even in SVA/SVM case.
-> > 
-> > I am assuming hardware queue can only be setup by the kernel and thus
-> > you are totaly safe forkwise as the queue is setup against a PASID and
-> > the child does not bind to any PASID and you use VM_DONTCOPY on the
-> > mmap of the hardware MMIO queue because you should really use that flag
-> > for that.
-> > 
-> > 
-> > > > (2) Device does not have SVA/SVM (or it is disabled)
-> > > > 
-> > > > You want to still allow device to be part of your framework. However
-> > > > here i see fundamentals securities issues and you move the burden of
-> > > > being careful to user space which i think is a bad idea. We should
-> > > > never trus the userspace from kernel space.
-> > > > 
-> > > > To keep the same API for the user space code you want a 1:1 mapping
-> > > > between device physical address and process virtual address (ie if
-> > > > device access device physical address A it is accessing the same
-> > > > memory as what is backing the virtual address A in the process.
-> > > > 
-> > > > Security issues are on two things:
-> > > > [I1]- fork/exec, a process who opened any such device and created an
-> > > >       active queue can transfer without its knowledge control of its
-> > > >       commands queue through COW. The parent map some anonymous region
-> > > >       to the device as a command queue buffer but because of COW the
-> > > >       parent can be the first to copy on write and thus the child can
-> > > >       inherit the original pages that are mapped to the hardware.
-> > > >       Here parent lose control and child gain it.
-> > > 
-> > > This is indeed an issue. But it remains an issue only if you continue to use the
-> > > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
-> > > user space.
-> > 
-> > Trusting user space is a no go from my point of view.
+> > In original code, it will go to "call *%[thunk_target]\n" while
+> > we have set SPECTRE_V2_RETPOLINE_MINIMAL or
+> > SPECTRE_V2_RETPOLINE_MINIMAL_AMD. Is this expected?
 > 
-> Can we dive deeper on this? Maybe we have different understanding on "Trusting
-> user space". As my understanding, "trusting user space" means "no matter what
-> the user process does, it should only hurt itself and anything give to it, no
-> the kernel and the other process".
-> 
-> In our case, we create a channel between a process and the hardware. The process
-> can do whateven it like to its own memory the channel itself. It won't hurt the
-> other process and the kernel. And if the process fork a child and give the
-> channel to the child, it should the freedom on those resource remain within the
-> parent and the child. We are not trust another else.
-> 
-> So do you refer to something else here?
-> 
+> Yes, that is exactly right -- it does that with or without your change
+> though.
 
-I am refering to COW giving control to the child on to what happens
-in the parent from device point of view. A process hurting itself is
-fine, but if process now has to do special steps to protect from
-its child ie make sure that its childs can not hurt it, then i see
-that as a kernel bug. We can not ask user space process to know about
-all the thousands things that needs to be done to avoid issues with
-each device driver that the process may use (process can be totaly
-ignorant it is using a device if that device is use by a library it
-links to).
+Soryr, I wrote that before I noticed the CONFIG_RETPOLINE vs RETPOLINE
+thing.
 
-
-Maybe what needs to happen will explain it better. So if userspace
-wants to be secure and protect itself from its child taking over the
-device through COW:
-
-    - parent opened a device and is using it
-
-    ... when parent wants to fork/exec it must:
-
-    - parent _must_ flush device command queue and wait for the
-      device to finish all pending jobs
-
-    - parent _must_ unmap all range mapped to the device
-
-    - parent should first close device file (unless you force set
-      the CLOEXEC flag in the kernel)/it could also just flush
-      but if you are not mapping the device command queue with
-      VM_DONTCOPY then you should really be closing the device
-
-    - now parent can fork/exec
-
-    - parent must force COW ie write at least one byte to _all_
-      pages in the range it wants to use with the device
-
-    - parent re-open the device and re-initialize everything
-
-
-So this is putting quite a burden on a number of steps the parent
-_must_ do in order to keep control of memory exposed to the device.
-Not doing so can potentialy lead (it depends on who does the COW
-first) to the child taking control of memory use by the device,
-memory which was mapped by the parent before the child was created.
-
-Forcing CLOEXEC and VM_DONTCOPY somewhat help to simplify this,
-but you still need to stop, flush, unmap, before fork/exec and then
-re-init everything after.
-
-
-This is only when not using SVA/SVM, SVA/SVM is totaly fine from
-that point of view, no issues whatsoever.
-
-The solution i outlined in previous email do not have that above
-issue either, no need to rely on user space doing that dance.
-
-Cheers,
-Jérôme
+In any case, since retpoline capable compilers are widely available, I'm
+all for making CONFIG_RETPOLINE hard depend on it. That minimal stuff
+really is quite silly.
