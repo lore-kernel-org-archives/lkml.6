@@ -2,109 +2,190 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C4BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC9DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC4D214DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:37:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ub8lV9wV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC4D214DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B834D214DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B834D214DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbeIRWLK (ORCPT
+        id S1730272AbeIRWM2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:11:10 -0400
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:38522 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729859AbeIRWLJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:11:09 -0400
-Received: by mail-ot1-f47.google.com with SMTP id n5-v6so2656920otl.5;
-        Tue, 18 Sep 2018 09:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VZs5gu9VeFKZSibqK+Xlu8440jTsIjOk4EkOPNtPH3c=;
-        b=Ub8lV9wVzSLY1T476QbusMWO1IgPcSgZr7E1maUAXRv/DNCV9Cc7RfdfuN5UQz1CjU
-         Rcdkts3L3wArHZHUMr3lqNqZt6v3y3TkqGaSlE+WTBYnJ4ly62cXUhOjEmag3pC1Do98
-         9SsaCrRsHLOQcH0gyb+Hz5M/1/8QFBnvgxu/W9yef20r2FjzyxlGfJmvf1wux9xgmHlz
-         /XtCZJZj1by8Yg7xP429us1VxLTwCsDtvjA9yROSrH5tkrdFlma6sI1zeLgOsvpIIZvr
-         89l53US5cx2jO7N+8X1Pxz+TDz5neA6RqESkWeLRm0LQzzYJ+jur79stryGRYUnTQWSs
-         ZU7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VZs5gu9VeFKZSibqK+Xlu8440jTsIjOk4EkOPNtPH3c=;
-        b=dMCAwj7MBCyIfd7j7MZG5aLHDsCk82sKz8EXCnvWttb89fMxqoh1sk+iFgNNEU3x70
-         Z8iRbkvLsGzkFYC3LltggLzC5FtYgwLP5kCxxKMEsOEmGSql45LV9v4EDshmRDgVsCWy
-         ndf/E1EHtUZjjXPFFwqk2iIo4qlhjzy6WUkpc4Yt2+6z7WdOwL5MfuzEXB+oDlRAwfHM
-         F26yWpuBvjfHJpaWxQmJ0hz+PJeuKJuomVffsluxl4erRZP3mt7Ud2AqezWp7i2YxvJO
-         TElV1+tJv0zvmeZCFWM043+KAtnFgmYopPiFzkGrG6Pzl+HWkfBl26BeIvZa/gNXvB7F
-         YZ5A==
-X-Gm-Message-State: APzg51C5EPGQY7onbn74IzwMwr6XhJ2E07Tw/duknNi2LoR6BHq7wIiH
-        R5e/MgzCrFxMKzdC//ZZOPPpSC6T
-X-Google-Smtp-Source: ANB0VdbwSJwv3Xk2ljaV8yJ6JPdznEDVCQ2Sj0cs2QdEkK3QGuQNRaTx70cFSI+42sM48nxabtkL8g==
-X-Received: by 2002:a9d:47:: with SMTP id 65-v6mr15944720ota.6.1537288666529;
-        Tue, 18 Sep 2018 09:37:46 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id v5-v6sm7980467oix.36.2018.09.18.09.37.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 09:37:46 -0700 (PDT)
-Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
- <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
- <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
- <1537253993.20009.62.camel@infradead.org>
- <14067.1537285833@warthog.procyon.org.uk>
- <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
- <19247.1537288419@warthog.procyon.org.uk>
-From:   Denis Kenzior <denkenz@gmail.com>
-Message-ID: <14f91823-474e-1b46-d305-12229dac8967@gmail.com>
-Date:   Tue, 18 Sep 2018 00:51:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 18 Sep 2018 18:12:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36386 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729998AbeIRWM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:12:28 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 593B58666B;
+        Tue, 18 Sep 2018 16:39:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 79E417DEE4;
+        Tue, 18 Sep 2018 16:39:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180918090722.GA463@jagdpanzerIV>
+References: <20180918090722.GA463@jagdpanzerIV> <20180911220743.GA13208@roeck-us.net> <20180911174641.GA15149@roeck-us.net> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313714181.13253.304098108512966976.stgit@warthog.procyon.org.uk> <27113.1536702746@warthog.procyon.org.uk> <32382.1536707855@warthog.procyon.org.uk> <20180911235403.GA10107@roeck-us.net>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     dhowells@redhat.com, Guenter Roeck <linux@roeck-us.net>,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 14/33] vfs: Implement a filesystem superblock creation/configuration context [ver #11]
 MIME-Version: 1.0
-In-Reply-To: <19247.1537288419@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27018.1537288742.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 18 Sep 2018 17:39:02 +0100
+Message-ID: <27019.1537288742@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 18 Sep 2018 16:39:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+I think I need to include something like the attached change in this patch.
+Changes also need to be made to proc and cgroup.
 
-> It passes it to each parser in turn till one says it can parse it.  It's not
-> ideal, but it seems to work - so far.  Better would be to annotate it in some
-> way.  I have considered annotating the type field so that the payload doesn't
-> have to have it added:
-> 
-> 	keyctl padd asymmetric.x509 "" @s </tmp/foo.x509
-> 	keyctl padd asymmetric.pkcs#8 ...
-> 	keyctl padd asymmetric.tpm ...
-> 
-> However, this doesn't work with "keyctl update" or "keyctl instantiate".
-> 
+David
+---
+commit 1a336480a0f664b3e1988a581bccd4fa10d98764
+Author: David Howells <dhowells@redhat.com>
+Date:   Tue Sep 18 17:25:23 2018 +0100
 
-In theory the PEM file already contains the type of the certificate, at 
-least at a high level.  E.g. private, public, tpm.  So if we accept PEM 
-files directly that could be potentially a faster way of determining the 
-parser to use and would still work with keyctl update/instantiate, right?
+    fix remount
 
-Regards,
--Denis
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index a82679441031..1f36b72e3ee9 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -42,8 +42,6 @@ struct legacy_fs_context {
+ 	enum legacy_fs_param	param_type;
+ };
+ 
+-static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
+-
+ static const struct constant_table common_set_sb_flag[] = {
+ 	{ "dirsync",	SB_DIRSYNC },
+ 	{ "lazytime",	SB_LAZYTIME },
+@@ -293,7 +291,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 		break;
+ 	}
+ 
+-
+ 	/* TODO: Make all filesystems support this unconditionally */
+ 	init_fs_context = fc->fs_type->init_fs_context;
+ 	if (!init_fs_context)
+@@ -662,12 +659,20 @@ const struct fs_context_operations legacy_fs_context_ops = {
+  * Initialise a legacy context for a filesystem that doesn't support
+  * fs_context.
+  */
+-static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
++int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
+ {
++	switch (fc->purpose) {
++	default:
++		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
++					 GFP_KERNEL);
++		if (!fc->fs_private)
++			return -ENOMEM;
++		break;
+ 
+-	fc->fs_private = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
+-	if (!fc->fs_private)
+-		return -ENOMEM;
++	case FS_CONTEXT_FOR_UMOUNT:
++	case FS_CONTEXT_FOR_EMERGENCY_RO:
++		break;
++	}
+ 
+ 	fc->ops = &legacy_fs_context_ops;
+ 	return 0;
+diff --git a/fs/internal.h b/fs/internal.h
+index d25cb82af69d..fc2da60abbcd 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -55,6 +55,7 @@ extern void __init chrdev_init(void);
+  * fs_context.c
+  */
+ extern const struct fs_context_operations legacy_fs_context_ops;
++extern int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
+ 
+ /*
+  * fsopen.c
+diff --git a/fs/namespace.c b/fs/namespace.c
+index ddb2c3b88cd6..86b60566fcdf 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1429,9 +1429,19 @@ static int do_umount_root(struct super_block *sb)
+ 	};
+ 
+ 	down_write(&sb->s_umount);
+-	if (!sb_rdonly(sb))
+-		/* Might want to call ->init_fs_context(). */
+-		ret = reconfigure_super(&fc);
++	if (!sb_rdonly(sb)) {
++		int ret;
++
++		if (fc.fs_type->init_fs_context)
++			ret = fc.fs_type->init_fs_context(&fc, NULL);
++		else
++			ret = legacy_init_fs_context(&fc, NULL);
++
++		if (ret == 0) {
++			ret = reconfigure_super(&fc);
++			fc.ops->free(&fc);
++		}
++	}
+ 	up_write(&sb->s_umount);
+ 	return ret;
+ }
+@@ -2396,7 +2406,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 
+ 	err = security_fs_context_validate(fc);
+ 	if (err)
+-		return err;
++		goto err_fc;
+ 
+ 	down_write(&sb->s_umount);
+ 	err = -EPERM;
+diff --git a/fs/super.c b/fs/super.c
+index e00b03249bfa..df8c4cebd000 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1026,12 +1026,20 @@ static void do_emergency_remount_callback(struct super_block *sb)
+ 
+ 	down_write(&sb->s_umount);
+ 	if (sb->s_root && sb->s_bdev && (sb->s_flags & SB_BORN) &&
+-	    !sb_rdonly(sb))
+-		/* Might want to call ->init_fs_context(). */
++	    !sb_rdonly(sb)) {
++		int ret;
++
++		if (fc.fs_type->init_fs_context)
++			ret = fc.fs_type->init_fs_context(&fc, NULL);
++		else
++			ret = legacy_init_fs_context(&fc, NULL);
++
+ 		/*
+ 		 * What lock protects sb->s_flags??
+ 		 */
+-		reconfigure_super(&fc);
++		if (ret == 0)
++			reconfigure_super(&fc);
++	}
+ 	up_write(&sb->s_umount);
+ }
+ 
