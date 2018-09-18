@@ -2,180 +2,116 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ED2ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821C2ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E122086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:54:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dttpcY4V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E122086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 4894A2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4894A2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbeIRT1S (ORCPT
+        id S1729911AbeIRT1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:27:18 -0400
-Received: from mail.efficios.com ([167.114.142.138]:51048 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbeIRT1S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:27:18 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6A2A523F9B6;
-        Tue, 18 Sep 2018 09:54:33 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 9h3yJSJJct0B; Tue, 18 Sep 2018 09:54:31 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C5CD923F9B3;
-        Tue, 18 Sep 2018 09:54:31 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C5CD923F9B3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1537278871;
-        bh=Vb+Xoe63fO5xpReySK+14lEymxnrzzTwRO35FZk4+D0=;
-        h=From:To:Date:Message-Id;
-        b=dttpcY4VYtUNiiUKBdrVGYnpDbBE698elgy2o27K/4znpgdea3g+op1eUMrHBU7Rd
-         Rw+34fCICHS8tLZxDTXqTQt+Efh1TQIlBtNlfj1/9YKS25e2UWwwwna+AQtWULAAIx
-         Sw8yuanUv67Pm0ODmnktN8VYIH5LqDKibjxjc6mMrRzXo/OmzmzUVgBax8+DECiPda
-         flv22ur+60+M+8Zo+ZmK3xEF47+DhXtF6P9Te9TwnPDz/EFPdpxtO/WgJmnM2PJNKA
-         AQjjpXSAzrjSOIil6fgNWQxkhcsqb1gFcspYR46xHasuhtxRL9/kE7YgTLI2NRLMKx
-         VrmXUHlQ19Kxw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id L5VxyA8y2AEX; Tue, 18 Sep 2018 09:54:31 -0400 (EDT)
-Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 50A0323F9AE;
-        Tue, 18 Sep 2018 09:54:31 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "# v4 . 18" <stable@vger.kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH] rseq/selftests: fix parametrized test with -fpie
-Date:   Tue, 18 Sep 2018 09:53:28 -0400
-Message-Id: <20180918135328.32034-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 18 Sep 2018 15:27:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47922 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727846AbeIRT1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:27:49 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2D4FE36A9C68A;
+        Tue, 18 Sep 2018 21:55:03 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
+ 21:54:53 +0800
+Subject: Re: [PATCH 4/5] scsi: libsas: check the ata device status by
+ ata_dev_enabled()
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180912082946.34814-1-yanaijie@huawei.com>
+ <20180912082946.34814-5-yanaijie@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <miaoxie@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>, <linux-ide@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <57f8b9fb-3a5b-fda6-5e3c-af23524431f4@huawei.com>
+Date:   Tue, 18 Sep 2018 14:54:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180912082946.34814-5-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On x86-64, the parametrized selftest code for rseq crashes with a
-segmentation fault when compiled with -fpie. This happens when the
-param_test binary is loaded at an address beyond 32-bit on x86-64.
-
-The issue is caused by use of a 32-bit register to hold the address
-of the loop counter variable.
-
-Fix this by using a 64-bit register to calculate the address of the
-loop counter variables as an offset from rip.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: <stable@vger.kernel.org> # v4.18
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Watson <davejwatson@fb.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: linux-kselftest@vger.kernel.org
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Chris Lameter <cl@linux.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Maurer <bmaurer@fb.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
----
- tools/testing/selftests/rseq/param_test.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
-index 615252331813..4bc071525bf7 100644
---- a/tools/testing/selftests/rseq/param_test.c
-+++ b/tools/testing/selftests/rseq/param_test.c
-@@ -56,15 +56,13 @@ unsigned int yield_mod_cnt, nr_abort;
- 			printf(fmt, ## __VA_ARGS__);	\
- 	} while (0)
- 
--#if defined(__x86_64__) || defined(__i386__)
-+#ifdef __i386__
- 
- #define INJECT_ASM_REG	"eax"
- 
- #define RSEQ_INJECT_CLOBBER \
- 	, INJECT_ASM_REG
- 
--#ifdef __i386__
--
- #define RSEQ_INJECT_ASM(n) \
- 	"mov asm_loop_cnt_" #n ", %%" INJECT_ASM_REG "\n\t" \
- 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
-@@ -76,9 +74,16 @@ unsigned int yield_mod_cnt, nr_abort;
- 
- #elif defined(__x86_64__)
- 
-+#define INJECT_ASM_REG_P	"rax"
-+#define INJECT_ASM_REG		"eax"
 +
-+#define RSEQ_INJECT_CLOBBER \
-+	, INJECT_ASM_REG_P \
-+	, INJECT_ASM_REG
-+
- #define RSEQ_INJECT_ASM(n) \
--	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG "\n\t" \
--	"mov (%%" INJECT_ASM_REG "), %%" INJECT_ASM_REG "\n\t" \
-+	"lea asm_loop_cnt_" #n "(%%rip), %%" INJECT_ASM_REG_P "\n\t" \
-+	"mov (%%" INJECT_ASM_REG_P "), %%" INJECT_ASM_REG "\n\t" \
- 	"test %%" INJECT_ASM_REG ",%%" INJECT_ASM_REG "\n\t" \
- 	"jz 333f\n\t" \
- 	"222:\n\t" \
-@@ -86,10 +91,6 @@ unsigned int yield_mod_cnt, nr_abort;
- 	"jnz 222b\n\t" \
- 	"333:\n\t"
- 
--#else
--#error "Unsupported architecture"
--#endif
--
- #elif defined(__ARMEL__)
- 
- #define RSEQ_INJECT_INPUT \
--- 
-2.11.0
+
+On 12/09/2018 09:29, Jason Yan wrote:
+> When ata device IDENTIFY failed, the ata device status is
+> ATA_DEV_UNKNOWN. The libata reported like:
+>
+> [113518.620433] ata5.00: qc timeout (cmd 0xec)
+> [113518.653646] ata5.00: failed to IDENTIFY (I/O error, err_mask=0x4)
+>
+> But libsas verifies the device status by ata_dev_disabled(), which
+> skiped ATA_DEV_UNKNOWN. This will make libsas think the ata device
+
+/s/skiped/skipped/
+
+> probing succeed the device cannot be actually brought up. And even the
+> new bcast of this device will be considered as flutter and will not
+> probe this device again.
+>
+> Change ata_dev_disabled() to !ata_dev_enabled() so that libsas can
+> deal with this if the ata device probe failed. New bcasts can let us
+> try to probe the device again and bring it up if it is fine to
+> IDENTIFY.
+>
+> Tested-by: Zhou Yupeng <zhouyupeng1@huawei.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+
+Reviewed-by: John Garry <john.garry@huawei.com>
+
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_ata.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+> index 64a958a99f6a..4f6cdf53e913 100644
+> --- a/drivers/scsi/libsas/sas_ata.c
+> +++ b/drivers/scsi/libsas/sas_ata.c
+> @@ -654,7 +654,7 @@ void sas_probe_sata(struct asd_sas_port *port)
+>  		/* if libata could not bring the link up, don't surface
+>  		 * the device
+>  		 */
+> -		if (ata_dev_disabled(sas_to_ata_dev(dev)))
+> +		if (!ata_dev_enabled(sas_to_ata_dev(dev)))
+
+I do wonder if ata_dev_disabled() needs to be updated to cover 
+ATA_DEV_UNKNOWN also or even instead of this change?
+
+>  			sas_fail_probe(dev, __func__, -ENODEV);
+>  	}
+>
+>
+
 
