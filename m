@@ -2,113 +2,147 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47633C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1EDC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCD621471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCD621471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 3452720C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:14:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LaRhAeCq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3452720C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeISEtI (ORCPT
+        id S1728302AbeISEto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 00:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbeISEtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 00:49:08 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A830F20C0E;
-        Tue, 18 Sep 2018 23:14:14 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 19:14:13 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Wed, 19 Sep 2018 00:49:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37147 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728266AbeISEto (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 00:49:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 2-v6so1761759pgo.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=1Gp6sMzc9rjka+xKBsb2Fo/YxyBwNUaNCDXgZtP2yKk=;
+        b=LaRhAeCqyFaTJXihh1rOdB6gWqGx9RwNif0FGOwcTWyr+tyPN5WzB0z8V1QZpO7y1s
+         W0Tp67H7B6YsWodTwT0emxK0Xx1ppCtfm+lLytSn3sL9lzQ92rprQehKTSkA+nCOOndt
+         ImXXAIvjSowXnhi8kH+U5+kjXP62Eb35U5nmA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1Gp6sMzc9rjka+xKBsb2Fo/YxyBwNUaNCDXgZtP2yKk=;
+        b=iAJrPLRX84jgmyXSsOL2ksH5AbOa6Y0hYl+VObgdn/tdMBhnbPIpbvt6ZYtgkbh4SV
+         Pv/IqrPfObXJIO/7TF0spKKBLU5ol/Y9c+d2m/7KBkDoPP7uuokOOBT/hpXGdWj1LmAX
+         ZZNHmmZClhwdr6VpaS+XDmZYygefQ/tb3IH25II0MUYr27cbhO3hHhaBjuWa3zou/v6H
+         zSlSnxAan2+3kY/aFtf2R5sR6+EQZ3iyRD3zn0PIM5/w0cCrVHok4MCoLGzSuJTcudfM
+         EMbAdzlOHqjgEyvco/8sKJUkbz5cba8ye0Df0ca8E+Zr4ifOYrb6CQ3dJMuwItD2Y4rx
+         IH6g==
+X-Gm-Message-State: APzg51CPq8X+IvFWGkxQIaZkwNOBi6dRZDbmS+ZJLiCilTbXm/5aLNle
+        6RR1bg9MM5H2lS5zJ2whldgKkO6/YVZ4+Q==
+X-Google-Smtp-Source: ANB0VdYjRt7mSPYbcA0c5TrEKIutoJ1TxgGXEWn7kPsAno3Np0+x//gnbhdNlrVOFJ2/kENs1H9yxA==
+X-Received: by 2002:a62:4898:: with SMTP id q24-v6mr33348806pfi.22.1537312491376;
+        Tue, 18 Sep 2018 16:14:51 -0700 (PDT)
+Received: from holly.lan ([209.121.128.187])
+        by smtp.gmail.com with ESMTPSA id n83-v6sm42805317pfk.19.2018.09.18.16.14.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 16:14:50 -0700 (PDT)
+Date:   Tue, 18 Sep 2018 16:14:49 -0700
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vaibhav Nagarnaik <vnagarnaik@google.com>,
-        Jason Behmer <jbehmer@google.com>, stable@vger.kernel.org
-Subject: [GIT PULL] ring-buffer: Allow for rescheduling when removing pages
-Message-ID: <20180918191413.4426aef4@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] misc: kgdbts: Fix restrict error
+Message-ID: <20180918231449.akg2qjgaohedtx4h@holly.lan>
+References: <20180911174403.32088-1-labbott@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180911174403.32088-1-labbott@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 10:44:03AM -0700, Laura Abbott wrote:
+> kgdbts current fails when compiled with restrict:
+> 
+> drivers/misc/kgdbts.c: In function ‘configure_kgdbts’:
+> drivers/misc/kgdbts.c:1070:2: error: ‘strcpy’ source argument is the same as destination [-Werror=restrict]
+>   strcpy(config, opt);
+>   ^~~~~~~~~~~~~~~~~~~
+> 
+> As the error says, config is being used in both the source and destination.
+> Refactor the code to avoid the extra copy and put the parsing closer to
+> the actual location.
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-Linus (aka Greg),
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Vaibhav Nagarnaik found that modifying the ring buffer size could cause
-a huge latency in the system because it does a while loop to free pages
-without releasing the CPU (on non preempt kernels). In a case where there
-are hundreds of thousands of pages to free it could actually cause a system
-stall. A properly place cond_resched() solves this issue.
-
-
-Please pull the latest trace-v4.19-rc4 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.19-rc4
-
-Tag SHA1: 977e4fb3741e24151a255ee13bd4a1224545ae4e
-Head SHA1: 83f365554e47997ec68dc4eca3f5dce525cd15c3
-
-
-Vaibhav Nagarnaik (1):
-      ring-buffer: Allow for rescheduling when removing pages
-
-----
- kernel/trace/ring_buffer.c | 2 ++
- 1 file changed, 2 insertions(+)
----------------------------
-commit 83f365554e47997ec68dc4eca3f5dce525cd15c3
-Author: Vaibhav Nagarnaik <vnagarnaik@google.com>
-Date:   Fri Sep 7 15:31:29 2018 -0700
-
-    ring-buffer: Allow for rescheduling when removing pages
-    
-    When reducing ring buffer size, pages are removed by scheduling a work
-    item on each CPU for the corresponding CPU ring buffer. After the pages
-    are removed from ring buffer linked list, the pages are free()d in a
-    tight loop. The loop does not give up CPU until all pages are removed.
-    In a worst case behavior, when lot of pages are to be freed, it can
-    cause system stall.
-    
-    After the pages are removed from the list, the free() can happen while
-    the work is rescheduled. Call cond_resched() in the loop to prevent the
-    system hangup.
-    
-    Link: http://lkml.kernel.org/r/20180907223129.71994-1-vnagarnaik@google.com
-    
-    Cc: stable@vger.kernel.org
-    Fixes: 83f40318dab00 ("ring-buffer: Make removal of ring buffer pages atomic")
-    Reported-by: Jason Behmer <jbehmer@google.com>
-    Signed-off-by: Vaibhav Nagarnaik <vnagarnaik@google.com>
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 1d92d4a982fd..65bd4616220d 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1546,6 +1546,8 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
- 	tmp_iter_page = first_page;
- 
- 	do {
-+		cond_resched();
-+
- 		to_remove_page = tmp_iter_page;
- 		rb_inc_page(cpu_buffer, &tmp_iter_page);
- 
+> ---
+> v2: Refactored to move the verbose setting into kgbts_run_tests per
+> suggestion of Daniel Thompson
+> ---
+>  drivers/misc/kgdbts.c | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
+> index 6193270e7b3d..de20bdaa148d 100644
+> --- a/drivers/misc/kgdbts.c
+> +++ b/drivers/misc/kgdbts.c
+> @@ -985,6 +985,12 @@ static void kgdbts_run_tests(void)
+>  	int nmi_sleep = 0;
+>  	int i;
+>  
+> +	verbose = 0;
+> +	if (strstr(config, "V1"))
+> +		verbose = 1;
+> +	if (strstr(config, "V2"))
+> +		verbose = 2;
+> +
+>  	ptr = strchr(config, 'F');
+>  	if (ptr)
+>  		fork_test = simple_strtol(ptr + 1, NULL, 10);
+> @@ -1068,13 +1074,6 @@ static int kgdbts_option_setup(char *opt)
+>  		return -ENOSPC;
+>  	}
+>  	strcpy(config, opt);
+> -
+> -	verbose = 0;
+> -	if (strstr(config, "V1"))
+> -		verbose = 1;
+> -	if (strstr(config, "V2"))
+> -		verbose = 2;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -1086,9 +1085,6 @@ static int configure_kgdbts(void)
+>  
+>  	if (!strlen(config) || isspace(config[0]))
+>  		goto noconfig;
+> -	err = kgdbts_option_setup(config);
+> -	if (err)
+> -		goto noconfig;
+>  
+>  	final_ack = 0;
+>  	run_plant_and_detach_test(1);
+> -- 
+> 2.17.1
+> 
