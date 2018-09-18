@@ -2,105 +2,135 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CFAECE565
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00869ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C13214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:39:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C13214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D03A20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 07:40:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="ZSI4GvaV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D03A20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbeIRNK6 (ORCPT
+        id S1729285AbeIRNMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 09:10:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:59919 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeIRNK6 (ORCPT
+        Tue, 18 Sep 2018 09:12:19 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45353 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeIRNMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 09:10:58 -0400
-Received: from [192.168.178.69] ([109.104.37.4]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MJFpj-1gMqlY2bz1-00KhmO; Tue, 18 Sep 2018 09:38:23 +0200
-Subject: Re: [PATCH 0/4] Add i.MX6ULZ SoC support
-To:     Anson Huang <Anson.Huang@nxp.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, fabio.estevam@nxp.com,
-        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-        ping.bai@nxp.com, Aisheng.dong@nxp.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <e82e2894-2a0d-0084-913c-b7c6d966fc13@i2se.com>
-Date:   Tue, 18 Sep 2018 09:38:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 09:12:19 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p52-v6so1029041eda.12
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 00:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=19dNveM2mFw76QGcbi170r/izzRIUvZSJ3Ry8FOcEUk=;
+        b=ZSI4GvaVRh+qIOUJrcK9viXqmGBixPw829wCEHOlQL89BkdICvxI4kboIIoiu1mE6k
+         nQS89T0uk+F7GLpHB3iRwo+Vh5CalRfOaha+ugzWahPMVP31jU/VVeLItSZhw7A8IPCG
+         yTDxKnT17F9jJZDELmKt9sQRKfEm56XWYFESBdzRhx3r3saFzshlGKktC3i30KroVVGX
+         7BoGvLSkarlXu+KAjazxGb+1x7FdVeyCbx9LfyRmEkOhpLo30nzb6Kttc4KurbbqA8hP
+         s/VfNLEgT99td+NuDuEMjUivpCFQnVmGFsruc3ahIrbvJcrh6hl9b0c7Z76PwN6BcwmY
+         VMGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=19dNveM2mFw76QGcbi170r/izzRIUvZSJ3Ry8FOcEUk=;
+        b=tkbb0RK1aZ4L8Md25eTbP123cws5IbFI1Ni+6I2aeJIq55b9ZVXlwm9BNeqPJSJ5rV
+         aV+ys0O0uy5GYeSm8lXCPwTCfa+7UnuF4+m+n/fcDLG+/tBHO02BY2iMob0gx4z/G4aB
+         o4BVTjBA1YhYwimpI74ne95r5GrJZoZpYg91qqIu+frDCJifwa/QSFHtzAhhQ5pbKFLq
+         urKejc6PumH8PwMOcjIyFmX14wORI2I2BmJ2zKtDUDcZLon/yq2Xa7SFxuXxE1o99Ozc
+         9JSdpXJwDANFw6AtccVyKGXBei9iAE1ecuZAIsfUZMXqSXoZcrxbIOehxXLZ1ykFY7h8
+         kyCw==
+X-Gm-Message-State: APzg51DXWACzh+XEyi3qSiwj1t4jOhFeuhZCDnGNKjy579+KzqkYhiXy
+        gDZkxJDbnJHq/Jey8/IveMJXMtL7py8=
+X-Google-Smtp-Source: ANB0VdbPJwsm4hjuwjg87SinbM4tk76OLZTd/MyN7gDJQ4K0U0tHSKBDzyarwS8cwkgdStQIIEJAvg==
+X-Received: by 2002:a50:cd58:: with SMTP id d24-v6mr50278701edj.1.1537256456003;
+        Tue, 18 Sep 2018 00:40:56 -0700 (PDT)
+Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id g38-v6sm8037566edc.40.2018.09.18.00.40.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Sep 2018 00:40:55 -0700 (PDT)
+From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To:     mb@lightnvm.io
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: fix race on sysfs line state
+Date:   Tue, 18 Sep 2018 09:40:32 +0200
+Message-Id: <1537256432-19807-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:t0QQVvYKhrPZ4vc45UgL6d4HVgWHW0/s0Ja+VdHkEWQvRCCbVQs
- x3G1m6J4NQLSQ1S6Y11KN012xGTE/Ry26og6T8de1M/qRf0LkW72dZ9MQy1g+DqXHeCNeAG
- bHBF6rkm0OcLDQ8cv4OO+czBAc5BSR5i3xljpGYQq/g8v8rbQPEyjxAlGquJVlqGPhgFfIW
- cQciNHxF2XQXXEkjlQSPA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:H6f4dZpQrL8=:025ntIO5hcVJTdM3z01BCZ
- 0sFrCf0xf/Phi//62UeR7BFqzrk1S17vCvxlf/TC76+nM0Gd2P56zQyYitwMxuGWk2ND2AoRM
- 19YDqA3+R5DCXftWz+LXktM1tpIyufZUsmo4M1WLuDFnBZ6VHs2B6wXp3m6bqesccaMisPWpb
- tj+QBXdxUw7w89W0ATHrUKmmvxpvxb03yUxSrCzSlbsAhvX9ETK+ajWE/c7dtM+iw7n/3gNzk
- SXjiMQWrH2YQzLOcPaeSmHBDx3Y4wgTs3u/VwInDa8u7bB12ZMPeYRvTM9qvbL01mXzH/VEKG
- gUwk0+/88HUEOc2gi7OjGuAKElgEEHIy2ApDwAr1u9NY+JVTXHFeNkzcFAd34SFuCVu6CfHUo
- tpIL/M3lJh1ghn1Os87OFZuNPqCr5ESJYHIYwclhWItXQWSXZWLymdGAYA4eGELtPyacgRiSN
- GX5hVTpjUJi5S56tVu37rRd6VzenfX28hKqbM2kE4g+dzPqQNqdT53zIwR0nOmo8MCwyaRBcf
- xLUjXyE9pl2W5+vYGy1KOw3k6UQqfdW9IgjKXalAVpcvSvaFjB3eSpIUBycN5sBuYMsZcggfz
- vaDECpwXqMWiKXdNG4RxO8Esr5KGHrjo9XT9CcshmJb9kQjuwZXIr1ljTy7uuERNSuELTA34b
- WE0LSf+2sM6ncP6mvsmCQ922cREDCPbG5K0au4vm+ixAvrMiR1/oHl9oZPcQOVnwOQ9KL4dF8
- OPu5R4wikSdAdcMJ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+pblk exposes a sysfs interface that represents its internal state. Part
+of this state is the map bitmap for the current open line, which should
+be protected by the line lock to avoid a race when freeing the line
+metadata. Currently, it is not.
 
-Am 18.09.2018 um 08:19 schrieb Anson Huang:
-> This patch set adds i.MX6ULZ SoC support, i.MX6ULZ is a new SoC of
-> i.MX6 family, compared to i.MX6ULL, it removes below modules:
->
->     - UART5/UART6/UART7/UART8;
->     - PWM5/PWM6/PWM7/PWM8;
->     - eCSPI3/eCSPI4;
->     - CAN1/CAN2;
->     - FEC1/FEC2;
->     - I2C3/I2C4;
->     - EPIT2;
->     - LCDIF;
->     - GPT2;
->     - TSC;
->
-> And i.MX6ULZ has same soc_id as i.MX6ULL, but SRC_SBMR2 bit[6] is
-> to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means i.MX6ULZ and
-> 1'b0 means i.MX6ULL. i.MX6ULZ reuse most of i.MX6UL/i.MX6ULL code,
-> just add the new CPU type and remove those non-exist modules from dtb.
->
-> Anson Huang (4):
->   ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
->   ARM: imx: add i.mx6ulz msl support
->   clk: imx6ul: add i.mx6ulz support
->   dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
->
->  
+This patch makes sure that the line state is consistent and NULL
+bitmap pointers are not dereferenced.
 
-i recommend the following patch order:
-ARM: imx: add i.mx6ulz msl support
-clk: imx6ul: add i.mx6ulz support
-dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
-ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
+Signed-off-by: Javier González <javier@cnexlabs.com>
+---
+ drivers/lightnvm/pblk-core.c  | 5 +++--
+ drivers/lightnvm/pblk-sysfs.c | 8 +++++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-Stefan
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index a23e965d32fc..fec0ad68dcd6 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1662,13 +1662,14 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
+ 	struct pblk_line *cur, *new = NULL;
+ 	unsigned int left_seblks;
+ 
+-	cur = l_mg->data_line;
+ 	new = l_mg->data_next;
+ 	if (!new)
+ 		goto out;
++
++	spin_lock(&l_mg->free_lock);
++	cur = l_mg->data_line;
+ 	l_mg->data_line = new;
+ 
+-	spin_lock(&l_mg->free_lock);
+ 	pblk_line_setup_metadata(new, l_mg, &pblk->lm);
+ 	spin_unlock(&l_mg->free_lock);
+ 
+diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
+index cba83ac43e62..2d2818155aa8 100644
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -263,8 +263,14 @@ static ssize_t pblk_sysfs_lines(struct pblk *pblk, char *page)
+ 		sec_in_line = l_mg->data_line->sec_in_line;
+ 		meta_weight = bitmap_weight(&l_mg->meta_bitmap,
+ 							PBLK_DATA_LINES);
+-		map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
++
++		spin_lock(&l_mg->data_line->lock);
++		if (l_mg->data_line->map_bitmap)
++			map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
+ 							lm->sec_per_line);
++		else
++			map_weight = 0;
++		spin_unlock(&l_mg->data_line->lock);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+ 
+-- 
+2.7.4
 
