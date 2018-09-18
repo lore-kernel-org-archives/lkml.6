@@ -2,88 +2,204 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FEEECE565
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A10C433F4
 	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F37D21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F37D21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 964B620858
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964B620858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbeIROPs (ORCPT
+        id S1729444AbeIROPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:15:48 -0400
-Received: from www62.your-server.de ([213.133.104.62]:56677 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729129AbeIROPs (ORCPT
+        Tue, 18 Sep 2018 10:15:38 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36448 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729129AbeIROPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:15:48 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2Bc7-0000Qs-SS; Tue, 18 Sep 2018 10:44:07 +0200
-Received: from [178.197.249.15] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2Bc7-000JWR-N0; Tue, 18 Sep 2018 10:44:07 +0200
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vakul Garg <vakul.garg@nxp.com>
-References: <20180918101107.74d8689a@canb.auug.org.au>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
-Date:   Tue, 18 Sep 2018 10:44:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 18 Sep 2018 10:15:38 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437684|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03302;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.CsM55JJ_1537260211;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CsM55JJ_1537260211)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Tue, 18 Sep 2018 16:43:32 +0800
+Date:   Tue, 18 Sep 2018 16:43:31 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V5 1/3] irqchip: add C-SKY irqchip drivers
+Message-ID: <20180918084331.GA10950@guoren>
+References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
+ <86in35mfas.wl-marc.zyngier@arm.com>
+ <20180917020928.GA22452@guoren-Inspiron-7460>
+ <86tvmoz22k.wl-marc.zyngier@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180918101107.74d8689a@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24950/Tue Sep 18 05:20:31 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86tvmoz22k.wl-marc.zyngier@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 02:11 AM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Sep 17, 2018 at 02:27:31PM +0100, Marc Zyngier wrote:
+> On Mon, 17 Sep 2018 03:09:29 +0100,
+> Guo Ren <ren_guo@c-sky.com> wrote:
 > 
-> Today's linux-next merge of the net-next tree got a conflict in:
+> [...]
 > 
->   tools/testing/selftests/net/tls.c
-> 
-> between commit:
-> 
->   50c6b58a814d ("tls: fix currently broken MSG_PEEK behavior")
-> 
-> from the net tree and commit:
-> 
->   c2ad647c6442 ("selftests/tls: Add test for recv(PEEK) spanning across multiple records")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> > > > +
+> > > > +	irq_set_default_host(root_domain);
+> > > 
+> > > Please drop this. There is no reason to use this on any modern, DT
+> > > based architecture.
+Ok.
 
-The test from 50c6b58a814d supersedes the one from c2ad647c6442 so the
-recv_peek_large_buf_mult_recs could be removed; latter was also not working
-correctly due to this bug.
+> > Please let me keep this and in my arch/csky/kernel/smp.c:
+> > 
+> > void __init setup_smp_ipi(void)
+> > {
+> > 	...
+> > 	irq_create_mapping(NULL, IPI_IRQ);
+> >	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
+> 
+> This looks quite wrong. Reading the code at
+> https://lkml.org/lkml/2018/9/12/674, it really looks like you're
+> assuming that IPI_IRQ will be mapped to a Linux IRQ with the same
+> number. Nothing could be farther from the truth.
+Yes, you are right. I should use irq_create_mapping() return value as
+the arg for request_percpu_irq. It's a stupid bug, thoug it happens to
+work.
 
-Thanks,
-Daniel
+> The Linux IRQ is returned as the result of irq_create_mapping, which
+> you're ignoring. You'd be better off creating this mapping from the
+> irqchip code, and expose the resulting Linux IRQ to oyu SMP code by
+> any mean of your choice (such as moving the send_ipi_message into the
+> irqchip code as well).
+Ok, see my diff below, is that OK?
+
+--- a/drivers/irqchip/irq-csky-mpintc.c
++++ b/drivers/irqchip/irq-csky-mpintc.c
+@@ -16,6 +16,7 @@
+ #include <asm/reg_ops.h>
+ #include <asm/smp.h>
+ 
++static struct irq_domain *root_domain;
+ static void __iomem *INTCG_base;
+ static void __iomem *INTCL_base;
+ 
+@@ -46,7 +47,7 @@ static void csky_mpintc_handler(struct pt_regs *regs)
+ 	void __iomem *reg_base = this_cpu_read(intcl_reg);
+ 
+ 	do {
+-		handle_domain_irq(NULL,
++		handle_domain_irq(root_domain,
+ 				  readl_relaxed(reg_base + INTCL_RDYIR),
+ 				  regs);
+ 	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
+@@ -139,13 +140,17 @@ static void csky_mpintc_send_ipi(const unsigned long *mask, unsigned long irq)
+ 	 */
+ 	writel_relaxed((*mask) << 8 | irq, reg_base + INTCL_SIGR);
+ }
++
++static int csky_mpintc_ipi_irq_mapping(void)
++{
++	return irq_create_mapping(root_domain, IPI_IRQ);
++}
+ #endif
+ 
+ /* C-SKY multi processor interrupt controller */
+ static int __init
+ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+ {
+-	struct irq_domain *root_domain;
+ 	unsigned int cpu, nr_irq;
+ 	int ret;
+ 
+@@ -172,8 +177,6 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+ 	if (!root_domain)
+ 		return -ENXIO;
+ 
+-	irq_set_default_host(root_domain);
+-
+ 	/* for every cpu */
+ 	for_each_present_cpu(cpu) {
+ 		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
+@@ -184,6 +187,8 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
+ 
+ #ifdef CONFIG_SMP
+ 	set_send_ipi(&csky_mpintc_send_ipi);
++
++	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
+ #endif
+ 
+ 	return 0;
+
+diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
+index 9a53abf..fed3a5a 100644
+--- a/arch/csky/include/asm/smp.h
++++ b/arch/csky/include/asm/smp.h
+@@ -7,6 +7,8 @@
+ 
+ #ifdef CONFIG_SMP
+ 
++#define IPI_IRQ	15
++
+ void __init setup_smp(void);
+ 
+ void __init setup_smp_ipi(void);
+@@ -19,6 +21,8 @@ void arch_send_call_function_single_ipi(int cpu);
+ 
+ void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long));
+ 
++void __init set_ipi_irq_mapping(int (*func)(void));
++
+ #define raw_smp_processor_id()	(current_thread_info()->cpu)
+ 
+ #endif /* CONFIG_SMP */
+diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
+index 522c73f..f8343f6 100644
+--- a/arch/csky/kernel/smp.c
++++ b/arch/csky/kernel/smp.c
+@@ -20,8 +20,6 @@
+ #include <asm/mmu_context.h>
+ #include <asm/pgalloc.h>
+ 
+-#define IPI_IRQ	15
+-
+ static struct {
+ 	unsigned long bits ____cacheline_aligned;
+ } ipi_data[NR_CPUS] __cacheline_aligned;
+@@ -121,13 +119,23 @@ void __init enable_smp_ipi(void)
+ 	enable_percpu_irq(IPI_IRQ, 0);
+ }
+ 
++static int (*arch_ipi_irq_mapping)(void) = NULL;
++
++void __init set_ipi_irq_mapping(int (*func)(void))
++{
++	if (arch_ipi_irq_mapping)
++		return;
++
++	arch_ipi_irq_mapping = func;
++}
++
+ void __init setup_smp_ipi(void)
+ {
+-	int rc;
++	int rc, irq;
+ 
+-	irq_create_mapping(NULL, IPI_IRQ);
++	irq = arch_ipi_irq_mapping();
+ 
+-	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
++	rc = request_percpu_irq(irq, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
+ 	if (rc)
+ 		panic("%s IRQ request failed\n", __func__);
