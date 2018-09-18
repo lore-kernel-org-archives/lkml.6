@@ -2,99 +2,114 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C22FECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50342ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098DB21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098DB21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E58AD20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58AD20C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeISEvp (ORCPT
+        id S1728226AbeISEyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 00:51:45 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59134 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeISEvo (ORCPT
+        Wed, 19 Sep 2018 00:54:06 -0400
+Received: from mail115-100.sinamail.sina.com.cn ([218.30.115.100]:48655 "HELO
+        mail115-100.sinamail.sina.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1725779AbeISEyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 00:51:44 -0400
-Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g2PEd-00067g-21; Wed, 19 Sep 2018 01:16:47 +0200
-Date:   Wed, 19 Sep 2018 01:16:46 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matt Rickard <matt@softrans.com.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        devel@linuxdriverproject.org,
-        Linux Virtualization <virtualization@lists.linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
-In-Reply-To: <439A3E73-E4FF-4D66-800E-5BEE58EDE8F6@amacapital.net>
-Message-ID: <alpine.DEB.2.21.1809190112020.1468@nanos.tec.linutronix.de>
-References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de> <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com> <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
- <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de> <863331ED-B04A-4B94-91A2-D34002C9CCDC@amacapital.net> <alpine.DEB.2.21.1809190037570.1468@nanos.tec.linutronix.de> <439A3E73-E4FF-4D66-800E-5BEE58EDE8F6@amacapital.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1986204183-1537312607=:1468"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 19 Sep 2018 00:54:06 -0400
+X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Sep 2018 00:54:05 EDT
+Received: from unknown (HELO localhost.localdomain.localdomain)([110.184.36.9])
+        by sina.com with ESMTP
+        id 5BA1846200000F8B; Tue, 19 Sep 2018 07:04:11 +0800 (CST)
+X-Sender: penghao122@sina.com.cn
+X-Auth-ID: penghao122@sina.com.cn
+X-SMAIL-MID: 460227132372
+From:   Peng Hao <penghao122@sina.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        peng.hao2@zte.com, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH RESEND]  kvm/x86: propagate fetch fault into guest
+Date:   Tue, 18 Sep 2018 19:03:48 -0400
+Message-Id: <1537311828-4547-1-git-send-email-penghao122@sina.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323329-1986204183-1537312607=:1468
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Peng Hao <peng.hao2@zte.com.cn>
 
-On Tue, 18 Sep 2018, Andy Lutomirski wrote:
-> > On Sep 18, 2018, at 3:46 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Tue, 18 Sep 2018, Andy Lutomirski wrote:
-> >> Do we do better if we use signed arithmetic for the whole calculation?
-> >> Then a small backwards movement would result in a small backwards result.
-> >> Or we could offset everything so that we’d have to go back several
-> >> hundred ms before we cross zero.
-> > 
-> > That would be probably the better solution as signed math would be
-> > problematic when the resulting ns value becomes negative. As the delta is
-> > really small, otherwise the TSC sync check would have caught it, the caller
-> > should never be able to observe time going backwards.
-> > 
-> > I'll have a look into that. It needs some thought vs. the fractional part
-> > of the base time, but it should be not rocket science to get that
-> > correct. Famous last words...
-> > 
-> 
-> It’s also fiddly to tune. If you offset it too much, then the fancy
-> divide-by-repeated-subtraction loop will hurt more than the comparison to
-> last.
+When handling ept misconfig exit, it will call emulate instruction
+with insn_len = 0. The decode instruction function may return a fetch
+fault and should propagate to guest.
 
-Not really. It's sufficient to offset it by at max. 1000 cycles or so. That
-won't hurt the magic loop, but it will definitely cover that slight offset
-case.
+The problem will result to emulation fail.
+KVM internal error. Suberror: 1
+emulation failure
+EAX=f81a0024 EBX=f6a07000 ECX=f6a0737c EDX=f8be0118
+ESI=f6a0737c EDI=00000021 EBP=f6929f98 ESP=f6929f98
+EIP=f8bdd141 EFL=00010086 [--S--P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00c09b00 DPL=0 CS32 [-RA]
+SS =0068 00000000 ffffffff 00c09300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
+FS =00d8 2c044000 ffffffff 00809300 DPL=0 DS16 [-WA]
+GS =0033 081a44c8 01000fff 00d0f300 DPL=3 DS   [-WA]
+LDT=0000 00000000 ffffffff 00000000
+TR =0080 f6ea0c80 0000206b 00008b00 DPL=0 TSS32-busy
+GDT=     f6e99000 000000ff
+IDT=     fffbb000 000007ff
+CR0=80050033 CR2=b757d000 CR3=35d31000 CR4=001406d0
 
-Thanks,
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ arch/x86/kvm/emulate.c | 5 ++++-
+ arch/x86/kvm/x86.c     | 4 +++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-	tglx
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index 106482d..aecf9a72 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5105,8 +5105,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
+ 		memcpy(ctxt->fetch.data, insn, insn_len);
+ 	else {
+ 		rc = __do_insn_fetch_bytes(ctxt, 1);
+-		if (rc != X86EMUL_CONTINUE)
++		if (rc != X86EMUL_CONTINUE) {
++			if (rc == X86EMUL_PROPAGATE_FAULT)
++				ctxt->have_exception = true;
+ 			return rc;
++		}
+ 	}
+ 
+ 	switch (mode) {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 542f631..27072e1 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6188,8 +6188,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+ 			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
+ 						emulation_type))
+ 				return EMULATE_DONE;
+-			if (ctxt->have_exception && inject_emulated_exception(vcpu))
++			if (ctxt->have_exception) {
++				inject_emulated_exception(vcpu);
+ 				return EMULATE_DONE;
++			}
+ 			if (emulation_type & EMULTYPE_SKIP)
+ 				return EMULATE_FAIL;
+ 			return handle_emulation_failure(vcpu, emulation_type);
+-- 
+1.8.3.1
 
 
---8323329-1986204183-1537312607=:1468--
