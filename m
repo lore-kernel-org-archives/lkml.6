@@ -2,168 +2,118 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BB5ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A552ECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4712821471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:52:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=as-electronics.de header.i=@as-electronics.de header.b="s1coq/ib"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4712821471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=exceet.de
+	by mail.kernel.org (Postfix) with ESMTP id 3E56420C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 10:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E56420C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbeIRQYS (ORCPT
+        id S1729110AbeIRQ1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 12:24:18 -0400
-Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.132]:27847 "EHLO
-        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbeIRQYS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 12:24:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1537267933;
-        s=strato-dkim-0002; d=as-electronics.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Xb7BJAVJCVyD+9ZBtAdAYXSfZem1NOoivnl0dp5tOxs=;
-        b=s1coq/ib+yh41mXRzQeDXcdzlXvSJiW+9efY5STcLMO3bWD+dDW4dD2KIKT7aMdzjs
-        AOxit4XhWDcy/KWzJwOu6lXJ4m7SfdYYzoyCSUyhHcQ/ohq7mxSQfGETZ5sZvYXyCUFx
-        7NS5JJZgOZKceaEW49AuDuVV+8LjhGpCiCVkgdkhCSCyzMOVIswdWzkZv0NpkynFjQvj
-        FoefAxahwXoBxh95+xZKHBmghhNLN3sVeSwC3L4vokWlPb3zy4R7hRfmAXhlt/qU35bD
-        qgxpPW0SaYGaW5SYQ//XJMlZ5EJWhAMgAhGFOuZnYqzpDUIBeaFSSk3KZCT4jpsP5Dup
-        xCbw==
-X-RZG-AUTH: ":LX8JdEmkW/4tAFwMkcNJIloh1hrA5u3owhPk7bdT5Fx2zAOrX/r2ZbrrxoyMly7vtKoBCSu4zR9/f0shzjGSYbJY5KbsbrlTGd0CtJA="
-X-RZG-CLASS-ID: mo05
-Received: from [IPv6:2003:a:e7a:6200:246c:2a8b:f45a:a33d]
-        by smtp.strato.de (RZmta 44.1 AUTH)
-        with ESMTPSA id C0b243u8IAppEeT
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 18 Sep 2018 12:51:51 +0200 (CEST)
-Subject: Re: [PATCH] mtd: spi-nor: Support controllers with limited TX FIFO
- size
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>, marek.vasut@gmail.com
-Cc:     linux-mtd@lists.infradead.org, computersforpeace@gmail.com,
-        david.wolfe@nxp.com, han.xu@nxp.com, festevam@gmail.com,
-        prabhakar.kushwaha@nxp.com, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
-References: <1528870092-14526-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <20180709233427.1a714de7@bbrezillon>
-From:   Frieder Schrempf <frieder.schrempf@exceet.de>
-Message-ID: <81e0653f-1e07-6ec9-f12a-d448e269c87a@exceet.de>
-Date:   Tue, 18 Sep 2018 12:51:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 12:27:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53920 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726786AbeIRQ1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 12:27:38 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9F2D308AA15;
+        Tue, 18 Sep 2018 10:55:35 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B197F86BBA;
+        Tue, 18 Sep 2018 10:55:35 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w8IAtZKb030098;
+        Tue, 18 Sep 2018 06:55:35 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w8IAtYpW030094;
+        Tue, 18 Sep 2018 06:55:34 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Tue, 18 Sep 2018 06:55:34 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Sasha Levin <Alexander.Levin@microsoft.com>
+cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH AUTOSEL 4.18 032/136] arm64: fix infinite stacktrace
+In-Reply-To: <20180917030006.245495-32-alexander.levin@microsoft.com>
+Message-ID: <alpine.LRH.2.02.1809180654220.17180@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180917030006.245495-1-alexander.levin@microsoft.com> <20180917030006.245495-32-alexander.levin@microsoft.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180709233427.1a714de7@bbrezillon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 18 Sep 2018 10:55:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek, hi Boris,
+This patch is not correct, because the stacktrace is supposed to work 
+around discontiguous interrupt stacks.
 
-On 09.07.2018 23:34, Boris Brezillon wrote:
-> +Fabio
-> 
-> Hi Yogesh,
-> 
-> On Wed, 13 Jun 2018 11:38:12 +0530
-> Yogesh Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> 
->> Some SPI controllers can't write nor->page_size bytes in a single
->> step because their TX FIFO is too small.
->>
->> Allow nor->write() to return a size that is smaller than the requested
->> write size to gracefully handle this case.
-> 
-> There's been a discussion between Marek and I regarding this patch and
-> patch "mtd: devices: m25p80: Make sure WRITE_EN is issued before each
-> write". Marek would like to avoid letting drivers do non-aligned page
-> writes when the MTD user requested full page writes.
-> 
-> So, the question is, is the FSL QSPI engine capable of handling that
-> when the NOR page is being than the TX FIFO? According to the current
-> implementation it's not [1], but it looks like we have a way to
-> know when the TX FIFO is not full so we could potentially refill the
-> FIFO either from the CPU or using DMA if that's possible (not sure the
-> eDMA engine can fill the QSPI TX FIFO directly).
-> 
-> What I find worrisome with this solution is this particular statement
-> in the datasheet:
-> 
-> "
-> When the QuadSPI module tries to pull data out of an empty TX Buffer
-> the TX Buffer underrun is signaled by the QSPI_FR[TBUF] flag. The
-> current IP Command leading to the underrun condition is continued until
-> the specified number of bytes has been sent to the serial flash device,
-> in the underrun condition when QuadSPI module tries to pull out data of
-> empty TX buffer, the data transferred is undefined i.e. once the
-> underrun flag is set, it will return the garbage value until the
-> required number of bytes are not sent.
-> "
-> 
-> If we fail to fill the TX FIFO fast enough for any reasons (contention
-> on the APB/AHB/AXI bus in case of DMA, task being scheduled out in
-> case of PIO access), that means we transfer garbage to the NOR...
-> Clearly something we should avoid at any cost.
-> 
-> Yogesh, Fabio, Han, any comment on this?
+You should replace 'frame->fp <= fp' with 'frame->fp == fp'.
 
-I want to revive the discussion about this patch. Meanwhile we have 
-received confirmation from NXP, that the hardware can't handle writing 
-data chunks bigger than the TX buffer size, even when we use DMA to 
-refill the buffer [1].
+Mikulas
 
-This means, that this patch is required to get the FSL QSPI driver 
-working with the SPI mem framework.
 
-Could you please reconsider this patch?
 
-Thanks,
-Frieder
+On Mon, 17 Sep 2018, Sasha Levin wrote:
 
-[1] 
-http://lists.infradead.org/pipermail/linux-mtd/2018-September/083799.html
-
+> From: Mikulas Patocka <mpatocka@redhat.com>
 > 
-> Thanks,
+> [ Upstream commit 7e7df71fd57ff2894d96abb0080922bf39460a79 ]
 > 
-> Boris
+> I've got this infinite stacktrace when debugging another problem:
+> [  908.795225] INFO: rcu_preempt detected stalls on CPUs/tasks:
+> [  908.796176]  1-...!: (1 GPs behind) idle=952/1/4611686018427387904 softirq=1462/1462 fqs=355
+> [  908.797692]  2-...!: (1 GPs behind) idle=f42/1/4611686018427387904 softirq=1550/1551 fqs=355
+> [  908.799189]  (detected by 0, t=2109 jiffies, g=130, c=129, q=235)
+> [  908.800284] Task dump for CPU 1:
+> [  908.800871] kworker/1:1     R  running task        0    32      2 0x00000022
+> [  908.802127] Workqueue: writecache-writeabck writecache_writeback [dm_writecache]
+> [  908.820285] Call trace:
+> [  908.824785]  __switch_to+0x68/0x90
+> [  908.837661]  0xfffffe00603afd90
+> [  908.844119]  0xfffffe00603afd90
+> [  908.850091]  0xfffffe00603afd90
+> [  908.854285]  0xfffffe00603afd90
+> [  908.863538]  0xfffffe00603afd90
+> [  908.865523]  0xfffffe00603afd90
 > 
-> [1]https://elixir.bootlin.com/linux/v4.18-rc4/source/drivers/mtd/spi-nor/fsl-quadspi.c#L1117
+> The machine just locked up and kept on printing the same line over and
+> over again. This patch fixes it.
 > 
->>
->> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
->> ---
->>   drivers/mtd/spi-nor/spi-nor.c | 7 -------
->>   1 file changed, 7 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
->> index 5bfa36e..3e63543 100644
->> --- a/drivers/mtd/spi-nor/spi-nor.c
->> +++ b/drivers/mtd/spi-nor/spi-nor.c
->> @@ -1431,13 +1431,6 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
->>   			goto write_err;
->>   		*retlen += written;
->>   		i += written;
->> -		if (written != page_remain) {
->> -			dev_err(nor->dev,
->> -				"While writing %zu bytes written %zd bytes\n",
->> -				page_remain, written);
->> -			ret = -EIO;
->> -			goto write_err;
->> -		}
->>   	}
->>   
->>   write_err:
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> ---
+>  arch/arm64/kernel/stacktrace.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/stacktrace.c b/arch/arm64/kernel/stacktrace.c
+> index d5718a060672..e160ca123da3 100644
+> --- a/arch/arm64/kernel/stacktrace.c
+> +++ b/arch/arm64/kernel/stacktrace.c
+> @@ -56,6 +56,9 @@ int notrace unwind_frame(struct task_struct *tsk, struct stackframe *frame)
+>  	frame->fp = READ_ONCE_NOCHECK(*(unsigned long *)(fp));
+>  	frame->pc = READ_ONCE_NOCHECK(*(unsigned long *)(fp + 8));
+>  
+> +	if (frame->fp <= fp)
+> +		return -EINVAL;
+> +
+>  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>  	if (tsk->ret_stack &&
+>  			(frame->pc == (unsigned long)return_to_handler)) {
+> -- 
+> 2.17.1
 > 
