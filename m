@@ -2,115 +2,280 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C3CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F29FECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE562146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D894C2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 22:05:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tsoff5/t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE562146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SrC4yddq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D894C2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeISDjd (ORCPT
+        id S1730582AbeISDjj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:39:33 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38035 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730325AbeISDjd (ORCPT
+        Tue, 18 Sep 2018 23:39:39 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37553 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730325AbeISDji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:39:33 -0400
-Received: by mail-io1-f68.google.com with SMTP id y3-v6so2878411ioc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 15:04:55 -0700 (PDT)
+        Tue, 18 Sep 2018 23:39:38 -0400
+Received: by mail-yw1-f66.google.com with SMTP id x83-v6so1471003ywd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 15:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=oBMGK7wn0pM2rKeXp9igJZu/qcejhBbhBiG7lzy2ZIk=;
-        b=Tsoff5/tcIPDUKF9NwhurYEVAVngBcN/cycMV8tDfjcskJKQ64VntoioCXjywC8Ido
-         PF9ivn11dEpfbCHRkurziyAjAKuJaW1NgxBo2dsdeRvqdLjiB+2OHPmXIRxlMpL6nbzS
-         vsXUjuiFducXh4pak0loGlZIpZ6jeRyyJGJD0=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=onBv8jOsJww8mZri3+GK2RMUTnB79jejjYDs7sycejk=;
+        b=SrC4yddqj+gFUIYXLaZGzi4fSoiSJMk7tlBfBwPd2wdRgo3EC/2E20dnUAVwrHHoXR
+         +G+77Z+SFMsAeBnAJMb7tv2KldF3Xc1oWQWmJsscgM7w6GeYce4n+gZbMZSgi77YSCXs
+         UWeaFn0mqQJOwzyO97pdqh1zIgDTObg3HfwPowDwFngIMUcEYbnEQY79EIGlZibfja/L
+         91jmtgKgqHMCVC9LaDZUWQSiGRGaIkOAcJAp9sjLydn/sr5VS6fTD+sH2CHh5DE3wRum
+         PH37UIIWk/UvPEEpGUKLdX+bsqmLKrePSsSvaHqGxsGclpa/CgC5vy96n9y/zmmtl9Yi
+         KMlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=oBMGK7wn0pM2rKeXp9igJZu/qcejhBbhBiG7lzy2ZIk=;
-        b=JiZQWxTEa9ovDay48SBLs1vCFFZQhyrJKDLJlKQXuWs8jn1Hcyp0HC9KZcANZx5pfE
-         ZeRNdnkSKnMmDFHnIBuBQ7MQxz6bWPL6NBVAfHc0DGbx/C//Deb6Vy1IuqPEskhqwPwv
-         f9b6avdVIF+yK76JGUoB7V3lSClnJEE0P+BtEAYRxQ4YOtywSg9478fBW66kudbgHWid
-         XnVJS2ac2fSaYEsZNrvY0ic6LiCpirXR0e/8fD1qq/RVmMWXt80yzvlZYo6aVPJt/4FB
-         ViMYuX8iXRvId8ATyPIXHCxRs0XCwDmGibJ+4AJUghpC/gltWC1qVfexgjhY/L9uCq6x
-         z+EA==
-X-Gm-Message-State: APzg51A92JuuPWfFipySTdsiGg1Hc7W7zDh8hXO5hW1Fsgk1wXCEr+kU
-        PsyjPYwm/y7bge4IBqEAmUaxhqIVgEelx2jklQc1GwISquU=
-X-Google-Smtp-Source: ANB0Vda5XFkPfTQo527B1b1saDcMf5pjCfVlEnt6QHMto/5w0+5uEGhQvoWRunZZo6DJPL8pNl7d5dPKbiDOwvfzniw=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr26526934iof.173.1537308295452;
- Tue, 18 Sep 2018 15:04:55 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=onBv8jOsJww8mZri3+GK2RMUTnB79jejjYDs7sycejk=;
+        b=Aq3edhEoQc9hphk7LiJiaJXcBRNSSc6HQcafx0hOEeSprfjl5uBDDDxmcVNyBREX6m
+         Rh1x/OwzGG7Xk66RWyoc4sOtRjSZLCCPaA8zWhhyLsmRnLU/119AqOHTlU/VZhoj0gbu
+         waOYMbSGaW5MVHkN5CS5p94wV9eyLxyXnSR85tuAbQr+Z7NqPQvOOYw0i7cwVLXyxs53
+         5hrxC7sRsYLRA+/Au+JPFX498rdSzMvT3o8IOdgBobnX7qR2gq46/00ubZimcxLlNgdg
+         WDQU7TCiJRJa4Y10ZKmwYksqUYhLyD97k0frp0iG7IdJPgid66Wxqvu9r2vc/V6qiBLt
+         A25w==
+X-Gm-Message-State: APzg51AQkXHG/U+d1wP/s+TIppN6aFJMJlS8doK2OhQV3sYBscswsZ6a
+        abRBguNGly3+ZqxwH4Qd5xUicsru5f7Hb743lum6yg==
+X-Google-Smtp-Source: ANB0Vda81FVhNvRi/QOQXccvZsAhPtdeb43HgVXWzcu6aeJ86fxEAy8uzWuS3HtmA6zYP5JP9Z+0hu+mKkRKLurW6p0=
+X-Received: by 2002:a81:78d5:: with SMTP id t204-v6mr13882240ywc.340.1537308299665;
+ Tue, 18 Sep 2018 15:04:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 15:04:54
- -0700 (PDT)
-In-Reply-To: <20180916152246.GG4765@decadent.org.uk>
-References: <20180916152246.GG4765@decadent.org.uk>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 18 Sep 2018 15:04:54 -0700
-Message-ID: <CAKv+Gu8-u+Nfw0hx_iyMFFhG=-T0M_OuKfg34m1U3RgC13dUqA@mail.gmail.com>
-Subject: Re: [PATCH] x86: boot: Fix EFI stub alignment
-To:     Ben Hutchings <ben@decadent.org.uk>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>
+References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+In-Reply-To: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Tue, 18 Sep 2018 15:04:23 -0700
+Message-ID: <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
+ operations as well
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        casey.g.bowman@intel.com,
+        "Atwood, Matthew S" <matthew.s.atwood@intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 September 2018 at 08:22, Ben Hutchings <ben@decadent.org.uk> wrote:
-> We currently align the end of the compressed image to a multiple of
-> 16.  However the PE-COFF header included in the EFI stub says that the
-> file alignment is 32 bytes, and when adding an EFI signature to the
-> file it must first be padded to this alignment.
+On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> sbsigntool commands warn about this:
+> For some reason I thought GPIOLIB handles translation from GPIO ranges
+> to pinctrl pins but it turns out not to be the case. This means that
+> when GPIOs operations are performed for a pin controller having a custom
+> GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
+> used internally.
 >
->     warning: file-aligned section .text extends beyond end of file
->     warning: checksum areas are greater than image size. Invalid section =
-table?
+> Fix this in the same way we did for lock/unlock IRQ operations and
+> translate the GPIO number to pin before using it.
 >
-> Worse, pesign-at least when creating a detached signature=E2=80=94uses th=
-e
-> hash of the unpadded file, resulting in an invalid signature if
-> padding is required.
+> Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+> Reported-by: Rajat Jain <rajatja@google.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Tested-by: Rajat Jain <rajatja@google.com>
+
+This has fixed the issue for me.
+
+One question, may not be related: I see this line in my logs everytime
+I export a pin (GPIO40 = pin 16 in this case). Is that an indication
+of a problem?
+
+"gpio gpiochip0: Persistence not supported for GPIO 40"
+
+Thanks,
+
+Rajat
+
+On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> Avoid both these problems by increasing alignment to 32 bytes when
-> CONFIG_EFI_STUB is enabled.
+> For some reason I thought GPIOLIB handles translation from GPIO ranges
+> to pinctrl pins but it turns out not to be the case. This means that
+> when GPIOs operations are performed for a pin controller having a custom
+> GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
+> used internally.
 >
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> Fix this in the same way we did for lock/unlock IRQ operations and
+> translate the GPIO number to pin before using it.
+>
+> Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
+> Reported-by: Rajat Jain <rajatja@google.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > ---
-
-Thanks, queued in efi/next.
-
-
-> --- a/arch/x86/boot/tools/build.c
-> +++ b/arch/x86/boot/tools/build.c
-> @@ -391,6 +391,13 @@ int main(int argc, char ** argv)
->                 die("Unable to mmap '%s': %m", argv[2]);
->         /* Number of 16-byte paragraphs, including space for a 4-byte CRC=
- */
->         sys_size =3D (sz + 15 + 4) / 16;
-> +#ifdef CONFIG_EFI_STUB
-> +       /*
-> +        * COFF requires minimum 32-byte alignment of sections, and
-> +        * adding a signature is problematic without that alignment.
-> +        */
-> +       sys_size =3D (sys_size + 1) & ~1;
-> +#endif
+>  drivers/pinctrl/intel/pinctrl-intel.c | 111 +++++++++++++++-----------
+>  1 file changed, 63 insertions(+), 48 deletions(-)
 >
->         /* Patch the setup code with the appropriate size parameters */
->         buf[0x1f1] =3D setup_sectors-1;
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index 62b009b27eda..ec8dafc94694 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -747,13 +747,63 @@ static const struct pinctrl_desc intel_pinctrl_desc = {
+>         .owner = THIS_MODULE,
+>  };
+>
+> +/**
+> + * intel_gpio_to_pin() - Translate from GPIO offset to pin number
+> + * @pctrl: Pinctrl structure
+> + * @offset: GPIO offset from gpiolib
+> + * @commmunity: Community is filled here if not %NULL
+> + * @padgrp: Pad group is filled here if not %NULL
+> + *
+> + * When coming through gpiolib irqchip, the GPIO offset is not
+> + * automatically translated to pinctrl pin number. This function can be
+> + * used to find out the corresponding pinctrl pin.
+> + */
+> +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
+> +                            const struct intel_community **community,
+> +                            const struct intel_padgroup **padgrp)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < pctrl->ncommunities; i++) {
+> +               const struct intel_community *comm = &pctrl->communities[i];
+> +               int j;
+> +
+> +               for (j = 0; j < comm->ngpps; j++) {
+> +                       const struct intel_padgroup *pgrp = &comm->gpps[j];
+> +
+> +                       if (pgrp->gpio_base < 0)
+> +                               continue;
+> +
+> +                       if (offset >= pgrp->gpio_base &&
+> +                           offset < pgrp->gpio_base + pgrp->size) {
+> +                               int pin;
+> +
+> +                               pin = pgrp->base + offset - pgrp->gpio_base;
+> +                               if (community)
+> +                                       *community = comm;
+> +                               if (padgrp)
+> +                                       *padgrp = pgrp;
+> +
+> +                               return pin;
+> +                       }
+> +               }
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +
+>  static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  {
+>         struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+>         void __iomem *reg;
+>         u32 padcfg0;
+> +       int pin;
+> +
+> +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+> +       if (pin < 0)
+> +               return -EINVAL;
+>
+> -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
+> +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+>         if (!reg)
+>                 return -EINVAL;
+>
+> @@ -770,8 +820,13 @@ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>         unsigned long flags;
+>         void __iomem *reg;
+>         u32 padcfg0;
+> +       int pin;
+> +
+> +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+> +       if (pin < 0)
+> +               return;
+>
+> -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
+> +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+>         if (!reg)
+>                 return;
+>
+> @@ -790,8 +845,13 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+>         struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+>         void __iomem *reg;
+>         u32 padcfg0;
+> +       int pin;
+>
+> -       reg = intel_get_padcfg(pctrl, offset, PADCFG0);
+> +       pin = intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+> +       if (pin < 0)
+> +               return -EINVAL;
+> +
+> +       reg = intel_get_padcfg(pctrl, pin, PADCFG0);
+>         if (!reg)
+>                 return -EINVAL;
+>
+> @@ -827,51 +887,6 @@ static const struct gpio_chip intel_gpio_chip = {
+>         .set_config = gpiochip_generic_config,
+>  };
+>
+> -/**
+> - * intel_gpio_to_pin() - Translate from GPIO offset to pin number
+> - * @pctrl: Pinctrl structure
+> - * @offset: GPIO offset from gpiolib
+> - * @commmunity: Community is filled here if not %NULL
+> - * @padgrp: Pad group is filled here if not %NULL
+> - *
+> - * When coming through gpiolib irqchip, the GPIO offset is not
+> - * automatically translated to pinctrl pin number. This function can be
+> - * used to find out the corresponding pinctrl pin.
+> - */
+> -static int intel_gpio_to_pin(struct intel_pinctrl *pctrl, unsigned offset,
+> -                            const struct intel_community **community,
+> -                            const struct intel_padgroup **padgrp)
+> -{
+> -       int i;
+> -
+> -       for (i = 0; i < pctrl->ncommunities; i++) {
+> -               const struct intel_community *comm = &pctrl->communities[i];
+> -               int j;
+> -
+> -               for (j = 0; j < comm->ngpps; j++) {
+> -                       const struct intel_padgroup *pgrp = &comm->gpps[j];
+> -
+> -                       if (pgrp->gpio_base < 0)
+> -                               continue;
+> -
+> -                       if (offset >= pgrp->gpio_base &&
+> -                           offset < pgrp->gpio_base + pgrp->size) {
+> -                               int pin;
+> -
+> -                               pin = pgrp->base + offset - pgrp->gpio_base;
+> -                               if (community)
+> -                                       *community = comm;
+> -                               if (padgrp)
+> -                                       *padgrp = pgrp;
+> -
+> -                               return pin;
+> -                       }
+> -               }
+> -       }
+> -
+> -       return -EINVAL;
+> -}
+> -
+>  static int intel_gpio_irq_reqres(struct irq_data *d)
+>  {
+>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> --
+> 2.18.0
+>
