@@ -2,158 +2,159 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC23C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016DFECE560
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9429F214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:15:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNcAFNVo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9429F214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AB7C721471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7C721471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbeIRRrx (ORCPT
+        id S1729626AbeIRRtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:47:53 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:34625 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728681AbeIRRrw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:47:52 -0400
-Received: by mail-yw1-f67.google.com with SMTP id y134-v6so671506ywg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 05:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oojYhBLBUuSv9+HnDBLox3Yi8H1bXUnifpxXZNqN/9c=;
-        b=cNcAFNVoq/SNbhlWMk4grfPasBGRXROV30aEBpIiaZ7kM789uJQT+WqLgMZONhbOT0
-         EvXWV4WaNhecwDZhwWgweUoFFThzGIKpN+CjCGAQGXSHP3Rx8QHliBuoDX3eI+iGO7P0
-         IbF4aFEzpHvs+92xxDwXmiZzuPW8W2oUvI/BI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oojYhBLBUuSv9+HnDBLox3Yi8H1bXUnifpxXZNqN/9c=;
-        b=coUa9Rqyx9rDfHo+ZJiCMLLrroNY7UBNm6X1UDjXpwQ6MQsx0nIEfXaOZK913UVLEE
-         nxZN6pMCXO2xFFjKrnIdbIM/c77/uM9houQzJyN1PbFrgMQtBQl3CB6HmaAJin4AIfkl
-         I0hD+cfIz9iWhjLdNVdOGNrafD6A2BhxlMEKiSq49CiOpDpSkcmKbf8+ZpS2VRgo9aZA
-         nQ8NjtRHBXWtjhRID7PV+sWP6+Rci7HadxQdUqHWp4r0Z2Qvr892AeJynoewqqjcObST
-         n6QXLsoTc1zHybitKxFhrasIr9nJbdPwZ38dUJ7spwNiWCL9zXYHyNFDdRywbo7S/JQL
-         c2jw==
-X-Gm-Message-State: APzg51Dsqf5Gv5oQVK89Ddt30Cgj0ClY8GXcgU0qLuBXMPLTcfXQffqb
-        52AtlZ/DJ2nYlRzXzKnc03m+HLuC7LG/4ZZh+r66xA==
-X-Google-Smtp-Source: ANB0VdaprcCtLp03D+Rw3uqqIkuKsky0ZG1jcSLhToFxjsegWn3Rz8cetVwS32aKIChrmuQ3YCbPP0mwVGZCf/eNd+M=
-X-Received: by 2002:a81:1b82:: with SMTP id b124-v6mr12486389ywb.381.1537272932724;
- Tue, 18 Sep 2018 05:15:32 -0700 (PDT)
+        Tue, 18 Sep 2018 13:49:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44030 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727229AbeIRRtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 13:49:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 370DAED1;
+        Tue, 18 Sep 2018 05:16:43 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25AA23F557;
+        Tue, 18 Sep 2018 05:16:37 -0700 (PDT)
+Subject: Re: [PATCH v2 3/4] perf: add arm64 smmuv3 pmu driver
+To:     Will Deacon <will.deacon@arm.com>,
+        John Garry <john.garry@huawei.com>
+Cc:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
+        guohanjun@huawei.com, pabba@codeaurora.org, vkilari@codeaurora.org,
+        rruigrok@codeaurora.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com, neil.m.leeder@gmail.com
+References: <20180724114515.21764-1-shameerali.kolothum.thodi@huawei.com>
+ <20180724114515.21764-4-shameerali.kolothum.thodi@huawei.com>
+ <935f7572-38d7-070a-dba6-3f18189de4d3@arm.com>
+ <a7481657-1551-8f3e-e679-8bfbee8f1ab4@huawei.com>
+ <20180918114718.GD16498@arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <527f47d7-20a2-d74a-1b0a-9901b8981f91@arm.com>
+Date:   Tue, 18 Sep 2018 13:16:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 05:15:32
- -0700 (PDT)
-In-Reply-To: <CAK8P3a1PCnHy1JX4T21LjOr3ZGAVLdqxQaPYfLHAgM-9Y5yxVg@mail.gmail.com>
-References: <1536913980-4811-1-git-send-email-firoz.khan@linaro.org>
- <1536913980-4811-3-git-send-email-firoz.khan@linaro.org> <CAK8P3a1PCnHy1JX4T21LjOr3ZGAVLdqxQaPYfLHAgM-9Y5yxVg@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 18 Sep 2018 17:45:32 +0530
-Message-ID: <CALxhOngVYQRwbcUg6c_3LcKAEoBwyN1B478LqRGmWEGL004--w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] powerpc: Add system call table generation support
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180918114718.GD16498@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 September 2018 at 15:31, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Sep 14, 2018 at 10:33 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->
->> ---
->>  arch/powerpc/kernel/syscalls/Makefile       |  51 ++++
->>  arch/powerpc/kernel/syscalls/syscall_32.tbl | 378 ++++++++++++++++++++++++++++
->>  arch/powerpc/kernel/syscalls/syscall_64.tbl | 372 +++++++++++++++++++++++++++
->>  arch/powerpc/kernel/syscalls/syscallhdr.sh  |  37 +++
->>  arch/powerpc/kernel/syscalls/syscalltbl.sh  |  38 +++
->
-> I think you should only need a single .tbl  input file here.
+On 18/09/18 12:47, Will Deacon wrote:
+> On Mon, Sep 17, 2018 at 06:10:05PM +0100, John Garry wrote:
+>>
+>>>> +
+>>>> +#define SMMU_EVENT_ATTR(_name, _id)                      \
+>>>> +    (&((struct perf_pmu_events_attr[]) {                  \
+>>>> +        { .attr = __ATTR(_name, 0444, smmu_pmu_event_show, NULL), \
+>>>> +          .id = _id, }                          \
+>>>> +    })[0].attr.attr)
+>>>> +
+>>>> +static struct attribute *smmu_pmu_events[] = {
+>>>> +    SMMU_EVENT_ATTR(cycles, SMMU_PMU_CYCLES),
+>>>> +    SMMU_EVENT_ATTR(transaction, SMMU_PMU_TRANSACTION),
+>>>> +    SMMU_EVENT_ATTR(tlb_miss, SMMU_PMU_TLB_MISS),
+>>>> +    SMMU_EVENT_ATTR(config_cache_miss, SMMU_PMU_CONFIG_CACHE_MISS),
+>>>> +    SMMU_EVENT_ATTR(trans_table_walk, SMMU_PMU_TRANS_TABLE_WALK),
+>>>> +    SMMU_EVENT_ATTR(config_struct_access,
+>>>> SMMU_PMU_CONFIG_STRUCT_ACCESS),
+>>>> +    SMMU_EVENT_ATTR(pcie_ats_trans_rq, SMMU_PMU_PCIE_ATS_TRANS_RQ),
+>>>> +    SMMU_EVENT_ATTR(pcie_ats_trans_passed,
+>>>> SMMU_PMU_PCIE_ATS_TRANS_PASSED),
+>>>> +    NULL
+>>>> +};
+>>>> +
+>>>> +static umode_t smmu_pmu_event_is_visible(struct kobject *kobj,
+>>>> +                     struct attribute *attr, int unused)
+>>>> +{
+>>>> +    struct device *dev = kobj_to_dev(kobj);
+>>>> +    struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
+>>>> +    struct perf_pmu_events_attr *pmu_attr;
+>>>> +
+>>>> +    pmu_attr = container_of(attr, struct perf_pmu_events_attr,
+>>>> attr.attr);
+>>>> +
+>>>> +    if (test_bit(pmu_attr->id, smmu_pmu->supported_events))
+>>>> +        return attr->mode;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +static struct attribute_group smmu_pmu_events_group = {
+>>>> +    .name = "events",
+>>>> +    .attrs = smmu_pmu_events,
+>>>> +    .is_visible = smmu_pmu_event_is_visible,
+>>>> +};
+>>>> +
+>>>> +/* Formats */
+>>>> +PMU_FORMAT_ATTR(event,           "config:0-15");
+>>>> +PMU_FORMAT_ATTR(filter_stream_id,  "config1:0-31");
+>>>> +PMU_FORMAT_ATTR(filter_span,       "config1:32");
+>>>> +PMU_FORMAT_ATTR(filter_enable,       "config1:33");
+>>>> +
+>>>> +static struct attribute *smmu_pmu_formats[] = {
+>>>> +    &format_attr_event.attr,
+>>>> +    &format_attr_filter_stream_id.attr,
+>>>> +    &format_attr_filter_span.attr,
+>>>> +    &format_attr_filter_enable.attr,
+>>>> +    NULL
+>>>> +};
+>>>> +
+>>>> +static struct attribute_group smmu_pmu_format_group = {
+>>>> +    .name = "format",
+>>>> +    .attrs = smmu_pmu_formats,
+>>>> +};
+>>>> +
+>>>> +static const struct attribute_group *smmu_pmu_attr_grps[] = {
+>>>> +    &smmu_pmu_cpumask_group,
+>>>> +    &smmu_pmu_events_group,
+>>>> +    &smmu_pmu_format_group,
+>>>> +    NULL,
+>>>> +};
+>>>> +
+>>
+>>
+>> Question: If we wanted to add proper named event support for the
+>> IMPLEMENTATION DEFINED events, how to add (if at all)?
+>>
+>> So currently the driver only supports the Architected events, which is fine.
+>> And we support raw events for the IMPLEMENTATION DEFINED events
+>> (0x80-0xFFFF).
+>>
+>> But to add named event support for the IMP DEF events, I assume we would
+>> want to do something similar to arm64 CPU PMU events - that is, common
+>> architected events in kernel pmu driver, and implementation defined events
+>> defined in perf tool. However I don't know if it's even feasible considering
+>> there does not seem to be a mandatory/standard PMCG ID register to detect
+>> the implementation.
+> 
+> I guess we'd need something from firmware to identify the SMMU/PMU
+> implementation, so that we could probe the driver correctly. Once we have
+> that, it seems like it's just a matter of exposing a different name to
+> userspace, like we do for the CPU PMU.
 
-Yes, we can do that way also.As I mentioned, it will add
-more complexity in the script.
+Indeed - in fact a while ago I raised it with the architects that PMCGs 
+don't have an equivalent to IIDR, so you can't interpret the imp-def 
+PMCG_ID_REGS without already knowing what the thing is some other way. 
+For IORT it should already be somewhat feasible to figure out the 
+implementation by way of chasing the node reference to figure out what 
+device the the PMCG is part of, however that might require some sort of 
+API between the PMCG driver and SMMUv3 (and other component) driver(s) 
+to communicate runtime-probed stuff.
 
- The script has to be smart enough to parse the
-.tbl if we add more thing in the .tble file. It need more
-logic in the scripts. This is not common. So if you keep
-separate .tbl we can avoid this.
-
-ABI flag is serving *nothing* in all other architecture including
-SPARC.
-
-But as I told in the cover letter, I followed x86/arm/
-s390 architecture's system table generation implementation.
-They are keeping ABI flag. In our case we can delete this
-flag completely from all architectures.
-
-Most of the architecture these 32/64 similarity is absent.
-So it would be better keep separate files to maintain a
-generic script across all architecture.
-
->
->
->> +
->> +systbl_abi_syscall_table_32 := 32
->> +$(out)/syscall_table_32.h: $(syscall32) $(systbl)
->> +       $(call if_changed,systbl)
->> +
->> +systbl_abi_syscall_table_64 := 64
->> +$(out)/syscall_table_64.h: $(syscall64) $(systbl)
->> +       $(call if_changed,systbl)
->> +
->> +systbl_abi_syscall_table_c32 := c32
->> +$(out)/syscall_table_c32.h: $(syscall32) $(systbl)
->> +       $(call if_changed,systbl)
->
-> And here you need a fourth output file for the SPU table on ppc64.
-
-Hmm. Let me have a look where things went wrong.
-
->
->> +383     common  statx                           sys_statx
->> +384     common  pkey_alloc                      sys_pkey_alloc
->> +385     common  pkey_free                       sys_pkey_free
->> +386     common  pkey_mprotect                   sys_pkey_mprotect
->
-> This also misses rseq and io_pgetevents.
-
-As I mentioned in the cover letter:
-"I started working system call table generation on 4.17-rc1. I used
-marcin's script - https://github.com/hrw/syscalls-table to generate
-the syscall.tbl file. And this will be the input to the system call
-table generation script. But there are couple system call got add
-in the latest rc release. If run Marcin's script on latest release,
-It will generate a new syscall.tbl. But I still use the old file -
-syscall.tbl and once all review got over I'll update syscall.tbl
-alone w.r.to the tip of the kernel. The impact of this thing, few
-of the system call won't work."
-
-Hopefully, the next version does have this change. Thanks!
-
-- Firoz
+Robin.
