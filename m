@@ -2,103 +2,142 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DATE_IN_PAST_06_12,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A11C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C90BC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6115F20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE13720833
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:21:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="aoqvieQk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6115F20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfPvrvSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE13720833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729975AbeIRUx2 (ORCPT
+        id S1730007AbeIRUy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 16:53:28 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40200 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbeIRUx2 (ORCPT
+        Tue, 18 Sep 2018 16:54:29 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36694 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeIRUy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 16:53:28 -0400
-Received: by mail-io1-f68.google.com with SMTP id l14-v6so1864380iob.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 08:20:25 -0700 (PDT)
+        Tue, 18 Sep 2018 16:54:28 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r69-v6so2144918oie.3;
+        Tue, 18 Sep 2018 08:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ryAEL7a48nNcYMS3LWfkHKzI6ZASI9BfB7LspkPM5Eo=;
-        b=aoqvieQkVCQavRzd/oDa4/DQymw2EXsfmyZEDijx23gmsM98yAx8la0CYVfxgwmEGi
-         /veVA0ihk/W3BhcJ9FzJ+oXAuzYkM/Glr9pDGuqdRFFli3XjTmDs6zulx5GWd5lcgrHf
-         gMy08FX6YnyxynOdNsnKN7C6x60be3MxxYC9E=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=keRDOha3jfZc+smDOIg0A4FTSQus8ljZUcNPpsqvxuw=;
+        b=DfPvrvSDNsam0uaJ2bGjiHLC7tn+XMWxFN+eT7H1ECKKDFkvQoQSG5E0obaz/7QJ4f
+         YYL77AxtJptdpsuuoP4DPsa2R1MXH5AEOZ6S7l9Ga6oRlw1RAeCFcR7+ycjHMviQDAJl
+         gmGSzsfXe8JVlww8y8j/RYQbw6R+HYMcgrLc6kquaaj2e0eScAmSyvytwicixTebKEYL
+         fthQC1lGKwDp+oJSG4KhEXqKIjzTIs96voSNG9fmYaiQ9xAe6T+UcI+7ItWsHrWDvBWp
+         qDT+YQJ7WWdd6p5b7py6UARu18VNF164FKN/ukoYtQlxwm/UrgkWSdJ3oXaUhKOFkhIS
+         QSeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ryAEL7a48nNcYMS3LWfkHKzI6ZASI9BfB7LspkPM5Eo=;
-        b=XyE9AuKJ61fia+8UmMp1JDshtb6yCtVHPaajMIA9maMjVYXhoICIuN6vuShVLd29sO
-         Hi2EoYlNIzeNohs3/XoExVt6gzbT5s9eeS6fJjAIFbR6csyz0YSy+3f6tbPP8XK5TxPr
-         yLrTMe1cHpZm8jOSk/rM5fRjhteSEeS6frdy6rDxnEROcTY9Yx2GjIKs5/TxtLg84l9k
-         m2ttgM1pqNFb7ZegFuX6p8B/7MWsk24b4mnlzQfr6y2ElOTeh8Ei8zXZb1mq6QvR6PrK
-         9upXiWLNrakeonErrEWh0pZ2chN8x3hBpZz2CZoM9TBjhUH3ZHDHptzHnUq2KTQ74n2N
-         kCAA==
-X-Gm-Message-State: ABuFfogHXteKQNwkq5niUa0Tgp8nBC/ggXP/h6fvv/oeDo8jVaWFL5R/
-        6j10D7f5DunaITfBst1oPFksG9vUehZ7KJky/ckzQg==
-X-Google-Smtp-Source: ACcGV60fQ6qLESJ5Y63LfuVdOSreFkunGhK9KLpDnPmSRknIx/5Hj/AFoWBwsrCJgkhBlwEJHF8PRG89CM+i6hkfHtM=
-X-Received: by 2002:a5e:d50d:: with SMTP id e13-v6mr1337951iom.291.1537284025137;
- Tue, 18 Sep 2018 08:20:25 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=keRDOha3jfZc+smDOIg0A4FTSQus8ljZUcNPpsqvxuw=;
+        b=kovrqkknptLi2ZsK0f4gbUIXT7/Cyv55zaY63SmRrSykYykixbQc6xRTHFX3r/n1He
+         G5K7GNdmcd/wVbj91jeKHDpjmM+ew+6LAkV9u1hMZSghDAJOeCwua2uXNq8PIcjyV17x
+         mKaoqqzKnPALQR35wyGZq4BSf0vXkM3F8vZv3pbxrfPDUtdwJHVTJ71zglw2cAC/UEti
+         JaXCBtsV4IncZLckYLfu7l91fI25HwjIxYTXBeP7K3NRybr90JiSRyDKeLsPue9V4T7s
+         OUvhDvKNDGi+VyytEsJa/Teo2a0dyp6UTLltH0fftg08/evvcC5pc2rlcRboSbCwTY73
+         tBQQ==
+X-Gm-Message-State: APzg51DfzPQhK480ZRxumerd4VRqCgBoqFlA9dMC5u1S8u5q6WJzdKRj
+        BHMuMHiGgapbUXMy8rYo3IJT6ra8
+X-Google-Smtp-Source: ANB0VdbC6EzvT+hcX/TjM76EMzcLNcaz8qLN1kTRCWMyQSUwbCIkXwlC+4JRkwZBxu41f5UrbyP53g==
+X-Received: by 2002:aca:4914:: with SMTP id w20-v6mr1719309oia.5.1537284084862;
+        Tue, 18 Sep 2018 08:21:24 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id d5-v6sm6188445oia.57.2018.09.18.08.21.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Sep 2018 08:21:24 -0700 (PDT)
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+To:     David Woodhouse <dwmw2@infradead.org>,
+        David Howells <dhowells@redhat.com>, jmorris@namei.org
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+ <1537253993.20009.62.camel@infradead.org>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+Date:   Mon, 17 Sep 2018 23:34:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Received: by 2002:a4f:6cc5:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 08:20:24
- -0700 (PDT)
-X-Originating-IP: [2a02:168:569e:0:3106:d637:d723:e855]
-In-Reply-To: <20180918150244.GA21766@kroah.com>
-References: <1534472646-10368-1-git-send-email-zhongjiang@huawei.com>
- <5BA112BC.8080108@huawei.com> <20180918150244.GA21766@kroah.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 18 Sep 2018 17:20:24 +0200
-X-Google-Sender-Auth: licR9BPTNy9sbLfU1NGIRj1m4o0
-Message-ID: <CAKMK7uGCKEy_4WtroMfk91A=j7yOo3_kgXVjNq120JNgivFVYA@mail.gmail.com>
-Subject: Re: [PATCH] gpu: do not double put device node in zx_drm_probe
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     zhong jiang <zhongjiang@huawei.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1537253993.20009.62.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 5:02 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Tue, Sep 18, 2018 at 10:59:08PM +0800, zhong jiang wrote:
->> Hi,  Greg
+Hi David,
+
+On 09/18/2018 01:59 AM, David Woodhouse wrote:
+> On Wed, 2018-09-05 at 22:54 +0100, David Howells wrote:
 >>
->> Can you pick up the patch?
->
-> Nope:
-> $ ./scripts/get_maintainer.pl --file drivers/gpu/drm/zte/zx_drm_drv.c
-> Shawn Guo <shawnguo@kernel.org> (maintainer:DRM DRIVERS FOR ZTE ZX)
-> David Airlie <airlied@linux.ie> (maintainer:DRM DRIVERS)
-> dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR ZTE ZX)
-> linux-kernel@vger.kernel.org (open list)
->
-> why would I take thi when all of those others are the correct
-> maintainers?
->
-> Also, you only posted this 1 day ago.  Please relax and give people time
-> and a chance to review your patch.  It is not instant.
+>> Example usage for a PKCS#8 blob:
+>>
+>>          j=`openssl pkcs8 -in private_key.pem -topk8 -nocrypt -outform DER | \
+>>              keyctl padd asymmetric foo @s`
 
-First submission was in August, acked by Shawn, but somehow they
-forgot to actually push the patch out. I pinged Shawn.
+The kernel expects a raw DER formatted PKCS8 certificate.  And as you 
+point out, keyctl doesn't grok PEM files.  So, that is why this is being 
+done via openssl.  The example above simply shows one how to import a 
+private key in PEM format into the kernel keys framework.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>>
+>> Example usage for a TPM wrapped blob:
+>>
+>>          openssl genrsa -out /tmp/privkey.foo.pem 2048
+>>          create_tpm_key -s 2048 -w /tmp/privkey.foo.pem /tmp/privkey.foo.tpm
+>>          j=`openssl asn1parse -inform pem -in /tmp/privkey.foo.tpm -noout |
+>>              keyctl padd asymmetric foo @s`
+> 
+> Those examples aren't equivalent. For the PKCS#8 blob you are first
+> using openssl to convert from an encrypted PKCS#8 PEM to unencrypted
+> DER, presumably because you haven't added decryption support (or base64
+> decode) to keyctl yet.
+
+To be pedantic, it converts an optionally encrypted PEM to unencrypted 
+DER.  But yes, correct.
+
+> 
+> For the TPM example though, you are also showing the *generation* of
+> the key, and importing it into the TPM. And then I'm confused by the
+> 'openssl asn1parse' line there... what is that actually doing? If I run
+> it on a '-----BEGIN TSS KEY BLOB-----' file I have lying around, I get
+> no output at all.
+> 
+
+Same thing applies as above.  The kernel has no PEM parser, so the raw 
+DER must be passed in.  openssl asn1parse line simply does that.  It 
+strips the PEM layer leaving the raw DER.
+
+However, now that you mention it, the actual command incantation is 
+wrong.  It seems openssl asn1parse acts slightly different from openssl 
+pkcs8 and so it needs to be modified to add an extra -out parameter.  So 
+the example incantation should be:
+
+   openssl genrsa -out /tmp/privkey.2048.pem 2048
+   create_tpm_key -s 2048 -w /tmp/privkey.2048.pem /tmp/privkey.2048.tpm
+   openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
+			-out /tmp/privkey.2048.der
+   j=`cat /tmp/privkey.2048.der | keyctl padd asymmetric tpm @u`
+   echo "TPM key serial is: $j"
+
+Sorry, I should have caught this earlier.
+
+Regards,
+-Denis
