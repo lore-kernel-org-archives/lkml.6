@@ -2,396 +2,227 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 327DAECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4949CECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9E620685
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9E620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id ECD9620685
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 06:02:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PicGUSEZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD9620685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbeIRLdV (ORCPT
+        id S1728722AbeIRLdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 07:33:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57754 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727228AbeIRLdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 07:33:21 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6DF132E813496;
-        Tue, 18 Sep 2018 14:02:16 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
- 2018 14:02:10 +0800
-Date:   Tue, 18 Sep 2018 14:00:14 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Joerg Roedel" <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        <linux-crypto@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Zaibo Xu" <xuzaibo@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180918060014.GF207969@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
- <20180917083940.GE207969@Turing-Arch-b>
- <20180917123744.GA3605@redhat.com>
+        Tue, 18 Sep 2018 07:33:38 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38510 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbeIRLdi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 07:33:38 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z186-v6so646008lfa.5;
+        Mon, 17 Sep 2018 23:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cw9MBjFl6kMTvJfej6PY+IpmfNK4j9G5QWxzLp37qcE=;
+        b=PicGUSEZ6zc3xwTJ0fnzLqBD2RnfVVYcUt7agoOYztG7Mr4VvVWJN8bguyoEPwuiGJ
+         Kp39sR6e6+PnXDIWLcwWpu+UK/32NxL20kSVhTnrJGgqocWd5NgUEbfjBpBpzmsPoTwV
+         CPkjWLfVeIs14gMg1gy9F1cc0WNeJNyEjc5TQcrw4/ePwKSbjRuTVafxPaslfKOWPylb
+         NKhCP9xefakhe8bu6E0S0n0u4vPyBTSyGJ95mchQVSDmtjnfqiuBLywIWtJ+pGq5vL4u
+         8vjjWP00C1bPJftiOT0Lc084CtuOawArTq+4Jb+9lyXDU4rJgwiZ4RPxT1tK6zZWwsss
+         MrRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cw9MBjFl6kMTvJfej6PY+IpmfNK4j9G5QWxzLp37qcE=;
+        b=Nyj6pXiDVrABS8MPwr4F9NZRafdkFvFuTJApJEr+7y3bKYPeidwLTT6G2vKQSG87zk
+         G7YyM4l1btWEW201VTZEiukQRlupaKiPcW4JKV84bFfutmof5FkSRvYXWaf1B89XtfR9
+         KZFh3P1H2N9MjULmDYduMC6sS+qXdj6KAoSwUPAsEWIt1DRkDO0wbCpe5sNNUoTzvpty
+         3gTFxgzRFXom0xsSnTXmvIWsl4tjVtdvmGL787fvho+tBQlsWgnnIsEZLmwlcDzdcXzT
+         l4ltify+mqrzDPgZ0AWn/NnhWPeup6NIgt8UQtiVd9SgAaZhmenrH+N58AIrSTxDbPcR
+         PXlw==
+X-Gm-Message-State: APzg51AF755JpsoPpo3I4EVFLms7KavCGwda4CHv6iEKLV6YIo8rxGNE
+        RjBuyGX6CxbEazOw+oRyc0eZdciXGeVY1yHVVu6Qsg==
+X-Google-Smtp-Source: ANB0VdZovNu6DrSfxl78zpIrJbDUuieA5zYFgdRkrIkL/hBCXJLnoABc9063iET71bsxWfGNH8iz402k2y1/nSb1C2k=
+X-Received: by 2002:a19:cc97:: with SMTP id c145-v6mr8762791lfg.145.1537250554139;
+ Mon, 17 Sep 2018 23:02:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917123744.GA3605@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+References: <20180802154517.GA10593@jordon-HP-15-Notebook-PC> <CAFqt6zZDRaVp53RnEri+P4b8+GByE-UQwerJmuLBe6E=GK0kDQ@mail.gmail.com>
+In-Reply-To: <CAFqt6zZDRaVp53RnEri+P4b8+GByE-UQwerJmuLBe6E=GK0kDQ@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 18 Sep 2018 11:32:22 +0530
+Message-ID: <CAFqt6zbp+yFq-59o-J5dtB8Gfc3Ggd6Ff6tCy5vt0OTTSr41vQ@mail.gmail.com>
+Subject: Re: [PATCH v4] gpu/drm/exynos: Convert drm_atomic_helper_suspend/resume()
+To:     Inki Dae <inki.dae@samsung.com>, jy0922.shim@samsung.com,
+        sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        airlied@linux.ie, kgene@kernel.org, krzk@kernel.org,
+        Ajit Linux <ajitn.linux@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
-> Date: Mon, 17 Sep 2018 08:37:45 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, Herbert Xu
->  <herbert@gondor.apana.org.au>, kvm@vger.kernel.org, Jonathan Corbet
->  <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg
->  Roedel <joro@8bytes.org>, linux-doc@vger.kernel.org, Sanjay Kumar
->  <sanjay.k.kumar@intel.com>, Hao Fang <fanghao11@huawei.com>,
->  iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
->  linuxarm@huawei.com, Alex Williamson <alex.williamson@redhat.com>, Thomas
->  Gleixner <tglx@linutronix.de>, linux-crypto@vger.kernel.org, Zhou Wang
->  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
->  Zaibo Xu <xuzaibo@huawei.com>, "David S . Miller" <davem@davemloft.net>,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
-> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> User-Agent: Mutt/1.10.1 (2018-07-13)
-> Message-ID: <20180917123744.GA3605@redhat.com>
-> 
-> On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
-> > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> > > So i want to summarize issues i have as this threads have dig deep into
-> > > details. For this i would like to differentiate two cases first the easy
-> > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> > 
-> > Thank you very much for the summary.
-> > 
-> > > In both cases your objectives as i understand them:
-> > > 
-> > > [R1]- expose a common user space API that make it easy to share boiler
-> > >       plate code accross many devices (discovering devices, opening
-> > >       device, creating context, creating command queue ...).
-> > > [R2]- try to share the device as much as possible up to device limits
-> > >       (number of independant queues the device has)
-> > > [R3]- minimize syscall by allowing user space to directly schedule on the
-> > >       device queue without a round trip to the kernel
-> > > 
-> > > I don't think i missed any.
-> > > 
-> > > 
-> > > (1) Device with SVA/SVM
-> > > 
-> > > For that case it is easy, you do not need to be in VFIO or part of any
-> > > thing specific in the kernel. There is no security risk (modulo bug in
-> > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> > > to a device is just couple dozen lines of code.
-> > > 
-> > 
-> > This is right...logically. But the kernel has no clear definition about "Device
-> > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
-> > boiler plate.
-> > 
-> > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
-> > one. If we add that support within VFIO, which solve most of the problem of
-> > SVA/SVM, it will save a lot of work in the future.
-> 
-> You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
-> all do the SVA/SVM setup in couple dozen lines and i failed to see how it
-> would require any more than that in your case.
-> 
-> 
-> > I think this is the key confliction between us. So could Alex please say
-> > something here? If the VFIO is going to take this into its scope, we can try
-> > together to solve all the problem on the way. If it it is not, it is also
-> > simple, we can just go to another way to fulfill this part of requirements even
-> > we have to duplicate most of the code.
-> > 
-> > Another point I need to emphasis here: because we have to replace the hardware
-> > queue when fork, so it won't be very simple even in SVA/SVM case.
-> 
-> I am assuming hardware queue can only be setup by the kernel and thus
-> you are totaly safe forkwise as the queue is setup against a PASID and
-> the child does not bind to any PASID and you use VM_DONTCOPY on the
-> mmap of the hardware MMIO queue because you should really use that flag
-> for that.
-> 
-> 
-> > > (2) Device does not have SVA/SVM (or it is disabled)
-> > > 
-> > > You want to still allow device to be part of your framework. However
-> > > here i see fundamentals securities issues and you move the burden of
-> > > being careful to user space which i think is a bad idea. We should
-> > > never trus the userspace from kernel space.
-> > > 
-> > > To keep the same API for the user space code you want a 1:1 mapping
-> > > between device physical address and process virtual address (ie if
-> > > device access device physical address A it is accessing the same
-> > > memory as what is backing the virtual address A in the process.
-> > > 
-> > > Security issues are on two things:
-> > > [I1]- fork/exec, a process who opened any such device and created an
-> > >       active queue can transfer without its knowledge control of its
-> > >       commands queue through COW. The parent map some anonymous region
-> > >       to the device as a command queue buffer but because of COW the
-> > >       parent can be the first to copy on write and thus the child can
-> > >       inherit the original pages that are mapped to the hardware.
-> > >       Here parent lose control and child gain it.
-> > 
-> > This is indeed an issue. But it remains an issue only if you continue to use the
-> > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
-> > user space.
-> 
-> Trusting user space is a no go from my point of view.
+Hi Inki,
+On Tue, Sep 11, 2018 at 2:06 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Thu, Aug 2, 2018 at 9:12 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > convert drm_atomic_helper_suspend/resume() to use
+> > drm_mode_config_helper_suspend/resume().
+> >
+> > exynos_drm_fbdev_suspend/resume can be removed
+> > as drm_mode_config_helper_suspend/resume has
+> > implement the same in generic way.
+> >
+> > Remove suspend_state from exynos_drm_private
+> > struct as it is no more useful.
+> >
+> > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> Can we get this patch in queue for 4.20 ? Not yet available in linux-next.
 
-Can we dive deeper on this? Maybe we have different understanding on "Trusting
-user space". As my understanding, "trusting user space" means "no matter what
-the user process does, it should only hurt itself and anything give to it, no
-the kernel and the other process".
+Is this patch queued for 4.20 ?
 
-In our case, we create a channel between a process and the hardware. The process
-can do whateven it like to its own memory the channel itself. It won't hurt the
-other process and the kernel. And if the process fork a child and give the
-channel to the child, it should the freedom on those resource remain within the
-parent and the child. We are not trust another else.
-
-So do you refer to something else here?
-
-> 
-> 
-> > From some perspectives, I think the issue can be solved by iommu_notifier. For
-> > example, when the process is fork-ed, we can set the mapped device mmio space as
-> > COW for the child process, so a new queue can be created and set to the same
-> > state as the parent's if the space is accessed. Then we can have two separated
-> > queues for both the parent and the child. The memory part can be done in the
-> > same way.
-> 
-> The mmap of mmio space for the queue is not an issue just use VM_DONTCOPY
-> for it. Issue is with COW and IOMMU mapping of pages and this can not be
-> solve in your model.
-> 
-> > The thing is, the same strategy can be applied to VFIO without changing its
-> > original feature.
-> 
-> No it can not it would break existing VFIO contract (which only should be
-> use against private anonymous vma).
-> 
-> > 
-> > > 
-> > > [I2]- Because of [R3] you want to allow userspace to schedule commands
-> > >       on the device without doing an ioctl and thus here user space
-> > >       can schedule any commands to the device with any address. What
-> > >       happens if that address have not been mapped by the user space
-> > >       is undefined and in fact can not be defined as what each IOMMU
-> > >       does on invalid address access is different from IOMMU to IOMMU.
-> > > 
-> > >       In case of a bad IOMMU, or simply an IOMMU improperly setup by
-> > >       the kernel, this can potentialy allow user space to DMA anywhere.
-> > 
-> > I don't think this is an issue. If you cannot trust IOMMU and proper setup of
-> > IOMMU in kernel, you cannot trust anything. And the whole VFIO framework is
-> > untrustable.
-> 
-> VFIO device is usualy restricted to trusted user and other device that
-> do DMA do various checks to make sure user space can not abuse them, the
-> assumption i have always seen so far is to not trust that IOMMU will do
-> all the work. So exposing user space access to device with DMA capabilities
-> should be done carefuly IMHO.
-> 
-> To be thorough list of potential bugs i am concern about:
->     - IOMMU hardware bug
->     - IOMMU does not isolate device after too many fail attempt
->     - firmware setup the IOMMU in some unsafe way and linux kernel does
->       not catch that (like passthrough on error or when there is no
->       entry for the PA which i am told is a thing for debug)
->     - bug in the linux IOMMU kernel driver
-> 
-> 
-> 
-> > > 
-> > > [I3]- By relying on GUP in VFIO you are not abiding by the implicit
-> > >       contract (at least i hope it is implicit) that you should not
-> > >       try to map to the device any file backed vma (private or share).
-> > > 
-> > >       The VFIO code never check the vma controlling the addresses that
-> > >       are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
-> > >       user space can provide file backed range.
-> > > 
-> > >       I am guessing that the VFIO code never had any issues because its
-> > >       number one user is QEMU and QEMU never does that (and that's good
-> > >       as no one should ever do that).
-> > > 
-> > >       So if process does that you are opening your self to serious file
-> > >       system corruption (depending on file system this can lead to total
-> > >       data loss for the filesystem).
-> > > 
-> > >       Issue is that once you GUP you never abide to file system flushing
-> > >       which write protect the page before writing to the disk. So
-> > >       because the page is still map with write permission to the device
-> > >       (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
-> > >       write to the page while it is in the middle of being written back
-> > >       to disk. Consult your nearest file system specialist to ask him
-> > >       how bad that can be.
-> > 
-> > Same as I2, it is an issue, but the problem can be solved in VFIO if we really
-> > take it in the scope of VFIO.
-> 
-> Except it can not be solve without breaking VFIO. If you use mmu_notifier
-> it means that the the IOMMU mapping can vanish at _any_ time and because
-> you allow user space to directly schedule work on the hardware command
-> queue than you do not have any synchronization point to use.
-> 
-> When notifier calls you must stop all hardware access and wait for any
-> pending work that might still dereference affected range. Finaly you can
-> restore mapping only once the notifier is done. AFAICT this would break
-> all existing VFIO user.
-> 
-> So solving that for your case it means you would have to:
-> warp_invalidate_range_callback() {
->     - take some lock to protect against restore
->     - unmap the command queue (zap_range) from userspace to stop further
->       commands
->     - wait for any pending commands on the hardware to complete
->     - clear all IOMMU mappings for the range
->     - put_pages()
->     - drop restore lock
->     return to let invalidation complete its works
-> }
-> 
-> warp_restore() {
->     // This is call by the page fault handler on the command queue mapped
->     // to user space.
->     - take restore lock
->     - go over all IOMMU mapping and restore them (GUP)
->     - remap command queue to userspace
->     - drop restore lock
-> }
-> 
-> This model does not work for VFIO existing users AFAICT.
-> 
-> 
-> > > [I4]- Design issue, mdev design As Far As I Understand It is about
-> > >       sharing a single device to multiple clients (most obvious case
-> > >       here is again QEMU guest). But you are going against that model,
-> > >       in fact AFAIUI you are doing the exect opposite. When there is
-> > >       no SVA/SVM you want only one mdev device that can not be share.
-> > 
-> > Wait. It is NOT "I want only one mdev device when there is no SVA/SVM", it is "I
-> > can support only one mdev when there is no PASID support for the IOMMU".
-> 
-> Except you can support more than one user when no SVA/SVM with the model
-> i outlined below.
-> 
-> 
-> > > 
-> > >       So this is counter intuitive to the mdev existing design. It is
-> > >       not about sharing device among multiple users but about giving
-> > >       exclusive access to the device to one user.
-> > > 
-> > > 
-> > > 
-> > > All the reasons above is why i believe a different model would serve
-> > > you and your user better. Below is a design that avoids all of the
-> > > above issues and still delivers all of your objectives with the
-> > > exceptions of the third one [R3] when there is no SVA/SVM.
-> > > 
-> > > 
-> > > Create a subsystem (very much boiler plate code) which allow device to
-> > > register themself against (very much like what you do in your current
-> > > patchset but outside of VFIO).
-> > > 
-> > > That subsystem will create a device file for each registered system and
-> > > expose a common API (ie set of ioctl) for each of those device files.
-> > > 
-> > > When user space create a queue (through an ioctl after opening the device
-> > > file) the kernel can return -EBUSY if all the device queue are in use,
-> > > or create a device queue and return a flag like SYNC_ONLY for device that
-> > > do not have SVA/SVM.
-> > > 
-> > > For device with SVA/SVM at the time the process create a queue you bind
-> > > the process PASID to the device queue. From there on the userspace can
-> > > schedule commands and use the device without going to kernel space.
-> > 
-> > As mentioned previously, this is not enough for fork scenario.
-> 
-> It is for every existing user of SVA/SVM so i fail to see why it would
-> be any different in your case. Note that they all use VM_DONTCOPY flag
-> on the queue mapped to userspace.
-> 
-> 
-> > > For device without SVA/SVM you create a fake queue that is just pure
-> > > memory is not related to the device. From there on the userspace must
-> > > call an ioctl every time it wants the device to consume its queue
-> > > (hence why the SYNC_ONLY flag for synchronous operation only). The
-> > > kernel portion read the fake queue expose to user space and copy
-> > > commands into the real hardware queue but first it properly map any
-> > > of the process memory needed for those commands to the device and
-> > > adjust the device physical address with the one it gets from dma_map
-> > > API.
-> > > 
-> > 
-> > But in this way, we will lost most of the benefit of avoiding syscall.
-> 
-> Yes but only when there is SVA/SVM. What i am trying to stress is that
-> there is no sane way to mirror user space address space onto device
-> without mmu_notifier so short of that this model where you have to
-> syscall to schedules thing on the hardware is the easiest thing to do.
-> 
-> 
-> > > With that model it is "easy" to listen to mmu_notifier and to abide by
-> > > them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
-> > > issue by only mapping a fake device queue to userspace.
-> > > 
-> > > So yes with that models it means that every device that wish to support
-> > > the non SVA/SVM case will have to do extra work (ie emulate its command
-> > > queue in software in the kernel). But by doing so, you support an
-> > > unlimited number of process on your device (ie all the process can share
-> > > one single hardware command queues or multiple hardware queues).
-> > 
-> > If I can do this, I will not need WarpDrive at all:(
-> 
-> This is only needed if you wish to support non SVA/SVM, shifting the
-> burden to the kernel is always the thing to do especially if they are
-> legitimate security concerns.
-
-For the other part, please give me some more time to write some test code and
-come back to the discussino. Thank you.
-
-Cheers
-
-> 
-> 
-> Cheers,
-> Jérôme
-
--- 
-			-Kenneth(Hisilicon)
-
+> > ---
+> > v2: Address Inki Dae's comment. Remove ret variable
+> >     from both suspend/resume function.
+> >
+> > v3: Tested by Marek. Updated the change log.
+> >
+> > v4: removing the return as exynos_drm_resume()
+> >     now returns void.
+> >
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.c   | 26 ++------------------------
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 -
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 17 -----------------
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.h | 10 ----------
+> >  4 files changed, 2 insertions(+), 52 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > index b599f74..6f76baf 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> > @@ -149,37 +149,15 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+> >  static int exynos_drm_suspend(struct device *dev)
+> >  {
+> >         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> > -       struct exynos_drm_private *private;
+> > -
+> > -       if (!drm_dev)
+> > -               return 0;
+> > -
+> > -       private = drm_dev->dev_private;
+> > -
+> > -       drm_kms_helper_poll_disable(drm_dev);
+> > -       exynos_drm_fbdev_suspend(drm_dev);
+> > -       private->suspend_state = drm_atomic_helper_suspend(drm_dev);
+> > -       if (IS_ERR(private->suspend_state)) {
+> > -               exynos_drm_fbdev_resume(drm_dev);
+> > -               drm_kms_helper_poll_enable(drm_dev);
+> > -               return PTR_ERR(private->suspend_state);
+> > -       }
+> >
+> > -       return 0;
+> > +       return  drm_mode_config_helper_suspend(drm_dev);
+> >  }
+> >
+> >  static void exynos_drm_resume(struct device *dev)
+> >  {
+> >         struct drm_device *drm_dev = dev_get_drvdata(dev);
+> > -       struct exynos_drm_private *private;
+> > -
+> > -       if (!drm_dev)
+> > -               return;
+> >
+> > -       private = drm_dev->dev_private;
+> > -       drm_atomic_helper_resume(drm_dev, private->suspend_state);
+> > -       exynos_drm_fbdev_resume(drm_dev);
+> > -       drm_kms_helper_poll_enable(drm_dev);
+> > +       drm_mode_config_helper_resume(drm_dev);
+> >  }
+> >
+> >  static const struct dev_pm_ops exynos_drm_pm_ops = {
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > index c737c4b..7349e7c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> > @@ -195,7 +195,6 @@ struct drm_exynos_file_private {
+> >   */
+> >  struct exynos_drm_private {
+> >         struct drm_fb_helper *fb_helper;
+> > -       struct drm_atomic_state *suspend_state;
+> >
+> >         struct device *g2d_dev;
+> >         struct device *dma_dev;
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > index 132dd52..918dd2c 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > @@ -270,20 +270,3 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
+> >         private->fb_helper = NULL;
+> >  }
+> >
+> > -void exynos_drm_fbdev_suspend(struct drm_device *dev)
+> > -{
+> > -       struct exynos_drm_private *private = dev->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(private->fb_helper, 1);
+> > -       console_unlock();
+> > -}
+> > -
+> > -void exynos_drm_fbdev_resume(struct drm_device *dev)
+> > -{
+> > -       struct exynos_drm_private *private = dev->dev_private;
+> > -
+> > -       console_lock();
+> > -       drm_fb_helper_set_suspend(private->fb_helper, 0);
+> > -       console_unlock();
+> > -}
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > index b338472..6840b6a 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.h
+> > @@ -19,8 +19,6 @@
+> >
+> >  int exynos_drm_fbdev_init(struct drm_device *dev);
+> >  void exynos_drm_fbdev_fini(struct drm_device *dev);
+> > -void exynos_drm_fbdev_suspend(struct drm_device *drm);
+> > -void exynos_drm_fbdev_resume(struct drm_device *drm);
+> >
+> >  #else
+> >
+> > @@ -39,14 +37,6 @@ static inline void exynos_drm_fbdev_restore_mode(struct drm_device *dev)
+> >
+> >  #define exynos_drm_output_poll_changed (NULL)
+> >
+> > -static inline void exynos_drm_fbdev_suspend(struct drm_device *drm)
+> > -{
+> > -}
+> > -
+> > -static inline void exynos_drm_fbdev_resume(struct drm_device *drm)
+> > -{
+> > -}
+> > -
+> >  #endif
+> >
+> >  #endif
+> > --
+> > 1.9.1
+> >
