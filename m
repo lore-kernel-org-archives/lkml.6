@@ -2,301 +2,124 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166BCECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA34C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B890B2150C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDBF21508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:43:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptO9NxaV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B890B2150C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="BNNKrKiO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDBF21508
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbeIRWNU (ORCPT
+        id S1730143AbeIRWQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729447AbeIRWNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:13:19 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B66FA214DD;
-        Tue, 18 Sep 2018 16:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537288795;
-        bh=aS1lsXQi4oxQk01uJzvW5BcpsuXSeALgrttWvssH4uA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ptO9NxaVhdKGub2ShRQGkmmaPHOSATVgQ7HnZrX5GNlWqg1S2GAd2QDbU+S3HvPKh
-         dTB7n7tEmDj0cyc5PFQZqRwy4/pw7wLillfG+Hxhd/+OYAReIQ9ObxARcXDGdvXbLm
-         6cDywER3xCu8fe2gxMPA3c9wGmUSwh0lRAFsSg+s=
-Date:   Tue, 18 Sep 2018 09:39:54 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Sahitya Tummala <stummala@codeaurora.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] f2fs: add new idle interval timing for discard and gc
- paths
-Message-ID: <20180918163954.GB91945@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1537169458-30361-1-git-send-email-stummala@codeaurora.org>
- <20180918013039.GD79604@jaegeuk-macbookpro.roam.corp.google.com>
- <20180918032516.GD22939@codeaurora.org>
+        Tue, 18 Sep 2018 18:16:23 -0400
+Received: from mail-eopbgr710067.outbound.protection.outlook.com ([40.107.71.67]:16928
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729447AbeIRWQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:16:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=omvLTxG8QQQukTIrULt5Hldu4H/Vc4WT5PAWvzgcnAs=;
+ b=BNNKrKiOL7h4vQsh9HDCDvvxfDvNkOagqfFDOX7SqA/0lFIWtWeQC/EYCirusyJF+MHHbGLTyzlRf/ujoq5bjWIr2VHCMZrrn4hBWKmedTqjjO6cjODiN1s0B1ryi3AUP4oAv00dPIiMGsFfuGRDaGDJj1Mq7gc2rPDpFGtzbso=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5143.namprd05.prod.outlook.com (20.177.231.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.12; Tue, 18 Sep 2018 16:42:57 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1cc9:412c:6f6b:e0ae]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1cc9:412c:6f6b:e0ae%4]) with mapi id 15.20.1164.014; Tue, 18 Sep 2018
+ 16:42:57 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Arnd Bergmann <arnd@arndb.de>, LKML <linux-kernel@vger.kernel.org>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH 00/19] vmw_balloon: compaction, shrinker, 64-bit, etc.
+Thread-Topic: [PATCH 00/19] vmw_balloon: compaction, shrinker, 64-bit, etc.
+Thread-Index: AQHUTxp5rm7pw0H7Ik+DFMi05ah+baT197iAgABHWoA=
+Date:   Tue, 18 Sep 2018 16:42:57 +0000
+Message-ID: <B27D8BAC-28E2-4807-8D96-90A6938305F3@vmware.com>
+References: <20180918063853.198332-1-namit@vmware.com>
+ <20180918122729.GA13598@kroah.com>
+In-Reply-To: <20180918122729.GA13598@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5143;20:IsQt2cKvscHMhVNdPoE2YwZb9WHpFp6DqqfasQ0w/vjujhLpj3ZvUDa4ZHU2/DoQCIjnpcSJjJOWHNJvCuy8Q/5abS0cOov1CHfndHmgxvNNdiIuCS//Ov6StY+eCkAXsE9IWpPKTu93U3E2jEG2FEWKh16y5bGCFgMJL+8GQ2Y=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 02b921f5-232e-4aa9-8d10-08d61d85c9e5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5143;
+x-ms-traffictypediagnostic: BYAPR05MB5143:
+bcl:    0
+x-microsoft-antispam-prvs: <BYAPR05MB51436A5AFBA9B495C120D67FD01D0@BYAPR05MB5143.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699050)(76991041);SRVR:BYAPR05MB5143;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5143;
+x-forefront-prvs: 0799B1B2D7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(396003)(136003)(39860400002)(199004)(189003)(2900100001)(8936002)(6116002)(3846002)(25786009)(105586002)(486006)(316002)(106356001)(229853002)(83716003)(81156014)(476003)(8676002)(99286004)(82746002)(7736002)(446003)(54906003)(11346002)(256004)(14444005)(305945005)(2906002)(36756003)(2616005)(33656002)(4326008)(14454004)(81166006)(6512007)(66066001)(86362001)(6916009)(26005)(5250100002)(478600001)(76176011)(6246003)(68736007)(6436002)(186003)(102836004)(97736004)(53936002)(5660300001)(6346003)(6486002)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5143;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-microsoft-antispam-message-info: bloFSy7Ip/y3WuzMEuSWKwHZCTyXIj1T8TZetflOgk1Ge3C+mSzoLvKL/ZzEfl8luarbjWEl/llq9X3DAag2/6eteVcBiCKLoGkxwepRXom8V2WrDT4qmIb25LDdQVHcxpgoob5GxkEOt0j2RXXKXu4V2WR5eNqDjRZ74g/Obg3HxJva54Q5kZYEw5qndA1MMON5bucQHwP0J02xQ590qbTWf6/60o16hZpj18eDqwpv/Az95hm04ELfBDAvMl8SEWfHIBgSVJQh10fOT4ex6MrycG3p8GIyhdMyBTqq8Nau1D0AxVC8HFBW54Pmme/FoWLfzBbRJSBJ6fpfQn925LuGWwGLXiJzg5FoRF32HFs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A0DDE62851C5714E8E5C2F370CF0BEFA@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918032516.GD22939@codeaurora.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02b921f5-232e-4aa9-8d10-08d61d85c9e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 16:42:57.3061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18, Sahitya Tummala wrote:
-> On Mon, Sep 17, 2018 at 06:30:39PM -0700, Jaegeuk Kim wrote:
-> > On 09/17, Sahitya Tummala wrote:
-> > > This helps to control the frequency of submission of discard and
-> > > GC requests independently, based on the need.
-> > > 
-> > > Suggested-by: Chao Yu <yuchao0@huawei.com>
-> > > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > > ---
-> > > v3:
-> > > -don't change gc thread wait_ms in this patch
-> > > -Use the existing function f2fs_time_over() to handle this
-> > > -change f2fs_get_wait_time() to f2fs_time_to_wait()
-> > > 
-> > >  Documentation/ABI/testing/sysfs-fs-f2fs | 17 ++++++++++++++++-
-> > >  fs/f2fs/f2fs.h                          | 28 +++++++++++++++++++++++++---
-> > >  fs/f2fs/gc.c                            |  2 +-
-> > >  fs/f2fs/segment.c                       | 14 +++++---------
-> > >  fs/f2fs/super.c                         |  2 ++
-> > >  fs/f2fs/sysfs.c                         |  5 +++++
-> > >  6 files changed, 54 insertions(+), 14 deletions(-)
-> > > 
-> > > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > index 94a24ae..3ac4177 100644
-> > > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> > > @@ -121,7 +121,22 @@ What:		/sys/fs/f2fs/<disk>/idle_interval
-> > >  Date:		January 2016
-> > >  Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> > >  Description:
-> > > -		 Controls the idle timing.
-> > > +		 Controls the idle timing for all paths other than
-> > > +		 discard and gc path.
-> > > +
-> > > +What:		/sys/fs/f2fs/<disk>/discard_idle_interval
-> > > +Date:		September 2018
-> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > > +Description:
-> > > +		 Controls the idle timing for discard path.
-> > > +
-> > > +What:		/sys/fs/f2fs/<disk>/gc_idle_interval
-> > > +Date:		September 2018
-> > > +Contact:	"Chao Yu" <yuchao0@huawei.com>
-> > > +Contact:	"Sahitya Tummala" <stummala@codeaurora.org>
-> > > +Description:
-> > > +		 Controls the idle timing for gc path.
-> > >  
-> > >  What:		/sys/fs/f2fs/<disk>/iostat_enable
-> > >  Date:		August 2017
-> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > index 88b8d50..41e00d3 100644
-> > > --- a/fs/f2fs/f2fs.h
-> > > +++ b/fs/f2fs/f2fs.h
-> > > @@ -1095,6 +1095,8 @@ enum {
-> > >  enum {
-> > >  	CP_TIME,
-> > >  	REQ_TIME,
-> > > +	DISCARD_TIME,
-> > > +	GC_TIME,
-> > >  	MAX_TIME,
-> > >  };
-> > >  
-> > > @@ -1352,11 +1354,31 @@ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
-> > >  static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
-> > >  {
-> > >  	unsigned long interval = sbi->interval_time[type] * HZ;
-> > > +	unsigned long last_time;
-> > >  
-> > > -	return time_after(jiffies, sbi->last_time[type] + interval);
-> > > +	if (type == CP_TIME)
-> > > +		last_time = sbi->last_time[CP_TIME];
-> > > +	else
-> > > +		last_time = sbi->last_time[REQ_TIME];
-> > 
-> > Why can't we use just this?
-> > 
-> > 	return time_after(jiffies, sbi->last_time[type] + interval);
-> > 
-> 
-> There is no sbi_->last_time[discard_time] and sbi->last_time[gc_time]. Only
-> sbi->interval_time[discard_time] and sbi->interval_time[gc_time] is defined to
-> determine the idle interval time since the last request time, separately for
-> these two paths.
-
-If you add enums above, sbi will have last_time slots for DISCARD_TIME/GC_TIME.
-Doesn't it make sense to add the below in f2fs_update_time(), if you want to
-introduce two additional types?
-
-	/* DISCARD_TIME and GC_TIME are based on REQ_TIME */
-	if (type == REQ_TIME) {
-		sbi->last_time(DISCARD_TIME) = jiffies;
-		sbi->last_time(GC_TIME) = jiffies;
-	}
-
-> 
-> > > +
-> > > +	return time_after(jiffies, last_time + interval);
-> > > +}
-> > > +
-> > > +static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-> > > +						int type)
-> > > +{
-> > > +	unsigned long interval = sbi->interval_time[type] * HZ;
-> > > +	unsigned int wait_ms = 0;
-> > > +	long delta;
-> > > +
-> > > +	delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-
-Then, we can use *type* instead of REQ_TIME?
-
-> > > +	if (delta > 0)
-> > > +		wait_ms = jiffies_to_msecs(delta);
-> > > +
-> > > +	return wait_ms;
-> > >  }
-> > >  
-> > > -static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > > +static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
-> > >  {
-> > >  	struct block_device *bdev = sbi->sb->s_bdev;
-> > >  	struct request_queue *q = bdev_get_queue(bdev);
-> > > @@ -1365,7 +1387,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
-> > >  	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
-> > >  		return false;
-> > >  
-> > > -	return f2fs_time_over(sbi, REQ_TIME);
-> > > +	return f2fs_time_over(sbi, type);
-> > >  }
-> > >  
-> > >  /*
-> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > > index 5c8d004..49e2328 100644
-> > > --- a/fs/f2fs/gc.c
-> > > +++ b/fs/f2fs/gc.c
-> > > @@ -83,7 +83,7 @@ static int gc_thread_func(void *data)
-> > >  		if (!mutex_trylock(&sbi->gc_mutex))
-> > >  			goto next;
-> > >  
-> > > -		if (!is_idle(sbi)) {
-> > > +		if (!is_idle(sbi, GC_TIME)) {
-> > >  			increase_sleep_time(gc_th, &wait_ms);
-> > >  			mutex_unlock(&sbi->gc_mutex);
-> > >  			goto next;
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index 187c848..67cf7e4 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -511,7 +511,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> > >  	else
-> > >  		f2fs_build_free_nids(sbi, false, false);
-> > >  
-> > > -	if (!is_idle(sbi) &&
-> > > +	if (!is_idle(sbi, REQ_TIME) &&
-> > >  		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
-> > >  		return;
-> > >  
-> > > @@ -1311,7 +1311,7 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> > >  		if (dc->state != D_PREP)
-> > >  			goto next;
-> > >  
-> > > -		if (dpolicy->io_aware && !is_idle(sbi)) {
-> > > +		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
-> > >  			io_interrupted = true;
-> > >  			break;
-> > >  		}
-> > > @@ -1371,7 +1371,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> > >  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> > >  
-> > >  			if (dpolicy->io_aware && i < dpolicy->io_aware_gran &&
-> > > -								!is_idle(sbi)) {
-> > > +						!is_idle(sbi, DISCARD_TIME)) {
-> > >  				io_interrupted = true;
-> > >  				break;
-> > >  			}
-> > > @@ -1564,8 +1564,6 @@ static int issue_discard_thread(void *data)
-> > >  	struct discard_policy dpolicy;
-> > >  	unsigned int wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> > >  	int issued;
-> > > -	unsigned long interval = sbi->interval_time[REQ_TIME] * HZ;
-> > > -	long delta;
-> > >  
-> > >  	set_freezable();
-> > >  
-> > > @@ -1602,10 +1600,8 @@ static int issue_discard_thread(void *data)
-> > >  			__wait_all_discard_cmd(sbi, &dpolicy);
-> > >  			wait_ms = dpolicy.min_interval;
-> > >  		} else if (issued == -1){
-> > > -			delta = (sbi->last_time[REQ_TIME] + interval) - jiffies;
-> > > -			if (delta > 0)
-> > > -				wait_ms = jiffies_to_msecs(delta);
-> > > -			else
-> > > +			wait_ms = f2fs_time_to_wait(sbi, DISCARD_TIME);
-> > > +			if (!wait_ms)
-> > >  				wait_ms = dpolicy.mid_interval;
-> > >  		} else {
-> > >  			wait_ms = dpolicy.max_interval;
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > index 3106da1..2f67948 100644
-> > > --- a/fs/f2fs/super.c
-> > > +++ b/fs/f2fs/super.c
-> > > @@ -2463,6 +2463,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-> > >  	sbi->dir_level = DEF_DIR_LEVEL;
-> > >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
-> > >  	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-> > > +	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
-> > > +	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
-> > >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
-> > >  
-> > >  	for (i = 0; i < NR_COUNT_TYPE; i++)
-> > > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > > index 81c0e53..0afe99c 100644
-> > > --- a/fs/f2fs/sysfs.c
-> > > +++ b/fs/f2fs/sysfs.c
-> > > @@ -407,6 +407,9 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
-> > > +					interval_time[DISCARD_TIME]);
-> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
-> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
-> > > @@ -460,6 +463,8 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> > >  	ATTR_LIST(dirty_nats_ratio),
-> > >  	ATTR_LIST(cp_interval),
-> > >  	ATTR_LIST(idle_interval),
-> > > +	ATTR_LIST(discard_idle_interval),
-> > > +	ATTR_LIST(gc_idle_interval),
-> > >  	ATTR_LIST(iostat_enable),
-> > >  	ATTR_LIST(readdir_ra),
-> > >  	ATTR_LIST(gc_pin_file_thresh),
-> > > -- 
-> > > Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> > > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-> 
-> -- 
-> --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+YXQgNToyNyBBTSwgR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9y
+Zz4gd3JvdGU6DQoNCj4gT24gTW9uLCBTZXAgMTcsIDIwMTggYXQgMTE6Mzg6MzRQTSAtMDcwMCwg
+TmFkYXYgQW1pdCB3cm90ZToNCj4+IFRoaXMgcGF0Y2gtc2V0IGFkZHMgdGhlIGZvbGxvd2luZyBl
+bmhhbmNlbWVudHMgdG8gdGhlIFZNd2FyZSBiYWxsb29uDQo+PiBkcml2ZXI6DQo+PiANCj4+IDEu
+IEJhbGxvb24gY29tcGFjdGlvbiBzdXBwb3J0Lg0KPj4gMi4gUmVwb3J0IHRoZSBudW1iZXIgb2Yg
+aW5mbGF0ZWQvZGVmbGF0ZWQgYmFsbG9vbmVkIHBhZ2VzIHRocm91Z2ggdm1zdGF0Lg0KPj4gMy4g
+TWVtb3J5IHNocmlua2VyIHRvIGF2b2lkIGJhbGxvb24gb3Zlci1pbmZsYXRpb24gKGFuZCBPT00p
+Lg0KPj4gNC4gU3VwcG9ydCBWTXMgd2l0aCBtZW1vcnkgbGltaXQgdGhhdCBpcyBncmVhdGVyIHRo
+YW4gMTZUQi4NCj4+IDUuIEZhc3RlciBhbmQgbW9yZSBhZ2dyZXNzaXZlIGluZmxhdGlvbi4NCj4+
+IA0KPj4gVG8gc3VwcG9ydCBjb21wYWN0aW9uIHdlIHdpc2ggdG8gdXNlIHRoZSBleGlzdGluZyBp
+bmZyYXN0cnVjdHVyZS4NCj4+IEhvd2V2ZXIsIHdlIG5lZWQgdG8gbWFrZSBzbGlnaHQgYWRhcHRp
+b25zIGZvciBpdC4gV2UgYWRkIGEgbmV3IGxpc3QNCj4+IGludGVyZmFjZSB0byBiYWxsb29uLWNv
+bXBhY3Rpb24sIHdoaWNoIGlzIG1vcmUgZ2VuZXJpYyBhbmQgZWZmaWNpZW50LA0KPj4gc2luY2Ug
+aXQgZG9lcyBub3QgcmVxdWlyZSBhcyBtYW55IElSUSBzYXZlL3Jlc3RvcmUgb3BlcmF0aW9ucy4g
+V2UgbGVhdmUNCj4+IHRoZSBvbGQgaW50ZXJmYWNlIHRoYXQgaXMgdXNlZCBieSB0aGUgdmlydGlv
+IGJhbGxvb24uDQo+PiANCj4+IEJpZyBwYXJ0cyBvZiB0aGlzIHBhdGNoLXNldCBhcmUgY2xlYW51
+cCBhbmQgZG9jdW1lbnRhdGlvbi4gUGF0Y2hlcyAxLTEzDQo+PiBzaW1wbGlmeSB0aGUgYmFsbG9v
+biBjb2RlLCBkb2N1bWVudCBpdHMgYmVoYXZpb3IgYW5kIGFsbG93IHRoZSBiYWxsb29uDQo+PiBj
+b2RlIHRvIHJ1biBjb25jdXJyZW50bHkuIFRoZSBzdXBwb3J0IGZvciBjb25jdXJyZW5jeSBpcyBy
+ZXF1aXJlZCBmb3INCj4+IGNvbXBhY3Rpb24gYW5kIHRoZSBzaHJpbmtlciBpbnRlcmZhY2UuDQo+
+PiANCj4+IEZvciBkb2N1bWVudGF0aW9uIHdlIHVzZSB0aGUga2VybmVsLWRvYyBmb3JtYXQuIFdl
+IGFyZSBhd2FyZSB0aGF0IHRoZQ0KPj4gYmFsbG9vbiBpbnRlcmZhY2UgaXMgbm90IHB1YmxpYywg
+YnV0IGZvbGxvd2luZyB0aGUga2VybmVsLWRvYyBmb3JtYXQgbWF5DQo+PiBiZSB1c2VmdWwgb25l
+IGRheS4NCj4gDQo+IGtidWlsZCBzZWVtcyB0byBub3QgbGlrZSB0aGlzIHBhdGNoIHNlcmllcywg
+c28gSSdtIGdvaW5nIHRvIGRyb3AgaXQgZnJvbQ0KPiBteSBxdWV1ZSBhbmQgd2FpdCBmb3IgYSB2
+MiByZXNwaW4gYmVmb3JlIGxvb2tpbmcgYXQgaXQuDQoNClN1cmUuIEnigJlsbCBzZW5kIHYyIGlu
+IGEgZGF5IG9yIHR3by4NCg0KTmFkYXYgDQoNCg0K
