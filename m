@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
 	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8E9ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEB4ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C62A32133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79302133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lM4nekji";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VJgXtT9Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62A32133F
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EEpv82SU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h5r99c4H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79302133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeISFTM (ORCPT
+        id S1730776AbeISFTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 01:19:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42516 "EHLO
+        Wed, 19 Sep 2018 01:19:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42526 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeISFTK (ORCPT
+        with ESMTP id S1727326AbeISFTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 01:19:10 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 11CC960C4B; Tue, 18 Sep 2018 23:44:11 +0000 (UTC)
+        id 23C506034E; Tue, 18 Sep 2018 23:44:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
         s=default; t=1537314251;
-        bh=Zj8nR7mc9VOQNq+J7BKyEKm79z8yGhTaVs3LLn79rK4=;
+        bh=V/9K9Ehznn5V/tbp06rpQFLX6Y7zL9VljX2T6MdKG/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lM4nekjiqfztx9WpY0BC2SEtnRtQMtFlvxetZ/pvLCLkmNtY66L/KSZ0gst94kz7h
-         l1LG1V/1bgUvTCBnVhUhX3lD2he1p09paNoD5RzgIP7yG2GrM0Wp0uCXpSwiUxYWY+
-         dojDJDNS1pkglmKsRsnzi7wB0Zw7LAmnW2VO7JGc=
+        b=EEpv82SUtHALPHdKOpvdWwvZyu9aJtayjYSPRpdpfIkJKyJsNeaTm9S4pIokFK5+4
+         K0ttLWYeB2qs2F9FRsI28sfVc3m4wcSXrRiD2DRHdtqkRFq5t3W/fz12Ipr84WMD4A
+         HjydqIRFFjqhN1693iXtgHodvuzvUlOnY3dSL08c=
 Received: from vgarodia-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vgarodia@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5AD2C60B73;
-        Tue, 18 Sep 2018 23:43:55 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44C8A60866;
+        Tue, 18 Sep 2018 23:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537314240;
-        bh=Zj8nR7mc9VOQNq+J7BKyEKm79z8yGhTaVs3LLn79rK4=;
+        s=default; t=1537314233;
+        bh=V/9K9Ehznn5V/tbp06rpQFLX6Y7zL9VljX2T6MdKG/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VJgXtT9QB+zfT9rlvWosO/V17mVc56njCJGK3ZqdYM6YA98RWLuDHJlOLIok1t9KR
-         iqu/RlYxfzBp1Ux8mFdRAKiViR8JRcNAAhcPoQZvriMhYdo84tqdqM37im5UKQ72K7
-         w2GR/Fy5QjddkCjMISwKMHc70EUwPc2bYpmv4elY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AD2C60B73
+        b=h5r99c4He8JAk5WluDXBIupPNcdmaD4nS4tIIT1dozMXzhEvILjSRYmWg2AlKUoaP
+         80a9GKI43eu/0JPoCXuZFG2Dln9SfKGjKqWGUYc1hFhzbckLZosfDFLAAZGEW8iNiz
+         dRgml5ZcQ/6e4zu7cpSFLm+meiohaw9a+NNwPJ9s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44C8A60866
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vgarodia@codeaurora.org
 From:   Vikash Garodia <vgarodia@codeaurora.org>
@@ -60,9 +60,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, acourbot@chromium.org,
         vgarodia@codeaurora.org
-Subject: [PATCH v9 5/5] dt-bindings: media: Document bindings for venus firmware device
-Date:   Wed, 19 Sep 2018 05:13:12 +0530
-Message-Id: <1537314192-26892-6-git-send-email-vgarodia@codeaurora.org>
+Subject: [PATCH v9 4/5] venus: firmware: add no TZ boot and shutdown routine
+Date:   Wed, 19 Sep 2018 05:13:11 +0530
+Message-Id: <1537314192-26892-5-git-send-email-vgarodia@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
 References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
@@ -71,50 +71,239 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree binding documentation for firmware loader for video
-hardware running on qualcomm chip.
+Video hardware is mainly comprised of vcodec subsystem and video
+control subsystem. Video control has ARM9 which executes the video
+firmware instructions whereas vcodec does the video frame processing.
+This change adds support to load the video firmware and bring ARM9
+out of reset for platforms which does not have trustzone.
+An iommu domain is associated and managed with the firmware device.
 
 Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 ---
- Documentation/devicetree/bindings/media/qcom,venus.txt | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/venus/core.c         |  6 +-
+ drivers/media/platform/qcom/venus/core.h         |  1 +
+ drivers/media/platform/qcom/venus/firmware.c     | 94 +++++++++++++++++++++++-
+ drivers/media/platform/qcom/venus/firmware.h     |  2 +-
+ drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
+ 5 files changed, 97 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
-index 00d0d1b..7e04586 100644
---- a/Documentation/devicetree/bindings/media/qcom,venus.txt
-+++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
-@@ -53,7 +53,7 @@
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 440f25f..3bd3b8a 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -76,7 +76,7 @@ static void venus_sys_error_handler(struct work_struct *work)
+ 	hfi_core_deinit(core, true);
+ 	hfi_destroy(core);
+ 	mutex_lock(&core->lock);
+-	venus_shutdown(core->dev);
++	venus_shutdown(core);
  
- * Subnodes
- The Venus video-codec node must contain two subnodes representing
--video-decoder and video-encoder.
-+video-decoder and video-encoder, and one optional firmware subnode.
+ 	pm_runtime_put_sync(core->dev);
  
- Every of video-encoder or video-decoder subnode should have:
+@@ -327,7 +327,7 @@ static int venus_probe(struct platform_device *pdev)
+ err_core_deinit:
+ 	hfi_core_deinit(core, false);
+ err_venus_shutdown:
+-	venus_shutdown(dev);
++	venus_shutdown(core);
+ err_runtime_disable:
+ 	pm_runtime_set_suspended(dev);
+ 	pm_runtime_disable(dev);
+@@ -348,7 +348,7 @@ static int venus_remove(struct platform_device *pdev)
+ 	WARN_ON(ret);
  
-@@ -79,6 +79,13 @@ Every of video-encoder or video-decoder subnode should have:
- 		    power domain which is responsible for collapsing
- 		    and restoring power to the subcore.
+ 	hfi_destroy(core);
+-	venus_shutdown(dev);
++	venus_shutdown(core);
+ 	of_platform_depopulate(dev);
  
-+The firmware subnode must have:
+ 	venus_firmware_deinit(core);
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 6f2c82d..baaa1cc 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -132,6 +132,7 @@ struct venus_core {
+ 	struct device *dev_enc;
+ 	struct video_firmware {
+ 		struct device *dev;
++		struct iommu_domain *iommu_domain;
+ 	} fw;
+ 	bool no_tz;
+ 	struct mutex lock;
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index f4d2b4b..3cf9313 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -15,6 +15,7 @@
+ #include <linux/device.h>
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
++#include <linux/iommu.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -122,6 +123,56 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+ 	return ret;
+ }
+ 
++static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
++			    size_t mem_size)
++{
++	struct iommu_domain *iommu;
++	struct device *dev;
++	int ret;
 +
-+- iommus:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: A list of phandle and IOMMU specifier pairs.
++	dev = core->fw.dev;
++	if (!dev)
++		return -EPROBE_DEFER;
 +
- * An Example
- 	video-codec@1d00000 {
- 		compatible = "qcom,msm8916-venus";
-@@ -105,4 +112,8 @@ Every of video-encoder or video-decoder subnode should have:
- 			clock-names = "core";
- 			power-domains = <&mmcc VENUS_CORE1_GDSC>;
- 		};
++	iommu = core->fw.iommu_domain;
 +
-+		video-firmware {
-+			iommus = <&apps_iommu 0x10b2 0x0>;
-+		};
- 	};
++	ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
++			IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
++	if (ret) {
++		dev_err(dev, "could not map video firmware region\n");
++		return ret;
++	}
++
++	venus_reset_cpu(core);
++
++	return 0;
++}
++
++static int venus_shutdown_no_tz(struct venus_core *core)
++{
++	struct iommu_domain *iommu;
++	size_t unmapped;
++	u32 reg;
++	struct device *dev = core->fw.dev;
++	void __iomem *base = core->base;
++
++	/* Assert the reset to ARM9 */
++	reg = readl_relaxed(base + WRAPPER_A9SS_SW_RESET);
++	reg |= WRAPPER_A9SS_SW_RESET_BIT;
++	writel_relaxed(reg, base + WRAPPER_A9SS_SW_RESET);
++
++	/* Make sure reset is asserted before the mapping is removed */
++	mb();
++
++	iommu = core->fw.iommu_domain;
++
++	unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, VENUS_FW_MEM_SIZE);
++	if (unmapped != VENUS_FW_MEM_SIZE)
++		dev_err(dev, "failed to unmap firmware\n");
++
++	return 0;
++}
++
+ int venus_boot(struct venus_core *core)
+ {
+ 	struct device *dev = core->dev;
+@@ -139,17 +190,30 @@ int venus_boot(struct venus_core *core)
+ 		return -EINVAL;
+ 	}
+ 
+-	return qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++	if (core->no_tz)
++		ret = venus_boot_no_tz(core, mem_phys, mem_size);
++	else
++		ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++
++	return ret;
+ }
+ 
+-int venus_shutdown(struct device *dev)
++int venus_shutdown(struct venus_core *core)
+ {
+-	return qcom_scm_pas_shutdown(VENUS_PAS_ID);
++	int ret;
++
++	if (core->no_tz)
++		ret = venus_shutdown_no_tz(core);
++	else
++		ret = qcom_scm_pas_shutdown(VENUS_PAS_ID);
++
++	return ret;
+ }
+ 
+ int venus_firmware_init(struct venus_core *core)
+ {
+ 	struct platform_device_info info;
++	struct iommu_domain *iommu_dom;
+ 	struct platform_device *pdev;
+ 	struct device_node *np;
+ 	int ret;
+@@ -179,12 +243,29 @@ int venus_firmware_init(struct venus_core *core)
+ 	}
+ 
+ 	core->fw.dev = &pdev->dev;
++
++	iommu_dom = iommu_domain_alloc(&platform_bus_type);
++	if (!iommu_dom) {
++		dev_err(core->fw.dev, "Failed to allocate iommu domain\n");
++		ret = -ENOMEM;
++		goto err_unregister;
++	}
++
++	ret = iommu_attach_device(iommu_dom, core->fw.dev);
++	if (ret) {
++		dev_err(core->fw.dev, "could not attach device\n");
++		goto err_iommu_free;
++	}
++
+ 	core->no_tz = true;
++	core->fw.iommu_domain = iommu_dom;
+ 
+ 	of_node_put(np);
+ 
+ 	return 0;
+ 
++err_iommu_free:
++	iommu_domain_free(iommu_dom);
+ err_unregister:
+ 	platform_device_unregister(pdev);
+ 	of_node_put(np);
+@@ -193,8 +274,15 @@ int venus_firmware_init(struct venus_core *core)
+ 
+ void venus_firmware_deinit(struct venus_core *core)
+ {
++	struct iommu_domain *iommu;
++
+ 	if (!core->fw.dev)
+ 		return;
+ 
++	iommu = core->fw.iommu_domain;
++
++	iommu_detach_device(iommu, core->fw.dev);
++	iommu_domain_free(iommu);
++
+ 	platform_device_unregister(to_platform_device(core->fw.dev));
+ }
+diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+index fd7edf0..119a9a4 100644
+--- a/drivers/media/platform/qcom/venus/firmware.h
++++ b/drivers/media/platform/qcom/venus/firmware.h
+@@ -19,7 +19,7 @@
+ int venus_firmware_init(struct venus_core *core);
+ void venus_firmware_deinit(struct venus_core *core);
+ int venus_boot(struct venus_core *core);
+-int venus_shutdown(struct device *dev);
++int venus_shutdown(struct venus_core *core);
+ int venus_set_hw_state(struct venus_core *core, bool suspend);
+ 
+ static inline int venus_set_hw_state_suspend(struct venus_core *core)
+diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+index d69f51b..ef0c72a 100644
+--- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
++++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+@@ -119,6 +119,7 @@
+ #define WRAPPER_NONPIX_START_ADDR		(WRAPPER_BASE + 0x1030)
+ #define WRAPPER_NONPIX_END_ADDR			(WRAPPER_BASE + 0x1034)
+ #define WRAPPER_A9SS_SW_RESET			(WRAPPER_BASE + 0x3000)
++#define WRAPPER_A9SS_SW_RESET_BIT		BIT(4)
+ 
+ /* Venus 4xx */
+ #define WRAPPER_VCODEC0_MMCC_POWER_STATUS	(WRAPPER_BASE + 0x90)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
