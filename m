@@ -2,101 +2,161 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1037ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38679ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC1B20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=me.com header.i=@me.com header.b="ANTCcGY6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC1B20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=me.com
+	by mail.kernel.org (Postfix) with ESMTP id EEE6220C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 01:38:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE6220C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728674AbeIRHIZ (ORCPT
+        id S1728815AbeIRHIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 03:08:25 -0400
-Received: from st14p23im-asmtp003.me.com ([17.164.101.13]:45320 "EHLO
-        st14p23im-asmtp003.me.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727263AbeIRHIZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 03:08:25 -0400
-X-Greylist: delayed 3612 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Sep 2018 03:08:24 EDT
-Received: from process-dkim-sign-daemon.st14p23im-asmtp003.me.com by
- st14p23im-asmtp003.me.com
- (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
- 2018)) id <0PF800O006TDMX00@st14p23im-asmtp003.me.com>; Tue,
- 18 Sep 2018 00:38:21 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=04042017;
-        t=1537231100; bh=sd7BnCTIuB6QsPKifQZfeW2sQKoRHH5pxGY/thMdjKI=;
-        h=Content-type:MIME-version:Subject:From:Date:Message-id:To;
-        b=ANTCcGY61Z2EYLuC262KP3R30MyIKfaRqyqaVvDIDNsEfq2TicKAyAgVWtjGZ9txh
- rToaNMlKYGIZdT2g2uTu5LTdykYIW1wWS/vqbnJcbtxkhUHprKLnGsHnwjBPyqdgf7
- RFz8oZXkOC4EFuwTZ1s9Asa8OdlYIV2c8xwEllCJDCd35Hx2x2WgQ1hc6OrDL22IPr
- mSpgUTFHPDSdG0rSqzCmswstgPFrn9NFikWQXojg8xPpu8KRuX3hbu0xZqhLB02TAk
- evttZ44meU2ds+HI4rB7cTz34jcmmS09j0Vx/FUC/Lg1UdU/8RD+aGtCGjSDr+ZVfJ
- qzkn6mSFAh1aA==
-Received: from icloud.com ([127.0.0.1]) by st14p23im-asmtp003.me.com
- (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
- 2018)) with ESMTPSA id <0PF801B2673URA20@st14p23im-asmtp003.me.com>; Tue,
- 18 Sep 2018 00:38:20 +0000 (GMT)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2
- malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
- mlxlogscore=920 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809180004
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
- definitions=2018-09-17_13:,, signatures=0
-Content-type: text/plain; charset=us-ascii
-MIME-version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCHv2 2/2] scsi: ibmvscsis: Ensure partition name is properly
- NUL terminated
-From:   Bryant Ly <bryant.ly@me.com>
-In-reply-to: <20180911192226.3620-3-labbott@redhat.com>
-Date:   Mon, 17 Sep 2018 19:38:17 -0500
-Cc:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-transfer-encoding: 7bit
-Message-id: <8E56DEE3-6A6D-49E5-81D0-0E26CDBC28A6@me.com>
-References: <20180911192226.3620-1-labbott@redhat.com>
- <20180911192226.3620-3-labbott@redhat.com>
-To:     Laura Abbott <labbott@redhat.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Tue, 18 Sep 2018 03:08:35 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12170 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728703AbeIRHIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 03:08:35 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7A589C5882D11;
+        Tue, 18 Sep 2018 09:38:29 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
+ 09:38:27 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180911201546.56566-1-jaegeuk@kernel.org>
+ <7aa2e6f3-a4b2-dfdd-6205-f19c4bc952e6@kernel.org>
+ <20180912000603.GA67662@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180912002700.GA69323@jaegeuk-macbookpro.roam.corp.google.com>
+ <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
+ <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
+ <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+Date:   Tue, 18 Sep 2018 09:38:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Sep 11, 2018, at 2:22 PM, Laura Abbott <labbott@redhat.com> wrote:
+On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> On 09/13, Chao Yu wrote:
+>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+>>> On 09/12, Chao Yu wrote:
+>>>> On 2018/9/12 9:40, Chao Yu wrote:
+>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+>>>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+>>>>>>>>>>> can recover it based on previous user information.
+>>>>>>>>>>
+>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+>>>>>>>>>> same?
+>>>>>>>>>
+>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+>>>>>>>>> fsck after roll-forward recovery.
+>>>>>>>>>
+>>>>>>>>> Anyway, let me test again without this patch for a while.
+>>>>>>>>
+>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+>>>>>>>
+>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+>>>>>>> may was corrupted/inconsistent. Right?
+>>>>>
+>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+>>>>> detected by fsck, I guess there is bug in v8.
+>>>>
+>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+>>>> 1. flush time in block_operation exceed a threshold.
+>>>> 2. dquot subsystem error occurs.
+>>>>
+>>>> For above case, fsck should repair the quota file by default.
+>>>
+>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+>>> during the recovery. So, we have something missing in the recovery in terms
+>>> of quota updates.
+>>
+>> Yeah, I checked the code, just found one suspected place:
+>>
+>> find_fsync_dnodes()
+>>  - f2fs_recover_inode_page
+>>   - inc_valid_node_count
+>>    - dquot_reserve_block  dquot info is not initialized now
+>>  - add_fsync_inode
+>>   - dquot_initialize
+>>
+>> I think we should reserve block for inode block after dquot_initialize(), can
+>> you confirm this?
 > 
-> While reviewing another part of the code, Kees noticed that the
-> strncpy of the partition name might not always be NUL terminated. Switch
-> to using strscpy which does this safely.
+> Let me test this.
 > 
-> Reported-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> Subject: [PATCH] f2fs: count inode block for recovered files
+> 
+> If a new file is recovered, we missed to reserve its inode block.
+
+I remember, in order to keep line with other filesystem, unlike on-disk, we
+have to keep backward compatibilty, in memory we don't account block number
+for f2fs' inode block, but only account inode number for it, so here like
+we did in inc_valid_node_count(), we don't need to do this.
+
+Can you test v9 first? I didn't encounter quota corruption with your
+testcase right now. Will check it in cell phone environment.
+
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
-> v2: Switch to strscpy instead of just strlcpy
-> ---
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/f2fs/recovery.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-
-Reviewed-by: Bryant G. Ly bly@catalogicsoftware.com
-
-I sent a PR to update my email from bryantly@linux.vnet.ibm.com a week ago.
-
--Bryant
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 56d34193a74b..bff5cf730e13 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+>  		err = dquot_alloc_inode(inode);
+>  		if (err)
+>  			goto err_out;
+> +		err = dquot_reserve_block(inode, 1);
+> +		if (err) {
+> +			dquot_drop(inode);
+> +			goto err_out;
+> +		}
+>  	}
+>  
+>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> 
 
