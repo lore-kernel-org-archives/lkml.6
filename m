@@ -8,66 +8,66 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63971ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB43DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E00A214DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 859AF214DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KNzPCOu/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E00A214DD
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="usxB7bXW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 859AF214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeISAI1 (ORCPT
+        id S1730447AbeISAI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:08:27 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42720 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730348AbeISAI0 (ORCPT
+        Tue, 18 Sep 2018 20:08:29 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35729 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730411AbeISAI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:08:26 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z8-v6so2665665qto.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 11:34:34 -0700 (PDT)
+        Tue, 18 Sep 2018 20:08:28 -0400
+Received: by mail-qk1-f195.google.com with SMTP id f62-v6so1595703qke.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 11:34:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rDZVJePVfJo2ljZeIe9wGOUwq18IZmhUECBVkgFtXkg=;
-        b=KNzPCOu/k3c/MuFz39CMyBYWW8Lqy8dbOsolfGMVJxRnEVSMreL2zzqZ/pGx3eyynH
-         av0e/a2af2LgiNJ8SbymVhXFg4AabnJSSM/qaJMGs29XbtZkXBI44cBDOnPJhViNBNxl
-         LQxP1fG8Q5WTzhbehFH01HPdwbwpRNgx61TbeGH117y6MOwZI7Sezd7K3UOENzd2N+J8
-         Q5M+7yJdhW/0SjC7xBNDz07a4TLspFbfCMzdMIAMR0MTHvOGAR6MtMvVgdgyCnyadvcU
-         sj7LPaMt0kvZ8zNN9lEJXOupR9gdfFIxdEkWaUaUBN7kW6DdGeJPjVEIN0jwrXQj4jqY
-         TlFw==
+        bh=gVvwJUUsuoo61qdK9/n8q8dibmVNerp3vNU6K3KNlaM=;
+        b=usxB7bXW5xqzLuDB9CwrjAfED29IjMx+82WeHSmEu5xUhuVg7bzWLE5iWBEkK00+dP
+         weNIONAQKaLPm/9hAj+LNTxGIrp93OkWnCnARbs/L3/WqzRoSJd/GG9uuOMEeHO+Oajs
+         biFEOBS2L2OQbxhp9bMkX9qCvM5DKjDLpLw4ekyNEJUF0IS0MbnK0Og6lAGiu+OfXine
+         rqhPr5rnRnYQmfIJzZl3TWTZeKZeA3Pq0ALP132c6YREWsc80c3wEW4m1+Z72FJbEbCy
+         TJklO0yauDhLWZN5IGH/3iobDdsNRtq7unaV507mUueGQpqtJul9AeD9Y+8QiaymuZcS
+         YBnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rDZVJePVfJo2ljZeIe9wGOUwq18IZmhUECBVkgFtXkg=;
-        b=Fvznj891RuErynZrN2C9IxvzA1FzHxc3m3+ImKll+unNXoXfrCqO9wdIOhcxgg/Kdz
-         Z2CMjtqGN3qYTBepIFD/g+QI95sOfVup+3hgDpaHiwlIVFydtu7aZAToDVWmaxFQiySa
-         0gWptmmoeEDS+BM2dtRmEB/HFw3Vjmpg14vSVyOeA4b+PqIYI8eeP3SKP2I+DrpotY7t
-         v1v1vECRt3AabvG8aYQqCek4qGBsxLCC2uhGlxdTkeTryObMcuiVdkEfli3NMgFIGd0a
-         zwz3X0yFmYSya7rsiVoLqsy2wvB8FyA9fCrHwkNs7lwf+qgTIMgwYN6suAjmN85LtE/G
-         ej1g==
-X-Gm-Message-State: APzg51BwZtk74s1CK3TtVJeOFMwLJkBEc14X/HHDr6VwgbNIu/PMfyPa
-        K4KyFf9vuWjTWBSkjFAqsMM=
-X-Google-Smtp-Source: ANB0VdZafyh65YbHmCFzHjANqECdL2sXU6kNpCamkJdLb1VgEJljiFRIyFQorAc4dVDH0sZw+G7row==
-X-Received: by 2002:a0c:becb:: with SMTP id f11-v6mr22609181qvj.217.1537295674387;
-        Tue, 18 Sep 2018 11:34:34 -0700 (PDT)
+        bh=gVvwJUUsuoo61qdK9/n8q8dibmVNerp3vNU6K3KNlaM=;
+        b=T9IprHvE94nYp4ELkBxZOM8BOT1M4L6CJaC8+wo8cBaqESIPoPBbQnnsVP92d6YFgP
+         hLCfNh2cpajVpdlhijljIfDQiZEtzrowJSXL4noFVZKiY/R5chH2ZJxECSuI7N+1pesV
+         6ZWUQRbIklWW9cDwfMoBS3heXR+t+iDbyI/C9exZCYlp03VE85Hrnz1sD1HDjXF77q+5
+         9as1f7iPdJQ7y0Gh/OuXbUABimFuuzq/SJGA3FgL9waSTiG7p+V4/SDkrcc9p2hAGz4C
+         WvU5bIf4N/AoKygRwLSpLBrwEJhVHtLKRlxVhPnGshQJgH4crT1wlFXqd8RK0KDOiDG+
+         P6Ag==
+X-Gm-Message-State: APzg51CaN8oBMTtDrj1CCluiyP2eK7McxhiLluJIOz5wWLy2XW9lCrZJ
+        o2KPq73jXYoOt08ivh0PeIo=
+X-Google-Smtp-Source: ANB0VdaKyf60zUOauuxx7I4GEuDteDkwFDdC+T6kPddeAW/Vh4tb9dkKVB5V88xDoNYorSmB8ImvoQ==
+X-Received: by 2002:a37:ac0d:: with SMTP id e13-v6mr21854659qkm.100.1537295676532;
+        Tue, 18 Sep 2018 11:34:36 -0700 (PDT)
 Received: from localhost.localdomain ([2605:a000:1316:4273:719d:df26:b0cf:931a])
-        by smtp.googlemail.com with ESMTPSA id m15-v6sm13819101qki.1.2018.09.18.11.34.33
+        by smtp.googlemail.com with ESMTPSA id m15-v6sm13819101qki.1.2018.09.18.11.34.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 18 Sep 2018 11:34:34 -0700 (PDT)
+        Tue, 18 Sep 2018 11:34:36 -0700 (PDT)
 From:   Connor McAdams <conmanx360@gmail.com>
 Cc:     conmanx360@gmail.com, Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Alastair Bridgewater <alastair.bridgewater@gmail.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/15] ALSA: hda/ca0132 - Set AE-5 bools and select mixer
-Date:   Tue, 18 Sep 2018 14:33:32 -0400
-Message-Id: <1537295625-8082-5-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 05/15] ALSA: hda/ca0132 - Change ca0132_mmio_init for AE-5
+Date:   Tue, 18 Sep 2018 14:33:33 -0400
+Message-Id: <1537295625-8082-6-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537295625-8082-1-git-send-email-conmanx360@gmail.com>
 References: <1537295625-8082-1-git-send-email-conmanx360@gmail.com>
@@ -77,50 +77,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch sets the bool values for the AE-5, as well as selects the
-mixer it will use.
+This patch adds the unique writes for the AE-5 on startup to
+ca0132_mmio_init. The other cards share some addresses written to, but
+use different values.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_ca0132.c | 61 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 55 insertions(+), 6 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 5f53c71..7c870c4 100644
+index 7c870c4..51af3dc 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -7597,7 +7597,11 @@ static int ca0132_prepare_verbs(struct hda_codec *codec)
+@@ -7223,23 +7223,72 @@ static void ca0132_mmio_init(struct hda_codec *codec)
+ {
  	struct ca0132_spec *spec = codec->spec;
  
- 	spec->chip_init_verbs = ca0132_init_verbs0;
--	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3D)
-+	/*
-+	 * Since desktop cards use pci_mmio, this can be used to determine
-+	 * whether or not to use these verbs instead of a separate bool.
-+	 */
-+	if (spec->use_pci_mmio)
- 		spec->desktop_init_verbs = ca0132_init_verbs1;
- 	spec->spec_init_verbs = kcalloc(NUM_SPEC_VERBS,
- 					sizeof(struct hda_verb),
-@@ -7671,6 +7675,10 @@ static int patch_ca0132(struct hda_codec *codec)
- 		spec->mixers[0] = r3di_mixer;
- 		snd_hda_codec_set_name(codec, "Recon3Di");
- 		break;
-+	case QUIRK_AE5:
-+		spec->mixers[0] = desktop_mixer;
-+		snd_hda_codec_set_name(codec, "Sound BlasterX AE-5");
-+		break;
- 	default:
- 		spec->mixers[0] = ca0132_mixer;
- 		break;
-@@ -7680,6 +7688,7 @@ static int patch_ca0132(struct hda_codec *codec)
- 	switch (spec->quirk) {
- 	case QUIRK_SBZ:
- 	case QUIRK_R3D:
-+	case QUIRK_AE5:
- 		spec->use_alt_controls = true;
- 		spec->use_alt_functions = true;
- 		spec->use_pci_mmio = true;
+-	writel(0x00000000, spec->mem_base + 0x400);
+-	writel(0x00000000, spec->mem_base + 0x408);
+-	writel(0x00000000, spec->mem_base + 0x40C);
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000001, spec->mem_base + 0x400);
++	else
++		writel(0x00000000, spec->mem_base + 0x400);
++
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000001, spec->mem_base + 0x408);
++	else
++		writel(0x00000000, spec->mem_base + 0x408);
++
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000001, spec->mem_base + 0x40c);
++	else
++		writel(0x00000000, spec->mem_base + 0x40C);
++
+ 	writel(0x00880680, spec->mem_base + 0x01C);
+-	writel(0x00000083, spec->mem_base + 0xC0C);
++
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000080, spec->mem_base + 0xC0C);
++	else
++		writel(0x00000083, spec->mem_base + 0xC0C);
++
+ 	writel(0x00000030, spec->mem_base + 0xC00);
+ 	writel(0x00000000, spec->mem_base + 0xC04);
++
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000000, spec->mem_base + 0xC0C);
++	else
++		writel(0x00000003, spec->mem_base + 0xC0C);
++
+ 	writel(0x00000003, spec->mem_base + 0xC0C);
+ 	writel(0x00000003, spec->mem_base + 0xC0C);
+ 	writel(0x00000003, spec->mem_base + 0xC0C);
+-	writel(0x00000003, spec->mem_base + 0xC0C);
+-	writel(0x000000C1, spec->mem_base + 0xC08);
++
++	if (spec->quirk == QUIRK_AE5)
++		writel(0x00000001, spec->mem_base + 0xC08);
++	else
++		writel(0x000000C1, spec->mem_base + 0xC08);
++
+ 	writel(0x000000F1, spec->mem_base + 0xC08);
+ 	writel(0x00000001, spec->mem_base + 0xC08);
+ 	writel(0x000000C7, spec->mem_base + 0xC08);
+ 	writel(0x000000C1, spec->mem_base + 0xC08);
+ 	writel(0x00000080, spec->mem_base + 0xC04);
++
++	if (spec->quirk == QUIRK_AE5) {
++		writel(0x00000000, spec->mem_base + 0x42c);
++		writel(0x00000000, spec->mem_base + 0x46c);
++		writel(0x00000000, spec->mem_base + 0x4ac);
++		writel(0x00000000, spec->mem_base + 0x4ec);
++		writel(0x00000000, spec->mem_base + 0x43c);
++		writel(0x00000000, spec->mem_base + 0x47c);
++		writel(0x00000000, spec->mem_base + 0x4bc);
++		writel(0x00000000, spec->mem_base + 0x4fc);
++		writel(0x00000600, spec->mem_base + 0x100);
++		writel(0x00000014, spec->mem_base + 0x410);
++		writel(0x0000060f, spec->mem_base + 0x100);
++		writel(0x0000070f, spec->mem_base + 0x100);
++		writel(0x00000aff, spec->mem_base + 0x830);
++		writel(0x00000000, spec->mem_base + 0x86c);
++		writel(0x0000006b, spec->mem_base + 0x800);
++		writel(0x00000001, spec->mem_base + 0x86c);
++		writel(0x0000006b, spec->mem_base + 0x800);
++		writel(0x00000057, spec->mem_base + 0x804);
++		writel(0x00800000, spec->mem_base + 0x20c);
++	}
+ }
+ 
+ /*
 -- 
 2.7.4
 
