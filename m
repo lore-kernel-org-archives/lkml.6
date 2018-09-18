@@ -2,86 +2,102 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C900C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5AFC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1818A2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:09:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1818A2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 6F9ED2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 12:14:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9ED2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbeIRRlY (ORCPT
+        id S1729134AbeIRRqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:41:24 -0400
-Received: from www62.your-server.de ([213.133.104.62]:45694 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbeIRRlY (ORCPT
+        Tue, 18 Sep 2018 13:46:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58542 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeIRRqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:41:24 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2EoN-00032N-UO; Tue, 18 Sep 2018 14:08:59 +0200
-Received: from [178.197.249.15] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1g2EoN-0003AN-Og; Tue, 18 Sep 2018 14:08:59 +0200
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Vakul Garg <vakul.garg@nxp.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "davejwatson@fb.com" <davejwatson@fb.com>,
-        "doronrk@fb.com" <doronrk@fb.com>
-References: <20180918101107.74d8689a@canb.auug.org.au>
- <93982e9d-dc78-6423-bb9b-c5773d98e244@iogearbox.net>
- <DB7PR04MB42522B223D4E04F5DA519A8B8B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
- <236589cd-b55d-1ceb-f236-36f9135f794e@iogearbox.net>
- <DB7PR04MB4252D31B8E79B789CC507D248B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
- <5959dad0-dd02-1c3d-2487-13a69f8c507b@iogearbox.net>
- <d5eee0d9-c270-3ce7-5fcd-5f94b713dc3b@iogearbox.net>
- <DB7PR04MB425225AD548F3A3040250EF48B1D0@DB7PR04MB4252.eurprd04.prod.outlook.com>
- <20180918214814.4eae366d@canb.auug.org.au>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <c9b60dd3-5e47-bc5f-98ee-99f96a863710@iogearbox.net>
-Date:   Tue, 18 Sep 2018 14:08:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 18 Sep 2018 13:46:36 -0400
+Received: from localhost (unknown [147.67.4.98])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28651CEA;
+        Tue, 18 Sep 2018 12:14:15 +0000 (UTC)
+Date:   Tue, 18 Sep 2018 14:14:13 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
+        Miao Xie <miaoxie@huawei.com>
+Subject: Re: [PATCH 0/8] staging: erofs: error handing and more tracepoints
+Message-ID: <20180918121413.GA499@kroah.com>
+References: <1536936030-62362-1-git-send-email-gaoxiang25@huawei.com>
+ <20180918111953.GA3585@kroah.com>
+ <aab26d0e-f8dc-cc83-46eb-7a93a833eaae@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180918214814.4eae366d@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24951/Tue Sep 18 10:16:39 2018)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aab26d0e-f8dc-cc83-46eb-7a93a833eaae@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 01:48 PM, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Sep 18, 2018 at 08:02:30PM +0800, Gao Xiang wrote:
+> Hi Greg,
 > 
-> On Tue, 18 Sep 2018 10:17:03 +0000 Vakul Garg <vakul.garg@nxp.com> wrote:
->>
->> Got it. 
->> Thanks for the guidance.
+> On 2018/9/18 19:19, Greg Kroah-Hartman wrote:
+> > On Fri, Sep 14, 2018 at 10:40:22PM +0800, Gao Xiang wrote:
+> >> In order to avoid conflicts with cleanup patches, Chao and I think
+> >> it is better to send reviewed preview patches in the erofs mailing list
+> >> to the community in time.
+> >>
+> >> So here is reviewed & tested patches right now, which clean up and
+> >> enhance the error handing and add some tracepoints for decompression.
+> >>
+> >> Note that in this patchset, bare use of 'unsigned' and NULL comparison are
+> >> also fixed compared with the preview patches according to the previous
+> >> discussion in the staging mailing list.
+> > 
+> > I applied this, but I need to go delete it as this patch series adds a
+> > build warning to the system:
+> > 
+> > In file included from drivers/staging/erofs/unzip_vle.h:16:0,
+> >                  from drivers/staging/erofs/unzip_vle.c:13:
+> > drivers/staging/erofs/unzip_vle.c: In function ‘z_erofs_map_blocks_iter’:
+> > drivers/staging/erofs/internal.h:303:34: warning: ‘pblk’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >  #define blknr_to_addr(nr)       ((erofs_off_t)(nr) * EROFS_BLKSIZ)
+> >                                   ^
+> > drivers/staging/erofs/unzip_vle.c:1574:20: note: ‘pblk’ was declared here
+> >   erofs_blk_t mblk, pblk;
+> >                     ^~~~
+> > 
+> > Please fix that up and resend.
 > 
-> So, what should I remove? ;-)
+> strange... my compiler (4.8.4) and huawei internal CI don't report that,
+> and this patchset has been in Chao's tree for a while, I don't get any report so far...
+> 
+> I just looked into that code again and it seems a false warning since
+> 1) this code is heavily running on the products and working fine till now.
+> 2) pblk gets a proper value before unzip_vle.c:1690 map->m_pa = blknr_to_addr(pblk);
+> 
+> so I think I need to silence this warning for now and check if there is a really issue....
 
-My (very own personal) preference in general would be that we test / assert
-the kernel behavior that exists /today/, meaning once we implement support
-for multi-record peek we add the corresponding test case along with that
-code. Fwiw, this practice would be consistent with the rest of the kernel
-selftests development model we have under net (& bpf).
+Don't just silent the warning.  Usually gcc now properly detects where
+there really is a problem, it should not be a false-positive.  And in
+looking at the code, it does seem that pblk could not be set if one of
+the different case statements is taken and then exact_hitted: is jumped
+to, right?
 
-Thanks,
-Daniel
+Or is gcc just being "dumb" here?  What about clang, have you tried
+building it with that compiler as well?
+
+thanks,
+
+greg k-h
