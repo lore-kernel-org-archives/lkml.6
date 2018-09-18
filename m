@@ -2,144 +2,212 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDDCECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30591ECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EECA02086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:32:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EECA02086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id DADE02086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:33:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADE02086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeIRPEA (ORCPT
+        id S1729506AbeIRPFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:04:00 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:9556 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729578AbeIRPD6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:03:58 -0400
-X-IronPort-AV: E=Sophos;i="5.53,389,1531785600"; 
-   d="scan'208";a="79199947"
-From:   George Dunlap <George.Dunlap@citrix.com>
-To:     =?utf-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>
-CC:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Roger Pau Monne <roger.pau@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        George Dunlap <George.Dunlap@citrix.com>
-Subject: Re: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
- flr/slot/bus reset with 'reset' SysFS attribute
-Thread-Topic: [Xen-devel] [PATCH V3 2/2] Xen/PCIback: Implement PCI
- flr/slot/bus reset with 'reset' SysFS attribute
-Thread-Index: AQHUTx9f82+4VewK8EuqL3LeXVReCKT1pSiA
-Date:   Tue, 18 Sep 2018 09:32:09 +0000
-Message-ID: <5E7DDB68-4E68-48A5-AEEC-EE1B21A50E9E@citrix.com>
-References: <20171207222145.9769-1-Govinda.Tatti@Oracle.COM>
- <20171207222145.9769-3-Govinda.Tatti@Oracle.COM>
- <5A2A6AB10200007800195D4F@prv-mh.provo.novell.com>
- <8a3bc517-1255-4547-d244-5c400e44cc77@Oracle.COM>
- <f19dbb09-ef22-2cf4-fb38-2a7c42b5dc48@Oracle.COM>
- <5A377E020200007800197FFA@prv-mh.provo.novell.com>
- <559ffd12-b541-8a69-60bd-fbe10e3dc159@oracle.com>
- <20180916114306.GF18222@reaktio.net>
- <a726840b-8a5c-0890-73c6-3a95a7205153@oracle.com>
- <20180918071519.GG18222@reaktio.net>
-In-Reply-To: <20180918071519.GG18222@reaktio.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.9.1)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <06A5B4745A58F84980FE1810FD94B93F@citrix.com>
-Content-Transfer-Encoding: base64
+        Tue, 18 Sep 2018 11:05:40 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:31645 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726838AbeIRPFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:05:40 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42DyVF5tjlz9ttC9;
+        Tue, 18 Sep 2018 11:33:41 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 7-1R2oRSNf_1; Tue, 18 Sep 2018 11:33:41 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42DyVF5L3bz9ttBY;
+        Tue, 18 Sep 2018 11:33:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 925468B7DE;
+        Tue, 18 Sep 2018 11:33:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id uzEipEIdKS98; Tue, 18 Sep 2018 11:33:52 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0D0A28B74C;
+        Tue, 18 Sep 2018 11:33:52 +0200 (CEST)
+Subject: Checkpatch bad Warning (Re: [PATCH] powerpc/kgdb: add
+ kgdb_arch_set/remove_breakpoint())
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Joe Perches <joe@perches.com>, Andy Whitcroft <apw@canonical.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
+Message-ID: <2f5f572a-a28c-9d17-844b-9e1961febf64@c-s.fr>
+Date:   Tue, 18 Sep 2018 09:33:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gT24gU2VwIDE4LCAyMDE4LCBhdCA4OjE1IEFNLCBQYXNpIEvDpHJra8OkaW5lbiA8cGFz
-aWtAaWtpLmZpPiB3cm90ZToNCj4gDQo+IEhpLA0KPiANCj4gT24gTW9uLCBTZXAgMTcsIDIwMTgg
-YXQgMDI6MDY6MDJQTSAtMDQwMCwgQm9yaXMgT3N0cm92c2t5IHdyb3RlOg0KPj4gT24gOS8xNi8x
-OCA3OjQzIEFNLCBQYXNpIEvDpHJra8OkaW5lbiB3cm90ZToNCj4+PiBIaSwNCj4+PiANCj4+PiBP
-biBNb24sIERlYyAxOCwgMjAxNyBhdCAxMjozMjoxMVBNIC0wNTAwLCBCb3JpcyBPc3Ryb3Zza3kg
-d3JvdGU6DQo+Pj4+IE9uIDEyLzE4LzIwMTcgMDI6MzYgQU0sIEphbiBCZXVsaWNoIHdyb3RlOg0K
-Pj4+Pj4+Pj4gT24gMTUuMTIuMTcgYXQgMjA6NTIsIDxHb3ZpbmRhLlRhdHRpQE9yYWNsZS5DT00+
-IHdyb3RlOg0KPj4+Pj4+Pj4+ICtzdGF0aWMgaW50IHBjaXN0dWJfZGV2aWNlX3Jlc2V0KHN0cnVj
-dCBwY2lfZGV2ICpkZXYpDQo+Pj4+Pj4+Pj4gK3sNCj4+Pj4+Pj4+PiArCXN0cnVjdCB4ZW5fcGNp
-YmtfZGV2X2RhdGEgKmRldl9kYXRhOw0KPj4+Pj4+Pj4+ICsJYm9vbCBzbG90ID0gZmFsc2UsIGJ1
-cyA9IGZhbHNlOw0KPj4+Pj4+Pj4+ICsJc3RydWN0IHBjaXN0dWJfYXJncyBhcmcgPSB7fTsNCj4+
-Pj4+Pj4+PiArDQo+Pj4+Pj4+Pj4gKwlpZiAoIWRldikNCj4+Pj4+Pj4+PiArCQlyZXR1cm4gLUVJ
-TlZBTDsNCj4+Pj4+Pj4+PiArDQo+Pj4+Pj4+Pj4gKwlkZXZfZGJnKCZkZXYtPmRldiwgIlslc11c
-biIsIF9fZnVuY19fKTsNCj4+Pj4+Pj4+PiArDQo+Pj4+Pj4+Pj4gKwkvKiBGaXJzdCBjaGVjayBh
-bmQgdHJ5IEZMUiAqLw0KPj4+Pj4+Pj4+ICsJaWYgKHBjaWVfaGFzX2ZscihkZXYpKSB7DQo+Pj4+
-Pj4+Pj4gKwkJZGV2X2RiZygmZGV2LT5kZXYsICJyZXNldHRpbmcgJXMgZGV2aWNlIHVzaW5nIEZM
-UlxuIiwNCj4+Pj4+Pj4+PiArCQkJcGNpX25hbWUoZGV2KSk7DQo+Pj4+Pj4+Pj4gKwkJcGNpZV9m
-bHIoZGV2KTsNCj4+Pj4+Pj4+IFRoZSBsYWNrIG9mIGVycm9yIGNoZWNrIGhlcmUgcHV6emxlZCBt
-ZSwgYnV0IEkgc2VlIHRoZSBmdW5jdGlvbg0KPj4+Pj4+Pj4gaW5kZWVkIHJldHVybnMgdm9pZCBy
-aWdodCBub3cuIEkgdGhpbmsgdGhlIHByZXJlcSBwYXRjaCBzaG91bGQNCj4+Pj4+Pj4+IGNoYW5n
-ZSB0aGlzIGFsb25nIHdpdGggZXhwb3J0aW5nIHRoZSBmdW5jdGlvbiAtIHlvdSByZWFsbHkgZG9u
-J3QNCj4+Pj4+Pj4+IHdhbnQgdGhlIGRldmljZSB0byBiZSBoYW5kZWQgdG8gYSBndWVzdCB3aGVu
-IHRoZSBGTFIgdGltZWQNCj4+Pj4+Pj4+IG91dC4NCj4+Pj4+Pj4gV2Ugd2lsbCBjaGFuZ2UgcGNp
-ZV9mbHIoKSB0byByZXR1cm4gZXJyb3IgY29kZS4gSSB3aWxsIG1ha2UgdGhpcyBjaGFuZ2UNCj4+
-Pj4+Pj4gaW4gdGhlIG5leHQgdmVyc2lvbiBvZiB0aGlzIHBhdGNoLg0KPj4+Pj4+IEkgZXhjaGFu
-Z2VkIHNvbWUgZW1haWxzIHdpdGggQmpvcm4vQ2hyaXN0b3BoIGFuZCBpdCBsb29rcyBsaWtlIENo
-cmlzdG9waA0KPj4+Pj4+IGFzIHNvbWUgcGxhbnRvIHJlc3RydWN0dXJlIHBjaWUgZmxyIHNwZWNp
-ZmljIGZ1bmN0aW9ucyBidXQgSSBkb24ndCBrbm93DQo+Pj4+Pj4gdGhlIGV4YWN0IHRpbWUtZnJh
-bWUuIEZvciBub3csSSBhbSBwbGFubmluZyB0byB1c2UgZXhpc3RpbmcgcGNpZV9mbHIoKQ0KPj4+
-Pj4+IGFmdGVyIGNoZWNraW5nIEZMUiBjYXBhYmlsaXR5LiBXZSB3aWxsIHN3aXRjaHRvIHJldmlz
-ZWQgcGNpZV9mbHIoKSBvbmNlDQo+Pj4+Pj4gaXQgaXMgYXZhaWxhYmxlLg0KPj4+Pj4+IA0KPj4+
-Pj4+IEkgaG9wZSB5b3UgYXJlIGZpbmUgd2l0aCB0aGlzIGFwcHJvYWNoLiBQbGVhc2UgbGV0IG1l
-IGtub3cuIFRoYW5rcy4NCj4+Pj4+IEkndmUgc2VlbiB0aGF0IG90aGVyIGRpc2N1c3Npb24uIEkg
-ZG9uJ3QgdGhpbmsgdGhlIGNoYW5nZSBoZXJlDQo+Pj4+PiBzaG91bGQgYmUgZG9uZSBwcmlvciB0
-byB0aGUgZXJyb3IgcmVwb3J0aW5nIGJlaW5nIHB1dCBpbiBwbGFjZSwNCj4+Pj4+IGZvciBzZWN1
-cml0eSByZWFzb25zLiBCdXQgaW4gdGhlIGVuZCBpdCdsbCBiZSBLb25yYWQgYXMgdGhlDQo+Pj4+
-PiBtYWludGFpbmVyIHRvIGp1ZGdlLg0KPj4+Pj4gDQo+Pj4+PiBPciB3YWl0LCBsb29rcyBsaWtl
-IHRoZXJlJ3Mgc29tZSBjb25mdXNpb24gaW4gLi9NQUlOVEFJTkVSUzoNCj4+Pj4+IEtvbnJhZCBp
-cyBsaXN0ZWQgYXMgbWFpbnRhaW5lciBmb3IgIlhFTiBQQ0kgU1VCU1lTVEVNIiwgYnV0IHRoZQ0K
-Pj4+Pj4gbGlzdCBvZiBmaWxlcyBkb2Vzbid0IGluY2x1ZGUgcGNpYmFjay4gU28gaXQgd291bGQg
-aW5zdGVhZCBiZSBCb3Jpcw0KPj4+Pj4gb3IgSsO8cmdlbiB0byBnaXZlIHlvdSBhIGZpbmFsIHdv
-cmQuDQo+Pj4+IA0KPj4+PiBUaGlzIGlzIG5vdyA0LjE2IG1hdGVyaWFsIHNvIHdlIGNhbiBhdCBs
-ZWFzdCB3YWl0IHVudGlsIGNsb3NlciB0bw0KPj4+PiBvcGVuaW5nIG9mIHRoZSBtZXJnZSB3aW5k
-b3cgd2hlbiB3ZSBtYXkgaGF2ZSB0aGUgUENJIHVwZGF0ZXMuIChBbmQgSQ0KPj4+PiBqdXN0IG5v
-dGljZWQgdGhhdCB5b3UgcmVzcG9uZGVkIHRvIENocmlzdG9waC4pDQo+Pj4+IA0KPj4+PiBCZXNp
-ZGVzLCB3ZSBkb24ndCB3YW50IHRvIG1ha2Uga2VybmVsIGNoYW5nZXMgdW50aWwgdGhlIGludGVy
-ZmFjZSBpcw0KPj4+PiBzZXR0bGVkIChpLmUgdGhlIHRvb2xzdGFjayBjaGFuZ2VzIGFyZSBhY2Nl
-cHRlZCkuDQo+Pj4+IA0KPj4+IEl0IHNlZW1zIEdvdmluZGEncyBlbWFpbCBhZGRyZXNzIGlzIGdp
-dmluZyBhbiBlcnJvciwgc28gSSBhc3N1bWUgc29tZW9uZSBlbHNlIG5lZWRzIHRvIHBpY2sgdXAg
-dGhpcyBwY2liYWNrICdyZXNldCcgZmVhdHVyZS4NCj4+PiBJcyBpdCBsaWtlbHkgc29tZW9uZSBl
-bHNlIGZyb20gT3JhY2xlIGNhbi93aWxsIHBpY2sgdXAgYW5kIHJlZnJlc2ggdGhpcyBwYXRjaCwg
-d2l0aCB0aGUgcmV2aWV3IGNvbW1lbnRzIGFkZHJlc3NlZD8NCj4+IA0KPj4gDQo+PiBHb3ZpbmRh
-IGlzIG5vIGxvbmdlciBhdCBPcmFjbGUuDQo+PiANCj4gDQo+IFllcCwgdGhvdWdodCBzby4gUmVt
-b3ZlZCBmcm9tIENDIGxpc3QuDQo+IA0KPiANCj4+IFdoYXQgYWJvdXQgdGhlIHRvb2xzdGFjayBj
-aGFuZ2VzPyBIYXZlIHRoZXkgYmVlbiBhY2NlcHRlZD8gSSB2YWd1ZWx5DQo+PiByZWNhbGwgdGhl
-cmUgd2FzIGEgZGlzY3Vzc2lvbiBhYm91dCB0aG9zZSBjaGFuZ2VzIGJ1dCBkb24ndCByZW1lbWJl
-ciBob3cNCj4+IGl0IGVuZGVkLg0KPj4gDQo+IA0KPiBJIGRvbid0IHRoaW5rIHRvb2xzdGFjay9s
-aWJ4bCBwYXRjaCBoYXMgYmVlbiBhcHBsaWVkIHlldCBlaXRoZXIuDQo+IA0KPiANCj4gIltQQVRD
-SCBWMSAwLzFdIFhlbi9Ub29sczogUENJIHJlc2V0IHVzaW5nICdyZXNldCcgU3lzRlMgYXR0cmli
-dXRlIjoNCj4gaHR0cHM6Ly9saXN0cy54ZW4ub3JnL2FyY2hpdmVzL2h0bWwveGVuLWRldmVsLzIw
-MTctMTIvbXNnMDA2NjQuaHRtbA0KPiANCj4gIltQQVRDSCBWMSAxLzFdIFhlbi9saWJ4bDogUGVy
-Zm9ybSBQQ0kgcmVzZXQgdXNpbmcgJ3Jlc2V0JyBTeXNGUyBhdHRyaWJ1dGUiOg0KPiBodHRwczov
-L2xpc3RzLnhlbi5vcmcvYXJjaGl2ZXMvaHRtbC94ZW4tZGV2ZWwvMjAxNy0xMi9tc2cwMDY2My5o
-dG1sDQo+IA0KPiBHZW9yZ2UgYXNrZWQgZm9yIHNvbWUgY2xhcmlmaWNhdGlvbnM6DQo+IGh0dHBz
-Oi8vbGlzdHMueGVuLm9yZy9hcmNoaXZlcy9odG1sL3hlbi1kZXZlbC8yMDE3LTEyL21zZzAxMDQ0
-Lmh0bWwNCj4gaHR0cHM6Ly9saXN0cy54ZW4ub3JnL2FyY2hpdmVzL2h0bWwveGVuLWRldmVsLzIw
-MTctMTIvbXNnMDExMTYuaHRtbA0KDQpSaWdodCwgdGhlIGRlc2NyaXB0aW9uIG9mIHRoZSBwYXRj
-aCBkaWRu4oCZdCBhY3R1YWxseSB0ZWxsIHlvdSB3aGF0IHdhcyBnb2luZyBvbi4gIEl0IHNob3Vs
-ZCBoYXZlIHNhaWQgc29tZXRoaW5nIGxpa2UsIOKAnHhsIGN1cnJlbnRseSBhdHRlbXB0cyB0byBy
-ZXNldCBhIGRldmljZSB1c2luZyBYOyBidXQgdGhhdOKAmXMgbmV2ZXIgYmVlbiBpbXBsZW1lbnRl
-ZCBpbiBMaW51eC4gIEluc3RlYWQsIHVzZSBZLCB3aGljaCBbaXMgYmV0dGVyIGZvciB3aGF0ZXZl
-ciByZWFzb25d4oCdLg0KDQogLUdlb3JnZQ0KDQo=
+On the below patch, checkpatch reports
+
+WARNING: struct kgdb_arch should normally be const
+#127: FILE: arch/powerpc/kernel/kgdb.c:480:
++struct kgdb_arch arch_kgdb_ops;
+
+But when I add 'const', I get compilation failure
+
+   CC      arch/powerpc/kernel/kgdb.o
+arch/powerpc/kernel/kgdb.c:480:24: error: conflicting type qualifiers 
+for ‘arch_kgdb_ops’
+  const struct kgdb_arch arch_kgdb_ops;
+                         ^
+In file included from arch/powerpc/kernel/kgdb.c:18:0:
+./include/linux/kgdb.h:284:26: note: previous declaration of 
+‘arch_kgdb_ops’ was here
+  extern struct kgdb_arch  arch_kgdb_ops;
+                           ^
+make[1]: *** [arch/powerpc/kernel/kgdb.o] Error 1
+
+Christophe
+
+On 09/18/2018 09:26 AM, Christophe Leroy wrote:
+> Generic implementation fails to remove breakpoints after init
+> when CONFIG_STRICT_KERNEL_RWX is selected:
+> 
+> [   13.251285] KGDB: BP remove failed: c001c338
+> [   13.259587] kgdbts: ERROR PUT: end of test buffer on 'do_fork_test' line 8 expected OK got $E14#aa
+> [   13.268969] KGDB: re-enter exception: ALL breakpoints killed
+> [   13.275099] CPU: 0 PID: 1 Comm: init Not tainted 4.18.0-g82bbb913ffd8 #860
+> [   13.282836] Call Trace:
+> [   13.285313] [c60e1ba0] [c0080ef0] kgdb_handle_exception+0x6f4/0x720 (unreliable)
+> [   13.292618] [c60e1c30] [c000e97c] kgdb_handle_breakpoint+0x3c/0x98
+> [   13.298709] [c60e1c40] [c000af54] program_check_exception+0x104/0x700
+> [   13.305083] [c60e1c60] [c000e45c] ret_from_except_full+0x0/0x4
+> [   13.310845] [c60e1d20] [c02a22ac] run_simple_test+0x2b4/0x2d4
+> [   13.316532] [c60e1d30] [c0081698] put_packet+0xb8/0x158
+> [   13.321694] [c60e1d60] [c00820b4] gdb_serial_stub+0x230/0xc4c
+> [   13.327374] [c60e1dc0] [c0080af8] kgdb_handle_exception+0x2fc/0x720
+> [   13.333573] [c60e1e50] [c000e928] kgdb_singlestep+0xb4/0xcc
+> [   13.339068] [c60e1e70] [c000ae1c] single_step_exception+0x90/0xac
+> [   13.345100] [c60e1e80] [c000e45c] ret_from_except_full+0x0/0x4
+> [   13.350865] [c60e1f40] [c000e11c] ret_from_syscall+0x0/0x38
+> [   13.356346] Kernel panic - not syncing: Recursive entry to debugger
+> 
+> This patch creates powerpc specific version of
+> kgdb_arch_set_breakpoint() and kgdb_arch_remove_breakpoint()
+> using patch_instruction()
+> 
+> Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>   arch/powerpc/include/asm/kgdb.h |  5 ++++-
+>   arch/powerpc/kernel/kgdb.c      | 43 +++++++++++++++++++++++++++++++++--------
+>   2 files changed, 39 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/kgdb.h b/arch/powerpc/include/asm/kgdb.h
+> index 9db24e77b9f4..a9e098a3b881 100644
+> --- a/arch/powerpc/include/asm/kgdb.h
+> +++ b/arch/powerpc/include/asm/kgdb.h
+> @@ -26,9 +26,12 @@
+>   #define BREAK_INSTR_SIZE	4
+>   #define BUFMAX			((NUMREGBYTES * 2) + 512)
+>   #define OUTBUFMAX		((NUMREGBYTES * 2) + 512)
+> +
+> +#define BREAK_INSTR		0x7d821008	/* twge r2, r2 */
+> +
+>   static inline void arch_kgdb_breakpoint(void)
+>   {
+> -	asm(".long 0x7d821008"); /* twge r2, r2 */
+> +	asm(stringify_in_c(.long BREAK_INSTR));
+>   }
+>   #define CACHE_FLUSH_IS_SAFE	1
+>   #define DBG_MAX_REG_NUM     70
+> diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
+> index 35e240a0a408..59c578f865aa 100644
+> --- a/arch/powerpc/kernel/kgdb.c
+> +++ b/arch/powerpc/kernel/kgdb.c
+> @@ -24,6 +24,7 @@
+>   #include <asm/processor.h>
+>   #include <asm/machdep.h>
+>   #include <asm/debug.h>
+> +#include <asm/code-patching.h>
+>   #include <linux/slab.h>
+>   
+>   /*
+> @@ -144,7 +145,7 @@ static int kgdb_handle_breakpoint(struct pt_regs *regs)
+>   	if (kgdb_handle_exception(1, SIGTRAP, 0, regs) != 0)
+>   		return 0;
+>   
+> -	if (*(u32 *) (regs->nip) == *(u32 *) (&arch_kgdb_ops.gdb_bpt_instr))
+> +	if (*(u32 *)regs->nip == BREAK_INSTR)
+>   		regs->nip += BREAK_INSTR_SIZE;
+>   
+>   	return 1;
+> @@ -441,16 +442,42 @@ int kgdb_arch_handle_exception(int vector, int signo, int err_code,
+>   	return -1;
+>   }
+>   
+> +int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+> +{
+> +	int err;
+> +	unsigned int instr;
+> +	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
+> +
+> +	err = probe_kernel_address(addr, instr);
+> +	if (err)
+> +		return err;
+> +
+> +	err = patch_instruction(addr, BREAK_INSTR);
+> +	if (err)
+> +		return -EFAULT;
+> +
+> +	*(unsigned int *)bpt->saved_instr = instr;
+> +
+> +	return 0;
+> +}
+> +
+> +int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+> +{
+> +	int err;
+> +	unsigned int instr = *(unsigned int *)bpt->saved_instr;
+> +	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
+> +
+> +	err = patch_instruction(addr, instr);
+> +	if (err)
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+>   /*
+>    * Global data
+>    */
+> -struct kgdb_arch arch_kgdb_ops = {
+> -#ifdef __LITTLE_ENDIAN__
+> -	.gdb_bpt_instr = {0x08, 0x10, 0x82, 0x7d},
+> -#else
+> -	.gdb_bpt_instr = {0x7d, 0x82, 0x10, 0x08},
+> -#endif
+> -};
+> +struct kgdb_arch arch_kgdb_ops;
+>   
+>   static int kgdb_not_implemented(struct pt_regs *regs)
+>   {
+> 
