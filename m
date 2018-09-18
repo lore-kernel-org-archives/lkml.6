@@ -2,94 +2,170 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711CAECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835F9C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FEC621508
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F5821508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:16:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="dSrDHQAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FEC621508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="jBy6sSuz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F5821508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbeIRVsZ (ORCPT
+        id S1729946AbeIRVtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:48:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50552 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbeIRVsZ (ORCPT
+        Tue, 18 Sep 2018 17:49:45 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:44476 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbeIRVtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:48:25 -0400
+        Tue, 18 Sep 2018 17:49:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1YC6JztbfBD+Uy/BFjIsDwwZmRR6wdDEqg65M3ZD174=; b=dSrDHQAvs4dPP8bzVv/oO9ZF1
-        DJCYnXkxOXAKuc2cTqJ0Sf1c2EK7k0zmqYsNkFkSgbKK3MjBDIMpbJPWahnDNe0E03fhQ2wOwciuT
-        +8rNHn+NUOIxA9Qzb2alonzuFbxXeMsoslApFYr7cLh2K5L3Vul2EFSSJjzooRiUcrNUs=;
-Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+         bh=Q8f5TrSNLIe1z/M/aehl1L0nQlXQ0Vr9/8sv0pfynt8=; b=jBy6sSuzNRE8jzCiuudEaivvK
+        BDKssQX5P7AUEhOAMMuMF3FCbouAE/oN+8/4UrRPS1TVFJ55Z5CWEf+ullopJCgPD2LFhO0jHh447
+        ayJVLWeCPK9e6WE06gLlozNJOYBaHH7uwGm49RwoG9KPmf4ZtQDfzcVoQoTlGboNMH5Yo=;
+Received: from p5dcc36a5.dip0.t-ipconnect.de ([93.204.54.165] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g2IeZ-0003Pn-4d; Tue, 18 Sep 2018 16:15:07 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 056D7440078; Tue, 18 Sep 2018 17:15:04 +0100 (BST)
-Date:   Tue, 18 Sep 2018 09:15:04 -0700
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Shih <pihsun@chromium.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] spi: mediatek: Don't modify spi_transfer when
- transfer.
-Message-ID: <20180918161504.GM2471@sirena.org.uk>
-References: <20180910035047.98496-1-pihsun@chromium.org>
- <20180910035421.101505-1-pihsun@chromium.org>
+        (envelope-from <andreas@kemnade.info>)
+        id 1g2Ifo-0005nY-QG; Tue, 18 Sep 2018 18:16:24 +0200
+Date:   Tue, 18 Sep 2018 18:16:19 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     kishon@ti.com, lee.jones@linaro.org, daniel.thompson@linaro.org,
+        wsa@the-dreams.de, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH RESEND] phy: phy-twl4030-usb: fix denied runtime access
+Message-ID: <20180918181619.2e266f0d@aktux>
+In-Reply-To: <20180917222345.GA203020@dtor-ws>
+References: <20180917052254.12336-1-andreas@kemnade.info>
+        <20180917175131.GA104770@dtor-ws>
+        <20180917205634.6a320cad@aktux>
+        <20180917222345.GA203020@dtor-ws>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Qgof7w7UksPF5inF"
-Content-Disposition: inline
-In-Reply-To: <20180910035421.101505-1-pihsun@chromium.org>
-X-Cookie: Universe, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hF17.lQIoc7SEI58RHUA+gC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/hF17.lQIoc7SEI58RHUA+gC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---Qgof7w7UksPF5inF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-On Mon, Sep 10, 2018 at 11:54:21AM +0800, Peter Shih wrote:
+On Mon, 17 Sep 2018 15:23:45 -0700
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-> Change-Id: I23e218cd964f16c0b2b26127d4a5ca6529867673
+> On Mon, Sep 17, 2018 at 08:56:34PM +0200, Andreas Kemnade wrote:
+> > Hi Dmitry,
+> >=20
+> > On Mon, 17 Sep 2018 10:51:31 -0700
+> > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> >  =20
+> > > Hi Andreas,
+> > >=20
+> > > On Mon, Sep 17, 2018 at 07:22:54AM +0200, Andreas Kemnade wrote: =20
+> > > > When runtime is not enabled, pm_runtime_get_sync() returns -EACCESS,
+> > > > the counter will be incremented but the resume callback not called,
+> > > > so enumeration and charging will not start properly.
+> > > > To avoid that happen, wait and try again later.
+> > > >=20
+> > > > Practically this happens when the device is woken up from suspend by
+> > > > plugging in usb.
+> > > >=20
+> > > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > > ---
+> > > >  drivers/phy/ti/phy-twl4030-usb.c | 9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > >=20
+> > > > diff --git a/drivers/phy/ti/phy-twl4030-usb.c b/drivers/phy/ti/phy-=
+twl4030-usb.c
+> > > > index a44680d64f9b..1f3cf4e48383 100644
+> > > > --- a/drivers/phy/ti/phy-twl4030-usb.c
+> > > > +++ b/drivers/phy/ti/phy-twl4030-usb.c
+> > > > @@ -552,6 +552,15 @@ static irqreturn_t twl4030_usb_irq(int irq, vo=
+id *_twl)
+> > > > =20
+> > > >  	status =3D twl4030_usb_linkstat(twl);
+> > > > =20
+> > > > +	/* we might get here too early when runtime is not ready yet
+> > > > +	 * and we will get an EACCESS later, so try again later
+> > > > +	 */   =20
+> > >=20
+> > > How exactly can this happen? What disables (and later re-enables)
+> > > runtime PM?  =20
+> > If the whole resume process is started by plugging in usb, the
+> > interrupt will be triggered still in the resume process so that=20
+> > runtime resume is not yet possible, pm_runtime_get_sync() returns
+> > EACCESS =20
+>=20
+> I see. This all seems a bit wonky, to be honest. I would expect that the
+> driver would have a suspend routine that disables interrupt and also
+> configure interrupt for wakeup (enable_irq_wake) and kick bus scanning
+> from there instead of aborting interrupt handler...
+>=20
+well, that seems doable. So there will be a v2.
 
-Please don't include noise like this in upstream submissions, it doesn't
-mean anything outside of your company's systems.
+> >  =20
+> > > How can we guarantee that the interrupt will be
+> > > re-triggered?
+> > >  =20
+> > The interrupt will not be re-triggered but the handler will be
+> > called at some other places...
+> >  =20
+> > > > +	if (!pm_runtime_enabled(twl->dev)) {
+> > > > +		cancel_delayed_work(&twl->id_workaround_work);
+> > > > +		schedule_delayed_work(&twl->id_workaround_work, HZ);
+> > > > +		return IRQ_HANDLED;
+> > > > +	}
+> > > > + =20
+> > ... for example by this delayed work which is already there. =20
+>=20
+> If we decide to keep this, it should be mod_delayed_work() I think.
+>=20
+Well, is that valid for the other uses of id_workaround_work() (which
+are clearly required)? So there should be a second, independent
+cleanup patch for the existing uses?
 
---Qgof7w7UksPF5inF
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+Andreas=20
+
+--Sig_/hF17.lQIoc7SEI58RHUA+gC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluhJIgACgkQJNaLcl1U
-h9BaDQf+Nu9Kez1693p1wvOqM7SkP+JhsdZZgbssDubRZnAi8zcLhfhvpvwHAqzx
-Sl6khg6e8k+yLmDVXpCHrL+v3bZ8184YojoFaedC0qzjquvtfW/uQlSin2hskErK
-x59vldjUwxjhgmFVPK4kd9miy/BU2B8STMqeLswcVs/Apleprw6WGHnlS3JcTLX1
-fN+lE+CGGdJrQ1z9/g6aFoVYkEpSO1SXkwfdCyeVvmeLGqkjOD9AARgqnYmBF0x/
-rV+OXv0UgVQl1I4U4XsdBd4wmjZGb6sp6SdJ4+oJLLLCiytolnR2oS6qcXkFqYQu
-12fYNnjiMOAA7KaNrf5DLwGmIbtGaQ==
-=rqUc
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAluhJNMACgkQfb1qx03i
+kyRqSRAAxyTwGaRnx00uUC5GgMf7USmj0z/RC/wWCX+8F/UnZfMyvGl4zgEeE9wd
+uXMgKTAJxHCIYSgp106rgo3Y/IbqMZ1t0o27HuD7fmmL2HJ8MuxiZkNYVzkfuKz4
+518CgFqBi8q6SP+zAG9TI3bQZJapFbxORoSdRAQGcfFDYeicCx5ObUJh4BRMI5Ey
+sX9g237+QzuNMTYvTYa0Vh0HiceHnkAlD2Sj2+jgMFHS7cKitj4bnAajxCNG5y/i
+C0OZ4JUsm4d3Ztea7HEi4g5TI97l24sHraYhHbcPZ8twVlccgEwGWrtsuDHclXFc
+DFbaeqWRsvLhw0jtdRRtKGiB40cX5W8WAVFTG3HEzBbostSzeln7hGb3vPR1a5rO
+4MdWLFTDTFUZyxEfm1CD7qRap7zD/v+choz1ya8kAe/f4plTBdLKWxkC+pZzQRij
+nsy+kmC3PSsTH/w6CpBWv883ZiESLijxeLvmP8/69vZTaqhUzRz01tVIvSHtoUgm
+lEDSDkMvLpktKUuchUV3tpeyjPU74iuZsCJC+yEIQnYg2TPdOAUKLhpEeGC7NiYr
+P7F5xANEntc13a4fotAK6k2pA4Z6ftvseWCvfgavWoUfgIRShk/mfqI8wbctS5Fo
+DRaM5Zk/Fp5Nsqy7FsjA0P4pUj/0C+bHkavbqQjl6SxF388tTKk=
+=miFt
 -----END PGP SIGNATURE-----
 
---Qgof7w7UksPF5inF--
+--Sig_/hF17.lQIoc7SEI58RHUA+gC--
