@@ -6,58 +6,56 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E03AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B710CECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022172150C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:45:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 679752150B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="eZe3QHme"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022172150C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="J4B6PPoC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679752150B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730567AbeIRXSw (ORCPT
+        id S1730507AbeIRXUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:18:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60446 "EHLO
+        Tue, 18 Sep 2018 19:20:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34304 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729739AbeIRXSv (ORCPT
+        with ESMTP id S1729928AbeIRXUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:18:51 -0400
+        Tue, 18 Sep 2018 19:20:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sNF0GuQ5D1+QSgH8cnNrFAajx7Z+bjr+l+21/DCzWW8=; b=eZe3QHmejEjc
-        1DUOwAT4lRij6xLwYMOpVttUyeJ2lZSmJd5XV+8cGcRXwtS6tVaICGddMyFhJjb9MMxwv2Gy8/wbu
-        tJrf+RO4uZ5JKnJP4X8/eG7VIxFkpm3goLd9uq60gVlXC5BxtKCz2AxzWHWjn+IVIJvKLuMZZ9Tcc
-        6c7EM=;
+        List-Archive; bh=zKI4Kj4ahwadqOUaI8J707VCqYsUn2Mkh5071Zvum6w=; b=J4B6PPoCyBxf
+        a+ZYtaNkByZBC1TDo/apu7ZOjWyAZkzQkN8eOmMdVqRB+es1BTT3qn6PzflXXBxr+Y9A1fx8uKmv2
+        7/HRxJ3KxQRyKELtGvZAr2toJKsXt4YjdmXMq8ZON6TIH/+nQAy05GJm76ybeU2oTq/F5M1YeXAOB
+        Dywj4=;
 Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1g2K3b-0003WZ-5d; Tue, 18 Sep 2018 17:45:03 +0000
+        id 1g2K4N-0003XN-Oh; Tue, 18 Sep 2018 17:45:52 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 56D92440078; Tue, 18 Sep 2018 18:45:01 +0100 (BST)
+        id DE9B4440078; Tue, 18 Sep 2018 18:45:49 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, djkurtz@chromium.org,
-        akshu.agrawal@amd.com, Mark Brown <broonie@kernel.org>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        cychiang@chromium.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: AMD: Fix capture unstable in beginning for some runs" to the asoc tree
-In-Reply-To:  <1537255398-25166-1-git-send-email-akshu.agrawal@amd.com>
-Message-Id: <20180918174501.56D92440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 18 Sep 2018 18:45:01 +0100 (BST)
+To:     David Lechner <david@lechnology.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: spi-davinci: Don't error when SPI_CS_WORD and cs_gpio" to the spi tree
+In-Reply-To:  <20180918170850.2749-3-david@lechnology.com>
+Message-Id: <20180918174549.DE9B4440078@finisterre.ee.mobilebroadband>
+Date:   Tue, 18 Sep 2018 18:45:49 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,11 +63,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: AMD: Fix capture unstable in beginning for some runs
+   spi: spi-davinci: Don't error when SPI_CS_WORD and cs_gpio
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -90,69 +88,39 @@ to this mail.
 Thanks,
 Mark
 
-From c50535ed6a10fcae1b64ae83c0f6b1eeb5535afc Mon Sep 17 00:00:00 2001
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Date: Tue, 18 Sep 2018 12:53:13 +0530
-Subject: [PATCH] ASoC: AMD: Fix capture unstable in beginning for some runs
+From f34ecdbd5661816ce8bbd7511f33181ffa8f4895 Mon Sep 17 00:00:00 2001
+From: David Lechner <david@lechnology.com>
+Date: Tue, 18 Sep 2018 12:08:49 -0500
+Subject: [PATCH] spi: spi-davinci: Don't error when SPI_CS_WORD and cs_gpio
 
-alsa_conformance_test -C hw:0,4 -p 1024 --debug
-would sometime show:
-TIME_DIFF(s)    HW_LEVEL       READ              RATE
-0.000095970         1024       1024    10670001.041992
-0.042609555         1024       2048       24032.168372
-0.021330364         1024       3072       48006.681930
-0.021339559         1024       4096       47985.996337
-The issue is that in dma pointer function we can have stale value
-of the register for current descriptor of channel.
-The register retains the number of the last descriptor that
-was transferred.
+This remove the check and subsequent return of error for the case when
+a SPI device requires SPI_CS_WORD and is also configured to use a GPIO
+for the CS line.
 
-Fix ensures that we report position, 0, till the one period worth of
-data is transferred.  After one period of data, in handler of period
-completion interrupt we update the config and correct value of descriptor
-starts reflecting.
+Commit a134cc414e86 ("spi: always use software fallback for SPI_CS_WORD
+when using cs_gio") handles this case now, so this check is no longer
+necessary.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/spi/spi-davinci.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 77b265bd0505..3135e9eafd18 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -1036,16 +1036,22 @@ static snd_pcm_uframes_t acp_dma_pointer(struct snd_pcm_substream *substream)
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index 205f763c7383..56adec83f8fc 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -441,9 +441,6 @@ static int davinci_spi_setup(struct spi_device *spi)
  
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
- 		period_bytes = frames_to_bytes(runtime, runtime->period_size);
--		dscr = acp_reg_read(rtd->acp_mmio, rtd->dma_curr_dscr);
--		if (dscr == rtd->dma_dscr_idx_1)
--			pos = period_bytes;
--		else
--			pos = 0;
- 		bytescount = acp_get_byte_count(rtd);
--		if (bytescount > rtd->bytescount)
-+		if (bytescount >= rtd->bytescount)
- 			bytescount -= rtd->bytescount;
--		delay = do_div(bytescount, period_bytes);
--		runtime->delay = bytes_to_frames(runtime, delay);
-+		if (bytescount < period_bytes) {
-+			pos = 0;
-+		} else {
-+			dscr = acp_reg_read(rtd->acp_mmio, rtd->dma_curr_dscr);
-+			if (dscr == rtd->dma_dscr_idx_1)
-+				pos = period_bytes;
-+			else
-+				pos = 0;
-+		}
-+		if (bytescount > 0) {
-+			delay = do_div(bytescount, period_bytes);
-+			runtime->delay = bytes_to_frames(runtime, delay);
-+		}
- 	} else {
- 		buffersize = frames_to_bytes(runtime, runtime->buffer_size);
- 		bytescount = acp_get_byte_count(rtd);
+ 		if (internal_cs) {
+ 			set_io_bits(dspi->base + SPIPC0, 1 << spi->chip_select);
+-		} else if (spi->mode & SPI_CS_WORD) {
+-			dev_err(&spi->dev, "SPI_CS_WORD can't be use with GPIO CS\n");
+-			return -EINVAL;
+ 		}
+ 	}
+ 
 -- 
 2.19.0
 
