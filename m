@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A660BECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625C9ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450702133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051EB2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="lGji5A8v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450702133F
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="BknCy2LE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051EB2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbeISFPL (ORCPT
+        id S1730260AbeISFQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 01:15:11 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42738 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbeISFPL (ORCPT
+        Wed, 19 Sep 2018 01:16:35 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:36774 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725779AbeISFQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 01:15:11 -0400
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8INXgZX013777
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:40:13 -0700
+        Wed, 19 Sep 2018 01:16:34 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8INb2fg023894
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:41:35 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : mime-version : content-type; s=facebook;
  bh=JriOzuGSBXjp2zfTuinXCfo08czmhOPGUL1rWQK3bQE=;
- b=lGji5A8vdvo9nthe493zvc76TICAiWSARn5J2FA39PJ0n8vrA8L9J+nwKchHPF0XE81i
- rEBUvSL+VA7WsUn8QvHK4yqtB2gW6Lt15l6a98WOWRzvNymFc4jHaYnu0GlAxQRPHYlW
- asEMAdZmmOLBKQd2nlA9Rw68R9et7CWws/s= 
+ b=BknCy2LEWwPMEGkcNTGICi0p13i4SJ+gA8oKFmnqiWTgBP95/lfU9/h0xoe0OJnOzOld
+ TxG5qtDmTvm9XKQXZuF4GhWPLkcZQlfAH95NVm+gO98Q0rq1I+38itEiwwb1xY2jXC1w
+ 3T8dJ3jguZX++o54RC78DuI8TZI7eYZKfLE= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mk8k90ypf-14
+        by m0001303.ppops.net with ESMTP id 2mkat5r2m9-14
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:40:12 -0700
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:41:35 -0700
 Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.14) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
- 2018 16:39:42 -0700
+ (192.168.16.13) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 18 Sep
+ 2018 16:41:30 -0700
 Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- D99EC1715B39; Tue, 18 Sep 2018 16:39:40 -0700 (PDT)
+ DC20C1715CB7; Tue, 18 Sep 2018 16:41:28 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Vijay Khemka <vijaykhemka@fb.com>
 Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         <linux-aspeed@lists.ozlabs.org>
 CC:     <vijaykhemka@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] ARM: dts: aspeed: Adding Facebook TiogaPass BMC
-Date:   Tue, 18 Sep 2018 16:39:02 -0700
-Message-ID: <20180918233904.1904859-1-vijaykhemka@fb.com>
+Subject: [PATCH v3] ARM: dts: aspeed: Adding Facebook TiogaPass BMC
+Date:   Tue, 18 Sep 2018 16:41:08 -0700
+Message-ID: <20180918234110.1908926-1-vijaykhemka@fb.com>
 X-Mailer: git-send-email 2.17.1
 X-FB-Internal: Safe
 MIME-Version: 1.0
