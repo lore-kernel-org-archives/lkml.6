@@ -2,213 +2,149 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B585C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C308EC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31D1206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:46:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEz5oBBq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F31D1206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 80271206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 11:47:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80271206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbeIRRS5 (ORCPT
+        id S1729379AbeIRRTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 13:18:57 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43012 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeIRRS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 13:18:57 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m84-v6so1447046lje.10;
-        Tue, 18 Sep 2018 04:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FO8In4+kpHVxJiAmCfSF5jtGQHqw0es1EYDQd4q6i2s=;
-        b=lEz5oBBqUzzc6vGwWgfpGxxy0dZuSVOCBwTDtSex7G9veIC7Tt5pYgZAqwnxflZIh0
-         j51RHGbyh4YutG98h4w4dFYY+99QWxb4X2AV8ET98v+DivaQltRs/lSNrTtkTmEID0Jp
-         q2rSlgNMyUNgHcr8RjmgWHa5R1oXyLqoZUkROybNs4aHyAyD5q3HdSYV4EIA8wW3r8FX
-         AdDl8iCPHFc/LqWXGFoWuHuOE9oblbyh3mqoVpON7OkM2hg/xRYA2iOn7nvplIhIU/hv
-         +ZxlCH6Pqnioh5axdPxWw5HefwqvMScfNcBwH32vF0Gp+4PEzPcivznD2TX9vrQYhYnA
-         nk/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FO8In4+kpHVxJiAmCfSF5jtGQHqw0es1EYDQd4q6i2s=;
-        b=VY9Gf9/obk+pgjmPBr1VL4UQzhyIWsstvJ6WrlShaNnzrrvw5DBOjQCICBYRQvitQe
-         L039PPpC+eTzyTPHsI4IdxntDnIotv2apR/+tW6BgZwbs2hFtzAydjjXnW4d8nDH7GQA
-         3dM7AXxaRxyJ/Zc5ePL6MqPZSok4IIs5GIwVL0mva9qAYJGCLLyZ31wpy2djxzkuOY2G
-         Lktk0aADrf+AGhprYuZM+JbT7BE0PGqGXgX4Gpp7bw+94k+6QJX4wcEfD3YX2CqUT9yE
-         ax6BX8UzlEn/Ngc650B9ratVXndEBxrUK4wax+NYtSofGprD/LG0yiP5ySXAb0RfbhL0
-         VfVA==
-X-Gm-Message-State: APzg51BsyuKFcPqhGHlws4FIMef7Xt9ckpollyp7IMeRQM1FS53EonMO
-        7I5pfDWlQJhbqeCWbDrosITccPsu7b1LRSno3qr2Ahdk
-X-Google-Smtp-Source: ANB0VdZAvSxtyRQ1rnJ2XtCxpFggtCvcDGLdTvPVhAMVUEfH1wI/6JtxbLub54y/bVzPADfjuCttNNoCw4CIaZPpJcI=
-X-Received: by 2002:a2e:85d5:: with SMTP id h21-v6mr18244253ljj.103.1537271201897;
- Tue, 18 Sep 2018 04:46:41 -0700 (PDT)
+        Tue, 18 Sep 2018 13:19:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43464 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbeIRRTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 13:19:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B4F6ED1;
+        Tue, 18 Sep 2018 04:47:00 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0B22C3F557;
+        Tue, 18 Sep 2018 04:47:00 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id DBDCF1AE1181; Tue, 18 Sep 2018 12:47:18 +0100 (BST)
+Date:   Tue, 18 Sep 2018 12:47:18 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        lorenzo.pieralisi@arm.com, mark.rutland@arm.com,
+        guohanjun@huawei.com, pabba@codeaurora.org, vkilari@codeaurora.org,
+        rruigrok@codeaurora.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com, neil.m.leeder@gmail.com
+Subject: Re: [PATCH v2 3/4] perf: add arm64 smmuv3 pmu driver
+Message-ID: <20180918114718.GD16498@arm.com>
+References: <20180724114515.21764-1-shameerali.kolothum.thodi@huawei.com>
+ <20180724114515.21764-4-shameerali.kolothum.thodi@huawei.com>
+ <935f7572-38d7-070a-dba6-3f18189de4d3@arm.com>
+ <a7481657-1551-8f3e-e679-8bfbee8f1ab4@huawei.com>
 MIME-Version: 1.0
-References: <20180731200705.GA21510@jordon-HP-15-Notebook-PC>
- <CAFqt6zZM_MzAo8vEZ3+C3W6E-xE_78acnNvmMYoPVgYuxaMvGA@mail.gmail.com> <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
-In-Reply-To: <CAFqt6zYTzErgrE_vM0dUJn8FGcBxHHeM9thJbRtHdEXKQQMdtA@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 18 Sep 2018 17:16:29 +0530
-Message-ID: <CAFqt6zZ++D4uDcKnqS=sty82DJCdqMXNMrOOZcxFYdqWNJBLCw@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: Convert drm_atomic_helper_suspend/resume()
-To:     Thierry Reding <thierry.reding@gmail.com>, airlied@linux.ie,
-        jonathanh@nvidia.com, Ajit Linux <ajitn.linux@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7481657-1551-8f3e-e679-8bfbee8f1ab4@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 12:16 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Mon, Aug 6, 2018 at 11:42 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > On Wed, Aug 1, 2018 at 1:37 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > > convert drm_atomic_helper_suspend/resume() to use
-> > > drm_mode_config_helper_suspend/resume().
-> > >
-> > > With this conversion, tegra_drm_fb_suspend() and
-> > > tegra_drm_fb_resume() wil not be used anymore.
-> > > Both of these functions can be removed.
-> > >
-> > > Also, in tegra_drm struct's member state will not be
-> > > used anymore. So this can be removed forever.
-> > >
-> > > Fixed one sparse warning.
-> > >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > Signed-off-by: Ajit Negi <ajitn.linux@gmail.com>
-> > > ---
-> >
-> > Any comment on this patch ?
->
-> If no comment, can we get this patch in queue for 4.20 ?
+On Mon, Sep 17, 2018 at 06:10:05PM +0100, John Garry wrote:
+> 
+> >>+
+> >>+#define SMMU_EVENT_ATTR(_name, _id)                      \
+> >>+    (&((struct perf_pmu_events_attr[]) {                  \
+> >>+        { .attr = __ATTR(_name, 0444, smmu_pmu_event_show, NULL), \
+> >>+          .id = _id, }                          \
+> >>+    })[0].attr.attr)
+> >>+
+> >>+static struct attribute *smmu_pmu_events[] = {
+> >>+    SMMU_EVENT_ATTR(cycles, SMMU_PMU_CYCLES),
+> >>+    SMMU_EVENT_ATTR(transaction, SMMU_PMU_TRANSACTION),
+> >>+    SMMU_EVENT_ATTR(tlb_miss, SMMU_PMU_TLB_MISS),
+> >>+    SMMU_EVENT_ATTR(config_cache_miss, SMMU_PMU_CONFIG_CACHE_MISS),
+> >>+    SMMU_EVENT_ATTR(trans_table_walk, SMMU_PMU_TRANS_TABLE_WALK),
+> >>+    SMMU_EVENT_ATTR(config_struct_access,
+> >>SMMU_PMU_CONFIG_STRUCT_ACCESS),
+> >>+    SMMU_EVENT_ATTR(pcie_ats_trans_rq, SMMU_PMU_PCIE_ATS_TRANS_RQ),
+> >>+    SMMU_EVENT_ATTR(pcie_ats_trans_passed,
+> >>SMMU_PMU_PCIE_ATS_TRANS_PASSED),
+> >>+    NULL
+> >>+};
+> >>+
+> >>+static umode_t smmu_pmu_event_is_visible(struct kobject *kobj,
+> >>+                     struct attribute *attr, int unused)
+> >>+{
+> >>+    struct device *dev = kobj_to_dev(kobj);
+> >>+    struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
+> >>+    struct perf_pmu_events_attr *pmu_attr;
+> >>+
+> >>+    pmu_attr = container_of(attr, struct perf_pmu_events_attr,
+> >>attr.attr);
+> >>+
+> >>+    if (test_bit(pmu_attr->id, smmu_pmu->supported_events))
+> >>+        return attr->mode;
+> >>+
+> >>+    return 0;
+> >>+}
+> >>+static struct attribute_group smmu_pmu_events_group = {
+> >>+    .name = "events",
+> >>+    .attrs = smmu_pmu_events,
+> >>+    .is_visible = smmu_pmu_event_is_visible,
+> >>+};
+> >>+
+> >>+/* Formats */
+> >>+PMU_FORMAT_ATTR(event,           "config:0-15");
+> >>+PMU_FORMAT_ATTR(filter_stream_id,  "config1:0-31");
+> >>+PMU_FORMAT_ATTR(filter_span,       "config1:32");
+> >>+PMU_FORMAT_ATTR(filter_enable,       "config1:33");
+> >>+
+> >>+static struct attribute *smmu_pmu_formats[] = {
+> >>+    &format_attr_event.attr,
+> >>+    &format_attr_filter_stream_id.attr,
+> >>+    &format_attr_filter_span.attr,
+> >>+    &format_attr_filter_enable.attr,
+> >>+    NULL
+> >>+};
+> >>+
+> >>+static struct attribute_group smmu_pmu_format_group = {
+> >>+    .name = "format",
+> >>+    .attrs = smmu_pmu_formats,
+> >>+};
+> >>+
+> >>+static const struct attribute_group *smmu_pmu_attr_grps[] = {
+> >>+    &smmu_pmu_cpumask_group,
+> >>+    &smmu_pmu_events_group,
+> >>+    &smmu_pmu_format_group,
+> >>+    NULL,
+> >>+};
+> >>+
+> 
+> 
+> Question: If we wanted to add proper named event support for the
+> IMPLEMENTATION DEFINED events, how to add (if at all)?
+> 
+> So currently the driver only supports the Architected events, which is fine.
+> And we support raw events for the IMPLEMENTATION DEFINED events
+> (0x80-0xFFFF).
+> 
+> But to add named event support for the IMP DEF events, I assume we would
+> want to do something similar to arm64 CPU PMU events - that is, common
+> architected events in kernel pmu driver, and implementation defined events
+> defined in perf tool. However I don't know if it's even feasible considering
+> there does not seem to be a mandatory/standard PMCG ID register to detect
+> the implementation.
 
-David/ Daniel,
-is this patch [1] good to go in 4.20 ?
+I guess we'd need something from firmware to identify the SMMU/PMU
+implementation, so that we could probe the driver correctly. Once we have
+that, it seems like it's just a matter of exposing a different name to
+userspace, like we do for the CPU PMU.
 
-[1] https://lkml.org/lkml/2018/7/31/839
-
-> >
-> > >  drivers/gpu/drm/tegra/drm.c | 20 ++------------------
-> > >  drivers/gpu/drm/tegra/drm.h |  4 ----
-> > >  drivers/gpu/drm/tegra/fb.c  | 24 +-----------------------
-> > >  3 files changed, 3 insertions(+), 45 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> > > index a2bd587..9a0efce 100644
-> > > --- a/drivers/gpu/drm/tegra/drm.c
-> > > +++ b/drivers/gpu/drm/tegra/drm.c
-> > > @@ -1212,31 +1212,15 @@ static int host1x_drm_remove(struct host1x_device *dev)
-> > >  static int host1x_drm_suspend(struct device *dev)
-> > >  {
-> > >         struct drm_device *drm = dev_get_drvdata(dev);
-> > > -       struct tegra_drm *tegra = drm->dev_private;
-> > > -
-> > > -       drm_kms_helper_poll_disable(drm);
-> > > -       tegra_drm_fb_suspend(drm);
-> > > -
-> > > -       tegra->state = drm_atomic_helper_suspend(drm);
-> > > -       if (IS_ERR(tegra->state)) {
-> > > -               tegra_drm_fb_resume(drm);
-> > > -               drm_kms_helper_poll_enable(drm);
-> > > -               return PTR_ERR(tegra->state);
-> > > -       }
-> > >
-> > > -       return 0;
-> > > +       return drm_mode_config_helper_suspend(drm);
-> > >  }
-> > >
-> > >  static int host1x_drm_resume(struct device *dev)
-> > >  {
-> > >         struct drm_device *drm = dev_get_drvdata(dev);
-> > > -       struct tegra_drm *tegra = drm->dev_private;
-> > >
-> > > -       drm_atomic_helper_resume(drm, tegra->state);
-> > > -       tegra_drm_fb_resume(drm);
-> > > -       drm_kms_helper_poll_enable(drm);
-> > > -
-> > > -       return 0;
-> > > +       return drm_mode_config_helper_resume(drm);
-> > >  }
-> > >  #endif
-> > >
-> > > diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-> > > index 92d2487..1012335 100644
-> > > --- a/drivers/gpu/drm/tegra/drm.h
-> > > +++ b/drivers/gpu/drm/tegra/drm.h
-> > > @@ -60,8 +60,6 @@ struct tegra_drm {
-> > >         unsigned int pitch_align;
-> > >
-> > >         struct tegra_display_hub *hub;
-> > > -
-> > > -       struct drm_atomic_state *state;
-> > >  };
-> > >
-> > >  struct tegra_drm_client;
-> > > @@ -186,8 +184,6 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
-> > >  void tegra_drm_fb_free(struct drm_device *drm);
-> > >  int tegra_drm_fb_init(struct drm_device *drm);
-> > >  void tegra_drm_fb_exit(struct drm_device *drm);
-> > > -void tegra_drm_fb_suspend(struct drm_device *drm);
-> > > -void tegra_drm_fb_resume(struct drm_device *drm);
-> > >
-> > >  extern struct platform_driver tegra_display_hub_driver;
-> > >  extern struct platform_driver tegra_dc_driver;
-> > > diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> > > index 4c22cdd..b947e82 100644
-> > > --- a/drivers/gpu/drm/tegra/fb.c
-> > > +++ b/drivers/gpu/drm/tegra/fb.c
-> > > @@ -356,7 +356,7 @@ static void tegra_fbdev_exit(struct tegra_fbdev *fbdev)
-> > >                 /* Undo the special mapping we made in fbdev probe. */
-> > >                 if (bo && bo->pages) {
-> > >                         vunmap(bo->vaddr);
-> > > -                       bo->vaddr = 0;
-> > > +                       bo->vaddr = NULL;
-> > >                 }
-> > >
-> > >                 drm_framebuffer_remove(fbdev->fb);
-> > > @@ -412,25 +412,3 @@ void tegra_drm_fb_exit(struct drm_device *drm)
-> > >         tegra_fbdev_exit(tegra->fbdev);
-> > >  #endif
-> > >  }
-> > > -
-> > > -void tegra_drm_fb_suspend(struct drm_device *drm)
-> > > -{
-> > > -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> > > -       struct tegra_drm *tegra = drm->dev_private;
-> > > -
-> > > -       console_lock();
-> > > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 1);
-> > > -       console_unlock();
-> > > -#endif
-> > > -}
-> > > -
-> > > -void tegra_drm_fb_resume(struct drm_device *drm)
-> > > -{
-> > > -#ifdef CONFIG_DRM_FBDEV_EMULATION
-> > > -       struct tegra_drm *tegra = drm->dev_private;
-> > > -
-> > > -       console_lock();
-> > > -       drm_fb_helper_set_suspend(&tegra->fbdev->base, 0);
-> > > -       console_unlock();
-> > > -#endif
-> > > -}
-> > > --
-> > > 1.9.1
-> > >
+Will
