@@ -2,306 +2,103 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8A7ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A935EECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437112146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437112146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7009D2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7009D2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbeIRT7R (ORCPT
+        id S1730225AbeIRT7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:59:17 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39755 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730133AbeIRT7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:59:16 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B3D3A5E13F5CD;
-        Tue, 18 Sep 2018 22:26:20 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 18 Sep
- 2018 22:26:13 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 2/8] staging: erofs: clean up z_erofs_map_blocks_iter
-Date:   Tue, 18 Sep 2018 22:25:34 +0800
-Message-ID: <1537280740-122019-3-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
-References: <1537280740-122019-1-git-send-email-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        Tue, 18 Sep 2018 15:59:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32938 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730133AbeIRT7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:59:23 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE13F88306;
+        Tue, 18 Sep 2018 14:26:32 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EA1B178DDB;
+        Tue, 18 Sep 2018 14:26:23 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [RFC v2 13/20] iommu/smmuv3: Implement bind_guest_msi
+Date:   Tue, 18 Sep 2018 16:24:50 +0200
+Message-Id: <20180918142457.3325-14-eric.auger@redhat.com>
+In-Reply-To: <20180918142457.3325-1-eric.auger@redhat.com>
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 18 Sep 2018 14:26:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch mainly introduces `vle_map_blocks_iter_ctx' to clean up
-z_erofs_map_blocks_iter and vle_get_logical_extent_head.
+The bind_guest_msi() callback checks the domain
+is NESTED and redirect to the dma-iommu implementation.
 
-It changes the return value of `vle_get_logical_extent_head' to int
-for the later error handing. In addition, it also renames `pcn' to
-`pblk' since only `pblk' exists in erofs compression ondisk format.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 ---
- drivers/staging/erofs/unzip_vle.c | 140 +++++++++++++++++++++-----------------
- 1 file changed, 78 insertions(+), 62 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index d16e3dc..1e89ff6 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1410,6 +1410,13 @@ static int z_erofs_vle_normalaccess_readpages(
- 	.readpages = z_erofs_vle_normalaccess_readpages,
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 4054da756a41..d9d300ab62a5 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -2168,6 +2168,27 @@ static void arm_smmu_put_resv_regions(struct device *dev,
+ 		kfree(entry);
+ }
+ 
++static int arm_smmu_bind_guest_msi(struct iommu_domain *domain,
++				   struct iommu_guest_msi_binding *binding)
++{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_device *smmu;
++	int ret = -EINVAL;
++
++	mutex_lock(&smmu_domain->init_mutex);
++	smmu = smmu_domain->smmu;
++	if (!smmu)
++		goto out;
++
++	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
++		goto out;
++
++	ret = iommu_dma_bind_doorbell(domain, binding);
++out:
++	mutex_unlock(&smmu_domain->init_mutex);
++	return ret;
++}
++
+ static int arm_smmu_bind_pasid_table(struct iommu_domain *domain,
+ 				     struct iommu_pasid_table_config *cfg)
+ {
+@@ -2311,6 +2332,7 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.bind_pasid_table	= arm_smmu_bind_pasid_table,
+ 	.unbind_pasid_table	= arm_smmu_unbind_pasid_table,
+ 	.cache_invalidate	= arm_smmu_cache_invalidate,
++	.bind_guest_msi		= arm_smmu_bind_guest_msi,
+ 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
  };
  
-+/*
-+ * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
-+ * ---
-+ * VLE compression mode attempts to compress a number of logical data into
-+ * a physical cluster with a fixed size.
-+ * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
-+ */
- #define __vle_cluster_advise(x, bit, bits) \
- 	((le16_to_cpu(x) >> (bit)) & ((1 << (bits)) - 1))
- 
-@@ -1465,90 +1472,96 @@ static int z_erofs_vle_normalaccess_readpages(
- 	return erofs_blkoff(iloc(sbi, vi->nid) + ofs);
- }
- 
--/*
-- * Variable-sized Logical Extent (Fixed Physical Cluster) Compression Mode
-- * ---
-- * VLE compression mode attempts to compress a number of logical data into
-- * a physical cluster with a fixed size.
-- * VLE compression mode uses "struct z_erofs_vle_decompressed_index".
-- */
--static erofs_off_t vle_get_logical_extent_head(
--	struct inode *inode,
--	struct page **page_iter,
--	void **kaddr_iter,
--	unsigned int lcn,	/* logical cluster number */
--	erofs_blk_t *pcn,
--	unsigned int *flags)
-+struct vle_map_blocks_iter_ctx {
-+	struct inode *inode;
-+	struct super_block *sb;
-+	unsigned int clusterbits;
-+
-+	struct page **mpage_ret;
-+	void **kaddr_ret;
-+};
-+
-+static int
-+vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
-+			    unsigned int lcn,	/* logical cluster number */
-+			    unsigned long long *ofs,
-+			    erofs_blk_t *pblk,
-+			    unsigned int *flags)
- {
--	/* for extent meta */
--	struct page *page = *page_iter;
--	erofs_blk_t blkaddr = vle_extent_blkaddr(inode, lcn);
-+	const unsigned int clustersize = 1 << ctx->clusterbits;
-+	const erofs_blk_t mblk = vle_extent_blkaddr(ctx->inode, lcn);
-+	struct page *mpage = *ctx->mpage_ret;	/* extent metapage */
-+
- 	struct z_erofs_vle_decompressed_index *di;
--	unsigned long long ofs;
--	struct super_block *const sb = inode->i_sb;
--	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
--	const unsigned int clustersize = 1 << clusterbits;
--	unsigned int delta0;
--
--	if (page->index != blkaddr) {
--		kunmap_atomic(*kaddr_iter);
--		unlock_page(page);
--		put_page(page);
-+	unsigned int cluster_type, delta0;
- 
--		page = erofs_get_meta_page_nofail(sb, blkaddr, false);
--		*page_iter = page;
--		*kaddr_iter = kmap_atomic(page);
-+	if (mpage->index != mblk) {
-+		kunmap_atomic(*ctx->kaddr_ret);
-+		unlock_page(mpage);
-+		put_page(mpage);
-+
-+		mpage = erofs_get_meta_page_nofail(ctx->sb, mblk, false);
-+		*ctx->mpage_ret = mpage;
-+		*ctx->kaddr_ret = kmap_atomic(mpage);
- 	}
- 
--	di = *kaddr_iter + vle_extent_blkoff(inode, lcn);
--	switch (vle_cluster_type(di)) {
-+	di = *ctx->kaddr_ret + vle_extent_blkoff(ctx->inode, lcn);
-+
-+	cluster_type = vle_cluster_type(di);
-+	switch (cluster_type) {
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
- 		delta0 = le16_to_cpu(di->di_u.delta[0]);
- 		DBG_BUGON(!delta0);
- 		DBG_BUGON(lcn < delta0);
- 
--		ofs = vle_get_logical_extent_head(inode,
--			page_iter, kaddr_iter,
--			lcn - delta0, pcn, flags);
--		break;
-+		return vle_get_logical_extent_head(ctx,
-+			lcn - delta0, ofs, pblk, flags);
- 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
- 		*flags ^= EROFS_MAP_ZIPPED;
-+		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
- 		/* clustersize should be a power of two */
--		ofs = ((u64)lcn << clusterbits) +
-+		*ofs = ((u64)lcn << ctx->clusterbits) +
- 			(le16_to_cpu(di->di_clusterofs) & (clustersize - 1));
--		*pcn = le32_to_cpu(di->di_u.blkaddr);
-+		*pblk = le32_to_cpu(di->di_u.blkaddr);
- 		break;
- 	default:
- 		BUG_ON(1);
- 	}
--	return ofs;
-+	return 0;
- }
- 
- int z_erofs_map_blocks_iter(struct inode *inode,
- 	struct erofs_map_blocks *map,
- 	struct page **mpage_ret, int flags)
- {
-+	void *kaddr;
-+	const struct vle_map_blocks_iter_ctx ctx = {
-+		.inode = inode,
-+		.sb = inode->i_sb,
-+		.clusterbits = EROFS_I_SB(inode)->clusterbits,
-+		.mpage_ret = mpage_ret,
-+		.kaddr_ret = &kaddr
-+	};
-+	const unsigned int clustersize = 1 << ctx.clusterbits;
-+	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
-+	const bool initial = !map->m_llen;
-+
- 	/* logicial extent (start, end) offset */
- 	unsigned long long ofs, end;
--	struct z_erofs_vle_decompressed_index *di;
--	erofs_blk_t e_blkaddr, pcn;
--	unsigned int lcn, logical_cluster_ofs, cluster_type;
-+	unsigned int lcn;
- 	u32 ofs_rem;
-+
-+	/* initialize `pblk' to keep gcc from printing foolish warnings */
-+	erofs_blk_t mblk, pblk = 0;
- 	struct page *mpage = *mpage_ret;
--	void *kaddr;
--	bool initial;
--	struct super_block *const sb = inode->i_sb;
--	const unsigned int clusterbits = EROFS_SB(sb)->clusterbits;
--	const unsigned int clustersize = 1 << clusterbits;
-+	struct z_erofs_vle_decompressed_index *di;
-+	unsigned int cluster_type, logical_cluster_ofs;
- 	int err = 0;
- 
--	/* if both m_(l,p)len are 0, regularize l_lblk, l_lofs, etc... */
--	initial = !map->m_llen;
--
- 	/* when trying to read beyond EOF, leave it unmapped */
- 	if (unlikely(map->m_la >= inode->i_size)) {
--		BUG_ON(!initial);
-+		DBG_BUGON(!initial);
- 		map->m_llen = map->m_la + 1 - inode->i_size;
- 		map->m_la = inode->i_size;
- 		map->m_flags = 0;
-@@ -1561,16 +1574,16 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 	ofs = map->m_la + map->m_llen;
- 
- 	/* clustersize should be power of two */
--	lcn = ofs >> clusterbits;
-+	lcn = ofs >> ctx.clusterbits;
- 	ofs_rem = ofs & (clustersize - 1);
- 
--	e_blkaddr = vle_extent_blkaddr(inode, lcn);
-+	mblk = vle_extent_blkaddr(inode, lcn);
- 
--	if (mpage == NULL || mpage->index != e_blkaddr) {
-+	if (!mpage || mpage->index != mblk) {
- 		if (mpage != NULL)
- 			put_page(mpage);
- 
--		mpage = erofs_get_meta_page_nofail(sb, e_blkaddr, false);
-+		mpage = erofs_get_meta_page_nofail(ctx.sb, mblk, false);
- 		*mpage_ret = mpage;
- 	} else {
- 		lock_page(mpage);
-@@ -1580,8 +1593,8 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 	kaddr = kmap_atomic(mpage);
- 	di = kaddr + vle_extent_blkoff(inode, lcn);
- 
--	debugln("%s, lcn %u e_blkaddr %u e_blkoff %u", __func__, lcn,
--		e_blkaddr, vle_extent_blkoff(inode, lcn));
-+	debugln("%s, lcn %u mblk %u e_blkoff %u", __func__, lcn,
-+		mblk, vle_extent_blkoff(inode, lcn));
- 
- 	err = vle_decompressed_index_clusterofs(&logical_cluster_ofs,
- 						clustersize, di);
-@@ -1608,13 +1621,13 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_HEAD:
- 		if (ofs_rem == logical_cluster_ofs) {
--			pcn = le32_to_cpu(di->di_u.blkaddr);
-+			pblk = le32_to_cpu(di->di_u.blkaddr);
- 			goto exact_hitted;
- 		}
- 
- 		if (ofs_rem > logical_cluster_ofs) {
- 			ofs = (u64)lcn * clustersize | logical_cluster_ofs;
--			pcn = le32_to_cpu(di->di_u.blkaddr);
-+			pblk = le32_to_cpu(di->di_u.blkaddr);
- 			break;
- 		}
- 
-@@ -1629,9 +1642,12 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
- 		/* get the correspoinding first chunk */
--		ofs = vle_get_logical_extent_head(inode, mpage_ret,
--			&kaddr, lcn, &pcn, &map->m_flags);
-+		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
-+						  &pblk, &map->m_flags);
- 		mpage = *mpage_ret;
-+
-+		if (unlikely(err))
-+			goto unmap_out;
- 		break;
- 	default:
- 		errln("unknown cluster type %u at offset %llu of nid %llu",
-@@ -1644,7 +1660,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- exact_hitted:
- 	map->m_llen = end - ofs;
- 	map->m_plen = clustersize;
--	map->m_pa = blknr_to_addr(pcn);
-+	map->m_pa = blknr_to_addr(pblk);
- 	map->m_flags |= EROFS_MAP_MAPPED;
- unmap_out:
- 	kunmap_atomic(kaddr);
 -- 
-1.9.1
+2.17.1
 
