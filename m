@@ -2,150 +2,109 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC95C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78493ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1DDB2150B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FD352150C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 18:08:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="saV9/EHI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DDB2150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NqIr2SG3";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NqIr2SG3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD352150C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbeIRXmN (ORCPT
+        id S1730427AbeIRXmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 19:42:13 -0400
-Received: from mail.efficios.com ([167.114.142.138]:40630 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729946AbeIRXmN (ORCPT
+        Tue, 18 Sep 2018 19:42:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60574 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729907AbeIRXmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 19:42:13 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EE28823F800
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 14:08:24 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id jR-9XXvPnxEm for <linux-kernel@vger.kernel.org>;
-        Tue, 18 Sep 2018 14:08:24 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6B05623F7E9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 14:08:24 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6B05623F7E9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1537294104;
-        bh=kLSqyAh2vzgVDoxpAsmhT8aATGytO7+qJrGEt2PWi7w=;
-        h=MIME-Version:From:Date:Message-ID:To;
-        b=saV9/EHINrCIVrV3V1SaW81jJ/wIxhiId2Ge24wym6JRreaSdq2qAmLeTL5b5vGsa
-         4QzdBQrdVw7NWYBFNcyViA4THcGJ/+khQcMoN6B4aEgDUYiDeBQAk02SNDDKSg8U5F
-         8qFVr/6eynCPA0wMaXRt3DzkGUi9iSAsrPFQ1vh6fbzPrG04q2kp/H9TxpvOUhRiIV
-         Ld7ErygfqxCmLZ8qX5HT5FVRT+GdPyVmEl/gz1SKUdyls3CVAQ91I3eopUV+a5+AlE
-         e6V4vi1xb7mDARxp/Be+QXzmaXuNmkYrXmtrCKhyvWCwrshbMIYgn9y0EHwHWI8eYp
-         77eTwxezU9CLQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id R3n3ZWcyLVDR for <linux-kernel@vger.kernel.org>;
-        Tue, 18 Sep 2018 14:08:24 -0400 (EDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-        by mail.efficios.com (Postfix) with ESMTPSA id 1511323F7D1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 14:08:24 -0400 (EDT)
-Received: by mail-lf1-f43.google.com with SMTP id e11-v6so2699341lfc.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 11:08:24 -0700 (PDT)
-X-Gm-Message-State: APzg51AqYLrtPDkd18KZjOokYDsgdWyBRjlVpDaXBYvYqoyvFhLWrQHO
-        9e8GNYpSDyHewoCZ6EDX4wgHj+kjQWiZRF4diY8=
-X-Google-Smtp-Source: ANB0VdZrYvIPhzfn9wR996hgU+DMaGTl9/FNc33n5P1xT59/wVrzTorO/+6o9dweUQWSXkYx/SeQP2m/A0NVTvOmQV0=
-X-Received: by 2002:a19:3b0f:: with SMTP id i15-v6mr2867047lfa.56.1537294102317;
- Tue, 18 Sep 2018 11:08:22 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:5b96:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 11:07:41
- -0700 (PDT)
-In-Reply-To: <20180905160918.GB29759@krava>
-References: <20180829201648.19588-1-jeremie.galarneau@efficios.com> <20180905160918.GB29759@krava>
-From:   =?UTF-8?Q?J=C3=A9r=C3=A9mie_Galarneau?= 
-        <jeremie.galarneau@efficios.com>
-Date:   Tue, 18 Sep 2018 14:07:41 -0400
-X-Gmail-Original-Message-ID: <CA+jJMxvHN0-=vByU0=mdnDZJ0BsfCAf240ShQ=Obm1J=Nd=mpQ@mail.gmail.com>
-Message-ID: <CA+jJMxvHN0-=vByU0=mdnDZJ0BsfCAf240ShQ=Obm1J=Nd=mpQ@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Initialize perf_data_file fd field
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 18 Sep 2018 19:42:22 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B0E64607C6; Tue, 18 Sep 2018 18:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537294115;
+        bh=NRs1BTIKrLgBMl3U1lp4k2BzbatZlzjGjQHJay7tMdg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NqIr2SG334Anjn6HWOhdkJsKM+n/PFz+F4k9Y2KNFYc0WtApWw6cnEMD4wNWfWgv5
+         IOcKWgCCHvwTUScz2pjalwujs0JOMd5dArJyFfYOKbuccafG+P+s+ehcXI4yyPZWq0
+         BBOyFPByvVZmpIZalRof7ikYj0tvQ3WX7jUS23UI=
+Received: from dkota-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: dkota@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9FB70607C6;
+        Tue, 18 Sep 2018 18:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537294115;
+        bh=NRs1BTIKrLgBMl3U1lp4k2BzbatZlzjGjQHJay7tMdg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NqIr2SG334Anjn6HWOhdkJsKM+n/PFz+F4k9Y2KNFYc0WtApWw6cnEMD4wNWfWgv5
+         IOcKWgCCHvwTUScz2pjalwujs0JOMd5dArJyFfYOKbuccafG+P+s+ehcXI4yyPZWq0
+         BBOyFPByvVZmpIZalRof7ikYj0tvQ3WX7jUS23UI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9FB70607C6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=dkota@codeaurora.org
+From:   Dilip Kota <dkota@codeaurora.org>
+To:     swboyd@chromium.org, dianders@chromium.org, broonie@kernel.org,
+        mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Dilip Kota <dkota@codeaurora.org>
+Subject: [PATCH V4 1/4] dt-bindings: soc: qcom: Remove SPI controller maximum frequency binding
+Date:   Tue, 18 Sep 2018 23:37:23 +0530
+Message-Id: <1537294047-12093-2-git-send-email-dkota@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537294047-12093-1-git-send-email-dkota@codeaurora.org>
+References: <1537294047-12093-1-git-send-email-dkota@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+SPI controller driver should maintain the maximum frequency
+of the controller instead of relying on device tree bindings.
+Because maximum frequency is specific property of SPI
+controller.
 
-Anything I can do to help you with this patch?
+Signed-off-by: Dilip Kota <dkota@codeaurora.org>
+---
+ Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-J=C3=A9r=C3=A9mie
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+index 68b7d62..16467ed 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
+@@ -60,7 +60,6 @@ Required properties:
+ - interrupts:		Must contain SPI controller interrupts.
+ - clock-names:		Must contain "se".
+ - clocks:		Serial engine core clock needed by the device.
+-- spi-max-frequency:	Specifies maximum SPI clock frequency, units - Hz.
+ - #address-cells:	Must be <1> to define a chip select address on
+ 			the SPI bus.
+ - #size-cells:		Must be <0>.
+@@ -112,7 +111,6 @@ Example:
+ 			pinctrl-names = "default", "sleep";
+ 			pinctrl-0 = <&qup_1_spi_2_active>;
+ 			pinctrl-1 = <&qup_1_spi_2_sleep>;
+-			spi-max-frequency = <19200000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 		};
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-On 5 September 2018 at 12:09, Jiri Olsa <jolsa@redhat.com> wrote:
-> On Wed, Aug 29, 2018 at 04:16:48PM -0400, J=C3=A9r=C3=A9mie Galarneau wro=
-te:
->> Building the perf CTF converter fails with gcc 4.8.4
->> on Ubuntu 14.04 with the following error:
->>
->> error: missing initializer for field =E2=80=98fd=E2=80=99 of =E2=80=98st=
-ruct perf_data_file=E2=80=99
->> [-Werror=3Dmissing-field-initializers]
->>
->> Per 4b838b0d and the ensuing discussion on the mailing
->> list, it appears that this affects other distributions
->> and gcc versions.
->>
->> Signed-off-by: J=C3=A9r=C3=A9mie Galarneau <jeremie.galarneau@efficios.c=
-om>
->
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
->
-> thanks,
-> jirka
->
->> Cc: Jiri Olsa <jolsa@kernel.org>
->> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> ---
->>  tools/perf/util/data-convert-bt.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-co=
-nvert-bt.c
->> index abd38abf1d91..f75d4aa612c5 100644
->> --- a/tools/perf/util/data-convert-bt.c
->> +++ b/tools/perf/util/data-convert-bt.c
->> @@ -1578,7 +1578,7 @@ int bt_convert__perf2ctf(const char *input, const =
-char *path,
->>  {
->>       struct perf_session *session;
->>       struct perf_data data =3D {
->> -             .file.path =3D input,
->> +             .file      =3D { .path =3D input, .fd =3D -1 },
->>               .mode      =3D PERF_DATA_MODE_READ,
->>               .force     =3D opts->force,
->>       };
->> --
->> 2.18.0
->>
-
-
-
---=20
-J=C3=A9r=C3=A9mie Galarneau
-EfficiOS Inc.
-http://www.efficios.com
