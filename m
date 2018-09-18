@@ -2,89 +2,152 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586F3ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F779ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1272220877
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1272220877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EB70220C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 17:16:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mvf2PJzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB70220C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbeIRWtF (ORCPT
+        id S1730467AbeIRWuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:49:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:48418 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729037AbeIRWtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:49:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B877A7A9;
-        Tue, 18 Sep 2018 10:15:32 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 897A13F703;
-        Tue, 18 Sep 2018 10:15:32 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 758CA1AE1396; Tue, 18 Sep 2018 18:15:51 +0100 (BST)
-Date:   Tue, 18 Sep 2018 18:15:51 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Robert Richter <robert.richter@cavium.com>
-Cc:     Mian Yousaf Kaukab <ykaukab@suse.de>, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        cwu@amperecomputing.com
-Subject: Re: [PATCH RESEND 3/6] arm64: add sysfs vulnerability show for
- spectre v1
-Message-ID: <20180918171550.GN16498@arm.com>
-References: <20180827143310.641-1-ykaukab@suse.de>
- <20180827143310.641-4-ykaukab@suse.de>
- <20180917172206.GA3795@rric.localdomain>
- <20180918083805.GB14404@arm.com>
- <20180918095226.GJ3795@rric.localdomain>
+        Tue, 18 Sep 2018 18:50:00 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40352 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730153AbeIRWuA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:50:00 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l63-v6so1351920pga.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 10:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QCHpPDM/qklcyagtyYZfheQsrV08LWx/22ph8TNlGNY=;
+        b=Mvf2PJzZMJFJKj4KhAg9A6vIsHaWFw+ZZOOi5q91mfM1o3hyFUrNnL0OavC1afXgFm
+         lmnGnmYVIPCGmKaW1fHRit+TDxYMB5kN6++RUKziDt1PI9BtopRoXvmjrDYUkcw4IuCi
+         i82LeVwJLeO5QZdzOtsxugNckjnBnQynh8eEBX1Ipp0A56HBiW4+0vUyBklBO9NDWlU9
+         d8iqd7Uey5t8DI/RazBQNSk4NE56AFs8D95sCvMplizOMyvgPcRoXSVQUdyJKvyJguKD
+         PyeAq1rgCRLQdva6TEZcJ7N+0AH9douuXrmZZX5ojg5k6EDXnddYc9AEGxJT79ZZrqxb
+         EGMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QCHpPDM/qklcyagtyYZfheQsrV08LWx/22ph8TNlGNY=;
+        b=F1bwpKt93YqSCHBsxYfnYWIKdm8MGW3UUDLnttLk2VJ+KheIs/vxFtOhMeA2gkMw3R
+         C/7g1qpWuK4PwJzP/3LIVN6D+lJmM/3BmEi9R16N1wqyKo5EiOSTSLTn3vVoPxE3by0k
+         65WmzncsQTJDiLWFrbvw5RAMPveCYZSKCkdSTbxCybmV4mZ4PUS4D9uUq/afAMa6cOxj
+         AhxMuJKv2oxzXtcMW4U8X/lncdJqEub/HRkjEfGW6Y6GO4BUqznQgTPk1Alutxk7aLMo
+         Of1QqH0hjB347o1SO2pdZLKydBi5A0rIC7h0TwlZwwpCuVPEi87mxL/miiUTZvWp5xoj
+         EUVA==
+X-Gm-Message-State: APzg51Cu3KX60S1IXSJ4xPb0cwtdSHlDrhnQ8ivrW/cZ16qr6KPzOsRk
+        70ejpIxim2rGOeHUD1Avpt9BV1jztbXVuiqVwzVXTQ==
+X-Google-Smtp-Source: ANB0VdaZqpDRSeTfmL36STcfeijVlWShx1JDkfOIt6t/V3/KgCJiCOqJNhSKZVBSyJxvPGxLY/79wukW1NpVIOZbrdE=
+X-Received: by 2002:a62:4b14:: with SMTP id y20-v6mr31659624pfa.93.1537290986976;
+ Tue, 18 Sep 2018 10:16:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918095226.GJ3795@rric.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180918023157.23951-1-stefan@agner.ch>
+In-Reply-To: <20180918023157.23951-1-stefan@agner.ch>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 18 Sep 2018 10:16:15 -0700
+Message-ID: <CAKwvOd=CRw+5T6Us-Pw+t02PYWFEh=SM49C+28x7_oH+hcPOzQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: allow to use GCC toolchain not in Clang search path
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Hines <srhines@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 11:52:27AM +0200, Robert Richter wrote:
-> On 18.09.18 09:38:05, Will Deacon wrote:
-> > On Mon, Sep 17, 2018 at 07:22:07PM +0200, Robert Richter wrote:
-> > > On 27.08.18 16:33:07, Mian Yousaf Kaukab wrote:
-> > > > Hard-coded since patches are merged and there are no configuration
-> > > > options.
-> > >
-> > > Could you add a list of upstream patches to the description that are
-> > > required to solve this? This would be a strict definition for the
-> > > mitigation being enabled and makes it easier to check if backports are
-> > > affected or not. A build-time check would be ideal (e.g. checking for
-> > > certain macros).
-> > 
-> > Hmm, I don't grok what you're proposing here. Why do we need a build-time
-> > check (and to check what?)
-> 
-> My concern is, that for kernel backports (esp. distro kernels) there
-> could be various interpretations of what "Mitigation: __user pointer
-> sanitization" means. So a list of upstream patches that need to be
-> backported in addition to this patch as a requirement would be good to
-> agree on. That should be documented in the patch description.
-> 
-> If these mitigations are available in a kernel backport, that could be
-> even checked at build time. E.g. we could have a sanity check if the
-> macro array_index_nospec() is defined. But such a check does not
-> replace a code review of a kernel backport.
-> 
-> I hope that makes sense?
+On Mon, Sep 17, 2018 at 7:32 PM Stefan Agner <stefan@agner.ch> wrote:
+>
+> When using a GCC cross toolchain which is not in a compiled in
+> Clang search path, Clang reverts to the system assembler and
+> linker. This leads to assembler or linker errors, depending on
+> which tool is first used for a given architecture.
+>
+> It seems that Clang is not searching $PATH for a matching
+> assembler or linker.
 
-Ok, I see what you mean now, thanks. However, it doesn't sound much
-different than backporting a patch with dependencies, so I'd rather
-avoid adding additional code to treat this case specially.
+Yes, Clang uses what's called a sysroot, which is meant to be more
+hygenic than $PATH, IIUC.  This is surprising to folks familiar with
+$PATH, but really helps include the correct headers and use the
+correct toolchain when cross compiling, at the cost of freedom to put
+the cross toolchain wherever in the filesystem. (this is my
+understanding of sysroot, I just learned about it yesterday, so take
+this with a grain of salt).
 
-Will
+>
+> Make sure that Clang picks up the correct assembler or linker by
+> passing the cross compilers bin directory as search path.
+>
+> This allows to use Clang provided by distributions with GCC
+> toolchains not in /usr/bin.
+
+IIUC, its just utilities in binutils we're using (as, bfd.ld,
+objcopy), not GCC, but maybe that's just being pedantic.
+
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/78
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Nick, I removed your Reviewed-by since I had to change variable
+> assignment slightly...
+
+Yes, thank you, that's the right thing to do.
+
+>
+>  Makefile | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 4d5c883a98e5..d5de2db4b549 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -495,13 +495,15 @@ endif
+>  ifeq ($(cc-name),clang)
+>  ifneq ($(CROSS_COMPILE),)
+>  CLANG_TARGET   := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> -GCC_TOOLCHAIN  := $(realpath $(dir $(shell which $(LD)))/..)
+> +GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+> +CLANG_PREFIX   := --prefix=$(GCC_TOOLCHAIN_DIR)
+
+Yep: https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-b-dir
+
+> +GCC_TOOLCHAIN  := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+>  endif
+>  ifneq ($(GCC_TOOLCHAIN),)
+>  CLANG_GCC_TC   := --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+> -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+> +KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> +KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+>  KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+>  KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+>  endif
+> --
+> 2.19.0
+>
+
+Thanks for this patch Stefan.
+Reviewed-and-tested-by: Nick Desaulniers <ndesaulniers@google.com>
+-- 
+Thanks,
+~Nick Desaulniers
