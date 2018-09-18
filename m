@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE68C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A13C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89782214C2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C678321508
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:57:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7bkRPwr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89782214C2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W94IRGVM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C678321508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbeIRWaW (ORCPT
+        id S1730448AbeIRWa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:30:22 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50814 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730200AbeIRWaV (ORCPT
+        Tue, 18 Sep 2018 18:30:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38702 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730153AbeIRWaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:30:21 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s12-v6so3308377wmc.0;
-        Tue, 18 Sep 2018 09:56:53 -0700 (PDT)
+        Tue, 18 Sep 2018 18:30:22 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t25-v6so3655445wmi.3;
+        Tue, 18 Sep 2018 09:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2DzhRwrr2MWLw9Cg0FhGTgbP6uZUQ8F4dsAU+Q41KI4=;
-        b=I7bkRPwrMX0I9BKLmWfW34DbB6GVFNvJAUKiimRdcjDZd1vhYYVngYmbraAccRTAZs
-         af1+kNk9AdolBJUKRkOq+JueS8gPjxHGUpg7eilak0Pr1ExEwoptOeKjpqYRNf5vBDzV
-         aLq6ojsjUQn2IA71Lug7kqFHPsrdeTEKqWb7TNZRztSNAInqubJ7e5MtA10dRMtX0uPg
-         aeKvA9U5TqqOCf9I/TsE+u9Ts5siIu6Lo4V0i+zLi9vMpSDhbhr8pm9rDvP3Dn+fppMh
-         7qFRR4zr5WPkmIsFfgI6z14ZJKOPLVpBeu/qRlb64iisYIhd7JyfWAT72Kjh5+S2lpkZ
-         u1jw==
+        bh=9HtIKUpVKYxgznAebLhJ+GTOb81tqMTVvVX/aOyPgJU=;
+        b=W94IRGVMKzgYITGNEWaWIXx6cBAOpYNHEi1tERfPeiC1dsFbsimPIvlRocTsUjM8CF
+         7xN0FpuGCkY0SKBxWKWzpUkRzVvoyyWZ8nV3VR2BZ30+QCnhVnsJtRthha7Kcjum+825
+         YB3YtMd2PvGcFnItxcuQO052n0y6nKtt+Wy2MPf7ixZPpJNTIGm1Md+6m1xs+WuS91un
+         y0usYT5HmU3pbjYjug3sGQDaYSaKhBmGgyyNKaR+sxAKutR3otYERoVnw3Y7xryoocem
+         b8vO5/puabt2Hc9FfbJJ4EMVPnRoe/4hmpTtqCvuxOz79NT4CuoyxzpJUGHYBi9dF+Rn
+         qpQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2DzhRwrr2MWLw9Cg0FhGTgbP6uZUQ8F4dsAU+Q41KI4=;
-        b=McXbtjH6XhVzQV9mcLuG5mI+9ATwk5uPUOuLiomfo7RA1oTEx7JK0Z+MhrhiE63auq
-         VyECQHu5O6sn5RhZdZbkDE8eBQ1MLI/coig0dtdD85UMrnheZlPZyfrCdiYalprsmv8R
-         zgJEuZLWgrdKiF/sdRL9AjIFJYUEWN6m0lydVSgRsNA0Q3NOmnuIixL4QQi3pGaVe6+P
-         2U0QWNMx4LfkOMezLGqtu7ElptU/BqZhOD5BX7lYuwz+UB8lHHiwhKRJL5/oJK1wlsj7
-         C2N1Dos/RLcsr8SNUcNZ55+BFsLwyxEfgHR58udXke9pD4gNpXZLdPMBq310x67DNhCF
-         CZrQ==
-X-Gm-Message-State: APzg51B0Tko0gfGEV7pjzsz1QgOglm3lM0TfYc+ddHXUEN0RY8b9gbr6
-        Xl6JePO/cm25XUhbZ1gbU0s=
-X-Google-Smtp-Source: ANB0VdbSKHVkg2v6Q+jYyvqtVyI9hWCaPah68zIzHMbPf58TYHDtxmFC3MNuD83hPexqONNqugv8hA==
-X-Received: by 2002:a1c:1745:: with SMTP id 66-v6mr16019615wmx.38.1537289812850;
-        Tue, 18 Sep 2018 09:56:52 -0700 (PDT)
+        bh=9HtIKUpVKYxgznAebLhJ+GTOb81tqMTVvVX/aOyPgJU=;
+        b=ovNARRQQymoim6i9j54jm7X5gQYRECvfnjy4ee21QfQyLxpSDEhXT/fq2L147/FQJ/
+         oGhYfHTUVcq4nxOTih77XkqHkQxCn0UNaWCONQNZG2zan6h3VKq+rudK15uTzbk+ba/d
+         0Fv2Ss5xdcQhg+K2K7EntI3UySnhPopojpQPXMaBBNRqSMyYHXRfCH7YM7+KqLT1p8NG
+         fJv2h+vsvCmIKyb136EZ6RiMxHYID38f52crJkGwFNxco148OvMwUy+rFITZ70uFKCAS
+         2kAzR/Q/0F5ZO/KMUxfs1KdaaZMN7rxdJyYfHQW3xRu2dTFXH2r1pKlnDX1APt2Pfskf
+         YPZQ==
+X-Gm-Message-State: APzg51AazECmcmpUl9wv3k+z3HVFf2Y9pyX9TA+TCQefD60yCoh7MBA9
+        aLqadlkuTVuXP91KQJxjMB0=
+X-Google-Smtp-Source: ANB0VdbfB5UI42Y64j1yTp9w65BWCbXOi0KrDjXcl/6Jymnr+wSIKu9a/YaJTFjHCj8OzPtn1L5HNQ==
+X-Received: by 2002:a1c:b686:: with SMTP id g128-v6mr15236897wmf.83.1537289814078;
+        Tue, 18 Sep 2018 09:56:54 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm2934768wme.20.2018.09.18.09.56.51
+        by smtp.gmail.com with ESMTPSA id g2-v6sm2934768wme.20.2018.09.18.09.56.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 09:56:52 -0700 (PDT)
+        Tue, 18 Sep 2018 09:56:53 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -68,15 +68,14 @@ Cc:     linux-kernel@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Ingo Molnar <mingo@kernel.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Joe Perches <joe@perches.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-sparse@vger.kernel.org
-Subject: [PATCH v2 1/2] Compiler Attributes: naked was fixed in gcc 4.6
-Date:   Tue, 18 Sep 2018 18:55:41 +0200
-Message-Id: <20180918165542.4691-2-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+Date:   Tue, 18 Sep 2018 18:55:42 +0200
+Message-Id: <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,15 +83,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9c695203a7dd ("compiler-gcc.h: gcc-4.5 needs noclone
-and noinline on __naked functions") added noinline and noclone
-as a workaround for a gcc 4.5 bug, which was resolved in 4.6.0.
+The naked attribute is supported by at least gcc >= 4.6 (for ARM,
+which is the only current user), gcc >= 8 (for x86), clang >= 3.1
+and icc >= 13. See https://godbolt.org/z/350Dyc
 
-Since now the minimum gcc supported version is 4.6,
-we can clean it up.
+Therefore, move it out of compiler-gcc.h so that the definition
+is shared by all compilers.
 
-See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44290
-and https://godbolt.org/z/h6NMIL
+This also fixes Clang support for ARM32 --- 815f0ddb346c
+("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
 
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Eli Friedman <efriedma@codeaurora.org>
@@ -100,42 +99,61 @@ Cc: Christopher Li <sparse@chrisli.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Ingo Molnar <mingo@kernel.org>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Joe Perches <joe@perches.com>
 Cc: Dominique Martinet <asmadeus@codewreck.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-sparse@vger.kernel.org
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
 Tested-by: Stefan Agner <stefan@agner.ch>
 Reviewed-by: Stefan Agner <stefan@agner.ch>
 Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-gcc.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ include/linux/compiler-gcc.h   | 8 --------
+ include/linux/compiler_types.h | 8 ++++++++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 763bbad1e258..25d3dd6b2702 100644
+index 25d3dd6b2702..4d36b27214fd 100644
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
-@@ -84,14 +84,8 @@
-  * to trace naked functions because then mcount is called without
-  * stack and frame pointer being set up and there is no chance to
-  * restore the lr register to the value before mcount was called.
-- *
-- * The asm() bodies of naked functions often depend on standard calling
-- * conventions, therefore they must be noinline and noclone.
-- *
-- * GCC 4.[56] currently fail to enforce this, so we must do so ourselves.
-- * See GCC PR44290.
-  */
--#define __naked		__attribute__((naked)) noinline __noclone notrace
-+#define __naked		__attribute__((naked)) notrace
+@@ -79,14 +79,6 @@
+ #define __noretpoline __attribute__((indirect_branch("keep")))
+ #endif
  
+-/*
+- * it doesn't make sense on ARM (currently the only user of __naked)
+- * to trace naked functions because then mcount is called without
+- * stack and frame pointer being set up and there is no chance to
+- * restore the lr register to the value before mcount was called.
+- */
+-#define __naked		__attribute__((naked)) notrace
+-
  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
  
+ #define __optimize(level)	__attribute__((__optimize__(level)))
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 3525c179698c..db192becfec4 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -226,6 +226,14 @@ struct ftrace_likely_data {
+ #define notrace			__attribute__((no_instrument_function))
+ #endif
+ 
++/*
++ * it doesn't make sense on ARM (currently the only user of __naked)
++ * to trace naked functions because then mcount is called without
++ * stack and frame pointer being set up and there is no chance to
++ * restore the lr register to the value before mcount was called.
++ */
++#define __naked			__attribute__((naked)) notrace
++
+ #define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
+ 
+ /*
 -- 
 2.17.1
 
