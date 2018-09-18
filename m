@@ -5,62 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF70C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0716C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F28C2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F28C2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E37C2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 15:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E37C2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbeIRVHk (ORCPT
+        id S1730061AbeIRVHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 17:07:40 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57050 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727756AbeIRVHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 17:07:39 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B286485CF9A1C;
-        Tue, 18 Sep 2018 23:34:27 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Tue, 18 Sep 2018
- 23:34:28 +0800
-Message-ID: <5BA11B03.3030807@huawei.com>
-Date:   Tue, 18 Sep 2018 23:34:27 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Tue, 18 Sep 2018 17:07:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729947AbeIRVHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 17:07:47 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 77C2D30833B1;
+        Tue, 18 Sep 2018 15:34:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E62E830912F4;
+        Tue, 18 Sep 2018 15:34:39 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180918090722.GA463@jagdpanzerIV>
+References: <20180918090722.GA463@jagdpanzerIV> <20180911220743.GA13208@roeck-us.net> <20180911174641.GA15149@roeck-us.net> <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk> <153313714181.13253.304098108512966976.stgit@warthog.procyon.org.uk> <27113.1536702746@warthog.procyon.org.uk> <32382.1536707855@warthog.procyon.org.uk> <20180911235403.GA10107@roeck-us.net>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     dhowells@redhat.com, Guenter Roeck <linux@roeck-us.net>,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 14/33] vfs: Implement a filesystem superblock creation/configuration context [ver #11]
 MIME-Version: 1.0
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <martin.petersen@oracle.com>, <Don.Brace@microchip.com>,
-        <don.brace@microsemi.com>, <jejb@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] scsi: Use vmemdup_user to replace the open code
-References: <1534164200-28408-1-git-send-email-zhongjiang@huawei.com> <BYAPR11MB28555A88771594AA31AC7596E1390@BYAPR11MB2855.namprd11.prod.outlook.com> <5B7E9CCE.5010007@huawei.com> <5BA11315.4060908@huawei.com> <20180918151015.GA27663@kroah.com>
-In-Reply-To: <20180918151015.GA27663@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <23042.1537284879.1@warthog.procyon.org.uk>
+Date:   Tue, 18 Sep 2018 16:34:39 +0100
+Message-ID: <23043.1537284879@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 18 Sep 2018 15:34:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/18 23:10, Greg KH wrote:
-> On Tue, Sep 18, 2018 at 11:00:37PM +0800, zhong jiang wrote:
->> Hi,  Greg
->>
->> Can you pick up the patch?
-> Nope, sorry, as before, work with the maintainers please.
-Thank you for your reply timely .:-)
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Sincerely,
-zhong jiang
-> greg k-h
->
-> .
->
+>  static void do_emergency_remount_callback(struct super_block *sb)
+>  {
+>  	struct fs_context fc = {
+> +		.ops		= &legacy_fs_context_ops,
+>  		.purpose	= FS_CONTEXT_FOR_EMERGENCY_RO,
+>  		.fs_type	= sb->s_type,
+>  		.root		= sb->s_root,
 
+Actually, we do need to call ->init_fs_context() or legacy_init_fs_context()
+to set the ops pointer.
 
+David
