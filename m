@@ -2,109 +2,78 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA57ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B14ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C96B20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:32:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jZcsGG1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C96B20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DE95E20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE95E20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbeIRWGH (ORCPT
+        id S1730386AbeIRWHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:06:07 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45235 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730136AbeIRWGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:06:07 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i26-v6so1262408pfo.12;
-        Tue, 18 Sep 2018 09:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Kbkq7QPlT82VaZvzmmAYBTMJShUCSXYbj45gJB1vMLk=;
-        b=jZcsGG1xpwfPjkkHXCyGlQpCJMArwBeyCS5SkmTtJAYyI3C4tbLkDudtxBhgDu6Vwh
-         thVy4KptcZ3dkM4+fZ58InFkXomDw8Z4G0tB8NthFgYOIvvgg8yse5VtuCeX8GGu+qsf
-         lls5rNDDcFwtlu2n2MPWdRmjy7nPcRMEDMyQ6bml2YhxWJIPL86rFSore+RbJi8WoZNm
-         FC5mEXv1+LSNBDS95eNNzCLOhyE1OYv14F3MwihlZfjDGt1JPQEhueX+73KazAWPkEs4
-         /L1uES7SfDAPLzipdJwjOFcc0FDNJonRpHTuLFH4ZDKjXzYVkljH4Qstyuovjxqh4lcg
-         cqjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Kbkq7QPlT82VaZvzmmAYBTMJShUCSXYbj45gJB1vMLk=;
-        b=ZqHIA2QNGbRi97IHCKYpeI8bJ24b/1tp+YBsAB9N+MfieYf7b6Dk3adiTlO0BOsARQ
-         iLjIq/NkALEMfeRD5zl0AqGAjNHfFvRgE5CrppTP16oaC6UG+MpXlmYNTK7K2q3tdpKY
-         o7f1iSKy1QT5tBv45ISpMb3KYPk/T9vd44JWg7sfPboaQn9VT5QTWYHNbohWfml2fujP
-         4kKDYUBrg0t2gMWfHAaJ7X/67aLN6Ph3IH7844Yvyy/aXgmGAmmz2y6k2TJGstVZ1k+I
-         imKip+zRV5MWXidkno9fPP+mRXcQc4Qz0ZjwAYihAXzngkE3S9BbTEYywmgi9tmsNK4e
-         wnSw==
-X-Gm-Message-State: APzg51D++4647x5NRi7u5eXF7cEbmKo+/pFjHFp6j2joDsuh16ICaT5M
-        N25PIJdBNpp0b5jXl34kKRc=
-X-Google-Smtp-Source: ANB0VdYhkNpvGMOdSFb0nC0rarQ/+8Hj2oss9whzTIuAlNNQeX3QtG3bknT9Pr1L7HjAjM7RMhT8Jw==
-X-Received: by 2002:a62:ba0b:: with SMTP id k11-v6mr31865860pff.171.1537288365199;
-        Tue, 18 Sep 2018 09:32:45 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm30330932pfa.116.2018.09.18.09.32.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 09:32:44 -0700 (PDT)
-Date:   Tue, 18 Sep 2018 09:32:42 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Aaron Ma <aaron.ma@canonical.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: elantech - enable middle button of touchpad on
- ThinkPad P72
-Message-ID: <20180918163242.GA177805@dtor-ws>
-References: <20180907070651.6916-1-aaron.ma@canonical.com>
+        Tue, 18 Sep 2018 18:07:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729501AbeIRWHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:07:04 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 46ECE1B7B;
+        Tue, 18 Sep 2018 16:33:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E699616BF8;
+        Tue, 18 Sep 2018 16:33:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+References: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org> <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com> <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <1537253993.20009.62.camel@infradead.org> <14067.1537285833@warthog.procyon.org.uk> <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     dhowells@redhat.com, Denis Kenzior <denkenz@gmail.com>,
+        jmorris@namei.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180907070651.6916-1-aaron.ma@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <19246.1537288419.1@warthog.procyon.org.uk>
+Date:   Tue, 18 Sep 2018 17:33:39 +0100
+Message-ID: <19247.1537288419@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 18 Sep 2018 16:33:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 07, 2018 at 03:06:51PM +0800, Aaron Ma wrote:
-> Adding 2 new touchpad IDs to support middle button support.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+David Woodhouse <dwmw2@infradead.org> wrote:
 
-Applied, thank you.
+> You are passing the raw DER to the kernel in both cases, right?
 
-> ---
->  drivers/input/mouse/elantech.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-> index 44f57cf6675b..2d95e8d93cc7 100644
-> --- a/drivers/input/mouse/elantech.c
-> +++ b/drivers/input/mouse/elantech.c
-> @@ -1178,6 +1178,8 @@ static const struct dmi_system_id elantech_dmi_has_middle_button[] = {
->  static const char * const middle_button_pnp_ids[] = {
->  	"LEN2131", /* ThinkPad P52 w/ NFC */
->  	"LEN2132", /* ThinkPad P52 */
-> +	"LEN2133", /* ThinkPad P72 w/ NFC */
-> +	"LEN2134", /* ThinkPad P72 */
->  	NULL
->  };
->  
-> -- 
-> 2.17.1
-> 
+I haven't put a PEM stripper and base64 decoder into the kernel, though we
+certainly could do that.  We could even do the decode in-place in the same
+buffer since the resulting data would be smaller than the original.
 
--- 
-Dmitry
+> And the kernel just happens to know that if it receives a bare OCTET-STRING
+> it's supposed to treat it as a TPMv1.2 key?
+
+It passes it to each parser in turn till one says it can parse it.  It's not
+ideal, but it seems to work - so far.  Better would be to annotate it in some
+way.  I have considered annotating the type field so that the payload doesn't
+have to have it added:
+
+	keyctl padd asymmetric.x509 "" @s </tmp/foo.x509
+	keyctl padd asymmetric.pkcs#8 ...
+	keyctl padd asymmetric.tpm ...
+
+However, this doesn't work with "keyctl update" or "keyctl instantiate".
+
+David
