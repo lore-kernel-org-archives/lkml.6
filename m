@@ -2,118 +2,100 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE69ECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EA7ECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C272086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:35:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C272086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id F3D14206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:35:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="vrrPIZ7H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D14206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeIRPHA (ORCPT
+        id S1729749AbeIRPH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 11:07:00 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:34816 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729487AbeIRPGt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 11:06:49 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42DyWn0PFdz1qx9G;
-        Tue, 18 Sep 2018 11:35:01 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42DyWm6xbCz1qr2Y;
-        Tue, 18 Sep 2018 11:35:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 4K95DQEcQN31; Tue, 18 Sep 2018 11:34:59 +0200 (CEST)
-X-Auth-Info: eZ77StSqVjRfIIwiZI9ofVWvB6mYtalXWjjjK4bANnw=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 18 Sep 2018 11:34:59 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH 2/3] ARM: dspi: Provide per DSPI instance of the MCR register (SLAVE mode)
-Date:   Tue, 18 Sep 2018 11:34:36 +0200
-Message-Id: <20180918093437.26799-3-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180918093437.26799-1-lukma@denx.de>
-References: <20180918093437.26799-1-lukma@denx.de>
+        Tue, 18 Sep 2018 11:07:27 -0400
+Received: from erza.pados.hu ([176.9.136.194]:41174 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728934AbeIRPH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 11:07:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
+        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=pRLruqAu5UIkefxjI6ufy+FsBjthtPNNH3su70bp428=; b=vrrPIZ7Hx085dYK/ro77cEMJMp
+        SZceJWLpem2wBmah+yz5hCs6m8eP8WNAW1Ms4i1tWd9rGI5VGSNz6QzKsQ3lBBDsobENR/uMuhgta
+        uAsoG6lBEg/7Es6e9Kn5hmQdlV/4RN8RN5NystvPKTcRe1YVyENfaEXaUfZdJuuBdRGMdduUCRJTn
+        eyE54qAdWWa6+OPp4UkP1uVHE9n1Nxmm7urg0hKKh62bwcE8lpRD1c+Dfi5TzjbI5MGVOgHQWslnB
+        zROSDQFfEXASr5EsB2hqSwlzdeQHj7jaHIFA/PSZlzwPDSEySqFQZrT+enpiB5NNaL3xJ69DWjmqw
+        OXCsaF3Q==;
+Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1g2CPy-00016z-13; Tue, 18 Sep 2018 11:35:38 +0200
+MIME-Version: 1.0
+Date:   Tue, 18 Sep 2018 09:35:35 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: RainLoop/1.12.0
+From:   "Karoly Pados" <pados@pados.hu>
+Message-ID: <ef753ab98cf19ce4482e76864d406c1e@pados.hu>
+Subject: Re: [PATCH v4] USB: serial: ftdi_sio: implement GPIO support for
+ FT-X devices
+To:     "Johan Hovold" <johan@kernel.org>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Loic Poulain" <loic.poulain@linaro.org>
+In-Reply-To: <20180918091634.GC3943@localhost>
+References: <20180918091634.GC3943@localhost>
+ <20180916175847.3288-1-pados@pados.hu>
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  >> + goto out_free; >> + >> + /* Chip-type guessing logic
+   based on libftdi. */ >> + priv->gc.ngpio = 4; /* FT230X, FT231X */ >> + if
+    (le16_to_cpu(serial->dev->descriptor.bcdDevice) != 0x1000) >> + priv->gc.ngpio
+    = 1; /* FT234XD */ > > As I mentioned in my last mail: I've asked FTDI about
+    this, but I fear > that FTX234XD has bcdDevice 0x1000 and we may need to
+   just always > register all four pins after all. > [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vf610 Vybryd can work in two DSPI modes - namely master and slave.
-Already we do support master mode.
-This commit serves as a prerequisite to add support for slave mode. For
-slave mode we do need to preserve the MCR register value to change its
-"mode" bit (31) according to the supported state.
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- drivers/spi/spi-fsl-dspi.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 7cb3ab0a35a0..472385f0a842 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -126,6 +126,7 @@
- #define DMA_COMPLETION_TIMEOUT	msecs_to_jiffies(3000)
- 
- struct chip_data {
-+	u32 mcr_val;
- 	u32 ctar_val;
- 	u16 void_write_data;
- };
-@@ -696,9 +697,9 @@ static int dspi_transfer_one_message(struct spi_master *master,
- 		else
- 			dspi->bytes_per_word = 4;
- 
--		regmap_update_bits(dspi->regmap, SPI_MCR,
--				   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
--				   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
-+		regmap_write(dspi->regmap, SPI_MCR, dspi->cur_chip->mcr_val |
-+			     SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
-+
- 		regmap_write(dspi->regmap, SPI_CTAR(0),
- 			     dspi->cur_chip->ctar_val |
- 			     SPI_FRAME_BITS(transfer->bits_per_word));
-@@ -767,6 +768,11 @@ static int dspi_setup(struct spi_device *spi)
- 			return -ENOMEM;
- 	}
- 
-+	chip->mcr_val = SPI_MCR_MASTER | SPI_MCR_PCSIS;
-+
-+	if (dspi->devtype_data->xspi_mode)
-+		chip->mcr_val |= SPI_MCR_XSPI;
-+
- 	pdata = dev_get_platdata(&dspi->pdev->dev);
- 
- 	if (!pdata) {
-@@ -964,8 +970,6 @@ static const struct regmap_config dspi_xspi_regmap_config[] = {
- 
- static void dspi_init(struct fsl_dspi *dspi)
- {
--	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER | SPI_MCR_PCSIS |
--		     (dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0));
- 	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
- 	if (dspi->devtype_data->xspi_mode)
- 		regmap_write(dspi->regmap, SPI_CTARE(0),
--- 
-2.11.0
-
+>> + goto out_free;=0A>> +=0A>> + /* Chip-type guessing logic based on li=
+bftdi. */=0A>> + priv->gc.ngpio =3D 4; /* FT230X, FT231X */=0A>> + if (le=
+16_to_cpu(serial->dev->descriptor.bcdDevice) !=3D 0x1000)=0A>> + priv->gc=
+.ngpio =3D 1; /* FT234XD */=0A> =0A> As I mentioned in my last mail: I've=
+ asked FTDI about this, but I fear=0A> that FTX234XD has bcdDevice 0x1000=
+ and we may need to just always=0A> register all four pins after all.=0A>=
+ =0A=0ATo avoid missing 4.20, what is the latest time I should wait for F=
+TDI's answer?=0AOr should I just submit v5 as it is now and you'll incorp=
+orate FTDI's feedback=0Awhen you receive it?=0A=0A=0A>> +static void ftdi=
+_gpio_remove(struct usb_serial_port *port)=0A>> +{=0A>> + struct ftdi_pri=
+vate *priv =3D usb_get_serial_port_data(port);=0A>> +=0A>> + if (priv->gp=
+io_used) {=0A>> + /* Remark: Exiting CBUS-mode does not reset pin states =
+too */=0A>> + ftdi_exit_cbus_mode(port);=0A>> + priv->gpio_used =3D false=
+;=0A>> + }=0A> =0A> This should go after deregistration or we have a tiny=
+ race window here.=0A=0ACan you elaborate on that to make sure I get it r=
+ight? =0ABy "deregistration" do you mean deregistering the GPIO chip belo=
+w in the same method?=0ADoes that mean something can call into our module=
+ while this method is running?=0AIf not, I'm clueless about the possible =
+race here.
