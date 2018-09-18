@@ -2,111 +2,97 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA38C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B2DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27FD0206B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3B2214DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 19:05:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mg9OBVOI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IpFsJQNG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27FD0206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpZAT5OL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3B2214DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbeISAiw (ORCPT
+        id S1729891AbeISAjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 20:38:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbeISAiw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 20:38:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C8A09601CF; Tue, 18 Sep 2018 19:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537297493;
-        bh=1evB/4PEtGE4+5auLOhcvbyvx31j9yAeFIBIu9djTxg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mg9OBVOImvMq8b3BF3oUqPfIpfHAGBLeCq32wcKO3Dl7VR+HocbuaWMaBNLuWs19/
-         h7biJgkF687OBvykFjnS0YOE6TsstdMgJHqey1HICuj9mz3hPopV6QaVvch/va3GDR
-         UYyH4gNg2Ai7823sJ6DvEbqGvP7FDGjU51Z4IM5Y=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 92C6B605A5;
-        Tue, 18 Sep 2018 19:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537297492;
-        bh=1evB/4PEtGE4+5auLOhcvbyvx31j9yAeFIBIu9djTxg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IpFsJQNGoFzorITCkyHlH6DPDTGMgAiyjJjADyjPFY9BN+s2g4oV6H5nrkH13iinM
-         O+IrSGjHI/exC/beTUaHmrAKuSIhrsgedNpWlO7/38BDoB5HICKHrwNX8RKCzBkcBa
-         3IGOAFcCJM/PDy83Va5cvesBIl+560DERyV7Tzn8=
+        Tue, 18 Sep 2018 20:39:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728721AbeISAjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 20:39:51 -0400
+Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0199D2150C;
+        Tue, 18 Sep 2018 19:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537297553;
+        bh=K9RStsRTczG6OD4E6X240NOaZGSE+ycV/6OIO2Nj59I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GpZAT5OLACc71O243hIDPgVBqiXDMIV/kKb4KtM4eox1lfnYQTRtRalJZdnk3+fuL
+         I9EVpEyAPXHAGmAw/XGmS3g3iXKejm6XGYa95LFEFjqPxCkQSfs5u60BTfioZIjVXK
+         bZiTLhJ8qzjVvLhKv4Ilz6ONYwl9tVOx8Ao5olSY=
+Received: by mail-qt0-f170.google.com with SMTP id t5-v6so2788245qtn.3;
+        Tue, 18 Sep 2018 12:05:52 -0700 (PDT)
+X-Gm-Message-State: APzg51BaJebAvpyAMtkP5qywJGQgEyg8pd4Ao2vjYxVnSetM3YeOzb9d
+        IkPpJLf9gZiFQpV06Ss+vG4pHVUsv7pmel3rog==
+X-Google-Smtp-Source: ANB0VdZR4EAwsSGIcEM5q8dDBVNg/m5yfRZq4b86sNWGN727cefetRPuzooTUDtQVqbl96jErF8hKUUVAHyp2eZDDfI=
+X-Received: by 2002:ad4:414b:: with SMTP id z11-v6mr22641300qvp.77.1537297552184;
+ Tue, 18 Sep 2018 12:05:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 19 Sep 2018 00:34:52 +0530
-From:   poza@codeaurora.org
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Wei Zhang <wzhang@fb.com>, linux-kernel@vger.kernel.org,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH] PCI/AER: Clear uncorrectable error status for device
-In-Reply-To: <ab1ee64e-d257-4521-1517-4c2c648d0d9c@kernel.org>
-References: <1537258829-15763-1-git-send-email-poza@codeaurora.org>
- <ab1ee64e-d257-4521-1517-4c2c648d0d9c@kernel.org>
-Message-ID: <49a44a7202802c20d52164403139284b@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20180829183440.13601-1-robh@kernel.org> <20180913145130.GA5756@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20180913145130.GA5756@e107981-ln.cambridge.arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 18 Sep 2018 12:05:40 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqKoOJigMkiWqoG77+nstr-6=qiAeTePZkSThcfbVAtEQQ@mail.gmail.com>
+Message-ID: <CAL_JsqKoOJigMkiWqoG77+nstr-6=qiAeTePZkSThcfbVAtEQQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: remove unnecessary check of device_type == pci
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-pci@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-18 20:00, Sinan Kaya wrote:
-> On 9/18/2018 4:20 AM, Oza Pawandeep wrote:
->> +++ b/drivers/pci/pcie/err.c
->> @@ -265,6 +265,8 @@ static pci_ers_result_t 
->> broadcast_error_message(struct pci_dev *dev,
->>   		 * The error is non fatal so the bus is ok; just invoke
->>   		 * the callback for the function that logged the error.
->>   		 */
->> +		if (cb == report_resume)
->> +			pci_cleanup_aer_uncorrect_error_status(dev);
->>   		cb(dev, &result_data);
->>   	}
-> 
-> In order to follow the existing behavior (drivers are calling
-> pci_cleanup_aer_uncorrect_error_status() right before return),
-> you should probably move the pci_cleanup_aer_uncorrect_error_status
-> after
-> 
-> cb(dev, &result_data);
-> 
-> line.
+On Thu, Sep 13, 2018 at 7:51 AM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Wed, Aug 29, 2018 at 01:34:40PM -0500, Rob Herring wrote:
+> > PCI host drivers have already matched on compatible strings, so checking
+> > device_type is redundant. Also, device_type is considered deprecated for
+> > FDT though we've still been requiring it for PCI hosts as it is useful
+> > for finding PCI buses.
+>
+> Hi Rob,
+>
+> I have no problem with the patch per-se, I can't parse though the second
+> paragraph, in particular what you mean by "useful for finding PCI
+> buses".
 
-some drivers are calling it in slot_reset, which is before resume,
-while some are calling in beginning of resume (e.g. netxen_io_resume)
+Device_type is the only generic way we can identify PCI buses which is
+useful for dtc for example to do PCI binding checks. Maybe we can use
+the node name which is what I'm doing for cpu nodes, but we've been
+less consistent about that for PCI.
 
-hence I have kept it before calling resume()   (e.g. before cb(dev, 
-&result_data))
+>
+> What about the corresponding dts files ? I suspect we had better leave
+> them alone lest we can trigger regressions with new dts and older
+> kernels.
 
-Regards,
-Oza.
+Yes. it will take some time before we can remove from dts files. Or
+maybe only new ones change.
+
+Rob
