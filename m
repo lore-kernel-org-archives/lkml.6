@@ -2,125 +2,187 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7704ECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 997F9ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45A14214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45756206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:45:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=catalogicsoftware.com header.i=@catalogicsoftware.com header.b="hes4RDjt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A14214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=catalogicsoftware.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OpAFDQ+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45756206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbeIRGOy (ORCPT
+        id S1728948AbeIRGPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:14:54 -0400
-Received: from us-smtp-delivery-107.mimecast.com ([63.128.21.107]:37790 "EHLO
-        us-smtp-delivery-107.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726501AbeIRGOx (ORCPT
+        Tue, 18 Sep 2018 02:15:25 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37987 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeIRGPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:14:53 -0400
-X-Greylist: delayed 467 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Sep 2018 02:14:53 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=catalogicsoftware.com; s=mimecast20180821; t=1537231500; h=from:from:sender:reply-to:subject:subject:date:date: message-id:message-id:to:to:cc:cc:mime-version:mime-version: content-type:content-type: content-transfer-encoding:content-transfer-encoding: in-reply-to:in-reply-to:references:references; bh=NbN4tw0OZl0xugJ0oQqU3OMqIKPWv9jyXhBuyH+9dtE=; b=hes4RDjtsUeSBB26Bd+QeVbG2XbKnjDU1/2hAyeH1BeFDKD8WYr5ZY6vbWNJd6LZ3Ob/7wEiVH0+dQg0ZDOyo0iznvm/eC7Qsu8UtxXlaxF3kPkC/ozJ6e6MrpEY2Nk3EA5sWRTHVdKFGB2XyNUTTkOzxxGcAkw5yeW2MmDAERI=
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com
- (mail-dm3nam03lp0016.outbound.protection.outlook.com [207.46.163.16])
- (Using TLS) by us-smtp-1.mimecast.com with ESMTP id
- us-mta-294-xG7ZdLJXOjqiV231qHIAIQ-1; Mon, 17 Sep 2018 20:37:13 -0400
-Received: from DM5PR01MB2348.prod.exchangelabs.com (10.168.192.138) by
- DM5PR01MB2699.prod.exchangelabs.com (10.172.185.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.15; Tue, 18 Sep 2018 00:37:11 +0000
-Received: from DM5PR01MB2348.prod.exchangelabs.com
- ([fe80::55fd:2d5a:fdbc:51a1]) by DM5PR01MB2348.prod.exchangelabs.com
- ([fe80::55fd:2d5a:fdbc:51a1%6]) with mapi id 15.20.1143.017; Tue, 18 Sep 2018
- 00:37:11 +0000
-From:   "Ly, Bryant" <bly@catalogicsoftware.com>
-To:     Laura Abbott <labbott@redhat.com>
-CC:     "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        Michael Cyr <mikecyr@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3 1/2] scsi: ibmvscsis: Fix a stringop-overflow warning
-Thread-Topic: [PATCHv3 1/2] scsi: ibmvscsis: Fix a stringop-overflow warning
-Thread-Index: AQHUTue8XqW/6HgMhUG27FT8Dl/7Jw==
-Date:   Tue, 18 Sep 2018 00:37:11 +0000
-Message-ID: <B86907DE-444B-498D-A402-78190A5A402B@catalogicsoftware.com>
-References: <20180911192226.3620-1-labbott@redhat.com>
- <20180911192226.3620-2-labbott@redhat.com>
-In-Reply-To: <20180911192226.3620-2-labbott@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [96.42.214.145]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR01MB2699;20:sVQ05ui/P6dRlGByIT2QnLuP4MwMfGFOsZ0X1AxXqCT4V4qGua7Dd2EPIn5OCGhNJAyRtfRao42b3eLtYZKcw/GJC7JAR7Cl8OmxphXRp56zLoimt2RjdFKrDYroxqu+5da6u86qrPTuAzbBZpDcD6f0/W6Pu4ywazeVnxm72IM=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 85654288-5ee4-40ee-94f9-08d61cfedf6e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR01MB2699;
-x-ms-traffictypediagnostic: DM5PR01MB2699:
-x-microsoft-antispam-prvs: <DM5PR01MB2699B4A264B3E8B418AE2A69B41D0@DM5PR01MB2699.prod.exchangelabs.com>
-x-exchange-antispam-report-test: UriScan:(104084551191319);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:DM5PR01MB2699;BCL:0;PCL:0;RULEID:;SRVR:DM5PR01MB2699;
-x-forefront-prvs: 0799B1B2D7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(39840400004)(376002)(346002)(189003)(199004)(486006)(6506007)(53546011)(33656002)(86362001)(81166006)(6916009)(81156014)(2900100001)(54906003)(6246003)(99286004)(478600001)(446003)(4326008)(14444005)(68736007)(305945005)(256004)(11346002)(476003)(2616005)(14454004)(316002)(7736002)(106356001)(2906002)(6512007)(97736004)(53936002)(25786009)(26005)(8936002)(82746002)(5250100002)(3846002)(6116002)(102836004)(5660300001)(186003)(76176011)(105586002)(6436002)(66066001)(229853002)(83716003)(6486002)(36756003)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR01MB2699;H:DM5PR01MB2348.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: oxP0a1Pis1DpW5SV1WoHaaPyGFf9VqJ+RknGjJ5rQw2CCZK5oZIAGn+VHxzSD5KsX/WaEVCdT8Qx5S2gqEzO3con8noZilsFbuPTcuS2rIqKqNxnTULCvQsCjcinktIh3VQ+rDUhJDXe8VeMmoozeM3gBfXBo4DyQ66Bdo5tKCgcaxRn+OVPNsSrH+WfpsKjk5VckjEb511edA2XsnwcnDYSgq2Kly2LSDxIDhdGmIB2yI93MoZegysp/rIfpRTJ4+eWicI7HgSIxNVGfYsI6hJD9QpJcrzJo6Z8J2krKFYbWgGdrjoFJ2P3UfKz8u6b3cuRxOoyRHkCx4DLLI6XYJb6+9trmSIv4RRkAB6CTns=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-ID: <D061C8A3AE55F84DBF2C3151C325DDD4@prod.exchangelabs.com>
+        Tue, 18 Sep 2018 02:15:25 -0400
+Received: by mail-yw1-f67.google.com with SMTP id n21-v6so91297ywh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 17:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=RLTFXtCKHlXSPakm8BOXJ+hCRLLkcB5u6dQOtHaqioo=;
+        b=OpAFDQ+u8r1pvUVD30z54DccG0hIGjjSaEeJGw4vktbmSKPAKbsTQI6lc270tAQezd
+         qFlVdqWGsqlGhhFwDpjaIjRIN3sjVznoLmYDwR56AsLrb3ORNDjng/il24tCKcHm4MPO
+         jpGz2WRTUn/r1qGhBjV+KhJFn1Brft7zFwSMQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=RLTFXtCKHlXSPakm8BOXJ+hCRLLkcB5u6dQOtHaqioo=;
+        b=m9+gHvWSBd69Wn5qKlqg2uj/kFbMYSIe5jvKqHDQ4IOfo0TPPCUgQP5PaZsHPJsiGe
+         IhIrm0j/ywLCfZXycsp3WMM1Sjx4XCMNKlM915ZJb44G49Dd6ZEeYRgTCyR38sJOozUG
+         MiFs7sL/VPBk9bYBYXPdsJuWl/Emz0bY/KMMhVuNO+2rVfgoRBQ92ZLkuBYGqU9skECe
+         T3rxB1VR7BOG4H7wBodhYKR4aBvTkjnM2mSa20caTZtlNhxjqFGhtMQMyGgvld9cBs1r
+         mkB6rTyPkFa2OVS+na/Ij1Wd5JfSsaxnGJN6AN+u3wk8kDdmjw/2YHB+Us8vlz0cLQHA
+         ChkA==
+X-Gm-Message-State: APzg51CW0luzQMvGcThQqrB/maOVUhFpBx0XvnsHGi6U26PfUTP0VyFg
+        3ltNNzOJcLWDufIvYezcuRe+s2YFu3g=
+X-Google-Smtp-Source: ANB0VdaaUbrCcl7DF7BRAMz9BVoJ6hxw6+6mgrNGoYhzgpLLiRZ9sMRjTZQVdb0DrdCHruLpaz2Vuw==
+X-Received: by 2002:a0d:e847:: with SMTP id r68-v6mr11025181ywe.17.1537231531077;
+        Mon, 17 Sep 2018 17:45:31 -0700 (PDT)
+Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
+        by smtp.gmail.com with ESMTPSA id k130-v6sm1292825ywe.29.2018.09.17.17.45.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Sep 2018 17:45:29 -0700 (PDT)
+Received: by mail-yw1-f51.google.com with SMTP id l9-v6so79745ywc.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Sep 2018 17:45:29 -0700 (PDT)
+X-Received: by 2002:a81:1194:: with SMTP id 142-v6mr11742647ywr.168.1537231529171;
+ Mon, 17 Sep 2018 17:45:29 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: catalogicsoftware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85654288-5ee4-40ee-94f9-08d61cfedf6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2018 00:37:11.4403
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ea3d63e8-dd40-410b-9496-d2ee49ccddc3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR01MB2699
-X-MC-Unique: xG7ZdLJXOjqiV231qHIAIQ-1
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Mon, 17 Sep 2018 17:45:28
+ -0700 (PDT)
+In-Reply-To: <ee3b287d-95a4-db16-e3c6-fc6f6172a5ae@schaufler-ca.com>
+References: <20180916003059.1046-1-keescook@chromium.org> <20180916003059.1046-17-keescook@chromium.org>
+ <84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com> <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+ <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com> <CAGXu5jJ71RLGh0nDgOaN3vCXFGE0poXFU2Gb9o+20aO+AEdOvw@mail.gmail.com>
+ <8f0bd39b-29a6-325d-4558-d9f484249c22@schaufler-ca.com> <CAGXu5jLeTfwEXAZLz_H1PCx0ySWZcRhXQMfnE14TG8BvxY46JA@mail.gmail.com>
+ <53377892-695f-6336-8574-54c7aa0a4201@schaufler-ca.com> <7ecfffc3-d2a4-3ff7-4bf5-db3029d73c59@canonical.com>
+ <fbdc2a75-8364-c743-f9c3-9dcd2570c569@schaufler-ca.com> <e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
+ <CAGXu5jKhZTcz_+uQpNRh6Mg34pP2+aNSo9cV=c8pC0r=oJBJog@mail.gmail.com> <ee3b287d-95a4-db16-e3c6-fc6f6172a5ae@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 17 Sep 2018 17:45:28 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK4pa7-G8zhHE-noM4qVQGytTzcKX4BkQFkuJmEbLONaw@mail.gmail.com>
+Message-ID: <CAGXu5jK4pa7-G8zhHE-noM4qVQGytTzcKX4BkQFkuJmEbLONaw@mail.gmail.com>
+Subject: Re: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 17, 2018 at 5:24 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/17/2018 5:00 PM, Kees Cook wrote:
+>> The legacy per-LSM
+>> enable/disable ordering is the same, but ordering between
+>> lsm.enable/disable and the per-LSM options is NOT ordered. i.e. the
+>> precedent mentioned in the prior paragraph.
+>
+> That is, capability,yama,loadpin,<major>
 
+Yeah, sorry, I didn't mean LSM order there, I meant the commandline
+order of appearance of the options. If you mix them, the last
+lsm.enable/disable for an LSM is the "real" setting, and the last
+$LSM.enabled= setting is the last of _that_ one.
 
-> On Sep 11, 2018, at 2:22 PM, Laura Abbott <labbott@redhat.com> wrote:
->=20
-> There's currently a warning about string overflow with strncat:
->=20
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_probe':
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3479:2: error: 'strncat' specifi=
-ed
-> bound 64 equals destination size [-Werror=3Dstringop-overflow=3D]
->  strncat(vscsi->eye, vdev->name, MAX_EYE);
->  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> Switch to a single snprintf instead of a strcpy + strcat to handle this
-> cleanly.
->=20
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v3: Make sure there is an extra space in the partition name
-> ---
-> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
->=20
+>> To support "security=", we'll still have some kind of legacy
+>> LSM_FLAG_MAJOR to perform implicit disabling of the non-operational
+>> other "major" LSMs. This means "security=$foo" will be a short-hand
+>> for "lsm.disable=all-LSM_FLAG_MAJOR-who-are-not-$foo". This will
+>> exactly match current behavior (i.e. "security=smack" and if smack
+>> fails initialization, we do not then fall back to another major).
+>
+> Right.
 
-Reviewed-by: Bryant G. Ly bly@catalogicsoftware.com
+Cool.
 
-I sent a PR to update my email from bryantly@linux.vnet.ibm.com a week ago.
+>> I think we have to support runtime ordering for the reasons John
+>> specifies. Additionally, I have the sense that anything we can
+>> configure in Kconfig ultimately ends up being expressed at runtime
+>> too, so better to just make sure the design includes it now.
+>
+> Right.
+>
+>> What we have now:
+>>
+>> "first" then "order-doesn't-matter-minors" then "exclusive-major"
+>>
+>> - we can't change first.
+>> - exclusivity-ordering only matters in the face of enable/disable
+>> which we have solved now (?)
+>
+> I'm not sure where you get the conclusion we've solved this.
+> Today I can't say "lsm.enable=smack lsm.enable=apparmor", and
+> there's no mechanism to prevent that.
+>
+>> so, ordering can be totally arbitrary after "first" (but before some
+>> future "last"). We must not allow a token for "everything else" since
+>> that overlaps with enable/disable, so "everything else" stay implicit
+>> (I would argue a trailing implicit ordering).
+>
+> There's an assumption you're making that I'm not getting. Where does
+> this overlap between ordering and enable/disable come from?
 
--Bryant
+Handling exclusivity means the non-active LSMs are disabled. We had
+been saying "the other majors are disabled", but the concept of major
+will become arbitrary. If instead we move to "first exclusive wins
+among the exclusives", we still have the "the others are disabled"
+case. So exclusivity begets disabling.
 
+>> The one complication I see with ordering, then, is that if we change
+>> the exclusivity over time, we change what may be present on the
+>> system. For example, right now tomoyo is exclusive. Once we have
+>> blob-sharing, it doesn't need to be.
+>>
+>> so: lsm.order=tomoyo  after this series means
+>> "capability,tomoyo,yama,loadpin,integrity", but when tomoyo becomes
+>> non-exclusive, suddenly we get
+>> "capability,tomoyo,yama,loadpin,{selinux,smack,apparmor},integrity".
+>> (i.e. if selinux is disabled then move on to trying smack, then
+>> apparmor, etc.)
+>
+> We're missing a description of what happens at build time.
+> It's hard to see what you expect to happen if I want to build in
+> all the major modules and don't plan to use the boot command line
+> options.
+>
+>> I would argue that this is a design feature (LSMs aren't left behind),
+>> and order of enabled exclusive LSMs "wins" the choice for the
+>> exclusivity (instead of operating "by name" the way "security="
+>> works).
+>
+> I think I see more, but I'm guessing. At build time it looks like
+> you're dropping the specification on the "major" module. We can't
+> do that because I want to build kernels that run Smack by default
+> but include SELinux for when I'm feeling less evil than normal.
+
+Do we need build time _ordering_, or can we just go with build time
+"first exclusive"? For the v1, I went with "first exclusive" from
+CONFIG_SECURITY_DEFAULT, and left the rest of the ordering up to the
+Makefile.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
