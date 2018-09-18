@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FFAC4161C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17977ECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6D0214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC834214C5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfqnQWhf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6D0214C5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RraQOg4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC834214C5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbeIRGRr (ORCPT
+        id S1729434AbeIRGRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:17:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41992 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729344AbeIRGRq (ORCPT
+        Tue, 18 Sep 2018 02:17:49 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40972 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729407AbeIRGRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:17:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so103499pgp.9;
-        Mon, 17 Sep 2018 17:47:52 -0700 (PDT)
+        Tue, 18 Sep 2018 02:17:47 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h79-v6so105291pfk.8;
+        Mon, 17 Sep 2018 17:47:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0w+EbiE4L+ll0rh87wVXQ0LffiC/T5ki4PVoOHplc8U=;
-        b=NfqnQWhfFhmM+QPrJQhqJMwlaTM+DwEBI8/OyQlUbNbV5GgT7O36hWW+j5Ve4cscz+
-         NC3EqHwhbwYpDbuq+kkJUfH7q/1vZJY7y0th82HNM6mV1JsZabsprvbV6R7K56u7/OkD
-         HRP5+4nKijb8VNauNLA/cx4RbAJ3YGsIQVooF0Odns0Sk/gch5q2HvomXYLIlhWSqc5x
-         hOrxsgqaYUi3fY98itDISZvwPKPb2W5leBPl1UkQ+srMhX47xIB+Dzf84fd5xTOmL6tB
-         E8sF5dshYvmRgH9fK0BGnVXQm/NgMo9YR4kB9At5UdT1Wf+FuOoCfPl+O7l5IhUAqWPH
-         ScBg==
+        bh=TJUB5Y8stsaj+NlXR7or8AWO9SD70GBJBp+fkS7Z/BE=;
+        b=RraQOg4M6cKTWVCfIpuljXY3YVE61hnDxIvFLYatvHAVB7WhPgPivPl6XoNjZF0tvi
+         T8UiGYlGPq1UbZy4TsvL0c0gLB4fB2K/UVmI7v2pXs6hrfceCt9xV3qyBW3mnNTlGZs5
+         YZa3zuEUFowKqPO+Z5B4D2lwgvW65SrcqX002vf7mi7QZHvuBSl49wwJ8BIcCyBX0aBG
+         N+Bw0EPZHHTIkVoxSz+fpXrPE5Sll0XWHzE/wnt+H7FdcxGqwArapoBkazFTxV3dwMdc
+         3Bx+2aiBRZnRexaH+l0l+lEkYA3tZS8Yg/do0ZekUK8Ubu/ZuePdk3RJgHVqocGRMwuB
+         fFpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0w+EbiE4L+ll0rh87wVXQ0LffiC/T5ki4PVoOHplc8U=;
-        b=mlw8BDIfd5l+UFFRX0TU7/Q3AEhXs98ICtxTsWuqzpMyGAnV7Gi1EKStwS1qkOm1G4
-         mUF6JR59zH77sk6FKAqK7Ozo0g5zldLIoApt5XCSPvxoPU1/dMwwC9p8kMDRAdwvy3fg
-         EoxzHSSmEelc1TcF3ruw2qUuYfchYSdeEAADxFO8Z74XG9x6xJAlLWzbVN2Gr9DoYRof
-         B8y2gq/o69v9isesOMW3Uw1SaqYsgwsesnWp8U6BSXGsdcngnVehgUGFW6646A+jcYFQ
-         ak4W5XV06yPjzO2V1KvDnhhfThxhX4BXLNwcvvGcvcm4BdM8IBGXwLe9AJcNH8n/0ZO4
-         a8vA==
-X-Gm-Message-State: APzg51BpovqHY/ttgWnaC3EUdC6YQYrH6LucBB/BMcd/cVV7GVXuMmG4
-        /OuRMA6pJCxl5rFtkj6CRDpeshuX
-X-Google-Smtp-Source: ANB0Vdbc44lKUcxxo46h98t6Jq87N8DkZf8f3dL1OIxBmeUbdvjIqRi3rYPFd1MUnD7EJYlhAPQYzg==
-X-Received: by 2002:a62:642:: with SMTP id 63-v6mr28386809pfg.42.1537231671646;
-        Mon, 17 Sep 2018 17:47:51 -0700 (PDT)
+        bh=TJUB5Y8stsaj+NlXR7or8AWO9SD70GBJBp+fkS7Z/BE=;
+        b=SVFlzg+LZJMEnuL0h2c5aAVhyg6el8LX4FO9PBICN1/AVkrrLmhp74qVHSebqKoJBU
+         AYaU/BCGnJ8RvzeiQNPGc3EF43ZeTsLS9jyMIHsOliBw0OT3+ObHPQghjc12Evo3aRJ3
+         a8a29WN8GSYbfsJzH949b8Oexxc+WsmyN/t+uw5VBfwrOxzkqa4dWik8ALv64F6ahXjG
+         fk2Ug8HrtQWZubSPagU6Mu/dzCvX5PsRrl+Ot2DWIQVwDLoyuOmNKe/UTCUKt/phtmOo
+         hu78IHQYWMRLEXm6HVZkLSzxulU4QewLYjrHJjzyqNlTC9RQpZl1mmV3BGBr9eqVri1q
+         +cIw==
+X-Gm-Message-State: APzg51C2LnnEcjSCQImyVMqOatjx3CsCAzuYWoGwEAL6MjAdww6cQCR2
+        4l47Sk6Ff8X7z99F3vdGJbmmuboo
+X-Google-Smtp-Source: ANB0VdbDVxbZzmz8UwRTU74nZ/O97ERrf+Nv/3E1dcvPW1iU86x6yjAIJMpPdIpe3K+BNID58iNc1A==
+X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr28340287pfd.32.1537231673018;
+        Mon, 17 Sep 2018 17:47:53 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.50
+        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 17:47:50 -0700 (PDT)
+        Mon, 17 Sep 2018 17:47:52 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 11/20] Input: iforce - factor out hat handling when parsing packets
-Date:   Mon, 17 Sep 2018 17:47:23 -0700
-Message-Id: <20180918004732.9875-11-dmitry.torokhov@gmail.com>
+Subject: [PATCH 12/20] Input: iforce - do not combine arguments for iforce_process_packet()
+Date:   Mon, 17 Sep 2018 17:47:24 -0700
+Message-Id: <20180918004732.9875-12-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
 References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
@@ -75,147 +75,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes code clearer a bit.
+Current code combines packet type and data length into single argument to
+iforce_process_packet() and then has to untangle it. It is much clearer to
+simply use separate arguments.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- .../input/joystick/iforce/iforce-packets.c    | 101 ++++++++++--------
- 1 file changed, 57 insertions(+), 44 deletions(-)
+ drivers/input/joystick/iforce/iforce-packets.c | 9 +++++----
+ drivers/input/joystick/iforce/iforce-serio.c   | 8 ++++----
+ drivers/input/joystick/iforce/iforce-usb.c     | 4 ++--
+ drivers/input/joystick/iforce/iforce.h         | 3 ++-
+ 4 files changed, 13 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/input/joystick/iforce/iforce-packets.c b/drivers/input/joystick/iforce/iforce-packets.c
-index 7aba2966454a..ffd1dd65deb8 100644
+index ffd1dd65deb8..35b7a5206977 100644
 --- a/drivers/input/joystick/iforce/iforce-packets.c
 +++ b/drivers/input/joystick/iforce/iforce-packets.c
-@@ -130,11 +130,47 @@ static int mark_core_as_ready(struct iforce *iforce, unsigned short addr)
- 	return -1;
+@@ -166,7 +166,8 @@ static void iforce_report_hats_buttons(struct iforce *iforce, u8 *data)
+ 	}
  }
  
 -void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
-+static void iforce_report_hats_buttons(struct iforce *iforce, u8 *data)
++void iforce_process_packet(struct iforce *iforce,
++			   u8 packet_id, u8 *data, size_t len)
  {
  	struct input_dev *dev = iforce->dev;
- 	int i;
- 
-+	input_report_abs(dev, ABS_HAT0X, iforce_hat_to_axis[data[6] >> 4].x);
-+	input_report_abs(dev, ABS_HAT0Y, iforce_hat_to_axis[data[6] >> 4].y);
-+
-+	for (i = 0; iforce->type->btn[i] >= 0; i++)
-+		input_report_key(dev, iforce->type->btn[i],
-+				 data[(i >> 3) + 5] & (1 << (i & 7)));
-+
-+	/* If there are untouched bits left, interpret them as the second hat */
-+	if (i <= 8) {
-+		u8 btns = data[6];
-+
-+		if (test_bit(ABS_HAT1X, dev->absbit)) {
-+			if (btns & BIT(3))
-+				input_report_abs(dev, ABS_HAT1X, -1);
-+			else if (btns & BIT(1))
-+				input_report_abs(dev, ABS_HAT1X, 1);
-+			else
-+				input_report_abs(dev, ABS_HAT1X, 0);
-+		}
-+
-+		if (test_bit(ABS_HAT1Y, dev->absbit)) {
-+			if (btns & BIT(0))
-+				input_report_abs(dev, ABS_HAT1Y, -1);
-+			else if (btns & BIT(2))
-+				input_report_abs(dev, ABS_HAT1Y, 1);
-+			else
-+				input_report_abs(dev, ABS_HAT1Y, 0);
-+		}
-+	}
-+}
-+
-+void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
-+{
-+	struct input_dev *dev = iforce->dev;
-+	int i, j;
-+
- 	wake_up(&iforce->wait);
- 
+ 	int i, j;
+@@ -176,14 +177,14 @@ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
  	if (!iforce->type)
-@@ -143,48 +179,26 @@ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
- 	switch (HI(cmd)) {
+ 		return;
+ 
+-	switch (HI(cmd)) {
++	switch (packet_id) {
  
  	case 0x01:	/* joystick position data */
--	case 0x03:	/* wheel position data */
--		if (HI(cmd) == 1) {
--			input_report_abs(dev, ABS_X, (__s16) (((__s16)data[1] << 8) | data[0]));
--			input_report_abs(dev, ABS_Y, (__s16) (((__s16)data[3] << 8) | data[2]));
--			input_report_abs(dev, ABS_THROTTLE, 255 - data[4]);
--			if (LO(cmd) >= 8 && test_bit(ABS_RUDDER ,dev->absbit))
--				input_report_abs(dev, ABS_RUDDER, (__s8)data[7]);
--		} else {
--			input_report_abs(dev, ABS_WHEEL, (__s16) (((__s16)data[1] << 8) | data[0]));
--			input_report_abs(dev, ABS_GAS,   255 - data[2]);
--			input_report_abs(dev, ABS_BRAKE, 255 - data[3]);
--		}
-+		input_report_abs(dev, ABS_X, (__s16) (((__s16)data[1] << 8) | data[0]));
-+		input_report_abs(dev, ABS_Y, (__s16) (((__s16)data[3] << 8) | data[2]));
-+		input_report_abs(dev, ABS_THROTTLE, 255 - data[4]);
+ 		input_report_abs(dev, ABS_X, (__s16) (((__s16)data[1] << 8) | data[0]));
+ 		input_report_abs(dev, ABS_Y, (__s16) (((__s16)data[3] << 8) | data[2]));
+ 		input_report_abs(dev, ABS_THROTTLE, 255 - data[4]);
  
--		input_report_abs(dev, ABS_HAT0X, iforce_hat_to_axis[data[6] >> 4].x);
--		input_report_abs(dev, ABS_HAT0Y, iforce_hat_to_axis[data[6] >> 4].y);
--
--		for (i = 0; iforce->type->btn[i] >= 0; i++)
--			input_report_key(dev, iforce->type->btn[i], data[(i >> 3) + 5] & (1 << (i & 7)));
--
--		/* If there are untouched bits left, interpret them as the second hat */
--		if (i <= 8) {
--			int btns = data[6];
--			if (test_bit(ABS_HAT1X, dev->absbit)) {
--				if (btns & 8)
--					input_report_abs(dev, ABS_HAT1X, -1);
--				else if (btns & 2)
--					input_report_abs(dev, ABS_HAT1X, 1);
--				else
--					input_report_abs(dev, ABS_HAT1X, 0);
--			}
--			if (test_bit(ABS_HAT1Y, dev->absbit)) {
--				if (btns & 1)
--					input_report_abs(dev, ABS_HAT1Y, -1);
--				else if (btns & 4)
--					input_report_abs(dev, ABS_HAT1Y, 1);
--				else
--					input_report_abs(dev, ABS_HAT1Y, 0);
--			}
--		}
-+		if (LO(cmd) >= 8 && test_bit(ABS_RUDDER ,dev->absbit))
-+			input_report_abs(dev, ABS_RUDDER, (__s8)data[7]);
-+
-+		iforce_report_hats_buttons(iforce, data);
+-		if (LO(cmd) >= 8 && test_bit(ABS_RUDDER ,dev->absbit))
++		if (len >= 8 && test_bit(ABS_RUDDER ,dev->absbit))
+ 			input_report_abs(dev, ABS_RUDDER, (__s8)data[7]);
  
- 		input_sync(dev);
-+		break;
- 
-+	case 0x03:	/* wheel position data */
-+		input_report_abs(dev, ABS_WHEEL, (__s16) (((__s16)data[1] << 8) | data[0]));
-+		input_report_abs(dev, ABS_GAS,   255 - data[2]);
-+		input_report_abs(dev, ABS_BRAKE, 255 - data[3]);
-+
-+		iforce_report_hats_buttons(iforce, data);
-+
-+		input_sync(dev);
- 		break;
- 
- 	case 0x02:	/* status report */
-@@ -202,11 +216,10 @@ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
- 			/* Report stop event */
+ 		iforce_report_hats_buttons(iforce, data);
+@@ -217,7 +218,7 @@ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
  			input_report_ff_status(dev, i, FF_STATUS_STOPPED);
  		}
--		if (LO(cmd) > 3) {
--			int j;
--			for (j = 3; j < LO(cmd); j += 2)
--				mark_core_as_ready(iforce, data[j] | (data[j+1]<<8));
--		}
-+
-+		for (j = 3; j < LO(cmd); j += 2)
-+			mark_core_as_ready(iforce, data[j] | (data[j + 1] << 8));
-+
+ 
+-		for (j = 3; j < LO(cmd); j += 2)
++		for (j = 3; j < len; j += 2)
+ 			mark_core_as_ready(iforce, data[j] | (data[j + 1] << 8));
+ 
  		break;
+diff --git a/drivers/input/joystick/iforce/iforce-serio.c b/drivers/input/joystick/iforce/iforce-serio.c
+index 6c6411fbdc32..f8bf7d2aa59f 100644
+--- a/drivers/input/joystick/iforce/iforce-serio.c
++++ b/drivers/input/joystick/iforce/iforce-serio.c
+@@ -163,16 +163,16 @@ static irqreturn_t iforce_serio_irq(struct serio *serio,
  	}
- }
+ 
+ 	if (iforce_serio->idx == iforce_serio->len) {
+-		u16 cmd = (iforce_serio->id << 8) | iforce_serio->idx;
+-
+ 		/* Handle command completion */
+ 		if (iforce_serio->expect_packet == iforce_serio->id) {
+ 			iforce_serio->expect_packet = 0;
+-			iforce->ecmd = cmd;
++			iforce->ecmd = (iforce_serio->id << 8) |
++					iforce_serio->idx;
+ 			memcpy(iforce->edata, iforce->data, IFORCE_MAX_LENGTH);
+ 		}
+ 
+-		iforce_process_packet(iforce, cmd, iforce->data);
++		iforce_process_packet(iforce, iforce_serio->id,
++				      iforce->data, iforce_serio->len);
+ 
+ 		iforce_serio->pkt = 0;
+ 		iforce_serio->id  = 0;
+diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
+index cefaa1c5abc7..b3743fde2a3a 100644
+--- a/drivers/input/joystick/iforce/iforce-usb.c
++++ b/drivers/input/joystick/iforce/iforce-usb.c
+@@ -170,8 +170,8 @@ static void iforce_usb_irq(struct urb *urb)
+ 		goto exit;
+ 	}
+ 
+-	iforce_process_packet(iforce,
+-		(iforce->data[0] << 8) | (urb->actual_length - 1), iforce->data + 1);
++	iforce_process_packet(iforce, iforce->data[0],
++			      iforce->data + 1, urb->actual_length - 1);
+ 
+ exit:
+ 	status = usb_submit_urb(urb, GFP_ATOMIC);
+diff --git a/drivers/input/joystick/iforce/iforce.h b/drivers/input/joystick/iforce/iforce.h
+index 3e3df83b9d77..ce3c6aead8b6 100644
+--- a/drivers/input/joystick/iforce/iforce.h
++++ b/drivers/input/joystick/iforce/iforce.h
+@@ -147,7 +147,8 @@ int iforce_init_device(struct device *parent, u16 bustype,
+ 
+ /* iforce-packets.c */
+ int iforce_control_playback(struct iforce*, u16 id, unsigned int);
+-void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data);
++void iforce_process_packet(struct iforce *iforce,
++			   u8 packet_id, u8 *data, size_t len);
+ int iforce_send_packet(struct iforce *iforce, u16 cmd, unsigned char* data);
+ void iforce_dump_packet(struct iforce *iforce, char *msg, u16 cmd, unsigned char *data);
+ 
 -- 
 2.19.0.397.gdd90340f6a-goog
 
