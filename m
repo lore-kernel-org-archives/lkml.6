@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51102C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317D8ECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04CCD20867
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2B9920867
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UynjGKnd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CCD20867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uudXvGQE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B9920867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbeIRNjR (ORCPT
+        id S1729478AbeIRNjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 09:39:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53783 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728952AbeIRNjQ (ORCPT
+        Tue, 18 Sep 2018 09:39:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38941 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbeIRNjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 09:39:16 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b19-v6so1368973wme.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 01:07:48 -0700 (PDT)
+        Tue, 18 Sep 2018 09:39:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s14-v6so1000501wrw.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 01:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wVx8WmW87VghpDBLCiQVby24CGj0iZ6HJYpFvH/63nk=;
-        b=UynjGKndWS2hQkVr3RrKsKzRMs5ikzVn0fhFiJ1mb93kw9xUlASFhwFfujaBiehd/F
-         g2ceM8ylWyiE+zlx49ozkWn8IToEoD8M3bh0hLWMpIRNs939Vlh/b9oSRCm1t867jrGZ
-         QZAcEEy+9s2EMHBrHYAav6OLu8afXmfsiBIVZe911In0jNw2bDxZaBsO6x5oYuUoWro7
-         0NB9AR9i1ayon3KVPaRpmSoK1XIxzxmOWOZcI3/CYPxdazR7NjMKYNx7rCr7qRAlvi4q
-         oMQ76puUV2YM1hKV03dGcx3JAOLaqHPmso1ov8tXtIv+/Dawf6JOj+2SV+YTzF0X3i0E
-         u+jw==
+        bh=ZSXDNBBNhUsCnnfMOMa4ywH3AKXJc/J1kIJt7rV81QM=;
+        b=uudXvGQEr7LayYH5FQbZNkdrJL5EHdyyLgtRhYJ/E3Tq3Ah5C0C19mBuid1R/R6FNv
+         kNoI9pDB9dmUxpRpoDpAZdMoyaq1JzZEO5BaUQAY8/6SgB51YtvOu4MWOAQ14xntp5kj
+         U7vs8EX9S4JgQSJsWAJyCsM0DmIDWD1HZG6VqA2olsLpH09EF5k3BBE5+FTpm41e7kZW
+         9aw0lJ9z7Iyn9W7hR057WjRA4AWXO7CWhL08QEW/iddhiK/XhgW+1+V1GrE75DGQXYS+
+         HrEd7J2LMKOYqINS8RPBJgIcVLRYSbsKXIFpGr/c0h6G9n7cDsmm+AMBk5VVuk5fNG0I
+         hddA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wVx8WmW87VghpDBLCiQVby24CGj0iZ6HJYpFvH/63nk=;
-        b=jfaeFUnxvLbRVuq6/0rw7OO8D8IgteEpXJqha+voG9SiEGeLjA5QoWdFnqooEFNUY3
-         6kScsQMxdmCvmgmjPi6sZJD5fbHLesTvYFH7HebxUIIuZ7EAHg7+GXdP6uR63ys207wD
-         wQ5S1CRHPi/rVmOwo5TkmN5QQuE0sEb+1NMV2ocTWjEYxvBUyQZCXC5s01Nl8ylSOqy2
-         6FssjkVbqKn+d0NTyjivL0gp8j7IYsE5ePgPust64wyj5gScC+XCxdmdCFPADXzBIOV+
-         NrHDKFaZMHJO1FArcuhMbBf1JZFs89Scqvy3ZJQ75lEoTFuFexypH3XHHHO+r2FRo74G
-         4qJA==
-X-Gm-Message-State: APzg51ArdMMpywxSlgCpxThLI/dMVaJGBDUu18ue6CyH9PhWxKqJW94z
-        24pTPhTTyywcqzwuPw8mZ6k=
-X-Google-Smtp-Source: ANB0VdaLq0NeAHvglD56D/2OS6Qs6zeeB4W9+FHvtREBsg97gWUAhqGlJz3eW3kauBAgVowGTg37yw==
-X-Received: by 2002:a1c:a941:: with SMTP id s62-v6mr13740237wme.76.1537258067616;
-        Tue, 18 Sep 2018 01:07:47 -0700 (PDT)
+        bh=ZSXDNBBNhUsCnnfMOMa4ywH3AKXJc/J1kIJt7rV81QM=;
+        b=FS7VYAY9FpTxzN7AP7AGE0o5ShlBCh7RLOV5LlqwUd39Bw5WsSIVdNHmzCGvAhs9zL
+         PU7ZThS+HN0Iym+jCC2ebXr1Xa5Ahi6K5KBWdQ8tDoaIPCsoBVo2lUlFZ0/cHYG8J06l
+         d1iLpk1oPGbGVllDp8Yqrt9ZbFWVKhY98PPmAmbldHIB4uSztC/M1bbX0KnMUwg/HqKw
+         wWVrTHRWqJl5WBOAUZAslx3qvATmS2qKtJ8JCSrhYQY9EuFL7tFiePVYEzh31TWZJXVR
+         qifQjvMVxKjy+/DbMnltXW/dIMpQu4AvKAuD6gG/qH31I5cgVINran9aKTrcYOXVAMiZ
+         fHAg==
+X-Gm-Message-State: APzg51DnHjI9k5bntqTqyXgOv4Rh05nQvvpwM31SvOJSl91bnXi0+SGF
+        /898ibwUFUKX3AEYRzNS/6J0A/sx
+X-Google-Smtp-Source: ANB0VdajXO8+5qi13blW7spvbnvu4Hhi+jVCOMbXGfCzgRgIV/VaXR1zJqbD8uOeyyCx8yhjfsoc0A==
+X-Received: by 2002:adf:ee86:: with SMTP id b6-v6mr21697397wro.242.1537258062975;
+        Tue, 18 Sep 2018 01:07:42 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id r140-v6sm1386869wmd.7.2018.09.18.01.07.46
+        by smtp.gmail.com with ESMTPSA id r140-v6sm1386869wmd.7.2018.09.18.01.07.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 01:07:47 -0700 (PDT)
+        Tue, 18 Sep 2018 01:07:42 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 8/8] staging: rtl8188eu: simplify function comments
-Date:   Tue, 18 Sep 2018 10:07:11 +0200
-Message-Id: <20180918080711.21594-8-straube.linux@gmail.com>
+Subject: [PATCH v2 5/8] staging: rtl8188eu: fix comparsions to false
+Date:   Tue, 18 Sep 2018 10:07:08 +0200
+Message-Id: <20180918080711.21594-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180918080711.21594-1-straube.linux@gmail.com>
 References: <20180918080711.21594-1-straube.linux@gmail.com>
@@ -76,46 +76,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify function comments to a single line.
+Use if(!x) instead of if(x == false).
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_ioctl_set.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_ioctl_set.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-index c291d3a0fdcc..0b3eb0b40975 100644
+index bd82de044bba..db983f15ddd6 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-@@ -530,12 +530,7 @@ u8 rtw_set_802_11_add_wep(struct adapter *padapter, struct ndis_802_11_wep *wep)
- 	return ret;
- }
+@@ -145,7 +145,7 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
+ 		RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("set_bssid: _FW_LINKED||WIFI_ADHOC_MASTER_STATE\n"));
  
--/*
--* rtw_get_cur_max_rate -
--* @adapter: pointer to struct adapter structure
--*
--* Return 0 or 100Kbps
--*/
-+/* Return 0 or 100Kbps */
- u16 rtw_get_cur_max_rate(struct adapter *adapter)
- {
- 	int i = 0;
-@@ -586,13 +581,7 @@ u16 rtw_get_cur_max_rate(struct adapter *adapter)
- 	return max_rate;
- }
+ 		if (!memcmp(&pmlmepriv->cur_network.network.MacAddress, bssid, ETH_ALEN)) {
+-			if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == false)
++			if (!check_fwstate(pmlmepriv, WIFI_STATION_STATE))
+ 				goto release_mlme_lock;/* it means driver is in WIFI_ADHOC_MASTER_STATE, we needn't create bss again. */
+ 		} else {
+ 			RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("Set BSSID not the same bssid\n"));
+@@ -231,7 +231,7 @@ u8 rtw_set_802_11_ssid(struct adapter *padapter, struct ndis_802_11_ssid *ssid)
  
--/*
--* rtw_set_country -
--* @adapter: pointer to struct adapter structure
--* @country_code: string of country code
--*
--* Return _SUCCESS or _FAIL
--*/
-+/* Return _SUCCESS or _FAIL */
- int rtw_set_country(struct adapter *adapter, const char *country_code)
- {
- 	int i;
+ 		if (pmlmepriv->assoc_ssid.SsidLength == ssid->SsidLength &&
+ 		    !memcmp(&pmlmepriv->assoc_ssid.Ssid, ssid->Ssid, ssid->SsidLength)) {
+-			if ((check_fwstate(pmlmepriv, WIFI_STATION_STATE) == false)) {
++			if (!check_fwstate(pmlmepriv, WIFI_STATION_STATE)) {
+ 				RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_,
+ 					 ("Set SSID is the same ssid, fw_state = 0x%08x\n",
+ 					  get_fwstate(pmlmepriv)));
 -- 
 2.19.0
 
