@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369BBECE562
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BECECE562
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DADA4214C5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 351CC214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 00:47:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rx2YjMxn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DADA4214C5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWB52MIb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351CC214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeIRGRd (ORCPT
+        id S1729125AbeIRGRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 02:17:33 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39213 "EHLO
+        Tue, 18 Sep 2018 02:17:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35429 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbeIRGRc (ORCPT
+        with ESMTP id S1729069AbeIRGRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 02:17:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i190-v6so109368pgc.6;
-        Mon, 17 Sep 2018 17:47:38 -0700 (PDT)
+        Tue, 18 Sep 2018 02:17:33 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 7-v6so117977pgf.2;
+        Mon, 17 Sep 2018 17:47:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hjHW6GAdKl25iWmfD9ZbtgysZDtLOgpSph44E0kquHA=;
-        b=rx2YjMxnYL88ikAKC2HG0zluRL6ROhfTH5/N4xq5Nx3OfLdKu96AbMRuE8HuQ26m+8
-         Q9H2VbgufwhlUsNlGvi2kU6O04QhshbRoAVjj/wegmVMOpgSu9otAIm9m8XteBkG8oTr
-         mPywTbOiirknHf9xyYCMYSjrVOFmYD+ChJO7+qkmuV4tUut1nXYkczYMl26NI+U2hUrQ
-         Zwu6OJahDniIusvRzjt0dxRFbS4ORPTLIm85oFf1Pq3s50bC0xXrHS+oDVePO2zTa4Jf
-         ORdC9vKONjWEdHaCExuklgO+zg1qS4H1M60OSpGm1FoxYDUnlk8IP9A5VKzQ05cqzOXE
-         pWuA==
+        bh=Re7V/+eHmV1ScUdnfZ229caXo8Q+chYJv59OC/pPiXI=;
+        b=CWB52MIbaTOo/B0Z5tsnwYMNBFF3jehAwA0/8P0wD2qKXv95tRcZKJu1DLnL/eSkV/
+         8tJy1polvDwUMg5KdqPvvPyuCUVsInbk6L3jINmSvJbehk5LxTl0SizWQwti1ZnH8l+o
+         LfQz3kzzhl3V54Y6cc5VmiUSVp1Aw3AlXgvGEsnMEXFNkYdmKpS1y1yc6HrdNkxAw+0W
+         LfLc8/gr41x2XE/vZctSqrh7nMGrKEpxgCzdpKhlQmz6azOscnC1MXS2nut9O5SjzLMa
+         gGs/iowvhuPhFuf2eevXKCT9S2DvvoZ6vxMC5U8JazHQryCY4DknLJhOfI2YxQxrGcjm
+         eM6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hjHW6GAdKl25iWmfD9ZbtgysZDtLOgpSph44E0kquHA=;
-        b=XTekhyf46ark/JNY9njulsr5pP6dw3HffEirCtnf8f9WoCHetlEEXfJ8ftWw7GFYlI
-         qH1gfUCLYqN4FzA9BCV5XJFzAUveerhVCc34Od/ptp+YZ9S9zkCIK6UMFtSWpqc4WVfk
-         RxfOxDeWRPOXahmECSFoAyfl6fSdUtl64X8R5xpFzBroN/0aXSCTK2iVGAERcORvUTlV
-         YsFljBpFX9rp4MWejaZ1uX3z4ikkyT0Ozbrt49SJbwjh7rogiGNd/iYH9agZmhpXPFg3
-         2aUGQ1Nr+ZZQ9GZVtil+SXVnD3MEmLvjWxCZT/VJDd9JYCNsf/d4Zqx3MstV2v8UvQa7
-         O0oA==
-X-Gm-Message-State: APzg51AtJAbBXJZZGiHdn8U2O2n8bbdlF90vziOW7HcGpWVXqu2VqOGS
-        Qa4DcNu49LQahph5DNldD3q9F5WF
-X-Google-Smtp-Source: ANB0VdZTSI8H6U1e7uKOh7dhZFlhgDe66odUfQBl/vCbzIionlJdl8MoR5YjZqd2QrWVW74OncPX3w==
-X-Received: by 2002:a63:9e0a:: with SMTP id s10-v6mr25810556pgd.326.1537231657662;
-        Mon, 17 Sep 2018 17:47:37 -0700 (PDT)
+        bh=Re7V/+eHmV1ScUdnfZ229caXo8Q+chYJv59OC/pPiXI=;
+        b=L/cuitHfqjhkvnUxtvumP/q0S/zj+boc0MOKNjCSRRiIYv7V/lvvpg6jiAqkwvoF4k
+         7VQIg6A1hyBw7C3G4lpm6z1kiqnxGWzO2XZ6fOSqBmHVZSlQHASBogmSuQYcSlKHIprw
+         goY5vThOpAvSub3FQPq4BEJ6gglEOw1g4KL9ebNIK8c3Bsza9n0vhcbCoQl80w4Y8N3K
+         qbUjpbSOnYAoiGObHqxd8cDAoruXx/nkFt5Lsy5scsnD644ay6zdUFpZwNPxIqrWfDvc
+         g2Rd3eKaPlRm3QBo+razEHmlQUtQJ6mtWbPsTUEaZgH22NWH7VZcZh0B0pxEWlo2ip0H
+         LKbQ==
+X-Gm-Message-State: APzg51DDjCZOSKID+4vp8RQp/MJXLp2gVvgP7RL0CYKhsAQSDuIfImDb
+        PAyu8EHhtf71h7GUId8Emmy48LJC
+X-Google-Smtp-Source: ANB0Vdbijjxp9sHCzKpDyrbXkDj5zLHo18NEwqjbXO+dfvmuDPysQOmYyZ8/IBP+TGm11ZYs2v08Zg==
+X-Received: by 2002:a63:c702:: with SMTP id n2-v6mr25934569pgg.108.1537231659032;
+        Mon, 17 Sep 2018 17:47:39 -0700 (PDT)
 Received: from dtor-ws.mtv.corp.google.com ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.36
+        by smtp.gmail.com with ESMTPSA id w69-v6sm26053316pgd.37.2018.09.17.17.47.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Sep 2018 17:47:36 -0700 (PDT)
+        Mon, 17 Sep 2018 17:47:38 -0700 (PDT)
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 02/20] Input: iforce - introduce transport ops
-Date:   Mon, 17 Sep 2018 17:47:14 -0700
-Message-Id: <20180918004732.9875-2-dmitry.torokhov@gmail.com>
+Subject: [PATCH 03/20] Input: iforce - move get_id to the transport operations
+Date:   Mon, 17 Sep 2018 17:47:15 -0700
+Message-Id: <20180918004732.9875-3-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
 References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
@@ -75,169 +75,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to tease apart the driver into core and transport modules, let's
-introduce transport operations and make "xmit" the very first one such
-operation.
+To avoid #ifdef-ing out parts of the code and having conditionals in normal
+control flow, let's define "get_id" transport method and move
+implementation into respective transport modules.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- .../input/joystick/iforce/iforce-packets.c    | 20 ++-----------------
- drivers/input/joystick/iforce/iforce-serio.c  |  9 +++++++--
- drivers/input/joystick/iforce/iforce-usb.c    | 15 ++++++++++++--
- drivers/input/joystick/iforce/iforce.h        | 13 ++++++------
- 4 files changed, 29 insertions(+), 28 deletions(-)
+ .../input/joystick/iforce/iforce-packets.c    | 64 -------------------
+ drivers/input/joystick/iforce/iforce-serio.c  | 17 +++++
+ drivers/input/joystick/iforce/iforce-usb.c    | 29 +++++++++
+ drivers/input/joystick/iforce/iforce.h        |  6 +-
+ 4 files changed, 51 insertions(+), 65 deletions(-)
 
 diff --git a/drivers/input/joystick/iforce/iforce-packets.c b/drivers/input/joystick/iforce/iforce-packets.c
-index 91893c751524..b8ca9bdfdef8 100644
+index b8ca9bdfdef8..e677562efc9a 100644
 --- a/drivers/input/joystick/iforce/iforce-packets.c
 +++ b/drivers/input/joystick/iforce/iforce-packets.c
-@@ -91,25 +91,9 @@ int iforce_send_packet(struct iforce *iforce, u16 cmd, unsigned char* data)
- /*
-  * If necessary, start the transmission
-  */
+@@ -210,67 +210,3 @@ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data)
+ 			break;
+ 	}
+ }
+-
+-int iforce_get_id_packet(struct iforce *iforce, char *packet)
+-{
 -	switch (iforce->bus) {
 -
--#ifdef CONFIG_JOYSTICK_IFORCE_232
--		case IFORCE_232:
--		if (empty)
--			iforce_serial_xmit(iforce);
--		break;
--#endif
+-	case IFORCE_USB: {
 -#ifdef CONFIG_JOYSTICK_IFORCE_USB
--		case IFORCE_USB:
-+	if (empty)
-+		iforce->xport_ops->xmit(iforce);
- 
--		if (iforce->usbdev && empty &&
--			!test_and_set_bit(IFORCE_XMIT_RUNNING, iforce->xmit_flags)) {
+-		int status;
 -
--			iforce_usb_xmit(iforce);
+-		iforce->cr.bRequest = packet[0];
+-		iforce->ctrl->dev = iforce->usbdev;
+-
+-		status = usb_submit_urb(iforce->ctrl, GFP_KERNEL);
+-		if (status) {
+-			dev_err(&iforce->intf->dev,
+-				"usb_submit_urb failed %d\n", status);
+-			return -1;
+-		}
+-
+-		wait_event_interruptible_timeout(iforce->wait,
+-			iforce->ctrl->status != -EINPROGRESS, HZ);
+-
+-		if (iforce->ctrl->status) {
+-			dev_dbg(&iforce->intf->dev,
+-				"iforce->ctrl->status = %d\n",
+-				iforce->ctrl->status);
+-			usb_unlink_urb(iforce->ctrl);
+-			return -1;
+-		}
+-#else
+-		printk(KERN_DEBUG "iforce_get_id_packet: iforce->bus = USB!\n");
+-#endif
 -		}
 -		break;
+-
+-	case IFORCE_232:
+-
+-#ifdef CONFIG_JOYSTICK_IFORCE_232
+-		iforce->expect_packet = FF_CMD_QUERY;
+-		iforce_send_packet(iforce, FF_CMD_QUERY, packet);
+-
+-		wait_event_interruptible_timeout(iforce->wait,
+-			!iforce->expect_packet, HZ);
+-
+-		if (iforce->expect_packet) {
+-			iforce->expect_packet = 0;
+-			return -1;
+-		}
+-#else
+-		dev_err(&iforce->dev->dev,
+-			"iforce_get_id_packet: iforce->bus = SERIO!\n");
 -#endif
+-		break;
+-
+-	default:
+-		dev_err(&iforce->dev->dev,
+-			"iforce_get_id_packet: iforce->bus = %d\n",
+-			iforce->bus);
+-		break;
 -	}
- 	return 0;
- }
- 
+-
+-	return -(iforce->edata[0] != packet[0]);
+-}
+-
 diff --git a/drivers/input/joystick/iforce/iforce-serio.c b/drivers/input/joystick/iforce/iforce-serio.c
-index f4ba4a751fe0..c9469209f994 100644
+index c9469209f994..fa45ce425d47 100644
 --- a/drivers/input/joystick/iforce/iforce-serio.c
 +++ b/drivers/input/joystick/iforce/iforce-serio.c
-@@ -23,7 +23,7 @@
- 
- #include "iforce.h"
- 
--void iforce_serial_xmit(struct iforce *iforce)
-+static void iforce_serio_xmit(struct iforce *iforce)
- {
- 	unsigned char cs;
- 	int i;
-@@ -67,11 +67,15 @@ void iforce_serial_xmit(struct iforce *iforce)
+@@ -67,8 +67,25 @@ static void iforce_serio_xmit(struct iforce *iforce)
  	spin_unlock_irqrestore(&iforce->xmit_lock, flags);
  }
  
-+static const struct iforce_xport_ops iforce_serio_xport_ops = {
-+	.xmit		= iforce_serio_xmit,
-+};
-+
- static void iforce_serio_write_wakeup(struct serio *serio)
- {
- 	struct iforce *iforce = serio_get_drvdata(serio);
- 
--	iforce_serial_xmit(iforce);
-+	iforce_serio_xmit(iforce);
- }
- 
- static irqreturn_t iforce_serio_irq(struct serio *serio,
-@@ -129,6 +133,7 @@ static int iforce_serio_connect(struct serio *serio, struct serio_driver *drv)
- 	if (!iforce)
- 		return -ENOMEM;
- 
-+	iforce->xport_ops = &iforce_serio_xport_ops;
- 	iforce->bus = IFORCE_232;
- 	iforce->serio = serio;
- 
-diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
-index 78073259c9a1..d4f7f34db9a0 100644
---- a/drivers/input/joystick/iforce/iforce-usb.c
-+++ b/drivers/input/joystick/iforce/iforce-usb.c
-@@ -23,7 +23,7 @@
- 
- #include "iforce.h"
- 
--void iforce_usb_xmit(struct iforce *iforce)
-+static void __iforce_usb_xmit(struct iforce *iforce)
- {
- 	int n, c;
- 	unsigned long flags;
-@@ -69,6 +69,16 @@ void iforce_usb_xmit(struct iforce *iforce)
- 	spin_unlock_irqrestore(&iforce->xmit_lock, flags);
- }
- 
-+static void iforce_usb_xmit(struct iforce *iforce)
++static int iforce_serio_get_id(struct iforce *iforce, u8 *packet)
 +{
-+	if (!test_and_set_bit(IFORCE_XMIT_RUNNING, iforce->xmit_flags))
-+		__iforce_usb_xmit(iforce);
++	iforce->expect_packet = FF_CMD_QUERY;
++	iforce_send_packet(iforce, FF_CMD_QUERY, packet);
++
++	wait_event_interruptible_timeout(iforce->wait,
++					 !iforce->expect_packet, HZ);
++
++	if (iforce->expect_packet) {
++		iforce->expect_packet = 0;
++		return -EIO;
++	}
++
++	return -(iforce->edata[0] != packet[0]);
 +}
 +
-+static const struct iforce_xport_ops iforce_usb_xport_ops = {
-+	.xmit		= iforce_usb_xmit,
-+};
-+
- static void iforce_usb_irq(struct urb *urb)
- {
- 	struct iforce *iforce = urb->context;
-@@ -113,7 +123,7 @@ static void iforce_usb_out(struct urb *urb)
- 		return;
- 	}
- 
--	iforce_usb_xmit(iforce);
-+	__iforce_usb_xmit(iforce);
- 
- 	wake_up(&iforce->wait);
- }
-@@ -155,6 +165,7 @@ static int iforce_usb_probe(struct usb_interface *intf,
- 	if (!(iforce->ctrl = usb_alloc_urb(0, GFP_KERNEL)))
- 		goto fail;
- 
-+	iforce->xport_ops = &iforce_usb_xport_ops;
- 	iforce->bus = IFORCE_USB;
- 	iforce->usbdev = dev;
- 	iforce->intf = intf;
-diff --git a/drivers/input/joystick/iforce/iforce.h b/drivers/input/joystick/iforce/iforce.h
-index 0e9d01f8bcb6..2fea3be751ed 100644
---- a/drivers/input/joystick/iforce/iforce.h
-+++ b/drivers/input/joystick/iforce/iforce.h
-@@ -93,9 +93,16 @@ struct iforce_device {
- 	signed short *ff;
+ static const struct iforce_xport_ops iforce_serio_xport_ops = {
+ 	.xmit		= iforce_serio_xmit,
++	.get_id		= iforce_serio_get_id,
  };
  
-+struct iforce;
+ static void iforce_serio_write_wakeup(struct serio *serio)
+diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
+index d4f7f34db9a0..f7eeaad92602 100644
+--- a/drivers/input/joystick/iforce/iforce-usb.c
++++ b/drivers/input/joystick/iforce/iforce-usb.c
+@@ -75,8 +75,37 @@ static void iforce_usb_xmit(struct iforce *iforce)
+ 		__iforce_usb_xmit(iforce);
+ }
+ 
++static int iforce_usb_get_id(struct iforce *iforce, u8 *packet)
++{
++	int status;
 +
-+struct iforce_xport_ops {
-+	void (*xmit)(struct iforce *iforce);
-+};
++	iforce->cr.bRequest = packet[0];
++	iforce->ctrl->dev = iforce->usbdev;
 +
++	status = usb_submit_urb(iforce->ctrl, GFP_KERNEL);
++	if (status) {
++		dev_err(&iforce->intf->dev,
++			"usb_submit_urb failed %d\n", status);
++		return -EIO;
++	}
++
++	wait_event_interruptible_timeout(iforce->wait,
++		iforce->ctrl->status != -EINPROGRESS, HZ);
++
++	if (iforce->ctrl->status) {
++		dev_dbg(&iforce->intf->dev,
++			"iforce->ctrl->status = %d\n",
++			iforce->ctrl->status);
++		usb_unlink_urb(iforce->ctrl);
++		return -EIO;
++	}
++
++	return -(iforce->edata[0] != packet[0]);
++}
++
+ static const struct iforce_xport_ops iforce_usb_xport_ops = {
+ 	.xmit		= iforce_usb_xmit,
++	.get_id		= iforce_usb_get_id,
+ };
+ 
+ static void iforce_usb_irq(struct urb *urb)
+diff --git a/drivers/input/joystick/iforce/iforce.h b/drivers/input/joystick/iforce/iforce.h
+index 2fea3be751ed..f6636230be31 100644
+--- a/drivers/input/joystick/iforce/iforce.h
++++ b/drivers/input/joystick/iforce/iforce.h
+@@ -97,6 +97,7 @@ struct iforce;
+ 
+ struct iforce_xport_ops {
+ 	void (*xmit)(struct iforce *iforce);
++	int (*get_id)(struct iforce *iforce, u8* id);
+ };
+ 
  struct iforce {
- 	struct input_dev *dev;		/* Input device interface */
- 	struct iforce_device *type;
-+	const struct iforce_xport_ops *xport_ops;
- 	int bus;
+@@ -146,6 +147,10 @@ struct iforce {
+ /* Encode a time value */
+ #define TIME_SCALE(a)	(a)
  
- 	unsigned char data[IFORCE_MAX_LENGTH];
-@@ -141,12 +148,6 @@ struct iforce {
- 
++static inline int iforce_get_id_packet(struct iforce *iforce, u8* id)
++{
++	return iforce->xport_ops->get_id(iforce, id);
++}
  
  /* Public functions */
--/* iforce-serio.c */
--void iforce_serial_xmit(struct iforce *iforce);
--
--/* iforce-usb.c */
--void iforce_usb_xmit(struct iforce *iforce);
--
  /* iforce-main.c */
- int iforce_init_device(struct iforce *iforce);
+@@ -156,7 +161,6 @@ int iforce_control_playback(struct iforce*, u16 id, unsigned int);
+ void iforce_process_packet(struct iforce *iforce, u16 cmd, unsigned char *data);
+ int iforce_send_packet(struct iforce *iforce, u16 cmd, unsigned char* data);
+ void iforce_dump_packet(struct iforce *iforce, char *msg, u16 cmd, unsigned char *data);
+-int iforce_get_id_packet(struct iforce *iforce, char *packet);
  
+ /* iforce-ff.c */
+ int iforce_upload_periodic(struct iforce *, struct ff_effect *, struct ff_effect *);
 -- 
 2.19.0.397.gdd90340f6a-goog
 
