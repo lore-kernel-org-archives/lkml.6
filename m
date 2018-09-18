@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEC6C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E39EC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CEF92146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CEF92146D
+	by mail.kernel.org (Postfix) with ESMTP id BC860214D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 14:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC860214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbeIRT7D (ORCPT
+        id S1730127AbeIRT7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 15:59:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51382 "EHLO mx1.redhat.com"
+        Tue, 18 Sep 2018 15:59:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:15423 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbeIRT7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 15:59:02 -0400
+        id S1730103AbeIRT7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 15:59:05 -0400
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2737F5F74A;
-        Tue, 18 Sep 2018 14:26:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id E8761750D7;
+        Tue, 18 Sep 2018 14:26:15 +0000 (UTC)
 Received: from laptop.redhat.com (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5177553B27;
-        Tue, 18 Sep 2018 14:26:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F3667B011;
+        Tue, 18 Sep 2018 14:26:12 +0000 (UTC)
 From:   Eric Auger <eric.auger@redhat.com>
 To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -39,167 +39,141 @@ To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         will.deacon@arm.com, robin.murphy@arm.com
 Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v2 09/20] iommu/smmuv3: Get prepared for nested stage support
-Date:   Tue, 18 Sep 2018 16:24:46 +0200
-Message-Id: <20180918142457.3325-10-eric.auger@redhat.com>
+Subject: [RFC v2 10/20] iommu/smmuv3: Implement bind_pasid_table
+Date:   Tue, 18 Sep 2018 16:24:47 +0200
+Message-Id: <20180918142457.3325-11-eric.auger@redhat.com>
 In-Reply-To: <20180918142457.3325-1-eric.auger@redhat.com>
 References: <20180918142457.3325-1-eric.auger@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Sep 2018 14:26:12 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Sep 2018 14:26:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To allow nested stage support, we need to store both
-stage 1 and stage 2 configurations (and remove the former
-union).
+On bind_pasid_table() we program STE S1 related info set
+by the guest into the actual physical STEs. At minimum
+we need to program the context descriptor GPA and compute
+whether the guest wanted to bypass the stage 1 or induce
+aborts for this STE.
 
-arm_smmu_write_strtab_ent() is modified to write both stage
-fields in the STE.
-
-We add a nested_bypass field to the S1 configuration as the first
-stage can be bypassed. Also the guest may force the STE to abort:
-this information gets stored into the nested_abort field.
-
-Only S2 stage is "finalized" as the host does not configure
-S1 CD, guest does.
+On unbind, the STE stage 1 fields are reset.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
 ---
 
 v1 -> v2:
-- invalidate the STE before moving from a live STE config to another
-- add the nested_abort and nested_bypass fields
+- invalidate the STE before changing them
+- hold init_mutex
+- handle new fields
 ---
- drivers/iommu/arm-smmu-v3.c | 43 ++++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 10 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 85 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 80bb93b43a2e..9749c36208f3 100644
+index 9749c36208f3..c7e05c0b93e1 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -222,6 +222,7 @@
- #define STRTAB_STE_0_CFG_BYPASS		4
- #define STRTAB_STE_0_CFG_S1_TRANS	5
- #define STRTAB_STE_0_CFG_S2_TRANS	6
-+#define STRTAB_STE_0_CFG_NESTED		7
+@@ -2168,6 +2168,89 @@ static void arm_smmu_put_resv_regions(struct device *dev,
+ 		kfree(entry);
+ }
  
- #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
- #define STRTAB_STE_0_S1FMT_LINEAR	0
-@@ -497,6 +498,10 @@ struct arm_smmu_strtab_l1_desc {
- struct arm_smmu_s1_cfg {
- 	__le64				*cdptr;
- 	dma_addr_t			cdptr_dma;
-+	/* in nested mode, tells s1 must be bypassed */
-+	bool				nested_bypass;
-+	/* in nested mode, abort is forced by guest */
-+	bool				nested_abort;
- 
- 	struct arm_smmu_ctx_desc {
- 		u16	asid;
-@@ -521,6 +526,7 @@ struct arm_smmu_strtab_ent {
- 	 * configured according to the domain type.
- 	 */
- 	bool				assigned;
-+	bool				nested;
- 	struct arm_smmu_s1_cfg		*s1_cfg;
- 	struct arm_smmu_s2_cfg		*s2_cfg;
- };
-@@ -629,10 +635,8 @@ struct arm_smmu_domain {
- 	struct io_pgtable_ops		*pgtbl_ops;
- 
- 	enum arm_smmu_domain_stage	stage;
--	union {
--		struct arm_smmu_s1_cfg	s1_cfg;
--		struct arm_smmu_s2_cfg	s2_cfg;
--	};
-+	struct arm_smmu_s1_cfg	s1_cfg;
-+	struct arm_smmu_s2_cfg	s2_cfg;
- 
- 	struct iommu_domain		domain;
- 
-@@ -1119,10 +1123,11 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 			break;
- 		case STRTAB_STE_0_CFG_S1_TRANS:
- 		case STRTAB_STE_0_CFG_S2_TRANS:
-+		case STRTAB_STE_0_CFG_NESTED:
- 			ste_live = true;
- 			break;
- 		case STRTAB_STE_0_CFG_ABORT:
--			if (disable_bypass)
-+			if (disable_bypass || ste->nested)
- 				break;
- 		default:
- 			BUG(); /* STE corruption */
-@@ -1134,7 +1139,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 
- 	/* Bypass/fault */
- 	if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
--		if (!ste->assigned && disable_bypass)
-+		if ((!ste->assigned && disable_bypass) ||
-+				(ste->s1_cfg && ste->s1_cfg->nested_abort))
- 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT);
- 		else
- 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_BYPASS);
-@@ -1152,8 +1158,17 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 		return;
- 	}
- 
-+	if (ste->nested && ste_live) {
-+		/*
-+		 * When enabling nested, the STE may be transitionning from
-+		 * s2 to nested and back. Invalidate the STE before changing it.
-+		 */
-+		dst[0] = cpu_to_le64(0);
-+		arm_smmu_sync_ste_for_sid(smmu, sid);
-+		val = STRTAB_STE_0_V;
++static int arm_smmu_bind_pasid_table(struct iommu_domain *domain,
++				     struct iommu_pasid_table_config *cfg)
++{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_master_data *entry;
++	struct arm_smmu_s1_cfg *s1_cfg;
++	struct arm_smmu_device *smmu;
++	unsigned long flags;
++	int ret = -EINVAL;
++
++	if (cfg->format != IOMMU_PASID_FORMAT_SMMUV3)
++		return -EINVAL;
++
++	mutex_lock(&smmu_domain->init_mutex);
++
++	smmu = smmu_domain->smmu;
++
++	if (!smmu)
++		goto out;
++
++	if (!((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
++	      (smmu->features & ARM_SMMU_FEAT_TRANS_S2))) {
++		dev_info(smmu_domain->smmu->dev,
++			 "does not implement two stages\n");
++		goto out;
 +	}
 +
- 	if (ste->s1_cfg) {
--		BUG_ON(ste_live);
- 		dst[1] = cpu_to_le64(
- 			 FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
- 			 FIELD_PREP(STRTAB_STE_1_S1COR, STRTAB_STE_1_S1C_CACHE_WBRA) |
-@@ -1167,12 +1182,12 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
- 		   !(smmu->features & ARM_SMMU_FEAT_STALL_FORCE))
- 			dst[1] |= cpu_to_le64(STRTAB_STE_1_S1STALLD);
++	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
++		goto out;
++
++	/* we currently support a single CD. S1DSS and S1FMT are ignored */
++	if (cfg->smmuv3.s1cdmax)
++		goto out;
++
++	s1_cfg = &smmu_domain->s1_cfg;
++	s1_cfg->nested_bypass = cfg->smmuv3.bypass;
++	s1_cfg->nested_abort = cfg->smmuv3.abort;
++	s1_cfg->cdptr_dma = cfg->smmuv3.s1contextptr;
++
++	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++	list_for_each_entry(entry, &smmu_domain->devices, list) {
++		entry->ste.s1_cfg = &smmu_domain->s1_cfg;
++		entry->ste.nested = true;
++		arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++	}
++	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++	ret = 0;
++out:
++	mutex_unlock(&smmu_domain->init_mutex);
++	return ret;
++}
++
++static void arm_smmu_unbind_pasid_table(struct iommu_domain *domain)
++{
++	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
++	struct arm_smmu_device *smmu = smmu_domain->smmu;
++	struct arm_smmu_master_data *entry;
++	struct arm_smmu_s1_cfg *s1_cfg;
++	unsigned long flags;
++
++	if (!smmu)
++		return;
++
++	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
++		return;
++
++	mutex_lock(&smmu_domain->init_mutex);
++
++	s1_cfg = &smmu_domain->s1_cfg;
++
++	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
++	list_for_each_entry(entry, &smmu_domain->devices, list) {
++		entry->ste.s1_cfg = NULL;
++		entry->ste.nested = false;
++		arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
++	}
++	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
++
++	s1_cfg->nested_abort = false;
++	s1_cfg->nested_bypass = false;
++	mutex_unlock(&smmu_domain->init_mutex);
++}
++
+ static struct iommu_ops arm_smmu_ops = {
+ 	.capable		= arm_smmu_capable,
+ 	.domain_alloc		= arm_smmu_domain_alloc,
+@@ -2186,6 +2269,8 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.of_xlate		= arm_smmu_of_xlate,
+ 	.get_resv_regions	= arm_smmu_get_resv_regions,
+ 	.put_resv_regions	= arm_smmu_put_resv_regions,
++	.bind_pasid_table	= arm_smmu_bind_pasid_table,
++	.unbind_pasid_table	= arm_smmu_unbind_pasid_table,
+ 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+ };
  
--		val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
--			FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
-+		if (!ste->s1_cfg->nested_bypass)
-+			val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
-+				FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
- 	}
- 
- 	if (ste->s2_cfg) {
--		BUG_ON(ste_live);
- 		dst[2] = cpu_to_le64(
- 			 FIELD_PREP(STRTAB_STE_2_S2VMID, ste->s2_cfg->vmid) |
- 			 FIELD_PREP(STRTAB_STE_2_VTCR, ste->s2_cfg->vtcr) |
-@@ -1438,6 +1453,10 @@ static void arm_smmu_tlb_inv_context(void *cookie)
- 		cmd.opcode	= CMDQ_OP_TLBI_NH_ASID;
- 		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
- 		cmd.tlbi.vmid	= 0;
-+	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
-+		cmd.opcode      = CMDQ_OP_TLBI_NH_ASID;
-+		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
-+		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
- 	} else {
- 		cmd.opcode	= CMDQ_OP_TLBI_S12_VMALL;
- 		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
-@@ -1462,6 +1481,10 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
- 	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
- 		cmd.opcode	= CMDQ_OP_TLBI_NH_VA;
- 		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
-+	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
-+		cmd.opcode      = CMDQ_OP_TLBI_NH_VA;
-+		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
-+		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
- 	} else {
- 		cmd.opcode	= CMDQ_OP_TLBI_S2_IPA;
- 		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
 -- 
 2.17.1
 
