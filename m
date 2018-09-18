@@ -5,158 +5,96 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5C9C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C22FECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65CA920880
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CA920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 098DB21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 23:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098DB21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeISEu1 (ORCPT
+        id S1729926AbeISEvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 00:50:27 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39275 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbeISEu1 (ORCPT
+        Wed, 19 Sep 2018 00:51:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59134 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeISEvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 00:50:27 -0400
-Received: by mail-it0-f65.google.com with SMTP id h1-v6so5323747itj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 16:15:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:organization:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=qyCijqEYPntGwh9BMjACFQvIyIv3pf+v7mxoqG0uJis=;
-        b=buS6hD3QsjLXT1hHEw7lcbRw/txXkka5tkD7WW28ac5JBR5D97b4p48lnn8+i3i190
-         e+MEgEWEMF3npVwh0eIp/hIJrjWpyZtRQNiS7M8Kfi4z1mCJfat9ALgTuz+wCujGJ7YW
-         Vp7vWAac/5XCvRt9UyYvH2uSMvOM2PqX23sajFla4UqJlwp4TTsx8HkEmwoZdIez+wmW
-         V1TO6WJ4NYi9MOhePWLwOA3N7DZU31Cg5cveb9LdzcvrosE11J4P9w4PfRWCgPEWcyNS
-         kleXkx2MgrjXcJT/Yo/fZIJxduNMxRaJVt0DPYgwCO0wBjbPzAMCG1jfKdWY+kT5eB2+
-         fuCg==
-X-Gm-Message-State: APzg51Ax/tInMj6JtT2xMb6VgRD+LtJmNn4QZlOKJUC3MVgaVhwJxi1f
-        K+v47D3QF5BkxB+uIRGgEtIaNw==
-X-Google-Smtp-Source: ANB0VdZtrovg7qqSYaHzTKcto7rLI5ZsIiUq9S8rrSaP7o1rvMQhfPMQDqhg45hJ4fVFF9aSNHshjQ==
-X-Received: by 2002:a02:41d8:: with SMTP id n85-v6mr29609304jad.108.1537312533898;
-        Tue, 18 Sep 2018 16:15:33 -0700 (PDT)
-Received: from masetto.ahs3 (c-67-165-232-89.hsd1.co.comcast.net. [67.165.232.89])
-        by smtp.gmail.com with ESMTPSA id x68-v6sm7352502ita.2.2018.09.18.16.15.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 16:15:32 -0700 (PDT)
-Reply-To: ahs3@redhat.com
-Subject: Re: [PATCH] net: apm: xgene: force XGene enet driver to re-balance
- IRQ usage
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        David Miller <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "isubramanian@apm.com" <isubramanian@apm.com>,
-        "kchudgar@apm.com" <kchudgar@apm.com>,
-        "qnguyen@apm.com" <qnguyen@apm.com>
-References: <20180917233533.28626-1-ahs3@redhat.com>
- <20180917.193531.1424852853827678152.davem@davemloft.net>
- <a5adee73-dde7-d00f-e7ef-1f81dc7c813a@amd.com>
-From:   Al Stone <ahs3@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=ahs3@redhat.com; keydata=
- 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
- AeZZwq9vgjZvBA==
-Organization: Red Hat, Inc.
-Message-ID: <4929e93d-508a-4670-9450-66e4fc85be7e@redhat.com>
-Date:   Tue, 18 Sep 2018 17:15:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 19 Sep 2018 00:51:44 -0400
+Received: from p5492e4c1.dip0.t-ipconnect.de ([84.146.228.193] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2PEd-00067g-21; Wed, 19 Sep 2018 01:16:47 +0200
+Date:   Wed, 19 Sep 2018 01:16:46 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+cc:     John Stultz <john.stultz@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matt Rickard <matt@softrans.com.au>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        devel@linuxdriverproject.org,
+        Linux Virtualization <virtualization@lists.linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [patch 09/11] x86/vdso: Simplify the invalid vclock case
+In-Reply-To: <439A3E73-E4FF-4D66-800E-5BEE58EDE8F6@amacapital.net>
+Message-ID: <alpine.DEB.2.21.1809190112020.1468@nanos.tec.linutronix.de>
+References: <20180914125006.349747096@linutronix.de> <20180914125118.909646643@linutronix.de> <CALCETrXh70oFHfT0Z-JXcnAumhAgLqSea5UiPY3WXu=v2GcKTg@mail.gmail.com> <CALAqxLUv9Rd_eA7u9gZNFvTNrT1Z67RpHLozdeNC0W2yZm=Heg@mail.gmail.com>
+ <alpine.DEB.2.21.1809180948570.3558@nanos.tec.linutronix.de> <863331ED-B04A-4B94-91A2-D34002C9CCDC@amacapital.net> <alpine.DEB.2.21.1809190037570.1468@nanos.tec.linutronix.de> <439A3E73-E4FF-4D66-800E-5BEE58EDE8F6@amacapital.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <a5adee73-dde7-d00f-e7ef-1f81dc7c813a@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-1986204183-1537312607=:1468"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 05:09 PM, Lendacky, Thomas wrote:
-> 
-> 
-> On 09/17/2018 09:35 PM, David Miller wrote:
->> From: Al Stone <ahs3@redhat.com>
->> Date: Mon, 17 Sep 2018 17:35:33 -0600
->>
->>> @@ -866,8 +866,11 @@ static int xgene_enet_napi(struct napi_struct *napi, const int budget)
->>>  	processed = xgene_enet_process_ring(ring, budget);
->>>  
->>>  	if (processed != budget) {
->>> +		struct irq_desc *desc = irq_to_desc(ring->irq);
->>> +
->>>  		napi_complete_done(napi, processed);
-> 
-> The problem could be that the driver isn't checking the
-> napi_complete_done() return code.  It was changed to return a bool and
-> the check should be more like:
-> 
->   if ((processed != budget) && napi_complete_done(napi, processed)) {
-> 
-> If it returns false, then the driver will get called for polling again
-> after having issued enable_irq() and it well then issue the enable_irq()
-> a second (or more) time without having the matching diable_irq().
-> 
-> Thanks,
-> Tom
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Aha, that might be.  My apologies -- I play in ACPI but seldom in the network
-drivers, so was not fully aware of that change.  I can give that a try.
+--8323329-1986204183-1537312607=:1468
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Thanks for the pointer.
+On Tue, 18 Sep 2018, Andy Lutomirski wrote:
+> > On Sep 18, 2018, at 3:46 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Tue, 18 Sep 2018, Andy Lutomirski wrote:
+> >> Do we do better if we use signed arithmetic for the whole calculation?
+> >> Then a small backwards movement would result in a small backwards result.
+> >> Or we could offset everything so that we’d have to go back several
+> >> hundred ms before we cross zero.
+> > 
+> > That would be probably the better solution as signed math would be
+> > problematic when the resulting ns value becomes negative. As the delta is
+> > really small, otherwise the TSC sync check would have caught it, the caller
+> > should never be able to observe time going backwards.
+> > 
+> > I'll have a look into that. It needs some thought vs. the fractional part
+> > of the base time, but it should be not rocket science to get that
+> > correct. Famous last words...
+> > 
+> 
+> It’s also fiddly to tune. If you offset it too much, then the fancy
+> divide-by-repeated-subtraction loop will hurt more than the comparison to
+> last.
 
--- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+Not really. It's sufficient to offset it by at max. 1000 cycles or so. That
+won't hurt the magic loop, but it will definitely cover that slight offset
+case.
+
+Thanks,
+
+	tglx
+
+
+--8323329-1986204183-1537312607=:1468--
