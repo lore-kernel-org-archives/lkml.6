@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C826EC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB34ECE566
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 746B421471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B46E21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HMJavHzZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746B421471
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zJ55wceY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B46E21471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbeIROR7 (ORCPT
+        id S1729569AbeIROR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Sep 2018 10:17:59 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:55701 "EHLO
+Received: from conuserg-07.nifty.com ([210.131.2.74]:55703 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729192AbeIROR6 (ORCPT
+        with ESMTP id S1729316AbeIROR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Sep 2018 10:17:58 -0400
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w8I8juLS029470;
+        by conuserg-07.nifty.com with ESMTP id w8I8juLT029470;
         Tue, 18 Sep 2018 17:45:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w8I8juLS029470
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w8I8juLT029470
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1537260358;
-        bh=tj2rDC3SWOGJr3wJdUY3fa/p8CdfSaT2qhILVPE4uOE=;
+        s=dec2015msa; t=1537260359;
+        bh=8QvWQPQnnkID6eS2uCqPUDx2wVrHT/2j5vswBJskWpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMJavHzZxwnpbmVY0l8Jkpm+jPaGV4inLTD/7hAmqWlPLNfXu0Zp7sPYx4Juz+lHa
-         WpEPdjYykXXaUi8qWE0PbNTdYqOusKm5hvidYCIZcHdNGY6LV0h/Gz823S6rA43vq8
-         Rr+Qof73w7cV4ID3cmUn66T8FC+RIGPZ3zCUz0XA7Q0Ck6GcHv6yN/MhrkMIJ+1SQw
-         H3/StEs0AYQRpdMauI08Qib6bSn9AjTd5ZzUZIgh2NDYOzFYkmgZ8BwPmJkQB40UVG
-         FI1PFEo8USTZ0oRc2AC1+NoTsN+dpJHG8al7qiUq45+cDXIrsNnQVdils3ZRn3KYcB
-         kSvur4gFGpZew==
+        b=zJ55wceY2mLsd/+EjxLcsx2yZERv+sopitEKQ/nCbQOrQmxsY4kEwpai3ke7FOAxP
+         IZQ9wHv1ofbD6OtoidthOS23dLJVzwSfEu7iGZizLgNZdmAuyZ1LHGdCclkW/+7RHh
+         86dlGhKbrcZIcTKxBGlfGDTzFlvOFZO/wLORJNPml+ZHxpnJy0lEli9DcqBlJK67hz
+         BK6A3NaNtD8SxlqzkwSyTCaBbPlLrMByovUDC58AVB5zU71+AJW7FEqz7rBFrh6jzX
+         5drsYBzVavADmaCp8DPiPj5xSGTzv2sTTb8gOKKN9yo8I0RgTvMYGfbzGc1uUEurWN
+         P6zc0oSAYCmjA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] kbuild: do not pass $(objtree) to scripts/mkmakefile
-Date:   Tue, 18 Sep 2018 17:45:53 +0900
-Message-Id: <1537260354-30082-3-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 4/4] kbuild: simplify command line creation in scripts/mkmakefile
+Date:   Tue, 18 Sep 2018 17:45:54 +0900
+Message-Id: <1537260354-30082-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537260354-30082-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1537260354-30082-1-git-send-email-yamada.masahiro@socionext.com>
@@ -57,56 +57,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since $(objtree) is always '.', it is not useful to pass it to
-scripts/mkmakefile.  I assume nobody wants to run this script directly.
+Assuming we never invoke the generated Makefile from outside of
+the $(objtree) directory, $(CURDIR) points to the absolute path
+of $(objtree).
+
+BTW, 'lastword' is natively supported by GNU Make 3.81+, which
+is the current requirement for building the kernel.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Makefile           | 2 +-
- scripts/mkmakefile | 7 +++----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ scripts/mkmakefile | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 6e1a059..3799bc5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -482,7 +482,7 @@ PHONY += outputmakefile
- outputmakefile:
- ifneq ($(KBUILD_SRC),)
- 	$(Q)ln -fsn $(srctree) source
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree) $(objtree)
-+	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree)
- endif
- 
- ifeq ($(cc-name),clang)
 diff --git a/scripts/mkmakefile b/scripts/mkmakefile
-index 2435428..85995f9 100755
+index 85995f9..412f13f 100755
 --- a/scripts/mkmakefile
 +++ b/scripts/mkmakefile
-@@ -6,19 +6,18 @@
- 
- # Usage
- # $1 - Kernel src directory
--# $2 - Output directory
- 
- # Only overwrite automatically generated Makefiles
- # (so we do not overwrite kernel Makefile)
--if test -e $2/Makefile && ! grep -q Automatically $2/Makefile
-+if test -e Makefile && ! grep -q Automatically Makefile
- then
- 	exit 0
- fi
- if [ "${quiet}" != "silent_" ]; then
--	echo "  GEN     $2/Makefile"
-+	echo "  GEN     Makefile"
- fi
- 
--cat << EOF > $2/Makefile
-+cat << EOF > Makefile
+@@ -20,9 +20,6 @@ fi
+ cat << EOF > Makefile
  # Automatically generated by $0: don't edit
  
- lastword = \$(word \$(words \$(1)),\$(1))
+-lastword = \$(word \$(words \$(1)),\$(1))
+-makedir := \$(dir \$(call lastword,\$(MAKEFILE_LIST)))
+-
+ ifeq ("\$(origin V)", "command line")
+ VERBOSE := \$(V)
+ endif
+@@ -30,15 +27,12 @@ ifneq (\$(VERBOSE),1)
+ Q := @
+ endif
+ 
+-MAKEARGS := -C $1
+-MAKEARGS += O=\$(if \$(patsubst /%,,\$(makedir)),\$(CURDIR)/)\$(patsubst %/,%,\$(makedir))
+-
+ MAKEFLAGS += --no-print-directory
+ 
+ .PHONY: __sub-make \$(MAKECMDGOALS)
+ 
+ __sub-make:
+-	\$(Q)\$(MAKE) \$(MAKEARGS) \$(MAKECMDGOALS)
++	\$(Q)\$(MAKE) -C $1 O=\$(CURDIR) \$(MAKECMDGOALS)
+ 
+ \$(filter-out __sub-make, \$(MAKECMDGOALS)): __sub-make
+ 	@:
 -- 
 2.7.4
 
