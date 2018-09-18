@@ -2,204 +2,106 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A10C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4597C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964B620858
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:44:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964B620858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 70C6A21471
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 08:46:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="fZzgtvoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C6A21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729444AbeIROPi (ORCPT
+        id S1729524AbeIROR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:15:38 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:36448 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729129AbeIROPi (ORCPT
+        Tue, 18 Sep 2018 10:17:57 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:55702 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729250AbeIROR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:15:38 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437684|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03302;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.CsM55JJ_1537260211;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CsM55JJ_1537260211)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Tue, 18 Sep 2018 16:43:32 +0800
-Date:   Tue, 18 Sep 2018 16:43:31 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V5 1/3] irqchip: add C-SKY irqchip drivers
-Message-ID: <20180918084331.GA10950@guoren>
-References: <a70337117db84f6e1091d0b3fc28acb691ac9b35.1537087118.git.ren_guo@c-sky.com>
- <86in35mfas.wl-marc.zyngier@arm.com>
- <20180917020928.GA22452@guoren-Inspiron-7460>
- <86tvmoz22k.wl-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86tvmoz22k.wl-marc.zyngier@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 18 Sep 2018 10:17:57 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id w8I8juLQ029470;
+        Tue, 18 Sep 2018 17:45:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w8I8juLQ029470
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1537260357;
+        bh=oc89FkiRS8fOvTIsgqiQMWyosxvDE18DMW1VoU1FMUk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fZzgtvoEI8HQFXTrv2gJvY+IRd1wnTVjq+Ze1YP9RZpLpx06iQ7THljTCzLe9TSH0
+         U2LWfNlvmlq97FTQ/jnil1cc0hEAaa7o4FdntOg2T6f+FV12yclQxX1SUTc1V7l4MQ
+         NNmGIWssAeSgU5jGkfzuW+J/btKej3f/B4rZu0ALu/MJxyMiZ2p9+WcFA456VnKSfD
+         FchFaERglfr8WFTy7TDGYbHXbzrNFomeuZndXK8J6+OT9mTFREMDJaVAKfti2kWzpb
+         /IEA/W4tyrY5RhWryS9x6eLmiKEvmyO2mslu657hL6C4tm14QJ+6tLh1sPlvnk3twe
+         irUZspLbb0TeA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] kbuild: remove VERSION and PATCHLEVEL from $(objtree)/Makefile
+Date:   Tue, 18 Sep 2018 17:45:51 +0900
+Message-Id: <1537260354-30082-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 02:27:31PM +0100, Marc Zyngier wrote:
-> On Mon, 17 Sep 2018 03:09:29 +0100,
-> Guo Ren <ren_guo@c-sky.com> wrote:
-> 
-> [...]
-> 
-> > > > +
-> > > > +	irq_set_default_host(root_domain);
-> > > 
-> > > Please drop this. There is no reason to use this on any modern, DT
-> > > based architecture.
-Ok.
+Neither VERSION nor PATCHLEVEL is used in any useful way.
 
-> > Please let me keep this and in my arch/csky/kernel/smp.c:
-> > 
-> > void __init setup_smp_ipi(void)
-> > {
-> > 	...
-> > 	irq_create_mapping(NULL, IPI_IRQ);
-> >	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
-> 
-> This looks quite wrong. Reading the code at
-> https://lkml.org/lkml/2018/9/12/674, it really looks like you're
-> assuming that IPI_IRQ will be mapped to a Linux IRQ with the same
-> number. Nothing could be farther from the truth.
-Yes, you are right. I should use irq_create_mapping() return value as
-the arg for request_percpu_irq. It's a stupid bug, thoug it happens to
-work.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> The Linux IRQ is returned as the result of irq_create_mapping, which
-> you're ignoring. You'd be better off creating this mapping from the
-> irqchip code, and expose the resulting Linux IRQ to oyu SMP code by
-> any mean of your choice (such as moving the send_ipi_message into the
-> irqchip code as well).
-Ok, see my diff below, is that OK?
+ Makefile           | 3 +--
+ scripts/mkmakefile | 6 ------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
---- a/drivers/irqchip/irq-csky-mpintc.c
-+++ b/drivers/irqchip/irq-csky-mpintc.c
-@@ -16,6 +16,7 @@
- #include <asm/reg_ops.h>
- #include <asm/smp.h>
+diff --git a/Makefile b/Makefile
+index d2976b5..6e1a059 100644
+--- a/Makefile
++++ b/Makefile
+@@ -482,8 +482,7 @@ PHONY += outputmakefile
+ outputmakefile:
+ ifneq ($(KBUILD_SRC),)
+ 	$(Q)ln -fsn $(srctree) source
+-	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile \
+-	    $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
++	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree) $(objtree)
+ endif
  
-+static struct irq_domain *root_domain;
- static void __iomem *INTCG_base;
- static void __iomem *INTCL_base;
- 
-@@ -46,7 +47,7 @@ static void csky_mpintc_handler(struct pt_regs *regs)
- 	void __iomem *reg_base = this_cpu_read(intcl_reg);
- 
- 	do {
--		handle_domain_irq(NULL,
-+		handle_domain_irq(root_domain,
- 				  readl_relaxed(reg_base + INTCL_RDYIR),
- 				  regs);
- 	} while (readl_relaxed(reg_base + INTCL_HPPIR) & BIT(31));
-@@ -139,13 +140,17 @@ static void csky_mpintc_send_ipi(const unsigned long *mask, unsigned long irq)
- 	 */
- 	writel_relaxed((*mask) << 8 | irq, reg_base + INTCL_SIGR);
- }
-+
-+static int csky_mpintc_ipi_irq_mapping(void)
-+{
-+	return irq_create_mapping(root_domain, IPI_IRQ);
-+}
- #endif
- 
- /* C-SKY multi processor interrupt controller */
- static int __init
- csky_mpintc_init(struct device_node *node, struct device_node *parent)
- {
--	struct irq_domain *root_domain;
- 	unsigned int cpu, nr_irq;
- 	int ret;
- 
-@@ -172,8 +177,6 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
- 	if (!root_domain)
- 		return -ENXIO;
- 
--	irq_set_default_host(root_domain);
+ ifeq ($(cc-name),clang)
+diff --git a/scripts/mkmakefile b/scripts/mkmakefile
+index e19d656..e2106444 100755
+--- a/scripts/mkmakefile
++++ b/scripts/mkmakefile
+@@ -7,9 +7,6 @@
+ # Usage
+ # $1 - Kernel src directory
+ # $2 - Output directory
+-# $3 - version
+-# $4 - patchlevel
 -
- 	/* for every cpu */
- 	for_each_present_cpu(cpu) {
- 		per_cpu(intcl_reg, cpu) = INTCL_base + (INTCL_SIZE * cpu);
-@@ -184,6 +187,8 @@ csky_mpintc_init(struct device_node *node, struct device_node *parent)
  
- #ifdef CONFIG_SMP
- 	set_send_ipi(&csky_mpintc_send_ipi);
-+
-+	set_ipi_irq_mapping(&csky_mpintc_ipi_irq_mapping);
- #endif
+ test ! -r $2/Makefile -o -O $2/Makefile || exit 0
+ # Only overwrite automatically generated Makefiles
+@@ -25,9 +22,6 @@ fi
+ cat << EOF > $2/Makefile
+ # Automatically generated by $0: don't edit
  
- 	return 0;
-
-diff --git a/arch/csky/include/asm/smp.h b/arch/csky/include/asm/smp.h
-index 9a53abf..fed3a5a 100644
---- a/arch/csky/include/asm/smp.h
-+++ b/arch/csky/include/asm/smp.h
-@@ -7,6 +7,8 @@
- 
- #ifdef CONFIG_SMP
- 
-+#define IPI_IRQ	15
-+
- void __init setup_smp(void);
- 
- void __init setup_smp_ipi(void);
-@@ -19,6 +21,8 @@ void arch_send_call_function_single_ipi(int cpu);
- 
- void __init set_send_ipi(void (*func)(const unsigned long *, unsigned long));
- 
-+void __init set_ipi_irq_mapping(int (*func)(void));
-+
- #define raw_smp_processor_id()	(current_thread_info()->cpu)
- 
- #endif /* CONFIG_SMP */
-diff --git a/arch/csky/kernel/smp.c b/arch/csky/kernel/smp.c
-index 522c73f..f8343f6 100644
---- a/arch/csky/kernel/smp.c
-+++ b/arch/csky/kernel/smp.c
-@@ -20,8 +20,6 @@
- #include <asm/mmu_context.h>
- #include <asm/pgalloc.h>
- 
--#define IPI_IRQ	15
+-VERSION = $3
+-PATCHLEVEL = $4
 -
- static struct {
- 	unsigned long bits ____cacheline_aligned;
- } ipi_data[NR_CPUS] __cacheline_aligned;
-@@ -121,13 +119,23 @@ void __init enable_smp_ipi(void)
- 	enable_percpu_irq(IPI_IRQ, 0);
- }
+ lastword = \$(word \$(words \$(1)),\$(1))
+ makedir := \$(dir \$(call lastword,\$(MAKEFILE_LIST)))
  
-+static int (*arch_ipi_irq_mapping)(void) = NULL;
-+
-+void __init set_ipi_irq_mapping(int (*func)(void))
-+{
-+	if (arch_ipi_irq_mapping)
-+		return;
-+
-+	arch_ipi_irq_mapping = func;
-+}
-+
- void __init setup_smp_ipi(void)
- {
--	int rc;
-+	int rc, irq;
- 
--	irq_create_mapping(NULL, IPI_IRQ);
-+	irq = arch_ipi_irq_mapping();
- 
--	rc = request_percpu_irq(IPI_IRQ, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
-+	rc = request_percpu_irq(irq, handle_ipi, "IPI Interrupt", &ipi_dummy_dev);
- 	if (rc)
- 		panic("%s IRQ request failed\n", __func__);
+-- 
+2.7.4
+
