@@ -2,123 +2,199 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BDFC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC927C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B81F21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 977232086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 13:08:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnR8I1gA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B81F21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="sM9sjopT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977232086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbeIRSiY (ORCPT
+        id S1729626AbeIRSkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 14:38:24 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46283 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727207AbeIRSiY (ORCPT
+        Tue, 18 Sep 2018 14:40:37 -0400
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:20884 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727207AbeIRSkg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 14:38:24 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u24-v6so985613pfn.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 06:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1a2U8BQyEsSn6l+/bDVwsJsFBUD0QbFEgCGuHrWLnvs=;
-        b=fnR8I1gA1EPSGC1lvkpmWe4zOlwZHLP0d04yWx2pgwOfaU38xk8USRgo5Q6tgKFR5y
-         SG1A9oPA1BxoYQyVTco3Om+hp6FZJDxfG8+UERF5/Yc6ebjHSZpC633Ss0aB8LF9pUVQ
-         5VKFQwuFCNRKlMv21v+usQMA+1ouHSKJu8b5Hefm8c5F7r2nWO5vIB3x6qFjqjDLru8+
-         txMhFpTo8CHSDwOpTq9/WLupQTx6D2iyOeiuoVyHnu2rARMEUuoGsRybXbU5KyxrFH/o
-         ueE0uMumEbrMKIqTAymQcS+jXedJK4cW++O+ufvAOH+4diz/oET5fWxMUVNT8e6YvuTu
-         i90w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1a2U8BQyEsSn6l+/bDVwsJsFBUD0QbFEgCGuHrWLnvs=;
-        b=ba6d5GquJ2KMOutQf6YNpWJLIamhVbHDG1BT82RHEx3VtGtWIYNQSksWXwfFtOFuVQ
-         p53UeKunsu2LHcpFtgUWV111pk0hkVCZCrS3smjbrgoH3k855M0rKSynsnZTf+Nhuciv
-         zjVGfv/KrKTy72EcRnm7RKwlGKXByI4yaxTSNgSHMNrz8qt7ou7HeV0puRcwKq4OHuGV
-         CjNSCeo1cSapTiEnHcPFOFc7k845AvhcsL6wbaFYUhb0VxAtQCSPXLUojLcrjo5K9BnK
-         XCjrrLyPdfNHrUe3mSUMh+BN+ejQIMW22X818UvdWnHaWBdww4k0fvFrfOS9ofqRnnJr
-         rIfw==
-X-Gm-Message-State: APzg51AyhfRbohr+JjkcVAv99CeONvAymmSXlA0oEnFDd9bMxcQY6fyX
-        l7QbPykrF9/GfsfMMpXa6WY=
-X-Google-Smtp-Source: ANB0VdangKKK9EqYVo4mMUaDuI7dMJg6LQ0knWkt++VlG8L9Y0DICVEhAB2Ir/hFEMUJ8CEpO4uI/Q==
-X-Received: by 2002:a63:3dc6:: with SMTP id k189-v6mr27735061pga.191.1537275953136;
-        Tue, 18 Sep 2018 06:05:53 -0700 (PDT)
-Received: from localhost (27-32-189-129.static.tpgi.com.au. [27.32.189.129])
-        by smtp.gmail.com with ESMTPSA id l6-v6sm25142198pfl.169.2018.09.18.06.05.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 06:05:52 -0700 (PDT)
-From:   Andrew Worsley <amworsley@gmail.com>
-To:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org (open list:UNSORTED BLOCK IMAGES (UBI)),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Andrew Worsley <amworsley@gmail.com>
-Subject: [PATCH] Round UBI average erase count up to next integer
-Date:   Tue, 18 Sep 2018 23:05:21 +1000
-Message-Id: <20180918130521.22880-2-amworsley@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180918130521.22880-1-amworsley@gmail.com>
-References: <20180918130521.22880-1-amworsley@gmail.com>
+        Tue, 18 Sep 2018 14:40:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1537276065; x=1568812065;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=Hm5GoymEOjt/oLg++PSaotiBRYzeh4BHKEvvGGISNcU=;
+  b=sM9sjopTIPtlNii9ESv8JZnmYwutVRZr9prrr819NTnAxmmQgUyb5sli
+   7xN7cfKoawyMyIaMFKZK/7jqWVX73xVNuCwudn7ElnQ0guMj7m6t38GxB
+   Kx0ehuOT0UjvgbEaGivbIMbc+xhCP4puigKNTBdBxcP9cLiLP8RbhMzgY
+   M=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EcAADt96BbhyWd50NbGwEBAQEDAQE?=
+ =?us-ascii?q?BCQEBAYFQg1oSKAqLfV+NXIhejW4UgWYLhGyEIzQYAQMBAQIBAQIBAQIQAQE?=
+ =?us-ascii?q?BCgsJCCkjDEIQAYFiIoJiAQEBAwESFRM/BQsCAQgYHhAhNgIEARIIEweCf4F?=
+ =?us-ascii?q?qAw0ImSWJVwEBAYFoM4c3DYJPjQSEJIJWghAYhVgCiBmFT4VYiEIjLAkFiUG?=
+ =?us-ascii?q?DRIMPH48UglGKB4drAgQCBAUCFIFCgg5wgzyCJQ4Jh06GSW8BhF6HSoEeAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EcAADt96BbhyWd50NbGwEBAQEDAQEBCQEBAYFQg1oSK?=
+ =?us-ascii?q?AqLfV+NXIhejW4UgWYLhGyEIzQYAQMBAQIBAQIBAQIQAQEBCgsJCCkjDEIQA?=
+ =?us-ascii?q?YFiIoJiAQEBAwESFRM/BQsCAQgYHhAhNgIEARIIEweCf4FqAw0ImSWJVwEBA?=
+ =?us-ascii?q?YFoM4c3DYJPjQSEJIJWghAYhVgCiBmFT4VYiEIjLAkFiUGDRIMPH48UglGKB?=
+ =?us-ascii?q?4drAgQCBAUCFIFCgg5wgzyCJQ4Jh06GSW8BhF6HSoEeAQE?=
+Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Sep 2018 08:07:44 -0500
+Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8ID33Th086173;
+        Tue, 18 Sep 2018 09:08:03 -0400
+Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
+        by mx0b-00154901.pphosted.com with ESMTP id 2mjtxsjav6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Sep 2018 09:08:03 -0400
+Cc:     <linux-pci@vger.kernel.org>, <bhelgaas@google.com>,
+        <keith.busch@intel.com>, <Austin.Bolen@dell.com>,
+        <Shyam.Iyer@dell.com>, <Narendra.K@dell.com>,
+        <Stuart.Hayes@dell.com>, <lukas@wunner.de>,
+        <linux-kernel@vger.kernel.org>
+Received: from ausxipps301.us.dell.com ([143.166.148.223])
+  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 18 Sep 2018 19:08:01 +0600
+X-LoopCount0: from 10.166.134.89
+X-IronPort-AV: E=Sophos;i="5.53,389,1531803600"; 
+   d="scan'208";a="231717807"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <helgaas@kernel.org>, <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Topic: [PATCH] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Thread-Index: AQHUKEtdWZAK09POFEiUwzvn0dT1gA==
+Date:   Tue, 18 Sep 2018 13:07:58 +0000
+Message-ID: <5c7aa51ff9294b1aab51a3bda2416094@ausx13mps321.AMER.DELL.COM>
+References: <20180730212146.31909-1-mr.nuke.me@gmail.com>
+ <20180912212831.GM118330@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.177.90.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-18_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=825 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809180132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a slightly larger than average EC so these PEBs will be
-reinitialised with erase counts that make them less likely to
-be reused than other (perhaps less worn or error-prone) PEBs
-
-We have more frequent ECC failures on reads of page 0 of some PEBs
-which manifest itself commonly during ubiattach. We believe this is due to
-"program disturb" and want those PEB to be re-used later than average.
-
-Signed-off-by: Andrew Worsley <amworsley@gmail.com>
----
- drivers/mtd/ubi/attach.c  | 2 +-
- drivers/mtd/ubi/fastmap.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/ubi/attach.c b/drivers/mtd/ubi/attach.c
-index 93ceea4f27d5..f97e2ba56fb2 100644
---- a/drivers/mtd/ubi/attach.c
-+++ b/drivers/mtd/ubi/attach.c
-@@ -1414,7 +1414,7 @@ static int scan_all(struct ubi_device *ubi, struct ubi_attach_info *ai,
- 
- 	/* Calculate mean erase counter */
- 	if (ai->ec_count)
--		ai->mean_ec = div_u64(ai->ec_sum, ai->ec_count);
-+		ai->mean_ec = div_u64(ai->ec_sum+ai->ec_count-1, ai->ec_count);
- 
- 	err = late_analysis(ubi, ai);
- 	if (err)
-diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
-index 462526a10537..91e513788f38 100644
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -684,7 +684,7 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
- 			be32_to_cpu(fmec->ec), 1);
- 	}
- 
--	ai->mean_ec = div_u64(ai->ec_sum, ai->ec_count);
-+	ai->mean_ec = div_u64(ai->ec_sum+ai->ec_count-1, ai->ec_count);
- 	ai->bad_peb_count = be32_to_cpu(fmhdr->bad_peb_count);
- 
- 	/* Iterate over all volumes and read their EBA table */
--- 
-2.11.0
-
+On 9/12/2018 4:28 PM, Bjorn Helgaas wrote:=0A=
+> On Mon, Jul 30, 2018 at 04:21:44PM -0500, Alexandru Gagniuc wrote:=0A=
+>> When a PCI device is gone, we don't want to send IO to it if we can=0A=
+>> avoid it. We expose functionality via the irq_chip structure. As=0A=
+>> users of that structure may not know about the underlying PCI device,=0A=
+>> it's our responsibility to guard against removed devices.=0A=
+> =0A=
+> I'm pretty ambivalent about pci_dev_is_disconnected() in general, but=0A=
+> I think I'll take this, given a couple minor changelog clarifications:=0A=
+> =0A=
+>> irq_write_msi_msg is already guarded. pci_msi_(un)mask_irq are not.=0A=
+>> Guard them for completeness.=0A=
+> =0A=
+> By the irq_write_msi_msg() guard, I guess you mean this path:=0A=
+> =0A=
+>    pci_msi_domain_write_msg       # irq_chip.irq_write_msi_msg=0A=
+>      __pci_write_msi_msg=0A=
+>        if (dev->current_state !=3D PCI_D0 || pci_dev_is_disconnected(dev)=
+)=0A=
+>          /* don't touch */=0A=
+=0A=
+Yes!=0A=
+=0A=
+> pci_msi_(un)mask_irq() may be irq_chip.irq_mask, .irq_unmask, etc=0A=
+> pointers.  So these are parallel because they're all irq_chip function=0A=
+> pointers, but the changelog isn't (yet) parallel because it uses the=0A=
+> irq_chip pointer name for .irq_write_msi_msg but not for mask/unmask=0A=
+=0A=
+Good catch! I'll get this corrected.=0A=
+=0A=
+=0A=
+>> For example, surprise removal of a PCIe device triggers teardown. This=
+=0A=
+>> touches the irq_chips ops some point to disable the interrupts. I/O=0A=
+>> generated here can crash the system on machines with buggy firmware.=0A=
+>> Not triggering the IO in the first place eliminates the problem.=0A=
+> =0A=
+> It doesn't eliminate the problem completely because .irq_mask() and=0A=
+> .irq_unmask() may be called for reasons other than surprise removal,=0A=
+> and if a surprise removal happens after the pci_dev_is_disconnected()=0A=
+> check but before the readl(), we will still generate I/O to a device=0A=
+> that's gone.  I'd be OK if you said it "reduces" the problem.=0A=
+=0A=
+That sounds reasonable.=0A=
+=0A=
+> One reason I'm ambivalent about pci_dev_is_disconnected() is that in=0A=
+> cases like this, it turns a reproducible problem into a very=0A=
+> hard-to-reproduce problem, which reduces the likelihood that the buggy=0A=
+> firmware will be fixed.=0A=
+=0A=
+If it manages to turn this into 99.999% territory, I'll be much happier. =
+=0A=
+I'd love to give you an academically correct solution, but I just don't =0A=
+see how, given how firmware-first philosophy is written.=0A=
+=0A=
+> Do you have information about known platforms with this buggy firmware=0A=
+> and the signature of the crash?  If you do, it's always nice to be=0A=
+> able to connect a patch with the user-visible problem it fixes.=0A=
+=0A=
+ From what I've heard, it won't be fixed. The number of changes needed =0A=
+would require re-qualifying the firmware. I'm told that's very hard to =0A=
+do on platforms that are shipping. I can reword this to say =0A=
+"firmware-first" instead of "buggy" since they are mostly synonymous.=0A=
+=0A=
+Alex=0A=
+=0A=
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>=0A=
+>> ---=0A=
+>>=0A=
+>> There's another patch by Lukas Wunner that is needed (not yet published)=
+=0A=
+>> in order to fully block IO on SURPRISE!!! removal. The existing code onl=
+y=0A=
+>> sets the PCI_DEV_DISCONNECTED bit in an unreasonably narrow set of=0A=
+>> circumstances. Lukas' patch fixes that.=0A=
+>>=0A=
+>> However, this change is otherwise fully independent, and enjoy!=0A=
+>>=0A=
+>>   drivers/pci/msi.c | 3 +++=0A=
+>>   1 file changed, 3 insertions(+)=0A=
+>>=0A=
+>> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c=0A=
+>> index 4d88afdfc843..5f47b5cb0401 100644=0A=
+>> --- a/drivers/pci/msi.c=0A=
+>> +++ b/drivers/pci/msi.c=0A=
+>> @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, =
+u32 flag)=0A=
+>>   {=0A=
+>>   	struct msi_desc *desc =3D irq_data_get_msi_desc(data);=0A=
+>>   =0A=
+>> +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))=0A=
+>> +		return;=0A=
+>> +=0A=
+>>   	if (desc->msi_attrib.is_msix) {=0A=
+>>   		msix_mask_irq(desc, flag);=0A=
+>>   		readl(desc->mask_base);		/* Flush write to device */=0A=
+>> -- =0A=
+>> 2.17.1=0A=
+>>=0A=
+> =0A=
+=0A=
