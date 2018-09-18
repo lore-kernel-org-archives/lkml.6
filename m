@@ -2,78 +2,88 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B14ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B45ECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE95E20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE95E20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4627F214C2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 16:35:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yfPNC3gX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4627F214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbeIRWHE (ORCPT
+        id S1730299AbeIRWIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 18:07:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32974 "EHLO mx1.redhat.com"
+        Tue, 18 Sep 2018 18:08:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729501AbeIRWHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 18:07:04 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730029AbeIRWIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 18:08:34 -0400
+Received: from localhost (unknown [209.121.128.187])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 46ECE1B7B;
-        Tue, 18 Sep 2018 16:33:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E699616BF8;
-        Tue, 18 Sep 2018 16:33:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
-References: <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org> <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com> <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk> <1537253993.20009.62.camel@infradead.org> <14067.1537285833@warthog.procyon.org.uk> <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     dhowells@redhat.com, Denis Kenzior <denkenz@gmail.com>,
-        jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+        by mail.kernel.org (Postfix) with ESMTPSA id 51A14206B5;
+        Tue, 18 Sep 2018 16:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537288512;
+        bh=m37A0+L9ewlyyLoAvfWE0dQrsjtriNOVFLnRTbpXqlc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yfPNC3gXlU8HFi3AoHP58c/kt4OZ4XsdHjsglSAkFBOF2San6ZKJDOqy+O4igR81X
+         TajL2bXhu/IAl9LF5uw9TT4zhDTkmmjZFo823nuoYzKEKRQmav7GSdFsgPSoGzikeG
+         4YK+OAAlQ3/NzKUZDglxAkUbqcTJ7GkLQzTRNq/4=
+Date:   Tue, 18 Sep 2018 09:35:12 -0700
+From:   Vinod <vkoul@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     dan.j.williams@intel.com, afaerber@suse.de, robh+dt@kernel.org,
+        gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org, dmaengine@vger.kernel.org,
+        liuwei@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br
+Subject: Re: [PATCH 2/3] dmaengine: Add Slave and Cyclic mode support for
+ Actions Semi Owl S900 SoC
+Message-ID: <20180918163512.GE2613@vkoul-mobl>
+References: <20180901164215.3683-1-manivannan.sadhasivam@linaro.org>
+ <20180901164215.3683-3-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19246.1537288419.1@warthog.procyon.org.uk>
-Date:   Tue, 18 Sep 2018 17:33:39 +0100
-Message-ID: <19247.1537288419@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 18 Sep 2018 16:33:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180901164215.3683-3-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Woodhouse <dwmw2@infradead.org> wrote:
+On 01-09-18, 22:12, Manivannan Sadhasivam wrote:
 
-> You are passing the raw DER to the kernel in both cases, right?
+> @@ -364,6 +372,26 @@ static inline int owl_dma_cfg_lli(struct owl_dma_vchan *vchan,
+>  			OWL_DMA_MODE_DT_DCU | OWL_DMA_MODE_SAM_INC |
+>  			OWL_DMA_MODE_DAM_INC;
+>  
+> +		break;
+> +	case DMA_MEM_TO_DEV:
+> +		mode |= OWL_DMA_MODE_TS(vchan->drq)
+> +			| OWL_DMA_MODE_ST_DCU | OWL_DMA_MODE_DT_DEV
+> +			| OWL_DMA_MODE_SAM_INC | OWL_DMA_MODE_DAM_CONST;
+> +
+> +		/* Handle bus width for UART */
+> +		if (sconfig->dst_addr_width == DMA_SLAVE_BUSWIDTH_1_BYTE)
+> +			mode |= OWL_DMA_MODE_NDDBW_8BIT;
 
-I haven't put a PEM stripper and base64 decoder into the kernel, though we
-certainly could do that.  We could even do the decode in-place in the same
-buffer since the resulting data would be smaller than the original.
+this is fine per se, but not correct way to handle in dmaengine driver.
+You should be agnostic to user of dmaengine, so handle all the buswidths
+the IP block supports and update the values accordingly. That way new
+uses can be added w/o requiring change in dmaengine driver
 
-> And the kernel just happens to know that if it receives a bare OCTET-STRING
-> it's supposed to treat it as a TPMv1.2 key?
-
-It passes it to each parser in turn till one says it can parse it.  It's not
-ideal, but it seems to work - so far.  Better would be to annotate it in some
-way.  I have considered annotating the type field so that the payload doesn't
-have to have it added:
-
-	keyctl padd asymmetric.x509 "" @s </tmp/foo.x509
-	keyctl padd asymmetric.pkcs#8 ...
-	keyctl padd asymmetric.tpm ...
-
-However, this doesn't work with "keyctl update" or "keyctl instantiate".
-
-David
+-- 
+~Vinod
