@@ -2,182 +2,240 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7512EECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0BDC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62472146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:13:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n8gxN29I";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e35IKDB9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62472146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 319ED2146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:18:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319ED2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbeISCsT (ORCPT
+        id S1730374AbeISCxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 22:48:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48348 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbeISCsT (ORCPT
+        Tue, 18 Sep 2018 22:53:21 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41156 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729693AbeISCxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 22:48:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 668DB60C54; Tue, 18 Sep 2018 21:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537305233;
-        bh=VQwTAayGUzUy0CZjvYqH2mTee36S4Xe4ScKUf6F/1B4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=n8gxN29IKo6zYlbJCv8mO3l9BRy+ckD5ypfmVKuQCG8TydgJZZHtwtr1EYteeYauk
-         KdqqH4c9v+x83oncz3s6VxKrZ13xnG9To75SzqKaSVcQtu542GUcEZBxnmbzLaMmqm
-         SPZo/vksdpL6QV3COucnTT2ft3ohxNcIj8XyQKdY=
-Received: from [192.168.43.47] (unknown [27.59.117.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 07AC86034E;
-        Tue, 18 Sep 2018 21:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537305231;
-        bh=VQwTAayGUzUy0CZjvYqH2mTee36S4Xe4ScKUf6F/1B4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e35IKDB9R9ZpmY9waHBJxzb74BlAKuFvFAM6BNQmE3t75WoW4n94ldnSQWRH1Nf19
-         5h/sZEovyW216jIrrmSyiMJ7yAow0GOYtuJr0VGSU87KeR79OIhCPd3Aet1MWkbTb6
-         HUYOO+H5n1ArQpaxdE5OhTD9/YKt2F7cJNTvnVhk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07AC86034E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 2/6] pstore: Add event tracing support
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <20180917193426.41c99fd5@gandalf.local.home>
- <cb17a8c9-fca1-5492-3255-eab0ea33577c@codeaurora.org>
- <20180918164434.472294f3@gandalf.local.home>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <bad69c36-2600-f0b3-5bfd-c865039ae97f@codeaurora.org>
-Date:   Wed, 19 Sep 2018 02:43:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Sep 2018 22:53:21 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k12-v6so3160626oiw.8;
+        Tue, 18 Sep 2018 14:18:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iY6ocZcyOP/p1/bvG5B59HAIPaVQDLpoBdapu7hxxwc=;
+        b=nKdpb4Ya7LXSzwR+LXyVrPQMnBvkya6tIMbTuvlGUgu7r2cyEdOJVnof1dB1UPFx91
+         5qtFHGqgv1zuXc6CZnKQhqZ4kjsvPde2cZ7rBLsdPloL0zNjlizskxaZ5cxR1fcWEKG7
+         8oLPXKSFKegakBS8j1GmLcsKnALHBl1+tMpqPYhW87/ETcVd0x5O/yqU3q8x9e1gu0KR
+         p9SQfi4700uCcwZpXCh+PxPsAj0zzbaOhRxoY6Az3mT08Cks3fF1h4rTiGgXp0AsUQy9
+         d63RSVK+J8wC6FRyj8agtzA26a8jA0nnqXv/kb5yBF1XLIYxtVufneGmuJC0BZCSqy7g
+         Fhfw==
+X-Gm-Message-State: APzg51DaDycY5RYA186GhsjwboUQn2YCC6K7ZKj6KWSgtwepDVscCLwk
+        uk4FMfgBuvD0dDkFzHxGLkf0sFKxeCXPfmPQIAs=
+X-Google-Smtp-Source: ANB0VdYWIM2P8Y5fN4xgqP1iLsGXe0whTNbFMUQ2qwa4+5Ev3WSpGTcjWNCnnWgCaLiHOh07UNpD9/6+HlGUY/FE/Gw=
+X-Received: by 2002:a54:4010:: with SMTP id x16-v6mr2601846oie.228.1537305533103;
+ Tue, 18 Sep 2018 14:18:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180918164434.472294f3@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180918114822.21926-1-david@redhat.com> <20180918114822.21926-2-david@redhat.com>
+In-Reply-To: <20180918114822.21926-2-david@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 18 Sep 2018 23:18:41 +0200
+Message-ID: <CAJZ5v0gDDEvBrNCbB8E3Stq4QE_+6X72Pbu0Wyj8bQoSPXs3WA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] mm/memory_hotplug: make remove_memory() take the device_hotplug_lock
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        xen-devel@lists.xenproject.org, devel@linuxdriverproject.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, rashmica.g@gmail.com,
+        Michael Neuling <mikey@neuling.org>,
+        Balbir Singh <bsingharora@gmail.com>, nfont@linux.vnet.ibm.com,
+        jallen@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        osalvador@suse.de, yasu.isimatu@gmail.com, malat@debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/2018 2:14 AM, Steven Rostedt wrote:
-> On Tue, 18 Sep 2018 23:22:48 +0530
-> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> 
->> On 9/18/2018 5:04 AM, Steven Rostedt wrote:
->>>
->>> It looks like pstore_event_call() gets called from a trace event. You
->>> can't call kmalloc() from one. One thing is that kmalloc has
->>> tracepoints itself. You trace those you just entered an infinite loop.
->>>
->>>    
->>
->> Ok will remove it in v2. But any alternative way to do this?
-> 
-> I think I describe it below.
-> 
+On Tue, Sep 18, 2018 at 1:48 PM David Hildenbrand <david@redhat.com> wrote:
+>
+> remove_memory() is exported right now but requires the
+> device_hotplug_lock, which is not exported. So let's provide a variant
+> that takes the lock and only export that one.
+>
+> The lock is already held in
+>         arch/powerpc/platforms/pseries/hotplug-memory.c
+>         drivers/acpi/acpi_memhotplug.c
+> So, let's use the locked variant.
+>
+> The lock is not held (but taken in)
+>         arch/powerpc/platforms/powernv/memtrace.c
+> So let's keep using the (now) locked variant.
+>
+> Apart from that, there are not other users in the tree.
+>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Rashmica Gupta <rashmica.g@gmail.com>
+> Cc: Michael Neuling <mikey@neuling.org>
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+> Cc: John Allen <jallen@linux.vnet.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/powerpc/platforms/powernv/memtrace.c       | 2 --
+>  arch/powerpc/platforms/pseries/hotplug-memory.c | 6 +++---
+>  drivers/acpi/acpi_memhotplug.c                  | 2 +-
+>  include/linux/memory_hotplug.h                  | 3 ++-
+>  mm/memory_hotplug.c                             | 9 ++++++++-
+>  5 files changed, 14 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+> index 51dc398ae3f7..8f1cd4f3bfd5 100644
+> --- a/arch/powerpc/platforms/powernv/memtrace.c
+> +++ b/arch/powerpc/platforms/powernv/memtrace.c
+> @@ -90,9 +90,7 @@ static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
+>         walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+>                           change_memblock_state);
+>
+> -       lock_device_hotplug();
+>         remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+> -       unlock_device_hotplug();
+>
+>         return true;
+>  }
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> index c1578f54c626..b3f54466e25f 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> @@ -334,7 +334,7 @@ static int pseries_remove_memblock(unsigned long base, unsigned int memblock_siz
+>         nid = memory_add_physaddr_to_nid(base);
+>
+>         for (i = 0; i < sections_per_block; i++) {
+> -               remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
+> +               __remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
+>                 base += MIN_MEMORY_BLOCK_SIZE;
+>         }
+>
+> @@ -423,7 +423,7 @@ static int dlpar_remove_lmb(struct drmem_lmb *lmb)
+>         block_sz = pseries_memory_block_size();
+>         nid = memory_add_physaddr_to_nid(lmb->base_addr);
+>
+> -       remove_memory(nid, lmb->base_addr, block_sz);
+> +       __remove_memory(nid, lmb->base_addr, block_sz);
+>
+>         /* Update memory regions for memory remove */
+>         memblock_remove(lmb->base_addr, block_sz);
+> @@ -710,7 +710,7 @@ static int dlpar_add_lmb(struct drmem_lmb *lmb)
+>
+>         rc = dlpar_online_lmb(lmb);
+>         if (rc) {
+> -               remove_memory(nid, lmb->base_addr, block_sz);
+> +               __remove_memory(nid, lmb->base_addr, block_sz);
+>                 dlpar_remove_device_tree_lmb(lmb);
+>         } else {
+>                 lmb->flags |= DRCONF_MEM_ASSIGNED;
+> diff --git a/drivers/acpi/acpi_memhotplug.c b/drivers/acpi/acpi_memhotplug.c
+> index 6b0d3ef7309c..811148415993 100644
+> --- a/drivers/acpi/acpi_memhotplug.c
+> +++ b/drivers/acpi/acpi_memhotplug.c
+> @@ -282,7 +282,7 @@ static void acpi_memory_remove_memory(struct acpi_memory_device *mem_device)
+>                         nid = memory_add_physaddr_to_nid(info->start_addr);
+>
+>                 acpi_unbind_memory_blocks(info);
+> -               remove_memory(nid, info->start_addr, info->length);
+> +               __remove_memory(nid, info->start_addr, info->length);
+>                 list_del(&info->list);
+>                 kfree(info);
+>         }
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 34a28227068d..1f096852f479 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -301,6 +301,7 @@ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+>  extern void try_offline_node(int nid);
+>  extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+>  extern void remove_memory(int nid, u64 start, u64 size);
+> +extern void __remove_memory(int nid, u64 start, u64 size);
+>
+>  #else
+>  static inline bool is_mem_section_removable(unsigned long pfn,
+> @@ -317,6 +318,7 @@ static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+>  }
+>
+>  static inline void remove_memory(int nid, u64 start, u64 size) {}
+> +static inline void __remove_memory(int nid, u64 start, u64 size) {}
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+>
+>  extern void __ref free_area_init_core_hotplug(int nid);
+> @@ -330,7 +332,6 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+>                 unsigned long nr_pages, struct vmem_altmap *altmap);
+>  extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+>  extern bool is_memblock_offlined(struct memory_block *mem);
+> -extern void remove_memory(int nid, u64 start, u64 size);
+>  extern int sparse_add_one_section(struct pglist_data *pgdat,
+>                 unsigned long start_pfn, struct vmem_altmap *altmap);
+>  extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 38d94b703e9d..b8b1bd970322 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1873,7 +1873,7 @@ EXPORT_SYMBOL(try_offline_node);
+>   * and online/offline operations before this call, as required by
+>   * try_offline_node().
+>   */
+> -void __ref remove_memory(int nid, u64 start, u64 size)
+> +void __ref __remove_memory(int nid, u64 start, u64 size)
+>  {
+>         int ret;
+>
+> @@ -1902,5 +1902,12 @@ void __ref remove_memory(int nid, u64 start, u64 size)
+>
+>         mem_hotplug_done();
+>  }
+> +
+> +void remove_memory(int nid, u64 start, u64 size)
+> +{
+> +       lock_device_hotplug();
+> +       __remove_memory(nid, start, size);
+> +       unlock_device_hotplug();
+> +}
+>  EXPORT_SYMBOL_GPL(remove_memory);
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+> --
 
-Ok got it, will change and post the 2nd version soon.
-
->>
->>>> +
->>>> +	event_call = fbuffer->trace_file->event_call;
->>>> +	if (!event_call || !event_call->event.funcs ||
->>>> +	    !event_call->event.funcs->trace)
->>>> +		goto fail_event;
->>>> +
->>>> +	event = &fbuffer->trace_file->event_call->event;
->>>> +
->>>> +	spin_lock_irqsave(&psinfo->buf_lock, flags);
->>>> +
->>>> +	trace_seq_init(&iter->seq);
->>>> +	iter->ent = fbuffer->entry;
->>>
->>> I guess what you are doing is needing to translate the raw data into
->>> ascii output, and need the trace_iterator to do so.
->>>
->>> You are already under a psinfo->buf_lock. Add a dummy iterator to that
->>> and use it instead.
->>>
->>> 	trace_seq_init(&psinfo->iter->seq);
->>>    
->>>> +	event_call->event.funcs->trace(iter, 0, event);
->>>
->>> 				      (psinfo->iter, 0 , event);
->>>
->>> etc.
->>>    
->>
->> Sure, will update in v2.
->>
->>>> +	trace_seq_putc(&iter->seq, 0);
->>>> +
->>>> +	if (seq->size > psinfo->bufsize)
->>>> +		seq->size = psinfo->bufsize;
->>>> +
->>>> +	s = &iter->seq;
->>>> +	seq = &s->seq;
->>>> +
->>>> +	record.buf = (char *)(seq->buffer);
->>>> +	record.size = seq->len;
->>>> +	psinfo->write(&record);
->>>> +
->>>> +	spin_unlock_irqrestore(&psinfo->buf_lock, flags);
->>>
->>> You may also need to convert these spin_locks into raw_spin_locks as
->>> when PREEMPT_RT enters the kernel you don't want them to turn into
->>> mutexes.
->>>
->>> But that can be another patch.
->>>    
->>
->> I will change this in v2, but can't we have it in same patch?
-> 
-> I suggested a separate patch because buf_lock is used elsewhere.
-> Changing it to "raw_spin_lock" will affect more than just what this
-> patch series does. Thus, I recommend making it a separate patch to keep
-> this patch series from being more intrusive than it needs to be.
-> 
-
-Sure, thanks a lot.
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
