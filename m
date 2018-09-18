@@ -2,93 +2,107 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4790ECE561
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 04:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE9FECE561
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 04:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB3B2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 04:21:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB3B2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id EFB6B2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 04:23:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLOIqgRy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB6B2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeIRJwd (ORCPT
+        id S1729165AbeIRJyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 05:52:33 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:41672 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeIRJwd (ORCPT
+        Tue, 18 Sep 2018 05:54:35 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:43789 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbeIRJyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 05:52:33 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1g27W8-0008OC-Mp; Tue, 18 Sep 2018 12:21:40 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1g27W2-0003S4-0x; Tue, 18 Sep 2018 12:21:34 +0800
-Date:   Tue, 18 Sep 2018 12:21:34 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     ard.biesheuvel@linaro.org, luto@kernel.org, davem@davemloft.net,
-        andrew@lunn.ch, ebiggers@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        sneves@dei.uc.pt, jeanphilippe.aumasson@gmail.com,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography
- library
-Message-ID: <20180918042133.4ybztgdooxkoyiru@gondor.apana.org.au>
+        Tue, 18 Sep 2018 05:54:35 -0400
+Received: by mail-qt0-f193.google.com with SMTP id g53-v6so514930qtg.10;
+        Mon, 17 Sep 2018 21:23:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6WX7NInYsqHuZkhPBpGSpuyl/chWTTpThNDjHXkR97U=;
+        b=RLOIqgRyyByJoIKe1uU0JWsvw81sXNSgogHfN0JW8nW5pG7LRl/+bYZcaICKiO3Ibf
+         hfEFYx9VS9vpXDI7q4BVvm9bxHwNOENij3JsT0MN5qBUN8ZVeMMo9b++0ZbIbXW0t+3g
+         dCKMFKU7CXANUQFRjFmIOtq4bzLNx6qH3reak/oCJTngBcXcK8xnobxLk6u/ZoBOjwdQ
+         GL4T/1D11QxuzEhBDPdl91WYyA82HtPHqe7MaS58xstiij1gzEIFdGdmWgDNmKzZDF1U
+         8/cx+vE+3JYctrdqF9qOHyOUhejt7cDa7QgBrlgLTFYHaEgIBl7BaKhCvIGHYVJ1aKKX
+         hKUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6WX7NInYsqHuZkhPBpGSpuyl/chWTTpThNDjHXkR97U=;
+        b=bMI9eVzrBAs10rOOm08mqirdcFNZNIXr5QCZkwbZ2N7HgYPU35XW7+r4sGNYb4DyQy
+         Y3ridgSMSDcQNy9Z5FjpogNnlpMswIR+EgxHiOciSVITHfrSO2TssfH6mfdqSn3pkpPk
+         jJr1sUM1FKC1wsd9bA1Fqw39BXbADJo51ojCFR96P7RsBeHW1+eetaCukonkHJEaJ8ox
+         tcubUitbjoaHE/vhj4S04WsDdcgip+FY2VqRXBoY5FHSo3F306MiNv2MV9LVLViKQGfx
+         l38EnpFLjyCWtSYB31kUfOcjZfqyCReETPsGJj4JIY+purthWGY8tCUYSMz2nij0sUme
+         4BaQ==
+X-Gm-Message-State: APzg51C8jlVAm49Gd8BEuyh9hIqwcEmcFs33sUzBBPIduJ7S/y2sVAQW
+        V1aRkH8rg3QMhcmv8vudeUThQOPVHl78NnAASa4=
+X-Google-Smtp-Source: ANB0VdbLaxBuHhLCHLZd3vKpWg/204VLvsPIfE/b8AjuakPfrHTXYlRrS6/1GMg+jUnTKPrlQ6va0WqXiA/E0ryY6AQ=
+X-Received: by 2002:aed:21ac:: with SMTP id l41-v6mr19364853qtc.293.1537244631777;
+ Mon, 17 Sep 2018 21:23:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHmME9qwRzuoo-3Hxahwu=Li2LCz06Uowaq1GFmkts6tsffM7w@mail.gmail.com>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel,apana.lists.os.linux.netdev
-Organization: Core
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+In-Reply-To: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 18 Sep 2018 07:23:40 +0300
+Message-ID: <CAHp75VcguYVeKMLGZ-S2JTvY0omSbBpjeqGNby+SzVqUoNdQiw@mail.gmail.com>
+Subject: Re: [RFC/PATCH 0/5] Support children for legacy device properties
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason:
+On Mon, Sep 17, 2018 at 9:18 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> The generic device properties APIs are very helpful as they allow abstracting
+> away details of the platform (whether it is ACPI, device tree, or legacy board
+> file), so that individual driver does not need separate code paths to support
+> all variants. However there are drivers that currently can not use generic
+> device properties API as they need notion of children properties, for example
+> gpio_keys driver, that expects every button to be described as a sub-node of
+> main device.
+>
+> This patch series introduces notion of sub-nodes for static properties and ties
+> it up with GPIO lookup tables so that they are usable with sub-nodes as well.
 
-Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> 
-> On Mon, Sep 17, 2018 at 7:26 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> OK, so let me summarize my remaining concerns as well. I may be a bit
->> more finicky than Andy, though.
-> 
-> Yes, and generally hostile to this whole initiative since the
-> beginning. But I am very grateful for your reviews nonetheless, and
-> I'll do my best to incorporate as much as is reasonable.
- 
->> I would like to urge Jason to
->> bear with us and bring this discussion to a close before resubmitting.
-> 
-> What I fear is that either:
-> - You don't like the Zinc initiative in one way or another, and the
-> desire to "keep discussing" and adding more things is less out of
-> their necessity and more out of a desire to stall it indefinitely.
-> - You're going to bikeshed and bikeshed and waste tons of time until
-> Zinc copies lots of the same design decisions from the present crypto
-> API.
+I like the idea.
+Though, I Cc'ed this to Mika and Sakari who might be interested to see
+and, perhaps, comment on it.
 
-That may be your view but from what I've read Ard has been very
-constructive in pointing out issues in your submission.  If your
-response to criticism is to dismiss them as hostile then I'm afraid
-that we will not be able to progress on this patch series.
+>
+> Thanks.
+>
+> --
+> Dmitry
+>
 
-Please keep in mind that this is a large project that has to support
-multiple users on one hand (not just WireGuard) and complex hardware
-acceleration drivers on the other.  Ard has been one of the most
-prolific contributors to the crypto code and his review should be
-taken seriously.
 
-Thanks,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+With Best Regards,
+Andy Shevchenko
