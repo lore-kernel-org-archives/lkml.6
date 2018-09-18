@@ -2,517 +2,183 @@ Return-Path: <SRS0=fL2C=MA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B64BECE567
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A117ECE567
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50FB21471
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:25:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/teJILr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50FB21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 94D6D20676
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 09:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D6D20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729463AbeIRO5K (ORCPT
+        id S1729562AbeIRO5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 10:57:10 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:46649 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbeIRO5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 10:57:09 -0400
-Received: by mail-yb1-f195.google.com with SMTP id y20-v6so498009ybi.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 02:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pAO9YuoKi9vX7O37Ub5W5rFv6m7pv8tLVXbnv7pRLEA=;
-        b=W/teJILrsLxPTD57nsYFSujEv3UVLG/DUkVFUW9M+zK+17a/Ze7wGDo6+/qb8ZkGbz
-         e6Lhg/vfCLCLEeQWuQwqN8tOEAoV2iedrvTLiv0uAKOzoAyRrcREUlJHG03egj+3mIum
-         ubM1sw7GJ8R/7iD9u8TC4oogbttC2M1s9cJgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pAO9YuoKi9vX7O37Ub5W5rFv6m7pv8tLVXbnv7pRLEA=;
-        b=nwsJb4u/h4FmHgJT+z19NxoS+q5Y4SdanDtczVE+pqWBdH0iWM+OQofn7e8hbhT51F
-         jZYSsWIK7Od3pN5Tg+4bhgnrIsT/h2pzQh7zDC9KAG773Nsm5GgBTFEJnKpYnJViuMpv
-         oVqbrFBQmsWea0/ZCzlv0IZTZa2bapiCbi7lCdoI14yuJsYrpfhSQkyjqct4tVbgKRj7
-         ZmloUY39iMc9cD4NGhPfG0KK+fAMuDt7QI3jU7CcG6unOBJDoQCRnmzN0iF+Eb9FP1U8
-         iNse5qbf+PLLfLHJX1TOYtVd7QM1WI+EM78i8VHDbqrB6kmiVMrUVQ4gT1G5atPomxfm
-         imQg==
-X-Gm-Message-State: APzg51DJahissyt35MNVgpi3bLPXDVCIEgVo1qRQc9i1RGocCpugkvIj
-        falcaGTF+TKMtTj5ZfeAUdBXyxGSSR3cNu7FR6/Gfw==
-X-Google-Smtp-Source: ANB0Vdawkia7rG/VG6hvrunZQVB0F5Z1Oq6ADdcMsAsJzgfjFfWOZ7X0E2UdMMPmS+Yj7hI4Vii8I3SkvgKqWVAvxYw=
-X-Received: by 2002:a25:2c89:: with SMTP id s131-v6mr648431ybs.378.1537262724639;
- Tue, 18 Sep 2018 02:25:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Tue, 18 Sep 2018 02:25:24
- -0700 (PDT)
-In-Reply-To: <20180810162026.GA14287@agluck-desk>
-References: <1533791115-3681-1-git-send-email-firoz.khan@linaro.org> <20180810162026.GA14287@agluck-desk>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Tue, 18 Sep 2018 14:55:24 +0530
-Message-ID: <CALxhOnjgKqwHGeUU6eEkDKbCTUQHmr9aCMGaVM+nzpdana+s4w@mail.gmail.com>
-Subject: Re: [PATCH 0/5] System call table generation support
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     linux-ia64@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 18 Sep 2018 10:57:52 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:59013 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727563AbeIRO5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 10:57:52 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42DyKD5Sl0z9ttC9;
+        Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id xCuAA5MR71qZ; Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42DyKD4vjWz9ttBY;
+        Tue, 18 Sep 2018 11:25:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9D44F8B7E2;
+        Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 5LVO20QicnM5; Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4EC178B7E1;
+        Tue, 18 Sep 2018 11:26:03 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 158DB718E8; Tue, 18 Sep 2018 09:26:03 +0000 (UTC)
+Message-Id: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/kgdb: add kgdb_arch_set/remove_breakpoint()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 18 Sep 2018 09:26:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10 August 2018 at 21:50, Luck, Tony <tony.luck@intel.com> wrote:
-> On Thu, Aug 09, 2018 at 10:35:10AM +0530, Firoz Khan wrote:
->> The purpose of this patch series is:
->> 1. We can easily add/modify/delete system call by changing entry
->> in syscall.tbl file. No need to manually edit many files.
->
-> I tried applying this to latest upstream as it was yesterday
-> HEAD = fedb8da96355f5f64 ("parisc: Define mb() and add memory barriers to assembler unlock sequences")
->
-> it built with no errors, but does not boot.  Init dies, so may be an
-> issue with not being able to make a system call???
->
-> Serial console log below.
+Generic implementation fails to remove breakpoints after init
+when CONFIG_STRICT_KERNEL_RWX is selected:
 
-Thanks for your reply :)
-Sorry for the delayed response :(
+[   13.251285] KGDB: BP remove failed: c001c338
+[   13.259587] kgdbts: ERROR PUT: end of test buffer on 'do_fork_test' line 8 expected OK got $E14#aa
+[   13.268969] KGDB: re-enter exception: ALL breakpoints killed
+[   13.275099] CPU: 0 PID: 1 Comm: init Not tainted 4.18.0-g82bbb913ffd8 #860
+[   13.282836] Call Trace:
+[   13.285313] [c60e1ba0] [c0080ef0] kgdb_handle_exception+0x6f4/0x720 (unreliable)
+[   13.292618] [c60e1c30] [c000e97c] kgdb_handle_breakpoint+0x3c/0x98
+[   13.298709] [c60e1c40] [c000af54] program_check_exception+0x104/0x700
+[   13.305083] [c60e1c60] [c000e45c] ret_from_except_full+0x0/0x4
+[   13.310845] [c60e1d20] [c02a22ac] run_simple_test+0x2b4/0x2d4
+[   13.316532] [c60e1d30] [c0081698] put_packet+0xb8/0x158
+[   13.321694] [c60e1d60] [c00820b4] gdb_serial_stub+0x230/0xc4c
+[   13.327374] [c60e1dc0] [c0080af8] kgdb_handle_exception+0x2fc/0x720
+[   13.333573] [c60e1e50] [c000e928] kgdb_singlestep+0xb4/0xcc
+[   13.339068] [c60e1e70] [c000ae1c] single_step_exception+0x90/0xac
+[   13.345100] [c60e1e80] [c000e45c] ret_from_except_full+0x0/0x4
+[   13.350865] [c60e1f40] [c000e11c] ret_from_syscall+0x0/0x38
+[   13.356346] Kernel panic - not syncing: Recursive entry to debugger
 
-I'll work on this issue now and will update you ASAP.
+This patch creates powerpc specific version of
+kgdb_arch_set_breakpoint() and kgdb_arch_remove_breakpoint()
+using patch_instruction()
 
-- Firoz
+Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/kgdb.h |  5 ++++-
+ arch/powerpc/kernel/kgdb.c      | 43 +++++++++++++++++++++++++++++++++--------
+ 2 files changed, 39 insertions(+), 9 deletions(-)
 
->
-> Linux version 4.18.0-rc8-generic-smp-9-g3484b4f4d494 (aegl@linux-bxb1) (gcc version 4.3.4 [gcc-4_3-branch revision 152973] (SUSE Linux)) #1 SMP Thu Aug 9 10:42:37 PDT 2018
-> EFI v2.10 by EDK II:
-> efi:  SALsystab=0x3e81e418  ACPI 2.0=0x3da42014  SMBIOS=0x3a3af000
-> booting generic kernel on platform dig
-> earlycon: uart0 at I/O port 0x3f8 (options '')
-> bootconsole [uart0] enabled
-> ACPI: Early table checksum verification disabled
-> ACPI: RSDP 0x000000003DA42014 000024 (v02 INTEL )
-> ACPI: XSDT 0x000000003DA42120 00004C (v01 INTEL  BXBIOH   00000002      01000013)
-> ACPI: FACP 0x000000003A3D2000 0000F4 (v04 INTEL  BXBIOH   00000002      00000000)
-> ACPI BIOS Warning (bug): 32/64X length mismatch in FADT/PmTimerBlock: 32/24 (20180531/tbfadt-569)
-> ACPI BIOS Warning (bug): 32/64X length mismatch in FADT/Gpe0Block: 128/64 (20180531/tbfadt-569)
-> ACPI BIOS Warning (bug): Invalid length for FADT/PmTimerBlock: 24, using default 32 (20180531/tbfadt-674)
-> ACPI: DSDT 0x000000003A3B0000 019928 (v01 INTEL  BXBIOH   00000002 INTL 20080926)
-> ACPI: FACS 0x000000003A4EA000 000040
-> ACPI: FACS 0x000000003A4EA000 000040
-> ACPI: APIC 0x000000003A3D0000 0002D0 (v01 INTEL  BXBIOH   00000002      00000000)
-> ACPI: SLIT 0x000000003A3CE000 00003C (v01 INTEL  BXBIOH   00000002      00000000)
-> ACPI: SPCR 0x000000003A3CC000 000050 (v01 INTEL  BXBIOH   00000002      00000000)
-> ACPI: SRAT 0x000000003A3CA000 000550 (v01 INTEL  BXBIOH   00000002      00000000)
-> ia64_native_iosapic_pcat_compat_init: Disabling PC-AT compatible 8259 interrupts
-> ACPI: Local APIC address (____ptrval____)
-> 32 CPUs available, 32 CPUs total
-> Number of logical nodes in system = 1
-> Number of memory chunks in system = 3
-> SMP: Allowing 32 CPUs, 0 hotplug CPUs
-> Initial ramdisk at: 0xe0000004faad3000 (5048585 bytes)
-> SAL 3.20:  version 0.0
-> SAL: AP wakeup using external interrupt vector 0xf0
-> MCA related initialization done
-> Virtual mem_map starts at 0x(____ptrval____)
-> Zone ranges:
->   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->   Normal   [mem 0x0000000100000000-0x00000004fbffffff]
-> Movable zone start for each node
-> Early memory node ranges
->   node   0: [mem 0x0000000001000000-0x000000003a39ffff]
->   node   0: [mem 0x000000003a3e0000-0x000000003a4dffff]
->   node   0: [mem 0x000000003a540000-0x000000003a59ffff]
->   node   0: [mem 0x000000003a6c0000-0x000000003a6dffff]
->   node   0: [mem 0x000000003a780000-0x000000003ac3ffff]
->   node   0: [mem 0x000000003acb0000-0x000000003ad4ffff]
->   node   0: [mem 0x000000003ad70000-0x000000003ad8ffff]
->   node   0: [mem 0x000000003adb0000-0x000000003adcffff]
->   node   0: [mem 0x000000003ae40000-0x000000003ae4ffff]
->   node   0: [mem 0x000000003ae60000-0x000000003ae7ffff]
->   node   0: [mem 0x000000003b280000-0x000000003b2dffff]
->   node   0: [mem 0x000000003b2f0000-0x000000003b39ffff]
->   node   0: [mem 0x000000003b3c0000-0x000000003b92ffff]
->   node   0: [mem 0x000000003b960000-0x000000003b97ffff]
->   node   0: [mem 0x000000003c0f0000-0x000000003c15ffff]
->   node   0: [mem 0x000000003c180000-0x000000003c20ffff]
->   node   0: [mem 0x000000003c230000-0x000000003c7dffff]
->   node   0: [mem 0x000000003c7f0000-0x000000003c88ffff]
->   node   0: [mem 0x000000003c8b0000-0x000000003c8bffff]
->   node   0: [mem 0x000000003c8e0000-0x000000003ca4ffff]
->   node   0: [mem 0x000000003ca60000-0x000000003caaffff]
->   node   0: [mem 0x000000003cac0000-0x000000003cc7ffff]
->   node   0: [mem 0x000000003cc90000-0x000000003cdcffff]
->   node   0: [mem 0x000000003cde0000-0x000000003ce2ffff]
->   node   0: [mem 0x000000003ce40000-0x000000003d9effff]
->   node   0: [mem 0x000000003da00000-0x000000003da3ffff]
->   node   0: [mem 0x000000003da50000-0x000000003e7fffff]
->   node   0: [mem 0x000000003e820000-0x000000003f8cffff]
->   node   0: [mem 0x000000003fdd0000-0x000000003fdeffff]
->   node   0: [mem 0x0000000100000000-0x00000003ffffffff]
->   node   0: [mem 0x0000000440000000-0x00000004faf9ffff]
->   node   0: [mem 0x00000004fb010000-0x00000004fb0bffff]
->   node   0: [mem 0x00000004fb0d0000-0x00000004fbffffff]
-> Initmem setup node 0 [mem 0x0000000001000000-0x00000004fbffffff]
-> Built 1 zonelists, mobility grouping on.  Total pages: 260199
-> Policy zone: Normal
-> Kernel command line: BOOT_IMAGE=scsi0:\efi\SuSE\l-generic-smp.gz  console=tty1 console=uart,io,0x3f8 intel_iommu=off root=/dev/sda3
-> DMAR: IOMMU disabled
-> Sorting __ex_table...
-> software IO TLB [mem 0x060a0000-0x0a0a0000] (64MB) mapped at [(____ptrval____)-(____ptrval____)]
-> Memory: 16541952K/16670656K available (15088K kernel code, 6042K rwdata, 2028K rodata, 1216K init, 7091K bss, 128704K reserved, 0K cma-reserved)
-> SLUB: HWalign=128, Order=0-3, MinObjects=0, CPUs=32, Nodes=1024
-> Hierarchical RCU implementation.
->         RCU event tracing is enabled.
->         RCU restricting CPUs from NR_CPUS=4096 to nr_cpu_ids=32.
-> RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=32
-> NR_IRQS: 1024
-> ia64_native_iosapic_pcat_compat_init: Disabling PC-AT compatible 8259 interrupts
-> ACPI: Local APIC address (____ptrval____)
-> PLATFORM int CPEI (0x3): GSI 22 (level, low) -> CPU 0 (0x0000) vector 30
-> PLATFORM int PMI (0x1): GSI 23 (edge, low) -> CPU 0 (0x0000) vector 0
-> register_intr: changing vector 39 from IO-SAPIC-edge to IO-SAPIC-level
->
-> clocksource: itc: mask: 0xffffffffffffffff max_cycles: 0xb881274fa3, max_idle_ns: 440795210636 ns
-> Console: colour VGA+ 80x25
-> console [tty1] enabled
-> ACPI: Core revision 20180531
-> Calibrating delay loop... 3641.34 BogoMIPS (lpj=7282688)
-> pid_max: default: 32768 minimum: 301
-> Dentry cache hash table entries: 2097152 (order: 8, 16777216 bytes)
-> Inode-cache hash table entries: 1048576 (order: 7, 8388608 bytes)
-> Mount-cache hash table entries: 32768 (order: 2, 262144 bytes)
-> Mountpoint-cache hash table entries: 32768 (order: 2, 262144 bytes)
-> Boot processor id 0x0/0x0
-> Hierarchical SRCU implementation.
-> smp: Bringing up secondary CPUs ...
-> Fixed BSP b0 value from CPU 1
-> CPU 1: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 61 cycles)
->
-> CPU 2: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 671 cycles)
->
-> CPU 3: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 667 cycles)
->
-> CPU 4: synchronized ITC with CPU 0 (last diff 2 cycles, maxerr 670 cycles)
->
-> CPU 5: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 667 cycles)
->
-> CPU 6: synchronized ITC with CPU 0 (last diff 2 cycles, maxerr 671 cycles)
->
-> CPU 7: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 666 cycles)
->
-> CPU 8: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 756 cycles)
->
-> CPU 9: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 751 cycles)
->
-> CPU 10: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 758 cycles)
->
-> CPU 11: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 751 cycles)
->
-> CPU 12: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 757 cycles)
->
-> CPU 13: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 752 cycles)
->
-> CPU 14: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 758 cycles)
->
-> CPU 15: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 752 cycles)
->
-> CPU 16: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 713 cycles)
->
-> CPU 17: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 706 cycles)
->
-> CPU 18: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 712 cycles)
->
-> CPU 19: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 706 cycles)
->
-> CPU 20: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 708 cycles)
->
-> CPU 21: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 706 cycles)
->
-> CPU 22: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 708 cycles)
->
-> CPU 23: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 706 cycles)
->
-> CPU 24: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 765 cycles)
->
-> CPU 25: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 758 cycles)
->
-> CPU 26: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 764 cycles)
->
-> CPU 27: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 758 cycles)
->
-> CPU 28: synchronized ITC with CPU 0 (last diff 1 cycles, maxerr 763 cycles)
->
-> CPU 29: synchronized ITC with CPU 0 (last diff -1 cycles, maxerr 758 cycles)
->
-> CPU 30: synchronized ITC with CPU 0 (last diff -3 cycles, maxerr 768 cycles)
->
-> CPU 31: synchronized ITC with CPU 0 (last diff 0 cycles, maxerr 758 cycles)
->
-> smp: Brought up 1 node, 32 CPUs
-> Total of 32 processors activated (116523.00 BogoMIPS).
-> random: fast init done
-> random: get_random_u32 called from bucket_table_alloc+0x100/0x2e0 with crng_init=1
-> SMBIOS 2.4 present.
-> DMI: Supermicro I8QBH/I8QBH, BIOS I8QBH 15.006.004RAS 2010/05/10
-> clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
-> futex hash table entries: 8192 (order: 4, 1048576 bytes)
-> NET: Registered protocol family 16
-> ACPI: bus type PCI registered
-> acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
-> HugeTLB registered 256 MiB page size, pre-allocated 0 pages
-> ACPI: Added _OSI(Module Device)
-> ACPI: Added _OSI(Processor Device)
-> ACPI: Added _OSI(3.0 _SCP Extensions)
-> ACPI: Added _OSI(Processor Aggregator Device)
-> ACPI: Added _OSI(Linux-Dell-Video)
-> ACPI: 1 ACPI AML tables successfully acquired and loaded
-> ACPI: Interpreter enabled
-> ACPI: (supports S0 S5)
-> ACPI: Using IOSAPIC for interrupt routing
-> ACPI: Enabled 11 GPEs in block 00 to 3F
-> ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-7f])
-> acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig Segments MSI]
-> acpi PNP0A08:00: PCIe port services disabled; not requesting _OSC control
-> PCI host bridge to bus 0000:00
-> pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
-> pci_bus 0000:00: root bus resource [io  0x1000-0x8fff window]
-> pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff]
-> pci_bus 0000:00: root bus resource [mem 0x000c0000-0x000fffff]
-> pci_bus 0000:00: root bus resource [mem 0xfec00000-0xfec3ffff]
-> pci_bus 0000:00: root bus resource [mem 0xfed1c000-0xfed1c0ff]
-> pci_bus 0000:00: root bus resource [mem 0xfed40000-0xfedfffff]
-> pci_bus 0000:00: root bus resource [mem 0x50000000-0x9fffffff window]
-> pci_bus 0000:00: root bus resource [mem 0x10000000000-0x100fffffffe]
-> pci_bus 0000:00: root bus resource [mem 0x10100000000-0x101fffffffe]
-> pci_bus 0000:00: root bus resource [mem 0x10200000000-0x102fffffffe]
-> pci_bus 0000:00: root bus resource [mem 0x10300000000-0x103fffffffe]
-> pci_bus 0000:00: root bus resource [bus 00-7f]
-> pci 0000:00:01.0: enabling Extended Tags
-> pci 0000:00:03.0: enabling Extended Tags
-> pci 0000:00:05.0: enabling Extended Tags
-> pci 0000:00:07.0: enabling Extended Tags
-> pci 0000:00:01.0: PCI bridge to [bus 01]
-> pci 0000:01:00.0: can't claim BAR 6 [mem 0xfffe0000-0xffffffff pref]: no compatible bridge window
-> pci 0000:01:00.1: can't claim BAR 6 [mem 0xfffe0000-0xffffffff pref]: no compatible bridge window
-> pci 0000:00:03.0: PCI bridge to [bus 02]
-> pci 0000:03:00.0: enabling Extended Tags
-> pci 0000:00:05.0: PCI bridge to [bus 03]
-> pci 0000:03:00.0: can't claim BAR 6 [mem 0xffe00000-0xffffffff pref]: no compatible bridge window
-> pci 0000:00:07.0: PCI bridge to [bus 04]
-> pci 0000:00:1c.0: PCI bridge to [bus 05]
-> pci 0000:00:1c.1: PCI bridge to [bus 06]
-> pci 0000:00:1c.2: PCI bridge to [bus 07]
-> pci 0000:00:1c.3: PCI bridge to [bus 08]
-> pci 0000:00:1c.4: PCI bridge to [bus 09]
-> pci 0000:00:1c.5: PCI bridge to [bus 0a]
-> pci_bus 0000:0b: extended config space not accessible
-> pci 0000:00:1e.0: PCI bridge to [bus 0b] (subtractive decode)
-> pci 0000:0b:04.0: can't claim BAR 6 [mem 0xfffe0000-0xffffffff pref]: no compatible bridge window
-> ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 *6 7 9 10 11 12 14 15)
-> ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKD] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKE] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKF] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKG] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Interrupt Link [LNKH] (IRQs 3 4 5 6 7 9 10 11 12 14 15) *0, disabled.
-> ACPI: PCI Root Bridge [PCI1] (domain 0000 [bus 80-ff])
-> acpi PNP0A08:01: _OSC: OS supports [ExtendedConfig Segments MSI]
-> acpi PNP0A08:01: PCIe port services disabled; not requesting _OSC control
-> PCI host bridge to bus 0000:80
-> pci_bus 0000:80: root bus resource [io  0x9000-0xffff window]
-> pci_bus 0000:80: root bus resource [mem 0xfec40000-0xfec7ffff]
-> pci_bus 0000:80: root bus resource [mem 0xa0000000-0xefffffff]
-> pci_bus 0000:80: root bus resource [mem 0x10400000000-0x104fffffffe]
-> pci_bus 0000:80: root bus resource [mem 0x10500000000-0x105fffffffe]
-> pci_bus 0000:80: root bus resource [mem 0x10600000000-0x106fffffffe]
-> pci_bus 0000:80: root bus resource [mem 0x10700000000-0x107fffffffe]
-> pci_bus 0000:80: root bus resource [bus 80-ff]
-> pci 0000:80:01.0: enabling Extended Tags
-> pci 0000:80:03.0: enabling Extended Tags
-> pci 0000:80:05.0: enabling Extended Tags
-> pci 0000:80:07.0: enabling Extended Tags
-> acpiphp: Slot [0] registered
-> pci 0000:80:01.0: PCI bridge to [bus 81]
-> pci 0000:81:00.0: can't claim BAR 6 [mem 0xfffe0000-0xffffffff pref]: no compatible bridge window
-> pci 0000:81:00.1: can't claim BAR 6 [mem 0xfffe0000-0xffffffff pref]: no compatible bridge window
-> acpiphp: Slot [0-1] registered
-> pci 0000:80:03.0: PCI bridge to [bus 82]
-> acpiphp: Slot [0-2] registered
-> pci 0000:83:00.0: enabling Extended Tags
-> pci 0000:80:05.0: PCI bridge to [bus 83]
-> pci 0000:83:00.0: can't claim BAR 6 [mem 0xffe00000-0xffffffff pref]: no compatible bridge window
-> acpiphp: Slot [0-3] registered
-> pci 0000:80:07.0: PCI bridge to [bus 84]
-> pci 0000:0b:04.0: vgaarb: setting as boot VGA device
-> pci 0000:0b:04.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
-> pci 0000:0b:04.0: vgaarb: bridge control possible
-> vgaarb: loaded
-> SCSI subsystem initialized
-> pps_core: LinuxPPS API ver. 1 registered
-> pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
-> PTP clock support registered
-> Registered efivars operations
-> random: crng init done
-> clocksource: Switched to clocksource itc
-> pnp: PnP ACPI init
-> system 00:01: [io  0x0500-0x053f] has been reserved
-> system 00:01: [io  0x0400-0x047f] has been reserved
-> system 00:01: [io  0x0800-0x081f] has been reserved
-> system 00:01: [mem 0xfed1c000-0xfed8bffe] could not be reserved
-> system 00:01: [mem 0xff000000-0xffffffff] has been reserved
-> system 00:01: [mem 0xfee00000-0xfeefffff] has been reserved
-> system 00:01: [mem 0xfea00000-0xfea0001f] has been reserved
-> system 00:01: [mem 0xfed1b000-0xfed1bfff] has been reserved
-> pnp: PnP ACPI: found 4 devices
-> NET: Registered protocol family 2
-> tcp_listen_portaddr_hash hash table entries: 8192 (order: 1, 131072 bytes)
-> TCP established hash table entries: 131072 (order: 4, 1048576 bytes)
-> TCP bind hash table entries: 65536 (order: 4, 1048576 bytes)
-> TCP: Hash tables configured (established 131072 bind 65536)
-> UDP hash table entries: 8192 (order: 2, 262144 bytes)
-> UDP-Lite hash table entries: 8192 (order: 2, 262144 bytes)
-> NET: Registered protocol family 1
-> GSI 16 (level, low) -> CPU 0 (0x0000) vector 49
-> GSI 16 (level, low) -> CPU 0 (0x0000) vector 49 unregistered
-> pci 0000:00:1a.0: quirk_usb_early_handoff+0x0/0x360 took 10857 usecs
-> GSI 17 (level, low) -> CPU 1 (0x0100) vector 49
-> GSI 17 (level, low) -> CPU 1 (0x0100) vector 49 unregistered
-> pci 0000:00:1a.1: quirk_usb_early_handoff+0x0/0x360 took 10689 usecs
-> GSI 18 (level, low) -> CPU 2 (0x0200) vector 49
-> GSI 18 (level, low) -> CPU 2 (0x0200) vector 49 unregistered
-> pci 0000:00:1a.2: quirk_usb_early_handoff+0x0/0x360 took 10682 usecs
-> GSI 18 (level, low) -> CPU 3 (0x0300) vector 49
-> GSI 18 (level, low) -> CPU 3 (0x0300) vector 49 unregistered
-> pci 0000:00:1a.7: quirk_usb_early_handoff+0x0/0x360 took 10698 usecs
-> GSI 16 (level, low) -> CPU 4 (0x0400) vector 49
-> GSI 16 (level, low) -> CPU 4 (0x0400) vector 49 unregistered
-> pci 0000:00:1d.0: quirk_usb_early_handoff+0x0/0x360 took 10697 usecs
-> GSI 17 (level, low) -> CPU 5 (0x0500) vector 49
-> GSI 17 (level, low) -> CPU 5 (0x0500) vector 49 unregistered
-> pci 0000:00:1d.1: quirk_usb_early_handoff+0x0/0x360 took 10686 usecs
-> GSI 18 (level, low) -> CPU 6 (0x0600) vector 49
-> GSI 18 (level, low) -> CPU 6 (0x0600) vector 49 unregistered
-> pci 0000:00:1d.2: quirk_usb_early_handoff+0x0/0x360 took 10696 usecs
-> GSI 16 (level, low) -> CPU 7 (0x0700) vector 49
-> GSI 16 (level, low) -> CPU 7 (0x0700) vector 49 unregistered
-> pci 0000:00:1d.7: quirk_usb_early_handoff+0x0/0x360 took 10690 usecs
-> pci 0000:0b:04.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
-> Trying to unpack rootfs image as initramfs...
-> Freeing initrd memory: 4864kB freed
-> PAL Information Facility v0.5
-> workingset: timestamp_bits=52 max_order=18 bucket_order=0
-> SGI XFS with security attributes, no debug enabled
-> Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
-> io scheduler noop registered
-> io scheduler deadline registered
-> io scheduler cfq registered (default)
-> io scheduler mq-deadline registered
-> io scheduler kyber registered
-> Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-> 00:02: ttyS0 at I/O 0x3f8 (irq = 44, base_baud = 115200) is a 16550A
-> console [ttyS0] enabled
-> console [ttyS0] enabled
-> bootconsole [uart0] disabled
-> bootconsole [uart0] disabled
-> 00:03: ttyS1 at I/O 0x2f8 (irq = 45, base_baud = 115200) is a 16550A
-> EFI Time Services Driver v0.4
-> brd: module loaded
-> Uniform Multi-Platform E-IDE driver
-> ide-gd driver 1.18
-> ide-cd driver 5.00
-> GSI 17 (level, low) -> CPU 8 (0x1000) vector 49
-> ata_piix 0000:00:1f.2: MAP [ P0 P2 P1 P3 ]
-> scsi host0: ata_piix
-> scsi host1: ata_piix
-> ata1: SATA max UDMA/133 cmd 0x4138 ctl 0x414c bmdma 0x4110 irq 50
-> ata2: SATA max UDMA/133 cmd 0x4130 ctl 0x4148 bmdma 0x4118 irq 50
-> ata_piix 0000:00:1f.5: MAP [ P0 -- P1 -- ]
-> scsi host2: ata_piix
-> scsi host3: ata_piix
-> ata3: SATA max UDMA/133 cmd 0x4128 ctl 0x4144 bmdma 0x40f0 irq 50
-> ata4: SATA max UDMA/133 cmd 0x4120 ctl 0x4140 bmdma 0x40f8 irq 50
-> e1000: Intel(R) PRO/1000 Network Driver - version 7.3.21-k8-NAPI
-> e1000: Copyright (c) 1999-2006 Intel Corporation.
-> igb: Intel(R) Gigabit Ethernet Network Driver - version 5.4.0-k
-> igb: Copyright (c) 2007-2014 Intel Corporation.
-> GSI 28 (level, low) -> CPU 9 (0x1100) vector 50
-> igb 0000:01:00.0: added PHC on eth0
-> igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
-> igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x4) 00:30:48:fe:19:3a
-> igb 0000:01:00.0: eth0: PBA No: Unknown
-> igb 0000:01:00.0: Using MSI-X interrupts. 8 rx queue(s), 8 tx queue(s)
-> GSI 40 (level, low) -> CPU 10 (0x1200) vector 60
-> ata3: SATA link down (SStatus 0 SControl 300)
-> ata4: SATA link down (SStatus 0 SControl 300)
-> ata2.00: SATA link down (SStatus 0 SControl 300)
-> ata2.01: SATA link down (SStatus 0 SControl 300)
-> igb 0000:01:00.1: added PHC on eth1
-> igb 0000:01:00.1: Intel(R) Gigabit Ethernet Network Connection
-> ata1.00: SATA link down (SStatus 0 SControl 300)
-> igb 0000:01:00.1: eth1: (PCIe:2.5Gb/s:Width x4) 00:30:48:fe:19:3b
-> ata1.01: SATA link down (SStatus 0 SControl 300)
-> igb 0000:01:00.1: eth1: PBA No: Unknown
-> igb 0000:01:00.1: Using MSI-X interrupts. 8 rx queue(s), 8 tx queue(s)
-> GSI 52 (level, low) -> CPU 11 (0x1300) vector 70
-> igb 0000:81:00.0: added PHC on eth2
-> igb 0000:81:00.0: Intel(R) Gigabit Ethernet Network Connection
-> igb 0000:81:00.0: eth2: (PCIe:2.5Gb/s:Width x4) 00:30:48:fe:19:b0
-> igb 0000:81:00.0: eth2: PBA No: Unknown
-> igb 0000:81:00.0: Using MSI-X interrupts. 8 rx queue(s), 8 tx queue(s)
-> GSI 64 (level, low) -> CPU 12 (0x1400) vector 80
-> igb 0000:81:00.1: added PHC on eth3
-> igb 0000:81:00.1: Intel(R) Gigabit Ethernet Network Connection
-> igb 0000:81:00.1: eth3: (PCIe:2.5Gb/s:Width x4) 00:30:48:fe:19:b1
-> igb 0000:81:00.1: eth3: PBA No: Unknown
-> igb 0000:81:00.1: Using MSI-X interrupts. 8 rx queue(s), 8 tx queue(s)
-> Fusion MPT base driver 3.04.20
-> Copyright (c) 1999-2008 LSI Corporation
-> Fusion MPT SPI Host driver 3.04.20
-> Fusion MPT SAS Host driver 3.04.20
-> GSI 26 (level, low) -> CPU 13 (0x1500) vector 90
-> mptbase: ioc0: Initiating bringup
-> ioc0: LSISAS1068E B3: Capabilities={Initiator}
-> scsi host4: ioc0: LSISAS1068E B3, FwRev=011a0000h, Ports=1, MaxQ=478, IRQ=92
-> mptsas: ioc0: attaching ssp device: fw_channel 0, fw_id 6, phy 6, sas_addr 0x5000c5000ecb8f49
-> scsi 4:0:0:0: Direct-Access     SEAGATE  ST9146802SS      0003 PQ: 0 ANSI: 5
-> GSI 50 (level, low) -> CPU 14 (0x1600) vector 91
-> sd 4:0:0:0: [sda] 286749488 512-byte logical blocks: (147 GB/137 GiB)
-> mptbase: ioc1: Initiating bringup
-> sd 4:0:0:0: [sda] Write Protect is off
-> sd 4:0:0:0: [sda] Write cache: enabled, read cache: enabled, supports DPO and FUA
->  sda: sda1 sda2 sda3
-> sd 4:0:0:0: [sda] Attached SCSI disk
-> ioc1: LSISAS1068E B3: Capabilities={Initiator}
-> scsi host5: ioc1: LSISAS1068E B3, FwRev=011a0000h, Ports=1, MaxQ=478, IRQ=93
-> mptsas: ioc1: attaching ssp device: fw_channel 0, fw_id 6, phy 6, sas_addr 0x5000c5000ecada69
-> scsi 5:0:0:0: Direct-Access     SEAGATE  ST9146802SS      0003 PQ: 0 ANSI: 5
-> EFI Variables Facility v0.08 2004-May-17
-> sd 5:0:0:0: [sdb] 286749488 512-byte logical blocks: (147 GB/137 GiB)
-> sd 5:0:0:0: [sdb] Write Protect is off
-> sd 5:0:0:0: [sdb] Write cache: enabled, read cache: enabled, supports DPO and FUA
->  sdb: sdb1 sdb2
-> sd 5:0:0:0: [sdb] Attached SCSI disk
-> NET: Registered protocol family 17
-> console [netcon0] enabled
-> netconsole: network logging started
-> Freeing unused kernel memory: 1216K
-> This architecture does not have kernel memory protection.
-> doing fast boot
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->
-> ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
->  ]---
+diff --git a/arch/powerpc/include/asm/kgdb.h b/arch/powerpc/include/asm/kgdb.h
+index 9db24e77b9f4..a9e098a3b881 100644
+--- a/arch/powerpc/include/asm/kgdb.h
++++ b/arch/powerpc/include/asm/kgdb.h
+@@ -26,9 +26,12 @@
+ #define BREAK_INSTR_SIZE	4
+ #define BUFMAX			((NUMREGBYTES * 2) + 512)
+ #define OUTBUFMAX		((NUMREGBYTES * 2) + 512)
++
++#define BREAK_INSTR		0x7d821008	/* twge r2, r2 */
++
+ static inline void arch_kgdb_breakpoint(void)
+ {
+-	asm(".long 0x7d821008"); /* twge r2, r2 */
++	asm(stringify_in_c(.long BREAK_INSTR));
+ }
+ #define CACHE_FLUSH_IS_SAFE	1
+ #define DBG_MAX_REG_NUM     70
+diff --git a/arch/powerpc/kernel/kgdb.c b/arch/powerpc/kernel/kgdb.c
+index 35e240a0a408..59c578f865aa 100644
+--- a/arch/powerpc/kernel/kgdb.c
++++ b/arch/powerpc/kernel/kgdb.c
+@@ -24,6 +24,7 @@
+ #include <asm/processor.h>
+ #include <asm/machdep.h>
+ #include <asm/debug.h>
++#include <asm/code-patching.h>
+ #include <linux/slab.h>
+ 
+ /*
+@@ -144,7 +145,7 @@ static int kgdb_handle_breakpoint(struct pt_regs *regs)
+ 	if (kgdb_handle_exception(1, SIGTRAP, 0, regs) != 0)
+ 		return 0;
+ 
+-	if (*(u32 *) (regs->nip) == *(u32 *) (&arch_kgdb_ops.gdb_bpt_instr))
++	if (*(u32 *)regs->nip == BREAK_INSTR)
+ 		regs->nip += BREAK_INSTR_SIZE;
+ 
+ 	return 1;
+@@ -441,16 +442,42 @@ int kgdb_arch_handle_exception(int vector, int signo, int err_code,
+ 	return -1;
+ }
+ 
++int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
++{
++	int err;
++	unsigned int instr;
++	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
++
++	err = probe_kernel_address(addr, instr);
++	if (err)
++		return err;
++
++	err = patch_instruction(addr, BREAK_INSTR);
++	if (err)
++		return -EFAULT;
++
++	*(unsigned int *)bpt->saved_instr = instr;
++
++	return 0;
++}
++
++int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
++{
++	int err;
++	unsigned int instr = *(unsigned int *)bpt->saved_instr;
++	unsigned int *addr = (unsigned int *)bpt->bpt_addr;
++
++	err = patch_instruction(addr, instr);
++	if (err)
++		return -EFAULT;
++
++	return 0;
++}
++
+ /*
+  * Global data
+  */
+-struct kgdb_arch arch_kgdb_ops = {
+-#ifdef __LITTLE_ENDIAN__
+-	.gdb_bpt_instr = {0x08, 0x10, 0x82, 0x7d},
+-#else
+-	.gdb_bpt_instr = {0x7d, 0x82, 0x10, 0x08},
+-#endif
+-};
++struct kgdb_arch arch_kgdb_ops;
+ 
+ static int kgdb_not_implemented(struct pt_regs *regs)
+ {
+-- 
+2.13.3
+
