@@ -4,80 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A702ECE564
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBDFECE564
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165A920867
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A9A20867
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 20:12:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hL62dVpb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165A920867
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TlknAMMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A9A20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbeISBqb (ORCPT
+        id S1730343AbeISBqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 21:46:31 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:36971 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729859AbeISBqa (ORCPT
+        Tue, 18 Sep 2018 21:46:42 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39534 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729859AbeISBqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 21:46:30 -0400
-Received: by mail-io1-f66.google.com with SMTP id v14-v6so2647346iob.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:12:18 -0700 (PDT)
+        Tue, 18 Sep 2018 21:46:42 -0400
+Received: by mail-io1-f68.google.com with SMTP id l7-v6so2640335iok.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8Vcu+k05xsaSqoSC4RQzKbNc6+lR9/LYik9Nar7hIWE=;
-        b=hL62dVpbEEmQ5RXEFPpAVrQWkhKCho+2MlzmLShcJmRZOvxThsC/HQxCYOvdRUpHvh
-         7mVhFgw9TO+r5Xu26ZLzrMqeXRNHXiTbu5QQjRKQbw1SUMvIKoOPRvvZIK278vW94Fvo
-         W3tpLpH32FLmSMcJp+1fI3g4zhAn7JvNoQ+V0=
+        bh=iHCoAHEmQ6Gp0tLNwfJQ2Vi5Zuiw8x6oFo5bdagm7zM=;
+        b=TlknAMMZjoK/hetTHLiPwY2QR9lLzz9EhuRBF8i7h3pOGAPctzOOvsvZlfcpGApHMN
+         atZeEWU9Erq1jmPtQwRaNmH90skgdqlAdGtqIOQo2iHwNGpLal4xpwLXB7DC7RkmHGXP
+         LF7US3T0S3z5OPNjzOns9Keffj0TLSNMfOK/Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8Vcu+k05xsaSqoSC4RQzKbNc6+lR9/LYik9Nar7hIWE=;
-        b=LYZOz1jEJVHOOzvpxKq5ZnjvRXYLxJzyE+cbipBOZ8O62dD/8TDsmVNVJ8rykcmf2D
-         4vL8rCz/H3cPZDdlqSnULKsqTNRzfyOqI2ra5xlkYwEJeN8YdA6On97XSieoCBExO9WN
-         CFR9Hw+TGXrcmJhpUatsNUm1+v+sf4giHFVG2DUHYJGazXZugv31hJQFQc/hLj8q1BrA
-         E4JR8kSELYgsnArHA8ahxzQDerVzNCOw8F34tirKW74iRbrMNcROXLqXQM77MtVu4Zjr
-         6gz70Elaf1DFykwM/rkNNn4rk6FyMZFB/EBR/qaxNBmpHshGR0TGMw9IwrZvUF6L3xmP
-         u+kQ==
-X-Gm-Message-State: APzg51APeylae+voVbCp7GHOG0F/yyhHT6kRG1Y0ZzXsk+qCuJEfI3NH
-        mAQMUsyXCuvjcBEQm3GFsrgE9F/pPWE=
-X-Google-Smtp-Source: ANB0VdbUeZaNf2iLrX8LEaYxrOJ+v6YKQtn7xeVpCcs6QN7hkafnaStHH0q9uprv6lSnhkjv8vPfqQ==
-X-Received: by 2002:a6b:3954:: with SMTP id g81-v6mr25462726ioa.225.1537301538364;
-        Tue, 18 Sep 2018 13:12:18 -0700 (PDT)
-Received: from mail-it0-f42.google.com (mail-it0-f42.google.com. [209.85.214.42])
-        by smtp.gmail.com with ESMTPSA id a14-v6sm6626515ioh.45.2018.09.18.13.12.17
+        bh=iHCoAHEmQ6Gp0tLNwfJQ2Vi5Zuiw8x6oFo5bdagm7zM=;
+        b=eu3y4KFzw3xkSFOh5yFchGnAw3epT2lKijJF1SbvXzKWVH1Y0/9pQdLrHKx4iauFpD
+         qmXMqjBlfFEqdpjq/PjJg4kAhU6oV4VBvzD11gwuUZdv5uWINghN2m9uszy5hNr28bo0
+         BjUnhdz1M6ysu7oGpHZ1peaQhvcmYFoOgnJ8jyz+cB7SMWDUoU3GHohtA8XQ/JbYUJBF
+         iUl5lGYhQCITdO/W0Av2P5ZWTCqDiY7I9HfG5Y+1dUX5l8jWjb6v/4hPmcqwAaYqMG3r
+         O/ESY5I/DzBiJxpjYJPvlZ3n17mXLRu8dChqU0cO9Gen+qZLyVoMOk9CK11IsGr/2oJv
+         Qt3w==
+X-Gm-Message-State: APzg51BKGeA160jZQZNLjkiAgBIvbCgDZ1oPL/iM4DbusCQbS0m9jQOI
+        c6ZQdJDOQXT7Omgc33Ip/rNV2Fg9dTg=
+X-Google-Smtp-Source: ANB0VdaQlGnqHwfdu5Fid9bYgqhkjS8++Xe59b5btxUHiXoYHVP0ZOz4BUR6pNlujQoDkdXJpCl9+w==
+X-Received: by 2002:a6b:7a49:: with SMTP id k9-v6mr27598655iop.238.1537301549925;
+        Tue, 18 Sep 2018 13:12:29 -0700 (PDT)
+Received: from mail-it0-f54.google.com (mail-it0-f54.google.com. [209.85.214.54])
+        by smtp.gmail.com with ESMTPSA id i26-v6sm6345046ioj.33.2018.09.18.13.12.28
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 13:12:17 -0700 (PDT)
-Received: by mail-it0-f42.google.com with SMTP id x79-v6so15187644ita.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:12:17 -0700 (PDT)
-X-Received: by 2002:a02:ab8e:: with SMTP id t14-v6mr22811566jan.102.1537301536912;
- Tue, 18 Sep 2018 13:12:16 -0700 (PDT)
+        Tue, 18 Sep 2018 13:12:29 -0700 (PDT)
+Received: by mail-it0-f54.google.com with SMTP id h1-v6so4738311itj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 13:12:28 -0700 (PDT)
+X-Received: by 2002:a24:cf06:: with SMTP id y6-v6mr18323938itf.5.1537301548546;
+ Tue, 18 Sep 2018 13:12:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <1537294047-12093-1-git-send-email-dkota@codeaurora.org> <1537294047-12093-4-git-send-email-dkota@codeaurora.org>
-In-Reply-To: <1537294047-12093-4-git-send-email-dkota@codeaurora.org>
+References: <1537294047-12093-1-git-send-email-dkota@codeaurora.org> <1537294047-12093-5-git-send-email-dkota@codeaurora.org>
+In-Reply-To: <1537294047-12093-5-git-send-email-dkota@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 18 Sep 2018 13:12:04 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UJo0yL-MiQyJrS85p-RFs3TqWdagVpjCdtZfEkgYCYbg@mail.gmail.com>
-Message-ID: <CAD=FV=UJo0yL-MiQyJrS85p-RFs3TqWdagVpjCdtZfEkgYCYbg@mail.gmail.com>
-Subject: Re: [PATCH V4 3/4] spi: spi-geni-qcom: Add SPI driver support for
- GENI based QUP
+Date:   Tue, 18 Sep 2018 13:12:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VP5xKY8GSwcsb3WBinb+wn75AL8Z2Z=fWau_KAx7iztQ@mail.gmail.com>
+Message-ID: <CAD=FV=VP5xKY8GSwcsb3WBinb+wn75AL8Z2Z=fWau_KAx7iztQ@mail.gmail.com>
+Subject: Re: [PATCH V4 4/4] spi: spi-geni-qcom: Plugin API to assert and
+ de-assert Chipselect
 To:     Dilip Kota <dkota@codeaurora.org>
 Cc:     Stephen Boyd <swboyd@chromium.org>,
         Mark Brown <broonie@kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-spi <linux-spi@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,72 +87,23 @@ Hi,
 
 On Tue, Sep 18, 2018 at 11:09 AM Dilip Kota <dkota@codeaurora.org> wrote:
 >
-> From: Girish Mahadevan <girishm@codeaurora.org>
+> Plugin set cs API to the SPI framework so that
+> framework can do chipselect assert de-assert
+> during  SPI transfers.
 >
-> This driver supports GENI based SPI Controller in the Qualcomm SOCs. The
-> Qualcomm Generic Interface (GENI) is a programmable module supporting a
-> wide range of serial interfaces including SPI. This driver supports SPI
-> operations using FIFO mode of transfer.
->
-> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
 > Signed-off-by: Dilip Kota <dkota@codeaurora.org>
 > ---
-> Addressing all the reviewer commets given in Patchset1.
-> Summerizing the chages below:
->
->         Move prepare_transfer_hardware to probe
->         Fix the unbind failure
->         Add Spinlock
->         Use readl/writel() instead of _relaxed()
->         Remove __func__ in dev_err
->         Declare register variables as u32
->         Don't initialize variables and then overwrite them
->         Remove unused step
->         Remove IRQ entry in geni struct
->         Remove extra paranthesis
->         Reframe probe errors
->         Change the tx_fifo_width naming in handle_rx and handle_tx
->         Declare spi_geni_master as 'mas' in complete driver.
->         Correcting the punctuation in the comments.
->         Adding comments in the code while setting Tx WaterMark Register.
->         get_spi_clk_cfg() fixes
->         Rewrite the geni_spi_handle_tx() and geni_spi_handle_rx()
->
-> Regarding the suspend/resume and loopback failures, i am working to update in next patch series
-> drivers/spi/Kconfig               |  12 +
->  drivers/spi/Makefile              |   1 +
->  drivers/spi/spi-geni-qcom.c       | 653 ++++++++++++++++++++++++++++++++++++++
->  include/linux/spi/spi-geni-qcom.h |  14 +
->  4 files changed, 680 insertions(+)
+>  drivers/spi/spi-geni-qcom.c | 65 ++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 46 insertions(+), 19 deletions(-)
 
-I've confirmed that all the feedback I'm aware of from previous
-versions of this patch has now been addressed, except as noted above:
+As I mentioned in out-of-band I don't see a huge reason why this can't
+be squashed into patch #3.  Logically patch #3 has a bug where it
+can't handle setting the chip select without a non-zero transfer and
+that bug isn't fixed until patch #4.  ...but if folks really feel like
+it should be a separate patch then I won't object too loudly since the
+end result is the same.
 
-* suspend callback still looks a little wonky.
-* loopback doesn't actually work
-
-IMO it would be OK to land this patch and address the suspend callback
-/ loopback issues in later patches, but obviously that's for Mark to
-decide.
-
-NOTE: for this patch to land it must be based on a tree that includes
-the patch ("soc: qcom: geni: Make version macros simpler") [1] in
-order to compile.  It would also be nice if it was also based upon the
-patches ("soc: qcom: geni: Don't ignore clk_round_rate() errors in
-geni_se_clk_tbl_get()") [2] and ("soc: qcom: geni:
-geni_se_clk_freq_match() should always accept multiples") [3].  Those
-aren't needed for things to compile but are technically needed for
-correctness.  +Andy Gross has said he'll put that the above 3 patches
-in his tree in a way that it would be easy to pull in
-
-Mark: it would be super if you had a chance to take a look at this
-patch now and see what you think.
-
-[1] https://lkml.kernel.org/r/20180518224750.232742-1-swboyd@chromium.org
-[2] https://lkml.kernel.org/r/20180906224906.93752-1-dianders@chromium.org
-[3] https://lkml.kernel.org/r/20180906224906.93752-2-dianders@chromium.org
-
-With all that said, I'm happy adding:
+...so feel free to add:
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Tested-by: Douglas Anderson <dianders@chromium.org>
