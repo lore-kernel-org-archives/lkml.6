@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9715FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF8DECE565
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5493D2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5493D2146D
+	by mail.kernel.org (Postfix) with ESMTP id 701A42146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Sep 2018 21:52:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701A42146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730608AbeISD0c (ORCPT
+        id S1730652AbeISD0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Sep 2018 23:26:32 -0400
-Received: from mga14.intel.com ([192.55.52.115]:59619 "EHLO mga14.intel.com"
+        Tue, 18 Sep 2018 23:26:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:59629 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbeISD03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Sep 2018 23:26:29 -0400
+        id S1730601AbeISD0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Sep 2018 23:26:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 14:51:53 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 14:51:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,391,1531810800"; 
-   d="scan'208";a="87270312"
+   d="scan'208";a="87270407"
 Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Sep 2018 14:51:39 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 18 Sep 2018 14:51:54 -0700
 From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Jean Delvare <jdelvare@suse.com>,
@@ -71,9 +71,9 @@ Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         James Feist <james.feist@linux.intel.com>,
         Jason M Biils <jason.m.bills@linux.intel.com>,
         Vernon Mauery <vernon.mauery@linux.intel.com>
-Subject: [PATCH v8 02/12] Documentation: ioctl: Add ioctl numbers for PECI subsystem
-Date:   Tue, 18 Sep 2018 14:51:14 -0700
-Message-Id: <20180918215124.14003-3-jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v8 07/12] dt-bindings: mfd: Add a document for PECI client MFD
+Date:   Tue, 18 Sep 2018 14:51:19 -0700
+Message-Id: <20180918215124.14003-8-jae.hyun.yoo@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
 References: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
@@ -82,41 +82,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit updates ioctl-number.txt to reflect ioctl numbers used
-by the PECI subsystem.
+This commit adds a dt-bindings document for PECI client MFD.
 
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Tomohiro Kusumi <kusumi.tomohiro@gmail.com>
-Cc: Eric Sandeen <sandeen@redhat.com>
-Cc: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Cc: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrew Jeffery <andrew@aj.id.au>
 Cc: James Feist <james.feist@linux.intel.com>
 Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+Cc: Joel Stanley <joel@jms.id.au>
 Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
 Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 ---
- Documentation/ioctl/ioctl-number.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/mfd/intel-peci-client.txt        | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/intel-peci-client.txt
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index 13a7c999c04a..d9577593647e 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -325,6 +325,8 @@ Code  Seq#(hex)	Include File		Comments
- 0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
- 0xB5	00-0F	uapi/linux/rpmsg.h	<mailto:linux-remoteproc@vger.kernel.org>
- 0xB6	all	linux/fpga-dfl.h
-+0xB7	00-0F	uapi/linux/peci-ioctl.h	PECI subsystem
-+					<mailto:jae.hyun.yoo@linux.intel.com>
- 0xC0	00-0F	linux/usb/iowarrior.h
- 0xCA	00-0F	uapi/misc/cxl.h
- 0xCA	10-2F	uapi/misc/ocxl.h
+diff --git a/Documentation/devicetree/bindings/mfd/intel-peci-client.txt b/Documentation/devicetree/bindings/mfd/intel-peci-client.txt
+new file mode 100644
+index 000000000000..cb341e363add
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/intel-peci-client.txt
+@@ -0,0 +1,34 @@
++* Intel PECI client bindings
++
++PECI (Platform Environment Control Interface) is a one-wire bus interface that
++provides a communication channel from PECI clients in Intel processors and
++chipset components to external monitoring or control devices. PECI is designed
++to support the following sideband functions:
++
++- Processor and DRAM thermal management
++- Platform Manageability
++- Processor Interface Tuning and Diagnostics
++- Failure Analysis
++
++Required properties:
++- compatible : Should be "intel,peci-client".
++- reg        : Should contain address of a client CPU. Address range of CPU
++	       clients starts from 0x30 based on PECI specification.
++
++Example:
++	peci-bus@0 {
++		compatible = "vendor,soc-peci";
++		reg = <0x0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		peci-client@30 {
++			compatible = "intel,peci-client";
++			reg = <0x30>;
++		};
++
++		peci-client@31 {
++			compatible = "intel,peci-client";
++			reg = <0x31>;
++		};
++	};
 -- 
 2.18.0
 
