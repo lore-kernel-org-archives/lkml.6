@@ -2,152 +2,192 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DB3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC38DECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B3321521
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FC4208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ59Vvny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B3321521
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhHHpTs+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FC4208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733117AbeITAKQ (ORCPT
+        id S1733126AbeITAPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 20:10:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727804AbeITAKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 20:10:16 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6171C2150E;
-        Wed, 19 Sep 2018 18:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537381865;
-        bh=9Z7OU8IH2N1n/1Tj502z0FM/MVZSjzRzEZxx7GrfNpk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QZ59Vvnyb6ybhdtpIdx4y/MWiZ7wXg4OCK5ko3vIbxdHwMJpky2H++GogioXecXbZ
-         6NpBf2b5Obc2Kj5Wq5jh4d8+oquxdcSXE5w14B1kwaOlT5RNgRcCmJgxFPt5JyJDPj
-         ldoClKBt1z245ZCbkj6TscvXNxoj0HVD0Fz9Y6DU=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 28809140260; Wed, 19 Sep 2018 15:31:03 -0300 (-03)
-Date:   Wed, 19 Sep 2018 15:31:03 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, kim.phillips@arm.com,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v5 9/9] perf, tools, script: Support total cycles count
-Message-ID: <20180919183103.GI31812@kernel.org>
-References: <20180918123214.26728-1-andi@firstfloor.org>
- <20180918123214.26728-10-andi@firstfloor.org>
+        Wed, 19 Sep 2018 20:15:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41891 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731253AbeITAPH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 20:15:07 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s15-v6so3149428pgv.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QK0fSJ9W1CsbaEjWiJzh+XXQd6y2ykltB+2jjetf5xU=;
+        b=FhHHpTs+7+hMtcEkjRJ3f7P0CNg5ITLfhEJnbT7ks7yJgCY3X34q0WTD7PipKH8QDm
+         NnONnI9YruyDIWkCWa6Qo2H4B7+denrlSbc/7mV8rD7fHAy++HmPVbLD+gQ0wheNw85f
+         0sURi6gM2q3witmt6m1l32Rr0BhpLCLfiAXOj7Ksesu1mKM5UnzBNQDT9NGJqHF4A5Jb
+         pgM2/0sCmB3OKeh/43dIOU5CYqzhKc2a0M7tjjsKzpEiHW1fUi/IK3gbTtqKSn51I3BO
+         EB0bT7A/6GUVA0XKJqPMhiFRLnEHcywdWojkZnnSa+XLmifJyXHE9HNtwpasPAtEaRGX
+         HqaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QK0fSJ9W1CsbaEjWiJzh+XXQd6y2ykltB+2jjetf5xU=;
+        b=YoykyQbrOulpnrQvwOoud/qa/1QPGRRCIu8uqvENtQTCH2ksQDQ97gPtwSnNviUZ2U
+         os5CkwjW7i7T/qumvw+o9prmcdOdnS82mFTUTJLVZ9DGW/239t7cbjD3WogkydOk+dbC
+         bwFK81Df8xTuh3BNK+KFAli8t09DMA4yT0vh3NOHW9VB33KFeDBrDJ9jW8ZnBEqCT1e3
+         DP59LbCGsyAedjHttCdVQ5H6Mdy0uLnt1poZ3BjiW1tekiJbfbbX2HF4L9/BGp3oy631
+         ZpK1L6vCZRu/khJQykerQQUIJNHrCI1i5XnRMzM0p26xmSFtPYKAq2aM6SSxhZNCbrQE
+         56lQ==
+X-Gm-Message-State: APzg51DF+UL/mVpcWB7bkSQMg2dE8DXUI3+uaLWWCeGhpx+AklFxJlmf
+        UyppuCNzJLq2zJNozCbOa2pgCYPVbwauT4XDFFkYbQ==
+X-Google-Smtp-Source: ANB0VdYaBOYYW381G5pf0iE7ujpph5SZBXHhd9iZLqUbOMov+jm7HhisOKr3815gQK4x+MmAF5XJSTSebdVRPBVei4M=
+X-Received: by 2002:a63:2605:: with SMTP id m5-v6mr32138366pgm.225.1537382156482;
+ Wed, 19 Sep 2018 11:35:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918123214.26728-10-andi@firstfloor.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180919053829.4858-1-natechancellor@gmail.com>
+ <20180919102944.GA15014@e107981-ln.cambridge.arm.com> <CAKwvOd=ughACX1DVPrk9N-qhe_ww4hCu3FkuDTVOq+MUEuGUbA@mail.gmail.com>
+ <20180919175849.GA8787@flashbox>
+In-Reply-To: <20180919175849.GA8787@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 19 Sep 2018 11:35:45 -0700
+Message-ID: <CAKwvOdkQGHvE4JgfwZ2Hvk0HowBFvTBWwBSpkVtKX4U4iBEg=w@mail.gmail.com>
+Subject: Re: [PATCH] PCI: kirin: Fix section mismatch warning
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     lorenzo.pieralisi@arm.com, songxiaowei@hisilicon.com,
+        wangbinghui@hisilicon.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Sep 18, 2018 at 05:32:14AM -0700, Andi Kleen escreveu:
-> From: Andi Kleen <ak@linux.intel.com>
-> 
-> For perf script brstackinsn also print a running cycles count.
-> This makes it easier to calculate cycle deltas for code sections
-> measured with LBRs.
-> 
-> % perf record -b -a sleep 1
-> % perf script -F +brstackinsn
-> ...
->         _dl_sysdep_start+330:
->         00007eff9f20583a        insn: 75 c4                     # PRED 24 cycles [24]
->         00007eff9f205800        insn: 48 83 e8 03
->         00007eff9f205804        insn: 48 83 f8 1e
->         00007eff9f205808        insn: 77 26
->         00007eff9f20580a        insn: 48 63 04 81
->         00007eff9f20580e        insn: 48 01 c8
->         00007eff9f205811        insn: ff e0                     # MISPRED 31 cycles [7] 0.71 IPC
->         00007eff9f2059c0        insn: 44 8b 62 08
->         00007eff9f2059c4        insn: e9 67 fe ff ff            # PRED 55 cycles [24] 0.04 IPC
->         00007eff9f205830        insn: 48 83 c2 10
->         00007eff9f205834        insn: 48 8b 02
->         00007eff9f205837        insn: 48 85 c0
->         00007eff9f20583a        insn: 75 c4                     # PRED 68 cycles [13] 0.23 IPC
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> ---
->  tools/perf/builtin-script.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 3b73c3226141..84895c861b84 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -913,7 +913,7 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
->  
->  static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
->  			    struct perf_insn *x, u8 *inbuf, int len,
-> -			    int insn, FILE *fp)
-> +			    int insn, FILE *fp, int *total_cycles)
->  {
->  	int printed = fprintf(fp, "\t%016" PRIx64 "\t%-30s\t#%s%s%s%s", ip,
->  			      dump_insn(x, ip, inbuf, len, NULL),
-> @@ -922,7 +922,8 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
->  			      en->flags.in_tx ? " INTX" : "",
->  			      en->flags.abort ? " ABORT" : "");
->  	if (en->flags.cycles) {
-> -		printed += fprintf(fp, " %d cycles", en->flags.cycles);
-> +		*total_cycles += en->flags.cycles;
-> +		printed += fprintf(fp, " %d cycles [%d]", *total_cycles, en->flags.cycles);
->  		if (insn)
->  			printed += fprintf(fp, " %.2f IPC", (float)insn / en->flags.cycles);
->  	}
-> @@ -979,6 +980,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
->  	u8 buffer[MAXBB];
->  	unsigned off;
->  	struct symbol *lastsym = NULL;
-> +	int total_cycles = 0;
->  
->  	if (!(br && br->nr))
->  		return 0;
-> @@ -999,7 +1001,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
->  		printed += ip__fprintf_sym(br->entries[nr - 1].from, thread,
->  					   x.cpumode, x.cpu, &lastsym, attr, fp);
->  		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
-> -					    &x, buffer, len, 0, fp);
-> +					    &x, buffer, len, 0, fp, &total_cycles);
->  	}
->  
->  	/* Print all blocks */
-> @@ -1027,7 +1029,9 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
->  
->  			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
->  			if (ip == end) {
-> -				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
-> +				printed += ip__fprintf_jump(ip, &br->entries[i],
-> +						&x, buffer + off, len - off,
-> +						insn, fp, &total_cycles);
+On Wed, Sep 19, 2018 at 10:58 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Wed, Sep 19, 2018 at 10:35:55AM -0700, Nick Desaulniers wrote:
+> > On Wed, Sep 19, 2018 at 3:29 AM Lorenzo Pieralisi
+> > <lorenzo.pieralisi@arm.com> wrote:
+> > >
+> > > Xiaowei, Binghui,
+> > >
+> > > On Tue, Sep 18, 2018 at 10:38:29PM -0700, Nathan Chancellor wrote:
+> > > > WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
+> > > > the function kirin_pcie_probe() to the function
+> > > > .init.text:kirin_add_pcie_port()
+> > > > The function kirin_pcie_probe() references
+> > > > the function __init kirin_add_pcie_port().
+> > > > This is often because kirin_pcie_probe lacks a __init
+> > > > annotation or the annotation of kirin_add_pcie_port is wrong.
+> > > >
+> > > > Remove '__init' from kirin_add_pcie_port so there is no mismatch.
+> > >
+> > > I think that instead of removing __init section tag we should add
+> > > it to kirin_pcie_probe().
+> >
+> > A bunch of these functions have a single call site, with a mix of __init:
+> >
+> > kirin_pcie_probe() ->
+> >   kirin_add_pcie_port() ->  // __init
+> >     kirin_pcie_add_msi()
+> >
+> > But it looks like probe functions should be marked init:
+> > $ cd drivers; grep -r __init | grep probe
+> >
+> > seems to turn up quite a lot of *probe() functions that are marked __init.
+> > https://www.tldp.org/LDP/lkmpg/2.4/html/x281.htm has more info, and
+> > from reading that, it seems that it's a no-op for a module that's
+> > marked loadable.
+> >
+> > So I agree; __init should be added to kirin_pcie_probe(), but also
+> > kirin_pcie_add_msi().  That way if the module is statically compiled
+> > into the kernel image, these functions with a single call site get
+> > cleaned up after init.
+> >
+> > Nathan, would you mind sending a v2?
+> >
+>
+> Hi Nick and Lorenzo,
+>
+> I had tested adding __init to both kirin_pcie_probe and
+> kirin_pcie_add_msi but ran into this warning:
+>
+> WARNING: vmlinux.o(.data+0x68b78): Section mismatch in reference from
+> the variable kirin_pcie_driver to the function
 
-Please don't reflow these things like that, just align the next line
-with the new thing, parses quicker when reviewing.
+I think we want builtin_platform_driver_probe() here.
 
-- Arnaldo
+Try removing the probe reference from the declaration of
+kirin_pcie_driver, and then calling
+
+builtin_platform_driver_probe(kirin_pcie_driver, kirin_pcie_probe);
+
+Does that fix the section mismatches, while keeping as much in __init
+as possible?
+
+> .init.text:kirin_pcie_probe()
+> The variable kirin_pcie_driver references
+> the function __init kirin_pcie_probe()
+>
+> Doing a quick 'grep -r __init | grep platform_driver' doesn't show any
+> 'static struct platform_driver' constructs marked as __init, leading me
+> to believe this patch is the proper solution.
+>
+> I'm happy to hear otherwise, thank you both for the quick responses,
+> Nathan
+>
+> > >
+> > > Please let me know and ACK accordingly.
+> > >
+> > > Lorenzo
+> > >
+> > > > Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+> > > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > ---
+> > > >  drivers/pci/controller/dwc/pcie-kirin.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > index 5352e0c3be82..9b599296205d 100644
+> > > > --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> > > > @@ -467,8 +467,8 @@ static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > -static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+> > > > -                                   struct platform_device *pdev)
+> > > > +static int kirin_add_pcie_port(struct dw_pcie *pci,
+> > > > +                            struct platform_device *pdev)
+> > > >  {
+> > > >       int ret;
+> > > >
+> > > > --
+> > > > 2.19.0
+> > > >
+> >
+> >
+> >
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
 
 
 
->  				break;
->  			} else {
->  				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
-> -- 
-> 2.17.1
+-- 
+Thanks,
+~Nick Desaulniers
