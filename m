@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF798ECE566
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE08DC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A617821521
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4FA20867
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:21:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Djc6bI6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A617821521
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxzQxtXO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4FA20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387455AbeITEA4 (ORCPT
+        id S2387539AbeITEBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:00:56 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38615 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387400AbeITEA4 (ORCPT
+        Thu, 20 Sep 2018 00:01:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33638 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387400AbeITEA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:00:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id x17-v6so3349369pfh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:20:55 -0700 (PDT)
+        Thu, 20 Sep 2018 00:00:57 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y18-v6so93126pge.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=25gV/yr+DQaieOUd7LXdpHMVharUDBC9tXEOJxeQeO8=;
-        b=Djc6bI6BMMVojfSs9W39ToJZ753bA6PsqPD81ey1/C6zHiIfxmZW6YnXtHhub/fUNm
-         7HMSwb/5oxeFPv89MelgsJ76rIoRbPpkKQjuQSkDhXcmrMVXJXFvLri/s5j7QEj5CvVv
-         Y5Tty7RqTw+A7oAp+29XLZVaByP+2HFlecf5c=
+        bh=lOCO4EDC8Q7oDBzPlggldAfccotE1FhuTN71HpuLTTI=;
+        b=dxzQxtXOMt24gp9Kdm/pMZ4LveTazVeLqdhF0qSrKiMNHtcJ44NVLQzl9NBf+hGERr
+         JhaKkEzKDIC4UUM4N51wTgrXmUhXBu5rFIbe7nDqq/HjP0dKHAXUBMbLAquaY8pySmiy
+         itRyPU2Xdg6pKq0p+JcgiptMxGSHBVQbyWTsE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=25gV/yr+DQaieOUd7LXdpHMVharUDBC9tXEOJxeQeO8=;
-        b=WzxdcVJ0JzChuxJbfshNR+qeeVuCuK1MZBMZKnW0zIeKbfz0RA6zayTlqLcRohTe5+
-         Jv3msIXp/75LIhbz75ZVXFOWIeExPhtOqbplJ/QJnS2+/FdBMlcT3eR+lyNIr6xn1ac1
-         rKWS+jANNzi6n+yuVAXijld5sAp78xYdHl+TDy89SasAV7lsQHOdOqxe+Y0HHXYMhgMt
-         8vQJ0QsV9r6yKL1Veug9EMPmkeXRjKGEFk6Rsu/II93NJ+cgV4Ouzx7JUBXOKAGq3CW8
-         s2QhnyN2mR2S/yjGI6ef+3SxToRXg7xP/bBBVJEJ/5gMqmY0ywS4xezYQEkaNWpMYsK6
-         fhSA==
-X-Gm-Message-State: APzg51D3dREZbpqhdshr2Zt7ZsWe+NwUUJfjUeNU/YQ5rO1uUipDI0jN
-        TXnpeqAPfqhKb3rUF3VUDvjnSg==
-X-Google-Smtp-Source: ANB0VdbnIvHZfHKwjt12/ZMC4gDh+MnJZSinZAWMt77a/ti42fjrtALCbyoQD6ymS14FPdNT8bPyeg==
-X-Received: by 2002:a63:26c6:: with SMTP id m189-v6mr33939143pgm.70.1537395655114;
-        Wed, 19 Sep 2018 15:20:55 -0700 (PDT)
+        bh=lOCO4EDC8Q7oDBzPlggldAfccotE1FhuTN71HpuLTTI=;
+        b=AbyOLE2ynofNsduz6jxWWRYAQ3lfe0jaQ2e1NnaZDU4BvSAXjY+MbSWYpKDIHi8OL3
+         JrRL3i0xElrP5Km3fkcNB5pWHhttsgqusqgE8CPtS3A3pude6uva0dQ+oXL71YdGvGxL
+         007IwZUVO21j5wYPiu0LJjJhtBQeBjJIs71pWBAGG5RR/W4OGglD00JNF5CAgNzhPUMd
+         GT2gQcan6yfg0tc+liNJBuY1HCeSExzPr4t0BGCIDj9obf8+MpbK1oUFfB2WjwCsBU31
+         30ptmFXdOhHaAhn0arWG7M9kcvjG7Jwpmoml1tsjE0G/QL4HGcO5zbz1KPGtEzKcoC/c
+         uOWA==
+X-Gm-Message-State: APzg51CHR1DV37p7qX1bme9W+Bj+GrK/vXsHnqcw5XsPm/TxnuiEvOX7
+        5Xy+TfPK8/XzJRk0/4RIc+aKbg6bvyQ=
+X-Google-Smtp-Source: ANB0VdaL1SAy6f+k+QqxgnNOtaMzq9r0+V5SBrXriQSGTNP4raT39QMHeqYwfQq/s0SG59BTbXBKeA==
+X-Received: by 2002:a62:225d:: with SMTP id i90-v6mr37923089pfi.246.1537395656692;
+        Wed, 19 Sep 2018 15:20:56 -0700 (PDT)
 Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id k23-v6sm23996094pgl.42.2018.09.19.15.20.54
+        by smtp.gmail.com with ESMTPSA id f11-v6sm32580232pfa.131.2018.09.19.15.20.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 15:20:54 -0700 (PDT)
+        Wed, 19 Sep 2018 15:20:56 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 08/12] cpufreq: mvebu: Remove OPPs using dev_pm_opp_remove()
-Date:   Wed, 19 Sep 2018 15:20:27 -0700
-Message-Id: <883071c4bd9a6e45bf0b5e45575d110eaeb2e6d0.1537394233.git.viresh.kumar@linaro.org>
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 09/12] OPP: Don't remove dynamic OPPs from _dev_pm_opp_remove_table()
+Date:   Wed, 19 Sep 2018 15:20:28 -0700
+Message-Id: <2a4eb7358aba6beff7fa23f028c733310756e525.1537394233.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1537394233.git.viresh.kumar@linaro.org>
 References: <cover.1537394233.git.viresh.kumar@linaro.org>
@@ -78,44 +77,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dev_pm_opp_cpumask_remove_table() is going to change in the next commit
-and will not remove dynamic OPPs automatically. They must be removed
-with a call to dev_pm_opp_remove().
+Only one platform was depending on this feature and it is already
+updated now. Stop removing dynamic OPPs from _dev_pm_opp_remove_table().
+This simplifies lot of paths and removes unnecessary parameters.
 
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/cpufreq/mvebu-cpufreq.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/opp/core.c | 20 +++++---------------
+ drivers/opp/cpu.c  |  9 +++------
+ drivers/opp/of.c   | 12 ++++++------
+ drivers/opp/opp.h  |  6 +++---
+ 4 files changed, 17 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/cpufreq/mvebu-cpufreq.c b/drivers/cpufreq/mvebu-cpufreq.c
-index 31513bd42705..6d33a639f902 100644
---- a/drivers/cpufreq/mvebu-cpufreq.c
-+++ b/drivers/cpufreq/mvebu-cpufreq.c
-@@ -84,9 +84,10 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index b555121b878b..2319ad4a0177 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1759,14 +1759,10 @@ int dev_pm_opp_unregister_notifier(struct device *dev,
+ EXPORT_SYMBOL(dev_pm_opp_unregister_notifier);
  
- 		ret = dev_pm_opp_add(cpu_dev, clk_get_rate(clk) / 2, 0);
- 		if (ret) {
-+			dev_pm_opp_remove(cpu_dev, clk_get_rate(clk));
- 			clk_put(clk);
- 			dev_err(cpu_dev, "Failed to register OPPs\n");
--			goto opp_register_failed;
-+			return ret;
+ /*
+- * Free OPPs either created using static entries present in DT or even the
+- * dynamically added entries based on remove_all param.
++ * Free OPPs either created using static entries present in DT.
+  */
+-void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev,
+-			      bool remove_all)
++void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev)
+ {
+-	struct dev_pm_opp *opp, *tmp;
+-
+ 	/* Protect dev_list */
+ 	mutex_lock(&opp_table->lock);
+ 
+@@ -1775,12 +1771,6 @@ void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev,
+ 		/* Free static OPPs */
+ 		_put_opp_list_kref(opp_table);
+ 
+-		/* Free dynamic OPPs */
+-		list_for_each_entry_safe(opp, tmp, &opp_table->opp_list, node) {
+-			if (remove_all)
+-				dev_pm_opp_put(opp);
+-		}
+-
+ 		/*
+ 		 * The OPP table is getting removed, drop the performance state
+ 		 * constraints.
+@@ -1795,7 +1785,7 @@ void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev,
+ 	mutex_unlock(&opp_table->lock);
+ }
+ 
+-void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all)
++void _dev_pm_opp_find_and_remove_table(struct device *dev)
+ {
+ 	struct opp_table *opp_table;
+ 
+@@ -1812,7 +1802,7 @@ void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all)
+ 		return;
+ 	}
+ 
+-	_dev_pm_opp_remove_table(opp_table, dev, remove_all);
++	_dev_pm_opp_remove_table(opp_table, dev);
+ 
+ 	dev_pm_opp_put_opp_table(opp_table);
+ }
+@@ -1826,6 +1816,6 @@ void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all)
+  */
+ void dev_pm_opp_remove_table(struct device *dev)
+ {
+-	_dev_pm_opp_find_and_remove_table(dev, true);
++	_dev_pm_opp_find_and_remove_table(dev);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_remove_table);
+diff --git a/drivers/opp/cpu.c b/drivers/opp/cpu.c
+index 36586f66cd83..ab6d07e78945 100644
+--- a/drivers/opp/cpu.c
++++ b/drivers/opp/cpu.c
+@@ -108,7 +108,7 @@ void dev_pm_opp_free_cpufreq_table(struct device *dev,
+ EXPORT_SYMBOL_GPL(dev_pm_opp_free_cpufreq_table);
+ #endif	/* CONFIG_CPU_FREQ */
+ 
+-void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, bool of,
++void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask,
+ 				      int last_cpu)
+ {
+ 	struct device *cpu_dev;
+@@ -127,10 +127,7 @@ void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, bool of,
+ 			continue;
  		}
  
- 		ret = dev_pm_opp_set_sharing_cpus(cpu_dev,
-@@ -99,11 +100,5 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
- 
- 	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
- 	return 0;
--
--opp_register_failed:
--	/* As registering has failed remove all the opp for all cpus */
--	dev_pm_opp_cpumask_remove_table(cpu_possible_mask);
--
--	return ret;
+-		if (of)
+-			dev_pm_opp_of_remove_table(cpu_dev);
+-		else
+-			dev_pm_opp_remove_table(cpu_dev);
++		_dev_pm_opp_find_and_remove_table(cpu_dev);
+ 	}
  }
- device_initcall(armada_xp_pmsu_cpufreq_init);
+ 
+@@ -144,7 +141,7 @@ void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, bool of,
+  */
+ void dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask)
+ {
+-	_dev_pm_opp_cpumask_remove_table(cpumask, false, -1);
++	_dev_pm_opp_cpumask_remove_table(cpumask, -1);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_cpumask_remove_table);
+ 
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index aaa4bab69846..861cc75de329 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -279,7 +279,7 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
+  */
+ void dev_pm_opp_of_remove_table(struct device *dev)
+ {
+-	_dev_pm_opp_find_and_remove_table(dev, false);
++	_dev_pm_opp_find_and_remove_table(dev);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
+ 
+@@ -432,7 +432,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np,
+ 		if (ret) {
+ 			dev_err(dev, "%s: Failed to add OPP, %d\n", __func__,
+ 				ret);
+-			_dev_pm_opp_remove_table(opp_table, dev, false);
++			_dev_pm_opp_remove_table(opp_table, dev);
+ 			of_node_put(np);
+ 			goto put_opp_table;
+ 		}
+@@ -453,7 +453,7 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np,
+ 		dev_err(dev, "Not all nodes have performance state set (%d: %d)\n",
+ 			count, pstate_count);
+ 		ret = -ENOENT;
+-		_dev_pm_opp_remove_table(opp_table, dev, false);
++		_dev_pm_opp_remove_table(opp_table, dev);
+ 		goto put_opp_table;
+ 	}
+ 
+@@ -507,7 +507,7 @@ static int _of_add_opp_table_v1(struct device *dev)
+ 		if (ret) {
+ 			dev_err(dev, "%s: Failed to add OPP %ld (%d)\n",
+ 				__func__, freq, ret);
+-			_dev_pm_opp_remove_table(opp_table, dev, false);
++			_dev_pm_opp_remove_table(opp_table, dev);
+ 			break;
+ 		}
+ 		nr -= 2;
+@@ -618,7 +618,7 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_add_table_indexed);
+  */
+ void dev_pm_opp_of_cpumask_remove_table(const struct cpumask *cpumask)
+ {
+-	_dev_pm_opp_cpumask_remove_table(cpumask, true, -1);
++	_dev_pm_opp_cpumask_remove_table(cpumask, -1);
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_opp_of_cpumask_remove_table);
+ 
+@@ -653,7 +653,7 @@ int dev_pm_opp_of_cpumask_add_table(const struct cpumask *cpumask)
+ 				 __func__, cpu, ret);
+ 
+ 			/* Free all other OPPs */
+-			_dev_pm_opp_cpumask_remove_table(cpumask, true, cpu);
++			_dev_pm_opp_cpumask_remove_table(cpumask, cpu);
+ 			break;
+ 		}
+ 	}
+diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+index 9274116c90e4..98dd7d39e1ad 100644
+--- a/drivers/opp/opp.h
++++ b/drivers/opp/opp.h
+@@ -194,13 +194,13 @@ void _get_opp_table_kref(struct opp_table *opp_table);
+ int _get_opp_count(struct opp_table *opp_table);
+ struct opp_table *_find_opp_table(struct device *dev);
+ struct opp_device *_add_opp_dev(const struct device *dev, struct opp_table *opp_table);
+-void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev, bool remove_all);
+-void _dev_pm_opp_find_and_remove_table(struct device *dev, bool remove_all);
++void _dev_pm_opp_remove_table(struct opp_table *opp_table, struct device *dev);
++void _dev_pm_opp_find_and_remove_table(struct device *dev);
+ struct dev_pm_opp *_opp_allocate(struct opp_table *opp_table);
+ void _opp_free(struct dev_pm_opp *opp);
+ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp, struct opp_table *opp_table, bool rate_not_available);
+ int _opp_add_v1(struct opp_table *opp_table, struct device *dev, unsigned long freq, long u_volt, bool dynamic);
+-void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, bool of, int last_cpu);
++void _dev_pm_opp_cpumask_remove_table(const struct cpumask *cpumask, int last_cpu);
+ struct opp_table *_add_opp_table(struct device *dev);
+ void _put_opp_list_kref(struct opp_table *opp_table);
+ 
 -- 
 2.14.1
 
