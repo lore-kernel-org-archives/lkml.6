@@ -2,26 +2,25 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EDAECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8624FECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C239214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:26:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C239214C2
+	by mail.kernel.org (Postfix) with ESMTP id 4B044214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:26:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B044214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731510AbeISRDW (ORCPT
+        id S1731495AbeISRDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 19 Sep 2018 13:03:22 -0400
 Received: from mga06.intel.com ([134.134.136.31]:57783 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727820AbeISRDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731466AbeISRDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 13:03:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -29,16 +28,16 @@ Received: from orsmga007.jf.intel.com ([10.7.209.58])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 04:25:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
-   d="scan'208";a="74247654"
+   d="scan'208";a="74247618"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.98])
-  by orsmga007.jf.intel.com with ESMTP; 19 Sep 2018 04:25:38 -0700
+  by orsmga007.jf.intel.com with ESMTP; 19 Sep 2018 04:25:34 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] perf intel-pt: Implement decoder flags for trace begin / end
-Date:   Wed, 19 Sep 2018 14:23:38 +0300
-Message-Id: <20180919112338.20347-7-adrian.hunter@intel.com>
+Subject: [PATCH 4/6] perf tools: Improve thread_stack__process() for trace begin / end
+Date:   Wed, 19 Sep 2018 14:23:36 +0300
+Message-Id: <20180919112338.20347-5-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919112338.20347-1-adrian.hunter@intel.com>
 References: <20180919112338.20347-1-adrian.hunter@intel.com>
@@ -48,160 +47,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, the decoder would indicate begin / end by a branch from / to
-zero. That hides useful information, in particular when a trace ends with a
-call. That happens when using address filters, for example:
-
-$ perf record -e intel_pt/cyc,mtc_period=0,noretcomp/u --filter='filter main @ /bin/uname ' uname
-Linux
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.031 MB perf.data ]
-
-Before:
-
-$ perf script --itrace=cre -Ftime,flags,ip,sym,symoff,addr --ns
- 7249.622183310:   tr strt         0 [unknown] =>   401590 main+0x0
- 7249.622183311:   call       4015b9 main+0x29 =>        0 [unknown]
- 7249.622183711:   tr strt         0 [unknown] =>   4015be main+0x2e
- 7249.622183714:   call       4015c8 main+0x38 =>        0 [unknown]
- 7249.622247731:   tr strt         0 [unknown] =>   4015cd main+0x3d
- 7249.622247760:   call       4015d7 main+0x47 =>        0 [unknown]
- 7249.622248340:   tr strt         0 [unknown] =>   4015dc main+0x4c
- 7249.622248341:   call       4015e1 main+0x51 =>        0 [unknown]
- 7249.622248681:   tr strt         0 [unknown] =>   4015e6 main+0x56
- 7249.622248682:   call       4015eb main+0x5b =>        0 [unknown]
- 7249.622248970:   tr strt         0 [unknown] =>   4015f0 main+0x60
- 7249.622248971:   call       401612 main+0x82 =>        0 [unknown]
- 7249.622249757:   tr strt         0 [unknown] =>   401617 main+0x87
- 7249.622249770:   call       401847 main+0x2b7 =>        0 [unknown]
- 7249.622250606:   tr strt         0 [unknown] =>   40184c main+0x2bc
- 7249.622250612:   call       4019bf main+0x42f =>        0 [unknown]
- 7249.622256823:   tr strt         0 [unknown] =>   4019c4 main+0x434
- 7249.622256863:   call       4019f5 main+0x465 =>        0 [unknown]
- 7249.622264217:   tr strt         0 [unknown] =>   4019fa main+0x46a
- 7249.622264235:   call       401832 main+0x2a2 =>        0 [unknown]
-
-After:
-
-$ perf script --itrace=cre -Ftime,flags,ip,sym,symoff,addr --ns
- 7249.622183310:   tr strt              0 [unknown] =>   401590 main+0x0
- 7249.622183311:   tr end  call    4015b9 main+0x29 =>   401ef0 set_program_name+0x0
- 7249.622183711:   tr strt              0 [unknown] =>   4015be main+0x2e
- 7249.622183714:   tr end  call    4015c8 main+0x38 =>   4014b0 setlocale@plt+0x0
- 7249.622247731:   tr strt              0 [unknown] =>   4015cd main+0x3d
- 7249.622247760:   tr end  call    4015d7 main+0x47 =>   4012d0 bindtextdomain@plt+0x0
- 7249.622248340:   tr strt              0 [unknown] =>   4015dc main+0x4c
- 7249.622248341:   tr end  call    4015e1 main+0x51 =>   4012b0 textdomain@plt+0x0
- 7249.622248681:   tr strt              0 [unknown] =>   4015e6 main+0x56
- 7249.622248682:   tr end  call    4015eb main+0x5b =>   404340 atexit+0x0
- 7249.622248970:   tr strt              0 [unknown] =>   4015f0 main+0x60
- 7249.622248971:   tr end  call    401612 main+0x82 =>   401320 getopt_long@plt+0x0
- 7249.622249757:   tr strt              0 [unknown] =>   401617 main+0x87
- 7249.622249770:   tr end  call    401847 main+0x2b7 =>   401360 uname@plt+0x0
- 7249.622250606:   tr strt              0 [unknown] =>   40184c main+0x2bc
- 7249.622250612:   tr end  call    4019bf main+0x42f =>   401b10 print_element+0x0
- 7249.622256823:   tr strt              0 [unknown] =>   4019c4 main+0x434
- 7249.622256863:   tr end  call    4019f5 main+0x465 =>   401340 __overflow@plt+0x0
- 7249.622264217:   tr strt              0 [unknown] =>   4019fa main+0x46a
- 7249.622264235:   tr end  call    401832 main+0x2a2 =>   401520 exit@plt+0x0
+thread_stack__process() is used to create call paths for database export.
+Improve the handling of trace begin / end to allow for a trace that ends in
+a call.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- .../util/intel-pt-decoder/intel-pt-decoder.c  | 34 +++++++++++++------
- 1 file changed, 23 insertions(+), 11 deletions(-)
+ tools/perf/util/thread-stack.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-index d404bed7003a..58f6a9ceb590 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1165,7 +1165,7 @@ static int intel_pt_walk_tip(struct intel_pt_decoder *decoder)
- 		decoder->pge = false;
- 		decoder->continuous_period = false;
- 		decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
--		decoder->state.to_ip = 0;
-+		decoder->state.type |= INTEL_PT_TRACE_END;
- 		return 0;
- 	}
- 	if (err == INTEL_PT_RETURN)
-@@ -1179,9 +1179,13 @@ static int intel_pt_walk_tip(struct intel_pt_decoder *decoder)
- 			decoder->continuous_period = false;
- 			decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			decoder->state.from_ip = decoder->ip;
--			decoder->state.to_ip = 0;
--			if (decoder->packet.count != 0)
-+			if (decoder->packet.count == 0) {
-+				decoder->state.to_ip = 0;
-+			} else {
-+				decoder->state.to_ip = decoder->last_ip;
- 				decoder->ip = decoder->last_ip;
-+			}
-+			decoder->state.type |= INTEL_PT_TRACE_END;
- 		} else {
- 			decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			decoder->state.from_ip = decoder->ip;
-@@ -1208,7 +1212,8 @@ static int intel_pt_walk_tip(struct intel_pt_decoder *decoder)
- 			decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			decoder->ip = to_ip;
- 			decoder->state.from_ip = decoder->ip;
--			decoder->state.to_ip = 0;
-+			decoder->state.to_ip = to_ip;
-+			decoder->state.type |= INTEL_PT_TRACE_END;
- 			return 0;
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index cea28b9074c1..45a97d15c6c8 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -357,7 +357,7 @@ void call_return_processor__free(struct call_return_processor *crp)
+ 
+ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 				 u64 timestamp, u64 ref, struct call_path *cp,
+-				 bool no_call)
++				 bool no_call, bool trace_end)
+ {
+ 	struct thread_stack_entry *tse;
+ 	int err;
+@@ -375,6 +375,7 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 	tse->branch_count = ts->branch_count;
+ 	tse->cp = cp;
+ 	tse->no_call = no_call;
++	tse->trace_end = trace_end;
+ 
+ 	return 0;
+ }
+@@ -448,7 +449,7 @@ static int thread_stack__bottom(struct thread *thread, struct thread_stack *ts,
+ 		return -ENOMEM;
+ 
+ 	return thread_stack__push_cp(thread->ts, ip, sample->time, ref, cp,
+-				     true);
++				     true, false);
+ }
+ 
+ static int thread_stack__no_call_return(struct thread *thread,
+@@ -480,7 +481,7 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 			if (!cp)
+ 				return -ENOMEM;
+ 			return thread_stack__push_cp(ts, 0, sample->time, ref,
+-						     cp, true);
++						     cp, true, false);
  		}
- 		intel_pt_log_at("ERROR: Conditional branch when expecting indirect branch",
-@@ -1640,14 +1645,15 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
+ 	} else if (thread_stack__in_kernel(ts) && sample->ip < ks) {
+ 		/* Return to userspace, so pop all kernel addresses */
+@@ -505,7 +506,7 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 		return -ENOMEM;
  
- 		case INTEL_PT_TIP_PGD:
- 			decoder->state.from_ip = decoder->ip;
--			decoder->state.to_ip = 0;
--			if (decoder->packet.count != 0) {
-+			if (decoder->packet.count == 0) {
-+				decoder->state.to_ip = 0;
-+			} else {
- 				intel_pt_set_ip(decoder);
--				intel_pt_log("Omitting PGD ip " x64_fmt "\n",
--					     decoder->ip);
-+				decoder->state.to_ip = decoder->ip;
- 			}
- 			decoder->pge = false;
- 			decoder->continuous_period = false;
-+			decoder->state.type |= INTEL_PT_TRACE_END;
+ 	err = thread_stack__push_cp(ts, sample->addr, sample->time, ref, cp,
+-				    true);
++				    true, false);
+ 	if (err)
+ 		return err;
+ 
+@@ -525,7 +526,7 @@ static int thread_stack__trace_begin(struct thread *thread,
+ 
+ 	/* Pop trace end */
+ 	tse = &ts->stack[ts->cnt - 1];
+-	if (tse->cp->sym == NULL && tse->cp->ip == 0) {
++	if (tse->trace_end) {
+ 		err = thread_stack__call_return(thread, ts, --ts->cnt,
+ 						timestamp, ref, false);
+ 		if (err)
+@@ -554,7 +555,7 @@ static int thread_stack__trace_end(struct thread_stack *ts,
+ 	ret_addr = sample->ip + sample->insn_len;
+ 
+ 	return thread_stack__push_cp(ts, ret_addr, sample->time, ref, cp,
+-				     false);
++				     false, true);
+ }
+ 
+ int thread_stack__process(struct thread *thread, struct comm *comm,
+@@ -604,6 +605,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 	ts->last_time = sample->time;
+ 
+ 	if (sample->flags & PERF_IP_FLAG_CALL) {
++		bool trace_end = sample->flags & PERF_IP_FLAG_TRACE_END;
+ 		struct call_path_root *cpr = ts->crp->cpr;
+ 		struct call_path *cp;
+ 		u64 ret_addr;
+@@ -621,7 +623,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		if (!cp)
+ 			return -ENOMEM;
+ 		err = thread_stack__push_cp(ts, ret_addr, sample->time, ref,
+-					    cp, false);
++					    cp, false, trace_end);
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
+ 		if (!sample->ip || !sample->addr)
  			return 0;
- 
- 		case INTEL_PT_TIP_PGE:
-@@ -1661,6 +1667,7 @@ static int intel_pt_walk_fup_tip(struct intel_pt_decoder *decoder)
- 				intel_pt_set_ip(decoder);
- 				decoder->state.to_ip = decoder->ip;
- 			}
-+			decoder->state.type |= INTEL_PT_TRACE_BEGIN;
- 			return 0;
- 
- 		case INTEL_PT_TIP:
-@@ -1739,6 +1746,7 @@ static int intel_pt_walk_trace(struct intel_pt_decoder *decoder)
- 			intel_pt_set_ip(decoder);
- 			decoder->state.from_ip = 0;
- 			decoder->state.to_ip = decoder->ip;
-+			decoder->state.type |= INTEL_PT_TRACE_BEGIN;
- 			return 0;
- 		}
- 
-@@ -2077,9 +2085,13 @@ static int intel_pt_walk_to_ip(struct intel_pt_decoder *decoder)
- 			decoder->pge = decoder->packet.type != INTEL_PT_TIP_PGD;
- 			if (intel_pt_have_ip(decoder))
- 				intel_pt_set_ip(decoder);
--			if (decoder->ip)
--				return 0;
--			break;
-+			if (!decoder->ip)
-+				break;
-+			if (decoder->packet.type == INTEL_PT_TIP_PGE)
-+				decoder->state.type |= INTEL_PT_TRACE_BEGIN;
-+			if (decoder->packet.type == INTEL_PT_TIP_PGD)
-+				decoder->state.type |= INTEL_PT_TRACE_END;
-+			return 0;
- 
- 		case INTEL_PT_FUP:
- 			if (intel_pt_have_ip(decoder))
 -- 
 2.17.1
 
