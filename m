@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAD1C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FFEECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37CC621524
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D101D21522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="hB2ODxoW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37CC621524
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Kz3jOFqO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D101D21522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387456AbeITDpC (ORCPT
+        id S2387472AbeITDpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:45:02 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45621 "EHLO
+        Wed, 19 Sep 2018 23:45:05 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37982 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733235AbeITDpC (ORCPT
+        with ESMTP id S1733235AbeITDpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:45:02 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p52-v6so6145400eda.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:04 -0700 (PDT)
+        Wed, 19 Sep 2018 23:45:04 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h33-v6so6182816edb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Fs5UFE/HY2e8DYvOOnhEO+Vn3hqK5fCSlLvW6URjl6I=;
-        b=hB2ODxoWssQUoQ5/gKKy5JThiOKigOWQ80hRWs0puFOG/05a1bF+KQ0htM4Hg5h2Sf
-         hFO5DTCpAXj0e2toQnV3qigiL53oGpAdFOOLTW1uLG6QCpHEmJw4PDRSTRFTdvBfNbWe
-         +gzcanXOi9gC7JsOBbzBXyUrKNdA0+9tIXwUs=
+        bh=NUlRhFFUn+OBNdcKE38oMHBd/eRPdho70t2mDPjGSPY=;
+        b=Kz3jOFqOe4w9HYjNpf0N5dD/BXdzDYiU5Kwf/d2NcYFql/dbDA+Za0/LeBu8vu2/uX
+         rWkZwiPXJD4ov0VVPUPcW5Rkm0ydfrJmb9pKJKWrmjBZyPRrxd/gOzaq1e8u386g3EEi
+         +aMme/Nxu721aIjkKex6vOJm6YUEroFxzAaV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Fs5UFE/HY2e8DYvOOnhEO+Vn3hqK5fCSlLvW6URjl6I=;
-        b=JHHs3XMarkaoNsa4M8Q3P1vzY0NgRRNUAmIPQM3YpzT+NaA8BBxZeY0E8KNt3L0b6I
-         UECa0+VOGqIFGpJHJc8+SBk5Khr+duD0/l3nt56pX38+6+qMfQLXVxxZFWj2Zta+PzLY
-         jQQc+9iWuUWoiiUEeyUCTq/SDrAY1vpSCsqrQucb9hnfmJ16yQLZ6+/4IB0GYimZGgvt
-         keWfhq+GSTQ4i7MPPTgGIT74wXkBLylcMvQhgDoUxz6vgsUThKkIMvvrZ8ljwRCgfu1d
-         Tu1mDADHLg5AFwHb5TASlrOyyFy7zNW2OpBXJLaFAV4z2BUMDa3y1ZkLCZNqjwNASwTC
-         MmSw==
-X-Gm-Message-State: APzg51B0+9ncl4pDGVcovlx3+FFD5N7ugQxK6SZkabzQM9HmpUrEqvdr
-        wemOjLQMk4Lk+EPM2nooE1/vgA==
-X-Google-Smtp-Source: ANB0Vday4qk23jjv/pBC4TFePWKDPmHwqxfhHuohhm+7xBNwh2K5I83kQxaTo/rSV5yuxnytj5FjkQ==
-X-Received: by 2002:a50:d01a:: with SMTP id j26-v6mr63249314edf.15.1537394704261;
-        Wed, 19 Sep 2018 15:05:04 -0700 (PDT)
+        bh=NUlRhFFUn+OBNdcKE38oMHBd/eRPdho70t2mDPjGSPY=;
+        b=ndRqkzvzCqA28OS+Ver32v25l+AGf0jgvvcgMVztlUafWR5NrjoJ/QzStH3BX6HG42
+         ARSBeZhsSTp+Ns6ARGxghsODcg0UIp+nNuWOFFLjE11wtL4bXrw9QtATZFvPcS3ZsWHR
+         4HEKtYPN+aCGaudya5ws+bVQ72UqR7ZNmr3dVQbziU5xQSu0LUBYiOxWd9C2AanKqiFd
+         YwbyxOGAWffeCeqAcYME4Ta22unay0DKSEVurvuRTPxw5nZfBMjYZ/KDZekGU6ZZHH+z
+         mLaHmFrLr3Rre+s3NSAA3MudAFBjrgwsknFJzupdUl0/F2FMdAUVKLiH7DnTCFK0XNY4
+         Sakw==
+X-Gm-Message-State: APzg51BhXSVI6tlh5lAFHOxU/l1mixColJCU8/LUdOhaqNfxohHBMF4y
+        x2X9DrMVS/bmQy5lhEuFZsjzZQ==
+X-Google-Smtp-Source: ANB0VdYK52gHsKiDxURTJVlHgt7fWwMN/XFs8p1XaB3BC4uLadIAzPD4GKgY1hZGZva1OoGOmm9DEQ==
+X-Received: by 2002:a50:fd10:: with SMTP id i16-v6mr22514445eds.253.1537394706312;
+        Wed, 19 Sep 2018 15:05:06 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-115-161.cgn.ip.fibianet.dk. [5.186.115.161])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.03
+        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Sep 2018 15:05:03 -0700 (PDT)
+        Wed, 19 Sep 2018 15:05:05 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 12/22] dynamic_debug: add static inline stub for ddebug_add_module
-Date:   Thu, 20 Sep 2018 00:04:34 +0200
-Message-Id: <20180919220444.23190-13-linux@rasmusvillemoes.dk>
+Subject: [PATCH 13/22] dynamic_debug: refactor dynamic_pr_debug and friends
+Date:   Thu, 20 Sep 2018 00:04:35 +0200
+Message-Id: <20180919220444.23190-14-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -71,61 +71,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For symmetry with ddebug_remove_module, and to avoid a bit of ifdeffery
-in module.c, move the declaration of ddebug_add_module inside #if
-defined(CONFIG_DYNAMIC_DEBUG) and add a corresponding no-op stub in the
-#else branch.
+For the upcoming 'define the _ddebug descriptor in assembly', we need
+all the descriptors in a translation unit to have distinct
+names (because asm does not understand C scope). The easiest way to
+achieve that is as usual with an extra level of macros, passing the
+identifier to use to the innermost macro, generating it via __UNIQUE_ID
+or something.
+
+However, instead of repeating that exercise for dynamic_pr_debug,
+dynamic_dev_dbg, dynamic_netdev_dbg and dynamic_hex_dump separately, we
+can use the similarity between their bodies to implement them via a
+common macro, _dynamic_func_call - though the hex_dump case requires
+a slight variant, since print_hex_dump does not take the _ddebug
+descriptor. We'll also get to use that variant elsewhere (btrfs).
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/dynamic_debug.h | 10 ++++++++--
- kernel/module.c               |  2 --
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ include/linux/dynamic_debug.h | 72 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 29 deletions(-)
 
 diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 0a643316597c..6a002b789d51 100644
+index 6a002b789d51..b9424097df37 100644
 --- a/include/linux/dynamic_debug.h
 +++ b/include/linux/dynamic_debug.h
-@@ -47,10 +47,10 @@ struct _ddebug {
- } __attribute__((aligned(8)));
+@@ -112,40 +112,54 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
  
+ #endif
  
--int ddebug_add_module(struct _ddebug *tab, unsigned int n,
--				const char *modname);
+-#define dynamic_pr_debug(fmt, ...)				\
+-do {								\
+-	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
+-	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
+-		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),	\
+-				   ##__VA_ARGS__);		\
++#define __dynamic_func_call(id, fmt, func, ...) do {	\
++	DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);		\
++	if (DYNAMIC_DEBUG_BRANCH(id))			\
++		func(&id, ##__VA_ARGS__);		\
+ } while (0)
  
- #if defined(CONFIG_DYNAMIC_DEBUG)
-+int ddebug_add_module(struct _ddebug *tab, unsigned int n,
-+				const char *modname);
- extern int ddebug_remove_module(const char *mod_name);
- extern __printf(2, 3)
- void __dynamic_pr_debug(struct _ddebug *descriptor, const char *fmt, ...);
-@@ -152,6 +152,12 @@ do {								\
- #include <linux/string.h>
- #include <linux/errno.h>
+-#define dynamic_dev_dbg(dev, fmt, ...)				\
+-do {								\
+-	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
+-	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
+-		__dynamic_dev_dbg(&descriptor, dev, fmt,	\
+-				  ##__VA_ARGS__);		\
++#define __dynamic_func_call_no_desc(id, fmt, func, ...) do {	\
++	DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);			\
++	if (DYNAMIC_DEBUG_BRANCH(id))				\
++		func(__VA_ARGS__);				\
+ } while (0)
  
-+static inline int ddebug_add_module(struct _ddebug *tab, unsigned int n,
-+				    const char *modname)
-+{
-+	return 0;
-+}
+-#define dynamic_netdev_dbg(dev, fmt, ...)			\
+-do {								\
+-	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
+-	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
+-		__dynamic_netdev_dbg(&descriptor, dev, fmt,	\
+-				     ##__VA_ARGS__);		\
+-} while (0)
++/*
++ * "Factory macro" for generating a call to func, guarded by a
++ * DYNAMIC_DEBUG_BRANCH. The dynamic debug decriptor will be
++ * initialized using the fmt argument. The function will be called with
++ * the address of the descriptor as first argument, followed by all
++ * the varargs. Note that fmt is repeated in invocations of this
++ * macro.
++ */
++#define _dynamic_func_call(fmt, func, ...)				\
++	__dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
++/*
++ * A variant that does the same, except that the descriptor is not
++ * passed as the first argument to the function; it is only called
++ * with precisely the macro's varargs.
++ */
++#define _dynamic_func_call_no_desc(fmt, func, ...)	\
++	__dynamic_func_call_no_desc(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
+ 
+-#define dynamic_hex_dump(prefix_str, prefix_type, rowsize,	\
+-			 groupsize, buf, len, ascii)		\
+-do {								\
+-	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor,		\
+-		__builtin_constant_p(prefix_str) ? prefix_str : "hexdump");\
+-	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
+-		print_hex_dump(KERN_DEBUG, prefix_str,		\
+-			       prefix_type, rowsize, groupsize,	\
+-			       buf, len, ascii);		\
+-} while (0)
++#define dynamic_pr_debug(fmt, ...)				\
++	_dynamic_func_call(fmt,	__dynamic_pr_debug,		\
++			   pr_fmt(fmt), ##__VA_ARGS__)
 +
- static inline int ddebug_remove_module(const char *mod)
- {
- 	return 0;
-diff --git a/kernel/module.c b/kernel/module.c
-index 381f9bf282fe..be2727c5a003 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2715,9 +2715,7 @@ static void dynamic_debug_setup(struct module *mod, struct _ddebug *debug, unsig
- {
- 	if (!debug)
- 		return;
--#ifdef CONFIG_DYNAMIC_DEBUG
- 	ddebug_add_module(debug, num, mod->name);
--#endif
- }
++#define dynamic_dev_dbg(dev, fmt, ...)				\
++	_dynamic_func_call(fmt,__dynamic_dev_dbg, 		\
++			   dev, fmt, ##__VA_ARGS__)
++
++#define dynamic_netdev_dbg(dev, fmt, ...)			\
++	_dynamic_func_call(fmt, __dynamic_netdev_dbg,		\
++			   dev, fmt, ##__VA_ARGS__)
++
++#define dynamic_hex_dump(prefix_str, prefix_type, rowsize,		\
++			 groupsize, buf, len, ascii)			\
++	_dynamic_func_call_no_desc(__builtin_constant_p(prefix_str) ? prefix_str : "hexdump", \
++				   print_hex_dump,			\
++				   KERN_DEBUG, prefix_str, prefix_type,	\
++				   rowsize, groupsize, buf, len, ascii)
  
- static void dynamic_debug_remove(struct module *mod, struct _ddebug *debug)
+ #else
+ 
 -- 
 2.16.4
 
