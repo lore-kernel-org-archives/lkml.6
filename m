@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A19ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C3EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9668A2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:13:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9668A2151B
+	by mail.kernel.org (Postfix) with ESMTP id 0EA892151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:13:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA892151B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732418AbeISUv2 (ORCPT
+        id S1732453AbeISUwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:51:28 -0400
-Received: from mga11.intel.com ([192.55.52.93]:3473 "EHLO mga11.intel.com"
+        Wed, 19 Sep 2018 16:52:07 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14439 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731266AbeISUv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:51:27 -0400
+        id S1731266AbeISUwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:52:07 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 08:13:03 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 08:13:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="87511885"
+   d="scan'208";a="87512115"
 Received: from pqueiros-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.13])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Sep 2018 08:12:58 -0700
-Date:   Wed, 19 Sep 2018 18:12:57 +0300
+  by fmsmga002.fm.intel.com with ESMTP; 19 Sep 2018 08:13:40 -0700
+Date:   Wed, 19 Sep 2018 18:13:39 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Tomas Winkler <tomas.winkler@intel.com>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
@@ -40,15 +40,15 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 16/20] tpm: tpm1: rewrite tpm1_get_random() using
+Subject: Re: [PATCH v3 17/20] tpm1: implement tpm1_pcr_read_dev() using
  tpm_buf structure
-Message-ID: <20180919151257.GI31076@linux.intel.com>
+Message-ID: <20180919151339.GJ31076@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-17-tomas.winkler@intel.com>
+ <20180918093459.19165-18-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180918093459.19165-17-tomas.winkler@intel.com>
+In-Reply-To: <20180918093459.19165-18-tomas.winkler@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,10 +56,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:34:55PM +0300, Tomas Winkler wrote:
-> 1. Use tpm_buf in tpm1_get_random()
-> 2. Fix comment in tpm_get_random() so it is clear that
-> the function is expected to return number of random bytes.
+On Tue, Sep 18, 2018 at 12:34:56PM +0300, Tomas Winkler wrote:
+> Implement tpm1_pcr_read_dev() using tpm_buf and remove
+> now unneeded structures from tpm.h
 > 
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
