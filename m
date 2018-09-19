@@ -2,133 +2,128 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36213ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1FDC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F4B21526
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1C092150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:44:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p/HMv4PL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3F4B21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JEkJv4cI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C092150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732589AbeISVVv (ORCPT
+        id S1732601AbeISVX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:21:51 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41374 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732294AbeISVVv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:21:51 -0400
-Received: by mail-qt0-f195.google.com with SMTP id t39-v6so5501953qtc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 08:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VGWw9HuZ8iPcfWRq4OOcD5x0N4s4FQYplacHpVzd58U=;
-        b=p/HMv4PLv2313a4WuGzZcCwffTmu9cV4Y4PvJ0qHeL4qyBEEeJxKscqxzN7WPUWRdu
-         GdNFzuBzqDCgNNOFEJr3LbarvdkpJ6+572TFRQKl4MW3N9SX+BRNHUp2McisOBUOx9pJ
-         UXVDWeinLHDktYGJ0skAW0F2DWZymHLgiEmXvx4/kgjFD7LUc7VQ0vER/bPgwNkF+VA1
-         uZ/iV9tOqamUPqpRgFFhSBMn5eOG3d8ulTu3xxT3Le7UGEZMna0xgSZ8PsQMDAxN9UUS
-         rdsDCuCaW+hoS9nOk2U/7/cpPoAiYF49Dz9RNbo/q5i+yvvLC8Jp4uY8VHWnc0AxAtch
-         WHhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VGWw9HuZ8iPcfWRq4OOcD5x0N4s4FQYplacHpVzd58U=;
-        b=oznlZBspFMyDDbZg8yPcbJYpEpA2A7yop78XOOK/ISqEFs18N32jrOdBj5h9bZ6COa
-         Pzom6Nl3ofQBaGyVWHRahP+N+nTFhf0Oq/hAyPVkFxAjpuCK+UmbI9H/9gUwQILxz8Gt
-         +Qc3sjC2G1GMT5PDb/6dA1unY1loGdEKrR/UIentVu8hYvBVXE3zey3y4rZsCO5R/V9r
-         dwGBahIbagXiRqZRoWnceA62qjxRwndD2DjMlqTGVdFgjF9sc3v81fc0MtFWZT2fdmDz
-         0748PBlRF7phBDMZfNBQPJqT+CTyWt+ovagQbDH9NYQjqphEX/6NuuWS06s8Rlk/L7Ny
-         bENw==
-X-Gm-Message-State: APzg51Dd/NuCVgKHSjBeA/9jCbblXv8DbaBdrbSppaqJH1NNts+AdRww
-        hkbDKFWuPzJ6mK9sK2uUOVI3vtmJa/37M8MbDZjq
-X-Google-Smtp-Source: ANB0VdajjuquHm4q3O9dN2UiuEM0rg/UP0BNMH69c6fa39TB0n+FBwxwg1itw31RoExDdGhuuKZg+HSln/9JShufWP8=
-X-Received: by 2002:aed:26e7:: with SMTP id q94-v6mr25426949qtd.37.1537371799009;
- Wed, 19 Sep 2018 08:43:19 -0700 (PDT)
+        Wed, 19 Sep 2018 17:23:28 -0400
+Received: from mail-eopbgr700132.outbound.protection.outlook.com ([40.107.70.132]:31072
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732294AbeISVX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 17:23:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ua5h77iSxuT2m8L0gKd69vHwFkEP03II+goaLfQlyTw=;
+ b=JEkJv4cIKgPhaex37BMbRur39LN6DHTCd5FzhLehLA3xZCBSTk5uwAuDEjfae4KFCc5QGsmUoydxCze09uelPNoYOeFMYP9e0z6NW+6Gjce+o+V5DFcw+T8l0iWpZYB1i2WoofEDyJjsd5OAA6/pZOGBrDnXnBbcCk+3unffdwY=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0839.namprd21.prod.outlook.com (10.173.192.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.7; Wed, 19 Sep 2018 15:44:54 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c%5]) with mapi id 15.20.1185.003; Wed, 19 Sep 2018
+ 15:44:54 +0000
+From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+To:     Dexuan Cui <decui@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'olaf@aepfle.de'" <olaf@aepfle.de>,
+        "'apw@canonical.com'" <apw@canonical.com>,
+        "'jasowang@redhat.com'" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>,
+        Josh Poulson <jopoulso@microsoft.com>
+Subject: RE: [PATCH] x86/hyperv: suppress "PCI: Fatal: No config space access
+ function found"
+Thread-Topic: [PATCH] x86/hyperv: suppress "PCI: Fatal: No config space access
+ function found"
+Thread-Index: AdRPnqLjk5RKpcSXRi2tGnIAPJn6lQAkNEyw
+Date:   Wed, 19 Sep 2018 15:44:54 +0000
+Message-ID: <CY4PR21MB0773AC52038EB086745D8368DC1C0@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <KU1P153MB0166D977DC930996C4BF538ABF1D0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <KU1P153MB0166D977DC930996C4BF538ABF1D0@KU1P153MB0166.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-09-18T22:29:47.8378282Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0839;6:qAkIfFNm4ksXVcGOUN2RDOcZYnl7PXhvUX3chNuORNfEeNLK0m0oKrM/N4kiMgP2nMpmWZ8HB6xL1lvE2mNg5kvlFfLC7e8GS+knJwrXqISqipFble7jUuFCf4ZZcvXntDU5jKoWFivjQuTYNqKrq1zst8Dm+Vy456ibCX1tcQJy7b5lTSD2HhgbOa3GqVxcsTlTRiYFRAizQ1FY2VbgQSL82QwFPW9mT7t3WVuUPk7dtUB6DmTQ2zmSQNEU9OWkvkmqppBdm5iNqg1bLnv+tAM1odoWTFVnNLaqa9h4lLidQddS3gXhu+Q4ueMCTD7/f4cMyyh87g3ZUAKgYXN3wT0JiH+B4XKjEG0QV8xndenPiYEiCJtGuF1B9gmZTOa+nYwO7FWd1NngorLjVCG/2qaTIxTIszIWJmMk1YjdJTLKigfFP+UXa/g/XMI4ma9XkUa9udFY8pq04WSxoQdXsQ==;5:XuFoaj41sP99gqLxvMpPG5FMia9vxlImkPhzqRGI0qtShRO9oavUYtqzBrVvhvZypfJ4g0PKQsfNJX8r2gjTeTpZe202bqRASmyeis7Y3+heO7nqh1kGY1Ik77+KyggVK5njlivFi7yqb6Elia78myNbDOL5BBpy0cxoFpu6IC4=;7:WQwIp/kTZDV2a/U7oLR0h2LXUZq5JJpxuXZSP+8RlARj1MCaSSyDFqBJXyfia2ai4i8eQJSCCjrfRu7dlywvDNh+Br817rXMj2dC7ZfzH5ajcx1Ba3ErkQo/ph/cgRy5SLD+LUaJa0htTH6gvmVKUYZ/KsmDc8ll5NNNI2IORbfqV/ZBUimmPlPseePH84ICz3BXh0k20Jk6g0sOT9m8ZGfV4HhmCFsKrI7gqjSs68xxS9B0+q7r/x9WAaUtxydM
+x-ms-office365-filtering-correlation-id: cf9a225d-81df-40f6-0ebf-08d61e46d874
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(2017052603328)(7193020);SRVR:CY4PR21MB0839;
+x-ms-traffictypediagnostic: CY4PR21MB0839:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <CY4PR21MB0839A1D0CD139C0C108FB939DC1C0@CY4PR21MB0839.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699050)(76991041);SRVR:CY4PR21MB0839;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0839;
+x-forefront-prvs: 0800C0C167
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(376002)(136003)(39860400002)(189003)(199004)(76176011)(86362001)(8936002)(99286004)(81156014)(7696005)(22452003)(81166006)(14454004)(53936002)(106356001)(26005)(6346003)(54906003)(110136005)(229853002)(316002)(102836004)(486006)(8676002)(97736004)(66066001)(1511001)(68736007)(3846002)(107886003)(6116002)(25786009)(6506007)(86612001)(4326008)(476003)(6246003)(10090500001)(7736002)(7416002)(5250100002)(74316002)(446003)(11346002)(305945005)(2501003)(256004)(14444005)(2906002)(5660300001)(33656002)(8990500004)(2900100001)(105586002)(6436002)(72206003)(9686003)(478600001)(10290500003)(55016002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0839;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
+x-microsoft-antispam-message-info: iJccCZYgC6B+/oNZBi2jAbSAyomK1Gfw6GbGzUtZgu+ExWv/sVQZZP6ghgnOykeOS7zFdnoTvBoqMOPIaWLjrI3BRMKPig5f2QUGwZxh9rWFfUqD6PuZnJsAMnhVa+9o3aCIa+u1RV6C8zQslbZDbN3Ihv8+cSoQKOaJwOhU3N66iV6U42S3jYgv6otKfFUCDwsqpMJPLhYHBU83NnI2dYRP5x4rf6MbyAZcpbKqHMeHF9CUEEp8N+GvtiZzlS220+1yRnHE2LKNT14Ny1UtCz4R6m2+Uub0zmZkLaijtVkzC1LF74XSOCYHrUVLE8rg34Sw8YH2qsCAjoDqfNpVKbmbplXvbQxcHCX073W6nXk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20180820212556.GC2230@char.us.oracle.com> <CA+55aFxZCyVZc4ZpRyZ3uDyakRSOG_=2XvnwMo4oejpsieF9=A@mail.gmail.com>
- <1534801939.10027.24.camel@amazon.co.uk> <20180919010337.GC8537@350D>
-In-Reply-To: <20180919010337.GC8537@350D>
-From:   Jonathan Adams <jwadams@google.com>
-Date:   Wed, 19 Sep 2018 08:43:07 -0700
-Message-ID: <CA+VK+GM6CaPnGKcPjEn7U=4ubtC-JWZ9k98BTxzRH_TthaFXDw@mail.gmail.com>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-To:     bsingharora@gmail.com
-Cc:     dwmw@amazon.co.uk, torvalds@linux-foundation.org,
-        konrad.wilk@oracle.com, deepa.srinivasan@oracle.com,
-        Jim Mattson <jmattson@google.com>, andrew.cooper3@citrix.com,
-        linux-kernel@vger.kernel.org, boris.ostrovsky@oracle.com,
-        linux-mm@kvack.org, tglx@linutronix.de, joao.m.martins@oracle.com,
-        pradeep.vincent@oracle.com, ak@linux.intel.com,
-        khalid.aziz@oracle.com, kanth.ghatraju@oracle.com,
-        liran.alon@oracle.com, keescook@google.com,
-        jsteckli@os.inf.tu-dresden.de, kernel-hardening@lists.openwall.com,
-        chris.hyser@oracle.com, tyhicks@canonical.com,
-        john.haxby@oracle.com, jcm@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf9a225d-81df-40f6-0ebf-08d61e46d874
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 15:44:54.5911
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0839
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(apologies again; resending due to formatting issues)
-On Tue, Sep 18, 2018 at 6:03 PM Balbir Singh <bsingharora@gmail.com> wrote:
->
-> On Mon, Aug 20, 2018 at 09:52:19PM +0000, Woodhouse, David wrote:
-> > On Mon, 2018-08-20 at 14:48 -0700, Linus Torvalds wrote:
-> > >
-> > > Of course, after the long (and entirely unrelated) discussion about
-> > > the TLB flushing bug we had, I'm starting to worry about my own
-> > > competence, and maybe I'm missing something really fundamental, and
-> > > the XPFO patches do something else than what I think they do, or my
-> > > "hey, let's use our Meltdown code" idea has some fundamental weakness
-> > > that I'm missing.
-> >
-> > The interesting part is taking the user (and other) pages out of the
-> > kernel's 1:1 physmap.
-> >
-> > It's the *kernel* we don't want being able to access those pages,
-> > because of the multitude of unfixable cache load gadgets.
->
-> I am missing why we need this since the kernel can't access
-> (SMAP) unless we go through to the copy/to/from interface
-> or execute any of the user pages. Is it because of the dependency
-> on the availability of those features?
->
-SMAP protects against kernel accesses to non-PRIV (i.e. userspace)
-mappings, but that isn't relevant to what's being discussed here.
+From: Dexuan Cui   Sent: Tuesday, September 18, 2018 3:30 PM
+>=20
+> A Generatin-2 Linux VM on Hyper-V doesn't have the legacy PCI bus, and
+> users always see the scary warning, which is actually harmless. The patch
+> is made to suppress the warning.
+>=20
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Cc: K. Y. Srinivasan <kys@microsoft.com>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> ---
+>  arch/x86/hyperv/hv_init.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>=20
 
-Davis is talking about the kernel Direct Map, which is a PRIV (i.e.
-kernel) mapping of all physical memory on the system, at
-  VA = (base + PA).
-Since this mapping exists for all physical addresses, speculative
-load gadgets (and the processor's prefetch mechanism, etc.) can
-load arbitrary data even if it is only otherwise mapped into user
-space.
-
-XPFO fixes this by unmapping the Direct Map translations when the
-page is allocated as a user page. The mapping is only restored:
-   1. temporarily if the kernel needs direct access to the page
-      (i.e. to zero it, access it from a device driver, etc),
-   2. when the page is freed
-
-And in so doing, significantly reduces the amount of non-kernel data
-vulnerable to speculative execution attacks against the kernel.
-(and reduces what data can be loaded into the L1 data cache while
-in kernel mode, to be peeked at by the recent L1 Terminal Fault
-vulnerability).
-
-Does that make sense?
-
-Cheers,
-- jonathan
+Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
