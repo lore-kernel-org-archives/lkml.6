@@ -7,62 +7,64 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF81DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6327EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7528621523
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1916A21523
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="dTrURk11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7528621523
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Moqdm828"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1916A21523
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbeITDqJ (ORCPT
+        id S2387653AbeITDq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:46:09 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40372 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730876AbeITDo7 (ORCPT
+        Wed, 19 Sep 2018 23:46:27 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37973 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733065AbeITDoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:44:59 -0400
-Received: by mail-ed1-f68.google.com with SMTP id j62-v6so6155501edd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:02 -0700 (PDT)
+        Wed, 19 Sep 2018 23:44:55 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h33-v6so6182562edb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:04:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yXcu0lgya7AY/QzNdA2HkC5LKeWw93fYQrPWSy28E+8=;
-        b=dTrURk11d7U12iIwZRAnCLnw6Xc90+azwJY3be0neSwjT6TIOEt5UTcbKZK7BSBj1s
-         Ch9efNbtsEGJe/7yXgVMZfF4JY5+6op37af5/5wAJiWK6s4uVIhRiGbN1mq+1Eu7iUuX
-         Z3WFuNEh1sUaFApAMttT3nvN4V0/WbxV4C6Uc=
+        bh=PK3LkoNJia1hIoJZkFXKIO0xhNkQIyjxNK31kURH6Mw=;
+        b=Moqdm828naAmPBT2vX7cIx5Z4pVA0aPZUt6vxZOidum2nS2hNzfTGZFxvMZ4ySPU7J
+         ScA2wrHxJH/F4vAU61JNgX8Ww464Ou94MOgc0t2heogCtlmRdnvXUcrlE8RTdkyFUlpk
+         UnnDYWGutFzvOcMIkkJdoi6pwDJxBUeF4jxTA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yXcu0lgya7AY/QzNdA2HkC5LKeWw93fYQrPWSy28E+8=;
-        b=TkfnXUTcs/3tMNyRUU5JWqfZwJmgoTHnloGPYwTZicJRxLGzP8+Z8x0c0GkosRIoqd
-         CQd1CzMtPoVu+RQP2oVDdQMzcHi2SVNTAFCKHcoI5Zz7vccscljLwQHBSnyBKv4AAyg6
-         akkqAcjCfhsIHV1r+hm4PYwpLR+rlWhif1vDDD7cBj9eNYNQX5e1m8ePM4fRVKfP17M4
-         gYMR1ayAzMBoOULxkQ5ImAaRgx4z+fPlKuCdYXGK8h2iZ+OkmANAxoGP57MUfTilRjG6
-         T8u3TpG8j47pe9nXNe+l6vqLzjisJ0PiEIwL3j1fn+7mkMxBI8D5uTga1AibXAGghfOW
-         d1fw==
-X-Gm-Message-State: APzg51Dg2o+wxj//LNawmZlGWXxT62elBgGQxyNwU7THgTFNHZj8HSQm
-        t1zOAOcaWeTZToVQtLj4Ahm5rts9kotcShvQ
-X-Google-Smtp-Source: ANB0Vdby5/Z26fxItQI15qcFI36rqC2x9NPpWdf9uGlj9dOUPkOJQEmswV58w3u8s63loskMOx7nTg==
-X-Received: by 2002:a50:f419:: with SMTP id r25-v6mr58835768edm.226.1537394701996;
-        Wed, 19 Sep 2018 15:05:01 -0700 (PDT)
+        bh=PK3LkoNJia1hIoJZkFXKIO0xhNkQIyjxNK31kURH6Mw=;
+        b=jGalTCDvZqqIaMECGSY4kr3zJOgSMryLIAkx8+1o/pOO2XHWBMRzq2nPMw4SjAleLm
+         6hfY1Jo7Ema5q03IMMRQxglXPQ5QUkyXdBYMRUk8va3HhncXgNJspa1rb0Z9WMqDI66i
+         JzrhbshBlwf5ue/lh+efHtMmmfk5xf05QvQb87yxWxJhuz3GiSwqJkGUNqydBE+CH4Dx
+         Ch1E96DtKMIfWUQtjTpA5E+s2p2NzatLAf3IyrGepMP1FGEd4Ulqstt3+RYpi+DFJVn6
+         UdkiWPIMEKaPejEPwhWzRED741s5UbZyoYBfvlHzbTgV26qwtvQlaZLCCCaWZjsxl20l
+         N3+Q==
+X-Gm-Message-State: APzg51AQ+Kj5OAjTUjDV0N1EDzY+RbU1tkQUwUIo7Gv6DE7tzqu6Pl6l
+        SnCtdrJXOJPjoU7PMEsra2j92g==
+X-Google-Smtp-Source: ANB0VdYxtmpWbEdv3t1xlAfJvedWHMUZq0ysAYSqlZj7j3sMBjFhH8r9C1YSeia4uZsAmIfJeCpZmg==
+X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr61344985edo.280.1537394697798;
+        Wed, 19 Sep 2018 15:04:57 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-115-161.cgn.ip.fibianet.dk. [5.186.115.161])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.01
+        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.04.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Sep 2018 15:05:01 -0700 (PDT)
+        Wed, 19 Sep 2018 15:04:57 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 10/22] dynamic_debug: remove unused EXPORT_SYMBOLs
-Date:   Thu, 20 Sep 2018 00:04:32 +0200
-Message-Id: <20180919220444.23190-11-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 06/22] linux/printk.h: use unique identifier for each struct _ddebug
+Date:   Thu, 20 Sep 2018 00:04:28 +0200
+Message-Id: <20180919220444.23190-7-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -71,36 +73,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only caller of ddebug_{add,remove}_module outside dynamic_debug.c is
-kernel/module.c, which is obviously not itself modular (though it would
-be an interesting exercise to make that happen...). I also fail to see
-how these interfaces can be used by modules, in-tree or not.
+Changes on x86-64 later in this series require that all struct _ddebug
+descriptors in a translation unit uses distinct identifiers. Realize
+that for pr_debug_ratelimited by generating such an identifier via
+__UNIQUE_ID and pass that to an extra level of macros.
 
+No functional change.
+
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- lib/dynamic_debug.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/linux/printk.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index ab81155f928d..f1de45a100fa 100644
---- a/lib/dynamic_debug.c
-+++ b/lib/dynamic_debug.c
-@@ -868,7 +868,6 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
- 	vpr_info("%u debug prints in module %s\n", n, dt->mod_name);
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(ddebug_add_module);
- 
- /* helper for ddebug_dyndbg_(boot|module)_param_cb */
- static int ddebug_dyndbg_param_cb(char *param, char *val,
-@@ -938,7 +937,6 @@ int ddebug_remove_module(const char *mod_name)
- 	mutex_unlock(&ddebug_lock);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(ddebug_remove_module);
- 
- static void ddebug_remove_all_tables(void)
- {
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index d3ba3245531d..70df2c578d40 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -460,7 +460,7 @@ extern int kptr_restrict;
+ /* If you are writing a driver, please use dev_dbg instead */
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ /* descriptor check is first to prevent flooding with "callbacks suppressed" */
+-#define pr_debug_ratelimited(fmt, ...)					\
++#define _pr_debug_ratelimited(descriptor, fmt, ...)			\
+ do {									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
+ 				      DEFAULT_RATELIMIT_INTERVAL,	\
+@@ -470,6 +470,8 @@ do {									\
+ 	    __ratelimit(&_rs))						\
+ 		__dynamic_pr_debug(&descriptor, pr_fmt(fmt), ##__VA_ARGS__);	\
+ } while (0)
++#define pr_debug_ratelimited(fmt, ...)		\
++	_pr_debug_ratelimited(__UNIQUE_ID(ddebug), fmt, ##__VA_ARGS__)
+ #elif defined(DEBUG)
+ #define pr_debug_ratelimited(fmt, ...)					\
+ 	printk_ratelimited(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
 -- 
 2.16.4
 
