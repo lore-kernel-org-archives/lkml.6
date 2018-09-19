@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11CBC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08DEC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E47E214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6348B214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:19:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="1URLoXje"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E47E214C2
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="U79PE6Iw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6348B214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ysoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbeISO4G (ORCPT
+        id S1731160AbeISO4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:56:06 -0400
+        Wed, 19 Sep 2018 10:56:10 -0400
 Received: from mail-eopbgr30087.outbound.protection.outlook.com ([40.107.3.87]:52824
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730802AbeISO4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:56:05 -0400
+        id S1730863AbeISO4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 10:56:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rES/CKauT0vKNNuiCnxyajxJ4Jw/bOGMHidRei13ESU=;
- b=1URLoXje5j2+WXFDa819w2ymhHvRuUZE9Q/F75uNM3QjlDOX30yEfURw0oRvS+YWPtztGnVunFM0F9H42orCEqQ4DkrBN6xqayVzqo8B4vj/o+OHYJTGr+JjtuVlC/Tpvu2gEvdyXyNPwCbj5fEOEO1C9/UHNoRj+JZ2l0BFoU4=
+ bh=SugdsQJCy9ufICdfFHxCAsXirR948j3vi9iZcCuwFSw=;
+ b=U79PE6IwNLMAC5/RPsGDe8lyasbkI3YX8K7Tuitq6PGLNwoPzRmsJRmzISWNTcYeKSiM9lSIV7/WhnJ+54vr26F7JuxzEShdl9LZXuCpFTP2LV2MPR2bXxiufZOD7d2w/oYCMq/n4oADoqqW+ufyq6v5HeAmWPqiYF6TYr6TW1Y=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Michal.Vokac@ysoft.com; 
 Received: from iota-build.ysoft.local (89.24.100.190) by
  AM0PR04MB4658.eurprd04.prod.outlook.com (2603:10a6:208:75::12) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Wed, 19 Sep 2018 09:19:01 +0000
+ 15.20.1143.18; Wed, 19 Sep 2018 09:19:02 +0000
 From:   =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Shawn Guo <shawnguo@kernel.org>
@@ -44,10 +44,12 @@ Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
         =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH 1/2] video: ssd1307fb: Use gpiod_set_value_cansleep() for reset
-Date:   Wed, 19 Sep 2018 11:18:43 +0200
-Message-Id: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com>
+Subject: [PATCH 2/2] video: ssd1307fb: Do not hard code active-low reset sequence
+Date:   Wed, 19 Sep 2018 11:18:44 +0200
+Message-Id: <1537348724-22976-2-git-send-email-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com>
+References: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -56,53 +58,54 @@ X-ClientProxiedBy: VI1PR03CA0067.eurprd03.prod.outlook.com
  (2603:10a6:803:50::38) To AM0PR04MB4658.eurprd04.prod.outlook.com
  (2603:10a6:208:75::12)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9746b710-7598-4934-9d79-08d61e10f044
+X-MS-Office365-Filtering-Correlation-Id: 993a2ca1-0ae6-4d41-49e3-08d61e10f0b2
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4658;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;3:cQi1td2RQS1M0Gejh+zgLmLV9QwR0UM04rAk+iti8kpAJhMBy4y+XW9qtidF3Qo0KMybzeq7ovPYvVb+b66mvw2jNc/y1K+uqWMkN3mN7M/6sonw29iVcQ0I0rlGmMWHVT0XdqgqGySfkw080CW6ACZ2eZ76Y8ijEzW9vk5KbKNe1l5a5B353SsgFMTJZzv+7sHtEa2NccNT+oxo3XY0VBk/UIyon387/0sFwCzMPLLLPpoe6OlwaZtqXq87JroE;25:Mmwc1i71exHYMm9iUzKHGO12AZDlwY5ISxJqJbs+iJ0KrCgL7Y9/lXwn499P4mbMWlHH20CMXt0x01h+S23nbR9TTJZ9H5ByOVjHV6JhIJDV/XO9suSVaM/s1U1tzKz7RTX4a924C6oKxrLV6l7RTYpOH+9xG4PE/nUfRK6o6Bu7zksv//ln4aWlqF8hs5Ng9pVHgZEbR6/DUEewtNSGYKPkCa8eRfOcsQQM0Jg5wCHFewtDVxTVhA/qdgUOsxO8BYqz05PJQLqbOp7s47zoqDMQrpZEgp1Fwsf0Ixh63QtV/Cc9BffBjOt7MuEGeIXf5F8KxkdArU1DoHWOVlSITw==;31:m//6VWZ5LwMXeFOE6c6C8/3rNNZ032MN86QIGa6epMilhu7WPWw2PfVmDGd2C7qVzItKRrSew3Sv/cQEd1VEnJ/1ELJyJiwN9DBEMHKFaDOqo1Lh/lTsFc8pEq1TiQV/f+z9CELsgvFfa17YsWKHGd3G1rjnJvmvx7Wzg0y9/mtq3Vrhvqq+FWNbDi2YUcYi3+1P3HNEiqb0YOEmeLLYyo3iEeADpKy3InFxjf43Z7U=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;3:UPxWmmP4c6PZtYayMsD2WQxt+bVsamMtKE6wlw7Vrudix1YVL35QV/OYxZBL9ZAOaLJn0WJr/RnHZqzho0124RTyjAws2Klmx+Lg9IZNhwEJ9NL2UWVKt4Z3xy5BaMhyzftzj4/eHMJwxQ4ieKdR/GoxA81ESEy6p+QMP4mb6hCDPXTfYWosTmPqphU6mtgahO+2e/cXnO5eAXjmcoJt56H6pjLwQNAluHLuHb15SujF1jI25OCQBey8IYhCDiaF;25:k8rHdLN/TlkC/G0CFvLTkkmOzaQr32vwRFhyBI+xwYZYQQZOz2ILc2bDx+H1E9uiqWgTj2c2nrrNfYHc1NurAS5gDcu2bvDz5y/da4TRohLjGT0WahOxr2SkM1tFnOQ6xcjc2mEjgjURdRyLJO+hFNSd89favDICwCNrf/Di2tYxt4o5OlbsaF+l9Eqv0BhO34xYZvhU1pmXYf94gL3eis5s4O78u3Cb7rufDi+a38bU88l/toDD6fTBbKPMOsnwQq8vWn8Nu3R25yRX2X/wxJjuOz+lMtxPdsz357yZ0kHcpDyXHw0ZPdZ7Yu8AjFMbH6kYTp78W1OZ/CKCptuGjg==;31:ToKYHngSdt0ZWWuezAZUGEZIK1TRYJH9Bs1Q3G3v3hH+ndeT6U3o3+bv/JYwZsfIAEr462fwh7/XtESjMtcZK3xiLTka62mh2whxae/rv3DsM/hG63mayVYZ0hFiX3wcbniXie1lZe6pHQXfmrFCGaKBBHSmIWwnF3CWs3Txw/fDnYG8DP7XHxoI+9NrtP1oK1BUOFA+RJo8Ac616j6zjnw6ZDvUm96BANw5s6l2AhA=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4658:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;20:0bj0tFkCnqZtjvjMiOdOVAVKrNotwx4Zn/7YT3W9q60QeGSpQYVOB98zFHw3VcMrgZ0PgUHsXm0Swhy30Wc23ZXgFfH/SATzxtls7F5xWyysNpX3YzssYyWkcKpQ3p9Lswfj9323+1JbaccI93NU6XYkxXrT7nMAz18MQeqtFtDQG38mlgjGLj8warnSTUuLyGPSkUPDJ+xZTDHjsInYZpOiPKYXDL+Kd99Eza/8ynftDrm8W8h3uITXV7zYtZu3;4:gov+7F60ii75EuUpSKkRC0dv5ufNKVgZrq1kd5bzL+rvzHJrPsu/IJuu0v7ToEQ1OS8LpY0+atC32Xm6fdJv2SfsK8Cv0t2W8GzsAzS/4oT0OJ52v44uEkqXyzO9yNsYbVWX/D1vjPufd7G2Ol7gETySuiCYo7mlLygutnAFCQBVnZA5vo2ZfX4ZGRCHRrDHsABD8ll7fADV5w+Icgb55CtaBi89BqZdjm3nQ6/5AY7qJfvrOxO3KvCT6gw78a1VAb7TXl9gTjPSYEAmgvEQJw==
-X-Microsoft-Antispam-PRVS: <AM0PR04MB465849B6855C31D2C29309CD9E1C0@AM0PR04MB4658.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;20:oipSOv6v36eTl/jHbkhruwWE4SrRg90MKDbvxyk/eFvbjjtZKqytd5Sig+0QvVQNTUDCaT62fi4LTvITt5Bsjhsy7mpY1Tmgy9jnty5uKHZ7gPyiBTOzw1rm/F5F53RC/dw/rG06U8RLubtaZPCA5tjR16KVoEUsv8jdcEdLvZK+zqnjHgkP3ZBaSnCSlb9U8euamJ4Pd4OrgqMf/F8jOETxIdtgNiY+z2zGC1jUuR7J8Gof+ehrND4dAyd601ig;4:D/IsaVJwq71DcVdiTENtOh9qbB6d7KNjlKmZxkKETslf/P4I2iuW/TfXu/jaxoAAU28mKXkFG0WivsUyb+uSr5+mRlBcPS9iK0vwP9BkWfysanUgW/NoeuCHRcT2qURkHZY8pJnkrAW6tBQTkBE7uxuYxmAO1J5jIQbeGnCnM0szElUK9nfqM0uMCwk6l4OBZMemZDDq0yvBpICmTkJemQVdsPJ/eAJNuY9GuOeqGPYNlblu6M6a+6nrWFT94lACIExuXsrYs9Bj1oZcwzHpRg==
+X-Microsoft-Antispam-PRVS: <AM0PR04MB46583312EC4DC4EA3565E0709E1C0@AM0PR04MB4658.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:AM0PR04MB4658;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4658;
 X-Forefront-PRVS: 0800C0C167
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39850400004)(189003)(199004)(66066001)(110136005)(50226002)(476003)(486006)(68736007)(23676004)(956004)(72206003)(2616005)(26005)(6512007)(6486002)(53936002)(54906003)(2906002)(186003)(81156014)(81166006)(6666003)(2870700001)(8676002)(7736002)(107886003)(6506007)(386003)(105586002)(36756003)(47776003)(16526019)(5660300001)(305945005)(316002)(86362001)(3846002)(50466002)(478600001)(52116002)(97736004)(25786009)(106356001)(4326008)(8936002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4658;H:iota-build.ysoft.local;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39850400004)(189003)(199004)(66066001)(110136005)(50226002)(476003)(486006)(68736007)(23676004)(446003)(956004)(72206003)(2616005)(26005)(11346002)(6512007)(6486002)(53936002)(54906003)(2906002)(186003)(81156014)(81166006)(6666003)(2870700001)(8676002)(7736002)(107886003)(6506007)(386003)(105586002)(36756003)(47776003)(16526019)(5660300001)(305945005)(316002)(86362001)(3846002)(50466002)(478600001)(52116002)(76176011)(97736004)(25786009)(106356001)(4326008)(8936002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4658;H:iota-build.ysoft.local;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: ysoft.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA0TUI0NjU4OzIzOjVxMUh0RjZTSWV3cDA2cUh2dWxINS9PL3VV?=
- =?utf-8?B?NjJXRHJ4aWRDVFBGb01UYWQ5TFgwR1ROUDEzNkdyaG5mMXkzVjhwMDdrbkpn?=
- =?utf-8?B?OUd5K2JXTEFEUHNTaHBsejdidElIR0RPeTVicjNYcDdMdkVJUFZwNkl1RU13?=
- =?utf-8?B?YTVNY1JXMHZPTkVKTEt0SHJtR2pWRDFpOEhtM0RDQlBUWkxFRjZ1MHhGRStB?=
- =?utf-8?B?aHdWdVlHYWFJdHpKNHRvOUVpeFNrK2J5NWg2RTVyekhjMVJnL3psNUx1OFVr?=
- =?utf-8?B?RlZtUHA4cHp3WTEzdk1qYk93d0FMbUVQOHRXWU5UUVRmMkdScTNHUnM2aWJN?=
- =?utf-8?B?R2pkV290dFRQQlRDV3Q2VFZTUCswK0FsbmRJNCt2U2pXNUpwcG82NVg4VTh3?=
- =?utf-8?B?c1F6ZWowejVXdEpmSzRPSFlXem5aSCtyb0llcHI1dk9nSnh2MVpSc1A1RkhJ?=
- =?utf-8?B?NTFXRlRkU3V5cEt2U3YxaDVuN05aSG1hdFVpN3ZCZTk1K28rZUVGMzBUc0Zu?=
- =?utf-8?B?Q1NsbXU5QlBSWGxZY3Z3UlN6OWpncWp1NTk1ZlkxYjdndWNMYlFzN1lXTkFC?=
- =?utf-8?B?a1JzZDBybWVWN3BSK1FBaTFRWDl0Um5NNll0NXJqcWhMSGRzV1FrdkpnMU0w?=
- =?utf-8?B?dHZCTS9Dd29pemFiSlM1bVE3cFRpUFkwVmV1VTV3WGhWUXQ0b1htaHFFZllE?=
- =?utf-8?B?L3lSQllPRXlyaWF0a2FsdDBINUV6ZUJFKy9HT0xVTkRqT0t5Zkwra1VuM0Ja?=
- =?utf-8?B?ZGYvNVhXRmZUcnF4OVBZaHpDOEhzTnhyVUdGRWRTMjIrV3F3b25DeDhneVFi?=
- =?utf-8?B?UjNNOHVMUUVrRjB3TmxzTWovaHZKV1VrVkVqSkt2WGh3b3pSYS95NFdLbE9I?=
- =?utf-8?B?OElIQzYvSlh0QTR2MTFQQldTTnJDdDhuWUkvczJCemppUGJlay9DbkllUzZB?=
- =?utf-8?B?WUh5LzlES2tLdnllR1NqOUw1bFBFam9MTDl5TE1SeEZyU2hWaWV6RUdOTUtl?=
- =?utf-8?B?bktwbGJNU2J6RmZVSWFEK25pVFc3SXhYY0EwSjdvSGxBVi94ODNtbitJRnFs?=
- =?utf-8?B?WWxwaHp0RHFCVFlzRFk5eFNUTnd2OER1RHhEdWFOdDhPZE9aeFdhRnQvNmt4?=
- =?utf-8?B?VjVGRXRDVmVUSFYvVVZHTUUrQ0hvODhrK0dxUlFKMHBpYnlvbndqT0lzallp?=
- =?utf-8?B?dXJUbC9vVHFJb1pBRmd4RFZyc0JuTVZtQnBUay9IWFprcGdKN1BvRWc2ekd0?=
- =?utf-8?B?K1pyWWFFck1yenB1WVkwWXRXUis0NVBhckMvZnpEVElzSncvcnlaM1ZTT0Mx?=
- =?utf-8?B?T1B2ajJTQmNJVWhyQ2gyNEN1RlBTM0l4STFRYXpOQytGT1F4ck52M2lSNjZT?=
- =?utf-8?B?NEpZRmoyNG5HdE1iVDQ0Sm5QRGloMkdpMVlvWGI0TEpFaGIrVklzS3QvUith?=
- =?utf-8?B?cDYyS2RhSGtjdEJ2Um9vQzVQNW0rNlErOXZmSEVJbnNEaXJFLzJjeS9VT09o?=
- =?utf-8?B?eW54aWY2YjlqQWxBVjhOUUpRU291a2ZVT3JTWjUxSTZPWE1ZRHBzbS9ra1I1?=
- =?utf-8?B?bUErbFdZSm5wK1pQbzhWUDBQemVOV1E9PQ==?=
-X-Microsoft-Antispam-Message-Info: tWqMIXlbHBtLb8KvkaLHM+djcJnxL+oFOUHA1dPaXRMrrUbYuQrdegHMZFLmBpZJ9qn4RJBPR+nF/mjds3xCz3v/IDDRzt0aoonwKBmxOt89o7wcsDEmRGilA19tAOcqRbSO17EnWBpCzYiawW8WHakF6HH1lZh/xDdivQBxITn7S7SdjxzHWg2j34A734TRw8sRuSb+8AwmepwPNQjcmM4N0WZeyL2TKYQlCXyHt5LpUhSJkcGCcPH5VhB3V1tqVVhGUbqjwm7vTIB1q7Wsd7j7wOvp0ZiRDJqyKSqLyjGyrUq9X4TwYwLq0m9tKf4M2BUy5eyvSy69KuYpjwUFK8wUWZshHXOO/YIV7mCanh4=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;6:Re7bJhWydkD27BvdH6h0eRSECl+w67LEFQU89DJNE5IgHY6mRvym6mOcTf68+tJ1szKkMbfG2Ze4jU/8xbz+NOXldEgW5VVrjXmYYKtsc8dx5yB2QGvX3VmznUFom2TvyQgVbbPhJUlYk3j5v8V4Stevr7W/xAoNeW1u/GMGWdusOSDjlh0ElHzHLjgAUJVxmeNIwOg84iehETGawMFOS1+ec2v7GaKtuGz9zp2UgYeQrOt9triwivi0ZBm7cFm4eelRwOirR2sSdhtjxSSG1zx+iCjw6D+2tAs74gl5W3V6HrQrVWKk0mRzMGaaByWCHhpVgU0oXp+xDLal6C58rbWqzNKoQjhqqK4EwOA3sPhYDRx+b7gihiLUtr5Q7lOQddBA7LagSPgRUTG7JAPPpPd1yUnAc+eBc/JYPMXIUoiS/HZr5Sv5SQf44Hth3iBk1a7djQDIikdUBHj1sCIltA==;5:mjAQOcaXu0R8lLV+bcP3I01ltHsk0dU94zk1FTR7zMTH/A5/fk3XVznc7O6o0dJJZOV9LAWng57eoa4FZdU1u+yOzlTm3vtt60Hgaqg8vvRxkzpBBKPVOk9qq+DJKM1ouGvLNk+nPcgy/lk7K9QU6ijG6DhjyW3Ly9mF20rpA8M=;7:KO2bjK3QamUL1DtVqejhqclE3hdznER69lvDKyzvmZaGE2iBcXc5P/oEs/mcFQuXoe4+B7V6zESgRyzIoY7vpaQH7FR5JE1it0WYE43W6Y1ePeNeyJytgmhVgBpQCSIV4saNk5vX7ZXswhLWi0Bli3ok5ntHgNFT1JYD6kTRD37/D2fEnHbTGGOIZbHPBuety6J6eiIKy1fu8cOT/bvByoFThJ0eNzbISQjhxIQsrC+JgVD8tKHB/eOAXYpLWsEq
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA0TUI0NjU4OzIzOkEvckI4ME5zaFIvalluZzEzYllzcXZ3QnBK?=
+ =?utf-8?B?TS8yZWFtQ1RkNnk3eTVIMTMxZVhHUkxiR09pRU1DVHlWNWI2dnY0a2VIN2pG?=
+ =?utf-8?B?OHAwMGttMXVaTlBQR0tsZGRjMnY0MHcyelpia1Q0cWgwemlQaVBhUGNoWVUr?=
+ =?utf-8?B?NWxhaCt4VW5EeXJpQi9vclFyVWYwS1BUYVo0MmlMUVg4bUN5VTA1Z1VHN1g1?=
+ =?utf-8?B?UkJTVy91azUwcncvcDNaaFpJVC85blFBTGU0OFBURjUwUk5aeVNSZWczeGgr?=
+ =?utf-8?B?NDVFRjQxY1RqK0hWa21RelZvNEljUGUrUmMvQXJnRDdqdjd1Sm55ZEtFTW9W?=
+ =?utf-8?B?S1ZwOU96Ry9OeTgvRFYvMUhJQ0ptNlJXdE04azhzRi9iV0E1dDBiZHNLNjJ4?=
+ =?utf-8?B?UGl5Rm40QXV1NU5oRSthZmhQdDFWSVBVd3M1ek5sbTdSVUlDcFB1L0Z0aUw2?=
+ =?utf-8?B?SFc2NEtQL2VyYmJ1Z1hhSmRRU1I0a1lUTklhN2lpcjE3OVE2TURZM1hVYzY5?=
+ =?utf-8?B?ZjQwYVpMS2MvTFRMd1RiTEpXd2VXbWQvWmY1dXY4dmtrUTNmU0hKNVFQZXRr?=
+ =?utf-8?B?eDRtb0NVMzJ0MUVHYjZuMUY1ME43T1lvNnBTeUlhTnpFSThRWDczc0hmY0VD?=
+ =?utf-8?B?WWFjY1FwVUZmQWlWeGhld2hJMmNBNno1YzNzZVlWS09sYVhQZEM5YnhMYWkz?=
+ =?utf-8?B?UVBpeUplVjJNdmlscnJNS0R4NEpHcHcydzJFSzkwSzBDMzlobUMxK3RCNjhi?=
+ =?utf-8?B?QVUvUDJxcERjeWVNNkxBSldsYk8vNnhNQ29JQmRXWjA5amZmVHBLLy81VXky?=
+ =?utf-8?B?eGRZeklxajFOSHRUMWd2Y0M0S28zLzk4VjRZTXIwbGlwN0wzR1FvcWs1Z1pv?=
+ =?utf-8?B?b1hLMXF1c2lTb0VBM3JETkFzR3pPTHlSUGQ3eHEyZWtoVVdXSmh6ZXZLR2FZ?=
+ =?utf-8?B?Q0RmVGpldXI3TnhrSGU3Uk8wMUVnVEE2KzNBK1IwUFpCbUJNVkpXRk5IcXNT?=
+ =?utf-8?B?eWJiOWowWE9kWitFakZYb3craklVZzV1Nk1pTVBpZWpMQ01zYThTMzhlMU5V?=
+ =?utf-8?B?WTlEeFBhcUVDZTRpMnhPN1l3ZnhyYVdqVVN4MnVPaEtkNmVUcDFqcXRkZ3Fs?=
+ =?utf-8?B?L3I4MCtadHh0aHRDczRsdlVTRTZUWFZGdVF1Wk5uZ1ZDMkZZcUJJNU5ROXdt?=
+ =?utf-8?B?U1V1Yks4bEZtUStrcFc2eDJLYkhGdkNFcHBBb1RJWGN6K3UydE5lOE9pWVZ0?=
+ =?utf-8?B?OTMwZ2dMMTFOTmU2YVZsTllJNEgrQUJhcUw4YjN6bDVFbm9CblFVdkVUN3lQ?=
+ =?utf-8?B?Wk1yNzgxb3pMaHJ2b2FyeVVaTEdSUlJmVFc1dCtjQnpQMnVtbzVHdU1oUFFl?=
+ =?utf-8?B?RVptVkJMUFBDMERCNTFiTE5YaGl1aHJYbnp5bm1tc3pDTzJ1NXppb1o5OVFT?=
+ =?utf-8?B?a2VwR1pZZ05NVGIxUnJEaXJUYnlPUk9GbzdNd3NWOXBpQ3kwcVZVb2pNcVIz?=
+ =?utf-8?B?eHNsY1RuY2krdlBvTjFKcFd2UnMzNEwvZC9wTTFpM1hDMVROYmVxc08xMTNw?=
+ =?utf-8?B?NUlFd011QXJ2eFlFYldBc212V3h0c2wydjFOWG5lamNOcVRkMVJPK3ZGcy90?=
+ =?utf-8?B?ZlFQbmNQd0RCemRGMzdXVEpNTXlJQUNJa29sbjFtb0pCenQ3MmlxT1h3PT0=?=
+X-Microsoft-Antispam-Message-Info: E4THhC/Vg+RJIF13xKjNKLij82vLatAru+KSjo1DUklbtB9tRBguu3/rBTssKTBPKZiGea4jdZJE4Nikj2nZr4h+Bh/gNL7IW2jjaMGjFqzst8oSHt3hrgggTJUhUVmk+jSoZ3HlV1SUjtFfVErmC8V5uHeWKXDigWGIAXM7vIWq+dGTraUcd1Y0gUF3OPn+UyUCFfJRY1U7Y2wlvcI/kcWkWKAuVl9R1SJb23i4wv8qNUCvu5LSy+InlhNhA+26qYN6ndPmaIDugjPDnEuW9s06Rj/9QVBboxb79kpCEmgrcyur/3/qXJpQGismP2mSF+mIgISP/S3MmBZHnZqkR2dY8GkJOnckLVD2RG4pgRY=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4658;6:38D+93xR+PsqOAb6N187ITTqgqT/PdMuGp6LL9mAk67YkR7Lg5C8pgAZYh4pMMJeFKaSYW7Rm58BhcrtYkJwIWn4yr1Oy7jk2gkULiHDZVa9DzNgb2TuqSQmz9cBMDq62MHp/gu+t7Wt1MHZTDx9qaJArL6NyVkDyW7Wgt+8hDOVPQLIvIQnQ5HkoRgVOP8vhYY/1LgitCIp5YuABNYH0LdFZ8nxkvx3SR2bXGepmZMSKGMEsZdqQBzmwdaBKuMNz0zUc590dmqKZOYHNWAGYR8/ipB/TyEgL4lqj+dKKmEh3Wd5R/whn8dDoVKUnGoz2M8x7XyB7wk3zeA/AR6ebkMOO7ILXnuLMToSOc1Ida6AluuIJ5FIKKrcKPMQG292ZzABqWqoWs++aqJ1ZALzu3LrQLKidRMdTa0tVmoM42+b6cyIbPl3EVsZPB2xasmOsYORBGqMXbKc1IN3EA20dA==;5:/exaBvQoSz363leCg6kd12dMGLwDvbO2165g/NDKNjrrihPi2yMW1iiLGu/S+umVrjqr/MMnoiZaPQUs1Y6aN/7F69qmrTbBzWJSmpjn7UszGqBwYOApgV9l8wfuVq2ZDKiHWSo8fMM8UlLaM07BjkVawh8+/VWKjIbzYlfk0ps=;7:qqiyVY9+KaR33WcAEiRvjGSajNTHFM2KQtm02oIwppjKezJmSQAAwaOTHTkooiDwU+6fpX/gS2vEqfVkJ+csWMwZTi7KEjp2GamkSGw9s9BGccUKMLDoDtJwsxdwWIl25ptU89cQxbAtqi7+M7V9rK2Kb4tSYOCTwDRSMZjCSVY7ruAjdWvmJm7Sn+Ic/gJ0uVUycFJN2c1cCH2Ml3C6BglGKGPSmE5iU4z8C8+ksmgo6LgIswWzJMOH0uHDjdOv
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2018 09:19:01.5092 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9746b710-7598-4934-9d79-08d61e10f044
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2018 09:19:02.1811 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 993a2ca1-0ae6-4d41-49e3-08d61e10f0b2
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: b5839965-430f-4be2-b282-d7a3149f2b37
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4658
@@ -111,32 +114,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reset signal can be produced by GPIO expander that can sleep.
-In that case the probe function fails. Allow using GPIO expanders for
-the reset signal by using the non-atomic gpiod_set_value_cansleep()
-function.
+The SSD130x OLED display reset signal is active low. Now the reset
+sequence is implemented in such a way that users are forced to
+define reset-gpios as GPIO_ACTIVE_HIGH in DT to make the reset work.
+
+Do not hard code the active-low sequence into the driver but instead
+allow the user to specify the gpio as GPIO_ACTIVE_LOW to reflect
+the real world.
+
+The only single in-tree user of the display is converted and builds
+fine.
 
 Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 ---
- drivers/video/fbdev/ssd1307fb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I am not really sure wheater this should be in one commit or the DT
+changes should be done in separate commit. Just tell me and I will
+split/merge the changes as you want. Thanks.
 
+ arch/arm/boot/dts/imx28-cfa10036.dts | 3 ++-
+ drivers/video/fbdev/ssd1307fb.c      | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx28-cfa10036.dts b/arch/arm/boot/dts/imx28-cfa10036.dts
+index e54f5ab..be3406e 100644
+--- a/arch/arm/boot/dts/imx28-cfa10036.dts
++++ b/arch/arm/boot/dts/imx28-cfa10036.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "imx28.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Crystalfontz CFA-10036 Board";
+@@ -95,7 +96,7 @@
+ 					pinctrl-names = "default";
+ 					pinctrl-0 = <&ssd1306_cfa10036>;
+ 					reg = <0x3c>;
+-					reset-gpios = <&gpio2 7 0>;
++					reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
+ 					solomon,height = <32>;
+ 					solomon,width = <128>;
+ 					solomon,page-offset = <0>;
 diff --git a/drivers/video/fbdev/ssd1307fb.c b/drivers/video/fbdev/ssd1307fb.c
-index ba66c02..e7ae135 100644
+index e7ae135..7b5bc42 100644
 --- a/drivers/video/fbdev/ssd1307fb.c
 +++ b/drivers/video/fbdev/ssd1307fb.c
-@@ -728,9 +728,9 @@ static int ssd1307fb_probe(struct i2c_client *client,
+@@ -728,10 +728,10 @@ static int ssd1307fb_probe(struct i2c_client *client,
  
  	if (par->reset) {
  		/* Reset the screen */
--		gpiod_set_value(par->reset, 0);
+-		gpiod_set_value_cansleep(par->reset, 0);
+-		udelay(4);
+ 		gpiod_set_value_cansleep(par->reset, 1);
+ 		udelay(4);
 +		gpiod_set_value_cansleep(par->reset, 0);
- 		udelay(4);
--		gpiod_set_value(par->reset, 1);
-+		gpiod_set_value_cansleep(par->reset, 1);
- 		udelay(4);
++		udelay(4);
  	}
  
+ 	if (par->vbat_reg) {
 -- 
 2.1.4
 
