@@ -2,179 +2,148 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8E3ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 04:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 330B1C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 04:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0306F20673
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 04:00:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0306F20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C9C5120673
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 04:04:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mM2g/MqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C5120673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730392AbeISJf4 (ORCPT
+        id S1728506AbeISJkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 05:35:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39698 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbeISJf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 05:35:56 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22B9E30014B0;
-        Wed, 19 Sep 2018 03:59:59 +0000 (UTC)
-Received: from t450s.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 15607308BDA0;
-        Wed, 19 Sep 2018 03:59:58 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 21:59:57 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     "Raj, Ashok" <ashok.raj@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Gage Eads <gage.eads@intel.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH] vfio/pci: Some buggy virtual functions incorrectly
- report 1 for intx.
-Message-ID: <20180918215957.0d155684@t450s.home>
-In-Reply-To: <20180912174618.GA19551@araj-mobl1.jf.intel.com>
-References: <1533843426-79170-1-git-send-email-ashok.raj@intel.com>
-        <20180809134417.50de7fe7@t450s.home>
-        <20180912174618.GA19551@araj-mobl1.jf.intel.com>
+        Wed, 19 Sep 2018 05:40:33 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44687 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbeISJkd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 05:40:33 -0400
+Received: by mail-lf1-f66.google.com with SMTP id g24-v6so3817540lfb.11;
+        Tue, 18 Sep 2018 21:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aG7ZklE/LQJ/WhEnFh6VPV+D9L0jQ1iZ3dCHA2GNV/o=;
+        b=mM2g/MqC2LH2/KpZBTv5e0zHNLiYw9GlznNNpwjlST6gBkKN8wReT5F07ivtbhZuF+
+         8L70H5AM3/Ko6WJ/iKBgsUFS0q5TIJpqvP12izQWEaxg/9TCHRYGIeR1ckEye+uwJUNE
+         hzQoWrxNzkoaDzYSs4pVq0ma63XVpmbnB+LxTfJ1+7MjxuuB/icHYfquSG3/R1WFOY67
+         MhUZHeD28dEDeXVkFdHhX+SEnWMuDfUAQ99ymzEO60D4ajsCbLGGMwsA0h4H6clUiZtf
+         VRYSjjmMnwMhLYFfGk/1C3ajob1gWYS+fJ1xCx5vuSxeYCcSpqJOgQ9HosQba6FlL3gC
+         mzhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aG7ZklE/LQJ/WhEnFh6VPV+D9L0jQ1iZ3dCHA2GNV/o=;
+        b=XTJnUu1ZJUExcfjLOlwZ/MFaWo2MIPgy5jgTjTsp1gdmw/P1vTFI7so9pTxNjqE/El
+         C8r1FnRuhVmwUPZS9iZkDBQHLXQYSbXr0JXCS86PSx6R2Eyj19MhtT8/3NGTEHU2+yzF
+         08eOwG9NR3PL6Qy2k6Cwx1wDz4cY9MgihclsGQ6iGjW3a3ji/QTrV6u195VGe+9v9jUu
+         wZyh0okpgPXqPWA0yC8BtxXGwlQ5b2z2Qx/qog0hY5Z7fkYQRLl/0lfqvjXgE5rd6uXc
+         froimv8YnTOQMvtNVCU6yTpu7sVOX7/8pGcf/ctUs5RL3lQEZT3Omr1FnY6MlPfHQGr0
+         3MqA==
+X-Gm-Message-State: APzg51DtTC63BPQ2xRnZsYHB9JPUOAUVTt1f5mxjVxznTS7kQWVSzYsk
+        /DPIdkm/7+LWqbWLYNBYd+nuirOI4vZFAcfOCZl+Yg==
+X-Google-Smtp-Source: ANB0VdaCUTXvZCfCliyJUj6DRqZTmmhjG9aQoTcZFN8gW0x32PXCTYCFobFak690Btr+U89rvTCRlgczG5m6jJo8uSc=
+X-Received: by 2002:a19:4e51:: with SMTP id c78-v6mr7568287lfb.79.1537329873893;
+ Tue, 18 Sep 2018 21:04:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 19 Sep 2018 03:59:59 +0000 (UTC)
+References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
+ <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
+In-Reply-To: <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date:   Wed, 19 Sep 2018 06:04:17 +0200
+Message-ID: <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org,
+        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 10:46:19 -0700
-"Raj, Ashok" <ashok.raj@intel.com> wrote:
+Hi Linus
+On Wed, Sep 19, 2018 at 12:40 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Fri, Sep 14, 2018 at 12:08 AM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
+>
+> > Current code assumes that the direction is input if direction_input
+> > function is set.
+> > This might not be the case on GPIOs with programmable direction.
+> >
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > ---
+> >  drivers/gpio/gpiolib.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > index a57300c1d649..af853749e0bb 100644
+> > --- a/drivers/gpio/gpiolib.c
+> > +++ b/drivers/gpio/gpiolib.c
+> > @@ -1352,7 +1352,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+> >                  * it does, and in case chip->get_direction is not set, we may
+> >                  * expose the wrong direction in sysfs.
+> >                  */
+> > -               desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
+> > +               if (chip->get_direction)
+> > +                       desc->flags = !chip->get_direction(chip, i) ?
+> > +                                       (1 << FLAG_IS_OUT) : 0;
+> > +               else
+> > +                       desc->flags = !chip->direction_input ?
+> > +                                       (1 << FLAG_IS_OUT) : 0;
+>
+> We used to do this.
+>
+> But it breaks Qualcomm hardware.
 
-> On Thu, Aug 09, 2018 at 01:44:17PM -0600, Alex Williamson wrote:
-> > On Thu,  9 Aug 2018 12:37:06 -0700
-> > Ashok Raj <ashok.raj@intel.com> wrote:
-> >   
-> > > PCI_INTERRUPT_PIN should always read  0 for SRIOV Virtual
-> > > Functions.
-> > > 
-> > > Some SRIOV devices have some bugs in RTL and VF's end up reading 1
-> > > instead of 0 for the PIN.  
-> > 
-> > Hi Ashok,
-> > 
-> > One question, can we identify which VFs are known to have this
-> > issue so that users (and downstreams) can know how to prioritize
-> > this patch?  
-> 
-> Hi Alex
-> 
-> Sorry it took some time to hunt this down. 
-> 
-> The offending VF has a device ID : 0x270C
-> The corresponding PF has a device ID: 0x270B.
+And should't that be tacked in qcom hardware with something like:
 
-Ok, I interpret Alan's previous comment about the patch[1] to suggest a
-structure a bit more like that below.  IOW, we know that 8086:270c
-inspires this change, but once it's included we won't know who else
-relies on it.  We can perhaps encourage better hardware validation, or
-at least better tracking of who needs this with a warning and
-whitelist.  Testing, especially positive and negative testing against
-the warning, and reviews welcome.  Thanks,
+if (!priv->initialized)
+   return INPUT;
 
-Alex
+if you or Timur point me to the harware that was crashing I would not
+mind looking into that, but the current situations seems to me like a
+hack.
 
-[1]https://lkml.org/lkml/2018/8/10/462
+Other option would be to implement a new function get_direction_fast()
+(the name could be better). I can also try to implement something in
+that direction if you want.
 
-commit d780da26a81c6f47522ae0aeff03abd4d08b89b5
-Author: Alex Williamson <alex.williamson@redhat.com>
-Date:   Tue Sep 18 21:27:57 2018 -0600
+Thanks for your review.
 
-    vfio/pci: Mask buggy SR-IOV VF INTx support
-    
-    The SR-IOV spec requires that VFs must report zero for the INTx pin
-    register as VFs are precluded from INTx support.  It's much easier for
-    the host kernel to understand whether a device is a VF and therefore
-    whether a non-zero pin register value is bogus than it is to do the
-    same in userspace.  Override the INTx count for such devices and
-    virtualize the pin register to provide a consistent view of the device
-    to the user.
-    
-    As this is clearly a spec violation, warn about it to support hardware
-    validation, but also provide a known whitelist as it doesn't do much
-    good to continue complaining if the hardware vendor doesn't plan to
-    fix it.
-    
-    Known devices with this issue: 8086:270c
-    
-    Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+>
+> commit 1ca2a92b2a99323f666f1b669b7484df4bda05e4
+> Author: Timur Tabi <timur@codeaurora.org>
+> Date:   Wed Dec 20 13:10:31 2017 -0600
+>
+>     Revert "gpio: set up initial state from .get_direction()"
+>
+>     This reverts commit 72d3200061776264941be1b5a9bb8e926b3b30a5.
+>
+>     We cannot blindly query the direction of all GPIOs when the pins are
+>     first registered.  The get_direction callback normally triggers a
+>     read/write to hardware, but we shouldn't be touching the hardware for
+>     an individual GPIO until after it's been properly claimed.
+>
+>     Signed-off-by: Timur Tabi <timur@codeaurora.org>
+>     Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+>     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index cddb453a1ba5..8af3f6f35f32 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -430,14 +430,41 @@ static int vfio_pci_open(void *device_data)
- 	return ret;
- }
- 
-+static const struct pci_device_id known_bogus_vf_intx_pin[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x270c) },
-+	{}
-+};
-+
- static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
- {
- 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
- 		u8 pin;
-+
-+		if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
-+			return 0;
-+
- 		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
--		if (IS_ENABLED(CONFIG_VFIO_PCI_INTX) && !vdev->nointx && pin)
--			return 1;
- 
-+		/*
-+		 * Per SR-IOV spec rev 1.1, 3.4.1.18 the interrupt pin register
-+		 * does not apply to VFs and VFs must implement this register
-+		 * as read-only with value zero.  Userspace is not readily
-+		 * able to identify a device as a VF and thus that the pin
-+		 * definition on the device is bogus should a device violate
-+		 * this requirement.  For such devices, override the bogus
-+		 * value and provide a warning to support hardware validation
-+		 * (or be quite if it's known).  PCI config space emulation
-+		 * will virtualize this register for all VFs.
-+		 */
-+		if (pin && vdev->pdev->is_virtfn) {
-+			if (!pci_match_id(known_bogus_vf_intx_pin, vdev->pdev))
-+				dev_warn_once(&vdev->pdev->dev,
-+					      "VF reports bogus INTx pin %d\n",
-+					      pin);
-+			return 0;
-+		}
-+
-+		return pin ? 1 : 0;
- 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
- 		u8 pos;
- 		u16 flags;
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index 62023b4a373b..25130fa6e265 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1678,7 +1678,8 @@ int vfio_config_init(struct vfio_pci_device *vdev)
- 		*(__le16 *)&vconfig[PCI_DEVICE_ID] = cpu_to_le16(pdev->device);
- 	}
- 
--	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
-+	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx ||
-+	    pdev->is_virtfn)
- 		vconfig[PCI_INTERRUPT_PIN] = 0;
- 
- 	ret = vfio_cap_init(vdev);
+
+
+-- 
+Ricardo Ribalda
