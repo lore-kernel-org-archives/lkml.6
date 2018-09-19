@@ -2,120 +2,98 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD57DECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64118C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF00214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:43:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF00214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C51D7214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sYwdqMKL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51D7214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeISITK (ORCPT
+        id S1726972AbeISIXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 04:19:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50124 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725817AbeISITK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 04:19:10 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07DC892E1B;
-        Wed, 19 Sep 2018 02:43:32 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E5E2C308BDA0;
-        Wed, 19 Sep 2018 02:43:31 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id CCE854BB74;
-        Wed, 19 Sep 2018 02:43:31 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 22:43:31 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Zhang Yi <yi.z.zhang@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        yu c zhang <yu.c.zhang@intel.com>, david@redhat.com,
-        jack@suse.cz, hch@lst.de, linux-mm@kvack.org, rkrcmar@redhat.com,
-        jglisse@redhat.com, yi z zhang <yi.z.zhang@intel.com>
-Message-ID: <1394508970.13987303.1537325011734.JavaMail.zimbra@redhat.com>
-In-Reply-To: <c0b53c74379e6d654bbe42471fcef8aa5fd22efd.1534934405.git.yi.z.zhang@linux.intel.com>
-References: <cover.1534934405.git.yi.z.zhang@linux.intel.com> <c0b53c74379e6d654bbe42471fcef8aa5fd22efd.1534934405.git.yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH V4 2/4] mm: introduce memory type MEMORY_DEVICE_DEV_DAX
+        Wed, 19 Sep 2018 04:23:38 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37172 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeISIXi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 04:23:38 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f1-v6so1902033plt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=h4pmfop0kqiPTcVQInMHigI4uggqGn9/2m9ws7pBNWY=;
+        b=sYwdqMKL0VIa9jH8eq9EMrSKBVfGiX1nZmpP3/L18mN2COlk26O93qge8g1lmeU/OR
+         8GxQ+j7q7hPOsMey/SUd8IYCRGLokjfWwyydkSYKDJLPlZ0CMt7dW3P0u6YfYLQIzEIz
+         BvIsQIkvUesRu7NAq8+p5upxF2TWoihvDM851OJFRGKOCybkJAfX6s2IYryxZwlLPfZB
+         7Osjn7CNxnfhrhEvGVTzOR5dSfXfUYmOMSsT9zVD+PgOQitFXWGSAUOl6yca0V8CRInZ
+         Vxlz1bt2AmGbRv4+3sbgQNm8UYRSVgIl914tjOzMFrPiRAxVJfGCGK1DuNB9hvvgWTdn
+         HrFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=h4pmfop0kqiPTcVQInMHigI4uggqGn9/2m9ws7pBNWY=;
+        b=PdqAij/LAdB0Ds2Fl72cIt7excukKi8nhHM4wkOh9tsiOiv/JI713nyKqCYu6UhoX5
+         kgIqJmxcyU8ijzl389OftM9jKAXS9xQ3aiBxayfC7o+WMufEkbrK9Dosfbzz9m+DAu4N
+         Wsmw0etPEY86I8OPK1GquHOeYC2LIl7YJ1PFYULaN996t5h7qzq/HLQ8IR1YXkB9E84l
+         7RH/mItjeXIX0zW6BqM9n5yA4AJ/J+Mw7N0/pyCOgUny0d0xa6nguNeTvkRZfPWYjzaY
+         3fVv9LBz8diuSNdrna8xKf9i48jB8VGowIVE9glT+fwiXVl381CdaoiEeMX2YTS0uGMz
+         Naig==
+X-Gm-Message-State: APzg51COJ6qFtyyDz1pReDZ1tvUDnIWIKN4Fc4oR0nOF2CQABP1kqD9C
+        44YfAvuQQGBZQzXq+b9zuqA=
+X-Google-Smtp-Source: ANB0Vda/ZbGAKdMQI1kYEctKpLmNmst2Z/bdYRZVY6vknLuIAvpJ/CFJ54Mo/AzZeHOLKpLKiRLdrw==
+X-Received: by 2002:a17:902:7586:: with SMTP id j6-v6mr32018331pll.295.1537325277915;
+        Tue, 18 Sep 2018 19:47:57 -0700 (PDT)
+Received: from localhost ([175.223.11.230])
+        by smtp.gmail.com with ESMTPSA id y7-v6sm25110141pge.8.2018.09.18.19.47.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 19:47:56 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 11:47:54 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        He Zhe <zhe.he@windriver.com>, pmladek@suse.com,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
+ to command line
+Message-ID: <20180919024754.GA15128@jagdpanzerIV>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+ <20180919023932.GA14090@jagdpanzerIV>
+ <20180918224312.6e9aef50@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.79, 10.4.195.12]
-Thread-Topic: introduce memory type MEMORY_DEVICE_DEV_DAX
-Thread-Index: OFqm6aQlhMGxhCDm/axIixZAe4oqXg==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 19 Sep 2018 02:43:32 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918224312.6e9aef50@vmware.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (09/18/18 22:43), Steven Rostedt wrote:
+> >  First  - switch to u64 size.
+> >  Second - check for NULL str.
+> > 
+> I think I would switch it around. Check for NULL first, and then switch
+> to u64. It was always an int, do we need to backport converting it to
+> u64 to stable? The NULL check is a definite, the overflow of int
+> shouldn't crash anything.
 
-> 
-> Currently, NVDIMM pages will be marked 'PageReserved'. However, unlike
-> other reserved PFNs, pages on NVDIMM shall still behave like normal ones
-> in many cases, i.e. when used as backend memory of KVM guest. This patch
-> introduces a new memory type, MEMORY_DEVICE_DEV_DAX. And set this flag
-> while dax driver hotplug the device memory.
-> 
-> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
-> Reviewed-by: Jan Kara suse.cz>
-> ---
->  drivers/dax/pmem.c       | 1 +
->  include/linux/memremap.h | 8 ++++++++
->  2 files changed, 9 insertions(+)
-> 
-> diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-> index fd49b24..fb3f363 100644
-> --- a/drivers/dax/pmem.c
-> +++ b/drivers/dax/pmem.c
-> @@ -111,6 +111,7 @@ static int dax_pmem_probe(struct device *dev)
->                  return rc;
->  
->          dax_pmem->pgmap.ref = &dax_pmem->ref;
-> +        dax_pmem->pgmap.type = MEMORY_DEVICE_DEV_DAX;
->          addr = devm_memremap_pages(dev, &dax_pmem->pgmap);
->          if (IS_ERR(addr))
->                  return PTR_ERR(addr);
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index f91f9e7..cd07ca8 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -53,11 +53,19 @@ struct vmem_altmap {
->   * wakeup event whenever a page is unpinned and becomes idle. This
->   * wakeup is used to coordinate physical address space management (ex:
->   * fs truncate/hole punch) vs pinned pages (ex: device dma).
-> + *
-> + * MEMORY_DEVICE_DEV_DAX:
-> + * Device memory that support raw access to persistent memory. Without need
-> + * of an intervening filesystem, it could be directed mapped via an mmap
-> + * capable character device. Together with the type MEMORY_DEVICE_FS_DAX,
-> + * we could distinguish the persistent memory pages from normal ZONE_DEVICE
-> + * pages.
->   */
->  enum memory_type {
->          MEMORY_DEVICE_PRIVATE = 1,
->          MEMORY_DEVICE_PUBLIC,
->          MEMORY_DEVICE_FS_DAX,
-> +        MEMORY_DEVICE_DEV_DAX,
->  };
->  
->  /*
-> --
+Agreed. This order makes much more sense. Do you mind, tho, to have
+"unsigned int size" in the first patch along with NULL str check?
+Just to silent the checkpatch.
 
-Reviewed-by: Pankaj Gupta <pagupta@redhat.com>
-
-> 2.7.4
-> 
-> 
+	-ss
