@@ -2,35 +2,35 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450EEC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0706AC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0295B20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:30:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0295B20880
+	by mail.kernel.org (Postfix) with ESMTP id 9C29520880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:31:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C29520880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeISNHQ (ORCPT
+        id S1731012AbeISNIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 09:07:16 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39784 "EHLO mga02.intel.com"
+        Wed, 19 Sep 2018 09:08:16 -0400
+Received: from mga09.intel.com ([134.134.136.24]:11818 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730787AbeISNHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:07:15 -0400
+        id S1726986AbeISNIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 09:08:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 00:30:37 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 00:31:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
-   d="scan'208";a="87395401"
+   d="scan'208";a="91367351"
 Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Sep 2018 00:30:23 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 00:31:32 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -38,74 +38,67 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         Len Brown <len.brown@intel.com>,
         Zhimin Gu <kookoo.gu@intel.com>, Yu Chen <yu.c.chen@intel.com>
-Subject: [PATCH 00/12][RFC v3] Backport several fixes from 64bits to 32bits hibernation 
-Date:   Wed, 19 Sep 2018 15:37:01 +0800
-Message-Id: <cover.1537275915.git.yu.c.chen@intel.com>
+Subject: [PATCH 02/12][RFC v3] PM / hibernate: Check the success of generating md5 digest before hibernation
+Date:   Wed, 19 Sep 2018 15:38:17 +0800
+Message-Id: <f50baa939e550d4c6e09fd15ed2c0ddb0b23b023.1537275915.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1537275915.git.yu.c.chen@intel.com>
+References: <cover.1537275915.git.yu.c.chen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently there are mainly three bugs in 32bits system when doing
-hibernation:
-1. The page copy code is not running in safe page, which might
-   cause hang during resume.
-2. There's no text mapping for the final jump address
-   of the original kernel, which might cause the system jumping
-   into illegal address and causes system hang during resume.
-3. The restore kernel switches to its own kernel page table(swapper_pg_dir)
-   rather than the original kernel page table after all the pages
-   been copied back, which might cause invalid virtual-physical
-   mapping issue during resume.
+Currently if get_e820_md5() fails, then it will hibernate nevertheless.
+Actually the error code should be propagated to upper caller so that
+the hibernation could be aware of the result and terminates the process
+if md5 digest fails.
 
-To solve these problems:
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ arch/x86/power/hibernate_64.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-1. Copy the code core_restore_code to a safe page, to avoid the instruction
-   code been overwritten when image kernel pages are being copied.
-2. Set up temporary text mapping for the image kernel's jump address,
-   so that after all the pages have been copied back, the system could
-   jump to this address.
-3. Switch to the original kernel page table during resume.
-
-Furthermore, MD5 hash check for e820 map is also backported from 64bits
-system.
-
-In order to make this patch set more readable, these fixes are splitted
-into several sub patches.
-
-Chen Yu (1):
-  PM / hibernate: Check the success of generating md5 digest before
-    hibernation
-
-Zhimin Gu (11):
-  x86, hibernate: Fix nosave_regions setup for hibernation
-  x86/asm/power: Create stack frames in hibernate_asm_32.S
-  x86, hibernate: Extract the common code of 64/32 bit system
-  x86, hibernate: Enable CONFIG_ARCH_HIBERNATION_HEADER set on 32bit
-    system
-  x86, hibernate: Rename temp_level4_pgt to temp_pgt
-  x86, hibernate: Use temp_pgt as the temporary page table
-  x86, hibernate: Use the page size macro instead of constant value
-  x86, hibernate: Switch to original page table after resumed
-  x86, hibernate: Switch to relocated restore code during resume on
-    32bit system
-  x86, hibernate: Set up temporary text mapping for 32bit system
-  x86, hibernate: Adjust in_suspend after resumed on 32bit system
-
- arch/x86/Kconfig                  |   2 +-
- arch/x86/include/asm/suspend.h    |   8 +
- arch/x86/include/asm/suspend_32.h |   4 +
- arch/x86/kernel/setup.c           |   2 +-
- arch/x86/power/Makefile           |   2 +-
- arch/x86/power/hibernate.c        | 249 ++++++++++++++++++++++++++++++
- arch/x86/power/hibernate_32.c     |  52 +++++--
- arch/x86/power/hibernate_64.c     | 224 +--------------------------
- arch/x86/power/hibernate_asm_32.S |  37 ++++-
- arch/x86/power/hibernate_asm_64.S |   2 +-
- 10 files changed, 335 insertions(+), 247 deletions(-)
- create mode 100644 arch/x86/power/hibernate.c
-
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index f8e3b668d20b..e0de959ad02d 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -265,9 +265,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
+ 	return ret;
+ }
+ 
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
+-	get_e820_md5(e820_table_firmware, buf);
++	return get_e820_md5(e820_table_firmware, buf);
+ }
+ 
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -287,8 +287,9 @@ static bool hibernation_e820_mismatch(void *buf)
+ 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
+ }
+ #else
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
++	return 0;
+ }
+ 
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -333,9 +334,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
+ 
+ 	rdr->magic = RESTORE_MAGIC;
+ 
+-	hibernation_e820_save(rdr->e820_digest);
+-
+-	return 0;
++	return hibernation_e820_save(rdr->e820_digest);
+ }
+ 
+ /**
 -- 
 2.17.1
 
