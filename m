@@ -2,136 +2,110 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92B3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F1BECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49770214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC12214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:50:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nBOEQdyV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49770214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjV+Kejn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC12214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730928AbeISNWy (ORCPT
+        id S1730605AbeISN1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 09:22:54 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35167 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbeISNWx (ORCPT
+        Wed, 19 Sep 2018 09:27:17 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38994 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbeISN1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:22:53 -0400
-Received: by mail-io1-f68.google.com with SMTP id w11-v6so3739629iob.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 00:46:12 -0700 (PDT)
+        Wed, 19 Sep 2018 09:27:17 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j8-v6so2302680pff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 00:50:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GiXtr5fZL/Y3zAGXyySg6WYsq8BpqUUyK2qzhtBZOwQ=;
-        b=nBOEQdyVfmw7k47I60y7bMqtOK12zGUd2jqMhzXU6oYovkvhNjsmNZB5VPvO7uL37S
-         yvXomu2Doyny0uGPsdFQhR8J7jaRIwbfTl/SaaTAlkCVE2xo/Oddx1ijA4y4avrSOZOH
-         UQQtW8Zv7jN7iJcdzJdR0Nfz9ZNwiF1DjaUys=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2gmqlvgWnuhnzgSQM//m0TlOlbcMkWwyT7FT/P5ZWOs=;
+        b=gjV+KejnHgh73TdZ35w5u4kfQshro06nCVAmdFdKKERhuX3WwCnJeBkvRWLdGab+vW
+         tXeX9ETq9emMJ/3qDQIbhOEz64JL9nXpdjqhejc6SKUAxetIeTCz3MDsY/bqu1fupKI5
+         aNUWdcp3FW2keYXbOtmRFDVVZoZyxgvbm9XlEzP1MUg5fkVr2KOTZr/1sX8CY8pbxMZ8
+         l7Ei3OnjcHG7eH2OjHZS4JKVSXumd8Y4WN/HCaM60DXi1Qa4T+dIa2IEEaLYvLfk+wGD
+         711gfOF1DTccNWy2a190K12ZneLRXf3MGAq2s7uQWCftslr555hbeVB5bmg7djf7l7/f
+         mKLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GiXtr5fZL/Y3zAGXyySg6WYsq8BpqUUyK2qzhtBZOwQ=;
-        b=UBq3G8ksl7+98/P+BKZ4DX6D2mc4MDTv4YBkCBOdxVWsUJC0ztkYtzfLU9bxe4tRTT
-         p/CJC+G6Lvb57adl0w8ePIYlK8fxdqg0HrShfPMe1wyAn2MX7UhQ8x3jEtePOwOVlWFz
-         lLXLdL8No0nVhBJteCq63IUb59ie6EKn3VYCAYx/AmiZKusgqEqD8BiYpUJYtzt1mWVL
-         ubVTJwFJrVYyVdJj41TqX/UDp0y4rRcA6NW2Jrx9T/WWtEqjU5khKkTcOoSdbND6H406
-         BsQho2v5yoJlW70tdF+9OgdnpryzXgPKb0ji5oFvpBCA+LescN1tPNeFr7idujkpoMpN
-         1o5w==
-X-Gm-Message-State: APzg51Dp1A4XMahhXfWo4EWC2pmNFLZz+bX8X6sjFjT1yuaQrdTKZsu4
-        azwNw2qc05jurkPd8pfmhir3AXk2ofhPyQ==
-X-Google-Smtp-Source: ANB0VdaE31OQez8Wv5ESK30gQZekDwsLUr0UkUNrTZtXD4grD7FAXdOLslm0f1mo0dpVmE0aQE1u/A==
-X-Received: by 2002:a6b:5f12:: with SMTP id t18-v6mr21107529iob.62.1537343172068;
-        Wed, 19 Sep 2018 00:46:12 -0700 (PDT)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
-        by smtp.gmail.com with ESMTPSA id p125-v6sm5669327ite.17.2018.09.19.00.46.11
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2gmqlvgWnuhnzgSQM//m0TlOlbcMkWwyT7FT/P5ZWOs=;
+        b=ZAkS+u42VwUzZRKAP1foE1bxgM/41J8k9wS7Ee9U/oCMKj+2M6sifD/7rZgsGupPns
+         fMu7NpU+7PjWs2Su1ahz0LzIGDEAAq0BmbFHLr12Rz6L5xiZ7u8MPdr3KgLemGEErkVB
+         LNJbR0OB2qCdjRFCRfBn06x84XM5+DfyKEmzszb5ZG367DCQCiUdnzeOhtIwPcu7aNb8
+         HXTLh8VanakaeywShXdTOyikitHRc8J0fYC41b87tTzxWFDpEGOJEdHsSYuC8H4LHFJs
+         tdoPQzgf9vrlVKvOFM/1oZX1QHV1IcP2DjU3gHVWwKVQrGm4nSCQ4AfutjAJi36eoBz3
+         0ZhA==
+X-Gm-Message-State: APzg51AmMb4ynw1fDLQRzMIekAyA9Z6gxyuC80Bx/Osq70SfT15qi5nj
+        yjlSZwgyKOXAyUq3zaMoTMVlz4mG
+X-Google-Smtp-Source: ANB0VdY8RmfcAc7C/mTeNPYtOR8zWZeW7Lerh32tucD7xf1Or7LCkWQsEGtwuIS50GCmWauMKz8FKw==
+X-Received: by 2002:a63:5b1b:: with SMTP id p27-v6mr31264409pgb.322.1537343435082;
+        Wed, 19 Sep 2018 00:50:35 -0700 (PDT)
+Received: from localhost.localdomain ([61.101.44.96])
+        by smtp.gmail.com with ESMTPSA id c17-v6sm28546123pfk.187.2018.09.19.00.50.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 00:46:11 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id 75-v6so3704205iou.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 00:46:11 -0700 (PDT)
-X-Received: by 2002:a6b:2387:: with SMTP id j129-v6mr27269381ioj.86.1537342736840;
- Wed, 19 Sep 2018 00:38:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <1537307954-9729-1-git-send-email-vgarodia@codeaurora.org> <72fb5d7d570c7f5520cc304bea800ae6@codeaurora.org>
-In-Reply-To: <72fb5d7d570c7f5520cc304bea800ae6@codeaurora.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Wed, 19 Sep 2018 16:38:45 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUk14W5hAM=h5rrZF+8w8RnwpNrBya+BPQ+TPdRp_834A@mail.gmail.com>
-Message-ID: <CAPBb6MUk14W5hAM=h5rrZF+8w8RnwpNrBya+BPQ+TPdRp_834A@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] Venus updates - PIL
-To:     vgarodia@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Sep 2018 00:50:34 -0700 (PDT)
+From:   Sangwon Hong <qpakzk@gmail.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Sangwon Hong <qpakzk@gmail.com>
+Subject: [PATCH] perf tool: Add missing subcommand `version`
+Date:   Wed, 19 Sep 2018 00:49:11 -0700
+Message-Id: <20180919074911.41931-1-qpakzk@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
+There isn't subcommand `version` when typing `perf help`.
 
-Thanks for this new revision. I don't have much to add, apart from
-maybe a few suggestions to make it easier to follow the "story" this
-series tells:
+Before :
 
-* Maybe the no_tz member is appearing too early in the series. For the
-first two patches, we still only support loading the firmware through
-TrustZone. In patch 3 we initialize no_tz properly, but still cannot
-boot without TrustZone, which creates a state where the driver could
-parse the firmware node, but would still attempt to use TrustZone.
-* I feel like patch 1 should be merged into patch 4, since the
-function it introduces is not used before patch 4 anyway.
+$ perf help | grep version
+ usage: perf [--version] [--help] [OPTIONS] COMMAND [ARGS]
 
-If you agree I can maybe do the v9 of the series to address the two
-points mentioned above, unless Stanimir is already happy with the
-state?
+So add perf-version in command-list.txt for listing it
+when typing `perf help`.
 
-In any case, this is doing the job, so:
-Tested-by: Alexandre Courbot <acourbot@chromium.org>
+After :
 
-On Wed, Sep 19, 2018 at 8:45 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
->
-> Ignore the v8 of this series. The code that was modified was added to
-> wrong
-> patchset while handling the git rebase.
-> Please review the version 9.
->
-> On 2018-09-19 03:29, Vikash Garodia wrote:
-> > This series just fixes the compilation for of_dma_configure.
-> > Minor #define name improvement and indentations.
-> >
-> > Stanimir Varbanov (1):
-> >   venus: firmware: register separate platform_device for firmware
-> > loader
-> >
-> > Vikash Garodia (4):
-> >   venus: firmware: add routine to reset ARM9
-> >   venus: firmware: move load firmware in a separate function
-> >   venus: firmware: add no TZ boot and shutdown routine
-> >   dt-bindings: media: Document bindings for venus firmware device
-> >
-> >  .../devicetree/bindings/media/qcom,venus.txt       |  13 +-
-> >  drivers/media/platform/qcom/venus/core.c           |  24 ++-
-> >  drivers/media/platform/qcom/venus/core.h           |   6 +
-> >  drivers/media/platform/qcom/venus/firmware.c       | 234
-> > +++++++++++++++++++--
-> >  drivers/media/platform/qcom/venus/firmware.h       |  17 +-
-> >  drivers/media/platform/qcom/venus/hfi_venus.c      |  13 +-
-> >  drivers/media/platform/qcom/venus/hfi_venus_io.h   |   8 +
-> >  7 files changed, 272 insertions(+), 43 deletions(-)
+$ perf help | grep version
+ usage: perf [--version] [--help] [OPTIONS] COMMAND [ARGS]
+   version         display the version of perf binary
+
+Signed-off-by: Sangwon Hong <qpakzk@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/command-list.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/command-list.txt b/tools/perf/command-list.txt
+index 2d0caf20ff3a..bc6c585f74fc 100644
+--- a/tools/perf/command-list.txt
++++ b/tools/perf/command-list.txt
+@@ -30,3 +30,4 @@ perf-test			mainporcelain common
+ perf-timechart			mainporcelain common
+ perf-top			mainporcelain common
+ perf-trace			mainporcelain audit
++perf-version			mainporcelain common
+-- 
+2.17.1
+
