@@ -2,78 +2,92 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD07C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0005BECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA2720880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:48:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA2720880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 958462150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:51:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958462150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbeISU0r (ORCPT
+        id S1731966AbeISU3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:26:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49004 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730986AbeISU0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:26:47 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 45450EFFB345E;
-        Wed, 19 Sep 2018 22:48:28 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 19 Sep 2018 22:48:25 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <airlied@linux.ie>
-CC:     <bskeggs@redhat.com>, <okaya@codeaurora.org>, <helgaas@kernel.org>,
-        <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm: nouveau: remove a redundant local variable 'pclks'
-Date:   Wed, 19 Sep 2018 22:36:04 +0800
-Message-ID: <1537367764-59819-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Wed, 19 Sep 2018 16:29:53 -0400
+Received: from mout.gmx.net ([212.227.15.19]:46821 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731221AbeISU3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:29:53 -0400
+Received: from [172.36.0.37] ([217.86.137.241]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lrek1-1ffrm13ssP-013PZK; Wed, 19
+ Sep 2018 16:51:32 +0200
+Subject: Re: [PATCH 01/20] Input: iforce - remove "being used" silliness
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
+From:   Tim Schumacher <timschumi@gmx.de>
+Message-ID: <0541f46d-1f4f-05f4-8e93-6663f6c13bd9@gmx.de>
+Date:   Wed, 19 Sep 2018 16:51:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:BCPEi9yIFpM70bbWgZfyzMvbSUjYoN2mIl+EafneAYL2TY7Ivyf
+ RTsqAIXQgERc69CI6OU9JF/V2UQmnxwkhvl+pvCZ18mw6dDoPYkQ29C8mFKyEbYrX401eBd
+ BbkCh138x4p3/i7fywBNvnFqafWb+0no2DDycwzN/M30bZeyHeIn/AO4609T+lYi0Ge+PFs
+ 3ybYjerEgfE+Te/95qL7Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PDt8b8OUw70=:ipEIB4iEwepz4/pqg7/Elk
+ fGuRbNT8Yfxe1Nfak1cab3wGVqvpQ4SFzlmsCZaE/mJdidLlGkhXyaMjpbnf4mjyW+wlTQocP
+ 7gkVQbouEFPJITp1dRP/nVM2KtXQtJQ/QyzYE+sLpuAjzek9ROqNeGddIcCkefAM+Je8/itCS
+ Y+agw8mY3SRKtSskQquCtD2qXOFX0/26hlb00YN22ws0Co2NVKQ7iYe87WuqIz4r31cg1RyvR
+ kSYqGuN3wzEhKJGAWeCptCuj9ril4lrXJAyPPcTg5PbsUsY3Pc6fnrL2eX8v3pkqMOlvelQIb
+ W7ATSqOjB5M5JgcQw6ggpOdHQcAZzuBPxipGsKDiCnK5IdA+OnauHTfScJ57S76U5+rhQEtKf
+ 2TRgXZCJZnfQJ1rqVHzlQHlr5gVJlkysg1rTCDeh0+rrcSkIL/EwQnTe7gN7wT6es10EZfVtY
+ pN76r7xoisRK9XR4Q6u0b6qzGgN5TggnmSRD6SjH2jSG7hcq66ZKmC3NyBlLDvzsTLXNYMVS0
+ MFCQ8KGQ/38uWz7JZoTH3NSdqs0SGeegfavoY618NHAvOcf9bH4CDGv0Wjv5o2+AvvQlNKBpR
+ 8TfqAxIQZwupVxq8BpQF1187SmiwJbhE/t0IPcZICZRaSFXLn31pRfUgRPt09YGNjjS9DOH8/
+ 9kHK63jA7wT9n2G33KW4P3+Umv+Ru1Abqg9zQTxjBCiTCaXO12em2nX67bxDqAVzMglVg3CHg
+ Uy902CYiKfdUwLrr18qys+hTjBC6NT23x8SOvIEepT63SXlXUHbt8uODkAhOQA9r/MNs06wWs
+ 0964jooaIsP9MeVsgF9k7BxC3lQf8wvurEmeEqUQgh1PinTLSY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The local variable 'pclks' is never used after being assigned.
-hence it should be redundant and can be removed.
+On 18.09.18 02:47, Dmitry Torokhov wrote:
+> The kernel is supposed to handle multiple devices, static flags
+> in packet handling code will never work.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+> 
+> This is a random assortment of iforce patches that I made a few weeks back.
+> 
+> Tim, I do not have hardware, so I was bound to screw it up, but if you
+> have some time I'd appreciate if you try them out (and if I indeed broke
+> things if you could identify issues that would be even more awesome).
+> 
+> Thanks!
+> 
+Hello Dmitry,
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/gpu/drm/nouveau/dispnv04/arb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I tested those patches and I didn't find any obvious issues. The basic functions
+do work (i.e. buttons and axes, don't have a HAT so I can't test that), force
+feedback seems to work to the extent it was before (I only have fftest though,
+no games that support force feedback). I'll go through a few more applications
+and see if anything not obvious is broken.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/arb.c b/drivers/gpu/drm/nouveau/dispnv04/arb.c
-index c79160c..cae8f71 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/arb.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/arb.c
-@@ -56,7 +56,7 @@ struct nv_sim_state {
- nv04_calc_arb(struct nv_fifo_info *fifo, struct nv_sim_state *arb)
- {
- 	int pagemiss, cas, width, bpp;
--	int nvclks, mclks, pclks, crtpagemiss;
-+	int nvclks, mclks, crtpagemiss;
- 	int found, mclk_extra, mclk_loop, cbs, m1, p1;
- 	int mclk_freq, pclk_freq, nvclk_freq;
- 	int us_m, us_n, us_p, crtc_drain_rate;
-@@ -71,7 +71,6 @@ struct nv_sim_state {
- 	bpp = arb->bpp;
- 	cbs = 128;
- 
--	pclks = 2;
- 	nvclks = 10;
- 	mclks = 13 + cas;
- 	mclk_extra = 3;
--- 
-1.7.12.4
+Unfortunately, I only have that one wheel and I can only test USB connections
+at the moment (unless I find a proper serial adaptor, but I'm not sure if that
+would even work).
 
+Are those patches planned to go into 4.19 or are they intended to be merged in
+the next development cycle?
