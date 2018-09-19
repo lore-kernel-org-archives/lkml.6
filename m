@@ -6,113 +6,151 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9EAC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFAFC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC18214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC18214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 52AE3214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:49:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52AE3214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbeISIXn (ORCPT
+        id S1728373AbeISIY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 04:23:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbeISIXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 04:23:43 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 257BE34C9;
-        Wed, 19 Sep 2018 02:48:03 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 06FF81001F56;
-        Wed, 19 Sep 2018 02:48:03 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 8F4A44BB74;
-        Wed, 19 Sep 2018 02:48:02 +0000 (UTC)
-Date:   Tue, 18 Sep 2018 22:48:02 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Zhang Yi <yi.z.zhang@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        yu c zhang <yu.c.zhang@intel.com>, david@redhat.com,
-        jack@suse.cz, hch@lst.de, linux-mm@kvack.org, rkrcmar@redhat.com,
-        jglisse@redhat.com, yi z zhang <yi.z.zhang@intel.com>
-Message-ID: <373427884.13987814.1537325282516.JavaMail.zimbra@redhat.com>
-In-Reply-To: <044309496afbb4121447dff6a453bd6b96d6068d.1534934405.git.yi.z.zhang@linux.intel.com>
-References: <cover.1534934405.git.yi.z.zhang@linux.intel.com> <044309496afbb4121447dff6a453bd6b96d6068d.1534934405.git.yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH V4 3/4] mm: add a function to differentiate the pages is
- from DAX device memory
+        Wed, 19 Sep 2018 04:24:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39643 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbeISIY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 04:24:57 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [10.3.19.202])
+        by Forcepoint Email with ESMTP id A62DF98E4B270;
+        Wed, 19 Sep 2018 10:49:14 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 10:49:07 +0800
+Subject: Re: [PATCH 5/5] scsi: libsas: fix a race condition when smp task
+ timeout
+To:     John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180912082946.34814-1-yanaijie@huawei.com>
+ <20180912082946.34814-6-yanaijie@huawei.com>
+ <357ad1d1-1675-4479-c0c3-c872b5f71892@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <miaoxie@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>, Linuxarm <linuxarm@huawei.com>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <5BA1B922.5010208@huawei.com>
+Date:   Wed, 19 Sep 2018 10:49:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <357ad1d1-1675-4479-c0c3-c872b5f71892@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.79, 10.4.195.12]
-Thread-Topic: add a function to differentiate the pages is from DAX device memory
-Thread-Index: ebQHsnixA0QSUk8WEmIsX4j9TyKNWg==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 19 Sep 2018 02:48:03 +0000 (UTC)
+X-Originating-IP: [10.177.96.203]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> 
-> DAX driver hotplug the device memory and move it to memory zone, these
-> pages will be marked reserved flag, however, some other kernel componet
-> will misconceive these pages are reserved mmio (ex: we map these dev_dax
-> or fs_dax pages to kvm for DIMM/NVDIMM backend). Together with the type
-> MEMORY_DEVICE_FS_DAX, we can use is_dax_page() to differentiate the pages
-> is DAX device memory or not.
-> 
-> Signed-off-by: Zhang Yi <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yu <yu.c.zhang@linux.intel.com>
-> Acked-by: Jan Kara <jack@suse.cz>
-> ---
->  include/linux/mm.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 68a5121..de5cbc3 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -889,6 +889,13 @@ static inline bool is_device_public_page(const struct
-> page *page)
->  		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
->  }
->  
-> +static inline bool is_dax_page(const struct page *page)
-> +{
-> +	return is_zone_device_page(page) &&
-> +		(page->pgmap->type == MEMORY_DEVICE_FS_DAX ||
-> +		page->pgmap->type == MEMORY_DEVICE_DEV_DAX);
-> +}
-> +
->  #else /* CONFIG_DEV_PAGEMAP_OPS */
->  static inline void dev_pagemap_get_ops(void)
->  {
-> @@ -912,6 +919,11 @@ static inline bool is_device_public_page(const struct
-> page *page)
->  {
->  	return false;
->  }
-> +
-> +static inline bool is_dax_page(const struct page *page)
-> +{
-> +	return false;
-> +}
->  #endif /* CONFIG_DEV_PAGEMAP_OPS */
->  
->  static inline void get_page(struct page *page)
-> --
 
-Reviewed-by: Pankaj Gupta <pagupta@redhat.com>
+On 2018/9/17 17:47, John Garry wrote:
+> On 12/09/2018 09:29, Jason Yan wrote:
+>> When the lldd is processing the complete sas task in interrupt and set
+>> the task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to
+>> be triggered at the same time. And smp_task_timedout() will complete the
+>> task wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may
+>> freed before lldd end the interrupt process. Thus a use-after-free will
+>> happen.
+>>
+>> Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
+>> set. And remove the check of the return value of the del_timer().
+>>
+>
+> Hi Jason,
+>
+> Please mention that once the LLDD sets DONE, it must call task->done(),
+> which will call smp_task_done()->complete()
+>
 
-> 2.7.4
-> 
-> 
+OK
+
+>> Reported-by: chenxiang <chenxiang66@hisilicon.com>
+>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>> CC: John Garry <john.garry@huawei.com>
+>> CC: Johannes Thumshirn <jthumshirn@suse.de>
+>> CC: Ewan Milne <emilne@redhat.com>
+>> CC: Christoph Hellwig <hch@lst.de>
+>> CC: Tomas Henzl <thenzl@redhat.com>
+>> CC: Dan Williams <dan.j.williams@intel.com>
+>> CC: Hannes Reinecke <hare@suse.com>
+>> ---
+>>  drivers/scsi/libsas/sas_expander.c | 9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/scsi/libsas/sas_expander.c
+>> b/drivers/scsi/libsas/sas_expander.c
+>> index 52222940d398..0d1f72752ca2 100644
+>> --- a/drivers/scsi/libsas/sas_expander.c
+>> +++ b/drivers/scsi/libsas/sas_expander.c
+>> @@ -48,17 +48,16 @@ static void smp_task_timedout(struct timer_list *t)
+>>      unsigned long flags;
+>>
+>>      spin_lock_irqsave(&task->task_state_lock, flags);
+>> -    if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
+>> +    if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+>>          task->task_state_flags |= SAS_TASK_STATE_ABORTED;
+>> +        complete(&task->slow_task->completion);
+>
+> Nit: for consistency with any other time we use this lock, can we call
+> complete() outside the lock? Maybe just use a flag variable for this.
+>
+
+Is it necessary to add a variable just for consistency with other places?
+
+>> +    }
+>>      spin_unlock_irqrestore(&task->task_state_lock, flags);
+>> -
+>> -    complete(&task->slow_task->completion);
+>>  }
+>>
+>>  static void smp_task_done(struct sas_task *task)
+>>  {
+>> -    if (!del_timer(&task->slow_task->timer))
+>> -        return;
+>> +    del_timer(&task->slow_task->timer);
+>>      complete(&task->slow_task->completion);
+>>  }
+>
+> Do we also need this change or similar:
+> static int smp_execute_task_sg(struct domain_device *dev,
+>      if ((task->task_state_flags & SAS_TASK_STATE_ABORTED)) {
+>          SAS_DPRINTK("smp task timed out or aborted\n");
+>          i->dft->lldd_abort_task(task);
+> -        if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+> -            SAS_DPRINTK("SMP task aborted and not done\n");
+> -            break;
+> -        }
+> +        break;
+>
+> To me, the ABORTED and DONE states are mutually exclusive.
+>
+
+This changes the logic a bit. To be safe, maybe we shall do this with 
+another patch after some tests.
+
+>>
+>>
+>
+> Thanks,
+> John
+>
+>
+>
+> .
+>
+
