@@ -2,84 +2,118 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB1CECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4F7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70388214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:41:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70388214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 00F40214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:43:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F40214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbeISOST (ORCPT
+        id S1731073AbeISOTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:18:19 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34347 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbeISOST (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:18:19 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so4383850ois.1;
-        Wed, 19 Sep 2018 01:41:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4TO6yngxdwH3Wdh+tmybQorYdVuz5cokLxSYklFVD/k=;
-        b=EW4MgyGZXhwt08M2bjloaodee390nh8zIFv/hvjDZuAG8x4p1gfVjcO2BGiI3orU6o
-         SfS/0kXLkw+wc8h8DhuMICmxMG3rsZuujOsPS9b+pVGhZr1c8UYkUed33b3ihGksX5n7
-         2VBUfzsAmHCVucWn2pJkeBFt/5Lt9bC4yirpzbqxPA38Qyh3vlUBsnSNnuK7VNYmTdQ6
-         5qyszTLO/j3bBu0U1fBAh1fpmDyzvrxefxcf9AFFMuxRvoCjpReK6DRFInzPpzuGHQRD
-         6pZwITBhG64AzWYpDXytFuuVtD1kViwrtwY6o+ZD3nbkC7Ny0RSUAOa7ZDCsujVyyzyR
-         LLbA==
-X-Gm-Message-State: APzg51BcA0+d/Z/MzthM3FquA1kwjfPTAlSt/gJRtQv2F9b2e7ScPIQu
-        OJHFkoWsV+ON2Q2txfRNOD/M79JNroiv8b3XCOQ=
-X-Google-Smtp-Source: ANB0Vdb5BPbUS5fzAoEKjMhz8HvtBiXseb6naPbSSoIZ1dQ/gIz4eZ6j3ElnuJCeUL/0AF+RXYCWzuMZC+x/gJ8qTzw=
-X-Received: by 2002:aca:4141:: with SMTP id o62-v6mr1027216oia.24.1537346488013;
- Wed, 19 Sep 2018 01:41:28 -0700 (PDT)
+        Wed, 19 Sep 2018 10:19:54 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12189 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727796AbeISOTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 10:19:53 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 083143E240954;
+        Wed, 19 Sep 2018 16:42:59 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 16:42:53 +0800
+Subject: Re: [PATCH v2 5/5] scsi: libsas: fix a race condition when smp task
+ timeout
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20180919033204.11102-1-yanaijie@huawei.com>
+ <20180919033204.11102-6-yanaijie@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <miaoxie@huawei.com>, Ewan Milne <emilne@redhat.com>,
+        Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <e4383f9f-7fd8-be48-3ea2-5e65dceae584@huawei.com>
+Date:   Wed, 19 Sep 2018 09:42:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <cover.1537275915.git.yu.c.chen@intel.com> <19aed6bb376b47f672800b4c59da07efca0f9e5a.1537275915.git.yu.c.chen@intel.com>
-In-Reply-To: <19aed6bb376b47f672800b4c59da07efca0f9e5a.1537275915.git.yu.c.chen@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 19 Sep 2018 10:41:16 +0200
-Message-ID: <CAJZ5v0jrodgg_j_dEUDsfPibaSDouXVpt-++UQ3-k_7M41dpTA@mail.gmail.com>
-Subject: Re: [PATCH 03/12][RFC v3] x86-32/asm/power: Create stack frames in hibernate_asm_32.S
-To:     "Chen, Yu C" <yu.c.chen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        kookoo.gu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180919033204.11102-6-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 9:31 AM Chen Yu <yu.c.chen@intel.com> wrote:
+On 19/09/2018 04:32, Jason Yan wrote:
+> When the lldd is processing the complete sas task in interrupt and set
+> the task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to
+> be triggered at the same time. And smp_task_timedout() will complete the
+> task wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may
+> freed before lldd end the interrupt process. Thus a use-after-free will
+> happen.
 >
-> From: Zhimin Gu <kookoo.gu@intel.com>
+> Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
+> set. And remove the check of the return value of the del_timer(). Once
+> the LLDD sets DONE, it must call task->done(), which will call
+> smp_task_done()->complete() and the task will be completed and freed
+> correctly.
 >
-> Backport
-> Commit ef0f3ed5a4ac (x86/asm/power: Create stack frames
-> in hibernate_asm_64.S)
-> and
-> Commit 4ce827b4cc58 (x86/power/64: Fix hibernation return
-> address corruption)
+> Reported-by: chenxiang <chenxiang66@hisilicon.com>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+
+Uh, I should have added this for my last comment on v1:
+Reviewed-by: John Garry <john.garry@huawei.com>
+
+> Reviewed-by: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_expander.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 >
-> And also prepare for relocated code and jump address
-> mapping.
+> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+> index 52222940d398..0d1f72752ca2 100644
+> --- a/drivers/scsi/libsas/sas_expander.c
+> +++ b/drivers/scsi/libsas/sas_expander.c
+> @@ -48,17 +48,16 @@ static void smp_task_timedout(struct timer_list *t)
+>  	unsigned long flags;
+>
+>  	spin_lock_irqsave(&task->task_state_lock, flags);
+> -	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
+> +	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
+>  		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
+> +		complete(&task->slow_task->completion);
+> +	}
+>  	spin_unlock_irqrestore(&task->task_state_lock, flags);
+> -
+> -	complete(&task->slow_task->completion);
+>  }
+>
+>  static void smp_task_done(struct sas_task *task)
+>  {
+> -	if (!del_timer(&task->slow_task->timer))
+> -		return;
+> +	del_timer(&task->slow_task->timer);
+>  	complete(&task->slow_task->completion);
+>  }
+>
+>
 
-I don't like the changelog.
 
-It should explain the technical reasons for making the changes in the
-first place and then mention that analogous changes were made for
-64-bit before and by which commits.
-
-Thanks,
-Rafael
