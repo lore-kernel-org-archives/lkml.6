@@ -2,153 +2,113 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9004AECE566
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B04ECE566
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347AC2146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:29:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baRuoF1Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347AC2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F3D952150E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D952150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731442AbeITEJi (ORCPT
+        id S1732113AbeITELW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:09:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36385 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeITEJi (ORCPT
+        Thu, 20 Sep 2018 00:11:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46894 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726003AbeITELW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:09:38 -0400
-Received: by mail-wm1-f68.google.com with SMTP id j192-v6so8723262wmj.1;
-        Wed, 19 Sep 2018 15:29:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ADPqFlF88heAT1v38Gok5chXrGTveT8whJPlgwnvLug=;
-        b=baRuoF1ZktRXkkAAwAPqDano/lVptlA8XYLlEgbJ6P24dO13cJt33H4XALzZEPFJnI
-         2G/YBy3jLb9uplzNqb2y1bgreiMI2kx6ajAIY2yxYhujTrfikfNgjRNIMZ5dcu9QBldd
-         n6nViK8lofonfPnN4NgTT5KJoZrUcrbenJsJckNp4ZmiKdprNS192ijNbJEOh576KRbm
-         Pqe8HXlA+aBQ7nnCaSSi2YRLkGsTd8kgLm+2HukEi2pbOYqMLhj7SfwSCCoijuIh86ol
-         1pE3PojnZsdd5yysbBs7oRmrQhqfIO/WQlX2OMzQSMpDW4J9QAAt8OxCbqzo5nELaKmb
-         9HbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ADPqFlF88heAT1v38Gok5chXrGTveT8whJPlgwnvLug=;
-        b=o5fie9snhI7IrCvWTJ8lGajOeHD9MIPFwZA59n9e/1f3LGQ4xlyUt1TLyVasBBp5bt
-         B3PGKdrBekAWAYKqgiXRT5ud9hooH1iYUu9MC9WZZ5oZN5KB5fKbQhRZ2BvJmGpHooTS
-         nQ7haXQ//jr0//UTIRgaE8XchmKuneUw8ywjwdfy+p72ZnYbTgX8gPWBLyw13eTOxqLe
-         T8HcaVJUy1wW+jiXF/rfeYdv+bKfzZLed998KbFLUxYiK5MCu+ClxaHYB2xrKZ28bzyD
-         XV/6cff8JQ2LiLg02Xhj6Nw6DPoJLcub5Of6f+roOPgMIQ1rPDyEDNcr6ToGjaxlzYRy
-         68cw==
-X-Gm-Message-State: APzg51Bg8CF5sMVRL+SEHuD5g9zsPbFw5BOTCl27BU0MlYJrVkeqkcKM
-        nQJu8YvovztCtHnV0HahsSY=
-X-Google-Smtp-Source: ANB0VdYmBL99taGuNQLoonwWrQC8eDJk73kqte8ivmfRaTcRnAV8Y2vl0ixW4INNNy38YETCP5n/OA==
-X-Received: by 2002:a1c:d141:: with SMTP id i62-v6mr10154wmg.113.1537396173101;
-        Wed, 19 Sep 2018 15:29:33 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm21361649wrw.32.2018.09.19.15.29.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 15:29:32 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 15:29:30 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     ilia.lin@gmail.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] cpufreq: qcom-kryo: Fix section mismatch warning
-Message-ID: <20180919222930.GA28725@flashbox>
-References: <20180919182247.1101-1-natechancellor@gmail.com>
- <CAKwvOdnW8p4Tj2n+Y4XyMMVdD7W90W4NTLkJHKhZ6604ah4fnw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnW8p4Tj2n+Y4XyMMVdD7W90W4NTLkJHKhZ6604ah4fnw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 20 Sep 2018 00:11:22 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JMTR03045407
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:31:17 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mkwj7uy59-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:31:17 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Wed, 19 Sep 2018 16:31:16 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Sep 2018 16:31:13 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8JMVBFg33816828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Sep 2018 15:31:11 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9F4C7805E;
+        Wed, 19 Sep 2018 16:31:11 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3481278063;
+        Wed, 19 Sep 2018 16:31:08 -0600 (MDT)
+Received: from [153.66.254.194] (unknown [9.85.133.102])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Sep 2018 16:31:07 -0600 (MDT)
+Subject: Re: [PATCH RFC] MAINTAINERS: Update from @linux.vnet.ibm.com to
+ @linux.ibm.com
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     paulmck@linux.ibm.com, linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, dougmill@linux.ibm.com, eajames@linux.ibm.com,
+        haver@linux.ibm.com, fbarrat@linux.ibm.com, jallen@linux.ibm.com,
+        manoj@linux.ibm.com, mrochs@linux.ibm.com, mikecyr@linux.ibm.com,
+        zohar@linux.ibm.com, naveen.n.rao@linux.ibm.com,
+        pfsmorigo@linux.ibm.com, pjk1939@linux.ibm.com,
+        seroyer@linux.ibm.com, tlfalcon@linux.ibm.com,
+        tyreld@linux.ibm.com, ukrishn@linux.ibm.com
+Date:   Wed, 19 Sep 2018 15:31:04 -0700
+In-Reply-To: <20180919222733.GA13679@linux.ibm.com>
+References: <20180919222733.GA13679@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18091922-0012-0000-0000-000016B6C335
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009736; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01090773; UDB=6.00563535; IPR=6.00870794;
+ MB=3.00023396; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-19 22:31:14
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091922-0013-0000-0000-00005476011E
+Message-Id: <1537396264.14262.5.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809190217
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 02:45:15PM -0700, Nick Desaulniers wrote:
-> On Wed, Sep 19, 2018 at 11:22 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > WARNING: vmlinux.o(.text+0x8aa424): Section mismatch in reference from
-> > the function qcom_cpufreq_kryo_probe() to the function
-> > .init.text:qcom_cpufreq_kryo_get_msm_id()
-> > The function qcom_cpufreq_kryo_probe() references
-> > the function __init qcom_cpufreq_kryo_get_msm_id().
-> > This is often because qcom_cpufreq_kryo_probe lacks a __init
-> > annotation or the annotation of qcom_cpufreq_kryo_get_msm_id is wrong.
-> >
-> > Add the '__init' annotation to qcom_cpufreq_kryo_probe so that there is
-> > no more mismatch warning.
+On Wed, 2018-09-19 at 15:27 -0700, Paul E. McKenney wrote:
+> IBM's patch-friendly email infrastructure is changing domains from
+> @linux.vnet.ibm.com to @linux.ibm.com, which if nothing else might
+> save a bit of typing.  This commit therefore updates us stragglers'
+> email addresses in the MAINTAINERS file.  The old addresses are
+> expected to continue to work for a few more months.
 > 
-> I wonder why this driver has an exit function marked __init rather
-> than __exit? Does that mean it gets cleaned up after kernel init, and
-> so on unloading of the driver, the kernel jumps to unmapped memory?
+> While in the neighborhood, remove some obsolete entries, which
+> results
+> in an orphaned subsystem: "JSM Neo PCI based serial card".
 > 
-> Does this patch now produce a warning for `qcom_cpufreq_kryo_driver`
-> referencing `qcom_cpufreq_kryo_probe`?
-> 
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Douglas Miller <dougmill@linux.ibm.com>
+> Cc: Eddie James <eajames@linux.ibm.com>
+> Cc: Frank Haverkamp <haver@linux.ibm.com>
+> Cc: Frederic Barrat <fbarrat@linux.ibm.com>
+> Cc: James Bottomley <jejb@linux.ibm.com>
 
-Hmmm I could have sworn I built this before sending it, although my
-config might have been messed up but yes, I do see that warning.
+Acked-by: James Bottomley <jejb@linux.ibm.com>
 
-WARNING: vmlinux.o(.data+0x117618): Section mismatch in reference from
-the variable qcom_cpufreq_kryo_driver to the function
-.init.text:qcom_cpufreq_kryo_probe()                                             
-The variable qcom_cpufreq_kryo_driver references
-the function __init qcom_cpufreq_kryo_probe() 
+James
 
-I suppose v1 might be the better option then as with the other patch,
-marking qcom_cpufreq_kryo_driver doesn't seem correct.
-
-I'm open to suggestions though.
-
-Nathan
-
-> >
-> > Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >
-> > v1 -> v2:
-> >
-> > Add '__init' to qcom_cpufreq_kryo_probe instead of removing it from
-> > qcom_cpufreq_kryo_get_msm_id.
-> >
-> >  drivers/cpufreq/qcom-cpufreq-kryo.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > index a1830fa25fc5..e001ef8ea7de 100644
-> > --- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > @@ -73,7 +73,7 @@ static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-> >         return version;
-> >  }
-> >
-> > -static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
-> > +static int __init qcom_cpufreq_kryo_probe(struct platform_device *pdev)
-> >  {
-> >         struct opp_table *opp_tables[NR_CPUS] = {0};
-> >         enum _msm8996_version msm8996_version;
-> > --
-> > 2.19.0
-> >
-> 
-> 
-> --
-> Thanks,
-> ~Nick Desaulniers
