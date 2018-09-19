@@ -2,113 +2,174 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115DFC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15894C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB5321522
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:55:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZgxHWlz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB5321522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AD33A21521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:56:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD33A21521
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732766AbeISWeV (ORCPT
+        id S1732771AbeISWfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:34:21 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40035 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731592AbeISWeU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:34:20 -0400
-Received: by mail-io1-f68.google.com with SMTP id l14-v6so5050709iob.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bYN4nchF7JLla5tLmZryLNZGGqi8p5WF3W8RE2ECWQc=;
-        b=eZgxHWlzBnrJvDxgFchvKp1iqgLj+ZM3ZJVDhvyu7Z/NBuKUyRDX9EYrHPPsnTshZs
-         fu8HY8pYgBMHlmPCkI21JNvWpbKiODHhDJCwOV6A+sxCSKSslMOS6iUGKQs5oxFewPRg
-         LlW+REHtDMP0P4aGV3+zYVgIFYBt54nCNy1bg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bYN4nchF7JLla5tLmZryLNZGGqi8p5WF3W8RE2ECWQc=;
-        b=hQOMEu/PbKXdOPGOzYTiPeqHhBtjDdO3+unxlte3cp+DnNYmObVHhYI7oyL4Xelnsb
-         xXOR7tBKMvdJnm8cjwXtNFo1b4clnTDta1dbQMC7vrkumJnaac4faw8lT3t2PXXYZotq
-         dvjSykHrdhqoKaJvsZoLH1W4IaDhnxm1JEVWXd0KQVxbpmykIt226aFp0W5bShGWUXNb
-         bsusQrf0izn5Kb77qRBB7k/T6AyEWfamZMaCADbMTJAxTBE6jqHbKSW/tuWLD3BX2Hzm
-         Yhxu91hV78Tp2+h+4nlv0dPTqTlGrSJKXIZtxpJI7sq0yRrJYKRP1+4zDYs49mpn9cJl
-         WgOA==
-X-Gm-Message-State: APzg51D88ez8va2uGH8ZV59xnFvzNK7os+lw41t2i7AE5kRi+K7fMHcQ
-        8yZnONI34k2mg/EkhU+udficNC6iJeJ8+EHk76VHIQ==
-X-Google-Smtp-Source: ANB0VdZBTM2LH0FxgQ1kNPPHsB2wnby1McMq5s0cP/71duyDMQxCFjnUOW3v3ebloP7HSsUJymDF/qQLCQqn/yc+s+g=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr29617290iof.173.1537376133959;
- Wed, 19 Sep 2018 09:55:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 09:55:32
- -0700 (PDT)
-In-Reply-To: <20180918203658.GA28723@zx2c4.com>
-References: <20180911214737.GA81235@gmail.com> <CAHmME9rFUruF-VN1pmU-k5nFsb9ppAPhPpW-5Ho9dKL2HCg4kA@mail.gmail.com>
- <20180911233015.GD11474@lunn.ch> <20180911.165739.2032677219588723041.davem@davemloft.net>
- <CALCETrXrJPcs3h9CtF50N4k2AGx3qzspJd_UW3t+KGYOj7+p=Q@mail.gmail.com>
- <CAKv+Gu8QgRo-Oex2Sk5unET3FMq+1Cp2btAWXCB8xsALxjatHg@mail.gmail.com>
- <CAHmME9qwRzuoo-3Hxahwu=Li2LCz06Uowaq1GFmkts6tsffM7w@mail.gmail.com>
- <CAKv+Gu8OKyVvvgLy48GDV2KJt-UmmHbf5x0qNxQC_SDiddb9-g@mail.gmail.com> <20180918203658.GA28723@zx2c4.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 19 Sep 2018 09:55:32 -0700
-Message-ID: <CAKv+Gu-JVLCbMuqFzsdC5TwOu0_jS4OeekD_GQcunV_7zGxAbQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 02/17] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Eric Biggers <ebiggers@kernel.org>,
+        Wed, 19 Sep 2018 18:35:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56576 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731514AbeISWfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 18:35:31 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D409E88303;
+        Wed, 19 Sep 2018 16:56:43 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A447A84E3;
+        Wed, 19 Sep 2018 16:56:42 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w8JGugi5009763;
+        Wed, 19 Sep 2018 12:56:42 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w8JGub0k009759;
+        Wed, 19 Sep 2018 12:56:37 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 19 Sep 2018 12:56:37 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dmitry Safonov <dima@arista.com>
+cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Nathan March <nathan@gt.net>,
+        =?ISO-8859-15?Q?Pasi_K=E4rkk=E4inen?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rong, Chen" <rong.a.chen@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        stable@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, Samuel Neves <sneves@dei.uc.pt>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
+Subject: Re: [PATCHv5 0/7] tty: Hold write ldisc sem in tty_reopen()
+In-Reply-To: <20180917235258.5719-1-dima@arista.com>
+Message-ID: <alpine.LRH.2.02.1809191256060.9689@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180917235258.5719-1-dima@arista.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-871284115-1537376202=:9689"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 19 Sep 2018 16:56:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 September 2018 at 13:36, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hi Ard,
->
-> On Tue, Sep 18, 2018 at 11:53:11AM -0700, Ard Biesheuvel wrote:
->> On 17 September 2018 at 08:52, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->> > Hi Ard,
->> >
->>
->> Given that you show no interest whatsoever in gaining an understanding
->> of the underlying requirements that we have to deal with in the crypto
->> API, the only way to get my point across is by repeatedly stating it
->
-> Sorry if I've come across that way, but I am certainly interested in
-> gaining such an understanding of said requirements.
->
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Excellent.
+--185206533-871284115-1537376202=:9689
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-So you are probably aware that there is a big push in the industry
-these days towards high-performance accelerators on a coherent fabric,
-potentially with device side caches, and this is the main reason that
-the crypto API abstractions are the way they are today.
 
-So while standardizing on Chacha20Poly1305 in WireGuard [while still a
-policy decision in my view] seems reasonable to me, the decision to
-limit WireGuard to synchronous software implementations seems to me
-like something we may want to revisit in the future. What is your view
-on that? And is the ChaCha20/Poly1305 AEAD construction in WireGuard
-identical to the one in RFC 7539, i.e., could an accelerator built for
-the IPsec flavor of ChaCha20Poly1305 potentially be reused for
-WireGuard?
+
+On Tue, 18 Sep 2018, Dmitry Safonov wrote:
+
+> Hi all,
+> 
+> Three fixes that worth to have in the @stable, as they were hit by
+> different people, including Arista on v4.9 stable.
+> 
+> And for linux-next - adding lockdep asserts for line discipline changing
+> code, verifying that write ldisc sem will be held forthwith.
+> 
+> The last patch is an optional and probably, timeout can be dropped for
+> read_lock(). I'll do it if everyone agrees.
+> (Or as per discussion with Peter in v3, just convert ldisc to
+> a regular rwsem).
+> 
+> Thanks,
+> Dima
+
+I confirm that this patch series fixes the crash for me.
+
+Tested-by: Mikulas Patocka <mpatocka@redhat.com>
+
+
+> Changes since v4:
+> - back to lock ldisc with (5*HZ) timeout in tty_reopen()
+>   (LKP report link: lkml.kernel.org/r/<1536940609.3185.29.camel@arista.com>)
+> - reordered 3/7 with 2/7 for LKP robot
+> 
+> Changes since v3:
+> - Added tested-by Mark Rutland (thanks!)
+> - Dropped patch with smp_wmb() - wrong idea
+> - lockdep_assert_held() should be actually lockdep_assert_held_exclusive()
+> - Described why tty_ldisc_open() can be called without ldisc_sem held
+>   for pty slave end (o_tty).
+> - Added Peter's patch for dropping self-made lockdep annotations
+> - Fix for a reader(s) of ldisc semaphore waiting for an active reader(s)
+> 
+> Changes since v2:
+> - Added reviewed-by tags
+> - Hopefully, fixed reported by 0-day issue.
+> - Added optional fix for wait_readers decrement
+> 
+> Changes since v1:
+> - Added tested-by/reported-by tags
+> - Dropped 3/4 (locking tty pair for lockdep sake),
+>   Because of that - not adding lockdep_assert_held() in tty_ldisc_open()
+> - Added 4/4 cleanup to inc tty->count only on success of
+>   tty_ldisc_reinit()
+> - lock ldisc without (5*HZ) timeout in tty_reopen()
+> 
+> v1 link: lkml.kernel.org/r/<20180829022353.23568-1-dima@arista.com>
+> v2 link: lkml.kernel.org/r/<20180903165257.29227-1-dima@arista.com>
+> v3 link: lkml.kernel.org/r/<20180911014821.26286-1-dima@arista.com>
+> v4 link: lkml.kernel.org/r/<20180912001702.18522-1-dima@arista.com>
+> 
+> Cc: Daniel Axtens <dja@axtens.net>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Michael Neuling <mikey@neuling.org>
+> Cc: Mikulas Patocka <mpatocka@redhat.com>
+> Cc: Nathan March <nathan@gt.net>
+> Cc: Pasi Kärkkäinen <pasik@iki.fi>
+> Cc: Peter Hurley <peter@hurleysoftware.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Rong, Chen" <rong.a.chen@intel.com>
+> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> Cc: Tan Xiaojun <tanxiaojun@huawei.com>
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> (please, ignore if I Cc'ed you mistakenly)
+> 
+> Dmitry Safonov (6):
+>   tty: Drop tty->count on tty_reopen() failure
+>   tty/ldsem: Wake up readers after timed out down_write()
+>   tty: Hold tty_ldisc_lock() during tty_reopen()
+>   tty: Simplify tty->count math in tty_reopen()
+>   tty/ldsem: Add lockdep asserts for ldisc_sem
+>   tty/ldsem: Decrement wait_readers on timeouted down_read()
+> 
+> Peter Zijlstra (1):
+>   tty/ldsem: Convert to regular lockdep annotations
+> 
+>  drivers/tty/tty_io.c    | 13 ++++++++---
+>  drivers/tty/tty_ldisc.c |  9 +++++++
+>  drivers/tty/tty_ldsem.c | 62 ++++++++++++++++++++-----------------------------
+>  3 files changed, 44 insertions(+), 40 deletions(-)
+> 
+> -- 
+> 2.13.6
+> 
+--185206533-871284115-1537376202=:9689--
