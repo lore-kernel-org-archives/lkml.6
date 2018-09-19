@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C516C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D71ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90AB2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90AB2151B
+	by mail.kernel.org (Postfix) with ESMTP id CA3052151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3052151B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbeISThs (ORCPT
+        id S1732226AbeISTh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:37:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56464 "EHLO mga18.intel.com"
+        Wed, 19 Sep 2018 15:37:57 -0400
+Received: from mga02.intel.com ([134.134.136.20]:37348 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727657AbeISThs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:37:48 -0400
+        id S1727657AbeISTh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:37:56 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 06:59:44 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 06:59:53 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="75601114"
+   d="scan'208";a="75601162"
 Received: from pqueiros-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.13])
-  by orsmga006.jf.intel.com with ESMTP; 19 Sep 2018 06:59:28 -0700
-Date:   Wed, 19 Sep 2018 16:59:26 +0300
+  by orsmga006.jf.intel.com with ESMTP; 19 Sep 2018 06:59:49 -0700
+Date:   Wed, 19 Sep 2018 16:59:48 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Tomas Winkler <tomas.winkler@intel.com>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
@@ -39,16 +39,15 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/20] tpm2: add new tpm2 commands according to TCG
- 1.36
-Message-ID: <20180919135926.GD26571@linux.intel.com>
+Subject: Re: [PATCH v3 02/20] tpm: sort objects in the Makefile
+Message-ID: <20180919135948.GE26571@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-2-tomas.winkler@intel.com>
- <20180919134627.GA26571@linux.intel.com>
+ <20180918093459.19165-3-tomas.winkler@intel.com>
+ <20180919134853.GB26571@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180919134627.GA26571@linux.intel.com>
+In-Reply-To: <20180919134853.GB26571@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,322 +55,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 04:46:27PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 18, 2018 at 12:34:40PM +0300, Tomas Winkler wrote:
-> > 1. TPM2_CC_LAST has moved from 182 to 193
-> > 2. Convert tpm2_ordinal_duration from an array into a switch statement,
-> >    as there are not so many commands that require special duration
-> >    relative to a number of commands.
+On Wed, Sep 19, 2018 at 04:48:53PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Sep 18, 2018 at 12:34:41PM +0300, Tomas Winkler wrote:
+> > Make the tpm Makefile a bit more in order by putting
+> > objects in one column and group together tpm2 modules
+> 
+> The change is fine but do you mean by the subordinate clause here?
+> 
+> /Jarkko
+> 
 > > 
 > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 > > ---
-> > V2-V3: Rebase.
-> >  drivers/char/tpm/tpm.h      |  41 +++++----
-> >  drivers/char/tpm/tpm2-cmd.c | 196 +++++++++++++++-----------------------------
-> >  2 files changed, 93 insertions(+), 144 deletions(-)
+> > V2: 1. back to tpm-y notation
+> >     2. Partially sort files alphanumerically.
+> > V3: Rebase
 > > 
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > index f20dc8ece348..0f08518b525d 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -134,22 +134,31 @@ enum tpm2_algorithms {
-> >  };
-> >  
-> >  enum tpm2_command_codes {
-> > -	TPM2_CC_FIRST		= 0x011F,
-> > -	TPM2_CC_CREATE_PRIMARY  = 0x0131,
-> > -	TPM2_CC_SELF_TEST	= 0x0143,
-> > -	TPM2_CC_STARTUP		= 0x0144,
-> > -	TPM2_CC_SHUTDOWN	= 0x0145,
-> > -	TPM2_CC_CREATE		= 0x0153,
-> > -	TPM2_CC_LOAD		= 0x0157,
-> > -	TPM2_CC_UNSEAL		= 0x015E,
-> > -	TPM2_CC_CONTEXT_LOAD	= 0x0161,
-> > -	TPM2_CC_CONTEXT_SAVE	= 0x0162,
-> > -	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
-> > -	TPM2_CC_GET_CAPABILITY	= 0x017A,
-> > -	TPM2_CC_GET_RANDOM	= 0x017B,
-> > -	TPM2_CC_PCR_READ	= 0x017E,
-> > -	TPM2_CC_PCR_EXTEND	= 0x0182,
-> > -	TPM2_CC_LAST		= 0x018F,
-> > +	TPM2_CC_FIRST		        = 0x011F,
-> > +	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
-> > +	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
-> > +	TPM2_CC_CREATE_PRIMARY          = 0x0131,
-> > +	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
-> > +	TPM2_CC_SELF_TEST	        = 0x0143,
-> > +	TPM2_CC_STARTUP		        = 0x0144,
-> > +	TPM2_CC_SHUTDOWN	        = 0x0145,
-> > +	TPM2_CC_NV_READ                 = 0x014E,
-> > +	TPM2_CC_CREATE		        = 0x0153,
-> > +	TPM2_CC_LOAD		        = 0x0157,
-> > +	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
-> > +	TPM2_CC_UNSEAL		        = 0x015E,
-> > +	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
-> > +	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
-> > +	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
-> > +	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
-> > +	TPM2_CC_GET_CAPABILITY	        = 0x017A,
-> > +	TPM2_CC_GET_RANDOM	        = 0x017B,
-> > +	TPM2_CC_PCR_READ	        = 0x017E,
-> > +	TPM2_CC_PCR_EXTEND	        = 0x0182,
-> > +	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
-> > +	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
-> > +	TPM2_CC_CREATE_LOADED           = 0x0191,
-> > +	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
-> >  };
-> >  
-> >  enum tpm2_permanent_handles {
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 3acf4fd4e5a5..9c3c5c0628d9 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -41,128 +41,73 @@ static struct tpm2_hash tpm2_hash_map[] = {
-> >  };
-> >  
-> >  /*
-> > - * Array with one entry per ordinal defining the maximum amount
-> > + * tpm2_ordinal_duration returns the maximum amount
-> 
-> tpm2_ordinal_duration should have parentheses when in a sentence
-> for clarity.
-> 
-> Add something this to tpm2_calc_ordinal_duration() instead:
-> 
-> /* tpm2_calc_ordinal_duration - return the maximum amount of time for command duration
->  * @ordinal:	the command code
->  *
->  * Return the maximum amount of time for the command duration. The values are
->  * taken from the PC Client Profile (PTP) specification. The values can
->  * are defined in &enum tpm_duration.
->  */
-> 
-> >   * of time the chip could take to return the result. The values
-> > + * of the MEDIUM, and LONG durations are taken from the
-> > + * PC Client Profile (PTP) specification (750, 2000 msec)
-> > + *
-> >   * LONG_LONG is for commands that generates keys which empirically
-> >   * takes longer time on some systems.
-> 
-> This tail should really be part of the kdoc for enum tpm_duration
-> (including the existing comment about LONG_LONG).
-> 
-> >   */
-> > -static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
-> > -	TPM_UNDEFINED,		/* 11F */
-> > -	TPM_UNDEFINED,		/* 120 */
-> > -	TPM_LONG,		/* 121 */
-> > -	TPM_UNDEFINED,		/* 122 */
-> > -	TPM_UNDEFINED,		/* 123 */
-> > -	TPM_UNDEFINED,		/* 124 */
-> > -	TPM_UNDEFINED,		/* 125 */
-> > -	TPM_UNDEFINED,		/* 126 */
-> > -	TPM_UNDEFINED,		/* 127 */
-> > -	TPM_UNDEFINED,		/* 128 */
-> > -	TPM_LONG,		/* 129 */
-> > -	TPM_UNDEFINED,		/* 12a */
-> > -	TPM_UNDEFINED,		/* 12b */
-> > -	TPM_UNDEFINED,		/* 12c */
-> > -	TPM_UNDEFINED,		/* 12d */
-> > -	TPM_UNDEFINED,		/* 12e */
-> > -	TPM_UNDEFINED,		/* 12f */
-> > -	TPM_UNDEFINED,		/* 130 */
-> > -	TPM_LONG_LONG,		/* 131 */
-> > -	TPM_UNDEFINED,		/* 132 */
-> > -	TPM_UNDEFINED,		/* 133 */
-> > -	TPM_UNDEFINED,		/* 134 */
-> > -	TPM_UNDEFINED,		/* 135 */
-> > -	TPM_UNDEFINED,		/* 136 */
-> > -	TPM_UNDEFINED,		/* 137 */
-> > -	TPM_UNDEFINED,		/* 138 */
-> > -	TPM_UNDEFINED,		/* 139 */
-> > -	TPM_UNDEFINED,		/* 13a */
-> > -	TPM_UNDEFINED,		/* 13b */
-> > -	TPM_UNDEFINED,		/* 13c */
-> > -	TPM_UNDEFINED,		/* 13d */
-> > -	TPM_MEDIUM,		/* 13e */
-> > -	TPM_UNDEFINED,		/* 13f */
-> > -	TPM_UNDEFINED,		/* 140 */
-> > -	TPM_UNDEFINED,		/* 141 */
-> > -	TPM_UNDEFINED,		/* 142 */
-> > -	TPM_LONG,		/* 143 */
-> > -	TPM_MEDIUM,		/* 144 */
-> > -	TPM_UNDEFINED,		/* 145 */
-> > -	TPM_UNDEFINED,		/* 146 */
-> > -	TPM_UNDEFINED,		/* 147 */
-> > -	TPM_UNDEFINED,		/* 148 */
-> > -	TPM_UNDEFINED,		/* 149 */
-> > -	TPM_UNDEFINED,		/* 14a */
-> > -	TPM_UNDEFINED,		/* 14b */
-> > -	TPM_UNDEFINED,		/* 14c */
-> > -	TPM_UNDEFINED,		/* 14d */
-> > -	TPM_LONG,		/* 14e */
-> > -	TPM_UNDEFINED,		/* 14f */
-> > -	TPM_UNDEFINED,		/* 150 */
-> > -	TPM_UNDEFINED,		/* 151 */
-> > -	TPM_UNDEFINED,		/* 152 */
-> > -	TPM_LONG_LONG,		/* 153 */
-> > -	TPM_UNDEFINED,		/* 154 */
-> > -	TPM_UNDEFINED,		/* 155 */
-> > -	TPM_UNDEFINED,		/* 156 */
-> > -	TPM_UNDEFINED,		/* 157 */
-> > -	TPM_UNDEFINED,		/* 158 */
-> > -	TPM_UNDEFINED,		/* 159 */
-> > -	TPM_UNDEFINED,		/* 15a */
-> > -	TPM_UNDEFINED,		/* 15b */
-> > -	TPM_MEDIUM,		/* 15c */
-> > -	TPM_UNDEFINED,		/* 15d */
-> > -	TPM_UNDEFINED,		/* 15e */
-> > -	TPM_UNDEFINED,		/* 15f */
-> > -	TPM_UNDEFINED,		/* 160 */
-> > -	TPM_UNDEFINED,		/* 161 */
-> > -	TPM_UNDEFINED,		/* 162 */
-> > -	TPM_UNDEFINED,		/* 163 */
-> > -	TPM_UNDEFINED,		/* 164 */
-> > -	TPM_UNDEFINED,		/* 165 */
-> > -	TPM_UNDEFINED,		/* 166 */
-> > -	TPM_UNDEFINED,		/* 167 */
-> > -	TPM_UNDEFINED,		/* 168 */
-> > -	TPM_UNDEFINED,		/* 169 */
-> > -	TPM_UNDEFINED,		/* 16a */
-> > -	TPM_UNDEFINED,		/* 16b */
-> > -	TPM_UNDEFINED,		/* 16c */
-> > -	TPM_UNDEFINED,		/* 16d */
-> > -	TPM_UNDEFINED,		/* 16e */
-> > -	TPM_UNDEFINED,		/* 16f */
-> > -	TPM_UNDEFINED,		/* 170 */
-> > -	TPM_UNDEFINED,		/* 171 */
-> > -	TPM_UNDEFINED,		/* 172 */
-> > -	TPM_UNDEFINED,		/* 173 */
-> > -	TPM_UNDEFINED,		/* 174 */
-> > -	TPM_UNDEFINED,		/* 175 */
-> > -	TPM_UNDEFINED,		/* 176 */
-> > -	TPM_LONG,		/* 177 */
-> > -	TPM_UNDEFINED,		/* 178 */
-> > -	TPM_UNDEFINED,		/* 179 */
-> > -	TPM_MEDIUM,		/* 17a */
-> > -	TPM_LONG,		/* 17b */
-> > -	TPM_UNDEFINED,		/* 17c */
-> > -	TPM_UNDEFINED,		/* 17d */
-> > -	TPM_UNDEFINED,		/* 17e */
-> > -	TPM_UNDEFINED,		/* 17f */
-> > -	TPM_UNDEFINED,		/* 180 */
-> > -	TPM_UNDEFINED,		/* 181 */
-> > -	TPM_MEDIUM,		/* 182 */
-> > -	TPM_UNDEFINED,		/* 183 */
-> > -	TPM_UNDEFINED,		/* 184 */
-> > -	TPM_MEDIUM,		/* 185 */
-> > -	TPM_MEDIUM,		/* 186 */
-> > -	TPM_UNDEFINED,		/* 187 */
-> > -	TPM_UNDEFINED,		/* 188 */
-> > -	TPM_UNDEFINED,		/* 189 */
-> > -	TPM_UNDEFINED,		/* 18a */
-> > -	TPM_UNDEFINED,		/* 18b */
-> > -	TPM_UNDEFINED,		/* 18c */
-> > -	TPM_UNDEFINED,		/* 18d */
-> > -	TPM_UNDEFINED,		/* 18e */
-> > -	TPM_UNDEFINED		/* 18f */
-> > -};
-> > +static u8 tpm2_ordinal_duration(u32 ordinal)
-> 
-> This naming scheme becomes confusing. I would suggest to name this
-> as __tpm2_calc_ordinal_duration(u32 ordinal).
-> 
-> > +{
-> > +	switch (ordinal) {
-> > +	/* Startup */
-> 
-> Please remove these comments. They add only extra weight to maintain
-> the code.
-> 
-> > +	case TPM2_CC_STARTUP:                 /* 144 */
-> > +		return TPM_MEDIUM;
+> >  drivers/char/tpm/Makefile | 15 ++++++++++++---
+> >  1 file changed, 12 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> > index 4e9c33ca1f8f..efc785053627 100644
+> > --- a/drivers/char/tpm/Makefile
+> > +++ b/drivers/char/tpm/Makefile
+> > @@ -3,9 +3,18 @@
+> >  # Makefile for the kernel tpm device drivers.
+> >  #
+> >  obj-$(CONFIG_TCG_TPM) += tpm.o
+> > -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> > -	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+> > -	 eventlog/tpm2.o tpm2-space.o
+> > +tpm-y := tpm-chip.o
+> > +tpm-y += tpm-dev-common.o
+> > +tpm-y += tpm-dev.o
+> > +tpm-y += tpm-interface.o
+> > +tpm-y += tpm2-cmd.o
+> > +tpm-y += tpmrm-dev.o
+> > +tpm-y += tpm2-space.o
+> > +tpm-y += tpm-sysfs.o
+> > +tpm-y += eventlog/common.o
+> > +tpm-y += eventlog/tpm1.o
+> > +tpm-y += eventlog/tpm2.o
 > > +
-> > +	/* Selftest */
-> > +	case TPM2_CC_SELF_TEST:               /* 143 */
-> > +		return TPM_LONG;
-> > +
-> > +	/* Random Number Generator */
-> > +	case TPM2_CC_GET_RANDOM:              /* 17B */
-> > +		return TPM_LONG;
-> > +
-> > +	/* Hash/HMAC/Event Sequences */
-> > +	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
-> > +		return TPM_MEDIUM;
-> > +	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
-> > +		return TPM_MEDIUM;
-> > +	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
-> > +		return TPM_MEDIUM;
-> > +	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
-> > +		return TPM_MEDIUM;
-> > +
-> > +	/* Signature Verification */
-> > +	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
-> > +		return TPM_LONG;
-> > +
-> > +	/* Integrity Collection (PCR) */
-> > +	case TPM2_CC_PCR_EXTEND:              /* 182 */
-> > +		return TPM_MEDIUM;
-> > +
-> > +	/* Hierarchy Commands */
-> > +	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
-> > +		return TPM_LONG;
-> > +	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
-> > +		return TPM_LONG;
-> > +
-> > +	/* Capability Commands */
-> > +	case TPM2_CC_GET_CAPABILITY:          /* 17A */
-> > +		return TPM_MEDIUM;
-> > +
-> > +	/* Non-volatile Storage */
-> > +	case TPM2_CC_NV_READ:                 /* 14E */
-> > +		return TPM_LONG;
-> > +
-> > +	/* Key generation (not in PTP) */
-> > +	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
-> > +		return TPM_LONG_LONG;
-> > +	case TPM2_CC_CREATE:                  /* 153 */
-> > +		return TPM_LONG_LONG;
-> > +	case TPM2_CC_CREATE_LOADED:           /* 191 */
-> > +		return TPM_LONG_LONG;
-> > +
-> > +	default:
-> > +		return TPM_UNDEFINED;
-> > +	}
-> > +}
-> >  
-> >  struct tpm2_pcr_read_out {
-> >  	__be32	update_cnt;
-> > @@ -758,19 +703,14 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
-> >   */
-> >  unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-> >  {
-> > -	int index = TPM_UNDEFINED;
-> > -	int duration = 0;
-> > +	unsigned int index;
-> >  
-> > -	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
-> > -		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
-> > +	index = tpm2_ordinal_duration(ordinal);
-> >  
-> >  	if (index != TPM_UNDEFINED)
-> > -		duration = chip->duration[index];
-> > -
-> > -	if (duration <= 0)
-> > -		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> > -
-> > -	return duration;
-> > +		return chip->duration[index];
-> > +	else
-> > +		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> >  }
-> >  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
-> >  
+> >  tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+> >  tpm-$(CONFIG_EFI) += eventlog/efi.o
+> >  tpm-$(CONFIG_OF) += eventlog/of.o
 > > -- 
 > > 2.14.4
 > > 
-> 
-> /Jarkko
 
 Forgot to add this:
 
