@@ -2,179 +2,105 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DB6C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE836ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AE52150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A842A2151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:22:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QYoCNjSH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2AE52150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOqmNrly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A842A2151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732996AbeISXAd (ORCPT
+        id S1733002AbeISXBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:00:33 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33084 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732929AbeISXAc (ORCPT
+        Wed, 19 Sep 2018 19:01:14 -0400
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:44454 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbeISXBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:00:32 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so3034370pfn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 10:21:39 -0700 (PDT)
+        Wed, 19 Sep 2018 19:01:14 -0400
+Received: by mail-lf1-f52.google.com with SMTP id g24-v6so5819084lfb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 10:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WnOCvoGqrkd4ntUXKQT7gBx5A1LjS48ql2JobwcP4Ow=;
-        b=QYoCNjSHQqUmY0MIdJSXcUJw/ln5X0JTnh6o2neTynngW0E9s4lxf0BiTBLNKBq6dc
-         3jViMI9M6KS+IlMmIZQPGGhFWWGa4W8sZjH99iD6oW8oBlF1ELN6WuLS6D4drIlIVc4C
-         vkzhdNWadzmdRImHkpkpUyEN12V87IRdkjK6Y=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=kjkzSeVbd9Q9AoA7oVEcp2Ze2wn+5aU/UqZKzoXCzTw=;
+        b=jOqmNrly2Tx35EAU1Rij2SH+OOSfzhGTKYfG+fB/5WSwIT27FbKgQslFOFxTyC/SmF
+         1cgDerBVFNpQ1w5p4yGFMzLxyKwJKKG+rlDGhzz9zO87hYq5EvGJ05tTFkTMuuJ6Yx5j
+         8Zep0+t84oVe7zzytKtZdTgLi5/8dZrQYxY714VezP7KYbq71np5y3pBxieIBVFIDuQQ
+         z22wa0gTAewdJbJ/lQMi757OMlPB3h554TxrMyATRogyWjSi70bYJr5Ji4U15O/vRfzt
+         vObZEh/KxBQmDKgh07X53RkZxuI/2r4X03mtP4aJyiOrvANbQwcQXoxWd4aFb67NkSth
+         b1Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WnOCvoGqrkd4ntUXKQT7gBx5A1LjS48ql2JobwcP4Ow=;
-        b=eqgH78ptfVQjxcg8XeGiB5jz4+TyQ3MDWXXxXP7U5ikRaicDpnGrS3R1ABnN61dlT4
-         TSxrdjcvTtYKfVCwjxdMuj1VFVgDODcpirp4MQ5CjJqZh56lxcx3U9Ay2S37AMUgz7qM
-         7TFihE//Lt9GxhMNkMr2pGy0Ql7QGRBJXg58FNrE4WxDPoUJ38NloQzalfL7VeDwukB4
-         6jabBmic79Bm6NsEA2HKyO/b8p93S3bpcCOJ0jBzbCNo/eomLox5+xeiu3TRJZQLCv0Q
-         SdGWD60gBg8HqMMXvLi3IsKM+LKNZh8Elzi3swmsAHnuYHrB+qopRIrKPXAth8WTgtJF
-         DxLg==
-X-Gm-Message-State: APzg51DUSRHu1lei0j7Bofh0cosatPx7uVxelcokbn/cpX6yHhHn7E5v
-        VYc5/APyBRG0czuquayQ7zFMMafO9dE=
-X-Google-Smtp-Source: ANB0Vda5ofWIzdwmpn2q+guI7oxE36/OfAkul815421iaT2DB3HS8h45MeKynIlsGgWbQD39LhNTuw==
-X-Received: by 2002:a65:6406:: with SMTP id a6-v6mr2717853pgv.60.1537377698905;
-        Wed, 19 Sep 2018 10:21:38 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id e190-v6sm45065576pfc.81.2018.09.19.10.21.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 10:21:38 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 10:21:37 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] Bluetooth: hci_qca: Add poweroff support during
- hci down for wcn3990
-Message-ID: <20180919172137.GQ22824@google.com>
-References: <20180919152113.7611-1-bgodavar@codeaurora.org>
- <20180919152113.7611-2-bgodavar@codeaurora.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=kjkzSeVbd9Q9AoA7oVEcp2Ze2wn+5aU/UqZKzoXCzTw=;
+        b=mPvPPLdWeGaKmdolMV+5lc1/a8wGoh1jXVkxWg8WL1zMhfMbFw4fbdS1Hihp63KJJw
+         GskTeKpgRLUBM42C1eOBs1jPL0suPP1Vf/huUjuG+7e+Pm2UVSz0BV5821JhI3L9FeMc
+         mYcb99xsMc+2pcSXqO7yVmu8T2G9b7EA1bT+iQ+nnFgvLI+WkbKCyE10OXP+0yPKf5BL
+         ykx4DiZx5O9OnxUmvzUBVEEP/ha7SGeJM4zObo1CCLHZC26e0nLQFmVD6ub3uxDHTVqw
+         U0nhb0HLH1EJC3xy1kqdnJPbP8H+LyUFkN8BNQNcWn+jXATEIXbRsYWgoREyohIUbYKM
+         YHmQ==
+X-Gm-Message-State: APzg51B6Q9dRrTnPMdZKHvFFF7lcoUAHjHek1E2oZ2G5bKloz8uMBWuY
+        Mcu1khvlAIoLeN8SVQFSrnuSj/NWp834YR9Ar3pkxw==
+X-Google-Smtp-Source: ANB0VdasdgeKntZaUjCU7kyeXI0/3FaaIpF3LNtqV/+k60/atCfE9GBYlA71L1E87daarF//pshtiaTFcwrmtncMBWE=
+X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr6795245lfl.63.1537377738340;
+ Wed, 19 Sep 2018 10:22:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180919152113.7611-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 10:22:17
+ -0700 (PDT)
+In-Reply-To: <77f81bcb07d6a9193992f87dbd040658@redchan.it>
+References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it> <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
+ <24cf6d6095c740903f16b56e22dd137c@redchan.it> <996c99ea4146a247730d87df14dfca1a@redchan.it>
+ <E1g2TJn-0006lD-Lm@fencepost.gnu.org> <0bd7fb92f5b2d5f18e67fdc9b3f6e603@redchan.it>
+ <77f81bcb07d6a9193992f87dbd040658@redchan.it>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Wed, 19 Sep 2018 12:22:17 -0500
+Message-ID: <CAMjeLr-qVubez4wJ0AVrjVv2hEk6HjCpA30U=Of0hJEWmwqKyA@mail.gmail.com>
+Subject: Re: Re: Fwd: Re: [DNG] GPL version 2 is a bare license. Recind.
+ (Regarding (future) linux Code of Conduct Bannings).
+To:     observerofaffairs@redchan.it
+Cc:     linux-kernel@vger.kernel.org, dng@lists.dyne.org,
+        debian-user@lists.debian.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 08:51:13PM +0530, Balakrishna Godavarthi wrote:
-> This patch enables power off support for hci down and power on support
-> for hci up. As wcn3990 power sources are ignited by regulators, we will
-> turn off them during hci down, i.e. an complete power off of wcn3990.
-> So while hci up, we will call vendor specific open/close and setup which
-> will turn on the regulators, requests BT chip version and download the
-> firmware.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
->  drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 74f5fede0274..c3038afa42af 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -168,6 +168,7 @@ struct qca_serdev {
->  
->  static int qca_power_setup(struct hci_uart *hu, bool on);
->  static void qca_power_shutdown(struct hci_uart *hu);
-> +static int qca_power_off(struct hci_dev *hdev);
->  
->  static void __serial_clock_on(struct tty_struct *tty)
->  {
-> @@ -1099,8 +1100,26 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  static int qca_wcn3990_init(struct hci_uart *hu)
->  {
->  	struct hci_dev *hdev = hu->hdev;
-> +	struct qca_serdev *qcadev;
->  	int ret;
->  
-> +	/* Check for vregs status, may be hci0 down has turned
-> +	 * off the vregs.
-> +	 */
+> On 2018-09-19 03:38, Richard Stallman wrote:
+>> [[[ To any NSA and FBI agents reading my email: please consider    ]]]
+>> [[[ whether defending the US Constitution against all enemies,     ]]]
+>> [[[ foreign or domestic, requires you to follow Snowden's example. ]]]
+>>
+>>   > One is rescission of the license they granted regarding their code,
+>> and
+>>   > then a lawsuit under copyright if/when the rescission is ignored.
+>>   > The others are breach of contract, libel, false light, etc.
+>>
+>> If "rescission" is really a possibility, it would cause greast trouble
+>> for the free software community.  We would need to take steps to make
+>> sure it cannot happen.
+>>
+>> However, that goes against everything I have been told by others.
 
-nit: it's not necessarily 'hci0', there may be systems with more than
-one Bluetooth controller. You could say hciN instead, you might also
-want to put quotes around 'hciN down' to make clearer this is
-referring to a command.
+This is where copyright differs from IP.  With copyright, you have the
+right to derived works if they don't violate Fair Use -- but that
+could essentially be violating the GPL.
 
-> +	qcadev = serdev_device_get_drvdata(hu->serdev);
-> +	if (qcadev->bt_power->vregs_on == false) {
+The only way to protect the code and spirit of the GPL at that point,
+is to accept the legal concept of Intellectual Property.
 
-nit:
-	if (!qcadev->bt_power->vregs_on) {
+The question then, is, is source code released under the GPL
+considered "published work"?
 
-is more common and easier to read IMO
-
-> +		serdev_device_close(hu->serdev);
-> +		ret = qca_power_setup(hu, true);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = serdev_device_open(hu->serdev);
-> +		if (ret) {
-> +			bt_dev_err(hu->hdev, "failed to open port");
-
-switch the regulators off again?
-
-> +			return ret;
-> +		}
-> +	}
-> +
->  	/* Forcefully enable wcn3990 to enter in to boot mode. */
->  	host_set_baudrate(hu, 2400);
->  	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
-> @@ -1152,6 +1171,12 @@ static int qca_setup(struct hci_uart *hu)
->  
->  	if (qcadev->btsoc_type == QCA_WCN3990) {
->  		bt_dev_info(hdev, "setting up wcn3990");
-> +
-> +		/* Enable NON_PERSISTENT_SETUP QUIRK to ensure to execute
-> +		 * setup for every hci0 up.
-
-nit: 'hciN up'?
-
-> +		 */
-> +		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
-> +		hu->hdev->shutdown = qca_power_off;
->  		ret = qca_wcn3990_init(hu);
->  		if (ret)
->  			return ret;
-> @@ -1242,6 +1267,14 @@ static void qca_power_shutdown(struct hci_uart *hu)
->  	qca_power_setup(hu, false);
->  }
->  
-> +static int qca_power_off(struct hci_dev *hdev)
-> +{
-> +	struct hci_uart *hu = hci_get_drvdata(hdev);
-> +
-> +	qca_power_shutdown(hu);
-
-Would it make sense to add a return value qca_power_shutdown() now
-that it is called by a non-void function? Might not be worth the
-hassle though, hci_dev_do_close() - the only caller of
-hdev->shutdown() - doesn't check the return value either.
-
-Cheers
-
-Matthias
+Mark Janssen, JD
