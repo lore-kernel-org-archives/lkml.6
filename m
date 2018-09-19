@@ -2,97 +2,108 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451AECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3230ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9EC8208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E8E8208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:44:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHMU/oR+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EC8208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQYQg534"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8E8208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730806AbeISMTU (ORCPT
+        id S1730869AbeISMUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 08:19:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbeISMTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:19:19 -0400
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FF1B208A3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 06:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537339372;
-        bh=JJTzJVR6CXFC95ntnj1X5FbqkHNij0221zM2Lp9CKBc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KHMU/oR+l0pWPBNIuCc9O5QurYpcINiMA8ImTTZ+TIfBatMLIwqUv9J41BegHDAM7
-         G7a9tOhuHNZpYbKmPXQBRfRmAf9rW8f3spl5dnclT1rz83GPHnpBI+iyx75hJthMRs
-         8G2ffloHEH3GyfDA9uOA2Gh0dL38Eu3gW1+zCsro=
-Received: by mail-wm1-f42.google.com with SMTP id o18-v6so5484811wmc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:42:52 -0700 (PDT)
-X-Gm-Message-State: APzg51COrPBpTFEm86dg3BSGfZ86Z8KSKa4QuUlNgLTSrREusz5RUBB1
-        C+wySBRIiib70MCVzE4LoyYaCJbS7z7M40M87ZA=
-X-Google-Smtp-Source: ANB0Vdbkx34XrV+Hi93+9W17Ro2eM/Tz+yGuajvmXLAh5r5DDYln/NqgI6UbeMVjKD5gXXJiqQS8IzLucz5MI11DbZQ=
-X-Received: by 2002:a1c:dc1:: with SMTP id 184-v6mr19645351wmn.145.1537339370475;
- Tue, 18 Sep 2018 23:42:50 -0700 (PDT)
+        Wed, 19 Sep 2018 08:20:50 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36357 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeISMUt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 08:20:49 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1-v6so2257854pgo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=6mTDbnoPdYrRlh111KzWtlF3P01llwzPtJH44qRhSWU=;
+        b=IQYQg534w3gApmIcskgDWALYy9IzAR4YflRM1igLAiRn1LRA9Bpy4eBfHjCiyb0kWI
+         JLaC5cw9RV15xvv2MCZOka5cQ4Wa8kB6kWK3TOjbcSR7CWGJYWKavjATcLl3ejyECW7p
+         r1/gjkqra4Ys5SSfV0DVaY7snnlIdpvFdfyP97x+Pmwo2oF8rxitjzjWeE0hJ93tcG9K
+         s99K9GZk4YiU9O3cUTLzTHVxbr1klBZNC2ZH7UTIi45mm1XM4LFclSHx1fUWHfzMx8pf
+         l4+V7kGiIBEn2WzH1kWYbRKJatRuwgXQNo7aZwNeV0Hf3ZURWLr0nMiw0AcdvQv28YJz
+         XYqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6mTDbnoPdYrRlh111KzWtlF3P01llwzPtJH44qRhSWU=;
+        b=NmleQiK2uyo1wkr+3dG+VCyXjJ30yxY963vNLSAug0HjcofFt1QcN8I+tjRICwCYTz
+         MyrU009JUC5H8jGI1T4KbEjibPQ5dplDONhMn/3jfx1vmgfl4nmounCPOqZ3buSo1Kj5
+         rP8/MfS9dP9LtXCaFH2WOqd99jllzE1++Ijn3aCUv0p55DtGwe3XyUTy81zabCkuDHEr
+         r7EZCFNN17NXwrcKIPM6fWLgXIrP2ztHGnWjIy10YJCyeMfX9jPbthJBydIzgRuSeZ2u
+         JQarIJtWuaodOh2z5KooZstxpsGmVdrLtnf8XQFHy1cJBrjlu8Wk5urHWhwRpqXEL1xg
+         y+8Q==
+X-Gm-Message-State: APzg51DJBom0Q2UMnuIwncZjL1WA1wen0zQbs0B2sw3xLaxASaq906tA
+        DLAjBT3HWZs0/DDmBw2hY5E=
+X-Google-Smtp-Source: ANB0VdZRJiVbmXU6KYdzyv70Nl3VRppgEwFLV8/1EU6x2BoYJDC4UEXuJvNcJHKVhvGL2WyEkwQ79A==
+X-Received: by 2002:a65:608b:: with SMTP id t11-v6mr31495986pgu.259.1537339461960;
+        Tue, 18 Sep 2018 23:44:21 -0700 (PDT)
+Received: from localhost ([175.223.11.230])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm45568524pfj.179.2018.09.18.23.44.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 23:44:20 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 15:44:18 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     He Zhe <zhe.he@windriver.com>, rostedt@goodmis.org,
+        pmladek@suse.com
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        sergey.senozhatsky@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
+ to command line
+Message-ID: <20180919064418.GC792@jagdpanzerIV>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
 MIME-Version: 1.0
-References: <201809191129.m6L5SG90%fengguang.wu@intel.com>
-In-Reply-To: <201809191129.m6L5SG90%fengguang.wu@intel.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 19 Sep 2018 08:42:39 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcSLyQq3k30Duu8hMF68ABuRS6UwTu5UPY1wDZQ_0azvQ@mail.gmail.com>
-Message-ID: <CAJKOXPcSLyQq3k30Duu8hMF68ABuRS6UwTu5UPY1wDZQ_0azvQ@mail.gmail.com>
-Subject: Re: arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
- linux/crc32poly.h: No such file or directory
-To:     lkp@intel.com
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        herbert@gondor.apana.org.au
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Sep 2018 at 05:57, kbuild test robot <lkp@intel.com> wrote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   5211da9ca526a5adddee1ccd078e6e33a583ab36
-> commit: faa16bc404d72a5afb857c924c83a5f691f83386 lib: Use existing define with polynomial
-> date:   8 weeks ago
-> config: powerpc-skiroot_defconfig (attached as .config)
-> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout faa16bc404d72a5afb857c924c83a5f691f83386
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=powerpc
->
-> All errors (new ones prefixed by >>):
->
->    In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:233:0,
->                     from arch/powerpc/boot/decompress.c:42:
-> >> arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error: linux/crc32poly.h: No such file or directory
->     #include <linux/crc32poly.h>
->              ^~~~~~~~~~~~~~~~~~~
->    compilation terminated.
->
-> vim +18 arch/powerpc/boot/../../../lib/xz/xz_crc32.c
->
->   > 18  #include <linux/crc32poly.h>
->     19  #include "xz_private.h"
->     20
+On (09/19/18 10:27), He Zhe wrote:
+> On 2018年09月19日 09:50, Sergey Senozhatsky wrote:
+> > On (09/19/18 01:17), zhe.he@windriver.com wrote:
+> >> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
+> >>  /* save requested log_buf_len since it's too early to process it */
+> >>  static int __init log_buf_len_setup(char *str)
+> >>  {
+> >> -	unsigned size = memparse(str, &str);
+> >> +	unsigned size;
+> > 	unsigned int size;
+> 
+> This is in v1 but then Steven suggested that it should be split out
+> and only keep the pure fix part here.
 
-Just for the record, fixed some time ago here:
-https://patchwork.ozlabs.org/patch/963258/
+JFI
 
-Best regards,
-Krzysztof
+Seems there are more patches like this. I found this one in MM list:
+lkml.kernel.org/r/1537284788-428784-1-git-send-email-zhe.he@windriver.com
+
+Andrew's response:
+lkml.kernel.org/r/20180918141917.2cb16b01c122dbe1ead2f657@linux-foundation.org
+
+	-ss
