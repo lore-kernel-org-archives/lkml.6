@@ -4,57 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C059ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FD8C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E2F2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0BFF20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0du+S2yT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E2F2150B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SB9dNYcg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BFF20858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731782AbeISVtf (ORCPT
+        id S1731852AbeISVtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:49:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45292 "EHLO
+        Wed, 19 Sep 2018 17:49:39 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45302 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731231AbeISVtf (ORCPT
+        with ESMTP id S1731231AbeISVtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:49:35 -0400
+        Wed, 19 Sep 2018 17:49:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kjFNFLt7BYlowH5qa+05w09D+l6YWxTXkBW7qecxaqk=; b=0du+S2yTZq/Y0U/epW49OepByi
-        RJtjcUyibrvAiS81lWj+no1UAECwGZQgN2ZV5oQ9DHTxBEyosIAvBvpJMvIQ476rYxA2cqexfhKHE
-        30Snw53TbLiYR3+uIEl7+RNvi4MEO1y9QxI4rIQQZwjw9xBuz33r+IYcOTB5370nK6tm7DZMFV6R+
-        T74x/2lU7q+xHO2rgr6EJMGQsDTYDa/k6CEOiose+liDPAPnnC0Tl3Tk8FYJXnpVtr30PsJDcBhcJ
-        x6MgT+jjoev5CjEdw9b2LnenNCzrBlmAk1mjjvXLZuRhIaOCagE2LgpQXs9PrUokN5kv9PoXhCTYF
-        4KOdufDA==;
-Received: from 50-233-148-155-static.hfc.comcastbusiness.net ([50.233.148.155] helo=[10.18.6.178])
+        bh=U41CMb1Q+4ghh4OLb8F1VrOZh4zgaWfrg6I5PMYxEM4=; b=SB9dNYcgOc9y9RTFT6QM/DwKqI
+        3qHg62ghAqN5l17MglcCFyBJSZ7Ntmpdj5Tp4km14ZCdfAbuN13xk6cW7gpSyiSQOBa3Lyi2d7ga5
+        qolR2rxRBeg6VNZdT/Y1uKLic35Xjv3sW0OFLgXEGHVvFMpoWEpbGKoLd4E7sMBjZd2xREOQaIk1u
+        JTTDVaVqBAWu38h5yb25OH+AQJp9Qcu/oRKdToO5nQha/20uDJ9ClkTts16w3B3A7GhkaDjKR9CeD
+        2JSZkbp3lYHgIrfR4D/185zlBFiq78xHsU2D7W5tuydfuXkhho8q5R2hb2+4of0DiZeEJ+6TlrPnX
+        KuGGmdMw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2f3x-0003eJ-Ja; Wed, 19 Sep 2018 16:10:49 +0000
-Subject: Re: [PATCH net-next] net: toshiba: fix return type of ndo_start_xmit
- function
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        kou.ishizaki@toshiba.co.jp, andrew@lunn.ch, f.fainelli@gmail.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20180919102339.13988-1-yuehaibing@huawei.com>
-From:   Geoff Levand <geoff@infradead.org>
-Message-ID: <44f9d0cf-e842-696a-2e49-e16643ea668e@infradead.org>
-Date:   Wed, 19 Sep 2018 09:10:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id 1g2f48-0003eN-FT; Wed, 19 Sep 2018 16:11:00 +0000
+Subject: process? [Re: Crypto Fixes for 4.19]
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+References: <20170714141855.GA29426@gondor.apana.org.au>
+ <20170922084401.GA15541@gondor.apana.org.au>
+ <20171128230929.GA17783@gondor.apana.org.au>
+ <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au>
+ <20180212031702.GA26153@gondor.apana.org.au>
+ <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
+ <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+ <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
+ <20180919062201.ov5o4vljvholgsed@gondor.apana.org.au>
+ <20180919132324.GA24399@kroah.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d8c061a9-b415-e092-c28f-9e433d83b59b@infradead.org>
+Date:   Wed, 19 Sep 2018 09:10:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180919102339.13988-1-yuehaibing@huawei.com>
+In-Reply-To: <20180919132324.GA24399@kroah.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,23 +73,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue, 
-
-On 09/19/2018 03:23 AM, YueHaibing wrote:
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, so make sure the implementation in
-> this driver has returns 'netdev_tx_t' value, and change the function
-> return type to netdev_tx_t.
+On 9/19/18 6:23 AM, Greg KH wrote:
+> On Wed, Sep 19, 2018 at 02:22:01PM +0800, Herbert Xu wrote:
+>> Hi Greg: 
+>>
+>> This push fixes a potential boot hang in ccp and an incorrect
+>> CPU capability check in aegis/morus on x86.
+>>
+>>
+>> Please pull from
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
 > 
-> Found by coccinelle.
+> Now pulled, thanks.
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> greg k-h
 
-I tested this against Linux-4.19-rc4, and it seemed to work OK.
+Hi,
+Just a process question:
 
-Please remove the irrelevant line 'Found by coccinelle.' from the
-commit message.  With that change:
+It looks like Greg is not adding Signed-of-by: <himself>
+to mainline git commits, although the prior mainline git committer did so.
 
-  Acked-by: Geoff Levand <geoff@infradead.org>
+Is that omission on purpose?
 
--Geoff
+submitting-patches.rst says:
+The Signed-off-by: tag indicates that the signer was involved in the
+development of the patch, or that he/she was in the patch's delivery path.
+
+
+thanks,
+-- 
+~Randy
