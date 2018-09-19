@@ -7,70 +7,66 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27667C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3B7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E3B2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CACB32151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9zX9L4T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E3B2151B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEqlxj3e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACB32151B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732284AbeISULV (ORCPT
+        id S1732328AbeISULW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:11:21 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:34788 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeISULU (ORCPT
+        Wed, 19 Sep 2018 16:11:22 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33726 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732265AbeISULV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:11:20 -0400
-Received: by mail-qt0-f196.google.com with SMTP id m13-v6so5309592qth.1;
-        Wed, 19 Sep 2018 07:33:07 -0700 (PDT)
+        Wed, 19 Sep 2018 16:11:21 -0400
+Received: by mail-qk1-f195.google.com with SMTP id z78-v6so3123426qka.0;
+        Wed, 19 Sep 2018 07:33:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4Tps4s77D23i3fxKoeF6dPhKuUaEwXZQhu6RTBKsY3Q=;
-        b=g9zX9L4TawPVaK0YzSox8YB+x+ct5iD9mIvHFYybGnpR33u0gqEd2UOQudYG85camN
-         Cx7+EXRNbZ6eHeigZFjjGvLB0N4PZzuvoX1Mj7r1hmvMS7TGND3uMUJngMJ8gq4vRJae
-         UHd49aMvIpAzAHUutSS1b+F4zimhEumQsd4Jm0Ok339EhweMKe8Y7qBy3b21IN6ykVbP
-         EgIXdekqa4leU6khqF7T1l+8aJU9aKQfm5tjQqQt4n1xa43U9zGFUSaxaMfhAkJmPhgk
-         x1pSKwu4I/LVTcdqMMgGPB5gYS00Qi7sF1uP3CIGatW8DDvxzRhYswE/Bc64K9gR4ecF
-         ZK8Q==
+        bh=FKzwpcQ3B3kdvSJOAAVDVIuSlQoQVipqdyNbcYJD7Z8=;
+        b=fEqlxj3eabgBNevuGFJbQR1TgOfxp4fl2FfOF1tpzsnBsxxtuED4ENewP1B0ZzNGB8
+         tb19q9yt7L7qZwB91bhBbmecC2sHchYR60hAchdN1qGsS8IDMz6fRqxzvPC6mMBJSxVu
+         l6ep64SgmJGrJUhqSJhab4FWpvqbxhz+d3cWuaBzSxpEzdVxJ/JcMTWbxyn0H5w+MYj0
+         I2E5NcJCJ52V+q4kqwP9Vm+LExCnr//lZboDTKuTBBwTbiUhrigxtGocbRTsim4C6KVt
+         OxF3cQXpccjKnzll19P8IR0SDPvHinWOuqzGvv1NMNXqrKVF7Exw3eqhCZP0ka9P0PLw
+         JYiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4Tps4s77D23i3fxKoeF6dPhKuUaEwXZQhu6RTBKsY3Q=;
-        b=YXTKaSywIh2USmb5zE4YSrauVHbK898FkBi0LB+o8hCQIUQfnU0o/6Ob8b0RXqL6Ua
-         wuBngjl7j7MzP4OO27ehddrrp2Fw5FALRuoqjEIUtBqcQqEHQgvJnF8dLw+qlTcMh95d
-         12j9axcAcTmoALu/Kh57Ex1aKiFbpTVmv4xugOLC2577MH0eBdgVosRRtwBBwncFTIgI
-         16KZQAZEeBNYFoTxKegl3FEHcmNEQ2Hq89fUhjZp9FVgbmHHGxAiIDyaTVI28Q6SnCCl
-         vnEHLmwO05U+Z5n3FN8z+BrwS+YHm6E4zP7MgkK9jy+X3wS20BxELR1hNDN/rhG/vRmS
-         CsuA==
-X-Gm-Message-State: APzg51DVX23qDEc+2Lu3IN8An5yyIgJDVJnm2Ffo7tkX/p0KjEGJqLmw
-        /cOw+FgYkM2Q4whUWQxVj9DmOq+Q
-X-Google-Smtp-Source: ANB0VdZWEaFuArm9yR6P9tSrGkSsNGQWEsFlKiiurX0rfbtQn8V05GJJL5BNMXv88Hw35aRVffzFSA==
-X-Received: by 2002:aed:2ec6:: with SMTP id k64-v6mr25044676qtd.177.1537367587181;
-        Wed, 19 Sep 2018 07:33:07 -0700 (PDT)
+        bh=FKzwpcQ3B3kdvSJOAAVDVIuSlQoQVipqdyNbcYJD7Z8=;
+        b=aMUwGG+yOzMHwn9vdeaksJIRiB5T8Hz13z+NSnbQGuZTlL7cLODC8zT/U6Sr/zNR3v
+         5cgGnEgNRxeXetcsWn0mpnnFeejBTvFnU72gEtBduOS5gKCMV0NdjfnDEJFCXEMTGtuf
+         30Ffj/fktW/uKcAdl0k3VD/pBcrkrtpSTfg6yFkb3Ioh1dGLcLuVAFqUKUR0yHnlN1Az
+         zjNYN2BmbwA6iKrAhGfCn9xgfmULnOoo0tNV6z1hJ9HBhcJtq27+rZVfI4HAGFxj15d0
+         FS3Wh0M711ooUVGwy18HsSf+mloIo2qx9d9jn7FAfINwba/IjHZQj0TpW86tHqRgpkso
+         okEA==
+X-Gm-Message-State: APzg51AJlRGJpTxbCdvxrb1BGUgzLHJxe2rmgxIOzA5jBc1eFgn2YIfR
+        CQCA+UR/9TMTznLShy0pOTQ9yp0p
+X-Google-Smtp-Source: ANB0VdZlWdL/f2NOH6sh3wty7DeGOAhhahucPCEGkthjKPKHs8LQcbMnXVr7PSr0CM9YJazo0DR3KA==
+X-Received: by 2002:a37:d708:: with SMTP id m8-v6mr22813927qki.132.1537367588881;
+        Wed, 19 Sep 2018 07:33:08 -0700 (PDT)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.33.05
+        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.33.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 07:33:06 -0700 (PDT)
+        Wed, 19 Sep 2018 07:33:08 -0700 (PDT)
 From:   Jim Quinlan <jim2101024@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Jim Quinlan <jim2101024@gmail.com>,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 06/12] MIPS: BMIPS: add dma remap for BrcmSTB PCIe
-Date:   Wed, 19 Sep 2018 10:32:01 -0400
-Message-Id: <1537367527-20773-7-git-send-email-jim2101024@gmail.com>
+Subject: [PATCH v5 07/12] PCI/MSI: enable PCI_MSI_IRQ_DOMAIN support for MIPS
+Date:   Wed, 19 Sep 2018 10:32:02 -0400
+Message-Id: <1537367527-20773-8-git-send-email-jim2101024@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
 References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
@@ -79,60 +75,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The design of the Broadcom PCIe RC controller requires us to remap its
-DMA addresses for inbound traffic.  We do this by modifying the
-definitions of __phys_to_dma() and __dma_to_phys().
-
-In arch/mips/bmips/dma.c, these functions are already in use to remap
-DMA addresses for the 338x SOC chips.  We leave this code alone -- and
-give its mapping priority -- but if it is not in use, the PCIe DMA
-mapping is in effect.
-
-One might think that the two DMA remapping systems of dma.c could be
-combined, but they cannot: one governs only DMA addresses for the PCIe
-controller of BrcmSTB ARM/ARM64/MIPs chips, while the other governs
-the PCIe controller *and* other peripherals for only MIPs 338x
-chips.
+Add MIPS as an arch that supports PCI_MSI_IRQ_DOMAIN and add
+generation of msi.h in the MIPS arch.
 
 Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
 ---
- arch/mips/bmips/dma.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/bmips/dma.c b/arch/mips/bmips/dma.c
-index 3d13c77..292994f 100644
---- a/arch/mips/bmips/dma.c
-+++ b/arch/mips/bmips/dma.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <asm/bmips.h>
-+#include <soc/brcmstb/common.h>
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 56ff8f6..61a9539 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -22,7 +22,7 @@ config PCI_MSI
+ 	   If you don't know what to do here, say Y.
  
- /*
-  * BCM338x has configurable address translation windows which allow the
-@@ -44,6 +45,10 @@ dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t pa)
- {
- 	struct bmips_dma_range *r;
+ config PCI_MSI_IRQ_DOMAIN
+-	def_bool ARC || ARM || ARM64 || X86
++	def_bool ARC || ARM || ARM64 || MIPS || X86
+ 	depends on PCI_MSI
+ 	select GENERIC_MSI_IRQ_DOMAIN
  
-+#ifdef CONFIG_PCIE_BRCMSTB
-+	if (!bmips_dma_ranges)
-+		return brcm_phys_to_dma(dev, pa);
-+#endif
- 	for (r = bmips_dma_ranges; r && r->size; r++) {
- 		if (pa >= r->child_addr &&
- 		    pa < (r->child_addr + r->size))
-@@ -56,6 +61,10 @@ phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dma_addr)
- {
- 	struct bmips_dma_range *r;
- 
-+#ifdef CONFIG_PCIE_BRCMSTB
-+	if (!bmips_dma_ranges)
-+		return (unsigned long)brcm_dma_to_phys(dev, dma_addr);
-+#endif
- 	for (r = bmips_dma_ranges; r && r->size; r++) {
- 		if (dma_addr >= r->parent_addr &&
- 		    dma_addr < (r->parent_addr + r->size))
 -- 
 1.9.0.138.g2de3478
 
