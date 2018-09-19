@@ -2,100 +2,127 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDC3ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C24C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EDBF208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDBF208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id D79C4208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:39:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zWy1oTzn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79C4208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbeISMJS (ORCPT
+        id S1730756AbeISMPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 08:09:18 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43764 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeISMJR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:09:17 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m84-v6so3932770lje.10;
-        Tue, 18 Sep 2018 23:32:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eTv9Oh0cnzsBkTpYGiDDxRzP2FV70E3x3cQbx6YJ1Yw=;
-        b=DSp4IkyMi7aR0md2ist8V9rVCS/1Gfnv4It+xznXm4W50j9tA0EhW8MmSKq+I2mv1z
-         z7cG7/K6mF57WLw4H2o8wDMaRucdFI1e00Aowk9Bwfj4rMh5YOMw/XI4k4VsTz+cKVKa
-         FKcvVSMOuFdHtItb9d4ZpzFuye5l5HyE356OQwmXYT/aGeuCI3pRQbg7WAD6bMA16XS1
-         1fs+O+35P1ZYge7jGPVoToMsabXhsm9PJ/VGw2OG60D8Xo7u0NzYrK0UWLXy9S0rbdLA
-         fKPfo/hR0fxc84xMZ9wgFd7gG5hLW8hiV92e8dMbA5SJar5lOQfUQwZ9Pz5oWIoy/mVm
-         y1VA==
-X-Gm-Message-State: APzg51AxB/eek+75xwAlj5XchpABhwy6fdxkgk4GO5Ta2BYzmNTlpepR
-        yulBAFKl78M0/FlYqkXLCRU=
-X-Google-Smtp-Source: ANB0VdZ4g9jlZVC4soVTXzIbM2vuN0o722iKcVSfFemReRLjnd+zOoBkqL/eWwFBldq1V6GhfA5jjg==
-X-Received: by 2002:a2e:5810:: with SMTP id m16-v6mr22332584ljb.134.1537338770124;
-        Tue, 18 Sep 2018 23:32:50 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 36-v6sm3782856lja.65.2018.09.18.23.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 23:32:49 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 09:32:47 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        sboyd@kernel.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
-Message-ID: <20180919063247.GC2295@localhost.localdomain>
-References: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <201809181853.7HyPgIo6%fengguang.wu@intel.com>
+        Wed, 19 Sep 2018 08:15:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726972AbeISMPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 08:15:44 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 677C5208A3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 06:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537339157;
+        bh=wbSQYLEpKpdHxr4L1FJjqYwtI6pS5pYQ6bWf5FVsOkA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zWy1oTzntiF73+kRu5HV0M5Czp4FCjw7f03kfuBIk+10DN07qRzpkgehNFSI7vP8h
+         DnFYohk4qTTQG6HJPozDfdPurpR3IlsBKVvO0ggLnHvsKBaJPdyVG9eHUXgvO6FrnN
+         drTNauW4aK1wfUThy94xZXoyq7i+o+au2abySnjU=
+Received: by mail-wr1-f44.google.com with SMTP id v16-v6so4471597wro.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:39:17 -0700 (PDT)
+X-Gm-Message-State: APzg51AG78OtlFjjt/s4OYQD12TF0iisMvlWcKsuwAPa1OjCyRAV1AnO
+        3nXbMdd1Fp9KFsfBEO3GK+rPtDUaKgLi5s7SLOM=
+X-Google-Smtp-Source: ANB0VdaiD59sZX9O4qO2El7qQIyTRtsWlymuf+Q8rerOHSw020D8LBphzzDbNFKn0R6acW8ARUjQCQ5Y/gXStUkJqLw=
+X-Received: by 2002:adf:a299:: with SMTP id s25-v6mr2612134wra.100.1537339155837;
+ Tue, 18 Sep 2018 23:39:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201809181853.7HyPgIo6%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180918230756.26035-1-joel@jms.id.au>
+In-Reply-To: <20180918230756.26035-1-joel@jms.id.au>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 19 Sep 2018 08:39:04 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPd4dCyuXKxAz-V=ujtiuKcumHzAx28y5J+6m+L7ZRLsZQ@mail.gmail.com>
+Message-ID: <CAJKOXPd4dCyuXKxAz-V=ujtiuKcumHzAx28y5J+6m+L7ZRLsZQ@mail.gmail.com>
+Subject: Re: [PATCH] lib/xz: Fix powerpc build with KERNEL_XZ
+To:     joel@jms.id.au
+Cc:     herbert@gondor.apana.org.au, linux-kernel@vger.kernel.org,
+        mpe@ellerman.id.au, oohall@gmail.com,
+        linuxppc-dev@lists.ozlabs.org,
+        Christophe LEROY <christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello All,
+On Wed, 19 Sep 2018 at 01:08, Joel Stanley <joel@jms.id.au> wrote:
+>
+> This partially reverts faa16bc404d72a5 ("lib: Use existing define with
+> polynomial").
+>
+> The cleanup added a dependency on include/linux, which broke the PowerPC
+> boot wrapper/decompresser when KERNEL_XZ is enabled:
+>
+>   BOOTCC  arch/powerpc/boot/decompress.o
+>  In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:233,
+>                  from arch/powerpc/boot/decompress.c:42:
+>  arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
+>  linux/crc32poly.h: No such file or directory
+>   #include <linux/crc32poly.h>
+>            ^~~~~~~~~~~~~~~~~~~
+>
+> The powerpc decompressor is a hairy corner of the kernel. Even while building
+> a 64-bit kernel it needs to build a 32-bit binary and therefore avoid including
+> files from include/linux.
 
-On Tue, Sep 18, 2018 at 06:13:48PM +0800, kbuild test robot wrote:
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on regulator/for-next]
-> [also build test ERROR on next-20180913]
-> [cannot apply to v4.19-rc4]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regulator-mfd-dt_bindings-bd718x7-Support-ROHM-bd71847/20180914-210454
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-> config: x86_64-randconfig-s4-09181517 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
-> >> drivers/regulator/bd718x7-regulator.c:364:16: error: implicit declaration of function 'of_match_ptr'; did you mean 'hash_ptr'? [-Werror=implicit-function-declaration]
->        .of_match = of_match_ptr("BUCK1"),
->                    ^~~~~~~~~~~~
->                    hash_ptr
+I fixed the build error here:
+https://lkml.org/lkml/2018/8/29/179
 
-This error is not introduced in this patch series. The already in-tree
-implementation of bd71837 driver has this bug already. I'll send a
-trivial patch to Mark for adding the missing include.
+If you choose to remove any includes from /linux, then go ahead but
+please use original reported-by :)
 
-Br,
-	Matti Vaittinen
+Best regards,
+Krzysztof
+
+>
+> Fixes: faa16bc404d7 ("lib: Use existing define with polynomial")
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+> We need to clean up the powerpc boot decompresser but that work will be
+> more involved than we would include in a late -rc. Please consider
+> merging this fix for 4.19. Thanks!
+>
+>  lib/xz/xz_crc32.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/lib/xz/xz_crc32.c b/lib/xz/xz_crc32.c
+> index 25a5d87e2e4c..34532d14fd4c 100644
+> --- a/lib/xz/xz_crc32.c
+> +++ b/lib/xz/xz_crc32.c
+> @@ -15,7 +15,6 @@
+>   * but they are bigger and use more memory for the lookup table.
+>   */
+>
+> -#include <linux/crc32poly.h>
+>  #include "xz_private.h"
+>
+>  /*
+> @@ -30,7 +29,7 @@ STATIC_RW_DATA uint32_t xz_crc32_table[256];
+>
+>  XZ_EXTERN void xz_crc32_init(void)
+>  {
+> -       const uint32_t poly = CRC32_POLY_LE;
+> +       const uint32_t poly = 0xEDB88320;
+>
+>         uint32_t i;
+>         uint32_t j;
+> --
+> 2.17.1
+>
