@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1088ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D186CECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2012150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:11:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EE4021521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:12:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7+oUl2Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2012150F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="df931/aJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE4021521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbeISRsn (ORCPT
+        id S1731487AbeISRuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 13:48:43 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:46420 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeISRsn (ORCPT
+        Wed, 19 Sep 2018 13:50:20 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:47028 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727834AbeISRuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 13:48:43 -0400
-Received: by mail-oi0-f68.google.com with SMTP id y207-v6so4820497oie.13;
-        Wed, 19 Sep 2018 05:11:04 -0700 (PDT)
+        Wed, 19 Sep 2018 13:50:20 -0400
+Received: by mail-ot1-f65.google.com with SMTP id v44-v6so5465091ote.13;
+        Wed, 19 Sep 2018 05:12:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=JDRXpzUiQ60eJ9kUT2tFKKpoI402+Ps8O1F9PhMjUgw=;
-        b=i7+oUl2Q1J1BvaaHw6y0+C9WmTXPP/qGw+1FqHmDIq6NVzZJsuo548peOkOQ+uTqX0
-         +uZ6vdOCX2AfaOUqIERCZQzCqKjmSIvyEOHONQb7T2/WKEFFJw59C7NJgcdx6CDSkKlR
-         oOKN8+fAPef7gmSEGKHEuJsyiyYNMMfymCE16SOs3IRO8UFjOL/DArh5TOW0n4UbEmDn
-         ufJqjcBtJD7bMF2qgfyb2Oj6L8Nruc5h1W7+MnTL6Yu1Z4gOefVaMM/mILlUld+x9Thn
-         /asTj/23wRjxIGTgHxD8g0n8c5rX7fWfEbZh/nTlOfCq1Yd5TGIUZLXyB57b6SH0+r4A
-         RDRw==
+        bh=EVoi1UsKAdKNzjeTS78mhZPGJrogNnJ4qlaZKHDInWw=;
+        b=df931/aJeNkdc9hDPfz4CABk3K+L5Jinjqq9izt1wK3maguj8suafPZ5vRiD4X0TXp
+         coGQ+EwCReFL6RB7e8SadnMieInShYdH+kFlsZye1IR8ua1+ZZwLnEcfoE5hTqekYmDo
+         HphoEa/NKA43+873yWDTQ5M9g7VftwYeoX6LVtDMRf/asV9EQU2r9x5p7SXS7+vC4N56
+         io0pbb0AobrROgmRQIeW5DTfHi08c/dHMcxN/jm4AXeru49SI5oy+83TXB1EP8+LplzP
+         6qXa7pE/PzCwyPtKaZM2Df0yS0F99EV6Xrk9v5lvYpjQgonYGHJNHqzbCCD5Ucyh8q2T
+         v3rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JDRXpzUiQ60eJ9kUT2tFKKpoI402+Ps8O1F9PhMjUgw=;
-        b=SK9UpHGm4tfbib8hrtfLR/pTr8Rbo0WNaNr18wSfD5JnJidE7O1KDlEGiA6rPxnEyu
-         zFYl/UnYQcHKm+cmGcSI5SZCfrFP7uYVnb1RsMeBOohyq5Gmu/bE4MP4w6p3ss8b1cNb
-         pHvpMNR1Cfb38VJWMeskfLKdRZsA5qB8LgxUoAxCkIA6MimY+mdAPVfM+UMMXKbh+feK
-         JhHegtbEO0/M2FuTfg/VWsO4PbaRVzf6KgzcQNj8ZcWMY23J9uP5sd4ZgSxBcKQ+IT+x
-         F7OVntv4xMNeJnchNQM92+Q5lYcjlfHBMkNJSV/+T8NVM28+/3faOAtEmRfjLxxxdQFu
-         qh8Q==
-X-Gm-Message-State: APzg51BXQQfcIgA+LOzxbSpxPuokTnQ28nJmyfleJeuALnfas0aGJQhh
-        DQ4FbHVfKdHOEvE2r56xhu+q76w9vKtSF1to4J0=
-X-Google-Smtp-Source: ANB0VdaQKh0F61maoRFCrC63nD1iOwMifTf88GQaK6cFDA7n2UaCxwvF/bI6xBNeh743F28pmpNk3ro5lkQZZRZh1lI=
-X-Received: by 2002:aca:90d:: with SMTP id 13-v6mr1483961oij.300.1537359064364;
- Wed, 19 Sep 2018 05:11:04 -0700 (PDT)
+        bh=EVoi1UsKAdKNzjeTS78mhZPGJrogNnJ4qlaZKHDInWw=;
+        b=sPxQLBLFOI9sAooAFH9wAM3cJvF+LJBYEzqYxrueVVKJYZE4Rm3NR1ruTiuBYcV+cP
+         WxqBIcCJFIp34IslHuKo6dTOzILKSIH8jaO4knscUvHYOeThEFI9JlOdr4I0b+AJWG8U
+         24JKCDEbd1OUN90ruE0l9OIbHvRkCSmxRTRd14YfV3NzqTK3PIAZSvCino3zjr/3SEyu
+         yzCJM1MHP5moKCvgDLnUT1ImgSTE4xZ4i1gFWIqmsKfwQ6Il+EgXBzCc0oCwfoct6YQ2
+         k9XYREOfXZXy97jdVt3lAThMck+E2RLV0c6RbJbpsDPegV0mXwSgzYWnqM7C7Z4L/xZ8
+         qAUA==
+X-Gm-Message-State: APzg51AJdXZrDCpWFALxb7tfxB3fiKgn/JElea2MN8YL8h8jbFU0VDx/
+        oJTche999VttQDWftSGE236EMy3YFzbLwkUeJRQ=
+X-Google-Smtp-Source: ANB0VdZ9XPXsjK3+6WoHRdboQU0OyAZ2r0J6z02on2g3Y2kJdcYnm6PWmhTEB0S0Z92zUdI6faSnmNdz4RcP2oxLJyc=
+X-Received: by 2002:a9d:2879:: with SMTP id h54-v6mr19805213otd.1.1537359161003;
+ Wed, 19 Sep 2018 05:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:cca:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 05:11:03 -0700 (PDT)
-In-Reply-To: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com>
-References: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com>
+Received: by 2002:a9d:cca:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 05:12:40 -0700 (PDT)
+In-Reply-To: <1537348724-22976-2-git-send-email-michal.vokac@ysoft.com>
+References: <1537348724-22976-1-git-send-email-michal.vokac@ysoft.com> <1537348724-22976-2-git-send-email-michal.vokac@ysoft.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 19 Sep 2018 09:11:03 -0300
-Message-ID: <CAOMZO5CEh-UQA=QiyWMadkpp=LcWbGs6zaaXXqa9cYQgrTLiDA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] video: ssd1307fb: Use gpiod_set_value_cansleep() for reset
+Date:   Wed, 19 Sep 2018 09:12:40 -0300
+Message-ID: <CAOMZO5CtaphPBXSkuRxX37Zbbx9oogXjy13TsRPgtR6y87gAdA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] video: ssd1307fb: Do not hard code active-low reset sequence
 To:     =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
 Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -83,11 +83,23 @@ Hi Michal,
 
 On Wed, Sep 19, 2018 at 6:18 AM, Michal Vok=C3=A1=C4=8D <michal.vokac@ysoft=
 .com> wrote:
-> The reset signal can be produced by GPIO expander that can sleep.
-> In that case the probe function fails. Allow using GPIO expanders for
-> the reset signal by using the non-atomic gpiod_set_value_cansleep()
-> function.
+> The SSD130x OLED display reset signal is active low. Now the reset
+> sequence is implemented in such a way that users are forced to
+> define reset-gpios as GPIO_ACTIVE_HIGH in DT to make the reset work.
+>
+> Do not hard code the active-low sequence into the driver but instead
+> allow the user to specify the gpio as GPIO_ACTIVE_LOW to reflect
+> the real world.
+>
+> The only single in-tree user of the display is converted and builds
+> fine.
 >
 > Signed-off-by: Michal Vok=C3=A1=C4=8D <michal.vokac@ysoft.com>
+> ---
+> I am not really sure wheater this should be in one commit or the DT
+> changes should be done in separate commit. Just tell me and I will
+> split/merge the changes as you want. Thanks.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Please separate in two patches: one for the dts and another for the driver.
+
+Thanks
