@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EABC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E1AECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:36:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A40A2150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:36:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A40A2150E
+	by mail.kernel.org (Postfix) with ESMTP id CE16921527
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE16921527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbeISSOM (ORCPT
+        id S1731798AbeISSOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:14:12 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49774 "EHLO inva020.nxp.com"
+        Wed, 19 Sep 2018 14:14:15 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:49856 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731507AbeISSOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:14:10 -0400
+        id S1731507AbeISSOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:14:15 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 037431A0004;
-        Wed, 19 Sep 2018 14:36:24 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4BFFA1A01FB;
+        Wed, 19 Sep 2018 14:36:28 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EAF9D1A0009;
-        Wed, 19 Sep 2018 14:36:23 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3F0781A0009;
+        Wed, 19 Sep 2018 14:36:28 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A9FE320618;
-        Wed, 19 Sep 2018 14:36:22 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id F2D6E20618;
+        Wed, 19 Sep 2018 14:36:26 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH 02/21] soc/fsl/bman: map FBPR area in the iommu
-Date:   Wed, 19 Sep 2018 15:35:54 +0300
-Message-Id: <20180919123613.15092-3-laurentiu.tudor@nxp.com>
+Subject: [PATCH 05/21] soc/fsl/qbman: add APIs to retrieve the probing status
+Date:   Wed, 19 Sep 2018 15:35:57 +0300
+Message-Id: <20180919123613.15092-6-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
 References: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
@@ -51,51 +51,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-Add a one-to-one iommu mapping for bman private data memory (FBPR).
-This is required for BMAN to work without faults behind an iommu.
+Add a couple of new APIs to check the probing status of qman and bman:
+ 'int bman_is_probed()' and 'int qman_is_probed()'.
+They return the following values.
+ *  1 if qman/bman were probed correctly
+ *  0 if qman/bman were not yet probed
+ * -1 if probing of qman/bman failed
+Drivers that use qman/bman driver services are required to use these
+APIs before calling any functions exported by qman or bman drivers
+or otherwise they will crash the kernel.
+The APIs will be used in the following couple of qbman portal patches
+and later in the series in the dpaa1 ethernet driver.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/soc/fsl/qbman/bman_ccsr.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/soc/fsl/qbman/bman_ccsr.c | 11 +++++++++++
+ drivers/soc/fsl/qbman/qman_ccsr.c | 11 +++++++++++
+ include/soc/fsl/bman.h            |  8 ++++++++
+ include/soc/fsl/qman.h            |  8 ++++++++
+ 4 files changed, 38 insertions(+)
 
 diff --git a/drivers/soc/fsl/qbman/bman_ccsr.c b/drivers/soc/fsl/qbman/bman_ccsr.c
-index 05c42235dd41..680f67f04fb4 100644
+index 680f67f04fb4..2c11883d42a5 100644
 --- a/drivers/soc/fsl/qbman/bman_ccsr.c
 +++ b/drivers/soc/fsl/qbman/bman_ccsr.c
-@@ -29,6 +29,7 @@
+@@ -121,6 +121,7 @@ static void bm_set_memory(u64 ba, u32 size)
   */
+ static dma_addr_t fbpr_a;
+ static size_t fbpr_sz;
++static int __bman_probed;
  
- #include "bman_priv.h"
-+#include <linux/iommu.h>
+ static int bman_fbpr(struct reserved_mem *rmem)
+ {
+@@ -167,6 +168,12 @@ static irqreturn_t bman_isr(int irq, void *ptr)
+ 	return IRQ_HANDLED;
+ }
  
- u16 bman_ip_rev;
- EXPORT_SYMBOL(bman_ip_rev);
-@@ -171,6 +172,7 @@ static int fsl_bman_probe(struct platform_device *pdev)
++int bman_is_probed(void)
++{
++	return __bman_probed;
++}
++EXPORT_SYMBOL_GPL(bman_is_probed);
++
+ static int fsl_bman_probe(struct platform_device *pdev)
+ {
  	int ret, err_irq;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *node = dev->of_node;
-+	struct iommu_domain *domain;
- 	struct resource *res;
+@@ -177,6 +184,8 @@ static int fsl_bman_probe(struct platform_device *pdev)
  	u16 id, bm_pool_cnt;
  	u8 major, minor;
-@@ -216,6 +218,16 @@ static int fsl_bman_probe(struct platform_device *pdev)
  
- 	dev_dbg(dev, "Allocated FBPR 0x%llx 0x%zx\n", fbpr_a, fbpr_sz);
- 
-+	/* Create an 1-to-1 iommu mapping for FBPR area */
-+	domain = iommu_get_domain_for_dev(dev);
-+	if (domain) {
-+		ret = iommu_map(iommu_get_domain_for_dev(dev),
-+				fbpr_a, fbpr_a, fbpr_sz,
-+				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
-+		if (ret)
-+			dev_warn(dev, "failed to iommu_map() %d\n", ret);
-+	}
++	__bman_probed = -1;
 +
- 	bm_set_memory(fbpr_a, fbpr_sz);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(dev, "Can't get %pOF property 'IORESOURCE_MEM'\n",
+@@ -267,6 +276,8 @@ static int fsl_bman_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
- 	err_irq = platform_get_irq(pdev, 0);
++	__bman_probed = 1;
++
+ 	return 0;
+ };
+ 
+diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
+index 7163f7511ce1..0bfbe24b479a 100644
+--- a/drivers/soc/fsl/qbman/qman_ccsr.c
++++ b/drivers/soc/fsl/qbman/qman_ccsr.c
+@@ -274,6 +274,7 @@ static const struct qman_error_info_mdata error_mdata[] = {
+ static u32 __iomem *qm_ccsr_start;
+ /* A SDQCR mask comprising all the available/visible pool channels */
+ static u32 qm_pools_sdqcr;
++static int __qman_probed;
+ 
+ static inline u32 qm_ccsr_in(u32 offset)
+ {
+@@ -689,6 +690,12 @@ static int qman_resource_init(struct device *dev)
+ 	return 0;
+ }
+ 
++int qman_is_probed(void)
++{
++	return __qman_probed;
++}
++EXPORT_SYMBOL_GPL(qman_is_probed);
++
+ static int fsl_qman_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -699,6 +706,8 @@ static int fsl_qman_probe(struct platform_device *pdev)
+ 	u16 id;
+ 	u8 major, minor;
+ 
++	__qman_probed = -1;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(dev, "Can't get %pOF property 'IORESOURCE_MEM'\n",
+@@ -847,6 +856,8 @@ static int fsl_qman_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	__qman_probed = 1;
++
+ 	return 0;
+ }
+ 
+diff --git a/include/soc/fsl/bman.h b/include/soc/fsl/bman.h
+index eaaf56df4086..5b99cb2ea5ef 100644
+--- a/include/soc/fsl/bman.h
++++ b/include/soc/fsl/bman.h
+@@ -126,4 +126,12 @@ int bman_release(struct bman_pool *pool, const struct bm_buffer *bufs, u8 num);
+  */
+ int bman_acquire(struct bman_pool *pool, struct bm_buffer *bufs, u8 num);
+ 
++/**
++ * bman_is_probed - Check if bman is probed
++ *
++ * Returns 1 if the bman driver successfully probed, -1 if the bman driver
++ * failed to probe or 0 if the bman driver did not probed yet.
++ */
++int bman_is_probed(void);
++
+ #endif	/* __FSL_BMAN_H */
+diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
+index d4dfefdee6c1..597783b8a3a0 100644
+--- a/include/soc/fsl/qman.h
++++ b/include/soc/fsl/qman.h
+@@ -1186,4 +1186,12 @@ int qman_alloc_cgrid_range(u32 *result, u32 count);
+  */
+ int qman_release_cgrid(u32 id);
+ 
++/**
++ * qman_is_probed - Check if qman is probed
++ *
++ * Returns 1 if the qman driver successfully probed, -1 if the qman driver
++ * failed to probe or 0 if the qman driver did not probed yet.
++ */
++int qman_is_probed(void);
++
+ #endif	/* __FSL_QMAN_H */
 -- 
 2.17.1
 
