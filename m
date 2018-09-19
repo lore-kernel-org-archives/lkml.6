@@ -2,96 +2,102 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F6CECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F278ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C389E2098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C389E2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A10412098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:49:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10412098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732051AbeISTUh (ORCPT
+        id S1732055AbeIST1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:20:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52992 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731391AbeISTUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:20:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3AFF1ACDE;
-        Wed, 19 Sep 2018 13:42:36 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc:     boris.ostrovsky@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH v2] xen: issue warning message when out of grant maptrack entries
-Date:   Wed, 19 Sep 2018 15:42:33 +0200
-Message-Id: <20180919134233.3040-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Wed, 19 Sep 2018 15:27:00 -0400
+Received: from mga18.intel.com ([134.134.136.126]:55126 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731240AbeIST1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:27:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 06:48:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
+   d="scan'208";a="75599252"
+Received: from pqueiros-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.13])
+  by orsmga006.jf.intel.com with ESMTP; 19 Sep 2018 06:48:54 -0700
+Date:   Wed, 19 Sep 2018 16:48:53 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 02/20] tpm: sort objects in the Makefile
+Message-ID: <20180919134853.GB26571@linux.intel.com>
+References: <20180918093459.19165-1-tomas.winkler@intel.com>
+ <20180918093459.19165-3-tomas.winkler@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918093459.19165-3-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a driver domain (e.g. dom0) is running out of maptrack entries it
-can't map any more foreign domain pages. Instead of silently stalling
-the affected domUs issue a rate limited warning in this case in order
-to make it easier to detect that situation.
+On Tue, Sep 18, 2018 at 12:34:41PM +0300, Tomas Winkler wrote:
+> Make the tpm Makefile a bit more in order by putting
+> objects in one column and group together tpm2 modules
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/xen/grant-table.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+The change is fine but do you mean by the subordinate clause here?
 
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 7bafa703a992..84575baceebc 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -1040,18 +1040,33 @@ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
- 		return ret;
- 
- 	for (i = 0; i < count; i++) {
--		/* Retry eagain maps */
--		if (map_ops[i].status == GNTST_eagain)
--			gnttab_retry_eagain_gop(GNTTABOP_map_grant_ref, map_ops + i,
--						&map_ops[i].status, __func__);
--
--		if (map_ops[i].status == GNTST_okay) {
-+		switch (map_ops[i].status) {
-+		case GNTST_okay:
-+		{
- 			struct xen_page_foreign *foreign;
- 
- 			SetPageForeign(pages[i]);
- 			foreign = xen_page_foreign(pages[i]);
- 			foreign->domid = map_ops[i].dom;
- 			foreign->gref = map_ops[i].ref;
-+			break;
-+		}
-+
-+		case GNTST_no_device_space:
-+			pr_warn_ratelimited("maptrack limit reached, can't map all guest pages\n");
-+			break;
-+
-+		case GNTST_eagain:
-+			/* Retry eagain maps */
-+			gnttab_retry_eagain_gop(GNTTABOP_map_grant_ref,
-+						map_ops + i,
-+						&map_ops[i].status, __func__);
-+			/* Test status in next loop iteration. */
-+			i--;
-+			break;
-+
-+		default:
-+			break;
- 		}
- 	}
- 
--- 
-2.16.4
+/Jarkko
 
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+> V2: 1. back to tpm-y notation
+>     2. Partially sort files alphanumerically.
+> V3: Rebase
+> 
+>  drivers/char/tpm/Makefile | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 4e9c33ca1f8f..efc785053627 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -3,9 +3,18 @@
+>  # Makefile for the kernel tpm device drivers.
+>  #
+>  obj-$(CONFIG_TCG_TPM) += tpm.o
+> -tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+> -	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+> -	 eventlog/tpm2.o tpm2-space.o
+> +tpm-y := tpm-chip.o
+> +tpm-y += tpm-dev-common.o
+> +tpm-y += tpm-dev.o
+> +tpm-y += tpm-interface.o
+> +tpm-y += tpm2-cmd.o
+> +tpm-y += tpmrm-dev.o
+> +tpm-y += tpm2-space.o
+> +tpm-y += tpm-sysfs.o
+> +tpm-y += eventlog/common.o
+> +tpm-y += eventlog/tpm1.o
+> +tpm-y += eventlog/tpm2.o
+> +
+>  tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+>  tpm-$(CONFIG_EFI) += eventlog/efi.o
+>  tpm-$(CONFIG_OF) += eventlog/of.o
+> -- 
+> 2.14.4
+> 
