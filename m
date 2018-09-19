@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA99ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A71AECE565
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379E521533
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379E521533
+	by mail.kernel.org (Postfix) with ESMTP id BEA182150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA182150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbeISXI7 (ORCPT
+        id S1733036AbeISXJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:08:59 -0400
+        Wed, 19 Sep 2018 19:09:00 -0400
 Received: from mga05.intel.com ([192.55.52.43]:33317 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731762AbeISXI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733000AbeISXI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 19:08:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 10:30:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="87551439"
+   d="scan'208";a="87551434"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by fmsmga002.fm.intel.com with ESMTP; 19 Sep 2018 10:30:02 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -38,9 +38,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 6/6] x86/intel_rdt: Re-enable pseudo-lock measurements
-Date:   Wed, 19 Sep 2018 10:29:11 -0700
-Message-Id: <bfb9fc31692e0c62d9ca39062e55eceb6a0635b5.1537377064.git.reinette.chatre@intel.com>
+Subject: [PATCH V5 4/6] x86/intel_rdt: Create required perf event attributes
+Date:   Wed, 19 Sep 2018 10:29:09 -0700
+Message-Id: <1822f6164e221a497648d108913d056ab675d5d0.1537377064.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1537377064.git.reinette.chatre@intel.com>
 References: <cover.1537377064.git.reinette.chatre@intel.com>
@@ -51,37 +51,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4a7a54a55e72 ("x86/intel_rdt: Disable PMU access") disabled
-measurements of pseudo-locked regions because of incorrect usage
-of the performance monitoring hardware.
+A perf event has many attributes that are maintained in a separate
+structure that should be provided when a new perf_event is created.
 
-Cache pseudo-locking measurements are now done correctly with the
-in-kernel perf API and its use can be re-enabled at this time.
+In preparation for the transition to perf_events the required attribute
+structures are created for all the events that may be used in the
+measurements. Most attributes for all the events are identical. The
+actual configuration, what specifies what needs to be measured, is what
+will be different between the events used. This configuration needs to
+be done with X86_CONFIG that cannot be used as part of the designated
+initializers used here, this will be introduced later.
 
-The adjustment to the in-kernel perf API also separated the L2 and L3
-measurements that can be triggered separately from user space. The
-re-enabling of the measurements is thus not a simple revert of the
-original disable in order to accommodate the additional parameter
-possible.
+Although they do look identical at this time the attribute structures
+needs to be maintained separately since a perf_event will maintain a
+pointer to its unique attributes.
+
+In support of patch testing the new structs are given the unused attribute
+until their use in later patches.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 26 +++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index c35b975e3b1e..edf30c94c226 100644
+index 8ad83eb3fc89..33d7968f152a 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -1237,7 +1237,7 @@ static ssize_t pseudo_lock_measure_trigger(struct file *file,
- 	buf[buf_size] = '\0';
- 	ret = kstrtoint(buf, 10, &sel);
- 	if (ret == 0) {
--		if (sel != 1)
-+		if (sel != 1 && sel != 2 && sel != 3)
- 			return -EINVAL;
- 		ret = debugfs_file_get(file->f_path.dentry);
- 		if (ret)
+@@ -17,6 +17,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
++#include <linux/perf_event.h>
+ #include <linux/pm_qos.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+@@ -915,6 +916,31 @@ static int measure_cycles_lat_fn(void *_plr)
+ 	return 0;
+ }
+ 
++/*
++ * Create a perf_event_attr for the hit and miss perf events that will
++ * be used during the performance measurement. A perf_event maintains
++ * a pointer to its perf_event_attr so a unique attribute structure is
++ * created for each perf_event.
++ *
++ * The actual configuration of the event is set right before use in order
++ * to use the X86_CONFIG macro.
++ */
++static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
++	.type		= PERF_TYPE_RAW,
++	.size		= sizeof(struct perf_event_attr),
++	.pinned		= 1,
++	.disabled	= 0,
++	.exclude_user	= 1,
++};
++
++static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
++	.type		= PERF_TYPE_RAW,
++	.size		= sizeof(struct perf_event_attr),
++	.pinned		= 1,
++	.disabled	= 0,
++	.exclude_user	= 1,
++};
++
+ static int measure_cycles_perf_fn(void *_plr)
+ {
+ 	unsigned long long l3_hits = 0, l3_miss = 0;
 -- 
 2.17.0
 
