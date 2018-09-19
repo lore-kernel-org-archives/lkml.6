@@ -2,79 +2,291 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEDDECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860C6ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355B420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:32:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355B420880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 289B920880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:32:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VrYPXhb6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289B920880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbeISNIj (ORCPT
+        id S1731100AbeISNJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 09:08:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54038 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbeISNIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:08:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 00:32:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
-   d="scan'208";a="91367436"
-Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 00:31:58 -0700
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Zhimin Gu <kookoo.gu@intel.com>, Yu Chen <yu.c.chen@intel.com>
-Subject: [PATCH 05/12][RFC v3] x86-32, hibernate: Enable CONFIG_ARCH_HIBERNATION_HEADER set on 32bit system
-Date:   Wed, 19 Sep 2018 15:38:43 +0800
-Message-Id: <ec80ac5b3ef0505e4f4786c4ed1e4f88a7770f12.1537275915.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1537275915.git.yu.c.chen@intel.com>
-References: <cover.1537275915.git.yu.c.chen@intel.com>
+        Wed, 19 Sep 2018 09:09:15 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51352 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeISNJO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 09:09:14 -0400
+Received: by mail-it0-f66.google.com with SMTP id e14-v6so6991677itf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 00:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jGzMNWV+NxscIDA6vfgvsVzsHzWAw0MrpOQi3+WCLHI=;
+        b=VrYPXhb6a0AcisdMejPAwVRMtl06FozXFxe18c8n9PrvbpqRniY7nmcyY+x0UKtqGr
+         6eBdqZxDes9QQq6/aNoxTuCTXUJ+Zkt+IiQGALVehMnKutCijhuk8PBicvND6JvxBAqJ
+         xOVg2QI8aNZviQdaxSq7zk3//ALIzI8wOakCs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jGzMNWV+NxscIDA6vfgvsVzsHzWAw0MrpOQi3+WCLHI=;
+        b=IUXWj/Fj1IpOQLs4nXJ/WHhVnuKpB/6soR2Ol1DmYs/2SZsvYCk9JYinSf6UuJqqfn
+         QgeB5paGZyghQQzNbBQftmFt/scj5WXGQg9U1TJnELmO8klwBxr0W84CA5E9UfiBKK+S
+         ntD67+s/kqZMM3NPOJ4B2y5jndJTF6zS0cbGQq9gJweUgCoJXVbR/w9MaLQCPxMuA5lf
+         VZjLhTgu0fbRTPvI0j36V9AbQek6I6Z7dKDCJsDsTHqPj9/W+8KxAuX893zeKIFXi4+o
+         MZ7SR8mklpUSbFtOA365bmickIc5qoe+1njeWC93RQv3aWkE1UNoO80W/SI82d6K0zd5
+         /TlQ==
+X-Gm-Message-State: APzg51Db0pFfykKcyL7SQw61AUqP0qxAYzXfrToITjV8Gg2kb4hBEhx4
+        3IGK/yqvhO0BJ/+FUacYHZrK1MSePXs9bg==
+X-Google-Smtp-Source: ANB0VdZdzCCKbCNtr0e48LXmgVvPtP7k2MVP2siwtwNVMqNIXLbYKCr3K7CFTLcogRsFKLAdGbD+zA==
+X-Received: by 2002:a24:46cd:: with SMTP id j196-v6mr2221083itb.0.1537342356020;
+        Wed, 19 Sep 2018 00:32:36 -0700 (PDT)
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com. [209.85.166.47])
+        by smtp.gmail.com with ESMTPSA id a63-v6sm6275815itc.38.2018.09.19.00.32.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 00:32:35 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id l14-v6so3683998iob.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 00:32:34 -0700 (PDT)
+X-Received: by 2002:a6b:2387:: with SMTP id j129-v6mr27254517ioj.86.1537342354610;
+ Wed, 19 Sep 2018 00:32:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org> <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Wed, 19 Sep 2018 16:32:22 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
+Message-ID: <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
+Subject: Re: [PATCH v9 1/5] venus: firmware: add routine to reset ARM9
+To:     vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhimin Gu <kookoo.gu@intel.com>
+On Wed, Sep 19, 2018 at 8:43 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> Add routine to reset the ARM9 and brings it out of reset. Also
+> abstract the Venus CPU state handling with a new function. This
+> is in preparation to add PIL functionality in venus driver.
+>
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/core.h         |  2 ++
+>  drivers/media/platform/qcom/venus/firmware.c     | 33 ++++++++++++++++++++++++
+>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
+>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
+>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
+>  5 files changed, 57 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 2f02365..dfd5c10 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -98,6 +98,7 @@ struct venus_caps {
+>   * @dev:               convenience struct device pointer
+>   * @dev_dec:   convenience struct device pointer for decoder device
+>   * @dev_enc:   convenience struct device pointer for encoder device
+> + * @no_tz:     a flag that suggests presence of trustzone
 
-Enable CONFIG_ARCH_HIBERNATION_HEADER for 32bit system so that
-md5 check is enabled and prepare for relocated code executing
-and jump address mapping.
+Looks like it suggests the absence of trustzone?
 
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- arch/x86/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Actually I would rename it as use_tz and set it if TrustZone is used.
+This would avoid double-negative statements like what we see below.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..e8de5de1057f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2422,7 +2422,7 @@ menu "Power management and ACPI options"
- 
- config ARCH_HIBERNATION_HEADER
- 	def_bool y
--	depends on X86_64 && HIBERNATION
-+	depends on HIBERNATION
- 
- source "kernel/power/Kconfig"
- 
--- 
-2.17.1
+>   * @lock:      a lock for this strucure
+>   * @instances: a list_head of all instances
+>   * @insts_count:       num of instances
+> @@ -129,6 +130,7 @@ struct venus_core {
+>         struct device *dev;
+>         struct device *dev_dec;
+>         struct device *dev_enc;
+> +       bool no_tz;
+>         struct mutex lock;
+>         struct list_head instances;
+>         atomic_t insts_count;
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index c4a5778..f2ae2f0 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -22,10 +22,43 @@
+>  #include <linux/sizes.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+>
+> +#include "core.h"
+>  #include "firmware.h"
+> +#include "hfi_venus_io.h"
+>
+>  #define VENUS_PAS_ID                   9
+>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
+> +#define VENUS_FW_START_ADDR            0x0
+> +
+> +static void venus_reset_cpu(struct venus_core *core)
+> +{
+> +       void __iomem *base = core->base;
+> +
+> +       writel(0, base + WRAPPER_FW_START_ADDR);
+> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
+> +       writel(0, base + WRAPPER_CPA_START_ADDR);
+> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
+> +       writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+> +       writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+> +
+> +       /* Bring ARM9 out of reset */
+> +       writel(0, base + WRAPPER_A9SS_SW_RESET);
+> +}
+> +
+> +int venus_set_hw_state(struct venus_core *core, bool resume)
+> +{
+> +       if (!core->no_tz)
 
+This is the kind of double negative statement I was referring do
+above: "if we do not not have TrustZone". Turning it into
+
+    if (core->use_tz)
+
+would save the reader a few neurons. :)
+
+> +               return qcom_scm_set_remote_state(resume, 0);
+> +
+> +       if (resume)
+> +               venus_reset_cpu(core);
+> +       else
+> +               writel(1, core->base + WRAPPER_A9SS_SW_RESET);
+> +
+> +       return 0;
+> +}
+>
+>  int venus_boot(struct device *dev, const char *fwname)
+>  {
+> diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+> index 428efb5..397570c 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.h
+> +++ b/drivers/media/platform/qcom/venus/firmware.h
+> @@ -18,5 +18,16 @@
+>
+>  int venus_boot(struct device *dev, const char *fwname);
+>  int venus_shutdown(struct device *dev);
+> +int venus_set_hw_state(struct venus_core *core, bool suspend);
+> +
+> +static inline int venus_set_hw_state_suspend(struct venus_core *core)
+> +{
+> +       return venus_set_hw_state(core, false);
+> +}
+> +
+> +static inline int venus_set_hw_state_resume(struct venus_core *core)
+> +{
+> +       return venus_set_hw_state(core, true);
+> +}
+
+I think these two venus_set_hw_state_suspend() and
+venus_set_hw_state_resume() are superfluous, if you want to make the
+state explicit you can also define an enum { SUSPEND, RESUME } to use
+as argument of venus_set_hw_state() and call it directly.
+
+>
+>  #endif
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
+> index 1240855..074837e 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+> -#include <linux/qcom_scm.h>
+>  #include <linux/slab.h>
+>
+>  #include "core.h"
+> @@ -27,6 +26,7 @@
+>  #include "hfi_msgs.h"
+>  #include "hfi_venus.h"
+>  #include "hfi_venus_io.h"
+> +#include "firmware.h"
+>
+>  #define HFI_MASK_QHDR_TX_TYPE          0xff000000
+>  #define HFI_MASK_QHDR_RX_TYPE          0x00ff0000
+> @@ -55,11 +55,6 @@
+>  #define IFACEQ_VAR_LARGE_PKT_SIZE      512
+>  #define IFACEQ_VAR_HUGE_PKT_SIZE       (1024 * 12)
+>
+> -enum tzbsp_video_state {
+> -       TZBSP_VIDEO_STATE_SUSPEND = 0,
+> -       TZBSP_VIDEO_STATE_RESUME
+> -};
+> -
+>  struct hfi_queue_table_header {
+>         u32 version;
+>         u32 size;
+> @@ -575,7 +570,7 @@ static int venus_power_off(struct venus_hfi_device *hdev)
+>         if (!hdev->power_enabled)
+>                 return 0;
+>
+> -       ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+> +       ret = venus_set_hw_state_suspend(hdev->core);
+>         if (ret)
+>                 return ret;
+>
+> @@ -595,7 +590,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+>         if (hdev->power_enabled)
+>                 return 0;
+>
+> -       ret = qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_RESUME, 0);
+> +       ret = venus_set_hw_state_resume(hdev->core);
+>         if (ret)
+>                 goto err;
+>
+> @@ -608,7 +603,7 @@ static int venus_power_on(struct venus_hfi_device *hdev)
+>         return 0;
+>
+>  err_suspend:
+> -       qcom_scm_set_remote_state(TZBSP_VIDEO_STATE_SUSPEND, 0);
+> +       venus_set_hw_state_suspend(hdev->core);
+>  err:
+>         hdev->power_enabled = false;
+>         return ret;
+> diff --git a/drivers/media/platform/qcom/venus/hfi_venus_io.h b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+> index def0926..d69f51b 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_venus_io.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_venus_io.h
+> @@ -112,6 +112,13 @@
+>  #define WRAPPER_CPU_STATUS                     (WRAPPER_BASE + 0x2014)
+>  #define WRAPPER_CPU_STATUS_WFI                 BIT(0)
+>  #define WRAPPER_SW_RESET                       (WRAPPER_BASE + 0x3000)
+> +#define WRAPPER_CPA_START_ADDR                 (WRAPPER_BASE + 0x1020)
+> +#define WRAPPER_CPA_END_ADDR                   (WRAPPER_BASE + 0x1024)
+> +#define WRAPPER_FW_START_ADDR                  (WRAPPER_BASE + 0x1028)
+> +#define WRAPPER_FW_END_ADDR                    (WRAPPER_BASE + 0x102C)
+> +#define WRAPPER_NONPIX_START_ADDR              (WRAPPER_BASE + 0x1030)
+> +#define WRAPPER_NONPIX_END_ADDR                        (WRAPPER_BASE + 0x1034)
+> +#define WRAPPER_A9SS_SW_RESET                  (WRAPPER_BASE + 0x3000)
+>
+>  /* Venus 4xx */
+>  #define WRAPPER_VCODEC0_MMCC_POWER_STATUS      (WRAPPER_BASE + 0x90)
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
