@@ -7,309 +7,156 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD98AECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EBAECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8734E2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 805222151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:32:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbHjttN2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8734E2086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZ53WoKU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805222151B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731915AbeISULG (ORCPT
+        id S1731989AbeISULK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:11:06 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42321 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeISULG (ORCPT
+        Wed, 19 Sep 2018 16:11:10 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:46956 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728096AbeISULJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:11:06 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z8-v6so5261833qto.9;
-        Wed, 19 Sep 2018 07:32:53 -0700 (PDT)
+        Wed, 19 Sep 2018 16:11:09 -0400
+Received: by mail-qt0-f195.google.com with SMTP id l42-v6so5237310qtf.13;
+        Wed, 19 Sep 2018 07:32:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oBNMA/I8BjgfrjLSYT87g070M2a2ksxr0t5f59UGFOM=;
-        b=GbHjttN2mldXJFvlwY7w6QMgr5gBPjLgecWC/zQBxcTBgGyMzcVdyU4rgU61vMIFf8
-         ftAEnuPABfRuk4Y5gHFHe9GhbsCA9rA+OoVXxLH+xaHnqRRga/zFZWA35bq3BhSHfBhs
-         aJ6dzMAuYWuOzbqMCjD3rXjY3pEw8bj/zQt7FaB0FuCMG8iVaxuGKHUz26sQmRHtPAyQ
-         3AsYLbgTCwG3s2tbqoHOOjDcFsJH/mvLjTX93Mx9ZId0cel85Lxur/BGtIqorP0zxIVD
-         u3DpyPROXriUyXC5o8qTLsIDXlhukN4GnNuvv5wlGA1w4IuGg5xaxW2UjXQVTvignEwI
-         6uew==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TLBiLM1mdu1HxR4W2fQf8NiJqsLvqjL8vfP6p3vMZ+w=;
+        b=WZ53WoKUusbA3cHPVmaeu4I1DvIcIOmtdV6PfCRnqSjYtDObuE+Nc3N8sx1V8uR1q5
+         /H/QAyXcWy3qRXdZ75wF2Od3gQHruAFvmPtPkpv+fCAwrczKJJz1yOXvjxXKToqlc/0+
+         0OJ+csAnhvOvsPJz8iooWn5QDryrutjo9HBXK/k5WBSwDJAqNhjoXPQaG3N4nTcVxMJL
+         JHthiMRJ6DttM5KBJBSbnpP5casJ8yqZ5ZwKB3IDmHDniokiP0/LX/EiY8hzFWWVPdDR
+         fVURdenDFXnF/loyldrY4bnyXkpNvDCYxcRKGvFM66Fvoq7LnmNY09Bfe+maOQr1WIhZ
+         4xNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oBNMA/I8BjgfrjLSYT87g070M2a2ksxr0t5f59UGFOM=;
-        b=h9FTky9uvgupjsYMDQqyX+RikMg60yQFj1oE/dSorTDmeh9//uOWLoJ5mJyXTHtGKL
-         Q9zl3tEp69vWOF4Ocm3h7SlrQlFTAPwzCmjv0uSpfkjSjmJjFnX+EqnBVulFIcMtoT/g
-         2pZVysdp4pErBOQ0ZegA7AIy8qhEVUzyjARau3GKahkrTjaj/ayQBo/mihPwxM9jttTd
-         JLtv8aOLvEA1SNaCWvr7UbP/AGjZVuZOYQ3zYOwXcqH7i/6pnm3kC7XdbcIHGr5hwp0m
-         LFxrQXLkvF3Tp3jciBwYW8WHPRaQ4tFLneTOm77y6yTyaEmr1ieHtjp0U7zV2YMPmGpW
-         SjKw==
-X-Gm-Message-State: APzg51D+bfrk8WHoYWZDzadclqZgaPsdnjxHWtCD0aU6qZRJ1R49j/MC
-        sNyWJv8BHlFpQH+KAvoqR6kwNJPf
-X-Google-Smtp-Source: ANB0VdbL9kyMN2KvAn5q5o3USY66s+zuokQdYxLMP4Ut/qXkSecVUSTq5eyXfrXQntz569rWqTe/Dg==
-X-Received: by 2002:aed:3e25:: with SMTP id l34-v6mr25033713qtf.62.1537367573127;
-        Wed, 19 Sep 2018 07:32:53 -0700 (PDT)
+         :references;
+        bh=TLBiLM1mdu1HxR4W2fQf8NiJqsLvqjL8vfP6p3vMZ+w=;
+        b=XWFjraTVHkF/6wi5trBvQ6zWYwb+bfT0qMO9uVJKGAJev2L5qyaZ49d8CI+Lt/JpkG
+         /HqYuvD0ZsrsXje0O/l5E9b8eieHEIB9Fo+QsWfAJZLOIzvBegCYSosDU8mG17iTs6UC
+         b1wa/+GBeeWR0cbiFSp0UOysAgP55byNWkClERpNI1QRCiHJSMhDZs4fU9XQarDzOPRt
+         aA4KyW3tcJpCaQLAb1ywbGWGNdAqiiOgpSI5e/wbUPhl841Iw/ZR70dfoHjYvP8Eyqp3
+         ti03ltRukQUOQXk0C7+8GymdRnLFL0npFwGMzFdijE1Gty10xUZNzDHsbAnBZy/k6mGf
+         /BmQ==
+X-Gm-Message-State: APzg51AleskXavr5TLF/Uwpbs73AOqJxZkJ1fOD/QtpNChnmOj4b4V+2
+        g+vzeIeiJ+h279Sy47Cv2Fg78uxt
+X-Google-Smtp-Source: ANB0Vdaoy/bMUe/Yab81ePa9h/gnrBVobMUqYgkmgHWY15T0tkCpyngXC68ZnraC7jDlxqOqgBwqHA==
+X-Received: by 2002:ac8:1bf6:: with SMTP id m51-v6mr23892699qtk.143.1537367576468;
+        Wed, 19 Sep 2018 07:32:56 -0700 (PDT)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.32.51
+        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.32.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 07:32:52 -0700 (PDT)
+        Wed, 19 Sep 2018 07:32:55 -0700 (PDT)
 From:   Jim Quinlan <jim2101024@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Jim Quinlan <jim2101024@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Brian Norris <computersforpeace@gmail.com>,
         Gregory Fong <gregory.0xf0@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Doug Berger <opendmb@gmail.com>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 01/12] soc: bcm: brcmstb: add memory API
-Date:   Wed, 19 Sep 2018 10:31:56 -0400
-Message-Id: <1537367527-20773-2-git-send-email-jim2101024@gmail.com>
+Subject: [PATCH v5 02/12] dt-bindings: pci: add DT docs for Brcmstb PCIe device
+Date:   Wed, 19 Sep 2018 10:31:57 -0400
+Message-Id: <1537367527-20773-3-git-send-email-jim2101024@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
 References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+The DT bindings description of the Brcmstb PCIe device is described.
+This node can be used by almost all Broadcom settop box chips, using
+ARM, ARM64, or MIPS CPU architectures.
 
-This commit adds a memory API suitable for ascertaining the sizes of
-each of the N memory controllers in a Broadcom STB chip.  Its first
-user will be the Broadcom STB PCIe root complex driver, which needs
-to know these sizes to properly set up DMA mappings for inbound
-regions.
-
-We cannot use memblock here or anything like what Linux provides
-because it collapses adjacent regions within a larger block, and here
-we actually need per-memory controller addresses and sizes, which is
-why we resort to manual DT parsing.
-
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/soc/bcm/brcmstb/Makefile |   2 +-
- drivers/soc/bcm/brcmstb/memory.c | 158 +++++++++++++++++++++++++++++++++++++++
- include/soc/brcmstb/memory_api.h |  26 +++++++
- 3 files changed, 185 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/bcm/brcmstb/memory.c
- create mode 100644 include/soc/brcmstb/memory_api.h
+ .../devicetree/bindings/pci/brcmstb-pcie.txt       | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/brcmstb-pcie.txt
 
-diff --git a/drivers/soc/bcm/brcmstb/Makefile b/drivers/soc/bcm/brcmstb/Makefile
-index 01687c2..e4ccd3a 100644
---- a/drivers/soc/bcm/brcmstb/Makefile
-+++ b/drivers/soc/bcm/brcmstb/Makefile
-@@ -1,2 +1,2 @@
--obj-y				+= common.o biuctrl.o
-+obj-y				+= common.o biuctrl.o memory.o
- obj-$(CONFIG_BRCMSTB_PM)	+= pm/
-diff --git a/drivers/soc/bcm/brcmstb/memory.c b/drivers/soc/bcm/brcmstb/memory.c
+diff --git a/Documentation/devicetree/bindings/pci/brcmstb-pcie.txt b/Documentation/devicetree/bindings/pci/brcmstb-pcie.txt
 new file mode 100644
-index 0000000..254783d
+index 0000000..a1a9ad5
 --- /dev/null
-+++ b/drivers/soc/bcm/brcmstb/memory.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright © 2015-2017 Broadcom */
++++ b/Documentation/devicetree/bindings/pci/brcmstb-pcie.txt
+@@ -0,0 +1,59 @@
++Brcmstb PCIe Host Controller Device Tree Bindings
 +
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/libfdt.h>
-+#include <linux/of_address.h>
-+#include <linux/of_fdt.h>
-+#include <linux/sizes.h>
-+#include <soc/brcmstb/memory_api.h>
++Required Properties:
++- compatible
++  "brcm,bcm7425-pcie" -- for 7425 family MIPS-based SOCs.
++  "brcm,bcm7435-pcie" -- for 7435 family MIPS-based SOCs.
++  "brcm,bcm7445-pcie" -- for 7445 and later ARM based SOCs (not including
++      the 7278).
++  "brcm,bcm7278-pcie"  -- for 7278 family ARM-based SOCs.
 +
-+/* Macro to help extract property data */
-+#define DT_PROP_DATA_TO_U32(b, offs) (fdt32_to_cpu(*(u32 *)(b + offs)))
++- reg -- the register start address and length for the PCIe reg block.
++- interrupts -- two interrupts are specified; the first interrupt is for
++     the PCI host controller and the second is for MSI if the built-in
++     MSI controller is to be used.
++- interrupt-names -- names of the interrupts (above): "pcie" and "msi".
++- #address-cells -- set to <3>.
++- #size-cells -- set to <2>.
++- #interrupt-cells: set to <1>.
++- interrupt-map-mask and interrupt-map, standard PCI properties to define the
++     mapping of the PCIe interface to interrupt numbers.
++- ranges: ranges for the PCI memory and I/O regions.
++- linux,pci-domain -- should be unique per host controller.
 +
-+/* Constants used when retrieving memc info */
-+#define NUM_BUS_RANGES 10
-+#define BUS_RANGE_ULIMIT_SHIFT 4
-+#define BUS_RANGE_LLIMIT_SHIFT 4
-+#define BUS_RANGE_PA_SHIFT 12
++Optional Properties:
++- clocks -- phandle of pcie clock.
++- clock-names -- set to "sw_pcie" if clocks is used.
++- dma-ranges -- Specifies the inbound memory mapping regions when
++     an "identity map" is not possible.
++- msi-controller -- this property is typically specified to have the
++     PCIe controller use its internal MSI controller.
++- msi-parent -- set to use an external MSI interrupt controller.
++- brcm,enable-ssc -- (boolean) indicates usage of spread-spectrum clocking.
++- max-link-speed --  (integer) indicates desired generation of link:
++     1 => 2.5 Gbps (gen1), 2 => 5.0 Gbps (gen2), 3 => 8.0 Gbps (gen3).
 +
-+enum {
-+	BUSNUM_MCP0 = 0x4,
-+	BUSNUM_MCP1 = 0x5,
-+	BUSNUM_MCP2 = 0x6,
-+};
++Example Node:
 +
-+/*
-+ * If the DT nodes are handy, determine which MEMC holds the specified
-+ * physical address.
-+ */
-+#ifdef CONFIG_ARCH_BRCMSTB
-+int __brcmstb_memory_phys_addr_to_memc(phys_addr_t pa, void __iomem *base)
-+{
-+	int memc = -1;
-+	int i;
-+
-+	for (i = 0; i < NUM_BUS_RANGES; i++, base += 8) {
-+		const u64 ulimit_raw = readl(base);
-+		const u64 llimit_raw = readl(base + 4);
-+		const u64 ulimit =
-+			((ulimit_raw >> BUS_RANGE_ULIMIT_SHIFT)
-+			 << BUS_RANGE_PA_SHIFT) | 0xfff;
-+		const u64 llimit = (llimit_raw >> BUS_RANGE_LLIMIT_SHIFT)
-+				   << BUS_RANGE_PA_SHIFT;
-+		const u32 busnum = (u32)(ulimit_raw & 0xf);
-+
-+		if (pa >= llimit && pa <= ulimit) {
-+			if (busnum >= BUSNUM_MCP0 && busnum <= BUSNUM_MCP2) {
-+				memc = busnum - BUSNUM_MCP0;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return memc;
-+}
-+
-+int brcmstb_memory_phys_addr_to_memc(phys_addr_t pa)
-+{
-+	int memc = -1;
-+	struct device_node *np;
-+	void __iomem *cpubiuctrl;
-+
-+	np = of_find_compatible_node(NULL, NULL, "brcm,brcmstb-cpu-biu-ctrl");
-+	if (!np)
-+		return memc;
-+
-+	cpubiuctrl = of_iomap(np, 0);
-+	if (!cpubiuctrl)
-+		goto cleanup;
-+
-+	memc = __brcmstb_memory_phys_addr_to_memc(pa, cpubiuctrl);
-+	iounmap(cpubiuctrl);
-+
-+cleanup:
-+	of_node_put(np);
-+
-+	return memc;
-+}
-+
-+#elif defined(CONFIG_MIPS)
-+int brcmstb_memory_phys_addr_to_memc(phys_addr_t pa)
-+{
-+	/* The logic here is fairly simple and hardcoded: if pa <= 0x5000_0000,
-+	 * then this is MEMC0, else MEMC1.
-+	 *
-+	 * For systems with 2GB on MEMC0, MEMC1 starts at 9000_0000, with 1GB
-+	 * on MEMC0, MEMC1 starts at 6000_0000.
-+	 */
-+	if (pa >= 0x50000000ULL)
-+		return 1;
-+	else
-+		return 0;
-+}
-+#endif
-+
-+u64 brcmstb_memory_memc_size(int memc)
-+{
-+	const void *fdt = initial_boot_params;
-+	const int mem_offset = fdt_path_offset(fdt, "/memory");
-+	int addr_cells = 1, size_cells = 1;
-+	const struct fdt_property *prop;
-+	int proplen, cellslen;
-+	u64 memc_size = 0;
-+	int i;
-+
-+	/* Get root size and address cells if specified */
-+	prop = fdt_get_property(fdt, 0, "#size-cells", &proplen);
-+	if (prop)
-+		size_cells = DT_PROP_DATA_TO_U32(prop->data, 0);
-+
-+	prop = fdt_get_property(fdt, 0, "#address-cells", &proplen);
-+	if (prop)
-+		addr_cells = DT_PROP_DATA_TO_U32(prop->data, 0);
-+
-+	if (mem_offset < 0)
-+		return -1;
-+
-+	prop = fdt_get_property(fdt, mem_offset, "reg", &proplen);
-+	cellslen = (int)sizeof(u32) * (addr_cells + size_cells);
-+	if ((proplen % cellslen) != 0)
-+		return -1;
-+
-+	for (i = 0; i < proplen / cellslen; ++i) {
-+		u64 addr = 0;
-+		u64 size = 0;
-+		int memc_idx;
-+		int j;
-+
-+		for (j = 0; j < addr_cells; ++j) {
-+			int offset = (cellslen * i) + (sizeof(u32) * j);
-+
-+			addr |= (u64)DT_PROP_DATA_TO_U32(prop->data, offset) <<
-+				((addr_cells - j - 1) * 32);
-+		}
-+		for (j = 0; j < size_cells; ++j) {
-+			int offset = (cellslen * i) +
-+				(sizeof(u32) * (j + addr_cells));
-+
-+			size |= (u64)DT_PROP_DATA_TO_U32(prop->data, offset) <<
-+				((size_cells - j - 1) * 32);
-+		}
-+
-+		if ((phys_addr_t)addr != addr) {
-+			pr_err("phys_addr_t is smaller than provided address 0x%llx!\n",
-+			       addr);
-+			return -1;
-+		}
-+
-+		memc_idx = brcmstb_memory_phys_addr_to_memc((phys_addr_t)addr);
-+		if (memc_idx == memc)
-+			memc_size += size;
-+	}
-+
-+	return memc_size;
-+}
-+EXPORT_SYMBOL_GPL(brcmstb_memory_memc_size);
-+
-diff --git a/include/soc/brcmstb/memory_api.h b/include/soc/brcmstb/memory_api.h
-new file mode 100644
-index 0000000..6546845
---- /dev/null
-+++ b/include/soc/brcmstb/memory_api.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __MEMORY_API_H
-+#define __MEMORY_API_H
-+
-+/*
-+ * Bus Interface Unit control register setup, must happen early during boot,
-+ * before SMP is brought up, called by machine entry point.
-+ */
-+void brcmstb_biuctrl_init(void);
-+
-+#ifdef CONFIG_SOC_BRCMSTB
-+int brcmstb_memory_phys_addr_to_memc(phys_addr_t pa);
-+u64 brcmstb_memory_memc_size(int memc);
-+#else
-+static inline int brcmstb_memory_phys_addr_to_memc(phys_addr_t pa)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline u64 brcmstb_memory_memc_size(int memc)
-+{
-+	return -1;
-+}
-+#endif
-+
-+#endif /* __MEMORY_API_H */
++pcie0: pcie@f0460000 {
++		reg = <0x0 0xf0460000 0x0 0x9310>;
++		interrupts = <0x0 0x0 0x4>;
++		compatible = "brcm,bcm7445-pcie";
++		#address-cells = <3>;
++		#size-cells = <2>;
++		ranges = <0x02000000 0x00000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x08000000
++			  0x02000000 0x00000000 0x08000000 0x00000000 0xc8000000 0x00000000 0x08000000>;
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 7>;
++		interrupt-map = <0 0 0 1 &intc 0 47 3
++				 0 0 0 2 &intc 0 48 3
++				 0 0 0 3 &intc 0 49 3
++				 0 0 0 4 &intc 0 50 3>;
++		clocks = <&sw_pcie0>;
++		clock-names = "sw_pcie";
++		msi-parent = <&pcie0>;  /* use PCIe's internal MSI controller */
++		msi-controller;         /* use PCIe's internal MSI controller */
++		brcm,ssc;
++		max-link-speed = <1>;
++		linux,pci-domain = <0>;
++	};
 -- 
 1.9.0.138.g2de3478
 
