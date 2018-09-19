@@ -2,948 +2,157 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CA4C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 820E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633362150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:29:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633362150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 313B22150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:29:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="FrlrS4xm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 313B22150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732130AbeISTHL (ORCPT
+        id S1732147AbeISTHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:07:11 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15130 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731330AbeISTHK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:07:10 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8JDO2c5014304;
-        Wed, 19 Sep 2018 15:28:07 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mgqut857h-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 19 Sep 2018 15:28:07 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 505DE34;
-        Wed, 19 Sep 2018 13:28:06 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0316B4F79;
-        Wed, 19 Sep 2018 13:28:06 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep
- 2018 15:28:05 +0200
-Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep 2018 15:28:05 +0200
-From:   Amelie Delaunay <amelie.delaunay@st.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 4/7] pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
-Date:   Wed, 19 Sep 2018 15:27:46 +0200
-Message-ID: <1537363669-25991-5-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com>
-References: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com>
+        Wed, 19 Sep 2018 15:07:31 -0400
+Received: from mail-eopbgr730054.outbound.protection.outlook.com ([40.107.73.54]:64432
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731330AbeISTHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:07:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qjlSxj37HaiCz3znz4KbH/0ix5yXa8+A+5oA64QQKPE=;
+ b=FrlrS4xm+DrXRGyL9/GpoiPaLR4BAQUWNhYE6RhhRNMNinpPavmF7jDite0rUYIq++fIQw4DimuzN63Jq5ov6gn+/TvQGnRjRaZrhUO4uXXX3poNIpE5Bfp4l//CHKd1V7b2MKfINfKoe6mM16EcJApJTyD2lEIzxadYPX7Yobc=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB0607.namprd12.prod.outlook.com (10.163.208.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Wed, 19 Sep 2018 13:29:30 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::2d1b:5638:5680:80e7]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::2d1b:5638:5680:80e7%5]) with mapi id 15.20.1143.017; Wed, 19 Sep 2018
+ 13:29:30 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "Hook, Gary" <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>
+Subject: Re: [PATCH 2/2] Allow SEV firmware to be chosen based on Family and
+ Model
+Thread-Topic: [PATCH 2/2] Allow SEV firmware to be chosen based on Family and
+ Model
+Thread-Index: AQHUTHrcPgiFH6NduUedtQfbSYr40KT3oJqA
+Date:   Wed, 19 Sep 2018 13:29:30 +0000
+Message-ID: <85155459-44ef-b200-f442-fc5fde75a1ae@amd.com>
+References: <cover.1536959537.git.Janakarajan.Natarajan@amd.com>
+ <5c58c32c0ce89c35a95e151734f5d43a3ed0dca0.1536959537.git.Janakarajan.Natarajan@amd.com>
+In-Reply-To: <5c58c32c0ce89c35a95e151734f5d43a3ed0dca0.1536959537.git.Janakarajan.Natarajan@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR07CA0059.namprd07.prod.outlook.com (2603:10b6:100::27)
+ To SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB0607;20:ulOs2fB0XJ2rFC7P84PtXatuf9J60QGFQLlHRZt5km8heixVnT/meXntD7si1liJTrCm6Z2tIszBdo4RKZz5n+wNi2Nk+qeUhCau5Gb46qfc0SLHEk4ieU7agPQCNEI0WF11Q1wRQvxPqjBkKm5fLOwqiWiyNL662ullVTKD0nEgaQH2Y0r7NjziC5Ei6i8PMEmnVfp5y4veeJf5ms1Vc8WLQ0tt/grRXNXVuwXgxdETctKGpT3hAMNsSj/Lkk1X
+x-ms-office365-filtering-correlation-id: 33a12820-32fd-4c3a-fec5-08d61e33ed3f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0607;
+x-ms-traffictypediagnostic: SN1PR12MB0607:
+x-microsoft-antispam-prvs: <SN1PR12MB06079620E528703FF24C76A2EC1C0@SN1PR12MB0607.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:SN1PR12MB0607;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0607;
+x-forefront-prvs: 0800C0C167
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(39860400002)(366004)(199004)(189003)(36756003)(2501003)(2900100001)(25786009)(4326008)(5250100002)(6246003)(3846002)(6116002)(76176011)(99286004)(2906002)(7736002)(305945005)(52116002)(256004)(14444005)(110136005)(54906003)(8936002)(8676002)(86362001)(575784001)(6436002)(105586002)(316002)(5660300001)(102836004)(81166006)(81156014)(478600001)(2201001)(106356001)(6486002)(229853002)(72206003)(14454004)(53936002)(31686004)(68736007)(53546011)(476003)(2616005)(31696002)(26005)(446003)(66066001)(486006)(6506007)(386003)(11346002)(6512007)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0607;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: FNNhTnWcXCr0g+et1PTui5GjfFokFmZCvKKSeVOQusDZe5UDrQ1dIY4R0w/SM/WQYo9E+FRAjzsUWww1l3rAaJUA1pozQwCOAHDl+K2+IXsOEVa019CHkOPITt33g5CPtoT76e8ZwJoVzuCO3qD52DlUXFdhSTmMC7GS2oFgvzsUcqsn/vG3d/O1q6HiAETH5O3zH3722StnkGYPx3VHGkJ4/8Hmxua+FC2NTOYAyL9E/C7BzxyFwCdOR95fSsODeHZeHA0/8M0CHzlBddfRsrbvnwWyt9SyU2UO/6vXIWoWrBPkYZ/r2b7jmxRiL95fHm/ag5bNpwXr8+S2NfpIXauQcA9qvVN039WpGL0mbF0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4730B51C1681B44AAC99B2A4747D6F9A@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_07:,,
- signatures=0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33a12820-32fd-4c3a-fec5-08d61e33ed3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 13:29:30.0969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0607
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds pinctrl/GPIO driver for STMicroelectronics
-Multi-Function eXpander (STMFX) GPIO expander.
-STMFX is an I2C slave controller, offering up to 24 GPIOs.
-The driver relies on generic pin config interface to configure the GPIOs.
-
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- drivers/pinctrl/Kconfig         |  12 +
- drivers/pinctrl/Makefile        |   1 +
- drivers/pinctrl/pinctrl-stmfx.c | 821 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 834 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-stmfx.c
-
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index e86752b..bbd3908 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -244,6 +244,18 @@ config PINCTRL_ST
- 	select PINCONF
- 	select GPIOLIB_IRQCHIP
- 
-+config PINCTRL_STMFX
-+	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
-+	select GENERIC_PINCONF
-+	select GPIOLIB_IRQCHIP
-+	select MFD_STMFX
-+	help
-+	  Driver for STMicroelectronics Multi-Function eXpander (STMFX)
-+	  GPIO expander.
-+	  This provides a GPIO interface supporting inputs and outputs,
-+	  and configuring push-pull, open-drain, and can also be used as
-+	  interrupt-controller.
-+
- config PINCTRL_U300
- 	bool "U300 pin controller driver"
- 	depends on ARCH_U300
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 46ef9bd..9abcaa59 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -38,6 +38,7 @@ obj-$(CONFIG_PINCTRL_LANTIQ)	+= pinctrl-lantiq.o
- obj-$(CONFIG_PINCTRL_LPC18XX)	+= pinctrl-lpc18xx.o
- obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
- obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
-+obj-$(CONFIG_PINCTRL_STMFX) 	+= pinctrl-stmfx.o
- obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
- obj-$(CONFIG_PINCTRL_INGENIC)	+= pinctrl-ingenic.o
- obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
-diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
-new file mode 100644
-index 0000000..e253ed1
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-stmfx.c
-@@ -0,0 +1,821 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander
-+ *
-+ * Copyright (C) 2018 STMicroelectronics
-+ * Author(s): Amelie Delaunay <amelie.delaunay@st.com>.
-+ */
-+#include <linux/gpio/driver.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/stmfx.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinmux.h>
-+
-+#include "core.h"
-+#include "pinctrl-utils.h"
-+
-+/* GPIOs expander */
-+/* GPIO_STATE1 0x10, GPIO_STATE2 0x11, GPIO_STATE3 0x12 */
-+#define STMFX_REG_GPIO_STATE		0x10 /* R */
-+/* GPIO_DIR1 0x60, GPIO_DIR2 0x61, GPIO_DIR3 0x63 */
-+#define STMFX_REG_GPIO_DIR		0x60 /* RW */
-+/* GPIO_TYPE1 0x64, GPIO_TYPE2 0x65, GPIO_TYPE3 0x66 */
-+#define STMFX_REG_GPIO_TYPE		0x64 /* RW */
-+/* GPIO_PUPD1 0x68, GPIO_PUPD2 0x69, GPIO_PUPD3 0x6A */
-+#define STMFX_REG_GPIO_PUPD		0x68 /* RW */
-+/* GPO_SET1 0x6C, GPO_SET2 0x6D, GPO_SET3 0x6E */
-+#define STMFX_REG_GPO_SET		0x6C /* RW */
-+/* GPO_CLR1 0x70, GPO_CLR2 0x71, GPO_CLR3 0x72 */
-+#define STMFX_REG_GPO_CLR		0x70 /* RW */
-+/* IRQ_GPI_SRC1 0x48, IRQ_GPI_SRC2 0x49, IRQ_GPI_SRC3 0x4A */
-+#define STMFX_REG_IRQ_GPI_SRC		0x48 /* RW */
-+/* IRQ_GPI_EVT1 0x4C, IRQ_GPI_EVT2 0x4D, IRQ_GPI_EVT3 0x4E */
-+#define STMFX_REG_IRQ_GPI_EVT		0x4C /* RW */
-+/* IRQ_GPI_TYPE1 0x50, IRQ_GPI_TYPE2 0x51, IRQ_GPI_TYPE3 0x52 */
-+#define STMFX_REG_IRQ_GPI_TYPE		0x50 /* RW */
-+/* IRQ_GPI_PENDING1 0x0C, IRQ_GPI_PENDING2 0x0D, IRQ_GPI_PENDING3 0x0E*/
-+#define STMFX_REG_IRQ_GPI_PENDING	0x0C /* R */
-+/* IRQ_GPI_ACK1 0x54, IRQ_GPI_ACK2 0x55, IRQ_GPI_ACK3 0x56 */
-+#define STMFX_REG_IRQ_GPI_ACK		0x54 /* RW */
-+
-+/* STMFX_REG_IRQ_PENDING bitfields */
-+#define STMFX_REG_IRQ_PENDING_GPIO	BIT(0)
-+
-+#define NR_GPIO_REGS			3
-+#define NR_GPIOS_PER_REG		8
-+#define get_reg(offset)			((offset) / NR_GPIOS_PER_REG)
-+#define get_shift(offset)		((offset) % NR_GPIOS_PER_REG)
-+#define get_mask(offset)		(BIT(get_shift(offset)))
-+
-+/*
-+ * STMFX pinctrl can have up to 24 pins if STMFX other functions are not used.
-+ * Pins availability is managed thanks to gpio-ranges property.
-+ */
-+static const struct pinctrl_pin_desc stmfx_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "agpio0"),
-+	PINCTRL_PIN(17, "agpio1"),
-+	PINCTRL_PIN(18, "agpio2"),
-+	PINCTRL_PIN(19, "agpio3"),
-+	PINCTRL_PIN(20, "agpio4"),
-+	PINCTRL_PIN(21, "agpio5"),
-+	PINCTRL_PIN(22, "agpio6"),
-+	PINCTRL_PIN(23, "agpio7"),
-+};
-+
-+struct stmfx_pinctrl {
-+	struct device *dev;
-+	struct stmfx *stmfx;
-+	struct pinctrl_dev *pctl_dev;
-+	struct pinctrl_desc pctl_desc;
-+	struct gpio_chip gpio_chip;
-+	struct irq_chip irq_chip;
-+	struct mutex lock; /* IRQ bus lock */
-+	unsigned long gpio_valid_mask;
-+	/* Cache of IRQ_GPI_* registers for bus_lock */
-+	u8 irq_gpi_src[NR_GPIO_REGS];
-+	u8 irq_gpi_type[NR_GPIO_REGS];
-+	u8 irq_gpi_evt[NR_GPIO_REGS];
-+	u8 irq_toggle_edge[NR_GPIO_REGS];
-+#ifdef CONFIG_PM
-+	/* Backup of GPIO_* registers for suspend/resume */
-+	u8 bkp_gpio_state[NR_GPIO_REGS];
-+	u8 bkp_gpio_dir[NR_GPIO_REGS];
-+	u8 bkp_gpio_type[NR_GPIO_REGS];
-+	u8 bkp_gpio_pupd[NR_GPIO_REGS];
-+#endif
-+};
-+
-+static int stmfx_gpio_get(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
-+	u32 reg = STMFX_REG_GPIO_STATE + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+	u32 value;
-+	int ret;
-+
-+	ret = regmap_read(pctl->stmfx->map, reg, &value);
-+
-+	return ret ? ret : !!(value & mask);
-+}
-+
-+static void stmfx_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-+{
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
-+	u32 reg = value ? STMFX_REG_GPO_SET : STMFX_REG_GPO_CLR;
-+	u32 mask = get_mask(offset);
-+
-+	regmap_write_bits(pctl->stmfx->map, reg + get_reg(offset),
-+			  mask, mask);
-+}
-+
-+static int stmfx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
-+	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(pctl->stmfx->map, reg, &val);
-+	/*
-+	 * On stmfx, gpio pins direction is (0)input, (1)output.
-+	 * .get_direction returns 0=out, 1=in
-+	 */
-+
-+	return ret ? ret : !(val & mask);
-+}
-+
-+static int stmfx_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
-+	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+
-+	return regmap_write_bits(pctl->stmfx->map, reg, mask, 0);
-+}
-+
-+static int stmfx_gpio_direction_output(struct gpio_chip *gc,
-+				       unsigned int offset, int value)
-+{
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gc);
-+	u32 reg = STMFX_REG_GPIO_DIR + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+
-+	stmfx_gpio_set(gc, offset, value);
-+
-+	return regmap_write_bits(pctl->stmfx->map, reg, mask, mask);
-+}
-+
-+static int stmfx_pinconf_get_pupd(struct stmfx_pinctrl *pctl,
-+				  unsigned int offset)
-+{
-+	u32 reg = STMFX_REG_GPIO_PUPD + get_reg(offset);
-+	u32 pupd, mask = get_mask(offset);
-+	int ret;
-+
-+	ret = regmap_read(pctl->stmfx->map, reg, &pupd);
-+	if (ret)
-+		return ret;
-+
-+	return !!(pupd & mask);
-+}
-+
-+static int stmfx_pinconf_set_pupd(struct stmfx_pinctrl *pctl,
-+				  unsigned int offset, u32 pupd)
-+{
-+	u32 reg = STMFX_REG_GPIO_PUPD + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+
-+	return regmap_write_bits(pctl->stmfx->map, reg, mask, pupd ? mask : 0);
-+}
-+
-+static int stmfx_pinconf_get_type(struct stmfx_pinctrl *pctl,
-+				  unsigned int offset)
-+{
-+	u32 reg = STMFX_REG_GPIO_TYPE + get_reg(offset);
-+	u32 type, mask = get_mask(offset);
-+	int ret;
-+
-+	ret = regmap_read(pctl->stmfx->map, reg, &type);
-+	if (ret)
-+		return ret;
-+
-+	return !!(type & mask);
-+}
-+
-+static int stmfx_pinconf_set_type(struct stmfx_pinctrl *pctl,
-+				  unsigned int offset, u32 type)
-+{
-+	u32 reg = STMFX_REG_GPIO_TYPE + get_reg(offset);
-+	u32 mask = get_mask(offset);
-+
-+	return regmap_write_bits(pctl->stmfx->map, reg, mask, type ? mask : 0);
-+}
-+
-+static int stmfx_pinconf_get(struct pinctrl_dev *pctldev,
-+			     unsigned int pin, unsigned long *config)
-+{
-+	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	u32 param = pinconf_to_config_param(*config);
-+	struct pinctrl_gpio_range *range;
-+	u32 dir, type, pupd;
-+	u32 arg = 0;
-+	int ret;
-+
-+	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, pin);
-+	if (!range)
-+		return -EINVAL;
-+
-+	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, pin);
-+	if (dir < 0)
-+		return dir;
-+	type = stmfx_pinconf_get_type(pctl, pin);
-+	if (type < 0)
-+		return type;
-+	pupd = stmfx_pinconf_get_pupd(pctl, pin);
-+	if (pupd < 0)
-+		return pupd;
-+
-+	switch (param) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		if ((!dir && (!type || !pupd)) || (dir && !type))
-+			arg = 1;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		if (dir && type && !pupd)
-+			arg = 1;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		if (type && pupd)
-+			arg = 1;
-+		break;
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		if ((!dir && type) || (dir && !type))
-+			arg = 1;
-+		break;
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		if ((!dir && !type) || (dir && type))
-+			arg = 1;
-+		break;
-+	case PIN_CONFIG_OUTPUT:
-+		if (dir)
-+			return -EINVAL;
-+
-+		ret = stmfx_gpio_get(&pctl->gpio_chip, pin);
-+		if (ret < 0)
-+			return ret;
-+
-+		arg = ret;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+static int stmfx_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
-+			     unsigned long *configs, unsigned int num_configs)
-+{
-+	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	struct pinctrl_gpio_range *range;
-+	enum pin_config_param param;
-+	u32 arg;
-+	int dir, i, ret;
-+
-+	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, pin);
-+	if (!range) {
-+		dev_err(pctldev->dev, "pin %d is not available\n", pin);
-+		return -EINVAL;
-+	}
-+
-+	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, pin);
-+	if (dir < 0)
-+		return dir;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_BIAS_PULL_PIN_DEFAULT:
-+		case PIN_CONFIG_BIAS_DISABLE:
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			ret = stmfx_pinconf_set_pupd(pctl, pin, 0);
-+			if (ret)
-+				return ret;
-+			break;
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			ret = stmfx_pinconf_set_pupd(pctl, pin, 1);
-+			if (ret)
-+				return ret;
-+			break;
-+		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+			if (!dir)
-+				ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+			else
-+				ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			if (ret)
-+				return ret;
-+			break;
-+		case PIN_CONFIG_DRIVE_PUSH_PULL:
-+			if (!dir)
-+				ret = stmfx_pinconf_set_type(pctl, pin, 0);
-+			else
-+				ret = stmfx_pinconf_set_type(pctl, pin, 1);
-+			if (ret)
-+				return ret;
-+			break;
-+		case PIN_CONFIG_OUTPUT:
-+			ret = stmfx_gpio_direction_output(&pctl->gpio_chip,
-+							  pin, arg);
-+			if (ret)
-+				return ret;
-+			break;
-+		default:
-+			return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void stmfx_pinconf_dbg_show(struct pinctrl_dev *pctldev,
-+				   struct seq_file *s, unsigned int offset)
-+{
-+	struct stmfx_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	struct pinctrl_gpio_range *range;
-+	int dir, type, pupd, val;
-+
-+	range = pinctrl_find_gpio_range_from_pin_nolock(pctldev, offset);
-+	if (!range)
-+		return;
-+
-+	dir = stmfx_gpio_get_direction(&pctl->gpio_chip, offset);
-+	if (dir < 0)
-+		return;
-+	type = stmfx_pinconf_get_type(pctl, offset);
-+	if (type < 0)
-+		return;
-+	pupd = stmfx_pinconf_get_pupd(pctl, offset);
-+	if (pupd < 0)
-+		return;
-+	val = stmfx_gpio_get(&pctl->gpio_chip, offset);
-+	if (val < 0)
-+		return;
-+
-+	if (!dir) {
-+		seq_printf(s, "output %s ", val ? "high" : "low");
-+		if (type)
-+			seq_printf(s, "open drain %s internal pull-up ",
-+				   pupd ? "with" : "without");
-+		else
-+			seq_puts(s, "push pull no pull ");
-+	} else {
-+		seq_printf(s, "input %s ", val ? "high" : "low");
-+		if (type)
-+			seq_printf(s, "with internal pull-%s ",
-+				   pupd ? "up" : "down");
-+		else
-+			seq_printf(s, "%s ", pupd ? "floating" : "analog");
-+	}
-+}
-+
-+static const struct pinconf_ops stmfx_pinconf_ops = {
-+	.pin_config_get		= stmfx_pinconf_get,
-+	.pin_config_set		= stmfx_pinconf_set,
-+	.pin_config_dbg_show	= stmfx_pinconf_dbg_show,
-+};
-+
-+static int stmfx_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	return 0;
-+}
-+
-+static const char *stmfx_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						unsigned int selector)
-+{
-+	return NULL;
-+}
-+
-+static int stmfx_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+					unsigned int selector,
-+					const unsigned int **pins,
-+					unsigned int *num_pins)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static const struct pinctrl_ops stmfx_pinctrl_ops = {
-+	.get_groups_count = stmfx_pinctrl_get_groups_count,
-+	.get_group_name = stmfx_pinctrl_get_group_name,
-+	.get_group_pins = stmfx_pinctrl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+static void stmfx_pinctrl_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
-+	u32 reg = get_reg(data->hwirq);
-+	u32 mask = get_mask(data->hwirq);
-+
-+	pctl->irq_gpi_src[reg] &= ~mask;
-+}
-+
-+static void stmfx_pinctrl_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
-+	u32 reg = get_reg(data->hwirq);
-+	u32 mask = get_mask(data->hwirq);
-+
-+	pctl->irq_gpi_src[reg] |= mask;
-+}
-+
-+static int stmfx_pinctrl_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
-+	u32 reg = get_reg(data->hwirq);
-+	u32 mask = get_mask(data->hwirq);
-+
-+	if (type & IRQ_TYPE_NONE)
-+		return -EINVAL;
-+
-+	if (type & IRQ_TYPE_EDGE_BOTH) {
-+		pctl->irq_gpi_evt[reg] |= mask;
-+		irq_set_handler_locked(data, handle_edge_irq);
-+	} else {
-+		pctl->irq_gpi_evt[reg] &= ~mask;
-+		irq_set_handler_locked(data, handle_level_irq);
-+	}
-+
-+	if ((type & IRQ_TYPE_EDGE_RISING) || (type & IRQ_TYPE_LEVEL_HIGH))
-+		pctl->irq_gpi_type[reg] |= mask;
-+	else
-+		pctl->irq_gpi_type[reg] &= ~mask;
-+
-+	/*
-+	 * In case of (type & IRQ_TYPE_EDGE_BOTH), we need to know current
-+	 * GPIO value to set the right edge trigger. But in atomic context
-+	 * here we can't access registers over I2C. That's why (type &
-+	 * IRQ_TYPE_EDGE_BOTH) will be managed in .irq_sync_unlock.
-+	 */
-+
-+	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
-+		pctl->irq_toggle_edge[reg] |= mask;
-+	else
-+		pctl->irq_toggle_edge[reg] &= mask;
-+
-+	return 0;
-+}
-+
-+static void stmfx_pinctrl_irq_bus_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
-+
-+	mutex_lock(&pctl->lock);
-+}
-+
-+static void stmfx_pinctrl_irq_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(data);
-+	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
-+	u32 reg = get_reg(data->hwirq);
-+	u32 mask = get_mask(data->hwirq);
-+
-+	/*
-+	 * In case of IRQ_TYPE_EDGE_BOTH), read the current GPIO value
-+	 * (this couldn't be done in .irq_set_type because of atomic context)
-+	 * to set the right irq trigger type.
-+	 */
-+	if (pctl->irq_toggle_edge[reg] & mask) {
-+		if (stmfx_gpio_get(gpio_chip, data->hwirq))
-+			pctl->irq_gpi_type[reg] &= ~mask;
-+		else
-+			pctl->irq_gpi_type[reg] |= mask;
-+	}
-+
-+	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_EVT,
-+			  pctl->irq_gpi_evt, NR_GPIO_REGS);
-+	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_TYPE,
-+			  pctl->irq_gpi_type, NR_GPIO_REGS);
-+	regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_SRC,
-+			  pctl->irq_gpi_src, NR_GPIO_REGS);
-+
-+	mutex_unlock(&pctl->lock);
-+}
-+
-+static void stmfx_pinctrl_irq_toggle_trigger(struct stmfx_pinctrl *pctl,
-+					     unsigned int offset)
-+{
-+	u32 reg = get_reg(offset);
-+	u32 mask = get_mask(offset);
-+	int val;
-+
-+	if (!(pctl->irq_toggle_edge[reg] & mask))
-+		return;
-+
-+	val = stmfx_gpio_get(&pctl->gpio_chip, offset);
-+	if (val < 0)
-+		return;
-+
-+	if (val) {
-+		pctl->irq_gpi_type[reg] &= mask;
-+		regmap_write_bits(pctl->stmfx->map,
-+				  STMFX_REG_IRQ_GPI_TYPE + reg,
-+				  mask, 0);
-+
-+	} else {
-+		pctl->irq_gpi_type[reg] |= mask;
-+		regmap_write_bits(pctl->stmfx->map,
-+				  STMFX_REG_IRQ_GPI_TYPE + reg,
-+				  mask, mask);
-+	}
-+}
-+
-+static irqreturn_t stmfx_pinctrl_irq_thread_fn(int irq, void *dev_id)
-+{
-+	struct stmfx_pinctrl *pctl = (struct stmfx_pinctrl *)dev_id;
-+	struct gpio_chip *gc = &pctl->gpio_chip;
-+	u8 pending[NR_GPIO_REGS];
-+	unsigned long n, status;
-+	int ret;
-+
-+	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_IRQ_GPI_PENDING,
-+			       &pending, NR_GPIO_REGS);
-+	if (ret)
-+		return IRQ_NONE;
-+
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_ACK,
-+				pending, NR_GPIO_REGS);
-+	if (ret)
-+		return IRQ_NONE;
-+
-+	status = *(unsigned long *)pending;
-+	for_each_set_bit(n, &status, gc->ngpio) {
-+		handle_nested_irq(irq_find_mapping(gc->irq.domain, n));
-+		stmfx_pinctrl_irq_toggle_trigger(pctl, n);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int stmfx_pinctrl_gpio_function_enable(struct stmfx_pinctrl *pctl)
-+{
-+	struct pinctrl_gpio_range *gpio_range;
-+	struct pinctrl_dev *pctl_dev = pctl->pctl_dev;
-+	u32 func = STMFX_FUNC_GPIO;
-+
-+	pctl->gpio_valid_mask = GENMASK(15, 0);
-+
-+	gpio_range = pinctrl_find_gpio_range_from_pin(pctl_dev, 16);
-+	if (gpio_range) {
-+		func |= STMFX_FUNC_ALTGPIO_LOW;
-+		pctl->gpio_valid_mask |= GENMASK(19, 16);
-+	}
-+
-+	gpio_range = pinctrl_find_gpio_range_from_pin(pctl_dev, 20);
-+	if (gpio_range) {
-+		func |= STMFX_FUNC_ALTGPIO_HIGH;
-+		pctl->gpio_valid_mask |= GENMASK(23, 20);
-+	}
-+
-+	return stmfx_function_enable(pctl->stmfx, func);
-+}
-+
-+static int stmfx_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct stmfx *stmfx = dev_get_platdata(&pdev->dev);
-+	struct device_node *np = pdev->dev.of_node;
-+	struct stmfx_pinctrl *pctl;
-+	u32 n;
-+	int irq, ret;
-+
-+	pctl = devm_kzalloc(stmfx->dev, sizeof(*pctl), GFP_KERNEL);
-+	if (!pctl)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, pctl);
-+
-+	pctl->dev = &pdev->dev;
-+	pctl->stmfx = stmfx;
-+
-+	if (!of_find_property(np, "gpio-ranges", NULL)) {
-+		dev_err(pctl->dev, "missing required gpio-ranges property\n");
-+		return -EINVAL;
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq <= 0) {
-+		dev_err(pctl->dev, "failed to get irq\n");
-+		return -ENXIO;
-+	}
-+
-+	mutex_init(&pctl->lock);
-+
-+	/* Register pin controller */
-+	pctl->pctl_desc.name = "stmfx-pinctrl";
-+	pctl->pctl_desc.pctlops = &stmfx_pinctrl_ops;
-+	pctl->pctl_desc.confops = &stmfx_pinconf_ops;
-+	pctl->pctl_desc.pins = stmfx_pins;
-+	pctl->pctl_desc.npins = ARRAY_SIZE(stmfx_pins);
-+	pctl->pctl_desc.owner = THIS_MODULE;
-+
-+	ret = devm_pinctrl_register_and_init(pctl->dev, &pctl->pctl_desc,
-+					     pctl, &pctl->pctl_dev);
-+	if (ret) {
-+		dev_err(pctl->dev, "pinctrl registration failed\n");
-+		return ret;
-+	}
-+
-+	ret = pinctrl_enable(pctl->pctl_dev);
-+	if (ret) {
-+		dev_err(pctl->dev, "pinctrl enable failed\n");
-+		return ret;
-+	}
-+
-+	/* Register gpio controller */
-+	pctl->gpio_chip.label = "stmfx-gpio";
-+	pctl->gpio_chip.parent = pctl->dev;
-+	pctl->gpio_chip.get_direction = stmfx_gpio_get_direction;
-+	pctl->gpio_chip.direction_input = stmfx_gpio_direction_input;
-+	pctl->gpio_chip.direction_output = stmfx_gpio_direction_output;
-+	pctl->gpio_chip.get = stmfx_gpio_get;
-+	pctl->gpio_chip.set = stmfx_gpio_set;
-+	pctl->gpio_chip.set_config = gpiochip_generic_config;
-+	pctl->gpio_chip.base = -1;
-+	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
-+	pctl->gpio_chip.can_sleep = true;
-+	pctl->gpio_chip.of_node = np;
-+	pctl->gpio_chip.need_valid_mask = true;
-+
-+	ret = devm_gpiochip_add_data(pctl->dev, &pctl->gpio_chip, pctl);
-+	if (ret) {
-+		dev_err(pctl->dev, "gpio_chip registration failed\n");
-+		return ret;
-+	}
-+
-+	ret = stmfx_pinctrl_gpio_function_enable(pctl);
-+	if (ret)
-+		return ret;
-+
-+	pctl->irq_chip.name = dev_name(pctl->dev);
-+	pctl->irq_chip.irq_mask = stmfx_pinctrl_irq_mask;
-+	pctl->irq_chip.irq_unmask = stmfx_pinctrl_irq_unmask;
-+	pctl->irq_chip.irq_set_type = stmfx_pinctrl_irq_set_type;
-+	pctl->irq_chip.irq_bus_lock = stmfx_pinctrl_irq_bus_lock;
-+	pctl->irq_chip.irq_bus_sync_unlock = stmfx_pinctrl_irq_bus_sync_unlock;
-+	for_each_clear_bit(n, &pctl->gpio_valid_mask, pctl->gpio_chip.ngpio)
-+		clear_bit(n, pctl->gpio_chip.valid_mask);
-+
-+	ret = gpiochip_irqchip_add_nested(&pctl->gpio_chip, &pctl->irq_chip,
-+					  0, handle_bad_irq, IRQ_TYPE_NONE);
-+	if (ret) {
-+		dev_err(pctl->dev, "cannot add irqchip to gpiochip\n");
-+		return ret;
-+	}
-+
-+	ret = devm_request_threaded_irq(pctl->dev, irq, NULL,
-+					stmfx_pinctrl_irq_thread_fn,
-+					IRQF_ONESHOT,
-+					pctl->irq_chip.name, pctl);
-+	if (ret) {
-+		dev_err(pctl->dev, "cannot request irq%d\n", irq);
-+		return ret;
-+	}
-+
-+	gpiochip_set_nested_irqchip(&pctl->gpio_chip, &pctl->irq_chip, irq);
-+
-+	dev_info(pctl->dev,
-+		 "%ld GPIOs available\n", hweight_long(pctl->gpio_valid_mask));
-+
-+	return 0;
-+}
-+
-+static int stmfx_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct stmfx *stmfx = dev_get_platdata(&pdev->dev);
-+
-+	return stmfx_function_disable(stmfx,
-+				      STMFX_FUNC_GPIO |
-+				      STMFX_FUNC_ALTGPIO_LOW |
-+				      STMFX_FUNC_ALTGPIO_HIGH);
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int stmfx_pinctrl_backup_regs(struct stmfx_pinctrl *pctl)
-+{
-+	int ret;
-+
-+	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_STATE,
-+			       &pctl->bkp_gpio_state, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_DIR,
-+			       &pctl->bkp_gpio_dir, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_TYPE,
-+			       &pctl->bkp_gpio_type, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_read(pctl->stmfx->map, STMFX_REG_GPIO_PUPD,
-+			       &pctl->bkp_gpio_pupd, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int stmfx_pinctrl_restore_regs(struct stmfx_pinctrl *pctl)
-+{
-+	int ret;
-+
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_DIR,
-+				pctl->bkp_gpio_dir, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_TYPE,
-+				pctl->bkp_gpio_type, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPIO_PUPD,
-+				pctl->bkp_gpio_pupd, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_GPO_SET,
-+				pctl->bkp_gpio_state, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_EVT,
-+				pctl->irq_gpi_evt, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_TYPE,
-+				pctl->irq_gpi_type, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+	ret = regmap_bulk_write(pctl->stmfx->map, STMFX_REG_IRQ_GPI_SRC,
-+				pctl->irq_gpi_src, NR_GPIO_REGS);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int stmfx_pinctrl_suspend(struct device *dev)
-+{
-+	struct stmfx_pinctrl *pctl = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = stmfx_pinctrl_backup_regs(pctl);
-+	if (ret) {
-+		dev_err(pctl->dev, "registers backup failure\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int stmfx_pinctrl_resume(struct device *dev)
-+{
-+	struct stmfx_pinctrl *pctl = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = stmfx_pinctrl_restore_regs(pctl);
-+	if (ret) {
-+		dev_err(pctl->dev, "registers restoration failure\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(stmfx_pinctrl_dev_pm_ops,
-+			 stmfx_pinctrl_suspend, stmfx_pinctrl_resume);
-+
-+static const struct of_device_id stmfx_pinctrl_of_match[] = {
-+	{ .compatible = "st,stmfx-0300-pinctrl", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, stmfx_pinctrl_of_match);
-+
-+static struct platform_driver stmfx_pinctrl_driver = {
-+	.driver = {
-+		.name = "stmfx-pinctrl",
-+		.of_match_table = stmfx_pinctrl_of_match,
-+		.pm = &stmfx_pinctrl_dev_pm_ops,
-+	},
-+	.probe = stmfx_pinctrl_probe,
-+	.remove = stmfx_pinctrl_remove,
-+};
-+module_platform_driver(stmfx_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("STMFX pinctrl/GPIO driver");
-+MODULE_AUTHOR("Amelie Delaunay <amelie.delaunay@st.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
+DQoNCk9uIDA5LzE0LzIwMTggMDU6MzIgUE0sIEphbmFrYXJhamFuIE5hdGFyYWphbiB3cm90ZToN
+Cj4gRHVyaW5nIFBTUCBpbml0aWFsaXphdGlvbiwgdGhlcmUgaXMgYW4gYXR0ZW1wdCB0byB1cGRh
+dGUgdGhlIFNFViBmaXJtd2FyZQ0KPiBieSBsb29raW5nIGluIC9saWIvZmlybXdhcmUvYW1kLy4g
+Q3VycmVudGx5LCBzZXYuZncgaXMgdGhlIGV4cGVjdGVkIG5hbWUNCj4gb2YgdGhlIGZpcm13YXJl
+IGJsb2IuDQo+IA0KPiBUaGlzIHBhdGNoIHdpbGwgYWxsb3cgZm9yIGZpcm13YXJlIGZpbGVuYW1l
+cyBiYXNlZCBvbiB0aGUgZmFtaWx5IGFuZA0KPiBtb2RlbCBvZiB0aGUgcHJvY2Vzc29yLg0KPiAN
+Cj4gTW9kZWwgc3BlY2lmaWMgZmlybXdhcmUgZmlsZXMgYXJlIGdpdmVuIGhpZ2hlc3QgcHJpb3Jp
+dHkuIEZvbGxvd2VkIGJ5DQo+IGZpcm13YXJlIGZvciBhIHN1YnNldCBvZiBtb2RlbHMuIExhc3Rs
+eSwgZmFpbGluZyB0aGUgcHJldmlvdXMgdHdvIG9wdGlvbnMsDQo+IGZhbGxiYWNrIHRvIGxvb2tp
+bmcgZm9yIHNldi5mdy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEphbmFrYXJhamFuIE5hdGFyYWph
+biA8SmFuYWthcmFqYW4uTmF0YXJhamFuQGFtZC5jb20+DQoNClJldmlld2VkLWJ5OiBUb20gTGVu
+ZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9jcnlw
+dG8vY2NwL3BzcC1kZXYuYyB8IDQ0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKystLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNDAgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlv
+bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRldi5jIGIv
+ZHJpdmVycy9jcnlwdG8vY2NwL3BzcC1kZXYuYw0KPiBpbmRleCBmNTQxZTYwLi4zYjMzODYzIDEw
+MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2NyeXB0by9jY3AvcHNwLWRldi5jDQo+ICsrKyBiL2RyaXZl
+cnMvY3J5cHRvL2NjcC9wc3AtZGV2LmMNCj4gQEAgLTMxLDggKzMxLDkgQEANCj4gIAkJKChwc3Bf
+bWFzdGVyLT5hcGlfbWFqb3IpID49IF9tYWogJiYJXA0KPiAgCQkgKHBzcF9tYXN0ZXItPmFwaV9t
+aW5vcikgPj0gX21pbikNCj4gIA0KPiAtI2RlZmluZSBERVZJQ0VfTkFNRQkic2V2Ig0KPiAtI2Rl
+ZmluZSBTRVZfRldfRklMRQkiYW1kL3Nldi5mdyINCj4gKyNkZWZpbmUgREVWSUNFX05BTUUJCSJz
+ZXYiDQo+ICsjZGVmaW5lIFNFVl9GV19GSUxFCQkiYW1kL3Nldi5mdyINCj4gKyNkZWZpbmUgU0VW
+X0ZXX05BTUVfU0laRQk2NA0KPiAgDQo+ICBzdGF0aWMgREVGSU5FX01VVEVYKHNldl9jbWRfbXV0
+ZXgpOw0KPiAgc3RhdGljIHN0cnVjdCBzZXZfbWlzY19kZXYgKm1pc2NfZGV2Ow0KPiBAQCAtNDQw
+LDYgKzQ0MSw0MCBAQCBzdGF0aWMgaW50IHNldl9nZXRfYXBpX3ZlcnNpb24odm9pZCkNCj4gIAly
+ZXR1cm4gMDsNCj4gIH0NCj4gIA0KPiAraW50IHNldl9nZXRfZmlybXdhcmUoc3RydWN0IGRldmlj
+ZSAqZGV2LCBjb25zdCBzdHJ1Y3QgZmlybXdhcmUgKipmaXJtd2FyZSkNCj4gK3sNCj4gKwljaGFy
+IGZ3X25hbWVfc3BlY2lmaWNbU0VWX0ZXX05BTUVfU0laRV07DQo+ICsJY2hhciBmd19uYW1lX3N1
+YnNldFtTRVZfRldfTkFNRV9TSVpFXTsNCj4gKw0KPiArCXNucHJpbnRmKGZ3X25hbWVfc3BlY2lm
+aWMsIHNpemVvZihmd19uYW1lX3NwZWNpZmljKSwNCj4gKwkJICJhbWQvYW1kX3Nldl9mYW0lLjJ4
+aF9tb2RlbCUuMnhoLnNiaW4iLA0KPiArCQkgYm9vdF9jcHVfZGF0YS54ODYsIGJvb3RfY3B1X2Rh
+dGEueDg2X21vZGVsKTsNCj4gKw0KPiArCXNucHJpbnRmKGZ3X25hbWVfc3Vic2V0LCBzaXplb2Yo
+ZndfbmFtZV9zdWJzZXQpLA0KPiArCQkgImFtZC9hbWRfc2V2X2ZhbSUuMnhoX21vZGVsJS4xeHho
+LnNiaW4iLA0KPiArCQkgYm9vdF9jcHVfZGF0YS54ODYsIChib290X2NwdV9kYXRhLng4Nl9tb2Rl
+bCAmIDB4ZjApID4+IDQpOw0KPiArDQo+ICsJLyogQ2hlY2sgZm9yIFNFViBGVyBmb3IgYSBwYXJ0
+aWN1bGFyIG1vZGVsLg0KPiArCSAqIEV4LiBhbWRfc2V2X2ZhbTE3aF9tb2RlbDAwaC5zYmluIGZv
+ciBGYW1pbHkgMTdoIE1vZGVsIDAwaA0KPiArCSAqDQo+ICsJICogb3INCj4gKwkgKg0KPiArCSAq
+IENoZWNrIGZvciBTRVYgRlcgY29tbW9uIHRvIGEgc3Vic2V0IG9mIG1vZGVscy4NCj4gKwkgKiBF
+eC4gYW1kX3Nldl9mYW0xN2hfbW9kZWwweGguc2JpbiBmb3INCj4gKwkgKiAgICAgRmFtaWx5IDE3
+aCBNb2RlbCAwMGggLS0gRmFtaWx5IDE3aCBNb2RlbCAwRmgNCj4gKwkgKg0KPiArCSAqIG9yDQo+
+ICsJICoNCj4gKwkgKiBGYWxsLWJhY2sgdG8gdXNpbmcgZ2VuZXJpYyBuYW1lOiBzZXYuZncNCj4g
+KwkgKi8NCj4gKwlpZiAoKGZpcm13YXJlX3JlcXVlc3Rfbm93YXJuKGZpcm13YXJlLCBmd19uYW1l
+X3NwZWNpZmljLCBkZXYpID49IDApIHx8DQo+ICsJICAgIChmaXJtd2FyZV9yZXF1ZXN0X25vd2Fy
+bihmaXJtd2FyZSwgZndfbmFtZV9zdWJzZXQsIGRldikgPj0gMCkgfHwNCj4gKwkgICAgKGZpcm13
+YXJlX3JlcXVlc3Rfbm93YXJuKGZpcm13YXJlLCBTRVZfRldfRklMRSwgZGV2KSA+PSAwKSkNCj4g
+KwkJcmV0dXJuIDA7DQo+ICsNCj4gKwlyZXR1cm4gLUVOT0VOVDsNCj4gK30NCj4gKw0KPiAgLyog
+RG9uJ3QgZmFpbCBpZiBTRVYgRlcgY291bGRuJ3QgYmUgdXBkYXRlZC4gQ29udGludWUgd2l0aCBl
+eGlzdGluZyBTRVYgRlcgKi8NCj4gIHN0YXRpYyBpbnQgc2V2X3VwZGF0ZV9maXJtd2FyZShzdHJ1
+Y3QgZGV2aWNlICpkZXYpDQo+ICB7DQo+IEBAIC00NDksOSArNDg0LDEwIEBAIHN0YXRpYyBpbnQg
+c2V2X3VwZGF0ZV9maXJtd2FyZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICAJc3RydWN0IHBhZ2Ug
+KnA7DQo+ICAJdTY0IGRhdGFfc2l6ZTsNCj4gIA0KPiAtCXJldCA9IHJlcXVlc3RfZmlybXdhcmUo
+JmZpcm13YXJlLCBTRVZfRldfRklMRSwgZGV2KTsNCj4gLQlpZiAocmV0IDwgMCkNCj4gKwlpZiAo
+c2V2X2dldF9maXJtd2FyZShkZXYsICZmaXJtd2FyZSkgPT0gLUVOT0VOVCkgew0KPiArCQlkZXZf
+ZGJnKGRldiwgIk5vIFNFViBmaXJtd2FyZSBmaWxlIHByZXNlbnRcbiIpOw0KPiAgCQlyZXR1cm4g
+LTE7DQo+ICsJfQ0KPiAgDQo+ICAJLyoNCj4gIAkgKiBTRVYgRlcgZXhwZWN0cyB0aGUgcGh5c2lj
+YWwgYWRkcmVzcyBnaXZlbiB0byBpdCB0byBiZSAzMg0KPiANCg==
