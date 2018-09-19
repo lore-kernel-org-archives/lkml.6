@@ -2,85 +2,89 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDD3ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DDCC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F0C2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F0C2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C3E792151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E792151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733089AbeISXJb (ORCPT
+        id S1733101AbeISXJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:09:31 -0400
-Received: from mga05.intel.com ([192.55.52.43]:33317 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732520AbeISXI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:08:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 10:30:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="87551379"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Sep 2018 10:30:01 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org
-Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V5 1/6] perf/core: Add sanity check to deal with pinned event failure
-Date:   Wed, 19 Sep 2018 10:29:06 -0700
-Message-Id: <6486385d1f30336e9973b24c8c65f5079543d3d3.1537377064.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1537377064.git.reinette.chatre@intel.com>
-References: <cover.1537377064.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1537377064.git.reinette.chatre@intel.com>
-References: <cover.1537377064.git.reinette.chatre@intel.com>
+        Wed, 19 Sep 2018 19:09:58 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12205 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727628AbeISXJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:09:58 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EF6B769700C29;
+        Thu, 20 Sep 2018 01:30:57 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 01:30:53 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 00/12] Fixes, cleanups & minor additions to HNS3 driver
+Date:   Wed, 19 Sep 2018 18:29:46 +0100
+Message-ID: <20180919172958.12992-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible that a failure can occur during the scheduling of a
-pinned event. The initial portion of perf_event_read_local() contains
-the various error checks an event should pass before it can be
-considered valid. Ensure that the potential scheduling failure
-of a pinned event is checked for and have a credible error.
+This patch-set present some fixes, cleanups to the HNS£ PF and VF driver.
 
-Link: http://lkml.kernel.org/r/20180807093615.GY2494@hirez.programming.kicks-ass.net
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- kernel/events/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Fuyun Liang (2):
+  net: hns3: Set STATE_DOWN bit of hdev state when stopping net
+  net: hns3: Fix for setting speed for phy failed problem
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 2a62b96600ad..191c0c2e10de 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3940,6 +3940,12 @@ int perf_event_read_local(struct perf_event *event, u64 *value,
- 		goto out;
- 	}
- 
-+	/* If this is a pinned event it must be running on this CPU */
-+	if (event->attr.pinned && event->oncpu != smp_processor_id()) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
- 	/*
- 	 * If the event is currently on this CPU, its either a per-task event,
- 	 * or local to this CPU. Furthermore it means its ACTIVE (otherwise
+Jian Shen (4):
+  net: hns3: Fix cmdq registers initialization issue for vf
+  net: hns3: Clear client pointer when initialize client failed or
+    unintialize finished
+  net: hns3: Fix client initialize state issue when roce client
+    initialize failed
+  net: hns3: Fix parameter type for q_id in hclge_tm_q_to_qs_map_cfg()
+
+Peng Li (5):
+  net: hns3: Add default irq affinity
+  net: hns3: Add unlikely for buf_num check
+  net: hns3: Remove tx budget to clean more TX descriptors in a napi
+  net: hns3: Remove packet statistics of public
+  net: hns3: Check hdev state when getting link status
+
+Xi Wang (1):
+  net: hns3: Add support for hns3_nic_netdev_ops.ndo_do_ioctl
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c        |  12 +-
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   5 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  83 ++++-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   4 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |   2 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 367 +++------------------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 105 ------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |   2 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |   4 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  47 ++-
+ 10 files changed, 171 insertions(+), 460 deletions(-)
+
 -- 
-2.17.0
+2.7.4
+
 
