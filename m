@@ -2,143 +2,134 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBD3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D337C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7A020858
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A5F420858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:15:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hJ2KP+tw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7A020858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eDr7FAe0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5F420858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbeISVxF (ORCPT
+        id S1732270AbeISVyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:53:05 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36468 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731230AbeISVxF (ORCPT
+        Wed, 19 Sep 2018 17:54:08 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45390 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731332AbeISVyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:53:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b11-v6so2945898pfo.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Cv0Kg9WgYq9n09CHdPKiz3S4O2/4qhSX9t+ATdi+8As=;
-        b=hJ2KP+tw+0h6i61qBNbhdbnOm812/oAxaCaj5U0yicpZf5QOE0adGoVY0nli7Zquhk
-         MGCjrpivAz0oojzifyPjOEFyFOhaQHPemXxoZgqn45YCI6isMTctjXEQzScTrbKO8+zm
-         JjVXXoFoeWhwMZA7vMHOp715ba235K1Yf7O0PweU4xrZ2Aoox180NAXaRHs7BOVr+fzn
-         YcvDXqdmRU3Uhha7ZVQPe/Xa9CDiFOo+q4WUJYRYZcayCyql5fRtKI7dVotDhH9omnGL
-         ylNiEOw1MJUXO2a2iEfe3uwibIhkzvyZ5+KFFFkibxZ/ZBIEq9De1JYlXfBxvCSOG0bk
-         rWWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cv0Kg9WgYq9n09CHdPKiz3S4O2/4qhSX9t+ATdi+8As=;
-        b=pK4wIaNBsblhMB3qBLkIcTydoc0PM9F2seXNvXIS/DKmWedXcFeqiNEj2iBmjHMm87
-         MCkU1LDBJqPJRgBABUMiiZkoW7hPU1/nDoPOtBOg6vJZEnMfASMPGKxbZMEtJza5+xmW
-         iNgy9tPOCo54p7WyGOUH1PPwuP/BS/+SvN9T8Io6cy7KIuTAVRHQlT85BPi416Icoiha
-         4MTcw01qsrG64cZkP1/d9A3FvtQSQuzVcp+aPowwMMRk0Tmnp1UuZfWfwjdb4WwmKR3i
-         +WMe3NturszGCz6lGdVWB2tC+HJXSbtX2Cgsz1ue1jqi6l3YeRZNBuLqKpy0Ds9Qoo9N
-         Pw/w==
-X-Gm-Message-State: APzg51APDhqoLwArqSPK5J0RORyOEoWBN4cgCcglmK8Enx6BMq6cYnTs
-        Ha/fYUaYmUiwNxtfYvgy3rAdJg==
-X-Google-Smtp-Source: ANB0VdYXiWyUb+qVKW4AT9Qf76zubnWVUuYqt5JDh+HmyWjhMeJKP9h9+TZqto7Fp+4XTiTiF+ZRcw==
-X-Received: by 2002:a62:858c:: with SMTP id m12-v6mr37083764pfk.173.1537373667984;
-        Wed, 19 Sep 2018 09:14:27 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm37893931pfe.32.2018.09.19.09.14.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 09:14:27 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g2f7S-0002aW-Tp; Wed, 19 Sep 2018 10:14:26 -0600
-Date:   Wed, 19 Sep 2018 10:14:26 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     dledford@redhat.com, leon@kernel.org, parav@mellanox.com,
-        danielj@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH -next] RDMA/core: Properly return the error code of
- rdma_set_src_addr_rcu
-Message-ID: <20180919161426.GC9867@ziepe.ca>
-References: <20180919122838.28184-1-yuehaibing@huawei.com>
+        Wed, 19 Sep 2018 17:54:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9WLkTlbQhdFwEP9lmfFlDXbxXHvuUtWVM9pup0dgwC4=; b=eDr7FAe0T7b5JHOhkPDpBJelK
+        ufHDRxB5Jst0CH+3EpyjVoaI31C+BK189P6oJLZSHWQESHnUWQeFZUxG908QepQKSOCwgV3mpTkrl
+        KujBqxKBPbGybCiqmUzPeI8vTIhO5kFLvJjQ7u+OlAXO0/Qggxaz89QXgma4Udleu2Yo/QXAUn5iu
+        Vzcm2nsLyEX/ZN0ijL0TeWRXEU0kytT6jX8z+0JiGlALvh+sYNnU8L20ZaSLcVWWgkfhsusV5DkKv
+        JcTC0qGAGZiHsttkEwjrb0TA2yLn7OvboP5yqJ222nY/+lcQCafd77Tu3MG4ZJ9IZirYxSgm+xnHE
+        6OufCoFJA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2f8H-0003fo-Go; Wed, 19 Sep 2018 16:15:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E8E472024E450; Wed, 19 Sep 2018 18:15:14 +0200 (CEST)
+Date:   Wed, 19 Sep 2018 18:15:14 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc:     will.deacon@arm.com, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, npiggin@gmail.com,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        heiko.carstens@de.ibm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 2/2] s390/tlb: convert to generic mmu_gather
+Message-ID: <20180919161514.GK24124@hirez.programming.kicks-ass.net>
+References: <20180918125151.31744-1-schwidefsky@de.ibm.com>
+ <20180918125151.31744-3-schwidefsky@de.ibm.com>
+ <20180919123849.GF24124@hirez.programming.kicks-ass.net>
+ <20180919162809.30b5c416@mschwideX1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180919122838.28184-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180919162809.30b5c416@mschwideX1>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 08:28:38PM +0800, YueHaibing wrote:
-> rdma_set_src_addr_rcu should check copy_src_l2_addr fails,
-> rather than always return 0. Also copy_src_l2_addr should return
-> 'ret' as its return value while rdma_translate_ip fails.
+On Wed, Sep 19, 2018 at 04:28:09PM +0200, Martin Schwidefsky wrote:
+> On Wed, 19 Sep 2018 14:38:49 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Fixes: c31d4b2ddf07 ("RDMA/core: Protect against changing dst->dev during destination resolve")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Parav Pandit <parav@mellanox.com>
-> ---
->  drivers/infiniband/core/addr.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> > On Tue, Sep 18, 2018 at 02:51:51PM +0200, Martin Schwidefsky wrote:
 
-Applied to for-next, thanks
+> > > +        page_table_free_rcu(tlb, (unsigned long *) pte, address);  
+> > 
+> > (whitespace damage, fixed)
+> > 
+> > Also, could you perhaps explain the need for that
+> > page_table_alloc/page_table_free code? That is, I get the comment about
+> > using 2K page-table fragments out of 4k physical page, but why this
+> > custom allocator instead of kmem_cache? It feels like there's a little
+> > extra complication, but it's not immediately obvious what.
+> 
+> The kmem_cache code uses the fields of struct page for its tracking.
+> pgtable_page_ctor uses the same fields, e.g. for the ptl. Last time
+> I tried to convert the page_table_alloc/page_table_free to kmem_cache
+> it just crashed. Plus the split of 4K pages into 2 2K fragments is
+> done on a per mm basis, that should help a little bit with fragmentation.
 
-> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-> index 7a0356c..8a31b11 100644
-> --- a/drivers/infiniband/core/addr.c
-> +++ b/drivers/infiniband/core/addr.c
-> @@ -468,7 +468,7 @@ static int addr_resolve_neigh(const struct dst_entry *dst,
->  	return ret;
->  }
->  
-> -static void copy_src_l2_addr(struct rdma_dev_addr *dev_addr,
-> +static int copy_src_l2_addr(struct rdma_dev_addr *dev_addr,
->  			     const struct sockaddr *dst_in,
->  			     const struct dst_entry *dst,
->  			     const struct net_device *ndev)
+Fair enough, thanks for the information.
 
-I fixed the indenting as Parav pointed out
+> > It's that ASCE limit that makes it impossible to use the generic
+> > helpers, right?
+> 
+> There are two problems, one of them is related to the ASCE limit:
+> 
+> 1) s390 supports 4 different page table layouts. 2-levels (2^31 bytes) for 31-bit compat,
+>    3-levels (2^42 bytes) as the default for 64-bit, 4-levels (2^53) if 4 tera-bytes are
+>    not enough and 5-levels (2^64) for the bragging rights.
+>    The pxd_free_tlb() turn into nops if the number of page table levels require it.
 
-> @@ -492,6 +492,8 @@ static void copy_src_l2_addr(struct rdma_dev_addr *dev_addr,
->  						RDMA_NETWORK_IPV6;
->  	else
->  		dev_addr->network = RDMA_NETWORK_IB;
-> +
-> +	return ret;
->  }
->  
->  static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
-> @@ -499,6 +501,7 @@ static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
->  				 const struct sockaddr *dst_in,
->  				 const struct dst_entry *dst)
->  {
-> +	int ret;
->  	struct net_device *ndev = READ_ONCE(dst->dev);
->  
->  	*ndev_flags = ndev->flags;
-> @@ -515,8 +518,8 @@ static int rdma_set_src_addr_rcu(struct rdma_dev_addr *dev_addr,
->  			return -ENODEV;
->  	}
->  
-> -	copy_src_l2_addr(dev_addr, dst_in, dst, ndev);
-> -	return 0;
-> +	ret = copy_src_l2_addr(dev_addr, dst_in, dst, ndev);
-> +	return ret;
->  }
+Shiny, I think we (x86) have to choose at boot time which paging mode we
+want and have to stick to it.
 
-And made this just 'return copy_src_l2_addr' without the ret.
+> 2) The mm->context.flush_mm indication.
+>    That goes back to this beauty in the architecture:
+> 
+>     * "A valid table entry must not be changed while it is attached
+>     * to any CPU and may be used for translation by that CPU except to
+>     * (1) invalidate the entry by using INVALIDATE PAGE TABLE ENTRY,
+>     * or INVALIDATE DAT TABLE ENTRY, (2) alter bits 56-63 of a page
+>     * table entry, or (3) make a change by means of a COMPARE AND SWAP
+>     * AND PURGE instruction that purges the TLB."
+> 
+>    If one CPU is doing a mmu_gather page table operation on the only active thread
+>    in the system the individual page table updates are done in a lazy fashion with
+>    simple stores. If a second CPU picks up another thread for execution, the
+>    attach_count is increased and the page table updates are done with IPTE/IDTE
+>    from now on. But there might by TLBs of around that are not flushed yet.
+>    We may *not* let the second CPU see these TLBs, otherwise the CPU may start an
+>    instruction, then loose the TLB without being able to recreate it. Due to that
+>    the CPU can end up with a half finished instruction it can not roll back nor
+>    complete, ending in a check-stop. The simplest example is MVC with a length
+>    of e.g. 256 bytes. The instruction has to complete with all 256 bytes moved,
+>    or no bytes may have at all.
+>    That is where the mm->context.flush_mm indication comes into play, if the
+>    second CPU finds the bit set at the time it attaches a thread, it will to
+>    an IDTE for flush all TLBs for the mm.
 
-Jason
+Oh man.. what fun. Still, this bit could easily be set in the
+__*_free_tlb() functions afaict. Still 1) above is enough.
+
+Thanks!
