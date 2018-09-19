@@ -7,54 +7,49 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2656EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7928FECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56F221524
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22F0221523
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zTrSUEr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C56F221524
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="keU1ICYa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F0221523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732179AbeISUEH (ORCPT
+        id S1732211AbeISUEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:04:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49462 "EHLO mail.kernel.org"
+        Wed, 19 Sep 2018 16:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730876AbeISUEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:04:07 -0400
+        id S1732181AbeISUEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:04:10 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4423F2151B;
-        Wed, 19 Sep 2018 14:25:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAEAA2151C;
+        Wed, 19 Sep 2018 14:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537367156;
-        bh=rodeIOqRDhc6tJerGcgOIZJkqntuYb2WbR6fZXUeVWQ=;
+        s=default; t=1537367159;
+        bh=ACpC0+gLraM1+bsnfEslopjwPK37TnX+uwNSAknhI1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zTrSUEr2rk8Lcj98WeTsEzHdBe2LTEB2eUIsj3Xz1m610NMNEZ2WLdbAKayDt8Qxj
-         spUX4pOiFAKtK9USm9PKzuv4T8uPo995ADg6qSowDkB+ARPpHYYV2MEF4ZSweHdIny
-         2r5djf1j7A7r88f0v0xHVdJlfY1UqhQYnivrDTzc=
+        b=keU1ICYaYcoJlAM+r0UhKDqw4fen1dpwAwNLugHCDmQ8/Eg6xYTSyfRLSrpgYdOMG
+         bz9EhKS3m2GJsGvYJff3tODwBx5TElCfaauI/6TUH9iH9JpVSf/LlWz+Ebn8BDqbCN
+         AXe6j3uVP1ReAKRly0tHWVJXyfMxeJfxJgx+3blA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kim Phillips <kim.phillips@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Richter <tmricht@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/13] perf test: Add watchpoint test
-Date:   Wed, 19 Sep 2018 11:25:26 -0300
-Message-Id: <20180919142537.29985-3-acme@kernel.org>
+Subject: [PATCH 03/13] perf ordered_events: Add 'struct ordered_events_buffer' layer
+Date:   Wed, 19 Sep 2018 11:25:27 -0300
+Message-Id: <20180919142537.29985-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180919142537.29985-1-acme@kernel.org>
 References: <20180919142537.29985-1-acme@kernel.org>
@@ -63,330 +58,232 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-We don't have a 'perf test' entry available to test the watchpoint
-functionality.
+When ordering events, we use preallocated buffers to store separate
+events.  Those buffers currently don't have their own struct, but since
+they are basically an array of 'struct ordered_event' objects, we use
+the first event to hold buffers data - list head, that holds all buffers
+together:
 
-Add a simple set of tests:
+   struct ordered_events {
+     ...
+     struct ordered_event *buffer;
+     ...
+   };
 
- - Read only watchpoint
- - Write only watchpoint
- - Read / Write watchpoint
- - Runtime watchpoint modification
+   struct ordered_event {
+     u64               timestamp;
+     u64               file_offset;
+     union perf_event  *event;
+     struct list_head  list;
+   };
 
-Ex.: on powerpc:
+This is quite convoluted and error prone as demonstrated by free-ing
+issue discovered and fixed by Stephane in here [1].
 
-  $ sudo perf test 22
-  22: Watchpoint                                            :
-  22.1: Read Only Watchpoint                                : Ok
-  22.2: Write Only Watchpoint                               : Ok
-  22.3: Read / Write Watchpoint                             : Ok
-  22.4: Modify Watchpoint                                   : Ok
+This patch adds the 'struct ordered_events_buffer' object, that holds
+the buffer data and frees it up properly.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Stephane Eranian <eranian@google.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20180912061229.22832-1-ravi.bangoria@linux.ibm.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180907102455.7030-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/Build          |   1 +
- tools/perf/tests/builtin-test.c |   9 ++
- tools/perf/tests/tests.h        |   3 +
- tools/perf/tests/wp.c           | 229 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 242 insertions(+)
- create mode 100644 tools/perf/tests/wp.c
+ tools/perf/util/ordered-events.c | 83 +++++++++++++++++++++++++++++++++-------
+ tools/perf/util/ordered-events.h | 37 ++++++++++--------
+ 2 files changed, 91 insertions(+), 29 deletions(-)
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 6c108fa79ae3..0b2b8305c965 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -21,6 +21,7 @@ perf-y += python-use.o
- perf-y += bp_signal.o
- perf-y += bp_signal_overflow.o
- perf-y += bp_account.o
-+perf-y += wp.o
- perf-y += task-exit.o
- perf-y += sw-clock.o
- perf-y += mmap-thread-lookup.o
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index d7a5e1b9aa6f..54ca7d87236f 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -120,6 +120,15 @@ static struct test generic_tests[] = {
- 		.func = test__bp_accounting,
- 		.is_supported = test__bp_signal_is_supported,
- 	},
-+	{
-+		.desc = "Watchpoint",
-+		.func = test__wp,
-+		.subtest = {
-+			.skip_if_fail	= false,
-+			.get_nr		= test__wp_subtest_get_nr,
-+			.get_desc	= test__wp_subtest_get_desc,
-+		},
-+	},
- 	{
- 		.desc = "Number of exit events of a simple workload",
- 		.func = test__task_exit,
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index a9760e790563..8e26a4148f30 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -59,6 +59,9 @@ int test__python_use(struct test *test, int subtest);
- int test__bp_signal(struct test *test, int subtest);
- int test__bp_signal_overflow(struct test *test, int subtest);
- int test__bp_accounting(struct test *test, int subtest);
-+int test__wp(struct test *test, int subtest);
-+const char *test__wp_subtest_get_desc(int subtest);
-+int test__wp_subtest_get_nr(void);
- int test__task_exit(struct test *test, int subtest);
- int test__mem(struct test *test, int subtest);
- int test__sw_clock_freq(struct test *test, int subtest);
-diff --git a/tools/perf/tests/wp.c b/tools/perf/tests/wp.c
-new file mode 100644
-index 000000000000..017a99317f94
---- /dev/null
-+++ b/tools/perf/tests/wp.c
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <stdlib.h>
-+#include <sys/ioctl.h>
-+#include <linux/hw_breakpoint.h>
-+#include "tests.h"
-+#include "debug.h"
-+#include "cloexec.h"
-+
-+#define WP_TEST_ASSERT_VAL(fd, text, val)       \
-+do {                                            \
-+	long long count;                        \
-+	wp_read(fd, &count, sizeof(long long)); \
-+	TEST_ASSERT_VAL(text, count == val);    \
-+} while (0)
-+
-+volatile u64 data1;
-+volatile u8 data2[3];
-+
-+static int wp_read(int fd, long long *count, int size)
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index bad9e0296e9a..84ce25272c13 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
+ 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
+ }
+ 
+-static void free_dup_event(struct ordered_events *oe, union perf_event *event)
++static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
+ {
+-	if (event && oe->copy_on_queue) {
++	if (event) {
+ 		oe->cur_alloc_size -= event->header.size;
+ 		free(event);
+ 	}
+ }
+ 
++static void free_dup_event(struct ordered_events *oe, union perf_event *event)
 +{
-+	int ret = read(fd, count, size);
-+
-+	if (ret != size) {
-+		pr_debug("failed to read: %d\n", ret);
-+		return -1;
-+	}
-+	return 0;
++	if (oe->copy_on_queue)
++		__free_dup_event(oe, event);
 +}
 +
-+static void get__perf_event_attr(struct perf_event_attr *attr, int wp_type,
-+				 void *wp_addr, unsigned long wp_len)
+ #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
+ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 					 union perf_event *event)
+@@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 	if (!new_event)
+ 		return NULL;
+ 
++	/*
++	 * We maintain the following scheme of buffers for ordered
++	 * event allocation:
++	 *
++	 *   to_free list -> buffer1 (64K)
++	 *                   buffer2 (64K)
++	 *                   ...
++	 *
++	 * Each buffer keeps an array of ordered events objects:
++	 *    buffer -> event[0]
++	 *              event[1]
++	 *              ...
++	 *
++	 * Each allocated ordered event is linked to one of
++	 * following lists:
++	 *   - time ordered list 'events'
++	 *   - list of currently removed events 'cache'
++	 *
++	 * Allocation of the ordered event uses the following order
++	 * to get the memory:
++	 *   - use recently removed object from 'cache' list
++	 *   - use available object in current allocation buffer
++	 *   - allocate new buffer if the current buffer is full
++	 *
++	 * Removal of ordered event object moves it from events to
++	 * the cache list.
++	 */
+ 	if (!list_empty(cache)) {
+ 		new = list_entry(cache->next, struct ordered_event, list);
+ 		list_del(&new->list);
+ 	} else if (oe->buffer) {
+-		new = oe->buffer + oe->buffer_idx;
++		new = &oe->buffer->event[oe->buffer_idx];
+ 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
+ 			oe->buffer = NULL;
+ 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
+-		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
++		size_t size = sizeof(*oe->buffer) +
++			      MAX_SAMPLE_BUFFER * sizeof(*new);
+ 
+ 		oe->buffer = malloc(size);
+ 		if (!oe->buffer) {
+@@ -122,11 +156,11 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 		oe->cur_alloc_size += size;
+ 		list_add(&oe->buffer->list, &oe->to_free);
+ 
+-		/* First entry is abused to maintain the to_free list. */
+-		oe->buffer_idx = 2;
+-		new = oe->buffer + 1;
++		oe->buffer_idx = 1;
++		new = &oe->buffer->event[0];
+ 	} else {
+ 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
++		return NULL;
+ 	}
+ 
+ 	new->event = new_event;
+@@ -300,15 +334,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
+ 	oe->deliver	   = deliver;
+ }
+ 
++static void
++ordered_events_buffer__free(struct ordered_events_buffer *buffer,
++			    unsigned int max, struct ordered_events *oe)
 +{
-+	memset(attr, 0, sizeof(struct perf_event_attr));
-+	attr->type           = PERF_TYPE_BREAKPOINT;
-+	attr->size           = sizeof(struct perf_event_attr);
-+	attr->config         = 0;
-+	attr->bp_type        = wp_type;
-+	attr->bp_addr        = (unsigned long)wp_addr;
-+	attr->bp_len         = wp_len;
-+	attr->sample_period  = 1;
-+	attr->sample_type    = PERF_SAMPLE_IP;
-+	attr->exclude_kernel = 1;
-+	attr->exclude_hv     = 1;
-+}
++	if (oe->copy_on_queue) {
++		unsigned int i;
 +
-+static int __event(int wp_type, void *wp_addr, unsigned long wp_len)
-+{
-+	int fd;
-+	struct perf_event_attr attr;
-+
-+	get__perf_event_attr(&attr, wp_type, wp_addr, wp_len);
-+	fd = sys_perf_event_open(&attr, 0, -1, -1,
-+				 perf_event_open_cloexec_flag());
-+	if (fd < 0)
-+		pr_debug("failed opening event %x\n", attr.bp_type);
-+
-+	return fd;
-+}
-+
-+static int wp_ro_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_R, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "RO watchpoint", 1);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "RO watchpoint", 1);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_wo_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_W, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "WO watchpoint", 0);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "WO watchpoint", 1);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_rw_test(void)
-+{
-+	int fd;
-+	unsigned long tmp, tmp1 = rand();
-+
-+	fd = __event(HW_BREAKPOINT_R | HW_BREAKPOINT_W, (void *)&data1,
-+		     sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	tmp = data1;
-+	WP_TEST_ASSERT_VAL(fd, "RW watchpoint", 1);
-+
-+	data1 = tmp1 + tmp;
-+	WP_TEST_ASSERT_VAL(fd, "RW watchpoint", 2);
-+
-+	close(fd);
-+	return 0;
-+}
-+
-+static int wp_modify_test(void)
-+{
-+	int fd, ret;
-+	unsigned long tmp = rand();
-+	struct perf_event_attr new_attr;
-+
-+	fd = __event(HW_BREAKPOINT_W, (void *)&data1, sizeof(data1));
-+	if (fd < 0)
-+		return -1;
-+
-+	data1 = tmp;
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 1);
-+
-+	/* Modify watchpoint with disabled = 1 */
-+	get__perf_event_attr(&new_attr, HW_BREAKPOINT_W, (void *)&data2[0],
-+			     sizeof(u8) * 2);
-+	new_attr.disabled = 1;
-+	ret = ioctl(fd, PERF_EVENT_IOC_MODIFY_ATTRIBUTES, &new_attr);
-+	if (ret < 0) {
-+		pr_debug("ioctl(PERF_EVENT_IOC_MODIFY_ATTRIBUTES) failed\n");
-+		close(fd);
-+		return ret;
++		for (i = 0; i < max; i++)
++			__free_dup_event(oe, buffer->event[i].event);
 +	}
 +
-+	data2[1] = tmp; /* Not Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 1);
-+
-+	/* Enable the event */
-+	ioctl(fd, PERF_EVENT_IOC_ENABLE, 0);
-+	if (ret < 0) {
-+		pr_debug("Failed to enable event\n");
-+		close(fd);
-+		return ret;
-+	}
-+
-+	data2[1] = tmp; /* Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 2);
-+
-+	data2[2] = tmp; /* Not Counted */
-+	WP_TEST_ASSERT_VAL(fd, "Modify watchpoint", 2);
-+
-+	close(fd);
-+	return 0;
++	free(buffer);
 +}
 +
-+static bool wp_ro_supported(void)
-+{
-+#if defined (__x86_64__) || defined (__i386__)
-+	return false;
-+#else
-+	return true;
-+#endif
-+}
+ void ordered_events__free(struct ordered_events *oe)
+ {
+-	while (!list_empty(&oe->to_free)) {
+-		struct ordered_event *event;
++	struct ordered_events_buffer *buffer, *tmp;
+ 
+-		event = list_entry(oe->to_free.next, struct ordered_event, list);
+-		list_del(&event->list);
+-		free_dup_event(oe, event->event);
+-		free(event);
++	if (list_empty(&oe->to_free))
++		return;
 +
-+static void wp_ro_skip_msg(void)
-+{
-+#if defined (__x86_64__) || defined (__i386__)
-+	pr_debug("Hardware does not support read only watchpoints.\n");
-+#endif
-+}
++	/*
++	 * Current buffer might not have all the events allocated
++	 * yet, we need to free only allocated ones ...
++	 */
++	list_del(&oe->buffer->list);
++	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
 +
-+static struct {
-+	const char *desc;
-+	int (*target_func)(void);
-+	bool (*is_supported)(void);
-+	void (*skip_msg)(void);
-+} wp_testcase_table[] = {
-+	{
-+		.desc = "Read Only Watchpoint",
-+		.target_func = &wp_ro_test,
-+		.is_supported = &wp_ro_supported,
-+		.skip_msg = &wp_ro_skip_msg,
-+	},
-+	{
-+		.desc = "Write Only Watchpoint",
-+		.target_func = &wp_wo_test,
-+	},
-+	{
-+		.desc = "Read / Write Watchpoint",
-+		.target_func = &wp_rw_test,
-+	},
-+	{
-+		.desc = "Modify Watchpoint",
-+		.target_func = &wp_modify_test,
-+	},
++	/* ... and continue with the rest */
++	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
++		list_del(&buffer->list);
++		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
+ 	}
+ }
+ 
+diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
+index 8c7a2948593e..1338d5c345dc 100644
+--- a/tools/perf/util/ordered-events.h
++++ b/tools/perf/util/ordered-events.h
+@@ -25,23 +25,28 @@ struct ordered_events;
+ typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
+ 					 struct ordered_event *event);
+ 
++struct ordered_events_buffer {
++	struct list_head	list;
++	struct ordered_event	event[0];
 +};
 +
-+int test__wp_subtest_get_nr(void)
-+{
-+	return (int)ARRAY_SIZE(wp_testcase_table);
-+}
-+
-+const char *test__wp_subtest_get_desc(int i)
-+{
-+	if (i < 0 || i >= (int)ARRAY_SIZE(wp_testcase_table))
-+		return NULL;
-+	return wp_testcase_table[i].desc;
-+}
-+
-+int test__wp(struct test *test __maybe_unused, int i)
-+{
-+	if (i < 0 || i >= (int)ARRAY_SIZE(wp_testcase_table))
-+		return TEST_FAIL;
-+
-+	if (wp_testcase_table[i].is_supported &&
-+	    !wp_testcase_table[i].is_supported()) {
-+		wp_testcase_table[i].skip_msg();
-+		return TEST_SKIP;
-+	}
-+
-+	return !wp_testcase_table[i].target_func() ? TEST_OK : TEST_FAIL;
-+}
+ struct ordered_events {
+-	u64			last_flush;
+-	u64			next_flush;
+-	u64			max_timestamp;
+-	u64			max_alloc_size;
+-	u64			cur_alloc_size;
+-	struct list_head	events;
+-	struct list_head	cache;
+-	struct list_head	to_free;
+-	struct ordered_event	*buffer;
+-	struct ordered_event	*last;
+-	ordered_events__deliver_t deliver;
+-	int			buffer_idx;
+-	unsigned int		nr_events;
+-	enum oe_flush		last_flush_type;
+-	u32			nr_unordered_events;
+-	bool                    copy_on_queue;
++	u64				 last_flush;
++	u64				 next_flush;
++	u64				 max_timestamp;
++	u64				 max_alloc_size;
++	u64				 cur_alloc_size;
++	struct list_head		 events;
++	struct list_head		 cache;
++	struct list_head		 to_free;
++	struct ordered_events_buffer	*buffer;
++	struct ordered_event		*last;
++	ordered_events__deliver_t	 deliver;
++	int				 buffer_idx;
++	unsigned int			 nr_events;
++	enum oe_flush			 last_flush_type;
++	u32				 nr_unordered_events;
++	bool				 copy_on_queue;
+ };
+ 
+ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
 -- 
 2.14.4
 
