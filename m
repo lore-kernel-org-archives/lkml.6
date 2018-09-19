@@ -2,118 +2,178 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808C4ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579B2C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1565C2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01691214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LvJoFXQb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1565C2151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXFRhmsy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01691214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbeISXs1 (ORCPT
+        id S1733063AbeISXsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:48:27 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38181 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732641AbeISXsX (ORCPT
+        Wed, 19 Sep 2018 19:48:37 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38397 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732428AbeISXsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:48:23 -0400
-Received: by mail-it0-f68.google.com with SMTP id p129-v6so8937956ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:09:18 -0700 (PDT)
+        Wed, 19 Sep 2018 19:48:36 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p6-v6so5924988ljc.5;
+        Wed, 19 Sep 2018 11:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ISZLf4DnHFIhsg+YbdjTklFmn4eDr4rDQyUoCeuA2q8=;
-        b=LvJoFXQb+KOhNNQPhO3Bdv8qeK6IF2ynw5MqyQpUSr/sE3NyU3UUttJfIOx02nuxef
-         /lO+PPDyUNPCbJRBgAnlwfutBVdvtE3F52n0kC2i5HKwDtolp8iW58o+pYeGvaat3MVh
-         GgFYsR/L+uJxBL8bVh+CVofaqRFOOtZw4ek0o=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=b+kw/mJfI1g5IzBxYn+xJC8Bz2nEa2IM1AiO5tlxWig=;
+        b=VXFRhmsyY/5wGiz0e2K3F/CyV2XWYNwJ7PgRWVIMcMaj9ObCbVrd5lvYuh581/FR/j
+         bnB0ptszkM/kKWLsY54Ew5ZtBtwo2WGKWiZ+X77CAs+E06L6Wjg0YXnHiWR4Ak/ju7XP
+         lkTSddlZRYh0aHjVFe5o2yBEBiz2qtWScruuRVBqQhyFa3mru1622U6q8QvZHEeoIoNE
+         NFGpuyjVr1bKj1wxDjxGXJM1h3a3qK5H8sTDoBvd3cjT3dYElW0EXEpC0j8jYDRbD/bS
+         LfYLzKuKAGHBOat4b+/4XyavCsxjLC8obqKSry5oZamJjmAI+yLy8nW9kLiIv68Iwnqa
+         N/Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ISZLf4DnHFIhsg+YbdjTklFmn4eDr4rDQyUoCeuA2q8=;
-        b=jbRp2Wwu84AJdbQpbJzhzlbME0kTxMVpTEQL+iYSRN3RO2l4/QuE8E2voCc95i9iiT
-         8L3lWd7VpyFgx/2mXFMgfSnkWc8XtINgTOj4MpO469sWyfEuwZVb1HLGnJECpa4q0g+R
-         Ua8dO1wlHzfd8x324kjxwCZ/tt7B6UlP8mouffIyzHN547+pGbl8i73MKA3jHayeIoha
-         J8TKg/QbER4iIbL+GKsy6MLcBX+u4N1yl/3IiOzxee+MYh+EwyL61pXboZ3oo4T4DIeQ
-         H2djm7In3t3RdYBaUZZENxASaxJoM6aFrMXX8wQkxUIeaCUY/4l9+vzAfVPhiajoQ5T5
-         HZjQ==
-X-Gm-Message-State: APzg51ARLpc23no6r9SlegCLfOQYJr0KwKbCdWhOeF+hQxs4vUcdfSGl
-        2fPnrQ1N9JT+NFdaiWhTPxBxZyp/6w9gAr7soWchqw==
-X-Google-Smtp-Source: ANB0VdaaDDXi8yndRXDcrfK1Ne9ZDdK4AK/4KYBaHZr/o/egJTR+4il7b6Xp09l7zkztVT11xv6U1L0Uy3QkYlhzd8M=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr33431549jab.87.1537380557726;
- Wed, 19 Sep 2018 11:09:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=b+kw/mJfI1g5IzBxYn+xJC8Bz2nEa2IM1AiO5tlxWig=;
+        b=ERa3pM7bryizoti5Fl7u4mfVyI7dLue1LGVyALjTkwHgIUCQpapKw8ZEcNbo5I27gg
+         6j+RzZCxzNclAldPTrKwh7jKQX+m+bFZeAgHTsLXmdDIKESfy1cNBHXy4ZCuPAqCQ/GG
+         i466SGx55HsMoJVb8qEDopZ4Mg8kdCnI0AYhNn0I/4bJLA9w/TJtP3iEfVeemlMKfp2u
+         4pi5f0TPyt+MbA+1eUGwZlYtHqNj5mQgWbaiEcRsXsggQ5cbFVmbtHy/K3uSXfKk9qds
+         mstmREmfqTi2kty/jjLxHkCZZFr+M3HfaF6aPv/ah8HZez+h+SScam83y1+aqLJxqsIH
+         yyyg==
+X-Gm-Message-State: APzg51DyR9RD9nGJ0Fv5UU8aJXye7DW3TEq1g6k1GfYfycvBW/St6fXe
+        Gbeq5rVidjfIsMtNkqGODBM=
+X-Google-Smtp-Source: ANB0VdYTNDwfLm36wLkSaWd5s/riPjCEW1HCuU7mhRSh5Tv7p8HTUHw4qYdb4M+rP2mC6f1lj7DiBQ==
+X-Received: by 2002:a2e:87cf:: with SMTP id v15-v6mr6415594ljj.13.1537380569668;
+        Wed, 19 Sep 2018 11:09:29 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id i28-v6sm1195570lfc.87.2018.09.19.11.09.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 11:09:28 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mtd@lists.infradead.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [PATCH v3 0/3] ARM: OMAP1: ams-delta: Complete driver gpiod migration
+Date:   Wed, 19 Sep 2018 20:10:54 +0200
+Message-ID: <1794253.R1RrZXVNCJ@z50>
+In-Reply-To: <20180909225605.16463-1-jmkrzyszt@gmail.com>
+References: <20180717231448.14958-1-jmkrzyszt@gmail.com> <20180909225605.16463-1-jmkrzyszt@gmail.com>
 MIME-Version: 1.0
-References: <20180902120144.6855-1-jmkrzyszt@gmail.com> <20180905215008.1649-1-jmkrzyszt@gmail.com>
- <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
-In-Reply-To: <CACRpkdbAG1N0v-BrXruf5088L0x3XwSHbFTWOFxjHQWx0LKz5g@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 19 Sep 2018 11:08:57 -0700
-Message-ID: <CACRpkdbdYmsFD3XOVLWjoGsPSU4UnTKtkYm5VQxGmoeQZewWZA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] gpiolib: speed up GPIO array processing
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-doc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 2:22 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Sep 5, 2018 at 11:49 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
->
-> > The goal is to boost performance of get/set array functions while
-> > processing GPIO arrays which represent pins of a signle chip in
-> > hardware order.  If resulting performance is close to PIO, GPIO API
-> > can be used for data I/O without much loss of speed.
->
-> I applied the v8 to an immutable branch and pushed to kernelorg
-> so the build servers can churn it a bit, and if it works fine
-> then we can merge this into the devel branch and also set up
-> that as something other subsystems can pull in if they need it.
->
-> I'm really excited to merge this!
+On Monday, September 10, 2018 12:56:02 AM CEST Janusz Krzysztofik wrote:
+> 
+> This is a follow up of initial submission of a series consisted of 
+> 6 changes, 3 of which have been already applied or reworkeed.
+> 
+> 
+> Janusz Krzysztofik (3):
+>       video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+>       mtd: rawnand: ams-delta: use GPIO lookup table
 
-The branch built with no problems, and now I merged this into
-devel. If that also builds fine, I will let it hit linux-next so we can
-stabilize it for v4.20.
+Hi Tony,
 
-Yours,
-Linus Walleij
+Please ignore this patch. It may no longer be possible to merged it cleanly 
+with nand/next tree. I'll exclude it from the series, rebase on top of nand/
+next and submit via linux-mtd.
+
+That shouldn't affect the two remaining patches of the series which should 
+still apply and merge cleanly, but I can resend them renumbered if you wish.
+
+Thanks,
+Janusz
+
+>       ARM: OMAP1: ams-delta: make board header file local to mach-omap1
+> 
+> 
+> I'm submitting the three patches in series because the last one depends
+> on the other two.
+> 
+> Tony, please set up an immutable tag for this series to be used by MTD
+> as there are more changes on Amstrad Delta NAND driver coming in.
+> 
+> Thanks,
+> Janusz
+> 
+> 
+> Changelog:
+> v3:
+> - rebased on top of v4.19-rc1
+> - added Acked-by: received from Miquel
+> 
+> v2:
+> [PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
+> 	- already in mainline, commit 68e62a15a914
+> [PATCH 2/6] Input: ams_delta_serio: use GPIO lookup table
+> 	- reworked and submitted as a series, already in linux-omap,
+> 	  commit 68e62a15a914 ("ARM: OMAP1: ams-delta: drop GPIO lookup
+> 	  table for serio device") followed by 9 more
+> [PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
+> 	- already in mainline, commit d65777d1a2cd
+> [PATCH 4/6] fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+> 	- resubmitting as [PATCH v2 1/3 v2]
+> 	v2: Remove problematic error code conversion no longer
+> 	    needed if used on top of commit d08605a64e67 ("ARM: OMAP1:
+> 	    ams-delta: move late devices back to init_machine")
+> 	    and commit 8853daf3b4ac ("gpiolib: Defer on non-DT
+> 	    find_chip_by_name() failure") already in linux-next
+> [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+> 	- resubmitting as [PATCH v2 2/3 v4]
+> 	v2: Fix handling of devm_gpiod_get_optional() return values -
+> 	    thanks to Andy Shevchenko.
+> 	v3: Remove problematic error code conversion no longer needed
+> 	    if used on top of commit d08605a64e67 ("ARM: OMAP1:
+> 	    ams-delta: move late devices back to init_machine") and
+> 	    commit 8853daf3b4ac ("gpiolib: Defer on non-DT
+> 	    find_chip_by_name() failure") already in linux-next - thanks
+> 	    to Boris Brezillon
+> 	v4: fix style issue - thanks to Boris Brezillon
+> [PATCH 6/6] ARM: OMAP1: ams-delta: make board header file local to
+> 	mach-omap1
+> 	- resending as [PATCH v2 3/3]
+> 
+> All dependencies mentioned in v2 changelog are satisfied in v4.19-rc1.
+> 
+> 
+> diffstat:
+>  arch/arm/mach-omap1/ams-delta-fiq-handler.S |    2 
+>  arch/arm/mach-omap1/ams-delta-fiq.c         |    3 
+>  arch/arm/mach-omap1/board-ams-delta.c       |    2 
+>  arch/arm/mach-omap1/board-ams-delta.h       |    2 
+>  drivers/mtd/nand/raw/ams-delta.c            |  126 +++++++++++++
++--------------
+>  drivers/video/fbdev/omap/lcd_ams_delta.c    |   55 ++++--------
+>  6 files changed, 93 insertions(+), 97 deletions(-)
+> 
+> 
+
+
+
+
