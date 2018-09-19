@@ -2,137 +2,126 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66638C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF7BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C4102146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:11:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4102146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 685C32146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:13:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ZMY+/Nhj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685C32146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732905AbeITDvq (ORCPT
+        id S1733163AbeITDxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:51:46 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56956 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727983AbeITDvq (ORCPT
+        Wed, 19 Sep 2018 23:53:48 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:40642 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732113AbeITDxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:51:46 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JM9FvR052860
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:11:46 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mkudfgrqn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:11:46 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 19 Sep 2018 18:11:45 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Sep 2018 18:11:42 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8JMBfmE25100298
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Sep 2018 22:11:41 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E626EB2068;
-        Wed, 19 Sep 2018 18:10:09 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C69B8B2065;
-        Wed, 19 Sep 2018 18:10:09 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Sep 2018 18:10:09 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D605B16C0E72; Wed, 19 Sep 2018 15:11:40 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 15:11:40 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
- cpu_online_mask
-Reply-To: paulmck@linux.ibm.com
-References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
- <20180911160532.GJ4225@linux.vnet.ibm.com>
- <20180911162142.cc3vgook2gctus4c@linutronix.de>
- <20180911170222.GO4225@linux.vnet.ibm.com>
- <20180919205521.GE902964@devbig004.ftw2.facebook.com>
+        Wed, 19 Sep 2018 23:53:47 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8JM8Chs000743
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:13:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=wTgZ9auVCQe3Ddwy+sDwXPpbQxHOertCx4S6lW2HJO4=;
+ b=ZMY+/NhjUJqInzc3hhX1TSYNowlSC8GMTuYUfeA+NXLe5cVhBRn4xBORJ5/Gh6wKXdb7
+ lyEmBKsDodD+8bEmEUmaeORItu9Uh0mdO4PFugab+3WFrtL7TVM89ydeIzD3Tx2P+ME3
+ /vhpvwPzD+31SoebGWHC/ljwdoHdpbZZcqc= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0001303.ppops.net with ESMTP id 2mkvck0kd0-4
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:13:47 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.18) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep
+ 2018 15:13:45 -0700
+Received: by devvm24792.prn1.facebook.com (Postfix, from userid 150176) id
+ B94A55E465FE; Wed, 19 Sep 2018 15:13:35 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Tao Ren <taoren@fb.com>
+Smtp-Origin-Hostname: devvm24792.prn1.facebook.com
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>
+CC:     Tao Ren <taoren@fb.com>, <openbmc@lists.ozlabs.org>, <cov@fb.com>,
+        <tfang@fb.com>
+Smtp-Origin-Cluster: prn1c35
+Subject: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
+Date:   Wed, 19 Sep 2018 15:13:31 -0700
+Message-ID: <20180919221331.2511558-1-taoren@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180919205521.GE902964@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18091922-0072-0000-0000-000003A5E847
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009736; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01090767; UDB=6.00563531; IPR=6.00870787;
- MB=3.00023396; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-19 22:11:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091922-0073-0000-0000-0000497A482D
-Message-Id: <20180919221140.GH4222@linux.ibm.com>
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_11:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=996 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809190214
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 01:55:21PM -0700, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Sep 11, 2018 at 10:02:22AM -0700, Paul E. McKenney wrote:
-> > > Doesn't work for me because it is still within the preempt-disable
-> > > section :/.
-> > > Would it work to use WORK_CPU_UNBOUND? As far as I understand it, the
-> > > CPU number does not matter, you just want to spread it across multiple
-> > > CPUs in the NUMA case.
-> > 
-> > Locality is a good thing, but yes, something like this?
-> > 
-> > 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && /* or whatever it is called */
-> > 	    unlikely(cpu > rnp->grphi - rnp->grplo))
-> > 
-> > Another approach that might be better longer term would be to have a
-> > workqueue interface that treats the specified CPU as a suggestion,
-> > and silently switches to WORK_CPU_UNBOUND if there is any problem
-> > whatsoever with the specified CPU.  Tejun, Lai, thoughts?
-> 
-> Unbound workqueue is NUMA-affine by default, so using it by default
-> might not harm anything.
+Currently, the aspeed MATCH1 register is updated to <current_count -
+cycles> in set_next_event handler, with the assumption that COUNT
+register value is preserved when the timer is disabled and it continues
+decrementing after the timer is enabled. But the assumption is wrong:
+RELOAD register is loaded into COUNT register when the aspeed timer is
+enabled, which means the next event may be delayed because timer
+interrupt won't be generated until <0xFFFFFFFF - current_count +
+cycles>.
 
-OK, so the above workaround would function correctly on -rt, thank you!
+The problem can be fixed by updating RELOAD register to <cycles>, and
+COUNT register will be re-loaded when the timer is enabled and interrupt
+is generated when COUNT register overflows.
 
-Sebastian, is there a counterpart to CONFIG_PREEMPT_RT already in
-mainline?  If so, I would be happy to make mainline safe for -rt.
+The test result on Facebook Backpack-CMM BMC hardware (AST2500) shows
+the issue is fixed: without the patch, usleep(100) suspends the process
+for several milliseconds (and sometimes even over 40 milliseconds);
+after applying the fix, usleep(100) takes averagely 240 microseconds to
+return under the same workload level.
 
->                           Also, per-cpu work items get unbound from
-> the cpu if the cpu goes down while the work item is running or queued,
-> so it might just work already.
+Signed-off-by: Tao Ren <taoren@fb.com>
+---
+ drivers/clocksource/timer-fttmr010.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-There are race conditions where the work item is queued at an inopportune
-time during the offline process, resulting in a splat, hence the need
-for a check with preemption disabled in order to synchronize with the
-synchronize_sched() in the offline process.
-
-							Thanx, Paul
+diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
+index c020038ebfab..cf93f6419b51 100644
+--- a/drivers/clocksource/timer-fttmr010.c
++++ b/drivers/clocksource/timer-fttmr010.c
+@@ -130,13 +130,17 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
+ 	cr &= ~fttmr010->t1_enable_val;
+ 	writel(cr, fttmr010->base + TIMER_CR);
+ 
+-	/* Setup the match register forward/backward in time */
+-	cr = readl(fttmr010->base + TIMER1_COUNT);
+-	if (fttmr010->count_down)
+-		cr -= cycles;
+-	else
+-		cr += cycles;
+-	writel(cr, fttmr010->base + TIMER1_MATCH1);
++	if (fttmr010->count_down) {
++		/*
++		 * ASPEED Timer Controller will load TIMER1_LOAD register
++		 * into TIMER1_COUNT register when the timer is re-enabled.
++		 */
++		writel(cycles, fttmr010->base + TIMER1_LOAD);
++	} else {
++		/* Setup the match register forward in time */
++		cr = readl(fttmr010->base + TIMER1_COUNT);
++		writel(cr + cycles, fttmr010->base + TIMER1_MATCH1);
++	}
+ 
+ 	/* Start */
+ 	cr = readl(fttmr010->base + TIMER_CR);
+-- 
+2.17.1
 
