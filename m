@@ -2,116 +2,99 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFB3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02F5C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA092151C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A94D20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S89A9MGP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA092151C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bW7SfUwZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A94D20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732062AbeISVvm (ORCPT
+        id S1732106AbeISVwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:51:42 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36316 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731219AbeISVvm (ORCPT
+        Wed, 19 Sep 2018 17:52:19 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45811 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbeISVwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:51:42 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v17-v6so1764349lfe.3;
-        Wed, 19 Sep 2018 09:13:04 -0700 (PDT)
+        Wed, 19 Sep 2018 17:52:19 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i26-v6so2923295pfo.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tW3lgWcCsvSQKvZT+KjDWgTvdJU4LVeRbHtdE0+ICiM=;
-        b=S89A9MGP2coeXPGkzYVQ+uNJctTced4MQwb3FBySHJ3a0Iy4d5mkPFu0MnPYWKx1+0
-         zNO4co3kWLgiLyBGr7yJQ2whxQBe+d43/BegmMsT2Y8+mYOSL3lTj816WAb8w0+q4olN
-         n05gUrzrIvdlauXVclkEmsdk6kF8uexNldL3+bFFim7+3ssNYUhcrBaJNfJgTPGbqpZc
-         fy9egYNEgRsY2bmjfutAg+JmPWUufxAXB0XItOQyBfpMC4opxchLjp7i7u+PoriBWWnC
-         UeGmRVtw8z1Sh9EOTtqbib95ThtaziMoeJ5VuRF4EBfPOdjcld9mndyrRZA2H6PfbTwW
-         YNcA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=emUEFn0OcajAlFY/h/sddojpuUAUq45BqeIFhvEdgpw=;
+        b=bW7SfUwZYX3WdkJY+AUGos1TWKZoPFQoGDcS45xzGlc/2amy6IkhzUWMJojAIyG0FJ
+         eywgOq7EQcv7j9RqnqnW5VS4fkoFRX2LlyVlGhnheEw1ZwVB2g9Tig181qQQd72AKwsQ
+         k61JFXqNsqtbLUfcva6GHx9akvJSYIqs3XMkHpQmtyfukwohNpGPwLCNLlkK2kvdLyXa
+         nps+9bp8d9aOhhR+WrPz8FV/3wLTl7iCDm5bCBnFMZOsTeEnYgMHed27igTGfA0rtfNe
+         vzYcqxogIUvrTH9MFW+QmNI9K3XXDzUK6WAdI4WGLmJoZms0e/bP5fDLlVEtyoVdqWVL
+         3Wug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tW3lgWcCsvSQKvZT+KjDWgTvdJU4LVeRbHtdE0+ICiM=;
-        b=UhenuDUe/U3WrZDwLrBi59N6P3NwxnLQuzMRvxgQ9PvdDSRLUmQ2qmDl0cczHH6SK6
-         wSR+NDH2OllDAszDlu8L1VZJZq63w1Z/nglD7BI35Cjh9i8sQARpJU8aPqrN/RNzXTdE
-         lC34YzDeF99eNLWMS36dhOlNvYZJQoz3zuJ702eujF8wePtXeE/KOwdcIVkBodT277Gp
-         amMiAsQqeB05aJXgZp0YSZ7Q/M9VChjdpj13Z3P4PyoYZJd16HLbqIWAcloMG/nXFGkw
-         TUv/irOfdHNxmv8oDmqkOTmnMynFXtUm4/CvSW7NrtTXfvNwE76MjGdJ6X+veDPhu/r8
-         i17Q==
-X-Gm-Message-State: APzg51BOOne/UjEoxGfG5vMDZGlLSCwUEZ8Qp2CwtkY9GQDEUBD01ZID
-        HZLwLdlBPi5vufNpG6bRjCc=
-X-Google-Smtp-Source: ANB0VdZPqgiKE7G8C4nwYG0BqMtaQU8WnMfYa9RNZqY51s4wCFrkH9pL0fUi7uQlcmv3H5ngfr2Tmg==
-X-Received: by 2002:a19:1063:: with SMTP id f96-v6mr9323593lfi.88.1537373583617;
-        Wed, 19 Sep 2018 09:13:03 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.102.224])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm970275lfs.84.2018.09.19.09.13.02
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=emUEFn0OcajAlFY/h/sddojpuUAUq45BqeIFhvEdgpw=;
+        b=McgXfNSm18Zrus7Sd4Kfdm8RWvRwLjd4ecMtOixPISq8Xrzhyq4R+E1gasFj7nWrym
+         97Wj6GHlz3k2SCzuAavCz6AtFcgK5hkxS38oOvrwXwDU68wCZtcMJ7zfv+SNJhWYNsgU
+         e1ZC7SfImlor6VM0hituUPxmGqdjFy5DE9LcOQbY+lZ5dME4lXLFbbjcNFSioTHOGbTG
+         306L/eZTz0X/p0Cq9vl1PhGR71s98KoR8+PIx0KmKvTIyaqSHg07bxuUEd52Mw3yUGhj
+         qRKy0Rklt4S/LMv6WUJwEcLYd87vTCcXngbnkliCiCJ9Cz19FlGIKCFIBay1P0UWNlaP
+         YJ4Q==
+X-Gm-Message-State: APzg51BZQ/pEEI7fyDgpNuN9hddYCFrzWMywuSS2lucf86fl1dEOpXAh
+        IJ3NQBn9W4BMZcSWEhocE7uflQ==
+X-Google-Smtp-Source: ANB0VdYptNUgqzWWrUrGvz4PbUWdCDwYj4yJvyuaC+VZwMGeziJeX3UX+aqCH5MDrdmG9fDmjYYnlQ==
+X-Received: by 2002:a63:6385:: with SMTP id x127-v6mr33447667pgb.413.1537373622917;
+        Wed, 19 Sep 2018 09:13:42 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm34260287pgk.28.2018.09.19.09.13.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 09:13:02 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id EAA6B460653; Wed, 19 Sep 2018 19:13:01 +0300 (MSK)
-Date:   Wed, 19 Sep 2018 19:13:01 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, avagin@virtuozzo.com,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-next] BUG triggered in ptraceme
-Message-ID: <20180919161301.GF17524@uranus.lan>
-References: <20180919070737.GB17524@uranus.lan>
- <20180919071056.GC17524@uranus.lan>
- <CAG48ez0d0mO3yN10ApgJuwt9DTDj6x+j_wtjz6qM35nGtxnUdw@mail.gmail.com>
+        Wed, 19 Sep 2018 09:13:41 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g2f6j-0002Zp-3q; Wed, 19 Sep 2018 10:13:41 -0600
+Date:   Wed, 19 Sep 2018 10:13:41 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     =?utf-8?B?SMOla29u?= Bugge <Haakon.Bugge@oracle.com>
+Cc:     Doug Ledford <dledford@redhat.com>, faisal.latif@intel.com,
+        shiraz.saleem@intel.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/i40iw: Fix incorrect iterator type
+Message-ID: <20180919161341.GB9867@ziepe.ca>
+References: <20180917140707.1253738-1-Haakon.Bugge@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAG48ez0d0mO3yN10ApgJuwt9DTDj6x+j_wtjz6qM35nGtxnUdw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180917140707.1253738-1-Haakon.Bugge@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 04:16:50PM +0200, Jann Horn wrote:
-...
-> >
-> > Heh, actually not :) It is due to commit
-> >
-> > commit 1f8266ff58840d698a1e96d2274189de1bdf7969
-> > Author: Jann Horn <jannh@google.com>
-> > Date:   Thu Sep 13 18:12:09 2018 +0200
-> >
-> > which introduced might_sleep. Seems it is bad idea to send bug report
-> > without having a cup of coffee at the morning :)
+On Mon, Sep 17, 2018 at 04:07:07PM +0200, Håkon Bugge wrote:
+> Commit f27b4746f378 ("i40iw: add connection management code") uses an
+> incorrect rcu iterator, whilst holding the rtnl_lock. Since the
+> critical region invokes i40iw_manage_qhash(), which is a sleeping
+> function, the rcu locking and traversal cannot be used.
 > 
-> Yeah, I fixed one sleep-in-atomic bug and figured I'd throw a
-> might_sleep() in there for good measure... sigh.
-> I guess now I have to go through all the callers of
-> begin_current_label_crit_section() to see what else looks wrong...
-> 
+> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> ---
+>  drivers/infiniband/hw/i40iw/i40iw_cm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, I fear so. Need to check every caller just to be sure.
+Applied to for-next, thanks
 
-> apparmor_ptrace_traceme() is wrong, as reported...
-> 
-> apparmor_path_link() looks icky, but I'm not sure - from what I can
-> tell, it's called with an i_rwsem held for writing, and that probably
-> makes calling back into filesystem context from there a bad idea?
-> OTOH, it's just the i_rwsem of a newly-created path, so I don't know
-> whether that's actually an issue...
-> 
-> security_path_rename() is called with two i_rwsem's held, but again,
-> I'm not sure whether that's a problem.
-
-Lets wait for fs people opinions.
+Jason
