@@ -2,129 +2,102 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A28ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4339ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1DE214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:12:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E1DE214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 55EC9214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:12:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmG3x926"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EC9214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbeISGrX (ORCPT
+        id S1730674AbeISGr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 02:47:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33528 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbeISGrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 02:47:23 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4258F2071E; Wed, 19 Sep 2018 03:12:06 +0200 (CEST)
-Received: from localhost (unknown [65.155.82.100])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8513320703;
-        Wed, 19 Sep 2018 03:11:55 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: reorder Makefile entries
-Date:   Wed, 19 Sep 2018 03:11:52 +0200
-Message-Id: <20180919011152.3674-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.0
+        Wed, 19 Sep 2018 02:47:58 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32792 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726887AbeISGr6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 02:47:58 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s7-v6so1887392pgc.0;
+        Tue, 18 Sep 2018 18:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MY2ErMXoKLvYfJ84LalNzf9X36+vwjSwsdrSUJekjlk=;
+        b=AmG3x926rDYq73s42JKBQprwSfCcO7ie219Zpqbaq8mwY7lklD0SC6Dmsuli+vR8DV
+         teboeDHnfHOAbBJAy+A+ocOGArkdFdDAVOB6rM9kwsnZvlrpqIL6U/wuNVMq66cQrWeP
+         7daYtLoC63N1y7/skZzBmBMMC3acvugzvhDmOfcUE3o2yKeMjNg84Z9AzvRUeTCmQkvO
+         v7YpPfo/mPHFdfbx8zgDG6F9pYVbVRR32hWx4C95wNpQmFXKrllude04muaolFRslSNd
+         7g/P9IYzcs8KMF+x5ZBLnkn5q6BGPZHbVkcY6QVL4iQ5MFGwb47IQfmE1A8TU2eERoju
+         wRow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MY2ErMXoKLvYfJ84LalNzf9X36+vwjSwsdrSUJekjlk=;
+        b=VmbA0vxB57SLP4J9OlD6HFia44q0hat7GzpaxJd9YVnE7S4TMeNOmCOhJeVVDcM+eZ
+         tMTjMynJUk2w6NdNnYu6IZMhsmNlPYXQo4Fscoc2CZxA6HpPAQC1Xe74tu5/RCQzUQEQ
+         2sdr5JEyNdXOBbY0lgssKGSu4cx34dpcgqQNvL10H/6Lr5Rb23ladjIpN/dgZUQA2AJE
+         beOwztllKD2YeyZUCcq58/nCPXdDKEyU4U8bZoA4Daj5jqejjk3wwFCJMdxpMScn14ov
+         25tRkC3a7c4sU3sJkiW0NNI4KMC/u1+alfrD7EAWH8Hvd39fnYoSuaI/eq+zn0KMwIXM
+         oWTQ==
+X-Gm-Message-State: APzg51Asi03taHKTFy/fO9wgVaS/q+8juxYgjCU4fF5CxdOKvF1jEuDg
+        N0e73kbWigY7MOWM10RBEkg=
+X-Google-Smtp-Source: ANB0VdZgq/vlqjUk4pAzNIBloL+2rZCEkV0lSe8fprkhOThp9pntyxhNXaZzw8rJ2jAX9GZr4nldxw==
+X-Received: by 2002:a63:170b:: with SMTP id x11-v6mr29254480pgl.364.1537319562318;
+        Tue, 18 Sep 2018 18:12:42 -0700 (PDT)
+Received: from localhost ([175.223.11.230])
+        by smtp.gmail.com with ESMTPSA id e73-v6sm36723789pfb.153.2018.09.18.18.12.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 18:12:40 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 10:12:36 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 14/33] vfs: Implement a filesystem superblock
+ creation/configuration context [ver #11]
+Message-ID: <20180919011236.GA407@jagdpanzerIV>
+References: <20180911220743.GA13208@roeck-us.net>
+ <20180911174641.GA15149@roeck-us.net>
+ <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+ <153313714181.13253.304098108512966976.stgit@warthog.procyon.org.uk>
+ <27113.1536702746@warthog.procyon.org.uk>
+ <32382.1536707855@warthog.procyon.org.uk>
+ <20180911235403.GA10107@roeck-us.net>
+ <20180918090722.GA463@jagdpanzerIV>
+ <80eb1ec0-7b61-debe-9e93-0176d3e2c76a@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80eb1ec0-7b61-debe-9e93-0176d3e2c76a@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A few entries are not placed correctly, reorder them.
+On (09/18/18 07:06), Guenter Roeck wrote:
+> > So the check either better be
+> > 
+> > 	if (fc->ops && fc->ops->reconfigure)
+> > 
+> 
+> Since there are multiple instances of fs_context where fc->ops isn't set,
+> this check would be needed wherever fc->ops is dereferenced.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/Makefile | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Right. If fc is always guaranteed to be properly zeroed-out. This is
+true for kzalloc-ed fc's, but not necessarily so in any other case.
 
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 5ff2fc0c361a..290c1730fb0a 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -36,9 +36,9 @@ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
- obj-$(CONFIG_RTC_DRV_AT91RM9200)+= rtc-at91rm9200.o
- obj-$(CONFIG_RTC_DRV_AT91SAM9)	+= rtc-at91sam9.o
- obj-$(CONFIG_RTC_DRV_AU1XXX)	+= rtc-au1xxx.o
--obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
- obj-$(CONFIG_RTC_DRV_BQ32K)	+= rtc-bq32k.o
- obj-$(CONFIG_RTC_DRV_BQ4802)	+= rtc-bq4802.o
-+obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
- obj-$(CONFIG_RTC_DRV_CMOS)	+= rtc-cmos.o
- obj-$(CONFIG_RTC_DRV_COH901331)	+= rtc-coh901331.o
- obj-$(CONFIG_RTC_DRV_CPCAP)	+= rtc-cpcap.o
-@@ -71,6 +71,7 @@ obj-$(CONFIG_RTC_DRV_EP93XX)	+= rtc-ep93xx.o
- obj-$(CONFIG_RTC_DRV_FM3130)	+= rtc-fm3130.o
- obj-$(CONFIG_RTC_DRV_FTRTC010)	+= rtc-ftrtc010.o
- obj-$(CONFIG_RTC_DRV_GENERIC)	+= rtc-generic.o
-+obj-$(CONFIG_RTC_DRV_GOLDFISH)	+= rtc-goldfish.o
- obj-$(CONFIG_RTC_DRV_HID_SENSOR_TIME) += rtc-hid-sensor-time.o
- obj-$(CONFIG_RTC_DRV_HYM8563)	+= rtc-hym8563.o
- obj-$(CONFIG_RTC_DRV_IMXDI)	+= rtc-imxdi.o
-@@ -78,10 +79,10 @@ obj-$(CONFIG_RTC_DRV_ISL12022)	+= rtc-isl12022.o
- obj-$(CONFIG_RTC_DRV_ISL12026)	+= rtc-isl12026.o
- obj-$(CONFIG_RTC_DRV_ISL1208)	+= rtc-isl1208.o
- obj-$(CONFIG_RTC_DRV_JZ4740)	+= rtc-jz4740.o
-+obj-$(CONFIG_RTC_DRV_LOONGSON1)	+= rtc-ls1x.o
- obj-$(CONFIG_RTC_DRV_LP8788)	+= rtc-lp8788.o
- obj-$(CONFIG_RTC_DRV_LPC24XX)	+= rtc-lpc24xx.o
- obj-$(CONFIG_RTC_DRV_LPC32XX)	+= rtc-lpc32xx.o
--obj-$(CONFIG_RTC_DRV_LOONGSON1)	+= rtc-ls1x.o
- obj-$(CONFIG_RTC_DRV_M41T80)	+= rtc-m41t80.o
- obj-$(CONFIG_RTC_DRV_M41T93)	+= rtc-m41t93.o
- obj-$(CONFIG_RTC_DRV_M41T94)	+= rtc-m41t94.o
-@@ -100,7 +101,6 @@ obj-$(CONFIG_RTC_DRV_MC13XXX)	+= rtc-mc13xxx.o
- obj-$(CONFIG_RTC_DRV_MCP795)	+= rtc-mcp795.o
- obj-$(CONFIG_RTC_DRV_MOXART)	+= rtc-moxart.o
- obj-$(CONFIG_RTC_DRV_MPC5121)	+= rtc-mpc5121.o
--obj-$(CONFIG_RTC_DRV_VRTC)	+= rtc-mrst.o
- obj-$(CONFIG_RTC_DRV_MSM6242)	+= rtc-msm6242.o
- obj-$(CONFIG_RTC_DRV_MT6397)	+= rtc-mt6397.o
- obj-$(CONFIG_RTC_DRV_MT7622)	+= rtc-mt7622.o
-@@ -116,8 +116,8 @@ obj-$(CONFIG_RTC_DRV_PCF2123)	+= rtc-pcf2123.o
- obj-$(CONFIG_RTC_DRV_PCF2127)	+= rtc-pcf2127.o
- obj-$(CONFIG_RTC_DRV_PCF50633)	+= rtc-pcf50633.o
- obj-$(CONFIG_RTC_DRV_PCF85063)	+= rtc-pcf85063.o
--obj-$(CONFIG_RTC_DRV_PCF85363)	+= rtc-pcf85363.o
- obj-$(CONFIG_RTC_DRV_PCF8523)	+= rtc-pcf8523.o
-+obj-$(CONFIG_RTC_DRV_PCF85363)	+= rtc-pcf85363.o
- obj-$(CONFIG_RTC_DRV_PCF8563)	+= rtc-pcf8563.o
- obj-$(CONFIG_RTC_DRV_PCF8583)	+= rtc-pcf8583.o
- obj-$(CONFIG_RTC_DRV_PIC32)	+= rtc-pic32.o
-@@ -154,9 +154,9 @@ obj-$(CONFIG_RTC_DRV_SNVS)	+= rtc-snvs.o
- obj-$(CONFIG_RTC_DRV_SPEAR)	+= rtc-spear.o
- obj-$(CONFIG_RTC_DRV_STARFIRE)	+= rtc-starfire.o
- obj-$(CONFIG_RTC_DRV_STK17TA8)	+= rtc-stk17ta8.o
-+obj-$(CONFIG_RTC_DRV_ST_LPC)	+= rtc-st-lpc.o
- obj-$(CONFIG_RTC_DRV_STM32) 	+= rtc-stm32.o
- obj-$(CONFIG_RTC_DRV_STMP)	+= rtc-stmp3xxx.o
--obj-$(CONFIG_RTC_DRV_ST_LPC)	+= rtc-st-lpc.o
- obj-$(CONFIG_RTC_DRV_SUN4V)	+= rtc-sun4v.o
- obj-$(CONFIG_RTC_DRV_SUN6I)	+= rtc-sun6i.o
- obj-$(CONFIG_RTC_DRV_SUNXI)	+= rtc-sunxi.o
-@@ -169,10 +169,10 @@ obj-$(CONFIG_RTC_DRV_TWL4030)	+= rtc-twl.o
- obj-$(CONFIG_RTC_DRV_TX4939)	+= rtc-tx4939.o
- obj-$(CONFIG_RTC_DRV_V3020)	+= rtc-v3020.o
- obj-$(CONFIG_RTC_DRV_VR41XX)	+= rtc-vr41xx.o
-+obj-$(CONFIG_RTC_DRV_VRTC)	+= rtc-mrst.o
- obj-$(CONFIG_RTC_DRV_VT8500)	+= rtc-vt8500.o
- obj-$(CONFIG_RTC_DRV_WM831X)	+= rtc-wm831x.o
- obj-$(CONFIG_RTC_DRV_WM8350)	+= rtc-wm8350.o
- obj-$(CONFIG_RTC_DRV_X1205)	+= rtc-x1205.o
- obj-$(CONFIG_RTC_DRV_XGENE)	+= rtc-xgene.o
- obj-$(CONFIG_RTC_DRV_ZYNQMP)	+= rtc-zynqmp.o
--obj-$(CONFIG_RTC_DRV_GOLDFISH)	+= rtc-goldfish.o
--- 
-2.19.0
-
+	-ss
