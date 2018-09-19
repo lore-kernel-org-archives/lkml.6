@@ -2,90 +2,104 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B802BECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C9EECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79DC72150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:38:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79DC72150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E92152150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:43:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92152150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbeISRPk (ORCPT
+        id S1731274AbeISRU5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 13:15:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55238 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727820AbeISRPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 13:15:40 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68F9E32B66D;
-        Wed, 19 Sep 2018 11:38:09 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B2565FC24;
-        Wed, 19 Sep 2018 11:38:09 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D78F49B31F; Wed, 19 Sep 2018 13:38:07 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 13:38:07 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Jiandi An <jiandi@amd.com>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        Dave Airlie <airlied@linux.ie>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
-Message-ID: <20180919113807.6mwqxkdg6f55h6fg@sirius.home.kraxel.org>
-References: <20180829122026.27012-1-kraxel@redhat.com>
- <20180829122026.27012-3-kraxel@redhat.com>
- <CAPM=9tyXc41DAkgjCRojrqH28qkirxgrpgNmrwu4WAeLpg7tAw@mail.gmail.com>
- <9bf20fa1-3752-edd1-588c-e38cd166c3af@amd.com>
- <20180912072541.nagfrr2dgy34szcx@sirius.home.kraxel.org>
- <5684a3fc-3605-7bb0-b0be-418c2ae702b5@amd.com>
- <20180919044600.utvnu5l6fvvi2qi4@sirius.home.kraxel.org>
- <d4c25272-9df8-33d6-d310-964b17a8c80d@amd.com>
+        Wed, 19 Sep 2018 13:20:57 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:55530 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727820AbeISRU4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 13:20:56 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 13820826-1500050 
+        for multiple; Wed, 19 Sep 2018 12:43:14 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4c25272-9df8-33d6-d310-964b17a8c80d@amd.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 19 Sep 2018 11:38:09 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+To:     Chris Chiu <chiu@endlessm.com>, airlied@linux.ie,
+        jani.nikula@intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20180919112933.47382-1-chiu@endlessm.com>
+Cc:     Chris Chiu <chiu@endlessm.com>, intel-gfx@lists.freedesktop.org,
+        linux@endlessm.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20180919112933.47382-1-chiu@endlessm.com>
+Message-ID: <153735739367.31835.11641995651905357659@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: re-check the hotplug with a delayed work
+Date:   Wed, 19 Sep 2018 12:43:13 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> Once display manger is kicked off for example (sudo systemctl start lightdm.service) and
-> >> resource id 3 gets created from user space down, it still gives a blank black screen.
-> > 
-> > Hmm.  I'd suspect there is simply a code path missing.  Can you send the
-> > patch you have?
-> > 
-> > cheers,
-> >   Gerd
-> > 
+Quoting Chris Chiu (2018-09-19 12:29:33)
+> I have few ASUS laptops, X705FD(Intel i7-8565), X560UD(Intel i5-8250U)
+> and X530UN(Intel i7-8550U) share the same problem. The HDMI connector
+> status stays 'connected' even the HDMI cable has been unplugged.
+> Then the status in sysfs would never change since then until we
+> do 'xrandr' to reprobe the devices. It would also cause the audio
+> output path cannot correctly swicth based on the connector status.
 > 
-> I sent the patch.  For now it does dma_sync_sg on the pages in 
-> TRANSFER_TO_HOST_2D/3D when use_dma_api is true.
+> This commit kicks off a delayed work when the status remains unchanged
+> in the first hotplug event handling, which may not be the perfect
+> timing in some special cases.
 > 
-> https://lore.kernel.org/lkml/20180919070931.91168-1-jiandi.an@amd.com/
+> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+> ---
+>  drivers/gpu/drm/i915/i915_drv.h      |  1 +
+>  drivers/gpu/drm/i915/intel_hotplug.c | 35 +++++++++++++++++++++++++++++++----
+>  2 files changed, 32 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+> index d51d8574a679..78e2cf09cc10 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.h
+> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> @@ -286,6 +286,7 @@ struct i915_hotplug {
+>         } stats[HPD_NUM_PINS];
+>         u32 event_bits;
+>         struct delayed_work reenable_work;
+> +       struct delayed_work recheck_work;
+>  
+>         struct intel_digital_port *irq_port[I915_MAX_PORTS];
+>         u32 long_port_mask;
+> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+> index 43aa92beff2a..089a24588ec8 100644
+> --- a/drivers/gpu/drm/i915/intel_hotplug.c
+> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
+> @@ -349,14 +349,15 @@ static void i915_digport_work_func(struct work_struct *work)
+>         }
+>  }
+>  
+> +#define HPD_RECHECK_DELAY        (2 * 1000)
 
-Hmm, the way it is hooked up it should not miss any resource update.
-So not sure why it isn't working.
-Pushed the patch nevertheless as it is clearly a step into the right
-direction.
+Or just (2 * HZ)
 
-cheers,
-  Gerd
+>  /*
+>   * Handle hotplug events outside the interrupt handler proper.
+>   */
+> -static void i915_hotplug_work_func(struct work_struct *work)
+> +static void do_i915_hotplug_check(struct work_struct *work,
+> +                                  struct drm_i915_private *dev_priv,
+> +                                  struct drm_device *dev, bool do_recheck)
 
+struct drm_i915_private == struct drm_device, no need for tautology
+
+Local struct drm_device *dev = &i915->drm; are eliminated by the
+compiler.
+-Chris
