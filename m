@@ -2,73 +2,74 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05DBC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C026C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BCC206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25BD2206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:40:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIdEBUZz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BCC206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="Hm1llpIs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BD2206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732587AbeITCUD (ORCPT
+        id S1732659AbeITCUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:20:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35730 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727676AbeITCT5 (ORCPT
+        Wed, 19 Sep 2018 22:20:06 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:42390 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727676AbeITCUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:19:57 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j26-v6so7158566wre.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:40:20 -0700 (PDT)
+        Wed, 19 Sep 2018 22:20:05 -0400
+Received: by mail-yb1-f196.google.com with SMTP id p74-v6so2396617ybc.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:40:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vXYYXmRluC0jjgE3HlYYssosxAQKJ/zlfwgo/DlNejo=;
-        b=PIdEBUZzJX/6nU8/1NrLaS69niPj1aUWu+lc/aTsdHJaGdj9DHF++Q3xPXP371NVcL
-         XlldkdwdWaMJ1LEooz/KnHousyqAIr/C3ulSVc7K5njTyV4rKJFx5PpQDB2jPbK2RDWf
-         vO/jLLhr6Wi5KrMfMmx1n21yj2AUk22T41jBX9PPhj56jo0sXIrGahwjfA3wg7qiKESe
-         SZIV9W0FkqnziuwRWvjeLBfABqQtr1JiNe+x3+Tn6NNAk8bIYZ93D8+ZavugeSJDQTB4
-         pYpLILv/Gp3pt9lEIYJvKmgJDt9YrT6xgxHUPevQxCrrBaRKLm6CJvCR6cD/DY7rRrPl
-         wqQQ==
+        d=poorly.run; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jKB08lIJM62TjYoXl+fj9q55SEJkhZHMNyRpQLYb2H0=;
+        b=Hm1llpIskzym3vuxbvfJH8fhKoejUt+bQ/kZ1873HDkJR7tZfwa+YCPaSLIPqi1+SW
+         LTqw84ljiKh1XoEf/DghfZyR6vf8Lwoq3B0hb+KXZxMnpn7wAzgb3P9bqplfnBaLpk4Y
+         9yUmaEkqYmjDIiW4mF6Mv2aocah27N4TTaFpGLo/v92xCuq2zCf1YNlfii9Ggz8/Dvcs
+         2qQmoetIE1w7MwTjMhvw/I+r9z9YLc1xgV9Ij9Hynrz+6C0tSvgSsoGcWaJk4isQLVaR
+         8UbKZ7cwZIpEKuwCWFrEsRhuRpeA0UnJ+r5PojBndQFPeNuJ2rIWV+IJ5xz4jFe3H7no
+         Zhlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vXYYXmRluC0jjgE3HlYYssosxAQKJ/zlfwgo/DlNejo=;
-        b=llj+33ONYv+t9AlzN9Rfh8coXeWaq3uGd5vzuqiilOWXe6i5fEHTbkZruzO3XeQ45l
-         7GJbyCuwDyIlThzzUzTybJoScu7gTyzSjU0To4oQr68MlHnVe11Dtz4gbf5Lhx9s4prD
-         j6lJOTlDFAhH1EkUGzbh5Rx2+wUteanPVEl8jgXsIBh+SWlMzyMfwi/teVXKJAjxpMQb
-         1cDzU+MjvBLoMe4ZZ8sBGKCmbZ01EWjJ+3POl9kD0Yke/dwOuivH30Pop1olpTI4WYVR
-         pizSl2JmPjWA0qBv/GsNM8Q+jRzPMKT8ujMhQwl9tRPaEH7KzDNg4uC+OhH6cC6NqDgX
-         EP9g==
-X-Gm-Message-State: APzg51BL3qOtzpwkGdK3BWgsVXL5RzS80NWU8WkAghDGu+4dxaJI9mrE
-        gELKgH5AuyAzb/glAuW6eik=
-X-Google-Smtp-Source: ANB0Vdb9DkP04QlYNvBTmF+Vb1R8zDJhWJFa3iBS682MG722+cGaWfjaeULl6avB3XudNj1o4Ssx9A==
-X-Received: by 2002:a5d:674d:: with SMTP id l13-v6mr30090629wrw.197.1537389619624;
-        Wed, 19 Sep 2018 13:40:19 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:85c0:57c8:32db:916d:97a2:c4eb])
-        by smtp.gmail.com with ESMTPSA id b10-v6sm18013637wrr.88.2018.09.19.13.40.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jKB08lIJM62TjYoXl+fj9q55SEJkhZHMNyRpQLYb2H0=;
+        b=GTe1D90oX01K/YG0dKW6odX+fPGNbaJz++2dQDVcmcrTbfBSHEpsS5AGBwWBXnzYE9
+         nbcoVrGpy/uPJ39l3iiIcey26H+WZrfWGRcKQv3kUhBtB0KkuLp4nBdmcIlmFHXv6PCh
+         MMbZgNjeCYz+45ts93GLsbXX+uRtAxXw1S1+TVRKAJtNkBPPmU2VHb0Mw6WbwMKYmK9Q
+         lkmKZQY96kyO+VWtYh2L/LNKw9RH1aECOmLhB9CBcPQFn24/RmYEo/mM1H4+28BhE4j5
+         /h1qo4ku2W4MZhz7UkLefpxe46BmJgcgLrWoD43MSDE4hz3P4OaAJiHRVodhpLirHm+O
+         /0Kw==
+X-Gm-Message-State: APzg51BU5k5usDd53/3962v3FpQcmZBPF94jHMuCbEasRK6/+LI4RLwF
+        e/NJrT2+93HB2T6MtTy85KFgiQ==
+X-Google-Smtp-Source: ANB0VdYAsQJdqFAD7t4KwGcRNZh1zUCSLJ/t2s+Qo1PK9ABK5UV8gxokmCnmt8A8PosiUDL5/iwJjQ==
+X-Received: by 2002:a25:9847:: with SMTP id k7-v6mr7635589ybo.255.1537389627973;
+        Wed, 19 Sep 2018 13:40:27 -0700 (PDT)
+Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id j66-v6sm2602989ywc.61.2018.09.19.13.40.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 13:40:19 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/4] staging: rtl8188eu: clean function definitions - style
-Date:   Wed, 19 Sep 2018 22:40:01 +0200
-Message-Id: <20180919204001.2358-4-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180919204001.2358-1-straube.linux@gmail.com>
-References: <20180919204001.2358-1-straube.linux@gmail.com>
+        Wed, 19 Sep 2018 13:40:27 -0700 (PDT)
+From:   Sean Paul <sean@poorly.run>
+To:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [PATCH 1/2] MAINTAINERS: Move udl drm driver to drm-misc tree
+Date:   Wed, 19 Sep 2018 16:39:57 -0400
+Message-Id: <20180919204026.3217-1-sean@poorly.run>
+X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,41 +77,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not line break function definitions where not needed and
-move the return type to the same line.
+From: Sean Paul <seanpaul@chromium.org>
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Move udl maintenance into drm-misc tree. I've also signed up to be a
+reviewer, but have kept it at "Odd Fixes" level of support.
+
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-index 5fc346a285c2..d95940485126 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-@@ -240,8 +240,7 @@ s32 InitLLTTable(struct adapter *padapter, u8 txpktbuf_bndy)
- 	return status;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d9068ed4ee5..ba1dbb8735b8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4720,8 +4720,11 @@ F:	drivers/gpu/drm/tdfx/
  
--void
--Hal_InitPGData88E(struct adapter *padapter)
-+void Hal_InitPGData88E(struct adapter *padapter)
- {
- 	struct eeprom_priv *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
+ DRM DRIVER FOR USB DISPLAYLINK VIDEO ADAPTERS
+ M:	Dave Airlie <airlied@redhat.com>
++R:	Sean Paul <sean@poorly.run>
++L:	dri-devel@lists.freedesktop.org
+ S:	Odd Fixes
+ F:	drivers/gpu/drm/udl/
++T:	git git://anongit.freedesktop.org/drm/drm-misc
  
-@@ -258,11 +257,7 @@ Hal_InitPGData88E(struct adapter *padapter)
- 	}
- }
- 
--void
--Hal_EfuseParseIDCode88E(
--		struct adapter *padapter,
--		u8 *hwinfo
--	)
-+void Hal_EfuseParseIDCode88E(struct adapter *padapter, u8 *hwinfo)
- {
- 	struct eeprom_priv *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
- 	u16			EEPROMId;
+ DRM DRIVER FOR VMWARE VIRTUAL GPU
+ M:	"VMware Graphics" <linux-graphics-maintainer@vmware.com>
 -- 
-2.19.0
+Sean Paul, Software Engineer, Google / Chromium OS
 
