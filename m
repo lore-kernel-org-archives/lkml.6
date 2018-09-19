@@ -7,61 +7,60 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94407ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA78ECE565
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AADE2154D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3ECC2154E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="BOrkhkg6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AADE2154D
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="FUo4oRF6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3ECC2154E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732760AbeITCab (ORCPT
+        id S1732829AbeITCac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:30:31 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35945 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732336AbeITCa3 (ORCPT
+        Wed, 19 Sep 2018 22:30:32 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34103 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732736AbeITCab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:30:29 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f4-v6so6046611edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:49 -0700 (PDT)
+        Wed, 19 Sep 2018 22:30:31 -0400
+Received: by mail-ed1-f66.google.com with SMTP id u1-v6so6052871eds.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PQ4JZILf1wPuiGcYuzRMQXBJWimKQO+nHWv+GPkcK2A=;
-        b=BOrkhkg6srttMHh8viMt1I07BhwLwtU170hEzjUXLacCyz8+edIzXxwjS7g40sOYcT
-         qT3xgjMNN9fM4iEBUChIKLhG2cRp1RnXGfnYlF0uVlZGyb448oPoK3vZzgmIOXM093WM
-         5X2QEzWoPtudKa6CGxSFAgiJkT2u1Ow4swSJHk7bKkG3+EwTIiDH56Qxg00vmbL34AzB
-         GM/C+j2gEooTJYkJboHgVBg+CRtsi7u0ZSJ8MZppDOgCfXsdb2ZCIsYPwSOwhzhL4eN0
-         TaWVizIs4vR1zRYIi/kzq1mCFo2Nzc2+dJgYbNph4VeI4m6m2unnm9kYBhh4SP52W562
-         2ClA==
+        bh=am+xBk+R/9bruvmNQKPUrS/iZOmfupXPVgm7mOIjt2g=;
+        b=FUo4oRF6ovk5j4s4ara7NOXSVcQu9YisGWLibUOwPWpu34BUaSx1s83uoIUFMW6Tai
+         iwlrrSUcA+fRA0U8G2nY8xaAXyhTklz3BvzC8gxH0/FbZaBd5DXoS2AriIuwxrUCO3z1
+         RAGXn5bievUWDBTdJ99IECCnBNxfLm9AO7o8FIgIq4WCSebUlHNpo5uLv4xv1N6PIcZH
+         /byYgRRBZVVwVY0WXWbYJPRsxxpkztFJd4OMqDg2KGKKnB08ukKBN4+JUljxHsKy9nG0
+         rNcoU0Zsv2G7MkNJ+KCmCglRf/WlKPQGRVLNT12MfeJEHw4JdDhWCkigJ/9fMR1LIH+6
+         LnKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PQ4JZILf1wPuiGcYuzRMQXBJWimKQO+nHWv+GPkcK2A=;
-        b=lwT8z+HdtT1EHCrB2Wp1HufGcLPswZkZYV2ws1e4d0WhycMRU6aTdiFsE1aVIjZGYd
-         +L4EiI0TiK7LOZLxSIDQwiiR4cHDgFyiFQKIcEKN1w3G7ZenItgLn4z3Aa+aLx+9dUf4
-         B1/mpUsO/5Oids1rfMiTj3QDnhfjtjoQtObaD4dmT5G7FxAN+AKela0Akw7/avbWC6zs
-         braZ+2LiCKEZdRs7zQlfZxit4yV2jdBOtQ/Ttctn3yoxPian2sEbtJMR80i3G7v2SINb
-         1mYebe9pGwXHmoCVetpblgg9n2Ik7KITDvYZFzvh17B+bXir82cHfUGpzOJPlQQaC6cA
-         Kwrw==
-X-Gm-Message-State: APzg51CUjTYo8qB4N6vUXIfTb8FI5G3ss5iYCWOai7/6kGf0RDLCpuNu
-        6pvDs8xeL5HG2ZSIHrhNlk5XJHaM4tU=
-X-Google-Smtp-Source: ANB0VdajzB/0I56gYueALXPtqSYTP7pm4NsfjiUxDEV6FIrUXm8GvjUoro46WqnqIhPewEAa1WYgjg==
-X-Received: by 2002:a50:f297:: with SMTP id f23-v6mr61787971edm.40.1537390248054;
-        Wed, 19 Sep 2018 13:50:48 -0700 (PDT)
+        bh=am+xBk+R/9bruvmNQKPUrS/iZOmfupXPVgm7mOIjt2g=;
+        b=l0nycTTSpBZyTUvdnIlZqpdOfkDmgpHjEWDNOl/kdFRYL+6sh96Ncyju+qqsSgRKH3
+         kAhG5zbxf9rk1PJk/3LjH45mYlj+MvYEZxhPBznU5qIn253zza3hkawILn/aPHT6Nstu
+         Hl1Ne/yiqbo3crEtoXhmQLesNxZw65D9ejw5aEb+MgKb6gTkaJHpwuXkbi6bUwkSensg
+         a6+IVXs85gBAUpswue2CkowFjPveV0Ac44ZBL1DmqcV7nKuuw7ubGB5b3Su8YXqxN9FP
+         D6lFjlQEP0qils90H78Gi9qZ5OUgdFqoU5YUzPcAiGnTKC3hftSMf/54wQV8I3bOUozT
+         OhSQ==
+X-Gm-Message-State: APzg51CYtB3rN3nuU0kFOumr3ZKZU/Ql+7tZepPbxgNQU8lOD7f0PN9m
+        /TpIx0qHY0jltJBXczbQuEGG4eC8+lQ=
+X-Google-Smtp-Source: ANB0VdZWZ4HB1UsR1BYWju0GQLDl2tZx+LtW1PHkqjyILHKiI8+b2D/p5hkRR0581SgW+TwPhh39ZQ==
+X-Received: by 2002:aa7:cb56:: with SMTP id w22-v6mr61029561edt.202.1537390251117;
+        Wed, 19 Sep 2018 13:50:51 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.46
+        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 13:50:47 -0700 (PDT)
+        Wed, 19 Sep 2018 13:50:50 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
         Andrei Vagin <avagin@openvz.org>,
@@ -76,9 +75,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [RFC 06/20] kernel: Take into account timens clock offsets in clock_nanosleep
-Date:   Wed, 19 Sep 2018 21:50:23 +0100
-Message-Id: <20180919205037.9574-7-dima@arista.com>
+Subject: [RFC 08/20] x86/vdso: Restrict splitting vvar vma
+Date:   Wed, 19 Sep 2018 21:50:25 +0100
+Message-Id: <20180919205037.9574-9-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180919205037.9574-1-dima@arista.com>
 References: <20180919205037.9574-1-dima@arista.com>
@@ -87,45 +86,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+As offsets differ between time namespaces, we will need to flush vvar
+mapping for timens page during setns(), unshare(), clone(NEW_TIME).
+Forcing userspace to mremap() either all vvar or nothing and the same
+for munmap() will simplify searching for timens page to flush.
 
-Wire up clock_nanosleep to timens offsets.
-
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- kernel/time/hrtimer.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/entry/vdso/vma.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index e1a549c9e399..4fe80c1325b2 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -51,6 +51,7 @@
- #include <linux/timer.h>
- #include <linux/freezer.h>
- #include <linux/compat.h>
-+#include <linux/time_namespace.h>
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index 5b8b556dbb12..8cc0395687b0 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -84,6 +84,18 @@ static int vdso_mremap(const struct vm_special_mapping *sm,
+ 	return 0;
+ }
  
- #include <linux/uaccess.h>
- 
-@@ -1730,9 +1731,16 @@ long hrtimer_nanosleep(const struct timespec64 *rqtp,
- {
- 	struct restart_block *restart;
- 	struct hrtimer_sleeper t;
-+	struct timespec64 tp;
- 	int ret = 0;
- 	u64 slack;
- 
-+	if (!(mode & HRTIMER_MODE_REL)) {
-+		tp = *rqtp;
-+		rqtp = &tp;
-+		timens_clock_to_host(clockid, &tp);
-+	}
++static int vvar_mremap(const struct vm_special_mapping *sm,
++		struct vm_area_struct *new_vma)
++{
++	unsigned long new_size = new_vma->vm_end - new_vma->vm_start;
++	const struct vdso_image *image = current->mm->context.vdso_image;
 +
- 	slack = current->timer_slack_ns;
- 	if (dl_task(current) || rt_task(current))
- 		slack = 0;
++	if (new_size != -image->sym_vvar_start)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static int vvar_fault(const struct vm_special_mapping *sm,
+ 		      struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
+@@ -142,6 +154,7 @@ static const struct vm_special_mapping vdso_mapping = {
+ static const struct vm_special_mapping vvar_mapping = {
+ 	.name = "[vvar]",
+ 	.fault = vvar_fault,
++	.mremap = vvar_mremap,
+ };
+ 
+ /*
 -- 
 2.13.6
 
