@@ -2,436 +2,140 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8699ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADDAC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8D220877
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:44:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NFG4txY3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8D220877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B00620877
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B00620877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732129AbeISUXK (ORCPT
+        id S1732194AbeISUXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:23:10 -0400
-Received: from mail.efficios.com ([167.114.142.138]:39020 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730986AbeISUXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:23:10 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8BB9323EF7A;
-        Wed, 19 Sep 2018 10:44:51 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id O_gev6igkpxo; Wed, 19 Sep 2018 10:44:50 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B3DC523EF77;
-        Wed, 19 Sep 2018 10:44:50 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B3DC523EF77
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1537368290;
-        bh=52p0isLp0XuhJD9DXl94rYS7j82OZmG12cO820lMb9Y=;
-        h=From:To:Date:Message-Id;
-        b=NFG4txY3e0bzJGnJ5ETK5c1szfC/pV8aVdjhfQhtq45bTDYgR7g3i26rAprznUEyF
-         9XTEk88EKfCpHiRPA926fTnKwikXvfTig0hrq/B0grPovA5XejUj7vVaYkLx5dTmh/
-         dUp/VnIazfbWu7nte0hnrXadbqI8C2rvfnEFcWWSZ21gscKTOBp1FCcInl3oZw70tL
-         5hBwJo3fjd46Nfm7Ly+VSKGxCaMmbb1IuBVQpRrfCJ4y8oR6aptI/SsJzkzmooZufn
-         5MhIUiIo8jwv1OIn+tYre3q9ELByHZqy/zf0LzOoLkfJXkmtghj602BCXBCgpa77CQ
-         dcKNXdyBp1JrA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id tU7xNnh7Viup; Wed, 19 Sep 2018 10:44:50 -0400 (EDT)
-Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 6806C23EF72;
-        Wed, 19 Sep 2018 10:44:50 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        libc-alpha@sourceware.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init and thread creation
-Date:   Wed, 19 Sep 2018 10:44:38 -0400
-Message-Id: <20180919144438.1066-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 19 Sep 2018 16:23:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62082 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730986AbeISUXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:23:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 07:44:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
+   d="scan'208";a="81693516"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.132]) ([10.122.105.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Sep 2018 07:44:54 -0700
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+Date:   Wed, 19 Sep 2018 09:47:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a rough prototype registering rseq(2) TLS for each thread
-(including main), and unregistering for each thread (excluding
-main). "rseq" stands for Restartable Sequences.
+Hi,
 
-Things to consider:
+On 09/16/2018 08:24 AM, A.s. Dong wrote:
+> Ping again
+> 
+>> -----Original Message-----
+>> From: A.s. Dong
+>> Sent: Thursday, September 6, 2018 11:23 AM
+>> To: linux-clk@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+>> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+>> hdegoede@redhat.com
+>> Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>>
+>> Gently ping...
+>>
+>>> -----Original Message-----
+>>> From: A.s. Dong
+>>> Sent: Friday, August 31, 2018 12:46 PM
+>>> To: linux-clk@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org;
+>>> linux-arm-kernel@lists.infradead.org;
+>>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+>>> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+>>> hdegoede@redhat.com; A.s. Dong <aisheng.dong@nxp.com>
+>>> Subject: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>>>
+>>> This patch series is a continue of discussion from here,
+>>> https://patchwork.kernel.org/patch/9986293/
+>>> that some users may want to handle all available clocks from device
+>>> tree without need to know the detailed clock information likes clock
+>>> numbers and names. This is useful in writing some generic drivers to handle
+>> clock part.
+>>>
+>>> Note:
+>>> This patch series is tested on MX6Q SDB cpufreq driver with a minor
+>>> change to switch to use clk_bulk_get_all.
+>>> But patch 4 only test compiling. Hopefully someone could help test the
+>>> function.
+>>>
+>>> v3->v4:
+>>>   * improve 'devres->clks = *clks' according to Stephen's suggestion
+>>> v2->v3:
+>>>   * address all comments from Stephen
+>>>   * fix build warnings on other architectures.
+>>> v1->v2:
+>>>   * add clk_bulk_{get|put}_all() which only supports DT platform
+>>> currently
+>>>   * remove _all variants and the wrapper struct clk_bulk
+>>>   * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+>>>     proves they need it because they don't have a struct device pointer.
+>>>
+>>> Dong Aisheng (4):
+>>>    clk: bulk: add of_clk_bulk_get()
+>>>    clk: add new APIs to operate on all available clocks
+>>>    clk: add managed version of clk_bulk_get_all
+>>>    video: simplefb: switch to use clk_bulk API to simplify clock
+>>>      operations
+>>>
+>>>   drivers/clk/clk-bulk.c         | 80
+>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/clk-devres.c       | 24 +++++++++++++
+>>>   drivers/video/fbdev/simplefb.c | 72 ++++++++++---------------------------
+>>>   include/linux/clk.h            | 65
+>>> +++++++++++++++++++++++++++++++++-
+>>>   4 files changed, 186 insertions(+), 55 deletions(-)
+>>>
+>>> --
+>>> 2.7.4
+> 
+Just checking on the status of this patch. The clock routines (patches 
+1-3) are useful for one of my drivers but if they aren't accepted or 
+will take a long time to be accepted, I'll need to refactor my driver.
 
-- Move __rseq_refcount to an extra field at the end of __rseq_abi to
-  eliminate one symbol. This would require to wrap struct rseq into
-  e.g. struct rseq_lib or such, e.g.:
+Thanks,
 
-struct rseq_lib {
-  struct rseq kabi;
-  int refcount;
-};
-
-All libraries/programs which try to register rseq (glibc, early-adopter
-applications, early-adopter libraries) should use the rseq refcount.
-It becomes part of the ABI within a user-space process, but it's not
-part of the ABI shared with the kernel per se.
-
-- Restructure how this code is organized so glibc keeps building on
-  non-Linux targets.
-
-- We do not need an atomic increment/decrement for the refcount per
-  se. Just being atomic with respect to the current thread (and nested
-  signals) would be enough. What is the proper API to use there ?
-  Should we expose struct rseq_lib in a public glibc header ? Should
-  we create a rseq(3) man page ?
-
-- Revisit use of "weak" symbol for __rseq_abi in glibc. Perhaps we
-  want a non-weak symbol there ? (and let all other early user
-  libraries use weak)
-
-- Should we pull linux/rseq.h from the Linux kernel into the glibc
-  tree or keep a dependency on installed kernel headers ?
-
-- I plan to host a librseq library containing mostly helper headers
-  that vastly simplify using rseq. It will contain a librseq.so
-  which provides an API to explicitly register rseq to the
-  kernel (for early adopters). The refcounting mechanism in the TLS
-  would be used to ensure combining librseq.so and libc.so.6 with rseq
-  support works fine.
-
-- How early do we want to register rseq and how late do we want to
-  unregister it ? It's important to consider if we expect rseq to
-  be used by the memory allocator and within destructor callbacks.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: libc-alpha@sourceware.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
----
- nptl/Versions                  |   1 +
- nptl/nptl-init.c               |   3 +
- nptl/pthreadP.h                |  45 ++++++++++
- nptl/pthread_create.c          |  15 ++++
- sysdeps/unix/sysv/linux/rseq.h | 147 +++++++++++++++++++++++++++++++++
- 5 files changed, 211 insertions(+)
- create mode 100644 sysdeps/unix/sysv/linux/rseq.h
-
-diff --git a/nptl/Versions b/nptl/Versions
-index e7f691da7a..7316c2815d 100644
---- a/nptl/Versions
-+++ b/nptl/Versions
-@@ -275,6 +275,7 @@ libpthread {
-     mtx_init; mtx_lock; mtx_timedlock; mtx_trylock; mtx_unlock; mtx_destroy;
-     call_once; cnd_broadcast; cnd_destroy; cnd_init; cnd_signal;
-     cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
-+    __rseq_abi; __rseq_refcount;
-   }
- 
-   GLIBC_PRIVATE {
-diff --git a/nptl/nptl-init.c b/nptl/nptl-init.c
-index 907411d5bc..0c056c3fce 100644
---- a/nptl/nptl-init.c
-+++ b/nptl/nptl-init.c
-@@ -431,6 +431,9 @@ __pthread_initialize_minimal_internal (void)
- 
-   /* Determine whether the machine is SMP or not.  */
-   __is_smp = is_smp_system ();
-+
-+    /* Register rseq ABI to the kernel. */
-+  (void) rseq_register_current_thread();
- }
- strong_alias (__pthread_initialize_minimal_internal,
- 	      __pthread_initialize_minimal)
-diff --git a/nptl/pthreadP.h b/nptl/pthreadP.h
-index 13bdb11133..94f54c630e 100644
---- a/nptl/pthreadP.h
-+++ b/nptl/pthreadP.h
-@@ -33,6 +33,8 @@
- #include <kernel-features.h>
- #include <errno.h>
- #include <internal-signals.h>
-+//TODO: fix sysdeps include to make it portable to non-Linux systems.
-+#include <sysdeps/unix/sysv/linux/rseq.h>
- 
- 
- /* Atomic operations on TLS memory.  */
-@@ -660,4 +662,47 @@ check_stacksize_attr (size_t st)
- 		  "offset of " #member " field of " #type " != "	\
- 		  ASSERT_PTHREAD_STRING (offset))
- 
-+//TODO: we may want to move the rseq code to a linux sysdeps file.
-+#define RSEQ_SIG 0x53053053
-+
-+extern __thread volatile struct rseq __rseq_abi;
-+extern __thread volatile int __rseq_refcount;
-+
-+static inline int
-+rseq_register_current_thread (void)
-+{
-+  int rc, ret = 0;
-+  INTERNAL_SYSCALL_DECL (err);
-+
-+  if (atomic_increment_val(&__rseq_refcount) - 1)
-+    goto end;
-+  rc = INTERNAL_SYSCALL_CALL(rseq, err, &__rseq_abi, sizeof(struct rseq),
-+                             0, RSEQ_SIG);
-+  if (!rc)
-+    goto end;
-+  if (INTERNAL_SYSCALL_ERRNO(rc, err) != EBUSY)
-+    __rseq_abi.cpu_id = -2;
-+  ret = -1;
-+  atomic_decrement(&__rseq_refcount);
-+end:
-+  return ret;
-+}
-+
-+static inline int
-+rseq_unregister_current_thread (void)
-+{
-+  int rc, ret = 0;
-+  INTERNAL_SYSCALL_DECL (err);
-+
-+  if (atomic_decrement_val(&__rseq_refcount))
-+    goto end;
-+  rc = INTERNAL_SYSCALL_CALL(rseq, err, &__rseq_abi, sizeof(struct rseq),
-+                             RSEQ_FLAG_UNREGISTER, RSEQ_SIG);
-+  if (!rc)
-+    goto end;
-+  ret = -1;
-+end:
-+  return ret;
-+}
-+
- #endif	/* pthreadP.h */
-diff --git a/nptl/pthread_create.c b/nptl/pthread_create.c
-index fe75d04113..20ee197d94 100644
---- a/nptl/pthread_create.c
-+++ b/nptl/pthread_create.c
-@@ -52,6 +52,13 @@ static struct pthread *__nptl_last_event __attribute_used__;
- /* Number of threads running.  */
- unsigned int __nptl_nthreads = 1;
- 
-+__attribute__((weak, tls_model("initial-exec"))) __thread
-+volatile struct rseq __rseq_abi = {
-+	.cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
-+};
-+
-+__attribute__((weak, tls_model("initial-exec"))) __thread
-+volatile int __rseq_refcount;
- 
- /* Code to allocate and deallocate a stack.  */
- #include "allocatestack.c"
-@@ -378,6 +385,7 @@ __free_tcb (struct pthread *pd)
- START_THREAD_DEFN
- {
-   struct pthread *pd = START_THREAD_SELF;
-+  bool has_rseq = false;
- 
- #if HP_TIMING_AVAIL
-   /* Remember the time when the thread was started.  */
-@@ -445,6 +453,9 @@ START_THREAD_DEFN
-   unwind_buf.priv.data.prev = NULL;
-   unwind_buf.priv.data.cleanup = NULL;
- 
-+  /* Register rseq TLS to the kernel. */
-+  has_rseq = !rseq_register_current_thread();
-+
-   if (__glibc_likely (! not_first_call))
-     {
-       /* Store the new cleanup handler info.  */
-@@ -487,6 +498,10 @@ START_THREAD_DEFN
-       THREAD_SETMEM (pd, result, ret);
-     }
- 
-+  /* Unregister rseq TLS from kernel. */
-+  if (has_rseq && rseq_unregister_current_thread())
-+    abort();
-+
-   /* Call destructors for the thread_local TLS variables.  */
- #ifndef SHARED
-   if (&__call_tls_dtors != NULL)
-diff --git a/sysdeps/unix/sysv/linux/rseq.h b/sysdeps/unix/sysv/linux/rseq.h
-new file mode 100644
-index 0000000000..9a402fdb60
---- /dev/null
-+++ b/sysdeps/unix/sysv/linux/rseq.h
-@@ -0,0 +1,147 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_RSEQ_H
-+#define _UAPI_LINUX_RSEQ_H
-+
-+/*
-+ * linux/rseq.h
-+ *
-+ * Restartable sequences system call API
-+ *
-+ * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ */
-+
-+#include <linux/types.h>
-+#include <asm/byteorder.h>
-+
-+enum rseq_cpu_id_state {
-+	RSEQ_CPU_ID_UNINITIALIZED		= -1,
-+	RSEQ_CPU_ID_REGISTRATION_FAILED		= -2,
-+};
-+
-+enum rseq_flags {
-+	RSEQ_FLAG_UNREGISTER = (1 << 0),
-+};
-+
-+enum rseq_cs_flags_bit {
-+	RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT	= 0,
-+	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT	= 1,
-+	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT	= 2,
-+};
-+
-+enum rseq_cs_flags {
-+	RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT	=
-+		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT),
-+	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL	=
-+		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT),
-+	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE	=
-+		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT),
-+};
-+
-+/*
-+ * struct rseq_cs is aligned on 4 * 8 bytes to ensure it is always
-+ * contained within a single cache-line. It is usually declared as
-+ * link-time constant data.
-+ */
-+struct rseq_cs {
-+	/* Version of this structure. */
-+	__u32 version;
-+	/* enum rseq_cs_flags */
-+	__u32 flags;
-+	__u64 start_ip;
-+	/* Offset from start_ip. */
-+	__u64 post_commit_offset;
-+	__u64 abort_ip;
-+} __attribute__((aligned(4 * sizeof(__u64))));
-+
-+/*
-+ * struct rseq is aligned on 4 * 8 bytes to ensure it is always
-+ * contained within a single cache-line.
-+ *
-+ * A single struct rseq per thread is allowed.
-+ */
-+struct rseq {
-+	/*
-+	 * Restartable sequences cpu_id_start field. Updated by the
-+	 * kernel. Read by user-space with single-copy atomicity
-+	 * semantics. This field should only be read by the thread which
-+	 * registered this data structure. Aligned on 32-bit. Always
-+	 * contains a value in the range of possible CPUs, although the
-+	 * value may not be the actual current CPU (e.g. if rseq is not
-+	 * initialized). This CPU number value should always be compared
-+	 * against the value of the cpu_id field before performing a rseq
-+	 * commit or returning a value read from a data structure indexed
-+	 * using the cpu_id_start value.
-+	 */
-+	__u32 cpu_id_start;
-+	/*
-+	 * Restartable sequences cpu_id field. Updated by the kernel.
-+	 * Read by user-space with single-copy atomicity semantics. This
-+	 * field should only be read by the thread which registered this
-+	 * data structure. Aligned on 32-bit. Values
-+	 * RSEQ_CPU_ID_UNINITIALIZED and RSEQ_CPU_ID_REGISTRATION_FAILED
-+	 * have a special semantic: the former means "rseq uninitialized",
-+	 * and latter means "rseq initialization failed". This value is
-+	 * meant to be read within rseq critical sections and compared
-+	 * with the cpu_id_start value previously read, before performing
-+	 * the commit instruction, or read and compared with the
-+	 * cpu_id_start value before returning a value loaded from a data
-+	 * structure indexed using the cpu_id_start value.
-+	 */
-+	__u32 cpu_id;
-+	/*
-+	 * Restartable sequences rseq_cs field.
-+	 *
-+	 * Contains NULL when no critical section is active for the current
-+	 * thread, or holds a pointer to the currently active struct rseq_cs.
-+	 *
-+	 * Updated by user-space, which sets the address of the currently
-+	 * active rseq_cs at the beginning of assembly instruction sequence
-+	 * block, and set to NULL by the kernel when it restarts an assembly
-+	 * instruction sequence block, as well as when the kernel detects that
-+	 * it is preempting or delivering a signal outside of the range
-+	 * targeted by the rseq_cs. Also needs to be set to NULL by user-space
-+	 * before reclaiming memory that contains the targeted struct rseq_cs.
-+	 *
-+	 * Read and set by the kernel. Set by user-space with single-copy
-+	 * atomicity semantics. This field should only be updated by the
-+	 * thread which registered this data structure. Aligned on 64-bit.
-+	 */
-+	union {
-+		__u64 ptr64;
-+#ifdef __LP64__
-+		__u64 ptr;
-+#else
-+		struct {
-+#if (defined(__BYTE_ORDER) && (__BYTE_ORDER == __BIG_ENDIAN)) || defined(__BIG_ENDIAN)
-+			__u32 padding;		/* Initialized to zero. */
-+			__u32 ptr32;
-+#else /* LITTLE */
-+			__u32 ptr32;
-+			__u32 padding;		/* Initialized to zero. */
-+#endif /* ENDIAN */
-+		} ptr;
-+#endif
-+	} rseq_cs;
-+
-+	/*
-+	 * Restartable sequences flags field.
-+	 *
-+	 * This field should only be updated by the thread which
-+	 * registered this data structure. Read by the kernel.
-+	 * Mainly used for single-stepping through rseq critical sections
-+	 * with debuggers.
-+	 *
-+	 * - RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-+	 *     Inhibit instruction sequence block restart on preemption
-+	 *     for this thread.
-+	 * - RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-+	 *     Inhibit instruction sequence block restart on signal
-+	 *     delivery for this thread.
-+	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
-+	 *     Inhibit instruction sequence block restart on migration for
-+	 *     this thread.
-+	 */
-+	__u32 flags;
-+} __attribute__((aligned(4 * sizeof(__u64))));
-+
-+#endif /* _UAPI_LINUX_RSEQ_H */
--- 
-2.17.1
-
+Thor
