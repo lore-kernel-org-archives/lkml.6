@@ -2,109 +2,136 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641E4ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CE4C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1858F2150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1858F2150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DCA8B2098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA8B2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731271AbeISQJL (ORCPT
+        id S1731231AbeISQKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 12:09:11 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40678 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbeISQJL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:09:11 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l202-v6so4610323oig.7;
-        Wed, 19 Sep 2018 03:31:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t80l66fIKlf3lFTqenjvPD6QDjQXcdP3r4ln+OMnII4=;
-        b=b43HmdH9YUXEP/Dq0Od7FGwncfvk8OFhtVmagOjxbxvelBrnvDjdL9C0Ibi194YD3A
-         888+Tzo5nYJsvZkCRd0by09YMutZhOZ7C+ewB/mj6tm6qB0ChSNESnE5y3c4Z8oJaxy+
-         KVGJqvuUiYz411gaSKkCtMZEJXE4eCGV2MqSH9p7D+Cg9V82Jxs7KZQve+m96rU7H7Ls
-         BcNOKAIQ0sQ1MgSI7Kab5yoCwVwdowRY0npd8GS7wioQISNyK1f2xOh53b5aEASGw5UU
-         brOFxLT5ik0Gf9LiH58DST/vMUcpB5I1Nk1E9dHa/R7JYNbX48tk/MB9ZoMRYf5vOi0I
-         rYrA==
-X-Gm-Message-State: APzg51AuUAmaI79RdHW9hKY1XroXwVEmbwhkPxuYOVDdsFkQHBxsysNn
-        z9VhZc8XTwK2ebRoNXyjbdksNyLu4TETOMH51yY=
-X-Google-Smtp-Source: ANB0VdYrAqhElR1c+gY4chdLxBgTHTc6996CbOZzkyh3GwWU377J2nDY7/hplc/SKtqVj1AtuIy2Tl0z/mbXbm/Y24Y=
-X-Received: by 2002:aca:4141:: with SMTP id o62-v6mr1258325oia.24.1537353114216;
- Wed, 19 Sep 2018 03:31:54 -0700 (PDT)
+        Wed, 19 Sep 2018 12:10:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12619 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728059AbeISQKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 12:10:14 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 518EEB4AD4F4B;
+        Wed, 19 Sep 2018 18:32:54 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 18:32:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <michal.simek@xilinx.com>,
+        <anirudh@xilinx.com>, <John.Linn@xilinx.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: toshiba: fix return type of ndo_start_xmit function
+Date:   Wed, 19 Sep 2018 18:32:39 +0800
+Message-ID: <20180919103240.27708-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <cover.1537275915.git.yu.c.chen@intel.com> <ec80ac5b3ef0505e4f4786c4ed1e4f88a7770f12.1537275915.git.yu.c.chen@intel.com>
-In-Reply-To: <ec80ac5b3ef0505e4f4786c4ed1e4f88a7770f12.1537275915.git.yu.c.chen@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 19 Sep 2018 12:31:42 +0200
-Message-ID: <CAJZ5v0jHZDCqCS=rT2G1Vx4Q1xH52TtJWurH_5Y4mVM=M=BRYQ@mail.gmail.com>
-Subject: Re: [PATCH 05/12][RFC v3] x86-32, hibernate: Enable
- CONFIG_ARCH_HIBERNATION_HEADER set on 32bit system
-To:     "Chen, Yu C" <yu.c.chen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        kookoo.gu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 9:32 AM Chen Yu <yu.c.chen@intel.com> wrote:
->
-> From: Zhimin Gu <kookoo.gu@intel.com>
->
-> Enable CONFIG_ARCH_HIBERNATION_HEADER for 32bit system so that
-> md5 check is enabled and prepare for relocated code executing
-> and jump address mapping.
->
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> ---
->  arch/x86/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1a0be022f91d..e8de5de1057f 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2422,7 +2422,7 @@ menu "Power management and ACPI options"
->
->  config ARCH_HIBERNATION_HEADER
->         def_bool y
-> -       depends on X86_64 && HIBERNATION
-> +       depends on HIBERNATION
->
->  source "kernel/power/Kconfig"
->
-> --
+The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+which is a typedef for an enum type, so make sure the implementation in
+this driver has returns 'netdev_tx_t' value, and change the function
+return type to netdev_tx_t.
 
-In this patch, in addition to the above, I would start moving the code
-in hibernate.c that you want to be common in the end out of #ifdef
-CONFIG_X86_64 blocks.
+Found by coccinelle.
 
-To start with, that would be the checksum handling code and the parts
-of arch_hibernation_header_save/restore() that refer to it and the
-"magic" value.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/toshiba/ps3_gelic_net.c | 4 ++--
+ drivers/net/ethernet/toshiba/ps3_gelic_net.h | 2 +-
+ drivers/net/ethernet/toshiba/spider_net.c    | 4 ++--
+ drivers/net/ethernet/toshiba/tc35815.c       | 6 ++++--
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-I would continue doing that in the subsequent patches to make it
-easier to follow which pieces of code start to be used on 32-bit after
-each patch.  The impact of each patch would be more clear this way
-IMO.
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+index 88d74ae..75237c8 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
+@@ -845,9 +845,9 @@ static int gelic_card_kick_txdma(struct gelic_card *card,
+  * @skb: packet to send out
+  * @netdev: interface device structure
+  *
+- * returns 0 on success, <0 on failure
++ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
+  */
+-int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
++netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct gelic_card *card = netdev_card(netdev);
+ 	struct gelic_descr *descr;
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+index 003d045..fbbf9b5 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
+@@ -370,7 +370,7 @@ static inline void udbg_shutdown_ps3gelic(void) {}
+ void gelic_card_down(struct gelic_card *card);
+ int gelic_net_open(struct net_device *netdev);
+ int gelic_net_stop(struct net_device *netdev);
+-int gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
++netdev_tx_t gelic_net_xmit(struct sk_buff *skb, struct net_device *netdev);
+ void gelic_net_set_multi(struct net_device *netdev);
+ void gelic_net_tx_timeout(struct net_device *netdev);
+ int gelic_net_setup_netdev(struct net_device *netdev, struct gelic_card *card);
+diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
+index d925b82..2341726 100644
+--- a/drivers/net/ethernet/toshiba/spider_net.c
++++ b/drivers/net/ethernet/toshiba/spider_net.c
+@@ -880,9 +880,9 @@
+  * @skb: packet to send out
+  * @netdev: interface device structure
+  *
+- * returns 0 on success, !0 on failure
++ * returns NETDEV_TX_OK on success, NETDEV_TX_BUSY on failure
+  */
+-static int
++static netdev_tx_t
+ spider_net_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	int cnt;
+diff --git a/drivers/net/ethernet/toshiba/tc35815.c b/drivers/net/ethernet/toshiba/tc35815.c
+index 7163a8d..6a71c2c 100644
+--- a/drivers/net/ethernet/toshiba/tc35815.c
++++ b/drivers/net/ethernet/toshiba/tc35815.c
+@@ -474,7 +474,8 @@ static void free_rxbuf_skb(struct pci_dev *hwdev, struct sk_buff *skb, dma_addr_
+ /* Index to functions, as function prototypes. */
+ 
+ static int	tc35815_open(struct net_device *dev);
+-static int	tc35815_send_packet(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t	tc35815_send_packet(struct sk_buff *skb,
++					    struct net_device *dev);
+ static irqreturn_t	tc35815_interrupt(int irq, void *dev_id);
+ static int	tc35815_rx(struct net_device *dev, int limit);
+ static int	tc35815_poll(struct napi_struct *napi, int budget);
+@@ -1248,7 +1249,8 @@ static void tc35815_tx_timeout(struct net_device *dev)
+  * invariant will hold if you make sure that the netif_*_queue()
+  * calls are done at the proper times.
+  */
+-static int tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t
++tc35815_send_packet(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct tc35815_local *lp = netdev_priv(dev);
+ 	struct TxFD *txfd;
+-- 
+1.8.3.1
 
-Thanks,
-Rafael
+
