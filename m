@@ -7,115 +7,95 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCD8C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5197EECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3A121523
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF012086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5FLSxsp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3A121523
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQs0j0nm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF012086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732389AbeISUEg (ORCPT
+        id S1732404AbeISUEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:04:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
+        Wed, 19 Sep 2018 16:04:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731889AbeISUEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:04:35 -0400
+        id S1731889AbeISUEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:04:37 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA0CC2151C;
-        Wed, 19 Sep 2018 14:26:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CD3621525;
+        Wed, 19 Sep 2018 14:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537367184;
-        bh=dJV3HxDMExQipUfrsJqwWqcsK3JAcra5+4h2YtkktV0=;
+        s=default; t=1537367187;
+        bh=lNdr2WIFySIi7nppYs0QPMsm2/vpwJ4AyqvOz95BBaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5FLSxsp4WVkz+t7MWsENzsB0PWZQmvhlW+qHdRXzYrz3AHMCgHeMGnePoLCr8FFY
-         u4MpMvw4HmBQHgNO5TqXoTupMqYLimx07lMdwY7DQc2/PWrjoEnVVHtOlhoYhygEBv
-         pJwJLv/xbBrQSaQMM8R8FsnGWDT9rPweEksZKflA=
+        b=tQs0j0nm0YzDF9fY64i4CSqvLx+lj/cCkw+T7OKDtr2bXUaDHmIOrw6KVfc6gqd1Z
+         L5jIg5sdfttbHOgRpwLjLGX4ZS4mvyzoieyEbOdfT+6xDaKzjgzUM+cIyLjBlKEaCK
+         HpfLnE9KE9+ZKnvAT1MbLA8gL1866uNbynNx02yY=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=A9mie=20Galarneau?= 
+        <jeremie.galarneau@efficios.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 11/13] perf util: Make copyfile_offset() global
-Date:   Wed, 19 Sep 2018 11:25:35 -0300
-Message-Id: <20180919142537.29985-12-acme@kernel.org>
+Subject: [PATCH 12/13] perf tools: Initialize perf_data_file fd field
+Date:   Wed, 19 Sep 2018 11:25:36 -0300
+Message-Id: <20180919142537.29985-13-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180919142537.29985-1-acme@kernel.org>
 References: <20180919142537.29985-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Jérémie Galarneau <jeremie.galarneau@efficios.com>
 
-It will be used outside of util object in following patches.
+Building the perf CTF converter fails with gcc 4.8.4 on Ubuntu 14.04
+with the following error:
 
-Committer note:
+  error: missing initializer for field ‘fd’ of ‘struct perf_data_file’
+  [-Werror=missing-field-initializers]
 
-We need to have the header with the definition for loff_t in util.h
-since we now use it in the copyfile_offset() signature.
+Per 4b838b0db4e9 ("perf tools: Add compression id into 'struct
+kmod_path'") and the ensuing discussion on the mailing list, it appears
+that this affects other distributions and gcc versions.
 
-Also move that prototype closer to the other copyfile_ prefixed
-functions.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Jeremie Galarneau <jeremie.galarneau@efficios.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180913125450.21342-10-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180829201648.19588-1-jeremie.galarneau@efficios.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/util.c | 2 +-
- tools/perf/util/util.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/util/data-convert-bt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
-index eac5b858a371..093352e93d50 100644
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -221,7 +221,7 @@ static int slow_copyfile(const char *from, const char *to, struct nsinfo *nsi)
- 	return err;
- }
- 
--static int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
-+int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
+diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
+index abd38abf1d91..f75d4aa612c5 100644
+--- a/tools/perf/util/data-convert-bt.c
++++ b/tools/perf/util/data-convert-bt.c
+@@ -1578,7 +1578,7 @@ int bt_convert__perf2ctf(const char *input, const char *path,
  {
- 	void *ptr;
- 	loff_t pgoff;
-diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
-index dc58254a2b69..14508ee7707a 100644
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -6,6 +6,7 @@
- /* glibc 2.20 deprecates _BSD_SOURCE in favour of _DEFAULT_SOURCE */
- #define _DEFAULT_SOURCE 1
- 
-+#include <fcntl.h>
- #include <stdbool.h>
- #include <stddef.h>
- #include <stdlib.h>
-@@ -35,6 +36,7 @@ bool lsdir_no_dot_filter(const char *name, struct dirent *d);
- int copyfile(const char *from, const char *to);
- int copyfile_mode(const char *from, const char *to, mode_t mode);
- int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi);
-+int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
- 
- ssize_t readn(int fd, void *buf, size_t n);
- ssize_t writen(int fd, const void *buf, size_t n);
+ 	struct perf_session *session;
+ 	struct perf_data data = {
+-		.file.path = input,
++		.file      = { .path = input, .fd = -1 },
+ 		.mode      = PERF_DATA_MODE_READ,
+ 		.force     = opts->force,
+ 	};
 -- 
 2.14.4
 
