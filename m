@@ -2,99 +2,77 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B428EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7B8ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A56E2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21DF72086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:33:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sEsRvpOj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A56E2086E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oMPZcim0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DF72086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732474AbeISULv (ORCPT
+        id S1732235AbeISULU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:11:51 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:38953 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731368AbeISULv (ORCPT
+        Wed, 19 Sep 2018 16:11:20 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33720 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732171AbeISULT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:11:51 -0400
-Received: by mail-qt0-f195.google.com with SMTP id o15-v6so5269209qtk.6;
-        Wed, 19 Sep 2018 07:33:38 -0700 (PDT)
+        Wed, 19 Sep 2018 16:11:19 -0400
+Received: by mail-qk1-f195.google.com with SMTP id z78-v6so3123308qka.0;
+        Wed, 19 Sep 2018 07:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2U9LikgFscV7wsdP1WxEAP/24uvqW3RQLtJ1fkoQMfI=;
-        b=sEsRvpOjeaoNFp/yHefkH+UXIKUpS7pkdxKrLhM2GU0JoXQHuuAE++Yw4y1Eu+0exb
-         02E0z4fWrWpiNi8/e0gKjNjihlCTW8xCzjVnSqrZb2OzbGbG/8zzH8Z+qKtvNF/p2J2c
-         tc1XNhVLXcUhL5RscmBnPicpjxXvRudh5yhx5IblrcOiMZzmzItwhZfyFC0G9lbhuqE2
-         Ea7S3FiYlAE/9DiUf76LKUipQAQaaa7rXSMC3KN982sx7Omk6YSDupzfstBb6sf1LzBR
-         B3YEBho0dpTSsSkPyWeUOLffqmhVJWok+eqlfG3Tbf5dQkaBr/CTjrtzN53F6p3hZvz8
-         f1Pg==
+        bh=hsaMxSOmkzqz5RAR+UryHHpliQIFDm8YiJ5EOlUllSg=;
+        b=oMPZcim0FchIxKuyIVpb/P0PO+9UWVzzvNs2JJQRmNRFglT6H+/iQJyEyLIryr7omd
+         g93lVEwi5WpPPtQSGP2X+RUkEf/n/BissfNmuQA1ivt5LGGM+qG9Yji+v6Qg0N9KBgl2
+         xAOCdjacgjvxEFTAKH4Qu5PUEuw5UciK57K1cRxCN39sZNDjwSzjOjcu03WN16q6Ctam
+         HoxSR5jUo+mfw2Eiwu6EuCnBPqUiUH1FqhtK6Br+bhd9GWo2Ez0LboC4gETCg6jU90q+
+         C+f7oStyRPylnYyU/7OvrVh53YYEtdhPFkLenxiDnHa+oPb+J4nh+/3JB3xshpxYbayi
+         nuGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2U9LikgFscV7wsdP1WxEAP/24uvqW3RQLtJ1fkoQMfI=;
-        b=q6HD53sEYMoIrpjNbVbyKT0vSyP2U8wFVnH7af9HyolVdEtWaLbe+1UgU00S5Vi9pB
-         b+aSmHzhwqvjMzOD6mxewbVjSIOvjGNzSiO4LyPGF+ffz9wd9/K44ZAUU3wMsHG/QCHB
-         DhdGtzLTXW5kD+pKmEg8hwMLO9D8NJTkQTuQ3td66Sqe/OSn2m2CuYZ3qZVFF7eWrIRU
-         yJL7Gmj2YxG816ljQDY4LwF976xIpN5pgme+/KCi62WpPz8q2sWyviPoShHYqSvbplwt
-         sgf4herJC+KdLh32h8/q3Gclh++eC4ySz3oervJUtjb46YHhkd9P8t5dTp1xySIHQ72l
-         X3hA==
-X-Gm-Message-State: APzg51CW6gmrvanngw+kPfcrsWHjHzxh7zmFQX7kc823V9+5bOQoNN+K
-        DT9WHoiLY+8MqftyOc/kgOwGto3X288=
-X-Google-Smtp-Source: ANB0VdbS9J9hdxpTX6PD2LhDAQliiRlIYYzOIvyFBMl1loDC6MGBtezEw1wSMqTLyt6Jfv1PSENkGA==
-X-Received: by 2002:a0c:8646:: with SMTP id p64-v6mr24941070qva.91.1537367617254;
-        Wed, 19 Sep 2018 07:33:37 -0700 (PDT)
+        bh=hsaMxSOmkzqz5RAR+UryHHpliQIFDm8YiJ5EOlUllSg=;
+        b=sqKel/Ia8muqn0YFrZ/aAkIjHXvW4VF+NdPj9x8fq04xuS5nL1w+M2EgvJYaHFvhL7
+         J/AOAzi/2kTOdBHTS3irS6xXmvPYzw4amHJgHEusO5w3iq0+YvETz/OlkiLl80P+YzUn
+         yh0douGhdxPay66ARQn/xptG57DiBNrGcf4pDmG7jYk3anpxtyishEzM/RkNbDt8OFrO
+         1PeSeVEfeOz9aTMop3RxSjVZBp5G+RulW4bny2aJkma57oe0xGeQaMqKucOV986+IlfC
+         TdFyI1rz7qzURLo3692legTFwOUk5wiZc2+Qd49kQIXaZSvCaW19IAwwveQufnn3Duj5
+         63xA==
+X-Gm-Message-State: APzg51BWHrJ27sjvB5oyUfCpGuY6U/6QAjkdVPijHYbYqjh1a57ZutgQ
+        b/3wszWWtS/tlz0RusUn7rcwPk+S
+X-Google-Smtp-Source: ANB0Vdbl22kgyejDpMCmfOcZOGiYeNuS5xNGwqYkihBQxRTriqLB4TUNKT+WfiPhuOcytFVp7Eg3Ug==
+X-Received: by 2002:a37:2f82:: with SMTP id v124-v6mr1083245qkh.1.1537367585298;
+        Wed, 19 Sep 2018 07:33:05 -0700 (PDT)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.33.34
+        by smtp.gmail.com with ESMTPSA id 17-v6sm2104051qkf.74.2018.09.19.07.33.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 07:33:36 -0700 (PDT)
+        Wed, 19 Sep 2018 07:33:04 -0700 (PDT)
 From:   Jim Quinlan <jim2101024@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Jim Quinlan <jim2101024@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Brian Norris <computersforpeace@gmail.com>,
         Gregory Fong <gregory.0xf0@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Stefan Agner <stefan@agner.ch>, Eric Anholt <eric@anholt.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "Dirk Hohndel (VMware)" <dirk@hohndel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 12/12] ARM: add dma remap for BrcmSTB PCIe
-Date:   Wed, 19 Sep 2018 10:32:07 -0400
-Message-Id: <1537367527-20773-13-git-send-email-jim2101024@gmail.com>
+Subject: [PATCH v5 05/12] PCI: brcmstb: add MSI capability
+Date:   Wed, 19 Sep 2018 10:32:00 -0400
+Message-Id: <1537367527-20773-6-git-send-email-jim2101024@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
 References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
@@ -103,446 +81,534 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BrcmSTB PCIe controller needs to remap DMA accesses to it because
-of the requirements of its interface with the SOC memory controllers.
-In the ARM64 and MIPs architectures, this is accomplished by
-CONFIG_ARCH_HAS_PHYS_TO_DMA=y and then defining the functions
-__dma_to_phys() and __phys_to_dma() accordingly.
+This commit adds MSI to the Broadcom STB PCIe host controller. It does
+not add MSIX since that functionality is not in the HW.  The MSI
+controller is physically located within the PCIe block, however, there
+is no reason why the MSI controller could not be moved elsewhere in
+the future.
 
-Doing so for the ARM architecture is not as easy as ARM64 and MIPS;
-the two functions are already defined as static inline functions.
-Howevery, the behavior of these functions may be changed by redefining
-the sub-functions that these two functions invoke.
-
-Specifically, this commit defines
-
-	__arch_pfn_to_dma()
-	__arch_dma_to_pfn()
-	__arch_dma_to_virt()
-	__arch_virt_to_dma()
-
-as these are the functions invoked by __dma_to_phys() and
-__phys_to_dma().  Unfortunately, the only apparent approach to do this
-is to declare and define the four sub-functions in
-arch/arm/mach-bcm/include/mach/memory.h, and in doing so we must move
-out of ARCH_MULTIPLATFORM and create brcmstb_defconfig, as we were
-previously using multi_v7_defconfig.
+Since the internal Brcmstb MSI controller is intertwined with the PCIe
+controller, it is not its own platform device but rather part of the
+PCIe platform device.
 
 Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
 ---
- arch/arm/Kconfig                            |  33 +++++
- arch/arm/configs/brcmstb_defconfig          | 204 ++++++++++++++++++++++++++++
- arch/arm/configs/multi_v7_defconfig         |   3 -
- arch/arm/mach-bcm/Kconfig                   |  21 +--
- arch/arm/mach-bcm/Makefile.boot             |   0
- arch/arm/mach-bcm/include/mach/irqs.h       |   3 +
- arch/arm/mach-bcm/include/mach/memory.h     |  47 +++++++
- arch/arm/mach-bcm/include/mach/uncompress.h |   8 ++
- 8 files changed, 296 insertions(+), 23 deletions(-)
- create mode 100644 arch/arm/configs/brcmstb_defconfig
- create mode 100644 arch/arm/mach-bcm/Makefile.boot
- create mode 100644 arch/arm/mach-bcm/include/mach/irqs.h
- create mode 100644 arch/arm/mach-bcm/include/mach/memory.h
- create mode 100644 arch/arm/mach-bcm/include/mach/uncompress.h
+ drivers/pci/controller/Kconfig        |   2 +-
+ drivers/pci/controller/pcie-brcmstb.c | 361 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 351 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index e8cd55a..913765b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -637,6 +637,39 @@ config ARCH_OMAP1
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index c863c67..8daa621 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -281,7 +281,7 @@ config VMD
+ config PCIE_BRCMSTB
+ 	bool "Broadcom Brcmstb PCIe host controller"
+ 	depends on ARCH_BRCMSTB || BMIPS_GENERIC
+-	depends on OF
++	depends on OF && PCI_MSI
+ 	depends on SOC_BRCMSTB
+ 	default ARCH_BRCMSTB || BMIPS_GENERIC
  	help
- 	  Support for older TI OMAP1 (omap7xx, omap15xx or omap16xx)
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index abfa429..a805d87 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright (C) 2009 - 2018 Broadcom */
  
-+config ARCH_BRCMSTB
-+	bool "Broadcom BCM7XXX based boards"
-+	select ARM_HAS_SG_CHAIN
-+	select ARM_PATCH_PHYS_VIRT
-+	select TIMER_OF
-+	select COMMON_CLK
-+	select GENERIC_CLOCKEVENTS
-+	select MULTI_IRQ_HANDLER
-+	select MIGHT_HAVE_PCI
-+	select PCI_DOMAINS if PCI
-+	select USE_OF
++#include <linux/bitops.h>
+ #include <linux/clk.h>
+ #include <linux/compiler.h>
+ #include <linux/delay.h>
+@@ -8,11 +9,13 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/log2.h>
+ #include <linux/module.h>
++#include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_pci.h>
+@@ -48,6 +51,9 @@
+ #define PCIE_MISC_RC_BAR2_CONFIG_LO			0x4034
+ #define PCIE_MISC_RC_BAR2_CONFIG_HI			0x4038
+ #define PCIE_MISC_RC_BAR3_CONFIG_LO			0x403c
++#define PCIE_MISC_MSI_BAR_CONFIG_LO			0x4044
++#define PCIE_MISC_MSI_BAR_CONFIG_HI			0x4048
++#define PCIE_MISC_MSI_DATA_CONFIG			0x404c
+ #define PCIE_MISC_PCIE_CTRL				0x4064
+ #define PCIE_MISC_PCIE_STATUS				0x4068
+ #define PCIE_MISC_REVISION				0x406c
+@@ -56,6 +62,7 @@
+ #define PCIE_MISC_CPU_2_PCIE_MEM_WIN0_LIMIT_HI		0x4084
+ #define PCIE_MISC_HARD_PCIE_HARD_DEBUG			0x4204
+ #define PCIE_INTR2_CPU_BASE				0x4300
++#define PCIE_MSI_INTR2_BASE				0x4500
+ 
+ /*
+  * Broadcom Settop Box PCIe Register Field shift and mask info. The
+@@ -116,6 +123,8 @@
+ 
+ #define BRCM_NUM_PCIE_OUT_WINS		0x4
+ #define BRCM_MAX_SCB			0x4
++#define BRCM_INT_PCI_MSI_NR		32
++#define BRCM_PCIE_HW_REV_33		0x0303
+ 
+ #define BRCM_MSI_TARGET_ADDR_LT_4GB	0x0fffffffcULL
+ #define BRCM_MSI_TARGET_ADDR_GT_4GB	0xffffffffcULL
+@@ -204,6 +213,33 @@ struct brcm_window {
+ 	dma_addr_t size;
+ };
+ 
++struct brcm_msi {
++	struct device		*dev;
++	void __iomem		*base;
++	struct device_node	*dn;
++	struct irq_domain	*msi_domain;
++	struct irq_domain	*inner_domain;
++	struct mutex		lock; /* guards the alloc/free operations */
++	u64			target_addr;
++	int			irq;
 +
-+	select CPU_V7
-+	select ARCH_BCM
-+	select HAVE_SMP
-+	select AUTO_ZRELADDR
-+	select ARM_GIC
-+	select ARM_GIC_V3
-+	select HAVE_ARM_ARCH_TIMER
-+	select SPARSE_IRQ
-+	select BRCMSTB_L2_IRQ
-+	select BCM7120_L2_IRQ
-+	select ARCH_HAS_HOLES_MEMORYMODEL
-+	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
-+	select ZONE_DMA if ARM_LPAE
-+	select NEED_MACH_MEMORY_H
-+	help
-+	  Say Y if you intend to run the kernel on a Broadcom ARM-based STB
-+	  chipset.
++	/* intr_base is the base pointer for interrupt status/set/clr regs */
++	void __iomem		*intr_base;
 +
-+	  This enables support for Broadcom ARM-based set-top box chipsets,
-+	  including the 7445 family of chips.
++	/* intr_legacy_mask indicates how many bits are MSI interrupts */
++	u32			intr_legacy_mask;
 +
- endchoice
++	/*
++	 * intr_legacy_offset indicates bit position of MSI_01. It is
++	 * to map the register bit position to a hwirq that starts at 0.
++	 */
++	u32			intr_legacy_offset;
++
++	/* used indicates which MSI interrupts have been alloc'd */
++	unsigned long		used;
++	unsigned int		rev;
++};
++
+ /* Internal PCIe Host Controller Information.*/
+ struct brcm_pcie {
+ 	struct device		*dev;
+@@ -218,7 +254,10 @@ struct brcm_pcie {
+ 	int			num_out_wins;
+ 	bool			ssc;
+ 	int			gen;
++	u64			msi_target_addr;
+ 	struct brcm_window	out_wins[BRCM_NUM_PCIE_OUT_WINS];
++	struct brcm_msi		*msi;
++	bool			msi_internal;
+ 	unsigned int		rev;
+ 	const int		*reg_offsets;
+ 	const int		*reg_field_info;
+@@ -535,6 +574,267 @@ static void brcm_pcie_set_outbound_win(struct brcm_pcie *pcie,
+ 	}
+ }
  
- menu "Multiple platform selection"
-diff --git a/arch/arm/configs/brcmstb_defconfig b/arch/arm/configs/brcmstb_defconfig
-new file mode 100644
-index 0000000..572fcf32
---- /dev/null
-+++ b/arch/arm/configs/brcmstb_defconfig
-@@ -0,0 +1,204 @@
-+CONFIG_POSIX_MQUEUE=y
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_IRQ_TIME_ACCOUNTING=y
-+CONFIG_LOG_BUF_SHIFT=16
-+CONFIG_CGROUPS=y
-+CONFIG_RELAY=y
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_INITRAMFS_SOURCE="romfs"
-+CONFIG_EMBEDDED=y
-+CONFIG_PERF_EVENTS=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_FORCE_LOAD=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_MODVERSIONS=y
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_ARCH_BRCMSTB=y
-+CONFIG_ARM_LPAE=y
-+CONFIG_ARM_THUMBEE=y
-+CONFIG_ARM_ERRATA_430973=y
-+CONFIG_ARM_ERRATA_720789=y
-+CONFIG_ARM_ERRATA_754322=y
-+CONFIG_ARM_ERRATA_754327=y
-+CONFIG_ARM_ERRATA_764369=y
-+CONFIG_ARM_ERRATA_775420=y
-+CONFIG_ARM_ERRATA_798181=y
-+CONFIG_PCI=y
-+CONFIG_PCIEPORTBUS=y
-+CONFIG_PCI_MSI=y
-+CONFIG_SMP=y
-+CONFIG_MCPM=y
-+CONFIG_NR_CPUS=16
-+CONFIG_ARM_PSCI=y
-+CONFIG_HZ_1000=y
-+CONFIG_HIGHMEM=y
-+CONFIG_CMA=y
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_ARM_ATAG_DTB_COMPAT=y
-+CONFIG_EFI=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
-+CONFIG_CPU_FREQ_GOV_USERSPACE=y
-+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
-+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
-+CONFIG_CPU_IDLE=y
-+CONFIG_VFP=y
-+CONFIG_PM_DEBUG=y
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_IP_MULTICAST=y
-+CONFIG_IP_PNP=y
-+CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_RARP=y
-+CONFIG_IP_MROUTE=y
-+CONFIG_IP_PIMSM_V1=y
-+CONFIG_IP_PIMSM_V2=y
-+# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-+# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-+# CONFIG_INET_XFRM_MODE_BEET is not set
-+CONFIG_INET_UDP_DIAG=y
-+CONFIG_TCP_CONG_ADVANCED=y
-+CONFIG_TCP_CONG_BIC=y
-+# CONFIG_TCP_CONG_WESTWOOD is not set
-+# CONFIG_TCP_CONG_HTCP is not set
-+# CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_DSA=y
-+CONFIG_CFG80211=y
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_ALIGNMENT=9
-+CONFIG_MTD=y
-+CONFIG_MTD_CMDLINE_PARTS=y
-+CONFIG_MTD_BLOCK=y
-+CONFIG_MTD_CFI=y
-+CONFIG_MTD_JEDECPROBE=y
-+CONFIG_MTD_CFI_INTELEXT=y
-+CONFIG_MTD_CFI_AMDSTD=y
-+CONFIG_MTD_CFI_STAA=y
-+CONFIG_MTD_ROM=y
-+CONFIG_MTD_ABSENT=y
-+CONFIG_MTD_PHYSMAP_OF=y
-+CONFIG_MTD_M25P80=y
-+CONFIG_MTD_NAND=y
-+CONFIG_MTD_NAND_BRCMNAND=y
-+CONFIG_MTD_SPI_NOR=y
-+# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
-+CONFIG_MTD_UBI=y
-+CONFIG_MTD_UBI_GLUEBI=y
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_SIZE=8192
-+CONFIG_EEPROM_93CX6=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_BLK_DEV_SR=y
-+CONFIG_CHR_DEV_SG=y
-+CONFIG_ATA=y
-+CONFIG_SATA_AHCI_PLATFORM=y
-+CONFIG_AHCI_BRCM=y
-+CONFIG_NETDEVICES=y
-+CONFIG_NET_DSA_BCM_SF2=y
-+# CONFIG_NET_VENDOR_ARC is not set
-+# CONFIG_NET_CADENCE is not set
-+CONFIG_BCMGENET=y
-+CONFIG_SYSTEMPORT=y
-+# CONFIG_NET_VENDOR_MARVELL is not set
-+# CONFIG_NET_VENDOR_MELLANOX is not set
-+# CONFIG_NET_VENDOR_MICREL is not set
-+# CONFIG_NET_VENDOR_MICROCHIP is not set
-+# CONFIG_NET_VENDOR_NATSEMI is not set
-+# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SMSC is not set
-+# CONFIG_NET_VENDOR_STMICRO is not set
-+# CONFIG_NET_VENDOR_VIA is not set
-+# CONFIG_NET_VENDOR_WIZNET is not set
-+CONFIG_USB_PEGASUS=y
-+CONFIG_USB_USBNET=y
-+# CONFIG_USB_NET_NET1080 is not set
-+# CONFIG_USB_NET_CDC_SUBSET is not set
-+# CONFIG_USB_NET_ZAURUS is not set
-+CONFIG_INPUT_EVDEV=y
-+CONFIG_MOUSE_PS2_ELANTECH=y
-+CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_UINPUT=y
-+# CONFIG_SERIO_SERPORT is not set
-+CONFIG_VT_HW_CONSOLE_BINDING=y
-+CONFIG_SERIAL_8250=y
-+CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_8250_DW=y
-+CONFIG_SERIAL_OF_PLATFORM=y
-+CONFIG_HW_RANDOM=y
-+CONFIG_I2C_CHARDEV=y
-+CONFIG_SPI=y
-+CONFIG_SPI_BITBANG=y
-+CONFIG_GPIOLIB=y
-+CONFIG_GPIO_SYSFS=y
-+CONFIG_POWER_RESET=y
-+# CONFIG_HWMON is not set
-+CONFIG_MFD_SYSCON=y
-+CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_USB_SUPPORT=y
-+CONFIG_USB_GSPCA=y
-+CONFIG_DRM=y
-+CONFIG_SOUND=m
-+CONFIG_SND=m
-+CONFIG_SND_SOC=m
-+CONFIG_USB=y
-+CONFIG_USB_MON=y
-+CONFIG_USB_XHCI_HCD=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_STORAGE=y
-+CONFIG_USB_GADGET=y
-+CONFIG_USB_MASS_STORAGE=y
-+CONFIG_MMC=y
-+CONFIG_MMC_BLOCK_MINORS=16
-+CONFIG_MMC_SDHCI=y
-+CONFIG_MMC_SDHCI_PLTFM=y
-+CONFIG_RTC_CLASS=y
-+# CONFIG_IOMMU_SUPPORT is not set
-+CONFIG_IIO=y
-+CONFIG_INA2XX_ADC=y
-+CONFIG_RESET_CONTROLLER=y
-+CONFIG_PHY_BRCM_SATA=y
-+CONFIG_EXT4_FS=y
-+CONFIG_JBD2_DEBUG=y
-+CONFIG_FUSE_FS=y
-+CONFIG_CUSE=y
-+CONFIG_ISO9660_FS=y
-+CONFIG_JOLIET=y
-+CONFIG_ZISOFS=y
-+CONFIG_UDF_FS=y
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_TMPFS=y
-+CONFIG_JFFS2_FS=y
-+CONFIG_UBIFS_FS=y
-+CONFIG_CRAMFS=y
-+CONFIG_SQUASHFS=y
-+CONFIG_SQUASHFS_LZO=y
-+CONFIG_SQUASHFS_XZ=y
-+CONFIG_NFS_FS=y
-+CONFIG_NFS_V3_ACL=y
-+CONFIG_NFS_V4=y
-+CONFIG_NFS_V4_1=y
-+CONFIG_NFS_V4_2=y
-+CONFIG_ROOT_NFS=y
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DEBUG_INFO=y
-+CONFIG_DEBUG_INFO_REDUCED=y
-+CONFIG_MAGIC_SYSRQ=y
-+# CONFIG_CRYPTO_HW is not set
-+CONFIG_CRC_CCITT=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index fc33444..33c91f8 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -17,7 +17,6 @@ CONFIG_ARCH_AT91=y
- CONFIG_SOC_SAMA5D2=y
- CONFIG_SOC_SAMA5D3=y
- CONFIG_SOC_SAMA5D4=y
--CONFIG_ARCH_BCM=y
- CONFIG_ARCH_BCM_CYGNUS=y
- CONFIG_ARCH_BCM_HR2=y
- CONFIG_ARCH_BCM_NSP=y
-@@ -26,7 +25,6 @@ CONFIG_ARCH_BCM_281XX=y
- CONFIG_ARCH_BCM_21664=y
- CONFIG_ARCH_BCM2835=y
- CONFIG_ARCH_BCM_63XX=y
--CONFIG_ARCH_BRCMSTB=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_MACH_BERLIN_BG2=y
- CONFIG_MACH_BERLIN_BG2CD=y
-@@ -229,7 +227,6 @@ CONFIG_B53_MMAP_DRIVER=m
- CONFIG_B53_SRAB_DRIVER=m
- CONFIG_NET_DSA_BCM_SF2=m
- CONFIG_SUN4I_EMAC=y
--CONFIG_BCMGENET=m
- CONFIG_BGMAC_BCMA=y
- CONFIG_SYSTEMPORT=m
- CONFIG_MACB=y
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index 25aac6e..2c3ad42 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- menuconfig ARCH_BCM
- 	bool "Broadcom SoC Support"
--	depends on ARCH_MULTI_V6_V7
-+	depends on ARCH_BRCMSTB
- 	help
- 	  This enables support for Broadcom ARM based SoC chips
++static struct irq_chip brcm_msi_irq_chip = {
++	.name = "Brcm_MSI",
++	.irq_mask = pci_msi_mask_irq,
++	.irq_unmask = pci_msi_unmask_irq,
++};
++
++static struct msi_domain_info brcm_msi_domain_info = {
++	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
++		   MSI_FLAG_PCI_MSIX),
++	.chip	= &brcm_msi_irq_chip,
++};
++
++static void brcm_pcie_msi_isr(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct brcm_msi *msi;
++	unsigned long status, virq;
++	u32 mask, bit, hwirq;
++	struct device *dev;
++
++	chained_irq_enter(chip, desc);
++	msi = irq_desc_get_handler_data(desc);
++	mask = msi->intr_legacy_mask;
++	dev = msi->dev;
++
++	while ((status = bcm_readl(msi->intr_base + STATUS) & mask)) {
++		for_each_set_bit(bit, &status, BRCM_INT_PCI_MSI_NR) {
++			/* clear the interrupt */
++			bcm_writel(1 << bit, msi->intr_base + CLR);
++
++			/* Account for legacy interrupt offset */
++			hwirq = bit - msi->intr_legacy_offset;
++
++			virq = irq_find_mapping(msi->inner_domain, hwirq);
++			if (virq) {
++				if (msi->used & (1 << hwirq))
++					generic_handle_irq(virq);
++				else
++					dev_info(dev, "unhandled MSI %d\n",
++						 hwirq);
++			} else {
++				/* Unknown MSI, just clear it */
++				dev_dbg(dev, "unexpected MSI\n");
++			}
++		}
++	}
++	chained_irq_exit(chip, desc);
++}
++
++static void brcm_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
++{
++	struct brcm_msi *msi = irq_data_get_irq_chip_data(data);
++	u32 temp;
++
++	msg->address_lo = lower_32_bits(msi->target_addr);
++	msg->address_hi = upper_32_bits(msi->target_addr);
++	temp = bcm_readl(msi->base + PCIE_MISC_MSI_DATA_CONFIG);
++	msg->data = ((temp >> 16) & (temp & 0xffff)) | data->hwirq;
++}
++
++static int brcm_msi_set_affinity(struct irq_data *irq_data,
++				 const struct cpumask *mask, bool force)
++{
++	return -EINVAL;
++}
++
++static struct irq_chip brcm_msi_bottom_irq_chip = {
++	.name			= "Brcm_MSI",
++	.irq_compose_msi_msg	= brcm_compose_msi_msg,
++	.irq_set_affinity	= brcm_msi_set_affinity,
++};
++
++static int brcm_msi_alloc(struct brcm_msi *msi)
++{
++	int bit, hwirq;
++
++	mutex_lock(&msi->lock);
++	bit = ~msi->used ? ffz(msi->used) : -1;
++
++	if (bit >= 0 && bit < BRCM_INT_PCI_MSI_NR) {
++		msi->used |= (1 << bit);
++		hwirq = bit - msi->intr_legacy_offset;
++	} else {
++		hwirq = -ENOSPC;
++	}
++
++	mutex_unlock(&msi->lock);
++	return hwirq;
++}
++
++static void brcm_msi_free(struct brcm_msi *msi, unsigned long hwirq)
++{
++	mutex_lock(&msi->lock);
++	msi->used &= ~(1 << (hwirq + msi->intr_legacy_offset));
++	mutex_unlock(&msi->lock);
++}
++
++static int brcm_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
++				 unsigned int nr_irqs, void *args)
++{
++	struct brcm_msi *msi = domain->host_data;
++	int hwirq;
++
++	hwirq = brcm_msi_alloc(msi);
++
++	if (hwirq < 0)
++		return hwirq;
++
++	irq_domain_set_info(domain, virq, (irq_hw_number_t)hwirq,
++			    &brcm_msi_bottom_irq_chip, domain->host_data,
++			    handle_simple_irq, NULL, NULL);
++	return 0;
++}
++
++static void brcm_irq_domain_free(struct irq_domain *domain,
++				 unsigned int virq, unsigned int nr_irqs)
++{
++	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
++	struct brcm_msi *msi = irq_data_get_irq_chip_data(d);
++
++	brcm_msi_free(msi, d->hwirq);
++}
++
++static void brcm_msi_set_regs(struct brcm_msi *msi)
++{
++	u32 data_val, msi_lo, msi_hi;
++
++	if (msi->rev >= BRCM_PCIE_HW_REV_33) {
++		/*
++		 * ffe0 -- least sig 5 bits are 0 indicating 32 msgs
++		 * 6540 -- this is our arbitrary unique data value
++		 */
++		data_val = 0xffe06540;
++	} else {
++		/*
++		 * fff8 -- least sig 3 bits are 0 indicating 8 msgs
++		 * 6540 -- this is our arbitrary unique data value
++		 */
++		data_val = 0xfff86540;
++	}
++
++	/*
++	 * Make sure we are not masking MSIs.  Note that MSIs can be masked,
++	 * but that occurs on the PCIe EP device
++	 */
++	bcm_writel(0xffffffff & msi->intr_legacy_mask,
++		   msi->intr_base + MASK_CLR);
++
++	msi_lo = lower_32_bits(msi->target_addr);
++	msi_hi = upper_32_bits(msi->target_addr);
++	/*
++	 * The 0 bit of PCIE_MISC_MSI_BAR_CONFIG_LO is repurposed to MSI
++	 * enable, which we set to 1.
++	 */
++	bcm_writel(msi_lo | 1, msi->base + PCIE_MISC_MSI_BAR_CONFIG_LO);
++	bcm_writel(msi_hi, msi->base + PCIE_MISC_MSI_BAR_CONFIG_HI);
++	bcm_writel(data_val, msi->base + PCIE_MISC_MSI_DATA_CONFIG);
++}
++
++static const struct irq_domain_ops msi_domain_ops = {
++	.alloc	= brcm_irq_domain_alloc,
++	.free	= brcm_irq_domain_free,
++};
++
++static int brcm_allocate_domains(struct brcm_msi *msi)
++{
++	struct fwnode_handle *fwnode = of_node_to_fwnode(msi->dn);
++	struct device *dev = msi->dev;
++
++	msi->inner_domain = irq_domain_add_linear(NULL, BRCM_INT_PCI_MSI_NR,
++						  &msi_domain_ops, msi);
++	if (!msi->inner_domain) {
++		dev_err(dev, "failed to create IRQ domain\n");
++		return -ENOMEM;
++	}
++
++	msi->msi_domain = pci_msi_create_irq_domain(fwnode,
++						    &brcm_msi_domain_info,
++						    msi->inner_domain);
++	if (!msi->msi_domain) {
++		dev_err(dev, "failed to create MSI domain\n");
++		irq_domain_remove(msi->inner_domain);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static void brcm_free_domains(struct brcm_msi *msi)
++{
++	irq_domain_remove(msi->msi_domain);
++	irq_domain_remove(msi->inner_domain);
++}
++
++static void brcm_msi_remove(struct brcm_pcie *pcie)
++{
++	struct brcm_msi *msi = pcie->msi;
++
++	if (!msi)
++		return;
++	irq_set_chained_handler(msi->irq, NULL);
++	irq_set_handler_data(msi->irq, NULL);
++	brcm_free_domains(msi);
++}
++
++static int brcm_pcie_enable_msi(struct brcm_pcie *pcie)
++{
++	struct brcm_msi *msi;
++	int irq, ret;
++	struct device *dev = pcie->dev;
++
++	irq = irq_of_parse_and_map(dev->of_node, 1);
++	if (irq <= 0) {
++		dev_err(dev, "cannot map msi intr\n");
++		return -ENODEV;
++	}
++
++	msi = devm_kzalloc(dev, sizeof(struct brcm_msi), GFP_KERNEL);
++	if (!msi)
++		return -ENOMEM;
++
++	msi->dev = dev;
++	msi->base = pcie->base;
++	msi->rev =  pcie->rev;
++	msi->dn = pcie->dn;
++	msi->target_addr = pcie->msi_target_addr;
++	msi->irq = irq;
++
++	ret = brcm_allocate_domains(msi);
++	if (ret)
++		return ret;
++
++	irq_set_chained_handler_and_data(msi->irq, brcm_pcie_msi_isr, msi);
++
++	if (msi->rev >= BRCM_PCIE_HW_REV_33) {
++		msi->intr_base = msi->base + PCIE_MSI_INTR2_BASE;
++		/*
++		 * This version of PCIe hw has only 32 intr bits
++		 * starting at bit position 0.
++		 */
++		msi->intr_legacy_mask = 0xffffffff;
++		msi->intr_legacy_offset = 0x0;
++		msi->used = 0x0;
++
++	} else {
++		msi->intr_base = msi->base + PCIE_INTR2_CPU_BASE;
++		/*
++		 * This version of PCIe hw has only 8 intr bits starting
++		 * at bit position 24.
++		 */
++		msi->intr_legacy_mask = 0xff000000;
++		msi->intr_legacy_offset = 24;
++		msi->used = 0x00ffffff;
++	}
++
++	brcm_msi_set_regs(msi);
++	pcie->msi = msi;
++
++	return 0;
++}
++
+ /* Configuration space read/write support */
+ static int cfg_index(int busnr, int devfn, int reg)
+ {
+@@ -776,6 +1076,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 	u16 nlw, cls, lnksta;
+ 	bool ssc_good = false;
+ 	struct device *dev = pcie->dev;
++	u64 msi_target_addr;
  
-@@ -203,23 +203,4 @@ config ARCH_BCM_63XX
- 	  It currently supports the 'BCM63XX' ARM-based family, which includes
- 	  the BCM63138 variant.
+ 	/* Reset the bridge */
+ 	brcm_pcie_bridge_sw_init_set(pcie, 1);
+@@ -820,14 +1121,17 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 	 * The PCIe host controller by design must set the inbound
+ 	 * viewport to be a contiguous arrangement of all of the
+ 	 * system's memory.  In addition, its size mut be a power of
+-	 * two.  To further complicate matters, the viewport must
+-	 * start on a pcie-address that is aligned on a multiple of its
+-	 * size.  If a portion of the viewport does not represent
+-	 * system memory -- e.g. 3GB of memory requires a 4GB viewport
+-	 * -- we can map the outbound memory in or after 3GB and even
+-	 * though the viewport will overlap the outbound memory the
+-	 * controller will know to send outbound memory downstream and
+-	 * everything else upstream.
++	 * two.  Further, the MSI target address must NOT be placed
++	 * inside this region, as the decoding logic will consider its
++	 * address to be inbound memory traffic.  To further
++	 * complicate matters, the viewport must start on a
++	 * pcie-address that is aligned on a multiple of its size.
++	 * If a portion of the viewport does not represent system
++	 * memory -- e.g. 3GB of memory requires a 4GB viewport --
++	 * we can map the outbound memory in or after 3GB and even
++	 * though the viewport will overlap the outbound memory
++	 * the controller will know to send outbound memory downstream
++	 * and everything else upstream.
+ 	 */
+ 	rc_bar2_size = roundup_pow_of_two_64(total_mem_size);
  
--config ARCH_BRCMSTB
--	bool "Broadcom BCM7XXX based boards"
--	depends on ARCH_MULTI_V7
--	select ARM_GIC
--	select ARM_ERRATA_798181 if SMP
--	select HAVE_ARM_ARCH_TIMER
--	select BRCMSTB_L2_IRQ
--	select BCM7120_L2_IRQ
--	select ARCH_HAS_HOLES_MEMORYMODEL
--	select ZONE_DMA if ARM_LPAE
--	select SOC_BRCMSTB
--	select SOC_BUS
--	help
--	  Say Y if you intend to run the kernel on a Broadcom ARM-based STB
--	  chipset.
+@@ -843,6 +1147,15 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 		if (total_mem_size <= 0xc0000000ULL &&
+ 		    rc_bar2_size <= 0x100000000ULL) {
+ 			rc_bar2_offset = 0;
++
++			/* If the viewport is less then 4GB we can fit
++			 * the MSI target address under 4GB. Otherwise
++			 * put it right below 64GB.
++			 */
++			msi_target_addr =
++				(rc_bar2_size == 0x100000000ULL)
++				? BRCM_MSI_TARGET_ADDR_GT_4GB
++				: BRCM_MSI_TARGET_ADDR_LT_4GB;
+ 		} else {
+ 			/*
+ 			 * The system memory is 4GB or larger so we
+@@ -852,8 +1165,12 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 			 * start it at the 1x multiple of its size
+ 			 */
+ 			rc_bar2_offset = rc_bar2_size;
+-		}
+ 
++			/* Since we are starting the viewport at 4GB or
++			 * higher, put the MSI target address below 4GB
++			 */
++			msi_target_addr = BRCM_MSI_TARGET_ADDR_LT_4GB;
++		}
+ 	} else {
+ 		/*
+ 		 * Set simple configuration based on memory sizes
+@@ -861,7 +1178,12 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 		 * and set the MSI target address accordingly.
+ 		 */
+ 		rc_bar2_offset = 0;
++
++		msi_target_addr = (rc_bar2_size >= 0x100000000ULL)
++			? BRCM_MSI_TARGET_ADDR_GT_4GB
++			: BRCM_MSI_TARGET_ADDR_LT_4GB;
+ 	}
++	pcie->msi_target_addr = msi_target_addr;
+ 
+ 	tmp = lower_32_bits(rc_bar2_offset);
+ 	tmp = INSERT_FIELD(tmp, PCIE_MISC_RC_BAR2_CONFIG_LO, SIZE,
+@@ -1036,6 +1358,9 @@ static int brcm_pcie_resume(struct device *dev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (pcie->msi && pcie->msi_internal)
++		brcm_msi_set_regs(pcie->msi);
++
+ 	pcie->suspended = false;
+ 
+ 	return 0;
+@@ -1043,6 +1368,7 @@ static int brcm_pcie_resume(struct device *dev)
+ 
+ static void _brcm_pcie_remove(struct brcm_pcie *pcie)
+ {
++	brcm_msi_remove(pcie);
+ 	turn_off(pcie);
+ 	clk_disable_unprepare(pcie->clk);
+ 	clk_put(pcie->clk);
+@@ -1072,7 +1398,7 @@ static int brcm_pcie_remove(struct platform_device *pdev)
+ 
+ static int brcm_pcie_probe(struct platform_device *pdev)
+ {
+-	struct device_node *dn = pdev->dev.of_node;
++	struct device_node *dn = pdev->dev.of_node, *msi_dn;
+ 	const struct of_device_id *of_id;
+ 	const struct pcie_cfg_data *data;
+ 	int ret;
+@@ -1152,6 +1478,20 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto fail;
+ 
++	msi_dn = of_parse_phandle(pcie->dn, "msi-parent", 0);
++	/* Use the internal MSI if no msi-parent property */
++	if (!msi_dn)
++		msi_dn = pcie->dn;
++
++	if (pci_msi_enabled() && msi_dn == pcie->dn) {
++		ret = brcm_pcie_enable_msi(pcie);
++		if (ret)
++			dev_err(pcie->dev,
++				"probe of internal MSI failed: %d)", ret);
++		else
++			pcie->msi_internal = true;
++	}
++
+ 	list_splice_init(&pcie->resources, &bridge->windows);
+ 	bridge->dev.parent = &pdev->dev;
+ 	bridge->busnr = 0;
+@@ -1174,7 +1514,6 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 	pcie->root_bus = bridge->bus;
+ 
+ 	return 0;
 -
--	  This enables support for Broadcom ARM-based set-top box chipsets,
--	  including the 7445 family of chips.
--
- endif
-diff --git a/arch/arm/mach-bcm/Makefile.boot b/arch/arm/mach-bcm/Makefile.boot
-new file mode 100644
-index 0000000..e69de29
-diff --git a/arch/arm/mach-bcm/include/mach/irqs.h b/arch/arm/mach-bcm/include/mach/irqs.h
-new file mode 100644
-index 0000000..f1f3f22
---- /dev/null
-+++ b/arch/arm/mach-bcm/include/mach/irqs.h
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#define NR_IRQS NR_IRQS_LEGACY
-diff --git a/arch/arm/mach-bcm/include/mach/memory.h b/arch/arm/mach-bcm/include/mach/memory.h
-new file mode 100644
-index 0000000..a90a216
---- /dev/null
-+++ b/arch/arm/mach-bcm/include/mach/memory.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_ARCH_MEMORY_H__
-+#define __ASM_ARCH_MEMORY_H__
-+#ifndef __ASSEMBLY__
-+
-+struct device;
-+
-+#include <soc/brcmstb/common.h>
-+
-+#ifdef CONFIG_PCIE_BRCMSTB
-+#define __arch_pfn_to_dma(dev, pfn)					\
-+	({								\
-+		if (dev)						\
-+			pfn -= dev->dma_pfn_offset;			\
-+		(dma_addr_t)brcm_phys_to_dma(dev, __pfn_to_phys(pfn));	\
-+	})
-+
-+#define  __arch_dma_to_pfn(dev, addr)					\
-+	({								\
-+		unsigned long pfn = __phys_to_pfn(brcm_dma_to_phys(dev, addr));\
-+		if (dev)						\
-+			pfn += dev->dma_pfn_offset;			\
-+		pfn;							\
-+	})
-+
-+#define __arch_dma_to_virt(dev, addr)					\
-+	({								\
-+		void *v;						\
-+		if (dev) {						\
-+			unsigned long pfn = dma_to_pfn(dev, addr);	\
-+			v = phys_to_virt(__pfn_to_phys(pfn));		\
-+		} else {						\
-+			v = (void *)__bus_to_virt((unsigned long)addr);	\
-+		}							\
-+		v;							\
-+	})
-+
-+#define __arch_virt_to_dma(dev, addr)					\
-+	({								\
-+		(dev) ? pfn_to_dma(dev, virt_to_pfn(addr))		\
-+		      : (dma_addr_t)__virt_to_bus((unsigned long)(addr));\
-+	})
-+
-+#endif /* CONFIG_PCIE_BRCMSTB */
-+#endif /* __ASSEMBLY__ */
-+#endif /* __ASM_ARCH_MEMORY_H__ */
-diff --git a/arch/arm/mach-bcm/include/mach/uncompress.h b/arch/arm/mach-bcm/include/mach/uncompress.h
-new file mode 100644
-index 0000000..b297333
---- /dev/null
-+++ b/arch/arm/mach-bcm/include/mach/uncompress.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifdef CONFIG_DEBUG_UNCOMPRESS
-+void putc(int c);
-+#else
-+static inline void putc(int c) {}
-+#endif
-+static inline void flush(void) {}
-+static inline void arch_decomp_setup(void) {}
+ fail:
+ 	_brcm_pcie_remove(pcie);
+ 	return ret;
 -- 
 1.9.0.138.g2de3478
 
