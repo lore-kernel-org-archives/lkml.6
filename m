@@ -7,64 +7,65 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD55ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19024C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40EBD2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8BC22146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eiWWoIVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EBD2146D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eVFOScn1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8BC22146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730834AbeISHyt (ORCPT
+        id S1730869AbeISHyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:54:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35113 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbeISHyt (ORCPT
+        Wed, 19 Sep 2018 03:54:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:32973 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728267AbeISHyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:54:49 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 205-v6so1005554pgd.2
+        Wed, 19 Sep 2018 03:54:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s7-v6so1960472pgc.0
         for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:19:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oy5DbuF7CYPV4PtmLt5437WSeAaoA2AwlwpYpljL60w=;
-        b=eiWWoIVDIlBYPTbbkdI9pCPyoWrnajXdH0DDRidVjrC3Ogtikd0A70Pqo7C3CPlRsh
-         iE2K0zF1zlgK+qwRRrrKRTBPZ6VpxlboovR51hbd+e/lSD6wO/uzUudpD0DKRwH3ERyV
-         RcSjg42JLpLhSQI4s5Q5qsaq00hFpn7lGdc1I=
+        bh=bwpHaNlRdidXYTSo5B9BGO/P76H7RxTgLjp5X7q/NJw=;
+        b=eVFOScn1P73qT/paJvfd9cUG9+vTYBA285PcZQ1jbgTyZVZA8p1UxdXs0uXk8st4yM
+         Vn7MMWK5OzrVfrHfv/hU4eJ0rKisZKM5pfu2ZUs0RPkP6egvz3kfQUmU1j3PqAAW2M7Z
+         orWRqQyOSItFpWSIUW9F/RcfzPx6WU2QvYmJk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oy5DbuF7CYPV4PtmLt5437WSeAaoA2AwlwpYpljL60w=;
-        b=WNyHIwIQ3ot91IB+TSAplS0bFg+o1Fjo353tRFeyBBArYkofwYzWBts2UFmJJIBjnP
-         abq8Gk19YPJQRVHofMB2Xy5aDvj6vqx7eYWrYGFv8/tERGBTz64yUC8dfoVr5hJBbWo5
-         +Y2DNI/Z7GKAT+B9O4EDFHZsrt1Md+Edy/rMOUR9e4WMWyAm1YkPzaYN30sGY58oFTm1
-         6KROAqp6InhgHRYOX+tFFQfqvE38PiSrkQSncn8WDa/vaWMn32FLO5Ssc1PVZcvQYI0E
-         GvG87yjQHrttLmpXzaX7EHrHjv7prGRNXmTsIQ29ZFLl7mBufrvrMBZOnoF79zRLoVgy
-         34og==
-X-Gm-Message-State: APzg51C6bUpz8ysg9wg0b8vyLOLTW0iTix1IkMv3o2OehQhZKCCrY9ue
-        NxucliOlE3tO5QKb9HCMzQ5Mag==
-X-Google-Smtp-Source: ANB0Vdao0+AmDrii5YU1+N32s1AluRmUTxrYnXHC9BXCRqQdzsWMn7qD7cvVvFuK2EtF5yGY20K1Qw==
-X-Received: by 2002:a63:c245:: with SMTP id l5-v6mr30303669pgg.255.1537323559802;
-        Tue, 18 Sep 2018 19:19:19 -0700 (PDT)
+        bh=bwpHaNlRdidXYTSo5B9BGO/P76H7RxTgLjp5X7q/NJw=;
+        b=lD1bR6lsl9jU/HNw2C/WU6s7fFppRYuMm8VSXxYtiaGuI4oUmy4Z6iwNr1+E6bb1CH
+         hOPTWJcRFzk5xHz/Iz/wiezOuAGBjmLq8YhJFHHxy3jUGVC/KzZ4Y8DXWVRJskHNrpDs
+         5uxCmiMjW5tpIAmJWEnQPwLf/ORePw6AWAVKNLMNgDu3YOKYM6tDOIz1UQ59T9ODJL8E
+         XLhQbSZExtT+rB8ByYfCkOGtT1CYttjLCN14qr+sWruWUDgigQjkRvU3DSDbaEFLIhQR
+         h/ZCLa0Ho57qOQNz5XckeKIYEZK9EBH6cdXptRGBuBBckGsf7Xb7CkFrrYM0fs0hhHrk
+         5hSA==
+X-Gm-Message-State: APzg51Bvz24XfehtntD4t/eMmZC2C/RCx4hXN7ctTtBUfxf0Dlhfer5o
+        kln+rEVtFwIHZcNSBBEAqLQdvQ==
+X-Google-Smtp-Source: ANB0VdZLxVEmbuy0wn/Y5oCh7SBNZnvgS1bkOOP37xIGXWzYQtEWqu0Oa8oxWyuSc7vmonV3Pya12g==
+X-Received: by 2002:a63:5204:: with SMTP id g4-v6mr29970572pgb.274.1537323560594;
+        Tue, 18 Sep 2018 19:19:20 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm39294690pfi.17.2018.09.18.19.19.18
+        by smtp.gmail.com with ESMTPSA id f75-v6sm35679362pfk.85.2018.09.18.19.19.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 18 Sep 2018 19:19:18 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 23/23] crypto: skcipher - Remove SKCIPHER_REQUEST_ON_STACK()
-Date:   Tue, 18 Sep 2018 19:11:00 -0700
-Message-Id: <20180919021100.3380-24-keescook@chromium.org>
+Subject: [PATCH crypto-next 17/23] crypto: qce - Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:54 -0700
+Message-Id: <20180919021100.3380-18-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -73,31 +74,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all the users of the VLA-generating SKCIPHER_REQUEST_ON_STACK()
-macro have been moved to SYNC_SKCIPHER_REQUEST_ON_STACK(), we can remove
-the former.
+In the quest to remove all stack VLA usage from the kernel[1], this
+replaces struct crypto_skcipher and SKCIPHER_REQUEST_ON_STACK() usage
+with struct crypto_sync_skcipher and SYNC_SKCIPHER_REQUEST_ON_STACK(),
+which uses a fixed stack size.
 
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+
+Cc: Himanshu Jha <himanshujha199640@gmail.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/crypto/skcipher.h | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/crypto/qce/ablkcipher.c | 13 ++++++-------
+ drivers/crypto/qce/cipher.h     |  2 +-
+ 2 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-index d00ce90dc7da..45ae894fda32 100644
---- a/include/crypto/skcipher.h
-+++ b/include/crypto/skcipher.h
-@@ -156,11 +156,6 @@ struct skcipher_alg {
- 			    ] CRYPTO_MINALIGN_ATTR; \
- 	struct skcipher_request *name = (void *)__##name##_desc
+diff --git a/drivers/crypto/qce/ablkcipher.c b/drivers/crypto/qce/ablkcipher.c
+index ea4d96bf47e8..585e1cab9ae3 100644
+--- a/drivers/crypto/qce/ablkcipher.c
++++ b/drivers/crypto/qce/ablkcipher.c
+@@ -189,7 +189,7 @@ static int qce_ablkcipher_setkey(struct crypto_ablkcipher *ablk, const u8 *key,
+ 	memcpy(ctx->enc_key, key, keylen);
+ 	return 0;
+ fallback:
+-	ret = crypto_skcipher_setkey(ctx->fallback, key, keylen);
++	ret = crypto_sync_skcipher_setkey(ctx->fallback, key, keylen);
+ 	if (!ret)
+ 		ctx->enc_keylen = keylen;
+ 	return ret;
+@@ -212,9 +212,9 @@ static int qce_ablkcipher_crypt(struct ablkcipher_request *req, int encrypt)
  
--#define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
--	char __##name##_desc[sizeof(struct skcipher_request) + \
--		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
--	struct skcipher_request *name = (void *)__##name##_desc
--
+ 	if (IS_AES(rctx->flags) && ctx->enc_keylen != AES_KEYSIZE_128 &&
+ 	    ctx->enc_keylen != AES_KEYSIZE_256) {
+-		SKCIPHER_REQUEST_ON_STACK(subreq, ctx->fallback);
++		SYNC_SKCIPHER_REQUEST_ON_STACK(subreq, ctx->fallback);
+ 
+-		skcipher_request_set_tfm(subreq, ctx->fallback);
++		skcipher_request_set_sync_tfm(subreq, ctx->fallback);
+ 		skcipher_request_set_callback(subreq, req->base.flags,
+ 					      NULL, NULL);
+ 		skcipher_request_set_crypt(subreq, req->src, req->dst,
+@@ -245,9 +245,8 @@ static int qce_ablkcipher_init(struct crypto_tfm *tfm)
+ 	memset(ctx, 0, sizeof(*ctx));
+ 	tfm->crt_ablkcipher.reqsize = sizeof(struct qce_cipher_reqctx);
+ 
+-	ctx->fallback = crypto_alloc_skcipher(crypto_tfm_alg_name(tfm), 0,
+-					      CRYPTO_ALG_ASYNC |
+-					      CRYPTO_ALG_NEED_FALLBACK);
++	ctx->fallback = crypto_alloc_sync_skcipher(crypto_tfm_alg_name(tfm),
++						   0, CRYPTO_ALG_NEED_FALLBACK);
+ 	return PTR_ERR_OR_ZERO(ctx->fallback);
+ }
+ 
+@@ -255,7 +254,7 @@ static void qce_ablkcipher_exit(struct crypto_tfm *tfm)
+ {
+ 	struct qce_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
+ 
+-	crypto_free_skcipher(ctx->fallback);
++	crypto_free_sync_skcipher(ctx->fallback);
+ }
+ 
+ struct qce_ablkcipher_def {
+diff --git a/drivers/crypto/qce/cipher.h b/drivers/crypto/qce/cipher.h
+index 2b0278bb6e92..ee055bfe98a0 100644
+--- a/drivers/crypto/qce/cipher.h
++++ b/drivers/crypto/qce/cipher.h
+@@ -22,7 +22,7 @@
+ struct qce_cipher_ctx {
+ 	u8 enc_key[QCE_MAX_KEY_SIZE];
+ 	unsigned int enc_keylen;
+-	struct crypto_skcipher *fallback;
++	struct crypto_sync_skcipher *fallback;
+ };
+ 
  /**
-  * DOC: Symmetric Key Cipher API
-  *
 -- 
 2.17.1
 
