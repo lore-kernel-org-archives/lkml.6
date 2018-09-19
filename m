@@ -2,58 +2,57 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD84C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DB3C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAB221521
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:28:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45B3321521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v8V5guuf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAB221521
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ59Vvny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B3321521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbeITAHu (ORCPT
+        id S1733117AbeITAKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 20:07:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51494 "EHLO mail.kernel.org"
+        Wed, 19 Sep 2018 20:10:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731233AbeITAHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 20:07:50 -0400
+        id S1727804AbeITAKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 20:10:16 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93DC720877;
-        Wed, 19 Sep 2018 18:28:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6171C2150E;
+        Wed, 19 Sep 2018 18:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537381721;
-        bh=Z/F5qgXw6Z9xN6P0DtkroyvdnbVOWSk0qYTtzpc0n9Y=;
+        s=default; t=1537381865;
+        bh=9Z7OU8IH2N1n/1Tj502z0FM/MVZSjzRzEZxx7GrfNpk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v8V5guufiB9axLtgVT+0zV3V1Yvpy6T+4iZMxiOb1hFluApOmybVFJng5kHM0I5Yo
-         2131i3oiMz/hVCceJRQm/uxUMmyEB9QylxFtRWrz60JwjFi8EETm2xvrhfxTAzOoDy
-         bXAS/Afkn6kCu1CJEn7wR/ns7MOLWCon2X3bSONU=
+        b=QZ59Vvnyb6ybhdtpIdx4y/MWiZ7wXg4OCK5ko3vIbxdHwMJpky2H++GogioXecXbZ
+         6NpBf2b5Obc2Kj5Wq5jh4d8+oquxdcSXE5w14B1kwaOlT5RNgRcCmJgxFPt5JyJDPj
+         ldoClKBt1z245ZCbkj6TscvXNxoj0HVD0Fz9Y6DU=
 Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 5E00B140260; Wed, 19 Sep 2018 15:28:37 -0300 (-03)
-Date:   Wed, 19 Sep 2018 15:28:37 -0300
+        id 28809140260; Wed, 19 Sep 2018 15:31:03 -0300 (-03)
+Date:   Wed, 19 Sep 2018 15:31:03 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
         linux-kernel@vger.kernel.org, kim.phillips@arm.com,
         Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v5 6/9] perf, tools, script: Make itrace script default
- to all calls
-Message-ID: <20180919182837.GH31812@kernel.org>
+Subject: Re: [PATCH v5 9/9] perf, tools, script: Support total cycles count
+Message-ID: <20180919183103.GI31812@kernel.org>
 References: <20180918123214.26728-1-andi@firstfloor.org>
- <20180918123214.26728-7-andi@firstfloor.org>
- <fa942e47-9654-dfa2-7a57-744b5fd3b790@intel.com>
+ <20180918123214.26728-10-andi@firstfloor.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa942e47-9654-dfa2-7a57-744b5fd3b790@intel.com>
+In-Reply-To: <20180918123214.26728-10-andi@firstfloor.org>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,131 +60,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Sep 18, 2018 at 04:24:55PM +0300, Adrian Hunter escreveu:
-> On 18/09/18 15:32, Andi Kleen wrote:
-> > +++ b/tools/perf/util/auxtrace.c
-> > @@ -964,16 +964,23 @@ s64 perf_event__process_auxtrace(struct perf_tool *tool,
-> >  #define PERF_ITRACE_DEFAULT_LAST_BRANCH_SZ	64
-> >  #define PERF_ITRACE_MAX_LAST_BRANCH_SZ		1024
-> >  
-> > -void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts)
-> > +void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts,
-> > +				    bool no_sample)
+Em Tue, Sep 18, 2018 at 05:32:14AM -0700, Andi Kleen escreveu:
+> From: Andi Kleen <ak@linux.intel.com>
 > 
-> Rather than pass no_sample, what about passing the whole of the tool's
-> options i.e.
+> For perf script brstackinsn also print a running cycles count.
+> This makes it easier to calculate cycle deltas for code sections
+> measured with LBRs.
+> 
+> % perf record -b -a sleep 1
+> % perf script -F +brstackinsn
+> ...
+>         _dl_sysdep_start+330:
+>         00007eff9f20583a        insn: 75 c4                     # PRED 24 cycles [24]
+>         00007eff9f205800        insn: 48 83 e8 03
+>         00007eff9f205804        insn: 48 83 f8 1e
+>         00007eff9f205808        insn: 77 26
+>         00007eff9f20580a        insn: 48 63 04 81
+>         00007eff9f20580e        insn: 48 01 c8
+>         00007eff9f205811        insn: ff e0                     # MISPRED 31 cycles [7] 0.71 IPC
+>         00007eff9f2059c0        insn: 44 8b 62 08
+>         00007eff9f2059c4        insn: e9 67 fe ff ff            # PRED 55 cycles [24] 0.04 IPC
+>         00007eff9f205830        insn: 48 83 c2 10
+>         00007eff9f205834        insn: 48 8b 02
+>         00007eff9f205837        insn: 48 85 c0
+>         00007eff9f20583a        insn: 75 c4                     # PRED 68 cycles [13] 0.23 IPC
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/builtin-script.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 3b73c3226141..84895c861b84 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -913,7 +913,7 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
+>  
+>  static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+>  			    struct perf_insn *x, u8 *inbuf, int len,
+> -			    int insn, FILE *fp)
+> +			    int insn, FILE *fp, int *total_cycles)
+>  {
+>  	int printed = fprintf(fp, "\t%016" PRIx64 "\t%-30s\t#%s%s%s%s", ip,
+>  			      dump_insn(x, ip, inbuf, len, NULL),
+> @@ -922,7 +922,8 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+>  			      en->flags.in_tx ? " INTX" : "",
+>  			      en->flags.abort ? " ABORT" : "");
+>  	if (en->flags.cycles) {
+> -		printed += fprintf(fp, " %d cycles", en->flags.cycles);
+> +		*total_cycles += en->flags.cycles;
+> +		printed += fprintf(fp, " %d cycles [%d]", *total_cycles, en->flags.cycles);
+>  		if (insn)
+>  			printed += fprintf(fp, " %.2f IPC", (float)insn / en->flags.cycles);
+>  	}
+> @@ -979,6 +980,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  	u8 buffer[MAXBB];
+>  	unsigned off;
+>  	struct symbol *lastsym = NULL;
+> +	int total_cycles = 0;
+>  
+>  	if (!(br && br->nr))
+>  		return 0;
+> @@ -999,7 +1001,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  		printed += ip__fprintf_sym(br->entries[nr - 1].from, thread,
+>  					   x.cpumode, x.cpu, &lastsym, attr, fp);
+>  		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
+> -					    &x, buffer, len, 0, fp);
+> +					    &x, buffer, len, 0, fp, &total_cycles);
+>  	}
+>  
+>  	/* Print all blocks */
+> @@ -1027,7 +1029,9 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+>  
+>  			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+>  			if (ip == end) {
+> -				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
+> +				printed += ip__fprintf_jump(ip, &br->entries[i],
+> +						&x, buffer + off, len - off,
+> +						insn, fp, &total_cycles);
 
-This can be done on top, right? Or will you need the other options on
-work you're doing right now and that would be an advantage to do this
-right now?
+Please don't reflow these things like that, just align the next line
+with the new thing, parses quicker when reviewing.
 
 - Arnaldo
- 
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index db1511359c5e..d4db61626a5f 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -964,8 +964,14 @@ s64 perf_event__process_auxtrace(struct perf_tool *tool,
->  #define PERF_ITRACE_DEFAULT_LAST_BRANCH_SZ	64
->  #define PERF_ITRACE_MAX_LAST_BRANCH_SZ		1024
->  
-> -void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts)
-> +bool itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts,
-> +				    const struct itrace_synth_opts *tool_synth_opts)
->  {
-> +	if (tool_synth_opts && tool_synth_opts->set) {
-> +		*synth_opts = *tool_synth_opts;
-> +		return false;
-> +	}
-> +
->  	synth_opts->instructions = true;
->  	synth_opts->branches = true;
->  	synth_opts->transactions = true;
-> @@ -977,6 +983,8 @@ void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts)
->  	synth_opts->callchain_sz = PERF_ITRACE_DEFAULT_CALLCHAIN_SZ;
->  	synth_opts->last_branch_sz = PERF_ITRACE_DEFAULT_LAST_BRANCH_SZ;
->  	synth_opts->initial_skip = 0;
-> +
-> +	return true;
->  }
->  
->  /*
-> @@ -1001,7 +1009,7 @@ int itrace_parse_synth_opts(const struct option *opt, const char *str,
->  	}
->  
->  	if (!str) {
-> -		itrace_synth_opts__set_default(synth_opts);
-> +		itrace_synth_opts__set_default(synth_opts, NULL);
->  		return 0;
->  	}
->  
-> diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-> index a516a891d7ea..172c92a8c596 100644
-> --- a/tools/perf/util/auxtrace.h
-> +++ b/tools/perf/util/auxtrace.h
-> @@ -528,7 +528,8 @@ int perf_event__process_auxtrace_error(struct perf_tool *tool,
->  				       struct perf_session *session);
->  int itrace_parse_synth_opts(const struct option *opt, const char *str,
->  			    int unset);
-> -void itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts);
-> +bool itrace_synth_opts__set_default(struct itrace_synth_opts *synth_opts,
-> +				    const struct itrace_synth_opts *tool_synth_opts);
->  
->  size_t perf_event__fprintf_auxtrace_error(union perf_event *event, FILE *fp);
->  void perf_session__auxtrace_error_inc(struct perf_session *session,
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 2ae640257fdb..45b9a2b9f473 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -1429,12 +1429,9 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
->  		return 0;
->  	}
->  
-> -	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-> -		etm->synth_opts = *session->itrace_synth_opts;
-> -	} else {
-> -		itrace_synth_opts__set_default(&etm->synth_opts);
-> +	if (itrace_synth_opts__set_default(&etm->synth_opts,
-> +					   session->itrace_synth_opts))
->  		etm->synth_opts.callchain = false;
-> -	}
->  
->  	err = cs_etm__synth_events(etm, session);
->  	if (err)
-> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-> index 7f0c83b6332b..2d96f4743789 100644
-> --- a/tools/perf/util/intel-bts.c
-> +++ b/tools/perf/util/intel-bts.c
-> @@ -907,12 +907,9 @@ int intel_bts_process_auxtrace_info(union perf_event *event,
->  	if (dump_trace)
->  		return 0;
->  
-> -	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-> -		bts->synth_opts = *session->itrace_synth_opts;
-> -	} else {
-> -		itrace_synth_opts__set_default(&bts->synth_opts);
-> -		if (session->itrace_synth_opts)
-> -			bts->synth_opts.thread_stack =
-> +	if (itrace_synth_opts__set_default(&bts->synth_opts,
-> +					   session->itrace_synth_opts)) {
-> +		bts->synth_opts.thread_stack =
->  				session->itrace_synth_opts->thread_stack;
->  	}
->  
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index aec68908d604..b6ac8ac2f4c3 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -2551,10 +2551,8 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
->  		goto err_delete_thread;
->  	}
->  
-> -	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
-> -		pt->synth_opts = *session->itrace_synth_opts;
-> -	} else {
-> -		itrace_synth_opts__set_default(&pt->synth_opts);
-> +	if (itrace_synth_opts__set_default(&pt->synth_opts,
-> +					   session->itrace_synth_opts)) {
->  		if (use_browser != -1) {
->  			pt->synth_opts.branches = false;
->  			pt->synth_opts.callchain = true;
+
+
+
+>  				break;
+>  			} else {
+>  				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+> -- 
+> 2.17.1
