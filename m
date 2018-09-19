@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889F8ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9569BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493FF2150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493FF2150E
+	by mail.kernel.org (Postfix) with ESMTP id 34D462150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D462150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731869AbeISSOX (ORCPT
+        id S1732095AbeISSQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:14:23 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:49996 "EHLO inva020.nxp.com"
+        Wed, 19 Sep 2018 14:16:15 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:32856 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731837AbeISSOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:14:21 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AC1DF1A0201;
-        Wed, 19 Sep 2018 14:36:35 +0200 (CEST)
+        id S1731507AbeISSOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:14:17 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3002A2001ED;
+        Wed, 19 Sep 2018 14:36:31 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9FD3C1A0200;
-        Wed, 19 Sep 2018 14:36:35 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2401F20016E;
+        Wed, 19 Sep 2018 14:36:31 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 6DB6220618;
-        Wed, 19 Sep 2018 14:36:34 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CF34920618;
+        Wed, 19 Sep 2018 14:36:29 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH 10/21] fsl/fman: add API to get the device behind a fman port
-Date:   Wed, 19 Sep 2018 15:36:02 +0300
-Message-Id: <20180919123613.15092-11-laurentiu.tudor@nxp.com>
+Subject: [PATCH 07/21] soc/fsl/bman_portals: defer probe after bman's probe
+Date:   Wed, 19 Sep 2018 15:35:59 +0300
+Message-Id: <20180919123613.15092-8-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
 References: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
@@ -51,52 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-Add an API that retrieves the 'struct device' that the specified fman
-port probed against. The new API will be used in a subsequent iommu
-enablement related patch.
+A crash in bman portal probing could not be triggered (as is the case
+with qman portals) but it does make calls [1] into the bman driver so
+lets make sure the bman portal probing happens after bman's.
+
+[1]  bman_p_irqsource_add() (in bman) called by:
+       init_pcfg() called by:
+         bman_portal_probe()
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/net/ethernet/freescale/fman/fman_port.c | 14 ++++++++++++++
- drivers/net/ethernet/freescale/fman/fman_port.h |  2 ++
- 2 files changed, 16 insertions(+)
+ drivers/soc/fsl/qbman/bman_portal.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
-index ee82ee1384eb..bd76c9730692 100644
---- a/drivers/net/ethernet/freescale/fman/fman_port.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_port.c
-@@ -1728,6 +1728,20 @@ u32 fman_port_get_qman_channel_id(struct fman_port *port)
- }
- EXPORT_SYMBOL(fman_port_get_qman_channel_id);
- 
-+/**
-+ * fman_port_get_device
-+ * port:	Pointer to the FMan port device
-+ *
-+ * Get the 'struct device' associated to the specified FMan port device
-+ *
-+ * Return: pointer to associated 'struct device'
-+ */
-+struct device *fman_port_get_device(struct fman_port *port)
-+{
-+	return port->dev;
-+}
-+EXPORT_SYMBOL(fman_port_get_device);
+diff --git a/drivers/soc/fsl/qbman/bman_portal.c b/drivers/soc/fsl/qbman/bman_portal.c
+index 2f71f7df3465..f9edd28894fd 100644
+--- a/drivers/soc/fsl/qbman/bman_portal.c
++++ b/drivers/soc/fsl/qbman/bman_portal.c
+@@ -91,7 +91,15 @@ static int bman_portal_probe(struct platform_device *pdev)
+ 	struct device_node *node = dev->of_node;
+ 	struct bm_portal_config *pcfg;
+ 	struct resource *addr_phys[2];
+-	int irq, cpu;
++	int irq, cpu, err;
 +
- int fman_port_get_hash_result_offset(struct fman_port *port, u32 *offset)
- {
- 	if (port->buffer_offsets.hash_result_offset == ILLEGAL_BASE)
-diff --git a/drivers/net/ethernet/freescale/fman/fman_port.h b/drivers/net/ethernet/freescale/fman/fman_port.h
-index 9dbb69f40121..82f12661a46d 100644
---- a/drivers/net/ethernet/freescale/fman/fman_port.h
-+++ b/drivers/net/ethernet/freescale/fman/fman_port.h
-@@ -157,4 +157,6 @@ int fman_port_get_tstamp(struct fman_port *port, const void *data, u64 *tstamp);
++	err = bman_is_probed();
++	if (!err)
++		return -EPROBE_DEFER;
++	if (err < 0) {
++		dev_err(&pdev->dev, "failing probe due to bman probe error\n");
++		return -ENODEV;
++	}
  
- struct fman_port *fman_port_bind(struct device *dev);
- 
-+struct device *fman_port_get_device(struct fman_port *port);
-+
- #endif /* __FMAN_PORT_H */
+ 	pcfg = devm_kmalloc(dev, sizeof(*pcfg), GFP_KERNEL);
+ 	if (!pcfg)
 -- 
 2.17.1
 
