@@ -2,118 +2,106 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4F7C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57086ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F40214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:43:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F40214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id F1EDF208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1EDF208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbeISOTy (ORCPT
+        id S1730971AbeISOXp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:19:54 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12189 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727796AbeISOTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:19:53 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 083143E240954;
-        Wed, 19 Sep 2018 16:42:59 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
- 16:42:53 +0800
-Subject: Re: [PATCH v2 5/5] scsi: libsas: fix a race condition when smp task
- timeout
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20180919033204.11102-1-yanaijie@huawei.com>
- <20180919033204.11102-6-yanaijie@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <miaoxie@huawei.com>, Ewan Milne <emilne@redhat.com>,
-        Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <e4383f9f-7fd8-be48-3ea2-5e65dceae584@huawei.com>
-Date:   Wed, 19 Sep 2018 09:42:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Wed, 19 Sep 2018 10:23:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42163 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727365AbeISOXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 10:23:44 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2387520798; Wed, 19 Sep 2018 10:46:50 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CB9F920379;
+        Wed, 19 Sep 2018 10:46:39 +0200 (CEST)
+Date:   Wed, 19 Sep 2018 10:46:39 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] mtd: rawnand: ams-delta: Cleanups and
+ optimizations
+Message-ID: <20180919104639.6b5339e9@xps13>
+In-Reply-To: <20180907164524.GH5662@atomide.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
+        <20180820213904.13475-1-jmkrzyszt@gmail.com>
+        <20180905084757.432e7c19@xps13>
+        <1855340.fVHtouTg44@z50>
+        <20180907164524.GH5662@atomide.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180919033204.11102-6-yanaijie@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/09/2018 04:32, Jason Yan wrote:
-> When the lldd is processing the complete sas task in interrupt and set
-> the task stat as SAS_TASK_STATE_DONE, the smp timeout timer is able to
-> be triggered at the same time. And smp_task_timedout() will complete the
-> task wheter the SAS_TASK_STATE_DONE is set or not. Then the sas task may
-> freed before lldd end the interrupt process. Thus a use-after-free will
-> happen.
->
-> Fix this by calling the complete() only when SAS_TASK_STATE_DONE is not
-> set. And remove the check of the return value of the del_timer(). Once
-> the LLDD sets DONE, it must call task->done(), which will call
-> smp_task_done()->complete() and the task will be completed and freed
-> correctly.
->
-> Reported-by: chenxiang <chenxiang66@hisilicon.com>
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> CC: John Garry <john.garry@huawei.com>
-> CC: Johannes Thumshirn <jthumshirn@suse.de>
-> CC: Ewan Milne <emilne@redhat.com>
-> CC: Christoph Hellwig <hch@lst.de>
-> CC: Tomas Henzl <thenzl@redhat.com>
-> CC: Dan Williams <dan.j.williams@intel.com>
-> CC: Hannes Reinecke <hare@suse.com>
+Hi Janusz,
 
-Uh, I should have added this for my last comment on v1:
-Reviewed-by: John Garry <john.garry@huawei.com>
+Tony Lindgren <tony@atomide.com> wrote on Fri, 7 Sep 2018 09:45:24
+-0700:
 
-> Reviewed-by: Hannes Reinecke <hare@suse.com>
-> ---
->  drivers/scsi/libsas/sas_expander.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-> index 52222940d398..0d1f72752ca2 100644
-> --- a/drivers/scsi/libsas/sas_expander.c
-> +++ b/drivers/scsi/libsas/sas_expander.c
-> @@ -48,17 +48,16 @@ static void smp_task_timedout(struct timer_list *t)
->  	unsigned long flags;
->
->  	spin_lock_irqsave(&task->task_state_lock, flags);
-> -	if (!(task->task_state_flags & SAS_TASK_STATE_DONE))
-> +	if (!(task->task_state_flags & SAS_TASK_STATE_DONE)) {
->  		task->task_state_flags |= SAS_TASK_STATE_ABORTED;
-> +		complete(&task->slow_task->completion);
-> +	}
->  	spin_unlock_irqrestore(&task->task_state_lock, flags);
-> -
-> -	complete(&task->slow_task->completion);
->  }
->
->  static void smp_task_done(struct sas_task *task)
->  {
-> -	if (!del_timer(&task->slow_task->timer))
-> -		return;
-> +	del_timer(&task->slow_task->timer);
->  	complete(&task->slow_task->completion);
->  }
->
->
+> Hi,
+> 
+> * Janusz Krzysztofik <jmkrzyszt@gmail.com> [180905 20:56]:
+> > On Wednesday, September 5, 2018 8:47:57 AM CEST Miquel Raynal wrote:  
+> > > Patch 2/3 does not apply on nand/next. Indeed the driver does not look
+> > > the same as in the diff.  
+> > 
+> > That's because I built it on top of my former series from the mid of July, 
+> > containing "[PATCH v2 2/3 v4] mtd: rawnand: ams-delta: use GPIO lookup table". 
+> > It was acked by you, Miquel, and supposed to be merged via linux-omap tree.  
+> 
+> Hmm I thought the plan was for dependencies to clear and then
+> merge the rest via various driver trees.. Or at least I don't have
+> the patch above tagged anywhere for me to merge. Then again, I
+> try to forget everything posted before -rc1 just to stay sane :)
+> 
+> > > I don't see any changes on my side that could
+> > > explain this so perhaps you could rebase on top of 4.19-rc2 (or
+> > > nand/next, as you wish) and resend the series?  
+> > 
+> > As far as I can see, Tony hasn't applied that series yet, so maybe I can still 
+> > move that patch out of there and insert it into this series in front of the 
+> > other 3 patches and resend. That would however make patch 3/3 of that old 
+> > series depend on this one.
+> > 
+> > Tony, what do you think?  
+> 
+> Yes please resend based on v4.19-rc1 or MTD next. If there
+> are still pending dependencies, please let us know and we can
+> set up an immutable branch against v4.19-rc1 with those for
+> MTD and me to merge in as needed.
+> 
+> Regards,
+> 
+> Tony
+
+AFAIR I didn't received any new patches from you since Tony suggestion.
+If you haven't done it already, please rebase against nand/next before
+sending patches (internal API changed a bit, it might be worth fixing
+the conflicts before sending them).
 
 
+Thanks,
+Miquèl
