@@ -2,111 +2,221 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAD8ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274DCECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F672146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:35:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GOjQt/b6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F672146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FAAE21508
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:38:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAAE21508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbeISHKv (ORCPT
+        id S1730769AbeISHNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:10:51 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:57393 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbeISHKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:10:51 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id ac3a7128;
-        Wed, 19 Sep 2018 01:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=qxSYIB8kvk/svqK+vY4LbZJN/qQ=; b=GOjQt/
-        b6fdhhjD0g4l6PFihsIzVWP8F2DuYebmlm5Sw1NS6y833pWTbQq7h9nXp4dCiCs1
-        Y5W57kc19IfiwuP0I1LZsoqgQ76WXSv+QpDe6n78N6TG50t8hJkguI0HJxQ7cRo2
-        TRFGiIWMorwhgleDkLcaYbndYUE1oRGO3ev3ocAO7jqDkyVHotF0oT21etvnhIuB
-        bLGdIi8VeBG0P4l6G1hM1r1w9Hsj0nexjqbTUT+bnd452rrFQD6RSeWxOeRsrH/w
-        n/yvZUbj206i4YyFecKey8eXAH5VDDJ8IceiXEjvwAaW9qsZdC0i8q8wM+AnxBRT
-        FDAFgWUeEKXGmLbg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6118351e (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 19 Sep 2018 01:17:50 +0000 (UTC)
-Received: by mail-ot1-f54.google.com with SMTP id i10-v6so4105103oth.0;
-        Tue, 18 Sep 2018 18:35:27 -0700 (PDT)
-X-Gm-Message-State: APzg51Bx/XvDFjVBpH4KIASubuzQdhLWJi09OdBtX1LhSyK9RzlpsrW4
-        FZhfLmwaJbM2Xse3iqXZScP26Plwg0gU8juwI9s=
-X-Google-Smtp-Source: ANB0VdZbIfyFRNzYjgSju9+ufzgPmKRK/XmLHj4jsh/e/oNTAinvKHOy4wbyvg0dfacqWp8MRjC3rQPW+xd2/el0Ybo=
-X-Received: by 2002:a9d:522d:: with SMTP id e45-v6mr16431518oth.250.1537320926773;
- Tue, 18 Sep 2018 18:35:26 -0700 (PDT)
+        Wed, 19 Sep 2018 03:13:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12182 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726887AbeISHNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:13:45 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 82FA4B7FEC771;
+        Wed, 19 Sep 2018 09:38:22 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 09:38:18 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Chao Yu <chao@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <650f06f4-7ca3-a3ed-d149-88d1e9f93b7a@huawei.com>
+ <20180912012550.GA71953@jaegeuk-macbookpro.roam.corp.google.com>
+ <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+ <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+ <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
+Date:   Wed, 19 Sep 2018 09:38:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-8-Jason@zx2c4.com>
- <20180919005054.GC74746@gmail.com>
-In-Reply-To: <20180919005054.GC74746@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 19 Sep 2018 03:35:15 +0200
-X-Gmail-Original-Message-ID: <CAHmME9oL98adRp6xXqaXxA0E4Oa4ecPW+JHChCS3hTgH7RLPjA@mail.gmail.com>
-Message-ID: <CAHmME9oL98adRp6xXqaXxA0E4Oa4ecPW+JHChCS3hTgH7RLPjA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 07/20] zinc: Poly1305 generic C
- implementations and selftest
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 2:50 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> Hardcoding the 'input' array to 600 bytes forces the full amount of space to be
-> reserved in the kernel image for every test vector.  Also, if anyone adds a
-> longer test vector they will need to remember to increase the value.
->
-> It should be a const pointer instead, like the test vectors in crypto/testmgr.h.
+On 2018/9/19 0:45, Jaegeuk Kim wrote:
+> On 09/18, Chao Yu wrote:
+>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+>>> On 09/18, Chao Yu wrote:
+>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+>>>>> On 09/13, Chao Yu wrote:
+>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+>>>>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+>>>>>>>>>>>>>>> can recover it based on previous user information.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+>>>>>>>>>>>>>> same?
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+>>>>>>>>>>>>> fsck after roll-forward recovery.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+>>>>>>>>>>>
+>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+>>>>>>>>>>> may was corrupted/inconsistent. Right?
+>>>>>>>>>
+>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+>>>>>>>>> detected by fsck, I guess there is bug in v8.
+>>>>>>>>
+>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+>>>>>>>> 1. flush time in block_operation exceed a threshold.
+>>>>>>>> 2. dquot subsystem error occurs.
+>>>>>>>>
+>>>>>>>> For above case, fsck should repair the quota file by default.
+>>>>>>>
+>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+>>>>>>> during the recovery. So, we have something missing in the recovery in terms
+>>>>>>> of quota updates.
+>>>>>>
+>>>>>> Yeah, I checked the code, just found one suspected place:
+>>>>>>
+>>>>>> find_fsync_dnodes()
+>>>>>>  - f2fs_recover_inode_page
+>>>>>>   - inc_valid_node_count
+>>>>>>    - dquot_reserve_block  dquot info is not initialized now
+>>>>>>  - add_fsync_inode
+>>>>>>   - dquot_initialize
+>>>>>>
+>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
+>>>>>> you confirm this?
+>>>>>
+>>>>> Let me test this.
+>>>>>
+>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
+>>>>>
+>>>>> If a new file is recovered, we missed to reserve its inode block.
+>>>>
+>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+>>>> have to keep backward compatibilty, in memory we don't account block number
+>>>> for f2fs' inode block, but only account inode number for it, so here like
+>>>> we did in inc_valid_node_count(), we don't need to do this.
+>>>
+>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+>>> is that caused by uid/gid change during recovery. Let me try out your patch.
+>>
+>> I guess we should update dquot and inode's uid/gid atomically under
+>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+>>
+>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+>> enabled, but w/ normal quota file, I got one regression reported by
+>> generic/232, I fixed in v10, will do some tests and release it later.
+>>
+>> Note that, my fsck can fix corrupted quota file automatically once
+>> CP_QUOTA_NEED_FSCK_FLAG is set.
+> 
+> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
 
-I know. The agony. This has been really annoying me. I originally did
-it the right way, but removed it last week, when I noticed that gcc
-failed to put it in the initconst section:
+That's strange, in my environment, before v9, I always encounter corrupted
+quota sysfile after step 9), after v9, I never hit failure again.
 
-https://git.zx2c4.com/WireGuard/commit/?id=f4698d20f13946afc6ce99e98685ba3f9adc4474
+1) enable fault injection
+2) run fsstress
+3) call shutdowon
+4) kill fsstress
+5) unmount
+6) fsck
+7) mount
+8) umount
+9) fsck
+10) go 1).
 
-Even changing the (u8[]){ ... } into a (const u8[]){ ... } or even
-into a const string literal does not do the trick. It makes it into
-the constant data section with const, but it does not make it into the
-initconst section. What a bummer.
+> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+> flag in roll-forward recovery, everything is fine.
 
-I went asking about this on the gcc mailing list, to see if there was
-just some aspect of C that I had overlooked:
-https://gcc.gnu.org/ml/gcc/2018-09/msg00043.html So far, it looks like
-we're SOL. I could probably make some macros to do this in a .S file
-but... that's pretty unacceptably gross. Or I could define lots and
-lots of variables in __initconst, and then connect them all together
-at the end, but that's pretty gross too. Or I could have all this data
-in one variable and record offsets into it, but that's even more
-atrocious.
+I do the test based on codes in my git tree, could you check the result
+again based on my code? in where I just disable nat_bits recovery, not
+sure, in step 6) fsck can break some thing in image.
 
-So I think it comes down to these two non-ugly options:
-- We use fixed sized buffers, waste a lot of space, and be happy that
-it's cleared from memory immediately after init/insertion anyway, so
-it's not actually wasting ram.
-- We use const string literals / constant compound literals, save
-space on disk, but not benefit from having it cleared from memory
-after init/insertion.
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
 
-Of these, which would you prefer? I can see the argument both ways,
-but in the end opted for the first. Or perhaps you have a better third
-option?
+Also, I just send the fsck code, could you check that too?
 
-Jason
+And I'd like to know your mount option and mkfs option, could you list for me?
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Can you test v9 first? I didn't encounter quota corruption with your
+>>>> testcase right now. Will check it in cell phone environment.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/recovery.c | 5 +++++
+>>>>>  1 file changed, 5 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>>>> index 56d34193a74b..bff5cf730e13 100644
+>>>>> --- a/fs/f2fs/recovery.c
+>>>>> +++ b/fs/f2fs/recovery.c
+>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+>>>>>  		err = dquot_alloc_inode(inode);
+>>>>>  		if (err)
+>>>>>  			goto err_out;
+>>>>> +		err = dquot_reserve_block(inode, 1);
+>>>>> +		if (err) {
+>>>>> +			dquot_drop(inode);
+>>>>> +			goto err_out;
+>>>>> +		}
+>>>>>  	}
+>>>>>  
+>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
+
