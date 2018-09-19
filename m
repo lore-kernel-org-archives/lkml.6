@@ -2,86 +2,133 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60DBECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232B0C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77713206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77713206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D02342151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02342151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731823AbeISSbh (ORCPT
+        id S1731841AbeISSce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:31:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:5829 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731419AbeISSbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:31:37 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7D0E73084038;
-        Wed, 19 Sep 2018 12:53:48 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-52.pek2.redhat.com [10.72.12.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B30F75D96E;
-        Wed, 19 Sep 2018 12:53:33 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com
-Subject: [PATCH 3/3 v2] x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
-Date:   Wed, 19 Sep 2018 20:52:51 +0800
-Message-Id: <20180919125251.8181-4-lijiang@redhat.com>
-In-Reply-To: <20180919125251.8181-1-lijiang@redhat.com>
-References: <20180919125251.8181-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 19 Sep 2018 12:53:48 +0000 (UTC)
+        Wed, 19 Sep 2018 14:32:34 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:40911 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731421AbeISSce (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:32:34 -0400
+Received: by mail-vs1-f67.google.com with SMTP id y196-v6so1742522vsy.7;
+        Wed, 19 Sep 2018 05:54:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sJcs1HfI+C4HyzfKaWbhWI+k6Q5SS8ZQVJdYqDwsQjo=;
+        b=B3Fxz4cYNctxYFV9e9XlQz7sTocSYL/5BebvfTLtJCmy771mR9Flg29UItRM7pCAyA
+         YbZQ8vkG3ir1cE0MhnrhL1J5DRbJr9QIm780j91PJOS+0D8uliaC3fHoVBZHMx3ztt1W
+         00CCmoKPgvsGxR4FCLv8gIOFPKtLPBYNpv3GDFQrqGWSz3OCvlCWM3qe+1HkqrtVThq1
+         TXiPFwZ9IcJ2nQ9H6U1AZB1yhYU9G9qYyk40oeKn+1DGiTi+7+eYDzkHKk5R48NoDjRU
+         U3OdXrlb0qzJFsTLcOL79yN0zWYPvxhIFmaA+VoQej1nUv9xD1do3vsN65f3RTqaOq5D
+         Hj+w==
+X-Gm-Message-State: APzg51AlX56If44ad4ajkv0lYEiD23fEsM0Yn4xNw6/i8gk+ncAwhZo5
+        J7d9hxW9m+LAGg8+XYWkPOosUyHMv2qLePYR3B8=
+X-Google-Smtp-Source: ANB0Vdbpua6bOP7LjYyk88Pq3eIPXi605uVMxOQu8ebiHa3z4MwMNJQsZg3dulltGKW7mu8ZOU8SCa6nJuXg0g4bw9Q=
+X-Received: by 2002:a67:4c93:: with SMTP id h19-v6mr10664178vsg.36.1537361683195;
+ Wed, 19 Sep 2018 05:54:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180917163955.19023-1-geert+renesas@glider.be>
+ <20180917163955.19023-3-geert+renesas@glider.be> <b7c4f5d1-020b-4a64-d511-b8e89f8c9196@redhat.com>
+In-Reply-To: <b7c4f5d1-020b-4a64-d511-b8e89f8c9196@redhat.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 19 Sep 2018 14:54:31 +0200
+Message-ID: <CAMuHMdXM9eog_+1oV_YCmSbOfBSFWOXy+YXwKGvfJA65rDqtzA@mail.gmail.com>
+Subject: Re: [PATCH/RFC v4 2/2] vfio: platform: Add generic reset controller support
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-E820 reserved ranges is useful in kdump kernel, we have added this in
-kexec-tools code.
+Hi Eric,
 
-One reason is PCI mmconf (extended mode) requires reserved region
-otherwise it falls back to legacy mode.
+On Wed, Sep 19, 2018 at 2:36 PM Auger Eric <eric.auger@redhat.com> wrote:
+> On 9/17/18 6:39 PM, Geert Uytterhoeven wrote:
+> > Vfio-platform requires dedicated reset support, provided either by ACPI,
+> > or, on DT platforms, by a device-specific reset driver matching against
+> > the device's compatible value.
+> >
+> > On many SoCs, devices are connected to an SoC-internal reset controller.
+> > If the reset hierarchy is described in DT using "resets" properties, or
+> > in lookup tables in platform code, such devices can be reset in a
+> > generic way through the reset controller subsystem.  Hence add support
+> > for this, avoiding the need to write device-specific reset drivers for
+> > each single device on affected SoCs.
+> >
+> > Devices that do require a more complex reset procedure can still provide
+> > a device-specific reset driver, as that takes precedence.
+> >
+> > Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+> > becomes a no-op (as in: "No reset function found for device") if reset
+> > controller support is disabled.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-When AMD SME kdump support, it needs to map dmi table area as unencrypted.
-For normal boot these ranges sit in e820 reserved ranges thus the early
-ioremap code naturally map them as unencrypted. So if we have same e820
-reserve setup in kdump kernel then it will just work like normal kernel.
+> > --- a/drivers/vfio/platform/vfio_platform_common.c
+> > +++ b/drivers/vfio/platform/vfio_platform_common.c
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
- arch/x86/kernel/crash.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> > @@ -128,8 +131,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+> >               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+> >                                                       &vdev->reset_module);
+> >       }
+> > +     if (vdev->of_reset)
+> > +             return 0;
+> > +
+> > +     rstc = reset_control_get_dedicated(vdev->device, NULL);
+> > +     if (!IS_ERR(rstc)) {
+> > +             vdev->reset_control = rstc;
+> > +             return 0;
+> > +     }
+> >
+> > -     return vdev->of_reset ? 0 : -ENOENT;
+> > +     return PTR_ERR(rstc);
+> This changes the returned value as seen by the user (probe returned
+> valud). Can we keep -ENOENT in case of no reset controller found?
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index ae724a6e0a5f..3460be990e0c 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -384,6 +384,11 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
- 			memmap_entry_callback);
- 
-+	/* Add all reserved ranges */
-+	cmd.type = E820_TYPE_RESERVED;
-+	walk_iomem_res_desc(IORES_DESC_NONE, 0, 0, -1, &cmd,
-+			memmap_entry_callback);
-+
- 	/* Add crashk_low_res region */
- 	if (crashk_low_res.end) {
- 		ei.addr = crashk_low_res.start;
+On success, it still returns 0.
+On failure, it forwards the error from reset_control_get_dedicated(), which
+is IMHO better than replacing it by -ENOENT: we try to propagate error
+codes as much as possible.  It could e.g. return -EPROBE_DEFER.
+
+Is there anything that relies on the function returning -ENOENT?
+
+> Otherwise looks good to me with the new "dedicated" reset semantics.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
