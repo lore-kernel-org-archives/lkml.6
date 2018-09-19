@@ -6,190 +6,440 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA290ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE6AECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE62214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:08:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE62214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D46621526
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:09:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D46621526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731377AbeISRqb (ORCPT
+        id S1731603AbeISRr0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 13:46:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62396 "EHLO mga06.intel.com"
+        Wed, 19 Sep 2018 13:47:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:13944 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeISRqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 13:46:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 05:08:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
-   d="scan'208";a="91426762"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 05:08:50 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
-In-Reply-To: <CAB4CAwdfTZ879LXpXGMiMrYi4kCJJBxggGGTi_REYkuRMvz2PQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com> <20180705144009.GC5565@intel.com> <CAB4CAwfQxrfRF=MaJZqagtRyPfJOdHjcS32GTqyG8cOg5=UgKw@mail.gmail.com> <CAB4CAwdjPFLTj+bL+bAeXw2cwAtk9tWFxPPaATpQ4QbuZsM0ew@mail.gmail.com> <87tvnjlsap.fsf@intel.com> <CAB4CAwdUiFrPVTFsz3iC=x2yTTis0n1V4BzozXPMf7EeD52gvA@mail.gmail.com> <CAB4CAwdfTZ879LXpXGMiMrYi4kCJJBxggGGTi_REYkuRMvz2PQ@mail.gmail.com>
-Date:   Wed, 19 Sep 2018 15:08:57 +0300
-Message-ID: <87k1nhy9ie.fsf@intel.com>
+        id S1731433AbeISRrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 13:47:25 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8013B3084219;
+        Wed, 19 Sep 2018 12:09:47 +0000 (UTC)
+Received: from [10.36.116.241] (ovpn-116-241.ams2.redhat.com [10.36.116.241])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B0E3127BAB;
+        Wed, 19 Sep 2018 12:09:45 +0000 (UTC)
+Subject: Re: [PATCH/RFC v4 1/2] reset: Add support for dedicated reset
+ controls
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180917163955.19023-1-geert+renesas@glider.be>
+ <20180917163955.19023-2-geert+renesas@glider.be>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <727f9a0b-79bb-dea9-1da7-12ef58e8081b@redhat.com>
+Date:   Wed, 19 Sep 2018 14:09:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180917163955.19023-2-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 19 Sep 2018 12:09:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Sep 2018, Chris Chiu <chiu@endlessm.com> wrote:
-> I tried to add a slight delay in the hotplug work as follows
->
-> --- a/drivers/gpu/drm/i915/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-> @@ -378,6 +378,8 @@ static void do_i915_hotplug_check(struct work_struct *work,
->
->         spin_unlock_irq(&dev_priv->irq_lock);
->
-> +       msleep(100);
+Hi Geert,
+
+On 9/17/18 6:39 PM, Geert Uytterhoeven wrote:
+> In some SoCs multiple hardware blocks may share a reset control.
+> The existing reset control API for shared resets will only assert such a
+> reset when the drivers for all hardware blocks agree.
+> The existing exclusive reset control API still allows to assert such a
+> reset, but that impacts all other hardware blocks sharing the reset.
+> 
+> Sometimes a driver needs to reset a specific hardware block, and be 100%
+> sure it has no impact on other hardware blocks.  This is e.g. the case
+> for virtualization with device pass-through, where the host wants to
+> reset any exported device before and after exporting it for use by the
+> guest, for isolation.
+> 
+> Hence a new flag for dedicated resets is added to the internal methods,
+> with a new public reset_control_get_dedicated() method, to obtain an
+> exclusive handle to a reset that is dedicated to one specific hardware
+> block.
+> 
+> This supports both DT-based and lookup-based reset controls.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>   - New.
+> 
+> Notes:
+>   - Dedicated lookup-based reset controls were not tested,
+>   - Several internal functions now take 3 boolean flags, and should
+>     probably be converted to take a bitmask instead,
+>   - I think __device_reset() should call __reset_control_get() with
+>     dedicated=true.  However, that will impact existing users,
+why should it?
+>   - Should a different error than -EINVAL be returned on failure?
+> ---
+>  drivers/reset/core.c  | 76 ++++++++++++++++++++++++++++++++++++++-----
+>  include/linux/reset.h | 60 ++++++++++++++++++++++------------
+>  2 files changed, 107 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 225e34c56b94a2e3..5bc4eeca70c0fcc2 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -459,9 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+>  	kref_put(&rstc->refcnt, __reset_control_release);
+>  }
+>  
+> +static bool __of_reset_is_dedicated(const struct device_node *node,
+> +				    const struct of_phandle_args args)
+> +{
+> +	struct of_phandle_args args2;
+> +	struct device_node *node2;
+> +	int index, ret;
 > +
->         drm_connector_list_iter_begin(dev, &conn_iter);
->         drm_for_each_connector_iter(connector, &conn_iter) {
->                 intel_connector = to_intel_connector(connector);
->
-> It does work in most cases, but still fail to update the status if I
-> unplug the HDMI
-> cable very slow. I basically pull the HDMI cable in loose connected
-> state first, and
-> hold in that state ~1 second, totally unplug after that. The status in
-> sysfs will report
-> connected as it used to. There was no problem when I tried the patch
-> https://bugs.freedesktop.org/show_bug.cgi?id=107125#c8
->
-> I'll try to modify this patch a little bit and send upstream for
-> discussion later. Please
-> advise if any. Thanks.
+> +	for_each_node_with_property(node2, "resets") {
+> +		if (node == node2)
+> +			continue;
+> +
+> +		for (index = 0; ; index++) {
+> +			ret = of_parse_phandle_with_args(node2, "resets",
+> +							 "#reset-cells", index,
+> +							 &args2);
+> +			if (ret)
+> +				break;
+> +
+> +			if (args2.np == args.np &&
+> +			    args2.args_count == args.args_count &&
+> +			    !memcmp(args2.args, args.args,
+> +				    args.args_count * sizeof(args.args[0])))
+> +				return false;
+You need to call of_node_put(args2.np) (see of_parse_phandle_with_args
+kernel doc)
 
-Please let's not add excessive msleeps in work functions.
+Isn't it sufficient to check device_node handles are equal?
 
-My idea was more along the lines of making the hotplug function run in a
-delayed work. After a chat with Ville, below is what I came up with.
+Thanks
 
-Please let me know how it works. Feel free to toy with the
-delay. However, 1-2 seconds or more seems too much.
+Eric
 
-BR,
-Jani.
-
-
-
-From 72515b3e856171e52e96bb74796774f595a7f418 Mon Sep 17 00:00:00 2001
-From: Jani Nikula <jani.nikula@intel.com>
-Date: Tue, 18 Sep 2018 13:12:34 +0300
-Subject: [PATCH] drm/i915: delay hotplug scheduling
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Cc: Jani Nikula <jani.nikula@intel.com>
-
-On some systems we get the hotplug irq on unplug before the DDC pins
-have been disconnected, resulting in connector status remaining
-connected. Since previous attempts at using hotplug live status before
-DDC have failed, the only viable option is to reduce the window for
-mistakes. Delay the hotplug processing.
-
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- drivers/gpu/drm/i915/i915_drv.h      |  2 +-
- drivers/gpu/drm/i915/intel_hotplug.c | 15 ++++++++++-----
- 2 files changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-index 7d4daa7412f1..27f579abddae 100644
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -286,7 +286,7 @@ enum hpd_pin {
- #define HPD_STORM_DEFAULT_THRESHOLD 5
- 
- struct i915_hotplug {
--	struct work_struct hotplug_work;
-+	struct delayed_work hotplug_work;
- 
- 	struct {
- 		unsigned long last_jiffies;
-diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-index 648a13c6043c..3af64daa5cfc 100644
---- a/drivers/gpu/drm/i915/intel_hotplug.c
-+++ b/drivers/gpu/drm/i915/intel_hotplug.c
-@@ -110,6 +110,8 @@ enum hpd_pin intel_hpd_pin_default(struct drm_i915_private *dev_priv,
- 	}
- }
- 
-+#define HOTPLUG_DELAY_MS		300
-+
- #define HPD_STORM_DETECT_PERIOD		1000
- #define HPD_STORM_REENABLE_DELAY	(2 * 60 * 1000)
- 
-@@ -319,7 +321,8 @@ static void i915_digport_work_func(struct work_struct *work)
- 		spin_lock_irq(&dev_priv->irq_lock);
- 		dev_priv->hotplug.event_bits |= old_bits;
- 		spin_unlock_irq(&dev_priv->irq_lock);
--		schedule_work(&dev_priv->hotplug.hotplug_work);
-+		schedule_delayed_work(&dev_priv->hotplug.hotplug_work,
-+				      msecs_to_jiffies(HOTPLUG_DELAY_MS));
- 	}
- }
- 
-@@ -329,7 +332,7 @@ static void i915_digport_work_func(struct work_struct *work)
- static void i915_hotplug_work_func(struct work_struct *work)
- {
- 	struct drm_i915_private *dev_priv =
--		container_of(work, struct drm_i915_private, hotplug.hotplug_work);
-+		container_of(work, struct drm_i915_private, hotplug.hotplug_work.work);
- 	struct drm_device *dev = &dev_priv->drm;
- 	struct intel_connector *intel_connector;
- 	struct intel_encoder *intel_encoder;
-@@ -466,7 +469,8 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
- 	if (queue_dig)
- 		queue_work(dev_priv->hotplug.dp_wq, &dev_priv->hotplug.dig_port_work);
- 	if (queue_hp)
--		schedule_work(&dev_priv->hotplug.hotplug_work);
-+		schedule_delayed_work(&dev_priv->hotplug.hotplug_work,
-+				      msecs_to_jiffies(HOTPLUG_DELAY_MS));
- }
- 
- /**
-@@ -586,7 +590,8 @@ void intel_hpd_poll_init(struct drm_i915_private *dev_priv)
- 
- void intel_hpd_init_work(struct drm_i915_private *dev_priv)
- {
--	INIT_WORK(&dev_priv->hotplug.hotplug_work, i915_hotplug_work_func);
-+	INIT_DELAYED_WORK(&dev_priv->hotplug.hotplug_work,
-+			  i915_hotplug_work_func);
- 	INIT_WORK(&dev_priv->hotplug.dig_port_work, i915_digport_work_func);
- 	INIT_WORK(&dev_priv->hotplug.poll_init_work, i915_hpd_poll_init_work);
- 	INIT_DELAYED_WORK(&dev_priv->hotplug.reenable_work,
-@@ -604,7 +609,7 @@ void intel_hpd_cancel_work(struct drm_i915_private *dev_priv)
- 	spin_unlock_irq(&dev_priv->irq_lock);
- 
- 	cancel_work_sync(&dev_priv->hotplug.dig_port_work);
--	cancel_work_sync(&dev_priv->hotplug.hotplug_work);
-+	cancel_delayed_work_sync(&dev_priv->hotplug.hotplug_work);
- 	cancel_work_sync(&dev_priv->hotplug.poll_init_work);
- 	cancel_delayed_work_sync(&dev_priv->hotplug.reenable_work);
- }
--- 
-2.11.0
-
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  struct reset_control *__of_reset_control_get(struct device_node *node,
+>  				     const char *id, int index, bool shared,
+> -				     bool optional)
+> +				     bool optional, bool dedicated)
+>  {
+>  	struct reset_control *rstc;
+>  	struct reset_controller_dev *r, *rcdev;
+> @@ -514,6 +543,11 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>  		return ERR_PTR(rstc_id);
+>  	}
+>  
+> +	if (dedicated && !__of_reset_is_dedicated(node, args)) {
+> +		mutex_unlock(&reset_list_mutex);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+>  	/* reset_list_mutex also protects the rcdev's reset_control list */
+>  	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
+>  
+> @@ -541,9 +575,25 @@ __reset_controller_by_name(const char *name)
+>  	return NULL;
+>  }
+>  
+> +static bool __reset_is_dedicated(const struct reset_control_lookup *lookup)
+> +{
+> +	const struct reset_control_lookup *lookup2;
+> +
+> +	list_for_each_entry(lookup, &reset_lookup_list, list) {
+> +		if (lookup2 == lookup)
+> +			continue;
+> +
+> +		if (lookup2->provider == lookup->provider &&
+> +		    lookup2->index == lookup->index)
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  static struct reset_control *
+>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+> -				bool shared, bool optional)
+> +				bool shared, bool optional, bool dedicated)
+>  {
+>  	const struct reset_control_lookup *lookup;
+>  	struct reset_controller_dev *rcdev;
+> @@ -562,6 +612,11 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  		if ((!con_id && !lookup->con_id) ||
+>  		    ((con_id && lookup->con_id) &&
+>  		     !strcmp(con_id, lookup->con_id))) {
+> +			if (dedicated && !__reset_is_dedicated(lookup)) {
+> +				mutex_unlock(&reset_lookup_mutex);
+> +				return ERR_PTR(-EINVAL);
+> +			}
+> +
+>  			mutex_lock(&reset_list_mutex);
+>  			rcdev = __reset_controller_by_name(lookup->provider);
+>  			if (!rcdev) {
+> @@ -588,13 +643,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  }
+>  
+>  struct reset_control *__reset_control_get(struct device *dev, const char *id,
+> -					  int index, bool shared, bool optional)
+> +					  int index, bool shared,
+> +					  bool optional, bool dedicated)
+>  {
+>  	if (dev->of_node)
+>  		return __of_reset_control_get(dev->of_node, id, index, shared,
+> -					      optional);
+> +					      optional, dedicated);
+>  
+> -	return __reset_control_get_from_lookup(dev, id, shared, optional);
+> +	return __reset_control_get_from_lookup(dev, id, shared, optional,
+> +					       dedicated);
+>  }
+>  EXPORT_SYMBOL_GPL(__reset_control_get);
+>  
+> @@ -635,7 +692,7 @@ static void devm_reset_control_release(struct device *dev, void *res)
+>  
+>  struct reset_control *__devm_reset_control_get(struct device *dev,
+>  				     const char *id, int index, bool shared,
+> -				     bool optional)
+> +				     bool optional, bool dedicated)
+>  {
+>  	struct reset_control **ptr, *rstc;
+>  
+> @@ -644,7 +701,7 @@ struct reset_control *__devm_reset_control_get(struct device *dev,
+>  	if (!ptr)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	rstc = __reset_control_get(dev, id, index, shared, optional);
+> +	rstc = __reset_control_get(dev, id, index, shared, optional, dedicated);
+>  	if (!IS_ERR(rstc)) {
+>  		*ptr = rstc;
+>  		devres_add(dev, ptr);
+> @@ -671,7 +728,7 @@ int __device_reset(struct device *dev, bool optional)
+>  	struct reset_control *rstc;
+>  	int ret;
+>  
+> -	rstc = __reset_control_get(dev, NULL, 0, 0, optional);
+> +	rstc = __reset_control_get(dev, NULL, 0, false, optional, false);
+>  	if (IS_ERR(rstc))
+>  		return PTR_ERR(rstc);
+>  
+> @@ -735,7 +792,8 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	for (i = 0; i < num; i++) {
+> -		rstc = __of_reset_control_get(np, NULL, i, shared, optional);
+> +		rstc = __of_reset_control_get(np, NULL, i, shared, optional,
+> +					      false);
+>  		if (IS_ERR(rstc))
+>  			goto err_rst;
+>  		resets->rstc[i] = rstc;
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index 09732c36f3515a1e..6ca6e108b612f923 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+> @@ -17,15 +17,15 @@ int reset_control_status(struct reset_control *rstc);
+>  
+>  struct reset_control *__of_reset_control_get(struct device_node *node,
+>  				     const char *id, int index, bool shared,
+> -				     bool optional);
+> +				     bool optional, bool dedicated);
+>  struct reset_control *__reset_control_get(struct device *dev, const char *id,
+>  					  int index, bool shared,
+> -					  bool optional);
+> +					  bool optional, bool dedicated);
+>  void reset_control_put(struct reset_control *rstc);
+>  int __device_reset(struct device *dev, bool optional);
+>  struct reset_control *__devm_reset_control_get(struct device *dev,
+>  				     const char *id, int index, bool shared,
+> -				     bool optional);
+> +				     bool optional, bool dedicated);
+>  
+>  struct reset_control *devm_reset_control_array_get(struct device *dev,
+>  						   bool shared, bool optional);
+> @@ -66,21 +66,23 @@ static inline int __device_reset(struct device *dev, bool optional)
+>  static inline struct reset_control *__of_reset_control_get(
+>  					struct device_node *node,
+>  					const char *id, int index, bool shared,
+> -					bool optional)
+> +					bool optional, bool dedicated)
+>  {
+>  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>  }
+>  
+>  static inline struct reset_control *__reset_control_get(
+>  					struct device *dev, const char *id,
+> -					int index, bool shared, bool optional)
+> +					int index, bool shared, bool optional,
+> +					bool dedicated)
+>  {
+>  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>  }
+>  
+>  static inline struct reset_control *__devm_reset_control_get(
+>  					struct device *dev, const char *id,
+> -					int index, bool shared, bool optional)
+> +					int index, bool shared, bool optional,
+> +					bool dedicated)
+>  {
+>  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
+>  }
+> @@ -127,7 +129,25 @@ static inline int device_reset_optional(struct device *dev)
+>  static inline struct reset_control *
+>  __must_check reset_control_get_exclusive(struct device *dev, const char *id)
+>  {
+> -	return __reset_control_get(dev, id, 0, false, false);
+> +	return __reset_control_get(dev, id, 0, false, false, false);
+> +}
+> +
+> +/**
+> + * reset_control_get_dedicated - Lookup and obtain an exclusive reference
+> + *                               to a dedicated reset controller.
+> + * @dev: device to be reset by the controller
+> + * @id: reset line name
+> + *
+> + * Returns a struct reset_control or IS_ERR() condition containing errno.
+> + * If this function is called more than once for the same reset_control it will
+> + * return -EBUSY.
+> + *
+> + * Use of id names is optional.
+> + */
+> +static inline struct reset_control *
+> +__must_check reset_control_get_dedicated(struct device *dev, const char *id)
+> +{
+> +	return __reset_control_get(dev, id, 0, false, false, true);
+>  }
+>  
+>  /**
+> @@ -155,19 +175,19 @@ __must_check reset_control_get_exclusive(struct device *dev, const char *id)
+>  static inline struct reset_control *reset_control_get_shared(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __reset_control_get(dev, id, 0, true, false);
+> +	return __reset_control_get(dev, id, 0, true, false, false);
+>  }
+>  
+>  static inline struct reset_control *reset_control_get_optional_exclusive(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __reset_control_get(dev, id, 0, false, true);
+> +	return __reset_control_get(dev, id, 0, false, true, false);
+>  }
+>  
+>  static inline struct reset_control *reset_control_get_optional_shared(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __reset_control_get(dev, id, 0, true, true);
+> +	return __reset_control_get(dev, id, 0, true, true, false);
+>  }
+>  
+>  /**
+> @@ -183,7 +203,7 @@ static inline struct reset_control *reset_control_get_optional_shared(
+>  static inline struct reset_control *of_reset_control_get_exclusive(
+>  				struct device_node *node, const char *id)
+>  {
+> -	return __of_reset_control_get(node, id, 0, false, false);
+> +	return __of_reset_control_get(node, id, 0, false, false, false);
+>  }
+>  
+>  /**
+> @@ -208,7 +228,7 @@ static inline struct reset_control *of_reset_control_get_exclusive(
+>  static inline struct reset_control *of_reset_control_get_shared(
+>  				struct device_node *node, const char *id)
+>  {
+> -	return __of_reset_control_get(node, id, 0, true, false);
+> +	return __of_reset_control_get(node, id, 0, true, false, false);
+>  }
+>  
+>  /**
+> @@ -225,7 +245,7 @@ static inline struct reset_control *of_reset_control_get_shared(
+>  static inline struct reset_control *of_reset_control_get_exclusive_by_index(
+>  					struct device_node *node, int index)
+>  {
+> -	return __of_reset_control_get(node, NULL, index, false, false);
+> +	return __of_reset_control_get(node, NULL, index, false, false, false);
+>  }
+>  
+>  /**
+> @@ -253,7 +273,7 @@ static inline struct reset_control *of_reset_control_get_exclusive_by_index(
+>  static inline struct reset_control *of_reset_control_get_shared_by_index(
+>  					struct device_node *node, int index)
+>  {
+> -	return __of_reset_control_get(node, NULL, index, true, false);
+> +	return __of_reset_control_get(node, NULL, index, true, false, false);
+>  }
+>  
+>  /**
+> @@ -272,7 +292,7 @@ static inline struct reset_control *
+>  __must_check devm_reset_control_get_exclusive(struct device *dev,
+>  					      const char *id)
+>  {
+> -	return __devm_reset_control_get(dev, id, 0, false, false);
+> +	return __devm_reset_control_get(dev, id, 0, false, false, false);
+>  }
+>  
+>  /**
+> @@ -287,19 +307,19 @@ __must_check devm_reset_control_get_exclusive(struct device *dev,
+>  static inline struct reset_control *devm_reset_control_get_shared(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __devm_reset_control_get(dev, id, 0, true, false);
+> +	return __devm_reset_control_get(dev, id, 0, true, false, false);
+>  }
+>  
+>  static inline struct reset_control *devm_reset_control_get_optional_exclusive(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __devm_reset_control_get(dev, id, 0, false, true);
+> +	return __devm_reset_control_get(dev, id, 0, false, true, false);
+>  }
+>  
+>  static inline struct reset_control *devm_reset_control_get_optional_shared(
+>  					struct device *dev, const char *id)
+>  {
+> -	return __devm_reset_control_get(dev, id, 0, true, true);
+> +	return __devm_reset_control_get(dev, id, 0, true, true, false);
+>  }
+>  
+>  /**
+> @@ -317,7 +337,7 @@ static inline struct reset_control *devm_reset_control_get_optional_shared(
+>  static inline struct reset_control *
+>  devm_reset_control_get_exclusive_by_index(struct device *dev, int index)
+>  {
+> -	return __devm_reset_control_get(dev, NULL, index, false, false);
+> +	return __devm_reset_control_get(dev, NULL, index, false, false, false);
+>  }
+>  
+>  /**
+> @@ -333,7 +353,7 @@ devm_reset_control_get_exclusive_by_index(struct device *dev, int index)
+>  static inline struct reset_control *
+>  devm_reset_control_get_shared_by_index(struct device *dev, int index)
+>  {
+> -	return __devm_reset_control_get(dev, NULL, index, true, false);
+> +	return __devm_reset_control_get(dev, NULL, index, true, false, false);
+>  }
+>  
+>  /*
+> 
