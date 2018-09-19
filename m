@@ -2,175 +2,123 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2FAECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D384C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 192002150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:55:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192002150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 2873B2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:55:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="0ZVV7E75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2873B2150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731057AbeISPce (ORCPT
+        id S1731111AbeISPcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 11:32:34 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:55678 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728008AbeISPce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 11:32:34 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8J9pnS5003017
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 19 Sep 2018 02:52:25 -0700
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 19 Sep
- 2018 02:51:45 -0700
-Subject: Re: [PATCH] mm/page_alloc: Fix panic caused by passing
- debug_guardpage_minorder or kernelcore to command line
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <mhocko@suse.com>, <vbabka@suse.cz>, <pasha.tatashin@oracle.com>,
-        <mgorman@techsingularity.net>, <aaron.lu@intel.com>,
-        <osalvador@suse.de>, <iamjoonsoo.kim@lge.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <1537284788-428784-1-git-send-email-zhe.he@windriver.com>
- <20180918141917.2cb16b01c122dbe1ead2f657@linux-foundation.org>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <1c32c1d2-a54a-30f7-1afb-ad6d3282f54a@windriver.com>
-Date:   Wed, 19 Sep 2018 17:51:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 19 Sep 2018 11:32:50 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55034 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbeISPct (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 11:32:49 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c14-v6so5556024wmb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 02:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OFB/MHMgh0Ap32ZYn2KzCunWcMDGOn12r0Z0szLw7J4=;
+        b=0ZVV7E751Kl/BJqthEr0nAnfpX0a/QFX8ZW9jfjpyQSDwxsNPVhpm4owCLzit1yamr
+         6rhw2pXg+/SMJ71T0BJI6x3o0OzDxWuRgnM6wqM4h6dlmL2SrzViGkEKQ6fu3ev1H6Ds
+         OTNa0rA+YhDzOjA3Kuhnvjmu3eCFfcTLpBLg1WtiCfygB2q7Y1vxOfJpCNLjwINv7S+j
+         N4GuatKjDeS0tk6Ud6Ctts7oJt2fJschjcQoaAgHnlQOZptPGF3rWaUNQbBjtUlmP2RG
+         laFlpRFLNd5+CiCcJ84sTpewSwyoc08zx3aolvnFnmRFxF8pew5em798nHj5Ey9DlLQg
+         aECg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OFB/MHMgh0Ap32ZYn2KzCunWcMDGOn12r0Z0szLw7J4=;
+        b=SQh7yMvX70RTjgWPi14Yt2BFPTmHKh1Ycdge17DBx8kdTp8hJ5wX/tuRfBmWX9/qm4
+         4XzCsD4TDRXx3e1oIEGayWwJUDRrnnRzblXCZRBtoe7RmW5itw6L4y9wjQy5GMrsxnoi
+         MRSdoIL3l22MhBDXVlIVX0JhTZ+qrk9cYLKdkHt9YZTmtcw/7eSq+oGETuRM5L1m7t+8
+         Xeau7sLwZpQ8IfcYkJKlAWVyBim29NsL4ZMiAu1zU8jSQRp9vR3hReTZ8e0kf3R3fFIc
+         2oOpBke96144iR/deqI6trQUUPCHLPXHtp0UkdCOK2GShG9HsGKJQKawVpqF/FMDV+sb
+         xgog==
+X-Gm-Message-State: APzg51Dg1pXb6dD0BbKU78RhCWyrZJVUp7QvvFJqpnNbMALt13xF51ch
+        o2prk8Vz9Rs4LijxHxUmxc8jBmpkNeW7pPOV
+X-Google-Smtp-Source: ANB0Vdaz5aECQNtTLeePawbBcdY6soe+20FTAAAt6TTlmYLZxzlNxy8HaQYnh3ebN9k+NDwNT+RYJg==
+X-Received: by 2002:a1c:40d5:: with SMTP id n204-v6mr19418064wma.44.1537350939353;
+        Wed, 19 Sep 2018 02:55:39 -0700 (PDT)
+Received: from cisco ([173.38.220.62])
+        by smtp.gmail.com with ESMTPSA id x15-v6sm17614359wrt.53.2018.09.19.02.55.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Sep 2018 02:55:38 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 03:55:36 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via
+ USER_NOTIF
+Message-ID: <20180919095536.GM4672@cisco>
+References: <20180906152859.7810-1-tycho@tycho.ws>
+ <20180906152859.7810-5-tycho@tycho.ws>
+ <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180918141917.2cb16b01c122dbe1ead2f657@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 12, 2018 at 04:52:38PM -0700, Andy Lutomirski wrote:
+> On Thu, Sep 6, 2018 at 8:28 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > The idea here is that the userspace handler should be able to pass an fd
+> > back to the trapped task, for example so it can be returned from socket().
+> >
+> > I've proposed one API here, but I'm open to other options. In particular,
+> > this only lets you return an fd from a syscall, which may not be enough in
+> > all cases. For example, if an fd is written to an output parameter instead
+> > of returned, the current API can't handle this. Another case is that
+> > netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
+> > ever decides to install an fd and output it, we wouldn't be able to handle
+> > this either.
+> 
+> An alternative could be to have an API (an ioctl on the listener,
+> perhaps) that just copies an fd into the tracee.  There would be the
+> obvious set of options: do we replace an existing fd or allocate a new
+> one, and is it CLOEXEC.  Then the tracer could add an fd and then
+> return it just like it's a regular number.
+> 
+> I feel like this would be more flexible and conceptually simpler, but
+> maybe a little slower for the common cases.  What do you think?
 
+I'm just implementing this now, and there's one question: when do we
+actually do the fd install? Should we do it when the user calls
+SECCOMP_NOTIF_PUT_FD, or when the actual response is sent? It feels
+like we should do it when the response is sent, instead of doing it
+right when SECCOMP_NOTIF_PUT_FD is called, since if there's a
+subsequent signal and the tracer decides to discard the response,
+we'll have to implement some delete mechanism to delete the fd, but it
+would have already been visible to the process, etc. So I'll go
+forward with this unless there are strong objections, but I thought
+I'd point it out just to avoid another round trip.
 
-On 2018年09月19日 05:19, Andrew Morton wrote:
-> On Tue, 18 Sep 2018 23:33:08 +0800 <zhe.he@windriver.com> wrote:
->
->> From: He Zhe <zhe.he@windriver.com>
->>
->> debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
->> input argument before using it. The argument would be a NULL pointer if
->> "debug_guardpage_minorder" or "kernelcore", without its value, is set in
->> command line and thus causes the following panic.
->>
->> PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
->> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
->> [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
->> ...
->> [    0.000000] Call Trace:
->> [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
->> [    0.000000]  do_early_param+0x57/0x8e
->> [    0.000000]  parse_args+0x208/0x320
->> [    0.000000]  ? rdinit_setup+0x30/0x30
->> [    0.000000]  parse_early_options+0x29/0x2d
->> [    0.000000]  ? rdinit_setup+0x30/0x30
->> [    0.000000]  parse_early_param+0x36/0x4d
->> [    0.000000]  setup_arch+0x336/0x99e
->> [    0.000000]  start_kernel+0x6f/0x4ee
->> [    0.000000]  x86_64_start_reservations+0x24/0x26
->> [    0.000000]  x86_64_start_kernel+0x6f/0x72
->> [    0.000000]  secondary_startup_64+0xa4/0xb0
-> >From my quick reading, more than half of the __setup handlers in mm/
-> will crash in the same way if misused in this fashion.
->
->> This patch adds a check to prevent the panic and adds KBUILD_MODNAME to
->> prints.
-> So a better solution might be to add a check into the calling code
-> (presumably in init/main.c) to print a warning if we have kernel
-> command line arguments such as "kernelcore=".  That way, users will see
-> the warning immediately before the oops and will know how to fix things
-> up.
-
-Thank you for your suggestion.
-
-"kernelcore=" would not cause crash, "kernelcore' would. Andmany users of
-early_param, e.g. the following two, depend on the validity of the "xxx"
-format. If we fixed in the calling code, those parameters would become
-invalid and need to be changed to a new format. That might affect too much.
-Soit might be better to correct the users who misuse it.
-
-
-static int __init cmdline_parse_movable_node(char *p)                           
-{                                                                                   
-#ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP                                            
-        movable_node_enabled = true;                                            
-#else                                                                           
-        pr_warn("movable_node parameter depends on CONFIG_HAVE_MEMBLOCK_NODE_MAP to work properly\n");
-#endif                                                                          
-        return 0;                                                               
-}                                                                               
-early_param("movable_node", cmdline_parse_movable_node);
-
-
-static int __init parse_alloc_mptable_opt(char *p)                                 
-{                                                                               
-        enable_update_mptable = 1;                                                 
-#ifdef CONFIG_PCI                                                               
-        pci_routeirq = 1;                                                       
-#endif                                                                          
-        alloc_mptable = 1;                                                      
-        if (!p)                                                                 
-                return 0;                                                       
-        mpc_new_length = memparse(p, &p);                                          
-        return 0;                                                               
-}                                                                               
-early_param("alloc_mptable", parse_alloc_mptable_opt);
-
->
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -14,6 +14,8 @@
->>   *          (lots of bits borrowed from Ingo Molnar & Andrew Morton)
->>   */
->>  
->> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->> +
->>  #include <linux/stddef.h>
->>  #include <linux/mm.h>
->>  #include <linux/swap.h>
->> @@ -630,6 +632,11 @@ static int __init debug_guardpage_minorder_setup(char *buf)
->>  {
->>  	unsigned long res;
->>  
->> +	if (!buf) {
->> +		pr_err("Config string not provided\n");
-> If were going to do it this way, we should tell the operator which
-> argument was bad.  pr_err("kernel option debug_guardpage_minorder
-> requires an argument").
-
-Yes, this makes it more clear for users.I'd like to do in this way.
-
->
-> And then perhaps we should just let the kernel crash anyway.  That
-> seems better than hoping that the user will notice that line in the
-> logs one day.  
-
-If we want the PANIC info for these early parameters when crashing,
-the parameter earlyprintk needs to be set correctly, especially in
-embedded scenarios. Otherwise the system will hang without any error
-info. Letting it boot up with an invalid parameter seems better than
-that. And the owner of the parameter may give more errors to the
-users if they don't get a valid value.
-
-Thanks,
-Zhe
-
->
-> And note that the preceding two paragraphs will produce the same result
-> as my do-it-in-init/main.c suggestion!
->
->
-
+Tycho
