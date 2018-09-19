@@ -2,194 +2,114 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86737C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1847EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF162150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB6B1206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="JCUEbNXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF162150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZDh8ij2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6B1206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbeITCaY (ORCPT
+        id S1732118AbeITCfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:30:24 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45037 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731902AbeITCaW (ORCPT
+        Wed, 19 Sep 2018 22:35:06 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:44987 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727760AbeITCfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:30:22 -0400
-Received: by mail-ed1-f66.google.com with SMTP id s10-v6so6008449edb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:43 -0700 (PDT)
+        Wed, 19 Sep 2018 22:35:06 -0400
+Received: by mail-yb1-f194.google.com with SMTP id s8-v6so2985502ybo.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TXxaWmvWwJSZ82Le63q+MPVKCbZ0fMfBagChLVPhkoU=;
-        b=JCUEbNXObW5AyGKN1SLiiJ2SILWfYQb6vQT6grrKNAC4JK1YrCKc0VKhYxHF/eUGc6
-         pubfjI82efwkW9pZlk4KGblZvfuazFuc1o1uBD+6ukGK+ZiIwYx2T7mckb4RCIDO9dg8
-         1ZqJz+S0rXhQwSx2UG1/pr9glGs5u34L33RgWlX0HDU3wIEliGx/zQuopTnpkADOCz92
-         Q/SVkk2FBnRp3YtW8lpsVgIyOcon0SJScOdLq62NM1AkvRHNRV3hOT7I/h33t5laRadT
-         r3QbqSviR77yuYdr9EjId+krvxGXabp/F0r4h85FFZEqMYG2qv4JIKwcgzWIC0nlZV3c
-         uU7w==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6LHoA8FhhC+6c7CSMYTPVmToxn9L+kcipGtG8g2T1oI=;
+        b=mZDh8ij25oh4hWSb6lqqxwVCZoKMc49yjmMAH6ZQN+wS7fGJn8+TZcGN99feE9FKwX
+         44IP2HSI0cDL9bhG+PxmPT4daBzLFVWQbw+EU1Z/VoUWOoOoT57Ck4wNES1UkSYXzm4K
+         nWz9EFg9PJs5rrmk58RGTklF3zTHJqEamu9/DVlNvd26vomzIOlwJx7U/WEE8oOhyyIt
+         Fpe8+wjdZy+1tNr3ZQV5MU2lAhoAimRwi30U53oiZw9lLjHigqgMn4snX0HH+wX8x0FN
+         7IRvVM/X40HSWjktTh1CkFhuH9eRV0llJgJgiq7IxD3cu1bhtr9Tr/n/OY8jBtfW/sdS
+         Guag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TXxaWmvWwJSZ82Le63q+MPVKCbZ0fMfBagChLVPhkoU=;
-        b=SKzvJI514XqgjlDriOE2mCDMFXx//toPoL5qB+KyxKyVUaz+NojdLemR2DkYiUiewX
-         WaL4u920BrEJz4MdbjXo8OJg/64CeT02G2izTHARGw5TU+yrVWdtV4yWAxrJtZvzBELo
-         8Y6LiXrVmN431EHPzMlyGVZY5jivIvu6xH4AlNEeu6gf33oiZ8KKM42KYzmAzDIVSd1/
-         QYhEnQK/fBwgc6nsAv1s5V9IT2QOodg23nQZcViJ+eHfkv8CtUyFOoxjsnAP7U1OK/GR
-         ea7YZ8jlbuBe8nrH68ywH6AiYpG/BaB+e86TSpD+usWVCNUlhJzv9XMuDflEx4DjGqAF
-         7bdw==
-X-Gm-Message-State: APzg51DcocLh5JgO1ohwy1IvMt6i13UyCShKfWX8y693hhQGuuI6jjj1
-        UGim15ENAUHS1/wO60ASi0uJuefhC+w=
-X-Google-Smtp-Source: ANB0VdYsrYmPjpTQEsuuazJ5uuCqMm40wrSMF+xu1uFaQksn0+8ydkqc3A+7J2JsmspRWhNBN/wh9g==
-X-Received: by 2002:a50:9306:: with SMTP id m6-v6mr59777681eda.206.1537390242440;
-        Wed, 19 Sep 2018 13:50:42 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 13:50:41 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: [RFC 02/20] timens: Add timens_offsets
-Date:   Wed, 19 Sep 2018 21:50:19 +0100
-Message-Id: <20180919205037.9574-3-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180919205037.9574-1-dima@arista.com>
-References: <20180919205037.9574-1-dima@arista.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6LHoA8FhhC+6c7CSMYTPVmToxn9L+kcipGtG8g2T1oI=;
+        b=tmIbvdYjL85i8KNKSNYpY9SldtjRTvgnQGdX/WQ8/wGClWPWUM2GxLcVCAQugd5Si6
+         Awr0QHbhtinhsugPBNIbhDEBy1tVO+fsb4voW4rVZ07THYnVwbT1+pfByYdUiwqW3Zra
+         pq7E47nN5echuGydSS3m3IMnTDZZ32rBzwRTtN6IolxnSJNsg9zskZ33kkn9VpvmHLjM
+         bSw78VQPnD9PcpjaQJB1OPSofsWhPBtim4Slmjg9O+alY6uOJNkBaLGmfmcjplOojpm9
+         MfA9pQL3RdC2PZ2Y+ZGyWuyTSIO8i8vzwf5oQl2hES2tyVqwLl1B5BZx/syb2HhLRewX
+         Uuxw==
+X-Gm-Message-State: APzg51BwdQobKQc6eqzrgMHBM+0/Za73I9g3vpAGO0FULnBdwLCHoVGj
+        4zg4VCuts+sZrMH/Oyawgdo=
+X-Google-Smtp-Source: ANB0VdZ6YjW4wzz2Qy8y329iOGpBt63Tc+JF5hS9xamoA+SJB0wRHTu2ibK2PGLT+1U3Pvz831aXEA==
+X-Received: by 2002:a25:6412:: with SMTP id y18-v6mr16582123ybb.436.1537390524483;
+        Wed, 19 Sep 2018 13:55:24 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:cfe3])
+        by smtp.gmail.com with ESMTPSA id b16-v6sm8390472ywa.33.2018.09.19.13.55.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 13:55:23 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 13:55:21 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        tglx@linutronix.de, Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Use cpus_read_lock() while looking at
+ cpu_online_mask
+Message-ID: <20180919205521.GE902964@devbig004.ftw2.facebook.com>
+References: <20180910135615.tr3cvipwbhq6xug4@linutronix.de>
+ <20180911160532.GJ4225@linux.vnet.ibm.com>
+ <20180911162142.cc3vgook2gctus4c@linutronix.de>
+ <20180911170222.GO4225@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180911170222.GO4225@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@openvz.org>
+Hello,
 
-Introduce offsets for time namespace. They will contain adjustment
-needed to convert clocks to/from host's.
+On Tue, Sep 11, 2018 at 10:02:22AM -0700, Paul E. McKenney wrote:
+> > Doesn't work for me because it is still within the preempt-disable
+> > section :/.
+> > Would it work to use WORK_CPU_UNBOUND? As far as I understand it, the
+> > CPU number does not matter, you just want to spread it across multiple
+> > CPUs in the NUMA case.
+> 
+> Locality is a good thing, but yes, something like this?
+> 
+> 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && /* or whatever it is called */
+> 	    unlikely(cpu > rnp->grphi - rnp->grplo))
+> 
+> Another approach that might be better longer term would be to have a
+> workqueue interface that treats the specified CPU as a suggestion,
+> and silently switches to WORK_CPU_UNBOUND if there is any problem
+> whatsoever with the specified CPU.  Tejun, Lai, thoughts?
 
-Allocate one page for each time namespace that will be premapped into
-userspace with vvar pages.
+Unbound workqueue is NUMA-affine by default, so using it by default
+might not harm anything.  Also, per-cpu work items get unbound from
+the cpu if the cpu goes down while the work item is running or queued,
+so it might just work already.
 
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- include/linux/time_namespace.h |  2 ++
- include/linux/timens_offsets.h |  8 ++++++++
- kernel/time_namespace.c        | 14 ++++++++++++--
- 3 files changed, 22 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/timens_offsets.h
+Thanks.
 
-diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
-index bf98f35efe07..4960c54f1b33 100644
---- a/include/linux/time_namespace.h
-+++ b/include/linux/time_namespace.h
-@@ -8,6 +8,7 @@
- #include <linux/nsproxy.h>
- #include <linux/ns_common.h>
- #include <linux/err.h>
-+#include <linux/timens_offsets.h>
- 
- struct user_namespace;
- extern struct user_namespace init_user_ns;
-@@ -17,6 +18,7 @@ struct time_namespace {
- 	struct user_namespace *user_ns;
- 	struct ucounts *ucounts;
- 	struct ns_common ns;
-+	struct timens_offsets *offsets;
- } __randomize_layout;
- extern struct time_namespace init_time_ns;
- 
-diff --git a/include/linux/timens_offsets.h b/include/linux/timens_offsets.h
-new file mode 100644
-index 000000000000..7d7cb68ea778
---- /dev/null
-+++ b/include/linux/timens_offsets.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_TIME_OFFSETS_H
-+#define _LINUX_TIME_OFFSETS_H
-+
-+struct timens_offsets {
-+};
-+
-+#endif
-diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
-index 902cd9c22159..a985529754b4 100644
---- a/kernel/time_namespace.c
-+++ b/kernel/time_namespace.c
-@@ -13,6 +13,7 @@
- #include <linux/user_namespace.h>
- #include <linux/proc_ns.h>
- #include <linux/sched/task.h>
-+#include <linux/mm.h>
- 
- static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
- {
-@@ -44,6 +45,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
- {
- 	struct time_namespace *ns;
- 	struct ucounts *ucounts;
-+	struct page *page;
- 	int err;
- 
- 	err = -ENOSPC;
-@@ -56,15 +58,22 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
- 	if (!ns)
- 		goto fail_dec;
- 
-+	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!page)
-+		goto fail_free;
-+	ns->offsets = page_address(page);
-+	BUILD_BUG_ON(sizeof(*ns->offsets) > PAGE_SIZE);
-+
- 	err = ns_alloc_inum(&ns->ns);
- 	if (err)
--		goto fail_free;
-+		goto fail_page;
- 
- 	ns->ucounts = ucounts;
- 	ns->ns.ops = &timens_operations;
- 	ns->user_ns = get_user_ns(user_ns);
- 	return ns;
--
-+fail_page:
-+	free_page((unsigned long)ns->offsets);
- fail_free:
- 	kfree(ns);
- fail_dec:
-@@ -93,6 +102,7 @@ void free_time_ns(struct kref *kref)
- 	struct time_namespace *ns;
- 
- 	ns = container_of(kref, struct time_namespace, kref);
-+	free_page((unsigned long)ns->offsets);
- 	dec_time_namespaces(ns->ucounts);
- 	put_user_ns(ns->user_ns);
- 	ns_free_inum(&ns->ns);
 -- 
-2.13.6
-
+tejun
