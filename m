@@ -2,164 +2,85 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31413C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F23ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFAFB2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAFB2150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5E5DE2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:26:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="04ZyHqxW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5DE2150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbeISSDN (ORCPT
+        id S1731552AbeISSEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:03:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38620 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731211AbeISSDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:03:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1061EAE14;
-        Wed, 19 Sep 2018 12:25:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D95401E091E; Wed, 19 Sep 2018 14:25:22 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 14:25:22 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     syzbot <syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com>
-Cc:     ak@linux.intel.com, akpm@linux-foundation.org, dhowells@redhat.com,
-        jack@suse.cz, jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mawilcox@microsoft.com,
-        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at include/linux/page-flags.h:LINE!
-Message-ID: <20180919122522.GL10257@quack2.suse.cz>
-References: <00000000000017d92b0576267d0f@google.com>
+        Wed, 19 Sep 2018 14:04:35 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:41421 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727772AbeISSEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:04:34 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id e6af9933;
+        Wed, 19 Sep 2018 12:09:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=4qfqBAAM8rP4GnrmCYyNp/gpMrc=; b=04ZyHq
+        xW3lTQhH0YL3Cx43+kCtG8/fdUfc3DUo+kuaj/sgxotc/VJkXTD3l8CwNP23QT/s
+        hK3DXv4u6cY3S3QVahiPLW/3YJuqlFF0RtSkEF+SRI4sMkHBjPyPRTrEojsi3kLN
+        GnbT2vnCFzBHCAXM6P95INmhN9QNy6rtMBpH8ZNVd1rJJb3m6ukZNxq9qYdSaeeU
+        AWjJ6LLrJ/r2WxB9GMC10H7vxBvE2Zt5E9NQXcuQvxEMgpyziOdKRMsBiU1N/GOq
+        jHIoY/RrV359l+RiM6RZ5YveXRTVjngH5wbHgQKJj9rKUfjPFDxYBmyEKvo2lyRd
+        2kl3jtSoV/lAfi6Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3540a8f9 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 19 Sep 2018 12:09:09 +0000 (UTC)
+Received: by mail-ot1-f44.google.com with SMTP id v44-v6so5504956ote.13;
+        Wed, 19 Sep 2018 05:26:50 -0700 (PDT)
+X-Gm-Message-State: APzg51DUczaAxS5IgfmihhjAt3oz7mALbyvY8A8TDlbe0zBSy8aQJ4x7
+        FMbwtHi4UMJ2X/3K+9F7Ufp9B9IMxV0WXWeTBSI=
+X-Google-Smtp-Source: ANB0Vdb5psyQ3p8QjGwPWZF3riC9Qzfc6iY0rlNfmyZOb5Ytq56Lf4Eeef9dbVZB8Sey0Cr749II036YcUF9OlOP89A=
+X-Received: by 2002:a9d:522d:: with SMTP id e45-v6mr17627413oth.250.1537360009775;
+ Wed, 19 Sep 2018 05:26:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000017d92b0576267d0f@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-8-Jason@zx2c4.com>
+ <20180919005054.GC74746@gmail.com> <CAHmME9oL98adRp6xXqaXxA0E4Oa4ecPW+JHChCS3hTgH7RLPjA@mail.gmail.com>
+ <BF781C43-52C2-410A-A6D0-AAD0AC998C2D@amacapital.net> <CAHmME9oERxpgxavBjoHEGwPCCq+O20eiDAXPvDSKgB4D+TRcDQ@mail.gmail.com>
+In-Reply-To: <CAHmME9oERxpgxavBjoHEGwPCCq+O20eiDAXPvDSKgB4D+TRcDQ@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 19 Sep 2018 14:26:38 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rsXFG6oUnc3e57Q9LY0R39eoTODZdyKk6OqJe7ssEY3g@mail.gmail.com>
+Message-ID: <CAHmME9rsXFG6oUnc3e57Q9LY0R39eoTODZdyKk6OqJe7ssEY3g@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 07/20] zinc: Poly1305 generic C
+ implementations and selftest
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 18-09-18 07:56:03, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    c0747ad363ff Merge tag 'linux-kselftest-4.19-rc5' of git:/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1483a8c9400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5373a556df9f9fec7e90
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> kernel BUG at include/linux/page-flags.h:273!
+On Wed, Sep 19, 2018 at 1:50 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> On Wed, Sep 19, 2018 at 6:19 AM Andy Lutomirski <luto@amacapital.net> wrote:
+> > Can you not uglify the code a bit by using normal (non-compound) liberals as described in the response to that email?
+>
+> I can define a bunch of variables, and then string them all together
+> in an array at the end. This is a bit ugly and less maintainable, but
+> would be the best of both worlds.
 
-Hum, looks like PageTail (i.e. the lowest bit of LRU pointer) got set for a
-pagecache page we try to writeback. No idea how that's possible...
+Alright, I wrote a little program to do this for me in a way that
+actually doesn't look half bad. Thanks for suggesting.
 
-								Honza
-
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 9734 Comm: kworker/u4:1 Not tainted 4.19.0-rc4+ #18
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: writeback wb_workfn (flush-7:4)
-> RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
-> RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
-> RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
-> Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8
-> 56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25 e2
-> ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
-> RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
-> RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
-> kobject: 'loop0' (00000000d6ad330d): kobject_uevent_env
-> R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
-> R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6134b6cc90 CR3: 00000001cc363000 CR4: 00000000001406e0
-> kobject: 'loop0' (00000000d6ad330d): fill_kobj_path: path =
-> '/devices/virtual/block/loop0'
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  page_endio+0x67c/0xb60 mm/filemap.c:1260
->  mpage_end_io+0x144/0x1e0 fs/mpage.c:54
->  bio_endio+0x5d2/0xb80 block/bio.c:1774
->  generic_make_request_checks+0x5f6/0x26c0 block/blk-core.c:2347
->  generic_make_request+0x2bd/0x15a0 block/blk-core.c:2401
->  submit_bio+0xba/0x460 block/blk-core.c:2566
->  mpage_bio_submit fs/mpage.c:66 [inline]
->  __mpage_writepage+0x1515/0x1d30 fs/mpage.c:627
->  write_cache_pages+0xd8e/0x1e50 mm/page-writeback.c:2239
->  mpage_writepages+0x14c/0x320 fs/mpage.c:730
->  fat_writepages+0x24/0x30 fs/fat/inode.c:198
->  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2340
->  __writeback_single_inode+0x20a/0x1620 fs/fs-writeback.c:1323
->  writeback_sb_inodes+0x71f/0x11d0 fs/fs-writeback.c:1587
->  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1656
->  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1765
->  wb_check_start_all fs/fs-writeback.c:1889 [inline]
->  wb_do_writeback fs/fs-writeback.c:1915 [inline]
->  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1949
->  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
->  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
->  kthread+0x35a/0x420 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
-> Modules linked in:
-> kobject: 'loop5' (0000000003a73ee3): kobject_uevent_env
-> kobject: 'loop5' (0000000003a73ee3): fill_kobj_path: path =
-> '/devices/virtual/block/loop5'
-> ---[ end trace b1bf6d33e16c103c ]---
-> RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
-> RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
-> RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
-> Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8
-> 56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25 e2
-> ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
-> RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
-> kobject: 'loop2' (0000000001c28b7c): kobject_uevent_env
-> RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
-> kobject: 'loop2' (0000000001c28b7c): fill_kobj_path: path =
-> '/devices/virtual/block/loop2'
-> R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
-> R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> kobject: 'loop3' (0000000091672ed1): kobject_uevent_env
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> kobject: 'loop3' (0000000091672ed1): fill_kobj_path: path =
-> '/devices/virtual/block/loop3'
-> CR2: 0000001b3202d000 CR3: 00000001cad9f000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jason
