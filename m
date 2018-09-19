@@ -2,148 +2,104 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BDBC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CDDECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C0E9214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70CF0208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:50:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jypLQSOz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0E9214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=russell.cc
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cko9XV+W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70CF0208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbeISHY7 (ORCPT
+        id S1730814AbeISHZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:24:59 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45603 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726887AbeISHY7 (ORCPT
+        Wed, 19 Sep 2018 03:25:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38913 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728226AbeISHZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:24:59 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id B963221FB7;
-        Tue, 18 Sep 2018 21:49:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 18 Sep 2018 21:49:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=TkbrD3
-        Z5mS/TrhR2eGrJmflwxC1YOPQMdlMIujcGRf8=; b=jypLQSOz98FwHaqw+eHu1L
-        WA6ARy/+DkQmrVLL/ys2xm9cc/VO/3qfVjOjfS6Euwz/VWY65eFBpiPFq3vOZGPq
-        eU+Dz+00aFFY63nmFwC63FuGeFjBN6RWG/IipfCIRbfCRpA2rzYMnqsaPedJtJRr
-        TN3KMwsf5yYN3okoRuUOlqrs+z5NqGPIU7jt8jqHKETOA9ms4SvdsSIUh1FEzcF9
-        gWSF1LVJlUsLcEmUzqFnyOGMsHgbYhhnpCvNdTfOclaY4wwlUTBst9ulgrtIoxV8
-        Di/H0UAiRt3XDuXS7L4sy3P3+MgkMOvtq46gjDm4sey5OPUNifDtTsxDa7AuB8cQ
-        ==
-X-ME-Proxy: <xmx:LKuhW5iM-c9OmA5WTrB57tvxEu6Fijb2BpKEyz7t4_cXYhYZjP_sxw>
-    <xmx:LKuhW7-1i1VaGUmp8VEgTF11WJH4uiWhMHwSefRb2w7jtPnMvMi0pg>
-    <xmx:LKuhWwp6oAmdln7qOULjcl0-vRYH9CR97XoDsEZ5J8tRT9gl6fDP1Q>
-    <xmx:LKuhW6_dyBFju2p1PoC4_Td4pWRImy-rtsn76sNHBz7evuOd8vMfQA>
-    <xmx:LKuhW0VQmgQLbS3jhCy5jMLouh1n_0OjKxMrzDmPXcE6JhK-rB73vw>
-    <xmx:LquhW7KSqtffKQ5x4dgPQ4eGr_tcTb0WjOG20cJuRIg7aFAPBFVw1A>
-X-ME-Sender: <xms:LKuhW5gUUWOoFeer7IAS7JzEtXIrPqKKzIrZGXyuOLxJlxmp0NmVrw>
-Received: from snap.ozlabs.ibm.com (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 26A3FE46B6;
-        Tue, 18 Sep 2018 21:49:28 -0400 (EDT)
-Message-ID: <1020abbb3d8a8f121d25da7327e296cfa1aaa698.camel@russell.cc>
-Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error
- handling
-From:   Russell Currey <ruscur@russell.cc>
-To:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, oohall@gmail.com,
-        sbobroff@linux.ibm.com
-In-Reply-To: <20180918215854.GH13616@bhelgaas-glaptop.roam.corp.google.com>
-References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
-         <20180918215854.GH13616@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 19 Sep 2018 11:49:26 +1000
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.1-2 
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Sep 2018 03:25:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i190-v6so1916986pgc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 18:50:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ojPp0tj0FKNKpyJOtWSVuqtxiQJwUqDJKD6Sfm7jraE=;
+        b=Cko9XV+WxNtCa9TT7Fw7Y9zgxax7fPVC7yzKhqXz4tghiQPX8/mJPYhN1ycqUb+XVH
+         yse8weYJDzA4Nbf3I4TsnJNrt0tITfpca/mgbAXEWSV5Xi+jXZCoQgqS2Adl8IYz6M6t
+         3gYz2jej2FJFAy6uL+zpMldGpCGmGwmhZzTH9rutjFzYfG3qgrkwgqSUSjrx+isxQyQr
+         MYyyZ5uRWLsljs2UAcEDoJhlnkQn2rQJ0ca769abc7M0kN0+BZCZWDXYzRE9bvJOL6Zg
+         +vg0sUobxXNhEWyvpL5vFeVEGKYlYp3NCrqEumen8BaYwaJ3SDQOpZs21P0SqwZbCISk
+         Zb5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ojPp0tj0FKNKpyJOtWSVuqtxiQJwUqDJKD6Sfm7jraE=;
+        b=dBFw1OnzODjjktN3YZQtAX4tvxJkalgRpKDWbp6EjsSZDJn/YYk7ow7B0ZyhFEfX/5
+         4A650/85VP2qONQSAzVy/ila9pTHQI5D8C1xnBHCR1epxG4+d2CHgtzP3cKtM9nyORQa
+         3BmMT4Z2c4By781yCNSXywVWNGa5umd6fdMO6VCmOVOYlOI6v/bbPls4iLENlg56tj2t
+         4WU1j4wxm/vzyQJULy77QWXMTIvyYHNyKgV25YzSk5V7kLHryNklayIAD73c4Pwln1/N
+         EwyGhUJ+olm53CiA3JUEUUYp3juA404ntCh08QeEAZagG1frNQ+jm4/2KskdfK1csHAk
+         58nA==
+X-Gm-Message-State: APzg51AewI5MJjdEq0Xp7pDxw193k2ga7W+ujCNM1wAZFdjZNLBIJGug
+        qefUfMYFFdrj8IGZbT6VTeM=
+X-Google-Smtp-Source: ANB0VdbTye1wX/1vxzvcC7/b+BM95iGW3VrQr9rGuJ8hBrsATcqlOZ3fbS+ctQcX2G1WGAOYO+MOCg==
+X-Received: by 2002:a63:24c4:: with SMTP id k187-v6mr30406144pgk.162.1537321834478;
+        Tue, 18 Sep 2018 18:50:34 -0700 (PDT)
+Received: from localhost ([175.223.11.230])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm42690754pfk.133.2018.09.18.18.50.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 18:50:33 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 10:50:30 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     zhe.he@windriver.com
+Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len
+ to command line
+Message-ID: <20180919015030.GA423@jagdpanzerIV>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-09-18 at 16:58 -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > The original PCI error recovery functionality was for the powerpc-specific
-> > IBM EEH feature.  PCIe subsequently added some similar features, including
-> > AER and DPC, that can be used on any architecture.
-> > 
-> > We want the generic PCI core error handling support to work with all of
-> > these features.  Driver error recovery callbacks should be independent of
-> > which feature the platform provides.
-> > 
-> > Add the generic PCI core error recovery files to the powerpc EEH
-> > MAINTAINERS entry so the powerpc folks will be copied on changes to the
-> > generic PCI error handling strategy.
-> > 
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> I applied the following to for-linus for v4.19.  Russell, if you want
-> to be removed, let me know and I'll do that.
+On (09/19/18 01:17), zhe.he@windriver.com wrote:
+> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
+>  /* save requested log_buf_len since it's too early to process it */
+>  static int __init log_buf_len_setup(char *str)
+>  {
+> -	unsigned size = memparse(str, &str);
+> +	unsigned size;
 
-Oliver's email address for kernel stuff is oohall@gmail.com, I think benh has been
-CCing his IBM address.  But other than that,
+	unsigned int size;
 
-Acked-by: Russell Currey <ruscur@russell.cc>
+> +	if (!str) {
+> +		pr_err("Config string not provided\n");
 
-Thanks for this, Bjorn.
+pr_debug() may be?
 
-- Russell
+It's not clear from this error message which one of the "config strings"
+was not provided. Besides, I think "config string" is misleading and in
+fact it's a "boot command line parameter". But, dunno, I guess I'd just
+drop that print out.
 
-> 
-> commit 3fed0e04026c
-> Author: Bjorn Helgaas <bhelgaas@google.com>
-> Date:   Wed Sep 12 11:55:26 2018 -0500
-> 
->     MAINTAINERS: Update PPC contacts for PCI core error handling
->     
->     The original PCI error recovery functionality was for the powerpc-specific
->     IBM EEH feature.  PCIe subsequently added some similar features, including
->     AER and DPC, that can be used on any architecture.
->     
->     We want the generic PCI core error handling support to work with all of
->     these features.  Driver error recovery callbacks should be independent of
->     which feature the platform provides.
->     
->     Add the generic PCI core error recovery files to the powerpc EEH
->     MAINTAINERS entry so the powerpc folks will be copied on changes to the
->     generic PCI error handling strategy.
->     
->     Add Sam and Oliver as maintainers for this area.
->     
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4ece30f15777..f23244003836 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11203,8 +11203,14 @@ F:	tools/pci/
->  
->  PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
->  M:	Russell Currey <ruscur@russell.cc>
-> +M:	Sam Bobroff <sbobroff@linux.ibm.com>
-> +M:	Oliver O'Halloran <oliveroh@au1.ibm.com>
->  L:	linuxppc-dev@lists.ozlabs.org
->  S:	Supported
-> +F:	Documentation/PCI/pci-error-recovery.txt
-> +F:	drivers/pci/pcie/aer.c
-> +F:	drivers/pci/pcie/dpc.c
-> +F:	drivers/pci/pcie/err.c
->  F:	Documentation/powerpc/eeh-pci-error-recovery.txt
->  F:	arch/powerpc/kernel/eeh*.c
->  F:	arch/powerpc/platforms/*/eeh*.c
+Otherwise,
+
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
