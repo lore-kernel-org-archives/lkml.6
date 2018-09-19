@@ -2,154 +2,140 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B93C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EFEECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41AA2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF44A2151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:53:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="B8N1Jjv+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41AA2151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="UfAewaHa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF44A2151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbeISVaB (ORCPT
+        id S1732633AbeISVcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:30:01 -0400
-Received: from sonic305-20.consmr.mail.gq1.yahoo.com ([98.137.64.83]:37195
-        "EHLO sonic305-20.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732435AbeISVaB (ORCPT
+        Wed, 19 Sep 2018 17:32:01 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:39794 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732164AbeISVcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 17:30:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1537372288; bh=jUQ3hU3BxrhEb8ncN8aukABv1gQrGFnXBtnnUmssR2Q=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=B8N1Jjv+ST1Q1L6BOeQ5o08L6wv9MhKsG2zrUBaTR5LhM09OJI2ELxWq4n4zkz0XMkc2rMBrpIhuXWtmv/0io3Tf2FjyPdoM1EbcWFQQjw/zyhtind3cY3CSLqvtAJLGThvSXHrtDaEeap6oA5v+JjjuPqn/hVKywc+Q8EWrH/0xVH0uqQrU4pSiAN3WUkW8cbWL093uYZ/hZlqgZjj0GocZ0XQuuHUCgxX5Iv3Io7wCzjlPdDr4Z0j9Ti4ZuuRodELyc+Uuq+qddYFWLFipThi9NRfyAcpf0+RB0zBb4GDrbS8+SAz3jncW6ECtxv9uTu/oeTPHhZc6JGHdJTtz0Q==
-X-YMail-OSG: LTLTW1EVM1k_gtdBaAjYaMhrz7IKn0fz8nGoIy7GEDo1VgwN.NtdRJKZxLOArPL
- ZX45neRbe9rzfyNbDKfCb72moVLU7lmpsNavQQywE1.hhLU.uyK4pFv48D.noQmqj8YevWZVGSby
- BwcnRa2kVJ5kHj_P82NRWetgDdM8O_Te8qz7p1CyiAMzZzmsVUanzCyMYZso.uhMME64ZgSjruGJ
- qhkjpgzIXoqZNuT.WhwsWyC6Lw0nFGRrKsgOZw.A1248zpWd6vykwfD36p1Mj0T9cX_W6mKG4.tF
- PjWefyYkV30lsaxYs.hBMk9hEze35T82JP17pnQQJqvZ7p7n07LYIueeibymXhOXhMX4CbkwYvJx
- 2.I0BJryHH43Q7ySwORvKdgaeXrZ1xk0VtcFX4GcuPfVxf0yZS2tU0kA5jYzCNVWoyWgvsOOTsFR
- WpLMj4vtp2aj8YRYd0t.4j0L7an8DHEVi06u0SuJXBmwUSBWJhKK333Duwk4VbgaoJnWVOy76jCm
- NLxjOPWx7ob_LUgKY_IQIrB4_GZJVCDZ05gtv84xGVotsU8wv4.3PKR8gkEAmICCFhXsbNPIAdS6
- oZUi1VPRMuEsvtZLaChR_ZvVu8yGKfWqzmYHh7HFcNYUQfy6G4ojXLwj7ta4NEb9Zfe3Isx5PiGz
- PytS5kbCoT.OLcuyPolI7PuoKRM6tmYkO8G5fDkgb39s.n8TAYbSOFoPVq5K8tTueFyRAPZh_s9y
- N3PhL9QrX8Tu0QR_8RgceXdfQijPEVggCEhw_heBErKxrN229sQv5n6bPKHqaQNl.kUzLWyBpMJr
- IchofiqPmPvqUebUiZTHaBusHcShyyh3nqeN4K3FnVBtUHWwfVsN7781Sn878931k2xMCImHpqMH
- N9Z1XSieQFNwy_tglgKST_j7FU9KWmWidrYdbgJhuVUlQBGOYzQDehdv3o1QSC3YSIn8QyXnNy2V
- Y5rivFt0bLIo_jvmpdMRj3ZTtfRtQXlvuclcaQremyiTCGg8qA7rb8JUM.c1FFKgJDIT1Ke9PfP4
- v
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Wed, 19 Sep 2018 15:51:28 +0000
-Received: from 180.173.110.117 (EHLO [192.168.1.3]) ([180.173.110.117])
-          by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 02532fb4924e373c622fc939a6514f11;
-          Wed, 19 Sep 2018 15:51:28 +0000 (UTC)
-Subject: Re: [PATCH 4/6] staging: erofs: cleanup
- `z_erofs_vle_normalaccess_readpages'
-To:     Chao Yu <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     devel@driverdev.osuosl.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-erofs@lists.ozlabs.org, Miao Xie <miaoxie@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, Du Wei <weidu.du@huawei.com>
-References: <1537336150-90604-1-git-send-email-gaoxiang25@huawei.com>
- <1537336150-90604-4-git-send-email-gaoxiang25@huawei.com>
- <1b38cbfe-70e0-1e6d-fa50-89b1fddeeb43@kernel.org>
- <fc0f977f-b1c3-41a9-a058-bca4261bf9ea@aol.com>
- <37b566ea-273b-8d81-7428-06bd35d60092@kernel.org>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <f49a05f6-c6cb-db9f-3fa3-d38881708ab3@aol.com>
-Date:   Wed, 19 Sep 2018 23:51:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <37b566ea-273b-8d81-7428-06bd35d60092@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Sep 2018 17:32:01 -0400
+Received: by mail-qt0-f194.google.com with SMTP id o15-v6so5544406qtk.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 08:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version;
+        bh=PzdaszGHr6Pq2TIiOA10NDQddYPGriTL6ZHRWZqhFJc=;
+        b=UfAewaHaPgQHMAF2hFGIXlZdgZK4Dj/5t8ZsB1ss3ACopyBrgjyO3tnAxEhQVLpVF5
+         pEJbMnCSnH9pRmc3DpKxDk7CWLeTBuS3DvfK5+TrtIhfdpACyD2Q+qMkcknIsyqdZhCv
+         RHHkPjRKZL1upz24t+dQl7diqqJUezRJX17pM/Y+GTlE9qI8uxanooONFQkWmpXasQ6R
+         pa72kiO8Wfk1ef8GwQ6TlyiSGIGCsG+xB5s5Gy7Q7IJoqDM0vFpKsjuNB38k2IS1Kj1R
+         s5QuO/SLJpxCrw2NNma81RgyBXTVwoEYx9xoWWTn55ocIZliZVFnrDt4xubPqdq7NcqM
+         NHAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version;
+        bh=PzdaszGHr6Pq2TIiOA10NDQddYPGriTL6ZHRWZqhFJc=;
+        b=pxodIITh18wfvKoARAX2QjyvKfHvoONNMpmYfHXxv55gAD/OBuom7HMzGTUuyQoZBo
+         tI0JoUo/dYiYywzmoRahZC66c/VUPpg2o578j13dboqgX8KuOFHRhTMJeW4IbbXhEB0c
+         mfEyvKYBPBDn7Qc3IVheRMSMHsv+w+ZtZ4EXn/LxWaGd0IDn0rVN/mpfk88hBeYxlgDY
+         Y63/J2d4V8miYnoMk3HAYNoflZDgRwMVfw8F/TbpTe4UTaes+2c0L65Vs8uDoRUQKcN/
+         1BcYXziWaM3irChBHEw9Uh6BhO8vWhUvBRWkdMGWK68gW2OQVS8HLE4oK06xRExpmDi9
+         pqLA==
+X-Gm-Message-State: APzg51DSQTD2lI77mr1LfP+QkV/XcRANzZdA7J6ztQp0elp2GmdS3Ohc
+        2lWu66tulOWF+l6X+cRz8iAH6Q==
+X-Google-Smtp-Source: ANB0VdYHSPCZWqpA7WLTYfSTbLqbQNmqYbK0plESUP2TboCLVIQG7NxXzUJ2T0Fzj7kiAL6D4aPxUg==
+X-Received: by 2002:ac8:259d:: with SMTP id e29-v6mr25464887qte.233.1537372407840;
+        Wed, 19 Sep 2018 08:53:27 -0700 (PDT)
+Received: from tpx230-nicolas (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
+        by smtp.gmail.com with ESMTPSA id r17-v6sm17111263qkr.78.2018.09.19.08.53.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Sep 2018 08:53:26 -0700 (PDT)
+Message-ID: <bec2edfda26ecbac928871ad14d768790e3175a8.camel@ndufresne.ca>
+Subject: Re: [PATCH] venus: vdec: fix decoded data size
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     vgarodia@codeaurora.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 19 Sep 2018 11:53:25 -0400
+In-Reply-To: <6d65ac0d-80a0-88fe-ed19-4785f2675e36@linaro.org>
+References: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
+         <01451f8e-aea3-b276-cb01-b0666a837d62@linaro.org>
+         <4ce55726d810e308a2cae3f84bca7140bed48c7d.camel@ndufresne.ca>
+         <92f6f79a-02ae-d23e-1b97-fc41fd921c89@linaro.org>
+         <33e8d8e3-138e-0031-5b75-4bef114ac75e@xs4all.nl>
+         <36b42952-982c-9048-77fb-72ca45cc7476@linaro.org>
+         <051af6fb-e0e8-4008-99c5-9685ac24e454@xs4all.nl>
+         <CAPBb6MVupMsdhF6Rtk4fm8JeVurrK+ZsuxAQ-BwrTzdSP1xP0Q@mail.gmail.com>
+         <6d65ac0d-80a0-88fe-ed19-4785f2675e36@linaro.org>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-RGb6Gp4tD6j4myXgFZQA"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
 
-On 2018/9/19 23:45, Chao Yu wrote:
-> Hi Xiang,
-> 
-> On 2018/9/19 23:32, Gao Xiang wrote:
->> Hi Chao,
->>
->> On 2018/9/19 23:26, Chao Yu wrote:
->>> Hi Xiang,
->>>
->>> On 2018/9/19 13:49, Gao Xiang wrote:
->>>> This patch introduces `__should_decompress_synchronously' to
->>>> cleanup `z_erofs_vle_normalaccess_readpages'.
->>>>
->>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->>>> ---
->>>>  drivers/staging/erofs/internal.h  | 11 +++++++++++
->>>>  drivers/staging/erofs/super.c     |  5 +++++
->>>>  drivers/staging/erofs/unzip_vle.c | 20 ++++++--------------
->>>>  3 files changed, 22 insertions(+), 14 deletions(-)
->>>>
->>>> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
->>>> index cfcc6db..c84eb97 100644
->>>> --- a/drivers/staging/erofs/internal.h
->>>> +++ b/drivers/staging/erofs/internal.h
->>>> @@ -95,6 +95,9 @@ struct erofs_sb_info {
->>>>  	/* the dedicated workstation for compression */
->>>>  	struct radix_tree_root workstn_tree;
->>>>  
->>>> +	/* threshold for decompression synchronously */
->>>> +	unsigned int max_sync_decompress_pages;
->>>> +
->>>>  #ifdef EROFS_FS_HAS_MANAGED_CACHE
->>>>  	struct inode *managed_cache;
->>>>  #endif
->>>> @@ -273,6 +276,14 @@ extern int erofs_try_to_free_cached_page(struct address_space *mapping,
->>>>  	struct page *page);
->>>>  #endif
->>>>  
->>>> +#define DEFAULT_MAX_SYNC_DECOMPRESS_PAGES	4
->>>> +
->>>> +static inline bool __should_decompress_synchronously(struct erofs_sb_info *sbi,
->>>> +						     unsigned int nr)
->>>> +{
->>>> +	return nr <= sbi->max_sync_decompress_pages;
->>> -		nr_pages < 4 /* sync */);
->>>
->>> There is a little bit changed except cleanup, IIUC, would it be any difference
->>> of performance around boundary of four pages?
->>
->> No.. Once synchronous decompression is applied for 1,2,3 pages for no special reasons.
->> But I think it could be better to adjust it to the power of two --- 1,2,3,4 is preferred.
->> Since I have no idea to measure which is better or what value is best for all platform or use cases...
->>
->> Therefore I tune it in this patch since I don't like the number
->> DEFAULT_MAX_SYNC_DECOMPRESS_PAGES == 3 ...
-> 
-> Yeah, how about adding one more patch to tune this magic number first? as that
-> change would not be part of cleanup thing. I guess later maybe we could export a
-> sysfs node to provider tuning ability on that threshold.
+--=-RGb6Gp4tD6j4myXgFZQA
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK, I think we can leave the original "3" for now. I will fix that value and resend this patch soon.
+Le mercredi 19 septembre 2018 =C3=A0 18:02 +0300, Stanimir Varbanov a
+=C3=A9crit :
+> > --- a/drivers/media/platform/qcom/venus/vdec.c
+> > +++ b/drivers/media/platform/qcom/venus/vdec.c
+> > @@ -943,8 +943,7 @@ static void vdec_buf_done(struct venus_inst
+> > *inst,
+> > unsigned int buf_type,
+> >                 unsigned int opb_sz =3D
+> > venus_helper_get_opb_size(inst);
+> >=20
+> >                 vb =3D &vbuf->vb2_buf;
+> > -               vb->planes[0].bytesused =3D
+> > -                       max_t(unsigned int, opb_sz, bytesused);
+> > +                vb2_set_plane_payload(vb, 0, bytesused ? :
+> > opb_sz);
+> >                 vb->planes[0].data_offset =3D data_offset;
+> >                 vb->timestamp =3D timestamp_us * NSEC_PER_USEC;
+> >                 vbuf->sequence =3D inst->sequence_cap++;
+> >=20
+> > It works fine for me, and should not return 0 more often than it
+> > did
+> > before (i.e. never). In practice I also never see the firmware
+> > reporting a payload of zero on SDM845, but maybe older chips
+> > differ?
+>=20
+> yes, it looks fine. Let me test it with older versions.
 
-The sysfs interface could be necessary later since it seems some arguments
-involved in decompression could impact the decompression performance.
+What about removing the allow_zero_bytesused flag on this specific
+queue ? Then you can leave it to 0, and the framework will change it to
+the buffer size.
 
-Thanks,
-Gao Xiang
+Nicolas
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->> Gao Xiang
->>
->>>
->>> Thanks,
->>>
+--=-RGb6Gp4tD6j4myXgFZQA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCW6Jw9QAKCRBxUwItrAao
+HFjZAKDRumEFmZk46/FnEsuGsQ6l9tC3ewCfeQOroYDAPOBtlLaONtwjkz7IAgo=
+=7Xsu
+-----END PGP SIGNATURE-----
+
+--=-RGb6Gp4tD6j4myXgFZQA--
+
