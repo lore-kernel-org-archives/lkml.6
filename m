@@ -7,67 +7,64 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE009ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B0DECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F61F214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D0E214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N8M0ZGQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F61F214DA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SkRE5MpZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D0E214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbeISHqo (ORCPT
+        id S1730981AbeISHqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:46:44 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45412 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730905AbeISHql (ORCPT
+        Wed, 19 Sep 2018 03:46:46 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36979 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730905AbeISHqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:46:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i26-v6so1897378pfo.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
+        Wed, 19 Sep 2018 03:46:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f1-v6so1864295plt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AEAcoMGIsRFw3HkHQ8e0m7OE5b3TEmxIotDoO7+No/8=;
-        b=N8M0ZGQT3rCZpc1OoPovmvArnrFwprTe9JNn6ycx5Cw8pVb3cFHqq4p4E+HyrgQEbh
-         S7pnMd9Kj8/2Hh0+fj0KVndCOL2DVg/B720g+z6jkcqWlXCov3vJ4IWRMP0SDODuls70
-         b5eNOmvWHisjFQsxvXuzwQTuu4RY9M1MeZNec=
+        bh=uUD2Xk/3An5Aa6Ik6vjGD89CMWst4AF7yOvsmdKgrlY=;
+        b=SkRE5MpZeaObfX7XKuI6GQh6k3fpEscQDmF4VyK5vWnOiuAT8SFa+hOSg5bmD9deLf
+         0w+u88GqdaFCKsYmhEtbrCgFgn84Z72SfMYhN9PYyFHIS5MxS0ttqbkBV/a4mhlGq7Fa
+         5zUEr/htN+C2upC6z0aFdeXoGzEUHlr7b/9Aw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AEAcoMGIsRFw3HkHQ8e0m7OE5b3TEmxIotDoO7+No/8=;
-        b=QbWv1bE9ZZHKmQULcUkMpZFVmnhnAPj/T5zva0ipoo/UEJPBZRWx8gL5QN97w/MYsZ
-         BkFWZJSOTKyrTideGIyTeoLZf+UT1MvfJSeJeg0bdrmmNWc0CsrnFdLhc8wGMZmMtKRP
-         sPV8ZDtOhwl8im4mAI8jUctFWc+su58KHZQ8QbfPspxSGGdcHiBKEKEMC1leqdrm7KcP
-         o41ExLkrGZLbvsOlClF/Eg/RC7/nqEwhYekwleCLoPV6T/FVSdDhlKb+Ow85QkT29nal
-         ovwst1YFLr0QZFwZdBY7Jtg/qQCEDSEETGKfi+yPFTvlCHhyf7/HYE/VSx3EI6vrgkvH
-         p2Pg==
-X-Gm-Message-State: APzg51DyGBDu6lf5fuz5W4UB1ZtB4+r7zgfVbslM/MwZitwrS6XQ80k0
-        qKThYMc4T/jnsHHBph8UHrKFlw==
-X-Google-Smtp-Source: ANB0VdYA+0hYiNYMdb41d/qf3UBxV53/m+6dISiJ/SN9OXRzpB5arDd1EyJoaGQKVd9ySrRHp9PaUA==
-X-Received: by 2002:a62:4bc6:: with SMTP id d67-v6mr33557881pfj.175.1537323073476;
-        Tue, 18 Sep 2018 19:11:13 -0700 (PDT)
+        bh=uUD2Xk/3An5Aa6Ik6vjGD89CMWst4AF7yOvsmdKgrlY=;
+        b=HE32ytYrTJfD+az6pdDD2LJhU08t8CMtFg4uLnQ4WHvg/8HvluRf2S+QuMYNCUgKPw
+         PNkO3aZLajeGkGGwFxHcIs3gCtIEeQJD9dD4/cEUuDhwDoK+PEbnNetX+GfJckyCtB8u
+         ec5BqxIwJiezfKec/ly2Q/7I/U/taqarQlVAgKpeNCqvlVsdKHLy8dURyCMsYFnN00QN
+         89ohMPvD19KhpDXMDBsM9V1cH8c/rThKq7lhbMQqmiAd/qFGr10U8k64wAVifkqxNAoo
+         BGWXPPsqHOeSIPUoCBYCYCXk7pDVjbqQofY5TTJnOOKiJYViBejrsfs3roMTsYnQuoP6
+         MN8g==
+X-Gm-Message-State: APzg51BZbFclGENyJg+9RhK5zo5E8Z5FD2+9tBRrYT7gPfT5BeJrIcW0
+        jv78Vfk0HOXs9OSv3tWidNsPog==
+X-Google-Smtp-Source: ANB0Vdago1IK+DnJ9tUj0kObdN6AND8Y9OyxKc/DZaj6rYTUzCHJ/QG7BAwfZWj3pekoTmm1Axgn3w==
+X-Received: by 2002:a17:902:d694:: with SMTP id v20-v6mr31483212ply.328.1537323078055;
+        Tue, 18 Sep 2018 19:11:18 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm26301540pff.162.2018.09.18.19.11.07
+        by smtp.gmail.com with ESMTPSA id v23-v6sm24687234pfm.80.2018.09.18.19.11.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
+        Tue, 18 Sep 2018 19:11:17 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 05/23] s390/crypto: Remove VLA usage of skcipher
-Date:   Tue, 18 Sep 2018 19:10:42 -0700
-Message-Id: <20180919021100.3380-6-keescook@chromium.org>
+Subject: [PATCH crypto-next 14/23] crypto: null - Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:51 -0700
+Message-Id: <20180919021100.3380-15-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -83,164 +80,269 @@ which uses a fixed stack size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-s390@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- arch/s390/crypto/aes_s390.c | 48 ++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ crypto/algif_aead.c             | 12 ++++++------
+ crypto/authenc.c                |  8 ++++----
+ crypto/authencesn.c             |  8 ++++----
+ crypto/crypto_null.c            | 11 +++++------
+ crypto/echainiv.c               |  4 ++--
+ crypto/gcm.c                    |  8 ++++----
+ crypto/seqiv.c                  |  4 ++--
+ include/crypto/internal/geniv.h |  2 +-
+ include/crypto/null.h           |  2 +-
+ 9 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/arch/s390/crypto/aes_s390.c b/arch/s390/crypto/aes_s390.c
-index c54cb26eb7f5..812d9498d97b 100644
---- a/arch/s390/crypto/aes_s390.c
-+++ b/arch/s390/crypto/aes_s390.c
-@@ -44,7 +44,7 @@ struct s390_aes_ctx {
- 	int key_len;
- 	unsigned long fc;
- 	union {
--		struct crypto_skcipher *blk;
-+		struct crypto_sync_skcipher *blk;
- 		struct crypto_cipher *cip;
- 	} fallback;
- };
-@@ -54,7 +54,7 @@ struct s390_xts_ctx {
- 	u8 pcc_key[32];
- 	int key_len;
- 	unsigned long fc;
--	struct crypto_skcipher *fallback;
-+	struct crypto_sync_skcipher *fallback;
+diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
+index c40a8c7ee8ae..eb100a04ce9f 100644
+--- a/crypto/algif_aead.c
++++ b/crypto/algif_aead.c
+@@ -42,7 +42,7 @@
+ 
+ struct aead_tfm {
+ 	struct crypto_aead *aead;
+-	struct crypto_skcipher *null_tfm;
++	struct crypto_sync_skcipher *null_tfm;
  };
  
- struct gcm_sg_walk {
-@@ -184,14 +184,15 @@ static int setkey_fallback_blk(struct crypto_tfm *tfm, const u8 *key,
- 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
- 	unsigned int ret;
- 
--	crypto_skcipher_clear_flags(sctx->fallback.blk, CRYPTO_TFM_REQ_MASK);
--	crypto_skcipher_set_flags(sctx->fallback.blk, tfm->crt_flags &
-+	crypto_sync_skcipher_clear_flags(sctx->fallback.blk,
-+					 CRYPTO_TFM_REQ_MASK);
-+	crypto_sync_skcipher_set_flags(sctx->fallback.blk, tfm->crt_flags &
- 						      CRYPTO_TFM_REQ_MASK);
- 
--	ret = crypto_skcipher_setkey(sctx->fallback.blk, key, len);
-+	ret = crypto_sync_skcipher_setkey(sctx->fallback.blk, key, len);
- 
- 	tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
--	tfm->crt_flags |= crypto_skcipher_get_flags(sctx->fallback.blk) &
-+	tfm->crt_flags |= crypto_sync_skcipher_get_flags(sctx->fallback.blk) &
- 			  CRYPTO_TFM_RES_MASK;
- 
- 	return ret;
-@@ -204,9 +205,9 @@ static int fallback_blk_dec(struct blkcipher_desc *desc,
- 	unsigned int ret;
- 	struct crypto_blkcipher *tfm = desc->tfm;
- 	struct s390_aes_ctx *sctx = crypto_blkcipher_ctx(tfm);
--	SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
- 
--	skcipher_request_set_tfm(req, sctx->fallback.blk);
-+	skcipher_request_set_sync_tfm(req, sctx->fallback.blk);
- 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
- 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
- 
-@@ -223,9 +224,9 @@ static int fallback_blk_enc(struct blkcipher_desc *desc,
- 	unsigned int ret;
- 	struct crypto_blkcipher *tfm = desc->tfm;
- 	struct s390_aes_ctx *sctx = crypto_blkcipher_ctx(tfm);
--	SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
- 
--	skcipher_request_set_tfm(req, sctx->fallback.blk);
-+	skcipher_request_set_sync_tfm(req, sctx->fallback.blk);
- 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
- 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
- 
-@@ -306,8 +307,7 @@ static int fallback_init_blk(struct crypto_tfm *tfm)
- 	const char *name = tfm->__crt_alg->cra_name;
- 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
- 
--	sctx->fallback.blk = crypto_alloc_skcipher(name, 0,
--						   CRYPTO_ALG_ASYNC |
-+	sctx->fallback.blk = crypto_alloc_sync_skcipher(name, 0,
- 						   CRYPTO_ALG_NEED_FALLBACK);
- 
- 	if (IS_ERR(sctx->fallback.blk)) {
-@@ -323,7 +323,7 @@ static void fallback_exit_blk(struct crypto_tfm *tfm)
- {
- 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
- 
--	crypto_free_skcipher(sctx->fallback.blk);
-+	crypto_free_sync_skcipher(sctx->fallback.blk);
+ static inline bool aead_sufficient_data(struct sock *sk)
+@@ -75,13 +75,13 @@ static int aead_sendmsg(struct socket *sock, struct msghdr *msg, size_t size)
+ 	return af_alg_sendmsg(sock, msg, size, ivsize);
  }
  
- static struct crypto_alg ecb_aes_alg = {
-@@ -453,14 +453,15 @@ static int xts_fallback_setkey(struct crypto_tfm *tfm, const u8 *key,
- 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
- 	unsigned int ret;
- 
--	crypto_skcipher_clear_flags(xts_ctx->fallback, CRYPTO_TFM_REQ_MASK);
--	crypto_skcipher_set_flags(xts_ctx->fallback, tfm->crt_flags &
-+	crypto_sync_skcipher_clear_flags(xts_ctx->fallback,
-+					 CRYPTO_TFM_REQ_MASK);
-+	crypto_sync_skcipher_set_flags(xts_ctx->fallback, tfm->crt_flags &
- 						     CRYPTO_TFM_REQ_MASK);
- 
--	ret = crypto_skcipher_setkey(xts_ctx->fallback, key, len);
-+	ret = crypto_sync_skcipher_setkey(xts_ctx->fallback, key, len);
- 
- 	tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
--	tfm->crt_flags |= crypto_skcipher_get_flags(xts_ctx->fallback) &
-+	tfm->crt_flags |= crypto_sync_skcipher_get_flags(xts_ctx->fallback) &
- 			  CRYPTO_TFM_RES_MASK;
- 
- 	return ret;
-@@ -472,10 +473,10 @@ static int xts_fallback_decrypt(struct blkcipher_desc *desc,
+-static int crypto_aead_copy_sgl(struct crypto_skcipher *null_tfm,
++static int crypto_aead_copy_sgl(struct crypto_sync_skcipher *null_tfm,
+ 				struct scatterlist *src,
+ 				struct scatterlist *dst, unsigned int len)
  {
- 	struct crypto_blkcipher *tfm = desc->tfm;
- 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(tfm);
--	SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
- 	unsigned int ret;
+-	SKCIPHER_REQUEST_ON_STACK(skreq, null_tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(skreq, null_tfm);
  
--	skcipher_request_set_tfm(req, xts_ctx->fallback);
-+	skcipher_request_set_sync_tfm(req, xts_ctx->fallback);
- 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
- 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
- 
-@@ -491,10 +492,10 @@ static int xts_fallback_encrypt(struct blkcipher_desc *desc,
+-	skcipher_request_set_tfm(skreq, null_tfm);
++	skcipher_request_set_sync_tfm(skreq, null_tfm);
+ 	skcipher_request_set_callback(skreq, CRYPTO_TFM_REQ_MAY_BACKLOG,
+ 				      NULL, NULL);
+ 	skcipher_request_set_crypt(skreq, src, dst, len, NULL);
+@@ -99,7 +99,7 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
+ 	struct af_alg_ctx *ctx = ask->private;
+ 	struct aead_tfm *aeadc = pask->private;
+ 	struct crypto_aead *tfm = aeadc->aead;
+-	struct crypto_skcipher *null_tfm = aeadc->null_tfm;
++	struct crypto_sync_skcipher *null_tfm = aeadc->null_tfm;
+ 	unsigned int i, as = crypto_aead_authsize(tfm);
+ 	struct af_alg_async_req *areq;
+ 	struct af_alg_tsgl *tsgl, *tmp;
+@@ -478,7 +478,7 @@ static void *aead_bind(const char *name, u32 type, u32 mask)
  {
- 	struct crypto_blkcipher *tfm = desc->tfm;
- 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(tfm);
--	SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
- 	unsigned int ret;
+ 	struct aead_tfm *tfm;
+ 	struct crypto_aead *aead;
+-	struct crypto_skcipher *null_tfm;
++	struct crypto_sync_skcipher *null_tfm;
  
--	skcipher_request_set_tfm(req, xts_ctx->fallback);
-+	skcipher_request_set_sync_tfm(req, xts_ctx->fallback);
- 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
- 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
+ 	tfm = kzalloc(sizeof(*tfm), GFP_KERNEL);
+ 	if (!tfm)
+diff --git a/crypto/authenc.c b/crypto/authenc.c
+index 4fa8d40d947b..37f54d1b2f66 100644
+--- a/crypto/authenc.c
++++ b/crypto/authenc.c
+@@ -33,7 +33,7 @@ struct authenc_instance_ctx {
+ struct crypto_authenc_ctx {
+ 	struct crypto_ahash *auth;
+ 	struct crypto_skcipher *enc;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ };
  
-@@ -611,8 +612,7 @@ static int xts_fallback_init(struct crypto_tfm *tfm)
- 	const char *name = tfm->__crt_alg->cra_name;
- 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
- 
--	xts_ctx->fallback = crypto_alloc_skcipher(name, 0,
--						  CRYPTO_ALG_ASYNC |
-+	xts_ctx->fallback = crypto_alloc_sync_skcipher(name, 0,
- 						  CRYPTO_ALG_NEED_FALLBACK);
- 
- 	if (IS_ERR(xts_ctx->fallback)) {
-@@ -627,7 +627,7 @@ static void xts_fallback_exit(struct crypto_tfm *tfm)
+ struct authenc_request_ctx {
+@@ -185,9 +185,9 @@ static int crypto_authenc_copy_assoc(struct aead_request *req)
  {
- 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
+ 	struct crypto_aead *authenc = crypto_aead_reqtfm(req);
+ 	struct crypto_authenc_ctx *ctx = crypto_aead_ctx(authenc);
+-	SKCIPHER_REQUEST_ON_STACK(skreq, ctx->null);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(skreq, ctx->null);
  
--	crypto_free_skcipher(xts_ctx->fallback);
-+	crypto_free_sync_skcipher(xts_ctx->fallback);
- }
+-	skcipher_request_set_tfm(skreq, ctx->null);
++	skcipher_request_set_sync_tfm(skreq, ctx->null);
+ 	skcipher_request_set_callback(skreq, aead_request_flags(req),
+ 				      NULL, NULL);
+ 	skcipher_request_set_crypt(skreq, req->src, req->dst, req->assoclen,
+@@ -318,7 +318,7 @@ static int crypto_authenc_init_tfm(struct crypto_aead *tfm)
+ 	struct crypto_authenc_ctx *ctx = crypto_aead_ctx(tfm);
+ 	struct crypto_ahash *auth;
+ 	struct crypto_skcipher *enc;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ 	int err;
  
- static struct crypto_alg xts_aes_alg = {
+ 	auth = crypto_spawn_ahash(&ictx->auth);
+diff --git a/crypto/authencesn.c b/crypto/authencesn.c
+index 50b804747e20..80a25cc04aec 100644
+--- a/crypto/authencesn.c
++++ b/crypto/authencesn.c
+@@ -36,7 +36,7 @@ struct crypto_authenc_esn_ctx {
+ 	unsigned int reqoff;
+ 	struct crypto_ahash *auth;
+ 	struct crypto_skcipher *enc;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ };
+ 
+ struct authenc_esn_request_ctx {
+@@ -183,9 +183,9 @@ static int crypto_authenc_esn_copy(struct aead_request *req, unsigned int len)
+ {
+ 	struct crypto_aead *authenc_esn = crypto_aead_reqtfm(req);
+ 	struct crypto_authenc_esn_ctx *ctx = crypto_aead_ctx(authenc_esn);
+-	SKCIPHER_REQUEST_ON_STACK(skreq, ctx->null);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(skreq, ctx->null);
+ 
+-	skcipher_request_set_tfm(skreq, ctx->null);
++	skcipher_request_set_sync_tfm(skreq, ctx->null);
+ 	skcipher_request_set_callback(skreq, aead_request_flags(req),
+ 				      NULL, NULL);
+ 	skcipher_request_set_crypt(skreq, req->src, req->dst, len, NULL);
+@@ -341,7 +341,7 @@ static int crypto_authenc_esn_init_tfm(struct crypto_aead *tfm)
+ 	struct crypto_authenc_esn_ctx *ctx = crypto_aead_ctx(tfm);
+ 	struct crypto_ahash *auth;
+ 	struct crypto_skcipher *enc;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ 	int err;
+ 
+ 	auth = crypto_spawn_ahash(&ictx->auth);
+diff --git a/crypto/crypto_null.c b/crypto/crypto_null.c
+index 0959b268966c..0bae59922a80 100644
+--- a/crypto/crypto_null.c
++++ b/crypto/crypto_null.c
+@@ -26,7 +26,7 @@
+ #include <linux/string.h>
+ 
+ static DEFINE_MUTEX(crypto_default_null_skcipher_lock);
+-static struct crypto_skcipher *crypto_default_null_skcipher;
++static struct crypto_sync_skcipher *crypto_default_null_skcipher;
+ static int crypto_default_null_skcipher_refcnt;
+ 
+ static int null_compress(struct crypto_tfm *tfm, const u8 *src,
+@@ -152,16 +152,15 @@ MODULE_ALIAS_CRYPTO("compress_null");
+ MODULE_ALIAS_CRYPTO("digest_null");
+ MODULE_ALIAS_CRYPTO("cipher_null");
+ 
+-struct crypto_skcipher *crypto_get_default_null_skcipher(void)
++struct crypto_sync_skcipher *crypto_get_default_null_skcipher(void)
+ {
+-	struct crypto_skcipher *tfm;
++	struct crypto_sync_skcipher *tfm;
+ 
+ 	mutex_lock(&crypto_default_null_skcipher_lock);
+ 	tfm = crypto_default_null_skcipher;
+ 
+ 	if (!tfm) {
+-		tfm = crypto_alloc_skcipher("ecb(cipher_null)",
+-					    0, CRYPTO_ALG_ASYNC);
++		tfm = crypto_alloc_sync_skcipher("ecb(cipher_null)", 0, 0);
+ 		if (IS_ERR(tfm))
+ 			goto unlock;
+ 
+@@ -181,7 +180,7 @@ void crypto_put_default_null_skcipher(void)
+ {
+ 	mutex_lock(&crypto_default_null_skcipher_lock);
+ 	if (!--crypto_default_null_skcipher_refcnt) {
+-		crypto_free_skcipher(crypto_default_null_skcipher);
++		crypto_free_sync_skcipher(crypto_default_null_skcipher);
+ 		crypto_default_null_skcipher = NULL;
+ 	}
+ 	mutex_unlock(&crypto_default_null_skcipher_lock);
+diff --git a/crypto/echainiv.c b/crypto/echainiv.c
+index 45819e6015bf..77e607fdbfb7 100644
+--- a/crypto/echainiv.c
++++ b/crypto/echainiv.c
+@@ -47,9 +47,9 @@ static int echainiv_encrypt(struct aead_request *req)
+ 	info = req->iv;
+ 
+ 	if (req->src != req->dst) {
+-		SKCIPHER_REQUEST_ON_STACK(nreq, ctx->sknull);
++		SYNC_SKCIPHER_REQUEST_ON_STACK(nreq, ctx->sknull);
+ 
+-		skcipher_request_set_tfm(nreq, ctx->sknull);
++		skcipher_request_set_sync_tfm(nreq, ctx->sknull);
+ 		skcipher_request_set_callback(nreq, req->base.flags,
+ 					      NULL, NULL);
+ 		skcipher_request_set_crypt(nreq, req->src, req->dst,
+diff --git a/crypto/gcm.c b/crypto/gcm.c
+index 0ad879e1f9b2..e438492db2ca 100644
+--- a/crypto/gcm.c
++++ b/crypto/gcm.c
+@@ -50,7 +50,7 @@ struct crypto_rfc4543_instance_ctx {
+ 
+ struct crypto_rfc4543_ctx {
+ 	struct crypto_aead *child;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ 	u8 nonce[4];
+ };
+ 
+@@ -1067,9 +1067,9 @@ static int crypto_rfc4543_copy_src_to_dst(struct aead_request *req, bool enc)
+ 	unsigned int authsize = crypto_aead_authsize(aead);
+ 	unsigned int nbytes = req->assoclen + req->cryptlen -
+ 			      (enc ? 0 : authsize);
+-	SKCIPHER_REQUEST_ON_STACK(nreq, ctx->null);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(nreq, ctx->null);
+ 
+-	skcipher_request_set_tfm(nreq, ctx->null);
++	skcipher_request_set_sync_tfm(nreq, ctx->null);
+ 	skcipher_request_set_callback(nreq, req->base.flags, NULL, NULL);
+ 	skcipher_request_set_crypt(nreq, req->src, req->dst, nbytes, NULL);
+ 
+@@ -1093,7 +1093,7 @@ static int crypto_rfc4543_init_tfm(struct crypto_aead *tfm)
+ 	struct crypto_aead_spawn *spawn = &ictx->aead;
+ 	struct crypto_rfc4543_ctx *ctx = crypto_aead_ctx(tfm);
+ 	struct crypto_aead *aead;
+-	struct crypto_skcipher *null;
++	struct crypto_sync_skcipher *null;
+ 	unsigned long align;
+ 	int err = 0;
+ 
+diff --git a/crypto/seqiv.c b/crypto/seqiv.c
+index 39dbf2f7e5f5..64a412be255e 100644
+--- a/crypto/seqiv.c
++++ b/crypto/seqiv.c
+@@ -73,9 +73,9 @@ static int seqiv_aead_encrypt(struct aead_request *req)
+ 	info = req->iv;
+ 
+ 	if (req->src != req->dst) {
+-		SKCIPHER_REQUEST_ON_STACK(nreq, ctx->sknull);
++		SYNC_SKCIPHER_REQUEST_ON_STACK(nreq, ctx->sknull);
+ 
+-		skcipher_request_set_tfm(nreq, ctx->sknull);
++		skcipher_request_set_sync_tfm(nreq, ctx->sknull);
+ 		skcipher_request_set_callback(nreq, req->base.flags,
+ 					      NULL, NULL);
+ 		skcipher_request_set_crypt(nreq, req->src, req->dst,
+diff --git a/include/crypto/internal/geniv.h b/include/crypto/internal/geniv.h
+index 2bcfb931bc5b..71be24cd59bd 100644
+--- a/include/crypto/internal/geniv.h
++++ b/include/crypto/internal/geniv.h
+@@ -20,7 +20,7 @@
+ struct aead_geniv_ctx {
+ 	spinlock_t lock;
+ 	struct crypto_aead *child;
+-	struct crypto_skcipher *sknull;
++	struct crypto_sync_skcipher *sknull;
+ 	u8 salt[] __attribute__ ((aligned(__alignof__(u32))));
+ };
+ 
+diff --git a/include/crypto/null.h b/include/crypto/null.h
+index 15aeef6e30ef..0ef577cc00e3 100644
+--- a/include/crypto/null.h
++++ b/include/crypto/null.h
+@@ -9,7 +9,7 @@
+ #define NULL_DIGEST_SIZE	0
+ #define NULL_IV_SIZE		0
+ 
+-struct crypto_skcipher *crypto_get_default_null_skcipher(void);
++struct crypto_sync_skcipher *crypto_get_default_null_skcipher(void);
+ void crypto_put_default_null_skcipher(void);
+ 
+ #endif
 -- 
 2.17.1
 
