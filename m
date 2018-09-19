@@ -2,164 +2,113 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC960C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952E8ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 704162150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAAB0214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:24:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYP6hEXN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704162150E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXFfIrbC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAAB0214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbeISG5a (ORCPT
+        id S1730765AbeISG7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 02:57:30 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36599 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeISG5a (ORCPT
+        Wed, 19 Sep 2018 02:59:38 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40701 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728177AbeISG7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 02:57:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b11-v6so1865454pfo.3;
-        Tue, 18 Sep 2018 18:22:12 -0700 (PDT)
+        Wed, 19 Sep 2018 02:59:38 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s13-v6so1859168pfi.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 18:24:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UrTrWbpH9AWgy9n7J6b6EqfVJPxAM+sBtDAXZwlWKz4=;
-        b=aYP6hEXNkOEh3hOb6bXM7dYTYS5jj19RYKBIbmHKM43qPHmiWb5+by+5LQOhGdDeYL
-         eDBtbcU3uNl6VBcJjQRfr1s25exYxP3rSjl+MvWp7uR5it41cDoHP0lcVdfLVvktR6nX
-         UgPxSmmTlA+tyLG7sP4Y454XgfS9vsHMjSPaOI2SgrH+qQQJQDgHYfkNMepEHcZ95gme
-         FY81U0wnspFgfEAcSTl7ZO4NMe5tyGlQ3yAHNPS65gpFiAogW61Ery5wS1I0e4YcK5wM
-         0mUy2aU6Sqk16MZlSXyUEdKljA0YGKZtdIqyAqynZhhSQs6C7jBjHpomgc6rW9udGxwK
-         J5IQ==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=lR+VCDa76RRa5mRVhtuamEUq4gmjXiDM+Ky1MlBWvps=;
+        b=HXFfIrbCwmDOVeObDEhhZ1cO5casMkm8IOCA33TJfM7xLrxEUd4KB1Vjc8tbg4dAjo
+         aMb7OeTu+7TsjW8wBdGVtd5wqPn2T05ugab30MqTSSD9BZSnveh2YdV4c+UTGCmulSpb
+         OpkLyteqr/oSCESfcXe3WAce9UYCbvBpO+Pfl8mcZuCLQ1d8LNO63ClXbBLksubllMAi
+         o7MbFb/8Fln3eSJ+pGiKM1qDCwsmTIQiYLEFRY2iWQ2h8FJH+gKIg/RcvNFTYEtrjfrZ
+         gADIOKXn16zJGYm8VzgFIf+bilcAXm6zYjv28WNW5WkBMt7CIFiNbkObe87Mj7ABkido
+         YoXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UrTrWbpH9AWgy9n7J6b6EqfVJPxAM+sBtDAXZwlWKz4=;
-        b=qxfE2yvj4GRRnYGWjvmMbTXWE9d0D3pBFhi/Zvy1DQya70Wl7sz0XS60vbp6gp2wk+
-         ZTW5LZFJJLbaFTC22ui78RmtDaJ7wyS5xgLHYtqaaydet670ML9OY70aQd9ftu16wQWY
-         Dvv0NWSHDRICkmRTM4Z19PYWIeDJXkOGocZal0gDOUdmUF5e8frbXCSqVXbvV2TZgGR9
-         Di++UcRrKoVRwHY3QyPq01Zc1t+L0rS6NSp2LmSJu7ynmOwsjlCjMfQuxkg9f0C+fUO5
-         HcJrlCoOZWbVxlfQkPTlhxueRlSLJH89SGNkBZK9xcf3QAVEJ/Z8CwIDCesQjaDVXJ2X
-         tNAA==
-X-Gm-Message-State: APzg51CVxS54yEuDcRCx632tBU1ES5oep/gvFjBtfThC6VSRmPQViRqU
-        EHktvKOrpIUD2g1a6Ku7gJY=
-X-Google-Smtp-Source: ANB0VdYgCOyhGJa82W3YuA4km0qhZLmI3SB4xdJRTmqLba+IWkzYZyHf3dxyHmJmU6fCtSH5w0YXfg==
-X-Received: by 2002:a63:5a13:: with SMTP id o19-v6mr29785435pgb.75.1537320131382;
-        Tue, 18 Sep 2018 18:22:11 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=lR+VCDa76RRa5mRVhtuamEUq4gmjXiDM+Ky1MlBWvps=;
+        b=M6was9kYKK7ZIS3wGRsT2PaXXccuCOkLlDJATiFRxLfduZrFcS8pAcDScmPGwfsQMH
+         cIYQON+ZqW8ikfmv+adr0l/pFWKSP3TSsK3ZmR3v9gEFfkhNxHnUlYHHuGfFGJIgZIid
+         8zW3RTeFiywW3BH4WrLKxxo7O/tmjI48MojenhHZHH7sb4ErRrty5CLeQt4lXgM+ITpx
+         57h05vHD9dxL4OJcv5bi4+pbmc5LscWR1AMxx+7vh3aujS6Ed+GQqaIOsHN3a4bu4hBO
+         xkvweN2ECNae9Vg80zNCSBR+FQS8UXXo6f1JtA4J0Vdkn7tsxmRtvr5EZWkPhpeBKcN/
+         6OtQ==
+X-Gm-Message-State: APzg51ARnDnyL8A4QBMElppvbVr24m/S1mWqHuQUFpUvnw7KDTFzHuqV
+        DxxQBVRlYMkH4RcQqAtOm2U=
+X-Google-Smtp-Source: ANB0VdYPu09jiIk5V15H/lFiq4PPprzQIu4+Z99e34LVfCLhywZfB7fK9wJDSWdM6N/xq8KjnKoLww==
+X-Received: by 2002:a63:1d22:: with SMTP id d34-v6mr30654926pgd.133.1537320259544;
+        Tue, 18 Sep 2018 18:24:19 -0700 (PDT)
 Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id n26-v6sm602291pgd.45.2018.09.18.18.22.09
+        by smtp.gmail.com with ESMTPSA id m25-v6sm23963425pgn.1.2018.09.18.18.24.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 18:22:10 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 11:22:07 +1000
+        Tue, 18 Sep 2018 18:24:18 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 11:24:15 +1000
 From:   Balbir Singh <bsingharora@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-acpi@vger.kernel.org, xen-devel@lists.xenproject.org,
-        devel@linuxdriverproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Len Brown <lenb@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Neuling <mikey@neuling.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rashmica Gupta <rashmica.g@gmail.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>
-Subject: Re: [PATCH v1 0/6] mm: online/offline_pages called w.o.
- mem_hotplug_lock
-Message-ID: <20180919012207.GD8537@350D>
-References: <20180918114822.21926-1-david@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org, Christoph Hellwig <hch@lst.de>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        alexander.h.duyck@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/7] mm, hmm: Replace hmm_devmem_pages_create() with
+ devm_memremap_pages()
+Message-ID: <20180919012415.GE8537@350D>
+References: <153680531988.453305.8080706591516037706.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153680535314.453305.11205770267271657025.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180918114822.21926-1-david@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <153680535314.453305.11205770267271657025.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 01:48:16PM +0200, David Hildenbrand wrote:
-> Reading through the code and studying how mem_hotplug_lock is to be used,
-> I noticed that there are two places where we can end up calling
-> device_online()/device_offline() - online_pages()/offline_pages() without
-> the mem_hotplug_lock. And there are other places where we call
-> device_online()/device_offline() without the device_hotplug_lock.
+On Wed, Sep 12, 2018 at 07:22:33PM -0700, Dan Williams wrote:
+> Commit e8d513483300 "memremap: change devm_memremap_pages interface to
+> use struct dev_pagemap" refactored devm_memremap_pages() to allow a
+> dev_pagemap instance to be supplied. Passing in a dev_pagemap interface
+> simplifies the design of pgmap type drivers in that they can rely on
+> container_of() to lookup any private data associated with the given
+> dev_pagemap instance.
 > 
-> While e.g.
-> 	echo "online" > /sys/devices/system/memory/memory9/state
-> is fine, e.g.
-> 	echo 1 > /sys/devices/system/memory/memory9/online
-> Will not take the mem_hotplug_lock. However the device_lock() and
-> device_hotplug_lock.
+> In addition to the cleanups this also gives hmm users multi-order-radix
+> improvements that arrived with commit ab1b597ee0e4 "mm,
+> devm_memremap_pages: use multi-order radix for ZONE_DEVICE lookups"
 > 
-> E.g. via memory_probe_store(), we can end up calling
-> add_memory()->online_pages() without the device_hotplug_lock. So we can
-> have concurrent callers in online_pages(). We e.g. touch in online_pages()
-> basically unprotected zone->present_pages then.
+> As part of the conversion to the devm_memremap_pages() method of
+> handling the percpu_ref relative to when pages are put, the percpu_ref
+> completion needs to move to hmm_devmem_ref_exit(). See commit
+> 71389703839e ("mm, zone_device: Replace {get, put}_zone_device_page...")
+> for details.
 > 
-> Looks like there is a longer history to that (see Patch #2 for details),
-> and fixing it to work the way it was intended is not really possible. We
-> would e.g. have to take the mem_hotplug_lock in device/base/core.c, which
-> sounds wrong.
-> 
-> Summary: We had a lock inversion on mem_hotplug_lock and device_lock().
-> More details can be found in patch 3 and patch 6.
-> 
-> I propose the general rules (documentation added in patch 6):
-> 
-> 1. add_memory/add_memory_resource() must only be called with
->    device_hotplug_lock.
-> 2. remove_memory() must only be called with device_hotplug_lock. This is
->    already documented and holds for all callers.
-> 3. device_online()/device_offline() must only be called with
->    device_hotplug_lock. This is already documented and true for now in core
->    code. Other callers (related to memory hotplug) have to be fixed up.
-> 4. mem_hotplug_lock is taken inside of add_memory/remove_memory/
->    online_pages/offline_pages.
-> 
-> To me, this looks way cleaner than what we have right now (and easier to
-> verify). And looking at the documentation of remove_memory, using
-> lock_device_hotplug also for add_memory() feels natural.
->
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Cc: Logan Gunthorpe <logang@deltatee.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
 
-That seems reasonable, but also implies that device_online() would hold
-back add/remove memory, could you please also document what mode
-read/write the locks need to be held? For example can the device_hotplug_lock
-be held in read mode while add/remove memory via (mem_hotplug_lock) is held
-in write mode?
+Looks like a good cleanup
 
-Balbir Singh.
- 
+Acked-by: Balbir Singh <bsingharora@gmail.com>
