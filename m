@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0ECECE565
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBFCECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411942150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411942150F
+	by mail.kernel.org (Postfix) with ESMTP id 2453B21522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2453B21522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbeISXKT (ORCPT
+        id S1733256AbeISXKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:10:19 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12626 "EHLO huawei.com"
+        Wed, 19 Sep 2018 19:10:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12210 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733197AbeISXKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:10:19 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 000FE4EF3643E;
-        Thu, 20 Sep 2018 01:31:18 +0800 (CST)
+        id S1733238AbeISXKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:10:23 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 55B66F5954B78;
+        Thu, 20 Sep 2018 01:31:23 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 01:31:12 +0800
+ 14.3.399.0; Thu, 20 Sep 2018 01:31:17 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>
-Subject: [PATCH net-next 07/12] net: hns3: Check hdev state when getting link status
-Date:   Wed, 19 Sep 2018 18:29:53 +0100
-Message-ID: <20180919172958.12992-8-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Jian Shen <shenjian15@huawei.com>
+Subject: [PATCH net-next 09/12] net: hns3: Fix cmdq registers initialization issue for vf
+Date:   Wed, 19 Sep 2018 18:29:55 +0100
+Message-ID: <20180919172958.12992-10-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180919172958.12992-1-salil.mehta@huawei.com>
 References: <20180919172958.12992-1-salil.mehta@huawei.com>
@@ -49,50 +49,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-By default, HW link status is up. If hclge_update_link_status is called
-before net up, driver will print "link up". It is not suitable. hdev
-state check is needed when getting link status.
+According to hardware's description, the head pointer register should
+be written before the tail pointer register while initializing the vf
+command queue. Otherwise, it may trigger an interrupt even though there
+is no command received.
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Fixes: fedd0c15d288 ("net: hns3: Add HNS3 VF IMP(Integrated Management Proc) cmd interface")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 3 +++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 66b31d1..4f4ded3 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2063,6 +2063,9 @@ static int hclge_get_mac_phy_link(struct hclge_dev *hdev)
- 	int mac_state;
- 	int link_stat;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+index fb471fe..d8c0cc8 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+@@ -132,8 +132,8 @@ static int hclgevf_init_cmd_queue(struct hclgevf_dev *hdev,
+ 		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_DEPTH_REG, reg_val);
  
-+	if (test_bit(HCLGE_STATE_DOWN, &hdev->state))
-+		return 0;
-+
- 	mac_state = hclge_get_mac_link_status(hdev);
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_TAIL_REG, 0);
+ 		break;
+ 	case HCLGEVF_TYPE_CRQ:
+ 		reg_val = (u32)ring->desc_dma_addr;
+@@ -145,8 +145,8 @@ static int hclgevf_init_cmd_queue(struct hclgevf_dev *hdev,
+ 		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_DEPTH_REG, reg_val);
  
- 	if (hdev->hw.mac.phydev) {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 47fc3cd..320043e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -299,6 +299,9 @@ void hclgevf_update_link_status(struct hclgevf_dev *hdev, int link_state)
+-		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
+ 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_HEAD_REG, 0);
++		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG, 0);
+ 		break;
+ 	}
  
- 	client = handle->client;
- 
-+	link_state =
-+		test_bit(HCLGEVF_STATE_DOWN, &hdev->state) ? 0 : link_state;
-+
- 	if (link_state != hdev->hw.mac.link) {
- 		client->ops->link_status_change(handle, !!link_state);
- 		hdev->hw.mac.link = link_state;
 -- 
 2.7.4
 
