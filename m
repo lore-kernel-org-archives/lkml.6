@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42061C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE009ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB00D214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F61F214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iLw6Owh1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB00D214DA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N8M0ZGQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F61F214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbeISHql (ORCPT
+        id S1730960AbeISHqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:46:41 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:32911 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730839AbeISHqi (ORCPT
+        Wed, 19 Sep 2018 03:46:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45412 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730905AbeISHql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:46:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b97-v6so1879244plb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
+        Wed, 19 Sep 2018 03:46:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i26-v6so1897378pfo.12
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ir2PH01Jcc8mpCMXYQzPHQt7ow07J4AJdATFqvNt4A0=;
-        b=iLw6Owh1QUk+fUk9/rFHqIZgqqmzM3fL2D6spe1SNchgdGL3Cj3FC25yjxe9iDAxk6
-         yB7pZg9pkLi55xwafzw7JBCzXHpiScRZcK49qBrUylgvIGDMpbVwsypY6N5Jw8POg+fS
-         p3V3CoW7c8ObjdP/duwi4CR1xTFGXjzHCR178=
+        bh=AEAcoMGIsRFw3HkHQ8e0m7OE5b3TEmxIotDoO7+No/8=;
+        b=N8M0ZGQT3rCZpc1OoPovmvArnrFwprTe9JNn6ycx5Cw8pVb3cFHqq4p4E+HyrgQEbh
+         S7pnMd9Kj8/2Hh0+fj0KVndCOL2DVg/B720g+z6jkcqWlXCov3vJ4IWRMP0SDODuls70
+         b5eNOmvWHisjFQsxvXuzwQTuu4RY9M1MeZNec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Ir2PH01Jcc8mpCMXYQzPHQt7ow07J4AJdATFqvNt4A0=;
-        b=E8P67jTw3UPq0AAo2HwopkBJ3A1XqJWScZg4NZ98SL8pPaSY2EsEP+TtufSECVVzwS
-         5cYij29QiPGCNpzqs00PVVDsNLExavqqGgc6BilnzxhvPVbNlnKffVxsP0fXoJ4IxlQZ
-         zrev2QGR732WLIn8CSJHcUzHQpm7t7EHLqcw+RaLLlQbjDll25JPhUYiqZK4nFVzKD7h
-         IViD0vCCOQ/vXLNWtba/0PeVBhmMw7ecnzuw59dNeXD/irJ3iag2cvkKD3UuKrhFZy5h
-         9PZ6cjsehQILu9bgl6SxYSu9qhHbwK+rlZED8sthnz5nB6aBHm+4IXcP1lT77+C779ao
-         3p6g==
-X-Gm-Message-State: APzg51DuKBjQrxPhI5mZvY+Evt8mpLmG5rK/uoMClPg1QWkDztfP6QId
-        4dIY8em0aH/MUykMKpheZHxLZg==
-X-Google-Smtp-Source: ANB0VdZ7W96jpdXbNnqSqSM4T8JEnwP/zkhfQnBsHo6JB6Av0ctGjpZHM4gj2j2u4bQ6L7KXF18SuQ==
-X-Received: by 2002:a17:902:3a2:: with SMTP id d31-v6mr31865181pld.287.1537323069270;
-        Tue, 18 Sep 2018 19:11:09 -0700 (PDT)
+        bh=AEAcoMGIsRFw3HkHQ8e0m7OE5b3TEmxIotDoO7+No/8=;
+        b=QbWv1bE9ZZHKmQULcUkMpZFVmnhnAPj/T5zva0ipoo/UEJPBZRWx8gL5QN97w/MYsZ
+         BkFWZJSOTKyrTideGIyTeoLZf+UT1MvfJSeJeg0bdrmmNWc0CsrnFdLhc8wGMZmMtKRP
+         sPV8ZDtOhwl8im4mAI8jUctFWc+su58KHZQ8QbfPspxSGGdcHiBKEKEMC1leqdrm7KcP
+         o41ExLkrGZLbvsOlClF/Eg/RC7/nqEwhYekwleCLoPV6T/FVSdDhlKb+Ow85QkT29nal
+         ovwst1YFLr0QZFwZdBY7Jtg/qQCEDSEETGKfi+yPFTvlCHhyf7/HYE/VSx3EI6vrgkvH
+         p2Pg==
+X-Gm-Message-State: APzg51DyGBDu6lf5fuz5W4UB1ZtB4+r7zgfVbslM/MwZitwrS6XQ80k0
+        qKThYMc4T/jnsHHBph8UHrKFlw==
+X-Google-Smtp-Source: ANB0VdYA+0hYiNYMdb41d/qf3UBxV53/m+6dISiJ/SN9OXRzpB5arDd1EyJoaGQKVd9ySrRHp9PaUA==
+X-Received: by 2002:a62:4bc6:: with SMTP id d67-v6mr33557881pfj.175.1537323073476;
+        Tue, 18 Sep 2018 19:11:13 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v26-v6sm26287625pfe.57.2018.09.18.19.11.04
+        by smtp.gmail.com with ESMTPSA id z11-v6sm26301540pff.162.2018.09.18.19.11.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Sep 2018 19:11:05 -0700 (PDT)
+        Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 03/23] lib80211: Remove VLA usage of skcipher
-Date:   Tue, 18 Sep 2018 19:10:40 -0700
-Message-Id: <20180919021100.3380-4-keescook@chromium.org>
+Subject: [PATCH crypto-next 05/23] s390/crypto: Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:42 -0700
+Message-Id: <20180919021100.3380-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -82,628 +83,164 @@ which uses a fixed stack size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-s390@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c  | 34 +++++++++----------
- drivers/staging/rtl8192e/rtllib_crypt_wep.c   | 28 +++++++--------
- .../rtl8192u/ieee80211/ieee80211_crypt_tkip.c | 34 +++++++++----------
- .../rtl8192u/ieee80211/ieee80211_crypt_wep.c  | 26 +++++++-------
- net/wireless/lib80211_crypt_tkip.c            | 34 +++++++++----------
- net/wireless/lib80211_crypt_wep.c             | 28 +++++++--------
- 6 files changed, 89 insertions(+), 95 deletions(-)
+ arch/s390/crypto/aes_s390.c | 48 ++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-index 9f18be14dda6..f38f1f74fcd6 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-@@ -49,9 +49,9 @@ struct rtllib_tkip_data {
- 	u32 dot11RSNAStatsTKIPLocalMICFailures;
- 
- 	int key_idx;
--	struct crypto_skcipher *rx_tfm_arc4;
-+	struct crypto_sync_skcipher *rx_tfm_arc4;
- 	struct crypto_shash *rx_tfm_michael;
--	struct crypto_skcipher *tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tx_tfm_arc4;
- 	struct crypto_shash *tx_tfm_michael;
- 	/* scratch buffers for virt_to_page() (crypto API) */
- 	u8 rx_hdr[16];
-@@ -66,8 +66,7 @@ static void *rtllib_tkip_init(int key_idx)
- 	if (priv == NULL)
- 		goto fail;
- 	priv->key_idx = key_idx;
--	priv->tx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--						  CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm_arc4)) {
- 		pr_debug("Could not allocate crypto API arc4\n");
- 		priv->tx_tfm_arc4 = NULL;
-@@ -81,8 +80,7 @@ static void *rtllib_tkip_init(int key_idx)
- 		goto fail;
- 	}
- 
--	priv->rx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--						  CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm_arc4)) {
- 		pr_debug("Could not allocate crypto API arc4\n");
- 		priv->rx_tfm_arc4 = NULL;
-@@ -100,9 +98,9 @@ static void *rtllib_tkip_init(int key_idx)
- fail:
- 	if (priv) {
- 		crypto_free_shash(priv->tx_tfm_michael);
--		crypto_free_skcipher(priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->tx_tfm_arc4);
- 		crypto_free_shash(priv->rx_tfm_michael);
--		crypto_free_skcipher(priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->rx_tfm_arc4);
- 		kfree(priv);
- 	}
- 
-@@ -116,9 +114,9 @@ static void rtllib_tkip_deinit(void *priv)
- 
- 	if (_priv) {
- 		crypto_free_shash(_priv->tx_tfm_michael);
--		crypto_free_skcipher(_priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->tx_tfm_arc4);
- 		crypto_free_shash(_priv->rx_tfm_michael);
--		crypto_free_skcipher(_priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->rx_tfm_arc4);
- 	}
- 	kfree(priv);
- }
-@@ -337,7 +335,7 @@ static int rtllib_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	*pos++ = (tkey->tx_iv32 >> 24) & 0xff;
- 
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
- 
- 		icv = skb_put(skb, 4);
- 		crc = ~crc32_le(~0, pos, len);
-@@ -349,8 +347,8 @@ static int rtllib_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 		sg_init_one(&sg, pos, len+4);
- 
- 
--		crypto_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
--		skcipher_request_set_tfm(req, tkey->tx_tfm_arc4);
-+		crypto_sync_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
-+		skcipher_request_set_sync_tfm(req, tkey->tx_tfm_arc4);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 		ret = crypto_skcipher_encrypt(req);
-@@ -420,7 +418,7 @@ static int rtllib_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	pos += 8;
- 
- 	if (!tcb_desc->bHwSec || (skb->cb[0] == 1)) {
--		SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
- 
- 		if ((iv32 < tkey->rx_iv32 ||
- 		    (iv32 == tkey->rx_iv32 && iv16 <= tkey->rx_iv16)) &&
-@@ -447,8 +445,8 @@ static int rtllib_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 
- 		sg_init_one(&sg, pos, plen+4);
- 
--		crypto_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
--		skcipher_request_set_tfm(req, tkey->rx_tfm_arc4);
-+		crypto_sync_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
-+		skcipher_request_set_sync_tfm(req, tkey->rx_tfm_arc4);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 		err = crypto_skcipher_decrypt(req);
-@@ -664,9 +662,9 @@ static int rtllib_tkip_set_key(void *key, int len, u8 *seq, void *priv)
- 	struct rtllib_tkip_data *tkey = priv;
- 	int keyidx;
- 	struct crypto_shash *tfm = tkey->tx_tfm_michael;
--	struct crypto_skcipher *tfm2 = tkey->tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm2 = tkey->tx_tfm_arc4;
- 	struct crypto_shash *tfm3 = tkey->rx_tfm_michael;
--	struct crypto_skcipher *tfm4 = tkey->rx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm4 = tkey->rx_tfm_arc4;
- 
- 	keyidx = tkey->key_idx;
- 	memset(tkey, 0, sizeof(*tkey));
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-index b3343a5d0fd6..d11ec39171d5 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-@@ -27,8 +27,8 @@ struct prism2_wep_data {
- 	u8 key[WEP_KEY_LEN + 1];
- 	u8 key_len;
- 	u8 key_idx;
--	struct crypto_skcipher *tx_tfm;
--	struct crypto_skcipher *rx_tfm;
-+	struct crypto_sync_skcipher *tx_tfm;
-+	struct crypto_sync_skcipher *rx_tfm;
+diff --git a/arch/s390/crypto/aes_s390.c b/arch/s390/crypto/aes_s390.c
+index c54cb26eb7f5..812d9498d97b 100644
+--- a/arch/s390/crypto/aes_s390.c
++++ b/arch/s390/crypto/aes_s390.c
+@@ -44,7 +44,7 @@ struct s390_aes_ctx {
+ 	int key_len;
+ 	unsigned long fc;
+ 	union {
+-		struct crypto_skcipher *blk;
++		struct crypto_sync_skcipher *blk;
+ 		struct crypto_cipher *cip;
+ 	} fallback;
+ };
+@@ -54,7 +54,7 @@ struct s390_xts_ctx {
+ 	u8 pcc_key[32];
+ 	int key_len;
+ 	unsigned long fc;
+-	struct crypto_skcipher *fallback;
++	struct crypto_sync_skcipher *fallback;
  };
  
+ struct gcm_sg_walk {
+@@ -184,14 +184,15 @@ static int setkey_fallback_blk(struct crypto_tfm *tfm, const u8 *key,
+ 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
+ 	unsigned int ret;
  
-@@ -41,13 +41,13 @@ static void *prism2_wep_init(int keyidx)
- 		goto fail;
- 	priv->key_idx = keyidx;
+-	crypto_skcipher_clear_flags(sctx->fallback.blk, CRYPTO_TFM_REQ_MASK);
+-	crypto_skcipher_set_flags(sctx->fallback.blk, tfm->crt_flags &
++	crypto_sync_skcipher_clear_flags(sctx->fallback.blk,
++					 CRYPTO_TFM_REQ_MASK);
++	crypto_sync_skcipher_set_flags(sctx->fallback.blk, tfm->crt_flags &
+ 						      CRYPTO_TFM_REQ_MASK);
  
--	priv->tx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm)) {
- 		pr_debug("rtllib_crypt_wep: could not allocate crypto API arc4\n");
- 		priv->tx_tfm = NULL;
- 		goto fail;
- 	}
--	priv->rx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm)) {
- 		pr_debug("rtllib_crypt_wep: could not allocate crypto API arc4\n");
- 		priv->rx_tfm = NULL;
-@@ -61,8 +61,8 @@ static void *prism2_wep_init(int keyidx)
+-	ret = crypto_skcipher_setkey(sctx->fallback.blk, key, len);
++	ret = crypto_sync_skcipher_setkey(sctx->fallback.blk, key, len);
  
- fail:
- 	if (priv) {
--		crypto_free_skcipher(priv->tx_tfm);
--		crypto_free_skcipher(priv->rx_tfm);
-+		crypto_free_sync_skcipher(priv->tx_tfm);
-+		crypto_free_sync_skcipher(priv->rx_tfm);
- 		kfree(priv);
- 	}
- 	return NULL;
-@@ -74,8 +74,8 @@ static void prism2_wep_deinit(void *priv)
- 	struct prism2_wep_data *_priv = priv;
+ 	tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
+-	tfm->crt_flags |= crypto_skcipher_get_flags(sctx->fallback.blk) &
++	tfm->crt_flags |= crypto_sync_skcipher_get_flags(sctx->fallback.blk) &
+ 			  CRYPTO_TFM_RES_MASK;
  
- 	if (_priv) {
--		crypto_free_skcipher(_priv->tx_tfm);
--		crypto_free_skcipher(_priv->rx_tfm);
-+		crypto_free_sync_skcipher(_priv->tx_tfm);
-+		crypto_free_sync_skcipher(_priv->rx_tfm);
- 	}
- 	kfree(priv);
- }
-@@ -135,7 +135,7 @@ static int prism2_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	memcpy(key + 3, wep->key, wep->key_len);
+ 	return ret;
+@@ -204,9 +205,9 @@ static int fallback_blk_dec(struct blkcipher_desc *desc,
+ 	unsigned int ret;
+ 	struct crypto_blkcipher *tfm = desc->tfm;
+ 	struct s390_aes_ctx *sctx = crypto_blkcipher_ctx(tfm);
+-	SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
  
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
+-	skcipher_request_set_tfm(req, sctx->fallback.blk);
++	skcipher_request_set_sync_tfm(req, sctx->fallback.blk);
+ 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
+ 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
  
- 		/* Append little-endian CRC32 and encrypt it to produce ICV */
- 		crc = ~crc32_le(~0, pos, len);
-@@ -146,8 +146,8 @@ static int prism2_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 		icv[3] = crc >> 24;
+@@ -223,9 +224,9 @@ static int fallback_blk_enc(struct blkcipher_desc *desc,
+ 	unsigned int ret;
+ 	struct crypto_blkcipher *tfm = desc->tfm;
+ 	struct s390_aes_ctx *sctx = crypto_blkcipher_ctx(tfm);
+-	SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, sctx->fallback.blk);
  
- 		sg_init_one(&sg, pos, len+4);
--		crypto_skcipher_setkey(wep->tx_tfm, key, klen);
--		skcipher_request_set_tfm(req, wep->tx_tfm);
-+		crypto_sync_skcipher_setkey(wep->tx_tfm, key, klen);
-+		skcipher_request_set_sync_tfm(req, wep->tx_tfm);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 		err = crypto_skcipher_encrypt(req);
-@@ -199,11 +199,11 @@ static int prism2_wep_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	plen = skb->len - hdr_len - 8;
+-	skcipher_request_set_tfm(req, sctx->fallback.blk);
++	skcipher_request_set_sync_tfm(req, sctx->fallback.blk);
+ 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
+ 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
  
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
+@@ -306,8 +307,7 @@ static int fallback_init_blk(struct crypto_tfm *tfm)
+ 	const char *name = tfm->__crt_alg->cra_name;
+ 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
  
- 		sg_init_one(&sg, pos, plen+4);
--		crypto_skcipher_setkey(wep->rx_tfm, key, klen);
--		skcipher_request_set_tfm(req, wep->rx_tfm);
-+		crypto_sync_skcipher_setkey(wep->rx_tfm, key, klen);
-+		skcipher_request_set_sync_tfm(req, wep->rx_tfm);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 		err = crypto_skcipher_decrypt(req);
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c
-index 1088fa0aee0e..829fa4bd253c 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c
-@@ -53,9 +53,9 @@ struct ieee80211_tkip_data {
+-	sctx->fallback.blk = crypto_alloc_skcipher(name, 0,
+-						   CRYPTO_ALG_ASYNC |
++	sctx->fallback.blk = crypto_alloc_sync_skcipher(name, 0,
+ 						   CRYPTO_ALG_NEED_FALLBACK);
  
- 	int key_idx;
- 
--	struct crypto_skcipher *rx_tfm_arc4;
-+	struct crypto_sync_skcipher *rx_tfm_arc4;
- 	struct crypto_shash *rx_tfm_michael;
--	struct crypto_skcipher *tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tx_tfm_arc4;
- 	struct crypto_shash *tx_tfm_michael;
- 
- 	/* scratch buffers for virt_to_page() (crypto API) */
-@@ -71,8 +71,7 @@ static void *ieee80211_tkip_init(int key_idx)
- 		goto fail;
- 	priv->key_idx = key_idx;
- 
--	priv->tx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--			CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm_arc4)) {
- 		printk(KERN_DEBUG "ieee80211_crypt_tkip: could not allocate "
- 				"crypto API arc4\n");
-@@ -88,8 +87,7 @@ static void *ieee80211_tkip_init(int key_idx)
- 		goto fail;
- 	}
- 
--	priv->rx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--			CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm_arc4)) {
- 		printk(KERN_DEBUG "ieee80211_crypt_tkip: could not allocate "
- 				"crypto API arc4\n");
-@@ -110,9 +108,9 @@ static void *ieee80211_tkip_init(int key_idx)
- fail:
- 	if (priv) {
- 		crypto_free_shash(priv->tx_tfm_michael);
--		crypto_free_skcipher(priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->tx_tfm_arc4);
- 		crypto_free_shash(priv->rx_tfm_michael);
--		crypto_free_skcipher(priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->rx_tfm_arc4);
- 		kfree(priv);
- 	}
- 
-@@ -126,9 +124,9 @@ static void ieee80211_tkip_deinit(void *priv)
- 
- 	if (_priv) {
- 		crypto_free_shash(_priv->tx_tfm_michael);
--		crypto_free_skcipher(_priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->tx_tfm_arc4);
- 		crypto_free_shash(_priv->rx_tfm_michael);
--		crypto_free_skcipher(_priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->rx_tfm_arc4);
- 	}
- 	kfree(priv);
- }
-@@ -340,7 +338,7 @@ static int ieee80211_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	*pos++ = (tkey->tx_iv32 >> 24) & 0xff;
- 
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
- 
- 		icv = skb_put(skb, 4);
- 		crc = ~crc32_le(~0, pos, len);
-@@ -348,9 +346,9 @@ static int ieee80211_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 		icv[1] = crc >> 8;
- 		icv[2] = crc >> 16;
- 		icv[3] = crc >> 24;
--		crypto_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
-+		crypto_sync_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
- 		sg_init_one(&sg, pos, len+4);
--		skcipher_request_set_tfm(req, tkey->tx_tfm_arc4);
-+		skcipher_request_set_sync_tfm(req, tkey->tx_tfm_arc4);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 		ret = crypto_skcipher_encrypt(req);
-@@ -418,7 +416,7 @@ static int ieee80211_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	pos += 8;
- 
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
- 
- 		if (iv32 < tkey->rx_iv32 ||
- 		(iv32 == tkey->rx_iv32 && iv16 <= tkey->rx_iv16)) {
-@@ -440,10 +438,10 @@ static int ieee80211_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 
- 		plen = skb->len - hdr_len - 12;
- 
--		crypto_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
-+		crypto_sync_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
- 		sg_init_one(&sg, pos, plen+4);
- 
--		skcipher_request_set_tfm(req, tkey->rx_tfm_arc4);
-+		skcipher_request_set_sync_tfm(req, tkey->rx_tfm_arc4);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 
-@@ -663,9 +661,9 @@ static int ieee80211_tkip_set_key(void *key, int len, u8 *seq, void *priv)
- 	struct ieee80211_tkip_data *tkey = priv;
- 	int keyidx;
- 	struct crypto_shash *tfm = tkey->tx_tfm_michael;
--	struct crypto_skcipher *tfm2 = tkey->tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm2 = tkey->tx_tfm_arc4;
- 	struct crypto_shash *tfm3 = tkey->rx_tfm_michael;
--	struct crypto_skcipher *tfm4 = tkey->rx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm4 = tkey->rx_tfm_arc4;
- 
- 	keyidx = tkey->key_idx;
- 	memset(tkey, 0, sizeof(*tkey));
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_wep.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_wep.c
-index b9f86be9e52b..d4a1bf0caa7a 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_wep.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_wep.c
-@@ -32,8 +32,8 @@ struct prism2_wep_data {
- 	u8 key[WEP_KEY_LEN + 1];
- 	u8 key_len;
- 	u8 key_idx;
--	struct crypto_skcipher *tx_tfm;
--	struct crypto_skcipher *rx_tfm;
-+	struct crypto_sync_skcipher *tx_tfm;
-+	struct crypto_sync_skcipher *rx_tfm;
- };
- 
- 
-@@ -46,10 +46,10 @@ static void *prism2_wep_init(int keyidx)
- 		return NULL;
- 	priv->key_idx = keyidx;
- 
--	priv->tx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm))
- 		goto free_priv;
--	priv->rx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm))
- 		goto free_tx;
- 
-@@ -58,7 +58,7 @@ static void *prism2_wep_init(int keyidx)
- 
- 	return priv;
- free_tx:
--	crypto_free_skcipher(priv->tx_tfm);
-+	crypto_free_sync_skcipher(priv->tx_tfm);
- free_priv:
- 	kfree(priv);
- 	return NULL;
-@@ -70,8 +70,8 @@ static void prism2_wep_deinit(void *priv)
- 	struct prism2_wep_data *_priv = priv;
- 
- 	if (_priv) {
--		crypto_free_skcipher(_priv->tx_tfm);
--		crypto_free_skcipher(_priv->rx_tfm);
-+		crypto_free_sync_skcipher(_priv->tx_tfm);
-+		crypto_free_sync_skcipher(_priv->rx_tfm);
- 	}
- 	kfree(priv);
- }
-@@ -128,7 +128,7 @@ static int prism2_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	memcpy(key + 3, wep->key, wep->key_len);
- 
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
- 
- 		/* Append little-endian CRC32 and encrypt it to produce ICV */
- 		crc = ~crc32_le(~0, pos, len);
-@@ -138,10 +138,10 @@ static int prism2_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 		icv[2] = crc >> 16;
- 		icv[3] = crc >> 24;
- 
--		crypto_skcipher_setkey(wep->tx_tfm, key, klen);
-+		crypto_sync_skcipher_setkey(wep->tx_tfm, key, klen);
- 		sg_init_one(&sg, pos, len+4);
- 
--		skcipher_request_set_tfm(req, wep->tx_tfm);
-+		skcipher_request_set_sync_tfm(req, wep->tx_tfm);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 
-@@ -193,12 +193,12 @@ static int prism2_wep_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	plen = skb->len - hdr_len - 8;
- 
- 	if (!tcb_desc->bHwSec) {
--		SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
-+		SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
- 
--		crypto_skcipher_setkey(wep->rx_tfm, key, klen);
-+		crypto_sync_skcipher_setkey(wep->rx_tfm, key, klen);
- 		sg_init_one(&sg, pos, plen+4);
- 
--		skcipher_request_set_tfm(req, wep->rx_tfm);
-+		skcipher_request_set_sync_tfm(req, wep->rx_tfm);
- 		skcipher_request_set_callback(req, 0, NULL, NULL);
- 		skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 
-diff --git a/net/wireless/lib80211_crypt_tkip.c b/net/wireless/lib80211_crypt_tkip.c
-index e6bce1f130c9..346e19cbdf59 100644
---- a/net/wireless/lib80211_crypt_tkip.c
-+++ b/net/wireless/lib80211_crypt_tkip.c
-@@ -64,9 +64,9 @@ struct lib80211_tkip_data {
- 
- 	int key_idx;
- 
--	struct crypto_skcipher *rx_tfm_arc4;
-+	struct crypto_sync_skcipher *rx_tfm_arc4;
- 	struct crypto_shash *rx_tfm_michael;
--	struct crypto_skcipher *tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tx_tfm_arc4;
- 	struct crypto_shash *tx_tfm_michael;
- 
- 	/* scratch buffers for virt_to_page() (crypto API) */
-@@ -99,8 +99,7 @@ static void *lib80211_tkip_init(int key_idx)
- 
- 	priv->key_idx = key_idx;
- 
--	priv->tx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--						  CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm_arc4)) {
- 		priv->tx_tfm_arc4 = NULL;
- 		goto fail;
-@@ -112,8 +111,7 @@ static void *lib80211_tkip_init(int key_idx)
- 		goto fail;
- 	}
- 
--	priv->rx_tfm_arc4 = crypto_alloc_skcipher("ecb(arc4)", 0,
--						  CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm_arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm_arc4)) {
- 		priv->rx_tfm_arc4 = NULL;
- 		goto fail;
-@@ -130,9 +128,9 @@ static void *lib80211_tkip_init(int key_idx)
-       fail:
- 	if (priv) {
- 		crypto_free_shash(priv->tx_tfm_michael);
--		crypto_free_skcipher(priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->tx_tfm_arc4);
- 		crypto_free_shash(priv->rx_tfm_michael);
--		crypto_free_skcipher(priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(priv->rx_tfm_arc4);
- 		kfree(priv);
- 	}
- 
-@@ -144,9 +142,9 @@ static void lib80211_tkip_deinit(void *priv)
- 	struct lib80211_tkip_data *_priv = priv;
- 	if (_priv) {
- 		crypto_free_shash(_priv->tx_tfm_michael);
--		crypto_free_skcipher(_priv->tx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->tx_tfm_arc4);
- 		crypto_free_shash(_priv->rx_tfm_michael);
--		crypto_free_skcipher(_priv->rx_tfm_arc4);
-+		crypto_free_sync_skcipher(_priv->rx_tfm_arc4);
- 	}
- 	kfree(priv);
- }
-@@ -344,7 +342,7 @@ static int lib80211_tkip_hdr(struct sk_buff *skb, int hdr_len,
- static int lib80211_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
+ 	if (IS_ERR(sctx->fallback.blk)) {
+@@ -323,7 +323,7 @@ static void fallback_exit_blk(struct crypto_tfm *tfm)
  {
- 	struct lib80211_tkip_data *tkey = priv;
--	SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->tx_tfm_arc4);
- 	int len;
- 	u8 rc4key[16], *pos, *icv;
- 	u32 crc;
-@@ -374,9 +372,9 @@ static int lib80211_tkip_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	icv[2] = crc >> 16;
- 	icv[3] = crc >> 24;
+ 	struct s390_aes_ctx *sctx = crypto_tfm_ctx(tfm);
  
--	crypto_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
-+	crypto_sync_skcipher_setkey(tkey->tx_tfm_arc4, rc4key, 16);
- 	sg_init_one(&sg, pos, len + 4);
--	skcipher_request_set_tfm(req, tkey->tx_tfm_arc4);
-+	skcipher_request_set_sync_tfm(req, tkey->tx_tfm_arc4);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 	err = crypto_skcipher_encrypt(req);
-@@ -400,7 +398,7 @@ static inline int tkip_replay_check(u32 iv32_n, u16 iv16_n,
- static int lib80211_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- {
- 	struct lib80211_tkip_data *tkey = priv;
--	SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tkey->rx_tfm_arc4);
- 	u8 rc4key[16];
- 	u8 keyidx, *pos;
- 	u32 iv32;
-@@ -463,9 +461,9 @@ static int lib80211_tkip_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 
- 	plen = skb->len - hdr_len - 12;
- 
--	crypto_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
-+	crypto_sync_skcipher_setkey(tkey->rx_tfm_arc4, rc4key, 16);
- 	sg_init_one(&sg, pos, plen + 4);
--	skcipher_request_set_tfm(req, tkey->rx_tfm_arc4);
-+	skcipher_request_set_sync_tfm(req, tkey->rx_tfm_arc4);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 	err = crypto_skcipher_decrypt(req);
-@@ -660,9 +658,9 @@ static int lib80211_tkip_set_key(void *key, int len, u8 * seq, void *priv)
- 	struct lib80211_tkip_data *tkey = priv;
- 	int keyidx;
- 	struct crypto_shash *tfm = tkey->tx_tfm_michael;
--	struct crypto_skcipher *tfm2 = tkey->tx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm2 = tkey->tx_tfm_arc4;
- 	struct crypto_shash *tfm3 = tkey->rx_tfm_michael;
--	struct crypto_skcipher *tfm4 = tkey->rx_tfm_arc4;
-+	struct crypto_sync_skcipher *tfm4 = tkey->rx_tfm_arc4;
- 
- 	keyidx = tkey->key_idx;
- 	memset(tkey, 0, sizeof(*tkey));
-diff --git a/net/wireless/lib80211_crypt_wep.c b/net/wireless/lib80211_crypt_wep.c
-index d05f58b0fd04..bdadee497f57 100644
---- a/net/wireless/lib80211_crypt_wep.c
-+++ b/net/wireless/lib80211_crypt_wep.c
-@@ -35,8 +35,8 @@ struct lib80211_wep_data {
- 	u8 key[WEP_KEY_LEN + 1];
- 	u8 key_len;
- 	u8 key_idx;
--	struct crypto_skcipher *tx_tfm;
--	struct crypto_skcipher *rx_tfm;
-+	struct crypto_sync_skcipher *tx_tfm;
-+	struct crypto_sync_skcipher *rx_tfm;
- };
- 
- static void *lib80211_wep_init(int keyidx)
-@@ -48,13 +48,13 @@ static void *lib80211_wep_init(int keyidx)
- 		goto fail;
- 	priv->key_idx = keyidx;
- 
--	priv->tx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->tx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->tx_tfm)) {
- 		priv->tx_tfm = NULL;
- 		goto fail;
- 	}
- 
--	priv->rx_tfm = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
-+	priv->rx_tfm = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
- 	if (IS_ERR(priv->rx_tfm)) {
- 		priv->rx_tfm = NULL;
- 		goto fail;
-@@ -66,8 +66,8 @@ static void *lib80211_wep_init(int keyidx)
- 
-       fail:
- 	if (priv) {
--		crypto_free_skcipher(priv->tx_tfm);
--		crypto_free_skcipher(priv->rx_tfm);
-+		crypto_free_sync_skcipher(priv->tx_tfm);
-+		crypto_free_sync_skcipher(priv->rx_tfm);
- 		kfree(priv);
- 	}
- 	return NULL;
-@@ -77,8 +77,8 @@ static void lib80211_wep_deinit(void *priv)
- {
- 	struct lib80211_wep_data *_priv = priv;
- 	if (_priv) {
--		crypto_free_skcipher(_priv->tx_tfm);
--		crypto_free_skcipher(_priv->rx_tfm);
-+		crypto_free_sync_skcipher(_priv->tx_tfm);
-+		crypto_free_sync_skcipher(_priv->rx_tfm);
- 	}
- 	kfree(priv);
+-	crypto_free_skcipher(sctx->fallback.blk);
++	crypto_free_sync_skcipher(sctx->fallback.blk);
  }
-@@ -129,7 +129,7 @@ static int lib80211_wep_build_iv(struct sk_buff *skb, int hdr_len,
- static int lib80211_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- {
- 	struct lib80211_wep_data *wep = priv;
--	SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->tx_tfm);
- 	u32 crc, klen, len;
- 	u8 *pos, *icv;
- 	struct scatterlist sg;
-@@ -162,9 +162,9 @@ static int lib80211_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	icv[2] = crc >> 16;
- 	icv[3] = crc >> 24;
  
--	crypto_skcipher_setkey(wep->tx_tfm, key, klen);
-+	crypto_sync_skcipher_setkey(wep->tx_tfm, key, klen);
- 	sg_init_one(&sg, pos, len + 4);
--	skcipher_request_set_tfm(req, wep->tx_tfm);
-+	skcipher_request_set_sync_tfm(req, wep->tx_tfm);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, len + 4, NULL);
- 	err = crypto_skcipher_encrypt(req);
-@@ -182,7 +182,7 @@ static int lib80211_wep_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
- static int lib80211_wep_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- {
- 	struct lib80211_wep_data *wep = priv;
--	SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, wep->rx_tfm);
- 	u32 crc, klen, plen;
- 	u8 key[WEP_KEY_LEN + 3];
- 	u8 keyidx, *pos, icv[4];
-@@ -208,9 +208,9 @@ static int lib80211_wep_decrypt(struct sk_buff *skb, int hdr_len, void *priv)
- 	/* Apply RC4 to data and compute CRC32 over decrypted data */
- 	plen = skb->len - hdr_len - 8;
+ static struct crypto_alg ecb_aes_alg = {
+@@ -453,14 +453,15 @@ static int xts_fallback_setkey(struct crypto_tfm *tfm, const u8 *key,
+ 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
+ 	unsigned int ret;
  
--	crypto_skcipher_setkey(wep->rx_tfm, key, klen);
-+	crypto_sync_skcipher_setkey(wep->rx_tfm, key, klen);
- 	sg_init_one(&sg, pos, plen + 4);
--	skcipher_request_set_tfm(req, wep->rx_tfm);
-+	skcipher_request_set_sync_tfm(req, wep->rx_tfm);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, plen + 4, NULL);
- 	err = crypto_skcipher_decrypt(req);
+-	crypto_skcipher_clear_flags(xts_ctx->fallback, CRYPTO_TFM_REQ_MASK);
+-	crypto_skcipher_set_flags(xts_ctx->fallback, tfm->crt_flags &
++	crypto_sync_skcipher_clear_flags(xts_ctx->fallback,
++					 CRYPTO_TFM_REQ_MASK);
++	crypto_sync_skcipher_set_flags(xts_ctx->fallback, tfm->crt_flags &
+ 						     CRYPTO_TFM_REQ_MASK);
+ 
+-	ret = crypto_skcipher_setkey(xts_ctx->fallback, key, len);
++	ret = crypto_sync_skcipher_setkey(xts_ctx->fallback, key, len);
+ 
+ 	tfm->crt_flags &= ~CRYPTO_TFM_RES_MASK;
+-	tfm->crt_flags |= crypto_skcipher_get_flags(xts_ctx->fallback) &
++	tfm->crt_flags |= crypto_sync_skcipher_get_flags(xts_ctx->fallback) &
+ 			  CRYPTO_TFM_RES_MASK;
+ 
+ 	return ret;
+@@ -472,10 +473,10 @@ static int xts_fallback_decrypt(struct blkcipher_desc *desc,
+ {
+ 	struct crypto_blkcipher *tfm = desc->tfm;
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(tfm);
+-	SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
+ 	unsigned int ret;
+ 
+-	skcipher_request_set_tfm(req, xts_ctx->fallback);
++	skcipher_request_set_sync_tfm(req, xts_ctx->fallback);
+ 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
+ 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
+ 
+@@ -491,10 +492,10 @@ static int xts_fallback_encrypt(struct blkcipher_desc *desc,
+ {
+ 	struct crypto_blkcipher *tfm = desc->tfm;
+ 	struct s390_xts_ctx *xts_ctx = crypto_blkcipher_ctx(tfm);
+-	SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, xts_ctx->fallback);
+ 	unsigned int ret;
+ 
+-	skcipher_request_set_tfm(req, xts_ctx->fallback);
++	skcipher_request_set_sync_tfm(req, xts_ctx->fallback);
+ 	skcipher_request_set_callback(req, desc->flags, NULL, NULL);
+ 	skcipher_request_set_crypt(req, src, dst, nbytes, desc->info);
+ 
+@@ -611,8 +612,7 @@ static int xts_fallback_init(struct crypto_tfm *tfm)
+ 	const char *name = tfm->__crt_alg->cra_name;
+ 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
+ 
+-	xts_ctx->fallback = crypto_alloc_skcipher(name, 0,
+-						  CRYPTO_ALG_ASYNC |
++	xts_ctx->fallback = crypto_alloc_sync_skcipher(name, 0,
+ 						  CRYPTO_ALG_NEED_FALLBACK);
+ 
+ 	if (IS_ERR(xts_ctx->fallback)) {
+@@ -627,7 +627,7 @@ static void xts_fallback_exit(struct crypto_tfm *tfm)
+ {
+ 	struct s390_xts_ctx *xts_ctx = crypto_tfm_ctx(tfm);
+ 
+-	crypto_free_skcipher(xts_ctx->fallback);
++	crypto_free_sync_skcipher(xts_ctx->fallback);
+ }
+ 
+ static struct crypto_alg xts_aes_alg = {
 -- 
 2.17.1
 
