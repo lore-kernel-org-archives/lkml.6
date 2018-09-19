@@ -2,79 +2,109 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEE7C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9C4ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BB9214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F626214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAl/9swK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BB9214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L7dG8IPZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F626214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732655AbeISXor (ORCPT
+        id S1732623AbeISXq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:44:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732450AbeISXor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:44:47 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FBD6214DA;
-        Wed, 19 Sep 2018 18:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537380343;
-        bh=YH4RfmdMgqjcyVkhKmqN4XGhbBu0bS64uO3+HHzj/pU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DAl/9swKz1RijHQE16/gee8oOVoAgjPO31hipojC3Pvaa5Sk+o1KmAcS/pYfLyDWd
-         Y3Fw5CT34gweOe8JHUoE2/ZwpOjAJGHyzk3v9c3xNliygfo2r5i2e+ttmXmVDeKzrU
-         2ulw041iwbTsu28FMcYl7tBpFY9wxAXTm6LqY55k=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 1CBF0140260; Wed, 19 Sep 2018 15:05:41 -0300 (-03)
-Date:   Wed, 19 Sep 2018 15:05:41 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Sangwon Hong <qpakzk@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: Re: [PATCH] perf tool: Add missing subcommand `version`
-Message-ID: <20180919180541.GB31812@kernel.org>
-References: <20180919074911.41931-1-qpakzk@gmail.com>
+        Wed, 19 Sep 2018 19:46:29 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46215 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbeISXq2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:46:28 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t19-v6so3022814ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=gf4EIDAAMwHRdiQuZXpaa1Oh3ACpC76ItHZ1frX+SWY=;
+        b=L7dG8IPZRm+kDIPY8pi3aM9OMkF66KPQg7YA2lWg37EVqhsiV1i5uHHJfHbziaTE6o
+         AQpAeDIQOiTpufoKBIsaNGbQXl/trdNXPDytAWNgeGbfa1IWi/XlWavYWT0AirEGJ5dO
+         J/7cKKuaGE6GtUWPGNbi0HY9eQPN/AXZgAtwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=gf4EIDAAMwHRdiQuZXpaa1Oh3ACpC76ItHZ1frX+SWY=;
+        b=Bg8KbaNCEXxkqL9tCmDTR2ScD6kTsX0ikiFyzaDyIZYebwF1oprOKqebA1ONSg0mSZ
+         UGP7hlZknsZp1UshZGBX4sgW83EKd4ugEyMRi2Gf61d5Cfi97qKScu9w1O8EuZI4rwho
+         M/Xl4oIQOaS5kwlgGhEZ1nj1CLjtmJJiuiX/F30+rDXde+3eYyRRq7zJ48tk92L201/1
+         7woNBVfgsg0CWkz6B2FZJRx0sferUkdwHRBnKGIUUUp2Actd0YrM1R1/EDMOn9dB8W4g
+         qlHqtE2XXA0Uk8L1LXE7zTl9soiOVP3NH7fzDzXmAAtPW4iuHEk6Fz8ZFEM3OQSSstno
+         BAlA==
+X-Gm-Message-State: APzg51DogcAN4EILLfQm4SkRsd47aCjsFSHvVx3v6q+I6x3JcLWiKv4T
+        ZR74JxrlQ9ByDkIOhn2orfUasw==
+X-Google-Smtp-Source: ANB0VdZlSfkXOcADWJKV6O7EGO0imHnpi6m7sB+BhpfQ2jG4+WOyRkQURi10Xl8mnyVVD4IqEsQR/A==
+X-Received: by 2002:a17:902:9a06:: with SMTP id v6-v6mr35725698plp.316.1537380444796;
+        Wed, 19 Sep 2018 11:07:24 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id a90-v6sm52463696pfg.106.2018.09.19.11.07.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Sep 2018 11:07:23 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 11:07:22 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Davidlohr Bueso <dbueso@suse.de>,
+        Manfred Spraul <manfred@colorfullife.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ipc/shm: Use ERR_CAST() for shm_lock() error return
+Message-ID: <20180919180722.GA15073@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180919074911.41931-1-qpakzk@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Sep 19, 2018 at 12:49:11AM -0700, Sangwon Hong escreveu:
-> There isn't subcommand `version` when typing `perf help`.
-> 
-> Before :
-> 
-> $ perf help | grep version
->  usage: perf [--version] [--help] [OPTIONS] COMMAND [ARGS]
-> 
-> So add perf-version in command-list.txt for listing it
-> when typing `perf help`.
-> 
-> After :
-> 
-> $ perf help | grep version
->  usage: perf [--version] [--help] [OPTIONS] COMMAND [ARGS]
->    version         display the version of perf binary
+This uses ERR_CAST() instead of an open-coded cast, as it is casting
+across structure pointers, which upsets __randomize_layout:
 
-Thanks, applied.
+ipc/shm.c: In function ‘shm_lock’:
+ipc/shm.c:209:9: note: randstruct: casting between randomized structure pointer types (ssa): ‘struct shmid_kernel’ and ‘struct kern_ipc_perm’
 
-- Arnaldo
+  return (void *)ipcp;
+         ^~~~~~~~~~~~
+
+Fixes: 82061c57ce93 ("ipc: drop ipc_lock()")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ ipc/shm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 4cd402e4cfeb..1c65fb357395 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -206,7 +206,7 @@ static inline struct shmid_kernel *shm_lock(struct ipc_namespace *ns, int id)
+ 	 * Callers of shm_lock() must validate the status of the returned ipc
+ 	 * object pointer and error out as appropriate.
+ 	 */
+-	return (void *)ipcp;
++	return ERR_CAST(ipcp);
+ }
+ 
+ static inline void shm_lock_by_ptr(struct shmid_kernel *ipcp)
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
+Pixel Security
