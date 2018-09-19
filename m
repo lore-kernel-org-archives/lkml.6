@@ -2,119 +2,164 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCF9C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31413C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C551E2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C551E2150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id CFAFB2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:25:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAFB2150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeISSCp (ORCPT
+        id S1731547AbeISSDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:02:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:49253 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbeISSCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:02:44 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42FfFS5zm4z9ttRg;
-        Wed, 19 Sep 2018 14:25:00 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id fZeWn7oN4xNJ; Wed, 19 Sep 2018 14:25:00 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42FfFS5PsQz9ttRZ;
-        Wed, 19 Sep 2018 14:25:00 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2278A8B834;
-        Wed, 19 Sep 2018 14:25:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id AYONQQpVPqbs; Wed, 19 Sep 2018 14:25:01 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EE4B98B833;
-        Wed, 19 Sep 2018 14:25:00 +0200 (CEST)
-Subject: Re: [PATCH v2 1/2] sched: move stack_canary field at the top of
- task_struct
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@redhat.com>, segher@kernel.crashing.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <d60ce7dd74704b0ca0a857186f30de4006b63534.1537355312.git.christophe.leroy@c-s.fr>
- <20180919115836.GE24124@hirez.programming.kicks-ass.net>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <f6a36d25-ce19-5d56-69d9-198215a7b9e1@c-s.fr>
-Date:   Wed, 19 Sep 2018 14:25:00 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 19 Sep 2018 14:03:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38620 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731211AbeISSDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:03:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1061EAE14;
+        Wed, 19 Sep 2018 12:25:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D95401E091E; Wed, 19 Sep 2018 14:25:22 +0200 (CEST)
+Date:   Wed, 19 Sep 2018 14:25:22 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     syzbot <syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com>
+Cc:     ak@linux.intel.com, akpm@linux-foundation.org, dhowells@redhat.com,
+        jack@suse.cz, jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mawilcox@microsoft.com,
+        mgorman@techsingularity.net, syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG at include/linux/page-flags.h:LINE!
+Message-ID: <20180919122522.GL10257@quack2.suse.cz>
+References: <00000000000017d92b0576267d0f@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180919115836.GE24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000017d92b0576267d0f@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 19/09/2018 à 13:58, Peter Zijlstra a écrit :
-> On Wed, Sep 19, 2018 at 11:14:43AM +0000, Christophe Leroy wrote:
->> In order to allow the use of non global stack protector canary,
->> the stack canary needs to be located at a know offset defined
->> in Makefile via -mstack-protector-guard-offset.
->>
->> On powerpc/32, register r2 points to current task_struct at
->> all time, the stack_canary located inside task_struct can be
->> used directly if it is located in a known place.
->>
->> In order to allow that, this patch moves the stack_canary field
->> out of the randomized area of task_struct.
+On Tue 18-09-18 07:56:03, syzbot wrote:
+> Hello,
 > 
-> And you cannot use something like asm-offsets to extract this?
-
-I have not been able to find a way to define the compilation flags AFTER 
-building asm-offsets.h, see https://patchwork.ozlabs.org/patch/971521/
-
-If you have a suggestion, it is welcomed.
-
+> syzbot found the following crash on:
 > 
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   include/linux/sched.h | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index 977cb57d7bc9..1d977b8a4bac 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -601,6 +601,10 @@ struct task_struct {
->>   	/* -1 unrunnable, 0 runnable, >0 stopped: */
->>   	volatile long			state;
->>   
->> +#ifdef CONFIG_STACKPROTECTOR
->> +	/* Canary value for the -fstack-protector GCC feature: */
->> +	unsigned long			stack_canary;
->> +#endif
->>   	/*
->>   	 * This begins the randomizable portion of task_struct. Only
->>   	 * scheduling-critical items should be added above here.
+> HEAD commit:    c0747ad363ff Merge tag 'linux-kselftest-4.19-rc5' of git:/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1483a8c9400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5373a556df9f9fec7e90
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 > 
-> Might as well put it before state, right after the task_info thing.
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+5373a556df9f9fec7e90@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/page-flags.h:273!
 
-Yes, it doesn't make much difference, don't any arch expect state at 
-offset 0 ?
+Hum, looks like PageTail (i.e. the lowest bit of LRU pointer) got set for a
+pagecache page we try to writeback. No idea how that's possible...
 
-Christophe
+								Honza
+
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 9734 Comm: kworker/u4:1 Not tainted 4.19.0-rc4+ #18
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: writeback wb_workfn (flush-7:4)
+> RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
+> RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
+> RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
+> Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8
+> 56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25 e2
+> ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
+> RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
+> RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
+> kobject: 'loop0' (00000000d6ad330d): kobject_uevent_env
+> R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
+> R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f6134b6cc90 CR3: 00000001cc363000 CR4: 00000000001406e0
+> kobject: 'loop0' (00000000d6ad330d): fill_kobj_path: path =
+> '/devices/virtual/block/loop0'
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  page_endio+0x67c/0xb60 mm/filemap.c:1260
+>  mpage_end_io+0x144/0x1e0 fs/mpage.c:54
+>  bio_endio+0x5d2/0xb80 block/bio.c:1774
+>  generic_make_request_checks+0x5f6/0x26c0 block/blk-core.c:2347
+>  generic_make_request+0x2bd/0x15a0 block/blk-core.c:2401
+>  submit_bio+0xba/0x460 block/blk-core.c:2566
+>  mpage_bio_submit fs/mpage.c:66 [inline]
+>  __mpage_writepage+0x1515/0x1d30 fs/mpage.c:627
+>  write_cache_pages+0xd8e/0x1e50 mm/page-writeback.c:2239
+>  mpage_writepages+0x14c/0x320 fs/mpage.c:730
+>  fat_writepages+0x24/0x30 fs/fat/inode.c:198
+>  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2340
+>  __writeback_single_inode+0x20a/0x1620 fs/fs-writeback.c:1323
+>  writeback_sb_inodes+0x71f/0x11d0 fs/fs-writeback.c:1587
+>  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1656
+>  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1765
+>  wb_check_start_all fs/fs-writeback.c:1889 [inline]
+>  wb_do_writeback fs/fs-writeback.c:1915 [inline]
+>  wb_workfn+0xee9/0x1790 fs/fs-writeback.c:1949
+>  process_one_work+0xc90/0x1b90 kernel/workqueue.c:2153
+>  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+>  kthread+0x35a/0x420 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
+> Modules linked in:
+> kobject: 'loop5' (0000000003a73ee3): kobject_uevent_env
+> kobject: 'loop5' (0000000003a73ee3): fill_kobj_path: path =
+> '/devices/virtual/block/loop5'
+> ---[ end trace b1bf6d33e16c103c ]---
+> RIP: 0010:PageWaiters include/linux/page-flags.h:273 [inline]
+> RIP: 0010:wake_up_page mm/filemap.c:1069 [inline]
+> RIP: 0010:end_page_writeback+0x769/0x950 mm/filemap.c:1233
+> Code: ff e8 6b 25 e2 ff 48 8b 85 30 fe ff ff 4c 8d 70 ff e9 d9 fa ff ff e8
+> 56 25 e2 ff 48 c7 c6 e0 24 12 88 48 89 df e8 a7 cc 13 00 <0f> 0b e8 40 25 e2
+> ff 48 c7 c6 60 25 12 88 48 89 df e8 91 cc 13 00
+> RSP: 0018:ffff8801b91e5288 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffffea00064dabc0 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81b08db9 RDI: ffffed003723ca42
+> kobject: 'loop2' (0000000001c28b7c): kobject_uevent_env
+> RBP: ffff8801b91e5460 R08: ffff880157a40400 R09: ffffed003b5e4fe8
+> kobject: 'loop2' (0000000001c28b7c): fill_kobj_path: path =
+> '/devices/virtual/block/loop2'
+> R10: ffffed003b5e4fe8 R11: ffff8801daf27f47 R12: 0000000000000001
+> R13: 1ffff1003723ca53 R14: 1ffff1003723ca7f R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> kobject: 'loop3' (0000000091672ed1): kobject_uevent_env
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> kobject: 'loop3' (0000000091672ed1): fill_kobj_path: path =
+> '/devices/virtual/block/loop3'
+> CR2: 0000001b3202d000 CR3: 00000001cad9f000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
