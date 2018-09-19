@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BDAC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3CDECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88FA62150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FA62150E
+	by mail.kernel.org (Postfix) with ESMTP id 628152150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:28:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628152150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbeISTGX (ORCPT
+        id S1731999AbeISTGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:06:23 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51280 "EHLO
+        Wed, 19 Sep 2018 15:06:25 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:3482 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727983AbeISTGX (ORCPT
+        by vger.kernel.org with ESMTP id S1727983AbeISTGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:06:23 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8JDO2v1006876;
-        Wed, 19 Sep 2018 15:28:03 +0200
+        Wed, 19 Sep 2018 15:06:25 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8JDO6Ne016377;
+        Wed, 19 Sep 2018 15:28:10 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mgryfa634-1
+        by mx08-00178001.pphosted.com with ESMTP id 2mkmqh0q53-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 19 Sep 2018 15:28:03 +0200
+        Wed, 19 Sep 2018 15:28:10 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 653BE34;
-        Wed, 19 Sep 2018 13:28:02 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 80C2331;
+        Wed, 19 Sep 2018 13:28:09 +0000 (GMT)
 Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3E2034F4A;
-        Wed, 19 Sep 2018 13:28:02 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 62E614F48;
+        Wed, 19 Sep 2018 13:28:09 +0000 (GMT)
 Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
  (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep
- 2018 15:28:02 +0200
+ 2018 15:28:09 +0200
 Received: from localhost (10.201.20.5) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep 2018 15:28:01 +0200
+ Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep 2018 15:28:08 +0200
 From:   Amelie Delaunay <amelie.delaunay@st.com>
 To:     Lee Jones <lee.jones@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 1/7] dt-bindings: mfd: Add ST Multi-Function eXpander (STMFX) core bindings
-Date:   Wed, 19 Sep 2018 15:27:43 +0200
-Message-ID: <1537363669-25991-2-git-send-email-amelie.delaunay@st.com>
+Subject: [PATCH v2 7/7] ARM: dts: stm32: add orange and blue leds on stm32746g-eval
+Date:   Wed, 19 Sep 2018 15:27:49 +0200
+Message-ID: <1537363669-25991-8-git-send-email-amelie.delaunay@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com>
 References: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com>
@@ -69,49 +69,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds documentation of device tree bindings for the
-STMicroelectronics Multi-Function eXpander (STMFX) MFD core.
+Orange (LD2) and blue (LD4) leds on stm32746g-eval are connected on
+STMFX gpio expander, offset 17 and 19.
 
 Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 ---
- Documentation/devicetree/bindings/mfd/stmfx.txt | 28 +++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/stmfx.txt
+ arch/arm/boot/dts/stm32746g-eval.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/stmfx.txt b/Documentation/devicetree/bindings/mfd/stmfx.txt
-new file mode 100644
-index 0000000..21cf798
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/stmfx.txt
-@@ -0,0 +1,28 @@
-+STMicroelectonics Multi-Function eXpander (STMFX) Core bindings
-+
-+ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
-+communication with the main MCU. Its main features are GPIO expansion, main
-+MCU IDD measurement (IDD is the amount of current that flows through VDD) and
-+resistive touchscreen controller.
-+
-+Required properties:
-+- compatible: should be "st,stmfx-0300".
-+- reg: I2C slave address of the device.
-+- interrupt-parent: phandle of the STMFX parent interrupt controller.
-+- interrutps: interrupt specifier triggered by MFX_IRQ_OUT signal.
-+
-+Optional properties:
-+- drive-open-drain: configure MFX_IRQ_OUT as open drain.
-+- vdd-supply: phandle of the regulator supplying STMFX.
-+
-+Example:
-+
-+	stmfx: stmfx@42 {
-+		compatible = "st,stmfx-0300";
-+		reg = <0x42>;
-+		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpioi>;
-+		vdd-supply = <&v3v3>;
-+	};
-+
-+Please refer to ../pinctrl/pinctrl-stmfx.txt for STMFX GPIO expander function bindings.
+diff --git a/arch/arm/boot/dts/stm32746g-eval.dts b/arch/arm/boot/dts/stm32746g-eval.dts
+index b86ad83..a5fa73f 100644
+--- a/arch/arm/boot/dts/stm32746g-eval.dts
++++ b/arch/arm/boot/dts/stm32746g-eval.dts
+@@ -69,9 +69,15 @@
+ 			gpios = <&gpiof 10 1>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
++		orange {
++			gpios = <&stmfx_pinctrl 17 1>;
++		};
+ 		red {
+ 			gpios = <&gpiob 7 1>;
+ 		};
++		blue {
++			gpios = <&stmfx_pinctrl 19 1>;
++		};
+ 	};
+ 
+ 	gpio_keys {
 -- 
 2.7.4
 
