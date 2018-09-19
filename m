@@ -2,96 +2,66 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C34AECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 00:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCD7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 00:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461262083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 00:46:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="xsrcl7i3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461262083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A53B214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 00:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A53B214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730766AbeISGVL (ORCPT
+        id S1730789AbeISGV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 02:21:11 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:37789 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727686AbeISGVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 02:21:11 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 2fd69d60;
-        Wed, 19 Sep 2018 00:28:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=Ej8cbOf50zxWVmDYal00+LfH7Dk=; b=xsrcl7
-        i3iHFZM95G9gp3ntTEjVuDq30fibtgfPe+VEdEmlZJc9Aqb3VUwwU9CdXl/pik4i
-        AcJzP90XgFJKfd2i0Pon4XLQCzoCI+Di88AOA3JWIhKieI5DZ/qhGNdlh3JdUM2n
-        Y5a1Dw51ukRwguJeKl323cO5pr3LtPtusjuhWvdLLDR/CBeGD2RwD3XnLcj+ic3e
-        MR5D3J2QGzmyYz0m+Brb3NNgGt+NPIG9/wpfViqxtm5KIdTBAIcjOY5QJomnjcaz
-        zLXWRpTfEGx5NymV6M3uQIL0/fxkbOo8qtwlyE8dtt2JHopEujmmkRj1vydU1ibs
-        Ui1eih5ylRCxwivA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0904a8f8 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Wed, 19 Sep 2018 00:28:21 +0000 (UTC)
-Received: by mail-oi0-f54.google.com with SMTP id r69-v6so3535151oie.3;
-        Tue, 18 Sep 2018 17:45:58 -0700 (PDT)
-X-Gm-Message-State: APzg51Ap16VeSaDbN83Y8INaaeydt0nCn0shn9KYbecSArmDRb/U63cc
-        7dSEPvuiyawtLsINsA1MnfBpKTunaCqVZaWjn4M=
-X-Google-Smtp-Source: ANB0VdbflTWkvbGiWy+n4hGSfYtHCubX/Av3uA1RiZ7mEGKxHnuR9+vgTKHtC/cljJhlq99M12NnWPHNfKGvJUehooI=
-X-Received: by 2002:aca:b256:: with SMTP id b83-v6mr186110oif.235.1537317957448;
- Tue, 18 Sep 2018 17:45:57 -0700 (PDT)
+        Wed, 19 Sep 2018 02:21:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52920 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727686AbeISGVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 02:21:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCA3880D;
+        Tue, 18 Sep 2018 17:46:44 -0700 (PDT)
+Received: from [10.119.48.19] (unknown [10.119.48.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26D283F5C0;
+        Tue, 18 Sep 2018 17:46:43 -0700 (PDT)
+Subject: Re: [PATCH v4] EDAC, ghes: use CPER module handles to locate DIMMs
+To:     Fan Wu <wufan@codeaurora.org>
+Cc:     mchehab@kernel.org, bp@alien8.de, baicar.tyler@gmail.com,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
+        toshi.kani@hpe.com, tanxiaofei@huawei.com, wanghuiqiang@huawei.com,
+        shiju.jose@huawei.com
+References: <1536067493-31454-1-git-send-email-wufan@codeaurora.org>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <33dde632-3ab9-cab3-38cc-cc841a9e88e2@arm.com>
+Date:   Wed, 19 Sep 2018 01:46:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-13-Jason@zx2c4.com>
- <20180919004132.GB74746@gmail.com>
-In-Reply-To: <20180919004132.GB74746@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 19 Sep 2018 02:45:46 +0200
-X-Gmail-Original-Message-ID: <CAHmME9quryj4RW6gDEYiXpz61oh-xcEett3kv36ZZ4y1in-yTQ@mail.gmail.com>
-Message-ID: <CAHmME9quryj4RW6gDEYiXpz61oh-xcEett3kv36ZZ4y1in-yTQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 12/20] zinc: BLAKE2s generic C implementation
- and selftest
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1536067493-31454-1-git-send-email-wufan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Eric,
+Hi Fan,
 
-On Wed, Sep 19, 2018 at 2:41 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> This buffer is 4 times too long.
+On 09/04/2018 02:24 PM, Fan Wu wrote:
+> For platforms whose firmwares provide valid module handles
+> (SMBIOS type 17) in error records, this patch uses the module
+> handles to locate corresponding DIMMs and enables per-DIMM
+> error counter update.
 
-Nice catch.
+Reviewed-by: James Morse <james.morse@arm.com>
 
-> Or how about something much simpler:
->
-> static inline void blake2s_final(struct blake2s_state *state, u8 *out,
->                                  const size_t outlen)
-> {
-> #ifdef DEBUG
->         BUG_ON(!out || !outlen || outlen > BLAKE2S_OUTBYTES);
-> #endif
->         __blake2s_final(state);
->
->         cpu_to_le32_array(state->h, ARRAY_SIZE(state->h));
->         memcpy(out, state->h, outlen);
->
->         memzero_explicit(state, sizeof(*state));
-> }
 
-Oh, that's excellent, thanks. Much better than prior. I'll do exactly that.
+Thanks,
 
-Jason
+James
