@@ -2,91 +2,105 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9983C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7530AECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF5421508
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E9EB214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:15:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CNYZsiSy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF5421508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Nh7o4UX/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9EB214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730992AbeISOwY (ORCPT
+        id S1731057AbeISOw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:52:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40672 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbeISOwY (ORCPT
+        Wed, 19 Sep 2018 10:52:28 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:43163 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbeISOw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:52:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=i5h+2OisngGCOv9A4OuZ2xnp4PuGuj3fKShnZrRMaag=; b=CNYZsiSyRITke+NEyGj/lITNv
-        RovF98Z0vLUyy6mdOCO20afFi++3L6gPz2KweiUHhbOb9LSC1iKMHiwI6xSOl8RfUBfGpelap2Lr+
-        mLZLcJYUo6F6oBoZFFkFt0ZNPsQa4RU1Y/0s0BgeL3hOvL5UdfhqOwk0KRoZjwtF7IKdAKTaOQ1V6
-        ciTO5aCUNF212fakVXCYi8nZycibwQ3LbSr9+Jx8kOYd7r7Tku/KN7kh94R0k+oH+xpBbdPvC51xo
-        ZX4YAG5JtCsU2+uAI5wB5zCQRsRJgGNAYSYgN4rR3rRiBl88bblt5ET6hQY7r6CwDEIgg5XAkVyZk
-        VdA3Usacg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2YZw-0004tF-2K; Wed, 19 Sep 2018 09:15:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4E3BB202C1A33; Wed, 19 Sep 2018 11:15:17 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 11:15:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Bin Yang <bin.yang@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-Subject: Re: [PATCH 1/8] x86/mm/cpa: Use flush_tlb_all()
-Message-ID: <20180919091517.GX24124@hirez.programming.kicks-ass.net>
-References: <20180919085016.164552924@infradead.org>
- <20180919085947.831102058@infradead.org>
+        Wed, 19 Sep 2018 10:52:27 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0CAA625B77D;
+        Wed, 19 Sep 2018 19:15:27 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1537348527; bh=SrikXci+RpodujCUm6OAw5yCEPPOrbZU/JbH6vuMAwM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nh7o4UX/1T9dN4wjGDEbw5oSXwqUZktq9meHZCuO9SbwQBep/00+X19eFv0b5wXs9
+         XZaAWeQHVdGniuDmiviApGY21aFvymMXJwV0LdqQJ+O8LIUoaZhrfSjEiCPfy5iLb+
+         aK0fZ3LEOWsLmDGhUNoAIa+R1WlJHh6/Dk3FgA9o=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 0DAAE940270; Wed, 19 Sep 2018 11:15:25 +0200 (CEST)
+Date:   Wed, 19 Sep 2018 11:15:24 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ARM: dts: r9a06g032: Add pinctrl node
+Message-ID: <20180919091524.rgbk4m6ht34idkpd@verge.net.au>
+References: <20180917163609.30457-1-phil.edworthy@renesas.com>
+ <20180917163609.30457-4-phil.edworthy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180919085947.831102058@infradead.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180917163609.30457-4-phil.edworthy@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 10:50:17AM +0200, Peter Zijlstra wrote:
-> Instead of open-coding it..
+On Mon, Sep 17, 2018 at 05:36:09PM +0100, Phil Edworthy wrote:
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
 > 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/x86/mm/pageattr.c |   12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
+> Based on a patch originally written by Michel Pollet at Renesas.
 > 
-> --- a/arch/x86/mm/pageattr.c
-> +++ b/arch/x86/mm/pageattr.c
-> @@ -285,16 +285,6 @@ static void cpa_flush_all(unsigned long
->  	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
->  }
->  
-> -static void __cpa_flush_range(void *arg)
-> -{
-> -	/*
-> -	 * We could optimize that further and do individual per page
-> -	 * tlb invalidates for a low number of pages. Caveat: we must
-> -	 * flush the high aliases on 64bit as well.
-> -	 */
-> -	__flush_tlb_all();
-> -}
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Hmm,.. so in patch #4 I do switch to flush_tlb_kernel_range(). What are
-those high aliases that comment talks about?
+Thanks Phil, I will defer this patch pending acceptance of the bindings.
+Please continue to repost this patch with updates to the bindings
+or otherwise ping me once they have been accepted.
+
+> ---
+> v3:
+>  - No changes.
+> v2:
+>  - Add "renesas,rzn1-pinctrl" compatible fallback string
+>  - Register size corrected.
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index eaf94976ed6d..2322268bc862 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -165,6 +165,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pin-controller@40067000 {
+> +			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+> -- 
+> 2.17.1
+> 
