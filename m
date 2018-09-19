@@ -2,77 +2,86 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AE5C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C60C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716752150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:30:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kNVjz3wX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716752150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id F2DD62150D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DD62150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731512AbeISRIS (ORCPT
+        id S1731515AbeISRKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 13:08:18 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39472 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730892AbeISRIS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 13:08:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iuLY8C0AU8OH5Kb725mmws1jmUxW+uCZnUhLDTEQU98=; b=kNVjz3wX9O8m4VKwDjlGwuuzO
-        1VlEfc0Zkazv7Q3GvG8l5J+OE0VebPQYdPQyYlR+J2muvJilk5cHLmbJtmWcWcmij06jY6800EjRw
-        RGZ9y+dTpsiUokS61b35XxmHDHXJE7o8VBSvGOFxTKCGkIV1ubkLdHIGI5jaKJSyQQAf/v3H9LTPV
-        jYjCCZJ3dLJWY8rm+flYSwEcsty0t4KNdr8Mv1JAS3tvVMAndLZAzrB3e6Qa57JJj7lLk05v0G/92
-        +ewE8ZuGa6fHIqmwEpu8dvbMW7pgWg3+MeED76VwWMRd/E2cbl07cBlDr8CMCwLkcCYkG/Ov2w2iG
-        FPhQA/O5w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2agl-0001qO-Uk; Wed, 19 Sep 2018 11:30:36 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FF5A2024E43D; Wed, 19 Sep 2018 13:30:33 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 13:30:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        npiggin@gmail.com, linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        heiko.carstens@de.ibm.com
-Subject: Re: [RFC][PATCH 07/11] arm/tlb: Convert to generic mmu_gather
-Message-ID: <20180919113033.GB24124@hirez.programming.kicks-ass.net>
-References: <20180913092110.817204997@infradead.org>
- <20180913092812.247989787@infradead.org>
- <20180918141034.GF16498@arm.com>
+        Wed, 19 Sep 2018 13:10:03 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12623 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731247AbeISRKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 13:10:02 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4913B5159AFB8;
+        Wed, 19 Sep 2018 19:32:30 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 19:32:28 +0800
+Message-ID: <5BA233CB.3070401@huawei.com>
+Date:   Wed, 19 Sep 2018 19:32:27 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918141034.GF16498@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+CC:     <davem@davemloft.net>, <jhs@mojatatu.com>,
+        <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>
+Subject: Re: [PATCH 1/5] net: iucv: Use FIELD_SIZEOF directly instead of reimplementing
+ its function
+References: <1537352781-48532-1-git-send-email-zhongjiang@huawei.com> <1537352781-48532-2-git-send-email-zhongjiang@huawei.com> <c7c1c701-2146-b8a8-f988-e504ede0bb61@de.ibm.com>
+In-Reply-To: <c7c1c701-2146-b8a8-f988-e504ede0bb61@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 03:10:34PM +0100, Will Deacon wrote:
-> > +	addr = (addr & PMD_MASK) + SZ_1M;
-> > +	__tlb_adjust_range(tlb, addr - PAGE_SIZE, addr + PAGE_SIZE);
-> 
-> Hmm, I don't think you've got the range correct here. Don't we want
-> something like:
-> 
-> 	__tlb_adjust_range(tlb, addr - PAGE_SIZE, 2 * PAGE_SIZE)
-> 
-> to ensure that we flush on both sides of the 1M boundary?
+On 2018/9/19 19:21, Christian Borntraeger wrote:
+> Can you please copy Ursula and Julian for iucv related patches?
+Thanks, Maybe I forget cc more maintainer. So I will resend in v2.
 
-Argh indeed. I confused {start,size} with {start,end}. Thanks!
+Sincerely,
+zhong jiang
+> On 09/19/2018 12:26 PM, zhong jiang wrote:
+>> FIELD_SIZEOF is defined as a macro to calculate the specified value. Therefore,
+>> We prefer to use the macro rather than calculating its value.
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> ---
+>>  net/iucv/af_iucv.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
+>> index e2f16a0..5b68ee9 100644
+>> --- a/net/iucv/af_iucv.c
+>> +++ b/net/iucv/af_iucv.c
+>> @@ -48,7 +48,7 @@
+>>  static const u8 iprm_shutdown[8] =
+>>  	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+>>  
+>> -#define TRGCLS_SIZE	(sizeof(((struct iucv_message *)0)->class))
+>> +#define TRGCLS_SIZE	FIELD_SIZEOF(struct iucv_message, class)
+>>  
+>>  #define __iucv_sock_wait(sk, condition, timeo, ret)			\
+>>  do {									\
+>>
+>
+>
+
+
