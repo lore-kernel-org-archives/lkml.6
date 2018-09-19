@@ -2,95 +2,175 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 302AFECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B7FC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE5CE2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE5CE2151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 694C621521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:12:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pd0Yuv4Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694C621521
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732296AbeISXvd (ORCPT
+        id S1732655AbeISXv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:51:33 -0400
-Received: from mga04.intel.com ([192.55.52.120]:5585 "EHLO mga04.intel.com"
+        Wed, 19 Sep 2018 19:51:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbeISXvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:51:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 11:12:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="74587137"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by orsmga008.jf.intel.com with ESMTP; 19 Sep 2018 11:12:14 -0700
-Subject: [PATCH v2] x86/numa_emulation: fix parsing of numa_meminfo for
- uniform numa emulation
-From:   Dave Jiang <dave.jiang@intel.com>
-To:     mingo@redhat.com, dan.j.williams@intel.com
-Cc:     tglx@linutronix.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 19 Sep 2018 11:12:14 -0700
-Message-ID: <153738070476.51648.10732413805504758768.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: StGit/unknown-version
+        id S1728096AbeISXv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:51:57 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF9D12151B;
+        Wed, 19 Sep 2018 18:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537380771;
+        bh=sP8JLOHciAYjd4zaULkZHID61jtYmAM6NTcQn8rKFzY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pd0Yuv4Z4bmYJNxcfjDDi5IJNmR42MAel2nE/nFWstL0y7ftLjQt6AvR5izSkvbsh
+         3jDH86Qn/1/9fGMWbxcfn6o+fZHpoSpjcklj/8SwmQvwArJLFrMiEXsgKbQk8Uzo4L
+         XtgqqTCcGk7EH5GSG9G6wkQvzYau17oQgcN8mqUo=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 75105140260; Wed, 19 Sep 2018 15:12:47 -0300 (-03)
+Date:   Wed, 19 Sep 2018 15:12:47 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1 03/10] tools, perf, script: Add --insn-trace for
+ instruction decoding
+Message-ID: <20180919181247.GC31812@kernel.org>
+References: <20180829171834.6590-1-andi@firstfloor.org>
+ <20180829171834.6590-4-andi@firstfloor.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829171834.6590-4-andi@firstfloor.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During fakenuma processing in numa_emulation(), pi gets passed in and
-processed as new fake numa nodes are being split out. Once the original
-memory region is proccessed, it gets removed from the pi by
-numa_remove_memblk_from() in emu_setup_memblk(). So entry 0 gets deleted
-and the rest of the entries get moved up. Therefore we should always pass
-in entry 0 for the next entry to process.
+Em Wed, Aug 29, 2018 at 10:18:27AM -0700, Andi Kleen escreveu:
+> From: Andi Kleen <ak@linux.intel.com>
+> 
+> Add a --insn-trace short hand option for decoding and disassembling
+> instruction streams for intel_pt. This automatically pipes the
+> output into the xed disassembler to generate disassembled instructions.
+> This just makes this use model much nicer to use
 
-Fixes: 1f6a2c6d9f121 ("x86/numa_emulation: Introduce uniform split
-capability")
+Would be nice to provide at least an URL to where to find xed, I tried
+this:
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
----
+[root@seventh ~]# dnf search xed
+Last metadata expiration check: 0:25:39 ago on Wed 19 Sep 2018 02:42:36 PM -03.
+=================================================================================== Name Exactly Matched: xed ====================================================================================
+xed.i686 : X-Apps [Text] Editor (Cross-DE, backward-compatible, GTK3, traditional UI)
+xed.x86_64 : X-Apps [Text] Editor (Cross-DE, backward-compatible, GTK3, traditional UI)
 
-V2:
-- Add comment for the code change (Dan)
+https://github.com/intelxed
 
- arch/x86/mm/numa_emulation.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+So I have to install a build system and then install it to then build
+intelxed?
 
-diff --git a/arch/x86/mm/numa_emulation.c b/arch/x86/mm/numa_emulation.c
-index b54d52a2d00a..d71d72cf6c66 100644
---- a/arch/x86/mm/numa_emulation.c
-+++ b/arch/x86/mm/numa_emulation.c
-@@ -400,9 +400,17 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
- 		n = simple_strtoul(emu_cmdline, &emu_cmdline, 0);
- 		ret = -1;
- 		for_each_node_mask(i, physnode_mask) {
-+			/*
-+			 * The reason we pass in blk[0] is due to
-+			 * numa_remove_memblk_from() called by
-+			 * emu_setup_memblk() will delete entry 0
-+			 * and then move everything else up in the pi.blk
-+			 * array. Therefore we should always be looking
-+			 * at blk[0].
-+			 */
- 			ret = split_nodes_size_interleave_uniform(&ei, &pi,
--					pi.blk[i].start, pi.blk[i].end, 0,
--					n, &pi.blk[i], nid);
-+					pi.blk[0].start, pi.blk[0].end, 0,
-+					n, &pi.blk[0], nid);
- 			if (ret < 0)
- 				break;
- 			if (ret < n) {
-
+- Arnaldo
+ 
+> Before
+> 
+> % perf record -e intel_pt// ...
+> % perf script --itrace=i0ns --ns -F +insn,-event,-period | xed -F insn: -A -64
+>    swapper     0 [000] 117276.429606186:  ffffffff81010486 pt_config ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
+>    swapper     0 [000] 117276.429606186:  ffffffff8101048b pt_config ([kernel.kallsyms])          add $0x10, %rsp
+>    swapper     0 [000] 117276.429606186:  ffffffff8101048f pt_config ([kernel.kallsyms])          popq  %rbx
+>    swapper     0 [000] 117276.429606186:  ffffffff81010490 pt_config ([kernel.kallsyms])          popq  %rbp
+>    swapper     0 [000] 117276.429606186:  ffffffff81010491 pt_config ([kernel.kallsyms])          popq  %r12
+>    swapper     0 [000] 117276.429606186:  ffffffff81010493 pt_config ([kernel.kallsyms])          popq  %r13
+>    swapper     0 [000] 117276.429606186:  ffffffff81010495 pt_config ([kernel.kallsyms])          popq  %r14
+>    swapper     0 [000] 117276.429606186:  ffffffff81010497 pt_config ([kernel.kallsyms])          popq  %r15
+>    swapper     0 [000] 117276.429606186:  ffffffff81010499 pt_config ([kernel.kallsyms])          retq
+>    swapper     0 [000] 117276.429606186:  ffffffff8101063e pt_event_add ([kernel.kallsyms])               cmpl  $0x1, 0x1b0(%rbx)
+>    swapper     0 [000] 117276.429606186:  ffffffff81010645 pt_event_add ([kernel.kallsyms])               mov $0xffffffea, %eax
+>    swapper     0 [000] 117276.429606186:  ffffffff8101064a pt_event_add ([kernel.kallsyms])               mov $0x0, %edx
+>    swapper     0 [000] 117276.429606186:  ffffffff8101064f pt_event_add ([kernel.kallsyms])               popq  %rbx
+>    swapper     0 [000] 117276.429606186:  ffffffff81010650 pt_event_add ([kernel.kallsyms])               cmovnz %edx, %eax
+>    swapper     0 [000] 117276.429606186:  ffffffff81010653 pt_event_add ([kernel.kallsyms])               jmp 0xffffffff81010635
+>    swapper     0 [000] 117276.429606186:  ffffffff81010635 pt_event_add ([kernel.kallsyms])               retq
+>    swapper     0 [000] 117276.429606186:  ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])            test %eax, %eax
+> 
+> Now
+> 
+> % perf record -e intel_pt// ...
+> % perf script --insn-trace
+> ... same output ...
+> 
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  tools/perf/Documentation/perf-script.txt |  4 ++++
+>  tools/perf/builtin-script.c              | 14 ++++++++++++++
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+> index afdafe2110a1..04a57e0fb3a6 100644
+> --- a/tools/perf/Documentation/perf-script.txt
+> +++ b/tools/perf/Documentation/perf-script.txt
+> @@ -383,6 +383,10 @@ include::itrace.txt[]
+>  	will be printed. Each entry has function name and file/line. Enabled by
+>  	default, disable with --no-inline.
+>  
+> +--insn-trace::
+> +	Show instruction stream for intel_pt traces. Requires installing the
+> +	xed disassembler.
+> +
+>  SEE ALSO
+>  --------
+>  linkperf:perf-record[1], linkperf:perf-script-perl[1],
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 910e0f1f2876..66daa7df68c5 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -44,6 +44,7 @@
+>  #include <sys/stat.h>
+>  #include <fcntl.h>
+>  #include <unistd.h>
+> +#include <subcmd/pager.h>
+>  
+>  #include "sane_ctype.h"
+>  
+> @@ -3072,6 +3073,17 @@ static int perf_script__process_auxtrace_info(struct perf_tool *tool,
+>  #define perf_script__process_auxtrace_info 0
+>  #endif
+>  
+> +static int parse_insn_trace(const struct option *opt __maybe_unused,
+> +			    const char *str __maybe_unused,
+> +			    int unset __maybe_unused)
+> +{
+> +	parse_output_fields(NULL, "+insn,-event,-period", 0);
+> +	itrace_parse_synth_opts(opt, "i0ns", 0);
+> +	nanosecs = true;
+> +	force_pager("xed -F insn: -A -64 | less");
+> +	return 0;
+> +}
+> +
+>  int cmd_script(int argc, const char **argv)
+>  {
+>  	bool show_full_info = false;
+> @@ -3156,6 +3168,8 @@ int cmd_script(int argc, const char **argv)
+>  		    "system-wide collection from all CPUs"),
+>  	OPT_STRING('S', "symbols", &symbol_conf.sym_list_str, "symbol[,symbol...]",
+>  		   "only consider these symbols"),
+> +	OPT_CALLBACK_OPTARG(0, "insn-trace", &itrace_synth_opts, NULL, NULL,
+> +			"Decode instructions from itrace", parse_insn_trace),
+>  	OPT_STRING(0, "stop-bt", &symbol_conf.bt_stop_list_str, "symbol[,symbol...]",
+>  		   "Stop display of callgraph at these symbols"),
+>  	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
+> -- 
+> 2.17.1
