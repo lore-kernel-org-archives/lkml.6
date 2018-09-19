@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB06C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B95ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A0021529
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F380021508
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LN3HkmDK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A0021529
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v2zt92aC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F380021508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbeISOhZ (ORCPT
+        id S1731213AbeISOh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:37:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36982 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbeISOhX (ORCPT
+        Wed, 19 Sep 2018 10:37:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37634 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbeISOh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:37:23 -0400
+        Wed, 19 Sep 2018 10:37:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=N+U+rBvrw/MiVGa4YM7UVfBkYCtdi8ILTxTXJ95cG7k=; b=LN3HkmDKZ8ezgdFkhmKzu+hM1H
-        FqHImcJ7DoLUBQkbk9IE/CW8teVS3PGH50qFCc0P3kmx9kqXI7au0Zr/xenyh/Q2iF4TJm05JA02y
-        CMEWRkhUCi/DNRLhkG+WO2BmsHLclSllOuztgWmN+u6Bh0DadrugoZBZr5Jvx1Wbz8zgu2oljpQoj
-        yEBx+KhnAmfuqyn44bTn0nAEo2aTc9IIK02+t4JO++z+VB+2MukKo2N1QHbc3SAZ3IHfH9ZoozVAU
-        2zK1ng7Fh+Yl+laiTDNbsormiALRl3JsuE4KEcziwBHEPGN0bwBMhps1GFUuomo7zlSBroIxNjpuy
-        xY1Ebwow==;
+        bh=4ZPVQ0z1vyyChYAsxGTS4wJMVuY5Y79QrDuo5PiLFxs=; b=v2zt92aChYJmYlNLmiPx+4fDtk
+        3G/PQUOOzAUEKgslwI7PT+F2uPp0xZxlPHDwYIIEik5HbvuK4hORk3YFB1DmtXAHDa5h5J9ty9Hvb
+        7f3yC5DcouiFP/veS1cmdvVTJ3PSZ+C1vd/iGqILunC1DDWevZTIHsJmzr2Jy3xptZAOggDt69h+p
+        1q2hLF7qzl6W1Hdk2Yut65OnXk3ec5q16o5l7/EFQ7aYYHVtx7zjamS09YI3ddfVlb3sVPGXnAK8L
+        N3JuHu2N4BR3hM5e3JkP/9bAorFrkKLoFrqYf4AYoUSYo04KcD0PER+5JqSqLtIN5o93cbP1Vvg1b
+        YoX7AYzg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2YLS-0007d1-JN; Wed, 19 Sep 2018 09:00:26 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2YLS-0000pV-C4; Wed, 19 Sep 2018 09:00:26 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id B3D29202E4E50; Wed, 19 Sep 2018 11:00:14 +0200 (CEST)
-Message-ID: <20180919085948.087848187@infradead.org>
+        id B8729202EDA24; Wed, 19 Sep 2018 11:00:14 +0200 (CEST)
+Message-ID: <20180919085948.138859183@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 19 Sep 2018 10:50:22 +0200
+Date:   Wed, 19 Sep 2018 10:50:23 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -52,7 +52,7 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [PATCH 6/8] x86/mm/cpa: Move CLFLUSH test into cpa_flush_array()
+Subject: [PATCH 7/8] x86/mm/cpa: Factor common code between cpa_flush_*()
 References: <20180919085016.164552924@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,59 +61,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than guarding cpa_flush_array() users with a CLFLUSH test, put
-it inside.
+The start of cpa_flush_range() and cpa_flush_array() is the same, use
+a common function.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/mm/pageattr.c |   29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ arch/x86/mm/pageattr.c |   29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -328,6 +328,11 @@ static void cpa_flush_array(unsigned lon
+@@ -285,22 +285,28 @@ static void cpa_flush_all(unsigned long
+ 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
+ }
  
+-static void cpa_flush_range(unsigned long start, int numpages, int cache)
++static bool __cpa_flush_range(unsigned long start, int numpages, int cache)
+ {
+-	unsigned int i, level;
+-	unsigned long addr;
+-
  	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
- 
-+	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
-+		cpa_flush_all(cache);
-+		return;
-+	}
 +
- 	flush_tlb_kernel_range(baddr, baddr + PAGE_SIZE * numpages);
+ 	WARN_ON(PAGE_ALIGN(start) != start);
  
- 	if (!cache)
-@@ -1753,19 +1758,19 @@ static int change_page_attr_set_clr(unsi
- 	cache = !!pgprot2cachemode(mask_set);
+ 	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
+ 		cpa_flush_all(cache);
+-		return;
++		return true;
+ 	}
+ 
+ 	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
+ 
+-	if (!cache)
++	return !cache;
++}
++
++static void cpa_flush_range(unsigned long start, int numpages, int cache)
++{
++	unsigned int i, level;
++	unsigned long addr;
++
++	if (__cpa_flush_range(start, numpages, cache))
+ 		return;
  
  	/*
--	 * On success we use CLFLUSH, when the CPU supports it to
--	 * avoid the WBINVD. If the CPU does not support it and in the
--	 * error case we fall back to cpa_flush_all (which uses
--	 * WBINVD):
--	 */
--	if (!ret && boot_cpu_has(X86_FEATURE_CLFLUSH)) {
--		if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY)) {
--			cpa_flush_array(baddr, addr, numpages, cache,
--					cpa.flags, pages);
--		} else
--			cpa_flush_range(baddr, numpages, cache);
--	} else
-+	 * On error; flush everything to be sure.
-+	 */
-+	if (ret) {
- 		cpa_flush_all(cache);
-+		goto out;
-+	}
-+
-+	if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY)) {
-+		cpa_flush_array(baddr, addr, numpages, cache,
-+				cpa.flags, pages);
-+	} else {
-+		cpa_flush_range(baddr, numpages, cache);
-+	}
+@@ -326,16 +332,7 @@ static void cpa_flush_array(unsigned lon
+ {
+ 	unsigned int i, level;
  
- out:
- 	return ret;
+-	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
+-
+-	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
+-		cpa_flush_all(cache);
+-		return;
+-	}
+-
+-	flush_tlb_kernel_range(baddr, baddr + PAGE_SIZE * numpages);
+-
+-	if (!cache)
++	if (__cpa_flush_range(baddr, numpages, cache))
+ 		return;
+ 
+ 	/*
 
 
