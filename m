@@ -2,122 +2,130 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103E1ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A085DC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A963521524
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:17:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1PEbsu8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A963521524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6440E21522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:19:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6440E21522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732965AbeISX4d (ORCPT
+        id S1733101AbeISX6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:56:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46076 "EHLO mail.kernel.org"
+        Wed, 19 Sep 2018 19:58:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59618 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732841AbeISX4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:56:32 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731250AbeISX6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:58:51 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE5CB21522;
-        Wed, 19 Sep 2018 18:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537381046;
-        bh=s8Iub3kqu+kXwC/VWCFasNw4k6a8dvDyOr+IDN8rJNA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e1PEbsu8kZ6FTw23ePAkzpYHjFjwP/S66VUo+JUR6WkVEBfQX6J1kkJU1fd1P+IVz
-         2YjstQtJJIdqp3TJ5guSEcsavi2Eajn6kUAsbopIc2fvRonj1KMr9EvouuuJBp+H9A
-         6EAaNt9tS/L40U+EjQxamuHBtLWHkMobwZHI0fJs=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id B35F1140260; Wed, 19 Sep 2018 15:17:23 -0300 (-03)
-Date:   Wed, 19 Sep 2018 15:17:23 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, kim.phillips@arm.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v5 2/9] tools, pager: Support overwriting the pager
-Message-ID: <20180919181723.GE31812@kernel.org>
-References: <20180918123214.26728-1-andi@firstfloor.org>
- <20180918123214.26728-3-andi@firstfloor.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AAA830B9321;
+        Wed, 19 Sep 2018 18:19:44 +0000 (UTC)
+Received: from t450s.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C8FC9183AE;
+        Wed, 19 Sep 2018 18:19:37 +0000 (UTC)
+Date:   Wed, 19 Sep 2018 12:19:37 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH/RFC v4 2/2] vfio: platform: Add generic reset controller
+ support
+Message-ID: <20180919121937.4c7fac9c@t450s.home>
+In-Reply-To: <9dc74e23-2f57-7db3-6fb6-4f75ed61575f@redhat.com>
+References: <20180917163955.19023-1-geert+renesas@glider.be>
+        <20180917163955.19023-3-geert+renesas@glider.be>
+        <b7c4f5d1-020b-4a64-d511-b8e89f8c9196@redhat.com>
+        <CAMuHMdXM9eog_+1oV_YCmSbOfBSFWOXy+YXwKGvfJA65rDqtzA@mail.gmail.com>
+        <9dc74e23-2f57-7db3-6fb6-4f75ed61575f@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918123214.26728-3-andi@firstfloor.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 19 Sep 2018 18:19:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Sep 18, 2018 at 05:32:07AM -0700, Andi Kleen escreveu:
-> From: Andi Kleen <ak@linux.intel.com>
-> 
-> Add an interface to the auto pager code that allows callers
-> to overwrite the pager.
+On Wed, 19 Sep 2018 17:31:43 +0200
+Auger Eric <eric.auger@redhat.com> wrote:
 
-Applied,
-
-- Arnaldo
- 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> ---
->  tools/lib/subcmd/pager.c | 11 ++++++++++-
->  tools/lib/subcmd/pager.h |  1 +
->  2 files changed, 11 insertions(+), 1 deletion(-)
+> Hi Geert,
 > 
-> diff --git a/tools/lib/subcmd/pager.c b/tools/lib/subcmd/pager.c
-> index 9997a8805a82..e3d47b59b14d 100644
-> --- a/tools/lib/subcmd/pager.c
-> +++ b/tools/lib/subcmd/pager.c
-> @@ -23,6 +23,13 @@ void pager_init(const char *pager_env)
->  	subcmd_config.pager_env = pager_env;
->  }
->  
-> +static const char *forced_pager;
-> +
-> +void force_pager(const char *pager)
-> +{
-> +	forced_pager = pager;
-> +}
-> +
->  static void pager_preexec(void)
->  {
->  	/*
-> @@ -66,7 +73,9 @@ void setup_pager(void)
->  	const char *pager = getenv(subcmd_config.pager_env);
->  	struct winsize sz;
->  
-> -	if (!isatty(1))
-> +	if (forced_pager)
-> +		pager = forced_pager;
-> +	if (!isatty(1) && !forced_pager)
->  		return;
->  	if (ioctl(1, TIOCGWINSZ, &sz) == 0)
->  		pager_columns = sz.ws_col;
-> diff --git a/tools/lib/subcmd/pager.h b/tools/lib/subcmd/pager.h
-> index f1a53cf29880..a818964693ab 100644
-> --- a/tools/lib/subcmd/pager.h
-> +++ b/tools/lib/subcmd/pager.h
-> @@ -7,5 +7,6 @@ extern void pager_init(const char *pager_env);
->  extern void setup_pager(void);
->  extern int pager_in_use(void);
->  extern int pager_get_columns(void);
-> +extern void force_pager(const char *);
->  
->  #endif /* __SUBCMD_PAGER_H */
-> -- 
-> 2.17.1
+> On 9/19/18 2:54 PM, Geert Uytterhoeven wrote:
+> > Hi Eric,
+> > 
+> > On Wed, Sep 19, 2018 at 2:36 PM Auger Eric <eric.auger@redhat.com> wrote:  
+> >> On 9/17/18 6:39 PM, Geert Uytterhoeven wrote:  
+> >>> Vfio-platform requires dedicated reset support, provided either by ACPI,
+> >>> or, on DT platforms, by a device-specific reset driver matching against
+> >>> the device's compatible value.
+> >>>
+> >>> On many SoCs, devices are connected to an SoC-internal reset controller.
+> >>> If the reset hierarchy is described in DT using "resets" properties, or
+> >>> in lookup tables in platform code, such devices can be reset in a
+> >>> generic way through the reset controller subsystem.  Hence add support
+> >>> for this, avoiding the need to write device-specific reset drivers for
+> >>> each single device on affected SoCs.
+> >>>
+> >>> Devices that do require a more complex reset procedure can still provide
+> >>> a device-specific reset driver, as that takes precedence.
+> >>>
+> >>> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+> >>> becomes a no-op (as in: "No reset function found for device") if reset
+> >>> controller support is disabled.
+> >>>
+> >>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> >>> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>  
+> >   
+> >>> --- a/drivers/vfio/platform/vfio_platform_common.c
+> >>> +++ b/drivers/vfio/platform/vfio_platform_common.c  
+> >   
+> >>> @@ -128,8 +131,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+> >>>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+> >>>                                                       &vdev->reset_module);
+> >>>       }
+> >>> +     if (vdev->of_reset)
+> >>> +             return 0;
+> >>> +
+> >>> +     rstc = reset_control_get_dedicated(vdev->device, NULL);
+> >>> +     if (!IS_ERR(rstc)) {
+> >>> +             vdev->reset_control = rstc;
+> >>> +             return 0;
+> >>> +     }
+> >>>
+> >>> -     return vdev->of_reset ? 0 : -ENOENT;
+> >>> +     return PTR_ERR(rstc);  
+> >> This changes the returned value as seen by the user (probe returned
+> >> valud). Can we keep -ENOENT in case of no reset controller found?  
+> > 
+> > On success, it still returns 0.
+> > On failure, it forwards the error from reset_control_get_dedicated(), which
+> > is IMHO better than replacing it by -ENOENT: we try to propagate error
+> > codes as much as possible.  It could e.g. return -EPROBE_DEFER.
+> > 
+> > Is there anything that relies on the function returning -ENOENT?  
+> None I am aware of actually. I was afraid about compatibility break but
+> here we would change an errno by another one so maybe that's not a big
+> deal at that stage of vfio_platform usage?
+
+Yeah, I don't see that one errno vs another really matters in the grand
+scheme of things.  I also don't see that propagating this particular
+errno adds much value, but it is good general practice, so seems ok to
+me unless there are other concerns.  Thanks,
+
+Alex
