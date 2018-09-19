@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD1EECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD356ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95302151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 892BF2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:57:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EVh5/8Fd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95302151B
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Zwko4mI3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892BF2150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732659AbeISVfj (ORCPT
+        id S1732674AbeISVfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 17:35:39 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37242 "EHLO
+        Wed, 19 Sep 2018 17:35:40 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37230 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732513AbeISVfj (ORCPT
+        with ESMTP id S1732545AbeISVfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 17:35:39 -0400
 Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A053421A9;
-        Wed, 19 Sep 2018 17:57:04 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E5DC421A8;
+        Wed, 19 Sep 2018 17:57:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1537372624;
-        bh=uLeCUIDi1SzI5LeSNLUziacTEo1k1TFiXoSXc6wd164=;
+        bh=2uI8uIDNLq2Qzm/PM6NUQ/Gtge+VHpW2lG+QaBnn9W4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EVh5/8FdV3fzkfe4rCrP6PjI0O/g8ybsO181+5sUlGY0nfJzwogGaMdy4ngEYAJIj
-         bUT2ptvX/XgkmSKST+9VLUCxkGeyeS4zPsTzEcfEFLDbn9AM3cyoh5+I9k7Eg/C8uZ
-         hhxgjk6WleoBHBs0Sf2pTMRF8eQnqvdhn7yoILOI=
+        b=Zwko4mI38zlJTagmSLfzIU7hOlz9QM5JXRLeWjg/zuHE1cnSD/eaWpAl+Pnr18NAm
+         WsuAnMKZrF0/62eG5qj6vgo7hFrGbeWQOWElF11WWA20nFKVEHTdHfok7pRhKwOc9L
+         BLodIHigXd0wzfLgXPMtG2zyfJdr26mHa3b2PLd8=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] drm: rcar-du: Enable alpha property on primary planes
-Date:   Wed, 19 Sep 2018 16:56:59 +0100
-Message-Id: <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/2] drm/atomic: Initialise planes with opaque alpha values
+Date:   Wed, 19 Sep 2018 16:56:58 +0100
+Message-Id: <20180919155700.10342-2-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
@@ -54,44 +56,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the alpha property is not added to a plane, a default value will be
-used, which can result in a non-visible layer if the alpha is
-initialised as 0.
+Planes without an alpha property, using __drm_atomic_helper_plane_reset
+will have their plane state alpha initialised as zero, which represents
+a transparent alpha.
 
-Provide an alpha blend property on all planes.
+If this value is then used for the plane, it may not be visible by
+default, and thus doesn't represent a good initialisation state.
 
-Fixes: 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
-instead of copying the logic")
+Update the default state->alpha value to DRM_BLEND_ALPHA_OPAQUE
+unconditionally when the plane is reset.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 9e07758a755c..72399a19d8a6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -783,13 +783,18 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
- 		drm_plane_helper_add(&plane->plane,
- 				     &rcar_du_plane_helper_funcs);
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 3cf1aa132778..e49b22381048 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3569,9 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
+ 	state->plane = plane;
+ 	state->rotation = DRM_MODE_ROTATE_0;
  
-+		/*
-+		 * The alpha property needs to be initialised on all planes
-+		 * to ensure the correct setting at the output.
-+		 */
-+		drm_plane_create_alpha_property(&plane->plane);
-+
- 		if (type == DRM_PLANE_TYPE_PRIMARY)
- 			continue;
+-	/* Reset the alpha value to fully opaque if it matters */
+-	if (plane->alpha_property)
+-		state->alpha = plane->alpha_property->values[1];
++	state->alpha = DRM_BLEND_ALPHA_OPAQUE;
+ 	state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
  
- 		drm_object_attach_property(&plane->plane.base,
- 					   rcdu->props.colorkey,
- 					   RCAR_DU_COLORKEY_NONE);
--		drm_plane_create_alpha_property(&plane->plane);
- 		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
- 	}
- 
+ 	plane->state = state;
 -- 
 2.17.1
 
