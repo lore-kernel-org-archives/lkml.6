@@ -1,147 +1,180 @@
 Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0081ECE566
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E03ECE566
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322722151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A5420858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:30:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gETcbdgx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322722151B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DkUiqua6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A5420858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732933AbeITE4t (ORCPT
+        id S1731576AbeITFKW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:56:49 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40662 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731348AbeITE4t (ORCPT
+        Thu, 20 Sep 2018 01:10:22 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41368 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbeITFKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:56:49 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l63-v6so3448262pga.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 16:16:35 -0700 (PDT)
+        Thu, 20 Sep 2018 01:10:22 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17-v6so6616139ljy.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 16:30:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=upesM3/JllML0LNNgjjQOvrQWh7XEfYp5JW8q2MKRfc=;
-        b=gETcbdgx4uwtvpmXzuStTsgDCEv7dEcig09uuf99RInrx/QUbKyaFOa7hGLxcjlLE8
-         ZhQv9afRbBqlF6bfvttwNoV+W0oc3RaGvxUhKyK22NAefKngtn0f38kw2FlOx0JBn3AY
-         W3wGLfMsZAzmhPLitCkq/Nceq9GNmzvKLhv20=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=chn+sgkuXa4SOG8ZBaPsJB6cSes98b5j4z2c8rwadJk=;
+        b=DkUiqua6k7wm50qDETskub6csIT0XlpVJ/WtQzyiD3OIzi2pjwly0YV5kohJw5UJN4
+         y7x2l05ERW+cOG62aAFa13C2np7fE3aH5UOqRxgjHQuZxNeI5/wh64jfsn/0Zvhqp+Eq
+         QBoaho4+G8WtmIRaQMHwZzgI9+Xon7TTRb6kM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=upesM3/JllML0LNNgjjQOvrQWh7XEfYp5JW8q2MKRfc=;
-        b=cZXByw648pjUIFfR+5w4IygIUgKEvm0E2b9jK7um5ntosJ2mcAySU+jLta+5SZPCoN
-         busnbdozJegTGBYq4ln0ViDaVuZU5WfY3Gzdehq3c76fOzIyoNzVdt2i6fksip0ebtAD
-         sS2MoTEtEOP5ZxboIgrd6CsmrZ7AGSLJvM0zF7JalmyEK3P0K9XEw3KbWDVcE3cxWGfg
-         UMfRtJGjt5eYmcEPsAsfu81dk/BH4fn95fwzSp6slzTm/kB8qcWHzs5tNlIvOH/J5WAS
-         OQCAvpjU5XCZX1KSidpGQl24rM1cg0UnIUszA0xeB7hg2xOdHr7ogKijIiF0AwIBy38Z
-         P68Q==
-X-Gm-Message-State: APzg51Df+hXyT7RJBuxoaL1KMI7pROQFG87l9kPpLCewNsEUFD0iXRuh
-        Fmtsac/Np8sjqdzzQMMKhr3FzA==
-X-Google-Smtp-Source: ANB0VdZTGARNJclNzdJGPwBfkcWTVSFmmMEA1u6Vm1vX+l3AqJ67FI95bjFc748i9bhar3zNMvqzUg==
-X-Received: by 2002:a65:65c6:: with SMTP id y6-v6mr34692726pgv.436.1537398994617;
-        Wed, 19 Sep 2018 16:16:34 -0700 (PDT)
-Received: from [10.21.2.196] ([209.121.128.187])
-        by smtp.googlemail.com with ESMTPSA id n29-v6sm26439749pgl.30.2018.09.19.16.16.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 16:16:33 -0700 (PDT)
-Subject: Re: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
-To:     Tao Ren <taoren@fb.com>, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     openbmc@lists.ozlabs.org, cov@fb.com, tfang@fb.com,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20180919221331.2511558-1-taoren@fb.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <bb452948-0a9e-140d-57d5-85c1732fca86@linaro.org>
-Date:   Thu, 20 Sep 2018 01:16:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=chn+sgkuXa4SOG8ZBaPsJB6cSes98b5j4z2c8rwadJk=;
+        b=hxRtNdSe4jP+A5XxuOAwpy6G8VAFrbVEGhyfhN0e6be5GE9ntRiFtK2C/hvJJSmQqw
+         ufQ3NGzTjEpz9ko9e97UX+FBipgHq2F3NhkyAk1SVzMiWKH0WYTUc9x2WgdeS8ChSCp9
+         T+SlOLdONWvU+g3r8HbBTlsZ7ETm+NB/q+/8DcCmzzn1Wv1FznEzE7rMFQt5Dt32UBk2
+         fQe4LzGqGLdcVH+UuZztVF6baqxqobN9DtPrx1ysNM57AYimCV2q1RoNsLb0sSCCCMEx
+         QI5lZeg+A41kJqQ17H8Ihd0ONl0VvjTAuqXjjJTBUB7f3UxnImrgWz79NZBjxBXyVPvs
+         plyQ==
+X-Gm-Message-State: APzg51Cz1zyhhtK14jyg2EBwsScH9LKsSy6JewNdlFAm9oVg3X1Hscd/
+        dC3aE9koaVDGLHjjpWmD3ZgxtKAJqyYDSVpNlOuZCg==
+X-Google-Smtp-Source: ANB0VdaWiB41dwmHDfdYL5z89RIosvNEfFi1ykSvlDPcCOO9YHWpoDzTnmUXbtIM9Ip5LJT7qICQEj8tEctjmyHch3Y=
+X-Received: by 2002:a2e:8957:: with SMTP id b23-v6mr3095286ljk.50.1537399804046;
+ Wed, 19 Sep 2018 16:30:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180919221331.2511558-1-taoren@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180912135352.19722-1-suzuki.poulose@arm.com>
+In-Reply-To: <20180912135352.19722-1-suzuki.poulose@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 19 Sep 2018 17:29:52 -0600
+Message-ID: <CANLsYkw15j2E-sB8YXHD7datLJ_JyyCoTX4Bd+cnLyc-Eizayg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] dts: Update coresight device tree bindings
+To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        coresight@lists.linaro.org, Leo Yan <leo.yan@linaro.org>,
+        alexandre.belloni@bootlin.com, Andy Gross <andy.gross@linaro.org>,
+        bcousson@baylibre.com, David Brown <david.brown@linaro.org>,
+        fabio.estevam@nxp.com, Ivan Ivanov <ivan.ivanov@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-omap@vger.kernel.org, lipengcheng <lipengcheng8@huawei.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        nicolas.ferre@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+        kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, tony@atomide.com,
+        xuwei <xuwei5@hisilicon.com>, Lyra Zhang <zhang.lyra@gmail.com>,
+        arm@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/09/2018 00:13, Tao Ren wrote:
-> Currently, the aspeed MATCH1 register is updated to <current_count -
-> cycles> in set_next_event handler, with the assumption that COUNT
-> register value is preserved when the timer is disabled and it continues
-> decrementing after the timer is enabled. But the assumption is wrong:
-> RELOAD register is loaded into COUNT register when the aspeed timer is
-> enabled, which means the next event may be delayed because timer
-> interrupt won't be generated until <0xFFFFFFFF - current_count +
-> cycles>.
-> 
-> The problem can be fixed by updating RELOAD register to <cycles>, and
-> COUNT register will be re-loaded when the timer is enabled and interrupt
-> is generated when COUNT register overflows.
-> 
-> The test result on Facebook Backpack-CMM BMC hardware (AST2500) shows
-> the issue is fixed: without the patch, usleep(100) suspends the process
-> for several milliseconds (and sometimes even over 40 milliseconds);
-> after applying the fix, usleep(100) takes averagely 240 microseconds to
-> return under the same workload level.
-> 
-> Signed-off-by: Tao Ren <taoren@fb.com>
+On Wed, 12 Sep 2018 at 07:54, Suzuki K Poulose <suzuki.poulose@arm.com> wro=
+te:
+>
+> Coresight DT bindings have been updated to obey the DTS rules
+> for label/address matching for graph nodes. The changes are in
+> coresight/next tree scheduled for v4.20. This series updates the
+> in kernel dts to match the new bindings along with updating a couple
+> of new examples (e.,g CATU) in the Documentation (which were missed
+> as they were still in flight when we created the series).
+>
+> Please note that this should not be pulled for v4.19, which I think
+> is a safe assumption. But please do pull it for v4.20.
+> The dt updates for the Juno boards were sent earlier with the original
+> DT update series and has been queued for v4.20.
+>
+> Applies on coresight/next (which is based on v4.19) and should apply
+> cleanly on v4.19-rc3.
+>
+> Changes since V1:
+>  - Avoid "avoid_unnecessary_addr_size" warnings by removing
+>    #address-cells/#size-cells for single port with address 0.
+>  - Fix TPIU inport for qcom msm8196.  (Leo Yan)
+>  - Fix documentation example for TPIU (Leo Yan)
+>  - Fix subject tags (as pointed out by Leo and Shawn)
+>  - Drop patch for TC2, which has been queued by Sudeep
+>
+>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Andy Gross <andy.gross@linaro.org>
+> Cc: Beno=C3=AEt Cousson <bcousson@baylibre.com>
+> Cc: David Brown <david.brown@linaro.org>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Ivan T. Ivanov <ivan.ivanov@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-omap@vger.kernel.org
+> Cc: lipengcheng8@huawei.com
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: orsonzhai@gmail.com
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Wei Xu <xuwei5@hisilicon.com>
+> Cc: xuwei5@hisilicon.com
+> Cc: zhang.lyra@gmail.com
+> Cc: arm@kernel.org
+>
+>
+> Suzuki K Poulose (11):
+>   coresight: dts: binding: Fix example for TPIU component
+>   coresight: dts: binding: Update coresight binding examples
+>   arm64: dts: hi6220: Update coresight bindings for hardware ports
+>   arm64: dts: sc9836/sc9860: Update coresight bindings for hardware
+>     ports
+>   arm64: dts: msm8916: Update coresight bindings for hardware ports
+>   arm: dts: hip04: Update coresight bindings for hardware ports
+>   arm: dts: imx7: Update coresight binding for hardware ports
+>   arm: dts: omap: Update coresight bindings for hardware ports
+>   arm: dts: qcom: Update coresight bindings for hardware ports
+>   arm: dts: sama5d2: Update coresight bindings for hardware ports
+>   arm: dts: ste-dbx5x0: Update coresight bindings for hardware port
+>
+>  .../devicetree/bindings/arm/coresight.txt     |  27 +-
+>  arch/arm/boot/dts/hip04.dtsi                  | 346 +++++++++---------
+>  arch/arm/boot/dts/imx7d.dtsi                  |  14 +-
+>  arch/arm/boot/dts/imx7s.dtsi                  |  82 ++---
+>  arch/arm/boot/dts/omap3-beagle-xm.dts         |  17 +-
+>  arch/arm/boot/dts/omap3-beagle.dts            |  17 +-
+>  arch/arm/boot/dts/qcom-apq8064.dtsi           |  71 ++--
+>  arch/arm/boot/dts/qcom-msm8974.dtsi           | 104 +++---
+>  arch/arm/boot/dts/sama5d2.dtsi                |  17 +-
+>  arch/arm/boot/dts/ste-dbx5x0.dtsi             |  65 ++--
+>  .../boot/dts/hisilicon/hi6220-coresight.dtsi  | 181 +++++----
+>  arch/arm64/boot/dts/qcom/msm8916.dtsi         |  95 ++---
+>  arch/arm64/boot/dts/sprd/sc9836.dtsi          |  82 +++--
+>  arch/arm64/boot/dts/sprd/sc9860.dtsi          | 215 +++++------
+>  14 files changed, 682 insertions(+), 651 deletions(-)
 
-Linus, any comments ?
+I have applied patch 1 and 2 in this set.
 
-> ---
->  drivers/clocksource/timer-fttmr010.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-fttmr010.c b/drivers/clocksource/timer-fttmr010.c
-> index c020038ebfab..cf93f6419b51 100644
-> --- a/drivers/clocksource/timer-fttmr010.c
-> +++ b/drivers/clocksource/timer-fttmr010.c
-> @@ -130,13 +130,17 @@ static int fttmr010_timer_set_next_event(unsigned long cycles,
->  	cr &= ~fttmr010->t1_enable_val;
->  	writel(cr, fttmr010->base + TIMER_CR);
->  
-> -	/* Setup the match register forward/backward in time */
-> -	cr = readl(fttmr010->base + TIMER1_COUNT);
-> -	if (fttmr010->count_down)
-> -		cr -= cycles;
-> -	else
-> -		cr += cycles;
-> -	writel(cr, fttmr010->base + TIMER1_MATCH1);
-> +	if (fttmr010->count_down) {
-> +		/*
-> +		 * ASPEED Timer Controller will load TIMER1_LOAD register
-> +		 * into TIMER1_COUNT register when the timer is re-enabled.
-> +		 */
-> +		writel(cycles, fttmr010->base + TIMER1_LOAD);
-> +	} else {
-> +		/* Setup the match register forward in time */
-> +		cr = readl(fttmr010->base + TIMER1_COUNT);
-> +		writel(cr + cycles, fttmr010->base + TIMER1_MATCH1);
-> +	}
->  
->  	/* Start */
->  	cr = readl(fttmr010->base + TIMER_CR);
-> 
+Thanks,
+Mathieu
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>
+> --
+> 2.19.0
+>
