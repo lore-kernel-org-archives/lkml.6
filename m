@@ -2,127 +2,100 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C99AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B9BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DA832150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="smryyW12"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA832150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A2F1D2150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:04:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F1D2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeITElN (ORCPT
+        id S1732499AbeITEod convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:41:13 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42007 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeITElN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:41:13 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z8-v6so6760171qto.9;
-        Wed, 19 Sep 2018 16:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=qbSUPQRqa3B4lO113dE2veQeSWz9ghrO/P/n8MCXexo=;
-        b=smryyW12V2itOEnwacPqe8Y7XjLnqQ3zM/Q1Bhah4Zo98HVINlCm1UveDfnETGhVs3
-         j1DyWX7/6e1kSPauEV7Jv7erdQMdKnLgS6ndIZpOPgYgVCSoS1M6KtquU48NWzywIAbK
-         XN0pQ/arx9ys918Xa+bC0IUQSYrNfeKxqEGr/LkLC1+Ds+XzGJrOhgWQ6rac2nkXOBML
-         LbUpfYkTulgvdSduj7TxZncwiGXe7mvVvlJ4lZezV2zrln6eScQGMr/eGMkwV4kecrss
-         652DIVAJ2WtU48E5ifqJzSvuxpYbWEvSCvC+FDeQfUoQNSFMFBkN6ZjoQ3mJIjXhBngt
-         NPEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=qbSUPQRqa3B4lO113dE2veQeSWz9ghrO/P/n8MCXexo=;
-        b=dlJtlR1OFPjnfSzkat3HmlXg5xJKPUOrJ679cZlz4Dj1+uP68ZdN1geetsuF/vUBPo
-         khC4LXon5U8fNdZVACma61NVSKZ63sKmTeo3y8CZq/D2CslXtsInr2tOi30vRlcKFzsA
-         PDkBEvAU3yGEpKs5unyNL1opgIo/knjJschET9HOMHg44J9YOb7YHCjHq9s9KnAMjkR5
-         BW8pI4fBIl8FXVgkoHJq081Ht+GzwuWJ/ke7pSt+ZsmbtUDUb2vppFHIsvk4avYhFYZM
-         pOZLBu0DmfeuGxt15RH9ScqZtZwQWnJoI5t9T/b2wOuNx0DwcVkMoxt0/KpD/ZgPqaML
-         1xtg==
-X-Gm-Message-State: APzg51Dq3UScvPtOdZya0KUOVpl8HPespTooPP9rP29oXsiJC5kqVA0K
-        kgCfumziMMi87PF/2u2nZ0tQOUruYmJ58CyMLcA=
-X-Google-Smtp-Source: ANB0VdabsS+wJ9qjr7GqM61eBUwjlAkPZG5gdNUzhyNhCf3oQ9j9Q9aVkjRgt9F+4lP968jZsr+QL4JQSLV98wj1jgs=
-X-Received: by 2002:ac8:350f:: with SMTP id y15-v6mr26698230qtb.241.1537398062488;
- Wed, 19 Sep 2018 16:01:02 -0700 (PDT)
+        Thu, 20 Sep 2018 00:44:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:40832 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbeITEod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 00:44:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 16:04:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,395,1531810800"; 
+   d="scan'208";a="91595756"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 16:03:05 -0700
+Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 19 Sep 2018 16:03:05 -0700
+Received: from fmsmsx103.amr.corp.intel.com ([169.254.2.126]) by
+ FMSMSX152.amr.corp.intel.com ([169.254.6.159]) with mapi id 14.03.0319.002;
+ Wed, 19 Sep 2018 16:03:04 -0700
+From:   "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        "Walker, Benjamin" <benjamin.walker@intel.com>
+CC:     "Howell, Seth" <seth.howell@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "monis@mellanox.com" <monis@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dledford@redhat.com" <dledford@redhat.com>
+Subject: RE: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
+Thread-Index: AQHUNB7dduKd6+3bL0SrpYoBIoJutKTB4cuAgAAKaQCAATczAIAGhGQAgCvyCACAAAhrAIAAFpsAgAAFJYCAArEDwA==
+Date:   Wed, 19 Sep 2018 23:03:04 +0000
+Message-ID: <13AA599688F47243B14FCFCCC2C803BB4BDC4DE4@FMSMSX103.amr.corp.intel.com>
+References: <20180814223303.83556-1-seth.howell@intel.com>
+ <20180815225021.GB31799@ziepe.ca>
+ <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
+ <20180816180126.GB10507@ziepe.ca>
+ <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
+ <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
+ <20180917210824.GF11367@ziepe.ca>
+ <0df4e4958250fd6cdb978005ace970c877269535.camel@intel.com>
+ <20180917224743.GG11367@ziepe.ca>
+In-Reply-To: <20180917224743.GG11367@ziepe.ca>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTM4N2ExYTktMmE3ZS00MmJiLWFjODctMGFjZWRkNDk2ZGFmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWjRhYzZOWGdDRjRmTktuMVlYN3drVGxEcHNhRVY4SjZ3QTlpMURJZmhxRlBEazFTbWIwSVFCUnBpSGhmK2lcL1MifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 16:00:41
- -0700 (PDT)
-In-Reply-To: <20180919211458.GA8757@kroah.com>
-References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
- <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com> <20180918173428.GA21591@kroah.com>
- <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com> <20180919211458.GA8757@kroah.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 20 Sep 2018 01:00:41 +0200
-Message-ID: <CANiq72kS_w7p3Xe9cDCjCA9j1u-zQ1-C4ZX7N8G+AbP4u7SG8w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-sparse@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 11:14 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Sep 18, 2018 at 08:56:04PM +0200, Miguel Ojeda wrote:
->> Hi Greg,
->>
->
->> Since Linus/Andrew/you
->> didn't comment on whether you wanted or not this for 4.19, we are
->> assuming they would go in for 4.20. However, Stefan/Nick/... wanted
->> this for 4.19 instead, they asked me to extract these patches two
->> separately for 4.19. I let them comment further on the status of Clang
->> on arm32.
->
-> If these do not fix a regression, I don't see how they would be ready
-> for 4.19-final.
+Hi Jason,
 
-Ok, I will wait a bit to send v5 until this is sorted out.
+> > What is the correct way for a user space application to check whether
+> > a NIC supports SEND_WITH_INVAL? We are currently examining the
+> > device_cap_flags in the structure returned by ibv_query_device.
+> > Specifically, we're looking at IBV_DEVICE_MEM_MGT_EXTENSIONS.
+> However,
+> > for i40iw, that flag is set. I'm concerned that the feature support
+> > flags are common between user space and the kernel, but the actual
+> support differs in this case.
+> 
+> That is the correct thing to do. Sadly the i40iw driver is broken, it should be
+> fixed to either mask those flags or implement the functionality.
+> 
 
-[CC'd Nick, Stefan, Arnd: I just noticed the Reviewed-by/... lines
-were not picked as CC].
+A fix to add SEND_WITH_INVAL support to the user space i40iw is coming.
+It is currently in regression testing.
 
->
->> I am going to send a v5 of the entire series without these two
->> patches, based on -rc4 (or -next, which one do you prefer? I would say
->> these patches should be applied early in the -next branches, so that
->> everyone is ready for the change, given it "touches" every translation
->> unit).
->
-> That's up to whomever takes these into their tree for linux-next
-> inclusion.  If you are about to break everything, then you might
-> consider changing your patches so they do not do that :)
->
+Thank you,
+Tatyana 
 
-Well, the series shouldn't break anything (famous last words :), even
-if everyone includes those headers. So, in theory, they *could* be
-applied anywhere, anytime; but given they are global changes...
-
-Cheers,
-Miguel
+> Jason
