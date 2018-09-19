@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B95ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2B3ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F380021508
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A967F21508
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:00:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v2zt92aC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F380021508
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RbzjKzlO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A967F21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbeISOh3 (ORCPT
+        id S1731198AbeISOh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 19 Sep 2018 10:37:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37634 "EHLO
+Received: from merlin.infradead.org ([205.233.59.134]:37636 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbeISOh2 (ORCPT
+        with ESMTP id S1731121AbeISOh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 10:37:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -31,20 +31,20 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4ZPVQ0z1vyyChYAsxGTS4wJMVuY5Y79QrDuo5PiLFxs=; b=v2zt92aChYJmYlNLmiPx+4fDtk
-        3G/PQUOOzAUEKgslwI7PT+F2uPp0xZxlPHDwYIIEik5HbvuK4hORk3YFB1DmtXAHDa5h5J9ty9Hvb
-        7f3yC5DcouiFP/veS1cmdvVTJ3PSZ+C1vd/iGqILunC1DDWevZTIHsJmzr2Jy3xptZAOggDt69h+p
-        1q2hLF7qzl6W1Hdk2Yut65OnXk3ec5q16o5l7/EFQ7aYYHVtx7zjamS09YI3ddfVlb3sVPGXnAK8L
-        N3JuHu2N4BR3hM5e3JkP/9bAorFrkKLoFrqYf4AYoUSYo04KcD0PER+5JqSqLtIN5o93cbP1Vvg1b
-        YoX7AYzg==;
+        bh=//W/vnsAmMCJpNThzi/9d2H/YLoI3/7b0AZIciqMgOs=; b=RbzjKzlOI3taauxz/ZwPNh8C8u
+        2A8F1gGdo5AhLvZfnVsnf+6A5dyimVPdzKuznFHApxtPe68hoa/efPTILCdHq3mwY+SvgipNRG6Q1
+        JNpFfXZcdhkUEgFjfoEFqZjou5Ml0BF96sIbtv5kRCxq5vDo74xQIY7RkwcvYK2hHOlRyuYolXMJz
+        8sP8IzdhqeUBFV1IY1D0Y8VB3PwMocFddRJxh4rY1B9XvzQr02ZxAdY6F10xgBbWJ0R4i+FVGNXNx
+        nfLiqz/P9XdTo1i8RwapCJ30+jJKkquVBNsZ2bmhM1/MMRnABrKFgfMJVdPvYEdVWdc8NVjKq+nLk
+        yMkQS0rA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2YLS-0000pV-C4; Wed, 19 Sep 2018 09:00:26 +0000
+        id 1g2YLS-0000pW-Ck; Wed, 19 Sep 2018 09:00:26 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id B8729202EDA24; Wed, 19 Sep 2018 11:00:14 +0200 (CEST)
-Message-ID: <20180919085948.138859183@infradead.org>
+        id AF10920268261; Wed, 19 Sep 2018 11:00:14 +0200 (CEST)
+Message-ID: <20180919085948.036195503@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 19 Sep 2018 10:50:23 +0200
+Date:   Wed, 19 Sep 2018 10:50:21 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
@@ -52,7 +52,7 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Bin Yang <bin.yang@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Mark Gross <mark.gross@intel.com>
-Subject: [PATCH 7/8] x86/mm/cpa: Factor common code between cpa_flush_*()
+Subject: [PATCH 5/8] x86/mm/cpa: Move CLFLUSH test into cpa_flush_range()
 References: <20180919085016.164552924@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,68 +61,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The start of cpa_flush_range() and cpa_flush_array() is the same, use
-a common function.
+Rather than guarding all cpa_flush_range() uses with a CLFLUSH test,
+put it inside.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/mm/pageattr.c |   29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+ arch/x86/mm/pageattr.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -285,22 +285,28 @@ static void cpa_flush_all(unsigned long
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
- }
- 
--static void cpa_flush_range(unsigned long start, int numpages, int cache)
-+static bool __cpa_flush_range(unsigned long start, int numpages, int cache)
- {
--	unsigned int i, level;
--	unsigned long addr;
--
+@@ -293,6 +293,11 @@ static void cpa_flush_range(unsigned lon
  	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
-+
  	WARN_ON(PAGE_ALIGN(start) != start);
  
- 	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
- 		cpa_flush_all(cache);
--		return;
-+		return true;
- 	}
- 
++	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
++		cpa_flush_all(cache);
++		return;
++	}
++
  	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
  
--	if (!cache)
-+	return !cache;
-+}
-+
-+static void cpa_flush_range(unsigned long start, int numpages, int cache)
-+{
-+	unsigned int i, level;
-+	unsigned long addr;
-+
-+	if (__cpa_flush_range(start, numpages, cache))
- 		return;
- 
+ 	if (!cache)
+@@ -2075,10 +2080,7 @@ static int __set_memory_enc_dec(unsigned
  	/*
-@@ -326,16 +332,7 @@ static void cpa_flush_array(unsigned lon
- {
- 	unsigned int i, level;
+ 	 * Before changing the encryption attribute, we need to flush caches.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_CLFLUSH))
+-		cpa_flush_range(start, numpages, 1);
+-	else
+-		cpa_flush_all(1);
++	cpa_flush_range(start, numpages, 1);
  
--	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
--
--	if (!static_cpu_has(X86_FEATURE_CLFLUSH)) {
--		cpa_flush_all(cache);
--		return;
--	}
--
--	flush_tlb_kernel_range(baddr, baddr + PAGE_SIZE * numpages);
--
--	if (!cache)
-+	if (__cpa_flush_range(baddr, numpages, cache))
- 		return;
+ 	ret = __change_page_attr_set_clr(&cpa, 1);
  
- 	/*
+@@ -2089,10 +2091,7 @@ static int __set_memory_enc_dec(unsigned
+ 	 * in case TLB flushing gets optimized in the cpa_flush_range()
+ 	 * path use the same logic as above.
+ 	 */
+-	if (static_cpu_has(X86_FEATURE_CLFLUSH))
+-		cpa_flush_range(start, numpages, 0);
+-	else
+-		cpa_flush_all(0);
++	cpa_flush_range(start, numpages, 0);
+ 
+ 	return ret;
+ }
 
 
