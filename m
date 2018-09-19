@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C90EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A64C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C1E20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E86792146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Focb2vMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C1E20880
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hX3BTpM6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86792146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731139AbeISM3N (ORCPT
+        id S1731157AbeISM3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 08:29:13 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:51186 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731086AbeISM3N (ORCPT
+        Wed, 19 Sep 2018 08:29:17 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53974 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731142AbeISM3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:29:13 -0400
-Received: by mail-it0-f65.google.com with SMTP id j81-v6so6864335ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:52:43 -0700 (PDT)
+        Wed, 19 Sep 2018 08:29:16 -0400
+Received: by mail-it0-f66.google.com with SMTP id p79-v6so6840240itp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6WcczBvykg2Z58bAiHqwLTs7BS22B+N9kwtSqthViSE=;
-        b=Focb2vMv0Nwcyy8JpgHJ+eawzudhCpL77NjYEXyCv5owfpRIMB9U+XM+EUUsK4ZAgM
-         FzzcDvaN97C+D4oF8Abvfa1yIacasMqfez3ah7v1BBLBqkVVyQMiR4oCyqB/pi8iYLns
-         qqs7M3GyoO3OUXvzfKgFJjlZ98/QYCN5z09n0=
+        bh=iA34PvoXnv/5jnydRzA1GyetmcM2pytY3HL8SIbi1DA=;
+        b=hX3BTpM6OFVDYHhbaduRyiEvKVa1h5kwWbYpjAoXCspqeB/8w7+LnC7RvhgfoKauDh
+         K/qeYeiNjLC3g0sGJS48hHaypqf2IsTsjQVJVmwnZUT1yHVeaa9UqpQsRT936/9JiXi2
+         dZmpGMvJAVhcNCShHhhW5p2Y0X6JZN8AwlEvA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6WcczBvykg2Z58bAiHqwLTs7BS22B+N9kwtSqthViSE=;
-        b=Sv+8DEOUIv8GoGfRZuu0qWT0wzNTZJGNRX9kVsRaANo8zJHNmTetKpE64Lv86N/Mk/
-         AMMz3RH2IA2x6gv4VYzAkYpATSDtL9GOq0l455vaNGDPyDt7LRFnifdnEvRTdoXTrT/q
-         SbV6HxWuIT3HH9kcBfZER28ER60vLVVUv/i7VvJ+KHJligVxEThnMNWteNKUgfaPG4Vq
-         gkF4FqAnLkuiJy+sORYqrmsmEO6XMyYOkShbQHkfr/vYbrsn3hFEWgP7DdNQgRZxgi4W
-         wpLiHCGRFgrv23ez14aUqrBD943U7n54uFjJndwafjlpIM0dhIqE7CeEUsXM5sGtSfBw
-         FJlw==
-X-Gm-Message-State: APzg51Cd1t2ixLfd8vsKkCDKjFuRHRfgAdDmKtpXmBcPrd9hmkHjMOLY
-        YFI2HkyLiNt+j6SC6qCCbEweEyYiIq8KBw==
-X-Google-Smtp-Source: ANB0Vdav2eJIjyrERUEmiGtnItipG3yg96dIXIH+VceUJ53gJklJE8jmvQvZXExnKIj05TmFCizbcQ==
-X-Received: by 2002:a24:1355:: with SMTP id 82-v6mr20940938itz.74.1537339963109;
-        Tue, 18 Sep 2018 23:52:43 -0700 (PDT)
+        bh=iA34PvoXnv/5jnydRzA1GyetmcM2pytY3HL8SIbi1DA=;
+        b=f8yyqeeYKsk0RMmS6I2YwgVs8ffLW746d7DXyLYqmKyWsM4vpR9CYZZc9/Y5etG+Kh
+         VUqxCDEAOoMdFH2CB3NgBvVumXmiZMmNpL7kwAwuUSMA4x+Ag/wxfq5SlYPbyyVsuIdM
+         hUHZlQy4C3/inWzNoy+9OqR3STSTdETATDIHtbZgk+IwHE7JKfQkNp/Fmj0/x07kmehx
+         lJQoatDYho9Tv0a7BGZl84sgOq72DLizd9+ao1wmGxPfEYda8qWlVd4uGh0LPL9NqwNz
+         j4xKVcGaCVOL1CfvFqTmd2O/5OfrjEvqko4n/UvYL2TLjIDiPzoKTI+6ZqmzkItVG3/h
+         7iJA==
+X-Gm-Message-State: APzg51CYVLE+La4WgtntG5gP0lfOo1z1EYznJ9nMenWR7kcuvsdPLPch
+        37dOI2ehW5wA1E5d11nmj4+3xTKwDj1iFQ==
+X-Google-Smtp-Source: ANB0VdbHgyQN/E94/b0fZazm9JVFBSMPzoF08/jTJct0BqxIbnvWsEkdPNxM/CD6Iz4TD2PbVPjMNg==
+X-Received: by 2002:a24:cf06:: with SMTP id y6-v6mr19881811itf.5.1537339966590;
+        Tue, 18 Sep 2018 23:52:46 -0700 (PDT)
 Received: from localhost.localdomain ([209.82.80.116])
-        by smtp.gmail.com with ESMTPSA id x68-v6sm7939477ita.2.2018.09.18.23.52.38
+        by smtp.gmail.com with ESMTPSA id x68-v6sm7939477ita.2.2018.09.18.23.52.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 23:52:42 -0700 (PDT)
+        Tue, 18 Sep 2018 23:52:45 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
@@ -70,9 +70,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Jessica Yu <jeyu@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v3 8/9] jump_table: move entries into ro_after_init region
-Date:   Tue, 18 Sep 2018 23:51:43 -0700
-Message-Id: <20180919065144.25010-9-ard.biesheuvel@linaro.org>
+Subject: [PATCH v3 9/9] s390/jump_label: switch to relative references
+Date:   Tue, 18 Sep 2018 23:51:44 -0700
+Message-Id: <20180919065144.25010-10-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
 References: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
@@ -81,93 +81,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __jump_table sections emitted into the core kernel and into
-each module consist of statically initialized references into
-other parts of the code, and with the exception of entries that
-point into init code, which are defused at post-init time, these
-data structures are never modified.
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-So let's move them into the ro_after_init section, to prevent them
-from being corrupted inadvertently by buggy code, or deliberately
-by an attacker.
+Enable support for relative references in jump_label entries.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/s390/kernel/vmlinux.lds.S    |  1 +
- include/asm-generic/vmlinux.lds.h | 11 +++++++----
- kernel/module.c                   |  9 +++++++++
- 3 files changed, 17 insertions(+), 4 deletions(-)
+ arch/s390/Kconfig                  |  1 +
+ arch/s390/include/asm/jump_label.h | 40 ++++++++------------
+ arch/s390/kernel/jump_label.c      | 11 +++---
+ 3 files changed, 23 insertions(+), 29 deletions(-)
 
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index b43f8d33a369..4042bbf3f9ad 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -66,6 +66,7 @@ SECTIONS
- 		 *(.data..ro_after_init)
- 	}
- 	EXCEPTION_TABLE(16)
-+	JUMP_TABLE_DATA
- 	. = ALIGN(PAGE_SIZE);
- 	__end_ro_after_init = .;
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 9a9c7a6fe925..12dc4c1af96c 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -120,6 +120,7 @@ config S390
+ 	select HAVE_ALIGNED_STRUCT_PAGE if SLUB
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_JUMP_LABEL
++	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ 	select CPU_NO_EFFICIENT_FFS if !HAVE_MARCH_Z9_109_FEATURES
+ 	select HAVE_ARCH_SECCOMP_FILTER
+ 	select HAVE_ARCH_SOFT_DIRTY
+diff --git a/arch/s390/include/asm/jump_label.h b/arch/s390/include/asm/jump_label.h
+index 40f651292aa7..e2d3e6c43395 100644
+--- a/arch/s390/include/asm/jump_label.h
++++ b/arch/s390/include/asm/jump_label.h
+@@ -14,41 +14,33 @@
+  * We use a brcl 0,2 instruction for jump labels at compile time so it
+  * can be easily distinguished from a hotpatch generated instruction.
+  */
+-static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
++static inline bool arch_static_branch(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("0:	brcl 0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
+-		".pushsection __jump_table, \"aw\"\n"
+-		".balign 8\n"
+-		".quad 0b, %l[label], %0\n"
+-		".popsection\n"
+-		: : "X" (&((char *)key)[branch]) : : label);
+-
++	asm_volatile_goto("0:	brcl	0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
++			  ".pushsection __jump_table,\"aw\"\n"
++			  ".balign	8\n"
++			  ".long	0b-.,%l[label]-.\n"
++			  ".quad	%0-.\n"
++			  ".popsection\n"
++			  : : "X" (&((char *)key)[branch]) : : label);
+ 	return false;
+ label:
+ 	return true;
+ }
  
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 7b75ff6e2fce..f09ee3c544bc 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -253,10 +253,6 @@
- 	STRUCT_ALIGN();							\
- 	*(__tracepoints)						\
- 	/* implement dynamic printk debug */				\
--	. = ALIGN(8);                                                   \
--	__start___jump_table = .;					\
--	KEEP(*(__jump_table))                                           \
--	__stop___jump_table = .;					\
- 	. = ALIGN(8);							\
- 	__start___verbose = .;						\
- 	KEEP(*(__verbose))                                              \
-@@ -300,6 +296,12 @@
- 	. = __start_init_task + THREAD_SIZE;				\
- 	__end_init_task = .;
+-static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
++static inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("0:	brcl 15, %l[label]\n"
+-		".pushsection __jump_table, \"aw\"\n"
+-		".balign 8\n"
+-		".quad 0b, %l[label], %0\n"
+-		".popsection\n"
+-		: : "X" (&((char *)key)[branch]) : : label);
+-
++	asm_volatile_goto("0:	brcl 15,%l[label]\n"
++			  ".pushsection __jump_table,\"aw\"\n"
++			  ".balign	8\n"
++			  ".long	0b-.,%l[label]-.\n"
++			  ".quad	%0-.\n"
++			  ".popsection\n"
++			  : : "X" (&((char *)key)[branch]) : : label);
+ 	return false;
+ label:
+ 	return true;
+ }
  
-+#define JUMP_TABLE_DATA							\
-+	. = ALIGN(8);							\
-+	__start___jump_table = .;					\
-+	KEEP(*(__jump_table))						\
-+	__stop___jump_table = .;
-+
- /*
-  * Allow architectures to handle ro_after_init data on their
-  * own by defining an empty RO_AFTER_INIT_DATA.
-@@ -308,6 +310,7 @@
- #define RO_AFTER_INIT_DATA						\
- 	__start_ro_after_init = .;					\
- 	*(.data..ro_after_init)						\
-+	JUMP_TABLE_DATA							\
- 	__end_ro_after_init = .;
+-typedef unsigned long jump_label_t;
+-
+-struct jump_entry {
+-	jump_label_t code;
+-	jump_label_t target;
+-	jump_label_t key;
+-};
+-
+ #endif  /* __ASSEMBLY__ */
  #endif
+diff --git a/arch/s390/kernel/jump_label.c b/arch/s390/kernel/jump_label.c
+index 43f8430fb67d..50a1798604a8 100644
+--- a/arch/s390/kernel/jump_label.c
++++ b/arch/s390/kernel/jump_label.c
+@@ -33,13 +33,13 @@ static void jump_label_make_branch(struct jump_entry *entry, struct insn *insn)
+ {
+ 	/* brcl 15,offset */
+ 	insn->opcode = 0xc0f4;
+-	insn->offset = (entry->target - entry->code) >> 1;
++	insn->offset = (jump_entry_target(entry) - jump_entry_code(entry)) >> 1;
+ }
  
-diff --git a/kernel/module.c b/kernel/module.c
-index 6746c85511fe..49a405891587 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3315,6 +3315,15 @@ static struct module *layout_and_allocate(struct load_info *info, int flags)
- 	 * Note: ro_after_init sections also have SHF_{WRITE,ALLOC} set.
- 	 */
- 	ndx = find_sec(info, ".data..ro_after_init");
-+	if (ndx)
-+		info->sechdrs[ndx].sh_flags |= SHF_RO_AFTER_INIT;
-+	/*
-+	 * Mark the __jump_table section as ro_after_init as well: these data
-+	 * structures are never modified, with the exception of entries that
-+	 * refer to code in the __init section, which are annotated as such
-+	 * at module load time.
-+	 */
-+	ndx = find_sec(info, "__jump_table");
- 	if (ndx)
- 		info->sechdrs[ndx].sh_flags |= SHF_RO_AFTER_INIT;
+ static void jump_label_bug(struct jump_entry *entry, struct insn *expected,
+ 			   struct insn *new)
+ {
+-	unsigned char *ipc = (unsigned char *)entry->code;
++	unsigned char *ipc = (unsigned char *)jump_entry_code(entry);
+ 	unsigned char *ipe = (unsigned char *)expected;
+ 	unsigned char *ipn = (unsigned char *)new;
  
+@@ -59,6 +59,7 @@ static void __jump_label_transform(struct jump_entry *entry,
+ 				   enum jump_label_type type,
+ 				   int init)
+ {
++	void *code = (void *)jump_entry_code(entry);
+ 	struct insn old, new;
+ 
+ 	if (type == JUMP_LABEL_JMP) {
+@@ -69,13 +70,13 @@ static void __jump_label_transform(struct jump_entry *entry,
+ 		jump_label_make_nop(entry, &new);
+ 	}
+ 	if (init) {
+-		if (memcmp((void *)entry->code, &orignop, sizeof(orignop)))
++		if (memcmp(code, &orignop, sizeof(orignop)))
+ 			jump_label_bug(entry, &orignop, &new);
+ 	} else {
+-		if (memcmp((void *)entry->code, &old, sizeof(old)))
++		if (memcmp(code, &old, sizeof(old)))
+ 			jump_label_bug(entry, &old, &new);
+ 	}
+-	s390_kernel_write((void *)entry->code, &new, sizeof(new));
++	s390_kernel_write(code, &new, sizeof(new));
+ }
+ 
+ static int __sm_arch_jump_label_transform(void *data)
 -- 
 2.17.1
 
