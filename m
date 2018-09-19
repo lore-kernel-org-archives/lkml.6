@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B59DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DCDC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A90B21522
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2464B21522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:56:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t7EHud3X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A90B21522
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="op++z0BS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2464B21522
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387723AbeITAfj (ORCPT
+        id S2387734AbeITAfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 20:35:39 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37619 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387587AbeITAeo (ORCPT
+        Wed, 19 Sep 2018 20:35:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37615 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387556AbeITAel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 20:34:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so6872149wrr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:55:28 -0700 (PDT)
+        Wed, 19 Sep 2018 20:34:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so6872015wrr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Jw2K2wpnoqMaSJ8uFP7eR1+4k/u8wFMFa7zpsX+OS5g=;
-        b=t7EHud3XKEEXHDP922lt6sPMiqiq9nM2wcysZV32bKKA1SE+nz61EfGYmywA1dXGit
-         9WZxK/jaky0AAHf/Q6UOKXR5Kur6KkoFTcmsu+txVR4FQcO9l/Ee4ZKGyG4SVKgKZ8Pr
-         gYbk8tgvInAzpi+VcB79/1ciBId2DICtjZ+aYyMoPKjrOYnoNBiixC93kom5kXKCYhEe
-         0JMJ//F5JrWOkDp90btk9Y/UYEEPbE6tKBEF/1CfqofBG+B3HyRtIgsNurICxD8aSZfZ
-         s5GmYCRmAzHs56Vzv0hzONIay3tzghXLGoIPgwqN5VVUl3mfq9UBAe02fcgir1cBUSJD
-         QWCw==
+        bh=d1iMb39p1prK7niLwUfLvs3mbBI1WfSY9Tra+BtzAxQ=;
+        b=op++z0BSZ/nwOadd89i0fho9uQZiZsdFy7N0GRCwHUqVvYMaWvDvVmYOPZbERPOPFx
+         ad23W/MQBbvV3/GY7+tuqP2Of9HHtQ5OTJHZQdRaqHLIIauiwl5p5TPXuZcuLja8f+lg
+         Gmg1pZr0oyuUyf5jFx3yO97RBema8RQDjlge5Vi/p9u6ZVJyeu/Q/b8sZe3wIn46oBTL
+         72/Sm5BUPocqr3OOPUjJ579q43JT4k5eYih4kkSQdo03+dbtwIDYkx5ncimrVvHA8k4o
+         PG200V3W+tgEQO46uTpx3RAKoZvVLrCxJ5EK6vEUn1RxqZyP4JQ2BP9MlWsfD2UEcjEy
+         JKhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Jw2K2wpnoqMaSJ8uFP7eR1+4k/u8wFMFa7zpsX+OS5g=;
-        b=VK4c7vd/bS2KVtHShHoBCVU64HPM7N8PQ7xLVE19GdAG/06+s9eHaJrUhJ2MKBxuvh
-         8J75jUc/iwl5Ih1S4YUpy05KMK43VZ9iZaPcgZfThjx5tbfKOU0ZkH1eIaq09740bR4J
-         fBRXlmKrajs7ILtwL0sT+GFzofAN6AeydbFcU7RTou8u5CQNfHhEz9Of9GVtNl+LTA5o
-         UfV+ySwg5tL/FnslkO36VThidQGMbrz1xYBVR3gUVPAF2/Afk9TstPAXTg7/yJoXEN6m
-         Ccl14lyCbnpeQc+1x1Fhy41D83qNeB+wCh+pqfLOoFFD47u8q2DZVgchud9ZpBReiaYT
-         Rp1Q==
-X-Gm-Message-State: APzg51CagEVO3kC40EEfjRsmC9mvcysViOt7x8NwSGDb5z6sU6iWBHuA
-        ln06n8J0YdHWUkla1EwUJhjVkw==
-X-Google-Smtp-Source: ANB0VdaWHDHKIKf2dppTPO9LjYtesdjVa9cdxTmnTRNARXTenV2GUf/zFzuR7wLZwBB2m8drdztEog==
-X-Received: by 2002:a5d:4089:: with SMTP id o9-v6mr30434186wrp.133.1537383327612;
-        Wed, 19 Sep 2018 11:55:27 -0700 (PDT)
+        bh=d1iMb39p1prK7niLwUfLvs3mbBI1WfSY9Tra+BtzAxQ=;
+        b=EN5m8qav4MB/HaJLo3Y0W6lPZ/Bi7JBXExVEwNwNvgwlBjWJm45izaWT9xKJI+gy+/
+         aT5lfKDBdqAeob1yw1qWeY6oqEUXRYI+DDBqxBWPqw2Eghs1H4BQLpv4ULDuyNngY6gF
+         TwfJAgQJV5Zs+ZFv7RJHfytduOsgDOfRtgdFJNKPGrcP3jWeo2NS0eoLlmmv3/5AX5BF
+         DlnezrrpcU6ASOganb2oKwuUZw1tnr+wWMaG9tf0vBKauaE+52VWk5DFBJ8fjU+FRjYM
+         DtEdfJxtlNa16s11lj4w7AkppWPzVN83AAEqezwac1wjsAAAP+BrKqJ3g90v+B5PqFVz
+         neWg==
+X-Gm-Message-State: APzg51B5OES/VEjnaJMK3IEx+47mZ4weRH3QweZ8ntsGxw5JIZpCFuPx
+        +Xu4+QS/pbPs1ctZrhY2IdBnsA==
+X-Google-Smtp-Source: ANB0Vdb5o820qjCsQHYsVlC6o405PmMuMtbuK7P7pWLgWe20tanCx9P4Y5oo2MG9QevgZjPd50wONQ==
+X-Received: by 2002:a05:6000:10d0:: with SMTP id b16mr30374902wrx.226.1537383324464;
+        Wed, 19 Sep 2018 11:55:24 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id b10-v6sm8510065wmc.28.2018.09.19.11.55.26
+        by smtp.gmail.com with ESMTPSA id b10-v6sm8510065wmc.28.2018.09.19.11.55.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 11:55:27 -0700 (PDT)
+        Wed, 19 Sep 2018 11:55:23 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v8 15/20] kasan: add bug reporting routines for tag-based mode
-Date:   Wed, 19 Sep 2018 20:54:54 +0200
-Message-Id: <3da501714f11f558ccb2f3e9ca1fa32ebe69b3c1.1537383101.git.andreyknvl@google.com>
+Subject: [PATCH v8 13/20] kasan, mm: perform untagged pointers comparison in krealloc
+Date:   Wed, 19 Sep 2018 20:54:52 +0200
+Message-Id: <286fcda449120b643e4665fc9848e81260a1300c.1537383101.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.397.gdd90340f6a-goog
 In-Reply-To: <cover.1537383101.git.andreyknvl@google.com>
 References: <cover.1537383101.git.andreyknvl@google.com>
@@ -109,214 +109,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds rountines, that print tag-based KASAN error reports.
-Those are quite similar to generic KASAN, the difference is:
-
-1. The way tag-based KASAN finds the first bad shadow cell (with a
-   mismatching tag). Tag-based KASAN compares memory tags from the shadow
-   memory to the pointer tag.
-
-2. Tag-based KASAN reports all bugs with the "KASAN: invalid-access"
-   header.
-
-Also simplify generic KASAN find_first_bad_addr.
+The krealloc function checks where the same buffer was reused or a new one
+allocated by comparing kernel pointers. Tag-based KASAN changes memory tag
+on the krealloc'ed chunk of memory and therefore also changes the pointer
+tag of the returned pointer. Therefore we need to perform comparison on
+untagged (with tags reset) pointers to check whether it's the same memory
+region or not.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/kasan/generic_report.c | 16 ++++-------
- mm/kasan/kasan.h          |  5 ++++
- mm/kasan/report.c         | 57 +++++++++++++++++++++------------------
- mm/kasan/tags_report.c    | 18 +++++++++++++
- 4 files changed, 59 insertions(+), 37 deletions(-)
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
-index 5201d1770700..a4604cceae59 100644
---- a/mm/kasan/generic_report.c
-+++ b/mm/kasan/generic_report.c
-@@ -33,16 +33,13 @@
- #include "kasan.h"
- #include "../slab.h"
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 3abfa0f86118..221c1be3f45f 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1513,7 +1513,7 @@ void *krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	}
  
--static const void *find_first_bad_addr(const void *addr, size_t size)
-+void *find_first_bad_addr(void *addr, size_t size)
- {
--	u8 shadow_val = *(u8 *)kasan_mem_to_shadow(addr);
--	const void *first_bad_addr = addr;
-+	void *p = addr;
+ 	ret = __do_krealloc(p, new_size, flags);
+-	if (ret && p != ret)
++	if (ret && kasan_reset_tag(p) != kasan_reset_tag(ret))
+ 		kfree(p);
  
--	while (!shadow_val && first_bad_addr < addr + size) {
--		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
--		shadow_val = *(u8 *)kasan_mem_to_shadow(first_bad_addr);
--	}
--	return first_bad_addr;
-+	while (p < addr + size && !(*(u8 *)kasan_mem_to_shadow(p)))
-+		p += KASAN_SHADOW_SCALE_SIZE;
-+	return p;
- }
- 
- static const char *get_shadow_bug_type(struct kasan_access_info *info)
-@@ -50,9 +47,6 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
- 	const char *bug_type = "unknown-crash";
- 	u8 *shadow_addr;
- 
--	info->first_bad_addr = find_first_bad_addr(info->access_addr,
--						info->access_size);
--
- 	shadow_addr = (u8 *)kasan_mem_to_shadow(info->first_bad_addr);
- 
- 	/*
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 31efc4ee3ddd..a2533b890248 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -119,6 +119,7 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value);
- void check_memory_region(unsigned long addr, size_t size, bool write,
- 				unsigned long ret_ip);
- 
-+void *find_first_bad_addr(void *addr, size_t size);
- const char *get_bug_type(struct kasan_access_info *info);
- 
- void kasan_report(unsigned long addr, size_t size,
-@@ -139,6 +140,8 @@ static inline void quarantine_remove_cache(struct kmem_cache *cache) { }
- 
- #ifdef CONFIG_KASAN_SW_TAGS
- 
-+void print_tags(u8 addr_tag, const void *addr);
-+
- #define KASAN_TAG_SHIFT 56
- #define KASAN_TAG_MASK (0xFFUL << KASAN_TAG_SHIFT)
- 
-@@ -166,6 +169,8 @@ static inline void *reset_tag(const void *addr)
- 
- #else /* CONFIG_KASAN_SW_TAGS */
- 
-+static inline void print_tags(u8 addr_tag, const void *addr) { }
-+
- static inline u8 random_tag(void)
- {
- 	return 0;
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 64a74f334c45..214d85035f99 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -64,11 +64,10 @@ static int __init kasan_set_multi_shot(char *str)
- }
- __setup("kasan_multi_shot", kasan_set_multi_shot);
- 
--static void print_error_description(struct kasan_access_info *info,
--					const char *bug_type)
-+static void print_error_description(struct kasan_access_info *info)
- {
- 	pr_err("BUG: KASAN: %s in %pS\n",
--		bug_type, (void *)info->ip);
-+		get_bug_type(info), (void *)info->ip);
- 	pr_err("%s of size %zu at addr %px by task %s/%d\n",
- 		info->is_write ? "Write" : "Read", info->access_size,
- 		info->access_addr, current->comm, task_pid_nr(current));
-@@ -272,6 +271,8 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
- 
- 	start_report(&flags);
- 	pr_err("BUG: KASAN: double-free or invalid-free in %pS\n", (void *)ip);
-+	print_tags(get_tag(object), reset_tag(object));
-+	object = reset_tag(object);
- 	pr_err("\n");
- 	print_address_description(object);
- 	pr_err("\n");
-@@ -279,41 +280,45 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
- 	end_report(&flags);
- }
- 
--static void kasan_report_error(struct kasan_access_info *info)
--{
--	unsigned long flags;
--
--	start_report(&flags);
--
--	print_error_description(info, get_bug_type(info));
--	pr_err("\n");
--
--	if (!addr_has_shadow(info->access_addr)) {
--		dump_stack();
--	} else {
--		print_address_description((void *)info->access_addr);
--		pr_err("\n");
--		print_shadow_for_address(info->first_bad_addr);
--	}
--
--	end_report(&flags);
--}
--
- void kasan_report(unsigned long addr, size_t size,
- 		bool is_write, unsigned long ip)
- {
- 	struct kasan_access_info info;
-+	void *tagged_addr;
-+	void *untagged_addr;
-+	unsigned long flags;
- 
- 	if (likely(!report_enabled()))
- 		return;
- 
- 	disable_trace_on_warning();
- 
--	info.access_addr = (void *)addr;
--	info.first_bad_addr = (void *)addr;
-+	tagged_addr = (void *)addr;
-+	untagged_addr = reset_tag(tagged_addr);
-+
-+	info.access_addr = tagged_addr;
-+	if (addr_has_shadow(untagged_addr))
-+		info.first_bad_addr = find_first_bad_addr(tagged_addr, size);
-+	else
-+		info.first_bad_addr = untagged_addr;
- 	info.access_size = size;
- 	info.is_write = is_write;
- 	info.ip = ip;
- 
--	kasan_report_error(&info);
-+	start_report(&flags);
-+
-+	print_error_description(&info);
-+	if (addr_has_shadow(untagged_addr))
-+		print_tags(get_tag(tagged_addr), info.first_bad_addr);
-+	pr_err("\n");
-+
-+	if (addr_has_shadow(untagged_addr)) {
-+		print_address_description(untagged_addr);
-+		pr_err("\n");
-+		print_shadow_for_address(info.first_bad_addr);
-+	} else {
-+		dump_stack();
-+	}
-+
-+	end_report(&flags);
- }
-diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
-index 8af15e87d3bc..573c51d20d09 100644
---- a/mm/kasan/tags_report.c
-+++ b/mm/kasan/tags_report.c
-@@ -37,3 +37,21 @@ const char *get_bug_type(struct kasan_access_info *info)
- {
- 	return "invalid-access";
- }
-+
-+void *find_first_bad_addr(void *addr, size_t size)
-+{
-+	u8 tag = get_tag(addr);
-+	void *p = reset_tag(addr);
-+	void *end = p + size;
-+
-+	while (p < end && tag == *(u8 *)kasan_mem_to_shadow(p))
-+		p += KASAN_SHADOW_SCALE_SIZE;
-+	return p;
-+}
-+
-+void print_tags(u8 addr_tag, const void *addr)
-+{
-+	u8 *shadow = (u8 *)kasan_mem_to_shadow(addr);
-+
-+	pr_err("Pointer tag: [%02x], memory tag: [%02x]\n", addr_tag, *shadow);
-+}
+ 	return ret;
 -- 
 2.19.0.397.gdd90340f6a-goog
 
