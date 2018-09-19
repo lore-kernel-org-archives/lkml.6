@@ -2,135 +2,179 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFCDECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DB6C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627BC2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2AE52150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:21:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JcWdFjBG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627BC2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QYoCNjSH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2AE52150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732885AbeISXAQ (ORCPT
+        id S1732996AbeISXAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:00:16 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44205 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731056AbeISXAQ (ORCPT
+        Wed, 19 Sep 2018 19:00:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33084 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732929AbeISXAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:00:16 -0400
-Received: by mail-io1-f67.google.com with SMTP id u12-v6so99135ioc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 10:21:22 -0700 (PDT)
+        Wed, 19 Sep 2018 19:00:32 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so3034370pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 10:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Qx6NJC2v/9AuvBpYoCol3poZhrOp9FfJwrOHdmd5Ak0=;
-        b=JcWdFjBGrwlEW8inXww05p5RWnTVPcWJ5v/k8s0ENylVW8/3bjmjWRtxTb07SSA8Ts
-         JlX4tv48pAas9tqj77/u2viQOeYNtD2a5y8qtL0JtsQr0qAoyIYU7Vq7XoRiNVkf5Epd
-         OMv+Z0b68bzsUEm5uWj0gBOveE//sbIg/UDPI=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WnOCvoGqrkd4ntUXKQT7gBx5A1LjS48ql2JobwcP4Ow=;
+        b=QYoCNjSHQqUmY0MIdJSXcUJw/ln5X0JTnh6o2neTynngW0E9s4lxf0BiTBLNKBq6dc
+         3jViMI9M6KS+IlMmIZQPGGhFWWGa4W8sZjH99iD6oW8oBlF1ELN6WuLS6D4drIlIVc4C
+         vkzhdNWadzmdRImHkpkpUyEN12V87IRdkjK6Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Qx6NJC2v/9AuvBpYoCol3poZhrOp9FfJwrOHdmd5Ak0=;
-        b=KrefppqqdLArh1TGF1cgsWXAyjmBK85jraG7DgV2CWM5iKA74Rx6PmIaJJZxXcPdR0
-         /vCTSLodLcd7ZPEYAtnUjF21Xzgeld5a3S8TeQ/oTnU62R/tfCQdcChnnn3r1pY0dNPN
-         Uhlz+xa5xLea/QrIL3i9AtjmdMbbg9SJddlwqT9Lz5bVM45UuZcJNmpCwm/DVnvR44L3
-         eUSzBcbV/c4cuzDxrC+CEY9P62yVGx4v9cpQf4rB7REu9tT795OQ2IBBlQ52ewhWpR0J
-         +SIahK02ZXDMMuYjU+wTIqCK4fcYEmr8HUsbC5BM0pByLa7fw/L/97N6hxJlN43wJxAT
-         sINQ==
-X-Gm-Message-State: APzg51CsVnoh7xg89xHaAT4LKUsdsxEVf91HB+Gb0PcZfSYcU6DJr/wY
-        m9CZOwFUh+pWD7B1gPw4yoLeqjriBjQJw8OW4X8IKqP2
-X-Google-Smtp-Source: ANB0VdYU3G8gKXKif7jvNPm4WPE+Y8w9xws5JYU8g42os6N8SkhBnlEPaldvOnmWXBQuovo+E8SapFU6Pw3vzHjrDWw=
-X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr31472949ioa.60.1537377682150;
- Wed, 19 Sep 2018 10:21:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WnOCvoGqrkd4ntUXKQT7gBx5A1LjS48ql2JobwcP4Ow=;
+        b=eqgH78ptfVQjxcg8XeGiB5jz4+TyQ3MDWXXxXP7U5ikRaicDpnGrS3R1ABnN61dlT4
+         TSxrdjcvTtYKfVCwjxdMuj1VFVgDODcpirp4MQ5CjJqZh56lxcx3U9Ay2S37AMUgz7qM
+         7TFihE//Lt9GxhMNkMr2pGy0Ql7QGRBJXg58FNrE4WxDPoUJ38NloQzalfL7VeDwukB4
+         6jabBmic79Bm6NsEA2HKyO/b8p93S3bpcCOJ0jBzbCNo/eomLox5+xeiu3TRJZQLCv0Q
+         SdGWD60gBg8HqMMXvLi3IsKM+LKNZh8Elzi3swmsAHnuYHrB+qopRIrKPXAth8WTgtJF
+         DxLg==
+X-Gm-Message-State: APzg51DUSRHu1lei0j7Bofh0cosatPx7uVxelcokbn/cpX6yHhHn7E5v
+        VYc5/APyBRG0czuquayQ7zFMMafO9dE=
+X-Google-Smtp-Source: ANB0Vda5ofWIzdwmpn2q+guI7oxE36/OfAkul815421iaT2DB3HS8h45MeKynIlsGgWbQD39LhNTuw==
+X-Received: by 2002:a65:6406:: with SMTP id a6-v6mr2717853pgv.60.1537377698905;
+        Wed, 19 Sep 2018 10:21:38 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm45065576pfc.81.2018.09.19.10.21.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Sep 2018 10:21:38 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 10:21:37 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] Bluetooth: hci_qca: Add poweroff support during
+ hci down for wcn3990
+Message-ID: <20180919172137.GQ22824@google.com>
+References: <20180919152113.7611-1-bgodavar@codeaurora.org>
+ <20180919152113.7611-2-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 10:21:21
- -0700 (PDT)
-In-Reply-To: <20180918210120.GA29812@zx2c4.com>
-References: <20180918161646.19105-1-Jason@zx2c4.com> <CAKv+Gu8doWS+BYzqoT7499CJX0hLm1jBSMfVxJoG3wsWFO7t1w@mail.gmail.com>
- <20180918210120.GA29812@zx2c4.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 19 Sep 2018 10:21:21 -0700
-Message-ID: <CAKv+Gu9T16fJJz4S3O-SG_+vkWdwdUp5vymSPn-xvAOtRc=3xA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 00/20] WireGuard: Secure Network Tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180919152113.7611-2-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 September 2018 at 14:01, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> Hi Ard,
->
-> On Tue, Sep 18, 2018 at 11:28:50AM -0700, Ard Biesheuvel wrote:
->> On 18 September 2018 at 09:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->> >   - While I initially wasn't going to do this for the initial
->> >     patchset, it was just so simple to do: now there's a nosimd
->> >     module parameter that can be used to disable simd instructions
->> >     for debugging and testing, or on weird systems.
->> >
->>
->> I was going to respond in the other thread but it is probably better
->> to move the discussion here.
->>
->> My concern about the monolithic nature of each algo module is not only
->> about SIMD, and it has nothing to do with weird systems. It has to do
->> with micro-architectural differences which are more common on ARM than
->> on other architectures *, I suppose. But generalizing from that, it
->> has to do with policy which is currently owned by userland and not by
->> the kernel. This will also be important for choosing between the time
->> variant but less safe table based scalar AES and the much slower time
->> invariant version (which is substantially slower, especially on
->> decryption) once we move AES into this library.
->>
->> So a command line option for the kernel is not the solution here. If
->> we can't have separate modules, could we at least have per-module
->> options that put the policy decisions back into userland?
->>
->> * as an example, the SHA256 NEON code I collaborated on with Andy
->> Polyakov 2 years ago is significantly faster on some cores and not on
->> others
->
-> Interesting concern. There are micro-architectural quirks on x86 too
-> that the current code actually already considers. Notably, we use an
-> AVX-512VL path for Skylake-X but an AVX-512F path for Knights Landing
-> and Coffee Lake and others, due to thermal throttling when touching the
-> zmm registers on Skylake-X. So, in the code, we have it automatically
-> select the right thing based on the micro-architecture.
->
-> Is the same thing not possible with ARM? Do you not have access to this
-> information already, such that the module can just always do the right
-> thing and not require any user intervention?
->
+On Wed, Sep 19, 2018 at 08:51:13PM +0530, Balakrishna Godavarthi wrote:
+> This patch enables power off support for hci down and power on support
+> for hci up. As wcn3990 power sources are ignited by regulators, we will
+> turn off them during hci down, i.e. an complete power off of wcn3990.
+> So while hci up, we will call vendor specific open/close and setup which
+> will turn on the regulators, requests BT chip version and download the
+> firmware.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+>  drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 74f5fede0274..c3038afa42af 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -168,6 +168,7 @@ struct qca_serdev {
+>  
+>  static int qca_power_setup(struct hci_uart *hu, bool on);
+>  static void qca_power_shutdown(struct hci_uart *hu);
+> +static int qca_power_off(struct hci_dev *hdev);
+>  
+>  static void __serial_clock_on(struct tty_struct *tty)
+>  {
+> @@ -1099,8 +1100,26 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  static int qca_wcn3990_init(struct hci_uart *hu)
+>  {
+>  	struct hci_dev *hdev = hu->hdev;
+> +	struct qca_serdev *qcadev;
+>  	int ret;
+>  
+> +	/* Check for vregs status, may be hci0 down has turned
+> +	 * off the vregs.
+> +	 */
 
-That depends on what the right thing is. 'Fastest' does not
-necessarily mean 'optimal', and I guess the thermal throttling on
-Skylake-X may still result in the most power efficient implementation,
-which may be the preferred one in some contexts.
+nit: it's not necessarily 'hci0', there may be systems with more than
+one Bluetooth controller. You could say hciN instead, you might also
+want to put quotes around 'hciN down' to make clearer this is
+referring to a command.
 
-The point is that this is a policy decision, and those belong in
-userland not in the kernel.
+> +	qcadev = serdev_device_get_drvdata(hu->serdev);
+> +	if (qcadev->bt_power->vregs_on == false) {
 
-> If so, that would be ideal. If not (and I'm curious to learn why not
-> exactly), then indeed we could add some runtime nobs in /sys/module/
-> {algo}/parameters/{nob}, or the like. This would be super easy to do,
-> should we ever encounter a situation where we're unable to auto-detect
-> the correct thing.
->
-> Regards,
-> Jason
+nit:
+	if (!qcadev->bt_power->vregs_on) {
+
+is more common and easier to read IMO
+
+> +		serdev_device_close(hu->serdev);
+> +		ret = qca_power_setup(hu, true);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = serdev_device_open(hu->serdev);
+> +		if (ret) {
+> +			bt_dev_err(hu->hdev, "failed to open port");
+
+switch the regulators off again?
+
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	/* Forcefully enable wcn3990 to enter in to boot mode. */
+>  	host_set_baudrate(hu, 2400);
+>  	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
+> @@ -1152,6 +1171,12 @@ static int qca_setup(struct hci_uart *hu)
+>  
+>  	if (qcadev->btsoc_type == QCA_WCN3990) {
+>  		bt_dev_info(hdev, "setting up wcn3990");
+> +
+> +		/* Enable NON_PERSISTENT_SETUP QUIRK to ensure to execute
+> +		 * setup for every hci0 up.
+
+nit: 'hciN up'?
+
+> +		 */
+> +		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+> +		hu->hdev->shutdown = qca_power_off;
+>  		ret = qca_wcn3990_init(hu);
+>  		if (ret)
+>  			return ret;
+> @@ -1242,6 +1267,14 @@ static void qca_power_shutdown(struct hci_uart *hu)
+>  	qca_power_setup(hu, false);
+>  }
+>  
+> +static int qca_power_off(struct hci_dev *hdev)
+> +{
+> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +
+> +	qca_power_shutdown(hu);
+
+Would it make sense to add a return value qca_power_shutdown() now
+that it is called by a non-void function? Might not be worth the
+hassle though, hci_dev_do_close() - the only caller of
+hdev->shutdown() - doesn't check the return value either.
+
+Cheers
+
+Matthias
