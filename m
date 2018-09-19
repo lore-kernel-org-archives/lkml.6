@@ -2,121 +2,97 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92509ECE566
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3E5C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE3821521
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:48:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE3821521
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E32572083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:50:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBQDu9ty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32572083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733286AbeITE2r (ORCPT
+        id S1733308AbeITEal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:28:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57834 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725993AbeITE2q (ORCPT
+        Thu, 20 Sep 2018 00:30:41 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36854 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725755AbeITEal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:28:46 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JMiZR7144959
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:48:38 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mkuuprm4g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:48:38 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 19 Sep 2018 18:48:37 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Sep 2018 18:48:36 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8JMmZ5i35127492
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Sep 2018 22:48:35 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7686CB2064;
-        Wed, 19 Sep 2018 18:47:04 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5558BB205F;
-        Wed, 19 Sep 2018 18:47:04 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Sep 2018 18:47:04 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 736D716C16E4; Wed, 19 Sep 2018 15:48:35 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 15:48:35 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        dougmill@linux.ibm.com, eajames@linux.ibm.com, haver@linux.ibm.com,
-        fbarrat@linux.ibm.com, jallen@linux.ibm.com, manoj@linux.ibm.com,
-        mrochs@linux.ibm.com, mikecyr@linux.ibm.com, zohar@linux.ibm.com,
-        naveen.n.rao@linux.ibm.com, pfsmorigo@linux.ibm.com,
-        pjk1939@linux.ibm.com, seroyer@linux.ibm.com,
-        tlfalcon@linux.ibm.com, tyreld@linux.ibm.com, ukrishn@linux.ibm.com
-Subject: Re: [PATCH RFC] MAINTAINERS: Update from @linux.vnet.ibm.com to
- @linux.ibm.com
-Reply-To: paulmck@linux.ibm.com
-References: <20180919222733.GA13679@linux.ibm.com>
- <1537396264.14262.5.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1537396264.14262.5.camel@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18091922-0052-0000-0000-00000333AE5B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009736; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01090779; UDB=6.00563538; IPR=6.00870800;
- MB=3.00023396; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-19 22:48:37
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091922-0053-0000-0000-00005E20EB74
-Message-Id: <20180919224835.GJ4222@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809190220
+        Thu, 20 Sep 2018 00:30:41 -0400
+Received: by mail-wm1-f66.google.com with SMTP id j192-v6so8758465wmj.1;
+        Wed, 19 Sep 2018 15:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=whkDutS3F2DQl4qkMuAGH7T1sbauHEXoAEgLmTSdGRE=;
+        b=gBQDu9tyfmbu4p/voVm+u9ELsdwpwUgvDuMsn1/ylgi/C5Oz9Z8eP0h5yMqbe6LXoJ
+         GLGSD5P5FnoaXfBMy7TDGRem8mqbSNw5jY3rmdHfvSfFeyfPMGiMdm/Ia5zX3KE5FNsX
+         cV00pRDr90u257F5fDDDLEESUVkbR6ICO2KzbumLEYTYh5x5SX4Cr5KDWzPXJdvuIlIb
+         JNxnBUD4sx9ok5fMffiL10jsQkFmAjMwKbEepB2oHYh0dUwZNHMPeqNiCGotM+wth3Wx
+         ygV72PaxqPrSpolfihzA/iRf8k3s9ShcmnyppH7tlosBFDffGSjfPp2n0JPIMVWhoWFt
+         BO/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=whkDutS3F2DQl4qkMuAGH7T1sbauHEXoAEgLmTSdGRE=;
+        b=GgMI1s2AlmzMLzJL8dWLYKAr/IUoqDmuKK0b3uOg6H/g/IgI+wIJfzwiXrjzsQvIU0
+         8ET0swXiP21cWEwIdFcuyv4nn/UAhY8ugHPt3QVej70cfwFUovDVLmpNaTZJta1sTR4n
+         HcwIsntJzhgGxsdFwXvVeUqCAeg2wCWhOzbOuYQlLEQNaWntl82DPvudRYn023aBqQR2
+         XYS9xSZ/15jPR7l3oJeIwouW5dIOazKWLWrcb5uNtUoZ5TaV5a4iPw81G3SAZH5II0kW
+         RdsmcnEoNoBQLIUIv2BC0Cb5num8niXPAbBxljYOhcw+WbMXSCO7eardlxxq5y7Eh9iJ
+         2Wng==
+X-Gm-Message-State: ABuFfojR1bgcJGlR5qYScOmHVcz6iyWrcmSF/JnumL3BH0b4bhXwDHxU
+        hp44nc5ycXbcpVDO4dmjqpe6BotJ
+X-Google-Smtp-Source: ANB0VdY1txpGmp3jzQJZ7tDMzVSwkdXswWd0h8MFFQdIKFRWo58rSyxAwcsat4xfBbuYy3GlRtCo3g==
+X-Received: by 2002:a1c:e00a:: with SMTP id x10-v6mr80083wmg.58.1537397431595;
+        Wed, 19 Sep 2018 15:50:31 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm46721117wre.0.2018.09.19.15.50.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 15:50:30 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH v2 0/3] KVM: VMX: handle preemption timer value of zero
+Date:   Thu, 20 Sep 2018 00:50:26 +0200
+Message-Id: <1537397429-38588-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 03:31:04PM -0700, James Bottomley wrote:
-> On Wed, 2018-09-19 at 15:27 -0700, Paul E. McKenney wrote:
-> > IBM's patch-friendly email infrastructure is changing domains from
-> > @linux.vnet.ibm.com to @linux.ibm.com, which if nothing else might
-> > save a bit of typing.  This commit therefore updates us stragglers'
-> > email addresses in the MAINTAINERS file.  The old addresses are
-> > expected to continue to work for a few more months.
-> > 
-> > While in the neighborhood, remove some obsolete entries, which
-> > results
-> > in an orphaned subsystem: "JSM Neo PCI based serial card".
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > Cc: Douglas Miller <dougmill@linux.ibm.com>
-> > Cc: Eddie James <eajames@linux.ibm.com>
-> > Cc: Frank Haverkamp <haver@linux.ibm.com>
-> > Cc: Frederic Barrat <fbarrat@linux.ibm.com>
-> > Cc: James Bottomley <jejb@linux.ibm.com>
-> 
-> Acked-by: James Bottomley <jejb@linux.ibm.com>
 
-Applied, thank you!
 
-							Thanx, Paul
+A VMX preemption timer value of '0' at the time of VMEnter is
+architecturally guaranteed to cause a VMExit prior to the CPU
+executing any instructions in the guest.  KVM serendipitously
+emulates this behavior when running as L0, but doesn't ensure
+correct emulation when running at L1 or higher.  Explicitly
+emulate the architectural behavior of a timer value of '0'.
+
+v1->v2:
+- move flag to vmx->loaded_vmcs
+- extract arming the timer to a separate function instead of using a boolean
+- clean up SVM
+
+Sean Christopherson (3):
+  KVM: VMX: immediately mark preemption timer expired only for zero
+    value
+  KVM: VMX: modify preemption timer bit only when arming timer
+  KVM: VMX: use preemption timer to force immediate VMExit
+
+ arch/x86/include/asm/kvm_host.h |  2 +
+ arch/x86/kvm/svm.c              |  2 +
+ arch/x86/kvm/vmx.c              | 94 ++++++++++++++++++++++++++---------------
+ arch/x86/kvm/x86.c              |  8 +++-
+ 4 files changed, 70 insertions(+), 36 deletions(-)
+
+-- 
+1.8.3.1
 
