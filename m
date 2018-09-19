@@ -2,92 +2,77 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0005BECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEE0ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 958462150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:51:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958462150B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 75F2020880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F2020880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbeISU3x (ORCPT
+        id S1732031AbeISUcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:29:53 -0400
-Received: from mout.gmx.net ([212.227.15.19]:46821 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731221AbeISU3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:29:53 -0400
-Received: from [172.36.0.37] ([217.86.137.241]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lrek1-1ffrm13ssP-013PZK; Wed, 19
- Sep 2018 16:51:32 +0200
-Subject: Re: [PATCH 01/20] Input: iforce - remove "being used" silliness
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
-From:   Tim Schumacher <timschumi@gmx.de>
-Message-ID: <0541f46d-1f4f-05f4-8e93-6663f6c13bd9@gmx.de>
-Date:   Wed, 19 Sep 2018 16:51:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 19 Sep 2018 16:32:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43487 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731421AbeISUcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:32:25 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1CB7FCA84F34A;
+        Wed, 19 Sep 2018 22:53:58 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 19 Sep 2018 22:53:58 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <stefan@datenfreihafen.org>, <alex.aring@gmail.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ieee802154: remove a redundant local variable 'i'
+Date:   Wed, 19 Sep 2018 22:41:37 +0800
+Message-ID: <1537368097-60101-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20180918004732.9875-1-dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BCPEi9yIFpM70bbWgZfyzMvbSUjYoN2mIl+EafneAYL2TY7Ivyf
- RTsqAIXQgERc69CI6OU9JF/V2UQmnxwkhvl+pvCZ18mw6dDoPYkQ29C8mFKyEbYrX401eBd
- BbkCh138x4p3/i7fywBNvnFqafWb+0no2DDycwzN/M30bZeyHeIn/AO4609T+lYi0Ge+PFs
- 3ybYjerEgfE+Te/95qL7Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:PDt8b8OUw70=:ipEIB4iEwepz4/pqg7/Elk
- fGuRbNT8Yfxe1Nfak1cab3wGVqvpQ4SFzlmsCZaE/mJdidLlGkhXyaMjpbnf4mjyW+wlTQocP
- 7gkVQbouEFPJITp1dRP/nVM2KtXQtJQ/QyzYE+sLpuAjzek9ROqNeGddIcCkefAM+Je8/itCS
- Y+agw8mY3SRKtSskQquCtD2qXOFX0/26hlb00YN22ws0Co2NVKQ7iYe87WuqIz4r31cg1RyvR
- kSYqGuN3wzEhKJGAWeCptCuj9ril4lrXJAyPPcTg5PbsUsY3Pc6fnrL2eX8v3pkqMOlvelQIb
- W7ATSqOjB5M5JgcQw6ggpOdHQcAZzuBPxipGsKDiCnK5IdA+OnauHTfScJ57S76U5+rhQEtKf
- 2TRgXZCJZnfQJ1rqVHzlQHlr5gVJlkysg1rTCDeh0+rrcSkIL/EwQnTe7gN7wT6es10EZfVtY
- pN76r7xoisRK9XR4Q6u0b6qzGgN5TggnmSRD6SjH2jSG7hcq66ZKmC3NyBlLDvzsTLXNYMVS0
- MFCQ8KGQ/38uWz7JZoTH3NSdqs0SGeegfavoY618NHAvOcf9bH4CDGv0Wjv5o2+AvvQlNKBpR
- 8TfqAxIQZwupVxq8BpQF1187SmiwJbhE/t0IPcZICZRaSFXLn31pRfUgRPt09YGNjjS9DOH8/
- 9kHK63jA7wT9n2G33KW4P3+Umv+Ru1Abqg9zQTxjBCiTCaXO12em2nX67bxDqAVzMglVg3CHg
- Uy902CYiKfdUwLrr18qys+hTjBC6NT23x8SOvIEepT63SXlXUHbt8uODkAhOQA9r/MNs06wWs
- 0964jooaIsP9MeVsgF9k7BxC3lQf8wvurEmeEqUQgh1PinTLSY=
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.09.18 02:47, Dmitry Torokhov wrote:
-> The kernel is supposed to handle multiple devices, static flags
-> in packet handling code will never work.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> This is a random assortment of iforce patches that I made a few weeks back.
-> 
-> Tim, I do not have hardware, so I was bound to screw it up, but if you
-> have some time I'd appreciate if you try them out (and if I indeed broke
-> things if you could identify issues that would be even more awesome).
-> 
-> Thanks!
-> 
-Hello Dmitry,
+The local variable 'i' is never used after being assigned.
+hence it should be redundant adn can be removed.
 
-I tested those patches and I didn't find any obvious issues. The basic functions
-do work (i.e. buttons and axes, don't have a HAT so I can't test that), force
-feedback seems to work to the extent it was before (I only have fftest though,
-no games that support force feedback). I'll go through a few more applications
-and see if anything not obvious is broken.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ net/ieee802154/nl802154.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Unfortunately, I only have that one wheel and I can only test USB connections
-at the moment (unless I find a proper serial adaptor, but I'm not sure if that
-would even work).
+diff --git a/net/ieee802154/nl802154.c b/net/ieee802154/nl802154.c
+index 99f6c25..5b90151 100644
+--- a/net/ieee802154/nl802154.c
++++ b/net/ieee802154/nl802154.c
+@@ -445,7 +445,6 @@ static int nl802154_send_wpan_phy(struct cfg802154_registered_device *rdev,
+ {
+ 	struct nlattr *nl_cmds;
+ 	void *hdr;
+-	int i;
+ 
+ 	hdr = nl802154hdr_put(msg, portid, seq, flags, cmd);
+ 	if (!hdr)
+@@ -508,7 +507,6 @@ static int nl802154_send_wpan_phy(struct cfg802154_registered_device *rdev,
+ 	if (!nl_cmds)
+ 		goto nla_put_failure;
+ 
+-	i = 0;
+ #define CMD(op, n)							\
+ 	do {								\
+ 		if (rdev->ops->op) {					\
+-- 
+1.7.12.4
 
-Are those patches planned to go into 4.19 or are they intended to be merged in
-the next development cycle?
