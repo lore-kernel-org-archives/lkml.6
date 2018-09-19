@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95D0C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF09C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1D920880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1D920880
+	by mail.kernel.org (Postfix) with ESMTP id 9C4ED20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 07:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4ED20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730971AbeISNMp (ORCPT
+        id S1731012AbeISNMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 09:12:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:55097 "EHLO mga14.intel.com"
+        Wed, 19 Sep 2018 09:12:53 -0400
+Received: from mga05.intel.com ([192.55.52.43]:23411 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbeISNMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 09:12:45 -0400
+        id S1726972AbeISNMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 09:12:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 00:36:06 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 00:36:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
-   d="scan'208";a="91368329"
+   d="scan'208";a="91368418"
 Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 00:36:02 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 00:36:11 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>
@@ -38,9 +38,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         Len Brown <len.brown@intel.com>,
         Zhimin Gu <kookoo.gu@intel.com>, Yu Chen <yu.c.chen@intel.com>
-Subject: [PATCH 07/12][RFC v3] x86-32, hibernate: Use temp_pgt as the temporary page table
-Date:   Wed, 19 Sep 2018 15:42:48 +0800
-Message-Id: <22b6bfd23d24405194930baf88f0ec3fe76ba807.1537275915.git.yu.c.chen@intel.com>
+Subject: [PATCH 08/12][RFC v3] x86-32, hibernate: Use the page size macro instead of constant value
+Date:   Wed, 19 Sep 2018 15:42:57 +0800
+Message-Id: <7f11d3a91409a5c3a3a6cf8e05c8e9e9b2d1e6ea.1537275915.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1537275915.git.yu.c.chen@intel.com>
 References: <cover.1537275915.git.yu.c.chen@intel.com>
@@ -51,8 +51,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhimin Gu <kookoo.gu@intel.com>
 
-This is to reuse the temp_pgt for both 32bit and 64bit
-system.
+Convert the hard code into PAGE_SIZE for better scalability.
 
 No functional change.
 
@@ -60,37 +59,22 @@ Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- arch/x86/power/hibernate_32.c     | 2 ++
- arch/x86/power/hibernate_asm_32.S | 3 +--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/power/hibernate_asm_32.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
-index f82fbd279d08..a44bdada4e4e 100644
---- a/arch/x86/power/hibernate_32.c
-+++ b/arch/x86/power/hibernate_32.c
-@@ -156,6 +156,8 @@ asmlinkage int swsusp_arch_resume(void)
- 	if (error)
- 		return error;
- 
-+	temp_pgt = __pa(resume_pg_dir);
-+
- 	/* We have got enough memory and from now on we cannot recover */
- 	restore_image();
- 	return 0;
 diff --git a/arch/x86/power/hibernate_asm_32.S b/arch/x86/power/hibernate_asm_32.S
-index 671d38d0d931..f0627cf30a36 100644
+index f0627cf30a36..f5103ae96582 100644
 --- a/arch/x86/power/hibernate_asm_32.S
 +++ b/arch/x86/power/hibernate_asm_32.S
-@@ -33,8 +33,7 @@ ENDPROC(swsusp_arch_suspend)
+@@ -52,7 +52,7 @@ copy_loop:
+ 	movl	pbe_address(%edx), %esi
+ 	movl	pbe_orig_address(%edx), %edi
  
- ENTRY(restore_image)
- 	movl	mmu_cr4_features, %ecx
--	movl	resume_pg_dir, %eax
--	subl	$__PAGE_OFFSET, %eax
-+	movl	temp_pgt, %eax
- 	movl	%eax, %cr3
+-	movl	$1024, %ecx
++	movl	$(PAGE_SIZE >> 2), %ecx
+ 	rep
+ 	movsl
  
- 	jecxz	1f	# cr4 Pentium and higher, skip if zero
 -- 
 2.17.1
 
