@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E891C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95150C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E1621528
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4597B2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="P0NUL8cA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E1621528
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Vum7eVmU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4597B2150B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbeITCby (ORCPT
+        id S1732616AbeITCa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:31:54 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41806 "EHLO
+        Wed, 19 Sep 2018 22:30:27 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33439 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732713AbeITCaa (ORCPT
+        with ESMTP id S1732336AbeITCa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:30:30 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f38-v6so6028917edd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:50 -0700 (PDT)
+        Wed, 19 Sep 2018 22:30:26 -0400
+Received: by mail-ed1-f68.google.com with SMTP id d8-v6so6063901edv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kDaZEMB2C80kMNyCOhHh/iJBiqAUF/7c7WB9+YRBuTE=;
-        b=P0NUL8cABaWV9joJLNyZH6+AnE5fllXYkQLUGvmTy5DInTp/zeY7mAJXdjxlDDQnjG
-         LtsPp5IrRvWcWhfqitKQsGOUqzN3AttsBlmgRa0ZK1BmossUYcMxvM5lGiwJRVJqWd2f
-         c34ttnpn/dYMdFhiEqksd4ze/gypbGBA2wsqB3vhYLwKsi8higXyhVioVdbwWPU8n5B7
-         ETrLpQnwMqKQ24iiSroFEBUDI0ncbwhI+PLjxWuluhL1/XTqnlHQkrDQMwqj3Li7rSjh
-         VsNgh30iPovFFtYQy9erO7Hi5/smpxptktRLE4OQ7o0rVtEk/9qCiWdJLdJib5yZY06Y
-         zviQ==
+        bh=bP6x72afHhqDJ7ddcE8DNcBh4tk+zD9yWPVM9lT5xD8=;
+        b=Vum7eVmU+8KkpZOqjqgsLPRxNn/ZFXt/4P3gwZ0Rpe/jMT1GjJqaEMwDdikL7aTHDx
+         PXNzNbSYPKejyf5RBQ0qfKl9u9Gs5dVAQFeSOK2fkUthFOAPSBMVBUATrtviGwmbugo4
+         jecWAPrnnWVHrh/XK+NcMq8TX4jrHSRxB4uGrgVvp8LoiUKiBeXz4JeeKXKczH3brbdQ
+         n6p+EhuXt1pEAh09pCu8/xEPkCjGwfFIU9u1AiGx/g68pWsZ8ENHriREpQxJuk39f/Cg
+         M5ybJhAP9IElcF6jTRqxNycNMcK7TIywG6G4Fe0Nlk8BHkDIIRMrvnVrC+mR677eQOVB
+         aEdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kDaZEMB2C80kMNyCOhHh/iJBiqAUF/7c7WB9+YRBuTE=;
-        b=Nl/pjraqU7HbM5rtYktKjZF5Xa7vg5Z9Nonqk4ldVylXFK/Xs8BnIFiqW38HUHRhL0
-         1v0zG8JA6doY3RIRi1rE4pzb2JsWiNiLz2ddSQgCAG1VYXWBzIW4dYCiskLK6ONExGtp
-         NYt4nczx4T9rE7DOKJvOiwtPIGNm+hStOhnPXlFHKt4NJssesb4C2jOdiErF155CZzLf
-         CZfTBfLIBYcqfEk8ZPoi34lLmvo8lKJd1if1xpELXo0yqExkAiS1k1bdh4UdYvcMjOqI
-         W1KOtWD9VPerccUnmJMfgHVf6iqlQLddKsDUturgFmN6Fkj8ZkjdyMbBwf/JOiI+LAA4
-         uzMQ==
-X-Gm-Message-State: APzg51CA3in6I5c7HC6QilcvqsP2AG9yAXsLbzoF5JZ5PSiIQsj45vcD
-        I/AXNNIvgCK+mFsgD+g/8tdOi+W5Eak=
-X-Google-Smtp-Source: ANB0VdZ2RpIL2bqcX7Q+ETk4GV6KrEHP0TZTeZ43IiMVXoIm0tUoKl0bun77Fp485R0kOe4ehcjo4Q==
-X-Received: by 2002:a50:a7a2:: with SMTP id i31-v6mr61302489edc.296.1537390249603;
-        Wed, 19 Sep 2018 13:50:49 -0700 (PDT)
+        bh=bP6x72afHhqDJ7ddcE8DNcBh4tk+zD9yWPVM9lT5xD8=;
+        b=Aog2ZxETwxW4Dl1EL4G5Ik9q9SZWxkctZ3Vc2OxfRJurqEDv0hdW+NYJucrFWJoKaE
+         F7Uy8iseyB/xoK5/hXWl4KZWvK8PbZnBwOE61xVAl7Yjc4vku0rTL+SFIasf0EPZn2hV
+         RIE8MbYNGInWb3ZPkzCFEicq5rQHWSqYE1YnRYorLBSrVviUCh+sILO3w35xyitNYuV8
+         ROndBBb5UhfFi05fyqA7ZwLxFwcIH5XZjXTnfGhJ8kVQCOv/+j0H7iC+ZJ3jFSqMGjgP
+         6n+/v+KEoo63+wXN4H6G8vsmEr6ihsVbFHHWzq7lmVoSWgJ9Q1fKK3zjn+szMm9fQwf+
+         AKGQ==
+X-Gm-Message-State: APzg51Bxc0uKTg7st8LNDJsOVcTM56lFa769b+zeMccNfhMlU/eBFoo7
+        20vXiG0FywpLNUI+8M16bjpK5C14KsE=
+X-Google-Smtp-Source: ANB0VdYdepDti0Z4R2+cyHD577UJjM7xe0joMQKhFQVm/L2BJ1KqPgQy2AEMwOevgnuqAVV02x7mkQ==
+X-Received: by 2002:a50:eb96:: with SMTP id y22-v6mr59897039edr.38.1537390245276;
+        Wed, 19 Sep 2018 13:50:45 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.48
+        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 13:50:48 -0700 (PDT)
+        Wed, 19 Sep 2018 13:50:44 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
         Andy Lutomirski <luto@kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Cyrill Gorcunov <gorcunov@openvz.org>,
@@ -74,11 +74,10 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [RFC 07/20] timens: Shift /proc/uptime
-Date:   Wed, 19 Sep 2018 21:50:24 +0100
-Message-Id: <20180919205037.9574-8-dima@arista.com>
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [RFC 04/20] timens: Introduce CLOCK_BOOTTIME offset
+Date:   Wed, 19 Sep 2018 21:50:21 +0100
+Message-Id: <20180919205037.9574-5-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180919205037.9574-1-dima@arista.com>
 References: <20180919205037.9574-1-dima@arista.com>
@@ -87,35 +86,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Respect boottime inside time namespace for /proc/uptime
+From: Andrei Vagin <avagin@openvz.org>
 
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Adds boottime virtualisation for time namespace.
+Provide clock_set() API to set boottime clock inside ns.
+
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- fs/proc/uptime.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/timens_offsets.h |  1 +
+ kernel/time/posix-timers.c     | 26 ++++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/fs/proc/uptime.c b/fs/proc/uptime.c
-index a4c2791ab70b..4421ec058472 100644
---- a/fs/proc/uptime.c
-+++ b/fs/proc/uptime.c
-@@ -5,6 +5,7 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/time.h>
-+#include <linux/time_namespace.h>
- #include <linux/kernel_stat.h>
+diff --git a/include/linux/timens_offsets.h b/include/linux/timens_offsets.h
+index 248b0c0bb92a..777530c46852 100644
+--- a/include/linux/timens_offsets.h
++++ b/include/linux/timens_offsets.h
+@@ -4,6 +4,7 @@
  
- static int uptime_proc_show(struct seq_file *m, void *v)
-@@ -20,6 +21,8 @@ static int uptime_proc_show(struct seq_file *m, void *v)
- 		nsec += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
+ struct timens_offsets {
+ 	struct timespec64  monotonic_time_offset;
++	struct timespec64  monotonic_boottime_offset;
+ };
  
- 	ktime_get_boottime_ts64(&uptime);
-+	timens_clock_from_host(CLOCK_BOOTTIME, &uptime);
+ #endif
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 3c1f98760dec..d38835a21c5d 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -276,7 +276,32 @@ static int posix_get_coarse_res(const clockid_t which_clock, struct timespec64 *
+ 
+ static int posix_get_boottime(const clockid_t which_clock, struct timespec64 *tp)
+ {
++	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
 +
- 	idle.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
- 	idle.tv_nsec = rem;
- 	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
+ 	ktime_get_boottime_ts64(tp);
++
++	if (!ns_offsets)
++		return 0;
++
++	*tp = timespec64_add(*tp, ns_offsets->monotonic_boottime_offset);
++
++	return 0;
++}
++
++static int posix_set_boottime(clockid_t which_clock, const struct timespec64 *tp)
++{
++	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
++	struct timespec64 ktp;
++
++	if (!ns_capable(current->nsproxy->time_ns->user_ns, CAP_SYS_TIME))
++		return -EPERM;
++
++	ktime_get_boottime_ts64(&ktp);
++
++	if (ns_offsets)
++		ns_offsets->monotonic_boottime_offset = timespec64_sub(*tp, ktp);
++	else
++		return -EINVAL;
+ 	return 0;
+ }
+ 
+@@ -1362,6 +1387,7 @@ static const struct k_clock clock_tai = {
+ static const struct k_clock clock_boottime = {
+ 	.clock_getres		= posix_get_hrtimer_res,
+ 	.clock_get		= posix_get_boottime,
++	.clock_set		= posix_set_boottime,
+ 	.nsleep			= common_nsleep,
+ 	.timer_create		= common_timer_create,
+ 	.timer_set		= common_timer_set,
 -- 
 2.13.6
 
