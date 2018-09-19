@@ -2,139 +2,108 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952B8C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F61EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367C72083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DCF2151C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="PUKembXv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367C72083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pv/VvEkE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DCF2151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbeISWcF (ORCPT
+        id S1732747AbeISWdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:32:05 -0400
-Received: from mail.efficios.com ([167.114.142.138]:50434 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeISWcF (ORCPT
+        Wed, 19 Sep 2018 18:33:31 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32806 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731592AbeISWdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:32:05 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 94B2123FE12;
-        Wed, 19 Sep 2018 12:53:15 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id FbZ5bGcgpbqu; Wed, 19 Sep 2018 12:53:14 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C67EF23FE04;
-        Wed, 19 Sep 2018 12:53:14 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C67EF23FE04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1537375994;
-        bh=vPL2Q2AaGgRJFXwbevUjgDAkJjmRz+aOOpXAItzUHm0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=PUKembXvkfGnvHSQsaatgRd5xsS41YEDOpyATAuqQ6Q6N+xJ9JwcUq9an7GMRDW0o
-         bBc1Kx9eTG0DNL7fOv8qYydksO9UNbz+H8L3itV0pmg0NmKCHVd6hue//BUBasLxls
-         ApapfzFMHHaTjfG5KmU92CCkg/PyeRkgxKxOcQeesTAcvtGjmjpK+3YDadGEP4pVTm
-         d8zInY1X8O7/CPqHmIwBrZndSS3liYwnuHzL8ryklbAU+h02kEAoytsBsINssB3qCh
-         AbGnlHP7YNPHuFPluZgipvU0AnUBLa98YKP+fTzCZLMnGBGxI8mc6daDjylSCQgGGC
-         WFYSWgba/g67w==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id FVzc21IrgR8a; Wed, 19 Sep 2018 12:53:14 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id AE78323FDF0;
-        Wed, 19 Sep 2018 12:53:14 -0400 (EDT)
-Date:   Wed, 19 Sep 2018 12:53:14 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Joseph Myers <joseph@codesourcery.com>
-Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <67473000.8399.1537375994645.JavaMail.zimbra@efficios.com>
-In-Reply-To: <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk>
-References: <20180919144438.1066-1-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk>
-Subject: Re: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init
- and thread creation
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.9_GA_3019 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_3019)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: TeRSFIkNT2ONAgHrmTf/5ZlK/KK5rA==
+        Wed, 19 Sep 2018 18:33:31 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b97-v6so2968111plb.0;
+        Wed, 19 Sep 2018 09:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=lwTqRO2ykRDPuXDuIeZVSmiXJzyd/m90WNtHQhJ/5s8=;
+        b=pv/VvEkEGs1oXRUMKUAVWOmcIzKf6J58t9a+3+6+Lrf/D0xJUupK9Tjf7gb92k0DPi
+         aY4MCKvFbf0W3CbbMuz3pk6U3zyM/HupC2X7f94Dl9e51cbhv+SGf6JfwIoxmIBLDebZ
+         f7iKDP5eXvsVCL/heOBCgGHqXmONKcJP48xFBg/PJvT3zu1Nxt4T3S7GyAGcmqXldkvt
+         avbo7sYicwy6XDSqa4uLHhBxovmWakkfWKA+sKzQlyqaLcA3oE4n4RlZNgvjTBtj4+rt
+         s27y4IcqMVU4YvsfrQ2DhbH23gEFjZa61g4XuzJNFB1ms4xBJyeXIdCwp6uQQiOHzgS3
+         /Xsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=lwTqRO2ykRDPuXDuIeZVSmiXJzyd/m90WNtHQhJ/5s8=;
+        b=IetCXthTVxfDOPFcHIqJlwvAwHo9S3FKxqOFJjPkpJVPUwhaNp3vmt/hmJoF/ZFgAb
+         gu9q4Yez417xQWAooBxWMlZIPQTy8Onb7ib7xeqk9eWbbK5fOTP2OASQluYl/EYDagU0
+         Mzfk5DQiOtywsrVf5fAUy0T6LLaaFFgwifMEtT79dyce1bwr8LvDgsEuVfhiEw+CqJXl
+         pbdI5i+ylFuHA+FIGo3JyZUWY2EnYl1XA/1zm1Vz7xZ6mAfhlTBPxgzBgiObBi97er8x
+         XzdohvbJBOUMOtt7WkH9702IfVUesKuqCb6wII7g85dXWmXGqeCYlLAVFN15F/6BaqaE
+         WCcQ==
+X-Gm-Message-State: APzg51Dd4dSzWYrBT6Ot5C6qr/so5CBTTmekiZn7/tRtJdWRDDugrTEl
+        Uh0aGf6N44Ts7yA6D/42/WQ=
+X-Google-Smtp-Source: ANB0VdZFVaCCHxx7JKzgubZT9O07LOX4+zrOsCc/OhMvzdoOchRXhuJ1t90io+0vVspjddhLs+yTcw==
+X-Received: by 2002:a17:902:b282:: with SMTP id u2-v6mr34512767plr.123.1537376085255;
+        Wed, 19 Sep 2018 09:54:45 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id a90-v6sm52314167pfg.106.2018.09.19.09.54.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 09:54:44 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v4.19-rc5
+Date:   Wed, 19 Sep 2018 09:54:42 -0700
+Message-Id: <1537376082-32219-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Sep 19, 2018, at 12:37 PM, Joseph Myers joseph@codesourcery.com wrote:
+Hi Linus,
+Hi Greg,
 
-> On Wed, 19 Sep 2018, Mathieu Desnoyers wrote:
-> 
->> Here is a rough prototype registering rseq(2) TLS for each thread
->> (including main), and unregistering for each thread (excluding
->> main). "rseq" stands for Restartable Sequences.
-> 
-> A final patch would need to add documentation and tests and a NEWS entry
-> and fix various coding style issues.
-> 
->> diff --git a/nptl/Versions b/nptl/Versions
->> index e7f691da7a..7316c2815d 100644
->> --- a/nptl/Versions
->> +++ b/nptl/Versions
->> @@ -275,6 +275,7 @@ libpthread {
->>      mtx_init; mtx_lock; mtx_timedlock; mtx_trylock; mtx_unlock; mtx_destroy;
->>      call_once; cnd_broadcast; cnd_destroy; cnd_init; cnd_signal;
->>      cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
->> +    __rseq_abi; __rseq_refcount;
-> 
-> That's the GLIBC_2.28 section, but 2.28 is already out.  New symbols would
-> need to go in GLIBC_2.29 or later (and the ABI test baselines would all
-> need updating).
+Please pull hwmon fixes for Linux v4.19-rc5 from signed tag:
 
-Certainly. I'm just not sure where I need to poke to update the ABI version
-from 2.28 to 2.29 in my dev branch.
-
-> 
->> diff --git a/sysdeps/unix/sysv/linux/rseq.h b/sysdeps/unix/sysv/linux/rseq.h
-> 
-> This looks like it's coming from the Linux kernel.  Can't the relevant
-> uapi header just be used directly without copying into glibc (with due
-> care to ensure that glibc still builds if the kernel headers used for the
-> build are too old - you need such conditionals anyway if they don't define
-> the relevant syscall number)?
-
-This is indeed in the list of "things to consider" I've put in the patch
-commit message. If the usual practice is to build against uapi kernel headers
-outside of the glibc tree, I'm fine with that.
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.19-rc5
 
 Thanks,
+Guenter
+------
 
-Mathieu
+The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
 
+  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
 
-> 
-> --
-> Joseph S. Myers
-> joseph@codesourcery.com
+are available in the git repository at:
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.19-rc5
+
+for you to fetch changes up to 55066354285b36ee09dc50e2527f43a97c567177:
+
+  hwmon: (nct6775) Use different register to get fan RPM for fan7 (2018-09-17 05:38:50 -0700)
+
+----------------------------------------------------------------
+Various bug fixes for nct6775 driver
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      hwmon: (nct6775) Set weight source to zero correctly
+
+Guenter Roeck (4):
+      hwmon: (nct6775) Fix access to fan pulse registers
+      hwmon: (nct6775) Fix virtual temperature sources for NCT6796D
+      hwmon: (nct6775) Fix RPM output for fan7 on NCT6796D
+      hwmon: (nct6775) Use different register to get fan RPM for fan7
+
+ drivers/hwmon/nct6775.c | 72 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 49 insertions(+), 23 deletions(-)
