@@ -2,75 +2,79 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61237C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA46EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 224E320877
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:41:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224E320877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 5D5DD20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5DD20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbeISUTb (ORCPT
+        id S1731971AbeISUVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:19:31 -0400
-Received: from verein.lst.de ([213.95.11.211]:53964 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731917AbeISUTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:19:31 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 22E1F68D83; Wed, 19 Sep 2018 16:41:19 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 16:41:19 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jim Quinlan <jim2101024@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 11/12] ARM64: add dma remap for BrcmSTB PCIe
-Message-ID: <20180919144119.GB29096@lst.de>
-References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com> <1537367527-20773-12-git-send-email-jim2101024@gmail.com>
+        Wed, 19 Sep 2018 16:21:31 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47509 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731311AbeISUVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:21:31 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D84D369C9EDE9;
+        Wed, 19 Sep 2018 22:43:11 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 19 Sep 2018 22:43:10 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <dougmill@linux.vnet.ibm.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: ibm: remove redundant local variables 'act_nr_of_entries' and 'act_pages'
+Date:   Wed, 19 Sep 2018 22:30:49 +0800
+Message-ID: <1537367449-59565-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537367527-20773-12-git-send-email-jim2101024@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 10:32:06AM -0400, Jim Quinlan wrote:
-> +#if defined(CONFIG_ARM64)
+That local variable are never used after being assigned.
+hence it should be redundant and can be removed.
 
-Please use plain #ifdef where possible.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/net/ethernet/ibm/ehea/ehea_qmr.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> +dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
-> +{
-> +	return brcm_phys_to_dma(dev, paddr);
-> +}
-> +
-> +phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dev_addr)
-> +{
-> +	return brcm_dma_to_phys(dev, dev_addr);
-> +}
-> +#endif
+diff --git a/drivers/net/ethernet/ibm/ehea/ehea_qmr.c b/drivers/net/ethernet/ibm/ehea/ehea_qmr.c
+index a0820f7..5e4e371 100644
+--- a/drivers/net/ethernet/ibm/ehea/ehea_qmr.c
++++ b/drivers/net/ethernet/ibm/ehea/ehea_qmr.c
+@@ -125,7 +125,7 @@ struct ehea_cq *ehea_create_cq(struct ehea_adapter *adapter,
+ 	struct ehea_cq *cq;
+ 	struct h_epa epa;
+ 	u64 *cq_handle_ref, hret, rpage;
+-	u32 act_nr_of_entries, act_pages, counter;
++	u32 counter;
+ 	int ret;
+ 	void *vpage;
+ 
+@@ -140,8 +140,6 @@ struct ehea_cq *ehea_create_cq(struct ehea_adapter *adapter,
+ 	cq->adapter = adapter;
+ 
+ 	cq_handle_ref = &cq->fw_handle;
+-	act_nr_of_entries = 0;
+-	act_pages = 0;
+ 
+ 	hret = ehea_h_alloc_resource_cq(adapter->handle, &cq->attr,
+ 					&cq->fw_handle, &cq->epas);
+-- 
+1.7.12.4
 
-How is this going to work for a kernel with BrcmSTB built in, but running
-on a more standard arm64 SOC?
-
-I suspect we really just want a set of ranges hanging off struct device
-(conditional on a config option).  Each SoC can then fill it at boot
-time, and if it is non-NULL the DMA code will use it instead of
-calling __phys_to_dma and __dma_to_phys.  In fact the single range
-version could probably just replace the existing dma_pfn_offset
-field.
