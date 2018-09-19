@@ -7,61 +7,60 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FB9ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1DEECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCAB21528
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D2121533
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="T+GbgY2r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCAB21528
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="fEac+gJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1D2121533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733131AbeITCas (ORCPT
+        id S1733198AbeITCbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:30:48 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34123 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732982AbeITCaq (ORCPT
+        Wed, 19 Sep 2018 22:31:15 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40435 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733021AbeITCan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:30:46 -0400
-Received: by mail-ed1-f66.google.com with SMTP id u1-v6so6053330eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:51:05 -0700 (PDT)
+        Wed, 19 Sep 2018 22:30:43 -0400
+Received: by mail-ed1-f67.google.com with SMTP id j62-v6so6018911edd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IWl+BsB9BfevdUY2WNa0fYCOuIWf1cvA+H9ptzwfKtc=;
-        b=T+GbgY2rJRZcmW0Pnz/ocICcE6cmIe5Dqnz2XO4s+Jw0UfHOg0JDk/nl1QgrYgVgXe
-         oxHjNWCWXlxJmFhRS+/nIKnJ9DSaYYMVuZgXXQo10koRWHP1cP8WKMjeAVn4VkXbh0Ak
-         LDe/53p7rZaQB2LqWupbnfUrcm6lsQGMM0/W7kk/uIZGMMYHgqRfqc4qkFk/Fc80lnWP
-         rjS+x40PDGYLawc1RFpCEw51WPeJaPAMcRPwVS9x4uUzn0zThrorWhmTFYGaHJeksEU/
-         uqF+yOzNLsm9Vj7XuYcvAeX+UgY9l9j7/fxmdai6mfeuwBj3wcTYwF612L82VVJegur9
-         +g7A==
+        bh=7uOjBHO7Lrm52O0tbCG82wfS7n8jMKfvrIot6rE79ss=;
+        b=fEac+gJbwc70BUi+TQv4ChHED/hfPZxUtEuIplGMLRbQmJ1/zw5xvOqaHM44Ys6sYa
+         F1t+xkV+SjjwgfHvjw6iMcEfFLV2NDf4py+Fj+pWC3pOvIJTI9vHcswtwtmMItiJmuMN
+         9HiT/rq+ivi0HrUSgdpl0T1gg6pRm6zCURdqKwUCw3rP9Agb83nQ5P+pJc4LO7bz+p+U
+         zFGfQVYzM/M4VUf0QR5sMDZ4ngW1JXxOFNG7BQUs95YhV3aVtkAQmlX5hoWZC9RrluOK
+         Wyht3lcYmsCKrRTQdVCUO6m/EQJ/SnPIbTyf7ZzgA6BMxW5HkRHPHhJJ45jPalHhN5VV
+         yaEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IWl+BsB9BfevdUY2WNa0fYCOuIWf1cvA+H9ptzwfKtc=;
-        b=IiK0NOLepcyfz6OUJXTzVsiXOt3kZODi/Diwna9YSgUtS2iLv8PlRucKnvg9oHygWW
-         hcWZkd0jV0OpOZqE/VPevmyf3JKRSYSyGgf9yq/4ZGYz09lSCEuErRc5dXvRL/5XchDo
-         fTWLmUEiKqbJb+Q6SVDDpia0MqXlh3Mfuw9c9KwYjgDNv1wzfuCYc7Xm+VZTpDvh8Nqs
-         OsnQ+NyTkECk263pKtcIrBi1BMWq2sbCJfYb2Y/cuv7Nq2zlwok3vcr7ZNjy80okKSXg
-         0MvEd0pYoJLOuz5vT6qgZ1Mo0z3KJEVPH0F9fHo9DIFXGmMGMqGPASPv3xF8jNUAIPav
-         C4dw==
-X-Gm-Message-State: APzg51AijGz7G7xPUJ8pECqflsqMIkGRu9GD6oCig0ZgQfUpFCfyUzJV
-        6ZJSt/EwW8uRG496yN0RJ6Ar2Arcm+Q=
-X-Google-Smtp-Source: ANB0Vdb/vmWbrce2pDgWj184qzrAel450u17meixyH+nIh0zfHrdIOxYQHnGbq34iZH+WQZ1Q+hBjA==
-X-Received: by 2002:a50:82c5:: with SMTP id 63-v6mr61268513edg.200.1537390264720;
-        Wed, 19 Sep 2018 13:51:04 -0700 (PDT)
+        bh=7uOjBHO7Lrm52O0tbCG82wfS7n8jMKfvrIot6rE79ss=;
+        b=ihFQyk9/netpcfLeUNDw1n5vV9D3fzAduze6Ksg3q7CXeneBTHv5ZzTcwMtkkcHUnF
+         SlMxqOk4ueKixfvg2J+oi/OlDbhKwSXcvLOKcmS6kCi8a2mzNDtj/NGWHrK8v0dPCrTr
+         83RyAti4XQSVW9eIvXPSlbKCUWVq1Q0wlyviPTOSXK86ZmZCEpjcVeclndSibYsR15g5
+         TSudpjHgKFpBkNimJpapln6ohRnlEqPi/bgkqaUL4mrx3At1tJg/D8rC29U91OGvH5qj
+         tJsmugkTRVzgJ+282wSGLP7whH9TEla2HYYKAm2IP0KSyEE/rMG9U5yNBmL11q1FA7m+
+         5Gkw==
+X-Gm-Message-State: APzg51CgTGWy2/qVM1LZSK000EjIJ+B0UWusg7HYCmvOEajHtIyeRqVG
+        zCyO8XKuEbCEIsXyAg8KXri02Qb74C0=
+X-Google-Smtp-Source: ANB0VdZPAdtSGlptPeJ7tS4cRn9ERsACYu+R9HHufOdAypsrfQcsfJFiAczzjwmZeDloWAvYK99uCw==
+X-Received: by 2002:a50:eb96:: with SMTP id y22-v6mr59898154edr.38.1537390261475;
+        Wed, 19 Sep 2018 13:51:01 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.51.03
+        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.51.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 13:51:04 -0700 (PDT)
+        Wed, 19 Sep 2018 13:51:00 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
         Andrei Vagin <avagin@openvz.org>,
@@ -75,11 +74,10 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [RFC 17/20] selftest/timens: Add test for timerfd
-Date:   Wed, 19 Sep 2018 21:50:34 +0100
-Message-Id: <20180919205037.9574-18-dima@arista.com>
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [RFC 15/20] timens: Optimize zero-offsets
+Date:   Wed, 19 Sep 2018 21:50:32 +0100
+Message-Id: <20180919205037.9574-16-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180919205037.9574-1-dima@arista.com>
 References: <20180919205037.9574-1-dima@arista.com>
@@ -88,139 +86,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+Fall through on host or in ns without time set.
+Add TIMENS_FALLBACK_SYSCALL which might be wired up if timens offsets
+should be unknown for userspace (will result in fall-back to syscalls).
 
-Check that timerfd_create takes into account clock offsets.
-
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- tools/testing/selftests/timens/.gitignore |  1 +
- tools/testing/selftests/timens/Makefile   |  2 +-
- tools/testing/selftests/timens/timerfd.c  | 96 +++++++++++++++++++++++++++++++
- 3 files changed, 98 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/timens/timerfd.c
+ arch/x86/entry/vdso/vclock_gettime.c | 17 +++++++++++++----
+ include/linux/timens_offsets.h       | 12 ++++++++++--
+ kernel/time/posix-timers.c           | 21 ++++++++++++---------
+ kernel/time_namespace.c              |  2 +-
+ 4 files changed, 36 insertions(+), 16 deletions(-)
 
-diff --git a/tools/testing/selftests/timens/.gitignore b/tools/testing/selftests/timens/.gitignore
-index 27a693229ce1..b609f6ee9fb9 100644
---- a/tools/testing/selftests/timens/.gitignore
-+++ b/tools/testing/selftests/timens/.gitignore
-@@ -1 +1,2 @@
- timens
-+timerfd
-diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/selftests/timens/Makefile
-index b877efb78974..66b90cd28e5c 100644
---- a/tools/testing/selftests/timens/Makefile
-+++ b/tools/testing/selftests/timens/Makefile
-@@ -1,4 +1,4 @@
--TEST_GEN_PROGS := timens
-+TEST_GEN_PROGS := timens timerfd
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index a265e2737a9a..458cb1992e2e 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -252,17 +252,25 @@ notrace void set_normalized_timespec(struct timespec *ts, time_t sec, s64 nsec)
+ 	ts->tv_nsec = nsec;
+ }
  
- CFLAGS := -Wall -Werror
+-notrace static __always_inline void monotonic_to_ns(struct timespec *ts)
++notrace static __always_inline int monotonic_to_ns(struct timespec *ts)
+ {
+ #ifdef CONFIG_TIME_NS
+ 	struct timens_offsets *timens = (struct timens_offsets *) &timens_page;
+ 	struct timespec offset;
  
-diff --git a/tools/testing/selftests/timens/timerfd.c b/tools/testing/selftests/timens/timerfd.c
-new file mode 100644
-index 000000000000..914a4cd9a0df
---- /dev/null
-+++ b/tools/testing/selftests/timens/timerfd.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <sched.h>
++	/* Optimization: time is the same as on host, return right away */
++	if (!(timens->flags & TIMENS_USE_OFFSETS))
++		return 0;
 +
-+#include <sys/timerfd.h>
-+#include <sys/syscall.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <stdint.h>
++	if (timens->flags & TIMENS_FALLBACK_SYSCALL)
++		return -1;
 +
-+#include "log.h"
-+
-+#ifndef CLONE_NEWTIME
-+# define CLONE_NEWTIME	0x00001000
-+#endif
-+
-+int run_test(int clockid)
-+{
-+	struct itimerspec new_value;
-+	struct timespec now;
-+	long long elapsed;
-+	int fd, i;
-+
-+	if (clock_gettime(clockid, &now))
-+		return pr_perror("clock_gettime");
-+
-+	for (i = 0; i < 2; i++) {
-+		int flags = 0;
-+
-+		pr_msg("timerfd_settime: %d", "INFO", clockid);
-+		new_value.it_value.tv_sec = 3600;
-+		new_value.it_value.tv_nsec = 0;
-+		new_value.it_interval.tv_sec = 1;
-+		new_value.it_interval.tv_nsec = 0;
-+
-+		if (i == 1) {
-+			new_value.it_value.tv_sec += now.tv_sec;
-+			new_value.it_value.tv_nsec += now.tv_nsec;
-+		}
-+
-+		fd = timerfd_create(clockid, 0);
-+		if (fd == -1)
-+			return pr_perror("timerfd_create");
-+
-+		if (i == 1)
-+			flags |= TFD_TIMER_ABSTIME;
-+
-+		if (timerfd_settime(fd, flags, &new_value, NULL))
-+			return pr_perror("timerfd_settime");
-+
-+		if (timerfd_gettime(fd, &new_value))
-+			return pr_perror("timerfd_gettime");
-+
-+		elapsed = new_value.it_value.tv_sec;
-+		if (abs(elapsed - 3600) > 60) {
-+			printf("FAIL\n");
-+			return 1;
-+		}
-+
-+		close(fd);
-+	}
-+
-+	printf("PASS\n");
-+
+ 	offset = timespec64_to_timespec(timens->monotonic_time_offset);
+ 
+ 	*ts = timespec_add(*ts, offset);
+ 
+ #endif
 +	return 0;
-+}
+ }
+ 
+ notrace static int __always_inline do_monotonic(struct timespec *ts)
+@@ -283,8 +291,6 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
+ 	ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+ 	ts->tv_nsec = ns;
+ 
+-	monotonic_to_ns(ts);
+-
+ 	return mode;
+ }
+ 
+@@ -306,7 +312,6 @@ notrace static void do_monotonic_coarse(struct timespec *ts)
+ 		ts->tv_sec = gtod->monotonic_time_coarse_sec;
+ 		ts->tv_nsec = gtod->monotonic_time_coarse_nsec;
+ 	} while (unlikely(gtod_read_retry(gtod, seq)));
+-	monotonic_to_ns(ts);
+ }
+ 
+ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+@@ -319,12 +324,16 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
+ 	case CLOCK_MONOTONIC:
+ 		if (do_monotonic(ts) == VCLOCK_NONE)
+ 			goto fallback;
++		if (monotonic_to_ns(ts))
++			goto fallback;
+ 		break;
+ 	case CLOCK_REALTIME_COARSE:
+ 		do_realtime_coarse(ts);
+ 		break;
+ 	case CLOCK_MONOTONIC_COARSE:
+ 		do_monotonic_coarse(ts);
++		if (monotonic_to_ns(ts))
++			goto fallback;
+ 		break;
+ 	default:
+ 		goto fallback;
+diff --git a/include/linux/timens_offsets.h b/include/linux/timens_offsets.h
+index 92a8ea5601eb..8c43e7c3e632 100644
+--- a/include/linux/timens_offsets.h
++++ b/include/linux/timens_offsets.h
+@@ -2,6 +2,13 @@
+ #ifndef _LINUX_TIME_OFFSETS_H
+ #define _LINUX_TIME_OFFSETS_H
+ 
++enum {
++	/* We're in namespace - add offsets from vvar */
++	TIMENS_USE_OFFSETS	= 1,
++	/* Don't expose host's offsets, fall back to syscall - slow */
++	TIMENS_FALLBACK_SYSCALL	= 2, /* TODO if anyone actually interested */
++};
 +
-+int main(int argc, char *argv[])
-+{
-+	struct timespec tp;
-+	int ret;
+ /*
+  * Time offsets need align as they're placed on vvar page,
+  * which should have tail paddings on ia32 vdso.
+@@ -10,8 +17,9 @@
+  * to timespec because of a padding occuring between the fields.
+  */
+ struct timens_offsets {
+-	struct timespec64  monotonic_time_offset __aligned(8);
+-	struct timespec64  monotonic_boottime_offset __aligned(8);
++	u64		  flags;
++	struct timespec64 monotonic_time_offset __aligned(8);
++	struct timespec64 monotonic_boottime_offset __aligned(8);
+ };
+ 
+ #endif
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 701cb0602b7a..576dbd24c498 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -210,7 +210,7 @@ static void common_timens_adjust(clockid_t which_clock, struct timespec64 *tp)
+ {
+ 	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
+ 
+-	if (!ns_offsets)
++	if (!ns_offsets || !(ns_offsets->flags & TIMENS_USE_OFFSETS))
+ 		return;
+ 
+ 	switch (which_clock) {
+@@ -234,15 +234,16 @@ static int posix_ktime_set_ts(clockid_t which_clock,
+ 	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
+ 	struct timespec64 ktp;
+ 
++	if (!ns_offsets)
++		return -EINVAL;
 +
-+	if (unshare(CLONE_NEWTIME))
-+		return pr_perror("unshare");
+ 	if (!ns_capable(current->nsproxy->time_ns->user_ns, CAP_SYS_TIME))
+ 		return -EPERM;
+ 
+ 	ktime_get_ts64(&ktp);
+ 
+-	if (ns_offsets)
+-		ns_offsets->monotonic_time_offset = timespec64_sub(*tp, ktp);
+-	else
+-		return -EINVAL;
++	ns_offsets->monotonic_time_offset = timespec64_sub(*tp, ktp);
++	ns_offsets->flags |= TIMENS_USE_OFFSETS;
+ 
+ 	return 0;
+ }
+@@ -296,15 +297,17 @@ static int posix_set_boottime(clockid_t which_clock, const struct timespec64 *tp
+ 	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
+ 	struct timespec64 ktp;
+ 
++	if (!ns_offsets)
++		return -EINVAL;
 +
-+	if (clock_gettime(CLOCK_MONOTONIC, &tp))
-+		return pr_perror("clock_gettime");
-+	tp.tv_sec = 7 * 24 * 3600;
-+	if (clock_settime(CLOCK_MONOTONIC, &tp))
-+		return pr_perror("clock_settime");
+ 	if (!ns_capable(current->nsproxy->time_ns->user_ns, CAP_SYS_TIME))
+ 		return -EPERM;
+ 
+ 	ktime_get_boottime_ts64(&ktp);
+ 
+-	if (ns_offsets)
+-		ns_offsets->monotonic_boottime_offset = timespec64_sub(*tp, ktp);
+-	else
+-		return -EINVAL;
++	ns_offsets->monotonic_boottime_offset = timespec64_sub(*tp, ktp);
++	ns_offsets->flags |= TIMENS_USE_OFFSETS;
 +
-+	if (clock_gettime(CLOCK_BOOTTIME, &tp))
-+		return pr_perror("clock_gettime");
-+	tp.tv_sec += 9 * 24 * 3600;
-+	tp.tv_nsec = 0;
-+	if (clock_settime(CLOCK_BOOTTIME, &tp))
-+		return pr_perror("clock_settime");
-+
-+	ret = 0;
-+	ret |= run_test(CLOCK_BOOTTIME);
-+	ret |= run_test(CLOCK_MONOTONIC);
-+	return ret;
-+}
-+
+ 	return 0;
+ }
+ 
+diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
+index f88ae0e17d92..4052bdcec110 100644
+--- a/kernel/time_namespace.c
++++ b/kernel/time_namespace.c
+@@ -171,7 +171,7 @@ static void clock_timens_fixup(int clockid, struct timespec64 *val, bool to_ns)
+ 	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
+ 	struct timespec64 *offsets = NULL;
+ 
+-	if (!ns_offsets)
++	if (!ns_offsets || !(ns_offsets->flags & TIMENS_USE_OFFSETS))
+ 		return;
+ 
+ 	if (val->tv_sec == 0 && val->tv_nsec == 0)
 -- 
 2.13.6
 
