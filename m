@@ -2,120 +2,195 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0379C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC9BECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D07F2150D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D07F2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id CC493214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="NSbHV3/3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC493214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731323AbeISQ4I (ORCPT
+        id S1731366AbeISQ5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 12:56:08 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:28159 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730967AbeISQ4I (ORCPT
+        Wed, 19 Sep 2018 12:57:32 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44094 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727675AbeISQ5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:56:08 -0400
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-3.bemta.az-a.eu-west-1.aws.symcld.net id 41/FB-27351-F8032AB5; Wed, 19 Sep 2018 11:18:39 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmleJIrShJLcpLzFFi42IJ73Q4rNtnsCj
-  a4NJ6S4v5R86xWhxe9ILR4uanb6wWl3fNYbNYev0ik0Xr3iPsDmwea+atYfTYOesuu8emVZ1s
-  Hp83yQWwRLFm5iXlVySwZvRe2slc8Iuj4vg/1QbGv+xdjFwcQgJrGSVOTGpm6mLkBHIqJD78n
-  MgGYvMKREisW7KfGcTmFDCT+D7zJ1SNqcTfJwsZQWw2AR2JRzPXg8VZBFQljjd8YgGxhQVSJE
-  6cawarEREIknj86CwLyDJmgd2MEh8uHGCGWCAocXLmE7AGZgEJiYMvXjBDLNCSOLdmFVizhIC
-  9xPT3V5khbH2Jl183MkHYhhLfZ31jgbDNJXZPPwZVYy1x/cMstgmMQrOQrJiFZMUCRqZVjBZJ
-  RZnpGSW5iZk5uoYGBrqGhka6hpbGukYmBnqJVbqJeqmluuWpxSW6hnqJ5cV6xZW5yTkpenmpJ
-  ZsYgVGSUnDwww7GhS3phxglOZiURHmZZi2MFuJLyk+pzEgszogvKs1JLT7EKMPBoSTB26q/KF
-  pIsCg1PbUiLTMHGK8waQkOHiUR3tkgad7igsTc4sx0iNQpRmOOU809k5g5/ryfOolZiCUvPy9
-  VSpy3C6RUAKQ0ozQPbhAsjVxilJUS5mVkYGAQ4ilILcrNLEGVf8UozsGoJMx7C2QKT2ZeCdy+
-  V0CnMAGd8nnpApBTShIRUlINjBMCszu/yRjaeijNSLZ3DrRe6X58XVA2z0oDluSJN7xnlJwUc
-  tW02JU5/9kbwcn619KtPcPeLH4is+3YT+l7pzSbDEN3zAnYmPTimPNEaTbl4L7A3QoNSzbwnn
-  iw8+Cas0J7UwqDBWdLLvVKOuW2bvFCveDj3/eJlP27FV4xnd9Yb37B+uSeQiWW4oxEQy3mouJ
-  EAB5wPB0eAwAA
-X-Env-Sender: roy.im.opensource@diasemi.com
-X-Msg-Ref: server-19.tower-268.messagelabs.com!1537355918!4205199!2
-X-Originating-IP: [87.137.64.195]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 22847 invoked from network); 19 Sep 2018 11:18:38 -0000
-Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
-  by server-19.tower-268.messagelabs.com with AES128-SHA encrypted SMTP; 19 Sep 2018 11:18:38 -0000
-Received: from krsrvapps-01.diasemi.com (10.95.17.50) by
- NB-EX-CASHUB01.diasemi.com (10.1.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 19 Sep 2018 13:18:38 +0200
-Received: by krsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
- 9DAE45F7F8; Wed, 19 Sep 2018 20:18:36 +0900 (KST)
-Message-ID: <4a7f9f7c97298c88a99fdfed02b82db9b83115d8.1537353304.git.Roy.Im@diasemi.com>
-In-Reply-To: <cover.1537353304.git.Roy.Im@diasemi.com>
-References: <cover.1537353304.git.Roy.Im@diasemi.com>
-From:   Roy Im <roy.im.opensource@diasemi.com>
-Date:   Wed, 19 Sep 2018 19:35:04 +0900
-Subject: [RESEND PATCH V6 1/3] MAINTAINERS: da7280 updates to the Dialog
- Semiconductor search terms
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
+        Wed, 19 Sep 2018 12:57:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s10-v6so4538736edb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 04:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hA0fQ3tpM8Gwj2bmKphRGaCfWpsJsg7qrXsk9r4dn1Y=;
+        b=NSbHV3/3kjqBfNS6aMej4bJqKmMkk/YdaSLgGvUCXF7xNghJxx06wMoswhHVolWSOP
+         hGFdKhL4Mbq3HlbfiFL1dToisaDrKkN5RzvY8xfJuFR+YV7oPA/ohK3dsYwOK0ix4xrz
+         1vht3XPl08IhbOZStDqWs7swrwLunw4N4WjdO/Vx+6RSg4Lq+TNvG+kXKgqAWexP0eYd
+         oMj+I/uVfV/hbE5vEZ+wtYpYs2yARA6K/l65dnk11ExIvsoX728Z0CmsjZLlJTBpPeQK
+         VXS+ORuPZrHNHvsFRCmYHvEcQ5VkbVEoTM7lVdiLWfYouUemyoee/HNKTSmN9Y4ipjf3
+         jPKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hA0fQ3tpM8Gwj2bmKphRGaCfWpsJsg7qrXsk9r4dn1Y=;
+        b=d1yJyzZKeDxhBDPC6Z/Cef6f/wksqD0zOzFAq7kijBK2GmFxpKLDjrWdZPT7cGd50c
+         m2yEBF4aRlR13EAY5vvhBioNDZbO+QCcNMDAXhy5apOl/zYg5khsuk3+TkaM1ZuzEdh4
+         wRxFMOic3h5MTQNOzgxiVa3luAozkdjkv8StHkOZoUMq5hJOldYPvhVCAeZtrAuvjflF
+         Fgn7pzkhSQ9MmyMvLq5cmERHvoL8wrbxeWvjG2xtakCHwBrpZqf1b6y9z07m10kWuAk/
+         G89m9DrMoEYCmcIsDcMGtegyB3rzn1zBPUlQdSTgu4wTg3M0CBUsOUd7MsZdISVbFhs1
+         hmPQ==
+X-Gm-Message-State: APzg51ChCt8AQWF4IYlMnRCUvifakH3Ma+tK2lEG1C2FTiSiCBcHbK3O
+        mBXK1nEPHd1yV7mR4xb9/zKsud67B4R8f2gdySfK4g==
+X-Google-Smtp-Source: ANB0VdZ+Age7Uhv5+Br1SSkHTvaOSpEa7JQvlPrEPd4gXsn5jQCrULchZqqseKdezGm3ze0MVkhpmU0+T9+l4iIme80=
+X-Received: by 2002:a50:98a3:: with SMTP id j32-v6mr56293417edb.6.1537356003318;
+ Wed, 19 Sep 2018 04:20:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: NB-EX-CASHUB01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 19.09.2018 10:15:00
-X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
+Received: by 2002:a50:94ae:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 04:20:02
+ -0700 (PDT)
+In-Reply-To: <CAB4CAwdUiFrPVTFsz3iC=x2yTTis0n1V4BzozXPMf7EeD52gvA@mail.gmail.com>
+References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
+ <20180705144009.GC5565@intel.com> <CAB4CAwfQxrfRF=MaJZqagtRyPfJOdHjcS32GTqyG8cOg5=UgKw@mail.gmail.com>
+ <CAB4CAwdjPFLTj+bL+bAeXw2cwAtk9tWFxPPaATpQ4QbuZsM0ew@mail.gmail.com>
+ <87tvnjlsap.fsf@intel.com> <CAB4CAwdUiFrPVTFsz3iC=x2yTTis0n1V4BzozXPMf7EeD52gvA@mail.gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Wed, 19 Sep 2018 19:20:02 +0800
+Message-ID: <CAB4CAwdfTZ879LXpXGMiMrYi4kCJJBxggGGTi_REYkuRMvz2PQ@mail.gmail.com>
+Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 6:25 PM, Chris Chiu <chiu@endlessm.com> wrote:
+> On Fri, Aug 24, 2018 at 11:04 PM, Jani Nikula <jani.nikula@intel.com> wro=
+te:
+>> On Wed, 22 Aug 2018, Chris Chiu <chiu@endlessm.com> wrote:
+>>> On Fri, Jul 6, 2018 at 2:44 PM, Chris Chiu <chiu@endlessm.com> wrote:
+>>>> On Thu, Jul 5, 2018 at 10:40 PM, Ville Syrj=C3=A4l=C3=A4
+>>>> <ville.syrjala@linux.intel.com> wrote:
+>>>>> On Thu, Jul 05, 2018 at 03:58:36PM +0800, Chris Chiu wrote:
+>>>>>> Hi,
+>>>>>>     We have few ASUS laptops X705FD (The new WiskyLake), X560UD (int=
+el
+>>>>>> i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
+>>>>>> the HDMI connector status stays connected even the HDMI cable has be=
+en
+>>>>>> unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
+>>>>>> checking the status while plug/unplug the HDMI, it shows
+>>>>>> "disconnected" before plug in HDMI cable, then switch to "connected"
+>>>>>> after plugin, and still stay "connected" after unplug. This would
+>>>>>> cause the audio output path cannot correctly switch from HDMI to
+>>>>>> internal speaker after unplugging the HDMI.
+>>>>>>
+>>>>>> I then try to verify with the latest kernel 4.18.0-rc3+, the bug sti=
+ll
+>>>>>> present. The full "dmesg" log is here.
+>>>>>> https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
+>>>>>>
+>>>>>> The HDMI cable is plugged in at ~26th second.
+>>>>>> "[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>>>>>> audio support"
+>>>>>> then unplug the HDMI at ~73th second.
+>>>>>> "[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
+>>>>>> audio support"
+>>>>>>
+>>>>>> Please advise what I can do to fix this. Thanks
+>>>>>
+>>>>> Pull the cable out faster?
+>>>>>
+>>>>> I presume this is the same old case of hpd disconnecting slightly
+>>>>> before ddc and we still manage to read the EDID when processing
+>>>>> the hpd irq. We kinda tried to fix that with the live status
+>>>>> check but that thing failed spectacularly.
+>>>>>
+>>>>> --
+>>>>> Ville Syrj=C3=A4l=C3=A4
+>>>>> Intel
+>>>
+>>> There's a patch https://bugs.freedesktop.org/show_bug.cgi?id=3D107125#c=
+8.
+>>> And I verified on the X705FD/X560UD which were easy to reproduce, the p=
+atch
+>>> works as expected. Can anyone kindly give comments about this patch?
+>>> We can do anything to help fix this issue upstream. Thanks
+>>
+>> Seems like a hack. Should look into hw based debouncing or a slight
+>> delay in the hotplug work processing I think.
+>>
+>> BR,
+>> Jani.
+>>
 
-This patch adds the da7280 bindings doc and driver to the Dialog
-Semiconductor support list.
+I tried to add a slight delay in the hotplug work as follows
 
-Signed-off-by: Roy Im <roy.im.opensource@diasemi.com>
+--- a/drivers/gpu/drm/i915/intel_hotplug.c
++++ b/drivers/gpu/drm/i915/intel_hotplug.c
+@@ -378,6 +378,8 @@ static void do_i915_hotplug_check(struct work_struct *w=
+ork,
 
----
-v6: No changes.
-v5: No changes.
-v4: No changes.
-v3: No changes.
-v2: No changes.
+        spin_unlock_irq(&dev_priv->irq_lock);
 
++       msleep(100);
++
+        drm_connector_list_iter_begin(dev, &conn_iter);
+        drm_for_each_connector_iter(connector, &conn_iter) {
+                intel_connector =3D to_intel_connector(connector);
 
- MAINTAINERS |    2 ++
- 1 file changed, 2 insertions(+)
+It does work in most cases, but still fail to update the status if I
+unplug the HDMI
+cable very slow. I basically pull the HDMI cable in loose connected
+state first, and
+hold in that state ~1 second, totally unplug after that. The status in
+sysfs will report
+connected as it used to. There was no problem when I tried the patch
+https://bugs.freedesktop.org/show_bug.cgi?id=3D107125#c8
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d870cb5..6244a7d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4313,6 +4313,7 @@ S:	Supported
- F:	Documentation/hwmon/da90??
- F:	Documentation/devicetree/bindings/mfd/da90*.txt
- F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
-+F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
- F:	Documentation/devicetree/bindings/thermal/da90??-thermal.txt
- F:	Documentation/devicetree/bindings/regulator/da92*.txt
- F:	Documentation/devicetree/bindings/watchdog/da90??-wdt.txt
-@@ -4321,6 +4322,7 @@ F:	drivers/gpio/gpio-da90??.c
- F:	drivers/hwmon/da90??-hwmon.c
- F:	drivers/iio/adc/da91??-*.c
- F:	drivers/input/misc/da90??_onkey.c
-+F:	drivers/input/misc/da72??.[ch]
- F:	drivers/input/touchscreen/da9052_tsi.c
- F:	drivers/leds/leds-da90??.c
- F:	drivers/mfd/da903x.c
--- 
-end-of-patch for RESEND PATCH V6
+I'll try to modify this patch a little bit and send upstream for
+discussion later. Please
+advise if any. Thanks.
 
+Chris
+
+> So you're suggesting to add a slight delay directly in i915_hotplug_work_=
+func()?
+> And any suggestion about the 'hw based' debouncing? Maybe some examples
+> that I can refer to?
+>
+> Thanks
+>
+>>>
+>>> Chris
+>>>
+>>>> Thanks for the suggestion. I tried pulling the cable out faster, the s=
+tatus
+>>>> shows correctly. I also tried branch drm-tip of
+>>>> https://cgit.freedesktop.org/drm/drm-tip
+>>>> but the symptom persists.
+>>>>
+>>>> Anything I can help here? Or any old commit/patch I can try to do some
+>>>> experiments?
+>>>>
+>>>> Chris
+>>
+>> --
+>> Jani Nikula, Intel Open Source Graphics Center
