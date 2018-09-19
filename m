@@ -2,59 +2,57 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB22CECE565
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83724C433F4
 	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D672146D
+	by mail.kernel.org (Postfix) with ESMTP id 33C7420880
 	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EhK3obIX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D672146D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADm/6+Mj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C7420880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbeISM2m (ORCPT
+        id S1730901AbeISM2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 08:28:42 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43766 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbeISM2m (ORCPT
+        Wed, 19 Sep 2018 08:28:38 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52698 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbeISM2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:28:42 -0400
-Received: by mail-io1-f67.google.com with SMTP id y10-v6so3588947ioa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:52:12 -0700 (PDT)
+        Wed, 19 Sep 2018 08:28:38 -0400
+Received: by mail-it0-f66.google.com with SMTP id h3-v6so6839901ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FZJNEVNflrAxT+1Z0Hv5uIC0eQ5VzZc2FwvWytlu3MQ=;
-        b=EhK3obIXXfTsziRS4vydKb2tw/b8QbSumbZwfBdocf8KWlnGbvytD6YkoFzpwgpz8o
-         YW5z7ju0gy9iwK67mFRVf1NQlXfH+qCIOW+LgDoyAhmatpvTE7mGtXg7VqGeuSes5EKK
-         N6syiiph9gKTA+xyTGgM1CO1Gvw/wJNtuCdgc=
+        h=from:to:cc:subject:date:message-id;
+        bh=8J6RqrCYqxFTJGEKNKL5VAPGu8G2QxV+5l6IwAhc2Vs=;
+        b=ADm/6+MjVXgAegUp5TVm/hq5rbbVz3gDtj3CZAjLBEjT9zj8k/VwpzY+M0JLvpEv8W
+         CGCIeKWNX0miypBSnGmmDHifkA0iFm8QxoxoDA3169xzWuQhd/37QqRcWYxOAY/by+12
+         ws1A1r+RXaUCxt4XvuskAO+WLSy3DZ6idt2IQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FZJNEVNflrAxT+1Z0Hv5uIC0eQ5VzZc2FwvWytlu3MQ=;
-        b=bMBaXinzDWcQQ34yQ9nOKUvOH4qRG7Y7LnHpKx1K+0+lyUYpw33Nl/yGRkF77o+H8d
-         LsmIMJyvXPN+BZQb6cypZoZEqBXZzzxaQSUjZwFlKH/IN0AlonD6P3nrFxZNf89gCPjq
-         JYMNKteBogBQMtied5wwYDzGSRy7y6N8MPRKWne48WGEyO/rsIbF/eI0xls5kIH6h8Ud
-         9lds8QAlfX4a/YXHCHwOInWqArK8Dg7yRu1XBsQFxLuiq+pzN4I+Dnv+mRTbQTxmesQD
-         wy55yexrLBgxMtPs8HknjqibOe5vw6MeDlyM4l1LFurZpRzz/rELhLfjfJCSCH8FLOYq
-         dHYA==
-X-Gm-Message-State: APzg51CfyMY6Zev93XztpZaMmS4a3vHCle9Ch0DE+H/qblI9vsXOTiKo
-        R0X4Q6DSckiVtfM4bod3rZNRZkifimM6cw==
-X-Google-Smtp-Source: ANB0VdaIiJrzgxXWBxuIAnUhl/0ErBhuYUX5OmCNWJXtIloBOoTXwE50R1pAazveXxSMGzcWHXk2rA==
-X-Received: by 2002:a6b:9d95:: with SMTP id g143-v6mr28303195ioe.46.1537339931935;
-        Tue, 18 Sep 2018 23:52:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8J6RqrCYqxFTJGEKNKL5VAPGu8G2QxV+5l6IwAhc2Vs=;
+        b=b2M5xzwPCnZU8PSUaMoTyNGw0NwYfCLgn9XlgfJiUDpS21Wfjdm+Z7K1hxRZG2pwjr
+         t4X875KMVG2CN8CZgLUOF2i/DROwesKq0lEf4ToMCa6wEo4t2ara7lxIor/A8Ga1a1eM
+         z+JHipDKtYk1seUjmv2xQ30RoATXmWWQWTL878CyR2ZfwtQ39tefMDVlQWNulWFECddj
+         lYF3ls7PjeoDxPWXMgPCORszrByOAr0nbYXqRPRZa3OmvZEpYOshzmt2TZDlKo+rfhIL
+         dQWiT51ygiJSFXIhTrh2Zd83rBwhD8LqqOr5EM7QGL41y5DbM300/BI6o27Oivwnslpx
+         us4w==
+X-Gm-Message-State: APzg51Adh3tVTQSPDGn/GnSMrArkDbMXLdFQlyevYlAiaAyoUGrqzDTF
+        MSw/Tw+8kj0OQAxKL8I1yyjWwYEaR93lIQ==
+X-Google-Smtp-Source: ANB0VdZbnNgHlyjztwE/tFcpbSEae7QHtRHdrfd/pW2ZoFxs0/q7jEor28e3gmlAuyiunPXLtMRWeA==
+X-Received: by 2002:a24:ad11:: with SMTP id c17-v6mr20577071itf.46.1537339928258;
+        Tue, 18 Sep 2018 23:52:08 -0700 (PDT)
 Received: from localhost.localdomain ([209.82.80.116])
-        by smtp.gmail.com with ESMTPSA id x68-v6sm7939477ita.2.2018.09.18.23.52.08
+        by smtp.gmail.com with ESMTPSA id x68-v6sm7939477ita.2.2018.09.18.23.52.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Sep 2018 23:52:11 -0700 (PDT)
+        Tue, 18 Sep 2018 23:52:07 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
@@ -70,192 +68,108 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Jessica Yu <jeyu@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v3 1/9] kernel/jump_label: abstract jump_entry member accessors
-Date:   Tue, 18 Sep 2018 23:51:36 -0700
-Message-Id: <20180919065144.25010-2-ard.biesheuvel@linaro.org>
+Subject: [PATCH v3 0/9] add support for relative references in jump tables
+Date:   Tue, 18 Sep 2018 23:51:35 -0700
+Message-Id: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
-References: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of allowing architectures to use relative references
-in jump_label entries [which can dramatically reduce the memory
-footprint], introduce abstractions for references to the 'code' and
-'key' members of struct jump_entry.
+This series implements support for emitting the data structures associated
+with jump tables as 32-bit relative references instead of absolute
+references, which take up more space on builds that target 64-bit
+architectures, or implement self relocation [or both].
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- include/linux/jump_label.h | 34 +++++++++++++++++
- kernel/jump_label.c        | 40 ++++++++------------
- 2 files changed, 49 insertions(+), 25 deletions(-)
+This series enables it for arm64 and x86, although other architectures
+might benefit as well.
 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index 1a0b6f17a5d6..2eadff9b3b90 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -119,6 +119,40 @@ struct static_key {
- 
- #ifdef HAVE_JUMP_LABEL
- #include <asm/jump_label.h>
-+
-+#ifndef __ASSEMBLY__
-+
-+static inline unsigned long jump_entry_code(const struct jump_entry *entry)
-+{
-+	return entry->code;
-+}
-+
-+static inline unsigned long jump_entry_target(const struct jump_entry *entry)
-+{
-+	return entry->target;
-+}
-+
-+static inline struct static_key *jump_entry_key(const struct jump_entry *entry)
-+{
-+	return (struct static_key *)((unsigned long)entry->key & ~1UL);
-+}
-+
-+static inline bool jump_entry_is_branch(const struct jump_entry *entry)
-+{
-+	return (unsigned long)entry->key & 1UL;
-+}
-+
-+static inline bool jump_entry_is_init(const struct jump_entry *entry)
-+{
-+	return entry->code == 0;
-+}
-+
-+static inline void jump_entry_set_init(struct jump_entry *entry)
-+{
-+	entry->code = 0;
-+}
-+
-+#endif
- #endif
- 
- #ifndef __ASSEMBLY__
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index 2e62503bea0d..834e43de0daf 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -38,10 +38,10 @@ static int jump_label_cmp(const void *a, const void *b)
- 	const struct jump_entry *jea = a;
- 	const struct jump_entry *jeb = b;
- 
--	if (jea->key < jeb->key)
-+	if (jump_entry_key(jea) < jump_entry_key(jeb))
- 		return -1;
- 
--	if (jea->key > jeb->key)
-+	if (jump_entry_key(jea) > jump_entry_key(jeb))
- 		return 1;
- 
- 	return 0;
-@@ -261,8 +261,8 @@ EXPORT_SYMBOL_GPL(jump_label_rate_limit);
- 
- static int addr_conflict(struct jump_entry *entry, void *start, void *end)
- {
--	if (entry->code <= (unsigned long)end &&
--		entry->code + JUMP_LABEL_NOP_SIZE > (unsigned long)start)
-+	if (jump_entry_code(entry) <= (unsigned long)end &&
-+	    jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE > (unsigned long)start)
- 		return 1;
- 
- 	return 0;
-@@ -321,16 +321,6 @@ static inline void static_key_set_linked(struct static_key *key)
- 	key->type |= JUMP_TYPE_LINKED;
- }
- 
--static inline struct static_key *jump_entry_key(struct jump_entry *entry)
--{
--	return (struct static_key *)((unsigned long)entry->key & ~1UL);
--}
--
--static bool jump_entry_branch(struct jump_entry *entry)
--{
--	return (unsigned long)entry->key & 1UL;
--}
--
- /***
-  * A 'struct static_key' uses a union such that it either points directly
-  * to a table of 'struct jump_entry' or to a linked list of modules which in
-@@ -355,7 +345,7 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
- {
- 	struct static_key *key = jump_entry_key(entry);
- 	bool enabled = static_key_enabled(key);
--	bool branch = jump_entry_branch(entry);
-+	bool branch = jump_entry_is_branch(entry);
- 
- 	/* See the comment in linux/jump_label.h */
- 	return enabled ^ branch;
-@@ -370,12 +360,12 @@ static void __jump_label_update(struct static_key *key,
- 		 * An entry->code of 0 indicates an entry which has been
- 		 * disabled because it was in an init text area.
- 		 */
--		if (entry->code) {
--			if (kernel_text_address(entry->code))
-+		if (!jump_entry_is_init(entry)) {
-+			if (kernel_text_address(jump_entry_code(entry)))
- 				arch_jump_label_transform(entry, jump_label_type(entry));
- 			else
- 				WARN_ONCE(1, "can't patch jump_label at %pS",
--					  (void *)(unsigned long)entry->code);
-+					  (void *)jump_entry_code(entry));
- 		}
- 	}
- }
-@@ -430,8 +420,8 @@ void __init jump_label_invalidate_initmem(void)
- 	struct jump_entry *iter;
- 
- 	for (iter = iter_start; iter < iter_stop; iter++) {
--		if (init_section_contains((void *)(unsigned long)iter->code, 1))
--			iter->code = 0;
-+		if (init_section_contains((void *)jump_entry_code(iter), 1))
-+			jump_entry_set_init(iter);
- 	}
- }
- 
-@@ -441,7 +431,7 @@ static enum jump_label_type jump_label_init_type(struct jump_entry *entry)
- {
- 	struct static_key *key = jump_entry_key(entry);
- 	bool type = static_key_type(key);
--	bool branch = jump_entry_branch(entry);
-+	bool branch = jump_entry_is_branch(entry);
- 
- 	/* See the comment in linux/jump_label.h */
- 	return type ^ branch;
-@@ -565,7 +555,7 @@ static int jump_label_add_module(struct module *mod)
- 			continue;
- 
- 		key = iterk;
--		if (within_module(iter->key, mod)) {
-+		if (within_module((unsigned long)key, mod)) {
- 			static_key_set_entries(key, iter);
- 			continue;
- 		}
-@@ -615,7 +605,7 @@ static void jump_label_del_module(struct module *mod)
- 
- 		key = jump_entry_key(iter);
- 
--		if (within_module(iter->key, mod))
-+		if (within_module((unsigned long)key, mod))
- 			continue;
- 
- 		/* No memory during module load */
-@@ -659,8 +649,8 @@ static void jump_label_invalidate_module_init(struct module *mod)
- 	struct jump_entry *iter;
- 
- 	for (iter = iter_start; iter < iter_stop; iter++) {
--		if (within_module_init(iter->code, mod))
--			iter->code = 0;
-+		if (within_module_init(jump_entry_code(iter), mod))
-+			jump_entry_set_init(iter);
- 	}
- }
- 
+Patch #1 does some preparatory refactoring before patch #2 introduces the
+generic pieces required for using relative references.
+
+Patch #3 wires everything up for arm64.
+
+Patch #4 introduces support for handling 64-bit place relative relocations
+on x86_64 (see 'Changes since v1' below)
+
+For x86, patch #5 applies some preparatory changes for the arch specific
+jump label C code, which is a lot more involved than on arm64, which is
+why it is split off in this case. Patch #6 wires it up for x86 as well.
+
+Patch #7 and #8 implement the changes so that the jump_entry arrays reside
+in ro_after_init memory rather than remain fully writable all of the time.
+
+Patch #9 enables the feature for s390 (contributed by Heiko)
+
+Changes since v2:
+- fix breakage in user mode x86 kernel due to missing definition of the
+  R_X86_64_PC64 symbolic constant
+- add acks from Jessica and Kees
+- add s390 enablement patch
+
+Changes since v1:
+- change the relative reference to the static key to a 64-bit wide one on 64
+  bit architectures; this is necessary on arm64, which allows modules to
+  reside anywhere within a 4 GB window covering the core kernel text, which
+  means a 32-bit signed quantity with its +/- 2 GB range is insufficient.
+  Note that x86_64 changes are in preparation that widen the relocation
+  range as well (using the PIE linker), so I assumed that the same change
+  is appropriate for x86 as well.
+- add patch #4 to handle the relocations emitted by the compiler as a result
+  of the change above
+- added patches to move the jump_entry arrays to ro_after_init memory, so
+  that they are not as easily corrupted or manipulated.
+- add Will's ack to patch #3
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com> 
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Jessica Yu <jeyu@kernel.org> 
+Cc: Peter Zijlstra <peterz@infradead.org>
+
+Ard Biesheuvel (8):
+  kernel/jump_label: abstract jump_entry member accessors
+  kernel/jump_label: implement generic support for relative references
+  arm64/kernel: jump_label: switch to relative references
+  x86: add support for 64-bit place relative relocations
+  x86: jump_label: switch to jump_entry accessors
+  x86/kernel: jump_table: use relative references
+  jump_label: annotate entries that operate on __init code earlier
+  jump_table: move entries into ro_after_init region
+
+Heiko Carstens (1):
+  s390/jump_label: switch to relative references
+
+ arch/Kconfig                        |   3 +
+ arch/arm64/Kconfig                  |   1 +
+ arch/arm64/include/asm/jump_label.h |  38 ++++----
+ arch/arm64/kernel/jump_label.c      |   6 +-
+ arch/s390/Kconfig                   |   1 +
+ arch/s390/include/asm/jump_label.h  |  40 ++++----
+ arch/s390/kernel/jump_label.c       |  11 ++-
+ arch/s390/kernel/vmlinux.lds.S      |   1 +
+ arch/x86/Kconfig                    |   1 +
+ arch/x86/include/asm/elf.h          |   3 +-
+ arch/x86/include/asm/jump_label.h   |  24 ++---
+ arch/x86/kernel/jump_label.c        |  62 +++++-------
+ arch/x86/kernel/module.c            |   6 ++
+ arch/x86/tools/relocs.c             |  10 ++
+ arch/x86/um/asm/elf.h               |   3 +-
+ include/asm-generic/vmlinux.lds.h   |  11 ++-
+ include/linux/jump_label.h          |  65 ++++++++++++-
+ init/main.c                         |   1 -
+ kernel/jump_label.c                 | 100 +++++++++-----------
+ kernel/module.c                     |   9 ++
+ tools/objtool/special.c             |   4 +-
+ 21 files changed, 226 insertions(+), 174 deletions(-)
+
 -- 
 2.17.1
 
