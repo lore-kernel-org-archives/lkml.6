@@ -7,65 +7,64 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FCEC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1B2ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D09B2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F7721508
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BSRyD3jF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D09B2150B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aPHTrHMw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F7721508
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbeISHsE (ORCPT
+        id S1731121AbeISHsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:48:04 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43669 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730890AbeISHqk (ORCPT
+        Wed, 19 Sep 2018 03:48:15 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43670 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730883AbeISHqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:46:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id q19-v6so1077940pgn.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:13 -0700 (PDT)
+        Wed, 19 Sep 2018 03:46:39 -0400
+Received: by mail-pg1-f196.google.com with SMTP id q19-v6so1077934pgn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DInXt2vSOmIL9OTMoezsciUOBSCf6CUqco9YDUIBOqw=;
-        b=BSRyD3jFcNmp6pnmIBWpkRXPEmmaVHKzQsckwdvd0dDT0FEcde+t5PYdBfXmpCpuy9
-         KJ2Lwzg+TaR4YEpI6HXcWuYIOEbnztZOddMTbdO355111jFH0X7ZPgBpxOIb2qpHAD1a
-         Lp/D0LZA7ECfgM5ETR6eAA2Q+NsF2OWGD/Brk=
+        bh=ROtVbEYXO0Dkld82te80QOJw3jccOmR4EUaG6Lwr8OI=;
+        b=aPHTrHMwWKXGdR2E/H1C/wj4Uor72+7iP3c78+k8+hL1nQ55tt1DCOdl9wKA2DqVsZ
+         tVJxw0f584K8BjVJVKwPPDkLk+OhuJEOJYRK+0kG5iVckl/24Gfu1pSFK5Nif4ByJu42
+         /8qV8MrT3qj9QQFDR0zxpRXnCWbM0uZxKFOu4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DInXt2vSOmIL9OTMoezsciUOBSCf6CUqco9YDUIBOqw=;
-        b=sBcb8DHlwI6Pdo22zwaVpauDgyIik3HY0+UvmGl4huZLanI7VB8AD5EVZDjo4hYhyv
-         3SBETaMrmwE6uzHbI38Kooz50phNo/nDD6ROCAtUW6o1lx38SH0Ori58yZc9pUL/vM7G
-         SuO8d/+Ct8uPVRE3m9nEPxUNHkdsoFw5StB1GmyAEYfaoZLFyqxu38lS/2EnzA0QpRLp
-         DfRlGKoWM8k1CKXXzmXmKxnzzZU4s2Y3acq3/zM+1lkclucvONI1Bnw6977PmYjJly5w
-         1q/wMg6oFlCAIKU+rp9hUPyQp9i46lEgPvTkBM0heUWKB4oWNojsnIpcQltyEBu3pY08
-         UNbQ==
-X-Gm-Message-State: APzg51AtrsXnDYsUsX925u9cvoq1Oc+BF9oRh9EX805n8RVe7YzXGwAk
-        26pqquOVPzWwQfpfJoYaEhv8Tw==
-X-Google-Smtp-Source: ANB0VdaCHMUFXdpSyoQ0bc3mslk7pYL4TXz5Y/ywvtFbggaibzrUDN+QS0eV1z1pQ5+0tcFqBzRH6g==
-X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr33431544pfb.29.1537323072563;
-        Tue, 18 Sep 2018 19:11:12 -0700 (PDT)
+        bh=ROtVbEYXO0Dkld82te80QOJw3jccOmR4EUaG6Lwr8OI=;
+        b=qRYo8kIOwr/PgB/jDpa1GZgmxkdN5d/9acy3yWv2brBXje9mkL8ZV9bMNE5woQ13xW
+         6dYPU/hzSqE7jxs+rOB3EkZaHrGeSwSgJ2VZZq7CIsOdKH7CIajKZWPkGoXKXNzyIrpO
+         DuvnJs/SBhmNATL8Y3mEZQLpiGF7OMB8uj+SVTBkvNZk/dErc0+ywQQpbBIhEyOkrYkU
+         ZQf33iu3RswRU8ndnMtEwHeyI25jOXGLNjX/gUj1GBuDV7aHygqT3/l+MkmODNQb32uw
+         sRKs3j1DJdC9a8yWNGeVoUaAxgXaXQpPQOp7wpo3WPqTtwCaMwa07ggbpM2kARlImxyr
+         oEew==
+X-Gm-Message-State: APzg51DuzkreXtcG7OYxJlTgVyYdZyAbdQ7hWCR9FWFLsOzdCCQYui8i
+        HEJuU8c1uHagddkyKSNNxt2KkQ==
+X-Google-Smtp-Source: ANB0VdanV2hPHPefDr0WprjOOk5d1CNZob8JS+8Q5LHnJ0o01nDdQ8lYpiB5QnrnSquIcffhQJJO/Q==
+X-Received: by 2002:a63:d90b:: with SMTP id r11-v6mr30428562pgg.315.1537323071718;
+        Tue, 18 Sep 2018 19:11:11 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm32084957pfg.25.2018.09.18.19.11.08
+        by smtp.gmail.com with ESMTPSA id i5-v6sm33157187pfe.140.2018.09.18.19.11.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org,
+Cc:     Kees Cook <keescook@chromium.org>, x86@kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 07/23] block: cryptoloop: Remove VLA usage of skcipher
-Date:   Tue, 18 Sep 2018 19:10:44 -0700
-Message-Id: <20180919021100.3380-8-keescook@chromium.org>
+Subject: [PATCH crypto-next 06/23] x86/fpu: Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:43 -0700
+Message-Id: <20180919021100.3380-7-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -81,85 +80,94 @@ which uses a fixed stack size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
+Cc: x86@kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/block/cryptoloop.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/crypto/fpu.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/block/cryptoloop.c b/drivers/block/cryptoloop.c
-index 7033a4beda66..254ee7d54e91 100644
---- a/drivers/block/cryptoloop.c
-+++ b/drivers/block/cryptoloop.c
-@@ -45,7 +45,7 @@ cryptoloop_init(struct loop_device *lo, const struct loop_info64 *info)
- 	char cms[LO_NAME_SIZE];			/* cipher-mode string */
- 	char *mode;
- 	char *cmsp = cms;			/* c-m string pointer */
--	struct crypto_skcipher *tfm;
-+	struct crypto_sync_skcipher *tfm;
+diff --git a/arch/x86/crypto/fpu.c b/arch/x86/crypto/fpu.c
+index 406680476c52..be9b3766f241 100644
+--- a/arch/x86/crypto/fpu.c
++++ b/arch/x86/crypto/fpu.c
+@@ -20,21 +20,23 @@
+ #include <asm/fpu/api.h>
  
- 	/* encryption breaks for non sector aligned offsets */
+ struct crypto_fpu_ctx {
+-	struct crypto_skcipher *child;
++	struct crypto_sync_skcipher *child;
+ };
  
-@@ -80,13 +80,13 @@ cryptoloop_init(struct loop_device *lo, const struct loop_info64 *info)
- 	*cmsp++ = ')';
- 	*cmsp = 0;
- 
--	tfm = crypto_alloc_skcipher(cms, 0, CRYPTO_ALG_ASYNC);
-+	tfm = crypto_alloc_sync_skcipher(cms, 0, 0);
- 	if (IS_ERR(tfm))
- 		return PTR_ERR(tfm);
- 
--	err = crypto_skcipher_setkey(tfm, info->lo_encrypt_key,
--				     info->lo_encrypt_key_size);
--	
-+	err = crypto_sync_skcipher_setkey(tfm, info->lo_encrypt_key,
-+					  info->lo_encrypt_key_size);
-+
- 	if (err != 0)
- 		goto out_free_tfm;
- 
-@@ -94,7 +94,7 @@ cryptoloop_init(struct loop_device *lo, const struct loop_info64 *info)
- 	return 0;
- 
-  out_free_tfm:
--	crypto_free_skcipher(tfm);
-+	crypto_free_sync_skcipher(tfm);
- 
-  out:
- 	return err;
-@@ -109,8 +109,8 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
- 		    struct page *loop_page, unsigned loop_off,
- 		    int size, sector_t IV)
+ static int crypto_fpu_setkey(struct crypto_skcipher *parent, const u8 *key,
+ 			     unsigned int keylen)
  {
--	struct crypto_skcipher *tfm = lo->key_data;
--	SKCIPHER_REQUEST_ON_STACK(req, tfm);
-+	struct crypto_sync_skcipher *tfm = lo->key_data;
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
- 	struct scatterlist sg_out;
- 	struct scatterlist sg_in;
- 
-@@ -119,7 +119,7 @@ cryptoloop_transfer(struct loop_device *lo, int cmd,
- 	unsigned in_offs, out_offs;
+ 	struct crypto_fpu_ctx *ctx = crypto_skcipher_ctx(parent);
+-	struct crypto_skcipher *child = ctx->child;
++	struct crypto_sync_skcipher *child = ctx->child;
  	int err;
  
--	skcipher_request_set_tfm(req, tfm);
-+	skcipher_request_set_sync_tfm(req, tfm);
- 	skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP,
- 				      NULL, NULL);
- 
-@@ -175,9 +175,9 @@ cryptoloop_ioctl(struct loop_device *lo, int cmd, unsigned long arg)
- static int
- cryptoloop_release(struct loop_device *lo)
+-	crypto_skcipher_clear_flags(child, CRYPTO_TFM_REQ_MASK);
+-	crypto_skcipher_set_flags(child, crypto_skcipher_get_flags(parent) &
++	crypto_sync_skcipher_clear_flags(child, CRYPTO_TFM_REQ_MASK);
++	crypto_sync_skcipher_set_flags(child,
++				       crypto_skcipher_get_flags(parent) &
+ 					 CRYPTO_TFM_REQ_MASK);
+-	err = crypto_skcipher_setkey(child, key, keylen);
+-	crypto_skcipher_set_flags(parent, crypto_skcipher_get_flags(child) &
++	err = crypto_sync_skcipher_setkey(child, key, keylen);
++	crypto_skcipher_set_flags(parent,
++				  crypto_sync_skcipher_get_flags(child) &
+ 					  CRYPTO_TFM_RES_MASK);
+ 	return err;
+ }
+@@ -43,11 +45,11 @@ static int crypto_fpu_encrypt(struct skcipher_request *req)
  {
--	struct crypto_skcipher *tfm = lo->key_data;
-+	struct crypto_sync_skcipher *tfm = lo->key_data;
- 	if (tfm != NULL) {
--		crypto_free_skcipher(tfm);
-+		crypto_free_sync_skcipher(tfm);
- 		lo->key_data = NULL;
- 		return 0;
- 	}
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct crypto_fpu_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	struct crypto_skcipher *child = ctx->child;
+-	SKCIPHER_REQUEST_ON_STACK(subreq, child);
++	struct crypto_sync_skcipher *child = ctx->child;
++	SYNC_SKCIPHER_REQUEST_ON_STACK(subreq, child);
+ 	int err;
+ 
+-	skcipher_request_set_tfm(subreq, child);
++	skcipher_request_set_sync_tfm(subreq, child);
+ 	skcipher_request_set_callback(subreq, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(subreq, req->src, req->dst, req->cryptlen,
+ 				   req->iv);
+@@ -64,11 +66,11 @@ static int crypto_fpu_decrypt(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct crypto_fpu_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	struct crypto_skcipher *child = ctx->child;
+-	SKCIPHER_REQUEST_ON_STACK(subreq, child);
++	struct crypto_sync_skcipher *child = ctx->child;
++	SYNC_SKCIPHER_REQUEST_ON_STACK(subreq, child);
+ 	int err;
+ 
+-	skcipher_request_set_tfm(subreq, child);
++	skcipher_request_set_sync_tfm(subreq, child);
+ 	skcipher_request_set_callback(subreq, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(subreq, req->src, req->dst, req->cryptlen,
+ 				   req->iv);
+@@ -93,7 +95,7 @@ static int crypto_fpu_init_tfm(struct crypto_skcipher *tfm)
+ 	if (IS_ERR(cipher))
+ 		return PTR_ERR(cipher);
+ 
+-	ctx->child = cipher;
++	ctx->child = (struct crypto_sync_skcipher *)cipher;
+ 
+ 	return 0;
+ }
+@@ -102,7 +104,7 @@ static void crypto_fpu_exit_tfm(struct crypto_skcipher *tfm)
+ {
+ 	struct crypto_fpu_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
+-	crypto_free_skcipher(ctx->child);
++	crypto_free_sync_skcipher(ctx->child);
+ }
+ 
+ static void crypto_fpu_free(struct skcipher_instance *inst)
 -- 
 2.17.1
 
