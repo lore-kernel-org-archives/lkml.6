@@ -2,44 +2,45 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D35ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48893ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05B732150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B732150E
+	by mail.kernel.org (Postfix) with ESMTP id 0D2522150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:38:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D2522150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbeISSON (ORCPT
+        id S1731739AbeISSOM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:14:13 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60896 "EHLO inva021.nxp.com"
+        Wed, 19 Sep 2018 14:14:12 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:49800 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731607AbeISSON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:14:13 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DA095200066;
-        Wed, 19 Sep 2018 14:36:26 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CD8E02001F8;
-        Wed, 19 Sep 2018 14:36:26 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8DED020618;
+        id S1727885AbeISSOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 14:14:11 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 71AAF1A00BF;
         Wed, 19 Sep 2018 14:36:25 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 64E341A0009;
+        Wed, 19 Sep 2018 14:36:25 +0200 (CEST)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.97])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F16020618;
+        Wed, 19 Sep 2018 14:36:24 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     roy.pledge@nxp.com, madalin.bucur@nxp.com, davem@davemloft.net,
         shawnguo@kernel.org, leoyang.li@nxp.com,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH 04/21] soc/fsl/qman-portal: map CENA area in the iommu
-Date:   Wed, 19 Sep 2018 15:35:56 +0300
-Message-Id: <20180919123613.15092-5-laurentiu.tudor@nxp.com>
+Subject: [PATCH 03/21] soc/fsl/qman: map FQD and PFDR areas in the iommu
+Date:   Wed, 19 Sep 2018 15:35:55 +0300
+Message-Id: <20180919123613.15092-4-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
 References: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
@@ -51,57 +52,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-Add a one-to-one iommu mapping for qman portal CENA register area.
-This is required for QMAN stashing to work without faults behind
-an iommu.
+Add a one-to-one iommu mapping for qman private data memory areas
+(FQD and PFDR). This is required for QMAN to work without faults
+behind an iommu.
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/soc/fsl/qbman/qman_portal.c | 17 +++++++++++++++++
+ drivers/soc/fsl/qbman/qman_ccsr.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
-diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
-index a120002b630e..012bb95e87e1 100644
---- a/drivers/soc/fsl/qbman/qman_portal.c
-+++ b/drivers/soc/fsl/qbman/qman_portal.c
+diff --git a/drivers/soc/fsl/qbman/qman_ccsr.c b/drivers/soc/fsl/qbman/qman_ccsr.c
+index 619e22030460..7163f7511ce1 100644
+--- a/drivers/soc/fsl/qbman/qman_ccsr.c
++++ b/drivers/soc/fsl/qbman/qman_ccsr.c
 @@ -29,6 +29,7 @@
   */
  
  #include "qman_priv.h"
 +#include <linux/iommu.h>
  
- struct qman_portal *qman_dma_portal;
- EXPORT_SYMBOL(qman_dma_portal);
-@@ -222,6 +223,7 @@ static int qman_portal_probe(struct platform_device *pdev)
+ u16 qman_ip_rev;
+ EXPORT_SYMBOL(qman_ip_rev);
+@@ -692,6 +693,7 @@ static int fsl_qman_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
  	struct device_node *node = dev->of_node;
 +	struct iommu_domain *domain;
- 	struct qm_portal_config *pcfg;
- 	struct resource *addr_phys[2];
- 	int irq, cpu, err;
-@@ -276,6 +278,21 @@ static int qman_portal_probe(struct platform_device *pdev)
- 		goto err_ioremap2;
+ 	struct resource *res;
+ 	int ret, err_irq;
+ 	u16 id;
+@@ -769,6 +771,21 @@ static int fsl_qman_probe(struct platform_device *pdev)
  	}
+ 	dev_dbg(dev, "Allocated PFDR 0x%llx 0x%zx\n", pfdr_a, pfdr_sz);
  
-+	/* Create an 1-to-1 iommu mapping for cena portal area */
++	/* Create an 1-to-1 iommu mapping for fqd and pfdr areas */
 +	domain = iommu_get_domain_for_dev(dev);
 +	if (domain) {
-+		/*
-+		 * Note: not mapping this as cacheable triggers the infamous
-+		 * QMan CIDE error.
-+		 */
-+		err = iommu_map(iommu_get_domain_for_dev(dev),
-+				addr_phys[0]->start, addr_phys[0]->start,
-+				resource_size(addr_phys[0]),
++		ret = iommu_map(domain,
++				fqd_a, fqd_a, fqd_sz,
 +				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
-+		if (err)
-+			dev_warn(dev, "failed to iommu_map() %d\n", err);
++		if (ret)
++			dev_warn(dev, "iommu_map(fqd) failed %d\n", ret);
++		ret = iommu_map(domain,
++				pfdr_a, pfdr_a, pfdr_sz,
++				IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE);
++		if (ret)
++			dev_warn(dev, "iommu_map(pfdr) failed %d\n", ret);
 +	}
 +
- 	pcfg->pools = qm_get_pools_sdqcr();
- 
- 	spin_lock(&qman_lock);
+ 	ret = qman_init_ccsr(dev);
+ 	if (ret) {
+ 		dev_err(dev, "CCSR setup failed\n");
 -- 
 2.17.1
 
