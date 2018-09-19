@@ -2,100 +2,148 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E876C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A16ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22D52083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:29:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bATWan4i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22D52083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 397BB2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:30:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 397BB2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbeISWIX (ORCPT
+        id S1732646AbeISWJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:08:23 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:56524 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731668AbeISWIW (ORCPT
+        Wed, 19 Sep 2018 18:09:10 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:41962 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731983AbeISWJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:08:22 -0400
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JGSN6s026729
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:29:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=3FSfz0SMePFFobY+QPJQevQqPinMJaseubL3+zFTHB8=;
- b=bATWan4i80WQ2su5NO3lDxa7BsYYy2S4P6e2ehdsB5HI+bO3K3R6uMMr+2sxlYKn96kl
- wCu9G95iC4m/QaWKaUBpu//lsnF97iks4bVoOGX0efDU/F7j1aUfwzQDvW9qXS6RVBYX
- TJQW7X5Bos1enjsOjiqx8bbrOut8W8KoIRM= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mkt0880b5-11
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:29:42 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.23) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 19 Sep
- 2018 09:29:41 -0700
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)  id
- 5F7411755F7F; Wed, 19 Sep 2018 09:29:38 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH 1/2] ARM: dt-bindings: aspeed: Facebook TiogaPass BMC
-Date:   Wed, 19 Sep 2018 09:29:16 -0700
-Message-ID: <20180919162918.3994257-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Wed, 19 Sep 2018 18:09:10 -0400
+X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
+   d="scan'208";a="20993397"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Sep 2018 09:30:17 -0700
+Received: from localhost.localdomain (10.10.76.4) by
+ chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
+ 14.3.352.0; Wed, 19 Sep 2018 09:30:17 -0700
+Subject: Re: [RESEND PATCH 1/2] mtd: spi-nor: add macros related to MICRON
+ flash
+To:     Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>
+CC:     <boris.brezillon@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <marek.vasut@gmail.com>, <frieder.schrempf@exceet.de>,
+        <cyrille.pitchen@wedev4u.fr>, <computersforpeace@gmail.com>
+References: <1537332608-19561-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1537332608-19561-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+From:   Tudor Ambarus <tudor.ambarus@microchip.com>
+Message-ID: <bd92d56c-fba6-6b79-07a8-cb426de33639@microchip.com>
+Date:   Wed, 19 Sep 2018 19:30:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <1537332608-19561-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial introduction of Facebook TiogaPass family equipped with
-Aspeed 2500 BMC SoC. TiogaPass is a x86 server development kit
-with a ASPEED ast2500 BMC manufactured by Facebook.
+Hi,
 
-This adds an entry of Facebook in Documentation for vendor prefix
----
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+On 09/19/2018 07:50 AM, Yogesh Gaur wrote:
+> Some MICRON related macros in spi-nor domain were ST.
+> Rename entries related to STMicroelectronics under macro SNOR_MFR_ST.
+> 
+> Added entry of MFR Id for Micron flashes, 0x002C.
+> 
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> ---
+>  drivers/mtd/spi-nor/spi-nor.c | 9 ++++++---
+>  include/linux/mtd/cfi.h       | 1 +
+>  include/linux/mtd/spi-nor.h   | 3 ++-
+>  3 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index f028277..33a55bc 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -271,6 +271,7 @@ static inline int set_4byte(struct spi_nor *nor, const struct flash_info *info,
+>  	u8 cmd;
+>  
+>  	switch (JEDEC_MFR(info)) {
+> +	case SNOR_MFR_ST:
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc512e746..0520303ee5b8 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -127,6 +127,7 @@ everspin	Everspin Technologies, Inc.
- exar	Exar Corporation
- excito	Excito
- ezchip	EZchip Semiconductor
-+facebook	Facebook
- fairphone	Fairphone B.V.
- faraday	Faraday Technology Corporation
- fastrax	Fastrax Oy
--- 
-2.17.1
+We should mark switch cases where we are expecting to fall through, so that we
+will be prepared when enabling -Wimplicit-fallthrough.
 
+>  	case SNOR_MFR_MICRON:
+>  		/* Some Micron need WREN command; all will accept it */
+>  		need_wren = true;
+> @@ -1096,7 +1097,7 @@ static int spi_nor_is_locked(struct mtd_info *mtd, loff_t ofs, uint64_t len)
+>  	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+>  	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048, SPI_NOR_QUAD_READ) },
+>  
+> -	/* Micron */
+> +	/* Micron <--> ST Micro */
+>  	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32, SECT_4K | SPI_NOR_QUAD_READ) },
+>  	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
+>  	{ "n25q032a",	 INFO(0x20bb16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
+> @@ -2502,6 +2503,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
+>  			params->quad_enable = macronix_quad_enable;
+>  			break;
+>  
+> +		case SNOR_MFR_ST:
+>  		case SNOR_MFR_MICRON:
+>  			break;
+>  
+> @@ -2876,8 +2878,9 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+>  	mtd->_resume = spi_nor_resume;
+>  
+>  	/* NOR protection support for STmicro/Micron chips and similar */
+> -	if (JEDEC_MFR(info) == SNOR_MFR_MICRON ||
+> -			info->flags & SPI_NOR_HAS_LOCK) {
+> +	if (JEDEC_MFR(info) == SNOR_MFR_ST ||
+> +	    JEDEC_MFR(info) == SNOR_MFR_MICRON ||
+> +	    info->flags & SPI_NOR_HAS_LOCK) {
+>  		nor->flash_lock = stm_lock;
+>  		nor->flash_unlock = stm_unlock;
+>  		nor->flash_is_locked = stm_is_locked;
+> diff --git a/include/linux/mtd/cfi.h b/include/linux/mtd/cfi.h
+> index 9b57a9b..cbf7716 100644
+> --- a/include/linux/mtd/cfi.h
+> +++ b/include/linux/mtd/cfi.h
+> @@ -377,6 +377,7 @@ struct cfi_fixup {
+>  #define CFI_MFR_SHARP		0x00B0
+>  #define CFI_MFR_SST		0x00BF
+>  #define CFI_MFR_ST		0x0020 /* STMicroelectronics */
+> +#define CFI_MFR_MICRON		0x002C /* Micron */
+
+Can you point us to a datasheet to verify the id?
+
+Best,
+ta
+
+>  #define CFI_MFR_TOSHIBA		0x0098
+>  #define CFI_MFR_WINBOND		0x00DA
+>  
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index c922e97..f43bfc5 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -23,7 +23,8 @@
+>  #define SNOR_MFR_ATMEL		CFI_MFR_ATMEL
+>  #define SNOR_MFR_GIGADEVICE	0xc8
+>  #define SNOR_MFR_INTEL		CFI_MFR_INTEL
+> -#define SNOR_MFR_MICRON		CFI_MFR_ST /* ST Micro <--> Micron */
+> +#define SNOR_MFR_ST		CFI_MFR_ST	/* ST Micro */
+> +#define SNOR_MFR_MICRON		CFI_MFR_MICRON	/* Micron */
+>  #define SNOR_MFR_MACRONIX	CFI_MFR_MACRONIX
+>  #define SNOR_MFR_SPANSION	CFI_MFR_AMD
+>  #define SNOR_MFR_SST		CFI_MFR_SST
+> 
