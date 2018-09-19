@@ -2,124 +2,91 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93900ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0EAC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A805214DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:18:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="opm6Meyv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cauwfVMm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A805214DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B97BA214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:19:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97BA214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730688AbeISGxo (ORCPT
+        id S1730735AbeISGzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 02:53:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44220 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbeISGxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 02:53:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F0011607F4; Wed, 19 Sep 2018 01:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537319906;
-        bh=pryowjq4fwdgXB4+CQaOYijb3cewvvkFgSoSbm4jCjU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=opm6Meyv4npa/G/2JH+2YaqUjt3ZPiGhDcaYW8HJiAv6Mmq+6JPjJfprKFAQbhE3c
-         D2klrBoTE08N0FDrjqPdX8YdYl9aQiNO0dL3CEefvCnzoj4h/iPmTkbONyKDAGfGHl
-         Ma5Q5yejORH98XRBjDhEEj/ifamdFV4itJcl6GQs=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id C4E5E607F4;
-        Wed, 19 Sep 2018 01:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537319905;
-        bh=pryowjq4fwdgXB4+CQaOYijb3cewvvkFgSoSbm4jCjU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=cauwfVMmwtLWyfLi8nB/JuUrcDrGaJSGyPDRruLEnEwujjw/26yzxmb+k/NxYn/Zr
-         frFUz8F55Be2nTspW6dbQSljlVUs6YXzi8sojdiVU9oziRBPxF3Nonpxkn12V1YhEk
-         MSOCEHKHK4DWiBoTBfB/FOECpvjd3xxM7fXtnWc4=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 19 Sep 2018 06:48:25 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Balbir Singh <bsingharora@gmail.com>, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, vbabka@suse.cz,
-        pasha.tatashin@oracle.com, iamjoonsoo.kim@lge.com,
-        osalvador@suse.de, malat@debian.org, gregkh@linuxfoundation.org,
-        yasu.isimatu@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, arunks.linux@gmail.com,
-        vinmenon@codeaurora.org
-Subject: Re: [RFC] memory_hotplug: Free pages as pageblock_order
-In-Reply-To: <20180914091053.GJ20287@dhcp22.suse.cz>
-References: <1536744405-16752-1-git-send-email-arunks@codeaurora.org>
- <20180912103853.GC10951@dhcp22.suse.cz> <20180912125743.GB8537@350D>
- <20180912131724.GH10951@dhcp22.suse.cz>
- <9d8dfd50046036a7b4e730738940014d@codeaurora.org>
- <20180914091053.GJ20287@dhcp22.suse.cz>
-Message-ID: <28e613e9a092a434cfa9b38f7b0f8eea@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 19 Sep 2018 02:55:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727103AbeISGzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 02:55:08 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BA84A308A967;
+        Wed, 19 Sep 2018 01:19:51 +0000 (UTC)
+Received: from llong.com (ovpn-122-167.rdu2.redhat.com [10.10.122.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C1D67DEE4;
+        Wed, 19 Sep 2018 01:19:48 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] clocksource: Warn if too many missing ticks are detected
+Date:   Tue, 18 Sep 2018 21:19:39 -0400
+Message-Id: <1537319979-6139-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 19 Sep 2018 01:19:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-14 14:40, Michal Hocko wrote:
-> On Wed 12-09-18 20:12:30, Arun KS wrote:
->> On 2018-09-12 18:47, Michal Hocko wrote:
->> > On Wed 12-09-18 22:57:43, Balbir Singh wrote:
->> > > On Wed, Sep 12, 2018 at 12:38:53PM +0200, Michal Hocko wrote:
->> > > > On Wed 12-09-18 14:56:45, Arun KS wrote:
->> > > > > When free pages are done with pageblock_order, time spend on
->> > > > > coalescing pages by buddy allocator can be reduced. With
->> > > > > section size of 256MB, hot add latency of a single section
->> > > > > shows improvement from 50-60 ms to less than 1 ms, hence
->> > > > > improving the hot add latency by 60%.
->> > > >
->> > > > Where does the improvement come from? You are still doing the same
->> > > > amount of work except that the number of callbacks is lower. Is this the
->> > > > real source of 60% improvement?
->> > > >
->> > >
->> > > It looks like only the first page of the pageblock is initialized, is
->> > > some of the cost amortized in terms of doing one initialization for
->> > > the page with order (order) and then relying on split_page and helpers
->> > > to do the rest? Of course the number of callbacks reduce by a
->> > > significant
->> > > number as well.
->> >
->> > Ohh, I have missed that part. Now when re-reading I can see the reason
->> > for the perf improvement. It is most likely the higher order free which
->> > ends up being much cheaper. This part makes some sense.
->> >
->> > How much is this feasible is another question. Do not forget we have
->> > those external providers of the online callback and those would need to
->> > be updated as well.
->> Sure Michal, I ll look into this.
->> 
->> >
->> > Btw. the normal memmap init code path does the same per-page free as
->> > well. If we really want to speed the hotplug path then I guess the init
->> > one would see a bigger improvement and those two should be in sync.
->> Thanks for pointers, Will look further.
-> 
-> I haven't looked closer and I will be travelling next week so just 
-> hint.
-> Have a look at the nobootmem and how it frees pages to the page
-> allocator in __free_pages_boot_core. Seems exactly what you want and it
-> also answers your question about reference counting.
+The clocksource watchdog, when running, is scheduled on all the CPUs in
+the system sequentially on a round-robin fashion with a period of 0.5s.
+A bug in the 4.18 kernel is causing missing ticks when nohz_full
+is specified. Under some circumstances, this causes the watchdog to
+incorrectly state that the TSC is unstable because of counter overflow
+in the hpet watchdog clock source after a few minutes delay.
 
-Thanks Michal. Will send a new version after testing.
+That particular bug is fixed by the 4.19 commit 7059b36636beab ("sched:
+idle: Avoid retaining the tick when it has been stopped"). To make it
+easier to catch this kind of bug in the future, a check is added to see
+if there is too much delay in the invocation of the watchdog callback
+and print a warning once if it happens.
 
-Regards,
-Arun
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/time/clocksource.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 0e6e97a..64b05ab 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -213,6 +213,18 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 	if (!watchdog_running)
+ 		goto out;
+ 
++	/*
++	 * When the timer tick is incorrectly stopped on a CPU with
++	 * pending events, for example, it is possible that the
++	 * clocksource watchdog will stop running for a sufficiently
++	 * long enough time to cause overflow in the delta
++	 * computation leading to incorrect report of unstable clock
++	 * source. So print a warning if there is unusually large
++	 * delay (> 0.5s) in the invocation of the watchdog. That
++	 * can indicate a hidden bug in the timer tick code.
++	 */
++	WARN_ON_ONCE(jiffies - watchdog_timer.expires > WATCHDOG_INTERVAL);
++
+ 	reset_pending = atomic_read(&watchdog_reset_pending);
+ 
+ 	list_for_each_entry(cs, &watchdog_list, wd_list) {
+-- 
+1.8.3.1
+
