@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6D6C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFCCECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A207D20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:57:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A207D20880
+	by mail.kernel.org (Postfix) with ESMTP id 610B62150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610B62150B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732288AbeISUfr (ORCPT
+        id S1732308AbeISUgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:35:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39314 "EHLO mx1.suse.de"
+        Wed, 19 Sep 2018 16:36:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39420 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731295AbeISUfr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:35:47 -0400
+        id S1731295AbeISUgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:36:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 886B0ADE0;
-        Wed, 19 Sep 2018 14:57:27 +0000 (UTC)
-Date:   Wed, 19 Sep 2018 16:57:25 +0200
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 437EBB067;
+        Wed, 19 Sep 2018 14:57:53 +0000 (UTC)
+Date:   Wed, 19 Sep 2018 16:57:52 +0200
 From:   Johannes Thumshirn <jthumshirn@suse.de>
 To:     Jason Yan <yanaijie@huawei.com>
 Cc:     martin.petersen@oracle.com, jejb@linux.vnet.ibm.com,
@@ -35,16 +35,16 @@ Cc:     martin.petersen@oracle.com, jejb@linux.vnet.ibm.com,
         dan.j.williams@intel.com, hch@lst.de, huangdaode@hisilicon.com,
         chenxiang66@hisilicon.com, miaoxie@huawei.com,
         Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-Subject: Re: [PATCH v2 4/5] scsi: libsas: check the ata device status by
- ata_dev_enabled()
-Message-ID: <20180919145725.GD3635@linux-x5ow.site>
+Subject: Re: [PATCH v2 5/5] scsi: libsas: fix a race condition when smp task
+ timeout
+Message-ID: <20180919145752.GE3635@linux-x5ow.site>
 References: <20180919033204.11102-1-yanaijie@huawei.com>
- <20180919033204.11102-5-yanaijie@huawei.com>
+ <20180919033204.11102-6-yanaijie@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180919033204.11102-5-yanaijie@huawei.com>
+In-Reply-To: <20180919033204.11102-6-yanaijie@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
