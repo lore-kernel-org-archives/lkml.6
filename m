@@ -2,128 +2,174 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D41C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B731ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45D4F2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:58:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="BuFrdihC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D4F2151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id D7F8920858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:58:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F8920858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732673AbeITAh5 (ORCPT
+        id S1732729AbeITAiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 20:37:57 -0400
-Received: from mail-eopbgr690124.outbound.protection.outlook.com ([40.107.69.124]:56154
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732549AbeITAh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 20:37:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rUzhsHtLe5e3Ixdm2FmnSWzydESkhywAsWLTuVHdoLY=;
- b=BuFrdihCnDtnMKNMtnu9NktXmnXCCp4y+oxAVCoTi9S/Ccfdww87uLmEsf0LhprmlobpAzVzRjDArPkUwwf34Ur+D7xXBBZ9D3lJiijqzl8JIia9Lih5WlTLFsNd0iAvLBJ4SbrFp470HHrWnJUT9iM6qazeBZsh+sZygK95AH4=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0501.namprd21.prod.outlook.com (10.172.122.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Wed, 19 Sep 2018 18:58:37 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.003; Wed, 19 Sep 2018
- 18:58:37 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     Sasha Levin <Alexander.Levin@microsoft.com>,
-        Song Qiang <songqiang1304521@gmail.com>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>
-CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] iio: proximity: Add driver support for ST's
- VL53L0X ToF ranging sensor.
-Thread-Topic: [PATCH v6 1/2] iio: proximity: Add driver support for ST's
- VL53L0X ToF ranging sensor.
-Thread-Index: AQHUUErFdRcR/Rbme0KsaP7mPS15JA==
-Date:   Wed, 19 Sep 2018 18:58:37 +0000
-Message-ID: <CY4PR21MB07761FEA1CDDC87FBE5568B4FB1C0@CY4PR21MB0776.namprd21.prod.outlook.com>
-References: <20180918082422.13050-1-songqiang1304521@gmail.com>
-In-Reply-To: <20180918082422.13050-1-songqiang1304521@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0501;6:+rXlhkO9KSNrgmABijTDf3c9rr0ouT+zt8smwFNDrqoDvo86BT0p/tpJFp61uyTaYFRf+Ya4QzdSDv7i+k8htm5GY+iGBYFJ5QBzWMdzPWsC3jwfurxZjrbzgKoE1KNn7itACHtaQXsiKx0P6vnX0mFa9QQF8a8urUFNDBuGKa4DzIjWsjOECzrVXRD4FHrLx8/nF7WS8NAnt4j+fhgU+KiUAyDtlBkJm0UoCvDvvMGAaamr+1vDTlD8aWRTCQjjNqCLuoKTgpqcKBSxuTTNtvG8/b/SLdx58BlK+4L59nQbNFCkOJLU5jizXsYlP7Kjq47zLdK0OZz7JsVrzzo/ZUK7atj3XzEd/zGRogJOScI9jx7tt2M8X++EqIewRRH3FK+VWz8mO4bWAk17wJMbs3qZafCzbTeJG1KVSvl/uYCTNbnnatv3r+2wm9iAg+GO1exLIsSOcLeCo5lUW0m6IQ==;5:AVqDlSB0wVyOF7hbtlzbccLP+wMLPwLVf3cUk5PJwaATgL1rmo9DHBww+4zTJpYV31zpOnTJcWAzcjVBvyszfzrzS/ClBcMBqJvzL7/gdtwIOrhGEiOP5LL5uEqfSgHIvtvEZltleEZ3HAqa+j3GpdrGl12SFGcdcuKJC55wYtA=;7:52vzsFXjfMgGeOa1OOvRpWp9FerzXvnBsc0/dq6QT0cetpjTEbL2/9w2yDV6JZFyju/MJTU8j9vSPU6Swck9V8+fLvVJ2rFttuRgkqDq02ia2U7+07OoxqN0cHwGMlCys9hAkAC3wRAwhlyCF9EGVet/IuHCqtRUC7Omn4O+DlIEQk+7E4z0zJoOno5kcDs7C3lJHRmdA7R0HdJUXRsMSO7lBUasjkluyw1RrMp/zrkZEJcsBibtNcWEMDd9aKze
-x-ms-office365-filtering-correlation-id: 0bea656d-b9ee-414b-98fc-08d61e61e851
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(2017052603328)(7193020);SRVR:CY4PR21MB0501;
-x-ms-traffictypediagnostic: CY4PR21MB0501:
-x-microsoft-antispam-prvs: <CY4PR21MB05017334DBF68D33D69613FAFB1C0@CY4PR21MB0501.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(2017102700009)(2017102701064)(6040522)(2401047)(5005006)(8121501046)(2017102702064)(20171027021009)(20171027022009)(20171027023009)(20171027024009)(20171027025009)(20171027026009)(2017102703076)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0501;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0501;
-x-forefront-prvs: 0800C0C167
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(136003)(376002)(396003)(366004)(189003)(199004)(54906003)(53936002)(110136005)(14454004)(22452003)(8936002)(68736007)(575784001)(86362001)(9686003)(5250100002)(478600001)(6436002)(2906002)(229853002)(55016002)(86612001)(72206003)(106356001)(10290500003)(2900100001)(102836004)(2201001)(105586002)(5660300001)(8676002)(81166006)(81156014)(476003)(256004)(76176011)(11346002)(39060400002)(316002)(66066001)(446003)(6506007)(305945005)(74316002)(99286004)(25786009)(26005)(7736002)(97736004)(2501003)(3846002)(8990500004)(6246003)(6116002)(1511001)(7696005)(33656002)(10090500001)(486006)(6346003)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0501;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: GMDGBjVDZGy9fEATSo/6HFi54aoDHxoQse4MMmKgqfkwo3fRlY+ufSm56wKssHIVoZvCls1dRynXHIHqhDlqV/Sdk+KcrfI7Zx/9TRKMFEATqd/pmIhPHiDFKT0RPBuVAGJ5iSekI5hWGM6Wpp/cRz0B0d+0eSVHHB6ieFKbmRkH+hIS52x12pvE+ZuC6BEXTGXjgiGXHpyiPhBxF3YfGlynPeEiUvUkUYCUwdzDgtB6VESWx6QV8sJHFvmqfEB575kaTaC/5eUV8j8ia0Pv7RieBux4RdnMcr5r/Ddt3VZmwWuXXCbM+g8V2eKnXe3PKipAp76WHOV6NXM2OYoIl9T7FoK1zi4n4a1VA6D5KGM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 19 Sep 2018 20:38:06 -0400
+Received: from ucol19pa13.eemsg.mail.mil ([214.24.24.86]:57927 "EHLO
+        ucol19pa13.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731632AbeITAiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 20:38:06 -0400
+X-EEMSG-check-008: 625464877|UCOL19PA13_EEMSG_MP11.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.53,395,1531785600"; 
+   d="scan'208";a="625464877"
+Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
+  by ucol19pa13.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 19 Sep 2018 18:58:45 +0000
+X-IronPort-AV: E=Sophos;i="5.53,395,1531785600"; 
+   d="scan'208";a="18440905"
+IronPort-PHdr: =?us-ascii?q?9a23=3Ac8YMbxRM32KfYnkgDPprGu3jZdpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa67ZRWFt8tkgFKBZ4jH8fUM07OQ7/i/HzRYqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9wIRmssQndqtQdjJd/JKo21h?=
+ =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
+ =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
+ =?us-ascii?q?K/5KpwVhTmlDkIOCI48GHPi8x/kqRboA66pxdix4LYeZyZOOZicq/Ye94VS3?=
+ =?us-ascii?q?BBXsJMXCJfBI2yYZYEA+4YMepGs4Xxol0Dpga8CwaxHuPi0iJGiGH43aM60O?=
+ =?us-ascii?q?ovHw/J0wMiEN0Sv3rZt8n1OaUIXOyp0KXFwzfOYvVL0jn98ojIdRUhrOmRU7?=
+ =?us-ascii?q?Jsb8XR0UkvGB3Djl6NtILlOima1uAJs2eF7+trSOWii3U6pAFquTWv2scthZ?=
+ =?us-ascii?q?XJhoIS0FzE8z55z5wvKd23T057f8epHZ1NvC+ZL4t7Wt4uTm5ntSogyrAKpI?=
+ =?us-ascii?q?S3cDYFxZg53RLTdvqKeJWS7B35TuaeOzJ4iWpgeLK4mhm971Ctyvb5VsmoyF?=
+ =?us-ascii?q?ZKqTdFksXUunANyRPT7s+HR+Nh/ki7wzaP1h3T6vpeLUAolavUN54hwrkqmp?=
+ =?us-ascii?q?oVrUvDBTP5lF/zjK+XckUo4umo6+L5bbX6vpKQKoB5hw7kPqkuh8CzG/o0Pw?=
+ =?us-ascii?q?cQU2SB5OiwzLjj8lf4QLVOgP02iK7ZsJXCKMQAu6G5GBRY0poj6hmjDzem18?=
+ =?us-ascii?q?4UnX8cLF1fYh6HgI/pO0/WLPDiEfi/m0iskCtsx/3eIr3uGJbNLn/FkLj8Z7?=
+ =?us-ascii?q?Zy8VVRxxYyzdBE+51UDasNL+70Wk/0rNbYFAM2MxSow+b7D9VwzpseVniSAq?=
+ =?us-ascii?q?+dK67SqUWH5v8rI+WVYY8VvzH9K+I76PL0kXA5nlodd7Gz3ZQLcHC4AuhmI0?=
+ =?us-ascii?q?KBbHXymtcOC30KvgslTOHxkF2NSyRTZ3epX6Ik4jE0Ep6pApnZSoCqmryB0z?=
+ =?us-ascii?q?+xHodKaWBeFlCMDXDoep2AW/cNbiKSP8BgniUHVbe/UY8h0w+htAvhxrp5Ie?=
+ =?us-ascii?q?rb5DcYuYjg1Ndr/e3Tkw899ThuA8SayWGNQHl+nnkUSD8uwKB/vUt9x0+M0K?=
+ =?us-ascii?q?dmmvBYEd1T5/VUUgY1LJLT0eN7C8zsVQLbeNeGUlKmT866DjEwVdI+39gOb1?=
+ =?us-ascii?q?xhFNWlixCQlxatVoMcjbWQTL8z9K7G1mTwOsU1n2rP164ng0MvasBOLmahwK?=
+ =?us-ascii?q?V48l6XT7bAjkHRsqGtb6lUiDbE6WOr1WOTuARdVwlqXOPOWnVJIgP7t9Xyrn?=
+ =?us-ascii?q?vLVb61QeAqKgJbyNWqMqJQa8bxiVxNSbHkItuIMEyrnGLlPgqF3rOBasLRfm?=
+ =?us-ascii?q?wZ2CjMQBwfnxs74WeNNQ94ADyo5W3ZEmo9RhrUf0rw/Lwm+zuARUguwlTPNh?=
+ =?us-ascii?q?c52g=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2DNAQAgm6Jb/wHyM5BdHAEBAQQBAQoBAYFSgVwqgWQog?=
+ =?us-ascii?q?3OVEwEBAQEBAQaBCC2IaY1jgXo2AYRAAoM7ITYWAQMBAQEBAQECAWwogjUkA?=
+ =?us-ascii?q?YJeAQEBAQIBIwQRNAoDEAsOCgICJgICVwYBDAYCAQEXgkc/gXUFCKVcezOEd?=
+ =?us-ascii?q?4UbgQuJYhd5gQeBOYJrhEchgxeCVwKIPIVxjiwJkBwGF48aljgELYFVKwgCG?=
+ =?us-ascii?q?AghD4MngiUXjjMjMHsBAYoZgkwBAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 19 Sep 2018 18:58:47 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id w8JIwkgn009626;
+        Wed, 19 Sep 2018 14:58:47 -0400
+Subject: Re: [RFC PATCH] selinux: add a fallback to defcontext for native
+ labeling
+To:     Taras Kondratiuk <takondra@cisco.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>
+Cc:     selinux@tycho.nsa.gov, linux-kernel@vger.kernel.org,
+        xe-linux-external@cisco.com
+References: <20180919165248.53090-1-takondra@cisco.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <f283c1e7-19eb-2b99-3fef-a19e2bf99a2b@tycho.nsa.gov>
+Date:   Wed, 19 Sep 2018 15:00:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bea656d-b9ee-414b-98fc-08d61e61e851
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 18:58:37.6732
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0501
+In-Reply-To: <20180919165248.53090-1-takondra@cisco.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 09/19/2018 12:52 PM, Taras Kondratiuk wrote:
+> When files on NFSv4 server are not properly labeled (label doesn't match
+> a policy on a client) they will end up with unlabeled_t type which is
+> too generic. We would like to be able to set a default context per
+> mount. 'defcontext' mount option looks like a nice solution, but it
+> doesn't seem to be fully implemented for native labeling. Default
+> context is stored, but is never used.
+> 
+> The patch adds a fallback to a default context if a received context is
+> invalid. If the inode context is already initialized, then it is left
+> untouched to preserve a context set locally on a client.
 
-[This is an automated email]
+Can you explain the use case further?  Why are you exporting a 
+filesystem with security labeling enabled to a client that doesn't 
+understand all of the labels used within it?  Why wouldn't you just 
+disable NFSv4 security labeling and/or use a regular context= mount to 
+assign a single context to all files in the mount?
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
+To be clear, defcontext= doesn't work that way for local/FS_USE_XATTR 
+filesystems. The context specified by it is only used for:
+1) files that don't implement the xattr inode operations at all,
+2) files that lack a security.selinux xattr,
+3) the MLS portion of the context if it was missing (strictly as a 
+legacy compatibility mechanism for RHEL4 which predated the enabling of 
+the MLS field/logic).
 
-The bot has tested the following trees: v4.18.8, v4.14.70, v4.9.127, v4.4.1=
-56, v3.18.122,=20
+A file with a security.selinux xattr that is invalid under policy for 
+any reason other than a missing MLS field will be handled as having the 
+unlabeled context.
 
-v4.18.8: Build OK!
-v4.14.70: Failed to apply! Possible dependencies:
-    22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
+So this would be a divergence in semantics for defcontext= between 
+local/FS_USE_XATTR and NFS/FS_USE_NATIVE filesystems.
 
-v4.9.127: Failed to apply! Possible dependencies:
-    22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
-    78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
+> 
+> Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
+> ---
+>   security/selinux/hooks.c | 25 ++++++++++++++++++++++++-
+>   1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index ad9a9b8e9979..f7debe798bf5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6598,7 +6598,30 @@ static void selinux_inode_invalidate_secctx(struct inode *inode)
+>    */
+>   static int selinux_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
+>   {
+> -	return selinux_inode_setsecurity(inode, XATTR_SELINUX_SUFFIX, ctx, ctxlen, 0);
+> +	struct superblock_security_struct *sbsec;
+> +	struct inode_security_struct *isec;
+> +	int rc;
+> +
+> +	rc = selinux_inode_setsecurity(inode, XATTR_SELINUX_SUFFIX, ctx, ctxlen, 0);
 
-v4.4.156: Failed to apply! Possible dependencies:
-    22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
-    78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
+In this case, we likely don't gain much by reusing 
+selinux_inode_setsecurity() here and could just inline the relevant 
+portion of it if we were to make this change.  Logically they mean 
+different things.
 
-v3.18.122: Failed to apply! Possible dependencies:
-    22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
-    4193c0f1d863 ("iio: driver for Semtech SX9500 proximity solution")
-    78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
+> +
+> +	/*
+> +	 * In case of Native labeling with defcontext mount option fall back
+> +	 * to a default SID if received context is invalid.
+> +	 */
+> +	if (rc == -EINVAL) {
+> +		sbsec = inode->i_sb->s_security;
+> +		if (sbsec->behavior == SECURITY_FS_USE_NATIVE &&
+> +		    sbsec->flags & DEFCONTEXT_MNT) {
+> +			isec = inode->i_security;
+> +			if (!isec->initialized) {
+> +				isec->sclass = inode_mode_to_security_class(inode->i_mode);
+> +				isec->sid = sbsec->def_sid;
+> +				isec->initialized = 1;
+> +			}
+> +			rc = 0;
+> +		}
+> +	}
+> +	return rc;
+>   }
+>   
+>   /*
+> 
 
-
-Please let us know how to resolve this.
-
---
-Thanks,
-Sasha=
