@@ -2,112 +2,238 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D36C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03B3ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5DCE20880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EFD221522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="gDSygDlY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5DCE20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="AD4rNOUu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFD221522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732933AbeITB3E (ORCPT
+        id S1732960AbeITB3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 21:29:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:47055 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeITB3D (ORCPT
+        Wed, 19 Sep 2018 21:29:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35144 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731211AbeITB3F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 21:29:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id b129-v6so3220118pga.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 12:49:37 -0700 (PDT)
+        Wed, 19 Sep 2018 21:29:05 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j26-v6so7033681wre.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 12:49:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=bzyfvbrR/LHN7Wn4QNbtu6FWbxbPrPUtwbxxperCojo=;
-        b=gDSygDlYuxjvk29iodPYikGSp1PxDeOW9ymjfkV2ZDdIraBQbV2uL32jXuWE51DiX+
-         4NW/kLK0EuW7NVpU53VEAnx78WbqnP7AZkPa7woZ0RMwv20OCzIQGemYaTfrwKihHom+
-         J3rLq06r0wl+9khpynmAjh0bX124nXddmsBHf4SJMVOX9ow7Jjsrd7G4PsDcRwbjuDSU
-         +0ZMOB9KrUOoFJYrCHoEJS3nvTIaL9O1NArlUiQblS0LAY/7X1KSGuOrh/JTXfLr6MsW
-         wOxD7MOm5O3DcXAEuLnChzY1lLF8sXgj6cdFUPu7Yy/lh1jeiVIx76eDr1Ufw6niIPMM
-         50Hg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bo4j3UukUa9SkDMYYl/pGFxA3YY3EzpYaHWvoHWKYew=;
+        b=AD4rNOUuqggZl8uYSjsJ10M5F43RLQqqbS01EoaAgr4ZIT4R0X/IZarvvrXu0osPRf
+         FPyQiLFuW/bHp92BfQucGh1U0wp8rHKO6YmfIFqbxhYrYemXmgzhp92CxnoUqqoHdvHE
+         fAuBtHLv+wIggVse0wDsVhRkvcV4ZUwrJyI7QrYblrc3h4/gVvbzo8Madasgjq7SGtfs
+         JqXOZomjF5Ve7soJfMQuL+8GkaYc+9mYbo6p7FHItWOgMXM/fDz+yi6Qp2UjKZCpR22i
+         3+barpYcAV7VFqOycLnbN5aDIVyLqGRqaFLU77wS4fM7Z0pFvvigh2UXZ2hqS24FjsJ0
+         SMaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=bzyfvbrR/LHN7Wn4QNbtu6FWbxbPrPUtwbxxperCojo=;
-        b=C7i1McmVfUDLRgOQnY0uOieQ2F3WRtHwCYx4xg4E9QCdgWV3gVLVAC79PeaMxGAJXH
-         POzdLytN8kcel6WT1Bcs3GkkxZ6jI8aq2ZoIFQYbecwWA9dgseU0HCd9+k1qQB7kZFT/
-         jsjwwAIhWriU6F76hljx5YZS7O/6tohPWoT8k8/7R00cbpaBxbgI8pK3BJj6KG5vImo7
-         z+ZEjtHHZN8vUVO2WYZCFZuYKt3YYSJbM8ffmnwubCC1cEIuZxukhsYpXHYq3bceoXYt
-         NSEF6zbyBO8OdBfgHSUU2ASOULcqCmr+ooFTfnxQNTL2vHLNhQ18+LLE/jd0liqIAPbP
-         Sk8A==
-X-Gm-Message-State: APzg51AkStrBJiEdA69ad9DBwiAh0DPubAUgK/q0ogq+CvDVewzNDDb1
-        gbNahNuCZUdKz7hTfyqPEGbTfg==
-X-Google-Smtp-Source: ANB0VdYJrFHajabyjvKQWM5zQy1yzXEV+4CWSItNsPjhOuNkI85PwDUkQaDGAUlkroBZUb6BW5DVLA==
-X-Received: by 2002:a63:165f:: with SMTP id 31-v6mr12757840pgw.103.1537386577095;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bo4j3UukUa9SkDMYYl/pGFxA3YY3EzpYaHWvoHWKYew=;
+        b=VaK+0CKJcDWGQWZxTHd082LVT5R8rBUTZSN98BnqDrqwsmnZ2TkHrkc60rA4mKyoZV
+         uZrfp8U5+USA1EAXcMoW3tYOL0HYKJb4HdvnXKjqlOaQAfGUKPHvaYDfUpS86zRGpnha
+         T57+0Uo+yQjRMTeZcQomd6FWNotexyW1wzmyPuFmRJC5Cz548ZjiWXFTiwG8Z1FGhJsX
+         ZJUvbXtI5ARLpku1oPsEuJjiz4JQd0c4k6PtTOXUR8BROnEbq78Ef7NE5qJtkrghz0iE
+         k5eND/LSav05a/+2wSCnyuKXsP6j3nbZx7eHaDY0n+vLvn7LZlQmF6wFyBKkWjUMXWx1
+         xBtg==
+X-Gm-Message-State: APzg51DwZtjAMsPdtd/72VUcz1PiDwQYZlLo9kR59puOq+UCq8BEdyU4
+        lrLJDFR91EkcgpW9VjMIzNCBYA==
+X-Google-Smtp-Source: ANB0VdZjKR/Bm1j/L66d03X3Qqmv3EcK3TV+MWKLbMkYXWpS9CKVhBpXB9pbwKnotWgPENaYkEUg+A==
+X-Received: by 2002:a5d:404a:: with SMTP id w10-v6mr28358056wrp.147.1537386577336;
         Wed, 19 Sep 2018 12:49:37 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:7429:ad:6d57:4d4:12f6? ([2601:646:c200:7429:ad:6d57:4d4:12f6])
-        by smtp.gmail.com with ESMTPSA id h190-v6sm36847591pge.18.2018.09.19.12.49.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id p11-v6sm23528047wrd.74.2018.09.19.12.49.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
         Wed, 19 Sep 2018 12:49:36 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <099b9f82-e162-c91a-bc51-aa1ac0cd50aa@redhat.com>
-Date:   Wed, 19 Sep 2018 12:49:35 -0700
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Rik van Riel <riel@surriel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        =?utf-8?Q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <27496B23-92A0-462C-A198-6A4413634488@amacapital.net>
-References: <8e5b64e4-b3e6-f884-beb6-b7b69ab2d8c1@redhat.com> <20180914203501.qibhpmueosvkr74w@linutronix.de> <a239e97a-d1a1-388e-5db9-10758c33d702@redhat.com> <20180918142701.atfb4ul45k7tl6ew@linutronix.de> <7e9a13f3-93f5-fe4a-20d2-f4f9407bd43b@redhat.com> <83e271e1298d603c1105dd0dbea32d67da9cf1fa.camel@surriel.com> <36e8493f-f994-e885-8fe6-2f0d4a9904a1@redhat.com> <20180918160419.2zeru6xnufxixcax@linutronix.de> <11aa7d0f4ba36eff8b61a5dc1bd35ee5195fd576.camel@surriel.com> <c3492a53-74cd-4474-b664-f227ef37b7de@redhat.com> <20180919165719.iepvc7tg6aabp5mm@linutronix.de> <099b9f82-e162-c91a-bc51-aa1ac0cd50aa@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        joe@perches.com, Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v2] usb: host: Replace empty define with do while
+Date:   Wed, 19 Sep 2018 19:48:53 +0000
+Message-Id: <1537386533-22916-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It's dangerous to use empty code define.
+Furthermore it lead to the following warning:
+"suggest braces around empty body in an « else » statement"
 
+So let's replace emptyness by "do {} while(0)"
 
-> On Sep 19, 2018, at 10:00 AM, Paolo Bonzini <pbonzini@redhat.com> wrote:
->=20
->> On 19/09/2018 18:57, Sebastian Andrzej Siewior wrote:
->>> On 2018-09-19 07:55:51 [+0200], Paolo Bonzini wrote:
->>> A kthread can do use_mm/unuse_mm.
->>=20
->> indeed. The FPU struct for the kernel thread isn't valid / does not
->> contain the expected PKRU value. So loading the pkru value from the
->> struct FPU does not work as expected. We could set it to 0 for a kernel
->> thread so we don't end up with a random value.
->> If we want to get this usecase working then we would have to move pkru
->> value from FPU to mm_struct and consider it in use_mm(). Do we want
->> this?
->=20
-> As a start, I think keeping it in the FPU struct but loading it
-> unconditionally will work.  kthreads will not obey PKU but it will be
-> better already.
->=20
-> I honestly don't know if PKRU should be per-mm, I don't know mm very
-> well despite my brilliant observation above. :)
->=20
->=20
+Furthermore, as suggested by Joe Perches, rename the macro to INCR.
 
-It must be per thread.  I don=E2=80=99t think it=E2=80=99s possible to have s=
-ane semantics per mm.
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+Changes since v1:
+- rename the macro from COUNT to INCR
 
-I also think that use_mm should set PKRU to the same value that signal handl=
-ers use.  If we use 0, it=E2=80=99s a recipe for accidental PK bypass.=
+ drivers/usb/host/ehci-hcd.c    |  6 +++---
+ drivers/usb/host/ehci-q.c      |  4 ++--
+ drivers/usb/host/ehci-timer.c  |  2 +-
+ drivers/usb/host/ehci.h        |  4 ++--
+ drivers/usb/host/fotg210-hcd.c | 12 ++++++------
+ drivers/usb/host/fotg210.h     |  4 ++--
+ 6 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
+index 8608ac513fb7..64186cf59c33 100644
+--- a/drivers/usb/host/ehci-hcd.c
++++ b/drivers/usb/host/ehci-hcd.c
+@@ -730,9 +730,9 @@ static irqreturn_t ehci_irq (struct usb_hcd *hcd)
+ 	/* normal [4.15.1.2] or error [4.15.1.1] completion */
+ 	if (likely ((status & (STS_INT|STS_ERR)) != 0)) {
+ 		if (likely ((status & STS_ERR) == 0))
+-			COUNT (ehci->stats.normal);
++			INCR(ehci->stats.normal);
+ 		else
+-			COUNT (ehci->stats.error);
++			INCR(ehci->stats.error);
+ 		bh = 1;
+ 	}
+ 
+@@ -756,7 +756,7 @@ static irqreturn_t ehci_irq (struct usb_hcd *hcd)
+ 		if (cmd & CMD_IAAD)
+ 			ehci_dbg(ehci, "IAA with IAAD still set?\n");
+ 		if (ehci->iaa_in_progress)
+-			COUNT(ehci->stats.iaa);
++			INCR(ehci->stats.iaa);
+ 		end_iaa_cycle(ehci);
+ 	}
+ 
+diff --git a/drivers/usb/host/ehci-q.c b/drivers/usb/host/ehci-q.c
+index 327630405695..aa2f77f1506d 100644
+--- a/drivers/usb/host/ehci-q.c
++++ b/drivers/usb/host/ehci-q.c
+@@ -245,12 +245,12 @@ ehci_urb_done(struct ehci_hcd *ehci, struct urb *urb, int status)
+ 	}
+ 
+ 	if (unlikely(urb->unlinked)) {
+-		COUNT(ehci->stats.unlink);
++		INCR(ehci->stats.unlink);
+ 	} else {
+ 		/* report non-error and short read status as zero */
+ 		if (status == -EINPROGRESS || status == -EREMOTEIO)
+ 			status = 0;
+-		COUNT(ehci->stats.complete);
++		INCR(ehci->stats.complete);
+ 	}
+ 
+ #ifdef EHCI_URB_TRACE
+diff --git a/drivers/usb/host/ehci-timer.c b/drivers/usb/host/ehci-timer.c
+index 4fcebda4b79d..a79c8ac0a55f 100644
+--- a/drivers/usb/host/ehci-timer.c
++++ b/drivers/usb/host/ehci-timer.c
+@@ -347,7 +347,7 @@ static void ehci_iaa_watchdog(struct ehci_hcd *ehci)
+ 	 */
+ 	status = ehci_readl(ehci, &ehci->regs->status);
+ 	if ((status & STS_IAA) || !(cmd & CMD_IAAD)) {
+-		COUNT(ehci->stats.lost_iaa);
++		INCR(ehci->stats.lost_iaa);
+ 		ehci_writel(ehci, STS_IAA, &ehci->regs->status);
+ 	}
+ 
+diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
+index c8e9a48e1d51..ac5e967907d1 100644
+--- a/drivers/usb/host/ehci.h
++++ b/drivers/usb/host/ehci.h
+@@ -235,9 +235,9 @@ struct ehci_hcd {			/* one per controller */
+ 	/* irq statistics */
+ #ifdef EHCI_STATS
+ 	struct ehci_stats	stats;
+-#	define COUNT(x) ((x)++)
++#	define INCR(x) ((x)++)
+ #else
+-#	define COUNT(x)
++#	define INCR(x) do {} while (0)
+ #endif
+ 
+ 	/* debug files */
+diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
+index 058ff82ea789..de43d0d326bc 100644
+--- a/drivers/usb/host/fotg210-hcd.c
++++ b/drivers/usb/host/fotg210-hcd.c
+@@ -1286,7 +1286,7 @@ static void fotg210_iaa_watchdog(struct fotg210_hcd *fotg210)
+ 		 */
+ 		status = fotg210_readl(fotg210, &fotg210->regs->status);
+ 		if ((status & STS_IAA) || !(cmd & CMD_IAAD)) {
+-			COUNT(fotg210->stats.lost_iaa);
++			INCR(fotg210->stats.lost_iaa);
+ 			fotg210_writel(fotg210, STS_IAA,
+ 					&fotg210->regs->status);
+ 		}
+@@ -2205,12 +2205,12 @@ __acquires(fotg210->lock)
+ 	}
+ 
+ 	if (unlikely(urb->unlinked)) {
+-		COUNT(fotg210->stats.unlink);
++		INCR(fotg210->stats.unlink);
+ 	} else {
+ 		/* report non-error and short read status as zero */
+ 		if (status == -EINPROGRESS || status == -EREMOTEIO)
+ 			status = 0;
+-		COUNT(fotg210->stats.complete);
++		INCR(fotg210->stats.complete);
+ 	}
+ 
+ #ifdef FOTG210_URB_TRACE
+@@ -5154,9 +5154,9 @@ static irqreturn_t fotg210_irq(struct usb_hcd *hcd)
+ 	/* normal [4.15.1.2] or error [4.15.1.1] completion */
+ 	if (likely((status & (STS_INT|STS_ERR)) != 0)) {
+ 		if (likely((status & STS_ERR) == 0))
+-			COUNT(fotg210->stats.normal);
++			INCR(fotg210->stats.normal);
+ 		else
+-			COUNT(fotg210->stats.error);
++			INCR(fotg210->stats.error);
+ 		bh = 1;
+ 	}
+ 
+@@ -5181,7 +5181,7 @@ static irqreturn_t fotg210_irq(struct usb_hcd *hcd)
+ 		if (cmd & CMD_IAAD)
+ 			fotg210_dbg(fotg210, "IAA with IAAD still set?\n");
+ 		if (fotg210->async_iaa) {
+-			COUNT(fotg210->stats.iaa);
++			INCR(fotg210->stats.iaa);
+ 			end_unlink_async(fotg210);
+ 		} else
+ 			fotg210_dbg(fotg210, "IAA with nothing unlinked?\n");
+diff --git a/drivers/usb/host/fotg210.h b/drivers/usb/host/fotg210.h
+index 28f6467c0cbf..1b4db95e5c43 100644
+--- a/drivers/usb/host/fotg210.h
++++ b/drivers/usb/host/fotg210.h
+@@ -177,9 +177,9 @@ struct fotg210_hcd {			/* one per controller */
+ 	/* irq statistics */
+ #ifdef FOTG210_STATS
+ 	struct fotg210_stats	stats;
+-#	define COUNT(x) ((x)++)
++#	define INCR(x) ((x)++)
+ #else
+-#	define COUNT(x)
++#	define INCR(x) do {} while (0)
+ #endif
+ 
+ 	/* silicon clock */
+-- 
+2.16.4
+
