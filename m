@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F31ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0ECECE565
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2DF42151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DF42151B
+	by mail.kernel.org (Postfix) with ESMTP id 411942150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411942150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733216AbeISXKS (ORCPT
+        id S1733236AbeISXKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:10:18 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12625 "EHLO huawei.com"
+        Wed, 19 Sep 2018 19:10:19 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12626 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733198AbeISXKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:10:18 -0400
+        id S1733197AbeISXKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:10:19 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 054D0670F2F0B;
-        Thu, 20 Sep 2018 01:31:19 +0800 (CST)
+        by Forcepoint Email with ESMTP id 000FE4EF3643E;
+        Thu, 20 Sep 2018 01:31:18 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 01:31:09 +0800
+ 14.3.399.0; Thu, 20 Sep 2018 01:31:12 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>
-Subject: [PATCH net-next 06/12] net: hns3: Set STATE_DOWN bit of hdev state when stopping net
-Date:   Wed, 19 Sep 2018 18:29:52 +0100
-Message-ID: <20180919172958.12992-7-salil.mehta@huawei.com>
+Subject: [PATCH net-next 07/12] net: hns3: Check hdev state when getting link status
+Date:   Wed, 19 Sep 2018 18:29:53 +0100
+Message-ID: <20180919172958.12992-8-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180919172958.12992-1-salil.mehta@huawei.com>
 References: <20180919172958.12992-1-salil.mehta@huawei.com>
@@ -49,11 +49,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: Peng Li <lipeng321@huawei.com>
 
-We clear STATE_DOWN bit of hdev state when starting net, but do not set
-it again when stopping net. It causes that the net is down, but hdev state
-is still up. STATE_DOWN bit of hdev state should be set when stopping net.
+By default, HW link status is up. If hclge_update_link_status is called
+before net up, driver will print "link up". It is not suitable. hdev
+state check is needed when getting link status.
 
 Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
 Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
@@ -61,36 +61,38 @@ Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 2 ++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 3 +++
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index ad15ba7..66b31d1 100644
+index 66b31d1..4f4ded3 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3519,6 +3519,8 @@ static void hclge_ae_stop(struct hnae3_handle *handle)
- 	struct hclge_dev *hdev = vport->back;
- 	int i;
+@@ -2063,6 +2063,9 @@ static int hclge_get_mac_phy_link(struct hclge_dev *hdev)
+ 	int mac_state;
+ 	int link_stat;
  
-+	set_bit(HCLGE_STATE_DOWN, &hdev->state);
++	if (test_bit(HCLGE_STATE_DOWN, &hdev->state))
++		return 0;
 +
- 	del_timer_sync(&hdev->service_timer);
- 	cancel_work_sync(&hdev->service_task);
- 	clear_bit(HCLGE_STATE_SERVICE_SCHED, &hdev->state);
+ 	mac_state = hclge_get_mac_link_status(hdev);
+ 
+ 	if (hdev->hw.mac.phydev) {
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 9c0091f..47fc3cd 100644
+index 47fc3cd..320043e 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1448,6 +1448,8 @@ static void hclgevf_ae_stop(struct hnae3_handle *handle)
- 	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
- 	int i, queue_id;
+@@ -299,6 +299,9 @@ void hclgevf_update_link_status(struct hclgevf_dev *hdev, int link_state)
  
-+	set_bit(HCLGEVF_STATE_DOWN, &hdev->state);
+ 	client = handle->client;
+ 
++	link_state =
++		test_bit(HCLGEVF_STATE_DOWN, &hdev->state) ? 0 : link_state;
 +
- 	for (i = 0; i < hdev->num_tqps; i++) {
- 		/* Ring disable */
- 		queue_id = hclgevf_get_queue_id(handle->kinfo.tqp[i]);
+ 	if (link_state != hdev->hw.mac.link) {
+ 		client->ops->link_status_change(handle, !!link_state);
+ 		hdev->hw.mac.link = link_state;
 -- 
 2.7.4
 
