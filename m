@@ -2,169 +2,116 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED37AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FC1ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9738621508
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7719B2086E
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P0jco0Jd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cEeR+FEm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9738621508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NsTjpQlD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7719B2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730835AbeISHec (ORCPT
+        id S1730831AbeISHic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:34:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54118 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730638AbeISHec (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:34:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CF48160BF7; Wed, 19 Sep 2018 01:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537322346;
-        bh=8heZ/jqPLgE7HY6ugtZQRuHjt39wuhlumsV9TdOVoyI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=P0jco0JdK3UzmmDtlmAINrtp60WZa1UmuQYi4LTTIag5zgxUWHDD12BYuy3EryxWI
-         ubznTKgB5EdhBymcK5Af/TAlEbKWCUNfcRHT+cOCv82qneR3uSFurxKnbYFSAMkFQb
-         idnY3U/ftTkDrzz4GTpeoN5p5/AFZmo+0Y3Mr/pU=
-Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 78C0D60721;
-        Wed, 19 Sep 2018 01:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537322345;
-        bh=8heZ/jqPLgE7HY6ugtZQRuHjt39wuhlumsV9TdOVoyI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cEeR+FEmKXF1d52EgUcaiEsT87AzADN8rIpby+pt5/GTNQvtUSSIUHaUGw9HfrLDh
-         IM9eRj527deVZghVbcuJxrvczbJhakSJGbZL3imaMB7cXQ8x3ajNrWMNQgJC9BbQv7
-         GXsQToz4rs2bZDK5F5TRR3O/tQ6eWjYfK3nk4nQo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78C0D60721
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   Fan Wu <wufan@codeaurora.org>
-To:     mchehab@kernel.org
-Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, john.garry@huawei.com,
-        toshi.kani@hpe.com, tanxiaofei@huawei.com, wanghuiqiang@huawei.com,
-        shiju.jose@huawei.com, Fan Wu <wufan@codeaurora.org>
-Subject: [PATCH v5] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Wed, 19 Sep 2018 01:59:00 +0000
-Message-Id: <1537322340-1860-1-git-send-email-wufan@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 19 Sep 2018 03:38:32 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:40745 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726887AbeISHib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:38:31 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d56da564;
+        Wed, 19 Sep 2018 01:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=nlSBR7BDJ1iM6gWgOA5HnSUXLXo=; b=NsTjpQ
+        lDdaZzC9yiLzkst5eSCI6NmG64O+bVUP8P5yYx98r2XhatQn2mG3l4TeZFa1Hczg
+        He3M1rlR3VbjJ9C9uqNZMGjblADrjImICn/NoHa41IGJ3nbrkbJovGjXavFxp+yf
+        C/prlAvaLJSVOerkwV52LBXN9hNpdZ+7mE9Kp/LIbQ66d1ZXqIg/gAl/tsMqU+hC
+        D3nvrR5YS/JuUWPuI51spyz3zOHrqkwK8m55L8tkN5iDjnDX5YT9AIxqu93wj3+H
+        QalAZbl/zSxAfZ7krIKoolR60GXVLlxVCkHK+UepkNlEDo4Xd/oW3DFTs3hJONP3
+        PlrfgfvsuxXymX4Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 561ade05 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Wed, 19 Sep 2018 01:45:26 +0000 (UTC)
+Received: by mail-oi0-f52.google.com with SMTP id p84-v6so3661092oic.4;
+        Tue, 18 Sep 2018 19:03:03 -0700 (PDT)
+X-Gm-Message-State: APzg51BKe06Eyf3KSeqd6suPFQ9d52Eh8+O22yY4UYWH0BEeAMy3c/8d
+        0sr100wfpfXdpdZwuYKLu5EFbmytvfROyCahPH0=
+X-Google-Smtp-Source: ANB0VdaKuJWqT0yg1SnXVGKoeacY58ERie2NkviBxSQ1yEaOSnlsTohUb3HFPd/imxUoHSMb2hXPuoo4Aa1DjySO1/c=
+X-Received: by 2002:aca:d4cd:: with SMTP id l196-v6mr297834oig.15.1537322582804;
+ Tue, 18 Sep 2018 19:03:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-4-Jason@zx2c4.com>
+ <20180919010816.GD74746@gmail.com>
+In-Reply-To: <20180919010816.GD74746@gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Wed, 19 Sep 2018 04:02:51 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qOZEBNr0yndDWmfGMwuFSsN16n4KCDUSdHCPtCVe+Afw@mail.gmail.com>
+Message-ID: <CAHmME9qOZEBNr0yndDWmfGMwuFSsN16n4KCDUSdHCPtCVe+Afw@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 03/20] zinc: ChaCha20 generic C implementation
+ and selftest
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For platforms whose firmwares provide valid module handles
-(SMBIOS type 17) in error records, this patch uses the module
-handles to locate corresponding DIMMs and enables per-DIMM
-error counter update.
+On Wed, Sep 19, 2018 at 3:08 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> Does this consistently perform as well as an implementation that organizes the
+> operations such that the quarterrounds for all columns/diagonals are
+> interleaved?  As-is, there are tight dependencies in QUARTER_ROUND() (as well as
+> in the existing chacha20_block() in lib/chacha20.c, for that matter), so we're
+> heavily depending on the compiler to do the needed interleaving so as to not get
+> potentially disastrous performance.  Making it explicit could be a good idea.
 
-Signed-off-by: Fan Wu <wufan@codeaurora.org>
-Reviewed-by: Tyler Baicar <baicar.tyler@gmail.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Tested-by: Toshi Kani <toshi.kani@hpe.com>
----
+It does perform as well, and the compiler outputs good code, even on
+older compilers. Notably that's all a single statement (via the comma
+operator).
 
-Changes from v4:
-Changes from v3:
-* Updated Reviewed-by list
+> > +}
+> > +
+> > +static void chacha20_generic(u8 *out, const u8 *in, u32 len, const u32 key[8],
+> > +                          const u32 counter[4])
+> > +{
+> > +     __le32 buf[CHACHA20_BLOCK_WORDS];
+> > +     u32 x[] = {
+> > +             EXPAND_32_BYTE_K,
+> > +             key[0], key[1], key[2], key[3],
+> > +             key[4], key[5], key[6], key[7],
+> > +             counter[0], counter[1], counter[2], counter[3]
+> > +     };
+> > +
+> > +     if (out != in)
+> > +             memmove(out, in, len);
+> > +
+> > +     while (len >= CHACHA20_BLOCK_SIZE) {
+> > +             chacha20_block_generic(buf, x);
+> > +             crypto_xor(out, (u8 *)buf, CHACHA20_BLOCK_SIZE);
+> > +             len -= CHACHA20_BLOCK_SIZE;
+> > +             out += CHACHA20_BLOCK_SIZE;
+> > +     }
+> > +     if (len) {
+> > +             chacha20_block_generic(buf, x);
+> > +             crypto_xor(out, (u8 *)buf, len);
+> > +     }
+> > +}
+>
+> If crypto_xor_cpy() is used instead of crypto_xor(), and 'in' is incremented
+> along with 'out', then the memmove() is not needed.
 
-Changes from v2:
-* Fixed coding style glitch
-* Added Tested-by/Reviewed-by
+Nice idea, thanks. Implemented.
 
-Changes from v1:
-*  Changed the new function name to get_dimm_smbios_index
-*  Removed unnecessary checks inside get_dimm_smbios_index
-*  Reverted the change of the DMI handle print
-*  Updated commit message
-
----
- drivers/edac/ghes_edac.c | 23 +++++++++++++++++++++++
- include/linux/edac.h     |  2 ++
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 473aeec..ba46160 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -81,6 +81,18 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
- 		(*num_dimm)++;
- }
- 
-+static int get_dimm_smbios_index(u16 handle)
-+{
-+	int i;
-+	struct mem_ctl_info *mci = ghes_pvt->mci;
-+
-+	for (i = 0; i < mci->tot_dimms; i++) {
-+		if (mci->dimms[i]->smbios_handle == handle)
-+			return i;
-+	}
-+	return -1;
-+}
-+
- static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- {
- 	struct ghes_edac_dimm_fill *dimm_fill = arg;
-@@ -177,6 +189,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- 				entry->total_width, entry->data_width);
- 		}
- 
-+		dimm->smbios_handle = entry->handle;
-+
- 		dimm_fill->count++;
- 	}
- }
-@@ -327,12 +341,21 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
- 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
- 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
- 		const char *bank = NULL, *device = NULL;
-+		int index = -1;
-+
- 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
- 		if (bank != NULL && device != NULL)
- 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
- 		else
- 			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
- 				     mem_err->mem_dev_handle);
-+
-+		index = get_dimm_smbios_index(mem_err->mem_dev_handle);
-+		if (index >= 0) {
-+			e->top_layer = index;
-+			e->enable_per_layer_report = true;
-+		}
-+
- 	}
- 	if (p > e->location)
- 		*(p - 1) = '\0';
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index bffb978..a45ce1f 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -451,6 +451,8 @@ struct dimm_info {
- 	u32 nr_pages;			/* number of pages on this dimm */
- 
- 	unsigned csrow, cschannel;	/* Points to the old API data */
-+
-+	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
- };
- 
- /**
--- 
-2.7.4
-
+Jason
