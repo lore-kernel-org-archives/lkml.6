@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8364ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45207ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF79E2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF79E2150F
+	by mail.kernel.org (Postfix) with ESMTP id D53E82150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D53E82150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733158AbeISXKK (ORCPT
+        id S1733177AbeISXKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:10:10 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33446 "EHLO huawei.com"
+        Wed, 19 Sep 2018 19:10:12 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33447 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732969AbeISXKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:10:09 -0400
+        id S1732911AbeISXKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:10:10 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AB9C051A5FF33;
+        by Forcepoint Email with ESMTP id B0D4C7B656B08;
         Thu, 20 Sep 2018 01:31:08 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 01:31:01 +0800
+ 14.3.399.0; Thu, 20 Sep 2018 01:31:03 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next 03/12] net: hns3: Remove tx budget to clean more TX descriptors in a napi
-Date:   Wed, 19 Sep 2018 18:29:49 +0100
-Message-ID: <20180919172958.12992-4-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Junxin Chen <chenjunxin1@huawei.com>
+Subject: [PATCH net-next 04/12] net: hns3: Remove packet statistics of public
+Date:   Wed, 19 Sep 2018 18:29:50 +0100
+Message-ID: <20180919172958.12992-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180919172958.12992-1-salil.mehta@huawei.com>
 References: <20180919172958.12992-1-salil.mehta@huawei.com>
@@ -51,105 +51,524 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peng Li <lipeng321@huawei.com>
 
-The the actual Tx work is minimal, driver can clean up as more
-Tx descriptors as possible in a irq.
+All pf have permission to read packet statistics of public in hardware,
+but the read operation will clear registers which cause statistical
+inaccuracy.
 
+This patch removes all packet statistics of public.
+
+Signed-off-by: Junxin Chen <chenjunxin1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 17 ++++++-----------
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |  2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  2 +-
- 3 files changed, 8 insertions(+), 13 deletions(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 313 ---------------------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    | 105 -------
+ 2 files changed, 418 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 837c6d6..99209a0 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1955,7 +1955,7 @@ static int is_valid_clean_head(struct hns3_enet_ring *ring, int h)
- 	return u > c ? (h > c && h <= u) : (h > c || h <= u);
- }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index cf18608..aececf5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -24,8 +24,6 @@
+ #define HCLGE_NAME			"hclge"
+ #define HCLGE_STATS_READ(p, offset) (*((u64 *)((u8 *)(p) + (offset))))
+ #define HCLGE_MAC_STATS_FIELD_OFF(f) (offsetof(struct hclge_mac_stats, f))
+-#define HCLGE_64BIT_STATS_FIELD_OFF(f) (offsetof(struct hclge_64_bit_stats, f))
+-#define HCLGE_32BIT_STATS_FIELD_OFF(f) (offsetof(struct hclge_32_bit_stats, f))
  
--bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
-+void hns3_clean_tx_ring(struct hns3_enet_ring *ring)
- {
- 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
- 	struct netdev_queue *dev_queue;
-@@ -1966,7 +1966,7 @@ bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
- 	rmb(); /* Make sure head is ready before touch any data */
+ static int hclge_set_mta_filter_mode(struct hclge_dev *hdev,
+ 				     enum hclge_mta_dmac_sel_type mta_mac_sel,
+@@ -56,170 +54,6 @@ static const char hns3_nic_test_strs[][ETH_GSTRING_LEN] = {
+ 	"Phy    Loopback test"
+ };
  
- 	if (is_ring_empty(ring) || head == ring->next_to_clean)
--		return true; /* no data to poll */
-+		return; /* no data to poll */
- 
- 	if (unlikely(!is_valid_clean_head(ring, head))) {
- 		netdev_err(netdev, "wrong head (%d, %d-%d)\n", head,
-@@ -1975,16 +1975,15 @@ bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
- 		u64_stats_update_begin(&ring->syncp);
- 		ring->stats.io_err_cnt++;
- 		u64_stats_update_end(&ring->syncp);
--		return true;
-+		return;
- 	}
- 
- 	bytes = 0;
- 	pkts = 0;
--	while (head != ring->next_to_clean && budget) {
-+	while (head != ring->next_to_clean) {
- 		hns3_nic_reclaim_one_desc(ring, &bytes, &pkts);
- 		/* Issue prefetch for next Tx descriptor */
- 		prefetch(&ring->desc_cb[ring->next_to_clean]);
--		budget--;
- 	}
- 
- 	ring->tqp_vector->tx_group.total_bytes += bytes;
-@@ -2009,8 +2008,6 @@ bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
- 			ring->stats.restart_queue++;
- 		}
- 	}
+-static const struct hclge_comm_stats_str g_all_64bit_stats_string[] = {
+-	{"igu_rx_oversize_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_oversize_pkt)},
+-	{"igu_rx_undersize_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_undersize_pkt)},
+-	{"igu_rx_out_all_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_out_all_pkt)},
+-	{"igu_rx_uni_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_uni_pkt)},
+-	{"igu_rx_multi_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_multi_pkt)},
+-	{"igu_rx_broad_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(igu_rx_broad_pkt)},
+-	{"egu_tx_out_all_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(egu_tx_out_all_pkt)},
+-	{"egu_tx_uni_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(egu_tx_uni_pkt)},
+-	{"egu_tx_multi_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(egu_tx_multi_pkt)},
+-	{"egu_tx_broad_pkt",
+-		HCLGE_64BIT_STATS_FIELD_OFF(egu_tx_broad_pkt)},
+-	{"ssu_ppp_mac_key_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_ppp_mac_key_num)},
+-	{"ssu_ppp_host_key_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_ppp_host_key_num)},
+-	{"ppp_ssu_mac_rlt_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ppp_ssu_mac_rlt_num)},
+-	{"ppp_ssu_host_rlt_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ppp_ssu_host_rlt_num)},
+-	{"ssu_tx_in_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_tx_in_num)},
+-	{"ssu_tx_out_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_tx_out_num)},
+-	{"ssu_rx_in_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_rx_in_num)},
+-	{"ssu_rx_out_num",
+-		HCLGE_64BIT_STATS_FIELD_OFF(ssu_rx_out_num)}
+-};
 -
--	return !!budget;
- }
+-static const struct hclge_comm_stats_str g_all_32bit_stats_string[] = {
+-	{"igu_rx_err_pkt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(igu_rx_err_pkt)},
+-	{"igu_rx_no_eof_pkt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(igu_rx_no_eof_pkt)},
+-	{"igu_rx_no_sof_pkt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(igu_rx_no_sof_pkt)},
+-	{"egu_tx_1588_pkt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(egu_tx_1588_pkt)},
+-	{"ssu_full_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(ssu_full_drop_num)},
+-	{"ssu_part_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(ssu_part_drop_num)},
+-	{"ppp_key_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(ppp_key_drop_num)},
+-	{"ppp_rlt_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(ppp_rlt_drop_num)},
+-	{"ssu_key_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(ssu_key_drop_num)},
+-	{"pkt_curr_buf_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_cnt)},
+-	{"qcn_fb_rcv_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_rcv_cnt)},
+-	{"qcn_fb_drop_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_drop_cnt)},
+-	{"qcn_fb_invaild_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(qcn_fb_invaild_cnt)},
+-	{"rx_packet_tc0_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc0_in_cnt)},
+-	{"rx_packet_tc1_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc1_in_cnt)},
+-	{"rx_packet_tc2_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc2_in_cnt)},
+-	{"rx_packet_tc3_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc3_in_cnt)},
+-	{"rx_packet_tc4_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc4_in_cnt)},
+-	{"rx_packet_tc5_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc5_in_cnt)},
+-	{"rx_packet_tc6_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc6_in_cnt)},
+-	{"rx_packet_tc7_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc7_in_cnt)},
+-	{"rx_packet_tc0_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc0_out_cnt)},
+-	{"rx_packet_tc1_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc1_out_cnt)},
+-	{"rx_packet_tc2_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc2_out_cnt)},
+-	{"rx_packet_tc3_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc3_out_cnt)},
+-	{"rx_packet_tc4_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc4_out_cnt)},
+-	{"rx_packet_tc5_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc5_out_cnt)},
+-	{"rx_packet_tc6_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc6_out_cnt)},
+-	{"rx_packet_tc7_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_packet_tc7_out_cnt)},
+-	{"tx_packet_tc0_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc0_in_cnt)},
+-	{"tx_packet_tc1_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc1_in_cnt)},
+-	{"tx_packet_tc2_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc2_in_cnt)},
+-	{"tx_packet_tc3_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc3_in_cnt)},
+-	{"tx_packet_tc4_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc4_in_cnt)},
+-	{"tx_packet_tc5_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc5_in_cnt)},
+-	{"tx_packet_tc6_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc6_in_cnt)},
+-	{"tx_packet_tc7_in_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc7_in_cnt)},
+-	{"tx_packet_tc0_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc0_out_cnt)},
+-	{"tx_packet_tc1_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc1_out_cnt)},
+-	{"tx_packet_tc2_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc2_out_cnt)},
+-	{"tx_packet_tc3_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc3_out_cnt)},
+-	{"tx_packet_tc4_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc4_out_cnt)},
+-	{"tx_packet_tc5_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc5_out_cnt)},
+-	{"tx_packet_tc6_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc6_out_cnt)},
+-	{"tx_packet_tc7_out_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_packet_tc7_out_cnt)},
+-	{"pkt_curr_buf_tc0_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc0_cnt)},
+-	{"pkt_curr_buf_tc1_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc1_cnt)},
+-	{"pkt_curr_buf_tc2_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc2_cnt)},
+-	{"pkt_curr_buf_tc3_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc3_cnt)},
+-	{"pkt_curr_buf_tc4_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc4_cnt)},
+-	{"pkt_curr_buf_tc5_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc5_cnt)},
+-	{"pkt_curr_buf_tc6_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc6_cnt)},
+-	{"pkt_curr_buf_tc7_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(pkt_curr_buf_tc7_cnt)},
+-	{"mb_uncopy_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(mb_uncopy_num)},
+-	{"lo_pri_unicast_rlt_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(lo_pri_unicast_rlt_drop_num)},
+-	{"hi_pri_multicast_rlt_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(hi_pri_multicast_rlt_drop_num)},
+-	{"lo_pri_multicast_rlt_drop_num",
+-		HCLGE_32BIT_STATS_FIELD_OFF(lo_pri_multicast_rlt_drop_num)},
+-	{"rx_oq_drop_pkt_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(rx_oq_drop_pkt_cnt)},
+-	{"tx_oq_drop_pkt_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(tx_oq_drop_pkt_cnt)},
+-	{"nic_l2_err_drop_pkt_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(nic_l2_err_drop_pkt_cnt)},
+-	{"roc_l2_err_drop_pkt_cnt",
+-		HCLGE_32BIT_STATS_FIELD_OFF(roc_l2_err_drop_pkt_cnt)}
+-};
+-
+ static const struct hclge_comm_stats_str g_mac_stats_string[] = {
+ 	{"mac_tx_mac_pause_num",
+ 		HCLGE_MAC_STATS_FIELD_OFF(mac_tx_mac_pause_num)},
+@@ -394,109 +228,6 @@ static const struct hclge_mac_mgr_tbl_entry_cmd hclge_mgr_table[] = {
+ 	},
+ };
  
- static int hns3_desc_unused(struct hns3_enet_ring *ring)
-@@ -2544,10 +2541,8 @@ static int hns3_nic_common_poll(struct napi_struct *napi, int budget)
- 	/* Since the actual Tx work is minimal, we can give the Tx a larger
- 	 * budget and be more aggressive about cleaning up the Tx descriptors.
- 	 */
--	hns3_for_each_ring(ring, tqp_vector->tx_group) {
--		if (!hns3_clean_tx_ring(ring, budget))
--			clean_complete = false;
+-static int hclge_64_bit_update_stats(struct hclge_dev *hdev)
+-{
+-#define HCLGE_64_BIT_CMD_NUM 5
+-#define HCLGE_64_BIT_RTN_DATANUM 4
+-	u64 *data = (u64 *)(&hdev->hw_stats.all_64_bit_stats);
+-	struct hclge_desc desc[HCLGE_64_BIT_CMD_NUM];
+-	__le64 *desc_data;
+-	int i, k, n;
+-	int ret;
+-
+-	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_STATS_64_BIT, true);
+-	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_64_BIT_CMD_NUM);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"Get 64 bit pkt stats fail, status = %d.\n", ret);
+-		return ret;
 -	}
-+	hns3_for_each_ring(ring, tqp_vector->tx_group)
-+		hns3_clean_tx_ring(ring);
+-
+-	for (i = 0; i < HCLGE_64_BIT_CMD_NUM; i++) {
+-		if (unlikely(i == 0)) {
+-			desc_data = (__le64 *)(&desc[i].data[0]);
+-			n = HCLGE_64_BIT_RTN_DATANUM - 1;
+-		} else {
+-			desc_data = (__le64 *)(&desc[i]);
+-			n = HCLGE_64_BIT_RTN_DATANUM;
+-		}
+-		for (k = 0; k < n; k++) {
+-			*data++ += le64_to_cpu(*desc_data);
+-			desc_data++;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static void hclge_reset_partial_32bit_counter(struct hclge_32_bit_stats *stats)
+-{
+-	stats->pkt_curr_buf_cnt     = 0;
+-	stats->pkt_curr_buf_tc0_cnt = 0;
+-	stats->pkt_curr_buf_tc1_cnt = 0;
+-	stats->pkt_curr_buf_tc2_cnt = 0;
+-	stats->pkt_curr_buf_tc3_cnt = 0;
+-	stats->pkt_curr_buf_tc4_cnt = 0;
+-	stats->pkt_curr_buf_tc5_cnt = 0;
+-	stats->pkt_curr_buf_tc6_cnt = 0;
+-	stats->pkt_curr_buf_tc7_cnt = 0;
+-}
+-
+-static int hclge_32_bit_update_stats(struct hclge_dev *hdev)
+-{
+-#define HCLGE_32_BIT_CMD_NUM 8
+-#define HCLGE_32_BIT_RTN_DATANUM 8
+-
+-	struct hclge_desc desc[HCLGE_32_BIT_CMD_NUM];
+-	struct hclge_32_bit_stats *all_32_bit_stats;
+-	__le32 *desc_data;
+-	int i, k, n;
+-	u64 *data;
+-	int ret;
+-
+-	all_32_bit_stats = &hdev->hw_stats.all_32_bit_stats;
+-	data = (u64 *)(&all_32_bit_stats->egu_tx_1588_pkt);
+-
+-	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_STATS_32_BIT, true);
+-	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_32_BIT_CMD_NUM);
+-	if (ret) {
+-		dev_err(&hdev->pdev->dev,
+-			"Get 32 bit pkt stats fail, status = %d.\n", ret);
+-
+-		return ret;
+-	}
+-
+-	hclge_reset_partial_32bit_counter(all_32_bit_stats);
+-	for (i = 0; i < HCLGE_32_BIT_CMD_NUM; i++) {
+-		if (unlikely(i == 0)) {
+-			__le16 *desc_data_16bit;
+-
+-			all_32_bit_stats->igu_rx_err_pkt +=
+-				le32_to_cpu(desc[i].data[0]);
+-
+-			desc_data_16bit = (__le16 *)&desc[i].data[1];
+-			all_32_bit_stats->igu_rx_no_eof_pkt +=
+-				le16_to_cpu(*desc_data_16bit);
+-
+-			desc_data_16bit++;
+-			all_32_bit_stats->igu_rx_no_sof_pkt +=
+-				le16_to_cpu(*desc_data_16bit);
+-
+-			desc_data = &desc[i].data[2];
+-			n = HCLGE_32_BIT_RTN_DATANUM - 4;
+-		} else {
+-			desc_data = (__le32 *)&desc[i];
+-			n = HCLGE_32_BIT_RTN_DATANUM;
+-		}
+-		for (k = 0; k < n; k++) {
+-			*data++ += le32_to_cpu(*desc_data);
+-			desc_data++;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ static int hclge_mac_update_stats(struct hclge_dev *hdev)
+ {
+ #define HCLGE_MAC_CMD_NUM 21
+@@ -675,14 +406,8 @@ static void hclge_update_netstat(struct hclge_hw_stats *hw_stats,
+ 				 struct net_device_stats *net_stats)
+ {
+ 	net_stats->tx_dropped = 0;
+-	net_stats->rx_dropped = hw_stats->all_32_bit_stats.ssu_full_drop_num;
+-	net_stats->rx_dropped += hw_stats->all_32_bit_stats.ppp_key_drop_num;
+-	net_stats->rx_dropped += hw_stats->all_32_bit_stats.ssu_key_drop_num;
+-
+ 	net_stats->rx_errors = hw_stats->mac_stats.mac_rx_oversize_pkt_num;
+ 	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_undersize_pkt_num;
+-	net_stats->rx_errors += hw_stats->all_32_bit_stats.igu_rx_no_eof_pkt;
+-	net_stats->rx_errors += hw_stats->all_32_bit_stats.igu_rx_no_sof_pkt;
+ 	net_stats->rx_errors += hw_stats->mac_stats.mac_rx_fcs_err_pkt_num;
  
- 	/* make sure rx ring budget not smaller than 1 */
- 	rx_budget = max(budget / tqp_vector->num_tqps, 1);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 31fa21f..4a56c3d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -617,7 +617,7 @@ void hns3_ethtool_set_ops(struct net_device *netdev);
- int hns3_set_channels(struct net_device *netdev,
- 		      struct ethtool_channels *ch);
+ 	net_stats->multicast = hw_stats->mac_stats.mac_tx_multi_pkt_num;
+@@ -717,12 +442,6 @@ static void hclge_update_stats_for_all(struct hclge_dev *hdev)
+ 		dev_err(&hdev->pdev->dev,
+ 			"Update MAC stats fail, status = %d.\n", status);
  
--bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget);
-+void hns3_clean_tx_ring(struct hns3_enet_ring *ring);
- int hns3_init_all_ring(struct hns3_nic_priv *priv);
- int hns3_uninit_all_ring(struct hns3_nic_priv *priv);
- int hns3_nic_reset_all_ring(struct hnae3_handle *h);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 3019007..3cfb6b8 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -200,7 +200,7 @@ static void hns3_lb_clear_tx_ring(struct hns3_nic_priv *priv, u32 start_ringid,
- 	for (i = start_ringid; i <= end_ringid; i++) {
- 		struct hns3_enet_ring *ring = priv->ring_data[i].ring;
- 
--		hns3_clean_tx_ring(ring, budget);
-+		hns3_clean_tx_ring(ring);
- 	}
+-	status = hclge_32_bit_update_stats(hdev);
+-	if (status)
+-		dev_err(&hdev->pdev->dev,
+-			"Update 32 bit stats fail, status = %d.\n",
+-			status);
+-
+ 	hclge_update_netstat(&hdev->hw_stats, &handle->kinfo.netdev->stats);
  }
+ 
+@@ -743,18 +462,6 @@ static void hclge_update_stats(struct hnae3_handle *handle,
+ 			"Update MAC stats fail, status = %d.\n",
+ 			status);
+ 
+-	status = hclge_32_bit_update_stats(hdev);
+-	if (status)
+-		dev_err(&hdev->pdev->dev,
+-			"Update 32 bit stats fail, status = %d.\n",
+-			status);
+-
+-	status = hclge_64_bit_update_stats(hdev);
+-	if (status)
+-		dev_err(&hdev->pdev->dev,
+-			"Update 64 bit stats fail, status = %d.\n",
+-			status);
+-
+ 	status = hclge_tqps_update_stats(handle);
+ 	if (status)
+ 		dev_err(&hdev->pdev->dev,
+@@ -793,8 +500,6 @@ static int hclge_get_sset_count(struct hnae3_handle *handle, int stringset)
+ 		handle->flags |= HNAE3_SUPPORT_SERDES_LOOPBACK;
+ 	} else if (stringset == ETH_SS_STATS) {
+ 		count = ARRAY_SIZE(g_mac_stats_string) +
+-			ARRAY_SIZE(g_all_32bit_stats_string) +
+-			ARRAY_SIZE(g_all_64bit_stats_string) +
+ 			hclge_tqps_get_sset_count(handle, stringset);
+ 	}
+ 
+@@ -814,16 +519,6 @@ static void hclge_get_strings(struct hnae3_handle *handle,
+ 					   g_mac_stats_string,
+ 					   size,
+ 					   p);
+-		size = ARRAY_SIZE(g_all_32bit_stats_string);
+-		p = hclge_comm_get_strings(stringset,
+-					   g_all_32bit_stats_string,
+-					   size,
+-					   p);
+-		size = ARRAY_SIZE(g_all_64bit_stats_string);
+-		p = hclge_comm_get_strings(stringset,
+-					   g_all_64bit_stats_string,
+-					   size,
+-					   p);
+ 		p = hclge_tqps_get_strings(handle, p);
+ 	} else if (stringset == ETH_SS_TEST) {
+ 		if (handle->flags & HNAE3_SUPPORT_MAC_LOOPBACK) {
+@@ -857,14 +552,6 @@ static void hclge_get_stats(struct hnae3_handle *handle, u64 *data)
+ 				 g_mac_stats_string,
+ 				 ARRAY_SIZE(g_mac_stats_string),
+ 				 data);
+-	p = hclge_comm_get_stats(&hdev->hw_stats.all_32_bit_stats,
+-				 g_all_32bit_stats_string,
+-				 ARRAY_SIZE(g_all_32bit_stats_string),
+-				 p);
+-	p = hclge_comm_get_stats(&hdev->hw_stats.all_64_bit_stats,
+-				 g_all_64bit_stats_string,
+-				 ARRAY_SIZE(g_all_64bit_stats_string),
+-				 p);
+ 	p = hclge_tqps_get_stats(handle, p);
+ }
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 1528fb3..7841b83 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -256,109 +256,6 @@ struct hclge_comm_stats_str {
+ 	unsigned long offset;
+ };
+ 
+-/* all 64bit stats, opcode id: 0x0030 */
+-struct hclge_64_bit_stats {
+-	/* query_igu_stat */
+-	u64 igu_rx_oversize_pkt;
+-	u64 igu_rx_undersize_pkt;
+-	u64 igu_rx_out_all_pkt;
+-	u64 igu_rx_uni_pkt;
+-	u64 igu_rx_multi_pkt;
+-	u64 igu_rx_broad_pkt;
+-	u64 rsv0;
+-
+-	/* query_egu_stat */
+-	u64 egu_tx_out_all_pkt;
+-	u64 egu_tx_uni_pkt;
+-	u64 egu_tx_multi_pkt;
+-	u64 egu_tx_broad_pkt;
+-
+-	/* ssu_ppp packet stats */
+-	u64 ssu_ppp_mac_key_num;
+-	u64 ssu_ppp_host_key_num;
+-	u64 ppp_ssu_mac_rlt_num;
+-	u64 ppp_ssu_host_rlt_num;
+-
+-	/* ssu_tx_in_out_dfx_stats */
+-	u64 ssu_tx_in_num;
+-	u64 ssu_tx_out_num;
+-	/* ssu_rx_in_out_dfx_stats */
+-	u64 ssu_rx_in_num;
+-	u64 ssu_rx_out_num;
+-};
+-
+-/* all 32bit stats, opcode id: 0x0031 */
+-struct hclge_32_bit_stats {
+-	u64 igu_rx_err_pkt;
+-	u64 igu_rx_no_eof_pkt;
+-	u64 igu_rx_no_sof_pkt;
+-	u64 egu_tx_1588_pkt;
+-	u64 egu_tx_err_pkt;
+-	u64 ssu_full_drop_num;
+-	u64 ssu_part_drop_num;
+-	u64 ppp_key_drop_num;
+-	u64 ppp_rlt_drop_num;
+-	u64 ssu_key_drop_num;
+-	u64 pkt_curr_buf_cnt;
+-	u64 qcn_fb_rcv_cnt;
+-	u64 qcn_fb_drop_cnt;
+-	u64 qcn_fb_invaild_cnt;
+-	u64 rsv0;
+-	u64 rx_packet_tc0_in_cnt;
+-	u64 rx_packet_tc1_in_cnt;
+-	u64 rx_packet_tc2_in_cnt;
+-	u64 rx_packet_tc3_in_cnt;
+-	u64 rx_packet_tc4_in_cnt;
+-	u64 rx_packet_tc5_in_cnt;
+-	u64 rx_packet_tc6_in_cnt;
+-	u64 rx_packet_tc7_in_cnt;
+-	u64 rx_packet_tc0_out_cnt;
+-	u64 rx_packet_tc1_out_cnt;
+-	u64 rx_packet_tc2_out_cnt;
+-	u64 rx_packet_tc3_out_cnt;
+-	u64 rx_packet_tc4_out_cnt;
+-	u64 rx_packet_tc5_out_cnt;
+-	u64 rx_packet_tc6_out_cnt;
+-	u64 rx_packet_tc7_out_cnt;
+-
+-	/* Tx packet level statistics */
+-	u64 tx_packet_tc0_in_cnt;
+-	u64 tx_packet_tc1_in_cnt;
+-	u64 tx_packet_tc2_in_cnt;
+-	u64 tx_packet_tc3_in_cnt;
+-	u64 tx_packet_tc4_in_cnt;
+-	u64 tx_packet_tc5_in_cnt;
+-	u64 tx_packet_tc6_in_cnt;
+-	u64 tx_packet_tc7_in_cnt;
+-	u64 tx_packet_tc0_out_cnt;
+-	u64 tx_packet_tc1_out_cnt;
+-	u64 tx_packet_tc2_out_cnt;
+-	u64 tx_packet_tc3_out_cnt;
+-	u64 tx_packet_tc4_out_cnt;
+-	u64 tx_packet_tc5_out_cnt;
+-	u64 tx_packet_tc6_out_cnt;
+-	u64 tx_packet_tc7_out_cnt;
+-
+-	/* packet buffer statistics */
+-	u64 pkt_curr_buf_tc0_cnt;
+-	u64 pkt_curr_buf_tc1_cnt;
+-	u64 pkt_curr_buf_tc2_cnt;
+-	u64 pkt_curr_buf_tc3_cnt;
+-	u64 pkt_curr_buf_tc4_cnt;
+-	u64 pkt_curr_buf_tc5_cnt;
+-	u64 pkt_curr_buf_tc6_cnt;
+-	u64 pkt_curr_buf_tc7_cnt;
+-
+-	u64 mb_uncopy_num;
+-	u64 lo_pri_unicast_rlt_drop_num;
+-	u64 hi_pri_multicast_rlt_drop_num;
+-	u64 lo_pri_multicast_rlt_drop_num;
+-	u64 rx_oq_drop_pkt_cnt;
+-	u64 tx_oq_drop_pkt_cnt;
+-	u64 nic_l2_err_drop_pkt_cnt;
+-	u64 roc_l2_err_drop_pkt_cnt;
+-};
+-
+ /* mac stats ,opcode id: 0x0032 */
+ struct hclge_mac_stats {
+ 	u64 mac_tx_mac_pause_num;
+@@ -450,8 +347,6 @@ struct hclge_mac_stats {
+ #define HCLGE_STATS_TIMER_INTERVAL	(60 * 5)
+ struct hclge_hw_stats {
+ 	struct hclge_mac_stats      mac_stats;
+-	struct hclge_64_bit_stats   all_64_bit_stats;
+-	struct hclge_32_bit_stats   all_32_bit_stats;
+ 	u32 stats_timer;
+ };
  
 -- 
 2.7.4
