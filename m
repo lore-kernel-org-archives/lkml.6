@@ -2,154 +2,134 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032C2ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B048C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23E220880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:58:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23E220880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A78A62150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:58:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BW+s8A+y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78A62150B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732354AbeISUgt (ORCPT
+        id S1732367AbeISUhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:36:49 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36127 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731739AbeISUgt (ORCPT
+        Wed, 19 Sep 2018 16:37:09 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54860 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731739AbeISUhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:36:49 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1g2dvm-0002oC-W8; Wed, 19 Sep 2018 16:58:18 +0200
-Message-ID: <1537369098.6816.6.camel@pengutronix.de>
-Subject: Re: [PATCH/RFC v4 1/2] reset: Add support for dedicated reset
- controls
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 19 Sep 2018 16:58:18 +0200
-In-Reply-To: <20180917163955.19023-2-geert+renesas@glider.be>
-References: <20180917163955.19023-1-geert+renesas@glider.be>
-         <20180917163955.19023-2-geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Wed, 19 Sep 2018 16:37:09 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8JEuvSq023756;
+        Wed, 19 Sep 2018 14:58:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=RGaQN7ndM2NyyHTeVLXZmcL2RwfRPIzchkT2porGF7k=;
+ b=BW+s8A+yedtuxHJ0ZPIiguPCt8dAHmUWtrR7+G/yVyRONasQ38J8DPybbHgsDbfeLlXA
+ lKfA+X/3yuYSBABFmevJC51sQTGvUtWZlSlsSjazvgm53qqdK0FSAW0Q1F9ocSq2CNUh
+ hqPwAN8R9ZOUwFnSwJU17KA38V92XlvirSSeAnArVEBHc6Xr3Nd5LCI6c5rPssZa0Xev
+ iFSFFJHXXn1kbrXr/h4K2/GtKJgZezpJ9+K2+BJ7X3MB5+WVJuypkESJMFrC4KnJrPSN
+ xCOAywLMbT4dENl4P0+nyMiQQimYTh7LrDxAPFjYeMJKKhOvDVd5XFuB3xkYLRze9RZI pw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mgsgtukjm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Sep 2018 14:58:45 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8JEweAo003833
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Sep 2018 14:58:40 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8JEwdeQ016596;
+        Wed, 19 Sep 2018 14:58:39 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 19 Sep 2018 07:58:38 -0700
+Subject: Re: [PATCH v2] xen: issue warning message when out of grant maptrack
+ entries
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20180919134233.3040-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <cd0f5ffd-a4c1-c096-2254-696003be3860@oracle.com>
+Date:   Wed, 19 Sep 2018 11:00:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180919134233.3040-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9020 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=847
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809190149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-09-17 at 18:39 +0200, Geert Uytterhoeven wrote:
-> In some SoCs multiple hardware blocks may share a reset control.
-> The existing reset control API for shared resets will only assert such a
-> reset when the drivers for all hardware blocks agree.
-> The existing exclusive reset control API still allows to assert such a
-> reset, but that impacts all other hardware blocks sharing the reset.
+On 9/19/18 9:42 AM, Juergen Gross wrote:
+> When a driver domain (e.g. dom0) is running out of maptrack entries it
+> can't map any more foreign domain pages. Instead of silently stalling
+> the affected domUs issue a rate limited warning in this case in order
+> to make it easier to detect that situation.
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-I consider requesting exclusive access to a shared reset line a misuse
-of the API. Are there such cases? Can they be fixed?
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-> Sometimes a driver needs to reset a specific hardware block, and be 100%
-> sure it has no impact on other hardware blocks.  This is e.g. the case
-> for virtualization with device pass-through, where the host wants to
-> reset any exported device before and after exporting it for use by the
-> guest, for isolation.
-> 
-> Hence a new flag for dedicated resets is added to the internal methods,
-> with a new public reset_control_get_dedicated() method, to obtain an
-> exclusive handle to a reset that is dedicated to one specific hardware
-> block.
 
-I'm not sure a new flag is necessary, this is what exclusive resets
-should be.
-Also I fear there will be confusion about the difference between
-exclusive (refering to the reset control) and dedicated (refering to
-the reset line) reset controls.
 
-> This supports both DT-based and lookup-based reset controls.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v4:
->   - New.
-> 
-> Notes:
->   - Dedicated lookup-based reset controls were not tested,
->   - Several internal functions now take 3 boolean flags, and should
->     probably be converted to take a bitmask instead,
-
-In case we have to add more flags, yes.
-
->   - I think __device_reset() should call __reset_control_get() with
->     dedicated=true.  However, that will impact existing users,
-
-Which ones? And how?
-
->   - Should a different error than -EINVAL be returned on failure?
-> ---
->  drivers/reset/core.c  | 76 ++++++++++++++++++++++++++++++++++++++-----
->  include/linux/reset.h | 60 ++++++++++++++++++++++------------
->  2 files changed, 107 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 225e34c56b94a2e3..5bc4eeca70c0fcc2 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -459,9 +459,38 @@ static void __reset_control_put_internal(struct reset_control *rstc)
->  	kref_put(&rstc->refcnt, __reset_control_release);
->  }
->  
-> +static bool __of_reset_is_dedicated(const struct device_node *node,
-> +				    const struct of_phandle_args args)
-> +{
-> +	struct of_phandle_args args2;
-> +	struct device_node *node2;
-> +	int index, ret;
-> +
-> +	for_each_node_with_property(node2, "resets") {
-> +		if (node == node2)
-> +			continue;
-> +
-> +		for (index = 0; ; index++) {
-> +			ret = of_parse_phandle_with_args(node2, "resets",
-> +							 "#reset-cells", index,
-> +							 &args2);
-> +			if (ret)
-> +				break;
-> +
-> +			if (args2.np == args.np &&
-> +			    args2.args_count == args.args_count &&
-> +			    !memcmp(args2.args, args.args,
-> +				    args.args_count * sizeof(args.args[0])))
-> +				return false;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-
-I want to hear the device tree maintainers' opinion about this.
-I'd very much like to have such a check for exclusive resets, but my
-understanding is that we are not allowed to make the assumption that
-other nodes' "reset" properties follow the common reset signal device
-tree bindings.
-
-Maybe this is something that should be checked in a device tree
-validation step?
-
-regards
-Philipp
