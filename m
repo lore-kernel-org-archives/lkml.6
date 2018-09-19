@@ -2,113 +2,229 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B04ECE566
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFA4ECE566
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D952150E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:31:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D952150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8202F21521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:38:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3+31zQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8202F21521
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732113AbeITELW (ORCPT
+        id S1726963AbeITES0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:11:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46894 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726003AbeITELW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:11:22 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JMTR03045407
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:31:17 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mkwj7uy59-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:31:17 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Wed, 19 Sep 2018 16:31:16 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Sep 2018 16:31:13 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8JMVBFg33816828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Sep 2018 15:31:11 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9F4C7805E;
-        Wed, 19 Sep 2018 16:31:11 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3481278063;
-        Wed, 19 Sep 2018 16:31:08 -0600 (MDT)
-Received: from [153.66.254.194] (unknown [9.85.133.102])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Sep 2018 16:31:07 -0600 (MDT)
-Subject: Re: [PATCH RFC] MAINTAINERS: Update from @linux.vnet.ibm.com to
- @linux.ibm.com
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     paulmck@linux.ibm.com, linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, dougmill@linux.ibm.com, eajames@linux.ibm.com,
-        haver@linux.ibm.com, fbarrat@linux.ibm.com, jallen@linux.ibm.com,
-        manoj@linux.ibm.com, mrochs@linux.ibm.com, mikecyr@linux.ibm.com,
-        zohar@linux.ibm.com, naveen.n.rao@linux.ibm.com,
-        pfsmorigo@linux.ibm.com, pjk1939@linux.ibm.com,
-        seroyer@linux.ibm.com, tlfalcon@linux.ibm.com,
-        tyreld@linux.ibm.com, ukrishn@linux.ibm.com
-Date:   Wed, 19 Sep 2018 15:31:04 -0700
-In-Reply-To: <20180919222733.GA13679@linux.ibm.com>
-References: <20180919222733.GA13679@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18091922-0012-0000-0000-000016B6C335
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009736; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01090773; UDB=6.00563535; IPR=6.00870794;
- MB=3.00023396; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-19 22:31:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18091922-0013-0000-0000-00005476011E
-Message-Id: <1537396264.14262.5.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809190217
+        Thu, 20 Sep 2018 00:18:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbeITES0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 00:18:26 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D77B2150E;
+        Wed, 19 Sep 2018 22:38:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537396700;
+        bh=RbPeOvZ7I2j7N2gepGEAcRxbtkYHz6aGCVVTU4hYayY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T3+31zQJmGx3Ul/PPkzaAOFaZeGx9BqTkgxlhka08Jj9JEWlPSQ+2qiAFWGIdqSyW
+         8HIoyPJW1/nwS+3tOGFp4tmk6jRgSLjdiasLZKlDfFKc9py7VbA81YOpH9wXScbR2y
+         LWOtmsw/KSfHWy/9kR7myc3Xi/Q84yn4aNgdDOH0=
+Date:   Wed, 19 Sep 2018 15:38:19 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
+Message-ID: <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
+References: <ffbfbc85-f7ac-dd5c-b20f-d08868adb4ee@huawei.com>
+ <24ee1c19-ccc1-31db-12d0-30ac76fd645e@huawei.com>
+ <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
+ <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
+ <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
+ <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
+ <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
+ <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
+ <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
+ <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-09-19 at 15:27 -0700, Paul E. McKenney wrote:
-> IBM's patch-friendly email infrastructure is changing domains from
-> @linux.vnet.ibm.com to @linux.ibm.com, which if nothing else might
-> save a bit of typing.  This commit therefore updates us stragglers'
-> email addresses in the MAINTAINERS file.  The old addresses are
-> expected to continue to work for a few more months.
+On 09/19, Chao Yu wrote:
+> On 2018/9/19 0:45, Jaegeuk Kim wrote:
+> > On 09/18, Chao Yu wrote:
+> >> On 2018/9/18 10:05, Jaegeuk Kim wrote:
+> >>> On 09/18, Chao Yu wrote:
+> >>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
+> >>>>> On 09/13, Chao Yu wrote:
+> >>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
+> >>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
+> >>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
+> >>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
+> >>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>> On 09/12, Chao Yu wrote:
+> >>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
+> >>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
+> >>>>>>>>>>>>>>> can recover it based on previous user information.
+> >>>>>>>>>>>>>>
+> >>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
+> >>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
+> >>>>>>>>>>>>>> same?
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
+> >>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
+> >>>>>>>>>>>>> fsck after roll-forward recovery.
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
+> >>>>>>>>>>>
+> >>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
+> >>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
+> >>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
+> >>>>>>>>>>> may was corrupted/inconsistent. Right?
+> >>>>>>>>>
+> >>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
+> >>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
+> >>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
+> >>>>>>>>> detected by fsck, I guess there is bug in v8.
+> >>>>>>>>
+> >>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
+> >>>>>>>> 1. flush time in block_operation exceed a threshold.
+> >>>>>>>> 2. dquot subsystem error occurs.
+> >>>>>>>>
+> >>>>>>>> For above case, fsck should repair the quota file by default.
+> >>>>>>>
+> >>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
+> >>>>>>> during the recovery. So, we have something missing in the recovery in terms
+> >>>>>>> of quota updates.
+> >>>>>>
+> >>>>>> Yeah, I checked the code, just found one suspected place:
+> >>>>>>
+> >>>>>> find_fsync_dnodes()
+> >>>>>>  - f2fs_recover_inode_page
+> >>>>>>   - inc_valid_node_count
+> >>>>>>    - dquot_reserve_block  dquot info is not initialized now
+> >>>>>>  - add_fsync_inode
+> >>>>>>   - dquot_initialize
+> >>>>>>
+> >>>>>> I think we should reserve block for inode block after dquot_initialize(), can
+> >>>>>> you confirm this?
+> >>>>>
+> >>>>> Let me test this.
+> >>>>>
+> >>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
+> >>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
+> >>>>> Subject: [PATCH] f2fs: count inode block for recovered files
+> >>>>>
+> >>>>> If a new file is recovered, we missed to reserve its inode block.
+> >>>>
+> >>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
+> >>>> have to keep backward compatibilty, in memory we don't account block number
+> >>>> for f2fs' inode block, but only account inode number for it, so here like
+> >>>> we did in inc_valid_node_count(), we don't need to do this.
+> >>>
+> >>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
+> >>> is that caused by uid/gid change during recovery. Let me try out your patch.
+> >>
+> >> I guess we should update dquot and inode's uid/gid atomically under
+> >> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
+> >>
+> >> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
+> >> enabled, but w/ normal quota file, I got one regression reported by
+> >> generic/232, I fixed in v10, will do some tests and release it later.
+> >>
+> >> Note that, my fsck can fix corrupted quota file automatically once
+> >> CP_QUOTA_NEED_FSCK_FLAG is set.
+> > 
+> > I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
 > 
-> While in the neighborhood, remove some obsolete entries, which
-> results
-> in an orphaned subsystem: "JSM Neo PCI based serial card".
+> That's strange, in my environment, before v9, I always encounter corrupted
+> quota sysfile after step 9), after v9, I never hit failure again.
 > 
-> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Douglas Miller <dougmill@linux.ibm.com>
-> Cc: Eddie James <eajames@linux.ibm.com>
-> Cc: Frank Haverkamp <haver@linux.ibm.com>
-> Cc: Frederic Barrat <fbarrat@linux.ibm.com>
-> Cc: James Bottomley <jejb@linux.ibm.com>
+> 1) enable fault injection
+> 2) run fsstress
+> 3) call shutdowon
+> 4) kill fsstress
+> 5) unmount
+> 6) fsck
+> 7) mount
+> 8) umount
+> 9) fsck
+> 10) go 1).
+> 
+> > CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
+> > flag in roll-forward recovery, everything is fine.
+> 
+> I do the test based on codes in my git tree, could you check the result
+> again based on my code? in where I just disable nat_bits recovery, not
+> sure, in step 6) fsck can break some thing in image.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
+> 
+> Also, I just send the fsck code, could you check that too?
+> 
+> And I'd like to know your mount option and mkfs option, could you list for me?
 
-Acked-by: James Bottomley <jejb@linux.ibm.com>
+I'm just doing this.
+https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
 
-James
-
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Can you test v9 first? I didn't encounter quota corruption with your
+> >>>> testcase right now. Will check it in cell phone environment.
+> >>>>
+> >>>>>
+> >>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>>> ---
+> >>>>>  fs/f2fs/recovery.c | 5 +++++
+> >>>>>  1 file changed, 5 insertions(+)
+> >>>>>
+> >>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> >>>>> index 56d34193a74b..bff5cf730e13 100644
+> >>>>> --- a/fs/f2fs/recovery.c
+> >>>>> +++ b/fs/f2fs/recovery.c
+> >>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
+> >>>>>  		err = dquot_alloc_inode(inode);
+> >>>>>  		if (err)
+> >>>>>  			goto err_out;
+> >>>>> +		err = dquot_reserve_block(inode, 1);
+> >>>>> +		if (err) {
+> >>>>> +			dquot_drop(inode);
+> >>>>> +			goto err_out;
+> >>>>> +		}
+> >>>>>  	}
+> >>>>>  
+> >>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+> >>>>>
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
