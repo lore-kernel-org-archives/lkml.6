@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B81DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB09ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A122150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42FA62150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 20:52:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="gFveRUye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A122150B
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Df1BR2ei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FA62150B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732979AbeITCai (ORCPT
+        id S1732893AbeITCaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 22:30:38 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41816 "EHLO
+        Wed, 19 Sep 2018 22:30:35 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46265 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732843AbeITCah (ORCPT
+        with ESMTP id S1732834AbeITCae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 22:30:37 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f38-v6so6029101edd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:56 -0700 (PDT)
+        Wed, 19 Sep 2018 22:30:34 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k14-v6so6004563edr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 13:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=scu1bFxVDh3KPsOHiZlETrumb5Bby17MXGXfbnfCbqU=;
-        b=gFveRUyeyD1arfgw0PQcTyAtbgUJDcF22poqj4MGrBW19fJukRASTWZANFkaZMKmU5
-         U2Dl0YZ+wdBr0RlZintmIw57dhuHrwK9HFNxBZhtBsGqFhF0gEDV/kYqM81GTlPd01Q2
-         TZbhmqQRmd/A74qY8vMv9CuCVy5yqBtFP/N1pUpqUPRW8i0dJBFv+6jncPVD1XziNQBI
-         h85D5e+7Al3aUeK/m25vsqBq5dmmtGuxCuE1doIh7qBf45nCkzUPUiDDn5KWmkCyRES/
-         dWhw2ECdmAiCww8ra2ws8qXwKnQH7cINq+uj5L7zwWFJ9x2iuKU3EB5Ys6dv2OqwY2Qw
-         U3rA==
+        bh=/GN/0v5e4mpHpuFOFRnCIZwBKmgxXnFMSxpKitNeAXo=;
+        b=Df1BR2eiVg0pMMtMSqaZcj/d+myni8ow5rNj21y3uhN2h5TdxnAml73SnELbQbAuRe
+         lCWAiGW2bkvRTXVnVDhouOUtk9Bg+yupo2pUB97gXdgRJNNez65RCN2iATn1wAB8jKHQ
+         BIrggy/J3XKDOIF3OProbVFHR7rjc1rZVux55zziNvuWLLyRBqOlQDsJDC9fqWHHoCOD
+         bIexySZybD5BdlT5Et8435pIVB9xwAqDvTUVm4NXy54X88AiCm3KgECNppmu7sfmImMk
+         i6RhJ96bdVYVnlcxedlYGqRkOCT3XdKfer/hPupKZzpKfVTNluXhijNVeN9O2PGX2h3O
+         Oo2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=scu1bFxVDh3KPsOHiZlETrumb5Bby17MXGXfbnfCbqU=;
-        b=rxWSCY+w0G4p7aFmdOi3JfocYDe3egXLzy/N3pQfbiKf8IrWHjbNOJdlo/7jX2surR
-         uM54ydfJ3wlish5+Kc1lnbACak/V+NjSGFbz6tL8IZLpxwJL/NsFNDB/oPdFN+4HqX3s
-         WaiP96v3isWMHH6xgp9S3IWMou+tPtepWcTAmBjn8b+cLMVituwFI6/cabx+oz65HS6F
-         N5X5hsHpE6qNaigOQy3bmJELlGmL3d2KJEHZbBkNg2AniUEptk2BA6wxRhhp0HQ3YSrT
-         QmjeevwcSiS9tMWmqgqCVRn+Gmb0VpDsNw7QsPeIcXlG2yRdjdzdqkpW/G6QJjKUMmqp
-         kwjw==
-X-Gm-Message-State: APzg51DEk6xturHV5oHdyIjyXfg9rziy3V3RQDtm5Yw5d3fH7g03xWoA
-        7z18B8WTbtTUhv4Ev11UN/Dq/kPNgS8=
-X-Google-Smtp-Source: ANB0VdZc8pYYIWyURNLNd7GAHbZyhXrSw4fkUt4EVGVMFc88RjKUahb1vuPzQpWJc9E4WiTVeTwIig==
-X-Received: by 2002:a50:e40d:: with SMTP id d13-v6mr60898848edm.263.1537390255613;
-        Wed, 19 Sep 2018 13:50:55 -0700 (PDT)
+        bh=/GN/0v5e4mpHpuFOFRnCIZwBKmgxXnFMSxpKitNeAXo=;
+        b=nIgj50DD+DNzQC2FIda9l0UPpl8T8VmH3UV/lTQkdBVinGu8U2Z/XCRWsJJV9tVrn5
+         QZoudZhSqJf08htqeuO2lmBw5g146J2dbGKmbXBXkVh7ILeEkZjoGJnPywMYzsLDrFRv
+         GDTAovUgsjMZkHklwnAwL25qeoTltJeMDDh5LuI3GkrpkmH+8vkbSw3hXju9ug4vD+Dn
+         wWaEiqlHNQCht3cmO04tKMy1N/ybd7oMD5ecZ9xgqjvCmj/GLM56haOivTkfcJKGD/x0
+         4Uv/oh/lTBSvciDH/bt0HsSy8tPdpqr2v9+dnQOfz2R3JhQ1QlpqXBK4WlI+6x5d9e6U
+         d+EQ==
+X-Gm-Message-State: APzg51CbEhddJiFatnSDIIov/Ydfu6Jq+MMyMof6vY5yoGzVb805w1Cn
+        00lgziXIETyG65RlujWe+wWO04rjs38=
+X-Google-Smtp-Source: ANB0VdaTR6MAQ9mODf/tFwY/lDopHyqQzpk6vVzStplztbPZcyXWlJB3DDoD+1hE6WD6SP9BHmPp5g==
+X-Received: by 2002:aa7:c881:: with SMTP id p1-v6mr59783289eds.295.1537390253998;
+        Wed, 19 Sep 2018 13:50:53 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.54
+        by smtp.gmail.com with ESMTPSA id t17-v6sm1747729edb.27.2018.09.19.13.50.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 13:50:54 -0700 (PDT)
+        Wed, 19 Sep 2018 13:50:53 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
         Andrei Vagin <avagin@openvz.org>,
@@ -75,9 +76,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [RFC 11/20] x86/vdso: Purge timens page on setns()/unshare()/clone()
-Date:   Wed, 19 Sep 2018 21:50:28 +0100
-Message-Id: <20180919205037.9574-12-dima@arista.com>
+Subject: [RFC 10/20] x86/vdso: Use set_normalized_timespec() to avoid 32 bit overflow
+Date:   Wed, 19 Sep 2018 21:50:27 +0100
+Message-Id: <20180919205037.9574-11-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180919205037.9574-1-dima@arista.com>
 References: <20180919205037.9574-1-dima@arista.com>
@@ -86,125 +87,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Find page with timens offsets on vvar and flush mapping for it during
-entering/creating another time namespace.
-Prevents application to have stale mapping from old namespace.
-(as old namespace might be destroyed on the moment of userspace access,
-it also prevents leaks from kernel).
+From: Andrei Vagin <avagin@gmail.com>
 
+ts->tv_nsec + offset->tv_nsec
+
+On 32 bit machines that sum can be larger than (1 << 31) and therefor
+result in a negative value which screws up the result completely.
+
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/entry/vdso/vma.c   | 31 +++++++++++++++++++++++++++++++
- arch/x86/include/asm/vdso.h |  1 +
- kernel/time_namespace.c     | 12 ++++++++++++
- 3 files changed, 44 insertions(+)
+ arch/x86/entry/vdso/vclock_gettime.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index 0f92227a4a7e..90eadcfcb7f5 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -25,6 +25,7 @@
- #include <asm/cpufeature.h>
- #include <asm/mshyperv.h>
- #include <asm/page.h>
-+#include <asm/tlbflush.h>
- 
- #if defined(CONFIG_X86_64)
- unsigned int __read_mostly vdso64_enabled = 1;
-@@ -158,6 +159,36 @@ static int vvar_fault(const struct vm_special_mapping *sm,
- 	return VM_FAULT_SIGBUS;
+diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
+index 0594266740b9..a265e2737a9a 100644
+--- a/arch/x86/entry/vdso/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vclock_gettime.c
+@@ -231,20 +231,37 @@ notrace static int __always_inline do_realtime(struct timespec *ts)
+ 	return mode;
  }
  
-+static void clear_flush_timens_pte(struct mm_struct *mm, unsigned long addr)
++notrace void set_normalized_timespec(struct timespec *ts, time_t sec, s64 nsec)
 +{
-+	spinlock_t *ptl;
-+	pte_t *ptep;
-+
-+	if (follow_pte_pmd(mm, addr, NULL, NULL, &ptep, NULL, &ptl))
-+		return; /* no pte found */
-+	ptep_get_and_clear(mm, addr, ptep);
-+	pte_unmap_unlock(ptep, ptl);
-+	flush_tlb_mm_range(mm, addr, addr + PAGE_SIZE, VM_NONE);
++	while (nsec >= NSEC_PER_SEC) {
++		/*
++		 * The following asm() prevents the compiler from
++		 * optimising this loop into a modulo operation. See
++		 * also __iter_div_u64_rem() in include/linux/time.h
++		 */
++		asm("" : "+rm"(nsec));
++		nsec -= NSEC_PER_SEC;
++		++sec;
++	}
++	while (nsec < 0) {
++		asm("" : "+rm"(nsec));
++		nsec += NSEC_PER_SEC;
++		--sec;
++	}
++	ts->tv_sec = sec;
++	ts->tv_nsec = nsec;
 +}
 +
-+int vvar_purge_timens(struct task_struct *task)
-+{
-+	struct mm_struct *mm = task->mm;
-+	const struct vdso_image *image;
-+	unsigned long addr;
-+
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
-+	image = mm->context.vdso_image;
-+
-+	addr = (unsigned long)mm->context.vdso + image->sym_timens_page;
-+	clear_flush_timens_pte(mm, addr);
-+
-+	up_write(&mm->mmap_sem);
-+	return 0;
-+}
-+
- static const struct vm_special_mapping vdso_mapping = {
- 	.name = "[vdso]",
- 	.fault = vdso_fault,
-diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
-index 619322065b8e..98b02481137c 100644
---- a/arch/x86/include/asm/vdso.h
-+++ b/arch/x86/include/asm/vdso.h
-@@ -45,6 +45,7 @@ extern const struct vdso_image vdso_image_32;
- extern void __init init_vdso_image(const struct vdso_image *image);
- 
- extern int map_vdso_once(const struct vdso_image *image, unsigned long addr);
-+extern int vvar_purge_timens(struct task_struct *task);
- 
- #endif /* __ASSEMBLER__ */
- 
-diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
-index f96871cb8124..f88ae0e17d92 100644
---- a/kernel/time_namespace.c
-+++ b/kernel/time_namespace.c
-@@ -14,6 +14,7 @@
- #include <linux/proc_ns.h>
- #include <linux/sched/task.h>
- #include <linux/mm.h>
-+#include <asm/vdso.h>
- 
- static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
+ notrace static __always_inline void monotonic_to_ns(struct timespec *ts)
  {
-@@ -91,9 +92,15 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
- struct time_namespace *copy_time_ns(unsigned long flags,
- 	struct user_namespace *user_ns, struct time_namespace *old_ns)
- {
-+	int ret;
+ #ifdef CONFIG_TIME_NS
+ 	struct timens_offsets *timens = (struct timens_offsets *) &timens_page;
++	struct timespec offset;
 +
- 	if (!(flags & CLONE_NEWTIME))
- 		return get_time_ns(old_ns);
++	offset = timespec64_to_timespec(timens->monotonic_time_offset);
++
++	*ts = timespec_add(*ts, offset);
  
-+	ret = vvar_purge_timens(current);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	return clone_time_ns(user_ns, old_ns);
+-	ts->tv_sec += timens->monotonic_time_offset.tv_sec;
+-	ts->tv_nsec += timens->monotonic_time_offset.tv_nsec;
+-	if (ts->tv_nsec > NSEC_PER_SEC) {
+-		ts->tv_nsec -= NSEC_PER_SEC;
+-		ts->tv_sec++;
+-	} else if (ts->tv_nsec < 0) {
+-		ts->tv_nsec += NSEC_PER_SEC;
+-		ts->tv_sec--;
+-	}
+ #endif
  }
  
-@@ -138,11 +145,16 @@ static void timens_put(struct ns_common *ns)
- static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
- {
- 	struct time_namespace *ns = to_time_ns(new);
-+	int ret;
- 
- 	if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN) ||
- 	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
- 		return -EPERM;
- 
-+	ret = vvar_purge_timens(current);
-+	if (ret)
-+		return ret;
-+
- 	get_time_ns(ns);
- 	put_time_ns(nsproxy->time_ns);
- 	nsproxy->time_ns = ns;
 -- 
 2.13.6
 
