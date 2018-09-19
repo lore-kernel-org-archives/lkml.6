@@ -2,102 +2,99 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E683CECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB2DECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D722083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D722083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prnet.org
+	by mail.kernel.org (Postfix) with ESMTP id 843F42150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 843F42150B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732747AbeISWNE (ORCPT
+        id S1732641AbeISWQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:13:04 -0400
-Received: from extserverfr1.prnet.org ([188.165.208.21]:33650 "EHLO
-        extserverfr1.prnet.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731266AbeISWNE (ORCPT
+        Wed, 19 Sep 2018 18:16:23 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:49215 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727675AbeISWQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:13:04 -0400
-Received: from extserver.intern.prnet.org (extserver.prnet.org [192.168.11.1])
-        by extserverfr1.prnet.org (8.14.9/8.14.9) with ESMTP id w8JGYBrn025660;
-        Wed, 19 Sep 2018 18:34:11 +0200
-Received: from [IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28] ([IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28])
-        (authenticated bits=0)
-        by extserver.intern.prnet.org (8.14.9/8.14.9) with ESMTP id w8JGYA5E032658
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 19 Sep 2018 18:34:10 +0200
-Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
- under high system load
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
-        netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
-References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
- <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
-From:   David Arendt <admin@prnet.org>
-Message-ID: <c37b0548-518c-f022-b407-6f71943b9db2@prnet.org>
-Date:   Wed, 19 Sep 2018 18:34:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 19 Sep 2018 18:16:23 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g2fTr-0003g7-HT from joseph_myers@mentor.com ; Wed, 19 Sep 2018 09:37:35 -0700
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 19 Sep 2018 17:37:32 +0100
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1g2fTn-0007qw-G1; Wed, 19 Sep 2018 16:37:31 +0000
+Date:   Wed, 19 Sep 2018 16:37:31 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC:     Carlos O'Donell <carlos@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        <libc-alpha@sourceware.org>, <linux-kernel@vger.kernel.org>,
+        <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init
+ and thread creation
+In-Reply-To: <20180919144438.1066-1-mathieu.desnoyers@efficios.com>
+Message-ID: <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk>
+References: <20180919144438.1066-1-mathieu.desnoyers@efficios.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 19 Sep 2018, Mathieu Desnoyers wrote:
 
-the networking problem did not occur for 12 hours now, so I think this
-patch resolved the problem.
+> Here is a rough prototype registering rseq(2) TLS for each thread
+> (including main), and unregistering for each thread (excluding
+> main). "rseq" stands for Restartable Sequences.
 
-Thanks,
-David Arendt
+A final patch would need to add documentation and tests and a NEWS entry 
+and fix various coding style issues.
 
-On 9/19/18 12:30 AM, Maciej S. Szmigiero wrote:
-> Hi,
->
-> On 18.09.2018 12:23, David Arendt wrote:
->> Hi,
->>
->> Today I had the network adapter problems again.
->> So the patch doesn't seem to change anything regarding this problem.
->> This week my time is unfortunately very limited, but I will try to
->> find some time next weekend to look a bit more into the issue.
-> If the problem is caused by missing TXCFG_AUTO_FIFO bit in TxConfig,
-> as the register difference would suggest, then you can try applying
-> the following patch (hack) on top of 4.18.8 that is already patched
-> with commit f74dd480cf4e:
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -5043,7 +5043,8 @@
->  {
->  	/* Set DMA burst size and Interframe Gap Time */
->  	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
-> -		(InterFrameGap << TxInterFrameGapShift));
-> +		(InterFrameGap << TxInterFrameGapShift)
-> +		| TXCFG_AUTO_FIFO);
->  }
->  
->  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
->
-> This hack will probably only work properly on RTL_GIGA_MAC_VER_40 or
-> later NICs.
->
-> Before running any tests please verify with "ethtool -d enp3s0" that
-> TxConfig register now contains 0x4f000f80, as it did in the old,
-> working driver version.
->
-> If this does not help then a bisection will most likely be needed.
->
->> Thanks in advance,
->> David Arendt
-> Maciej
+> diff --git a/nptl/Versions b/nptl/Versions
+> index e7f691da7a..7316c2815d 100644
+> --- a/nptl/Versions
+> +++ b/nptl/Versions
+> @@ -275,6 +275,7 @@ libpthread {
+>      mtx_init; mtx_lock; mtx_timedlock; mtx_trylock; mtx_unlock; mtx_destroy;
+>      call_once; cnd_broadcast; cnd_destroy; cnd_init; cnd_signal;
+>      cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
+> +    __rseq_abi; __rseq_refcount;
 
+That's the GLIBC_2.28 section, but 2.28 is already out.  New symbols would 
+need to go in GLIBC_2.29 or later (and the ABI test baselines would all 
+need updating).
 
+> diff --git a/sysdeps/unix/sysv/linux/rseq.h b/sysdeps/unix/sysv/linux/rseq.h
+
+This looks like it's coming from the Linux kernel.  Can't the relevant 
+uapi header just be used directly without copying into glibc (with due 
+care to ensure that glibc still builds if the kernel headers used for the 
+build are too old - you need such conditionals anyway if they don't define 
+the relevant syscall number)?
+
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
