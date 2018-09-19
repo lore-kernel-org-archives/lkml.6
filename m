@@ -2,192 +2,131 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F89C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA041ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD4D2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A59F208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:09:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="i56RBHBo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD4D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="nmc+3ctq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A59F208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730892AbeISKi7 (ORCPT
+        id S1730859AbeISKpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 06:38:59 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37024 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbeISKi7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 06:38:59 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8J52ncX047043;
-        Wed, 19 Sep 2018 00:02:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537333369;
-        bh=NTNgFT/KLaAcUBILpix8F48SuVxZhf3RH0/o4O+I8Js=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=i56RBHBorVmLBnJ7OkHc8IxDho9N52wD6zwaIAl9OG+2W1pchRSRj7JVp8qn2twIB
-         N8pZcWyobzW6NqUw6gz4+48/DF/EL3/Xtc8x1ImSu7T3iHs45qQkLdS9KDPOlOd6up
-         E60W+lX7YBJsW1K68it6kwuKJM+Sudn5beATQeIk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8J52nVk026043;
-        Wed, 19 Sep 2018 00:02:49 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 19
- Sep 2018 00:02:49 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 19 Sep 2018 00:02:49 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8J52ki3018367;
-        Wed, 19 Sep 2018 00:02:47 -0500
-Subject: Re: [PATCH 5/5] gpio: davinci: Move driver local definitions to
- driver
-To:     "Andrew F. Davis" <afd@ti.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180831191326.25106-1-afd@ti.com>
- <20180831191326.25106-5-afd@ti.com>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <a90eb795-753f-2b45-2c90-cda6f8acf238@ti.com>
-Date:   Wed, 19 Sep 2018 10:32:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180831191326.25106-5-afd@ti.com>
-Content-Type: text/plain; charset="utf-8"
+        Wed, 19 Sep 2018 06:45:21 -0400
+Received: from mail-eopbgr700047.outbound.protection.outlook.com ([40.107.70.47]:58707
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726019AbeISKpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 06:45:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NL/a60zTe22GV6n8SKU+26sg6FE2pnF5IZD7lx2qX9Q=;
+ b=nmc+3ctqxy66z7aB4rmcqkFFuzp1+r4/ZnqT52VdD/7AzkdNcQTjRBsqhmHfXLjZzuL+ZTqV2SuWLHN7uNgC3/qPYghZRw3himZ/hhbp+izMaP1iAcG39Ul32bOzQWvshSrXmdD9j2rqZq29yu+QIAg9+zwAnERlHID4IJwehjI=
+Received: from DM6PR02MB5227.namprd02.prod.outlook.com (20.176.116.140) by
+ DM6PR02MB4444.namprd02.prod.outlook.com (20.176.105.89) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Wed, 19 Sep 2018 05:08:54 +0000
+Received: from DM6PR02MB5227.namprd02.prod.outlook.com
+ ([fe80::8cc4:fb25:d431:bd00]) by DM6PR02MB5227.namprd02.prod.outlook.com
+ ([fe80::8cc4:fb25:d431:bd00%3]) with mapi id 15.20.1143.017; Wed, 19 Sep 2018
+ 05:08:50 +0000
+From:   Manish Narani <MNARANI@xilinx.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v7 1/7] edac: synopsys: Fix code comments and naming
+ convention
+Thread-Topic: [PATCH v7 1/7] edac: synopsys: Fix code comments and naming
+ convention
+Thread-Index: AQHUTpJJfC+LOp0j9EO9O/F3P2oYsaT1rCWAgAFj+nA=
+Date:   Wed, 19 Sep 2018 05:08:50 +0000
+Message-ID: <DM6PR02MB52271CFF653377B4810CD305C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+References: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
+ <1537194305-9243-2-git-send-email-manish.narani@xilinx.com>
+ <20180918075311.GB22202@nazgul.tnic>
+In-Reply-To: <20180918075311.GB22202@nazgul.tnic>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=MNARANI@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR02MB4444;6:ewMNK+OQh4fHdCgdxYkXr4xP5LTsy06+/EKMV/Z0zThC9+YOZ05qQn42sWNJBdyFx8fdg597Bg8Kxv1xsLmoyg+XpvUMDZlP5oNOy1zzKeeYsgtexhcrEjkWA9sQOiwbJYG706G48M5v+YlFvZdbPMdbv8Zqw3JP0y150MY4xrliPGCWTj5ZUPz4sB8WPn9wkDF5oJXdARjvtjCArUlBdy1HSIxwRC54Ts4ZTTCpoSvKRVP43kjCnFLlOVbyPuL7q0FsaLEvPMNuchLHH1tEOjgUnLb3S7JqoQrviy6bMGYMGQAaxGogx8sYPNhgxRpGoNEjMJD05M7i162gZYGRI4YKEAUPncRnmJx8V5H8ck3hKaLU2s2hp5mNDkwbVgIRl40pDurSQ46aX3LudLNIJ2sC4nKnO9hFt4vXI+bOyul+9U85nPO8JIP9K3tgsMCxzYD8MITgd8QaWvPVK1pweg==;5:naTx/1neXhLVP7vYn6vLPzTYU+ueVfS8uEd+/JEsuyWQDdxkDIbA1ymrsFYbZmwtHWal9tXGZvo9EByRXmlER2enoeT0DSRNg299xqIxG7krGVvMAWhnA2TlIAlK+Cuo6egWULPXBB0NQg3VTD/W4qhSk7TD/ne07XRgDGhZmmQ=;7:leEc4kJIrfaDSS2K6xqjTQFh+NACOCYcjPQmycCMoRd/Rbt+x+xyleGP4p+SSlx0YN9mVtjivuayCHkuDj5drIwC/QumX2ti8n+jTJstOgFU4Z6v9sTlnbpjLEajRosBwYeV8QOwyzePO6bmP9j8CnruR3T9aRFRLG78YzUPwYq9R5CRWvkdqoVBGA9UQeEq9umsNRA5p0jo6kUqkqrQTB4Gi5SBB7lqHYsqT/O7Cj/gKI7UrZejGF7gU6SuP1xJ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: e564a066-4318-4516-123c-08d61dedfd02
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4444;
+x-ms-traffictypediagnostic: DM6PR02MB4444:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <DM6PR02MB4444F2D598B447ABF960BC43C11C0@DM6PR02MB4444.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699050);SRVR:DM6PR02MB4444;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4444;
+x-forefront-prvs: 0800C0C167
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(39860400002)(346002)(376002)(189003)(199004)(13464003)(54906003)(7696005)(55016002)(6436002)(229853002)(3846002)(97736004)(74316002)(66066001)(105586002)(9686003)(76176011)(6246003)(68736007)(53936002)(106356001)(7736002)(7416002)(316002)(6506007)(99286004)(6116002)(305945005)(33656002)(446003)(476003)(478600001)(11346002)(486006)(2900100001)(26005)(25786009)(14454004)(6916009)(53546011)(5250100002)(72206003)(8936002)(102836004)(2906002)(5660300001)(8676002)(81156014)(4326008)(186003)(86362001)(81166006)(256004)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4444;H:DM6PR02MB5227.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 3f44Y495zBW0inlOIrlzQArmf2FWLDFAD8HZZ3hDpoI2kGJ844rxKNCOdF1+Lo1FsJAK/KUEZKFucfS98UzjJ4ekwuqPkeauWrJnxDsYJO2vcGjRcUJsUK5mm71lyC9MgwFPPSERRl8rQV57/mcQUSlc3xjDwxAytCcnAFve1yeI9KgoH+WkC0tqrQumfEx5j3z0XMQd8KV7snkS4PXAHM2qA9uwGOTiul/XtzEX8QItCtQgqc0AF7GAUBg2aj7u+4W0oDE/M0QFu9rQhk04kIkeb+x1zy5XUyKVBfEyPkqSMaVI0fG/bs9uPba+bUwwcCNADZgKfwOWqoTeG76mTrHDhWa6VniBX+RiGvzk+24=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e564a066-4318-4516-123c-08d61dedfd02
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 05:08:50.6838
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4444
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Saturday 01 September 2018 12:43 AM, Andrew F. Davis wrote:
-> These defines, structs and inline functions are used only internally by
-> the driver, they do not belong in platform_data. Move them.
-
-Tested for gpio interrupts on k2g and da850-lcdk
-
-Tested-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Keerthy <j-keerthy@ti.com>
-
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->  drivers/gpio/gpio-davinci.c                | 28 ++++++++++++++++++++++
->  include/linux/platform_data/gpio-davinci.h | 28 ----------------------
->  2 files changed, 28 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 121a7948f785..5c1564fcc24e 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -9,6 +9,7 @@
->   * the Free Software Foundation; either version 2 of the License, or
->   * (at your option) any later version.
->   */
-> +
->  #include <linux/gpio/driver.h>
->  #include <linux/errno.h>
->  #include <linux/kernel.h>
-> @@ -24,6 +25,12 @@
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/gpio-davinci.h>
->  #include <linux/irqchip/chained_irq.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <asm-generic/gpio.h>
-> +
-> +#define MAX_REGS_BANKS 5
-> +#define MAX_INT_PER_BANK 32
->  
->  struct davinci_gpio_regs {
->  	u32	dir;
-> @@ -45,6 +52,27 @@ typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
->  static void __iomem *gpio_base;
->  static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
->  
-> +struct davinci_gpio_irq_data {
-> +	void __iomem			*regs;
-> +	struct davinci_gpio_controller	*chip;
-> +	int				bank_num;
-> +};
-> +
-> +struct davinci_gpio_controller {
-> +	struct gpio_chip	chip;
-> +	struct irq_domain	*irq_domain;
-> +	/* Serialize access to GPIO registers */
-> +	spinlock_t		lock;
-> +	void __iomem		*regs[MAX_REGS_BANKS];
-> +	int			gpio_unbanked;
-> +	int			irqs[MAX_INT_PER_BANK];
-> +};
-> +
-> +static inline u32 __gpio_mask(unsigned gpio)
-> +{
-> +	return 1 << (gpio % 32);
-> +}
-> +
->  static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
->  {
->  	struct davinci_gpio_regs __iomem *g;
-> diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
-> index 47695b342883..f92a47e18034 100644
-> --- a/include/linux/platform_data/gpio-davinci.h
-> +++ b/include/linux/platform_data/gpio-davinci.h
-> @@ -16,40 +16,12 @@
->  #ifndef __DAVINCI_GPIO_PLATFORM_H
->  #define __DAVINCI_GPIO_PLATFORM_H
->  
-> -#include <linux/io.h>
-> -#include <linux/spinlock.h>
-> -
-> -#include <asm-generic/gpio.h>
-> -
-> -#define MAX_REGS_BANKS		5
-> -#define MAX_INT_PER_BANK 32
-> -
->  struct davinci_gpio_platform_data {
->  	u32	ngpio;
->  	u32	gpio_unbanked;
->  };
->  
-> -struct davinci_gpio_irq_data {
-> -	void __iomem			*regs;
-> -	struct davinci_gpio_controller	*chip;
-> -	int				bank_num;
-> -};
-> -
-> -struct davinci_gpio_controller {
-> -	struct gpio_chip	chip;
-> -	struct irq_domain	*irq_domain;
-> -	/* Serialize access to GPIO registers */
-> -	spinlock_t		lock;
-> -	void __iomem		*regs[MAX_REGS_BANKS];
-> -	int			gpio_unbanked;
-> -	int			irqs[MAX_INT_PER_BANK];
-> -};
-> -
->  /* Convert GPIO signal to GPIO pin number */
->  #define GPIO_TO_PIN(bank, gpio)	(16 * (bank) + (gpio))
->  
-> -static inline u32 __gpio_mask(unsigned gpio)
-> -{
-> -	return 1 << (gpio % 32);
-> -}
->  #endif
-> 
+SGkgQm9yaXMsDQoNClRoYW5rcyBhIGxvdCBmb3IgdGhlIHJldmlldy4NCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgW21haWx0bzpicEBhbGll
+bjguZGVdDQo+IFNlbnQ6IFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCAxOjIzIFBNDQo+IFRv
+OiBNYW5pc2ggTmFyYW5pIDxNTkFSQU5JQHhpbGlueC5jb20+DQo+IENjOiByb2JoK2R0QGtlcm5l
+bC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBtY2hlaGFiQGtlcm5lbC5vcmc7DQo+IE1pY2hh
+bCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsgbGVveWFuZy5saUBueHAuY29tOw0KPiBzdWRl
+ZXAuaG9sbGFAYXJtLmNvbTsgYW1pdC5rdWNoZXJpYUBsaW5hcm8ub3JnOw0KPiBkZXZpY2V0cmVl
+QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+
+IGVkYWNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NyAxLzddIGVkYWM6IHN5bm9wc3lzOiBGaXggY29k
+ZSBjb21tZW50cyBhbmQgbmFtaW5nDQo+IGNvbnZlbnRpb24NCj4gDQo+IE9uIE1vbiwgU2VwIDE3
+LCAyMDE4IGF0IDA3OjU0OjU5UE0gKzA1MzAsIE1hbmlzaCBOYXJhbmkgd3JvdGU6DQo+ID4gVXBk
+YXRlIHRoZSBjb21tZW50cyBpbiB0aGUgU3lub3BzeXMgRURBQyBkcml2ZXIuIE1pbm9yIGNoYW5n
+ZXMgdG8NCj4gPiBmdW5jdGlvbiBuYW1lcyBhbmQgcmV0dXJuIHR5cGVzIGFyZSBhbHNvIGluY2x1
+ZGVkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWFuaXNoIE5hcmFuaSA8bWFuaXNoLm5hcmFu
+aUB4aWxpbnguY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2VkYWMvc3lub3BzeXNfZWRhYy5j
+IHwgMTc2DQo+ID4gKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgODAgaW5zZXJ0aW9ucygrKSwgOTYgZGVsZXRpb25zKC0pDQo+
+IA0KPiBTbyB0aGlzIHBhdGNoIGRvZXMgYSBidW5jaCBvZiB0aGluZ3MgdG9nZXRoZXIgYW5kIHNo
+b3VsZCBiZSBzcGxpdCBpbnRvOg0KPiANCj4gKiBmdW5jdGlvbmFsIGNoYW5nZXMgbGlrZSBjb2Rl
+IGNsZWFudXANCj4gKiBmdW5jdGlvbnMgcmVuYW1pbmcNCj4gKiBjb21tZW50cyBjbGVhbnVwDQo+
+IA0KPiBNYXliZSBpbiB0aGF0IG9yZGVyLg0KPiANCj4gVGhpcyB3YXkgeW91J2xsIGhhdmUgb25l
+IGxvZ2ljYWwgc2V0IG9mIGNoYW5nZXMgcGVyIHBhdGNoIGFuZCByZXZpZXcgd2lsbCBiZQ0KPiBh
+bG1vc3QgdHJpdmlhbC4NCj4gDQpPa2F5LCBJIHdpbGwgZG8gdGhhdCBpbiB2OC4NCg0KVGhhbmtz
+LA0KTWFuaXNoDQo=
