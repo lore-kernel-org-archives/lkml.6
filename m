@@ -3,81 +3,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279B0ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3668ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB19C214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:53:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB19C214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 84D20214DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D20214DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730784AbeISH2d (ORCPT
+        id S1730816AbeISHc4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:28:33 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38216 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728226AbeISH2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:28:33 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8E72B22691DBB;
-        Wed, 19 Sep 2018 09:53:06 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
- 09:53:03 +0800
-Message-ID: <5BA1ABFB.2080401@huawei.com>
-Date:   Wed, 19 Sep 2018 09:52:59 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Wed, 19 Sep 2018 03:32:56 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:43327 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728226AbeISHc4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:32:56 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w8J1vLeN004079
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 19 Sep 2018 10:57:21 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w8J1vLGs025495;
+        Wed, 19 Sep 2018 10:57:21 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w8J1rSVP017508;
+        Wed, 19 Sep 2018 10:57:21 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-3814187; Wed, 19 Sep 2018 10:54:42 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0319.002; Wed,
+ 19 Sep 2018 10:54:41 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 2/2] mm: zero remaining unavailable struct pages
+Thread-Topic: [PATCH 2/2] mm: zero remaining unavailable struct pages
+Thread-Index: AQHUOw61nBfwJ4oj8EuIYNq2qyyUlaTTr6mAgAKZ4ACAAlWoAIAbZ8yAgAJjeQA=
+Date:   Wed, 19 Sep 2018 01:54:40 +0000
+Message-ID: <20180919015440.GA2581@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180823182513.8801-1-msys.mizuma@gmail.com>
+ <20180823182513.8801-2-msys.mizuma@gmail.com>
+ <7c773dec-ded0-7a1e-b3ad-6c6826851015@microsoft.com>
+ <484388a7-1e75-0782-fdfb-20345e1bda0d@gmail.com>
+ <20180831025536.GA29753@hori1.linux.bs1.fc.nec.co.jp>
+ <20180917132605.eln6tlc6hf7vfjy2@gabell>
+In-Reply-To: <20180917132605.eln6tlc6hf7vfjy2@gabell>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <CB043011886D704ABA9CFEE60E3D37B7@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-To:     Andy Gross <andy.gross@linaro.org>
-CC:     <david.brown@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: qcom: Fix a uninitialized warning.
-References: <1537247208-33632-1-git-send-email-zhongjiang@huawei.com> <20180918171707.GA6240@hector.localdomain>
-In-Reply-To: <20180918171707.GA6240@hector.localdomain>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/19 1:17, Andy Gross wrote:
-> On Tue, Sep 18, 2018 at 01:06:48PM +0800, zhong jiang wrote:
->> Fix the following compile warning:
->>
->> drivers/soc/qcom/cmd-db.c:194:38: warning: 'ent.addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   return ret < 0 ? 0 : le32_to_cpu(ent.addr);
->>
->> drivers/soc/qcom/cmd-db.c:247:38: warning: 'ent.len' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   return ret < 0 ? 0 : le16_to_cpu(ent.len);
->>
->> drivers/soc/qcom/cmd-db.c:269:24: warning: 'ent.addr' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   addr = le32_to_cpu(ent.addr);
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/soc/qcom/cmd-db.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
-> This is kind of an odd subject for the patch.  It should be something like
-> drivers: qcom: cmd-db: XXXXXXXXXXXXX
->
-> ASOC is sound related.
-Thank you for your reply and review.  I will update the subject and repost.
+On Mon, Sep 17, 2018 at 09:26:07AM -0400, Masayoshi Mizuma wrote:
+> On Fri, Aug 31, 2018 at 02:55:36AM +0000, Naoya Horiguchi wrote:
+> > On Wed, Aug 29, 2018 at 11:16:30AM -0400, Masayoshi Mizuma wrote:
+> > > Hi Horiguchi-san and Pavel
+> > > 
+> > > Thank you for your comments!
+> > > The Pavel's additional patch looks good to me, so I will add it to this series.
+> > > 
+> > > However, unfortunately, the movable_node option has something wrong yet...
+> > > When I offline the memory which belongs to movable zone, I got the following
+> > > warning. I'm trying to debug it.
+> > > 
+> > > I try to describe the issue as following. 
+> > > If you have any comments, please let me know.
+> > > 
+> > > WARNING: CPU: 156 PID: 25611 at mm/page_alloc.c:7730 has_unmovable_pages+0x1bf/0x200
+> > > RIP: 0010:has_unmovable_pages+0x1bf/0x200
+> > > ...
+> > > Call Trace:
+> > >  is_mem_section_removable+0xd3/0x160
+> > >  show_mem_removable+0x8e/0xb0
+> > >  dev_attr_show+0x1c/0x50
+> > >  sysfs_kf_seq_show+0xb3/0x110
+> > >  seq_read+0xee/0x480
+> > >  __vfs_read+0x36/0x190
+> > >  vfs_read+0x89/0x130
+> > >  ksys_read+0x52/0xc0
+> > >  do_syscall_64+0x5b/0x180
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > RIP: 0033:0x7fe7b7823f70
+> > > ...
+> > > 
+> > > I added a printk to catch the unmovable page.
+> > > ---
+> > > @@ -7713,8 +7719,12 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> > >                  * is set to both of a memory hole page and a _used_ kernel
+> > >                  * page at boot.
+> > >                  */
+> > > -               if (found > count)
+> > > +               if (found > count) {
+> > > +                       pr_info("DEBUG: %s zone: %lx page: %lx pfn: %lx flags: %lx found: %ld count: %ld \n",
+> > > +                               __func__, zone, page, page_to_pfn(page), page->flags, found, count);
+> > >                         goto unmovable;
+> > > +               }
+> > > ---
+> > > 
+> > > Then I got the following. The page (PFN: 0x1c0ff130d) flag is 
+> > > 0xdfffffc0040048 (uptodate|active|swapbacked)
+> > > 
+> > > ---
+> > > DEBUG: has_unmovable_pages zone: 0xffff8c0ffff80380 page: 0xffffea703fc4c340 pfn: 0x1c0ff130d flags: 0xdfffffc0040048 found: 1 count: 0 
+> > > ---
+> > > 
+> > > And I got the owner from /sys/kernel/debug/page_owner.
+> > > 
+> > > Page allocated via order 0, mask 0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO)
+> > > PFN 7532909325 type Movable Block 14712713 type Movable Flags 0xdfffffc0040048(uptodate|active|swapbacked)
+> > >  __alloc_pages_nodemask+0xfc/0x270
+> > >  alloc_pages_vma+0x7c/0x1e0
+> > >  handle_pte_fault+0x399/0xe50
+> > >  __handle_mm_fault+0x38e/0x520
+> > >  handle_mm_fault+0xdc/0x210
+> > >  __do_page_fault+0x243/0x4c0
+> > >  do_page_fault+0x31/0x130
+> > >  page_fault+0x1e/0x30
+> > > 
+> > > The page is allocated as anonymous page via page fault.
+> > > I'm not sure, but lru flag should be added to the page...?
+> > 
+> > There is a small window of no PageLRU flag just after page allocation
+> > until the page is linked to some LRU list.
+> > This kind of unmovability is transient, so retrying can work.
+> > 
+> > I guess that this warning seems to be visible since commit 15c30bc09085
+> > ("mm, memory_hotplug: make has_unmovable_pages more robust")
+> > which turned off the optimization based on the assumption that pages
+> > under ZONE_MOVABLE are always movable.
+> > I think that it helps developers find the issue that permanently
+> > unmovable pages are accidentally located in ZONE_MOVABLE zone.
+> > But even ZONE_MOVABLE zone could have transiently unmovable pages,
+> > so the reported warning seems to me a false charge and should be avoided.
+> > Doing lru_add_drain_all()/drain_all_pages() before has_unmovable_pages()
+> > might be helpful?
+> 
+> Thanks you for your proposal! And sorry for delayed responce.
+> 
+> lru_add_drain_all()/drain_all_pages() might be helpful, but it 
+> seems that the window is not very small because I tried to do
+> offline some times, and every offline failed...
 
-Sincerely,
-zhong jiang
->
-> Regards,
->
-> Andy
->
->
+OK, so this doesn't work, thank you for trying.
 
+> 
+> I have another idea. I found that if the page is belonged to
+> Movable zone and it has Uptodate flag, the page will go lru
+> soon, so I think we can pass the page.
+> Does the idea make sence? As far as I tested it, it works well.
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 52d9efe8c9fb..ecf87bec8ac6 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7758,6 +7758,9 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+>                 if (__PageMovable(page))
+>                         continue;
+> 
+> +               if ((zone_idx(zone) == ZONE_MOVABLE) && PageUptodate(page))
+> +                       continue;
+> +
 
+We have many call sites calling SetPageUptodate (many are from filesystems,)
+so I'm concerned that some caller might set PageUptodate on non-LRU pages.
+Could you explain a little more how/why this check is a clear separation b/w
+movable pages and unmovable pages?
+(Filesystem metadata is never allocated from ZONE_MOVABLE?)
+
+Thanks,
+Naoya Horiguchi
