@@ -6,223 +6,236 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD23C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51361ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A52EB2150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:13:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52EB2150B
+	by mail.kernel.org (Postfix) with ESMTP id 08C5A2150B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C5A2150B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbeISQuZ (ORCPT
+        id S1731320AbeISQui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 12:50:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55244 "EHLO mx1.redhat.com"
+        Wed, 19 Sep 2018 12:50:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51940 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731206AbeISQuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:50:25 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        id S1731204AbeISQuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 12:50:22 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A30C30001F0;
-        Wed, 19 Sep 2018 11:13:00 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B519230912F4;
+        by mx1.redhat.com (Postfix) with ESMTPS id A99B2C058CBE;
         Wed, 19 Sep 2018 11:12:57 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 01784176DB;
+        Wed, 19 Sep 2018 11:12:53 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 3718D9C42C; Wed, 19 Sep 2018 13:12:53 +0200 (CEST)
+        id 046879C423; Wed, 19 Sep 2018 13:12:53 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     michel@daenzer.net, imirkin@alum.mit.edu,
         Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 5/5] drm/virtio: fix DRM_FORMAT_* handling
-Date:   Wed, 19 Sep 2018 13:12:52 +0200
-Message-Id: <20180919111252.7932-6-kraxel@redhat.com>
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 4/5] drm/bochs: support changing byteorder at mode set time
+Date:   Wed, 19 Sep 2018 13:12:51 +0200
+Message-Id: <20180919111252.7932-5-kraxel@redhat.com>
 In-Reply-To: <20180919111252.7932-1-kraxel@redhat.com>
 References: <20180919111252.7932-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 19 Sep 2018 11:13:00 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 19 Sep 2018 11:12:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DRM_FORMAT_HOST_XRGB8888, so we are using the correct format code
-on bigendian machines.  Also set the quirk_addfb_prefer_host_byte_order
-mode_config bit so drm_mode_addfb() asks for the correct format code.
-
-Both DRM_FORMAT_* and VIRTIO_GPU_FORMAT_* are defined to be little
-endian, so using a different mapping on bigendian machines is wrong.
-It's there because of broken drm_mode_addfb() behavior.  So with
-drm_mode_addfb() being fixed we can fix this too.
-
-While wading through the code I've noticed we have a little issue in
-virtio:  We attach a format to the bo when it is created
-(DRM_IOCTL_MODE_CREATE_DUMB), not when we map it as framebuffer
-(DRM_IOCTL_MODE_ADDFB).  Easy way out:  Support a single format only.
-Pick DRM_FORMAT_HOST_XRGB8888, it is the only one actually used in
-practice.  Drop unused mappings in virtio_gpu_translate_format().
-
-With this patch applied both ADDFB and ADDFB2 ioctls work correctly in
-the virtio-gpu.ko driver on big endian machines.  Without the patch only
-ADDFB (which still seems to be used by the majority of userspace) works
-correctly.
+Add bochs_hw_set_*_endian() helper functions, to set the framebuffer
+byteorder at mode set time.  Support both DRM_FORMAT_XRGB8888 and
+DRM_FORMAT_BGRX8888 framebuffer formats, no matter what the native
+machine byte order is.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_display.c |  5 +++
- drivers/gpu/drm/virtio/virtgpu_fb.c      |  2 +-
- drivers/gpu/drm/virtio/virtgpu_gem.c     |  7 +++--
- drivers/gpu/drm/virtio/virtgpu_plane.c   | 54 ++------------------------------
- 4 files changed, 13 insertions(+), 55 deletions(-)
+ drivers/gpu/drm/bochs/bochs.h       |  4 ++-
+ drivers/gpu/drm/bochs/bochs_fbdev.c |  3 +-
+ drivers/gpu/drm/bochs/bochs_hw.c    | 64 +++++++++++++++++++++++++++++--------
+ drivers/gpu/drm/bochs/bochs_kms.c   |  8 +++--
+ 4 files changed, 61 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index 0379d68976..8f8fed471e 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -307,6 +307,10 @@ virtio_gpu_user_framebuffer_create(struct drm_device *dev,
- 	struct virtio_gpu_framebuffer *virtio_gpu_fb;
- 	int ret;
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index b4f6bb5219..e7a69077e4 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -58,6 +58,7 @@ struct bochs_device {
+ 	void __iomem   *fb_map;
+ 	unsigned long  fb_base;
+ 	unsigned long  fb_size;
++	unsigned long  qext_size;
  
-+	if (mode_cmd->pixel_format != DRM_FORMAT_HOST_XRGB8888 &&
-+	    mode_cmd->pixel_format != DRM_FORMAT_HOST_ARGB8888)
-+		return ERR_PTR(-ENOENT);
+ 	/* mode */
+ 	u16 xres;
+@@ -121,7 +122,8 @@ int bochs_hw_init(struct drm_device *dev);
+ void bochs_hw_fini(struct drm_device *dev);
+ 
+ void bochs_hw_setmode(struct bochs_device *bochs,
+-		      struct drm_display_mode *mode);
++		      struct drm_display_mode *mode,
++		      const struct drm_format_info *format);
+ void bochs_hw_setbase(struct bochs_device *bochs,
+ 		      int x, int y, u64 addr);
+ 
+diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+index c46fdae44e..dd3c7df267 100644
+--- a/drivers/gpu/drm/bochs/bochs_fbdev.c
++++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
+@@ -140,7 +140,8 @@ static struct drm_framebuffer *
+ bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
+ 		    const struct drm_mode_fb_cmd2 *mode_cmd)
+ {
+-	if (mode_cmd->pixel_format != DRM_FORMAT_HOST_XRGB8888)
++	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888 &&
++	    mode_cmd->pixel_format != DRM_FORMAT_BGRX8888)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	return drm_gem_fb_create(dev, file, mode_cmd);
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index 16e4f1cacc..cacff73a64 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -47,11 +47,33 @@ static void bochs_dispi_write(struct bochs_device *bochs, u16 reg, u16 val)
+ 	}
+ }
+ 
++static void bochs_hw_set_big_endian(struct bochs_device *bochs)
++{
++	if (bochs->qext_size < 8)
++		return;
 +
- 	/* lookup object associated with res handle */
- 	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
- 	if (!obj)
-@@ -355,6 +359,7 @@ int virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev)
- 	int i;
++	writel(0xbebebebe, bochs->mmio + 0x604);
++}
++
++static void bochs_hw_set_little_endian(struct bochs_device *bochs)
++{
++	if (bochs->qext_size < 8)
++		return;
++
++	writel(0x1e1e1e1e, bochs->mmio + 0x604);
++}
++
++#ifdef __BIG_ENDIAN
++#define bochs_hw_set_native_endian(_b) bochs_hw_set_big_endian(_b)
++#else
++#define bochs_hw_set_native_endian(_b) bochs_hw_set_little_endian(_b)
++#endif
++
+ int bochs_hw_init(struct drm_device *dev)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+ 	struct pci_dev *pdev = dev->pdev;
+-	unsigned long addr, size, mem, ioaddr, iosize, qext_size;
++	unsigned long addr, size, mem, ioaddr, iosize;
+ 	u16 id;
  
- 	drm_mode_config_init(vgdev->ddev);
-+	vgdev->ddev->mode_config.quirk_addfb_prefer_host_byte_order = true;
- 	vgdev->ddev->mode_config.funcs = &virtio_gpu_mode_funcs;
- 	vgdev->ddev->mode_config.helper_private = &virtio_mode_config_helpers;
+ 	if (pdev->resource[2].flags & IORESOURCE_MEM) {
+@@ -117,19 +139,14 @@ int bochs_hw_init(struct drm_device *dev)
+ 		 ioaddr);
  
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
-index b5cebc9a17..6c89974c7f 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fb.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
-@@ -233,7 +233,7 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
- 	mode_cmd.width = sizes->surface_width;
- 	mode_cmd.height = sizes->surface_height;
- 	mode_cmd.pitches[0] = mode_cmd.width * 4;
--	mode_cmd.pixel_format = drm_mode_legacy_fb_format(32, 24);
-+	mode_cmd.pixel_format = DRM_FORMAT_HOST_XRGB8888;
+ 	if (bochs->mmio && pdev->revision >= 2) {
+-		qext_size = readl(bochs->mmio + 0x600);
+-		if (qext_size < 4 || qext_size > iosize)
++		bochs->qext_size = readl(bochs->mmio + 0x600);
++		if (bochs->qext_size < 4 || bochs->qext_size > iosize) {
++			bochs->qext_size = 0;
+ 			goto noext;
+-		DRM_DEBUG("Found qemu ext regs, size %ld\n", qext_size);
+-		if (qext_size >= 8) {
+-#ifdef __BIG_ENDIAN
+-			writel(0xbebebebe, bochs->mmio + 0x604);
+-#else
+-			writel(0x1e1e1e1e, bochs->mmio + 0x604);
+-#endif
+-			DRM_DEBUG("  qext endian: 0x%x\n",
+-				  readl(bochs->mmio + 0x604));
+ 		}
++		DRM_DEBUG("Found qemu ext regs, size %ld\n",
++			  bochs->qext_size);
++		bochs_hw_set_native_endian(bochs);
+ 	}
  
- 	format = virtio_gpu_translate_format(mode_cmd.pixel_format);
- 	if (format == 0)
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index 0f2768eaca..82c817f37c 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -90,7 +90,10 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
- 	uint32_t resid;
- 	uint32_t format;
+ noext:
+@@ -150,7 +167,8 @@ void bochs_hw_fini(struct drm_device *dev)
+ }
  
--	pitch = args->width * ((args->bpp + 1) / 8);
-+	if (args->bpp != 32)
+ void bochs_hw_setmode(struct bochs_device *bochs,
+-		      struct drm_display_mode *mode)
++		      struct drm_display_mode *mode,
++		      const struct drm_format_info *format)
+ {
+ 	bochs->xres = mode->hdisplay;
+ 	bochs->yres = mode->vdisplay;
+@@ -158,8 +176,12 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ 	bochs->stride = mode->hdisplay * (bochs->bpp / 8);
+ 	bochs->yres_virtual = bochs->fb_size / bochs->stride;
+ 
+-	DRM_DEBUG_DRIVER("%dx%d @ %d bpp, vy %d\n",
++	DRM_DEBUG_DRIVER("%dx%d @ %d bpp, format %c%c%c%c, vy %d\n",
+ 			 bochs->xres, bochs->yres, bochs->bpp,
++			 (format->format >>  0) & 0xff,
++			 (format->format >>  8) & 0xff,
++			 (format->format >> 16) & 0xff,
++			 (format->format >> 24) & 0xff,
+ 			 bochs->yres_virtual);
+ 
+ 	bochs_vga_writeb(bochs, 0x3c0, 0x20); /* unblank */
+@@ -177,6 +199,20 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ 
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_ENABLE,
+ 			  VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
++
++	switch (format->format) {
++	case DRM_FORMAT_XRGB8888:
++		bochs_hw_set_little_endian(bochs);
++		break;
++	case DRM_FORMAT_BGRX8888:
++		bochs_hw_set_big_endian(bochs);
++		break;
++	default:
++		/* should not happen */
++		DRM_ERROR("%s: Huh? Got framebuffer format 0x%x",
++			  __func__, format->format);
++		break;
++	};
+ }
+ 
+ void bochs_hw_setbase(struct bochs_device *bochs,
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index f3fdaf9456..9bc5b438ae 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -77,7 +77,10 @@ static int bochs_crtc_mode_set(struct drm_crtc *crtc,
+ 	struct bochs_device *bochs =
+ 		container_of(crtc, struct bochs_device, crtc);
+ 
+-	bochs_hw_setmode(bochs, mode);
++	if (WARN_ON(crtc->primary->fb == NULL))
 +		return -EINVAL;
 +
-+	pitch = args->width * 4;
- 	args->size = pitch * args->height;
- 	args->size = ALIGN(args->size, PAGE_SIZE);
- 
-@@ -99,7 +102,7 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
- 	if (ret)
- 		goto fail;
- 
--	format = virtio_gpu_translate_format(DRM_FORMAT_XRGB8888);
-+	format = virtio_gpu_translate_format(DRM_FORMAT_HOST_XRGB8888);
- 	virtio_gpu_resource_id_get(vgdev, &resid);
- 	virtio_gpu_cmd_create_resource(vgdev, resid, format,
- 				       args->width, args->height);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index 88f2fb8c61..a84ff56507 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -28,22 +28,11 @@
- #include <drm/drm_atomic_helper.h>
- 
- static const uint32_t virtio_gpu_formats[] = {
--	DRM_FORMAT_XRGB8888,
--	DRM_FORMAT_ARGB8888,
--	DRM_FORMAT_BGRX8888,
--	DRM_FORMAT_BGRA8888,
--	DRM_FORMAT_RGBX8888,
--	DRM_FORMAT_RGBA8888,
--	DRM_FORMAT_XBGR8888,
--	DRM_FORMAT_ABGR8888,
-+	DRM_FORMAT_HOST_XRGB8888,
++	bochs_hw_setmode(bochs, mode, crtc->primary->fb->format);
+ 	bochs_crtc_mode_set_base(crtc, x, y, old_fb);
+ 	return 0;
+ }
+@@ -127,7 +130,8 @@ static const struct drm_crtc_helper_funcs bochs_helper_funcs = {
  };
  
- static const uint32_t virtio_gpu_cursor_formats[] = {
--#ifdef __BIG_ENDIAN
--	DRM_FORMAT_BGRA8888,
--#else
--	DRM_FORMAT_ARGB8888,
--#endif
-+	DRM_FORMAT_HOST_ARGB8888,
+ static const uint32_t bochs_formats[] = {
+-	DRM_FORMAT_HOST_XRGB8888,
++	DRM_FORMAT_XRGB8888,
++	DRM_FORMAT_BGRX8888,
  };
  
- uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
-@@ -51,32 +40,6 @@ uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
- 	uint32_t format;
- 
- 	switch (drm_fourcc) {
--#ifdef __BIG_ENDIAN
--	case DRM_FORMAT_XRGB8888:
--		format = VIRTIO_GPU_FORMAT_X8R8G8B8_UNORM;
--		break;
--	case DRM_FORMAT_ARGB8888:
--		format = VIRTIO_GPU_FORMAT_A8R8G8B8_UNORM;
--		break;
--	case DRM_FORMAT_BGRX8888:
--		format = VIRTIO_GPU_FORMAT_B8G8R8X8_UNORM;
--		break;
--	case DRM_FORMAT_BGRA8888:
--		format = VIRTIO_GPU_FORMAT_B8G8R8A8_UNORM;
--		break;
--	case DRM_FORMAT_RGBX8888:
--		format = VIRTIO_GPU_FORMAT_R8G8B8X8_UNORM;
--		break;
--	case DRM_FORMAT_RGBA8888:
--		format = VIRTIO_GPU_FORMAT_R8G8B8A8_UNORM;
--		break;
--	case DRM_FORMAT_XBGR8888:
--		format = VIRTIO_GPU_FORMAT_X8B8G8R8_UNORM;
--		break;
--	case DRM_FORMAT_ABGR8888:
--		format = VIRTIO_GPU_FORMAT_A8B8G8R8_UNORM;
--		break;
--#else
- 	case DRM_FORMAT_XRGB8888:
- 		format = VIRTIO_GPU_FORMAT_B8G8R8X8_UNORM;
- 		break;
-@@ -89,19 +52,6 @@ uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
- 	case DRM_FORMAT_BGRA8888:
- 		format = VIRTIO_GPU_FORMAT_A8R8G8B8_UNORM;
- 		break;
--	case DRM_FORMAT_RGBX8888:
--		format = VIRTIO_GPU_FORMAT_X8B8G8R8_UNORM;
--		break;
--	case DRM_FORMAT_RGBA8888:
--		format = VIRTIO_GPU_FORMAT_A8B8G8R8_UNORM;
--		break;
--	case DRM_FORMAT_XBGR8888:
--		format = VIRTIO_GPU_FORMAT_R8G8B8X8_UNORM;
--		break;
--	case DRM_FORMAT_ABGR8888:
--		format = VIRTIO_GPU_FORMAT_R8G8B8A8_UNORM;
--		break;
--#endif
- 	default:
- 		/*
- 		 * This should not happen, we handle everything listed
+ static struct drm_plane *bochs_primary_plane(struct drm_device *dev)
 -- 
 2.9.3
 
