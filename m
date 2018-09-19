@@ -2,111 +2,100 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85E8ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7652ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602CD2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:35:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602CD2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BD4C214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:36:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ABfCtMKV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD4C214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732921AbeISXOR (ORCPT
+        id S1733010AbeISXO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:14:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53550 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731569AbeISXOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:14:17 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 969E83084033;
-        Wed, 19 Sep 2018 17:35:19 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 05F1030912F5;
-        Wed, 19 Sep 2018 17:35:18 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w8JHZIBp020091;
-        Wed, 19 Sep 2018 13:35:18 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w8JHZGah020082;
-        Wed, 19 Sep 2018 13:35:16 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 19 Sep 2018 13:35:16 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Nathan March <nathan@gt.net>,
-        =?ISO-8859-15?Q?Pasi_K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Subject: Re: [PATCHv5 0/7] tty: Hold write ldisc sem in tty_reopen()
-In-Reply-To: <alpine.LRH.2.02.1809191256060.9689@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.LRH.2.02.1809191330590.19146@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180917235258.5719-1-dima@arista.com> <alpine.LRH.2.02.1809191256060.9689@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 19 Sep 2018 19:14:58 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:33312 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731514AbeISXO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 19:14:58 -0400
+Received: by mail-yw1-f65.google.com with SMTP id x67-v6so2616804ywg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 10:36:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jTAfN7iBnuqfTM/Wb91dnjpM4yrsmApQMl3NFYkxKuI=;
+        b=ABfCtMKVVkF17eUvKJCGhnM2kHPHdavbMPWwKR0TwW+IkFTwYG4sTyoMDoSRuDbARU
+         E4hyEV7JIVU63pcg8fwzN6SDFwsdPbD7AnvANbaQedxuWg7cWGd8ZuVEewDTDYjvtdmt
+         uoOrmQt1+zvv7DSAuBP35XuSd1LiE2gQr789ESydmijdmad9VeOWMb2up9CuAC5JA3FN
+         p1d+foedwBki8lwUIUuIlY9j7zaAz3+easWmn0imBrUu4LwgjhdRcX5IVuHOvPzaiXWW
+         m6l/QJ+lliZuCA7NNfqv2WX8KTV2CvF6H7EfoIXigMorg8amO6zfqOUjkE2/3d7Kc4gi
+         zfbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jTAfN7iBnuqfTM/Wb91dnjpM4yrsmApQMl3NFYkxKuI=;
+        b=i6RFT8ZGnbP/tB2mnIKzt9oz4NHXcNHJ+iRMSb+Eq7nxBwztqLhXlTkt5q48FaE3Ih
+         diMihl1lZ8aOTd4BYEYuiI22g53Imdf4YJO0USFC61bcbk+ui7URtNSR8wwYwn55uWnH
+         uT+gY6ppUgtCBJiNK27Fa63W3qGJEW696YESVScX51+7wXSIR9nJJiKqV17i95fsxMZw
+         CKoXtymappkPaS+9Egqd6ec59yf8GeAMV1BzeMWs8cldj7WTsNZOtcYXo+62mx5RYpcA
+         VGbFd/xVu83pSAnHLHnu6i6TvI1RSrPtjb7fB7nLrgspQ1M6ic0BaBvqHODapngpe56w
+         oWXA==
+X-Gm-Message-State: APzg51Aw/+g1vEFw6CvVA+zmQUvjdwLFTJMxSDmZe93fqTBMJ18vwBTn
+        csMrz7YfU6xyyB3zo6ECbXOcdNPxjby7PQafdS3CUg==
+X-Google-Smtp-Source: ANB0VdaZ/3QPNHSAG7UwdacOVf/AHnYG0wYEn9O7Aao+dys4OBIuWwFf7dhGmgvYUWv/l2NKlFfNkopVcVLm1KZTX+4=
+X-Received: by 2002:a81:78d5:: with SMTP id t204-v6mr15802154ywc.340.1537378560171;
+ Wed, 19 Sep 2018 10:36:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 19 Sep 2018 17:35:20 +0000 (UTC)
+References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
+ <CACK8Z6F4+N1paQTSWcomnwLpLEHoospSOT3M9bqFQZHHfWmahA@mail.gmail.com>
+ <CACK8Z6GfeJQSMN=m9hrFE2DFwpCNjNb57PqGiXFDD19Y=SXgnQ@mail.gmail.com> <20180919084002.GR14465@lahna.fi.intel.com>
+In-Reply-To: <20180919084002.GR14465@lahna.fi.intel.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Wed, 19 Sep 2018 10:35:22 -0700
+Message-ID: <CACK8Z6HCqN83rtEsV0EzSUcYdkq2Fx+QmOBrtW+ud5V4-ucCvQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
+ operations as well
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        casey.g.bowman@intel.com,
+        "Atwood, Matthew S" <matthew.s.atwood@intel.com>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 19, 2018 at 1:40 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Tue, Sep 18, 2018 at 03:14:44PM -0700, Rajat Jain wrote:
+> > Also consider fixing the checkpatch warning:
+> >
+> >         Errors:
+> >             * checkpatch.pl errors/warnings
+> >
+> >             WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> >             #48: FILE: drivers/pinctrl/intel/pinctrl-intel.c:764:
+> >             +static int intel_gpio_to_pin(struct intel_pinctrl *pctrl,
+> > unsigned offset,
+>
+> Right, it is currently the "convention" used in Intel pinctrl drivers so
+> I did not want to change that single entry.
+>
+> We should eventually convert the whole set of Intel pinctrl drivers to
+> use unsigned int instead of unsigned.
 
-
-On Wed, 19 Sep 2018, Mikulas Patocka wrote:
-
-> 
-> 
-> On Tue, 18 Sep 2018, Dmitry Safonov wrote:
-> 
-> > Hi all,
-> > 
-> > Three fixes that worth to have in the @stable, as they were hit by
-> > different people, including Arista on v4.9 stable.
-> > 
-> > And for linux-next - adding lockdep asserts for line discipline changing
-> > code, verifying that write ldisc sem will be held forthwith.
-> > 
-> > The last patch is an optional and probably, timeout can be dropped for
-> > read_lock(). I'll do it if everyone agrees.
-> > (Or as per discussion with Peter in v3, just convert ldisc to
-> > a regular rwsem).
-> > 
-> > Thanks,
-> > Dima
-> 
-> I confirm that this patch series fixes the crash for me.
-> 
-> Tested-by: Mikulas Patocka <mpatocka@redhat.com>
-
-I was too quick to acknowledge this patchset. It doesn't work.
-
-This patchset fixes the crash, but it introduces another bug - when I type 
-'reboot' on the console, it prints 'INIT: Switching to runlevel: 6' and 
-then it gets stuck for 80 seconds before proceeding with the reboot. When 
-I revert this patchset 'reboot' reboots the machine without any delay. 
-This bug was reproduced on Debian 5 userspace on pa-risc.
-
-Mikulas
+OK, Thanks for the clarification.
