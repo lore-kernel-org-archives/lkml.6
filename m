@@ -2,81 +2,87 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9048C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C844BECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A2F2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A2F2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8768921529
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:19:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8768921529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732891AbeISW6Z (ORCPT
+        id S1732954AbeISW6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:58:25 -0400
-Received: from mga07.intel.com ([134.134.136.100]:57176 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731841AbeISW6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:58:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 10:19:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="91959318"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by orsmga001.jf.intel.com with ESMTP; 19 Sep 2018 10:19:31 -0700
-Subject: [PATCH] x86/numa_emulation: fix parsing of numa_meminfo for uniform
- numa emulation
-From:   Dave Jiang <dave.jiang@intel.com>
-To:     mingo@redhat.com, dan.j.williams@intel.com
-Cc:     tglx@linutronix.de, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 19 Sep 2018 10:19:31 -0700
-Message-ID: <153737757130.23982.8187099986085191337.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: StGit/unknown-version
+        Wed, 19 Sep 2018 18:58:42 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33059 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbeISW6m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 18:58:42 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1g2g8f-0006l2-Ka; Wed, 19 Sep 2018 19:19:45 +0200
+Date:   Wed, 19 Sep 2018 19:19:45 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC PATCH 04/10 v2 ] x86/fpu: eager switch PKRU state
+Message-ID: <20180919171945.rd7dni7mih4yrh7r@linutronix.de>
+References: <a239e97a-d1a1-388e-5db9-10758c33d702@redhat.com>
+ <20180918142701.atfb4ul45k7tl6ew@linutronix.de>
+ <7e9a13f3-93f5-fe4a-20d2-f4f9407bd43b@redhat.com>
+ <83e271e1298d603c1105dd0dbea32d67da9cf1fa.camel@surriel.com>
+ <36e8493f-f994-e885-8fe6-2f0d4a9904a1@redhat.com>
+ <20180918160419.2zeru6xnufxixcax@linutronix.de>
+ <11aa7d0f4ba36eff8b61a5dc1bd35ee5195fd576.camel@surriel.com>
+ <c3492a53-74cd-4474-b664-f227ef37b7de@redhat.com>
+ <20180919165719.iepvc7tg6aabp5mm@linutronix.de>
+ <099b9f82-e162-c91a-bc51-aa1ac0cd50aa@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <099b9f82-e162-c91a-bc51-aa1ac0cd50aa@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During fakenuma processing in numa_emulation(), pi gets passed in and
-processed as new fake numa nodes are being split out. Once the original
-memory region is proccessed, it gets removed from the pi by
-numa_remove_memblk_from() in emu_setup_memblk(). So entry 0 gets deleted
-and the rest of the entries get moved up. Therefore we should always pass
-in entry 0 for the next entry to process.
+On 2018-09-19 19:00:34 [+0200], Paolo Bonzini wrote:
+> On 19/09/2018 18:57, Sebastian Andrzej Siewior wrote:
+> > On 2018-09-19 07:55:51 [+0200], Paolo Bonzini wrote:
+> >> A kthread can do use_mm/unuse_mm.
+> > 
+> > indeed. The FPU struct for the kernel thread isn't valid / does not
+> > contain the expected PKRU value. So loading the pkru value from the
+> > struct FPU does not work as expected. We could set it to 0 for a kernel
+> > thread so we don't end up with a random value.
+> > If we want to get this usecase working then we would have to move pkru
+> > value from FPU to mm_struct and consider it in use_mm(). Do we want
+> > this?
+> 
+> As a start, I think keeping it in the FPU struct but loading it
+> unconditionally will work.  kthreads will not obey PKU but it will be
+> better already.
 
-Fixes: 1f6a2c6d9f121 ("x86/numa_emulation: Introduce uniform split
-capability")
+Are you saying I should load the uninitialized value for kthreads or
+load 0 to have in a known state?
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
----
- arch/x86/mm/numa_emulation.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I honestly don't know if PKRU should be per-mm, I don't know mm very
+> well despite my brilliant observation above. :)
 
-diff --git a/arch/x86/mm/numa_emulation.c b/arch/x86/mm/numa_emulation.c
-index b54d52a2d00a..a3ca8bf5afcb 100644
---- a/arch/x86/mm/numa_emulation.c
-+++ b/arch/x86/mm/numa_emulation.c
-@@ -401,8 +401,8 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
- 		ret = -1;
- 		for_each_node_mask(i, physnode_mask) {
- 			ret = split_nodes_size_interleave_uniform(&ei, &pi,
--					pi.blk[i].start, pi.blk[i].end, 0,
--					n, &pi.blk[i], nid);
-+					pi.blk[0].start, pi.blk[0].end, 0,
-+					n, &pi.blk[0], nid);
- 			if (ret < 0)
- 				break;
- 			if (ret < n) {
+Now that I have qemu machine with PKRU I would need to figure out how
+this works. So unless I am mistaken mm is per task and the FPU is per
+thread. And since the FPU struct isn't initialized for kthreads, we
+should end up with 0. But setting to 0 if not used sounds good.
 
+> Paolo
+
+Sebastian
