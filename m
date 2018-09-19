@@ -2,129 +2,210 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D26C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49ACC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0AA214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:27:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dDhyGSLC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0AA214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 86CF0214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86CF0214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sma.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbeISPEv (ORCPT
+        id S1731102AbeISPF1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 11:04:51 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:14466 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727770AbeISPEv (ORCPT
+        Wed, 19 Sep 2018 11:05:27 -0400
+Received: from msgsrv4.atosorigin.de ([194.8.120.226]:56644 "EHLO
+        msgsrv4.atosorigin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbeISPF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 11:04:51 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 19 Sep 2018 18:27:47 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 336E47F4B1;
-        Wed, 19 Sep 2018 18:27:47 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.53,393,1531753200"; 
-   d="scan'208";a="292906835"
-Received: from mail-os2jpn01lp0150.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.150])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 19 Sep 2018 18:27:46 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E2b6s8uRrSjSQAs+iuFMv7gjscBiJ+QWYi0ItBUyA+U=;
- b=dDhyGSLCKgyXIa73wn05oZ31IMmMklpNkGqZbtGnSQCsnOYJqA1r+lxO95NPha1uiJqqRmEQDi4y+ykPIisC7h8ZoeUnOHwblGcxLWv/ZmD9lCen/Jgg5H16kbC13IVSYDvoOJMjgba97IWVRR5Ww+gFFcfWfwjbkQNv3HD07ks=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1SPR00MB081.jpnprd01.prod.outlook.com (10.174.228.16) with Microsoft SMTP
+        Wed, 19 Sep 2018 11:05:27 -0400
+Received: from unknown (HELO julia-mo2.ccsn.de.ao-srv.com) ([194.8.124.179])
+  by msgsrv-out2.atosorigin.de with ESMTP; 19 Sep 2018 11:28:22 +0200
+Received: from julia-mo2.ccsn.de.ao-srv.com (unknown [194.8.124.179]) by MCS01-MA1.atosorigin.de with smtp
+         id 5b23_0780_72663a8c_fa64_4044_91b8_b63e40b167b9;
+        Wed, 19 Sep 2018 11:28:22 +0200
+Received: from julia-mo2 (localhost [127.0.0.1])
+        by julia-mo2.ccsn.de.ao-srv.com (Postfix) with ESMTP id 1CFDDA9BFB9;
+        Wed, 19 Sep 2018 11:28:23 +0200 (CEST)
+Received: from MCS01-MA1.atosorigin.de (mcs01-ma1.deuser.de.intra [194.8.120.185])
+        by julia-mo2.ccsn.de.ao-srv.com (Postfix) with ESMTP id EF3FCA9BFBA;
+        Wed, 19 Sep 2018 11:28:22 +0200 (CEST)
+Received: from SVR-DE-EXMBX-01.sma.de (unknown [10.99.42.82]) by MCS01-MA1.atosorigin.de with smtp
+         id 5b23_0730_a093f2f4_1ca8_4ebb_bfc9_a4e425247756;
+        Wed, 19 Sep 2018 11:28:17 +0200
+Received: from EUR02-VE1-obe.outbound.protection.outlook.com (10.0.42.37) by
+ webmail.sma.de (10.0.42.161) with Microsoft SMTP Server (TLS) id 14.3.389.1;
+ Wed, 19 Sep 2018 11:28:05 +0200
+Received: from DB7PR04MB5243.eurprd04.prod.outlook.com (20.176.236.87) by
+ DB7PR04MB4394.eurprd04.prod.outlook.com (52.135.137.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.15; Wed, 19 Sep 2018 09:27:43 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::90da:703e:a3a9:cd97]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::90da:703e:a3a9:cd97%6]) with mapi id 15.20.1143.014; Wed, 19 Sep 2018
- 09:27:43 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Simon Horman <horms@verge.net.au>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Thread-Topic: [PATCH v3 3/3] ARM: dts: r9a06g032: Add pinctrl node
-Thread-Index: AQHUTqSnOZqOAaKgpEegzg3eDeimu6T3VU4AgAAAh5CAAAHLAIAAAKTA
-Date:   Wed, 19 Sep 2018 09:27:43 +0000
-Message-ID: <TY1PR01MB1769B445E15C05F342ABCCACF51C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20180917163609.30457-1-phil.edworthy@renesas.com>
- <20180917163609.30457-4-phil.edworthy@renesas.com>
- <20180919091524.rgbk4m6ht34idkpd@verge.net.au>
- <TY1PR01MB17690D4C023EB9B4A5164A2AF51C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdXhDcfXe7ohuO2s4MKHFPc-Z4TRjaTJv-MG0MHga=2viQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXhDcfXe7ohuO2s4MKHFPc-Z4TRjaTJv-MG0MHga=2viQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+ 15.20.1143.18; Wed, 19 Sep 2018 09:25:32 +0000
+Received: from DB7PR04MB5243.eurprd04.prod.outlook.com
+ ([fe80::f198:36b7:1793:542b]) by DB7PR04MB5243.eurprd04.prod.outlook.com
+ ([fe80::f198:36b7:1793:542b%3]) with mapi id 15.20.1143.017; Wed, 19 Sep 2018
+ 09:25:32 +0000
+From:   Andre Kalb <Andre.Kalb@sma.de>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Frank Rowand <frowand.list@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] of: __of_update_property_sysfs only call
+ __of_sysfs_remove_bin_file if of_node_is_attached
+Thread-Topic: [PATCH v2] of: __of_update_property_sysfs only call
+ __of_sysfs_remove_bin_file if of_node_is_attached
+Thread-Index: AdREZxxSehcX9yb4Tui0YlbCxpETAwCflhgAAIFiuDAACG4qAAG7OyRA
+Date:   Wed, 19 Sep 2018 09:25:32 +0000
+Message-ID: <DB7PR04MB5243B43ED321F828C5094DA8FC1C0@DB7PR04MB5243.eurprd04.prod.outlook.com>
+References: <AM6PR04MB52394FDB1266388BCE1374E3FC030@AM6PR04MB5239.eurprd04.prod.outlook.com>
+ <c0bcc2c1-3058-db4d-ca4d-4e56c502891b@gmail.com>
+ <DB7PR04MB5243B6ADEBCB4B53B5A161F8FC050@DB7PR04MB5243.eurprd04.prod.outlook.com>
+ <CAL_JsqKc1-Rz6iBJ_dpDrEDoFRpTaLR+1voXdTgiJjjG65druA@mail.gmail.com>
+In-Reply-To: <CAL_JsqKc1-Rz6iBJ_dpDrEDoFRpTaLR+1voXdTgiJjjG65druA@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
+ smtp.mailfrom=Andre.Kalb@sma.de; 
+x-originating-ip: [62.157.91.9]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1SPR00MB081;20:PBD5EGumQ3Ot27ejZkYE5M5kmMCcBEmKJymby3ybd5JFnw33Yzj5BfqehS6ZEpMdvYS6xoLOHMS3I3nfcg5FMfjfBQOhfnsNP+nPMckNbcuESfDmcOHhV57kcbmhwJbnjR4n5Cw/yOKVZOptMOlEVJXncF+BM23xYxPMxnxYhII=
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4394;6:4WKoMvMODz7mqfSx4ezR6PCOC8VLaV0v5eKeeJYpE39o/+qMSPFakgCofRs3PCM8FaEZ8nVD+y94vbTCPyXhGDtgdJKVGPmxJDrpK5u3h9aglACPM+CjWFEBg0kL6J6YZVKrRV7tI2A6Af130kzCUDre3qGD+qMuam4aKdnkwncM9ZQikubPlECy521gDNfsw6wnnRvCCuMmezvMwhKxQd9BBFyU5Q2Vh5GTi9Dnr2wIb0I3PuM/AKq6jgVmkP/XSKokVQmcDeRHaF+b1wXYeomSpTGoHltG+Tt86JXDbNl45JvZPT1nBhiUFvMjYBAFC3A2rXgGiBKzWgc6zp4bZKHLnIe46l33hJkqu/e/YGuwXfuTOVdWmu+yTY/RKeLYFz52HzP/rJPPn/HPFmhXtfb+jEnt8Lad1exIJPHWgC5YZB1OnN63dTMmjMkP5lYnRHziZEqd3yok6oMeGPeWKg==;5:4PZXFTObq3E+7uyjVaAvCs7kxiLP+v3Cd1w8bhPLnWFMMrYq3lop/DCJO6XHklzwbCbrTkzbdOgInggSv2WzHqPqEQD4Lzy6tul1rXzDWMwXndr5oTv3NpVVMqJoIygpKoBktX8rhG+annb/nfHgmtfrbWim/qCViurBQ6BKpQs=;7:vPXsWRs3YyWH3lYcp+7dW3CLSqiudKvZve5bSkENuskJWqmv3H6/u8q6yOefOCk+zAsVASmuqqW/sP5mhA6HEC1ng0Mb7I+AYSl7hu1t6tUaeEkEp5dAmKyGx0yTBcBjD+woQc6Cx8mex9SvXNy2j1zqZ/LqrPpK3WfXsjLixXd/59Kr63h3oVnQFCjVUbUx0J/ibyxinVfzmKZQIGXN0yzZYdYqq7xG1jdEn8NVdb8NcR4QyeckfkDWiMz3DGKu
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 57ba3cf6-fdcf-4b94-bc10-08d61e122773
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1SPR00MB081;
-x-ms-traffictypediagnostic: TY1SPR00MB081:
-x-microsoft-antispam-prvs: <TY1SPR00MB08107C6364CB86D4523F9B7F51C0@TY1SPR00MB081.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
+x-ms-office365-filtering-correlation-id: c405e72a-62df-4540-3500-08d61e11d936
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4394;
+x-ms-traffictypediagnostic: DB7PR04MB4394:
+x-microsoft-antispam-prvs: <DB7PR04MB43941F25123359FBE097DA25FC1C0@DB7PR04MB4394.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699050);SRVR:TY1SPR00MB081;BCL:0;PCL:0;RULEID:;SRVR:TY1SPR00MB081;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699050);SRVR:DB7PR04MB4394;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4394;
 x-forefront-prvs: 0800C0C167
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(396003)(366004)(346002)(136003)(189003)(199004)(6436002)(25786009)(97736004)(6116002)(3846002)(81156014)(14454004)(256004)(102836004)(186003)(81166006)(476003)(53546011)(4326008)(6506007)(8936002)(7736002)(9686003)(26005)(8676002)(86362001)(229853002)(2906002)(68736007)(6916009)(6246003)(93886005)(55016002)(305945005)(14444005)(11346002)(74316002)(66066001)(33656002)(7696005)(5250100002)(76176011)(2900100001)(106356001)(478600001)(105586002)(99286004)(54906003)(44832011)(53936002)(486006)(446003)(316002)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR00MB081;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(396003)(39860400002)(346002)(376002)(189003)(199004)(54906003)(5250100002)(305945005)(6436002)(7696005)(68736007)(99286004)(105586002)(66066001)(74316002)(9686003)(6306002)(39060400002)(33656002)(75402003)(76176011)(3846002)(55016002)(97736004)(316002)(7736002)(6506007)(6116002)(106356001)(446003)(478600001)(45080400002)(476003)(14454004)(11346002)(486006)(102836004)(25786009)(53936002)(53546011)(72206003)(8936002)(26005)(2906002)(81156014)(74482002)(93886005)(5024004)(86362001)(5660300001)(4326008)(8676002)(186003)(966005)(81166006)(14444005)(256004)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR04MB4394;H:DB7PR04MB5243.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: sma.de does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: MRciE0hk13YyrFDJ/ftMMUWOsFlpEPlkM30N9qSmhNXCDWbxWcCD4jgUnYou6kLVLNiIgnUW2ukQxOsIhMLXIgCulGlkLfRBueJ7GkA3Ln4yCqWJx9PbsQCkrkdxw9f9Uqt5MZnGy15WkhZxQTuCCwkJw1TjKUayDV9JOlVOYAUzANvabDceQBnVgaRwOb4nShqx1RNr/++AbduSNxrzFQOlmSOkeB/xHe8W6zJnJ+m5lOReml5QeZdhhLcaY/FpvEf8vl4hmaQyaxhmJ+dBuePuwt6qEES3eIaJZ1DctpALZc8r1jzQ+C6Sgi4xXONHIsmqx0FreDPSYqUui4er5jIa+7PsnXAdRocCPNVbU2A=
+x-microsoft-antispam-message-info: kXjACFvZlhMDKdSxhNX/r2uUxkHBInZQsPKfHGc6Ic+l/DRy+cc8PcCPpxXxVi5SqQpkHm8ZV29zuXDm35z1GdVVl9u+LBCoXD1FxqMMtvPALIfnLvyjgvuOg65XCvm1TP8JOyToRgqQhaO1f7ilOyZfrYut+EHxkevGizStGZbkIwCKgQ2uO1z83bwDKqmjwWfBHs1pivQNiGV6L/tWNkK3A5nl/r7ycZowA15KEWnkPKshzX5OyQRhJ7IIsUKTR92uzhBKCFNapKz4nUaBbREx/9/HM60Y0osyDMcMHvfHEeG+4/T17Dm8spwAgDcLU7eUjqtK+S7oUHGQFvKO4G2Np8At5Vz7fUf8uWPVFt0=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57ba3cf6-fdcf-4b94-bc10-08d61e122773
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 09:27:43.7963
+X-MS-Exchange-CrossTenant-Network-Message-Id: c405e72a-62df-4540-3500-08d61e11d936
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2018 09:25:32.5888
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR00MB081
+X-MS-Exchange-CrossTenant-id: a059b96c-2829-4d11-8837-4cc1ff84735d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4394
+X-OriginatorOrg: sma.de
+X-NAI-Spam-Flag: NO
+X-NAI-Spam-Level: 
+X-NAI-Spam-Threshold: 8
+X-NAI-Spam-Score: 0.9
+X-NAI-Spam-Version: 2.3.0.9418 : core <6376> : inlines <6884> : streams
+ <1798889> : uri <2713604>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDE5IFNlcHRlbWJlciAyMDE4IDEwOjI0IEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gT24gV2VkLCBTZXAgMTksIDIwMTggYXQgMTE6MTggQU0gUGhpbCBFZHdvcnRo
-eSAgd3JvdGU6DQo+ID4gT24gMTkgU2VwdGVtYmVyIDIwMTggMTA6MTUgU2ltb24gSG9ybWFuIHdy
-b3RlOg0KPiA+ID4gT24gTW9uLCBTZXAgMTcsIDIwMTggYXQgMDU6MzY6MDlQTSArMDEwMCwgUGhp
-bCBFZHdvcnRoeSB3cm90ZToNCj4gPiA+ID4gVGhpcyBwcm92aWRlcyBhIHBpbmN0cmwgZHJpdmVy
-IGZvciB0aGUgUmVuZXNhcyBSOUEwNkcwMzIgU29DDQo+ID4gPiA+DQo+ID4gPiA+IEJhc2VkIG9u
-IGEgcGF0Y2ggb3JpZ2luYWxseSB3cml0dGVuIGJ5IE1pY2hlbCBQb2xsZXQgYXQgUmVuZXNhcy4N
-Cj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUGhpbCBFZHdvcnRoeSA8cGhpbC5lZHdv
-cnRoeUByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBUaGFua3MgUGhpbCwgSSB3aWxsIGRlZmVy
-IHRoaXMgcGF0Y2ggcGVuZGluZyBhY2NlcHRhbmNlIG9mIHRoZSBiaW5kaW5ncy4NCj4gPiA+IFBs
-ZWFzZSBjb250aW51ZSB0byByZXBvc3QgdGhpcyBwYXRjaCB3aXRoIHVwZGF0ZXMgdG8gdGhlIGJp
-bmRpbmdzIG9yDQo+ID4gPiBvdGhlcndpc2UgcGluZyBtZSBvbmNlIHRoZXkgaGF2ZSBiZWVuIGFj
-Y2VwdGVkLg0KPiA+IFRoYW5rcywgaG93ZXZlciBJIHdpbGwgc2VuZCBhIG5ldyB2ZXJzaW9uIG9m
-IHRoaXMgcGF0Y2ggdG8gcmVtb3ZlIHRoZQ0KPiA+IGNsb2NrLW5hbWVzIHByb3AgYXMgaXQgaXMg
-bm90IG5lZWRlZC4NCj4gDQo+IEkgaGF2ZW4ndCByZXZpZXdlZCB0aGUgYmluZGluZ3MgcGF0Y2gg
-eWV0LCBidXQgaXQncyBhIGdvb2QgaWRlYSB0byBoYXZlDQo+IGNsb2NrLW5hbWVzLCBldmVuIGZv
-ciBhIHNpbmdsZSBjbG9jay4NCj4gSXQgbWFrZXMgbGlmZSBlYXNpZXIgaWYgdGhlIHNhbWUgbW9k
-dWxlIGlzIHJldXNlZCBvciBlbmhhbmNlZCBpbiBhIGxhdGVyIFNvQywNCj4gd2l0aCBtb3JlIGNs
-b2NrIGlucHV0cy4NCk9rLCBJJ2xsIHB1dCBpdCBiYWNrIDopDQoNCkkgc2hvdWxkIGJlIGFibGUg
-dG8gZ2V0IGEgbmV3IHZlcnNpb24gb3V0IHRvZGF5IHNvIHlvdSBtYXkgd2FudCB0byBkZWxheQ0K
-eW91ciByZXZpZXcgdW50aWwgdGhlbi4NCg0KVGhhbmtzDQpQaGlsDQo=
+Hi Rob,
+
+I have used an other hardware to check the patch. I hope it doesn't matter. I added few lines at the untitest.c. All existing unittest use an attached sysfs, therefore the bug isn't detectable.
+
+The patch of the unittest is posted: https://lore.kernel.org/patchwork/patch/985738/
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at fs/kernfs/dir.c:1481 kernfs_remove_by_name_ns+0x9c/0xa4
+kernfs: can not remove '(null)', no directory
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.18.7 #3
+Hardware name: Freescale i.MX6 Ultralite (Device Tree)
+[<c010f338>] (unwind_backtrace) from [<c010cefc>] (show_stack+0x10/0x14)
+[<c010cefc>] (show_stack) from [<c0122004>] (__warn+0xe0/0xf8)
+[<c0122004>] (__warn) from [<c0122060>] (warn_slowpath_fmt+0x44/0x68)
+[<c0122060>] (warn_slowpath_fmt) from [<c02c6540>] (kernfs_remove_by_name_ns+0x9c/0xa4)
+[<c02c6540>] (kernfs_remove_by_name_ns) from [<c055a704>] (__of_update_property_sysfs+0x38/0x50)
+[<c055a704>] (__of_update_property_sysfs) from [<c0557b94>] (of_update_property+0xc0/0x104)
+[<c0557b94>] (of_update_property) from [<c09521bc>] (of_unittest+0x1b8/0x28d4)
+[<c09521bc>] (of_unittest) from [<c0102d88>] (do_one_initcall+0x40/0x218)
+[<c0102d88>] (do_one_initcall) from [<c090101c>] (kernel_init_freeable+0x24c/0x2e4)
+[<c090101c>] (kernel_init_freeable) from [<c06a1f6c>] (kernel_init+0x8/0x110)
+[<c06a1f6c>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+Exception stack(0xcc099fb0 to 0xcc099ff8)
+9fa0:                                     00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+---[ end trace 4522f69e0760e4d5 ]---
+
+Best regards
+Andre Kalb
+
+> -----Ursprüngliche Nachricht-----
+> Von: Rob Herring [mailto:robh+dt@kernel.org]
+> Gesendet: Montag, 10. September 2018 15:47
+> An: Andre Kalb
+> Cc: Frank Rowand; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org
+> Betreff: Re: [PATCH v2] of: __of_update_property_sysfs only call
+> __of_sysfs_remove_bin_file if of_node_is_attached
+>
+> On Mon, Sep 10, 2018 at 4:51 AM Andre Kalb <Andre.Kalb@sma.de> wrote:
+> >
+> > Hi Frank,
+> >
+> > > -----Ursprüngliche Nachricht-----
+> > > Von: Frank Rowand [mailto:frowand.list@gmail.com]
+> > > Gesendet: Freitag, 7. September 2018 22:01
+> > > An: Andre Kalb; robh+dt@kernel.org; devicetree@vger.kernel.org;
+> > > linux- kernel@vger.kernel.org
+> > > Betreff: Re: [PATCH v2] of: __of_update_property_sysfs only call
+> > > __of_sysfs_remove_bin_file if of_node_is_attached
+> > >
+> > > Hi Andred,
+> > >
+> > > On 09/04/18 08:51, Andre Kalb wrote:
+> > > > To prevent warning "kernfs: can not remove '(null)', no directory"
+> > > > if an overlay
+> > > isn't applied to the active devicetree.
+> > > >
+> > > > Using of_remove_property and then of_add_property doesn't show the
+> > > warning.
+>
+> [...]
+>
+> > > What is the calling path that results in the warning?
+> > >
+> > > -Frank
+> >
+> > There is the callstack of the warning.
+> >
+> > [   10.782830] ------------[ cut here ]------------
+> > [   10.830357] WARNING: CPU: 0 PID: 170 at /linux-4.x/fs/kernfs/dir.c:1276
+> kernfs_remove_by_name_ns+0x30/0x80()
+> > [   10.928997] kernfs: can not remove '(null)', no directory
+> > [   10.993107] Modules linked in: module_capemgr(+)
+> > [   11.045750] CPU: 0 PID: 170 Comm: systemd-udevd Not tainted 4.4.143-
+> 00158-g8e5ca65ec7ee-dirty #114
+>
+> 158 patches on top of an almost 3 year old kernel...
+>
+> > [   12.011373] [<bf0000e4>] (module_capemgr_slot_scan [module_capemgr])
+> from [<bf0007bc>] (module_capemgr_probe+0x3c/0x58 [module_capemgr])
+>
+> And a driver that's not upstream.
+>
+> Not saying the fix isn't valid, but please reproduce on recent mainline. Add a
+> unittest if you have to.
+>
+> Rob
+
+___________________________________________________
+
+SMA Solar Technology AG
+Aufsichtsrat: Dr. Erik Ehrentraut (Vorsitzender)
+Vorstand: Ulrich Hadding, Dr.-Ing. Juergen Reinert, Pierre-Pascal Urbon
+Handelsregister: Amtsgericht Kassel HRB 3972
+Sitz der Gesellschaft: 34266 Niestetal
+USt-ID-Nr. DE 113 08 59 54
+WEEE-Reg.-Nr. DE 95881150
+___________________________________________________
