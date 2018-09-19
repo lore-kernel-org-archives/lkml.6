@@ -2,114 +2,135 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467B4C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44599C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3842214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:02:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3842214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D82A1214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82A1214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbeISPj1 (ORCPT
+        id S1731132AbeISPkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 11:39:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57018 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbeISPj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 11:39:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C167A7A9;
-        Wed, 19 Sep 2018 03:02:16 -0700 (PDT)
-Received: from [10.37.10.80] (unknown [10.37.10.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8B273F703;
-        Wed, 19 Sep 2018 03:02:13 -0700 (PDT)
-Subject: Re: [PATCH v5 18/18] kvm: arm64: Allow tuning the physical address
- size for VM
-To:     Peter Maydell <peter.maydell@linaro.org>
-Cc:     arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Dave P Martin <dave.martin@arm.com>, julien.grall@arm.com,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-19-suzuki.poulose@arm.com>
- <CAFEAcA8eWYkzwFYHyP49dasK-NDVbbm=6DbEFNNPq9ZAdUM7JQ@mail.gmail.com>
- <218b64d5-741d-97ef-8aae-bc0a2ac3e56c@arm.com>
- <CAFEAcA8qjJJ0FkQj4yBMKFrwNFiJj3Q4FBi4GbnK2PN3B3J-mg@mail.gmail.com>
- <fec1a2e0-a45a-eb51-6ffe-2ac9b35acc45@arm.com>
- <CAFEAcA_tphfZ_BKfAYuefStTipta0notyAR=NCnWFJ6nRfERpg@mail.gmail.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <e818aa74-a34e-91fa-ad5a-344816105840@arm.com>
-Date:   Wed, 19 Sep 2018 11:03:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 19 Sep 2018 11:40:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40796 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727605AbeISPkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 11:40:21 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 234D2C047B69;
+        Wed, 19 Sep 2018 10:03:12 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2BA3272D8;
+        Wed, 19 Sep 2018 10:03:02 +0000 (UTC)
+Date:   Wed, 19 Sep 2018 18:02:57 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+Message-ID: <20180919100256.GD23172@ming.t460p>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+ <877ejh3jv0.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFEAcA_tphfZ_BKfAYuefStTipta0notyAR=NCnWFJ6nRfERpg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877ejh3jv0.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 19 Sep 2018 10:03:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/18/2018 06:15 PM, Peter Maydell wrote:
-> On 18 September 2018 at 17:27, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
->> ---
->>
->> "On arm64, the physical address size for a VM (IPA Size limit) is limited
->> to 40bits by default. The limit can be configured if the host supports the
->> extension KVM_CAP_ARM_VM_IPA_SIZE. When supported, use
->> KVM_VM_TYPE_ARM_IPA_SIZE(IPA_Bits) to set the size in the machine type
->> identifier, where IPA_Bits is the maximum width of any physical
->> address used by the VM. The IPA_Bits is encoded in bits[7-0] of the
->> machine type identifier.
->>
->> e.g, to configure a guest to use 48bit physical address size :
->>
->>          vm_fd = ioctl(dev_fd, KVM_CREATE_VM, KVM_VM_TYPE_ARM_IPA_SIZE(48));
->>
->> The requested size (IPA_Bits) must be :
->>    0 - Implies default 40bits (for backward compatibility)
->>
->>    or
->>
->>    N - Implies N bits, where N is a positive integer such that 32 <= N <=
->> Host_IPA_Limit
->>
->> Host_IPA_Limit is the maximum possible value for IPA_Bits on the host and
->> is dependent on the CPU capability and the kernel configuration. The limit
->> can
->> be retrieved using KVM_CAP_ARM_VM_IPA_SIZE of the KVM_CHECK_EXTENSION
->> ioctl() at run-time.
->>
->> Please note that configuring the IPA size does not affect the capability
->> exposed by the guest CPUs in ID_AA64MMFR0_EL1[PARange]. It only affects
->> the guest to host physical address (stage2) translations setup by the host.
->> "
+Hi Vitaly,
+
+On Wed, Sep 19, 2018 at 11:41:07AM +0200, Vitaly Kuznetsov wrote:
+> Ming Lei <tom.leiming@gmail.com> writes:
 > 
-> Thanks, this is much clearer. The only bit I'm not sure about is that
-> last paragraph -- if I ask for a VM with a 48 bit address space why
-> don't we tell the guest that that's what it has ?
+> > Hi Guys,
+> >
+> > Some storage controllers have DMA alignment limit, which is often set via
+> > blk_queue_dma_alignment(), such as 512-byte alignment for IO buffer.
+> 
+> While mostly drivers use 512-byte alignment it is not a rule of thumb,
+> 'git grep' tell me we have:
+> ide-cd.c with 32-byte alignment
+> ps3disk.c and rsxx/dev.c with variable alignment.
+> 
+> What if our block configuration consists of several devices (in raid
+> array, for example) with different requirements, e.g. one requiring
+> 512-byte alignment and the other requiring 256?
 
-The point is the IPA Size is not a limit on the CPU's PA size. e.g, if
-this guest was a nested hypervisor with 48bit IPA, it could still
-support a 52bit IPA nested guest within by simply looking up the CPU
-PARange. The IPA size configuration here is simply a hint to the
-hypervisor on where the memory banks would be kept. And this certainly
-true on real platforms (e.g, my Juno has 42bit PARange on A57, while
-A53 reports 40bit, with PA max at 40bits).
+512-byte alignment is also 256-byte aligned, and the sector size is 512 byte.
 
-Suzuki
+> 
+> >
+> > Block layer now only checks if this limit is respected for buffer of
+> > pass-through request,
+> > see blk_rq_map_user_iov(), bio_map_user_iov().
+> >
+> > The userspace buffer for direct IO is checked in dio path, see
+> > do_blockdev_direct_IO().
+> > IO buffer from page cache should be fine wrt. this limit too.
+> >
+> > However, some file systems, such as XFS, may allocate single sector IO buffer
+> > via slab. Usually I guess kmalloc-512 should be fine to return
+> > 512-aligned buffer.
+> > But once KASAN or other slab debug options are enabled, looks this
+> > isn't true any
+> > more, kmalloc-512 may not return 512-aligned buffer. Then data corruption
+> > can be observed because the IO buffer from fs layer doesn't respect the DMA
+> > alignment limit any more.
+> >
+> > Follows several related questions:
+> >
+> > 1) does kmalloc-N slab guarantee to return N-byte aligned buffer?  If
+> > yes, is it a stable rule?
+> >
+> > 2) If it is a rule for kmalloc-N slab to return N-byte aligned buffer,
+> > seems KASAN violates this
+> > rule?
+> 
+> (as I was kinda involved in debugging): the issue was observed with SLUB
+> allocator KASAN is not to blame, everything wich requires aditional
+> metadata space will break this, see e.g. calculate_sizes() in slub.c
+
+Buffer allocated via kmalloc() should be aligned with L1 HW cache size
+at least.
+
+I have raised the question: does kmalloc-512 slab guarantee to return
+512-byte aligned buffer, let's see what the answer is from MM guys,:-) 
+
+From the Red Hat BZ, looks I understand this issue is only triggered when
+KASAN is enabled, or you have figured out how to reproduce it without
+KASAN involved?
+
+> 
+> >
+> > 3) If slab can't guarantee to return 512-aligned buffer, how to fix
+> > this data corruption issue?
+> 
+> I'm no expert in block layer but in case of complex block device
+> configurations when bio submitter can't know all the requirements I see
+> no other choice than bouncing.
+
+I guess that might be the last straw, given the current way without
+bouncing works for decades, and seems no one complains before.
+
+Thanks,
+Ming
