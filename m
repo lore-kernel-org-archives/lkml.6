@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274C6ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6503ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB2720880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1BC20880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 19:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="daUlNlKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB2720880
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nx7FwvUL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1BC20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732405AbeITBTl (ORCPT
+        id S1732471AbeITBVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 21:19:41 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36227 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728124AbeITBTl (ORCPT
+        Wed, 19 Sep 2018 21:21:55 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40732 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732351AbeITBVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 21:19:41 -0400
-Received: by mail-io1-f67.google.com with SMTP id q5-v6so5485496iop.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 12:40:17 -0700 (PDT)
+        Wed, 19 Sep 2018 21:21:55 -0400
+Received: by mail-it0-f65.google.com with SMTP id h23-v6so9290690ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 12:42:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7WY/6CssEJY+UuFJLT5i1WabJ4VIBZWRlZfbbKOvaBQ=;
-        b=daUlNlKAaPdQ8tpL0SqzZXye3SgmtdMr0XarkDF6AfuSyfyx6v963bedTWSSsDawGd
-         JsloP4fR5GkVU4YCy4yzQRBlCDrH08nfroLiBV3Cch13mQytJEEpWykZsbgLDSKPVYrX
-         qV881Z69jSVW1ivhoWYMh8O0E7GrzcATAEa4Y=
+        bh=Mnv5n65WnPoQRrR8ZglIYGfL/mOdF69NldNji9okAFo=;
+        b=Nx7FwvULeJTSVPSBVe7xMrVaKThkbtsq+r6MXIWUfj/lI0pCj63cKU6HaXMK7/ykmQ
+         BBolDrF61YHEYIKdcqEk3mqiWN8rQePyEj09P5CW5L6vob6hZDwab5zbjyk3qfXlsrUx
+         WDzhnCkb2OI43EqE7ZRecN4xlSN7rEdkXQ/jE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7WY/6CssEJY+UuFJLT5i1WabJ4VIBZWRlZfbbKOvaBQ=;
-        b=dZY40jTSuIcT9tr5EGtO60bVhgK01FQxa48ZEFQhXcda/v1TsNGNoUm8XvKubahHFo
-         5X2zmGbVjAABqTCxtU9XaycSGxM7JjgZN3LO/IpzqSRHKz0X9XuzyiC8APDgm3VhRTzJ
-         H7/iQ5FIJSt/18hw/sr8RfYFQou0W4vvIJh/xdsWsY0diz1DZR4Kx3tHfHs0X6eGOaFV
-         kvHj1nDZkF1gwMng6ea/Y+Vdz/LPfQLrUxdMHUQ55XDQWC0+M9/b6RB/zv1fRitSLBf9
-         nnYGQ9/O6RQux1TjR21J7STZ+UOzZlcRbRVcPMk7juCBRVZ/mIHN2AHm3hkdpczI62KH
-         ls+Q==
-X-Gm-Message-State: APzg51BlRR1/xQfbePfSj9JeKz4KBHQy6MNwPAows5xQGvrTnINqvLBO
-        VELvYuoijNrmT9fFOyMiwqQ4D3yhp4ITMW4m6+/vq/ie
-X-Google-Smtp-Source: ANB0VdYAm3fKcUm3WoEhoHVSqA2FtC4y1UQvIRfcLJ8uv9+k6bd6uchoZGG99son+vjYpbEssdXOtW831A8gnF6g0fw=
-X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr30242421iog.175.1537386017088;
- Wed, 19 Sep 2018 12:40:17 -0700 (PDT)
+        bh=Mnv5n65WnPoQRrR8ZglIYGfL/mOdF69NldNji9okAFo=;
+        b=AQbg3g2TRRVUh3XH2Vsm41jl1383xe5kVtGvPSHHJmwiZDdU/heif/aGOVau6jKxJQ
+         HNuAl9j7DxcgmhcWf9cvVMFycQV7t03fgI5YD1kA7MZadr95VGzVNDq5U+o1DpC4QE+h
+         CkSQJ+eEhohqFxFp7e0lUT5Cd7vJuSWggxecxKQHHco6Dq3uTtiEcNj4F6kQmmu+mM0g
+         I8crRyZIDVduKjwjSEWztflgNRrLtKheShM/3QJb0BtbQJzt0KSMrFWN23SEwWepXh4f
+         n+60OKRWbZx60/XUl1DGHB16tylqmYB9rQaNeQbfQyD+55QNIiswBCf90bGoShwenMok
+         jOZg==
+X-Gm-Message-State: APzg51DFwM0+fnCAScFyshB75KnbbJExIKxTlBP3VNfVu8GfCmuzdtNb
+        87L0aou6b61tGck558RueA3mtUBo4eW+gRudUqxf7rUi
+X-Google-Smtp-Source: ANB0VdadPgElP6YxxeT3pITRxRr6+fkW6L2pQP8zeET45+lXLb4a454bFtHBQgLMMMnCpG+CdlFmdavZ1m/bxPJ4RvM=
+X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr23765050itc.16.1537386150769;
+ Wed, 19 Sep 2018 12:42:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com> <1537363669-25991-3-git-send-email-amelie.delaunay@st.com>
-In-Reply-To: <1537363669-25991-3-git-send-email-amelie.delaunay@st.com>
+References: <1537363669-25991-1-git-send-email-amelie.delaunay@st.com> <1537363669-25991-4-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <1537363669-25991-4-git-send-email-amelie.delaunay@st.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 19 Sep 2018 12:40:04 -0700
-Message-ID: <CACRpkdYLiBsCsFw90zGeYDpXh6wKyiqG4cJTuq+E7_2-9iXh1A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] mfd: Add ST Multi-Function eXpander (STMFX) core driver
+Date:   Wed, 19 Sep 2018 12:42:18 -0700
+Message-ID: <CACRpkdZeSxCGKMePTWiey=QshrW3reEe6aqZxJA0yU2UnDFETw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: pinctrl: document the STMFX pinctrl bindings
 To:     Amelie Delaunay <amelie.delaunay@st.com>
 Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -77,17 +77,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, Sep 19, 2018 at 6:28 AM Amelie Delaunay <amelie.delaunay@st.com> wrote:
 
-> STMicroelectronics Multi-Function eXpander (STMFX) is a slave controller
-> using I2C for communication with the main MCU. Main features are:
-> - 16 fast GPIOs individually configurable in input/output
-> - 8 alternate GPIOs individually configurable in input/output when other
-> STMFX functions are not used
-> - Main MCU IDD measurement
-> - Resistive touchscreen controller
+> This patch adds documentation of device tree bindings for the
+> STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander.
 >
 > Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 
-This looks good to me:
+This is looking very good. Simple standard properties, and
+very clear information on the use. A bliss for developers.
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
