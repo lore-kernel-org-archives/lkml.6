@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CF7C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624B3ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B0621523
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1956220657
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Csh6Unsa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B0621523
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="F0U0tdM0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1956220657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387493AbeITDpI (ORCPT
+        id S2387511AbeITDpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:45:08 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42171 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733235AbeITDpH (ORCPT
+        Wed, 19 Sep 2018 23:45:10 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43210 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387482AbeITDpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:45:07 -0400
-Received: by mail-ed1-f67.google.com with SMTP id l5so6159943edw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:10 -0700 (PDT)
+        Wed, 19 Sep 2018 23:45:09 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z27-v6so6147710edb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p2v8O54H/+GBJz9AUMbqfK21ypoorYU8wjZ4lwLUBfg=;
-        b=Csh6Unsa3Mgk/RJ6v6ei8xKwwsYPuTAY7OzrgdCZtmZlAR4U74BvHiIe0XnqNLgxbd
-         rPbaFtRY3LDtKsBuTN6dWjnwOAo5v9dTi7MpjULAhr0XiuyxoAdllYIBBTk98k8WfSXK
-         LXub6uI9dmX+KOQQV+cus1wFQNPJ14UPLKkwA=
+        bh=loKi0hAOYQYVnH7Ulfxh8ug7JOSCbDwsR/x9j4oPl+I=;
+        b=F0U0tdM0S5F+Nh1PbRLVQ/g+0iusj2ziGCHzCNx+KgLbPX0nODSrdnvViVwy2Vqdn/
+         GGo4AgVvfw/GdvvnRxGZSy07MCYfjUT+3XvlOp8cjF7ET6Sts+YV6mRnJxZ1IaodRaUy
+         GcdZ5+et9OhMcoFalIOqJFhWytIABUjye+coE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=p2v8O54H/+GBJz9AUMbqfK21ypoorYU8wjZ4lwLUBfg=;
-        b=YszM5KJOYgRr9Gucs4hXrklRWmEwIhoqRjnJoUWSuuoNk+7cjScPzJNWY4dmhKibyu
-         JYyWqQuDDVqdLAId4ll/ipfBxIdWmGnFRqW48ZvQVhIB9XUnFFJM2nw3IBzB9p/i/w2a
-         JsDvYF2g5xI6kwNQ48uQwyF5vKEgTCgMdt3BWyVqYTGNqOa7JB4A+zXnwym/AO8giEfJ
-         JWt4jS94/uY8CH4mi0QuxK1mtzC2mnvb9zJdgv4ZCfMwoOtqxqoJri0iU8eKpTNTozlv
-         ujJWGTHT0BXJWZRq4u964ztkkb/9pzjQs6vEMsqv4kYRNwOC7o+7m9mrTdAKgF4m+qLT
-         Gmug==
-X-Gm-Message-State: APzg51CQlXUBtL2uJQYPxnP9ZPW9zmyak5z0UiVyiFApXVvuM9kR1Vg3
-        W7wj7rhuzvQ0wS1y7mdUkQMidA==
-X-Google-Smtp-Source: ANB0VdYq5zEUHzGXAGBGVOnDpcIoWO5QR4Gf3jEV53Z8r5jAHBcAra63/uxnO/My5XBRj23P0vrSQw==
-X-Received: by 2002:a50:b5e6:: with SMTP id a93-v6mr61290668ede.94.1537394709474;
-        Wed, 19 Sep 2018 15:05:09 -0700 (PDT)
+        bh=loKi0hAOYQYVnH7Ulfxh8ug7JOSCbDwsR/x9j4oPl+I=;
+        b=YuR1lynpWM96Mu9jzU05LjSKn2AsUZWwLNQtPs4r9AUcfHzIuecopzSG9mjBvzA6qg
+         hUAl1CfvRrVV4pYPBcQtor2rZqaq94qnbBw5Y6VlU5xLL//AsF8a+zwjawCDFv/s/jqf
+         L0egJlVW5+0RD+Mo8KopUD9tYLeo5w7bL//XaxHBe9hZUdV4veAXkJsmZ2P9Wj7b7T1a
+         6cL28IhCpdx3ZFKQKtdtzU8ymxvGI9fECY9WLRKWpzTKuakEERTS/3p5SiOAU5vT0RBJ
+         3aTq9clb+9kcYR992EFUXwHgSQ4YDiiStGCi0UO6SgtDMw7J68fdgKUNSk0t8DJ6rd57
+         JO6w==
+X-Gm-Message-State: APzg51CK15KRf7AQzYcQbAM7cTKh96LWvxr9nIcMzf9NS+JZd7ki6Ns2
+        2lNxMLbWFUDR/ScsEPRTKRUV1w==
+X-Google-Smtp-Source: ANB0VdZK3nRtB9HhDVKPc793xgSrcRHH4Pt96Mc13AeLXldIQFG0GGFC1YU9yvfa0zyPsoPjRaWK7Q==
+X-Received: by 2002:a50:92ce:: with SMTP id l14-v6mr61997732eda.43.1537394711689;
+        Wed, 19 Sep 2018 15:05:11 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-115-161.cgn.ip.fibianet.dk. [5.186.115.161])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.06
+        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Sep 2018 15:05:09 -0700 (PDT)
+        Wed, 19 Sep 2018 15:05:11 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-btrfs@vger.kernel.org
-Subject: [PATCH 14/22] btrfs: implement btrfs_debug* in terms of helper macro
-Date:   Thu, 20 Sep 2018 00:04:36 +0200
-Message-Id: <20180919220444.23190-15-linux@rasmusvillemoes.dk>
+        linux-acpi@vger.kernel.org
+Subject: [PATCH 15/22] ACPI: use proper DYNAMIC_DEBUG_BRANCH macro
+Date:   Thu, 20 Sep 2018 00:04:37 +0200
+Message-Id: <20180919220444.23190-16-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -72,68 +72,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First, the btrfs_debug macros open-code (one possible definition of)
-DYNAMIC_DEBUG_BRANCH, so they don't benefit from the HAVE_JUMP_LABEL
-optimization.
+dynamic debug may be implemented via static keys, but ACPI is missing
+out on that runtime benefit since it open-codes one possible definition
+of DYNAMIC_DEBUG_BRANCH.
 
-Second, changes on x86-64 later in this series require that all struct
-_ddebug descriptors in a translation unit use distinct identifiers.
-
-Using the new _dynamic_func_call_no_desc helper macro from
-dynamic_debug.h takes care of both of these.
-
-Cc: linux-btrfs@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- fs/btrfs/ctree.h | 34 ++++++++++------------------------
- 1 file changed, 10 insertions(+), 24 deletions(-)
+ include/linux/acpi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 2cddfe7806a4..7ae6cdad5b38 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3353,31 +3353,17 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...);
- 
- #if defined(CONFIG_DYNAMIC_DEBUG)
- #define btrfs_debug(fs_info, fmt, args...)				\
--do {									\
--        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
--        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
--		btrfs_printk(fs_info, KERN_DEBUG fmt, ##args);		\
--} while (0)
--#define btrfs_debug_in_rcu(fs_info, fmt, args...) 			\
--do {									\
--        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt); 	        \
--        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT)) 		\
--		btrfs_printk_in_rcu(fs_info, KERN_DEBUG fmt, ##args);	\
--} while (0)
-+	_dynamic_func_call_no_desc(fmt, btrfs_printk,			\
-+				   fs_info, KERN_DEBUG fmt, ##args)
-+#define btrfs_debug_in_rcu(fs_info, fmt, args...)			\
-+	_dynamic_func_call_no_desc(fmt, btrfs_printk_in_rcu,		\
-+				   fs_info, KERN_DEBUG fmt, ##args)
- #define btrfs_debug_rl_in_rcu(fs_info, fmt, args...)			\
--do {									\
--        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
--        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
--		btrfs_printk_rl_in_rcu(fs_info, KERN_DEBUG fmt,		\
--				       ##args);\
--} while (0)
--#define btrfs_debug_rl(fs_info, fmt, args...) 				\
--do {									\
--        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
--        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
--		btrfs_printk_ratelimited(fs_info, KERN_DEBUG fmt,	\
--					 ##args);			\
--} while (0)
-+	_dynamic_func_call_no_desc(fmt, btrfs_printk_rl_in_rcu,		\
-+				   fs_info, KERN_DEBUG fmt, ##args)
-+#define btrfs_debug_rl(fs_info, fmt, args...)				\
-+	_dynamic_func_call_no_desc(fmt, btrfs_printk_ratelimited,	\
-+				   fs_info, KERN_DEBUG fmt, ##args)
- #elif defined(DEBUG)
- #define btrfs_debug(fs_info, fmt, args...) \
- 	btrfs_printk(fs_info, KERN_DEBUG fmt, ##args)
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index de8d3d3fa651..21e03aa32aae 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -982,7 +982,7 @@ void __acpi_handle_debug(struct _ddebug *descriptor, acpi_handle handle, const c
+ #define acpi_handle_debug(handle, fmt, ...)				\
+ do {									\
+ 	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);			\
+-	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))		\
++	if (DYNAMIC_DEBUG_BRANCH(descriptor))				\
+ 		__acpi_handle_debug(&descriptor, handle, pr_fmt(fmt),	\
+ 				##__VA_ARGS__);				\
+ } while (0)
 -- 
 2.16.4
 
