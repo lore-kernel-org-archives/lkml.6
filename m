@@ -2,109 +2,74 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31761ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B07ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95A920877
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:20:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95A920877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B76DD2098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 15:20:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw1waNeF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76DD2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732308AbeISU6w (ORCPT
+        id S1732383AbeISU7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:58:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54426 "EHLO mail.bootlin.com"
+        Wed, 19 Sep 2018 16:59:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728054AbeISU6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:58:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 932BC206EE; Wed, 19 Sep 2018 17:20:25 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 64333206EE;
-        Wed, 19 Sep 2018 17:20:15 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     niklas.cassel@linaro.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] cpufreq: mvebu: Remove OPPs using dev_pm_opp_remove()
-References: <cover.1536736872.git.viresh.kumar@linaro.org>
-        <b6e58baec5ee4cf56f82c4b14dad7320cf01ce7f.1536736872.git.viresh.kumar@linaro.org>
-Date:   Wed, 19 Sep 2018 17:20:16 +0200
-In-Reply-To: <b6e58baec5ee4cf56f82c4b14dad7320cf01ce7f.1536736872.git.viresh.kumar@linaro.org>
-        (Viresh Kumar's message of "Wed, 12 Sep 2018 13:58:46 +0530")
-Message-ID: <87o9ctjyz3.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1732326AbeISU7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:59:17 -0400
+Received: from [192.168.0.101] (unknown [117.62.222.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48C9120877;
+        Wed, 19 Sep 2018 15:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537370452;
+        bh=wsD6/Yv+gxls1S088RXZC+qvudo/YN/8BmTL2/dddJY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jw1waNeF+IzUpzN+2uK2jucjTYkHNVg6YBmnh8fBaCssmLLXsGrWrN98ke7FVppLR
+         t6s8n4kXikTsZgByvh+Iq9OVxRWG8+DHXptiEooysZon6UZWoIEyb02SgCV1MLDsYl
+         UAOG8x8PdaS+4Dc1j/Gb9IxbOGL5Yvj581xYTdyg=
+Subject: Re: [PATCH 3/6] staging: erofs: drop multiref support temporarily
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, devel@driverdev.osuosl.org
+Cc:     Miao Xie <miaoxie@huawei.com>, linux-erofs@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>, Du Wei <weidu.du@huawei.com>
+References: <1537336150-90604-1-git-send-email-gaoxiang25@huawei.com>
+ <1537336150-90604-3-git-send-email-gaoxiang25@huawei.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <2c838085-2883-829d-08cd-1426721aa7bb@kernel.org>
+Date:   Wed, 19 Sep 2018 23:20:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1537336150-90604-3-git-send-email-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
- 
- On mer., sept. 12 2018, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On 2018/9/19 13:49, Gao Xiang wrote:
+> Multiref support means that a compressed page could have
+> more than one reference, which is designed for on-disk data
+> deduplication. However, mkfs doesn't support this mode
+> at this moment, and the kernel implementation is also broken.
+> 
+> Let's drop multiref support. If it is fully implemented
+> in the future, it can be reverted later.
+> 
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
-> dev_pm_opp_cpumask_remove_table() is going to change in the next commit
-> and will not remove dynamic OPPs automatically. They must be removed
-> with a call to dev_pm_opp_remove().
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-So now that mean when adding more than 2 OPPs, we should have the list
-of them available in the driver to be able to remove them, right?
-
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-Gregory
-
-> ---
->  drivers/cpufreq/mvebu-cpufreq.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/cpufreq/mvebu-cpufreq.c b/drivers/cpufreq/mvebu-cpufreq.c
-> index 31513bd42705..6d33a639f902 100644
-> --- a/drivers/cpufreq/mvebu-cpufreq.c
-> +++ b/drivers/cpufreq/mvebu-cpufreq.c
-> @@ -84,9 +84,10 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
->  
->  		ret = dev_pm_opp_add(cpu_dev, clk_get_rate(clk) / 2, 0);
->  		if (ret) {
-> +			dev_pm_opp_remove(cpu_dev, clk_get_rate(clk));
->  			clk_put(clk);
->  			dev_err(cpu_dev, "Failed to register OPPs\n");
-> -			goto opp_register_failed;
-> +			return ret;
->  		}
->  
->  		ret = dev_pm_opp_set_sharing_cpus(cpu_dev,
-> @@ -99,11 +100,5 @@ static int __init armada_xp_pmsu_cpufreq_init(void)
->  
->  	platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
->  	return 0;
-> -
-> -opp_register_failed:
-> -	/* As registering has failed remove all the opp for all cpus */
-> -	dev_pm_opp_cpumask_remove_table(cpu_possible_mask);
-> -
-> -	return ret;
->  }
->  device_initcall(armada_xp_pmsu_cpufreq_init);
-> -- 
-> 2.18.0.rc1.242.g61856ae69a2c
->
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Thanks,
