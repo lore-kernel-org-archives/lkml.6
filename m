@@ -2,127 +2,102 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE57C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD55ECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63A99214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A99214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 40EBD2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:19:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eiWWoIVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EBD2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730868AbeISHvc (ORCPT
+        id S1730834AbeISHyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:51:32 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19236 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbeISHvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:51:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 19:16:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,392,1531810800"; 
-   d="scan'208";a="71111037"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Sep 2018 19:15:55 -0700
-Received: from tiger-server (unknown [10.239.48.163])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 1A4DF580115;
-        Tue, 18 Sep 2018 19:15:52 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 18:55:05 +0800
-From:   Yi Zhang <yi.z.zhang@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        yu.c.zhang@intel.com, pagupta@redhat.com, david@redhat.com,
-        jack@suse.cz, hch@lst.de
-Cc:     linux-mm@kvack.org, rkrcmar@redhat.com, jglisse@redhat.com,
-        yi.z.zhang@intel.com
-Subject: Re: [PATCH V5 0/4] Fix kvm misconceives NVDIMM pages as reserved mmio
-Message-ID: <20180919105505.GA43643@tiger-server>
-Mail-Followup-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, pbonzini@redhat.com,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        yu.c.zhang@intel.com, pagupta@redhat.com, david@redhat.com,
-        jack@suse.cz, hch@lst.de, linux-mm@kvack.org, rkrcmar@redhat.com,
-        jglisse@redhat.com, yi.z.zhang@intel.com
-References: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 19 Sep 2018 03:54:49 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35113 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728267AbeISHyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:54:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 205-v6so1005554pgd.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oy5DbuF7CYPV4PtmLt5437WSeAaoA2AwlwpYpljL60w=;
+        b=eiWWoIVDIlBYPTbbkdI9pCPyoWrnajXdH0DDRidVjrC3Ogtikd0A70Pqo7C3CPlRsh
+         iE2K0zF1zlgK+qwRRrrKRTBPZ6VpxlboovR51hbd+e/lSD6wO/uzUudpD0DKRwH3ERyV
+         RcSjg42JLpLhSQI4s5Q5qsaq00hFpn7lGdc1I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oy5DbuF7CYPV4PtmLt5437WSeAaoA2AwlwpYpljL60w=;
+        b=WNyHIwIQ3ot91IB+TSAplS0bFg+o1Fjo353tRFeyBBArYkofwYzWBts2UFmJJIBjnP
+         abq8Gk19YPJQRVHofMB2Xy5aDvj6vqx7eYWrYGFv8/tERGBTz64yUC8dfoVr5hJBbWo5
+         +Y2DNI/Z7GKAT+B9O4EDFHZsrt1Md+Edy/rMOUR9e4WMWyAm1YkPzaYN30sGY58oFTm1
+         6KROAqp6InhgHRYOX+tFFQfqvE38PiSrkQSncn8WDa/vaWMn32FLO5Ssc1PVZcvQYI0E
+         GvG87yjQHrttLmpXzaX7EHrHjv7prGRNXmTsIQ29ZFLl7mBufrvrMBZOnoF79zRLoVgy
+         34og==
+X-Gm-Message-State: APzg51C6bUpz8ysg9wg0b8vyLOLTW0iTix1IkMv3o2OehQhZKCCrY9ue
+        NxucliOlE3tO5QKb9HCMzQ5Mag==
+X-Google-Smtp-Source: ANB0Vdao0+AmDrii5YU1+N32s1AluRmUTxrYnXHC9BXCRqQdzsWMn7qD7cvVvFuK2EtF5yGY20K1Qw==
+X-Received: by 2002:a63:c245:: with SMTP id l5-v6mr30303669pgg.255.1537323559802;
+        Tue, 18 Sep 2018 19:19:19 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id r1-v6sm39294690pfi.17.2018.09.18.19.19.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 19:19:18 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH crypto-next 23/23] crypto: skcipher - Remove SKCIPHER_REQUEST_ON_STACK()
+Date:   Tue, 18 Sep 2018 19:11:00 -0700
+Message-Id: <20180919021100.3380-24-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
+References: <20180919021100.3380-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any comments?
+Now that all the users of the VLA-generating SKCIPHER_REQUEST_ON_STACK()
+macro have been moved to SYNC_SKCIPHER_REQUEST_ON_STACK(), we can remove
+the former.
 
-Hi Pankaj and Paolo,
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/crypto/skcipher.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Can we Queue this to merge list since there no other comments last 2
-weeks?
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index d00ce90dc7da..45ae894fda32 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -156,11 +156,6 @@ struct skcipher_alg {
+ 			    ] CRYPTO_MINALIGN_ATTR; \
+ 	struct skcipher_request *name = (void *)__##name##_desc
+ 
+-#define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+-	char __##name##_desc[sizeof(struct skcipher_request) + \
+-		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
+-	struct skcipher_request *name = (void *)__##name##_desc
+-
+ /**
+  * DOC: Symmetric Key Cipher API
+  *
+-- 
+2.17.1
 
-Regards
-Yi.
-
-On 2018-09-08 at 02:03:02 +0800, Zhang Yi wrote:
-> For device specific memory space, when we move these area of pfn to
-> memory zone, we will set the page reserved flag at that time, some of
-> these reserved for device mmio, and some of these are not, such as
-> NVDIMM pmem.
-> 
-> Now, we map these dev_dax or fs_dax pages to kvm for DIMM/NVDIMM
-> backend, since these pages are reserved. the check of
-> kvm_is_reserved_pfn() misconceives those pages as MMIO. Therefor, we
-> introduce 2 page map types, MEMORY_DEVICE_FS_DAX/MEMORY_DEVICE_DEV_DAX,
-> to indentify these pages are from NVDIMM pmem. and let kvm treat these
-> as normal pages.
-> 
-> Without this patch, Many operations will be missed due to this
-> mistreatment to pmem pages. For example, a page may not have chance to
-> be unpinned for KVM guest(in kvm_release_pfn_clean); not able to be
-> marked as dirty/accessed(in kvm_set_pfn_dirty/accessed) etc.
-> 
-> V1:
-> https://lkml.org/lkml/2018/7/4/91
-> 
-> V2:
-> https://lkml.org/lkml/2018/7/10/135
-> 
-> V3:
-> https://lkml.org/lkml/2018/8/9/17
-> 
-> V4:
-> https://lkml.org/lkml/2018/8/22/17
-> 
-> V5:
-> [PATCH V3 1/4] Reviewed-by: David / Acked-by: Pankaj
-> [PATCH V3 2/4] Reviewed-by: Jan
-> [PATCH V3 3/4] Acked-by: Jan
-> [PATCH V3 4/4] Added "Acked-by: Pankaj", Added in-line comments: Dave
-> 
-> Zhang Yi (4):
->   kvm: remove redundant reserved page check
->   mm: introduce memory type MEMORY_DEVICE_DEV_DAX
->   mm: add a function to differentiate the pages is from DAX device
->     memory
->   kvm: add a check if pfn is from NVDIMM pmem.
-> 
->  drivers/dax/pmem.c       |  1 +
->  include/linux/memremap.h |  8 ++++++++
->  include/linux/mm.h       | 12 ++++++++++++
->  virt/kvm/kvm_main.c      | 24 ++++++++++++++++--------
->  4 files changed, 37 insertions(+), 8 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
