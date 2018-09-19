@@ -2,114 +2,129 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317C5ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B4CECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFDFF214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:30:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5g7OLhP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFDFF214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F3B9214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 08:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F3B9214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbeISOGw (ORCPT
+        id S1731048AbeISOK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 10:06:52 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44660 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbeISOGw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 10:06:52 -0400
-Received: by mail-io1-f68.google.com with SMTP id 75-v6so3789520iou.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 01:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=thO1O1kkEPA+NIurwfLUH/DmpyCgCrj1RRmWBvsw63s=;
-        b=V5g7OLhPdCXxLHElByiZWGgqjK1YzyWrLFZNS4TeWYRW12JNoNLu2Je6/4BbEXhq9V
-         SRObO1AsLBn/Vj5Cllw9pH0uC6bBvcxNh0/wixM7mJQGpSMiRnHRQ5MziaVnGtpMkVT1
-         7g4SNzN5VRNGLpWTZRQNu/Y4AoTyCIEZ8fVCRjGIDikNqrfW4KgTjJ6MKeP+7B8sdd1r
-         1yne/fz/HSEBWXGhekSiChJvWU0iR7BVbL1IO/1LNJHVQltQFseN6Gz7MHsgU5rYpXrf
-         /t62jdKKcAVCwkXWJ+bCXXOGXtAd4/xVp+9/NWGa/OOsqMnuIAqB2Jz3kSRCoOQxyITP
-         fK4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=thO1O1kkEPA+NIurwfLUH/DmpyCgCrj1RRmWBvsw63s=;
-        b=mBe+wmZIvWzvku5ldrubVlNi59CphP+6hymdSDkipA2QfO/xJM2mmIwWbJn7RsokUV
-         n0Nl9V7+8Z2vtk/57QmXVc2nzcCvF1R8WFEHE12H/cVDAys/xwItkaCVu0JFmI+wF6BN
-         zua8XdkU0dSK2wL3TtBABkBx7lgevMpPc3XERhnM9KkqR2gNmr/19F02TftmPrpVFy5Y
-         61NXsI65/8wkXnft2/D2d7Hk0DDa8yNU8FYDJvcdO/t7fY1jZuziyvIk3ad92bXoHjwT
-         C4fpxoHjZcfS5tJ4CxHse+wenFMaPkgyKtFPE8RAA4BkcEQLfCXsnMRX/aa7Z6iDT9YP
-         CCUQ==
-X-Gm-Message-State: APzg51DTPDNhczjQ9nUOfHv6z/jVq6mm7oTczMaQTpw4CHG6WAnAgO0F
-        jo5WEYYyCD7LyXkeJ/AqRclSIODQNLHOe+rJkERBsQ==
-X-Google-Smtp-Source: ANB0VdbgSPd3TD1ZPqfqP9WXEJ3EdXbPe3b4+vS9QALfK9YMxiVsQs62a2wA14jirS0ijVGtYsDDsgo7EHkKAxbkcZg=
-X-Received: by 2002:a6b:9885:: with SMTP id a127-v6mr25980503ioe.282.1537345802682;
- Wed, 19 Sep 2018 01:30:02 -0700 (PDT)
+        Wed, 19 Sep 2018 10:10:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:62677 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726527AbeISOK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 10:10:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 01:33:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,393,1531810800"; 
+   d="scan'208";a="258501330"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga005.jf.intel.com with SMTP; 19 Sep 2018 01:33:32 -0700
+Received: by lahna (sSMTP sendmail emulation); Wed, 19 Sep 2018 11:33:31 +0300
+Date:   Wed, 19 Sep 2018 11:33:31 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC/PATCH 4/5] gpiolib: add support for fetching descriptors
+ from static properties
+Message-ID: <20180919083331.GP14465@lahna.fi.intel.com>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-5-dmitry.torokhov@gmail.com>
+ <20180918090219.GE14465@lahna.fi.intel.com>
+ <20180918170418.GC177805@dtor-ws>
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 01:29:42
- -0700 (PDT)
-In-Reply-To: <20180919071847.GE3876@unicorn.suse.cz>
-References: <CACT4Y+YS55tk5xoPmscBXcgSbLrgWFSLAz1MUEjby0XT8eanmQ@mail.gmail.com>
- <20180919071847.GE3876@unicorn.suse.cz>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 19 Sep 2018 10:29:42 +0200
-Message-ID: <CACT4Y+bdzDe_LhQQh-eLapOg0ZsfXFRm2tjUbiAsgS-ObMvwBg@mail.gmail.com>
-Subject: Re: bpfilter breaks IPT_SO_GET_INFO
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Fabian Vogt <fvogt@suse.com>, Takashi Iwai <tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918170418.GC177805@dtor-ws>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 9:18 AM, Michal Kubecek <mkubecek@suse.cz> wrote:
-> On Mon, Sep 17, 2018 at 03:36:21PM +0200, Dmitry Vyukov wrote:
->> Hi,
->>
->> I am having some problem with upstream kernel and bpfilter. The
->> manifestation is that IPT_SO_GET_INFO on an ipv4 socket works, then
->> something (that I can't fully localize but can reproduce) happens and
->> then IPT_SO_GET_INFO starts permanently returning 256.
-> ...
->> Now the litmus program always fails with:
->>
->> getsockopt(3, SOL_IP, 0x40 /* IP_??? */,
->> "filter\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., [84])
->> = 256
->>
->> I am currently on upstream commit
->> 28619527b8a712590c93d0a9e24b4425b9376a8c, my .config is attached. I
->> don't know what is bpfilter, I see it mentions some umh, if it
->> requires some additional setup I don't it, i.e. I don't install any
->> userspace modules/helpers.
->
-> This looks similar to the fallback issue described here:
->
->   https://bugzilla.suse.com/show_bug.cgi?id=1106751#c1
->
-> Unfortunately I didn't have time to look into it more closely yet.
+On Tue, Sep 18, 2018 at 10:04:18AM -0700, Dmitry Torokhov wrote:
+> I am not sure how that would work, as there are multiple properties in
+> that child array, so we can't simply take the first entry or assume that
+> all entries describe GPIOs. Here is the fuller example:
+> 
+> static const struct property_entry simone_key_enter_props[] __initconst = {
+> 	PROPERTY_ENTRY_U32("linux,code",	KEY_ENTER),
+> 	PROPERTY_ENTRY_STRING("label",		"enter"),
+> 	PROPERTY_ENTRY_STRING("gpios",		"enter-gpios"),
+> 	{ }
+> };
+> 
+> static const struct property_entry simone_key_up_props[] __initconst = {
+> 	PROPERTY_ENTRY_U32("linux,code",	KEY_UP),
+> 	PROPERTY_ENTRY_STRING("label",		"up"),
+> 	PROPERTY_ENTRY_STRING("gpios",		"up-gpios"),
+> 	{ }
+> };
+> 
+> static const struct property_entry simone_key_up_props[] __initconst = {
+> 	PROPERTY_ENTRY_U32("linux,code",	KEY_LEFT),
+> 	PROPERTY_ENTRY_STRING("label",		"left"),
+> 	PROPERTY_ENTRY_STRING("gpios",		"left-gpios"),
+> 	{ }
+> };
+> 
+> static const struct property_entry simone_key_props[] __initconst = {
+> 	/* There are no properties at device level on this device */
+> 	{ }
+> };
+> 
+> static struct gpiod_lookup_table simone_keys_gpiod_table = {
+> 	.dev_id = "gpio-keys",
+> 	.table = {
+> 		/* Use local offsets on gpiochip/port "B" */
+> 		GPIO_LOOKUP_IDX("B", 0, "enter-gpios", 0, GPIO_ACTIVE_LOW),
+> 		GPIO_LOOKUP_IDX("B", 1, "up-gpios", 1, GPIO_ACTIVE_LOW),
+> 		GPIO_LOOKUP_IDX("B", 2, "left-gpios", 2, GPIO_ACTIVE_LOW),
+> 	},
+> };
+> 
+> static struct platform_device simone_keys_device = {
+> 	.name = "gpio-keys",
+> 	.id = -1,
+> };
+> 
+> static void __init simone_init_machine(void)
+> {
+> 	...
+> 	gpiod_add_lookup_table(&simone_keys_gpiod_table);
+> 	device_add_properties(&simone_keys_device.dev,
+> 			      simone_keys_device_props);
+> 	device_add_child_properties(&simone_keys_device.dev,
+> 				    dev_fwnode(&simone_keys_device.dev),
+> 				    simone_key_enter_props);
+> 	device_add_child_properties(&simone_keys_device.dev,
+> 				    dev_fwnode(&simone_keys_device.dev),
+> 				    simone_key_up_props);
+> 	device_add_child_properties(&simone_keys_device.dev,
+> 				    dev_fwnode(&simone_keys_device.dev),
+> 				    simone_key_left_props);
+> 	platform_device_register(&simone_keys_device);
+> 	...
+> }
 
-+Takashi
+Thanks for clarifying. I missed this last part where you feed the
+properties to the device.
 
-But I already have CONFIG_BPFILTER_UMH=y in my config, so it does not
-help completely.
-Also in my case it is working initially, but breaks after I run the
-second program.
+So looks fine by me :)
