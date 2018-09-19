@@ -7,67 +7,65 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1E5C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4053BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBD7214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E56F3214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GaWxCJtk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBD7214DA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8pCFocv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56F3214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730943AbeISHqm (ORCPT
+        id S1731102AbeISHrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:46:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36622 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730892AbeISHql (ORCPT
+        Wed, 19 Sep 2018 03:47:48 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35266 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730927AbeISHqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:46:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b11-v6so1919642pfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
+        Wed, 19 Sep 2018 03:46:42 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g2-v6so1871638plo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hwkPL0ZYuWobYJ2p0KIuxBRAKmWLxNc/NezeIPnQbXk=;
-        b=GaWxCJtkWhH496IZyhfS5PzIxv9aHnlLttPIkFuwIfU73wdbGEr2Lk8mNxPhMX4YNL
-         LWBafl/U8ME5OuDnx96B5cWp+kcDtAlEQUxxHIjxdr2dehTq4kvvzXGfOK5SAykqsVtZ
-         uz5/eLc0xG4pkDKttA3GfGEmj626IyACOkWEo=
+        bh=6R0mVhvKUSsGeG0bPrwWPq0HZqtET19tYibHdYTKJoo=;
+        b=O8pCFocvtffRHZ/uoRO7aBNC7X+jZOVPyvSd6lewteWZ1LPqWcEDmEpLHd/VhddvUA
+         17ZQidvlB9IC8VFZdEry3JsrLEM0T93IpTs6GqL21fk4ig8UIai1B7fsYtoXoJVt9/N7
+         ZsbFoYp/QFVtk6B9V8ElhaCZgkNscNBKWDnoA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hwkPL0ZYuWobYJ2p0KIuxBRAKmWLxNc/NezeIPnQbXk=;
-        b=AqVOPhWerk5fAA8zLJxoRquPKQaCuwvBYD9Mf6BqAl5vJ/sCEYeCAjBfdWLoCf+fEd
-         146W+oRIC7d1xJpbDIQZbkFkV/ifuRm5dyj5BK9FRyAVCZtuydnhhszHZtUNoRzgioa2
-         HNaBDtv3KhRawckz6lQOZRpz8CT/1oIQAxhW/e5IDJ2dXBg8mZx1xNlG0aNraIeWQqrJ
-         fjI5+55tUKgkZd7gXwah3hI/SKmnmPnG7ncF/4XsRHtqB6R8gZgHZX/gZlLtbsAK+0jt
-         dvuBwUSPLj4SIJVu+I1FFci3FmCIDwQ+/mIQejbGlN1Byb9qESa492KlRqSkHSwLeEPB
-         hBRg==
-X-Gm-Message-State: APzg51C/TzXGqPJZq8yknrqoQYW5Ndohbyf2KEtJ6JZN9mnyNMSigmpE
-        9WAer718dX0URjb2+xNRvo9oyQ==
-X-Google-Smtp-Source: ANB0VdaZupOgVvwTaGqTJ/pHIHBUyHlmAQyaO4TEXXba5hOmUuZSar9lF+r2iGhAMsGNKJnGQjQc2g==
-X-Received: by 2002:a62:4dc1:: with SMTP id a184-v6mr33424032pfb.5.1537323074371;
-        Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
+        bh=6R0mVhvKUSsGeG0bPrwWPq0HZqtET19tYibHdYTKJoo=;
+        b=Be2/GY4LseP0BZkPZiNlUPfwW3/jz7T4aPN1YVzPff1d11KZfkbiU5G08LUh1Ri4mZ
+         3a9Vn/KD3fJhpx/N9SEveacXPl0+KOUhOid08Tg049TQUBtb+jrmVQqcxL1DFKCrml0u
+         d3blZsXkMTt/qSHcxyPLieUSnSfyJ/zD9/Ux7jjBynPFxxjtUQadSsDX+ngs8n0Op4J0
+         3jBf2DNqcgP6rHFcTWlMQu3Ysok4RfuCNJSnpXdrmkrS6PUOb001FelTu0G5WNhkg4Yc
+         x9O1seZCpDz0uCJ3D9q2x+rEIX6Yk9hmFO3K6neAtMxvDxHWZZjNy81RD3cK1L5sRjcv
+         rXgg==
+X-Gm-Message-State: APzg51BPom1vyMx37iakDlKuFmc+Hny46raDB+XU3AMAAb4+vYf5zguD
+        Pgybc+qcYTRHw3bfHrvWDIrLpg==
+X-Google-Smtp-Source: ANB0Vdb/1NNTY4XmDVNOZnAe5ipfy62vN6Unfn0E81dPWCaTxQXLk6oTdGcpWFDb60+W55v8y89VZA==
+X-Received: by 2002:a17:902:a983:: with SMTP id bh3-v6mr31481010plb.245.1537323075219;
+        Tue, 18 Sep 2018 19:11:15 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id h132-v6sm27112806pfc.100.2018.09.18.19.11.08
+        by smtp.gmail.com with ESMTPSA id o3-v6sm21387459pgv.53.2018.09.18.19.11.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        ceph-devel@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linux-ppp@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 08/23] libceph: Remove VLA usage of skcipher
-Date:   Tue, 18 Sep 2018 19:10:45 -0700
-Message-Id: <20180919021100.3380-9-keescook@chromium.org>
+Subject: [PATCH crypto-next 09/23] ppp: mppe: Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:46 -0700
+Message-Id: <20180919021100.3380-10-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -83,81 +81,119 @@ which uses a fixed stack size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: "Yan, Zheng" <zyan@redhat.com>
-Cc: Sage Weil <sage@redhat.com>
-Cc: ceph-devel@vger.kernel.org
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: linux-ppp@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- net/ceph/crypto.c | 12 ++++++------
- net/ceph/crypto.h |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/ppp/ppp_mppe.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-index 02172c408ff2..5d6724cee38f 100644
---- a/net/ceph/crypto.c
-+++ b/net/ceph/crypto.c
-@@ -46,9 +46,9 @@ static int set_secret(struct ceph_crypto_key *key, void *buf)
- 		goto fail;
+diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+index a205750b431b..7ccdc62c6052 100644
+--- a/drivers/net/ppp/ppp_mppe.c
++++ b/drivers/net/ppp/ppp_mppe.c
+@@ -95,7 +95,7 @@ static inline void sha_pad_init(struct sha_pad *shapad)
+  * State for an MPPE (de)compressor.
+  */
+ struct ppp_mppe_state {
+-	struct crypto_skcipher *arc4;
++	struct crypto_sync_skcipher *arc4;
+ 	struct shash_desc *sha1;
+ 	unsigned char *sha1_digest;
+ 	unsigned char master_key[MPPE_MAX_KEY_LEN];
+@@ -155,15 +155,15 @@ static void get_new_key_from_sha(struct ppp_mppe_state * state)
+ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
+ {
+ 	struct scatterlist sg_in[1], sg_out[1];
+-	SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
+ 
+-	skcipher_request_set_tfm(req, state->arc4);
++	skcipher_request_set_sync_tfm(req, state->arc4);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 
+ 	get_new_key_from_sha(state);
+ 	if (!initial_key) {
+-		crypto_skcipher_setkey(state->arc4, state->sha1_digest,
+-				       state->keylen);
++		crypto_sync_skcipher_setkey(state->arc4, state->sha1_digest,
++					    state->keylen);
+ 		sg_init_table(sg_in, 1);
+ 		sg_init_table(sg_out, 1);
+ 		setup_sg(sg_in, state->sha1_digest, state->keylen);
+@@ -181,7 +181,8 @@ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
+ 		state->session_key[1] = 0x26;
+ 		state->session_key[2] = 0x9e;
  	}
+-	crypto_skcipher_setkey(state->arc4, state->session_key, state->keylen);
++	crypto_sync_skcipher_setkey(state->arc4, state->session_key,
++				    state->keylen);
+ 	skcipher_request_zero(req);
+ }
  
--	/* crypto_alloc_skcipher() allocates with GFP_KERNEL */
-+	/* crypto_alloc_sync_skcipher() allocates with GFP_KERNEL */
- 	noio_flag = memalloc_noio_save();
--	key->tfm = crypto_alloc_skcipher("cbc(aes)", 0, CRYPTO_ALG_ASYNC);
-+	key->tfm = crypto_alloc_sync_skcipher("cbc(aes)", 0, 0);
- 	memalloc_noio_restore(noio_flag);
- 	if (IS_ERR(key->tfm)) {
- 		ret = PTR_ERR(key->tfm);
-@@ -56,7 +56,7 @@ static int set_secret(struct ceph_crypto_key *key, void *buf)
- 		goto fail;
+@@ -203,7 +204,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 		goto out;
+ 
+ 
+-	state->arc4 = crypto_alloc_skcipher("ecb(arc4)", 0, CRYPTO_ALG_ASYNC);
++	state->arc4 = crypto_alloc_sync_skcipher("ecb(arc4)", 0, 0);
+ 	if (IS_ERR(state->arc4)) {
+ 		state->arc4 = NULL;
+ 		goto out_free;
+@@ -250,7 +251,7 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+ 		crypto_free_shash(state->sha1->tfm);
+ 		kzfree(state->sha1);
  	}
- 
--	ret = crypto_skcipher_setkey(key->tfm, key->key, key->len);
-+	ret = crypto_sync_skcipher_setkey(key->tfm, key->key, key->len);
- 	if (ret)
- 		goto fail;
- 
-@@ -136,7 +136,7 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
- 	if (key) {
- 		kfree(key->key);
- 		key->key = NULL;
--		crypto_free_skcipher(key->tfm);
-+		crypto_free_sync_skcipher(key->tfm);
- 		key->tfm = NULL;
+-	crypto_free_skcipher(state->arc4);
++	crypto_free_sync_skcipher(state->arc4);
+ 	kfree(state);
+ out:
+ 	return NULL;
+@@ -266,7 +267,7 @@ static void mppe_free(void *arg)
+ 		kfree(state->sha1_digest);
+ 		crypto_free_shash(state->sha1->tfm);
+ 		kzfree(state->sha1);
+-		crypto_free_skcipher(state->arc4);
++		crypto_free_sync_skcipher(state->arc4);
+ 		kfree(state);
  	}
  }
-@@ -216,7 +216,7 @@ static void teardown_sgtable(struct sg_table *sgt)
- static int ceph_aes_crypt(const struct ceph_crypto_key *key, bool encrypt,
- 			  void *buf, int buf_len, int in_len, int *pout_len)
+@@ -366,7 +367,7 @@ mppe_compress(void *arg, unsigned char *ibuf, unsigned char *obuf,
+ 	      int isize, int osize)
  {
--	SKCIPHER_REQUEST_ON_STACK(req, key->tfm);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, key->tfm);
- 	struct sg_table sgt;
- 	struct scatterlist prealloc_sg;
- 	char iv[AES_BLOCK_SIZE] __aligned(8);
-@@ -232,7 +232,7 @@ static int ceph_aes_crypt(const struct ceph_crypto_key *key, bool encrypt,
- 		return ret;
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+-	SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
+ 	int proto;
+ 	int err;
+ 	struct scatterlist sg_in[1], sg_out[1];
+@@ -426,7 +427,7 @@ mppe_compress(void *arg, unsigned char *ibuf, unsigned char *obuf,
+ 	setup_sg(sg_in, ibuf, isize);
+ 	setup_sg(sg_out, obuf, osize);
  
- 	memcpy(iv, aes_iv, AES_BLOCK_SIZE);
--	skcipher_request_set_tfm(req, key->tfm);
-+	skcipher_request_set_sync_tfm(req, key->tfm);
+-	skcipher_request_set_tfm(req, state->arc4);
++	skcipher_request_set_sync_tfm(req, state->arc4);
  	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, sgt.sgl, sgt.sgl, crypt_len, iv);
+ 	skcipher_request_set_crypt(req, sg_in, sg_out, isize, NULL);
+ 	err = crypto_skcipher_encrypt(req);
+@@ -480,7 +481,7 @@ mppe_decompress(void *arg, unsigned char *ibuf, int isize, unsigned char *obuf,
+ 		int osize)
+ {
+ 	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+-	SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, state->arc4);
+ 	unsigned ccount;
+ 	int flushed = MPPE_BITS(ibuf) & MPPE_BIT_FLUSHED;
+ 	struct scatterlist sg_in[1], sg_out[1];
+@@ -615,7 +616,7 @@ mppe_decompress(void *arg, unsigned char *ibuf, int isize, unsigned char *obuf,
+ 	setup_sg(sg_in, ibuf, 1);
+ 	setup_sg(sg_out, obuf, 1);
  
-diff --git a/net/ceph/crypto.h b/net/ceph/crypto.h
-index bb45c7d43739..96ef4d860bc9 100644
---- a/net/ceph/crypto.h
-+++ b/net/ceph/crypto.h
-@@ -13,7 +13,7 @@ struct ceph_crypto_key {
- 	struct ceph_timespec created;
- 	int len;
- 	void *key;
--	struct crypto_skcipher *tfm;
-+	struct crypto_sync_skcipher *tfm;
- };
- 
- int ceph_crypto_key_clone(struct ceph_crypto_key *dst,
+-	skcipher_request_set_tfm(req, state->arc4);
++	skcipher_request_set_sync_tfm(req, state->arc4);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(req, sg_in, sg_out, 1, NULL);
+ 	if (crypto_skcipher_decrypt(req)) {
 -- 
 2.17.1
 
