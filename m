@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02335ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1E5C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85166214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEBD7214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:12:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TU30HTn/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85166214DA
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GaWxCJtk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBD7214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbeISHri (ORCPT
+        id S1730943AbeISHqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:47:38 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46668 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730950AbeISHqn (ORCPT
+        Wed, 19 Sep 2018 03:46:42 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36622 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730892AbeISHql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:46:43 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t19-v6so1850774ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:16 -0700 (PDT)
+        Wed, 19 Sep 2018 03:46:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b11-v6so1919642pfo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0npKhypEj5VJ9eArFb+OgsloY11mz5XIZSdSjPh1TKU=;
-        b=TU30HTn/dycsfQZhEE3qKWBB9Xd84Ksv02d1wTerGD1242zBcMoYbLD5/qpDzpnxH3
-         /ebvBVUwYR5KdQV7dWBecT9YyeUy9VL4AlkBfzjitzc1JXdiGatnaRy6Y/cYR0jf22iQ
-         gcHr3IPu5qRlqagZFGgcbGNxaEqmAmxc6yA7Q=
+        bh=hwkPL0ZYuWobYJ2p0KIuxBRAKmWLxNc/NezeIPnQbXk=;
+        b=GaWxCJtkWhH496IZyhfS5PzIxv9aHnlLttPIkFuwIfU73wdbGEr2Lk8mNxPhMX4YNL
+         LWBafl/U8ME5OuDnx96B5cWp+kcDtAlEQUxxHIjxdr2dehTq4kvvzXGfOK5SAykqsVtZ
+         uz5/eLc0xG4pkDKttA3GfGEmj626IyACOkWEo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0npKhypEj5VJ9eArFb+OgsloY11mz5XIZSdSjPh1TKU=;
-        b=OJOjZ2UOQNEHoyhno63l4LKoYWGo0uKD+znPD5O+pzm3dpG0zJ8LrYg7D81LQ89/VW
-         IK99v12ucB9R8hX2jh3QS721KFyU7vHVef3ot+vP56wCzdXK+r4fHl6b+f9KnQsCuPUO
-         KL8ts0cFia9QgGV7HTj3O9IO5Tjc/1FyDp8iw/AS18dGWnkNpHN2OnoeN3dvZEkg5/hU
-         HLvU11b1T0A7rf3fMnA2JXivDsMEayxcANTTBsScztJ+/+I0UkvmWPA6WuzRRbxja/Br
-         it3A8KxiZdEfxWbfOC2j3gc1bxjiunZCbSnQfpnGM10bwNT1YqvGdelu7Ol4VtDtObCR
-         lHKQ==
-X-Gm-Message-State: APzg51AecPSnCcnaBmOHk/FzjbmO37zGkr3qG4oqrWcnX5shkrrBDcfC
-        YWaKWLRVbCWcgmGh3Z6WqaDvGQ==
-X-Google-Smtp-Source: ANB0VdYiH3hMVUe8+8w7FxIaGwMj9Mabkd1Rp+CkD5xf12iTofOO4XhjnD0Ua3olZQc/kAa85BBsCg==
-X-Received: by 2002:a17:902:3041:: with SMTP id u59-v6mr31291639plb.99.1537323076117;
-        Tue, 18 Sep 2018 19:11:16 -0700 (PDT)
+        bh=hwkPL0ZYuWobYJ2p0KIuxBRAKmWLxNc/NezeIPnQbXk=;
+        b=AqVOPhWerk5fAA8zLJxoRquPKQaCuwvBYD9Mf6BqAl5vJ/sCEYeCAjBfdWLoCf+fEd
+         146W+oRIC7d1xJpbDIQZbkFkV/ifuRm5dyj5BK9FRyAVCZtuydnhhszHZtUNoRzgioa2
+         HNaBDtv3KhRawckz6lQOZRpz8CT/1oIQAxhW/e5IDJ2dXBg8mZx1xNlG0aNraIeWQqrJ
+         fjI5+55tUKgkZd7gXwah3hI/SKmnmPnG7ncF/4XsRHtqB6R8gZgHZX/gZlLtbsAK+0jt
+         dvuBwUSPLj4SIJVu+I1FFci3FmCIDwQ+/mIQejbGlN1Byb9qESa492KlRqSkHSwLeEPB
+         hBRg==
+X-Gm-Message-State: APzg51C/TzXGqPJZq8yknrqoQYW5Ndohbyf2KEtJ6JZN9mnyNMSigmpE
+        9WAer718dX0URjb2+xNRvo9oyQ==
+X-Google-Smtp-Source: ANB0VdaZupOgVvwTaGqTJ/pHIHBUyHlmAQyaO4TEXXba5hOmUuZSar9lF+r2iGhAMsGNKJnGQjQc2g==
+X-Received: by 2002:a62:4dc1:: with SMTP id a184-v6mr33424032pfb.5.1537323074371;
+        Tue, 18 Sep 2018 19:11:14 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id j16-v6sm37140718pfk.125.2018.09.18.19.11.09
+        by smtp.gmail.com with ESMTPSA id h132-v6sm27112806pfc.100.2018.09.18.19.11.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 18 Sep 2018 19:11:10 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-afs@lists.infradead.org,
+        Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        ceph-devel@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Eric Biggers <ebiggers@google.com>,
         linux-crypto <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH crypto-next 10/23] rxrpc: Remove VLA usage of skcipher
-Date:   Tue, 18 Sep 2018 19:10:47 -0700
-Message-Id: <20180919021100.3380-11-keescook@chromium.org>
+Subject: [PATCH crypto-next 08/23] libceph: Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:45 -0700
+Message-Id: <20180919021100.3380-9-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
 References: <20180919021100.3380-1-keescook@chromium.org>
@@ -82,228 +83,81 @@ which uses a fixed stack size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: "Yan, Zheng" <zyan@redhat.com>
+Cc: Sage Weil <sage@redhat.com>
+Cc: ceph-devel@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- net/rxrpc/ar-internal.h |  2 +-
- net/rxrpc/rxkad.c       | 44 ++++++++++++++++++++---------------------
- 2 files changed, 23 insertions(+), 23 deletions(-)
+ net/ceph/crypto.c | 12 ++++++------
+ net/ceph/crypto.h |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index c97558710421..41be33c9eecf 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -442,7 +442,7 @@ struct rxrpc_connection {
- 	struct sk_buff_head	rx_queue;	/* received conn-level packets */
- 	const struct rxrpc_security *security;	/* applied security module */
- 	struct key		*server_key;	/* security for this service */
--	struct crypto_skcipher	*cipher;	/* encryption handle */
-+	struct crypto_sync_skcipher *cipher;	/* encryption handle */
- 	struct rxrpc_crypt	csum_iv;	/* packet checksum base */
- 	unsigned long		flags;
- 	unsigned long		events;
-diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
-index cea16838d588..cbef9ea43dec 100644
---- a/net/rxrpc/rxkad.c
-+++ b/net/rxrpc/rxkad.c
-@@ -46,7 +46,7 @@ struct rxkad_level2_hdr {
-  * alloc routine, but since we have it to hand, we use it to decrypt RESPONSE
-  * packets
-  */
--static struct crypto_skcipher *rxkad_ci;
-+static struct crypto_sync_skcipher *rxkad_ci;
- static DEFINE_MUTEX(rxkad_ci_mutex);
- 
- /*
-@@ -54,7 +54,7 @@ static DEFINE_MUTEX(rxkad_ci_mutex);
-  */
- static int rxkad_init_connection_security(struct rxrpc_connection *conn)
- {
--	struct crypto_skcipher *ci;
-+	struct crypto_sync_skcipher *ci;
- 	struct rxrpc_key_token *token;
- 	int ret;
- 
-@@ -63,14 +63,14 @@ static int rxkad_init_connection_security(struct rxrpc_connection *conn)
- 	token = conn->params.key->payload.data[0];
- 	conn->security_ix = token->security_index;
- 
--	ci = crypto_alloc_skcipher("pcbc(fcrypt)", 0, CRYPTO_ALG_ASYNC);
-+	ci = crypto_alloc_sync_skcipher("pcbc(fcrypt)", 0, 0);
- 	if (IS_ERR(ci)) {
- 		_debug("no cipher");
- 		ret = PTR_ERR(ci);
- 		goto error;
+diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+index 02172c408ff2..5d6724cee38f 100644
+--- a/net/ceph/crypto.c
++++ b/net/ceph/crypto.c
+@@ -46,9 +46,9 @@ static int set_secret(struct ceph_crypto_key *key, void *buf)
+ 		goto fail;
  	}
  
--	if (crypto_skcipher_setkey(ci, token->kad->session_key,
-+	if (crypto_sync_skcipher_setkey(ci, token->kad->session_key,
- 				   sizeof(token->kad->session_key)) < 0)
- 		BUG();
+-	/* crypto_alloc_skcipher() allocates with GFP_KERNEL */
++	/* crypto_alloc_sync_skcipher() allocates with GFP_KERNEL */
+ 	noio_flag = memalloc_noio_save();
+-	key->tfm = crypto_alloc_skcipher("cbc(aes)", 0, CRYPTO_ALG_ASYNC);
++	key->tfm = crypto_alloc_sync_skcipher("cbc(aes)", 0, 0);
+ 	memalloc_noio_restore(noio_flag);
+ 	if (IS_ERR(key->tfm)) {
+ 		ret = PTR_ERR(key->tfm);
+@@ -56,7 +56,7 @@ static int set_secret(struct ceph_crypto_key *key, void *buf)
+ 		goto fail;
+ 	}
  
-@@ -104,7 +104,7 @@ static int rxkad_init_connection_security(struct rxrpc_connection *conn)
- static int rxkad_prime_packet_security(struct rxrpc_connection *conn)
- {
- 	struct rxrpc_key_token *token;
--	SKCIPHER_REQUEST_ON_STACK(req, conn->cipher);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, conn->cipher);
- 	struct scatterlist sg;
- 	struct rxrpc_crypt iv;
- 	__be32 *tmpbuf;
-@@ -128,7 +128,7 @@ static int rxkad_prime_packet_security(struct rxrpc_connection *conn)
- 	tmpbuf[3] = htonl(conn->security_ix);
+-	ret = crypto_skcipher_setkey(key->tfm, key->key, key->len);
++	ret = crypto_sync_skcipher_setkey(key->tfm, key->key, key->len);
+ 	if (ret)
+ 		goto fail;
  
- 	sg_init_one(&sg, tmpbuf, tmpsize);
--	skcipher_request_set_tfm(req, conn->cipher);
-+	skcipher_request_set_sync_tfm(req, conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, tmpsize, iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -167,7 +167,7 @@ static int rxkad_secure_packet_auth(const struct rxrpc_call *call,
- 	memset(&iv, 0, sizeof(iv));
- 
- 	sg_init_one(&sg, sechdr, 8);
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, 8, iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -212,7 +212,7 @@ static int rxkad_secure_packet_encrypt(const struct rxrpc_call *call,
- 	memcpy(&iv, token->kad->session_key, sizeof(iv));
- 
- 	sg_init_one(&sg[0], sechdr, sizeof(rxkhdr));
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg[0], &sg[0], sizeof(rxkhdr), iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -250,7 +250,7 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
- 			       void *sechdr)
- {
- 	struct rxrpc_skb_priv *sp;
--	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
- 	struct rxrpc_crypt iv;
- 	struct scatterlist sg;
- 	u32 x, y;
-@@ -279,7 +279,7 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
- 	call->crypto_buf[1] = htonl(x);
- 
- 	sg_init_one(&sg, call->crypto_buf, 8);
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, 8, iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -352,7 +352,7 @@ static int rxkad_verify_packet_1(struct rxrpc_call *call, struct sk_buff *skb,
- 	/* start the decryption afresh */
- 	memset(&iv, 0, sizeof(iv));
- 
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, sg, sg, 8, iv.x);
- 	crypto_skcipher_decrypt(req);
-@@ -450,7 +450,7 @@ static int rxkad_verify_packet_2(struct rxrpc_call *call, struct sk_buff *skb,
- 	token = call->conn->params.key->payload.data[0];
- 	memcpy(&iv, token->kad->session_key, sizeof(iv));
- 
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, sg, sg, len, iv.x);
- 	crypto_skcipher_decrypt(req);
-@@ -506,7 +506,7 @@ static int rxkad_verify_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 			       unsigned int offset, unsigned int len,
- 			       rxrpc_seq_t seq, u16 expected_cksum)
- {
--	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
- 	struct rxrpc_crypt iv;
- 	struct scatterlist sg;
- 	bool aborted;
-@@ -529,7 +529,7 @@ static int rxkad_verify_packet(struct rxrpc_call *call, struct sk_buff *skb,
- 	call->crypto_buf[1] = htonl(x);
- 
- 	sg_init_one(&sg, call->crypto_buf, 8);
--	skcipher_request_set_tfm(req, call->conn->cipher);
-+	skcipher_request_set_sync_tfm(req, call->conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, &sg, &sg, 8, iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -755,7 +755,7 @@ static void rxkad_encrypt_response(struct rxrpc_connection *conn,
- 				   struct rxkad_response *resp,
- 				   const struct rxkad_key *s2)
- {
--	SKCIPHER_REQUEST_ON_STACK(req, conn->cipher);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, conn->cipher);
- 	struct rxrpc_crypt iv;
- 	struct scatterlist sg[1];
- 
-@@ -764,7 +764,7 @@ static void rxkad_encrypt_response(struct rxrpc_connection *conn,
- 
- 	sg_init_table(sg, 1);
- 	sg_set_buf(sg, &resp->encrypted, sizeof(resp->encrypted));
--	skcipher_request_set_tfm(req, conn->cipher);
-+	skcipher_request_set_sync_tfm(req, conn->cipher);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, sg, sg, sizeof(resp->encrypted), iv.x);
- 	crypto_skcipher_encrypt(req);
-@@ -1021,7 +1021,7 @@ static void rxkad_decrypt_response(struct rxrpc_connection *conn,
- 				   struct rxkad_response *resp,
- 				   const struct rxrpc_crypt *session_key)
- {
--	SKCIPHER_REQUEST_ON_STACK(req, rxkad_ci);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(req, rxkad_ci);
- 	struct scatterlist sg[1];
- 	struct rxrpc_crypt iv;
- 
-@@ -1031,7 +1031,7 @@ static void rxkad_decrypt_response(struct rxrpc_connection *conn,
- 	ASSERT(rxkad_ci != NULL);
- 
- 	mutex_lock(&rxkad_ci_mutex);
--	if (crypto_skcipher_setkey(rxkad_ci, session_key->x,
-+	if (crypto_sync_skcipher_setkey(rxkad_ci, session_key->x,
- 				   sizeof(*session_key)) < 0)
- 		BUG();
- 
-@@ -1039,7 +1039,7 @@ static void rxkad_decrypt_response(struct rxrpc_connection *conn,
- 
- 	sg_init_table(sg, 1);
- 	sg_set_buf(sg, &resp->encrypted, sizeof(resp->encrypted));
--	skcipher_request_set_tfm(req, rxkad_ci);
-+	skcipher_request_set_sync_tfm(req, rxkad_ci);
- 	skcipher_request_set_callback(req, 0, NULL, NULL);
- 	skcipher_request_set_crypt(req, sg, sg, sizeof(resp->encrypted), iv.x);
- 	crypto_skcipher_decrypt(req);
-@@ -1218,7 +1218,7 @@ static void rxkad_clear(struct rxrpc_connection *conn)
- 	_enter("");
- 
- 	if (conn->cipher)
--		crypto_free_skcipher(conn->cipher);
-+		crypto_free_sync_skcipher(conn->cipher);
+@@ -136,7 +136,7 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
+ 	if (key) {
+ 		kfree(key->key);
+ 		key->key = NULL;
+-		crypto_free_skcipher(key->tfm);
++		crypto_free_sync_skcipher(key->tfm);
+ 		key->tfm = NULL;
+ 	}
  }
- 
- /*
-@@ -1228,7 +1228,7 @@ static int rxkad_init(void)
+@@ -216,7 +216,7 @@ static void teardown_sgtable(struct sg_table *sgt)
+ static int ceph_aes_crypt(const struct ceph_crypto_key *key, bool encrypt,
+ 			  void *buf, int buf_len, int in_len, int *pout_len)
  {
- 	/* pin the cipher we need so that the crypto layer doesn't invoke
- 	 * keventd to go get it */
--	rxkad_ci = crypto_alloc_skcipher("pcbc(fcrypt)", 0, CRYPTO_ALG_ASYNC);
-+	rxkad_ci = crypto_alloc_sync_skcipher("pcbc(fcrypt)", 0, 0);
- 	return PTR_ERR_OR_ZERO(rxkad_ci);
- }
+-	SKCIPHER_REQUEST_ON_STACK(req, key->tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, key->tfm);
+ 	struct sg_table sgt;
+ 	struct scatterlist prealloc_sg;
+ 	char iv[AES_BLOCK_SIZE] __aligned(8);
+@@ -232,7 +232,7 @@ static int ceph_aes_crypt(const struct ceph_crypto_key *key, bool encrypt,
+ 		return ret;
  
-@@ -1238,7 +1238,7 @@ static int rxkad_init(void)
- static void rxkad_exit(void)
- {
- 	if (rxkad_ci)
--		crypto_free_skcipher(rxkad_ci);
-+		crypto_free_sync_skcipher(rxkad_ci);
- }
+ 	memcpy(iv, aes_iv, AES_BLOCK_SIZE);
+-	skcipher_request_set_tfm(req, key->tfm);
++	skcipher_request_set_sync_tfm(req, key->tfm);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(req, sgt.sgl, sgt.sgl, crypt_len, iv);
  
- /*
+diff --git a/net/ceph/crypto.h b/net/ceph/crypto.h
+index bb45c7d43739..96ef4d860bc9 100644
+--- a/net/ceph/crypto.h
++++ b/net/ceph/crypto.h
+@@ -13,7 +13,7 @@ struct ceph_crypto_key {
+ 	struct ceph_timespec created;
+ 	int len;
+ 	void *key;
+-	struct crypto_skcipher *tfm;
++	struct crypto_sync_skcipher *tfm;
+ };
+ 
+ int ceph_crypto_key_clone(struct ceph_crypto_key *dst,
 -- 
 2.17.1
 
