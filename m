@@ -2,119 +2,223 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D16ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED683C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684F22098A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:34:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sbPbuPyc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684F22098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 94C582098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 10:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C582098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731169AbeISQL1 (ORCPT
+        id S1731210AbeISQM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 12:11:27 -0400
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:54769 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730923AbeISQL1 (ORCPT
+        Wed, 19 Sep 2018 12:12:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46560 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731025AbeISQM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:11:27 -0400
-Received: by mail-wm1-f46.google.com with SMTP id c14-v6so5686446wmb.4;
-        Wed, 19 Sep 2018 03:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FrfezF+sxkXljTnQXuw4bz6AoHOAOgA2DoVMboTGhAY=;
-        b=sbPbuPyc0XL072CTYubkdidjDHNtnBpWlP2KX39uJVbJLfcEH/BpHNtP7LeR481Jn2
-         HfZvr+xGMsLQLn3Zb2HDcOXWwJ9GWhYgWOL+CbbXbgSfAcSK412mgtND9Vs//GcgsQKd
-         KPxQrrqWHKIFhVMjKejDtMNjvirCpwcHRJeyfNhd0kSb3/ut6i05NzasR3gZ0e576NnA
-         Ahfmd1ILRDQv1pu4esWEx8yq1PPE+lpenRiEwkbWUnDhQwSEHPhzHaphGpolhpbtY6Fj
-         7EQtAYFvKyho6x6M/WpyyJtBBGO5ReYrOWvKr90Emoqxma0ulTnulDRUKlKHLvxbVzTt
-         ueOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FrfezF+sxkXljTnQXuw4bz6AoHOAOgA2DoVMboTGhAY=;
-        b=ZPRyq0zwA96ERNhUQMyN8VoEZ5K5Ps4FrSFcDMQA/hnp7ITQlJrrqQlVv/XkGtjEj1
-         oKgsVfO02gsDKEC4rE3IEAEt57YvBNUOt1xZ9uz55LV4C14MLLdVba1ZCq/di4Mig2G+
-         /rfTHzW3dYubBuGsXQUrxi9TU1GOO9WaRd/SpeOcUCofBYkvWJ+vwEr1OGqmNfNsZ+8T
-         Q2ohdVEXSKvpdEbY0VE3FOeOfcrnFFEJQkoojp8iugqHizb8rOaViiY3F8YZCsVB60h2
-         rCqK/zGJ4XtqYFhnS6bxAHBNzHztkujmMAI8kc1Z1e7YizQFRQhAgoDEALra+IXpdE2U
-         Osfg==
-X-Gm-Message-State: APzg51B+r0D+DGNDvf5b11SuK+9SZcKbAq6EqDv0d5soEE8BYTYJQrgf
-        VEOOupjTatNL1aP5t7NuX/4=
-X-Google-Smtp-Source: ANB0VdabDLFOi1vkFUGLZ4ainsZyb4e3+CvdPvJWPmd6qd8HSin9dsqBKwVdwbu0Ts1r35tsSsTXfg==
-X-Received: by 2002:a1c:6782:: with SMTP id b124-v6mr19800385wmc.30.1537353248571;
-        Wed, 19 Sep 2018 03:34:08 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm20565856wru.79.2018.09.19.03.34.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 03:34:07 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 12:34:05 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Chen, Yu C" <yu.c.chen@intel.com>,
+        Wed, 19 Sep 2018 12:12:29 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8JAaNtD065506
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 06:37:44 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mkmh10wha-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 06:37:44 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 19 Sep 2018 11:35:08 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Sep 2018 11:35:02 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8JAZ1bS55509114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Sep 2018 10:35:01 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CE63A4051;
+        Wed, 19 Sep 2018 13:34:46 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB092A404D;
+        Wed, 19 Sep 2018 13:34:44 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.135])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 19 Sep 2018 13:34:44 +0100 (BST)
+Date:   Wed, 19 Sep 2018 13:34:57 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Paul Burton <paul.burton@mips.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        kookoo.gu@intel.com
-Subject: Re: [PATCH 04/12][RFC v3] x86, hibernate: Extract the common code of
- 64/32 bit system
-Message-ID: <20180919103405.GA19621@gmail.com>
-References: <cover.1537275915.git.yu.c.chen@intel.com>
- <020db877db6a8d39808dfaef2a5162f541f0853b.1537275915.git.yu.c.chen@intel.com>
- <CAJZ5v0jvB5zF-LqYsB1ughaZbRhZW1RjVSvY87q_W_pNkmqBeQ@mail.gmail.com>
+        Tony Luck <tony.luck@intel.com>, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com
+Subject: Re: [RFC PATCH 03/29] mm: remove CONFIG_HAVE_MEMBLOCK
+References: <1536163184-26356-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1536163184-26356-4-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180919100449.00006df9@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jvB5zF-LqYsB1ughaZbRhZW1RjVSvY87q_W_pNkmqBeQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180919100449.00006df9@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18091910-0028-0000-0000-000002FB7231
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18091910-0029-0000-0000-000023B52DB5
+Message-Id: <20180919103457.GA20545@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809190110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jonathan,
 
-* Rafael J. Wysocki <rafael@kernel.org> wrote:
-
-> > index 000000000000..fbde8f0e8fe0
-> > --- /dev/null
-> > +++ b/arch/x86/power/hibernate.c
-> > @@ -0,0 +1,249 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Hibernation support for x86
-> > + *
-> > + * Copyright (c) 2007 Rafael J. Wysocki <rjw@sisk.pl>
-> > + * Copyright (c) 2002 Pavel Machek <pavel@ucw.cz>
-> > + * Copyright (c) 2001 Patrick Mochel <mochel@osdl.org>
+On Wed, Sep 19, 2018 at 10:04:49AM +0100, Jonathan Cameron wrote:
+> On Wed, 5 Sep 2018 18:59:18 +0300
+> Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 > 
-> I don't think this "copyright" information has any legal bearing any
-> more at this point.
+> > All architecures use memblock for early memory management. There is no need
+> > for the CONFIG_HAVE_MEMBLOCK configuration option.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> 
+> Hi Mike,
+> 
+> A minor editing issue in here that is stopping boot on arm64 platforms with latest
+> version of the mm tree.
 
-I think that's wrong in general, and it's routine for corporate legal
-departments to insist on specific boilerplate copyright notices when
-OSS code is contributed.
+Can you please try the following patch:
 
-Copying code and then removing copyright notices is frowned upon
-independently as well.
 
-While you can probably talk for your own copyright notice, I'm not sure
-it's true of the two other historic copyright notices that were copied.
+From 079bd5d24a01df3df9500d0a33d89cb9f7da4588 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date: Wed, 19 Sep 2018 13:29:27 +0300
+Subject: [PATCH] of/fdt: fixup #ifdefs after removal of HAVE_MEMBLOCK config
+ option
 
-So I think it's best practice to preserve all copyright notices as-is.
+The removal of HAVE_MEMBLOCK configuration option, mistakenly dropped the
+wrong #endif. This patch restores that #endif and removes the part that
+should have been actually removed, starting from #else and up to the
+correct #endif
 
-Thanks,
+Reported-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ drivers/of/fdt.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
-	Ingo
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 48314e9..bb532aa 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -1119,6 +1119,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+ #endif
+ #ifndef MAX_MEMBLOCK_ADDR
+ #define MAX_MEMBLOCK_ADDR	((phys_addr_t)~0)
++#endif
+ 
+ void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
+ {
+@@ -1175,26 +1176,6 @@ int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
+ 	return memblock_reserve(base, size);
+ }
+ 
+-#else
+-void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
+-{
+-	WARN_ON(1);
+-}
+-
+-int __init __weak early_init_dt_mark_hotplug_memory_arch(u64 base, u64 size)
+-{
+-	return -ENOSYS;
+-}
+-
+-int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
+-					phys_addr_t size, bool nomap)
+-{
+-	pr_err("Reserved memory not supported, ignoring range %pa - %pa%s\n",
+-		  &base, &size, nomap ? " (nomap)" : "");
+-	return -ENOSYS;
+-}
+-#endif
+-
+ static void * __init early_init_dt_alloc_memory_arch(u64 size, u64 align)
+ {
+ 	return memblock_alloc(size, align);
+-- 
+2.7.4
+
+ 
+> > diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> > index 76c83c1..bd841bb 100644
+> > --- a/drivers/of/fdt.c
+> > +++ b/drivers/of/fdt.c
+> > @@ -1115,13 +1115,11 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+> >  	return 1;
+> >  }
+> >  
+> > -#ifdef CONFIG_HAVE_MEMBLOCK
+> >  #ifndef MIN_MEMBLOCK_ADDR
+> >  #define MIN_MEMBLOCK_ADDR	__pa(PAGE_OFFSET)
+> >  #endif
+> >  #ifndef MAX_MEMBLOCK_ADDR
+> >  #define MAX_MEMBLOCK_ADDR	((phys_addr_t)~0)
+> > -#endif
+> 
+> This isn't the right #endif. It is matching with the #ifndef MAX_MEMBLOCK_ADDR
+> not the intented #ifdef CONFIG_HAVE_MEMBLOCK.
+> 
+> Now I haven't chased through the exact reason this is causing my acpi
+> arm64 system not to boot on the basis it is obviously miss-matched anyway
+> and I'm inherently lazy.  It's resulting in stubs replacing the following weak
+> functions.
+> 
+> early_init_dt_add_memory_arch
+> (this is defined elsewhere for some architectures but not arm)
+> 
+> early_init_dt_mark_hotplug_memory_arch
+> (there is only one definition of this in the kernel so it doesn't
+>  need to be weak or in the header etc).
+> 
+> early_init_dt_reserve_memory_arch
+> (defined on mips but nothing else)
+> 
+> Taking out the right endif also lets you drop an #else removing some stub
+> functions further down in here.
+> 
+> Nice cleanup in general btw.
+> 
+> Thanks,
+> 
+> Jonathan
+> >  
+> >  void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
+> >  {
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
