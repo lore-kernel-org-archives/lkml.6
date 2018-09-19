@@ -2,136 +2,175 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3D5ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 21:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6E1ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 21:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B96BE20858
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 21:58:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B96BE20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id E057C20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 21:59:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E057C20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbeITDie (ORCPT
+        id S1732702AbeITDjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:38:34 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:39672 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbeITDid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:38:33 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1g2kUR-0000ow-Kr; Wed, 19 Sep 2018 23:58:31 +0200
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [RESEND][PATCH v2] cfq: clear queue pointers from cfqg after
- unpinning them in cfq_pd_offline
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Tejun Heo <tj@kernel.org>, jiufei.xue@linux.alibaba.com,
-        Caspar Zhang <caspar@linux.alibaba.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <9ce04d22-d9ae-fe19-b0b5-52a5e8eb5ed4@maciej.szmigiero.name>
-Date:   Wed, 19 Sep 2018 23:58:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
+        Wed, 19 Sep 2018 23:39:11 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:45834 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbeITDjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 23:39:11 -0400
+Received: by mail-qt0-f195.google.com with SMTP id l2-v6so1488293qtr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 14:59:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
+         :in-reply-to:references:organization:mime-version
+         :content-transfer-encoding;
+        bh=XSdA0lrXGE/cJphbsqCiv/b4vdMeX3q4JFPTlEWK3SM=;
+        b=QsgJWdIny99aNqL1OY2L17oLTsuT0rzFbg3UhqlSysr1NS/mVmNA4WeDr+N//q3T93
+         BlZNUHwurS7ZNZcWT/cq7AeWoZCqhRSwXIjgSuM/o6+ARMTrMQvo4Hm32P4W4y6mBmX1
+         GJud4J8DI0oNxjdgXc2KbsAPKLjjKarrBBRmdAju7fDQUScyV1Vec59FZc+WXsOoGH6o
+         sKnShQgZb+lc5PRsu6Y37xbaDm6uNeApiQMoqzE7/BgLP2mw9b3nV2Hjjn6g2YzRGth8
+         /mINTcOcnuG3MMwLVtpg7ofTmtskFpDBx45qT/0vWL6OPzNwWuOtev0Ugz2nLtAE/wob
+         5kNA==
+X-Gm-Message-State: APzg51C6z9ivCMT7F+2844MXRnNOArXkHRsXOJZyharq9FmN4ARFDlxz
+        6BRlQnE4oAG4irjjDfALJQpuY2ldYEQ=
+X-Google-Smtp-Source: ANB0VdbIXDkgIKNQakjaF6/KAPevOU4pbZX3r22Kh7gMVLe54jxnpYESLeZc/9MCR7jLs9ussup06A==
+X-Received: by 2002:ac8:4283:: with SMTP id o3-v6mr23074763qtl.28.1537394355050;
+        Wed, 19 Sep 2018 14:59:15 -0700 (PDT)
+Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
+        by smtp.gmail.com with ESMTPSA id 39-v6sm4715312qku.18.2018.09.19.14.59.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Sep 2018 14:59:14 -0700 (PDT)
+Message-ID: <c6ab617cee62c08ce5f81992e62d92dd6805cf7c.camel@redhat.com>
+Subject: Re: [PATCH 1/6] drm/dp_mst: Introduce
+ drm_dp_mst_connector_atomic_check() (fwd)
+From:   Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To:     Julia Lawall <julia.lawall@lip6.fr>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Sean Paul <sean@poorly.run>,
+        kbuild-all@01.org
+Date:   Wed, 19 Sep 2018 17:59:13 -0400
+In-Reply-To: <alpine.DEB.2.21.1809192237110.2433@hadrien>
+References: <alpine.DEB.2.21.1809192237110.2433@hadrien>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BFQ is already doing a similar thing in its .pd_offline_fn() method
-implementation.
+oh, good catch! will fix and respin in just a little bit
 
-While it seems that after
-commit 4c6994806f70 ("blk-throttle: fix race between blkcg_bio_issue_check() and cgroup_rmdir()")
-was reverted leaving these pointers intact no longer causes crashes
-clearing them is still a sensible thing to do to make the code more robust.
+On Wed, 2018-09-19 at 22:38 +0200, Julia Lawall wrote:
+> Hello,
+> 
+> I don't think you can update the loop index variable in
+> list_for_each_entry, because the mcro uses th index variable to get to the
+> next element.  Perhaps list_for_each_entry_safe would be more suitable?
+> 
+> julia
+> 
+> ---------- Forwarded message ----------
+> Date: Thu, 20 Sep 2018 04:30:13 +0800
+> From: kbuild test robot <lkp@intel.com>
+> To: kbuild@01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: Re: [PATCH 1/6] drm/dp_mst: Introduce
+>     drm_dp_mst_connector_atomic_check()
+> 
+> CC: kbuild-all@01.org
+> In-Reply-To: <20180918230637.20700-2-lyude@redhat.com>
+> References: <20180918230637.20700-2-lyude@redhat.com>
+> TO: Lyude Paul <lyude@redhat.com>
+> CC: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+> intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+> CC: David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org, 
+> stable@vger.kernel.org, Sean Paul <sean@poorly.run>
+> 
+> Hi Lyude,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on drm-intel/for-linux-next]
+> [also build test WARNING on v4.19-rc4 next-20180919]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system]
+> 
+> url:    
+> https://github.com/0day-ci/linux/commits/Lyude-Paul/Fix-legacy-DPMS-changes-with-MST/20180919-203434
+> base:   git://anongit.freedesktop.org/drm-intel for-linux-next
+> :::::: branch date: 8 hours ago
+> :::::: commit date: 8 hours ago
+> 
+> > > drivers/gpu/drm/drm_dp_mst_topology.c:3144:1-20: iterator with update on
+> > > line 3145
+> 
+> # 
+> https://github.com/0day-ci/linux/commit/f8df31d5221b9a6da6698d4a37e622253bb17cdc
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout f8df31d5221b9a6da6698d4a37e622253bb17cdc
+> vim +3144 drivers/gpu/drm/drm_dp_mst_topology.c
+> 
+> 3f3353b7 Pandiyan, Dhinakaran 2017-04-20  3131
+> f8df31d5 Lyude Paul           2018-09-18  3132  static bool
+> f8df31d5 Lyude Paul           2018-09-
+> 18  3133  drm_dp_mst_connector_still_exists(struct drm_connector *connector,
+> f8df31d5 Lyude Paul           2018-09-18  3134  				
+>   struct drm_dp_mst_topology_mgr *mgr,
+> f8df31d5 Lyude Paul           2018-09-18  3135  				
+>   struct drm_dp_mst_branch *mstb)
+> f8df31d5 Lyude Paul           2018-09-18  3136  {
+> f8df31d5 Lyude Paul           2018-09-18  3137  	struct drm_dp_mst_port
+> *port;
+> f8df31d5 Lyude Paul           2018-09-18  3138  	bool exists = false;
+> f8df31d5 Lyude Paul           2018-09-18  3139
+> f8df31d5 Lyude Paul           2018-09-18  3140  	mstb =
+> drm_dp_get_validated_mstb_ref(mgr, mstb);
+> f8df31d5 Lyude Paul           2018-09-18  3141  	if (!mstb)
+> f8df31d5 Lyude Paul           2018-09-18  3142  		return false;
+> f8df31d5 Lyude Paul           2018-09-18  3143
+> f8df31d5 Lyude Paul           2018-09-18 @3144  	list_for_each_entry(port
+> , &mstb->ports, next) {
+> f8df31d5 Lyude Paul           2018-09-18 @3145  		port =
+> drm_dp_get_validated_port_ref(mgr, port);
+> f8df31d5 Lyude Paul           2018-09-18  3146  		if (!port)
+> f8df31d5 Lyude Paul           2018-09-18  3147  			continue
+> ;
+> f8df31d5 Lyude Paul           2018-09-18  3148
+> f8df31d5 Lyude Paul           2018-09-18  3149  		exists = (port-
+> >connector == connector ||
+> f8df31d5 Lyude Paul           2018-09-18  3150  			  (port-
+> >mstb &&
+> f8df31d5 Lyude Paul           2018-09-18  3151  			   drm_d
+> p_mst_connector_still_exists(connector, mgr,
+> f8df31d5 Lyude Paul           2018-09-18  3152  					
+> 		     port->mstb)));
+> f8df31d5 Lyude Paul           2018-09-18  3153
+> f8df31d5 Lyude Paul           2018-09-18  3154  		drm_dp_put_port(
+> port);
+> f8df31d5 Lyude Paul           2018-09-18  3155  		if (exists)
+> f8df31d5 Lyude Paul           2018-09-18  3156  			break;
+> f8df31d5 Lyude Paul           2018-09-18  3157  	}
+> f8df31d5 Lyude Paul           2018-09-18  3158
+> f8df31d5 Lyude Paul           2018-09-18  3159  	drm_dp_put_mst_branch_de
+> vice(mstb);
+> f8df31d5 Lyude Paul           2018-09-18  3160  	return exists;
+> f8df31d5 Lyude Paul           2018-09-18  3161  }
+> f8df31d5 Lyude Paul           2018-09-18  3162
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
----
-Changes from v1: Drop stable and fixes tags, rewrite the commit message
-as after commit 4c6994806f70 was reverted this change is no longer
-required to fix a crash.
-
- block/cfq-iosched.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
-index 2eb87444b157..ed41aa978c4a 100644
---- a/block/cfq-iosched.c
-+++ b/block/cfq-iosched.c
-@@ -1644,14 +1644,20 @@ static void cfq_pd_offline(struct blkg_policy_data *pd)
- 	int i;
- 
- 	for (i = 0; i < IOPRIO_BE_NR; i++) {
--		if (cfqg->async_cfqq[0][i])
-+		if (cfqg->async_cfqq[0][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[0][i]);
--		if (cfqg->async_cfqq[1][i])
-+			cfqg->async_cfqq[0][i] = NULL;
-+		}
-+		if (cfqg->async_cfqq[1][i]) {
- 			cfq_put_queue(cfqg->async_cfqq[1][i]);
-+			cfqg->async_cfqq[1][i] = NULL;
-+		}
- 	}
- 
--	if (cfqg->async_idle_cfqq)
-+	if (cfqg->async_idle_cfqq) {
- 		cfq_put_queue(cfqg->async_idle_cfqq);
-+		cfqg->async_idle_cfqq = NULL;
-+	}
- 
- 	/*
- 	 * @blkg is going offline and will be ignored by
