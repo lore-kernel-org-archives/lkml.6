@@ -2,123 +2,97 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A249AECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EABECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7442151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410CA2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1hjnyCAk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7442151B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue7QFdTw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410CA2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbeISW1a (ORCPT
+        id S1732329AbeISW3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:27:30 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45772 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731330AbeISW1a (ORCPT
+        Wed, 19 Sep 2018 18:29:50 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39961 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731330AbeISW3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:27:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=AoFt2KLnMum6nhNXjdHcBEXsPHPsZU0R3MwlbjDSXH8=; b=1hjnyCAkUnbC300sPT0W4S4zky
-        Fcl/6bDIjOBPtBDxsA93u4lJXaZ+UzR6gCiaKKY/LfIj/UBqNGr8SHibJH3dkyEVZvezDmhg/x2VV
-        vxyhN3Fe4AEa6wSJnpUljDlcu8jF8hixZmqk2ZPyqxbiDREytlEOZnMj68O+KGl4q45plpgF3rreZ
-        DtdYbmzGZ3LMewiq86ms15d5HViWhe8starTTjREEo3Ldsnc13xeLihWOcNQK7Ax7RL5h7da0BcGq
-        xns/3YLCOeoKItVQIXEcdtWTML8jCLGIwNoYsQvix56ktVqSS/HG4ht8sYXtFq4vZ2PEJKvepGbJj
-        9DNdx6CA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2fee-00046O-GV; Wed, 19 Sep 2018 16:48:44 +0000
-Subject: Re: process? [Re: Crypto Fixes for 4.19]
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-References: <20171128230929.GA17783@gondor.apana.org.au>
- <20171222064931.GA27068@gondor.apana.org.au>
- <20180105073808.GA14405@gondor.apana.org.au>
- <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20180919062201.ov5o4vljvholgsed@gondor.apana.org.au>
- <20180919132324.GA24399@kroah.com>
- <d8c061a9-b415-e092-c28f-9e433d83b59b@infradead.org>
- <20180919164019.GA7195@kroah.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <06e6fac1-6011-7117-454f-af930a288d75@infradead.org>
-Date:   Wed, 19 Sep 2018 09:48:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180919164019.GA7195@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Sep 2018 18:29:50 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l63-v6so3021904pga.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 09:51:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LgKwM64f/DncxKA5cuArIvnc6ftrDf7DjKi23qGL/Kc=;
+        b=Ue7QFdTwAQdgX23WFITq5N5mzyOqtW6rPKP/GIsiEw3kOZxLDdX7qC9K8ZUBuq+rH8
+         T4uZApl2t8OL0OICrLBFiOye15APzDdY23OIa9EDYt5MZW8p4fgKtzfs2ac68IKfs2kU
+         eaxSDMUys20t9IX7DXOQo6B6sQLrI6/oPFEJnDgFFfeP5cvQZIbOoc5JexDe3TEZLxwM
+         vk9zaKZQ+Bq20wSJ0gc0NDCJ2Cll7kcCxh/DCVjZ88HVgcABBUIQHaF/Zdsaqznkosh0
+         eC7nRiD+zCVBEJm7RKGbD6NEeP5zvfkPvhE30RlZpLQMdGYpjfHWVLiS0CXsRvdfD/WA
+         hQFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LgKwM64f/DncxKA5cuArIvnc6ftrDf7DjKi23qGL/Kc=;
+        b=Z84UZMrnA9qodXYbCODksrk2ujqVTaPltHnWJ50fkD8QA3CBZQi48G9uaSM4QpQO8b
+         Z2MsluWSjFfR5HDRYfnHjYEl+QkSGRh848l7mkwaoEj016k91ifTTx9NiFv0sgRxYaTi
+         Nt2Qh5IKnCFvsmx60WeGdCE5Ohh/97/QlodjYRxvsI/oMConZBOSB4zjm6RUvocG/Ps0
+         KbgxHcU/XLy0sQQqywDc/PgfUQY4RqYjweoy3dcNw2r2JW19Lw5oIrem3E9d7muO1/vo
+         i6bzC+7bOzH6dlngchyWStN3Z5qg3j5qUOjimgGNgUbhplVOxBbCglyNJU1O4GzKCRen
+         HFHQ==
+X-Gm-Message-State: APzg51BUHpxCOuM410ecrUJZdVeIVl8ylthD7bFgTiByCHpjeEZmLP7S
+        Qm1v+ug4KOEAYNrxGQbSUeo=
+X-Google-Smtp-Source: ANB0VdZod216dxhE/r4lodZSJFGGxGyaweU/o/RngPp0GXVUT7eaQZtyrON55O/KL06mtZXQsWwiBw==
+X-Received: by 2002:a62:2483:: with SMTP id k3-v6mr37429326pfk.195.1537375865700;
+        Wed, 19 Sep 2018 09:51:05 -0700 (PDT)
+Received: from vultr.guest ([45.76.104.171])
+        by smtp.gmail.com with ESMTPSA id 70-v6sm30586863pfz.27.2018.09.19.09.51.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Sep 2018 09:51:05 -0700 (PDT)
+From:   "haiqing.shq" <leviathan0992@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     jack@suse.cz, mgorman@techsingularity.net, ak@linux.intel.com,
+        yang.s@alibaba-inc.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, "haiqing.shq" <leviathan0992@gmail.com>
+Subject: [PATCH] mm/filemap.c: Use existing variable
+Date:   Wed, 19 Sep 2018 16:50:55 +0000
+Message-Id: <1537375855-2088-1-git-send-email-leviathan0992@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/18 9:40 AM, Greg KH wrote:
-> On Wed, Sep 19, 2018 at 09:10:55AM -0700, Randy Dunlap wrote:
->> On 9/19/18 6:23 AM, Greg KH wrote:
->>> On Wed, Sep 19, 2018 at 02:22:01PM +0800, Herbert Xu wrote:
->>>> Hi Greg: 
->>>>
->>>> This push fixes a potential boot hang in ccp and an incorrect
->>>> CPU capability check in aegis/morus on x86.
->>>>
->>>>
->>>> Please pull from
->>>>
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
->>>
->>> Now pulled, thanks.
->>>
->>> greg k-h
->>
->> Hi,
->> Just a process question:
->>
->> It looks like Greg is not adding Signed-of-by: <himself>
->> to mainline git commits, although the prior mainline git committer did so.
->>
->> Is that omission on purpose?
-> 
-> s-o-b does not get added to git pulls, I "trust" the subsystem
-> maintainer got it correct.  That's what Linus has always done in the
-> past, what am I doing differently here?
-> 
->> submitting-patches.rst says:
->> The Signed-off-by: tag indicates that the signer was involved in the
->> development of the patch, or that he/she was in the patch's delivery path.
-> 
-> Yes, but not for git pulls.
-> 
-> I have not applied any patches sent in emails at this point in time, so
-> there's nothing that I could have even signed off on.
+From: "haiqing.shq" <leviathan0992@gmail.com>
 
-OK, I see.
+Use the variable write_len instead of ov_iter_count(from).
 
-> confused,
+Signed-off-by: haiqing.shq <leviathan0992@gmail.com>
+---
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-no, that's me :)
-
-
-thanks,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 52517f2..4a699ef 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3012,7 +3012,7 @@ int pagecache_write_end(struct file *file, struct address_space *mapping,
+ 	if (iocb->ki_flags & IOCB_NOWAIT) {
+ 		/* If there are pages to writeback, return */
+ 		if (filemap_range_has_page(inode->i_mapping, pos,
+-					   pos + iov_iter_count(from)))
++					   pos + write_len))
+ 			return -EAGAIN;
+ 	} else {
+ 		written = filemap_write_and_wait_range(mapping, pos,
 -- 
-~Randy
+1.8.3.1
+
