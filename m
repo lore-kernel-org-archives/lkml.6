@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47459ECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C90ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA75220645
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA75220645
+	by mail.kernel.org (Postfix) with ESMTP id 4FEBB20645
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 09:31:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEBB20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbeISPIU (ORCPT
+        id S1731167AbeISPHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 11:08:20 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43238 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731128AbeISPHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 11:07:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43229 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726986AbeISPHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 11:07:16 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0274B208D9; Wed, 19 Sep 2018 11:30:13 +0200 (CEST)
+        id 0F82D207D4; Wed, 19 Sep 2018 11:30:12 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-99-10.w90-88.abo.wanadoo.fr [90.88.4.10])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C7909208E7;
-        Wed, 19 Sep 2018 11:30:02 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id CE8BB208B0;
+        Wed, 19 Sep 2018 11:30:01 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
         gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
         nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
         mw@semihalf.com
-Subject: [PATCH net-next 08/12] net: mvpp2: make mvpp2_read_relaxed static
-Date:   Wed, 19 Sep 2018 11:27:07 +0200
-Message-Id: <20180919092711.22296-9-antoine.tenart@bootlin.com>
+Subject: [PATCH net-next 05/12] net: mvpp2: fix the number of queues per cpu for PPv2.2
+Date:   Wed, 19 Sep 2018 11:27:04 +0200
+Message-Id: <20180919092711.22296-6-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919092711.22296-1-antoine.tenart@bootlin.com>
 References: <20180919092711.22296-1-antoine.tenart@bootlin.com>
@@ -46,42 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the Marvell PPv2 driver the mvpp2_read_relaxed function is only used
-in a single file. Make it static and remove its prototype from the
-header.
+The Marvell PPv2.2 engine only has 8 Rx queues per CPU, while PPv2.1 has
+16 of them. This patch updates the code so that the Rx queues mask width
+is selected given the version of the network controller used.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h      | 2 --
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h      | 3 ++-
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 7 ++++---
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-index 5247f2d1f573..87ac86a87bd5 100644
+index 43f9d8372b28..014e3343b660 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -1097,8 +1097,6 @@ struct mvpp2_bm_pool {
- void mvpp2_write(struct mvpp2 *priv, u32 offset, u32 data);
- u32 mvpp2_read(struct mvpp2 *priv, u32 offset);
- 
--u32 mvpp2_read_relaxed(struct mvpp2 *priv, u32 offset);
--
- void mvpp2_dbgfs_init(struct mvpp2 *priv, const char *name);
- 
- void mvpp2_dbgfs_cleanup(struct mvpp2 *priv);
+@@ -253,7 +253,8 @@
+ #define     MVPP2_ISR_ENABLE_INTERRUPT(mask)	((mask) & 0xffff)
+ #define     MVPP2_ISR_DISABLE_INTERRUPT(mask)	(((mask) << 16) & 0xffff0000)
+ #define MVPP2_ISR_RX_TX_CAUSE_REG(port)		(0x5480 + 4 * (port))
+-#define     MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK	0xffff
++#define     MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(version) \
++					((version) == MVPP21 ? 0xffff : 0xff)
+ #define     MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK	0xff0000
+ #define     MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_OFFSET	16
+ #define     MVPP2_CAUSE_RX_FIFO_OVERRUN_MASK	BIT(24)
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index f5edde2994e0..011bf9c5d105 100644
+index 546328041898..86f4b1323077 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -83,7 +83,7 @@ u32 mvpp2_read(struct mvpp2 *priv, u32 offset)
- 	return readl(priv->swth_base[0] + offset);
- }
+@@ -909,7 +909,7 @@ static void mvpp2_interrupts_unmask(void *arg)
+ 	u32 val;
  
--u32 mvpp2_read_relaxed(struct mvpp2 *priv, u32 offset)
-+static u32 mvpp2_read_relaxed(struct mvpp2 *priv, u32 offset)
- {
- 	return readl_relaxed(priv->swth_base[0] + offset);
- }
+ 	val = MVPP2_CAUSE_MISC_SUM_MASK |
+-		MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++		MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(port->priv->hw_version);
+ 	if (port->has_tx_irqs)
+ 		val |= MVPP2_CAUSE_TXQ_OCCUP_DESC_ALL_MASK;
+ 
+@@ -929,7 +929,7 @@ mvpp2_shared_interrupt_mask_unmask(struct mvpp2_port *port, bool mask)
+ 	if (mask)
+ 		val = 0;
+ 	else
+-		val = MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++		val = MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(MVPP22);
+ 
+ 	for (i = 0; i < port->nqvecs; i++) {
+ 		struct mvpp2_queue_vector *v = port->qvecs + i;
+@@ -3065,7 +3065,8 @@ static int mvpp2_poll(struct napi_struct *napi, int budget)
+ 	}
+ 
+ 	/* Process RX packets */
+-	cause_rx = cause_rx_tx & MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK;
++	cause_rx = cause_rx_tx &
++		   MVPP2_CAUSE_RXQ_OCCUP_DESC_ALL_MASK(port->priv->hw_version);
+ 	cause_rx <<= qv->first_rxq;
+ 	cause_rx |= qv->pending_cause_rx;
+ 	while (cause_rx && budget > 0) {
 -- 
 2.17.1
 
