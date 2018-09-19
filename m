@@ -2,36 +2,37 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF189C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B266C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA452151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:04:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA452151B
+	by mail.kernel.org (Postfix) with ESMTP id 1AB442151C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:06:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB442151C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731985AbeISTmh (ORCPT
+        id S1731512AbeISToy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:42:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:61059 "EHLO mga09.intel.com"
+        Wed, 19 Sep 2018 15:44:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:5523 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731857AbeISTmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:42:37 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1730876AbeISToy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:44:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 07:04:31 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 07:06:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
-   d="scan'208";a="258578231"
+   d="scan'208";a="258578703"
 Received: from pqueiros-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.13])
-  by orsmga005.jf.intel.com with ESMTP; 19 Sep 2018 07:04:26 -0700
-Date:   Wed, 19 Sep 2018 17:04:25 +0300
+  by orsmga005.jf.intel.com with ESMTP; 19 Sep 2018 07:06:35 -0700
+Date:   Wed, 19 Sep 2018 17:06:34 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Tomas Winkler <tomas.winkler@intel.com>
 Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
@@ -39,14 +40,15 @@ Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/20] tpm: factor out tpm_get_timeouts
-Message-ID: <20180919140425.GH26571@linux.intel.com>
+Subject: Re: [PATCH v3 06/20] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+Message-ID: <20180919140634.GA27854@linux.intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
- <20180918093459.19165-6-tomas.winkler@intel.com>
+ <20180918093459.19165-7-tomas.winkler@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180918093459.19165-6-tomas.winkler@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180918093459.19165-7-tomas.winkler@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,13 +56,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:34:44PM +0300, Tomas Winkler wrote:
-> Factor out tpm_get_timeouts into tpm2_get_timeouts
-> and tpm1_get_timeouts.
+On Tue, Sep 18, 2018 at 12:34:45PM +0300, Tomas Winkler wrote:
+> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> unused pcrextend_header structure.
+> 
+> Fixes warning:
+> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
+>  static const struct tpm_input_header pcrextend_header = {
+>                                       ^~~~~~~~~~~~~~~~
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Function names missing parentheses. Should be there for clarity when
-used in a sentence. Otherwise, the commit looks fine.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Can someone with a working IMA environment to test it? Don't have one
+right now (should probably setup).
 
 /Jarkko
