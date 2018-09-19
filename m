@@ -2,100 +2,106 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B9BC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03BBECE566
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F1D2150F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:04:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F1D2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A07D62150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 23:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A07D62150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732499AbeITEod convert rfc822-to-8bit (ORCPT
+        id S1732727AbeITEpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 00:44:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40832 "EHLO mga14.intel.com"
+        Thu, 20 Sep 2018 00:45:32 -0400
+Received: from nautica.notk.org ([91.121.71.147]:47717 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbeITEod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 00:44:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 16:04:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,395,1531810800"; 
-   d="scan'208";a="91595756"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Sep 2018 16:03:05 -0700
-Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 19 Sep 2018 16:03:05 -0700
-Received: from fmsmsx103.amr.corp.intel.com ([169.254.2.126]) by
- FMSMSX152.amr.corp.intel.com ([169.254.6.159]) with mapi id 14.03.0319.002;
- Wed, 19 Sep 2018 16:03:04 -0700
-From:   "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>,
-        "Walker, Benjamin" <benjamin.walker@intel.com>
-CC:     "Howell, Seth" <seth.howell@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "monis@mellanox.com" <monis@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "dledford@redhat.com" <dledford@redhat.com>
-Subject: RE: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Topic: [PATCH] rdma: move the ib_wr_opcode enum to include/uapi
-Thread-Index: AQHUNB7dduKd6+3bL0SrpYoBIoJutKTB4cuAgAAKaQCAATczAIAGhGQAgCvyCACAAAhrAIAAFpsAgAAFJYCAArEDwA==
-Date:   Wed, 19 Sep 2018 23:03:04 +0000
-Message-ID: <13AA599688F47243B14FCFCCC2C803BB4BDC4DE4@FMSMSX103.amr.corp.intel.com>
-References: <20180814223303.83556-1-seth.howell@intel.com>
- <20180815225021.GB31799@ziepe.ca>
- <EA913ED399BBA34AA4EAC2EDC24CDD008611724E@FMSMSX105.amr.corp.intel.com>
- <20180816180126.GB10507@ziepe.ca>
- <EA913ED399BBA34AA4EAC2EDC24CDD0086118B12@FMSMSX105.amr.corp.intel.com>
- <11f85f780435a5ded567bc8559d7c770d3bc4464.camel@intel.com>
- <20180917210824.GF11367@ziepe.ca>
- <0df4e4958250fd6cdb978005ace970c877269535.camel@intel.com>
- <20180917224743.GG11367@ziepe.ca>
-In-Reply-To: <20180917224743.GG11367@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTM4N2ExYTktMmE3ZS00MmJiLWFjODctMGFjZWRkNDk2ZGFmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWjRhYzZOWGdDRjRmTktuMVlYN3drVGxEcHNhRVY4SjZ3QTlpMURJZmhxRlBEazFTbWIwSVFCUnBpSGhmK2lcL1MifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1725790AbeITEpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 00:45:32 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 0DC7DC01B; Thu, 20 Sep 2018 01:05:19 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 01:05:04 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+Message-ID: <20180919230504.GA20280@nautica>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
+ <20180918173428.GA21591@kroah.com>
+ <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
+ <20180919211458.GA8757@kroah.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180919211458.GA8757@kroah.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
-
-> > What is the correct way for a user space application to check whether
-> > a NIC supports SEND_WITH_INVAL? We are currently examining the
-> > device_cap_flags in the structure returned by ibv_query_device.
-> > Specifically, we're looking at IBV_DEVICE_MEM_MGT_EXTENSIONS.
-> However,
-> > for i40iw, that flag is set. I'm concerned that the feature support
-> > flags are common between user space and the kernel, but the actual
-> support differs in this case.
+Greg Kroah-Hartman wrote on Wed, Sep 19, 2018:
+> > > So, with this applied, does clang really build an arm32 kernel
+> > > successfully?  No other problem at all?  And this isn't really a
+> > > regression, arm32 never really worked with clang yet, right?
+> > 
+> > To recap a bit: these two patches come from the "Compiler Attributes"
+> > series which is meant as a general improvement.
 > 
-> That is the correct thing to do. Sadly the i40iw driver is broken, it should be
-> fixed to either mask those flags or implement the functionality.
+> Ok, so that's not for regressions, that's fine.
+
+I've not followed so closely, in particular I'm not sure if it's the
+only problem with arm32 right now, but that is a regression - the
+general serie is meant as an improvement, but these two patches fix
+815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
+exclusive") which was taken in 4.19-rc1
+
+(Miguel, perhaps a Fixes: tag might help remember that?)
+
+> If these do not fix a regression, I don't see how they would be ready
+> for 4.19-final.
+
+So the rest of the series is not a regression and isn't ready for
+4.19-final, these two would be, but only got tested by the handful of
+people in Cc here ; so ultimately it's your call.
+
+
+> > I am going to send a v5 of the entire series without these two
+> > patches, based on -rc4 (or -next, which one do you prefer? I would say
+> > these patches should be applied early in the -next branches, so that
+> > everyone is ready for the change, given it "touches" every translation
+> > unit).
 > 
+> That's up to whomever takes these into their tree for linux-next
+> inclusion.  If you are about to break everything, then you might
+> consider changing your patches so they do not do that :)
 
-A fix to add SEND_WITH_INVAL support to the user space i40iw is coming.
-It is currently in regression testing.
+I think that was more or less his question, there is no maintainer for
+these files, so who should that whomever be? :)
+The thing is linux took this kind of patch directly last time, but
+ideally it really should sink in -next for a bit...
 
-Thank you,
-Tatyana 
+(If no-one in Cc has anything included in -next I could take them in my
+9p branch, but that is quite a bit out of scope from what I advertised
+this branch as so I think it would be confusing ; I think it might
+almost be best if Miguel will keep maintaining these in the future to do
+his own request to inclusion in -next?)
 
-> Jason
+-- 
+Dominique Martinet
