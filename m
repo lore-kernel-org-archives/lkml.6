@@ -2,93 +2,73 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A37AECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8796EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E6B214C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24E6B214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A9F3214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:29:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9F3214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbeISIEX (ORCPT
+        id S1730859AbeISIEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 19 Sep 2018 04:04:23 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:51382 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730651AbeISIEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 04:04:22 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8J2RLKp025194
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 18 Sep 2018 19:27:48 -0700
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 18 Sep
- 2018 19:27:30 -0700
-Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len to
- command line
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-CC:     <pmladek@suse.com>, <sergey.senozhatsky@gmail.com>,
-        <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>
-References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
- <20180919015030.GA423@jagdpanzerIV>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
-Date:   Wed, 19 Sep 2018 10:27:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51514 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730667AbeISIEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 04:04:23 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EB8A9A95DB804;
+        Wed, 19 Sep 2018 10:28:48 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 19 Sep 2018 10:28:42 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <gaoxiang25@huawei.com>, <yuchao0@huawei.com>,
+        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] staging: erofs: Fix a unused variable 'arg' warning
+Date:   Wed, 19 Sep 2018 10:16:21 +0800
+Message-ID: <1537323381-23839-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-In-Reply-To: <20180919015030.GA423@jagdpanzerIV>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I find the following warning when compiling the kernel.
 
+drivers/staging/erofs/super.c:195:6: warning: unused variable 'arg' [-Wunused-variable]
+  int arg = 0;
 
-On 2018年09月19日 09:50, Sergey Senozhatsky wrote:
-> On (09/19/18 01:17), zhe.he@windriver.com wrote:
->> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
->>  /* save requested log_buf_len since it's too early to process it */
->>  static int __init log_buf_len_setup(char *str)
->>  {
->> -	unsigned size = memparse(str, &str);
->> +	unsigned size;
-> 	unsigned int size;
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/staging/erofs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This is in v1 but then Steven suggested that it should be split out
-and only keep the pure fix part here.
-
->
->> +	if (!str) {
->> +		pr_err("Config string not provided\n");
-> pr_debug() may be?
->
-> It's not clear from this error message which one of the "config strings"
-> was not provided. Besides, I think "config string" is misleading and in
-> fact it's a "boot command line parameter". But, dunno, I guess I'd just
-> drop that print out.
-
-I'm OK with dropping it. Anyway it'd get "Malformed early
-option 'log_buf_len'" from early_param later.
-
-I'll send v3. Thank you.
-
-Zhe
-
->
-> Otherwise,
->
-> Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->
-> 	-ss
->
+diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+index 6423592..c04313f 100644
+--- a/drivers/staging/erofs/super.c
++++ b/drivers/staging/erofs/super.c
+@@ -192,7 +192,9 @@ static int parse_options(struct super_block *sb, char *options)
+ {
+ 	substring_t args[MAX_OPT_ARGS];
+ 	char *p;
++#ifdef CONFIG_EROFS_FAULT_INJECTION
+ 	int arg = 0;
++#endif
+ 
+ 	if (!options)
+ 		return 0;
+-- 
+1.7.12.4
 
