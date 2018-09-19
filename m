@@ -2,96 +2,51 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE92EECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E683CECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A1872151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A1872151B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 87D722083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 16:34:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D722083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prnet.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbeISWM4 (ORCPT
+        id S1732747AbeISWNE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 18:12:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55182 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731266AbeISWM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 18:12:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F0AA4AB7D;
-        Wed, 19 Sep 2018 16:34:12 +0000 (UTC)
-Subject: Re: [PATCH 1/2] ARM: dt-bindings: aspeed: Facebook TiogaPass BMC
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-References: <20180919162918.3994257-1-vijaykhemka@fb.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBE6W6ZQBEAC/BIukDnkVenIkK9O14UucicBIVvRB5WSMHC23msS+R2h915mW7/vXfn+V
- 0nrr5ECmEg/5OjujKf0x/uhJYrsxcp45nDyYCk+RYoOJmGzzUFya1GvT/c04coZ8VmgFUWGE
- vCfhHJro85dZUL99IoLP21VXEVlCPyIngSstikeuf14SY17LPTN1aIpGQDI2Qt8HHY1zOVWv
- iz53aiFLFeIVhQlBmOABH2Ifr2M9loRC9yOyGcE2GhlzgyHGlQxEVGFn/QptX6iYbtaTBTU0
- c72rpmbe1Nec6hWuzSwu2uE8lF+HYcYi+22ml1XBHNMBeAdSEbSfDbwc///8QKtckUzbDvME
- S8j4KuqQhwvYkSg7dV9rs53WmjO2Wd4eygkC3tBhPM5s38/6CVGl3ABiWJs3kB08asUNy8Wk
- juusU/nRJbXDzxu1d+hv0d+s5NOBy/5+7Pa6HeyBnh1tUmCs5/f1D/cJnuzzYwAmZTHFUsfQ
- ygGBRRKpAVu0VxCFNPSYKW0ULi5eZV6bcj+NAhtafGsWcv8WPFXgVE8s2YU38D1VtlBvCo5/
- 0MPtQORqAQ/Itag1EHHtnfuK3MBtA0fNxQbb2jha+/oMAi5hKpmB/zAlFoRtYHwjFPFldHfv
- Iljpe1S0rDASaF9NsQPfUBEm7dA5UUkyvvi00HZ3e7/uyBGb0QARAQABzSJBbmRyZWFzIEbD
- pHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgID
- AQIeAQIXgAUCTqGJnQIZAQAKCRD6LtEtPn4BPzetD/4rF6k/HF+9U9KqykfJaWdUHJvXpI85
- Roab12rQbiIrL4hVEYKrYwPEKpCf+FthXpgOq+JdTGJ831DMlTx7Ed5/QJ9KAAQuhZlSNjSc
- +FNobJm7EbFv9jWFjQC0JcOl17Ji1ikgRcIRDCul1nQh9jCdfh1b848GerZmzteNdT9afRJm
- 7rrvMqXs1Y52/dTlfIW0ygMA2n5Vv3EwykXJOPF6fRimkErKO84sFMNg0eJV9mXs+Zyionfi
- g2sZJfVeKjkDqjxy7sDDBZZR68I9HWq5VJQrXqQkCZUvtr6TBLI+uiDLbGRUDNxA3wgjVdS2
- v9bhjYceSOHpKU+h3H2S8ju9rjhOADT2F5lUQMTSpjlzglh8IatV5rXLGkXEyum4MzMo2sCE
- Cr+GD6i2M3pHCtaIVV3xV0nRGALa6DdF7jBWqM54KHaKsE883kFH2+6ARcPCPrnPm7LX98h2
- 4VpG984ysoq6fpzHHG/KCaYCEOe1bpr3Plmmp3sqj0utA6lwzJy0hj5dqug+lqmg7QKAnxl+
- porgluoY56U0X0PIVBc0yO0dWqRxtylJa9kDX/TKwFYNVddMn2NQNjOJXzx2H9hf0We7rG7+
- F/vgwALVVYbiTzvp2L0XATTv/oX4BHagAa/Qc3dIsBYJH+KVhBp+ZX4uguxk4xlc2hm75b1s
- cqeAD87BTQROlumUARAAzd7eu+tw/52FB7xQZWDv5aF+6CAkoz7AuY4s1fo0AQQDqjLOdpQF
- bifdH7B8SnsA4eo0syfs+1tZW6nn9hdy1GHEMbeuvdhNwkhEfYGDYpSue7oVxB4jajKvRHAP
- VcewKZIxvIiZ5aSp5n1Bd7B0c0C443DHiWE/0XWSpvbU7fTzTNvdz+2OZmGtqCn610gBqScv
- 1BOiP3OfLly8ghxcJsos23c0mkB/1iWlzh3UMFIGrzsK3sZJ/3uRaLYFimmqqPlSwFqx3b0M
- 1gFdHWKfOpvQ4wwP5P10xwvqNXLWC30wB1QmJGD/X8aAoVNnGsmEL7GcWF4cLoOSRidSoccz
- znShE+Ap+FVDD6MRyesNT4D67l792//B38CGJRdELtNacdwazaFgxH9O85Vnd70ZC7fIcwzG
- yg/4ZEf96DlAvrSOnu/kgklofEYdzpZmW+Fqas6cnk6ZaHa35uHuBPesdE13MVz5TeiHGQTW
- xP1jbgWQJGPvJZ+htERT8SZGBQRb1paoRd1KWQ1mlr3CQvXtfA/daq8p/wL48sXrKNwedrLV
- iZOeJOFwfpJgsFU4xLoO/8N0RNFsnelBgWgZE3ZEctEd4BsWFUw+czYCPYfqOcJ556QUGA9y
- DeDcxSitpYrNIvpk4C5CHbvskVLKPIUVXxTNl8hAGo1Ahm1VbNkYlocAEQEAAcLBXwQYAQIA
- CQUCTpbplAIbDAAKCRD6LtEtPn4BPzA6D/9TbSBOPM99SHPX9JiEQAw4ITCBF2oTWeZQ6RJg
- RKpB15lzyPfyFbNSceJp9dCiwDWe+pzKaX6KYOFZ5+YTS0Ph2eCR+uT2l6Mt6esAun8dvER/
- xlPDW7p88dwGUcV8mHEukWdurSEDTj8V3K29vpgvIgRq2lHCn2wqRQBGpiJAt72Vg0HxUlwN
- GAJNvhpeW8Yb43Ek7lWExkUgOfNsDCTvDInF8JTFtEXMnUcPxC0d/GdAuvBilL9SlmzvoDIZ
- 5k2k456bkY3+3/ydDvKU5WIgThydyCEQUHlmE6RdA3C1ccIrIvKjVEwSH27Pzy5jKQ78qnhv
- dtLLAavOXyBJnOGlNDOpOyBXfv02x91RoRiyrSIM7dKmMEINKQlAMgB/UU/6B+mvzosbs5d3
- 4FPzBLuuRz9WYzXmnC460m2gaEVk1GjpidBWw0yY6kgnAM3KhwCFSecqUQCvwKFDGSXDDbCr
- w08b3GDk40UoCoUq9xrGfhlf05TUSFTg2NlSrK7+wAEsTUgs2ZYLpHyEeftoDDnKpM4ghs/O
- ceCeyZUP1zSgRSjgITQp691Uli5Nd1mIzaaM8RjOE/Rw67FwgblKR6HAhSy/LYw1HVOu+Ees
- RAEdbtRt37A8brlb/ENxbLd9SGC8/j20FQjit7oPNMkTJDs7Uo2eb7WxOt5pSTVVqZkv7Q==
-Organization: SUSE Linux GmbH
-Message-ID: <09e425e4-9199-dccd-a8ab-4fbd9f384677@suse.de>
-Date:   Wed, 19 Sep 2018 18:34:07 +0200
+        Wed, 19 Sep 2018 18:13:04 -0400
+Received: from extserverfr1.prnet.org ([188.165.208.21]:33650 "EHLO
+        extserverfr1.prnet.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731266AbeISWNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 18:13:04 -0400
+Received: from extserver.intern.prnet.org (extserver.prnet.org [192.168.11.1])
+        by extserverfr1.prnet.org (8.14.9/8.14.9) with ESMTP id w8JGYBrn025660;
+        Wed, 19 Sep 2018 18:34:11 +0200
+Received: from [IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28] ([IPv6:2001:7e8:cf00:bc00:da50:e6ff:febb:ea28])
+        (authenticated bits=0)
+        by extserver.intern.prnet.org (8.14.9/8.14.9) with ESMTP id w8JGYA5E032658
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
+        Wed, 19 Sep 2018 18:34:10 +0200
+Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
+ under high system load
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
+        netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
+References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
+ <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
+From:   David Arendt <admin@prnet.org>
+Message-ID: <c37b0548-518c-f022-b407-6f71943b9db2@prnet.org>
+Date:   Wed, 19 Sep 2018 18:34:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180919162918.3994257-1-vijaykhemka@fb.com>
+In-Reply-To: <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -99,41 +54,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-Subject should be "dt-bindings: Add vendor prefix for Facebook" or so.
-Please compare other commits for that file.
-
-Am 19.09.18 um 18:29 schrieb Vijay Khemka:
-> Initial introduction of Facebook TiogaPass family equipped with
-> Aspeed 2500 BMC SoC. TiogaPass is a x86 server development kit
-> with a ASPEED ast2500 BMC manufactured by Facebook.
-> 
-> This adds an entry of Facebook in Documentation for vendor prefix
-
-Lacking Signed-off-by.
-
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 2c3fc512e746..0520303ee5b8 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -127,6 +127,7 @@ everspin	Everspin Technologies, Inc.
->  exar	Exar Corporation
->  excito	Excito
->  ezchip	EZchip Semiconductor
-> +facebook	Facebook
->  fairphone	Fairphone B.V.
->  faraday	Faraday Technology Corporation
->  fastrax	Fastrax Oy
-
-Otherwise looking better.
+the networking problem did not occur for 12 hours now, so I think this
+patch resolved the problem.
 
 Thanks,
-Andreas
+David Arendt
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+On 9/19/18 12:30 AM, Maciej S. Szmigiero wrote:
+> Hi,
+>
+> On 18.09.2018 12:23, David Arendt wrote:
+>> Hi,
+>>
+>> Today I had the network adapter problems again.
+>> So the patch doesn't seem to change anything regarding this problem.
+>> This week my time is unfortunately very limited, but I will try to
+>> find some time next weekend to look a bit more into the issue.
+> If the problem is caused by missing TXCFG_AUTO_FIFO bit in TxConfig,
+> as the register difference would suggest, then you can try applying
+> the following patch (hack) on top of 4.18.8 that is already patched
+> with commit f74dd480cf4e:
+> --- a/drivers/net/ethernet/realtek/r8169.c
+> +++ b/drivers/net/ethernet/realtek/r8169.c
+> @@ -5043,7 +5043,8 @@
+>  {
+>  	/* Set DMA burst size and Interframe Gap Time */
+>  	RTL_W32(tp, TxConfig, (TX_DMA_BURST << TxDMAShift) |
+> -		(InterFrameGap << TxInterFrameGapShift));
+> +		(InterFrameGap << TxInterFrameGapShift)
+> +		| TXCFG_AUTO_FIFO);
+>  }
+>  
+>  static void rtl_set_rx_max_size(struct rtl8169_private *tp)
+>
+> This hack will probably only work properly on RTL_GIGA_MAC_VER_40 or
+> later NICs.
+>
+> Before running any tests please verify with "ethtool -d enp3s0" that
+> TxConfig register now contains 0x4f000f80, as it did in the old,
+> working driver version.
+>
+> If this does not help then a bisection will most likely be needed.
+>
+>> Thanks in advance,
+>> David Arendt
+> Maciej
+
+
