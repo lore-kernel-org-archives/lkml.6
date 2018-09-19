@@ -2,112 +2,224 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E2DECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAB9ECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0F32151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B2F42150F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 17:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SVjt7ZWj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0F32151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RqiMu3Ie";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gc+MaZrk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2F42150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733046AbeISXcW (ORCPT
+        id S1731877AbeISXeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 19:32:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34370 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732300AbeISXcW (ORCPT
+        Wed, 19 Sep 2018 19:34:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53476 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeISXeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 19:32:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JoLgKQryuTz2u5oM1ZCcgA8H3cJ5KRioXoBemgo9yes=; b=SVjt7ZWj+FxW
-        cP6UiyvaNPOgZX2NA+U1f+eltY8VoWSnAH9EIfFHf1saLf5pJh6lwpTWaKTkXtBnHNdW7oJMPaBf3
-        Au6qH5vsI/DBEZveUnwzmWlCeOujzGC8D1Or/gCOen+SjTGfbbhId54Y7EMBJyY7BhdiBwDb2oonE
-        VGpWc=;
-Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g2gf7-0004y4-40; Wed, 19 Sep 2018 17:53:17 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 2A4BD440078; Wed, 19 Sep 2018 18:53:15 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd718x7: add missing linux/of.h inclusion" to the regulator tree
-In-Reply-To: 
-Message-Id: <20180919175315.2A4BD440078@finisterre.ee.mobilebroadband>
-Date:   Wed, 19 Sep 2018 18:53:15 +0100 (BST)
+        Wed, 19 Sep 2018 19:34:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C961360BF5; Wed, 19 Sep 2018 17:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537379702;
+        bh=Ty5Le4td8hGpZLNS+S3EhWgPjwtNUY3w17H6HNWkkzI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RqiMu3Iec7/GAJ+4WZMx1sSFxpfRvN6nltOFC5QH1QOGtk023kYV+g8Z/Z7WIxzkY
+         4bj6AzL79ll5mXOLlMGCkWYe5rYt5N80fItrDJndYqeGsEoSTMwX+PJPbXgBAW9Niq
+         o2OcPrfbMkCuZ1w+dzHB8vzX3ON+JI9voG5kKps0=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id BBA0E607BD;
+        Wed, 19 Sep 2018 17:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537379701;
+        bh=Ty5Le4td8hGpZLNS+S3EhWgPjwtNUY3w17H6HNWkkzI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gc+MaZrkVaiu6wk5ew86TZXd7wUGgx3JW0jGl3PZGwGQxUeUs5vHLMJtjZL+mdVSM
+         0M7fGbA6NvK/27+Wat1XmaG+aki19KeS7ZgoZz2SiekjJz9k6pRuS8UNTMEhNOdeY8
+         08bmxk1oikshP2ng6OxOaQyDJMXuE2uBXL07JxqI=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 19 Sep 2018 23:25:01 +0530
+From:   Vikash Garodia <vgarodia@codeaurora.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH v9 1/5] venus: firmware: add routine to reset ARM9
+In-Reply-To: <97b94b9b-f028-cb8b-a3db-67626dc517ab@linaro.org>
+References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
+ <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
+ <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
+ <97b94b9b-f028-cb8b-a3db-67626dc517ab@linaro.org>
+Message-ID: <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
+X-Sender: vgarodia@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 2018-09-19 20:30, Stanimir Varbanov wrote:
+> Hi Alex,
+> 
+> On 09/19/2018 10:32 AM, Alexandre Courbot wrote:
+>> On Wed, Sep 19, 2018 at 8:43 AM Vikash Garodia 
+>> <vgarodia@codeaurora.org> wrote:
+>>> 
+>>> Add routine to reset the ARM9 and brings it out of reset. Also
+>>> abstract the Venus CPU state handling with a new function. This
+>>> is in preparation to add PIL functionality in venus driver.
+>>> 
+>>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+>>> ---
+>>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
+>>>  drivers/media/platform/qcom/venus/firmware.c     | 33 
+>>> ++++++++++++++++++++++++
+>>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
+>>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
+>>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
+>>>  5 files changed, 57 insertions(+), 9 deletions(-)
+>>> 
+>>> diff --git a/drivers/media/platform/qcom/venus/core.h 
+>>> b/drivers/media/platform/qcom/venus/core.h
+>>> index 2f02365..dfd5c10 100644
+>>> --- a/drivers/media/platform/qcom/venus/core.h
+>>> +++ b/drivers/media/platform/qcom/venus/core.h
+>>> @@ -98,6 +98,7 @@ struct venus_caps {
+>>>   * @dev:               convenience struct device pointer
+>>>   * @dev_dec:   convenience struct device pointer for decoder device
+>>>   * @dev_enc:   convenience struct device pointer for encoder device
+>>> + * @no_tz:     a flag that suggests presence of trustzone
+>> 
+>> Looks like it suggests the absence of trustzone?
+>> 
+>> Actually I would rename it as use_tz and set it if TrustZone is used.
+>> This would avoid double-negative statements like what we see below.
+> 
+> I find this suggestion reasonable.
 
-   regulator: bd718x7: add missing linux/of.h inclusion
+Initially i planned to keep it as a positive flag. The reason behind 
+keeping it
+as no_tz was to keep the default value of this flag to 0 indicating tz 
+is present
+by default.
+I can switch it to use_tz though and set it in firmware_init after the 
+presence of
+firmware node is checked.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From df43519eb706edfe951284a825642ce2e1d38d09 Mon Sep 17 00:00:00 2001
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date: Wed, 19 Sep 2018 10:14:00 +0300
-Subject: [PATCH] regulator: bd718x7: add missing linux/of.h inclusion
-
-0-Day tests found compilation error on x86. Driver won't
-compile on x86_64 as "of_match_ptr" is not found. Add missing
-include <linux/of.h>
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/bd71837-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-index 9b5e1297902f..4fe519581235 100644
---- a/drivers/regulator/bd71837-regulator.c
-+++ b/drivers/regulator/bd71837-regulator.c
-@@ -9,6 +9,7 @@
- #include <linux/kernel.h>
- #include <linux/mfd/rohm-bd718x7.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
--- 
-2.19.0
-
+>> 
+>>>   * @lock:      a lock for this strucure
+>>>   * @instances: a list_head of all instances
+>>>   * @insts_count:       num of instances
+>>> @@ -129,6 +130,7 @@ struct venus_core {
+>>>         struct device *dev;
+>>>         struct device *dev_dec;
+>>>         struct device *dev_enc;
+>>> +       bool no_tz;
+>>>         struct mutex lock;
+>>>         struct list_head instances;
+>>>         atomic_t insts_count;
+>>> diff --git a/drivers/media/platform/qcom/venus/firmware.c 
+>>> b/drivers/media/platform/qcom/venus/firmware.c
+>>> index c4a5778..f2ae2f0 100644
+>>> --- a/drivers/media/platform/qcom/venus/firmware.c
+>>> +++ b/drivers/media/platform/qcom/venus/firmware.c
+>>> @@ -22,10 +22,43 @@
+>>>  #include <linux/sizes.h>
+>>>  #include <linux/soc/qcom/mdt_loader.h>
+>>> 
+>>> +#include "core.h"
+>>>  #include "firmware.h"
+>>> +#include "hfi_venus_io.h"
+>>> 
+>>>  #define VENUS_PAS_ID                   9
+>>>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
+>>> +#define VENUS_FW_START_ADDR            0x0
+>>> +
+>>> +static void venus_reset_cpu(struct venus_core *core)
+>>> +{
+>>> +       void __iomem *base = core->base;
+>>> +
+>>> +       writel(0, base + WRAPPER_FW_START_ADDR);
+>>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
+>>> +       writel(0, base + WRAPPER_CPA_START_ADDR);
+>>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+>>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+>>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
+>>> +       writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+>>> +       writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+>>> +
+>>> +       /* Bring ARM9 out of reset */
+>>> +       writel(0, base + WRAPPER_A9SS_SW_RESET);
+>>> +}
+>>> +
+>>> +int venus_set_hw_state(struct venus_core *core, bool resume)
+>>> +{
+>>> +       if (!core->no_tz)
+>> 
+>> This is the kind of double negative statement I was referring do
+>> above: "if we do not not have TrustZone". Turning it into
+>> 
+>>     if (core->use_tz)
+>> 
+>> would save the reader a few neurons. :)
+>> 
+>>> +               return qcom_scm_set_remote_state(resume, 0);
+>>> +
+>>> +       if (resume)
+>>> +               venus_reset_cpu(core);
+>>> +       else
+>>> +               writel(1, core->base + WRAPPER_A9SS_SW_RESET);
+>>> +
+>>> +       return 0;
+>>> +}
+>>> 
+>>>  int venus_boot(struct device *dev, const char *fwname)
+>>>  {
+>>> diff --git a/drivers/media/platform/qcom/venus/firmware.h 
+>>> b/drivers/media/platform/qcom/venus/firmware.h
+>>> index 428efb5..397570c 100644
+>>> --- a/drivers/media/platform/qcom/venus/firmware.h
+>>> +++ b/drivers/media/platform/qcom/venus/firmware.h
+>>> @@ -18,5 +18,16 @@
+>>> 
+>>>  int venus_boot(struct device *dev, const char *fwname);
+>>>  int venus_shutdown(struct device *dev);
+>>> +int venus_set_hw_state(struct venus_core *core, bool suspend);
+>>> +
+>>> +static inline int venus_set_hw_state_suspend(struct venus_core 
+>>> *core)
+>>> +{
+>>> +       return venus_set_hw_state(core, false);
+>>> +}
+>>> +
+>>> +static inline int venus_set_hw_state_resume(struct venus_core *core)
+>>> +{
+>>> +       return venus_set_hw_state(core, true);
+>>> +}
+>> 
+>> I think these two venus_set_hw_state_suspend() and
+>> venus_set_hw_state_resume() are superfluous, if you want to make the
+>> state explicit you can also define an enum { SUSPEND, RESUME } to use
+>> as argument of venus_set_hw_state() and call it directly.
+> 
+> Infact this was by my request, and I wanted to avoid enum and have the
+> type of the action in the function name and also avoid one extra
+> function argument. Of course it is a matter of taste.
