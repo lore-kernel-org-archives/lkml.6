@@ -2,41 +2,41 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFD3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCD8C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D235A21529
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C3A121523
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkvE0C+e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D235A21529
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5FLSxsp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3A121523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbeISUEc (ORCPT
+        id S1732389AbeISUEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50236 "EHLO mail.kernel.org"
+        Wed, 19 Sep 2018 16:04:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732345AbeISUEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:04:31 -0400
+        id S1731889AbeISUEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 16:04:35 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12F921523;
-        Wed, 19 Sep 2018 14:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA0CC2151C;
+        Wed, 19 Sep 2018 14:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537367181;
-        bh=Kslem0FZg76BfAVBaPG/rNubFgW0lapdUVja7FVOixw=;
+        s=default; t=1537367184;
+        bh=dJV3HxDMExQipUfrsJqwWqcsK3JAcra5+4h2YtkktV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RkvE0C+eVYbv3NR7ZmcHPZUAOfj4lekNxlDE9U4YHXuv/LOqcbv2XnWWxVZZwzTIl
-         vd4bUCYRTAxeEI2ieC7QSnybpQ9TPrlfWPdmAE4BeQEKtfolZbipu1v4Xn0sZNEpbT
-         xT2Gra6yCrezGCslHJNwbxCjAUULDC3iEC5J6954=
+        b=f5FLSxsp4WVkz+t7MWsENzsB0PWZQmvhlW+qHdRXzYrz3AHMCgHeMGnePoLCr8FFY
+         u4MpMvw4HmBQHgNO5TqXoTupMqYLimx07lMdwY7DQc2/PWrjoEnVVHtOlhoYhygEBv
+         pJwJLv/xbBrQSaQMM8R8FsnGWDT9rPweEksZKflA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/13] perf tools: Add 'struct perf_mmap' arg to record__write()
-Date:   Wed, 19 Sep 2018 11:25:34 -0300
-Message-Id: <20180919142537.29985-11-acme@kernel.org>
+Subject: [PATCH 11/13] perf util: Make copyfile_offset() global
+Date:   Wed, 19 Sep 2018 11:25:35 -0300
+Message-Id: <20180919142537.29985-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180919142537.29985-1-acme@kernel.org>
 References: <20180919142537.29985-1-acme@kernel.org>
@@ -60,8 +60,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-The struct perf_mmap map argument will hold the file pointer to write
-the data to.
+It will be used outside of util object in following patches.
+
+Committer note:
+
+We need to have the header with the definition for loff_t in util.h
+since we now use it in the copyfile_offset() signature.
+
+Also move that prototype closer to the other copyfile_ prefixed
+functions.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -69,156 +76,46 @@ Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Andi Kleen <andi@firstfloor.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180913125450.21342-5-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180913125450.21342-10-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 24 ++++++++++++++----------
- tools/perf/util/auxtrace.c  |  2 +-
- tools/perf/util/auxtrace.h  |  1 +
- tools/perf/util/mmap.c      |  6 +++---
- tools/perf/util/mmap.h      |  2 +-
- 5 files changed, 20 insertions(+), 15 deletions(-)
+ tools/perf/util/util.c | 2 +-
+ tools/perf/util/util.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index fd8b12c5f4ae..0980dfe3396b 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -106,9 +106,12 @@ static bool switch_output_time(struct record *rec)
- 	       trigger_is_ready(&switch_output_trigger);
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index eac5b858a371..093352e93d50 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -221,7 +221,7 @@ static int slow_copyfile(const char *from, const char *to, struct nsinfo *nsi)
+ 	return err;
  }
  
--static int record__write(struct record *rec, void *bf, size_t size)
-+static int record__write(struct record *rec, struct perf_mmap *map __maybe_unused,
-+			 void *bf, size_t size)
+-static int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
++int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
  {
--	if (perf_data__write(rec->session->data, bf, size) < 0) {
-+	struct perf_data_file *file = &rec->session->data->file;
-+
-+	if (perf_data_file__write(file, bf, size) < 0) {
- 		pr_err("failed to write perf data, error: %m\n");
- 		return -1;
- 	}
-@@ -127,15 +130,15 @@ static int process_synthesized_event(struct perf_tool *tool,
- 				     struct machine *machine __maybe_unused)
- {
- 	struct record *rec = container_of(tool, struct record, tool);
--	return record__write(rec, event, event->header.size);
-+	return record__write(rec, NULL, event, event->header.size);
- }
+ 	void *ptr;
+ 	loff_t pgoff;
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index dc58254a2b69..14508ee7707a 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -6,6 +6,7 @@
+ /* glibc 2.20 deprecates _BSD_SOURCE in favour of _DEFAULT_SOURCE */
+ #define _DEFAULT_SOURCE 1
  
--static int record__pushfn(void *to, void *bf, size_t size)
-+static int record__pushfn(struct perf_mmap *map, void *to, void *bf, size_t size)
- {
- 	struct record *rec = to;
++#include <fcntl.h>
+ #include <stdbool.h>
+ #include <stddef.h>
+ #include <stdlib.h>
+@@ -35,6 +36,7 @@ bool lsdir_no_dot_filter(const char *name, struct dirent *d);
+ int copyfile(const char *from, const char *to);
+ int copyfile_mode(const char *from, const char *to, mode_t mode);
+ int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi);
++int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
  
- 	rec->samples++;
--	return record__write(rec, bf, size);
-+	return record__write(rec, map, bf, size);
- }
- 
- static volatile int done;
-@@ -170,6 +173,7 @@ static void record__sig_exit(void)
- #ifdef HAVE_AUXTRACE_SUPPORT
- 
- static int record__process_auxtrace(struct perf_tool *tool,
-+				    struct perf_mmap *map,
- 				    union perf_event *event, void *data1,
- 				    size_t len1, void *data2, size_t len2)
- {
-@@ -197,11 +201,11 @@ static int record__process_auxtrace(struct perf_tool *tool,
- 	if (padding)
- 		padding = 8 - padding;
- 
--	record__write(rec, event, event->header.size);
--	record__write(rec, data1, len1);
-+	record__write(rec, map, event, event->header.size);
-+	record__write(rec, map, data1, len1);
- 	if (len2)
--		record__write(rec, data2, len2);
--	record__write(rec, &pad, padding);
-+		record__write(rec, map, data2, len2);
-+	record__write(rec, map, &pad, padding);
- 
- 	return 0;
- }
-@@ -549,7 +553,7 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
- 	 * at least one event.
- 	 */
- 	if (bytes_written != rec->bytes_written)
--		rc = record__write(rec, &finished_round_event, sizeof(finished_round_event));
-+		rc = record__write(rec, NULL, &finished_round_event, sizeof(finished_round_event));
- 
- 	if (overwrite)
- 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 2fecee57f555..c4617bcfd521 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1285,7 +1285,7 @@ static int __auxtrace_mmap__read(struct perf_mmap *map,
- 	ev.auxtrace.tid = mm->tid;
- 	ev.auxtrace.cpu = mm->cpu;
- 
--	if (fn(tool, &ev, data1, len1, data2, len2))
-+	if (fn(tool, map, &ev, data1, len1, data2, len2))
- 		return -1;
- 
- 	mm->prev = head;
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 7eeb141361b9..a86b7eab6673 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -435,6 +435,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
- 				   bool per_cpu);
- 
- typedef int (*process_auxtrace_t)(struct perf_tool *tool,
-+				  struct perf_mmap *map,
- 				  union perf_event *event, void *data1,
- 				  size_t len1, void *data2, size_t len2);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 215f69f41672..cdb95b3a1213 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -281,7 +281,7 @@ int perf_mmap__read_init(struct perf_mmap *map)
- }
- 
- int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size))
-+		    int push(struct perf_mmap *map, void *to, void *buf, size_t size))
- {
- 	u64 head = perf_mmap__read_head(md);
- 	unsigned char *data = md->base + page_size;
-@@ -300,7 +300,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 		size = md->mask + 1 - (md->start & md->mask);
- 		md->start += size;
- 
--		if (push(to, buf, size) < 0) {
-+		if (push(md, to, buf, size) < 0) {
- 			rc = -1;
- 			goto out;
- 		}
-@@ -310,7 +310,7 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
- 	size = md->end - md->start;
- 	md->start += size;
- 
--	if (push(to, buf, size) < 0) {
-+	if (push(md, to, buf, size) < 0) {
- 		rc = -1;
- 		goto out;
- 	}
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index 05a6d47c7956..e603314dc792 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -93,7 +93,7 @@ union perf_event *perf_mmap__read_forward(struct perf_mmap *map);
- union perf_event *perf_mmap__read_event(struct perf_mmap *map);
- 
- int perf_mmap__push(struct perf_mmap *md, void *to,
--		    int push(void *to, void *buf, size_t size));
-+		    int push(struct perf_mmap *map, void *to, void *buf, size_t size));
- 
- size_t perf_mmap__mmap_len(struct perf_mmap *map);
- 
+ ssize_t readn(int fd, void *buf, size_t n);
+ ssize_t writen(int fd, const void *buf, size_t n);
 -- 
 2.14.4
 
