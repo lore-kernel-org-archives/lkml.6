@@ -2,90 +2,98 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 962B8C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9CCECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495AC21521
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:23:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="ywElcmOA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495AC21521
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 5DF052151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 14:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF052151B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731744AbeISUBK (ORCPT
+        id S1731809AbeISUCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 16:01:10 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46770 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731391AbeISUBK (ORCPT
+        Wed, 19 Sep 2018 16:02:03 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:50359 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727825AbeISUCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 16:01:10 -0400
-Received: by mail-yb1-f194.google.com with SMTP id y20-v6so2416143ybi.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 07:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CQ1dFM9Sw0pYDAvGYT6k29iUU9y9kH/dyOXYVbWUYw0=;
-        b=ywElcmOA/951O4PoXvgSC4j1Au8RCiPCKT9hkusQDCaLFj6ILQvEM09Rng4zb9zAo/
-         nRy71n+yVCWN7gMP4caTdIw3ZUiUc88/pIHkJYZGKcHm+PJgyoOchGj9rmJaPWubwrQY
-         EqpyFpdQyHGPjcHG03hJFpnd0/Yi0nivate12o/zl3Tyl4OP8vt7UpUSL5zd72YlGibT
-         Mjl/j7qTpZy30CEQnlM98l8SMbg1aMp8baXhwDpy8PmNmGgjFjqfBfyqo7Jii8M5CKfO
-         1cJna+Yth6KJBoHlRk+I4mQZIxTeVGvl4uG29uEY58I8a0lfBpx3eAScU0Hf4KgTeCDp
-         xoOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CQ1dFM9Sw0pYDAvGYT6k29iUU9y9kH/dyOXYVbWUYw0=;
-        b=VQPsSj4Ut9r4YPJ40xo5xI2Ft8aM/6kKTgRvmsRkCDq21odM586juVcWjCg1dXawUj
-         AB2qjHvhTBRGfPQBTE+WLxAKh6aOhhNGI+jVDO/b0vdJ8re70dkMnlvwATQyXpDvJwor
-         effkAWc8DArtnMS24wzqcNPZ884qW2rVaWDf7Vl3nX6eZEqz1rOzMFQJXzR0e0bYDQ4M
-         F+68kTf1ItDtFYVFDGYExCk518y4ksR5kzOW88l9Dr9VxZ7t5WvxN25yp2386WFeomgz
-         9jKydH9KDcDvDa5k6uy5jCBvQn/PxGkyfTV2wjAWr568d0CjPpBMohPFNOZ7OeI758WZ
-         SCzw==
-X-Gm-Message-State: APzg51BcIjOW6Lgy7oq/Ij3T0VUwahr9hiOoHx/i7hhKS/58xXJqc+um
-        UzhEeXihRAlmXDWi4qwZBTn60Q==
-X-Google-Smtp-Source: ANB0VdZRNyNvlbE6Ba3sOFbqKnkN/XBxn50IWsAP/dRbVS3KpvzRbSUMHGZTviJGn+Y7QnoHGlmFEw==
-X-Received: by 2002:a5b:cc5:: with SMTP id e5-v6mr4154414ybr.9.1537366980851;
-        Wed, 19 Sep 2018 07:23:00 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:9a94])
-        by smtp.gmail.com with ESMTPSA id u196-v6sm2055878ywg.68.2018.09.19.07.22.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 07:22:59 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 10:22:58 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memcg: remove memcg_kmem_skip_account
-Message-ID: <20180919142258.GA15400@cmpxchg.org>
-References: <20180919004501.178023-1-shakeelb@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180919004501.178023-1-shakeelb@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 19 Sep 2018 16:02:03 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie3.idc.renesas.com with ESMTP; 19 Sep 2018 23:23:51 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 9B44C8F3B4;
+        Wed, 19 Sep 2018 23:23:51 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.53,394,1531753200"; 
+   d="scan'208";a="291360259"
+Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
+  by relmlii1.idc.renesas.com with ESMTP; 19 Sep 2018 23:23:48 +0900
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Simon Horman <horms@verge.net.au>, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v4 0/3] Renesas R9A06G032 PINCTRL Driver
+Date:   Wed, 19 Sep 2018 15:23:43 +0100
+Message-Id: <20180919142346.25468-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 05:45:01PM -0700, Shakeel Butt wrote:
-> The flag memcg_kmem_skip_account was added during the era of opt-out
-> kmem accounting. There is no need for such flag in the opt-in world as
-> there aren't any __GFP_ACCOUNT allocations within
-> memcg_create_cache_enqueue().
-> 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+This implements the pinctrl driver for the RZ/N1 family of devices, including
+the R9A06G032 (RZ/N1D) device.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+This series was originally written by Michel Pollet whilst at Renesas, and I
+have taken over this work.
+
+Main changes:
+v4:
+ - Address Jacopo's comments
+ - Add alternative way to use the pinmux prop.
+ - Remove mention of gpios.
+ - Implement pin_config_group_get()
+ - Fix function to get pin configs, i.e. return -EINVAL when disabled.
+
+v3:
+ - Use standard DT props instead of proprietary ones.
+ - Replace virtual pins used for MDIO muxing with extra funcs.
+ - Use pinctrl_utils funcs to handle the maps.
+ - Remove the dbg functions to keep things simple.
+ - Change the way the functions are defined so it is easy to check
+   against the hardware numbering.
+
+v2:
+ - Change to generic rzn1 family driver, instead of device specific.
+ - Review comments fixed.
+ - Fix error handling during probe
+
+Phil Edworthy (3):
+  dt-bindings: pinctrl: renesas,rzn1-pinctrl: documentation
+  pinctrl: renesas: Renesas RZ/N1 pinctrl driver
+  ARM: dts: r9a06g032: Add pinctrl node
+
+ .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 +++
+ arch/arm/boot/dts/r9a06g032.dtsi              |   8 +
+ drivers/pinctrl/Kconfig                       |  10 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rzn1.c                | 951 ++++++++++++++++++
+ include/dt-bindings/pinctrl/rzn1-pinctrl.h    | 141 +++
+ 6 files changed, 1264 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rzn1.c
+ create mode 100644 include/dt-bindings/pinctrl/rzn1-pinctrl.h
+
+-- 
+2.17.1
+
