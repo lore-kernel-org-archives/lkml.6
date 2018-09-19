@@ -2,94 +2,379 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32C7ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C516C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C302150B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:58:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="naW8G/h9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C302150B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id B90AB2151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 13:59:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90AB2151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732194AbeISTgG (ORCPT
+        id S1732209AbeISThs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 15:36:06 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39074 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727657AbeISTgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 15:36:06 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8JDs5vu172831;
-        Wed, 19 Sep 2018 13:57:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=BIa1zgvdqBDVTzCke2BhfOUAwG/f6yXblcuctTARqXU=;
- b=naW8G/h93CLfx+XhQL6dHSxo0lGFrvoabL/KaY9Y10ZG+RlzewvAUbC9yRHB+l6h8ehp
- x/QOqR01Po/kH9DH3kBbMBC3lUt0LFrVyst2KqN66Uwr+HXhmwhe/+v90N63O3c1zHfP
- a79cEwGTl18MOrwHF9nvDGnehLMjNEyXffyDJWlVoCaCKhiBI0uwWUiZrlHHHKp0AdsD
- uNfuwauTuYQb9GNLoYqI6Zjq3EUpkba7u6rVxKlSyK6oa6K8HwqsXa/dkefzMNxuvQQE
- hAZJq1gb0jwqIfEjYFtRFA3zO7tcqvuOmzfWQjkLVt9NeLWe6N5frXC0cs5F/0AERzC3 JA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2mgt1pu4by-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Sep 2018 13:57:53 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8JDvqMd026953
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Sep 2018 13:57:52 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8JDvoI7007853;
-        Wed, 19 Sep 2018 13:57:50 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 19 Sep 2018 06:57:50 -0700
-Date:   Wed, 19 Sep 2018 16:57:42 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gary R Hook <ghook@amd.com>
-Cc:     "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Hook, Gary" <Gary.Hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [PATCH 1/2] Fix static checker warning
-Message-ID: <20180919135741.5icpyesntcfbgtcr@mwanda>
-References: <cover.1536959537.git.Janakarajan.Natarajan@amd.com>
- <31c49295223e51f5c1c4e36e7a09fe100dab1711.1536959537.git.Janakarajan.Natarajan@amd.com>
- <8dfca0f4-6639-3444-148f-eb0b0817fec6@amd.com>
+        Wed, 19 Sep 2018 15:37:48 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56464 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727657AbeISThs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 15:37:48 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 06:59:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,394,1531810800"; 
+   d="scan'208";a="75601114"
+Received: from pqueiros-mobl.ger.corp.intel.com (HELO localhost) ([10.249.37.13])
+  by orsmga006.jf.intel.com with ESMTP; 19 Sep 2018 06:59:28 -0700
+Date:   Wed, 19 Sep 2018 16:59:26 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/20] tpm2: add new tpm2 commands according to TCG
+ 1.36
+Message-ID: <20180919135926.GD26571@linux.intel.com>
+References: <20180918093459.19165-1-tomas.winkler@intel.com>
+ <20180918093459.19165-2-tomas.winkler@intel.com>
+ <20180919134627.GA26571@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8dfca0f4-6639-3444-148f-eb0b0817fec6@amd.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9020 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=629
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809190140
+In-Reply-To: <20180919134627.GA26571@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sounds reasonable.  The subject needs a subsystem prefix and it might
-be better to make it more specific.  Like so:
+On Wed, Sep 19, 2018 at 04:46:27PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Sep 18, 2018 at 12:34:40PM +0300, Tomas Winkler wrote:
+> > 1. TPM2_CC_LAST has moved from 182 to 193
+> > 2. Convert tpm2_ordinal_duration from an array into a switch statement,
+> >    as there are not so many commands that require special duration
+> >    relative to a number of commands.
+> > 
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > ---
+> > V2-V3: Rebase.
+> >  drivers/char/tpm/tpm.h      |  41 +++++----
+> >  drivers/char/tpm/tpm2-cmd.c | 196 +++++++++++++++-----------------------------
+> >  2 files changed, 93 insertions(+), 144 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index f20dc8ece348..0f08518b525d 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -134,22 +134,31 @@ enum tpm2_algorithms {
+> >  };
+> >  
+> >  enum tpm2_command_codes {
+> > -	TPM2_CC_FIRST		= 0x011F,
+> > -	TPM2_CC_CREATE_PRIMARY  = 0x0131,
+> > -	TPM2_CC_SELF_TEST	= 0x0143,
+> > -	TPM2_CC_STARTUP		= 0x0144,
+> > -	TPM2_CC_SHUTDOWN	= 0x0145,
+> > -	TPM2_CC_CREATE		= 0x0153,
+> > -	TPM2_CC_LOAD		= 0x0157,
+> > -	TPM2_CC_UNSEAL		= 0x015E,
+> > -	TPM2_CC_CONTEXT_LOAD	= 0x0161,
+> > -	TPM2_CC_CONTEXT_SAVE	= 0x0162,
+> > -	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+> > -	TPM2_CC_GET_CAPABILITY	= 0x017A,
+> > -	TPM2_CC_GET_RANDOM	= 0x017B,
+> > -	TPM2_CC_PCR_READ	= 0x017E,
+> > -	TPM2_CC_PCR_EXTEND	= 0x0182,
+> > -	TPM2_CC_LAST		= 0x018F,
+> > +	TPM2_CC_FIRST		        = 0x011F,
+> > +	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+> > +	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
+> > +	TPM2_CC_CREATE_PRIMARY          = 0x0131,
+> > +	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
+> > +	TPM2_CC_SELF_TEST	        = 0x0143,
+> > +	TPM2_CC_STARTUP		        = 0x0144,
+> > +	TPM2_CC_SHUTDOWN	        = 0x0145,
+> > +	TPM2_CC_NV_READ                 = 0x014E,
+> > +	TPM2_CC_CREATE		        = 0x0153,
+> > +	TPM2_CC_LOAD		        = 0x0157,
+> > +	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
+> > +	TPM2_CC_UNSEAL		        = 0x015E,
+> > +	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
+> > +	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
+> > +	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
+> > +	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
+> > +	TPM2_CC_GET_CAPABILITY	        = 0x017A,
+> > +	TPM2_CC_GET_RANDOM	        = 0x017B,
+> > +	TPM2_CC_PCR_READ	        = 0x017E,
+> > +	TPM2_CC_PCR_EXTEND	        = 0x0182,
+> > +	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
+> > +	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
+> > +	TPM2_CC_CREATE_LOADED           = 0x0191,
+> > +	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
+> >  };
+> >  
+> >  enum tpm2_permanent_handles {
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index 3acf4fd4e5a5..9c3c5c0628d9 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -41,128 +41,73 @@ static struct tpm2_hash tpm2_hash_map[] = {
+> >  };
+> >  
+> >  /*
+> > - * Array with one entry per ordinal defining the maximum amount
+> > + * tpm2_ordinal_duration returns the maximum amount
+> 
+> tpm2_ordinal_duration should have parentheses when in a sentence
+> for clarity.
+> 
+> Add something this to tpm2_calc_ordinal_duration() instead:
+> 
+> /* tpm2_calc_ordinal_duration - return the maximum amount of time for command duration
+>  * @ordinal:	the command code
+>  *
+>  * Return the maximum amount of time for the command duration. The values are
+>  * taken from the PC Client Profile (PTP) specification. The values can
+>  * are defined in &enum tpm_duration.
+>  */
+> 
+> >   * of time the chip could take to return the result. The values
+> > + * of the MEDIUM, and LONG durations are taken from the
+> > + * PC Client Profile (PTP) specification (750, 2000 msec)
+> > + *
+> >   * LONG_LONG is for commands that generates keys which empirically
+> >   * takes longer time on some systems.
+> 
+> This tail should really be part of the kdoc for enum tpm_duration
+> (including the existing comment about LONG_LONG).
+> 
+> >   */
+> > -static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+> > -	TPM_UNDEFINED,		/* 11F */
+> > -	TPM_UNDEFINED,		/* 120 */
+> > -	TPM_LONG,		/* 121 */
+> > -	TPM_UNDEFINED,		/* 122 */
+> > -	TPM_UNDEFINED,		/* 123 */
+> > -	TPM_UNDEFINED,		/* 124 */
+> > -	TPM_UNDEFINED,		/* 125 */
+> > -	TPM_UNDEFINED,		/* 126 */
+> > -	TPM_UNDEFINED,		/* 127 */
+> > -	TPM_UNDEFINED,		/* 128 */
+> > -	TPM_LONG,		/* 129 */
+> > -	TPM_UNDEFINED,		/* 12a */
+> > -	TPM_UNDEFINED,		/* 12b */
+> > -	TPM_UNDEFINED,		/* 12c */
+> > -	TPM_UNDEFINED,		/* 12d */
+> > -	TPM_UNDEFINED,		/* 12e */
+> > -	TPM_UNDEFINED,		/* 12f */
+> > -	TPM_UNDEFINED,		/* 130 */
+> > -	TPM_LONG_LONG,		/* 131 */
+> > -	TPM_UNDEFINED,		/* 132 */
+> > -	TPM_UNDEFINED,		/* 133 */
+> > -	TPM_UNDEFINED,		/* 134 */
+> > -	TPM_UNDEFINED,		/* 135 */
+> > -	TPM_UNDEFINED,		/* 136 */
+> > -	TPM_UNDEFINED,		/* 137 */
+> > -	TPM_UNDEFINED,		/* 138 */
+> > -	TPM_UNDEFINED,		/* 139 */
+> > -	TPM_UNDEFINED,		/* 13a */
+> > -	TPM_UNDEFINED,		/* 13b */
+> > -	TPM_UNDEFINED,		/* 13c */
+> > -	TPM_UNDEFINED,		/* 13d */
+> > -	TPM_MEDIUM,		/* 13e */
+> > -	TPM_UNDEFINED,		/* 13f */
+> > -	TPM_UNDEFINED,		/* 140 */
+> > -	TPM_UNDEFINED,		/* 141 */
+> > -	TPM_UNDEFINED,		/* 142 */
+> > -	TPM_LONG,		/* 143 */
+> > -	TPM_MEDIUM,		/* 144 */
+> > -	TPM_UNDEFINED,		/* 145 */
+> > -	TPM_UNDEFINED,		/* 146 */
+> > -	TPM_UNDEFINED,		/* 147 */
+> > -	TPM_UNDEFINED,		/* 148 */
+> > -	TPM_UNDEFINED,		/* 149 */
+> > -	TPM_UNDEFINED,		/* 14a */
+> > -	TPM_UNDEFINED,		/* 14b */
+> > -	TPM_UNDEFINED,		/* 14c */
+> > -	TPM_UNDEFINED,		/* 14d */
+> > -	TPM_LONG,		/* 14e */
+> > -	TPM_UNDEFINED,		/* 14f */
+> > -	TPM_UNDEFINED,		/* 150 */
+> > -	TPM_UNDEFINED,		/* 151 */
+> > -	TPM_UNDEFINED,		/* 152 */
+> > -	TPM_LONG_LONG,		/* 153 */
+> > -	TPM_UNDEFINED,		/* 154 */
+> > -	TPM_UNDEFINED,		/* 155 */
+> > -	TPM_UNDEFINED,		/* 156 */
+> > -	TPM_UNDEFINED,		/* 157 */
+> > -	TPM_UNDEFINED,		/* 158 */
+> > -	TPM_UNDEFINED,		/* 159 */
+> > -	TPM_UNDEFINED,		/* 15a */
+> > -	TPM_UNDEFINED,		/* 15b */
+> > -	TPM_MEDIUM,		/* 15c */
+> > -	TPM_UNDEFINED,		/* 15d */
+> > -	TPM_UNDEFINED,		/* 15e */
+> > -	TPM_UNDEFINED,		/* 15f */
+> > -	TPM_UNDEFINED,		/* 160 */
+> > -	TPM_UNDEFINED,		/* 161 */
+> > -	TPM_UNDEFINED,		/* 162 */
+> > -	TPM_UNDEFINED,		/* 163 */
+> > -	TPM_UNDEFINED,		/* 164 */
+> > -	TPM_UNDEFINED,		/* 165 */
+> > -	TPM_UNDEFINED,		/* 166 */
+> > -	TPM_UNDEFINED,		/* 167 */
+> > -	TPM_UNDEFINED,		/* 168 */
+> > -	TPM_UNDEFINED,		/* 169 */
+> > -	TPM_UNDEFINED,		/* 16a */
+> > -	TPM_UNDEFINED,		/* 16b */
+> > -	TPM_UNDEFINED,		/* 16c */
+> > -	TPM_UNDEFINED,		/* 16d */
+> > -	TPM_UNDEFINED,		/* 16e */
+> > -	TPM_UNDEFINED,		/* 16f */
+> > -	TPM_UNDEFINED,		/* 170 */
+> > -	TPM_UNDEFINED,		/* 171 */
+> > -	TPM_UNDEFINED,		/* 172 */
+> > -	TPM_UNDEFINED,		/* 173 */
+> > -	TPM_UNDEFINED,		/* 174 */
+> > -	TPM_UNDEFINED,		/* 175 */
+> > -	TPM_UNDEFINED,		/* 176 */
+> > -	TPM_LONG,		/* 177 */
+> > -	TPM_UNDEFINED,		/* 178 */
+> > -	TPM_UNDEFINED,		/* 179 */
+> > -	TPM_MEDIUM,		/* 17a */
+> > -	TPM_LONG,		/* 17b */
+> > -	TPM_UNDEFINED,		/* 17c */
+> > -	TPM_UNDEFINED,		/* 17d */
+> > -	TPM_UNDEFINED,		/* 17e */
+> > -	TPM_UNDEFINED,		/* 17f */
+> > -	TPM_UNDEFINED,		/* 180 */
+> > -	TPM_UNDEFINED,		/* 181 */
+> > -	TPM_MEDIUM,		/* 182 */
+> > -	TPM_UNDEFINED,		/* 183 */
+> > -	TPM_UNDEFINED,		/* 184 */
+> > -	TPM_MEDIUM,		/* 185 */
+> > -	TPM_MEDIUM,		/* 186 */
+> > -	TPM_UNDEFINED,		/* 187 */
+> > -	TPM_UNDEFINED,		/* 188 */
+> > -	TPM_UNDEFINED,		/* 189 */
+> > -	TPM_UNDEFINED,		/* 18a */
+> > -	TPM_UNDEFINED,		/* 18b */
+> > -	TPM_UNDEFINED,		/* 18c */
+> > -	TPM_UNDEFINED,		/* 18d */
+> > -	TPM_UNDEFINED,		/* 18e */
+> > -	TPM_UNDEFINED		/* 18f */
+> > -};
+> > +static u8 tpm2_ordinal_duration(u32 ordinal)
+> 
+> This naming scheme becomes confusing. I would suggest to name this
+> as __tpm2_calc_ordinal_duration(u32 ordinal).
+> 
+> > +{
+> > +	switch (ordinal) {
+> > +	/* Startup */
+> 
+> Please remove these comments. They add only extra weight to maintain
+> the code.
+> 
+> > +	case TPM2_CC_STARTUP:                 /* 144 */
+> > +		return TPM_MEDIUM;
+> > +
+> > +	/* Selftest */
+> > +	case TPM2_CC_SELF_TEST:               /* 143 */
+> > +		return TPM_LONG;
+> > +
+> > +	/* Random Number Generator */
+> > +	case TPM2_CC_GET_RANDOM:              /* 17B */
+> > +		return TPM_LONG;
+> > +
+> > +	/* Hash/HMAC/Event Sequences */
+> > +	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+> > +		return TPM_MEDIUM;
+> > +	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+> > +		return TPM_MEDIUM;
+> > +	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+> > +		return TPM_MEDIUM;
+> > +	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+> > +		return TPM_MEDIUM;
+> > +
+> > +	/* Signature Verification */
+> > +	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+> > +		return TPM_LONG;
+> > +
+> > +	/* Integrity Collection (PCR) */
+> > +	case TPM2_CC_PCR_EXTEND:              /* 182 */
+> > +		return TPM_MEDIUM;
+> > +
+> > +	/* Hierarchy Commands */
+> > +	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+> > +		return TPM_LONG;
+> > +	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+> > +		return TPM_LONG;
+> > +
+> > +	/* Capability Commands */
+> > +	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+> > +		return TPM_MEDIUM;
+> > +
+> > +	/* Non-volatile Storage */
+> > +	case TPM2_CC_NV_READ:                 /* 14E */
+> > +		return TPM_LONG;
+> > +
+> > +	/* Key generation (not in PTP) */
+> > +	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+> > +		return TPM_LONG_LONG;
+> > +	case TPM2_CC_CREATE:                  /* 153 */
+> > +		return TPM_LONG_LONG;
+> > +	case TPM2_CC_CREATE_LOADED:           /* 191 */
+> > +		return TPM_LONG_LONG;
+> > +
+> > +	default:
+> > +		return TPM_UNDEFINED;
+> > +	}
+> > +}
+> >  
+> >  struct tpm2_pcr_read_out {
+> >  	__be32	update_cnt;
+> > @@ -758,19 +703,14 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+> >   */
+> >  unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> >  {
+> > -	int index = TPM_UNDEFINED;
+> > -	int duration = 0;
+> > +	unsigned int index;
+> >  
+> > -	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
+> > -		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
+> > +	index = tpm2_ordinal_duration(ordinal);
+> >  
+> >  	if (index != TPM_UNDEFINED)
+> > -		duration = chip->duration[index];
+> > -
+> > -	if (duration <= 0)
+> > -		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> > -
+> > -	return duration;
+> > +		return chip->duration[index];
+> > +	else
+> > +		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> >  
+> > -- 
+> > 2.14.4
+> > 
+> 
+> /Jarkko
 
-[PATCH 1/2] crypto: ccp - potential uninitialized variable
+Forgot to add this:
 
-I don't know if Herbert fixes those things up himself normally?
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-regards,
-dan carpenter
-
+/Jarkko
