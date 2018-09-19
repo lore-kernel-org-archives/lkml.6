@@ -2,296 +2,807 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F166ECE561
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D02FECE561
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C75F2086E
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:06:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C75F2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 80F8F2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 02:11:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NbzDROza"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F8F2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbeISHmL convert rfc822-to-8bit (ORCPT
+        id S1730824AbeISHqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:42:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:38259 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726771AbeISHmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:42:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2018 19:06:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,392,1531810800"; 
-   d="scan'208";a="89991428"
-Received: from xuting-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.29.10])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Sep 2018 19:06:11 -0700
-Subject: Re: [LKP] [ipc] 61224adcd2: general_protection_fault:#[##]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Rong Chen <rong.a.chen@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <3905bb1b-c691-0c8b-490f-599e7a0d561b@intel.com>
- <9df6256f-dcf3-ee6f-dd9d-b7efe2f539e6@intel.com>
- <1dac87f5-fa47-eaf2-ef34-945365e0b2c3@intel.com>
- <7c403b7d-0f60-68ea-d058-cb56d3fece75@intel.com>
- <20180913010517.GB7632@shao2-debian>
- <23069.1536838121@warthog.procyon.org.uk>
- <7969.1537252241@warthog.procyon.org.uk>
- <9189.1537255398@warthog.procyon.org.uk>
- <9499.1537266023@warthog.procyon.org.uk>
- <22268.1537284200@warthog.procyon.org.uk>
-From:   Li Zhijian <zhijianx.li@intel.com>
-Message-ID: <0bebe825-7f1a-47c1-9e8b-52d47d6a1722@intel.com>
-Date:   Wed, 19 Sep 2018 10:06:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <22268.1537284200@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        Wed, 19 Sep 2018 03:46:34 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44624 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730499AbeISHqe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:46:34 -0400
+Received: by mail-pl1-f196.google.com with SMTP id ba4-v6so1854985plb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 19:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JpYnn3+r3WIK9m2uxvWFH2eKKLnBIBJN0RhewxeJaEk=;
+        b=NbzDROzaWFMCPJy7JM9yLbNLx2drhspfpYqJEdLDpPyL7Jd95j9YLYSqFwDFha27wU
+         1GfvptzFkna+kNH3DIq6ptZvqrBfOMBErxmU1EgkbR5I0lfsMZcjg5pDf76AW3EDZBcj
+         QLSscQTLXtAQ5dCyUWuheQ7omoCYwVbL8Ifgw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JpYnn3+r3WIK9m2uxvWFH2eKKLnBIBJN0RhewxeJaEk=;
+        b=cfPHmNQaOWdGDkFJAJPtwoIHCsykZeebGTH7IoQnfYevlf2Lgt3xwpjLrtaNOF/wIL
+         wFTGmZyHrt1pNT1CeCPolVRaPYeqHy+SqwComV2keV6p2k36QzgMkvo6onQB40Es/hL3
+         QRR+82zLxw0h69d4yLGR59KNRhIjf+mhv0PAcksg8nvzEsNn7kiem9i/yA1bq0EsoWV3
+         P1a74xFvDzKdKDtAd4AzOz0YEQgPPN3sMyLKL1DoobRDikVL6SXSzADkoNNXlJTdazJa
+         kNH+axZCiNyKj8Nolj3ZNvcUisGXLQ7aQTVUKQKFjPGipfZTnVEEB+Re66p0CQ4MAuAw
+         MLNA==
+X-Gm-Message-State: APzg51CVMxoLCJ9A9XIgCw1kbYzCkpLK1OjYscddT/zkod0M3oGU3OZ4
+        ih3+DhPW054cyW3cBckaek+FDQ==
+X-Google-Smtp-Source: ANB0VdbMaUOi5LF5NSOopFe9y2WB3Pms2T9iyYu5y0ZuMvKZh1hqL01Q/4IPJ5OJQCtW1vaMmis/Cw==
+X-Received: by 2002:a17:902:6b0b:: with SMTP id o11-v6mr31936301plk.214.1537323066718;
+        Tue, 18 Sep 2018 19:11:06 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id h130-v6sm24497825pgc.88.2018.09.18.19.11.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 19:11:05 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>, linux-nfs@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH crypto-next 02/23] gss_krb5: Remove VLA usage of skcipher
+Date:   Tue, 18 Sep 2018 19:10:39 -0700
+Message-Id: <20180919021100.3380-3-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180919021100.3380-1-keescook@chromium.org>
+References: <20180919021100.3380-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/2018 11:23 PM, David Howells wrote:
->> 1. please type following command to verify the lkp-src
->> $ gzip -dc/home/dhowells/.lkp/cache/lkp-x86_64-ad88cb1a437a_.cgz | cpio -t
->>
->> it should have something like
->> lizhijian@ivb44:~$ gzip -dc .lkp/cache/lkp-x86_64-ebf5822e1818_.cgz | cpio -t | head
-> It has a lot more than the listed files, but it does have all the ones you
-> listed.  Note that my cpio -t sorts things in a different order to yours
->
->> 2. remove this file and try again with following changes
-> The cgz file listed in (1)?
+In the quest to remove all stack VLA usage from the kernel[1], this
+replaces struct crypto_skcipher and SKCIPHER_REQUEST_ON_STACK() usage
+with struct crypto_sync_skcipher and SYNC_SKCIPHER_REQUEST_ON_STACK(),
+which uses a fixed stack size.
 
-Yes
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-
->
-> I turned on "set -x".  I presumed you wanted the output sending to you.
->
-> Anyway, note that it seems I need to do mkdir ~/.lkp/cache before running the
-> qemu command,
-
-LKP tools would help to create this directory, and your host already had this according to the listed file you post previously
-
-> final_initrd  initrd-concatenated  lkp/  lkp-x86_64-ad88cb1a437a_.cgz  osimage/
->
-> Note that ~/.lkp is a symlink to somewhere that I don't mind clobbering.
->
-
-
-not clear why you cannot create cpio under ~/.lkp/cache dir
-
-
-> + local tmp_src=/tmp/lkp_initrd-root/lkp/lkp/src
-> + local archive=/home/dhowells/.lkp/cache/lkp-x86_64
-> + local 'cpio_cmd=cpio --quiet -o --owner root:lkp -H newc -F/home/dhowells/.lkp/cache/lkp-x86_64.cpio'
-> + rm -f/home/dhowells/.lkp/cache/lkp-x86_64.cpio
-> + cd /tmp/lkp_initrd-root/rootfs
-> + find lkp
-> + cpio --quiet -o --owner root:lkp -H newc -F/home/dhowells/.lkp/cache/lkp-x86_64.cpio
-> cpio: Cannot open/home/dhowells/.lkp/cache/lkp-x86_64.cpio: No such file or directory
-
-
-> otherwise cpio commands fail.  With that, trinity appears to be
-> running.
-
-According  to the log you attached, trinity didn't run due to the lkp-src.cgz(lkp-x86_64-ad88cb1a437a_xxx.cgz) haven't be merged into the runtime rootfs.
-
-
-below is the full log on my env
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: YueHaibing <yuehaibing@huawei.com>
+Cc: linux-nfs@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ pwd
-/home/lizhijian/lkp/lkp-qemu
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ ls
-job.sh  vmlinuz-4.19.0-rc2-00211-g61224ad
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ ls ~/.lkp -ld
-ls: cannot access '/home/lizhijian/.lkp': No such file or directory
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ sudo ~/lkp-tests/bin/lkp qemu -k vmlinuz-4.19.0-rc2-00211-g61224ad job.sh
-The approx. disk space requirements are
+ include/linux/sunrpc/gss_krb5.h       | 30 ++++-----
+ net/sunrpc/auth_gss/gss_krb5_crypto.c | 87 ++++++++++++++-------------
+ net/sunrpc/auth_gss/gss_krb5_keys.c   |  9 ++-
+ net/sunrpc/auth_gss/gss_krb5_mech.c   | 53 ++++++++--------
+ net/sunrpc/auth_gss/gss_krb5_seqnum.c | 18 +++---
+ net/sunrpc/auth_gss/gss_krb5_wrap.c   | 20 +++---
+ 6 files changed, 108 insertions(+), 109 deletions(-)
 
-10M             simple boot test in rootfs openwrt
-50M		simple boot test in rootfs debian
-1G              plan to run a number of different tests
-100G or more    IO tests
-
-Please enter a dir with enough disk space, or simply press Enter to accept the default.
-You may still symlink /home/lizhijian/.lkp to a more suitable place in future.
-/home/lizhijian/.lkp =>
-cpio: File lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0-df108.cpio grew, 512 new bytes not copied
-12 blocks
-result_root: /home/lizhijian/.lkp//result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/0
-downloading initrds ...
-/usr/bin/wget -q --local-encoding=UTF-8 --retry-connrefused --waitretry 1000 --tries 1000 http://bee.sh.intel.com:80/~lkp/osimage/yocto/yocto-minimal-x86_64-2016-04-22.cgz -N -P /home/lizhijian/.lkp/cache/osimage/yocto
-13925 blocks
-/usr/bin/wget -q --local-encoding=UTF-8 --retry-connrefused --waitretry 1000 --tries 1000 http://bee.sh.intel.com:80/~lkp/osimage/pkg/debian-x86_64-2016-08-31.cgz/trinity-static-x86_64-x86_64-6ddabfd2_2017-11-10.cgz -N -P /home/lizhijian/.lkp/cache/osimage/pkg/debian-x86_64-2016-08-31.cgz
-26031 blocks
-Formatting '/tmp/vdisk-root/disk-vm-lkp-hsw01-yocto-x86_64-43-0', fmt=qcow2 size=274877906944 encryption=off cluster_size=65536 lazy_refcounts=off refcount_bits=16
-Formatting '/tmp/vdisk-root/disk-vm-lkp-hsw01-yocto-x86_64-43-1', fmt=qcow2 size=274877906944 encryption=off cluster_size=65536 lazy_refcounts=off refcount_bits=16
-exec command: qemu-system-x86_64 -enable-kvm -fsdev local,id=test_dev,path=/home/lizhijian/.lkp//result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/0,security_model=none -device virtio-9p-pci,fsdev=test_dev,mount_tag=9p/virtfs_mount -kernel vmlinuz-4.19.0-rc2-00211-g61224ad -append root=/dev/ram0 user=lkp job=/lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0.yaml ARCH=x86_64 kconfig=x86_64-randconfig-ne0-09121830 branch=linux-next/master commit=61224adcd25b0abd01f02459e82b30735161e723 BOOT_IMAGE=/pkg/linux/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/vmlinuz-4.19.0-rc2-00211-g61224ad max_uptime=1500 RESULT_ROOT=/result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/612
- 24adcd25b0abd01f02459e82b30735161e723/0 LKP_LOCAL_RUN=1 debug apic=debug sysrq_always_enabled rcupdate.rcu_cpu_stall_timeout=100 net.ifnames=0 printk.devkmsg=on panic=-1 softlockup_panic=1 nmi_watchdog=panic oops=panic load_ramdisk=2 prompt_ramdisk=0 drbd.minor_count=8 systemd.log_level=err ignore_loglevel console=tty0 earlyprintk=ttyS0,115200 console=ttyS0,115200 vga=normal rw  ip=dhcp result_service=9p/virtfs_mount -initrd /home/lizhijian/.lkp/cache/final_initrd -smp 1 -m 256M -no-reboot -watchdog i6300esb -rtc base=localtime -device e1000,netdev=net0 -netdev user,id=net0 -display none -monitor null -serial stdio -drive file=/tmp/vdisk-root/disk-vm-lkp-hsw01-yocto-x86_64-43-0,media=disk,if=virtio -drive file=/tmp/vdisk-root/disk-vm-lkp-hsw01-yocto-x86_64-43-1,media=disk,if=virtio
-early console in setup code
-early console in extract_kernel
-input_data: 0x000000000379f2e9
-input_len: 0x0000000000bfaac9
-output: 0x0000000001000000
-output_len: 0x0000000002c30258
-kernel_total_size: 0x00000000033bd000
-trampoline_32bit: 0x000000000009d000
-
-Decompressing Linux... Parsing ELF... done.
-Booting the kernel.
-[    0.000000] Linux version 4.19.0-rc2-00211-g61224ad (kbuild@sof-kbuild01) (gcc version 6.4.0 20171026 (Debian 6.4.0-9)) #1 Thu Sep 13 00:56:50 CST 2018
-[    0.000000] Command line: root=/dev/ram0 user=lkp job=/lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0.yaml ARCH=x86_64 kconfig=x86_64-randconfig-ne0-09121830 branch=linux-next/master commit=61224adcd25b0abd01f02459e82b30735161e723 BOOT_IMAGE=/pkg/linux/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/vmlinuz-4.19.0-rc2-00211-g61224ad max_uptime=1500 RESULT_ROOT=/result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/0 LKP_LOCAL_RUN=1 debug apic=debug sysrq_always_enabled rcupdate.rcu_cpu_stall_timeout=100 net.ifnames=0 printk.devkmsg=on panic=-1 softlockup_panic=1 nmi_watchdog=panic oops=panic load_ramdisk=2 prompt_ramdisk=0 drbd.minor_count=8 systemd.log_level=err ignore_loglevel console=tty0 earlyprintk=ttyS0,115200 console=ttyS0,115
- 200 vg
-[    0.000000] x86/fpu: x87 FPU will use FXSAVE
-[    0.000000] BIOS-provided physical RAM map:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-[...snip...]
-[    4.165953] random: get_random_bytes called from addrconf_dad_kick+0x92/0x110 with crng_init=0
-[    4.184619] Sending DHCP requests .
-[    4.184629] random: get_random_bytes called from ic_dynamic+0x296/0xfd0 with crng_init=0
-[    4.186656] , OK
-[    4.187101] IP-Config: Got DHCP answer from 10.0.2.2, my address is 10.0.2.15
-[    4.188162] IP-Config: Complete:
-[    4.188726]      device=eth0, hwaddr=52:54:00:12:34:56, ipaddr=10.0.2.15, mask=255.255.255.0, gw=10.0.2.2
-[    4.190163]      host=10.0.2.15, domain=, nis-domain=(none)
-[    4.191103]      bootserver=10.0.2.2, rootserver=10.0.2.2, rootpath=
-[    4.191106]      nameserver0=10.0.2.3
-[    4.197574] Freeing unused kernel image memory: 1684K
-[    4.198259] Write protecting the kernel read-only data: 28672k
-[    4.199968] Freeing unused kernel image memory: 2004K
-[    4.200944] Freeing unused kernel image memory: 1440K
-[    4.218255] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[    4.219068] rodata_test: all tests were successful
-[    4.219655] x86/mm: Checking user space page tables
-[    4.236740] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[    4.237504] Run /init as init process
-[    4.238113] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-INIT: version 2.88 booting
-/etc/rcS.d/S00fbsetup: line 3: /sbin/modprobe: not found
-Starting udev
-[    4.283879] udevd[135]: starting version 3.1.5
-[    4.284888] random: udevd: uninitialized urandom read (16 bytes read)
-[    4.285729] random: udevd: uninitialized urandom read (16 bytes read)
-[    4.286518] random: udevd: uninitialized urandom read (16 bytes read)
-bootlogd: cannot allocate pseudo tty: No such file or directory
-Populating dev cache
-hwclock: can't open '/dev/misc/rtc': No such file or directory
-INIT: Entering runlevel: 5
-Configuring network interfaces... done.
-hwclock: can't open '/dev/misc/rtc': No such file or directory
-Starting syslogd/klogd: done
-PATH=/sbin:/usr/sbin:/bin:/usr/bin:/lkp/lkp/src/bin
-LKP: HOSTNAME vm-lkp-hsw01-yocto-x86_64-43, MAC 52:54:00:12:34:56, kernel 4.19.0-rc2-00211-g61224ad 1, serial console /dev/ttyS0
-
-Poky (Yocto Project Reference Distro) 2.1 vm-lkp-hsw01-yocto-x86_64-43 /dev/ttyS0
-
-vm-lkp-hsw01-yocto-x86_64-43 login: [    5.809653] mount: mounting 9p/virtfs_mount on //result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/0 failed: No such device
-[    5.809653] /lkp/lkp/src/monitors/heartbeat: line 9: vmstat: not found
-[    5.809653] /lkp/lkp/src/monitors/heartbeat: exec: line 23: vmstat: not found
-[    5.813778] Kernel tests: Boot OK!
-[    5.813778] /lkp/lkp/src/bin/run-lkp
-[    5.813778] RESULT_ROOT=/result/trinity/300s/vm-lkp-hsw01-yocto-x86_64/yocto-minimal-x86_64-2016-04-22.cgz/x86_64-randconfig-ne0-09121830/gcc-6/61224adcd25b0abd01f02459e82b30735161e723/0
-[    5.813778] job=/lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0.yaml
-[    5.813778] run-job /lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0.yaml
-[    5.813778] skip http request: cgi-bin/lkp-jobfile-append-var?job_file=/lkp/jobs/scheduled/vm-lkp-hsw01-yocto-x86_64-43/trinity-300s-yocto-minimal-x86_64-2016-04-22.cgz-61224adcd25b0abd01f02459e82b30735161e723-20180913-83000-1fq8z3y-0.yaml&job_state=running -O /dev/null
-[    5.813778] target ucode:
-[    5.925243] _warn_unseeded_randomness: 1521 callbacks suppressed
-[    5.925255] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-[    5.929774] random: get_random_u64 called from load_elf_binary+0x5c1/0x1d80 with crng_init=0
-[    5.933200] random: get_random_u32 called from map_vdso_randomized+0x9f/0xd0 with crng_init=0
-[    6.823397] BusyBox v1.24.1 (2016-04-15 14:06:13 GMT) multi-call binary.
-[    6.823397]
-[    6.823397] Usage: time [-v] PROG ARGS
-[    7.515148] _warn_unseeded_randomness: 76 callbacks suppressed
-[    7.515157] random: get_random_u32 called from bucket_table_alloc+0x104/0x2f0 with crng_init=0
-[    7.896417] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-[    7.897153] random: get_random_u64 called from load_elf_binary+0x5c1/0x1d80 with crng_init=0
-[    8.825245] cat: write error: Invalid argument
-[   14.808842] _warn_unseeded_randomness: 3 callbacks suppressed
-[   14.808853] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-[   14.811599] random: get_random_u64 called from load_elf_binary+0x5c1/0x1d80 with crng_init=0
-[   14.813791] random: get_random_u32 called from map_vdso_randomized+0x9f/0xd0 with crng_init=0
-[   15.954725] _warn_unseeded_randomness: 5 callbacks suppressed
-[   15.954741] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-[   15.959934] random: get_random_u64 called from load_elf_binary+0x5c1/0x1d80 with crng_init=0
-[   15.962280] random: get_random_u64 called from arch_rnd+0x43/0x70 with crng_init=0
-[   16.551517] trinity-main uses obsolete (PF_INET,SOCK_PACKET)
-[   16.580197] general protection fault: 0000 [#1] PTI
-[   16.580695] CPU: 0 PID: 662 Comm: trinity-c2 Tainted: G                T 4.19.0-rc2-00211-g61224ad #1
-[   16.581517] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[   16.582373] RIP: 0010:mqueue_get_tree+0x41/0x110
-[   16.582846] Code: 29 4d 63 01 48 8b 45 00 4c 8b 20 31 c0 4d 85 e4 0f 95 c0 48 83 c0 02 48 83 04 c5 e8 af 02 83 01 4d 85 e4 74 50 e8 ef 13 be ff <49> 8b 04 24 4c 8b a0 40 04 00 00 31 c0 4d 85 e4 0f 95 c0 48 83 c0
-[   16.584573] RSP: 0018:ffffc90000a57d90 EFLAGS: 00010293
-[   16.585065] RAX: 0000000000000000 RBX: ffff88000b9f7228 RCX: 0000000000000000
-[   16.585637] RDX: ffff8800099c4840 RSI: ffffffff81606341 RDI: ffff88000b9f7228
-[   16.586261] RBP: ffff88000a630ac8 R08: ffffffff82f1dee0 R09: ffff88000a630ac8
-[   16.586946] R10: ffffc90000a57d00 R11: ffff88000a630410 R12: 6b6b6b6b6b6b6b6b
-[   16.587624] R13: ffff88000a4f7a78 R14: 0000000000000000 R15: ffffffff82c1c540
-[   16.588319] FS:  000000000104a880(0000) GS:ffffffff82c3c000(0000) knlGS:0000000000000000
-[   16.589139] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.589616] CR2: 00000000011ef7e8 CR3: 000000000a4f2000 CR4: 00000000000006b0
-[   16.590323] Call Trace:
-[   16.590600]  vfs_get_tree+0xe6/0x320
-[   16.590973]  mq_init_ns+0xef/0x220
-[   16.591310]  copy_ipcs+0x19c/0x250
-[   16.592215]  create_new_namespaces+0x18b/0x4f0
-[   16.592631]  unshare_nsproxy_namespaces+0xaa/0x140
-[   16.593116]  ksys_unshare+0x3e3/0x6a0
-[   16.593509]  __x64_sys_unshare+0x17/0x20
-[   16.593918]  do_syscall_64+0xbc/0xa10
-[   16.594308]  ? trace_hardirqs_off_thunk+0x1a/0x2b
-[   16.594792]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   16.595305] RIP: 0033:0x458527
-[   16.595639] Code: 00 00 00 b8 63 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 ad 72 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 8d 72 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-[   16.597125] RSP: 002b:00007ffc5559d628 EFLAGS: 00000217 ORIG_RAX: 0000000000000110
-[   16.597881] RAX: ffffffffffffffda RBX: 00000000011f2e60 RCX: 0000000000458527
-[   16.598554] RDX: 0000000001045510 RSI: 00007ffc5559d60c RDI: 0000000008000000
-[   16.599178] RBP: 0000000000000296 R08: 00000000010454e4 R09: 0000000001045560
-[   16.599759] R10: 0000000000456697 R11: 0000000000000217 R12: 00000000004b7820
-[   16.600380] R13: 0000000000000002 R14: 0000000000000000 R15: 0000000000000000
-[   16.601061] Modules linked in:
-[   16.601412] ---[ end trace 9c0f5694bf6c3b03 ]---
-[   16.601879] RIP: 0010:mqueue_get_tree+0x41/0x110
-[   16.602307] Code: 29 4d 63 01 48 8b 45 00 4c 8b 20 31 c0 4d 85 e4 0f 95 c0 48 83 c0 02 48 83 04 c5 e8 af 02 83 01 4d 85 e4 74 50 e8 ef 13 be ff <49> 8b 04 24 4c 8b a0 40 04 00 00 31 c0 4d 85 e4 0f 95 c0 48 83 c0
-[   16.603736] RSP: 0018:ffffc90000a57d90 EFLAGS: 00010293
-[   16.604193] RAX: 0000000000000000 RBX: ffff88000b9f7228 RCX: 0000000000000000
-[   16.604856] RDX: ffff8800099c4840 RSI: ffffffff81606341 RDI: ffff88000b9f7228
-[   16.605492] RBP: ffff88000a630ac8 R08: ffffffff82f1dee0 R09: ffff88000a630ac8
-[   16.606202] R10: ffffc90000a57d00 R11: ffff88000a630410 R12: 6b6b6b6b6b6b6b6b
-[   16.606894] R13: ffff88000a4f7a78 R14: 0000000000000000 R15: ffffffff82c1c540
-[   16.607597] FS:  000000000104a880(0000) GS:ffffffff82c3c000(0000) knlGS:0000000000000000
-[   16.608413] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   16.609017] CR2: 00000000011ef7e8 CR3: 000000000a4f2000 CR4: 00000000000006b0
-[   16.609710] Kernel panic - not syncing: Fatal exception
-[   16.610226] Kernel Offset: disabled
-
-
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ ls -ld ~/.lkp/
-drwxr-xr-x 5 root root 4096 9月  19 10:12 /home/lizhijian/.lkp/
-lizhijian@haswell-OptiPlex-9020:~/lkp/lkp-qemu$ ls -l ~/.lkp/cache/
-total 12800
--rw-r--r-- 1 root root 6548980 9月  19 10:14 final_initrd
--rw-r--r-- 1 root root 4583149 9月  19 10:14 initrd-concatenated
-drwxr-xr-x 3 root root    4096 9月  19 10:12 lkp
--rw-rw-r-- 1 root root 1964312 9月  19 10:12 lkp-x86_64-ad88cb1a437a_.cgz
-drwxr-xr-x 4 root root    4096 9月  19 10:14 osimage
-
-
-Thanks
-
-
->
-> David
+diff --git a/include/linux/sunrpc/gss_krb5.h b/include/linux/sunrpc/gss_krb5.h
+index 7df625d41e35..f6e8ceafafd8 100644
+--- a/include/linux/sunrpc/gss_krb5.h
++++ b/include/linux/sunrpc/gss_krb5.h
+@@ -71,10 +71,10 @@ struct gss_krb5_enctype {
+ 	const u32		keyed_cksum;	/* is it a keyed cksum? */
+ 	const u32		keybytes;	/* raw key len, in bytes */
+ 	const u32		keylength;	/* final key len, in bytes */
+-	u32 (*encrypt) (struct crypto_skcipher *tfm,
++	u32 (*encrypt) (struct crypto_sync_skcipher *tfm,
+ 			void *iv, void *in, void *out,
+ 			int length);		/* encryption function */
+-	u32 (*decrypt) (struct crypto_skcipher *tfm,
++	u32 (*decrypt) (struct crypto_sync_skcipher *tfm,
+ 			void *iv, void *in, void *out,
+ 			int length);		/* decryption function */
+ 	u32 (*mk_key) (const struct gss_krb5_enctype *gk5e,
+@@ -98,12 +98,12 @@ struct krb5_ctx {
+ 	u32			enctype;
+ 	u32			flags;
+ 	const struct gss_krb5_enctype *gk5e; /* enctype-specific info */
+-	struct crypto_skcipher	*enc;
+-	struct crypto_skcipher	*seq;
+-	struct crypto_skcipher *acceptor_enc;
+-	struct crypto_skcipher *initiator_enc;
+-	struct crypto_skcipher *acceptor_enc_aux;
+-	struct crypto_skcipher *initiator_enc_aux;
++	struct crypto_sync_skcipher *enc;
++	struct crypto_sync_skcipher *seq;
++	struct crypto_sync_skcipher *acceptor_enc;
++	struct crypto_sync_skcipher *initiator_enc;
++	struct crypto_sync_skcipher *acceptor_enc_aux;
++	struct crypto_sync_skcipher *initiator_enc_aux;
+ 	u8			Ksess[GSS_KRB5_MAX_KEYLEN]; /* session key */
+ 	u8			cksum[GSS_KRB5_MAX_KEYLEN];
+ 	s32			endtime;
+@@ -262,24 +262,24 @@ gss_unwrap_kerberos(struct gss_ctx *ctx_id, int offset,
+ 
+ 
+ u32
+-krb5_encrypt(struct crypto_skcipher *key,
++krb5_encrypt(struct crypto_sync_skcipher *key,
+ 	     void *iv, void *in, void *out, int length);
+ 
+ u32
+-krb5_decrypt(struct crypto_skcipher *key,
++krb5_decrypt(struct crypto_sync_skcipher *key,
+ 	     void *iv, void *in, void *out, int length); 
+ 
+ int
+-gss_encrypt_xdr_buf(struct crypto_skcipher *tfm, struct xdr_buf *outbuf,
++gss_encrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *outbuf,
+ 		    int offset, struct page **pages);
+ 
+ int
+-gss_decrypt_xdr_buf(struct crypto_skcipher *tfm, struct xdr_buf *inbuf,
++gss_decrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *inbuf,
+ 		    int offset);
+ 
+ s32
+ krb5_make_seq_num(struct krb5_ctx *kctx,
+-		struct crypto_skcipher *key,
++		struct crypto_sync_skcipher *key,
+ 		int direction,
+ 		u32 seqnum, unsigned char *cksum, unsigned char *buf);
+ 
+@@ -320,12 +320,12 @@ gss_krb5_aes_decrypt(struct krb5_ctx *kctx, u32 offset,
+ 
+ int
+ krb5_rc4_setup_seq_key(struct krb5_ctx *kctx,
+-		       struct crypto_skcipher *cipher,
++		       struct crypto_sync_skcipher *cipher,
+ 		       unsigned char *cksum);
+ 
+ int
+ krb5_rc4_setup_enc_key(struct krb5_ctx *kctx,
+-		       struct crypto_skcipher *cipher,
++		       struct crypto_sync_skcipher *cipher,
+ 		       s32 seqnum);
+ void
+ gss_krb5_make_confounder(char *p, u32 conflen);
+diff --git a/net/sunrpc/auth_gss/gss_krb5_crypto.c b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+index 0220e1ca5280..4f43383971ba 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -53,7 +53,7 @@
+ 
+ u32
+ krb5_encrypt(
+-	struct crypto_skcipher *tfm,
++	struct crypto_sync_skcipher *tfm,
+ 	void * iv,
+ 	void * in,
+ 	void * out,
+@@ -62,24 +62,24 @@ krb5_encrypt(
+ 	u32 ret = -EINVAL;
+ 	struct scatterlist sg[1];
+ 	u8 local_iv[GSS_KRB5_MAX_BLOCKSIZE] = {0};
+-	SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
+ 
+-	if (length % crypto_skcipher_blocksize(tfm) != 0)
++	if (length % crypto_sync_skcipher_blocksize(tfm) != 0)
+ 		goto out;
+ 
+-	if (crypto_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLOCKSIZE) {
++	if (crypto_sync_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLOCKSIZE) {
+ 		dprintk("RPC:       gss_k5encrypt: tfm iv size too large %d\n",
+-			crypto_skcipher_ivsize(tfm));
++			crypto_sync_skcipher_ivsize(tfm));
+ 		goto out;
+ 	}
+ 
+ 	if (iv)
+-		memcpy(local_iv, iv, crypto_skcipher_ivsize(tfm));
++		memcpy(local_iv, iv, crypto_sync_skcipher_ivsize(tfm));
+ 
+ 	memcpy(out, in, length);
+ 	sg_init_one(sg, out, length);
+ 
+-	skcipher_request_set_tfm(req, tfm);
++	skcipher_request_set_sync_tfm(req, tfm);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(req, sg, sg, length, local_iv);
+ 
+@@ -92,7 +92,7 @@ krb5_encrypt(
+ 
+ u32
+ krb5_decrypt(
+-     struct crypto_skcipher *tfm,
++     struct crypto_sync_skcipher *tfm,
+      void * iv,
+      void * in,
+      void * out,
+@@ -101,23 +101,23 @@ krb5_decrypt(
+ 	u32 ret = -EINVAL;
+ 	struct scatterlist sg[1];
+ 	u8 local_iv[GSS_KRB5_MAX_BLOCKSIZE] = {0};
+-	SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
+ 
+-	if (length % crypto_skcipher_blocksize(tfm) != 0)
++	if (length % crypto_sync_skcipher_blocksize(tfm) != 0)
+ 		goto out;
+ 
+-	if (crypto_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLOCKSIZE) {
++	if (crypto_sync_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLOCKSIZE) {
+ 		dprintk("RPC:       gss_k5decrypt: tfm iv size too large %d\n",
+-			crypto_skcipher_ivsize(tfm));
++			crypto_sync_skcipher_ivsize(tfm));
+ 		goto out;
+ 	}
+ 	if (iv)
+-		memcpy(local_iv,iv, crypto_skcipher_ivsize(tfm));
++		memcpy(local_iv, iv, crypto_sync_skcipher_ivsize(tfm));
+ 
+ 	memcpy(out, in, length);
+ 	sg_init_one(sg, out, length);
+ 
+-	skcipher_request_set_tfm(req, tfm);
++	skcipher_request_set_sync_tfm(req, tfm);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(req, sg, sg, length, local_iv);
+ 
+@@ -466,7 +466,8 @@ encryptor(struct scatterlist *sg, void *data)
+ {
+ 	struct encryptor_desc *desc = data;
+ 	struct xdr_buf *outbuf = desc->outbuf;
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(desc->req);
++	struct crypto_sync_skcipher *tfm =
++		crypto_sync_skcipher_reqtfm(desc->req);
+ 	struct page *in_page;
+ 	int thislen = desc->fraglen + sg->length;
+ 	int fraglen, ret;
+@@ -492,7 +493,7 @@ encryptor(struct scatterlist *sg, void *data)
+ 	desc->fraglen += sg->length;
+ 	desc->pos += sg->length;
+ 
+-	fraglen = thislen & (crypto_skcipher_blocksize(tfm) - 1);
++	fraglen = thislen & (crypto_sync_skcipher_blocksize(tfm) - 1);
+ 	thislen -= fraglen;
+ 
+ 	if (thislen == 0)
+@@ -526,16 +527,16 @@ encryptor(struct scatterlist *sg, void *data)
+ }
+ 
+ int
+-gss_encrypt_xdr_buf(struct crypto_skcipher *tfm, struct xdr_buf *buf,
++gss_encrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *buf,
+ 		    int offset, struct page **pages)
+ {
+ 	int ret;
+ 	struct encryptor_desc desc;
+-	SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
+ 
+-	BUG_ON((buf->len - offset) % crypto_skcipher_blocksize(tfm) != 0);
++	BUG_ON((buf->len - offset) % crypto_sync_skcipher_blocksize(tfm) != 0);
+ 
+-	skcipher_request_set_tfm(req, tfm);
++	skcipher_request_set_sync_tfm(req, tfm);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 
+ 	memset(desc.iv, 0, sizeof(desc.iv));
+@@ -567,7 +568,8 @@ decryptor(struct scatterlist *sg, void *data)
+ {
+ 	struct decryptor_desc *desc = data;
+ 	int thislen = desc->fraglen + sg->length;
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(desc->req);
++	struct crypto_sync_skcipher *tfm =
++		crypto_sync_skcipher_reqtfm(desc->req);
+ 	int fraglen, ret;
+ 
+ 	/* Worst case is 4 fragments: head, end of page 1, start
+@@ -578,7 +580,7 @@ decryptor(struct scatterlist *sg, void *data)
+ 	desc->fragno++;
+ 	desc->fraglen += sg->length;
+ 
+-	fraglen = thislen & (crypto_skcipher_blocksize(tfm) - 1);
++	fraglen = thislen & (crypto_sync_skcipher_blocksize(tfm) - 1);
+ 	thislen -= fraglen;
+ 
+ 	if (thislen == 0)
+@@ -608,17 +610,17 @@ decryptor(struct scatterlist *sg, void *data)
+ }
+ 
+ int
+-gss_decrypt_xdr_buf(struct crypto_skcipher *tfm, struct xdr_buf *buf,
++gss_decrypt_xdr_buf(struct crypto_sync_skcipher *tfm, struct xdr_buf *buf,
+ 		    int offset)
+ {
+ 	int ret;
+ 	struct decryptor_desc desc;
+-	SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, tfm);
+ 
+ 	/* XXXJBF: */
+-	BUG_ON((buf->len - offset) % crypto_skcipher_blocksize(tfm) != 0);
++	BUG_ON((buf->len - offset) % crypto_sync_skcipher_blocksize(tfm) != 0);
+ 
+-	skcipher_request_set_tfm(req, tfm);
++	skcipher_request_set_sync_tfm(req, tfm);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 
+ 	memset(desc.iv, 0, sizeof(desc.iv));
+@@ -672,12 +674,12 @@ xdr_extend_head(struct xdr_buf *buf, unsigned int base, unsigned int shiftlen)
+ }
+ 
+ static u32
+-gss_krb5_cts_crypt(struct crypto_skcipher *cipher, struct xdr_buf *buf,
++gss_krb5_cts_crypt(struct crypto_sync_skcipher *cipher, struct xdr_buf *buf,
+ 		   u32 offset, u8 *iv, struct page **pages, int encrypt)
+ {
+ 	u32 ret;
+ 	struct scatterlist sg[1];
+-	SKCIPHER_REQUEST_ON_STACK(req, cipher);
++	SYNC_SKCIPHER_REQUEST_ON_STACK(req, cipher);
+ 	u8 *data;
+ 	struct page **save_pages;
+ 	u32 len = buf->len - offset;
+@@ -706,7 +708,7 @@ gss_krb5_cts_crypt(struct crypto_skcipher *cipher, struct xdr_buf *buf,
+ 
+ 	sg_init_one(sg, data, len);
+ 
+-	skcipher_request_set_tfm(req, cipher);
++	skcipher_request_set_sync_tfm(req, cipher);
+ 	skcipher_request_set_callback(req, 0, NULL, NULL);
+ 	skcipher_request_set_crypt(req, sg, sg, len, iv);
+ 
+@@ -735,7 +737,7 @@ gss_krb5_aes_encrypt(struct krb5_ctx *kctx, u32 offset,
+ 	struct xdr_netobj hmac;
+ 	u8 *cksumkey;
+ 	u8 *ecptr;
+-	struct crypto_skcipher *cipher, *aux_cipher;
++	struct crypto_sync_skcipher *cipher, *aux_cipher;
+ 	int blocksize;
+ 	struct page **save_pages;
+ 	int nblocks, nbytes;
+@@ -754,7 +756,7 @@ gss_krb5_aes_encrypt(struct krb5_ctx *kctx, u32 offset,
+ 		cksumkey = kctx->acceptor_integ;
+ 		usage = KG_USAGE_ACCEPTOR_SEAL;
+ 	}
+-	blocksize = crypto_skcipher_blocksize(cipher);
++	blocksize = crypto_sync_skcipher_blocksize(cipher);
+ 
+ 	/* hide the gss token header and insert the confounder */
+ 	offset += GSS_KRB5_TOK_HDR_LEN;
+@@ -807,7 +809,7 @@ gss_krb5_aes_encrypt(struct krb5_ctx *kctx, u32 offset,
+ 	memset(desc.iv, 0, sizeof(desc.iv));
+ 
+ 	if (cbcbytes) {
+-		SKCIPHER_REQUEST_ON_STACK(req, aux_cipher);
++		SYNC_SKCIPHER_REQUEST_ON_STACK(req, aux_cipher);
+ 
+ 		desc.pos = offset + GSS_KRB5_TOK_HDR_LEN;
+ 		desc.fragno = 0;
+@@ -816,7 +818,7 @@ gss_krb5_aes_encrypt(struct krb5_ctx *kctx, u32 offset,
+ 		desc.outbuf = buf;
+ 		desc.req = req;
+ 
+-		skcipher_request_set_tfm(req, aux_cipher);
++		skcipher_request_set_sync_tfm(req, aux_cipher);
+ 		skcipher_request_set_callback(req, 0, NULL, NULL);
+ 
+ 		sg_init_table(desc.infrags, 4);
+@@ -855,7 +857,7 @@ gss_krb5_aes_decrypt(struct krb5_ctx *kctx, u32 offset, struct xdr_buf *buf,
+ 	struct xdr_buf subbuf;
+ 	u32 ret = 0;
+ 	u8 *cksum_key;
+-	struct crypto_skcipher *cipher, *aux_cipher;
++	struct crypto_sync_skcipher *cipher, *aux_cipher;
+ 	struct xdr_netobj our_hmac_obj;
+ 	u8 our_hmac[GSS_KRB5_MAX_CKSUM_LEN];
+ 	u8 pkt_hmac[GSS_KRB5_MAX_CKSUM_LEN];
+@@ -874,7 +876,7 @@ gss_krb5_aes_decrypt(struct krb5_ctx *kctx, u32 offset, struct xdr_buf *buf,
+ 		cksum_key = kctx->initiator_integ;
+ 		usage = KG_USAGE_INITIATOR_SEAL;
+ 	}
+-	blocksize = crypto_skcipher_blocksize(cipher);
++	blocksize = crypto_sync_skcipher_blocksize(cipher);
+ 
+ 
+ 	/* create a segment skipping the header and leaving out the checksum */
+@@ -891,13 +893,13 @@ gss_krb5_aes_decrypt(struct krb5_ctx *kctx, u32 offset, struct xdr_buf *buf,
+ 	memset(desc.iv, 0, sizeof(desc.iv));
+ 
+ 	if (cbcbytes) {
+-		SKCIPHER_REQUEST_ON_STACK(req, aux_cipher);
++		SYNC_SKCIPHER_REQUEST_ON_STACK(req, aux_cipher);
+ 
+ 		desc.fragno = 0;
+ 		desc.fraglen = 0;
+ 		desc.req = req;
+ 
+-		skcipher_request_set_tfm(req, aux_cipher);
++		skcipher_request_set_sync_tfm(req, aux_cipher);
+ 		skcipher_request_set_callback(req, 0, NULL, NULL);
+ 
+ 		sg_init_table(desc.frags, 4);
+@@ -946,7 +948,8 @@ gss_krb5_aes_decrypt(struct krb5_ctx *kctx, u32 offset, struct xdr_buf *buf,
+  * Set the key of the given cipher.
+  */
+ int
+-krb5_rc4_setup_seq_key(struct krb5_ctx *kctx, struct crypto_skcipher *cipher,
++krb5_rc4_setup_seq_key(struct krb5_ctx *kctx,
++		       struct crypto_sync_skcipher *cipher,
+ 		       unsigned char *cksum)
+ {
+ 	struct crypto_shash *hmac;
+@@ -994,7 +997,7 @@ krb5_rc4_setup_seq_key(struct krb5_ctx *kctx, struct crypto_skcipher *cipher,
+ 	if (err)
+ 		goto out_err;
+ 
+-	err = crypto_skcipher_setkey(cipher, Kseq, kctx->gk5e->keylength);
++	err = crypto_sync_skcipher_setkey(cipher, Kseq, kctx->gk5e->keylength);
+ 	if (err)
+ 		goto out_err;
+ 
+@@ -1012,7 +1015,8 @@ krb5_rc4_setup_seq_key(struct krb5_ctx *kctx, struct crypto_skcipher *cipher,
+  * Set the key of cipher kctx->enc.
+  */
+ int
+-krb5_rc4_setup_enc_key(struct krb5_ctx *kctx, struct crypto_skcipher *cipher,
++krb5_rc4_setup_enc_key(struct krb5_ctx *kctx,
++		       struct crypto_sync_skcipher *cipher,
+ 		       s32 seqnum)
+ {
+ 	struct crypto_shash *hmac;
+@@ -1069,7 +1073,8 @@ krb5_rc4_setup_enc_key(struct krb5_ctx *kctx, struct crypto_skcipher *cipher,
+ 	if (err)
+ 		goto out_err;
+ 
+-	err = crypto_skcipher_setkey(cipher, Kcrypt, kctx->gk5e->keylength);
++	err = crypto_sync_skcipher_setkey(cipher, Kcrypt,
++					  kctx->gk5e->keylength);
+ 	if (err)
+ 		goto out_err;
+ 
+diff --git a/net/sunrpc/auth_gss/gss_krb5_keys.c b/net/sunrpc/auth_gss/gss_krb5_keys.c
+index f7fe2d2b851f..550fdf18d3b3 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_keys.c
++++ b/net/sunrpc/auth_gss/gss_krb5_keys.c
+@@ -147,7 +147,7 @@ u32 krb5_derive_key(const struct gss_krb5_enctype *gk5e,
+ 	size_t blocksize, keybytes, keylength, n;
+ 	unsigned char *inblockdata, *outblockdata, *rawkey;
+ 	struct xdr_netobj inblock, outblock;
+-	struct crypto_skcipher *cipher;
++	struct crypto_sync_skcipher *cipher;
+ 	u32 ret = EINVAL;
+ 
+ 	blocksize = gk5e->blocksize;
+@@ -157,11 +157,10 @@ u32 krb5_derive_key(const struct gss_krb5_enctype *gk5e,
+ 	if ((inkey->len != keylength) || (outkey->len != keylength))
+ 		goto err_return;
+ 
+-	cipher = crypto_alloc_skcipher(gk5e->encrypt_name, 0,
+-				       CRYPTO_ALG_ASYNC);
++	cipher = crypto_alloc_sync_skcipher(gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(cipher))
+ 		goto err_return;
+-	if (crypto_skcipher_setkey(cipher, inkey->data, inkey->len))
++	if (crypto_sync_skcipher_setkey(cipher, inkey->data, inkey->len))
+ 		goto err_return;
+ 
+ 	/* allocate and set up buffers */
+@@ -238,7 +237,7 @@ u32 krb5_derive_key(const struct gss_krb5_enctype *gk5e,
+ 	memset(inblockdata, 0, blocksize);
+ 	kfree(inblockdata);
+ err_free_cipher:
+-	crypto_free_skcipher(cipher);
++	crypto_free_sync_skcipher(cipher);
+ err_return:
+ 	return ret;
+ }
+diff --git a/net/sunrpc/auth_gss/gss_krb5_mech.c b/net/sunrpc/auth_gss/gss_krb5_mech.c
+index 7bb2514aadd9..7f0424dfa8f6 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_mech.c
++++ b/net/sunrpc/auth_gss/gss_krb5_mech.c
+@@ -218,7 +218,7 @@ simple_get_netobj(const void *p, const void *end, struct xdr_netobj *res)
+ 
+ static inline const void *
+ get_key(const void *p, const void *end,
+-	struct krb5_ctx *ctx, struct crypto_skcipher **res)
++	struct krb5_ctx *ctx, struct crypto_sync_skcipher **res)
+ {
+ 	struct xdr_netobj	key;
+ 	int			alg;
+@@ -246,15 +246,14 @@ get_key(const void *p, const void *end,
+ 	if (IS_ERR(p))
+ 		goto out_err;
+ 
+-	*res = crypto_alloc_skcipher(ctx->gk5e->encrypt_name, 0,
+-							CRYPTO_ALG_ASYNC);
++	*res = crypto_alloc_sync_skcipher(ctx->gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(*res)) {
+ 		printk(KERN_WARNING "gss_kerberos_mech: unable to initialize "
+ 			"crypto algorithm %s\n", ctx->gk5e->encrypt_name);
+ 		*res = NULL;
+ 		goto out_err_free_key;
+ 	}
+-	if (crypto_skcipher_setkey(*res, key.data, key.len)) {
++	if (crypto_sync_skcipher_setkey(*res, key.data, key.len)) {
+ 		printk(KERN_WARNING "gss_kerberos_mech: error setting key for "
+ 			"crypto algorithm %s\n", ctx->gk5e->encrypt_name);
+ 		goto out_err_free_tfm;
+@@ -264,7 +263,7 @@ get_key(const void *p, const void *end,
+ 	return p;
+ 
+ out_err_free_tfm:
+-	crypto_free_skcipher(*res);
++	crypto_free_sync_skcipher(*res);
+ out_err_free_key:
+ 	kfree(key.data);
+ 	p = ERR_PTR(-EINVAL);
+@@ -336,30 +335,30 @@ gss_import_v1_context(const void *p, const void *end, struct krb5_ctx *ctx)
+ 	return 0;
+ 
+ out_err_free_key2:
+-	crypto_free_skcipher(ctx->seq);
++	crypto_free_sync_skcipher(ctx->seq);
+ out_err_free_key1:
+-	crypto_free_skcipher(ctx->enc);
++	crypto_free_sync_skcipher(ctx->enc);
+ out_err_free_mech:
+ 	kfree(ctx->mech_used.data);
+ out_err:
+ 	return PTR_ERR(p);
+ }
+ 
+-static struct crypto_skcipher *
++static struct crypto_sync_skcipher *
+ context_v2_alloc_cipher(struct krb5_ctx *ctx, const char *cname, u8 *key)
+ {
+-	struct crypto_skcipher *cp;
++	struct crypto_sync_skcipher *cp;
+ 
+-	cp = crypto_alloc_skcipher(cname, 0, CRYPTO_ALG_ASYNC);
++	cp = crypto_alloc_sync_skcipher(cname, 0, 0);
+ 	if (IS_ERR(cp)) {
+ 		dprintk("gss_kerberos_mech: unable to initialize "
+ 			"crypto algorithm %s\n", cname);
+ 		return NULL;
+ 	}
+-	if (crypto_skcipher_setkey(cp, key, ctx->gk5e->keylength)) {
++	if (crypto_sync_skcipher_setkey(cp, key, ctx->gk5e->keylength)) {
+ 		dprintk("gss_kerberos_mech: error setting key for "
+ 			"crypto algorithm %s\n", cname);
+-		crypto_free_skcipher(cp);
++		crypto_free_sync_skcipher(cp);
+ 		return NULL;
+ 	}
+ 	return cp;
+@@ -413,9 +412,9 @@ context_derive_keys_des3(struct krb5_ctx *ctx, gfp_t gfp_mask)
+ 	return 0;
+ 
+ out_free_enc:
+-	crypto_free_skcipher(ctx->enc);
++	crypto_free_sync_skcipher(ctx->enc);
+ out_free_seq:
+-	crypto_free_skcipher(ctx->seq);
++	crypto_free_sync_skcipher(ctx->seq);
+ out_err:
+ 	return -EINVAL;
+ }
+@@ -469,17 +468,15 @@ context_derive_keys_rc4(struct krb5_ctx *ctx)
+ 	/*
+ 	 * allocate hash, and skciphers for data and seqnum encryption
+ 	 */
+-	ctx->enc = crypto_alloc_skcipher(ctx->gk5e->encrypt_name, 0,
+-					 CRYPTO_ALG_ASYNC);
++	ctx->enc = crypto_alloc_sync_skcipher(ctx->gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(ctx->enc)) {
+ 		err = PTR_ERR(ctx->enc);
+ 		goto out_err_free_hmac;
+ 	}
+ 
+-	ctx->seq = crypto_alloc_skcipher(ctx->gk5e->encrypt_name, 0,
+-					 CRYPTO_ALG_ASYNC);
++	ctx->seq = crypto_alloc_sync_skcipher(ctx->gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(ctx->seq)) {
+-		crypto_free_skcipher(ctx->enc);
++		crypto_free_sync_skcipher(ctx->enc);
+ 		err = PTR_ERR(ctx->seq);
+ 		goto out_err_free_hmac;
+ 	}
+@@ -591,7 +588,7 @@ context_derive_keys_new(struct krb5_ctx *ctx, gfp_t gfp_mask)
+ 			context_v2_alloc_cipher(ctx, "cbc(aes)",
+ 						ctx->acceptor_seal);
+ 		if (ctx->acceptor_enc_aux == NULL) {
+-			crypto_free_skcipher(ctx->initiator_enc_aux);
++			crypto_free_sync_skcipher(ctx->initiator_enc_aux);
+ 			goto out_free_acceptor_enc;
+ 		}
+ 	}
+@@ -599,9 +596,9 @@ context_derive_keys_new(struct krb5_ctx *ctx, gfp_t gfp_mask)
+ 	return 0;
+ 
+ out_free_acceptor_enc:
+-	crypto_free_skcipher(ctx->acceptor_enc);
++	crypto_free_sync_skcipher(ctx->acceptor_enc);
+ out_free_initiator_enc:
+-	crypto_free_skcipher(ctx->initiator_enc);
++	crypto_free_sync_skcipher(ctx->initiator_enc);
+ out_err:
+ 	return -EINVAL;
+ }
+@@ -713,12 +710,12 @@ static void
+ gss_delete_sec_context_kerberos(void *internal_ctx) {
+ 	struct krb5_ctx *kctx = internal_ctx;
+ 
+-	crypto_free_skcipher(kctx->seq);
+-	crypto_free_skcipher(kctx->enc);
+-	crypto_free_skcipher(kctx->acceptor_enc);
+-	crypto_free_skcipher(kctx->initiator_enc);
+-	crypto_free_skcipher(kctx->acceptor_enc_aux);
+-	crypto_free_skcipher(kctx->initiator_enc_aux);
++	crypto_free_sync_skcipher(kctx->seq);
++	crypto_free_sync_skcipher(kctx->enc);
++	crypto_free_sync_skcipher(kctx->acceptor_enc);
++	crypto_free_sync_skcipher(kctx->initiator_enc);
++	crypto_free_sync_skcipher(kctx->acceptor_enc_aux);
++	crypto_free_sync_skcipher(kctx->initiator_enc_aux);
+ 	kfree(kctx->mech_used.data);
+ 	kfree(kctx);
+ }
+diff --git a/net/sunrpc/auth_gss/gss_krb5_seqnum.c b/net/sunrpc/auth_gss/gss_krb5_seqnum.c
+index c8b9082f4a9d..fb6656295204 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_seqnum.c
++++ b/net/sunrpc/auth_gss/gss_krb5_seqnum.c
+@@ -43,13 +43,12 @@ static s32
+ krb5_make_rc4_seq_num(struct krb5_ctx *kctx, int direction, s32 seqnum,
+ 		      unsigned char *cksum, unsigned char *buf)
+ {
+-	struct crypto_skcipher *cipher;
++	struct crypto_sync_skcipher *cipher;
+ 	unsigned char plain[8];
+ 	s32 code;
+ 
+ 	dprintk("RPC:       %s:\n", __func__);
+-	cipher = crypto_alloc_skcipher(kctx->gk5e->encrypt_name, 0,
+-				       CRYPTO_ALG_ASYNC);
++	cipher = crypto_alloc_sync_skcipher(kctx->gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(cipher))
+ 		return PTR_ERR(cipher);
+ 
+@@ -68,12 +67,12 @@ krb5_make_rc4_seq_num(struct krb5_ctx *kctx, int direction, s32 seqnum,
+ 
+ 	code = krb5_encrypt(cipher, cksum, plain, buf, 8);
+ out:
+-	crypto_free_skcipher(cipher);
++	crypto_free_sync_skcipher(cipher);
+ 	return code;
+ }
+ s32
+ krb5_make_seq_num(struct krb5_ctx *kctx,
+-		struct crypto_skcipher *key,
++		struct crypto_sync_skcipher *key,
+ 		int direction,
+ 		u32 seqnum,
+ 		unsigned char *cksum, unsigned char *buf)
+@@ -101,13 +100,12 @@ static s32
+ krb5_get_rc4_seq_num(struct krb5_ctx *kctx, unsigned char *cksum,
+ 		     unsigned char *buf, int *direction, s32 *seqnum)
+ {
+-	struct crypto_skcipher *cipher;
++	struct crypto_sync_skcipher *cipher;
+ 	unsigned char plain[8];
+ 	s32 code;
+ 
+ 	dprintk("RPC:       %s:\n", __func__);
+-	cipher = crypto_alloc_skcipher(kctx->gk5e->encrypt_name, 0,
+-				       CRYPTO_ALG_ASYNC);
++	cipher = crypto_alloc_sync_skcipher(kctx->gk5e->encrypt_name, 0, 0);
+ 	if (IS_ERR(cipher))
+ 		return PTR_ERR(cipher);
+ 
+@@ -130,7 +128,7 @@ krb5_get_rc4_seq_num(struct krb5_ctx *kctx, unsigned char *cksum,
+ 	*seqnum = ((plain[0] << 24) | (plain[1] << 16) |
+ 					(plain[2] << 8) | (plain[3]));
+ out:
+-	crypto_free_skcipher(cipher);
++	crypto_free_sync_skcipher(cipher);
+ 	return code;
+ }
+ 
+@@ -142,7 +140,7 @@ krb5_get_seq_num(struct krb5_ctx *kctx,
+ {
+ 	s32 code;
+ 	unsigned char plain[8];
+-	struct crypto_skcipher *key = kctx->seq;
++	struct crypto_sync_skcipher *key = kctx->seq;
+ 
+ 	dprintk("RPC:       krb5_get_seq_num:\n");
+ 
+diff --git a/net/sunrpc/auth_gss/gss_krb5_wrap.c b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+index 39a2e672900b..3d975a4013d2 100644
+--- a/net/sunrpc/auth_gss/gss_krb5_wrap.c
++++ b/net/sunrpc/auth_gss/gss_krb5_wrap.c
+@@ -174,7 +174,7 @@ gss_wrap_kerberos_v1(struct krb5_ctx *kctx, int offset,
+ 
+ 	now = get_seconds();
+ 
+-	blocksize = crypto_skcipher_blocksize(kctx->enc);
++	blocksize = crypto_sync_skcipher_blocksize(kctx->enc);
+ 	gss_krb5_add_padding(buf, offset, blocksize);
+ 	BUG_ON((buf->len - offset) % blocksize);
+ 	plainlen = conflen + buf->len - offset;
+@@ -239,10 +239,10 @@ gss_wrap_kerberos_v1(struct krb5_ctx *kctx, int offset,
+ 		return GSS_S_FAILURE;
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC) {
+-		struct crypto_skcipher *cipher;
++		struct crypto_sync_skcipher *cipher;
+ 		int err;
+-		cipher = crypto_alloc_skcipher(kctx->gk5e->encrypt_name, 0,
+-					       CRYPTO_ALG_ASYNC);
++		cipher = crypto_alloc_sync_skcipher(kctx->gk5e->encrypt_name,
++						    0, 0);
+ 		if (IS_ERR(cipher))
+ 			return GSS_S_FAILURE;
+ 
+@@ -250,7 +250,7 @@ gss_wrap_kerberos_v1(struct krb5_ctx *kctx, int offset,
+ 
+ 		err = gss_encrypt_xdr_buf(cipher, buf,
+ 					  offset + headlen - conflen, pages);
+-		crypto_free_skcipher(cipher);
++		crypto_free_sync_skcipher(cipher);
+ 		if (err)
+ 			return GSS_S_FAILURE;
+ 	} else {
+@@ -327,18 +327,18 @@ gss_unwrap_kerberos_v1(struct krb5_ctx *kctx, int offset, struct xdr_buf *buf)
+ 		return GSS_S_BAD_SIG;
+ 
+ 	if (kctx->enctype == ENCTYPE_ARCFOUR_HMAC) {
+-		struct crypto_skcipher *cipher;
++		struct crypto_sync_skcipher *cipher;
+ 		int err;
+ 
+-		cipher = crypto_alloc_skcipher(kctx->gk5e->encrypt_name, 0,
+-					       CRYPTO_ALG_ASYNC);
++		cipher = crypto_alloc_sync_skcipher(kctx->gk5e->encrypt_name,
++						    0, 0);
+ 		if (IS_ERR(cipher))
+ 			return GSS_S_FAILURE;
+ 
+ 		krb5_rc4_setup_enc_key(kctx, cipher, seqnum);
+ 
+ 		err = gss_decrypt_xdr_buf(cipher, buf, crypt_offset);
+-		crypto_free_skcipher(cipher);
++		crypto_free_sync_skcipher(cipher);
+ 		if (err)
+ 			return GSS_S_DEFECTIVE_TOKEN;
+ 	} else {
+@@ -371,7 +371,7 @@ gss_unwrap_kerberos_v1(struct krb5_ctx *kctx, int offset, struct xdr_buf *buf)
+ 	/* Copy the data back to the right position.  XXX: Would probably be
+ 	 * better to copy and encrypt at the same time. */
+ 
+-	blocksize = crypto_skcipher_blocksize(kctx->enc);
++	blocksize = crypto_sync_skcipher_blocksize(kctx->enc);
+ 	data_start = ptr + (GSS_KRB5_TOK_HDR_LEN + kctx->gk5e->cksumlength) +
+ 					conflen;
+ 	orig_start = buf->head[0].iov_base + offset;
+-- 
+2.17.1
 
