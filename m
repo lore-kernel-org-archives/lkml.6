@@ -2,195 +2,175 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC9BECE562
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC85ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC493214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="NSbHV3/3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC493214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id B24AB214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 11:20:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24AB214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbeISQ5c (ORCPT
+        id S1731434AbeISQ5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 12:57:32 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44094 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727675AbeISQ5c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 12:57:32 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s10-v6so4538736edb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 04:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hA0fQ3tpM8Gwj2bmKphRGaCfWpsJsg7qrXsk9r4dn1Y=;
-        b=NSbHV3/3kjqBfNS6aMej4bJqKmMkk/YdaSLgGvUCXF7xNghJxx06wMoswhHVolWSOP
-         hGFdKhL4Mbq3HlbfiFL1dToisaDrKkN5RzvY8xfJuFR+YV7oPA/ohK3dsYwOK0ix4xrz
-         1vht3XPl08IhbOZStDqWs7swrwLunw4N4WjdO/Vx+6RSg4Lq+TNvG+kXKgqAWexP0eYd
-         oMj+I/uVfV/hbE5vEZ+wtYpYs2yARA6K/l65dnk11ExIvsoX728Z0CmsjZLlJTBpPeQK
-         VXS+ORuPZrHNHvsFRCmYHvEcQ5VkbVEoTM7lVdiLWfYouUemyoee/HNKTSmN9Y4ipjf3
-         jPKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hA0fQ3tpM8Gwj2bmKphRGaCfWpsJsg7qrXsk9r4dn1Y=;
-        b=d1yJyzZKeDxhBDPC6Z/Cef6f/wksqD0zOzFAq7kijBK2GmFxpKLDjrWdZPT7cGd50c
-         m2yEBF4aRlR13EAY5vvhBioNDZbO+QCcNMDAXhy5apOl/zYg5khsuk3+TkaM1ZuzEdh4
-         wRxFMOic3h5MTQNOzgxiVa3luAozkdjkv8StHkOZoUMq5hJOldYPvhVCAeZtrAuvjflF
-         Fgn7pzkhSQ9MmyMvLq5cmERHvoL8wrbxeWvjG2xtakCHwBrpZqf1b6y9z07m10kWuAk/
-         G89m9DrMoEYCmcIsDcMGtegyB3rzn1zBPUlQdSTgu4wTg3M0CBUsOUd7MsZdISVbFhs1
-         hmPQ==
-X-Gm-Message-State: APzg51ChCt8AQWF4IYlMnRCUvifakH3Ma+tK2lEG1C2FTiSiCBcHbK3O
-        mBXK1nEPHd1yV7mR4xb9/zKsud67B4R8f2gdySfK4g==
-X-Google-Smtp-Source: ANB0VdZ+Age7Uhv5+Br1SSkHTvaOSpEa7JQvlPrEPd4gXsn5jQCrULchZqqseKdezGm3ze0MVkhpmU0+T9+l4iIme80=
-X-Received: by 2002:a50:98a3:: with SMTP id j32-v6mr56293417edb.6.1537356003318;
- Wed, 19 Sep 2018 04:20:03 -0700 (PDT)
+        Wed, 19 Sep 2018 12:57:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42250 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727675AbeISQ5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 12:57:47 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 15CA4618D559D;
+        Wed, 19 Sep 2018 19:20:18 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
+ 19:20:17 +0800
+Subject: Re: [PATCH 6/6] net: sun: fix return type of ndo_start_xmit function
+To:     <davem@davemloft.net>, <shannon.nelson@oracle.com>,
+        <alexander.h.duyck@intel.com>, <yanjun.zhu@oracle.com>,
+        <jeffrey.t.kirsher@intel.com>, <tklauser@distanz.ch>
+References: <20180919110702.10280-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <135e66d3-e51f-08ac-e246-f9601ccc1831@huawei.com>
+Date:   Wed, 19 Sep 2018 19:20:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Received: by 2002:a50:94ae:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 04:20:02
- -0700 (PDT)
-In-Reply-To: <CAB4CAwdUiFrPVTFsz3iC=x2yTTis0n1V4BzozXPMf7EeD52gvA@mail.gmail.com>
-References: <CAB4CAwcfj32FovZwpTbekvHpoc3gG0sVbNtW8jeXRcp5qwEsmw@mail.gmail.com>
- <20180705144009.GC5565@intel.com> <CAB4CAwfQxrfRF=MaJZqagtRyPfJOdHjcS32GTqyG8cOg5=UgKw@mail.gmail.com>
- <CAB4CAwdjPFLTj+bL+bAeXw2cwAtk9tWFxPPaATpQ4QbuZsM0ew@mail.gmail.com>
- <87tvnjlsap.fsf@intel.com> <CAB4CAwdUiFrPVTFsz3iC=x2yTTis0n1V4BzozXPMf7EeD52gvA@mail.gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Wed, 19 Sep 2018 19:20:02 +0800
-Message-ID: <CAB4CAwdfTZ879LXpXGMiMrYi4kCJJBxggGGTi_REYkuRMvz2PQ@mail.gmail.com>
-Subject: Re: [BUG] i915 HDMI connector status is connected after disconnection
-To:     Jani Nikula <jani.nikula@intel.com>
-Cc:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180919110702.10280-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 6:25 PM, Chris Chiu <chiu@endlessm.com> wrote:
-> On Fri, Aug 24, 2018 at 11:04 PM, Jani Nikula <jani.nikula@intel.com> wro=
-te:
->> On Wed, 22 Aug 2018, Chris Chiu <chiu@endlessm.com> wrote:
->>> On Fri, Jul 6, 2018 at 2:44 PM, Chris Chiu <chiu@endlessm.com> wrote:
->>>> On Thu, Jul 5, 2018 at 10:40 PM, Ville Syrj=C3=A4l=C3=A4
->>>> <ville.syrjala@linux.intel.com> wrote:
->>>>> On Thu, Jul 05, 2018 at 03:58:36PM +0800, Chris Chiu wrote:
->>>>>> Hi,
->>>>>>     We have few ASUS laptops X705FD (The new WiskyLake), X560UD (int=
-el
->>>>>> i5-8250U), X530UN (intel i7-8550U) share the same problem, which is
->>>>>> the HDMI connector status stays connected even the HDMI cable has be=
-en
->>>>>> unplugged. Look into the "/sys/class/drm/card0-HDMI-A-1/status" for
->>>>>> checking the status while plug/unplug the HDMI, it shows
->>>>>> "disconnected" before plug in HDMI cable, then switch to "connected"
->>>>>> after plugin, and still stay "connected" after unplug. This would
->>>>>> cause the audio output path cannot correctly switch from HDMI to
->>>>>> internal speaker after unplugging the HDMI.
->>>>>>
->>>>>> I then try to verify with the latest kernel 4.18.0-rc3+, the bug sti=
-ll
->>>>>> present. The full "dmesg" log is here.
->>>>>> https://gist.github.com/mschiu77/d761d7c5cf191b7868d4d7788ae087f1
->>>>>>
->>>>>> The HDMI cable is plugged in at ~26th second.
->>>>>> "[ 26.214371] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
->>>>>> audio support"
->>>>>> then unplug the HDMI at ~73th second.
->>>>>> "[ 73.328361] [drm:drm_detect_monitor_audio [drm]] Monitor has basic
->>>>>> audio support"
->>>>>>
->>>>>> Please advise what I can do to fix this. Thanks
->>>>>
->>>>> Pull the cable out faster?
->>>>>
->>>>> I presume this is the same old case of hpd disconnecting slightly
->>>>> before ddc and we still manage to read the EDID when processing
->>>>> the hpd irq. We kinda tried to fix that with the live status
->>>>> check but that thing failed spectacularly.
->>>>>
->>>>> --
->>>>> Ville Syrj=C3=A4l=C3=A4
->>>>> Intel
->>>
->>> There's a patch https://bugs.freedesktop.org/show_bug.cgi?id=3D107125#c=
-8.
->>> And I verified on the X705FD/X560UD which were easy to reproduce, the p=
-atch
->>> works as expected. Can anyone kindly give comments about this patch?
->>> We can do anything to help fix this issue upstream. Thanks
->>
->> Seems like a hack. Should look into hw based debouncing or a slight
->> delay in the hotplug work processing I think.
->>
->> BR,
->> Jani.
->>
+Sorry for wrongly title, will repost.
 
-I tried to add a slight delay in the hotplug work as follows
+On 2018/9/19 19:07, YueHaibing wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
+> 
+> Found by coccinelle.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/sun/ldmvsw.c         |  2 +-
+>  drivers/net/ethernet/sun/sunbmac.c        |  3 ++-
+>  drivers/net/ethernet/sun/sunqe.c          |  2 +-
+>  drivers/net/ethernet/sun/sunvnet.c        |  2 +-
+>  drivers/net/ethernet/sun/sunvnet_common.c | 14 ++++++++------
+>  drivers/net/ethernet/sun/sunvnet_common.h |  7 ++++---
+>  6 files changed, 17 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/sun/ldmvsw.c b/drivers/net/ethernet/sun/ldmvsw.c
+> index d42f47f..644e42c 100644
+> --- a/drivers/net/ethernet/sun/ldmvsw.c
+> +++ b/drivers/net/ethernet/sun/ldmvsw.c
+> @@ -113,7 +113,7 @@ static u16 vsw_select_queue(struct net_device *dev, struct sk_buff *skb,
+>  }
+>  
+>  /* Wrappers to common functions */
+> -static int vsw_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t vsw_start_xmit(struct sk_buff *skb, struct net_device *dev)
+>  {
+>  	return sunvnet_start_xmit_common(skb, dev, vsw_tx_port_find);
+>  }
+> diff --git a/drivers/net/ethernet/sun/sunbmac.c b/drivers/net/ethernet/sun/sunbmac.c
+> index f047b27..720b7ac 100644
+> --- a/drivers/net/ethernet/sun/sunbmac.c
+> +++ b/drivers/net/ethernet/sun/sunbmac.c
+> @@ -950,7 +950,8 @@ static void bigmac_tx_timeout(struct net_device *dev)
+>  }
+>  
+>  /* Put a packet on the wire. */
+> -static int bigmac_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t
+> +bigmac_start_xmit(struct sk_buff *skb, struct net_device *dev)
+>  {
+>  	struct bigmac *bp = netdev_priv(dev);
+>  	int len, entry;
+> diff --git a/drivers/net/ethernet/sun/sunqe.c b/drivers/net/ethernet/sun/sunqe.c
+> index 7fe0d5e..1468fa0 100644
+> --- a/drivers/net/ethernet/sun/sunqe.c
+> +++ b/drivers/net/ethernet/sun/sunqe.c
+> @@ -570,7 +570,7 @@ static void qe_tx_timeout(struct net_device *dev)
+>  }
+>  
+>  /* Get a packet queued to go onto the wire. */
+> -static int qe_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t qe_start_xmit(struct sk_buff *skb, struct net_device *dev)
+>  {
+>  	struct sunqe *qep = netdev_priv(dev);
+>  	struct sunqe_buffers *qbufs = qep->buffers;
+> diff --git a/drivers/net/ethernet/sun/sunvnet.c b/drivers/net/ethernet/sun/sunvnet.c
+> index 12539b3..5901728 100644
+> --- a/drivers/net/ethernet/sun/sunvnet.c
+> +++ b/drivers/net/ethernet/sun/sunvnet.c
+> @@ -247,7 +247,7 @@ static u16 vnet_select_queue(struct net_device *dev, struct sk_buff *skb,
+>  }
+>  
+>  /* Wrappers to common functions */
+> -static int vnet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t vnet_start_xmit(struct sk_buff *skb, struct net_device *dev)
+>  {
+>  	return sunvnet_start_xmit_common(skb, dev, vnet_tx_port_find);
+>  }
+> diff --git a/drivers/net/ethernet/sun/sunvnet_common.c b/drivers/net/ethernet/sun/sunvnet_common.c
+> index d8f4c3f..baa3088 100644
+> --- a/drivers/net/ethernet/sun/sunvnet_common.c
+> +++ b/drivers/net/ethernet/sun/sunvnet_common.c
+> @@ -1216,9 +1216,10 @@ static inline struct sk_buff *vnet_skb_shape(struct sk_buff *skb, int ncookies)
+>  	return skb;
+>  }
+>  
+> -static int vnet_handle_offloads(struct vnet_port *port, struct sk_buff *skb,
+> -				struct vnet_port *(*vnet_tx_port)
+> -				(struct sk_buff *, struct net_device *))
+> +static netdev_tx_t
+> +vnet_handle_offloads(struct vnet_port *port, struct sk_buff *skb,
+> +		     struct vnet_port *(*vnet_tx_port)
+> +		     (struct sk_buff *, struct net_device *))
+>  {
+>  	struct net_device *dev = VNET_PORT_TO_NET_DEVICE(port);
+>  	struct vio_dring_state *dr = &port->vio.drings[VIO_DRIVER_TX_RING];
+> @@ -1321,9 +1322,10 @@ static int vnet_handle_offloads(struct vnet_port *port, struct sk_buff *skb,
+>  	return NETDEV_TX_OK;
+>  }
+>  
+> -int sunvnet_start_xmit_common(struct sk_buff *skb, struct net_device *dev,
+> -			      struct vnet_port *(*vnet_tx_port)
+> -			      (struct sk_buff *, struct net_device *))
+> +netdev_tx_t
+> +sunvnet_start_xmit_common(struct sk_buff *skb, struct net_device *dev,
+> +			  struct vnet_port *(*vnet_tx_port)
+> +			  (struct sk_buff *, struct net_device *))
+>  {
+>  	struct vnet_port *port = NULL;
+>  	struct vio_dring_state *dr;
+> diff --git a/drivers/net/ethernet/sun/sunvnet_common.h b/drivers/net/ethernet/sun/sunvnet_common.h
+> index 1ea0b01..2b808d2 100644
+> --- a/drivers/net/ethernet/sun/sunvnet_common.h
+> +++ b/drivers/net/ethernet/sun/sunvnet_common.h
+> @@ -136,9 +136,10 @@ struct vnet {
+>  void sunvnet_set_rx_mode_common(struct net_device *dev, struct vnet *vp);
+>  int sunvnet_set_mac_addr_common(struct net_device *dev, void *p);
+>  void sunvnet_tx_timeout_common(struct net_device *dev);
+> -int sunvnet_start_xmit_common(struct sk_buff *skb, struct net_device *dev,
+> -			   struct vnet_port *(*vnet_tx_port)
+> -			   (struct sk_buff *, struct net_device *));
+> +netdev_tx_t
+> +sunvnet_start_xmit_common(struct sk_buff *skb, struct net_device *dev,
+> +			  struct vnet_port *(*vnet_tx_port)
+> +			  (struct sk_buff *, struct net_device *));
+>  #ifdef CONFIG_NET_POLL_CONTROLLER
+>  void sunvnet_poll_controller_common(struct net_device *dev, struct vnet *vp);
+>  #endif
+> 
 
---- a/drivers/gpu/drm/i915/intel_hotplug.c
-+++ b/drivers/gpu/drm/i915/intel_hotplug.c
-@@ -378,6 +378,8 @@ static void do_i915_hotplug_check(struct work_struct *w=
-ork,
-
-        spin_unlock_irq(&dev_priv->irq_lock);
-
-+       msleep(100);
-+
-        drm_connector_list_iter_begin(dev, &conn_iter);
-        drm_for_each_connector_iter(connector, &conn_iter) {
-                intel_connector =3D to_intel_connector(connector);
-
-It does work in most cases, but still fail to update the status if I
-unplug the HDMI
-cable very slow. I basically pull the HDMI cable in loose connected
-state first, and
-hold in that state ~1 second, totally unplug after that. The status in
-sysfs will report
-connected as it used to. There was no problem when I tried the patch
-https://bugs.freedesktop.org/show_bug.cgi?id=3D107125#c8
-
-I'll try to modify this patch a little bit and send upstream for
-discussion later. Please
-advise if any. Thanks.
-
-Chris
-
-> So you're suggesting to add a slight delay directly in i915_hotplug_work_=
-func()?
-> And any suggestion about the 'hw based' debouncing? Maybe some examples
-> that I can refer to?
->
-> Thanks
->
->>>
->>> Chris
->>>
->>>> Thanks for the suggestion. I tried pulling the cable out faster, the s=
-tatus
->>>> shows correctly. I also tried branch drm-tip of
->>>> https://cgit.freedesktop.org/drm/drm-tip
->>>> but the symptom persists.
->>>>
->>>> Anything I can help here? Or any old commit/patch I can try to do some
->>>> experiments?
->>>>
->>>> Chris
->>
->> --
->> Jani Nikula, Intel Open Source Graphics Center
