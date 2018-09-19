@@ -2,151 +2,296 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD6DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E3FECE565
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9983020880
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9983020880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id B9D1720880
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:52:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePc7YC7A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D1720880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731106AbeISM3I (ORCPT
+        id S1731121AbeISM3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 19 Sep 2018 08:29:09 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51180 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731086AbeISM3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 08:29:08 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63098 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731062AbeISM3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:29:08 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42FVsx3Rszz9ttG0;
-        Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id gRUbHO1cf9HE; Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42FVsx2rMjz9ttFP;
-        Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 651E88B81F;
-        Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 8qzgThk6o5jE; Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2E51F8B776;
-        Wed, 19 Sep 2018 08:52:37 +0200 (CEST)
-Subject: Re: [PATCH] lib/xz: Fix powerpc build with KERNEL_XZ
-To:     Oliver <oohall@gmail.com>
-Cc:     Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180918230756.26035-1-joel@jms.id.au>
- <a3a97ebf-9a40-db6e-8225-7b9ccf9cfb4b@c-s.fr>
- <CAOSf1CG3bFHNWS8hQVy-VrpfnwjLWBHSrr-c52AMQbsBRqeyZA@mail.gmail.com>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <6882aff7-eb33-b53c-3ff4-d4c327d4f589@c-s.fr>
-Date:   Wed, 19 Sep 2018 08:52:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAOSf1CG3bFHNWS8hQVy-VrpfnwjLWBHSrr-c52AMQbsBRqeyZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Received: by mail-it0-f66.google.com with SMTP id j81-v6so6864116ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Sep 2018 23:52:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Je2400ni9A5s80feHs0HBjY1gZ6UX9x0bE0fIx90rAE=;
+        b=ePc7YC7AmNfXSr4FpXbzsfuPGom2b9uu9QTkOtVTTpvbQnmlm+Ab5Fda4DSvDkiNSW
+         2n930+omZG2krqTyIvZHbqPMRfYLPEPCf7CqbnlVZak11lPxt0+JZGVX0RaAkWHUW1Qg
+         5Yzihq5i7+V3yXSxUwy87y990PW7TLphcsVXA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Je2400ni9A5s80feHs0HBjY1gZ6UX9x0bE0fIx90rAE=;
+        b=KBZ/KOps0zmg9KeEhtNB24GjbwIP+8hojRzxb5cuBmxmuIx/LFw9ckycBadMPR3HQ7
+         2ly2lGxuzA2PiGiv3fSaf1v/xS69MgZoCZDVaBQEhNTuafbwHQdbOMAHa5MCVQ8182+t
+         TSM9XHv+KZeT6OnT93oCJeguzhQki3sGGo1UtCM6c1UE20Q8w5mTC1FacjEMCHzfLWeI
+         ZcadGw0yNc8izVRUQeElF5ZV+zsH0ZskPg+W5AV5u8uWgIJfRNT8AjTpbSMs/HZwBrJq
+         HRmuQhFSOdzswKvQ8NK1UveL9JYKbb+YRHg2RFxeS9mTkHpc4JgkoaOQV152lNRjzCdi
+         yttQ==
+X-Gm-Message-State: APzg51CIbMXXgm110npmvZvuXCe7zjQH6cJAPnl+F5liquWXv6UGYF8Z
+        Zw+0J0dYkvZ0RuGFFZvVfyU19Q8sD8rDFQ==
+X-Google-Smtp-Source: ANB0VdbJIyPZkvihO7OB4sEFaf7dVCb85ROt+pj2C1IGG7N6NsvNoY+cNRUaQF9RxhbGxdC+soAo0Q==
+X-Received: by 2002:a24:6401:: with SMTP id t1-v6mr21062079itc.135.1537339958595;
+        Tue, 18 Sep 2018 23:52:38 -0700 (PDT)
+Received: from localhost.localdomain ([209.82.80.116])
+        by smtp.gmail.com with ESMTPSA id x68-v6sm7939477ita.2.2018.09.18.23.52.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Sep 2018 23:52:37 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v3 7/9] jump_label: annotate entries that operate on __init code earlier
+Date:   Tue, 18 Sep 2018 23:51:42 -0700
+Message-Id: <20180919065144.25010-8-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
+References: <20180919065144.25010-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jump table entries are mostly read-only, with the exception of the
+init and module loader code that defuses entries that point into init
+code when the code being referred to is freed.
 
+For robustness, it would be better to move these entries into the
+ro_after_init section, but clearing the 'code' member of each jump
+table entry referring to init code at module load time races with the
+module_enable_ro() call that remaps the ro_after_init section read
+only, so we'd like to do it earlier.
 
-Le 19/09/2018 à 08:44, Oliver a écrit :
-> On Wed, Sep 19, 2018 at 3:52 PM, Christophe LEROY
-> <christophe.leroy@c-s.fr> wrote:
->>
->>
->> Le 19/09/2018 à 01:07, Joel Stanley a écrit :
->>>
->>> This partially reverts faa16bc404d72a5 ("lib: Use existing define with
->>> polynomial").
->>>
->>> The cleanup added a dependency on include/linux, which broke the PowerPC
->>> boot wrapper/decompresser when KERNEL_XZ is enabled:
->>>
->>>     BOOTCC  arch/powerpc/boot/decompress.o
->>>    In file included from
->>> arch/powerpc/boot/../../../lib/decompress_unxz.c:233,
->>>                    from arch/powerpc/boot/decompress.c:42:
->>>    arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
->>>    linux/crc32poly.h: No such file or directory
->>>     #include <linux/crc32poly.h>
->>>              ^~~~~~~~~~~~~~~~~~~
->>>
->>> The powerpc decompressor is a hairy corner of the kernel. Even while
->>> building
->>> a 64-bit kernel it needs to build a 32-bit binary and therefore avoid
->>> including
->>> files from include/linux.
->>>
->>> Fixes: faa16bc404d7 ("lib: Use existing define with polynomial")
->>> Signed-off-by: Joel Stanley <joel@jms.id.au>
->>> ---
->>> We need to clean up the powerpc boot decompresser but that work will be
->>> more involved than we would include in a late -rc. Please consider
->>> merging this fix for 4.19. Thanks!
->>>
->>>    lib/xz/xz_crc32.c | 3 +--
->>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>
->>> diff --git a/lib/xz/xz_crc32.c b/lib/xz/xz_crc32.c
->>> index 25a5d87e2e4c..34532d14fd4c 100644
->>> --- a/lib/xz/xz_crc32.c
->>> +++ b/lib/xz/xz_crc32.c
->>> @@ -15,7 +15,6 @@
->>>     * but they are bigger and use more memory for the lookup table.
->>>     */
->>>    -#include <linux/crc32poly.h>
->>>    #include "xz_private.h"
->>>      /*
->>> @@ -30,7 +29,7 @@ STATIC_RW_DATA uint32_t xz_crc32_table[256];
->>>      XZ_EXTERN void xz_crc32_init(void)
->>>    {
->>> -       const uint32_t poly = CRC32_POLY_LE;
->>> +       const uint32_t poly = 0xEDB88320;
->>
->>
->> Maybe avoid capital letters ?
->>
->> What about adding something like the following in xz_private.h instead:
->>
->> #define CRC32_POLY_LE 0xedb88320
-> 
-> The problem is that it's pulling in linux/crc32poly.h. To support old
-> systems with a 32bit Open Firmware we boot wrapper we build the boot
-> wrapper as a 32bit ELF even for a 64 bit kernel. The headers generated
-> by Kbuild are only valid for the 64bit kernel so we have to avoid
-> pulling them into the boot wrapper.
+So given that whether such an entry refers to init code can be decided
+much earlier, we can pull this check forward. Since we may still need
+the code entry at this point, let's switch to setting a low bit in the
+'key' member just like we do to annotate the default state of a jump
+table entry.
 
-Yes I understood, hence my proposal to redefine CRC32_POLY_LE in 
-xz_private.h instead of including linux/crc32poly.h
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ include/linux/jump_label.h | 11 ++---
+ init/main.c                |  1 -
+ kernel/jump_label.c        | 48 ++++++--------------
+ 3 files changed, 18 insertions(+), 42 deletions(-)
 
-It avoids modifying the C code.
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index 2768a925bafa..5df6a621e464 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -141,7 +141,7 @@ static inline unsigned long jump_entry_target(const struct jump_entry *entry)
+ 
+ static inline struct static_key *jump_entry_key(const struct jump_entry *entry)
+ {
+-	long offset = entry->key & ~1L;
++	long offset = entry->key & ~3L;
+ 
+ 	return (struct static_key *)((unsigned long)&entry->key + offset);
+ }
+@@ -160,7 +160,7 @@ static inline unsigned long jump_entry_target(const struct jump_entry *entry)
+ 
+ static inline struct static_key *jump_entry_key(const struct jump_entry *entry)
+ {
+-	return (struct static_key *)((unsigned long)entry->key & ~1UL);
++	return (struct static_key *)((unsigned long)entry->key & ~3UL);
+ }
+ 
+ #endif
+@@ -172,12 +172,12 @@ static inline bool jump_entry_is_branch(const struct jump_entry *entry)
+ 
+ static inline bool jump_entry_is_init(const struct jump_entry *entry)
+ {
+-	return entry->code == 0;
++	return (unsigned long)entry->key & 2UL;
+ }
+ 
+ static inline void jump_entry_set_init(struct jump_entry *entry)
+ {
+-	entry->code = 0;
++	entry->key |= 2;
+ }
+ 
+ #endif
+@@ -213,7 +213,6 @@ extern struct jump_entry __start___jump_table[];
+ extern struct jump_entry __stop___jump_table[];
+ 
+ extern void jump_label_init(void);
+-extern void jump_label_invalidate_initmem(void);
+ extern void jump_label_lock(void);
+ extern void jump_label_unlock(void);
+ extern void arch_jump_label_transform(struct jump_entry *entry,
+@@ -261,8 +260,6 @@ static __always_inline void jump_label_init(void)
+ 	static_key_initialized = true;
+ }
+ 
+-static inline void jump_label_invalidate_initmem(void) {}
+-
+ static __always_inline bool static_key_false(struct static_key *key)
+ {
+ 	if (unlikely(static_key_count(key) > 0))
+diff --git a/init/main.c b/init/main.c
+index 18f8f0140fa0..a664246450d1 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1064,7 +1064,6 @@ static int __ref kernel_init(void *unused)
+ 	/* need to finish all async __init code before freeing the memory */
+ 	async_synchronize_full();
+ 	ftrace_free_init_mem();
+-	jump_label_invalidate_initmem();
+ 	free_initmem();
+ 	mark_readonly();
+ 
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 898a1d0c38dc..e8cf3ff3149c 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -373,14 +373,15 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
+ 
+ static void __jump_label_update(struct static_key *key,
+ 				struct jump_entry *entry,
+-				struct jump_entry *stop)
++				struct jump_entry *stop,
++				bool init)
+ {
+ 	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
+ 		/*
+ 		 * An entry->code of 0 indicates an entry which has been
+ 		 * disabled because it was in an init text area.
+ 		 */
+-		if (!jump_entry_is_init(entry)) {
++		if (init || !jump_entry_is_init(entry)) {
+ 			if (kernel_text_address(jump_entry_code(entry)))
+ 				arch_jump_label_transform(entry, jump_label_type(entry));
+ 			else
+@@ -420,6 +421,9 @@ void __init jump_label_init(void)
+ 		if (jump_label_type(iter) == JUMP_LABEL_NOP)
+ 			arch_jump_label_transform_static(iter, JUMP_LABEL_NOP);
+ 
++		if (init_section_contains((void *)jump_entry_code(iter), 1))
++			jump_entry_set_init(iter);
++
+ 		iterk = jump_entry_key(iter);
+ 		if (iterk == key)
+ 			continue;
+@@ -432,19 +436,6 @@ void __init jump_label_init(void)
+ 	cpus_read_unlock();
+ }
+ 
+-/* Disable any jump label entries in __init/__exit code */
+-void __init jump_label_invalidate_initmem(void)
+-{
+-	struct jump_entry *iter_start = __start___jump_table;
+-	struct jump_entry *iter_stop = __stop___jump_table;
+-	struct jump_entry *iter;
+-
+-	for (iter = iter_start; iter < iter_stop; iter++) {
+-		if (init_section_contains((void *)jump_entry_code(iter), 1))
+-			jump_entry_set_init(iter);
+-	}
+-}
+-
+ #ifdef CONFIG_MODULES
+ 
+ static enum jump_label_type jump_label_init_type(struct jump_entry *entry)
+@@ -524,7 +515,8 @@ static void __jump_label_mod_update(struct static_key *key)
+ 			stop = __stop___jump_table;
+ 		else
+ 			stop = m->jump_entries + m->num_jump_entries;
+-		__jump_label_update(key, mod->entries, stop);
++		__jump_label_update(key, mod->entries, stop,
++				    m->state == MODULE_STATE_COMING);
+ 	}
+ }
+ 
+@@ -570,6 +562,9 @@ static int jump_label_add_module(struct module *mod)
+ 	for (iter = iter_start; iter < iter_stop; iter++) {
+ 		struct static_key *iterk;
+ 
++		if (within_module_init(jump_entry_code(iter), mod))
++			jump_entry_set_init(iter);
++
+ 		iterk = jump_entry_key(iter);
+ 		if (iterk == key)
+ 			continue;
+@@ -605,7 +600,7 @@ static int jump_label_add_module(struct module *mod)
+ 
+ 		/* Only update if we've changed from our initial state */
+ 		if (jump_label_type(iter) != jump_label_init_type(iter))
+-			__jump_label_update(key, iter, iter_stop);
++			__jump_label_update(key, iter, iter_stop, true);
+ 	}
+ 
+ 	return 0;
+@@ -661,19 +656,6 @@ static void jump_label_del_module(struct module *mod)
+ 	}
+ }
+ 
+-/* Disable any jump label entries in module init code */
+-static void jump_label_invalidate_module_init(struct module *mod)
+-{
+-	struct jump_entry *iter_start = mod->jump_entries;
+-	struct jump_entry *iter_stop = iter_start + mod->num_jump_entries;
+-	struct jump_entry *iter;
+-
+-	for (iter = iter_start; iter < iter_stop; iter++) {
+-		if (within_module_init(jump_entry_code(iter), mod))
+-			jump_entry_set_init(iter);
+-	}
+-}
+-
+ static int
+ jump_label_module_notify(struct notifier_block *self, unsigned long val,
+ 			 void *data)
+@@ -695,9 +677,6 @@ jump_label_module_notify(struct notifier_block *self, unsigned long val,
+ 	case MODULE_STATE_GOING:
+ 		jump_label_del_module(mod);
+ 		break;
+-	case MODULE_STATE_LIVE:
+-		jump_label_invalidate_module_init(mod);
+-		break;
+ 	}
+ 
+ 	jump_label_unlock();
+@@ -767,7 +746,8 @@ static void jump_label_update(struct static_key *key)
+ 	entry = static_key_entries(key);
+ 	/* if there are no users, entry can be NULL */
+ 	if (entry)
+-		__jump_label_update(key, entry, stop);
++		__jump_label_update(key, entry, stop,
++				    system_state < SYSTEM_RUNNING);
+ }
+ 
+ #ifdef CONFIG_STATIC_KEYS_SELFTEST
+-- 
+2.17.1
 
-Christophe
-
-> 
->> Christophe
->>
->>>          uint32_t i;
->>>          uint32_t j;
->>>
->>
