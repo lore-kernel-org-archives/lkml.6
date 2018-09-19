@@ -2,121 +2,148 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5C3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BDBC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616D621508
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616D621508
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C0E9214C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 01:49:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jypLQSOz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0E9214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=russell.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbeISHYP (ORCPT
+        id S1730796AbeISHY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 03:24:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12614 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728226AbeISHYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 03:24:14 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3E86E37936025;
-        Wed, 19 Sep 2018 09:48:49 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.399.0; Wed, 19 Sep 2018
- 09:48:46 +0800
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: report ENOENT correct in f2fs_rename
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180918021805.85032-1-jaegeuk@kernel.org>
- <f2d06f89-4f84-8492-eeea-e1c07e5104c3@kernel.org>
- <20180918175936.GF91945@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <b791b223-e962-773c-3876-7fd7773df886@huawei.com>
-Date:   Wed, 19 Sep 2018 09:48:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180918175936.GF91945@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Wed, 19 Sep 2018 03:24:59 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45603 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726887AbeISHY7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 03:24:59 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id B963221FB7;
+        Tue, 18 Sep 2018 21:49:34 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 18 Sep 2018 21:49:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=TkbrD3
+        Z5mS/TrhR2eGrJmflwxC1YOPQMdlMIujcGRf8=; b=jypLQSOz98FwHaqw+eHu1L
+        WA6ARy/+DkQmrVLL/ys2xm9cc/VO/3qfVjOjfS6Euwz/VWY65eFBpiPFq3vOZGPq
+        eU+Dz+00aFFY63nmFwC63FuGeFjBN6RWG/IipfCIRbfCRpA2rzYMnqsaPedJtJRr
+        TN3KMwsf5yYN3okoRuUOlqrs+z5NqGPIU7jt8jqHKETOA9ms4SvdsSIUh1FEzcF9
+        gWSF1LVJlUsLcEmUzqFnyOGMsHgbYhhnpCvNdTfOclaY4wwlUTBst9ulgrtIoxV8
+        Di/H0UAiRt3XDuXS7L4sy3P3+MgkMOvtq46gjDm4sey5OPUNifDtTsxDa7AuB8cQ
+        ==
+X-ME-Proxy: <xmx:LKuhW5iM-c9OmA5WTrB57tvxEu6Fijb2BpKEyz7t4_cXYhYZjP_sxw>
+    <xmx:LKuhW7-1i1VaGUmp8VEgTF11WJH4uiWhMHwSefRb2w7jtPnMvMi0pg>
+    <xmx:LKuhWwp6oAmdln7qOULjcl0-vRYH9CR97XoDsEZ5J8tRT9gl6fDP1Q>
+    <xmx:LKuhW6_dyBFju2p1PoC4_Td4pWRImy-rtsn76sNHBz7evuOd8vMfQA>
+    <xmx:LKuhW0VQmgQLbS3jhCy5jMLouh1n_0OjKxMrzDmPXcE6JhK-rB73vw>
+    <xmx:LquhW7KSqtffKQ5x4dgPQ4eGr_tcTb0WjOG20cJuRIg7aFAPBFVw1A>
+X-ME-Sender: <xms:LKuhW5gUUWOoFeer7IAS7JzEtXIrPqKKzIrZGXyuOLxJlxmp0NmVrw>
+Received: from snap.ozlabs.ibm.com (unknown [122.99.82.10])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 26A3FE46B6;
+        Tue, 18 Sep 2018 21:49:28 -0400 (EDT)
+Message-ID: <1020abbb3d8a8f121d25da7327e296cfa1aaa698.camel@russell.cc>
+Subject: Re: [PATCH] MAINTAINERS: Add PPC contacts for PCI core error
+ handling
+From:   Russell Currey <ruscur@russell.cc>
+To:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, oohall@gmail.com,
+        sbobroff@linux.ibm.com
+In-Reply-To: <20180918215854.GH13616@bhelgaas-glaptop.roam.corp.google.com>
+References: <153677132617.23091.12307288405707171077.stgit@bhelgaas-glaptop.roam.corp.google.com>
+         <20180918215854.GH13616@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 19 Sep 2018 11:49:26 +1000
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.1-2 
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/19 1:59, Jaegeuk Kim wrote:
-> On 09/18, Chao Yu wrote:
->> On 2018/9/18 10:18, Jaegeuk Kim wrote:
->>> This fixes wrong error report in f2fs_rename.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/namei.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index 98d3ab7c3ce6..d653be777529 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>  	struct f2fs_dir_entry *old_entry;
->>>  	struct f2fs_dir_entry *new_entry;
->>>  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
->>> -	int err = -ENOENT;
->>> +	int err;
->>>  
->>>  	if (unlikely(f2fs_cp_error(sbi)))
->>>  		return -EIO;
->>> @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->>>  	if (err)
->>>  		goto out;
->>>  
->>> +	err = -ENOENT;
->>
->> I didn't get what's the difference after moving initialization of 'err' here...
+On Tue, 2018-09-18 at 16:58 -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 12, 2018 at 11:55:26AM -0500, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > The original PCI error recovery functionality was for the powerpc-specific
+> > IBM EEH feature.  PCIe subsequently added some similar features, including
+> > AER and DPC, that can be used on any architecture.
+> > 
+> > We want the generic PCI core error handling support to work with all of
+> > these features.  Driver error recovery callbacks should be independent of
+> > which feature the platform provides.
+> > 
+> > Add the generic PCI core error recovery files to the powerpc EEH
+> > MAINTAINERS entry so the powerpc folks will be copied on changes to the
+> > generic PCI error handling strategy.
+> > 
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> One example,
-> 
->         old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
->         if (!old_entry) {
->                 if (IS_ERR(old_page))
->                         err = PTR_ERR(old_page);
-> 
-> --> need to return ENOENT instead of 0.
+> I applied the following to for-linus for v4.19.  Russell, if you want
+> to be removed, let me know and I'll do that.
 
-Clear for me now, thanks for your explanation, I just miss that case. ;)
+Oliver's email address for kernel stuff is oohall@gmail.com, I think benh has been
+CCing his IBM address.  But other than that,
 
-It would be better to add this into commit log.
+Acked-by: Russell Currey <ruscur@russell.cc>
 
-I agree with Sahitya, we need to cover rename2 as well.
+Thanks for this, Bjorn.
 
-Thanks,
+- Russell
 
 > 
->                 goto out;
->         }
+> commit 3fed0e04026c
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date:   Wed Sep 12 11:55:26 2018 -0500
 > 
->>
->> Thanks,
->>
->>>  	if (new_inode) {
->>>  		err = dquot_initialize(new_inode);
->>>  		if (err)
->>>
+>     MAINTAINERS: Update PPC contacts for PCI core error handling
+>     
+>     The original PCI error recovery functionality was for the powerpc-specific
+>     IBM EEH feature.  PCIe subsequently added some similar features, including
+>     AER and DPC, that can be used on any architecture.
+>     
+>     We want the generic PCI core error handling support to work with all of
+>     these features.  Driver error recovery callbacks should be independent of
+>     which feature the platform provides.
+>     
+>     Add the generic PCI core error recovery files to the powerpc EEH
+>     MAINTAINERS entry so the powerpc folks will be copied on changes to the
+>     generic PCI error handling strategy.
+>     
+>     Add Sam and Oliver as maintainers for this area.
+>     
+>     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 > 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
-
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4ece30f15777..f23244003836 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11203,8 +11203,14 @@ F:	tools/pci/
+>  
+>  PCI ENHANCED ERROR HANDLING (EEH) FOR POWERPC
+>  M:	Russell Currey <ruscur@russell.cc>
+> +M:	Sam Bobroff <sbobroff@linux.ibm.com>
+> +M:	Oliver O'Halloran <oliveroh@au1.ibm.com>
+>  L:	linuxppc-dev@lists.ozlabs.org
+>  S:	Supported
+> +F:	Documentation/PCI/pci-error-recovery.txt
+> +F:	drivers/pci/pcie/aer.c
+> +F:	drivers/pci/pcie/dpc.c
+> +F:	drivers/pci/pcie/err.c
+>  F:	Documentation/powerpc/eeh-pci-error-recovery.txt
+>  F:	arch/powerpc/kernel/eeh*.c
+>  F:	arch/powerpc/platforms/*/eeh*.c
