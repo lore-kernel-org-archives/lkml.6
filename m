@@ -2,62 +2,62 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3392DECE565
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070D4C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A262151D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B0272151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="qo9M+gfq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A262151D
+	dkim=pass (2048-bit key) header.d=ursulin-net.20150623.gappssmtp.com header.i=@ursulin-net.20150623.gappssmtp.com header.b="WgSqsKOn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B0272151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbeISSFt (ORCPT
+        id S1731678AbeISSF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 14:05:49 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52155 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731235AbeISSFs (ORCPT
+        Wed, 19 Sep 2018 14:05:58 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45039 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731070AbeISSFp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 14:05:48 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y2-v6so6078318wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 05:28:04 -0700 (PDT)
+        Wed, 19 Sep 2018 14:05:45 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v16-v6so5584731wro.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 05:28:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ursulin-net.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kbL84+d+DsOFg/OzD+cbvvrEUxbtGzVBcNRtKIBsmDo=;
-        b=qo9M+gfq8iBtoVnQZJqCYe+TGBWs53KX7QMXHu1f4qjKfh2jj1aboCcBtK+DBQIZt2
-         4XbV8CKZ4JFA3ARhlecrh17/Dm5PZZs3UetDDl26UkvGIej6gzqfmkumTFMuPhhDjY3Z
-         XdX4zTIVdgjUV7Q/y3bimEgv87xhhNs7ZO31rxrU+NJUe+daGFcwETdoUsn2/FihtiG4
-         bTZ4ogUEZIq8700cAhDivIzaoC6BfZerrDpoHuBn4gFegANOP9a+wdMAcOlxaJNk/5JV
-         ss+2mlD1THuzUze4Ysg6NWF8i3aCbLP+SuqQ9l+aWuXkeCBTN9u1859pY6BW7rmDHqtw
-         zcKQ==
+        bh=mgNdcRiXOIDj/ssegf1dm+Nb4Rv3rYu1hOHwqaX7GAc=;
+        b=WgSqsKOnOsJABlo09ljTu3FrNUGrTTBB8YuyZiUHK061QivqlzMJtAR1pNw41px2Pk
+         MFkVTdEcnF6cCEBw50tNxCF1DJTwhsnbR6SNyJBaw+uzW/rKjpmqd7P1y1NpsJXk6LWq
+         YBZ+m48zGuH9qPJVHpT9AjqHnhcJNWAfCslj2vzws5bHdSnz0BIuApVuezToLaHs5jul
+         bsI+onjGXv5yoh/rGZch8CMK6lpl0RgkUZ40jy8pPlYoB+rw7J+aqt5D5O90XwYHMKBa
+         RdTfejReYJuPvpzzX+HEE8DTtz7DC4QZCf9iRZ48YQ6gvrxzSLtT6XXcyIwjia/rDU8L
+         QaWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kbL84+d+DsOFg/OzD+cbvvrEUxbtGzVBcNRtKIBsmDo=;
-        b=BjfpsLIVM8cDuf26ZL8v3zIRMkrXhIboIZw+97sdEzclDsI0Wg9lC8KDOxOYSokbAJ
-         1klGnVfbZK5+Qbtb3YPWRTOXg5DQITM7+KXNMX0SQmg0FmN7lN1NJcdyuEyduEX7ZH9K
-         JRS2XVRyLwGcupOoPjgkR1xo6Kd5VV1FkSNL0oGjGaiGru1Ukhu68+7yjI7fijyQeBMo
-         OAww/6LKAbcKov/U3uR8PsUu78MIkFDg2TnyFFqhLBJzKskKcJkQ2pgda4nv0cF5OHS5
-         NqOoesWZRMnCgvWGMsRqw8b6UbAcRSdNaDQ5CvlDWYFYtsDgAX739RFIb04uSKwd9BEN
-         GRjQ==
-X-Gm-Message-State: APzg51D9RUBqQz1IZQ6BBPvkfbN8Cgp8jWlTal7rLfHtdUVpE3CYB+2I
-        wsSawjD6JXXTOCa6fG/YW2/msSA2bSk=
-X-Google-Smtp-Source: ANB0Vda8ChrF1fO+MTxvYu7mBNmTgYHkqraO/Ab4wDMjh/j5S4Oyfc8vinqS6RnOI3yZKmOJgZ1/VQ==
-X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr18961194wmg.67.1537360083646;
-        Wed, 19 Sep 2018 05:28:03 -0700 (PDT)
+        bh=mgNdcRiXOIDj/ssegf1dm+Nb4Rv3rYu1hOHwqaX7GAc=;
+        b=jhuUoI9mjDkRSMP4d1C6XXspZoZt2GW7ld/18k0OUmGTVkQjlCxUDBBhJgk1qsNUgX
+         2bomZ1rp0ZcW8j0R0hJdQefipL5ts8Q1YNxvxXudtbVMafs83QCE2I5Mr/TekC6ej8dj
+         VvZQRBK8cqE/wLn/3B2i/QyHovS7mbhZrZD+9lZ5M0xq4B0itMUNbMguivsccpmxZdMM
+         r3OrLsWO4VzCPnmxL20i/H8R/C/cF4kIIynG3WW9FJ8Jnbhtss0eKNlI2R2KHeO2iFmw
+         WFfmk1i2mScuejrdR3bjJLfSYnY5684B2pW5iMMtwiAQkn85/eNhtdCTq2K8YCQgw09B
+         a//Q==
+X-Gm-Message-State: APzg51AQ/u3eN5fh995nqcTB5WJG1nKQQqZtgJxVXCqtnTyN+UfN4mCb
+        TsLX+7IyeP9L6RYlJGvvNcyYqQs5jK4=
+X-Google-Smtp-Source: ANB0VdZ69APgSB17lm+lQ1VvLg6J6rAfJe/T+7ySkfptYqfbuisZhq3aXvZovr4ArVghR+7xRWKCFA==
+X-Received: by 2002:adf:8485:: with SMTP id 5-v6mr28722311wrg.34.1537360079816;
+        Wed, 19 Sep 2018 05:27:59 -0700 (PDT)
 Received: from localhost.localdomain ([95.144.165.37])
-        by smtp.gmail.com with ESMTPSA id l18-v6sm19412403wru.75.2018.09.19.05.28.02
+        by smtp.gmail.com with ESMTPSA id l18-v6sm19412403wru.75.2018.09.19.05.27.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 05:28:03 -0700 (PDT)
+        Wed, 19 Sep 2018 05:27:59 -0700 (PDT)
 From:   Tvrtko Ursulin <tursulin@ursulin.net>
 X-Google-Original-From: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ Cc:     tursulin@ursulin.net, tvrtko.ursulin@linux.intel.com,
         Andi Kleen <ak@linux.intel.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         x86@kernel.org
-Subject: [RFC 5/5] tools/perf: Add support for per-PMU access control
-Date:   Wed, 19 Sep 2018 13:27:51 +0100
-Message-Id: <20180919122751.12439-6-tvrtko.ursulin@linux.intel.com>
+Subject: [RFC 2/5] perf: Pass pmu pointer to perf_paranoid_* helpers
+Date:   Wed, 19 Sep 2018 13:27:48 +0100
+Message-Id: <20180919122751.12439-3-tvrtko.ursulin@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
 References: <20180919122751.12439-1-tvrtko.ursulin@linux.intel.com>
@@ -88,15 +88,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
-Now that the perf core supports per-PMU paranoid settings we need to
-extend the tool to support that.
+To enable per-PMU access controls in a following patch we need to start
+passing in the PMU object pointer to perf_paranoid_* helpers.
 
-We handle the per-PMU setting in the platform support code where
-applicable and also notify the user of the new facility on failures to
-open the event.
+This patch only changes the API across the code base without changing the
+behaviour.
 
-Thanks to Jiri Olsa for contributing most of the "meat" for this patch and
-suggestion to improve the error banner as well.
+v2:
+ * Correct errors in core-book3s.c as reported by kbuild test robot.
 
 Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -113,191 +112,258 @@ Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org
 ---
- tools/perf/arch/arm/util/cs-etm.c    |  2 +-
- tools/perf/arch/arm64/util/arm-spe.c |  2 +-
- tools/perf/arch/x86/util/intel-bts.c |  2 +-
- tools/perf/arch/x86/util/intel-pt.c  |  2 +-
- tools/perf/util/evsel.c              | 41 ++++++++++++++++++++++++++--
- tools/perf/util/pmu.c                | 17 ++++++++++++
- tools/perf/util/pmu.h                |  1 +
- 7 files changed, 60 insertions(+), 7 deletions(-)
+ arch/powerpc/perf/core-book3s.c | 31 ++++++++++++++++++++++---------
+ arch/x86/events/intel/bts.c     |  2 +-
+ arch/x86/events/intel/core.c    |  2 +-
+ arch/x86/events/intel/p4.c      |  2 +-
+ include/linux/perf_event.h      |  6 +++---
+ kernel/events/core.c            | 15 ++++++++-------
+ kernel/trace/trace_event_perf.c |  6 ++++--
+ 7 files changed, 40 insertions(+), 24 deletions(-)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 2f595cd73da6..a5437f100ab9 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -69,7 +69,7 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
- 	struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
- 	struct perf_evsel *evsel, *cs_etm_evsel = NULL;
- 	const struct cpu_map *cpus = evlist->cpus;
--	bool privileged = (geteuid() == 0 || perf_event_paranoid() < 0);
-+	bool privileged = (geteuid() == 0 || cs_etm_pmu->paranoid < 0);
- 
- 	ptr->evlist = evlist;
- 	ptr->snapshot_mode = opts->auxtrace_snapshot_mode;
-diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
-index 5ccfce87e693..e7e8154757fa 100644
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -65,7 +65,7 @@ static int arm_spe_recording_options(struct auxtrace_record *itr,
- 			container_of(itr, struct arm_spe_recording, itr);
- 	struct perf_pmu *arm_spe_pmu = sper->arm_spe_pmu;
- 	struct perf_evsel *evsel, *arm_spe_evsel = NULL;
--	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
-+	bool privileged = geteuid() == 0 || arm_spe_pmu->paranoid < 0;
- 	struct perf_evsel *tracking_evsel;
- 	int err;
- 
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index 781df40b2966..c97e6556c8e7 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -116,7 +116,7 @@ static int intel_bts_recording_options(struct auxtrace_record *itr,
- 	struct perf_pmu *intel_bts_pmu = btsr->intel_bts_pmu;
- 	struct perf_evsel *evsel, *intel_bts_evsel = NULL;
- 	const struct cpu_map *cpus = evlist->cpus;
--	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
-+	bool privileged = geteuid() == 0 || intel_bts_pmu->paranoid < 0;
- 
- 	btsr->evlist = evlist;
- 	btsr->snapshot_mode = opts->auxtrace_snapshot_mode;
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index db0ba8caf5a2..ffbe5f7f1c57 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -555,7 +555,7 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
- 	bool have_timing_info, need_immediate = false;
- 	struct perf_evsel *evsel, *intel_pt_evsel = NULL;
- 	const struct cpu_map *cpus = evlist->cpus;
--	bool privileged = geteuid() == 0 || perf_event_paranoid() < 0;
-+	bool privileged = geteuid() == 0 || intel_pt_pmu->paranoid < 0;
- 	u64 tsc_bit;
- 	int err;
- 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 1a61628a1c12..fbebce0593f4 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -9,6 +9,7 @@
- 
- #include <byteswap.h>
- #include <errno.h>
-+#include <fcntl.h>
- #include <inttypes.h>
- #include <linux/bitops.h>
- #include <api/fs/fs.h>
-@@ -20,6 +21,7 @@
- #include <linux/err.h>
- #include <sys/ioctl.h>
- #include <sys/resource.h>
-+#include <sys/stat.h>
- #include <sys/types.h>
- #include <dirent.h>
- #include "asm/bug.h"
-@@ -2843,10 +2845,37 @@ static bool find_process(const char *name)
- 	return ret ? false : true;
+diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
+index 81f8a0c838ae..1e8b1aed6e81 100644
+--- a/arch/powerpc/perf/core-book3s.c
++++ b/arch/powerpc/perf/core-book3s.c
+@@ -95,7 +95,13 @@ static inline unsigned long perf_ip_adjust(struct pt_regs *regs)
+ {
+ 	return 0;
  }
- 
-+static int __pmu_paranoid_value(const char *name, char *buf, int bufsz)
+-static inline void perf_get_data_addr(struct pt_regs *regs, u64 *addrp) { }
++
++static inline void
++perf_get_data_addr(struct pmu *pmu, struct pt_regs *regs, u64 *addrp)
 +{
-+	char path[PATH_MAX];
-+	int fd, ret;
 +
-+	ret = snprintf(path, sizeof(path),
-+		       "%s/bus/event_source/devices/%s/perf_event_paranoid",
-+			sysfs__mountpoint(), name);
-+	if (ret < 0 || ret == sizeof(path))
-+		return -1;
-+
-+	fd = open(path, O_RDONLY);
-+	if (fd < 0)
-+		return -1;
-+
-+	ret = read(fd, buf, bufsz - 1);
-+	if (ret <= 0)
-+		return -1;
-+
-+	if (buf[ret - 1] == '\n')
-+		buf[ret - 1] = 0;
-+	else
-+		buf[ret] = 0;
-+
-+	return 0;
 +}
 +
- int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
- 			      int err, char *msg, size_t size)
+ static inline u32 perf_get_misc_flags(struct pt_regs *regs)
  {
--	char sbuf[STRERR_BUFSIZE];
-+	char sbuf[STRERR_BUFSIZE], buf[4];
- 	int printed = 0;
- 
- 	switch (err) {
-@@ -2870,9 +2899,15 @@ int perf_evsel__open_strerror(struct perf_evsel *evsel, struct target *target,
- 		 ">= 1: Disallow CPU event access by users without CAP_SYS_ADMIN\n"
- 		 ">= 2: Disallow kernel profiling by users without CAP_SYS_ADMIN\n\n"
- 		 "To make this setting permanent, edit /etc/sysctl.conf too, e.g.:\n\n"
--		 "	kernel.perf_event_paranoid = -1\n" ,
-+		 "	kernel.perf_event_paranoid = -1\n\n"
-+		 "Alternatively an identical per PMU setting can be found and adjusted at\n"
-+		 "/sys/bus/event_source/devices/%s/perf_event_paranoid for fine-grained\n"
-+		 "access control. The current value is '%s'.\n",
- 				 target->system_wide ? "system-wide " : "",
--				 perf_event_paranoid());
-+				 perf_event_paranoid(),
-+				 evsel->pmu_name,
-+				 __pmu_paranoid_value(evsel->pmu_name, buf,
-+						      sizeof(buf)) ? "-" : buf);
- 	case ENOENT:
- 		return scnprintf(msg, size, "The %s event is not supported.",
- 				 perf_evsel__name(evsel));
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index afd68524ffa9..5ecead4969af 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -545,6 +545,22 @@ static int pmu_type(const char *name, __u32 *type)
- 	return ret;
- }
- 
-+static int pmu_paranoid(const char *name)
+ 	return 0;
+@@ -126,7 +132,13 @@ static unsigned long ebb_switch_in(bool ebb, struct cpu_hw_events *cpuhw)
+ static inline void power_pmu_bhrb_enable(struct perf_event *event) {}
+ static inline void power_pmu_bhrb_disable(struct perf_event *event) {}
+ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in) {}
+-static inline void power_pmu_bhrb_read(struct cpu_hw_events *cpuhw) {}
++
++static inline void
++power_pmu_bhrb_read(struct pmu *pmu,struct cpu_hw_events *cpuhw)
 +{
-+	char path[PATH_MAX];
-+	int ret, paranoid;
 +
-+	ret = snprintf(path, sizeof(path),
-+		       EVENT_SOURCE_DEVICE_PATH "%s/perf_event_paranoid",
-+		       name);
-+
-+	if (ret > 0 && ret < (int)sizeof(path) &&
-+	    !sysfs__read_int(path, &paranoid))
-+		return paranoid;
-+
-+	return perf_event_paranoid();
 +}
 +
- /* Add all pmus in sysfs to pmu list: */
- static void pmu_read_sysfs(void)
+ static void pmao_restore_workaround(bool ebb) { }
+ #endif /* CONFIG_PPC32 */
+ 
+@@ -170,7 +182,8 @@ static inline unsigned long perf_ip_adjust(struct pt_regs *regs)
+  * pointed to by SIAR; this is indicated by the [POWER6_]MMCRA_SDSYNC, the
+  * [POWER7P_]MMCRA_SDAR_VALID bit in MMCRA, or the SDAR_VALID bit in SIER.
+  */
+-static inline void perf_get_data_addr(struct pt_regs *regs, u64 *addrp)
++static inline void
++perf_get_data_addr(struct pmu *pmu, struct pt_regs *regs, u64 *addrp)
  {
-@@ -825,6 +841,7 @@ static struct perf_pmu *pmu_lookup(const char *name)
- 	pmu->name = strdup(name);
- 	pmu->type = type;
- 	pmu->is_uncore = pmu_is_uncore(name);
-+	pmu->paranoid = pmu_paranoid(name);
- 	pmu_add_cpu_aliases(&aliases, pmu);
+ 	unsigned long mmcra = regs->dsisr;
+ 	bool sdar_valid;
+@@ -195,7 +208,7 @@ static inline void perf_get_data_addr(struct pt_regs *regs, u64 *addrp)
+ 	if (!(mmcra & MMCRA_SAMPLE_ENABLE) || sdar_valid)
+ 		*addrp = mfspr(SPRN_SDAR);
  
- 	INIT_LIST_HEAD(&pmu->format);
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 76fecec7b3f9..1f00c8bbdb90 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -30,6 +30,7 @@ struct perf_pmu {
- 	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
- 	struct list_head list;    /* ELEM */
- 	int (*set_drv_config)	(struct perf_evsel_config_term *term);
-+	int paranoid;
- };
+-	if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
++	if (perf_paranoid_kernel(pmu) && !capable(CAP_SYS_ADMIN) &&
+ 		is_kernel_addr(mfspr(SPRN_SDAR)))
+ 		*addrp = 0;
+ }
+@@ -435,7 +448,7 @@ static __u64 power_pmu_bhrb_to(u64 addr)
+ }
  
- struct perf_pmu_info {
+ /* Processing BHRB entries */
+-static void power_pmu_bhrb_read(struct cpu_hw_events *cpuhw)
++static void power_pmu_bhrb_read(struct pmu *pmu, struct cpu_hw_events *cpuhw)
+ {
+ 	u64 val;
+ 	u64 addr;
+@@ -463,8 +476,8 @@ static void power_pmu_bhrb_read(struct cpu_hw_events *cpuhw)
+ 			 * exporting it to userspace (avoid exposure of regions
+ 			 * where we could have speculative execution)
+ 			 */
+-			if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
+-				is_kernel_addr(addr))
++			if (perf_paranoid_kernel(pmu) &&
++			    !capable(CAP_SYS_ADMIN) && is_kernel_addr(addr))
+ 				continue;
+ 
+ 			/* Branches are read most recent first (ie. mfbhrb 0 is
+@@ -2066,12 +2079,12 @@ static void record_and_restart(struct perf_event *event, unsigned long val,
+ 
+ 		if (event->attr.sample_type &
+ 		    (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR))
+-			perf_get_data_addr(regs, &data.addr);
++			perf_get_data_addr(event->pmu, regs, &data.addr);
+ 
+ 		if (event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK) {
+ 			struct cpu_hw_events *cpuhw;
+ 			cpuhw = this_cpu_ptr(&cpu_hw_events);
+-			power_pmu_bhrb_read(cpuhw);
++			power_pmu_bhrb_read(event->pmu, cpuhw);
+ 			data.br_stack = &cpuhw->bhrb_stack;
+ 		}
+ 
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 24ffa1e88cf9..e416c9e2400a 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -555,7 +555,7 @@ static int bts_event_init(struct perf_event *event)
+ 	 * Note that the default paranoia setting permits unprivileged
+ 	 * users to profile the kernel.
+ 	 */
+-	if (event->attr.exclude_kernel && perf_paranoid_kernel() &&
++	if (event->attr.exclude_kernel && perf_paranoid_kernel(event->pmu) &&
+ 	    !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+ 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 035c37481f57..40ccb4dbbadf 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3033,7 +3033,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 	if (x86_pmu.version < 3)
+ 		return -EINVAL;
+ 
+-	if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++	if (perf_paranoid_cpu(event->pmu) && !capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+ 
+ 	event->hw.config |= ARCH_PERFMON_EVENTSEL_ANY;
+diff --git a/arch/x86/events/intel/p4.c b/arch/x86/events/intel/p4.c
+index d32c0eed38ca..878451ef1ace 100644
+--- a/arch/x86/events/intel/p4.c
++++ b/arch/x86/events/intel/p4.c
+@@ -776,7 +776,7 @@ static int p4_validate_raw_event(struct perf_event *event)
+ 	 * the user needs special permissions to be able to use it
+ 	 */
+ 	if (p4_ht_active() && p4_event_bind_map[v].shared) {
+-		if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_cpu(event->pmu) && !capable(CAP_SYS_ADMIN))
+ 			return -EACCES;
+ 	}
+ 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 53c500f0ca79..22906bcc1bcd 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1179,17 +1179,17 @@ extern int perf_cpu_time_max_percent_handler(struct ctl_table *table, int write,
+ int perf_event_max_stack_handler(struct ctl_table *table, int write,
+ 				 void __user *buffer, size_t *lenp, loff_t *ppos);
+ 
+-static inline bool perf_paranoid_tracepoint_raw(void)
++static inline bool perf_paranoid_tracepoint_raw(const struct pmu *pmu)
+ {
+ 	return sysctl_perf_event_paranoid > -1;
+ }
+ 
+-static inline bool perf_paranoid_cpu(void)
++static inline bool perf_paranoid_cpu(const struct pmu *pmu)
+ {
+ 	return sysctl_perf_event_paranoid > 0;
+ }
+ 
+-static inline bool perf_paranoid_kernel(void)
++static inline bool perf_paranoid_kernel(const struct pmu *pmu)
+ {
+ 	return sysctl_perf_event_paranoid > 1;
+ }
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index adcd9eae13fb..f556144bc0c5 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4108,7 +4108,7 @@ find_get_context(struct pmu *pmu, struct task_struct *task,
+ 
+ 	if (!task) {
+ 		/* Must be root to operate on a CPU event: */
+-		if (perf_paranoid_cpu() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_cpu(pmu) && !capable(CAP_SYS_ADMIN))
+ 			return ERR_PTR(-EACCES);
+ 
+ 		cpuctx = per_cpu_ptr(pmu->pmu_cpu_context, cpu);
+@@ -5676,7 +5676,7 @@ static int perf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	lock_limit >>= PAGE_SHIFT;
+ 	locked = vma->vm_mm->pinned_vm + extra;
+ 
+-	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw() &&
++	if ((locked > lock_limit) && perf_paranoid_tracepoint_raw(event->pmu) &&
+ 		!capable(CAP_IPC_LOCK)) {
+ 		ret = -EPERM;
+ 		goto unlock;
+@@ -10492,8 +10492,10 @@ SYSCALL_DEFINE5(perf_event_open,
+ 		goto err_cred;
+ 	}
+ 
++	pmu = event->pmu;
++
+ 	if (!attr.exclude_kernel) {
+-		if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
++		if (perf_paranoid_kernel(pmu) && !capable(CAP_SYS_ADMIN)) {
+ 			err = -EACCES;
+ 			goto err_alloc;
+ 		}
+@@ -10501,7 +10503,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 
+ 	/* Only privileged users can get physical addresses */
+ 	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+-	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
++	    perf_paranoid_kernel(pmu) && !capable(CAP_SYS_ADMIN)) {
+ 		err = -EACCES;
+ 		goto err_alloc;
+ 	}
+@@ -10509,13 +10511,13 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	/* privileged levels capture (kernel, hv): check permissions */
+ 	if ((attr.sample_type & PERF_SAMPLE_BRANCH_STACK) &&
+ 	    (attr.branch_sample_type & PERF_SAMPLE_BRANCH_PERM_PLM) &&
+-	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN)) {
++	    perf_paranoid_kernel(pmu) && !capable(CAP_SYS_ADMIN)) {
+ 		err = -EACCES;
+ 		goto err_alloc;
+ 	}
+ 
+ 	if (is_sampling_event(event)) {
+-		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
++		if (pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+ 			err = -EOPNOTSUPP;
+ 			goto err_alloc;
+ 		}
+@@ -10525,7 +10527,6 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	 * Special case software events and allow them to be part of
+ 	 * any hardware group.
+ 	 */
+-	pmu = event->pmu;
+ 
+ 	if (attr.use_clockid) {
+ 		err = perf_event_set_clock(event, attr.clockid);
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 69a3fe926e8c..04ea3afec5b2 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -46,7 +46,8 @@ static int perf_trace_event_perm(struct trace_event_call *tp_event,
+ 
+ 	/* The ftrace function trace is allowed only for root. */
+ 	if (ftrace_event_is_function(tp_event)) {
+-		if (perf_paranoid_tracepoint_raw() && !capable(CAP_SYS_ADMIN))
++		if (perf_paranoid_tracepoint_raw(p_event->pmu) &&
++		    !capable(CAP_SYS_ADMIN))
+ 			return -EPERM;
+ 
+ 		if (!is_sampling_event(p_event))
+@@ -82,7 +83,8 @@ static int perf_trace_event_perm(struct trace_event_call *tp_event,
+ 	 * ...otherwise raw tracepoint data can be a severe data leak,
+ 	 * only allow root to have these.
+ 	 */
+-	if (perf_paranoid_tracepoint_raw() && !capable(CAP_SYS_ADMIN))
++	if (perf_paranoid_tracepoint_raw(p_event->pmu) &&
++	    !capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	return 0;
 -- 
 2.17.1
 
