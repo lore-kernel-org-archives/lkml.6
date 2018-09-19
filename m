@@ -2,114 +2,100 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDC3ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C155B208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C1E2zdGS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C155B208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2EDBF208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:32:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDBF208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730989AbeISMHa (ORCPT
+        id S1730851AbeISMJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 08:07:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:56933 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbeISMHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 08:07:30 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42FVP23rMHz9sBx;
-        Wed, 19 Sep 2018 16:31:02 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537338662;
-        bh=acrS/RY5NCFRV4L6qp52jv7xwqucbjgIJz0MxC4EGVk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=C1E2zdGS3CFyfkWjmff4iCgtj8HuRDtdQn5e2u5DMx9vOvM52e9V5CPLIH+cnM5Uo
-         0u7QXMJzBwzxcPepUc3Uxx73rkOIiwa3n0nuZhDPib/mTHF8+is6cPq/CPL8VCejCf
-         9y8SCZqReMkVv86IniwxqH339fQtqBbEH4g8mXNm81SztEQqVgDkjq92Xps9pjgJ+S
-         l1KYHLefyTZWDUoGjkTeO5pa0tufyVpbjvXKL8y1hZVbn2URRLJ/VO2dRpKQRH2N29
-         2ufN16VMThnUtgTYGFkcFUQHl89kZR3PbT6bNlc2En5e4VKayIBEi2f4NALF/MQgwu
-         PfTKlFQ1KdZYg==
-Date:   Wed, 19 Sep 2018 16:31:02 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20180919163102.1a0adefb@canb.auug.org.au>
-In-Reply-To: <3565.1537336860@warthog.procyon.org.uk>
-References: <20180919094847.2103082b@canb.auug.org.au>
-        <20180919073826.02370812@canb.auug.org.au>
-        <20180910133525.28c5dd20@canb.auug.org.au>
-        <15925.1537309041@warthog.procyon.org.uk>
-        <3565.1537336860@warthog.procyon.org.uk>
+        Wed, 19 Sep 2018 08:09:18 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43764 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeISMJR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 08:09:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m84-v6so3932770lje.10;
+        Tue, 18 Sep 2018 23:32:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eTv9Oh0cnzsBkTpYGiDDxRzP2FV70E3x3cQbx6YJ1Yw=;
+        b=DSp4IkyMi7aR0md2ist8V9rVCS/1Gfnv4It+xznXm4W50j9tA0EhW8MmSKq+I2mv1z
+         z7cG7/K6mF57WLw4H2o8wDMaRucdFI1e00Aowk9Bwfj4rMh5YOMw/XI4k4VsTz+cKVKa
+         FKcvVSMOuFdHtItb9d4ZpzFuye5l5HyE356OQwmXYT/aGeuCI3pRQbg7WAD6bMA16XS1
+         1fs+O+35P1ZYge7jGPVoToMsabXhsm9PJ/VGw2OG60D8Xo7u0NzYrK0UWLXy9S0rbdLA
+         fKPfo/hR0fxc84xMZ9wgFd7gG5hLW8hiV92e8dMbA5SJar5lOQfUQwZ9Pz5oWIoy/mVm
+         y1VA==
+X-Gm-Message-State: APzg51AxB/eek+75xwAlj5XchpABhwy6fdxkgk4GO5Ta2BYzmNTlpepR
+        yulBAFKl78M0/FlYqkXLCRU=
+X-Google-Smtp-Source: ANB0VdZ4g9jlZVC4soVTXzIbM2vuN0o722iKcVSfFemReRLjnd+zOoBkqL/eWwFBldq1V6GhfA5jjg==
+X-Received: by 2002:a2e:5810:: with SMTP id m16-v6mr22332584ljb.134.1537338770124;
+        Tue, 18 Sep 2018 23:32:50 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 36-v6sm3782856lja.65.2018.09.18.23.32.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Sep 2018 23:32:49 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 09:32:47 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        sboyd@kernel.org, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
+Message-ID: <20180919063247.GC2295@localhost.localdomain>
+References: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <201809181853.7HyPgIo6%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZJ0kv3G641rgu3qYMev8HnC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201809181853.7HyPgIo6%fengguang.wu@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZJ0kv3G641rgu3qYMev8HnC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello All,
 
-Hi David,
+On Tue, Sep 18, 2018 at 06:13:48PM +0800, kbuild test robot wrote:
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on regulator/for-next]
+> [also build test ERROR on next-20180913]
+> [cannot apply to v4.19-rc4]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regulator-mfd-dt_bindings-bd718x7-Support-ROHM-bd71847/20180914-210454
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> config: x86_64-randconfig-s4-09181517 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+> >> drivers/regulator/bd718x7-regulator.c:364:16: error: implicit declaration of function 'of_match_ptr'; did you mean 'hash_ptr'? [-Werror=implicit-function-declaration]
+>        .of_match = of_match_ptr("BUCK1"),
+>                    ^~~~~~~~~~~~
+>                    hash_ptr
 
-On Wed, 19 Sep 2018 07:01:00 +0100 David Howells <dhowells@redhat.com> wrot=
-e:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > > I think the problem is that I haven't allocated system call numbers f=
-or
-> > > any arches other than x86 - even the x86 syscall numbers are provisio=
-nal
-> > > until the patchset is taken upstream.  I'm not sure of the best way to
-> > > deal with this - make the samples dependent on the X86 arch? =20
-> >=20
-> > But the sample programs are built with HOSTCC, so you can't depend on
-> > ARCH (since I, for one, am cross compiling).  Maybe SUBARCH.  Better
-> > would be to use either Kconfig's shell primitive or some make magic to
-> > figure out if the syscall number define's are defined. =20
->=20
-> I meant put the dependency in the Kconfig.
+This error is not introduced in this patch series. The already in-tree
+implementation of bd71837 driver has this bug already. I'll send a
+trivial patch to Mark for adding the missing include.
 
-Yeah, sure.  Kconfig now has the ability for that dependency to be the
-result of an external program "$(shell ....)", so you could have a
-script or program that checked to see if the syscall numbers are
-defined and then have the Kconfig symbol(s) for the tests depend on that.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZJ0kv3G641rgu3qYMev8HnC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluh7SYACgkQAVBC80lX
-0GxYPgf/bF74y30ZUjwdoFuUqy4+blmM+81kFJkuEtiNT+PQRFDjrzAxZvIGAJX+
-EVNSHZAl6Wfy39W0gCGA6K0GB3YWaNYqlZXjxLPlb28Z910dCjxl44z+cDQ/0qTx
-eooBlAH0z80gFw3MZqPErWf40rV0e0AuILJ6QE7o3qc7+tw6jP+3CiKJshuZFvm4
-RQG54g7Zxva8Nc9180iq68ag8PtYK6f8PzHeCruLU4sDgj/hMeHUcl/EdrCJFf45
-MLxBb5B+kdMUqoh3ByBp2L6GlmWhiNjH4X1veIqUL+CXlJbKyKVseAgBFutnJkbw
-9vgLxBtjLIS4vcMYSNbw0Zi3Uk1PHQ==
-=qN9e
------END PGP SIGNATURE-----
-
---Sig_/ZJ0kv3G641rgu3qYMev8HnC--
+Br,
+	Matti Vaittinen
