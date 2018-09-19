@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9C3ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE7AECE564
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB58206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCA4E21522
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 22:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="IKGzNkdx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB58206B5
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="V+AEPNnu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA4E21522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387544AbeITDpQ (ORCPT
+        id S2387560AbeITDp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 23:45:16 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34058 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387513AbeITDpQ (ORCPT
+        Wed, 19 Sep 2018 23:45:26 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34930 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732739AbeITDp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 23:45:16 -0400
-Received: by mail-ed1-f65.google.com with SMTP id u1-v6so6189256eds.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:18 -0700 (PDT)
+        Wed, 19 Sep 2018 23:45:26 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y20-v6so6191545edq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 15:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rSCg/80tkc3VizwDOMpy701dVmGb5mOTF3fco9aut6Y=;
-        b=IKGzNkdxmkY8G0PcVHnBrO0bcQj6Q8Cu2caGnD6CowOohVO9qbJ65dYm2277SGATrK
-         KGkqtWCFVfwlu8SPv4fFT7ydmL+CRBlz+R12ab5c0nhDYxT6cIlVOtCyQ1ExlwmXwXtF
-         kdTKp5E5ANlYYTtwC15uPb7lFM7MzFnxWdX2k=
+        bh=DnS7tM+CWu9J5KiofCmWRhYZwbelnNnS11kTmjUIIcI=;
+        b=V+AEPNnufi+dzvYhb16826bON62YeRSiHMZs0cC4ZoeFdYelUEn0n2FJgq8aep3VdV
+         F+duQ+qhnxiBLBFEIMjVfjnOFdHDh3V5jhuJyvV7KHbm8yK1zDjHFjBQ2kUsd6pnM/BN
+         s6r5HGlwpJIQGNU4UhStptugwSrH03eelcf0M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rSCg/80tkc3VizwDOMpy701dVmGb5mOTF3fco9aut6Y=;
-        b=fXY7MopvXFZBL/bEyaW17e4pkNzmkC/yB5CJJCG61T7vIrYWa98OUY5Fxk0Pi6qfTC
-         Hnn6dIxPpfjLM18oOsbagfLQ4NQ29US3aWaekaTuXwDhIOUnLUQZqR/w03Sixzrl1I4d
-         Jpwe2w0lnDVMV71JrkS6hYfMkZoPgPNTHG7j79j/j5IrtuekmswnLkcJ1RQV6WBGBn9/
-         LCvrUrmzGhvGYoOz5d/avjQxnPn7H05ZYpxizxfVdvx9HtjFo1pnywexSf2eOqzVd3qK
-         w3p1Ymb6p+L+w/9CLTx7PHij891WfFt22azgru+LX4ODd8A4Hjo+MUWbGqSM9/36TLwg
-         s16g==
-X-Gm-Message-State: APzg51BQwD4+ekaMBXqVyMfpEp6j22ELjZ/Uv1TiOn3DIekJ8GQD1dhC
-        koEscWBGQQNIj235zftFlmG6Zw==
-X-Google-Smtp-Source: ANB0VdZAkk/B63wpSceUuXVKw20rg/1DkQdKRLos4wputBzJvXn9sbSDf/VHiuMgnQoXIDfZx2zZFw==
-X-Received: by 2002:a50:f315:: with SMTP id p21-v6mr60595668edm.233.1537394717840;
-        Wed, 19 Sep 2018 15:05:17 -0700 (PDT)
+        bh=DnS7tM+CWu9J5KiofCmWRhYZwbelnNnS11kTmjUIIcI=;
+        b=iudQopiCPfP7U4ARCQhx47MRneUk3N1O2hkBG5Qi7gtgkKVf1rS236RZnqQ2jRyWcA
+         Ahwdkyh9kwq5SmP20mCUeN9kMhIjz71YkMmcKTCEXVujM3nmVXCf9MSsvluqkakTnF10
+         Rmi303mdeRostrLzTA+XlEaGnovBV+bWndSPiOK6RPG9qVkjI6eqz3kdZ8oWhxSsH3jY
+         p2RI5ytHoxj9RccZ1NaOhddDV6rE6NZs288oqqm0wYokrM5cKI7vhki/K1dB7+emKQX4
+         2EoK2QV7c3bsn69v6jKQbz/iOKpbWVUHOI/QpqMkDiBwKO9xG6IHQiI9ZB7FCO30aVPn
+         2sew==
+X-Gm-Message-State: APzg51AbB7URlhz+cNzCZ7M7WB+AeeEp/zlIIfwboUGr5+Nw0EJQZJ6e
+        /Z3qPwPZT42FN++KB4I62P8XkA==
+X-Google-Smtp-Source: ANB0VdbbOMyhAw2HPGILs+8C54V+BgtoRKsLw6boQLplPFPvx20s1dUOCMUGT7nW1VO06oLIoS2hAg==
+X-Received: by 2002:a50:ac56:: with SMTP id w22-v6mr60103994edc.211.1537394727218;
+        Wed, 19 Sep 2018 15:05:27 -0700 (PDT)
 Received: from prevas-ravi.waoo.dk (dhcp-5-186-115-161.cgn.ip.fibianet.dk. [5.186.115.161])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.14
+        by smtp.gmail.com with ESMTPSA id a9-v6sm2798edi.26.2018.09.19.15.05.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Sep 2018 15:05:17 -0700 (PDT)
+        Wed, 19 Sep 2018 15:05:26 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 18/22] dynamic_debug: introduce accessors for string members of struct _ddebug
-Date:   Thu, 20 Sep 2018 00:04:40 +0200
-Message-Id: <20180919220444.23190-19-linux@rasmusvillemoes.dk>
+Subject: [PATCH 19/22] dynamic_debug: drop use of bitfields in struct _ddebug
+Date:   Thu, 20 Sep 2018 00:04:41 +0200
+Message-Id: <20180919220444.23190-20-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
 References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
@@ -71,135 +71,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we introduce compact versions of these pointers (a la
-CONFIG_GENERIC_BUG_RELATIVE_POINTERS), all access to these members must
-go via appropriate accessors. This just mass-converts dynamic_debug.c to
-use the new accessors.
+Properly initializing a struct containing bitfields in assembly is
+hard. Instead, merge lineno and flags to a single unsigned int, which we
+mask manually. This should not cause any worse code than what gcc would
+need to generate for accessing the bitfields anyway.
+
+Actually, on 64 bit, there is a four byte hole after these fields, so we
+could just give flags and lineno each their own u32. But I don't think
+that's worth the ifdeffery.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- lib/dynamic_debug.c | 51 ++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 17 deletions(-)
+ include/linux/dynamic_debug.h | 12 +++++-------
+ lib/dynamic_debug.c           | 44 ++++++++++++++++++++++++++++---------------
+ 2 files changed, 34 insertions(+), 22 deletions(-)
 
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index b9424097df37..e1be30e8422b 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -20,7 +20,6 @@ struct _ddebug {
+ 	const char *function;
+ 	const char *filename;
+ 	const char *format;
+-	unsigned int lineno:18;
+ 	/*
+ 	 * The flags field controls the behaviour at the callsite.
+ 	 * The bits here are changed dynamically when the user
+@@ -37,7 +36,7 @@ struct _ddebug {
+ #else
+ #define _DPRINTK_FLAGS_DEFAULT 0
+ #endif
+-	unsigned int flags:8;
++	unsigned int flags_lineno; /* flags in lower 8 bits, lineno in upper 24 */
+ #ifdef HAVE_JUMP_LABEL
+ 	union {
+ 		struct static_key_true dd_key_true;
+@@ -46,7 +45,7 @@ struct _ddebug {
+ #endif
+ } __attribute__((aligned(8)));
+ 
+-
++#define _DPRINTK_FLAGS_LINENO_INIT (((unsigned)__LINE__ << 8) | _DPRINTK_FLAGS_DEFAULT)
+ 
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
+@@ -78,8 +77,7 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+ 		.function = __func__,				\
+ 		.filename = __FILE__,				\
+ 		.format = (fmt),				\
+-		.lineno = __LINE__,				\
+-		.flags = _DPRINTK_FLAGS_DEFAULT,		\
++		.flags_lineno = _DPRINTK_FLAGS_LINENO_INIT,	\
+ 		_DPRINTK_KEY_INIT				\
+ 	}
+ 
+@@ -104,10 +102,10 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+ 
+ #ifdef DEBUG
+ #define DYNAMIC_DEBUG_BRANCH(descriptor) \
+-	likely(descriptor.flags & _DPRINTK_FLAGS_PRINT)
++	likely(descriptor.flags_lineno & _DPRINTK_FLAGS_PRINT)
+ #else
+ #define DYNAMIC_DEBUG_BRANCH(descriptor) \
+-	unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT)
++	unlikely(descriptor.flags_lineno & _DPRINTK_FLAGS_PRINT)
+ #endif
+ 
+ #endif
 diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-index e90459dca34b..dbd837f486f9 100644
+index dbd837f486f9..9d4c840ff0de 100644
 --- a/lib/dynamic_debug.c
 +++ b/lib/dynamic_debug.c
-@@ -37,6 +37,23 @@
- #include <linux/device.h>
- #include <linux/netdevice.h>
+@@ -53,6 +53,18 @@ static inline const char *dd_format(const struct _ddebug *dd)
+ {
+ 	return dd->format;
+ }
++static inline unsigned dd_lineno(const struct _ddebug *dd)
++{
++	return dd->flags_lineno >> 8;
++}
++static inline unsigned dd_flags(const struct _ddebug *dd)
++{
++	return dd->flags_lineno & 0xff;
++}
++static inline void dd_set_flags(struct _ddebug *dd, unsigned newflags)
++{
++	dd->flags_lineno = (dd_lineno(dd) << 8) | newflags;
++}
  
-+static inline const char *dd_modname(const struct _ddebug *dd)
-+{
-+	return dd->modname;
-+}
-+static inline const char *dd_function(const struct _ddebug *dd)
-+{
-+	return dd->function;
-+}
-+static inline const char *dd_filename(const struct _ddebug *dd)
-+{
-+	return dd->filename;
-+}
-+static inline const char *dd_format(const struct _ddebug *dd)
-+{
-+	return dd->format;
-+}
-+
  extern struct _ddebug __start___verbose[];
  extern struct _ddebug __stop___verbose[];
+@@ -111,7 +123,7 @@ static char *ddebug_describe_flags(struct _ddebug *dp, char *buf,
  
-@@ -158,21 +175,21 @@ static int ddebug_change(const struct ddebug_query *query,
+ 	BUG_ON(maxlen < 6);
+ 	for (i = 0; i < ARRAY_SIZE(opt_array); ++i)
+-		if (dp->flags & opt_array[i].flag)
++		if (dd_flags(dp) & opt_array[i].flag)
+ 			*p++ = opt_array[i].opt_char;
+ 	if (p == buf)
+ 		*p++ = '_';
+@@ -157,7 +169,7 @@ static int ddebug_change(const struct ddebug_query *query,
+ {
+ 	int i;
+ 	struct ddebug_table *dt;
+-	unsigned int newflags;
++	unsigned int newflags, oldflags;
+ 	unsigned int nfound = 0;
+ 	char flagbuf[10];
  
- 			/* match against the source filename */
- 			if (query->filename &&
--			    !match_wildcard(query->filename, dp->filename) &&
-+			    !match_wildcard(query->filename, dd_filename(dp)) &&
- 			    !match_wildcard(query->filename,
--					   kbasename(dp->filename)) &&
-+					   kbasename(dd_filename(dp))) &&
- 			    !match_wildcard(query->filename,
--					   trim_prefix(dp->filename)))
-+					   trim_prefix(dd_filename(dp))))
- 				continue;
- 
- 			/* match against the function */
- 			if (query->function &&
--			    !match_wildcard(query->function, dp->function))
-+			    !match_wildcard(query->function, dd_function(dp)))
- 				continue;
- 
- 			/* match against the format */
- 			if (query->format &&
--			    !strstr(dp->format, query->format))
-+			    !strstr(dd_format(dp), query->format))
- 				continue;
+@@ -194,27 +206,28 @@ static int ddebug_change(const struct ddebug_query *query,
  
  			/* match against the line number range */
-@@ -197,8 +214,8 @@ static int ddebug_change(const struct ddebug_query *query,
+ 			if (query->first_lineno &&
+-			    dp->lineno < query->first_lineno)
++			    dd_lineno(dp) < query->first_lineno)
+ 				continue;
+ 			if (query->last_lineno &&
+-			    dp->lineno > query->last_lineno)
++			    dd_lineno(dp) > query->last_lineno)
+ 				continue;
+ 
+ 			nfound++;
+ 
+-			newflags = (dp->flags & mask) | flags;
+-			if (newflags == dp->flags)
++			oldflags = dd_flags(dp);
++			newflags = (oldflags & mask) | flags;
++			if (newflags == oldflags)
+ 				continue;
+ #ifdef HAVE_JUMP_LABEL
+-			if (dp->flags & _DPRINTK_FLAGS_PRINT) {
++			if (oldflags & _DPRINTK_FLAGS_PRINT) {
+ 				if (!(flags & _DPRINTK_FLAGS_PRINT))
+ 					static_branch_disable(&dp->key.dd_key_true);
+ 			} else if (flags & _DPRINTK_FLAGS_PRINT)
+ 				static_branch_enable(&dp->key.dd_key_true);
  #endif
- 			dp->flags = newflags;
+-			dp->flags = newflags;
++			dd_set_flags(dp, newflags);
  			vpr_info("changed %s:%d [%s]%s =%s\n",
--				 trim_prefix(dp->filename), dp->lineno,
--				 dt->mod_name, dp->function,
-+				 trim_prefix(dd_filename(dp)), dp->lineno,
-+				 dt->mod_name, dd_function(dp),
+-				 trim_prefix(dd_filename(dp)), dp->lineno,
++				 trim_prefix(dd_filename(dp)), dd_lineno(dp),
+ 				 dt->mod_name, dd_function(dp),
  				 ddebug_describe_flags(dp, flagbuf,
  						       sizeof(flagbuf)));
- 		}
-@@ -533,10 +550,10 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+@@ -537,10 +550,11 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+ {
+ 	int pos_after_tid;
+ 	int pos = 0;
++	unsigned flags = dd_flags(desc);
+ 
+ 	*buf = '\0';
+ 
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_TID) {
++	if (flags & _DPRINTK_FLAGS_INCL_TID) {
+ 		if (in_interrupt())
+ 			pos += snprintf(buf + pos, remaining(pos), "<intr> ");
+ 		else
+@@ -548,15 +562,15 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+ 					task_pid_vnr(current));
+ 	}
  	pos_after_tid = pos;
- 	if (desc->flags & _DPRINTK_FLAGS_INCL_MODNAME)
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_MODNAME)
++	if (flags & _DPRINTK_FLAGS_INCL_MODNAME)
  		pos += snprintf(buf + pos, remaining(pos), "%s:",
--				desc->modname);
-+				dd_modname(desc));
- 	if (desc->flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
+ 				dd_modname(desc));
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
++	if (flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
  		pos += snprintf(buf + pos, remaining(pos), "%s:",
--				desc->function);
-+				dd_function(desc));
- 	if (desc->flags & _DPRINTK_FLAGS_INCL_LINENO)
+ 				dd_function(desc));
+-	if (desc->flags & _DPRINTK_FLAGS_INCL_LINENO)
++	if (flags & _DPRINTK_FLAGS_INCL_LINENO)
  		pos += snprintf(buf + pos, remaining(pos), "%d:",
- 				desc->lineno);
-@@ -790,10 +807,10 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+-				desc->lineno);
++				dd_lineno(desc));
+ 	if (pos - pos_after_tid)
+ 		pos += snprintf(buf + pos, remaining(pos), " ");
+ 	if (pos >= PREFIX_SIZE)
+@@ -807,7 +821,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
  	}
  
  	seq_printf(m, "%s:%u [%s]%s =%s \"",
--		   trim_prefix(dp->filename), dp->lineno,
--		   iter->table->mod_name, dp->function,
-+		   trim_prefix(dd_filename(dp)), dp->lineno,
-+		   iter->table->mod_name, dd_function(dp),
+-		   trim_prefix(dd_filename(dp)), dp->lineno,
++		   trim_prefix(dd_filename(dp)), dd_lineno(dp),
+ 		   iter->table->mod_name, dd_function(dp),
  		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
--	seq_escape(m, dp->format, "\t\r\n\"");
-+	seq_escape(m, dd_format(dp), "\t\r\n\"");
- 	seq_puts(m, "\"\n");
- 
- 	return 0;
-@@ -987,20 +1004,20 @@ static int __init dynamic_debug_init(void)
- 		return 1;
- 	}
- 	iter = __start___verbose;
--	modname = iter->modname;
-+	modname = dd_modname(iter);
- 	iter_start = iter;
- 	for (; iter < __stop___verbose; iter++) {
- 		entries++;
--		verbose_bytes += strlen(iter->modname) + strlen(iter->function)
--			+ strlen(iter->filename) + strlen(iter->format);
-+		verbose_bytes += strlen(dd_modname(iter)) + strlen(dd_function(iter))
-+			+ strlen(dd_filename(iter)) + strlen(dd_format(iter));
- 
--		if (strcmp(modname, iter->modname)) {
-+		if (strcmp(modname, dd_modname(iter))) {
- 			modct++;
- 			ret = ddebug_add_module(iter_start, n, modname);
- 			if (ret)
- 				goto out_err;
- 			n = 0;
--			modname = iter->modname;
-+			modname = dd_modname(iter);
- 			iter_start = iter;
- 		}
- 		n++;
+ 	seq_escape(m, dd_format(dp), "\t\r\n\"");
 -- 
 2.16.4
 
