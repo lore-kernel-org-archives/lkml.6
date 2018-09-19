@@ -2,137 +2,151 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FC5ECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2914C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB15208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89D4C21521
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 18:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe4VUTgy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB15208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="txfmFsY/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D4C21521
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733282AbeITAZN (ORCPT
+        id S1732998AbeITA0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 20:25:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732027AbeITAZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 20:25:13 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0582D208A3;
-        Wed, 19 Sep 2018 18:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537382760;
-        bh=RKzk0AMgT7dBjfmLid1GTI+uSaEy2Nq9uvMt+yPQoD8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qe4VUTgybOmM8jXomGU0It2zrtNZRFEsdTgN26mkpfVkdvHcaRQoY7tt/u/X4GpZ+
-         lN6VAJEJL7CnnEac33ugj19F03yVWtlkUVNwRrQp4qkcO5JFM4z39S86FidP/V5dWs
-         Md9dLCNzHoHChJBbLUbLMNb08M3tdYFPTcvACdg8=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 3DF57140260; Wed, 19 Sep 2018 15:45:56 -0300 (-03)
-Date:   Wed, 19 Sep 2018 15:45:56 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] perf script: Enhance sample flags for trace begin /
- end
-Message-ID: <20180919184556.GJ31812@kernel.org>
-References: <20180919112338.20347-1-adrian.hunter@intel.com>
- <20180919112338.20347-2-adrian.hunter@intel.com>
+        Wed, 19 Sep 2018 20:26:44 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35075 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727676AbeITA0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 20:26:44 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p10-v6so6038904ljg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 11:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ApIGaPDQ9w0yju1KQqotIu/pbBqMxLwdaihRPOvwaII=;
+        b=txfmFsY/fft2+Atd8q9GjaHUFtv8c7D6O0ledlXH1EZPigxny2Z+7FHCg7x81bE+VC
+         9QP/88DmiUafx/SquguuSPbMHSEModTH6wJG/K1KoKXfCbDM2Ydf+8DWDw3WyKzvrgEN
+         /yVmFdn3WKqdRcwoG013Flh1wjk+xdZEVESNE/ocLuGroyYlmNnRWlplTpGD5Rs8s8UW
+         cXBT3qE2dLKYlY/rGlu5VPFsvfDLv1SvZ4f6NiXCU38EzVHGNNLqw3mhiau3mceg7IXT
+         hTvus4mOsPmFLFGPTI/CWOA6h9TnSgLKzDfLNaXtzCau/0xLM2GwEfHWxnY++jnft4YX
+         trww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ApIGaPDQ9w0yju1KQqotIu/pbBqMxLwdaihRPOvwaII=;
+        b=sAXAKi7K7o8bkCo48uKC34B64rRbIVR16rkqu84tFkTZw8G2sTNXLquC/ZH3bxVrO4
+         llRriziRkthckkj+LN7podhD7CH9vK27pTUUnrsnYMpie+4SNdX5uD8hZ2QdVnwbzE4p
+         uUqs7i8D7b4CxowlZjp39ujNegqYoYTQTZmqHG4YK0i38tfgd3v17XMu8JY1wy5MQgkL
+         w7Lx8gTKjGUaN+co1+XOpCS1z7S/VD0AlgejL8IpCBU9iL7kiW6AQXqg5zHUHvj0OzXe
+         r1lRPPwEKiLjBsqtmOBFAq2jmTy7lolEMhZZYdMV36vYKlL53GMFruicd9Mb1YGl27Q0
+         2vjQ==
+X-Gm-Message-State: APzg51ArXoBXY1dAZ+eYT/KArK3e5J/2Y0fq1DxAGZ3S1SDtd19NhoO7
+        8qdPaSkwgNSpFP2+/IO1EC88uGzZp7iU8VGMys0H
+X-Google-Smtp-Source: ANB0VdaT01ea2XIDYMFMINJLCaUILV2dff4C1rBEuzdO2gMaNTyWJ8pzodCPLRk6Zc8g4gNACXXyWQ4zuUeqzt/uIjI=
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr23214202ljj.139.1537382849506;
+ Wed, 19 Sep 2018 11:47:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180919112338.20347-2-adrian.hunter@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180919165248.53090-1-takondra@cisco.com>
+In-Reply-To: <20180919165248.53090-1-takondra@cisco.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 19 Sep 2018 14:47:18 -0400
+Message-ID: <CAHC9VhRhfdpjTDh8itu=0uNerpmaR7t+t7jdpfWqScaWL_RUJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] selinux: add a fallback to defcontext for native labeling
+To:     takondra@cisco.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
+        linux-kernel@vger.kernel.org, xe-linux-external@cisco.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Sep 19, 2018 at 02:23:33PM +0300, Adrian Hunter escreveu:
-> Allow for different combinations of sample flags with "trace begin" or
-> "trace end".
-
-Please describe how you would use this with some command and its output.
-
-- Arnaldo
- 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+On Wed, Sep 19, 2018 at 12:52 PM Taras Kondratiuk <takondra@cisco.com> wrote:
+> When files on NFSv4 server are not properly labeled (label doesn't match
+> a policy on a client) they will end up with unlabeled_t type which is
+> too generic. We would like to be able to set a default context per
+> mount. 'defcontext' mount option looks like a nice solution, but it
+> doesn't seem to be fully implemented for native labeling. Default
+> context is stored, but is never used.
+>
+> The patch adds a fallback to a default context if a received context is
+> invalid. If the inode context is already initialized, then it is left
+> untouched to preserve a context set locally on a client.
+>
+> Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 > ---
->  tools/perf/builtin-script.c | 36 +++++++++++++++++++++++++++---------
->  1 file changed, 27 insertions(+), 9 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 6176bae177c2..4982380ba96d 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -1255,6 +1255,18 @@ static struct {
->  	{0, NULL}
->  };
->  
-> +static const char *sample_flags_to_name(u32 flags)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; sample_flags[i].name ; i++) {
-> +		if (sample_flags[i].flags == flags)
-> +			return sample_flags[i].name;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
+>  security/selinux/hooks.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+
+The idea seems reasonable to me; if we want to treat labeled NFS like
+we treat local filesystems we should also support the defcontext mount
+option.
+
+However, I wonder if we are better off generalizing some of the
+SECURITY_FS_USE_XATTR based code in inode_doinit_with_dentry() such
+that it can be used both in selinux_inode_notifysecctx() and in
+inode_doinit_with_dentry().  Or maybe we just need a sbsec->def_sid
+variant of selinux_inode_setsecurity().  Regardless, the key is the
+call to security_context_to_sid_default(), the
+selinux_inode_setsecurity() function only calls
+security_context_to_sid().
+
+Just in case anyone is wondering, I'm not sure I want to update
+selinux_inode_setsecurity() to call security_context_to_sid_default();
+at least not without more investigation.
+
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index ad9a9b8e9979..f7debe798bf5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6598,7 +6598,30 @@ static void selinux_inode_invalidate_secctx(struct inode *inode)
+>   */
+>  static int selinux_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
 >  {
->  	const char *chars = PERF_IP_FLAG_CHARS;
-> @@ -1264,11 +1276,20 @@ static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
->  	char str[33];
->  	int i, pos = 0;
->  
-> -	for (i = 0; sample_flags[i].name ; i++) {
-> -		if (sample_flags[i].flags == (flags & ~PERF_IP_FLAG_IN_TX)) {
-> -			name = sample_flags[i].name;
-> -			break;
-> -		}
-> +	name = sample_flags_to_name(flags & ~PERF_IP_FLAG_IN_TX);
-> +	if (name)
-> +		return fprintf(fp, "  %-15s%4s ", name, in_tx ? "(x)" : "");
+> -       return selinux_inode_setsecurity(inode, XATTR_SELINUX_SUFFIX, ctx, ctxlen, 0);
+> +       struct superblock_security_struct *sbsec;
+> +       struct inode_security_struct *isec;
+> +       int rc;
 > +
-> +	if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
-> +		name = sample_flags_to_name(flags & ~(PERF_IP_FLAG_IN_TX | PERF_IP_FLAG_TRACE_BEGIN));
-> +		if (name)
-> +			return fprintf(fp, "  tr strt %-7s%4s ", name, in_tx ? "(x)" : "");
-> +	}
+> +       rc = selinux_inode_setsecurity(inode, XATTR_SELINUX_SUFFIX, ctx, ctxlen, 0);
 > +
-> +	if (flags & PERF_IP_FLAG_TRACE_END) {
-> +		name = sample_flags_to_name(flags & ~(PERF_IP_FLAG_IN_TX | PERF_IP_FLAG_TRACE_END));
-> +		if (name)
-> +			return fprintf(fp, "  tr end  %-7s%4s ", name, in_tx ? "(x)" : "");
->  	}
->  
->  	for (i = 0; i < n; i++, flags >>= 1) {
-> @@ -1281,10 +1302,7 @@ static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
->  	}
->  	str[pos] = 0;
->  
-> -	if (name)
-> -		return fprintf(fp, "  %-7s%4s ", name, in_tx ? "(x)" : "");
-> -
-> -	return fprintf(fp, "  %-11s ", str);
-> +	return fprintf(fp, "  %-19s ", str);
+> +       /*
+> +        * In case of Native labeling with defcontext mount option fall back
+> +        * to a default SID if received context is invalid.
+> +        */
+> +       if (rc == -EINVAL) {
+> +               sbsec = inode->i_sb->s_security;
+> +               if (sbsec->behavior == SECURITY_FS_USE_NATIVE &&
+> +                   sbsec->flags & DEFCONTEXT_MNT) {
+> +                       isec = inode->i_security;
+> +                       if (!isec->initialized) {
+> +                               isec->sclass = inode_mode_to_security_class(inode->i_mode);
+> +                               isec->sid = sbsec->def_sid;
+> +                               isec->initialized = 1;
+> +                       }
+> +                       rc = 0;
+> +               }
+> +       }
+> +       return rc;
 >  }
->  
->  struct printer_data {
-> -- 
-> 2.17.1
+>
+>  /*
+> --
+> 2.10.3.dirty
+>
+
+
+-- 
+paul moore
+www.paul-moore.com
