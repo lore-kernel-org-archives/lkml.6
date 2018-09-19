@@ -2,82 +2,89 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3CEECE564
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD771C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D8C2151C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YBZdMZI3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D8C2151C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6CC552151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 12:53:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC552151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731759AbeISSa6 (ORCPT
+        id S1731721AbeISSa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 19 Sep 2018 14:30:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34380 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731419AbeISSa6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mx1.redhat.com ([209.132.183.28]:52951 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728192AbeISSa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Sep 2018 14:30:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2PBXzP63wx/moa6VlflkmSL69hR5b374uZW4i277Q5s=; b=YBZdMZI3BGsQj6bS0N+q872Ie
-        nJprUip5pLm6S4Gr2Zf2W66lJOtREnqeS2G4Eprk7/TJETLJCwuEZVHs4eZ58XoM3/EHTyGO4RBUD
-        qIuzHJZuR8oK3L0b8m9P4TJ4t/ymOhnXFFrfioRxDb9TqZf6j41y7DZR1P0mthha9owEj2lX8Qkf9
-        GfjkU6AhWtU8+NB5LJdX2BttQ7R66odCPX9ZYnCLkY1IG0vRKnvRSg+vSCXRzWLYgQk1j+S08XUmB
-        Fks8ZzAr6D4ycLw8WvOZEMXm2wEijpiSm0HCkgvQDTZx9A0yold1U7hZi9m+1JzlSDeKO75S8fW4j
-        jDjgejuoQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g2byY-0008Qm-I0; Wed, 19 Sep 2018 12:53:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 161062024E44A; Wed, 19 Sep 2018 14:52:59 +0200 (CEST)
-Date:   Wed, 19 Sep 2018 14:52:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ingo Molnar <mingo@redhat.com>, segher@kernel.crashing.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 1/2] sched: move stack_canary field at the top of
- task_struct
-Message-ID: <20180919125259.GG24124@hirez.programming.kicks-ass.net>
-References: <d60ce7dd74704b0ca0a857186f30de4006b63534.1537355312.git.christophe.leroy@c-s.fr>
- <20180919115836.GE24124@hirez.programming.kicks-ass.net>
- <f6a36d25-ce19-5d56-69d9-198215a7b9e1@c-s.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6a36d25-ce19-5d56-69d9-198215a7b9e1@c-s.fr>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DEBB3308ED65;
+        Wed, 19 Sep 2018 12:53:08 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-52.pek2.redhat.com [10.72.12.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D4E4F18E28;
+        Wed, 19 Sep 2018 12:52:56 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, akpm@linux-foundation.org,
+        dan.j.williams@intel.com, thomas.lendacky@amd.com,
+        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
+        bp@suse.de, brijesh.singh@amd.com, dyoung@redhat.com
+Subject: [PATCH 0/3 v2] add reserved e820 ranges to the kdump kernel e820 table
+Date:   Wed, 19 Sep 2018 20:52:48 +0800
+Message-Id: <20180919125251.8181-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 19 Sep 2018 12:53:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 02:25:00PM +0200, Christophe LEROY wrote:
-> I have not been able to find a way to define the compilation flags AFTER
-> building asm-offsets.h, see https://patchwork.ozlabs.org/patch/971521/
-> 
-> If you have a suggestion, it is welcomed.
+E820 reserved ranges is useful in kdump kernel, we have added this in
+kexec-tools code.
 
-Not really; I always get lost in that stuff :/
+One reason is PCI mmconf (extended mode) requires reserved region otherwise
+it falls back to legacy mode.
 
-> > Might as well put it before state, right after the task_info thing.
-> > 
-> 
-> Yes, it doesn't make much difference, don't any arch expect state at offset
-> 0 ?
+Furthermore, when AMD SME kdump support, it needs to map dmi table area as
+unencrypted. For normal boot these ranges sit in e820 reserved ranges thus
+the early ioremap code naturally map them as unencrypted. So if we have same
+e820 reserve setup in kdump kernel then it will just work like normal kernel.
 
-Uhmm.. dunno. I would not expect so, but then I didn't check.
+Kdump use walk_iomem_res_desc to iterate resources then add matched desc to
+e820 table for the kdump kernel.
+
+But IORES_DESC_NONE resource type includes several different e820 types, we
+need add exact e820 type to the kdump kernel e820 table thus need an extra
+checking in memmap_entry_callback() to match the e820 type and resource name.
+
+By the way, we also fix an error which walks through iomem resources, the
+values of the function parameter may be modified in the while loop of
+__walk_iomem_res_desc(), which will cause us to not get the desired result
+in some cases.
+
+Changes since v1:
+1. We modified the value of flags to "0", when walking through the whole
+tree for e820 reserved ranges.
+
+Lianbo Jiang (3):
+  resource: fix an error which walks through iomem resources
+  x86/kexec_file: add e820 entry in case e820 type string matches to io
+    resource name
+  x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
+
+ arch/x86/include/asm/e820/api.h |  2 ++
+ arch/x86/kernel/crash.c         | 11 ++++++++++-
+ arch/x86/kernel/e820.c          |  2 +-
+ kernel/resource.c               |  3 +++
+ 4 files changed, 16 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
