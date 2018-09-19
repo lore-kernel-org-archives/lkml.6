@@ -2,213 +2,124 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B587C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9221FC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3712146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:06:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cantab.net header.i=@cantab.net header.b="qvI5bjMM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3712146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cantab.net
+	by mail.kernel.org (Postfix) with ESMTP id 483CB2098A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 06:07:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483CB2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbeISLme (ORCPT
+        id S1731068AbeISLna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 07:42:34 -0400
-Received: from mta01.prd.rdg.aluminati.org ([94.76.243.214]:53275 "EHLO
-        mta01.prd.rdg.aluminati.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730604AbeISLme (ORCPT
+        Wed, 19 Sep 2018 07:43:30 -0400
+Received: from p3plsmtpa06-07.prod.phx3.secureserver.net ([173.201.192.108]:37627
+        "EHLO p3plsmtpa06-07.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731052AbeISLna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 07:42:34 -0400
-X-Greylist: delayed 344 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Sep 2018 07:42:32 EDT
-Received: from mta01.prd.rdg.aluminati.org (localhost [127.0.0.1])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id 4DC9720F2C
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 07:00:29 +0100 (BST)
-Received: from localhost (localhost [127.0.0.1])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id 4778920F04
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 07:00:29 +0100 (BST)
-Authentication-Results: mta01.prd.rdg.aluminati.org (amavisd-new);
-        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
-        header.d=cantab.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cantab.net; h=
-        content-transfer-encoding:content-language:mime-version
-        :user-agent:date:date:message-id:subject:subject:from:from
-        :received:received; s=dkim; t=1537336827; bh=+46RYLRDQHkzTmmowgB
-        6haHl9wbzeFK1hhMk7yCkaXg=; b=qvI5bjMMXEM9bKV7XUpf7bcv8LM5FHR+YDB
-        z5adbf8Nlkj+xJVuXnT9SXnsr/RxlSQ5Nw+bTvcUbiiiItPyXQChzZx4a7nhAZKg
-        xREkVaA/niQ6zMp4nPgGGYXz93AZESxIjFp/hwc9kMoGGkbuSHpI+CxydFzVN63w
-        Has40zc6Nkhy50SH8wTpKS/u3flGBzKKBF3ncjYnW5PybIsTRSqsGxATStov5sRt
-        JyPI2RaSvWuScyHeke8TXdwCm6rLNzN/XF2IoMhXvDZER6jBWzMl1ZMqgICBn2kG
-        MYFctjQeYR0qick6W7gtNt9k8cwguaKjpQQeF/b+8zcan00sPyg==
-X-Quarantine-ID: <bB1rDNDgIEl2>
-X-Virus-Scanned: Debian amavisd-new at mta01.prd.rdg.aluminati.org
-Received: from mta.aluminati.local ([127.0.0.1])
-        by localhost (mta01.prd.rdg.aluminati.org [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id bB1rDNDgIEl2 for <linux-kernel@vger.kernel.org>;
-        Wed, 19 Sep 2018 07:00:27 +0100 (BST)
-Received: from [192.168.0.2] (cpc92884-cmbg20-2-0-cust324.5-4.cable.virginm.net [80.1.217.69])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTPSA id 9947762FDC
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 07:00:26 +0100 (BST)
-To:     linux-kernel@vger.kernel.org
-From:   Edward Cree <ec429@cantab.net>
-Subject: Re: Code of Conduct: Let's revamp it.
-Message-ID: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
-Date:   Wed, 19 Sep 2018 07:00:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 19 Sep 2018 07:43:30 -0400
+Received: from [172.20.1.132] ([50.235.29.93])
+        by :SMTPAUTH: with ESMTPSA
+        id 2VWhguSHRrtGy2VWhgOGEs; Tue, 18 Sep 2018 22:59:52 -0700
+Subject: Re: [Patch v7 21/22] CIFS: SMBD: Upper layer performs SMB read via
+ RDMA write through memory registration
+To:     Long Li <longli@exchange.microsoft.com>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Tom Talpey <ttalpey@microsoft.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Cc:     Long Li <longli@microsoft.com>
+References: <20171107085514.12693-1-longli@exchange.microsoft.com>
+ <20171107085514.12693-22-longli@exchange.microsoft.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <9b02dadb-d21b-7a8d-7803-910041f66047@talpey.com>
+Date:   Tue, 18 Sep 2018 22:59:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20171107085514.12693-22-longli@exchange.microsoft.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAS1IWOXLvbN15IWhnLiiLYPIgj3njHghlZ739UQ7I3KKR0ehxxgZ4L0XwQ6rDRqgcKOIcxzNJCrJQzazoFgcuNqVffAGBumLiW6835KED+B6gGX3Wti
+ xZwoq2pLYEpvc3xpVLPwdNNA5m/JTvlx8dmToZ6jA8Xem3qCB9GchEc/C5kamtcThxwR1AlloVRpDyS0Vq3RGQmpmhN9dgNz0BZjF0LjO7oz7qUlxacDLA5L
+ /SWU7ZgwceMbUXLuB/F6LZ74GdAp64tZyqxnnCEn1h3BumWWdwB2WRbJ9ySU0PPG3DiMwQf8unV2Ojq6MBrgxHOZtbxjzOmCzZWidP0GJTxELd2hJhFVq7Z7
+ hKsMMQkdiV2cRGNB5mjoi63wbPxFLsA+qHMXFjCIauLuYyrp3Az9BSEJA7rzkmycF6FAbvbVRYWfNXOuJQEa4HEXzCX2yhA2jcGdqGvl5Kb5bRffCh8tKWK1
+ H7h7mHXiQUFZv4qaDilJEzY7zVBsHL6Xd8yAf+GfH6g11eIypjc669ezWc4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new Code of Conduct makes me feel threatened and uncomfortable.
+Replying to a very old message, but it's something we
+discussed today at the IOLab event so to capture it:
 
-No, really.=C2=A0 As a person with (diagnosed) Asperger's, I'm a member o=
-f,
- =C2=A0objectively, a marginalised minority.=C2=A0 Effectively (i.e. this=
- is a massive
- =C2=A0oversimplification), I was born without the hard-wired circuitry f=
-or=20
-social
- =C2=A0interactions that is normally a part of the human brain; consequen=
-tly=20
-I have
- =C2=A0to run a slow and inaccurate software simulation when interacting =
-with
- =C2=A0'normal' people.
+On 11/7/2017 12:55 AM, Long Li wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> ---
+>   fs/cifs/file.c    | 17 +++++++++++++++--
+>   fs/cifs/smb2pdu.c | 45 ++++++++++++++++++++++++++++++++++++++++++++-
+>   2 files changed, 59 insertions(+), 3 deletions(-)
+> ...
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index c8afb83..8a5ff90 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -2379,7 +2379,40 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+>   	req->MinimumCount = 0;
+>   	req->Length = cpu_to_le32(io_parms->length);
+>   	req->Offset = cpu_to_le64(io_parms->offset);
+> +#ifdef CONFIG_CIFS_SMB_DIRECT
+> +	/*
+> +	 * If we want to do a RDMA write, fill in and append
+> +	 * smbd_buffer_descriptor_v1 to the end of read request
+> +	 */
+> +	if (server->rdma && rdata &&
+> +		rdata->bytes >= server->smbd_conn->rdma_readwrite_threshold) {
+> +
+> +		struct smbd_buffer_descriptor_v1 *v1;
+> +		bool need_invalidate =
+> +			io_parms->tcon->ses->server->dialect == SMB30_PROT_ID;
+> +
+> +		rdata->mr = smbd_register_mr(
+> +				server->smbd_conn, rdata->pages,
+> +				rdata->nr_pages, rdata->tailsz,
+> +				true, need_invalidate);
+> +		if (!rdata->mr)
+> +			return -ENOBUFS;
+> +
+> +		req->Channel = SMB2_CHANNEL_RDMA_V1_INVALIDATE;
+> +		if (need_invalidate)
+> +			req->Channel = SMB2_CHANNEL_RDMA_V1;
+> +		req->ReadChannelInfoOffset =
+> +			offsetof(struct smb2_read_plain_req, Buffer);
+> +		req->ReadChannelInfoLength =
+> +			sizeof(struct smbd_buffer_descriptor_v1);
+> +		v1 = (struct smbd_buffer_descriptor_v1 *) &req->Buffer[0];
+> +		v1->offset = rdata->mr->mr->iova;
 
-In nearly all the communities I participate in, this is a constantly=20
-limiting
- =C2=A0factor for me.=C2=A0 But there is one world that is blessedly free=
- of such=20
-things:
- =C2=A0the world of open-source software.=C2=A0 It is one of the last pla=
-ces where my
- =C2=A0particular neurodiversity does _not_ mark me out as Other, does _n=
-ot_=20
-force
- =C2=A0me to carefully watch what I say and present a falsely constructed=
-=20
-fa=C3=A7ade in
- =C2=A0place of my real identity.=C2=A0 For here, we care not for 'feelin=
-gs';=20
-either the
- =C2=A0code is good or it is bad, and in the latter case we say so direct=
-ly and
- =C2=A0bluntly.=C2=A0 Not only does this mean that I don't have to guard =
-my tongue=20
-when
- =C2=A0critiquing someone else's patch, far more importantly it means I c=
-an
- =C2=A0understand what's being said when _my_ patches are criticised.=C2=A0=
-=20
-(Almost all
- =C2=A0of my best ideas and patches have been born out of someone telling=
- me I'm
- =C2=A0wrong.)
+It's unnecessary, and possibly leaking kernel information, to use
+the IOVA as the offset of a memory region which is registered using
+an FRWR. Because such regions are based on the exact bytes targeted
+by the memory handle, the offset can be set to any value, typically
+zero, but nearly arbitrary. As long as the (offset + length) does
+not wrap or otherwise overflow, offset can be set to anything
+convenient.
 
-The Linux kernel community is a place without office politics, without=20
-subtle
- =C2=A0subtexts, without primate dominance dynamics.=C2=A0 A place where =
-criticism=20
-_can_
- =C2=A0be gracefully accepted _without_ having to worry that admitting to=
- being
- =C2=A0wrong will lower one's status.=C2=A0 A place where I, and people l=
-ike me,=20
-can feel
- =C2=A0at home, and maybe even create something of value.
+Since SMB reads and writes range up to 8MB, I'd suggest zeroing the
+least significant 23 bits, which should guarantee it. The other 41
+bits, party on. You could randomize them, pass some clever identifier
+such as MID sequence, whatever.
 
-And the Contributor Covenant looks very much like the camel's nose of an
- =C2=A0attempt to take that place, that community, away from me.=C2=A0 To=
- replace=20
-it with
- =C2=A0an Orwellian nightmare where I must forever second-guess what is s=
-afe=20
-to say.
- =C2=A0(First they came for "master/slave replication", and I did not spe=
-ak up
- =C2=A0because I was not a DBA.)
+Tom.
 
-I cannot speak for my employer (hence why I am posting this from my perso=
-nal
- =C2=A0address), but to the extent that my r=C3=B4le as a contributor to =
-the=20
-networking
- =C2=A0subsystem, and as co-maintainer of the sfc driver, gives me any=20
-standing in a
- =C2=A0_personal_ capacity, I absolutely cannot sign up to this 'Pledge' =
-nor=20
-accept
- =C2=A0the 'Responsibilities' to police the speech of others that it make=
-s a=20
-duty of
- =C2=A0maintainership, and I urge the project leadership to revert its ad=
-option.
-
-Some elements of the Code are unobjectionable; sexual advances, for=20
-instance,
- =C2=A0have no place on the lkml (though they may at, say, a conference, =
-and not
- =C2=A0everyone can reliably predict whether they are unwelcome), and the=
-=20
-ability of
- =C2=A0kernel developers to accept constructive criticism is one of the s=
-trengths
- =C2=A0that has made Linux what it is.=C2=A0 But far too many of its prov=
-isions=20
-rely on
- =C2=A0ill-defined terms, and thus give those charged with interpreting t=
-hose=20
-terms
- =C2=A0the power to destroy livelihoods.=C2=A0 By placing a corporate bod=
-y (the LF) in
- =C2=A0the position of arbiter, an avenue is opened for commercial pressu=
-re to be
- =C2=A0applied; and the legalistic phrasing of the Code practically invit=
-es=20
-rules-
- =C2=A0lawyering whereby the most abusive may twist it into a weapon to f=
-urther
- =C2=A0their abuse.
-
-If the Code were reduced to something more like the old Code of Conflict,
- =C2=A0reminding people to 'be liberal in what they accept and conservati=
-ve=20
-in what
- =C2=A0they emit', and clarifying that patch submissions should be judged=
- by the
- =C2=A0_code_ and not by any characteristics or beliefs of the submitter =
-(I don't
- =C2=A0think the enumerated list of protected classes is helpful, as a le=
-galistic
- =C2=A0abuser can always slip into a crack between them), I think the sti=
-ng=20
-would be
- =C2=A0drawn.=C2=A0 Probably the CoConflict would make a better base from=
- which to=20
-draft
- =C2=A0such a document.
-
-(A note for the irony-challenged: where I use Progressive terms-of-art, s=
-uch
- =C2=A0as 'marginalised', 'Other' and 'identity', in the above, I am=20
-endeavouring to
- =C2=A0show that this alleged push for 'inclusiveness' fails on its own=20
-terms; I am
- =C2=A0_not_ accepting the theory behind those terms nor suggesting that,=
- in
- =C2=A0reality, the kernel community owes me any special treatment on acc=
-ount=20
-of my
- =C2=A0'diversity'.)
-
+> +		v1->token = rdata->mr->mr->rkey;
+> +		v1->length = rdata->mr->mr->length;
