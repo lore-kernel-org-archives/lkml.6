@@ -2,222 +2,224 @@ Return-Path: <SRS0=r9ZY=MB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B08C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9002ECE562
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C404214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:49:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iw5iCOZD";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Tuw4Y1xx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C404214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 53062208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Sep 2018 05:50:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53062208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730947AbeISL0C (ORCPT
+        id S1730962AbeISL0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Sep 2018 07:26:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46228 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeISL0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Sep 2018 07:26:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 92BB0607F7; Wed, 19 Sep 2018 05:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537336185;
-        bh=ShiRCLXYSEuLZ0LPq+UdWgfCsSzyjgSHUs0yQxxoChY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=iw5iCOZDmxz7Rtbd8InNbju8iTn6BD3EHN2MITdEUx/P0OfUEmXQ09664YxOlL0of
-         9kqjfYm/sd8zBBH75Vn8AR1xxkpETMRdLTe1Yck6xf1vPt1e1PvVawbtXUsbG5GmPR
-         GluNE1hBpbNyJyrHxhGVVyLfpaVQxwoQgJrcKrqU=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 64D9E607F7;
-        Wed, 19 Sep 2018 05:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537336184;
-        bh=ShiRCLXYSEuLZ0LPq+UdWgfCsSzyjgSHUs0yQxxoChY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Tuw4Y1xxd1AmP58noouuywIs5719JlhyE7Xvtn1VjvnRmMvNdGruvUjEe3KDcTkRv
-         P+vycGO8RpXyJxhPlWfZA2QyFTlGN+BKvegoVAFfWpVdbDmBTz6P4PaFwVj/7l/JqO
-         RM+KT9oj4He2b6cYwSUBhguXEI8lNWrIaUCb+bUk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64D9E607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH v4 14/14] ASoC: qcom: common: move
- be_hw_fixup to common
-To:     srinivas.kandagatla@linaro.org, lee.jones@linaro.org,
-        robh+dt@kernel.org, broonie@kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org, vkoul@kernel.org
-References: <20180917005727.32728-1-srinivas.kandagatla@linaro.org>
- <20180917005727.32728-15-srinivas.kandagatla@linaro.org>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <500df2e4-6593-5537-ca08-b20a9b601c47@codeaurora.org>
-Date:   Wed, 19 Sep 2018 11:19:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 19 Sep 2018 07:26:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12616 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726972AbeISL0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Sep 2018 07:26:17 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C8C7782C15E48;
+        Wed, 19 Sep 2018 13:49:57 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.399.0; Wed, 19 Sep
+ 2018 13:49:53 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Miao Xie" <miaoxie@huawei.com>,
+        Du Wei <weidu.du@huawei.com>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 3/6] staging: erofs: drop multiref support temporarily
+Date:   Wed, 19 Sep 2018 13:49:07 +0800
+Message-ID: <1537336150-90604-3-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537336150-90604-1-git-send-email-gaoxiang25@huawei.com>
+References: <1537336150-90604-1-git-send-email-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917005727.32728-15-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Srinivas,
+Multiref support means that a compressed page could have
+more than one reference, which is designed for on-disk data
+deduplication. However, mkfs doesn't support this mode
+at this moment, and the kernel implementation is also broken.
 
+Let's drop multiref support. If it is fully implemented
+in the future, it can be reverted later.
 
-We will add support for vi feedback usecase in sdm845 machine driver 
-where we have to support 4 channel tx data for a particular backend. We 
-should probably keep be_hw_params_fixup in respective machine driver for 
-now to support such requirement.
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/unzip_vle.c | 36 +++++-------------------------------
+ drivers/staging/erofs/unzip_vle.h | 12 +-----------
+ 2 files changed, 6 insertions(+), 42 deletions(-)
 
-
-Thanks,
-
-Rohit
-
-
-On 9/17/2018 6:27 AM, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->
-> be_hw_fixup for qdsp is common across mutiple qcom machine drivers,
-> so move it to common file and remove the redundant code.
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   sound/soc/qcom/apq8096.c | 15 ---------------
->   sound/soc/qcom/common.c  | 17 +++++++++++++++++
->   sound/soc/qcom/sdm845.c  | 22 ++--------------------
->   3 files changed, 19 insertions(+), 35 deletions(-)
->
-> diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-> index daad43f..9cb26aee 100644
-> --- a/sound/soc/qcom/apq8096.c
-> +++ b/sound/soc/qcom/apq8096.c
-> @@ -20,20 +20,6 @@ struct apq8096_card_data {
->   	bool jack_setup;
->   };
->   
-> -static int apq8096_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
-> -				      struct snd_pcm_hw_params *params)
-> -{
-> -	struct snd_interval *rate = hw_param_interval(params,
-> -					SNDRV_PCM_HW_PARAM_RATE);
-> -	struct snd_interval *channels = hw_param_interval(params,
-> -					SNDRV_PCM_HW_PARAM_CHANNELS);
-> -
-> -	rate->min = rate->max = 48000;
-> -	channels->min = channels->max = 2;
-> -
-> -	return 0;
-> -}
-> -
->   static int msm_snd_hw_params(struct snd_pcm_substream *substream,
->   			     struct snd_pcm_hw_params *params)
->   {
-> @@ -139,7 +125,6 @@ static void apq8096_add_be_ops(struct snd_soc_card *card)
->   
->   	for (i = 0; i < num_links; i++) {
->   		if (link->no_pcm == 1) {
-> -			link->be_hw_params_fixup = apq8096_be_hw_params_fixup;
->   			link->init = apq8096_init;
->   			link->ops = &apq8096_ops;
->   		}
-> diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
-> index eb1b9da..ce8e759 100644
-> --- a/sound/soc/qcom/common.c
-> +++ b/sound/soc/qcom/common.c
-> @@ -3,8 +3,24 @@
->   // Copyright (c) 2018, The Linux Foundation. All rights reserved.
->   
->   #include <linux/module.h>
-> +#include <sound/pcm_params.h>
->   #include "common.h"
->   
-> +static int qcom_snd_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
-> +				       struct snd_pcm_hw_params *params)
-> +{
-> +	struct snd_interval *rate = hw_param_interval(params,
-> +					SNDRV_PCM_HW_PARAM_RATE);
-> +	struct snd_interval *channels = hw_param_interval(params,
-> +					SNDRV_PCM_HW_PARAM_CHANNELS);
-> +
-> +	rate->min = rate->max = 48000;
-> +	channels->min = channels->max = 2;
-> +	params_set_format(params, SNDRV_PCM_FORMAT_S16_LE);
-> +
-> +	return 0;
-> +}
-> +
->   int qcom_snd_parse_of(struct snd_soc_card *card)
->   {
->   	struct device_node *np;
-> @@ -79,6 +95,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
->   			}
->   			link->no_pcm = 1;
->   			link->ignore_pmdown_time = 1;
-> +			link->be_hw_params_fixup = qcom_snd_be_hw_params_fixup;
->   		} else {
->   			link->platform_of_node = link->cpu_of_node;
->   			link->codec_dai_name = "snd-soc-dummy-dai";
-> diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-> index 2a781d8..87e150c 100644
-> --- a/sound/soc/qcom/sdm845.c
-> +++ b/sound/soc/qcom/sdm845.c
-> @@ -11,7 +11,6 @@
->   #include "common.h"
->   #include "qdsp6/q6afe.h"
->   
-> -#define DEFAULT_SAMPLE_RATE_48K		48000
->   #define DEFAULT_MCLK_RATE		24576000
->   #define DEFAULT_BCLK_RATE		12288000
->   
-> @@ -177,32 +176,15 @@ static struct snd_soc_ops sdm845_be_ops = {
->   	.shutdown = sdm845_snd_shutdown,
->   };
->   
-> -static int sdm845_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
-> -				struct snd_pcm_hw_params *params)
-> -{
-> -	struct snd_interval *rate = hw_param_interval(params,
-> -					SNDRV_PCM_HW_PARAM_RATE);
-> -	struct snd_interval *channels = hw_param_interval(params,
-> -					SNDRV_PCM_HW_PARAM_CHANNELS);
-> -	struct snd_mask *fmt = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
-> -
-> -	rate->min = rate->max = DEFAULT_SAMPLE_RATE_48K;
-> -	channels->min = channels->max = 2;
-> -	snd_mask_set_format(fmt, SNDRV_PCM_FORMAT_S16_LE);
-> -
-> -	return 0;
-> -}
-> -
->   static void sdm845_add_be_ops(struct snd_soc_card *card)
->   {
->   	struct snd_soc_dai_link *link = card->dai_link;
->   	int i, num_links = card->num_links;
->   
->   	for (i = 0; i < num_links; i++) {
-> -		if (link->no_pcm == 1) {
-> +		if (link->no_pcm == 1)
->   			link->ops = &sdm845_be_ops;
-> -			link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
-> -		}
-> +
->   		link++;
->   	}
->   }
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index e820490..9fe18cd3 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -301,12 +301,9 @@ struct z_erofs_vle_work_finder {
+ 	grp = container_of(egrp, struct z_erofs_vle_workgroup, obj);
+ 	*f->grp_ret = grp;
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	work = z_erofs_vle_grab_work(grp, f->pageofs);
++	/* if multiref is disabled, `primary' is always true */
+ 	primary = true;
+-#else
+-	BUG();
+-#endif
+ 
+ 	DBG_BUGON(work->pageofs != f->pageofs);
+ 
+@@ -368,12 +365,9 @@ struct z_erofs_vle_work_finder {
+ 	struct z_erofs_vle_workgroup *grp = *f->grp_ret;
+ 	struct z_erofs_vle_work *work;
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
++	/* if multiref is disabled, grp should never be nullptr */
+ 	BUG_ON(grp != NULL);
+-#else
+-	if (grp != NULL)
+-		goto skip;
+-#endif
++
+ 	/* no available workgroup, let's allocate one */
+ 	grp = kmem_cache_zalloc(z_erofs_workgroup_cachep, GFP_NOFS);
+ 	if (unlikely(grp == NULL))
+@@ -396,13 +390,7 @@ struct z_erofs_vle_work_finder {
+ 	*f->hosted = true;
+ 
+ 	gnew = true;
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-skip:
+-	/* currently unimplemented */
+-	BUG();
+-#else
+ 	work = z_erofs_vle_grab_primary_work(grp);
+-#endif
+ 	work->pageofs = f->pageofs;
+ 
+ 	mutex_init(&work->lock);
+@@ -797,9 +785,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 
+ 	struct z_erofs_pagevec_ctor ctor;
+ 	unsigned int nr_pages;
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	unsigned int sparsemem_pages = 0;
+-#endif
+ 	struct page *pages_onstack[Z_EROFS_VLE_VMAP_ONSTACK_PAGES];
+ 	struct page **pages, **compressed_pages, *page;
+ 	unsigned int i, llen;
+@@ -811,11 +797,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	int err;
+ 
+ 	might_sleep();
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	work = z_erofs_vle_grab_primary_work(grp);
+-#else
+-	BUG();
+-#endif
+ 	BUG_ON(!READ_ONCE(work->nr_pages));
+ 
+ 	mutex_lock(&work->lock);
+@@ -866,13 +848,11 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 			pagenr = z_erofs_onlinepage_index(page);
+ 
+ 		BUG_ON(pagenr >= nr_pages);
+-
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 		BUG_ON(pages[pagenr] != NULL);
+-		++sparsemem_pages;
+-#endif
++
+ 		pages[pagenr] = page;
+ 	}
++	sparsemem_pages = i;
+ 
+ 	z_erofs_pagevec_ctor_exit(&ctor, true);
+ 
+@@ -902,10 +882,8 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 		pagenr = z_erofs_onlinepage_index(page);
+ 
+ 		BUG_ON(pagenr >= nr_pages);
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 		BUG_ON(pages[pagenr] != NULL);
+ 		++sparsemem_pages;
+-#endif
+ 		pages[pagenr] = page;
+ 
+ 		overlapped = true;
+@@ -931,12 +909,10 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	if (err != -ENOTSUPP)
+ 		goto out_percpu;
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ 	if (sparsemem_pages >= nr_pages) {
+ 		BUG_ON(sparsemem_pages > nr_pages);
+ 		goto skip_allocpage;
+ 	}
+-#endif
+ 
+ 	for (i = 0; i < nr_pages; ++i) {
+ 		if (pages[i] != NULL)
+@@ -945,9 +921,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 		pages[i] = __stagingpage_alloc(page_pool, GFP_NOFS);
+ 	}
+ 
+-#ifndef CONFIG_EROFS_FS_ZIP_MULTIREF
+ skip_allocpage:
+-#endif
+ 	vout = erofs_vmap(pages, nr_pages);
+ 
+ 	err = z_erofs_vle_unzip_vmap(compressed_pages,
+diff --git a/drivers/staging/erofs/unzip_vle.h b/drivers/staging/erofs/unzip_vle.h
+index 3939985..3316bc3 100644
+--- a/drivers/staging/erofs/unzip_vle.h
++++ b/drivers/staging/erofs/unzip_vle.h
+@@ -47,13 +47,6 @@ static inline bool z_erofs_gather_if_stagingpage(struct list_head *page_pool,
+ #define Z_EROFS_VLE_INLINE_PAGEVECS     3
+ 
+ struct z_erofs_vle_work {
+-	/* struct z_erofs_vle_work *left, *right; */
+-
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-	struct list_head list;
+-
+-	atomic_t refcount;
+-#endif
+ 	struct mutex lock;
+ 
+ 	/* I: decompression offset in page */
+@@ -107,10 +100,8 @@ static inline void z_erofs_vle_set_workgrp_fmt(
+ 	grp->flags = fmt | (grp->flags & ~Z_EROFS_VLE_WORKGRP_FMT_MASK);
+ }
+ 
+-#ifdef CONFIG_EROFS_FS_ZIP_MULTIREF
+-#error multiref decompression is unimplemented yet
+-#else
+ 
++/* definitions if multiref is disabled */
+ #define z_erofs_vle_grab_primary_work(grp)	(&(grp)->work)
+ #define z_erofs_vle_grab_work(grp, pageofs)	(&(grp)->work)
+ #define z_erofs_vle_work_workgroup(wrk, primary)	\
+@@ -118,7 +109,6 @@ static inline void z_erofs_vle_set_workgrp_fmt(
+ 		struct z_erofs_vle_workgroup, work) : \
+ 		({ BUG(); (void *)NULL; }))
+ 
+-#endif
+ 
+ #define Z_EROFS_WORKGROUP_SIZE       sizeof(struct z_erofs_vle_workgroup)
+ 
+-- 
+1.9.1
 
