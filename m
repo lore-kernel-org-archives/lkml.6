@@ -2,134 +2,241 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906DDECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2311ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F00C21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:17:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F00C21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 40EA72152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vJHBgY/F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EA72152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbeITXBm (ORCPT
+        id S1730955AbeITXEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:01:42 -0400
-Received: from mga04.intel.com ([192.55.52.120]:36364 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725849AbeITXBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:01:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 10:17:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
-   d="scan'208";a="234584283"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga004.jf.intel.com with ESMTP; 20 Sep 2018 10:17:10 -0700
-Subject: Re: [PATCH 2/2] x86/speculation: Provide application property based
- STIBP protection
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1537392876.git.tim.c.chen@linux.intel.com>
- <0c55c162a077aadbfd57878e2694e35292c1a29c.1537392876.git.tim.c.chen@linux.intel.com>
- <20180920075717.GL24124@hirez.programming.kicks-ass.net>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <733099f3-3d99-02d8-5641-8152167f0320@linux.intel.com>
-Date:   Thu, 20 Sep 2018 10:17:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Thu, 20 Sep 2018 19:04:41 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42134 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbeITXEl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 19:04:41 -0400
+Received: by mail-yw1-f65.google.com with SMTP id h134-v6so902200ywc.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fnflkOMX+ZxVkuUgkIRwASacO60hazLaT1r5Mr2xfmY=;
+        b=vJHBgY/Fx+QRHHg6PIgA2xj0ocuGXvYD4smK3iwjIjIenLi7WoI9GHfIDQcTe71IW1
+         06Sd/F8CqNVmPaoe/r9Hfe8eV4ic9n4Fhod9bKn48Y3ifiKQqbIqyHVL6iNNzIVgnNKj
+         JncZnGo/ntCv/frUkiWoLynMKmmV8PA7zplykBJTfbRzvMKB9Dsjp8nc0Cdui0pbqljO
+         APmRTpJxlMd0bMX6x96K4Xnca1cp3VYpTRB9nGsZ5vuVAlxC9o7naA+YHcru7gqb+ATa
+         bEeG4X99k2+RBES0u9WPikuxF9uujb7OORLwazCI1wWQzM4Xm21NW5nrxmzswYcxQZBR
+         zDsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fnflkOMX+ZxVkuUgkIRwASacO60hazLaT1r5Mr2xfmY=;
+        b=cpcycRT0HHcTwAqxqHHv9TmWB42oUSA4/H5SyNFdyzpcVxfeg0fqnQ5gKu2Dq3vt8d
+         svM3g7PNj+YO5QHndh443kejgukqmUw+oqk/FoaMhHVEzUhJ3Me/AaQSYoXiHmynpQBM
+         Niqk3BeJHWHfQq9IT5YNiUbvFFY6IME/e7fqTa7hbmrvV62LMoskjGdp2OdGDyVVlDqn
+         87LDyArI4apTQ+IR/AG7q9hd30HkYpepdM99R87KHt49yOnGE602ZtlHfH9sAcEQ5l0m
+         kDIn0AoeN0nCnfEKfY/audkpzeYuGp7umIVjwFIijVmUa46eqYjS+4iYyP9wqcHq6UyI
+         T4Og==
+X-Gm-Message-State: APzg51Dgbfw0hjxBehAvO1i64XSTmAQ/L0YXUgDb9RuWQ/vbtgdJFgoy
+        M2OBSHbm5Axdbg1ghkIGg55nUyNBdkvlw52PUIYSGg==
+X-Google-Smtp-Source: ANB0VdZ5z6088/D0ftFq1elRdT9tYf1MXXTDtg/aVxF34f9VdjKxP8+BdBcn0FzqX6Vjd4Vu9a6F0CdKfKbQt+kTFNA=
+X-Received: by 2002:a0d:df93:: with SMTP id i141-v6mr17783996ywe.349.1537464010760;
+ Thu, 20 Sep 2018 10:20:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180920075717.GL24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com> <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+In-Reply-To: <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Thu, 20 Sep 2018 10:19:34 -0700
+Message-ID: <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        "Banik, Subrata" <subrata.banik@intel.com>,
+        "Bohra, Aamir" <aamir.bohra@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/20/2018 12:57 AM, Peter Zijlstra wrote:
-> On Wed, Sep 19, 2018 at 02:35:30PM -0700, Tim Chen wrote:
->> +	if (get_dumpable(tsk->mm) != SUID_DUMP_USER)
->> +		test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
->> +	else
->> +		test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
->> +}
-> 
-> s/test_and_//
-> 
+On Fri, Sep 14, 2018 at 2:38 PM Rajat Jain <rajatja@google.com> wrote:
+>
+> On Fri, Sep 14, 2018 at 2:06 PM Rajat Jain <rajatja@google.com> wrote:
+> >
+> > On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > >
+> > > On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> > > >
+> > > > The Icelake does not have a community-3, and the memory resources are
+> > > > laid out in the following order in the ACPI:
+> > > >
+> > > > resource-0: community-0 registers
+> > > > resource-1: community-1 registers
+> > > > resource-2: community-2 registers
+> > > > resource-3: community-4 registers
+> > > > resource-4: community-5 registers
+> > > >
+> > > > (EDS also describes the communities in the above order).
+> > > >
+> > > > Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+> > > > the corresponding community registers by getting the resourse number right.
+> > > > Currently the resourse number is not correct for community 4 and 5, thus
+> > > > fix that.
+> > > >
+> > >
+> > > Can you share link to the ACPI dump of the tables? (you may get one by
+> > > running `acpidump -o tables.dat`)
 
-Ah yes.  Will update this.
+Hello Andy,
 
-Tim
+Any feedback on this patch? I provided a dump of the ACPI below,
+please let me know if you need more info.
+
+Thanks,
+
+Rajat
+
+> >
+> > I don't have that command on my system, but I took
+> > /sys/firmware/acpi/tables/DSDT from the system and disassembled it
+> > using Intel disassembler (iasl -d) and here is the relevant portion
+> > that describes the GPIO controller. The port IDs for communities can
+> > be seen in the below output (i.e. the PCRB()):
+>
+> I realized PCRB() is an ACPI method defined in the same disasembly:
+>
+>             Method (PCRB, 1, NotSerialized)
+>             {
+>                 Return ((0xFD000000 + (Arg0 << 0x10)))
+>             }
+>
+> >
+> >             Device (GPIO)
+> >             {
+> >                 Name (_HID, "INT3455")  // _HID: Hardware ID
+> >                 Name (_UID, Zero)  // _UID: Unique ID
+> >                 Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+> >                 Name (RBUF, ResourceTemplate ()
+> >                 {
+> >                     Memory32Fixed (ReadWrite,
+> >                         0x00000000,         // Address Base
+> >                         0x00000000,         // Address Length
+> >                         _Y06)
+> >                     Memory32Fixed (ReadWrite,
+> >                         0x00000000,         // Address Base
+> >                         0x00000000,         // Address Length
+> >                         _Y07)
+> >                     Memory32Fixed (ReadWrite,
+> >                         0x00000000,         // Address Base
+> >                         0x00000000,         // Address Length
+> >                         _Y08)
+> >                     Memory32Fixed (ReadWrite,
+> >                         0x00000000,         // Address Base
+> >                         0x00000000,         // Address Length
+> >                         _Y09)
+> >                     Memory32Fixed (ReadWrite,
+> >                         0x00000000,         // Address Base
+> >                         0x00000000,         // Address Length
+> >                         _Y0A)
+> >                     Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+> >                     {
+> >                         0x0000000E,
+> >                     }
+> >                 })
+> >                 Method (_CRS, 0, NotSerialized)  // _CRS: Current
+> > Resource Settings
+> >                 {
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._BAS,
+> > BAS0)  // _BAS: Base Address
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._LEN,
+> > LEN0)  // _LEN: Length
+> >                     BAS0 = PCRB (0x6E)
+> >                     LEN0 = 0x00010000
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._BAS,
+> > BAS1)  // _BAS: Base Address
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._LEN,
+> > LEN1)  // _LEN: Length
+> >                     BAS1 = PCRB (0x6D)
+> >                     LEN1 = 0x00010000
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._BAS,
+> > BAS2)  // _BAS: Base Address
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._LEN,
+> > LEN2)  // _LEN: Length
+> >                     BAS2 = PCRB (0x6C)
+> >                     LEN2 = 0x00010000
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._BAS,
+> > BAS4)  // _BAS: Base Address
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._LEN,
+> > LEN4)  // _LEN: Length
+> >                     BAS4 = PCRB (0x6A)
+> >                     LEN4 = 0x00010000
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._BAS,
+> > BAS5)  // _BAS: Base Address
+> >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._LEN,
+> > LEN5)  // _LEN: Length
+> >                     BAS5 = PCRB (0x69)
+> >                     LEN5 = 0x00010000
+> >                     Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+> >                 }
+> >
+> >                 Method (_STA, 0, NotSerialized)  // _STA: Status
+> >                 {
+> >                     Return (0x0F)
+> >                 }
+> >             }
+> >
+> > Please let me know if this helps, or if you need more info.
+> >
+> > Thanks & Best Regards,
+> >
+> > Rajat
+> >
+> > >
+> > > > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > > > ---
+> > > >  drivers/pinctrl/intel/pinctrl-icelake.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pinctrl/intel/pinctrl-icelake.c b/drivers/pinctrl/intel/pinctrl-icelake.c
+> > > > index 630b966ce081..5b4eaf7c90df 100644
+> > > > --- a/drivers/pinctrl/intel/pinctrl-icelake.c
+> > > > +++ b/drivers/pinctrl/intel/pinctrl-icelake.c
+> > > > @@ -331,8 +331,8 @@ static const struct intel_padgroup icllp_community5_gpps[] = {
+> > > >  static const struct intel_community icllp_communities[] = {
+> > > >         ICL_COMMUNITY(0, 0, 58, icllp_community0_gpps),
+> > > >         ICL_COMMUNITY(1, 59, 152, icllp_community1_gpps),
+> > > > -       ICL_COMMUNITY(2, 153, 215, icllp_community4_gpps),
+> > > > -       ICL_COMMUNITY(3, 216, 240, icllp_community5_gpps),
+> > > > +       ICL_COMMUNITY(3, 153, 215, icllp_community4_gpps),
+> > > > +       ICL_COMMUNITY(4, 216, 240, icllp_community5_gpps),
+> > > >  };
+> > > >
+> > > >  static const unsigned int icllp_spi0_pins[] = { 22, 23, 24, 25, 26 };
+> > > > --
+> > > > 2.19.0.397.gdd90340f6a-goog
+> > > >
+> > >
+> > >
+> > > --
+> > > With Best Regards,
+> > > Andy Shevchenko
