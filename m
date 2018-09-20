@@ -7,134 +7,159 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FF3ECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2C3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87BF21521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A1D521521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="c6yCAjSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87BF21521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FtSam3ck"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1D521521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388345AbeITIaa (ORCPT
+        id S2387902AbeITIeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:30:30 -0400
-Received: from mail-eopbgr710099.outbound.protection.outlook.com ([40.107.71.99]:10496
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Thu, 20 Sep 2018 04:34:13 -0400
+Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:36192
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388295AbeITIa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:30:27 -0400
+        id S2388313AbeITIa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:30:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R6pZK6l6tEZWd78W1oI19t2eaCvCCmpme80FpzdpqjI=;
- b=c6yCAjSW3kHW9p72YX/dLeS+Ey/EkxI3mkr4nviyfhJEV99V7mh9Lg316DmDDxQt+++hepbX3b9+RMQa3SvPS4E8+K83sI2waSkDrRwhrncGuTtUOQujMxnJ4a9zbaM8wHSxx06S9obRVhroWreIi+4sPoqj883+WwyMQrqqWnQ=
+ bh=B+mov5QcteXocqeBBvPRkegfg9f1xBXGdQHuqd1a5Sw=;
+ b=FtSam3ckx/ouakIT4MQFVCdh4VHkJCKKxRkOHs9Bh3MAKv8dfYvuf5vW+26lGIXa0KoCa+9AhdXZ9KRn6ILOFZbIpZMl+t37sTXNDs6Ene9dohryJszui0bt4IStXHqohX00CRZNwcdMz3aTZYXShKOM474zZqAJy2XFrKdyI+Y=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
+ CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.9; Thu, 20 Sep 2018 02:49:23 +0000
+ 15.20.1185.6; Thu, 20 Sep 2018 02:49:18 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:49:23 +0000
+ 02:49:18 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bo Chen <chenbo@pdx.edu>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+CC:     Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.9 06/14] e1000: check on netif_running() before
- calling e1000_up()
-Thread-Topic: [PATCH AUTOSEL 4.9 06/14] e1000: check on netif_running() before
- calling e1000_up()
-Thread-Index: AQHUUIxzCgcvqRtk0UGzRIrA96FIrw==
-Date:   Thu, 20 Sep 2018 02:48:46 +0000
-Message-ID: <20180920024838.58666-6-alexander.levin@microsoft.com>
-References: <20180920024838.58666-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180920024838.58666-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 22/25] arm/arm64: smccc-1.1: Make return values
+ unsigned long
+Thread-Topic: [PATCH AUTOSEL 4.14 22/25] arm/arm64: smccc-1.1: Make return
+ values unsigned long
+Thread-Index: AQHUUIxqJAnRJuGGn02pL/yQcrxpZQ==
+Date:   Thu, 20 Sep 2018 02:48:31 +0000
+Message-ID: <20180920024810.58594-22-alexander.levin@microsoft.com>
+References: <20180920024810.58594-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180920024810.58594-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:M9uUZb0vMJ7sDShQRcl/a9xzX3A1ZbBzUD2TUEUMGFtHYaE4Fn6PRO7ryuPp1uFrRG1ZcKTSdELYeIOBxUIzaVzK1rGzemPOZQ5bucKj00LCh7KoHXeaxvyKQDaYjSYZpBaKW+9utUpQow1eNxf922OaNfREWQfBJnLwnE9dUtKN79EFT6dGuagNBRicJmQxqQfHFEOpYpUf78k6uxPej+hN7d5klXsEAVSVRqdFKGIxQTFyv/dZ/5sqWbTpm+cQ9FhpB9PxAc5zkudlpNweRQgBrAVGI+psfLQ3iHhSeQ4a6JLUOFqWetlp8WtySmB00xMw3Gw1O4OX9K1oXoFYEYwbzS+7xZgdx3y6w/gDVYqkIT3uaBp1OC+BNNbnY1g+aojlAUdE8hIto8Y4ATSPuROipza/1xKOV9xDeZtblC8CORbIlk7vGJJ86f9M2rujTNLIEAUnSVCEjcqWahVRDw==;5:PVM8jyPosgzCZEyhvt+yzXaZX/XbAuch7bZfqxOt2V4LNZm7vyiqzX8DDN18fQcWziAC/0BO+z3qUM2WSg/VPe6BofaRQE5sN539bKByZFksKDsjbdApXVLfhjqDX6dIG1pmIFFF1CLExxnI8gHnx7+xGu6q5Pq9Y+F1Ko/32jQ=;7:6VABSZLCEGDmX6ff4fgZLAU2OSk25PVg5Rt5MYti+BWLrwvtjvlhld9bDFlkgaW3UdbASgFuSMI7/qaQ3JI5R1TKk8HsgvLKWFvA+DeWhPZsMnLyfPFPIYFNWxLEkvQ/LILG56OV/XgXKmD83W4DR/Q1Yh0czPk3V9Tha0/cr7qnV+cBxnB8wageBri/ODeGOoZkdhzrxpBD1J8nvY7qerfjiAr2IS9I4OmGcg7VUYZVscJzYq04wNKWx5mifB+u
-x-ms-office365-filtering-correlation-id: 703ecb55-b777-4db7-b479-08d61ea3abe7
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:Sy+Q/mMaS1B36kU4lDRQSx65Tk7mK1QjL0E3LgtCwV8WgVE7YMS0AzZoJ2yYYIrjVt6InyH7iMwCeS1bIUthXlHDKDKvKSH8BBr7t3Q2KUweubI1tkXN6RH+UsSvl195ERSdu3I1CTWvo8AHkbPmtN9g7md2z69YlZqaJOGgegQdX/20f3Juc0vAhudnsD3mglkONKlDPjPLZAidV86ZgKqu3YHrys2jMvnPVy5YNENBbv7UJ5lkB1ic5oublEkwxVlav0lJ3bpdqvH8RRg/e4xwm3l1Vdm8yl+yNoydeCdt2H3ZCCqXQVT6509FSiy5fsC4NPO5A78xciWlXcd0VlBtlf6MBuUstirwl5iOD8yHf3ZT0Rz5PY/56mIHAHYiAMsCgceoEwwA53h3NEU07QA2MMgBeXG54wXM6WNX6NQ/OpyYkc5UYrqBN47lchMRXXXvb0gRFeUn0qeuraLrZQ==;5:k0pR+2PXTvcSWFOPZ/WtW7I91yTndO9ZamXV7CD8b9T5hU6BFFMXq63LlfcNu7w3ItmPG6haps45fGNtKfrf2BBl0T4EfJ6AJ2FJv8K46YlkbhodI7ny4l8IOHOQzLb9gaBPx8zQPmnG4Baty1n47XaRl6fRgTm7WuuFcN5kVVc=;7:hK/8NWwY6UGjcFAO66bGYVDMiaaeEQOxukwotI/cNHSsrKVXZYgCcDUc/WDwG1fZuLiJ3D3j/qRMLw3p/DH0yfIJLLXSAqR5VBApiiSebDPwoXzKTBmoQ0qHyAMPS3faviZd2KBsQWJ7/jWApvp4rCXQPwwmULmujjHIhkz3/zrDa4bKdpnWg3bflldLOWaKh9RIebqW4UJ/ov4s3tLWJPKOJtufMDgURWYJdTqq5ZFUn1dGTn4VFZ3abJeHKJ52
+x-ms-office365-filtering-correlation-id: 4952e654-9b06-4c3c-ad75-08d61ea3a955
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
-x-ms-traffictypediagnostic: CY4PR21MB0469:
-x-microsoft-antispam-prvs: <CY4PR21MB0469752CB6BA1C97A9F3DE6EFB130@CY4PR21MB0469.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(240347492878265)(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
-x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(136003)(39860400002)(346002)(199004)(189003)(6506007)(53936002)(2906002)(10290500003)(6512007)(478600001)(97736004)(8676002)(2501003)(68736007)(305945005)(99286004)(14454004)(81166006)(106356001)(7736002)(36756003)(76176011)(186003)(5250100002)(105586002)(476003)(8936002)(72206003)(486006)(2616005)(11346002)(6486002)(6436002)(446003)(6346003)(81156014)(26005)(102836004)(86362001)(54906003)(22452003)(86612001)(6666003)(3846002)(6116002)(25786009)(4326008)(5660300001)(316002)(10090500001)(107886003)(14444005)(1076002)(66066001)(217873002)(2900100001)(256004)(110136005)(71190400001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
+x-ms-traffictypediagnostic: CY4PR21MB0744:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: Ad+CUeEVpNTSVkPspvf9dMC+RTrDG8q6hnSIwTXdjj59mNpC49FT1xYGjgj05450wo5Z4nAeNKyi/IDKucl+4/y/J8K71YT4If5A7BRVMtjvHOMD5oo92nkBELaPoUIFv0FnmpeDAL1HagWCTrL8zqhVBLzfM+ged1BDqL+aE6+ubTaHjnx6pU33bmU/j2b8qiSLiU/XNh/iXFqLZRWS4bAN2Y8yktYfpMeouNBS/VfFLgZ9Yo+Rq59MVs6StuHDiBgsjtokCYlAvyni9yBskQR87b0UMRAbfcJscbmVhZyQ/mnPjVZPkB4FbOEN56SWLNzm85bXAIz7jJKRkTH9hK0icTZ+kTtl2FYlC61AP4s=
+x-microsoft-antispam-prvs: <CY4PR21MB07447FBC946FB7DE83E4E4A5FB130@CY4PR21MB0744.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
+x-forefront-prvs: 0801F2E62B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(39860400002)(366004)(396003)(376002)(346002)(136003)(189003)(199004)(8936002)(6436002)(10090500001)(110136005)(217873002)(54906003)(6512007)(53936002)(68736007)(5660300001)(256004)(6666003)(71190400001)(6486002)(316002)(446003)(11346002)(105586002)(476003)(106356001)(478600001)(2616005)(2906002)(186003)(25786009)(10290500003)(486006)(71200400001)(72206003)(66066001)(4326008)(14454004)(22452003)(36756003)(102836004)(86612001)(97736004)(8676002)(305945005)(7736002)(1076002)(86362001)(575784001)(81156014)(26005)(76176011)(6506007)(5250100002)(107886003)(2900100001)(99286004)(3846002)(2501003)(81166006)(6116002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: elOc9FsI0XAcn1QXWNwnq0iFIbwzTVjjMmooRVtkcntKuKq7ybkqFDezamhXQhI2I0z0hhWvq1ZDEkDYGAlqVlDBrxpyS2MOKBO0oN7TtxE2OHDGQafM2jMZMMCW3lrtnugnUf4muJCCT69cMzGsbw/Yr3yIPDtrmP1JxjH0d6m94EPUXRErip7ut0JykK7WlMvhSX0u23qkhT5xgMwMiWdzz4IRPC6DE862ktEwK1ZAo+ziuhbd29BllUVLumGEkJi2SA/LTLVdCRIV/Qv/8JrUqukhSCU+zKHk3DE032MI4F+sEQDmqUmlctkYg5KdOI6pQjffMZvdIEVkNRnzupdOCrK5noTvYHRfpGpDCi4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 703ecb55-b777-4db7-b479-08d61ea3abe7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:46.1006
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4952e654-9b06-4c3c-ad75-08d61ea3a955
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:31.3195
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bo Chen <chenbo@pdx.edu>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-[ Upstream commit cf1acec008f8d7761aa3fd7c4bca7e17b2d2512d ]
+[ Upstream commit 1d8f574708a3fb6f18c85486d0c5217df893c0cf ]
 
-When the device is not up, the call to 'e1000_up()' from the error handling=
- path
-of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
-dereference. The null-pointer dereference is triggered in function
-'e1000_alloc_rx_buffers()' at line 'buffer_info =3D &rx_ring->buffer_info[i=
-]'.
+An unfortunate consequence of having a strong typing for the input
+values to the SMC call is that it also affects the type of the
+return values, limiting r0 to 32 bits and r{1,2,3} to whatever
+was passed as an input.
 
-This bug was reported by COD, a tool for testing kernel module binaries I a=
-m
-building. This bug was also detected by KFI from Dr. Kai Cong.
+Let's turn everything into "unsigned long", which satisfies the
+requirements of both architectures, and allows for the full
+range of return values.
 
-This patch fixes the bug by checking on 'netif_running()' before calling
-'e1000_up()' in 'e1000_set_ringparam()'.
-
-Signed-off-by: Bo Chen <chenbo@pdx.edu>
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reported-by: Julien Grall <julien.grall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/arm-smccc.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net=
-/ethernet/intel/e1000/e1000_ethtool.c
-index 975eeb885ca2..bdb85282137b 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -665,7 +665,8 @@ static int e1000_set_ringparam(struct net_device *netde=
-v,
- err_alloc_rx:
- 	kfree(txdr);
- err_alloc_tx:
--	e1000_up(adapter);
-+	if (netif_running(adapter->netdev))
-+		e1000_up(adapter);
- err_setup:
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
- 	return err;
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index ca1d2cc2cdfa..5a91ff33720b 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -199,31 +199,31 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, uns=
+igned long a1,
+=20
+ #define __declare_arg_0(a0, res)					\
+ 	struct arm_smccc_res   *___res =3D res;				\
+-	register u32           r0 asm("r0") =3D a0;			\
++	register unsigned long r0 asm("r0") =3D (u32)a0;			\
+ 	register unsigned long r1 asm("r1");				\
+ 	register unsigned long r2 asm("r2");				\
+ 	register unsigned long r3 asm("r3")
+=20
+ #define __declare_arg_1(a0, a1, res)					\
+ 	struct arm_smccc_res   *___res =3D res;				\
+-	register u32           r0 asm("r0") =3D a0;			\
+-	register typeof(a1)    r1 asm("r1") =3D a1;			\
++	register unsigned long r0 asm("r0") =3D (u32)a0;			\
++	register unsigned long r1 asm("r1") =3D a1;			\
+ 	register unsigned long r2 asm("r2");				\
+ 	register unsigned long r3 asm("r3")
+=20
+ #define __declare_arg_2(a0, a1, a2, res)				\
+ 	struct arm_smccc_res   *___res =3D res;				\
+-	register u32           r0 asm("r0") =3D a0;			\
+-	register typeof(a1)    r1 asm("r1") =3D a1;			\
+-	register typeof(a2)    r2 asm("r2") =3D a2;			\
++	register unsigned long r0 asm("r0") =3D (u32)a0;			\
++	register unsigned long r1 asm("r1") =3D a1;			\
++	register unsigned long r2 asm("r2") =3D a2;			\
+ 	register unsigned long r3 asm("r3")
+=20
+ #define __declare_arg_3(a0, a1, a2, a3, res)				\
+ 	struct arm_smccc_res   *___res =3D res;				\
+-	register u32           r0 asm("r0") =3D a0;			\
+-	register typeof(a1)    r1 asm("r1") =3D a1;			\
+-	register typeof(a2)    r2 asm("r2") =3D a2;			\
+-	register typeof(a3)    r3 asm("r3") =3D a3
++	register unsigned long r0 asm("r0") =3D (u32)a0;			\
++	register unsigned long r1 asm("r1") =3D a1;			\
++	register unsigned long r2 asm("r2") =3D a2;			\
++	register unsigned long r3 asm("r3") =3D a3
+=20
+ #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
+ 	__declare_arg_3(a0, a1, a2, a3, res);				\
 --=20
 2.17.1
