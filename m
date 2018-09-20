@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AE1ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640EDC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F9D2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1517E2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y+GIwIYy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F9D2147D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xzr75Puy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1517E2147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388040AbeITWIQ (ORCPT
+        id S2388056AbeITWIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:08:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46314 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732034AbeITWIQ (ORCPT
+        Thu, 20 Sep 2018 18:08:18 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38847 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388045AbeITWIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:08:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u24-v6so4597933pfn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:24:00 -0700 (PDT)
+        Thu, 20 Sep 2018 18:08:17 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x17-v6so4614611pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iBGZ2JAq52GVO7DMel4vdKBb6P5PB4Nfw1MCI4/fUVo=;
-        b=Y+GIwIYy1i7nEwQqJoICogiY+6igMki3L7ZSogo14PNlABRQEWW34ENWdENkTFLofS
-         VhQA+q4UDjAGnttTPca83jRHMhW/Gu5ldBqLc+69eTE+JfGKI1AG2zUBJ54LLLFP/a3c
-         h05HMkTWAnnhgCgfOpjEbBN/gOjdl7ZB/G+Hw=
+        bh=dj661ofWrIevUkOjpEMxgFKe/xflRUudjm72RcAWxpw=;
+        b=Xzr75PuyPMjChpDxxAd5r9+6AhusmkdlEV7ZXnkFp2FPl71FEA54aVfPu+dM0YsmIm
+         H6NdFLUQLe52sx2DUbIErzIspSGfK7goeUapLNpocp32yG/9QttxEMIaLS5ZyNRMOIMq
+         JNpwTsplJpOu7B1JqZoAohZ1ajUhXKjse6UTg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iBGZ2JAq52GVO7DMel4vdKBb6P5PB4Nfw1MCI4/fUVo=;
-        b=Ux3Kxpdu/0EXsVmYq7ihiXmRRS4Vt+kX6N3CBjLWcF+TgiBEkuJC4OXqP/QiO811dG
-         rZtuCtfwkbsr2bUTkH1yCU2KRiSEh3yD9pwlCXSvA4FVyv81pOqlSGsaD/gJJUKM32tf
-         FzoLHwoTJz8f4wkxGGf6FOvHulyAMZoLoru94FJ2jdpCRrjJTvLBwycxif80XKm5E8k+
-         QwRgaW1leLttoZrcxJTD7ssSL2M2YVjRZq4K7LUiDQbRJra8ukJuYO97iZhjwaPCLsfX
-         C/QUzysvywvmBa9S0mIwp+BgVznjhcCluOEr9OagVXjBYjBLYTL1NR0tZk6CJ2pGa2ld
-         U+ag==
-X-Gm-Message-State: APzg51Ct0gjXG9/JBgEoM5SK/7hQW1RKDFr6RCX6JJER7Tyw8Lok2YgG
-        VcYBBMvktSQfrFCkmPCzP6XLdQ==
-X-Google-Smtp-Source: ANB0VdZvPEYthdJSOrAqvxPARMZrpWIfjJvEAEpojcDbp8zFuDwP3KnBJnX8gt0DwiFHtCoAvxq55A==
-X-Received: by 2002:a65:5a81:: with SMTP id c1-v6mr37761175pgt.120.1537460640540;
-        Thu, 20 Sep 2018 09:24:00 -0700 (PDT)
+        bh=dj661ofWrIevUkOjpEMxgFKe/xflRUudjm72RcAWxpw=;
+        b=IQd0uCCiDZAvda1PVJeme9PS6eVG19DWa7wzzNBJqKT0qoBwnn0Zqu9fhAjJGAo16m
+         pyPx4USFQfGPB0/oEdGtBE3WBMEUb0RY8ez77WxzEWEvJMNmJcQYGzyzNFI9ZIDfFB0c
+         olJOw++RvIDsYMPQEJfIGnjoixjdsue3UllXdKDwrB0QpwtXJAAeVRmnO+0spTPpFL1Z
+         454NUjZCvQ8TgjXPPkVw83nT8MUlQqy9Xbdlv90RnyySWRtJG1sa0/0zGU4YBZFzG06u
+         agSLHzMAsIGfotEA2WBx2tQGVrbHTi7N1yGQBZTcA+I+uU9aDJe+bwFZpKxx2prRX6/f
+         nhQg==
+X-Gm-Message-State: APzg51D2SjUo0ghEbtfYngVacooD6AJL/1pkAOBZ8pUM4++ZYGd1Zvig
+        jixuUlzQDO4nu9NN/wX7dKH8Xg==
+X-Google-Smtp-Source: ANB0VdbJcBJwMpwmb9zXr7Z7Qd6q4z6PAesnSk3HeYG6TpgInkqve2K79penv0deet2X1EVWY44wJA==
+X-Received: by 2002:a62:f909:: with SMTP id o9-v6mr41908083pfh.141.1537460641405;
+        Thu, 20 Sep 2018 09:24:01 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v186-v6sm30118436pgd.25.2018.09.20.09.23.51
+        by smtp.gmail.com with ESMTPSA id v8-v6sm30976479pff.120.2018.09.20.09.23.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 20 Sep 2018 09:23:55 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v2 19/26] LSM: Introduce CONFIG_LSM_ORDER
-Date:   Thu, 20 Sep 2018 09:23:31 -0700
-Message-Id: <20180920162338.21060-20-keescook@chromium.org>
+Subject: [PATCH security-next v2 20/26] LSM: Introduce "lsm.order=" for boottime ordering
+Date:   Thu, 20 Sep 2018 09:23:32 -0700
+Message-Id: <20180920162338.21060-21-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
@@ -78,96 +78,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides a way to declare LSM initialization order via Kconfig.
+Provide a way to reorder LSM initialization using the new "lsm.order="
+comma-separated list of LSMs. Any LSMs not listed will be added in builtin
+order.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/Kconfig    | 11 +++++++++++
- security/security.c | 38 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 46 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+ security/security.c                             | 15 ++++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 27d8b2688f75..de8202886c1d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -276,5 +276,16 @@ config DEFAULT_SECURITY
- 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
- 	default "" if DEFAULT_SECURITY_DAC
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 32d323ee9218..5ac4c1056ffa 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2276,6 +2276,11 @@
  
-+config LSM_ORDER
-+	string "Default initialization order of builtin LSMs"
-+	default "integrity"
-+	help
-+	  A comma-separated list of LSMs, in initialization order.
-+	  Any LSMs left off this list will be link-order initialized
-+	  after any listed LSMs. Any LSMs listed here but not built in
-+	  the kernel will be ignored.
-+
-+	  If unsure, leave this as the default.
-+
- endmenu
+ 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
  
++	lsm.order=lsm1,...,lsmN
++			[SECURITY] Choose order of LSM initialization. Any
++			builtin LSMs not listed here will be implicitly
++			added to the list in builtin order.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
 diff --git a/security/security.c b/security/security.c
-index 2541a512a0f7..063ee2466e58 100644
+index 063ee2466e58..4db194f81419 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -44,6 +44,8 @@ char *lsm_names;
+@@ -43,6 +43,7 @@ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ char *lsm_names;
  /* Boot-time LSM user choice */
  static __initdata const char *chosen_major_lsm;
++static __initdata const char *chosen_lsm_order;
  
-+static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
-+
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
+ static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
  
-@@ -108,14 +110,44 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
- 		   (!lsm->enabled || *lsm->enabled) ? "en" : "dis");
+@@ -136,11 +137,15 @@ static void __init parse_lsm_order(const char *order, const char *origin)
+ 	kfree(sep);
  }
  
--/* Populate ordered LSMs list from hard-coded list of LSMs. */
-+/* Populate ordered LSMs list from given string. */
-+static void __init parse_lsm_order(const char *order, const char *origin)
-+{
-+	struct lsm_info *lsm;
-+	char *sep, *name, *next;
-+
-+	sep = kstrdup(order, GFP_KERNEL);
-+	next = sep;
-+	/* Walk the list, looking for matching LSMs. */
-+	while ((name = strsep(&next, ",")) != NULL) {
-+		bool found = false;
-+
-+		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
-+			    strcmp(lsm->name, name) == 0) {
-+				append_ordered_lsm(lsm, origin);
-+				found = true;
-+			}
-+		}
-+
-+		if (!found)
-+			init_debug("%s ignored: %s\n", origin, name);
-+	}
-+	kfree(sep);
-+}
-+
-+/* Populate ordered LSMs list from builtin list of LSMs. */
+-/* Populate ordered LSMs list from builtin list of LSMs. */
++/* Populate ordered LSMs list from commandline and builtin list of LSMs. */
  static void __init prepare_lsm_order(void)
  {
  	struct lsm_info *lsm;
  
-+	/* Parse order from builtin list. */
-+	parse_lsm_order(builtin_lsm_order, "builtin");
++	/* Parse order from commandline, if present. */
++	if (chosen_lsm_order)
++		parse_lsm_order(chosen_lsm_order, "cmdline");
 +
-+	/* Add any missing LSMs, in link order. */
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if (strcmp(lsm->name, "integrity") == 0)
--			append_ordered_lsm(lsm, "builtin");
-+		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+			append_ordered_lsm(lsm, "link-time");
- 	}
- }
+ 	/* Parse order from builtin list. */
+ 	parse_lsm_order(builtin_lsm_order, "builtin");
  
+@@ -264,6 +269,14 @@ static int __init choose_major_lsm(char *str)
+ }
+ __setup("security=", choose_major_lsm);
+ 
++/* Explicitly choose LSM initialization order. */
++static int __init choose_lsm_order(char *str)
++{
++	chosen_lsm_order = str;
++	return 1;
++}
++__setup("lsm.order=", choose_lsm_order);
++
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
+ {
 -- 
 2.17.1
 
