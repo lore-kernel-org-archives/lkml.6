@@ -4,33 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181F3ECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC9DECE567
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04E721521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFA721521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OTNVBUaD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04E721521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QtFvV7oH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFA721521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387899AbeITI3H (ORCPT
+        id S2387913AbeITI3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:29:07 -0400
+        Thu, 20 Sep 2018 04:29:08 -0400
 Received: from mail-eopbgr700094.outbound.protection.outlook.com ([40.107.70.94]:25376
         "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387856AbeITI3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:29:06 -0400
+        id S2387789AbeITI3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:29:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZEQ3Kx9S9y+qkBwKfEaIvKJLuslYGStcMBCn/An6B8M=;
- b=OTNVBUaDieUP0Kxhm7WdWtCiPNxHXjLSShuEv/0rDWtO0T4Ifc6xmLNwmuHxHU3kCyHXJgV9mDfjBiZQIgT1RuGcPRKzNFRSiKHQPtPd7lt/eHnvWzDseN3Kc0GYEiiy+stPyVAQGVKTNtpoMCuzyTPlDUHLu2mbQhtEYVfmrQw=
+ bh=MyTj6aPN45lCxH9hlCUqN66enAaeZYkuP7yp293viHM=;
+ b=QtFvV7oH0CHku/gOW+FTKZqfgGLaGZXpy7OTjNOzTWS3uHv0MafYFj6z9cfi8k0ZJSaO77KU3uNyV1UltAOPyIQiNDFCFUOIu+iji4zxlAabuf2YKyCVk1Q23e8WF5PxWMNva2rWwjNbGcMs39aUjmeZmkRuIBKxGZooPanJWfc=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,17 +42,17 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Jacob Keller <jacob.e.keller@intel.com>,
+CC:     Preethi Banala <preethi.banala@intel.com>,
         Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 28/56] ice: Report stats for allocated queues via
- ethtool stats
-Thread-Topic: [PATCH AUTOSEL 4.18 28/56] ice: Report stats for allocated
- queues via ethtool stats
-Thread-Index: AQHUUIxPStZMncmD10mnCtGrTm9Ahw==
-Date:   Thu, 20 Sep 2018 02:47:46 +0000
-Message-ID: <20180920024716.58490-28-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 29/56] ice: Clean control queues only when they
+ are initialized
+Thread-Topic: [PATCH AUTOSEL 4.18 29/56] ice: Clean control queues only when
+ they are initialized
+Thread-Index: AQHUUIxQM7sqVjoHcUW1dHNmAg4zVA==
+Date:   Thu, 20 Sep 2018 02:47:47 +0000
+Message-ID: <20180920024716.58490-29-alexander.levin@microsoft.com>
 References: <20180920024716.58490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180920024716.58490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,13 +61,13 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:nTocBTcRatVXQpNtUOMMLf6XMi8fabQDCo6fZT680qhsqft0ZDD5NLBZk/1d1wtpMOvnL3kMu0z8pPyPDZXW4oQRb/7dOSOOsG4gfBrjaWoA3NqNK1iGf49QfoN24AIzAMe43Efxvkbf3Mlk+yhuHImTwR/lGVjYRL8n5ieJJmXaSQ0NVZcVxpfx+MVTHoRv0BBm+9zDBkwqmIKDR3TvipV5pkfgg2bRq+7oB7bSub97kdN5w3WRNqGSi/BXn5Fd1+vZxLukH8C8n7+R8CC4eCwOKNLLWW3u1UIupFYkaaRLOVFd0+RqA523B+wlVMnTxFfTcpaWTOgrIG5BisuVSD9a87YAl4S8NLBTVIvlP9+MqnmNhU4HvxMXgehjK6wNROOJCGcE78vp1vWA7IDiFboQvB/lU4k1LNHZvkbzOfxN10A/r33CqHe5D+TASsh4aGDQ+r5U+17FbTUioaTG2w==;5:Ag0ruqBolrmYnaARVEdZoenpldX+o/GzeS7AtS1lo4Mn4YjLh6dyT3ggRIsjLbhqt5UscXAd9ZD5WG/zsm0tYJ9w1bp5oPxCV2GhgehpC5WsZxHIWgHm0QRSb9yFXL9ge/p0pQhvAlfAzO2eDR8xua10qNnQBpcxX0jE44wrLCM=;7:PXC0rnkcP4qdUnFkxVX++EtI5ykcCGWKtjeFmW5NEA84TwviwxBWqx3dmO/jQAUnQnP1/dgD/a+7r7htTnqQSx2eoFU0jNQrFnuqxwLSpDMiLres1smWzWe8x+Bhc5YzvoeInonNNmumW/4yggdWRYA5FnPhzzvHXu9V2Iown4O4Mg6YdEcyYn16S3yP+jmaQWxDHwaaVYkVqml0RaNeEjdSnF2vAQkUQN5NgLJSxeNKZUZ0Tw7ap1CR2YsAbDPD
-x-ms-office365-filtering-correlation-id: 6063720d-c12e-4097-1b9f-08d61ea3733c
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:PTKXaxpREsKkqbDcTrt1fFFH86mlhLo40mXla731znazV3e3pGDLj6VbKy/OVTbWwFGzoUxt5YxDkudd6JRIwXWjEu5BnPgmPdfX8n60SobES3a1TYQA1B7VM5BYee9g3fBWBxcQG/NqvM9mIF7PJexJjpcdyDWRn/+suPjwRG+6PYxxmwlek1Y5eHUJXCXtwHbNV4scWlPtPghjSbh7Pw/usTZ11BJIPxKtnD5ZSgbdSAcBBWJdNrRiYaPsUfJyQmKWnc9Qf/YQTT5LvTktGWn1xxuOqpCX9kMHdsLQNJ08LVeIcei6OMeFXZYtYiOPsBQ5cMHlnw1FW/MVwBNORmyTPdMfNObMpoqhp5JI1WoZJwWrs4wVRuhgrrIs06RVuPsUQoWX6l+JmS7RfeugbyXp7weP4b4talYYLITxGIqtW81Sw7OJQ+6qp4BT6vsfOvDvUXmeqbjk1ud6qzXftg==;5:sVU02yi/AAyouILAlUtQFuog1qZVNcTn9hQT0oNSvc/t1td/xV1BSwA/01s9tFf9m+vRvkxy6IP9IbT6GuJYfw9VN3h52UgAs51Gs5qsyN3m7sNSxoEPeTtof2S4WsUBo6wmdVlKTGT4DBqK7mPmlhItjkUGrseOWmv2dYmPlL4=;7:GP+c0A326ksn2R6n6upz7vGML4bU3Jxx3agEMEW+9DcX4CN3ywmHpvGEwjyCHs6HF80SYK9y6zTX8ghPkhLwU51A3b07UazTlQB9G7IKLZOsQoqajGWbzSH+RfJKauB+3kp5/ZeG7WBKlT6RRQ6sJIE9ZuM568fRtatQc9URWkJqL+fUqei3mOkNqxB+g1X5DVpva4i0srAkBuxrVH3uUnygi7jtV5rGXE0Oh1Nu4jOnqAMoIo4rL5KAPyRkRiSe
+x-ms-office365-filtering-correlation-id: bb09aae0-8e54-47aa-a06c-08d61ea373a2
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
 x-ms-traffictypediagnostic: CY4PR21MB0822:
-x-microsoft-antispam-prvs: <CY4PR21MB08222EA2C35C077B26151D74FB130@CY4PR21MB0822.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(211171220733660)(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0822C4565EAB0F2BF98881EFFB130@CY4PR21MB0822.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
 x-forefront-prvs: 0801F2E62B
@@ -76,15 +76,15 @@ received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: jCxBXugv4W65DMjoaFoBINBdAm2wxCSJ01rlzzjy5pUfosLzjAyTEcnnjo5Yds7pbWXqB21e/QtCX+n/gN+CrY/CeZjw2c5cbzzvlT4ES8j+5jLJyqUz5ZAcrFnf/7krBNikWwe1/mixVuskib65BMHdZ1kAUojCnN85LQzuQBey7X6u5IBUYbgVqoENlvd1Wltr+yWHUP21E6XR8L+2oRB0UDIiQNFlXm62ZRd1UDH73oXEcl+XHbl/YvLHrYyTG5l5eplaIzdQcj2ofZLkoraK5dTe1fYVvWUZUQSGWjNOCQBGmxrD8QMQ31gxtOssYOEk1d9sbn5m84fwQKX2XzVLMjC/itALadjaOks0xmg=
+x-microsoft-antispam-message-info: UmCHT80hh/w33eG8iBJcq+RzDj6oo6kR8kLx4tV4uqUyKW82rFKPoSECRLDjjCelAgpwQ+B2Ky5NIATWZteHjI5XFUZq5rn/DXgGlrq/Q++TYpCtfXi9tSXeFTTiXv67nECpUS9DekopJ/gso+HS67ES11TXCyE3SvVPK+8T6FHNlFE7PtCNfO0Wueq9e8/1cwcGx9LGE89eExrG+y8SJEpa5D+BJfyh6ai1RShDsm+1m9DKrf9YIXLoh4wd9wBMRQZRCbR55+2Tv4QkjRp+IJl5uM6OrvkN3Bo6k7FSpQh23Z6L3aX6Q11ZmkwclrleQ/A1/8OlhCtTPVINxwh+Sz0WD987FiItxxvdt9p9ETI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6063720d-c12e-4097-1b9f-08d61ea3733c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:46.8981
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb09aae0-8e54-47aa-a06c-08d61ea373a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:47.6638
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,202 +94,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Preethi Banala <preethi.banala@intel.com>
 
-[ Upstream commit f8ba7db850350319348b6d3c276f8ba19bc098ef ]
+[ Upstream commit b29bc220e2c7bd494a4605defcd93b18d5a8cf86 ]
 
-It is not safe to have the string table for statistics change order or
-size over the lifetime of a given netdevice. This is because of the
-nature of the 3-step process for obtaining stats. First, user space
-performs a request for the size of the strings table. Second it performs
-a separate request for the strings themselves, after allocating space
-for the table. Third, it requests the stats themselves, also allocating
-space for the table.
+Clean control queues only when they are initialized. One of the ways to
+validate if the basic initialization is done is by checking value of
+cq->sq.head and cq->rq.head variables that specify the register address.
+This patch adds a check to avoid NULL pointer dereference crash when tried
+to shutdown uninitialized control queue.
 
-If the size decreased, there is potential to see garbage data or stats
-values. In the worst case, we could potentially see stats values become
-mis-aligned with their strings, so that it looks like a statistic is
-being reported differently than it actually is.
-
-Even worse, if the size increased, there is potential that the strings
-table or stats table was not allocated large enough and the stats code
-could access and write to memory it should not, potentially resulting in
-undefined behavior and system crashes.
-
-It isn't even safe if the size always changes under the RTNL lock. This
-is because the calls take place over multiple user space commands, so it
-is not possible to hold the RTNL lock for the entire duration of
-obtaining strings and stats. Further, not all consumers of the ethtool
-API are the user space ethtool program, and it is possible that one
-assumes the strings will not change (valid under the current contract),
-and thus only requests the stats values when requesting stats in a loop.
-
-Finally, it's not possible in the general case to detect when the size
-changes, because it is quite possible that one value which could impact
-the stat size increased, while another decreased. This would result in
-the same total number of stats, but reordering them so that stats no
-longer line up with the strings they belong to. Since only size changes
-aren't enough, we would need some sort of hash or token to determine
-when the strings no longer match. This would require extending the
-ethtool stats commands, but there is no more space in the relevant
-structures.
-
-The real solution to resolve this would be to add a completely new API
-for stats, probably over netlink.
-
-In the ice driver, the only thing impacting the stats that is not
-constant is the number of queues. Instead of reporting stats for each
-used queue, report stats for each allocated queue. We do not change the
-number of queues allocated for a given netdevice, as we pass this into
-the alloc_etherdev_mq() function to set the num_tx_queues and
-num_rx_queues.
-
-This resolves the potential bugs at the slight cost of displaying many
-queue statistics which will not be activated.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Preethi Banala <preethi.banala@intel.com>
 Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
 Tested-by: Tony Brelinski <tonyx.brelinski@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/intel/ice/ice.h         |  7 +++
- drivers/net/ethernet/intel/ice/ice_ethtool.c | 52 +++++++++++++++-----
- 2 files changed, 46 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_controlq.c | 24 ++++++++++++-------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/in=
-tel/ice/ice.h
-index d8b5fff581e7..ed071ea75f20 100644
---- a/drivers/net/ethernet/intel/ice/ice.h
-+++ b/drivers/net/ethernet/intel/ice/ice.h
-@@ -89,6 +89,13 @@ extern const char ice_drv_ver[];
- #define ice_for_each_rxq(vsi, i) \
- 	for ((i) =3D 0; (i) < (vsi)->num_rxq; (i)++)
+diff --git a/drivers/net/ethernet/intel/ice/ice_controlq.c b/drivers/net/et=
+hernet/intel/ice/ice_controlq.c
+index 7c511f144ed6..c064416080e7 100644
+--- a/drivers/net/ethernet/intel/ice/ice_controlq.c
++++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
+@@ -597,10 +597,14 @@ static enum ice_status ice_init_check_adminq(struct i=
+ce_hw *hw)
+ 	return 0;
 =20
-+/* Macros for each allocated tx/rx ring whether used or not in a VSI */
-+#define ice_for_each_alloc_txq(vsi, i) \
-+	for ((i) =3D 0; (i) < (vsi)->alloc_txq; (i)++)
-+
-+#define ice_for_each_alloc_rxq(vsi, i) \
-+	for ((i) =3D 0; (i) < (vsi)->alloc_rxq; (i)++)
-+
- struct ice_tc_info {
- 	u16 qoffset;
- 	u16 qcount;
-diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool.c b/drivers/net/eth=
-ernet/intel/ice/ice_ethtool.c
-index 1db304c01d10..c71a9b528d6d 100644
---- a/drivers/net/ethernet/intel/ice/ice_ethtool.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ethtool.c
-@@ -26,7 +26,7 @@ static int ice_q_stats_len(struct net_device *netdev)
- {
- 	struct ice_netdev_priv *np =3D netdev_priv(netdev);
-=20
--	return ((np->vsi->num_txq + np->vsi->num_rxq) *
-+	return ((np->vsi->alloc_txq + np->vsi->alloc_rxq) *
- 		(sizeof(struct ice_q_stats) / sizeof(u64)));
+ init_ctrlq_free_rq:
+-	ice_shutdown_rq(hw, cq);
+-	ice_shutdown_sq(hw, cq);
+-	mutex_destroy(&cq->sq_lock);
+-	mutex_destroy(&cq->rq_lock);
++	if (cq->rq.head) {
++		ice_shutdown_rq(hw, cq);
++		mutex_destroy(&cq->rq_lock);
++	}
++	if (cq->sq.head) {
++		ice_shutdown_sq(hw, cq);
++		mutex_destroy(&cq->sq_lock);
++	}
+ 	return status;
  }
 =20
-@@ -218,7 +218,7 @@ static void ice_get_strings(struct net_device *netdev, =
-u32 stringset, u8 *data)
- 			p +=3D ETH_GSTRING_LEN;
- 		}
-=20
--		ice_for_each_txq(vsi, i) {
-+		ice_for_each_alloc_txq(vsi, i) {
- 			snprintf(p, ETH_GSTRING_LEN,
- 				 "tx-queue-%u.tx_packets", i);
- 			p +=3D ETH_GSTRING_LEN;
-@@ -226,7 +226,7 @@ static void ice_get_strings(struct net_device *netdev, =
-u32 stringset, u8 *data)
- 			p +=3D ETH_GSTRING_LEN;
- 		}
-=20
--		ice_for_each_rxq(vsi, i) {
-+		ice_for_each_alloc_rxq(vsi, i) {
- 			snprintf(p, ETH_GSTRING_LEN,
- 				 "rx-queue-%u.rx_packets", i);
- 			p +=3D ETH_GSTRING_LEN;
-@@ -253,6 +253,24 @@ static int ice_get_sset_count(struct net_device *netde=
-v, int sset)
- {
- 	switch (sset) {
- 	case ETH_SS_STATS:
-+		/* The number (and order) of strings reported *must* remain
-+		 * constant for a given netdevice. This function must not
-+		 * report a different number based on run time parameters
-+		 * (such as the number of queues in use, or the setting of
-+		 * a private ethtool flag). This is due to the nature of the
-+		 * ethtool stats API.
-+		 *
-+		 * User space programs such as ethtool must make 3 separate
-+		 * ioctl requests, one for size, one for the strings, and
-+		 * finally one for the stats. Since these cross into
-+		 * user space, changes to the number or size could result in
-+		 * undefined memory access or incorrect string<->value
-+		 * correlations for statistics.
-+		 *
-+		 * Even if it appears to be safe, changes to the size or
-+		 * order of strings will suffer from race conditions and are
-+		 * not safe.
-+		 */
- 		return ICE_ALL_STATS_LEN(netdev);
- 	default:
- 		return -EOPNOTSUPP;
-@@ -280,18 +298,26 @@ ice_get_ethtool_stats(struct net_device *netdev,
- 	/* populate per queue stats */
- 	rcu_read_lock();
-=20
--	ice_for_each_txq(vsi, j) {
-+	ice_for_each_alloc_txq(vsi, j) {
- 		ring =3D READ_ONCE(vsi->tx_rings[j]);
--		if (!ring)
--			continue;
--		data[i++] =3D ring->stats.pkts;
--		data[i++] =3D ring->stats.bytes;
-+		if (ring) {
-+			data[i++] =3D ring->stats.pkts;
-+			data[i++] =3D ring->stats.bytes;
-+		} else {
-+			data[i++] =3D 0;
-+			data[i++] =3D 0;
-+		}
+@@ -706,10 +710,14 @@ static void ice_shutdown_ctrlq(struct ice_hw *hw, enu=
+m ice_ctl_q q_type)
+ 		return;
  	}
 =20
--	ice_for_each_rxq(vsi, j) {
-+	ice_for_each_alloc_rxq(vsi, j) {
- 		ring =3D READ_ONCE(vsi->rx_rings[j]);
--		data[i++] =3D ring->stats.pkts;
--		data[i++] =3D ring->stats.bytes;
-+		if (ring) {
-+			data[i++] =3D ring->stats.pkts;
-+			data[i++] =3D ring->stats.bytes;
-+		} else {
-+			data[i++] =3D 0;
-+			data[i++] =3D 0;
-+		}
- 	}
+-	ice_shutdown_sq(hw, cq);
+-	ice_shutdown_rq(hw, cq);
+-	mutex_destroy(&cq->sq_lock);
+-	mutex_destroy(&cq->rq_lock);
++	if (cq->sq.head) {
++		ice_shutdown_sq(hw, cq);
++		mutex_destroy(&cq->sq_lock);
++	}
++	if (cq->rq.head) {
++		ice_shutdown_rq(hw, cq);
++		mutex_destroy(&cq->rq_lock);
++	}
+ }
 =20
- 	rcu_read_unlock();
-@@ -519,7 +545,7 @@ ice_set_ringparam(struct net_device *netdev, struct eth=
-tool_ringparam *ring)
- 		goto done;
- 	}
-=20
--	for (i =3D 0; i < vsi->num_txq; i++) {
-+	for (i =3D 0; i < vsi->alloc_txq; i++) {
- 		/* clone ring and setup updated count */
- 		tx_rings[i] =3D *vsi->tx_rings[i];
- 		tx_rings[i].count =3D new_tx_cnt;
-@@ -551,7 +577,7 @@ ice_set_ringparam(struct net_device *netdev, struct eth=
-tool_ringparam *ring)
- 		goto done;
- 	}
-=20
--	for (i =3D 0; i < vsi->num_rxq; i++) {
-+	for (i =3D 0; i < vsi->alloc_rxq; i++) {
- 		/* clone ring and setup updated count */
- 		rx_rings[i] =3D *vsi->rx_rings[i];
- 		rx_rings[i].count =3D new_rx_cnt;
+ /**
 --=20
 2.17.1
