@@ -2,93 +2,105 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E91EECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1AFECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A102152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:45:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A102152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 238C621529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238C621529
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387737AbeITS2W (ORCPT
+        id S2387747AbeITS3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:28:22 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:22065 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387701AbeITS2V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:28:21 -0400
+        Thu, 20 Sep 2018 14:29:48 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24357 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387453AbeITS3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:29:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 05:46:27 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,398,1531810800"; 
-   d="scan'208";a="20223232"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Sep 2018 05:45:02 -0700
-Received: from eh-station.microchip.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 20 Sep 2018 05:45:01 -0700
-From:   Eugen Hristev <eugen.hristev@microchip.com>
-To:     <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-CC:     <nicolas.ferre@microchip.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH 2/2] iio: adc: at91: fix wrong channel number in triggered buffer mode
-Date:   Thu, 20 Sep 2018 15:40:38 +0300
-Message-ID: <1537447238-18674-2-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
-References: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+   d="scan'208";a="87820837"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Sep 2018 05:46:09 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [QUEUED v20180920 00/16] stm class/intel_th: Queued updates for v4.20
+Date:   Thu, 20 Sep 2018 15:45:37 +0300
+Message-Id: <20180920124553.56978-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When channels are registered, the hardware channel number is not the
-actual iio channel number.
-This is because the driver is probed with a certain number of accessible
-channels. Some pins are routed and some not, depending on the description of
-the board in the DT.
-Because of that, channels 0,1,2,3 can correspond to hardware channels
-2,3,4,5 for example.
-In the buffered triggered case, we need to do the translation accordingly.
-Fixed the channel number to stop reading the wrong channel.
+Hi,
 
-Fixes 0e589d5fb "ARM: AT91: IIO: Add AT91 ADC driver."
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
----
- drivers/iio/adc/at91_adc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+These are patches I have queued so far, that I'm planning to send to
+Greg for the next merge window. This is mainly support for MIPI SyS-T
+protocol and all the infrastructure changes to make it possible.
 
-diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-index e85f859..6698804 100644
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *idev = pf->indio_dev;
- 	struct at91_adc_state *st = iio_priv(idev);
-+	struct iio_chan_spec *chan;
- 	int i, j = 0;
- 
- 	for (i = 0; i < idev->masklength; i++) {
- 		if (!test_bit(i, idev->active_scan_mask))
- 			continue;
--		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-+		chan = idev->channels + i;
-+		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
- 		j++;
- 	}
- 
+MIPI SyS-T is a public standard [0] for a software-level trace protocol
+that in this instance we use on top of STM devices (if we choose to) and
+MIPI STP protocol.
+
+The old "protocol" is preserved for compatibility.
+
+[0] http://www.mipi.org/specifications/sys-t
+
+Alexander Shishkin (16):
+  stm class: Rework policy node fallback
+  stm class: Clarify configfs root type/operations names
+  stm class: Clean up stp_configfs_init
+  stm class: Introduce framing protocol drivers
+  stm class: Add a helper for writing data packets
+  stm class: Factor out default framing protocol
+  stm class: Switch over to the protocol driver
+  stm class: Add MIPI SyS-T protocol support
+  stm class: p_sys-t: Add support for CLOCKSYNC packets
+  stm class: p_sys-t: Document the configfs interface
+  stm class: Document the MIPI SyS-T protocol usage
+  intel_th: SPDX-ify the documentation
+  stm class: SPDX-ify the documentation
+  stm class: heartbeat: Fix whitespace
+  lib: Add memcat_p(): paste 2 pointer arrays together
+  stm class: Use memcat_p()
+
+ .../ABI/testing/configfs-stp-policy-p_sys-t   |  41 ++
+ Documentation/trace/intel_th.rst              |   2 +
+ Documentation/trace/stm.rst                   |   2 +
+ Documentation/trace/sys-t.rst                 |  62 +++
+ drivers/hwtracing/stm/Kconfig                 |  29 ++
+ drivers/hwtracing/stm/Makefile                |   6 +
+ drivers/hwtracing/stm/core.c                  | 292 +++++++++++---
+ drivers/hwtracing/stm/heartbeat.c             |   2 +-
+ drivers/hwtracing/stm/p_basic.c               |  47 +++
+ drivers/hwtracing/stm/p_sys-t.c               | 381 ++++++++++++++++++
+ drivers/hwtracing/stm/policy.c                | 148 +++++--
+ drivers/hwtracing/stm/stm.h                   |  57 ++-
+ include/linux/string.h                        |   7 +
+ lib/Kconfig.debug                             |   8 +
+ lib/Makefile                                  |   1 +
+ lib/string.c                                  |  31 ++
+ lib/test_memcat_p.c                           | 115 ++++++
+ 17 files changed, 1138 insertions(+), 93 deletions(-)
+ create mode 100644 Documentation/ABI/testing/configfs-stp-policy-p_sys-t
+ create mode 100644 Documentation/trace/sys-t.rst
+ create mode 100644 drivers/hwtracing/stm/p_basic.c
+ create mode 100644 drivers/hwtracing/stm/p_sys-t.c
+ create mode 100644 lib/test_memcat_p.c
+
 -- 
-2.7.4
+2.18.0
 
