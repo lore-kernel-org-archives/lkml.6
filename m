@@ -2,122 +2,112 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC14C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D34C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753282152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:57:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="AB3oeSuD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753282152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id D33442152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:57:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33442152C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732285AbeITQjy (ORCPT
+        id S1732374AbeITQkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:39:54 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33829 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeITQjy (ORCPT
+        Thu, 20 Sep 2018 12:40:16 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:44823 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeITQkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:39:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f8-v6so7960433ljk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 03:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hYMeEJ1mYS5w9VXVieRfI6JukzrJSr09XclRJKwYHzI=;
-        b=AB3oeSuDtW5PNFd34tPPMvm/x1z4LHIU1y83yZK3cSf+tz4iVY7DhlRDUxDIqeVna+
-         lUSdnlbnVQ3HYEUwvtIzS5ELQjsUVB/w5b08/kafWz01I5aN1gfSnbNSx/KQPGTj4TJO
-         0iAgAGThtSWPPbapV0HYs1DMFAbxvyZALtwFA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hYMeEJ1mYS5w9VXVieRfI6JukzrJSr09XclRJKwYHzI=;
-        b=k5N5ttv60wX4BMavxTVE2iFaM0xiSP6xxUuRJf6OYhh4JWPb83EWlynFVdrDRcV0wB
-         wtgnvJ/QLJDnZ/delIZQqEQ+RFZKXMWVVHR9s5DkoLYz9DMyN4R22PLJJPTHKalxIwPU
-         MGRG6rbmdO+LtVXa0ldnCoZJAXcHzxB906f+UqSE4t85aRxc3JeZB6svfw72Gl9XYhpH
-         wAgKIsiACwtMo4xSD0GN+QzNtS8BBU4zbMA4bWWpa//EVMh+Wj3porlnZy66zQDHUwCG
-         PmYaSWE2CF/SyFYK9iiavDZ2o24KZ58J6NwoC2j50bEdlOJ7dVS6T76xTNCZZiO3SIlT
-         WpoA==
-X-Gm-Message-State: APzg51AwO1JwpjmiLmR0jsl3YLaXS8hFyDvGcP9zQXbS745l/APwkbF5
-        E2bOtpo9JDG8rHgn0rsCE/CWPhzBpi3MP3PN
-X-Google-Smtp-Source: ANB0VdZP94c6MoqI0v7+xr5xLhuObE3ntYaYUUNRSDBlENUSGTPIVrqAKd1Y0dXKfszvpAqwes5PaQ==
-X-Received: by 2002:a2e:1248:: with SMTP id t69-v6mr24183525lje.129.1537441017913;
-        Thu, 20 Sep 2018 03:56:57 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o67-v6sm1582025lff.36.2018.09.20.03.56.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 03:56:57 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, x86@kernel.org
-Subject: [PATCH 23/22] x86: dynamic_debug: protect against dynamic debug identifier reuse
-Date:   Thu, 20 Sep 2018 12:56:53 +0200
-Message-Id: <20180920105653.10964-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180919220444.23190-23-linux@rasmusvillemoes.dk>
-References: <20180919220444.23190-23-linux@rasmusvillemoes.dk>
+        Thu, 20 Sep 2018 12:40:16 -0400
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id A67BB3001EF4C;
+        Thu, 20 Sep 2018 12:57:19 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 7D30D110; Thu, 20 Sep 2018 12:57:19 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 12:57:19 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Andreas Bosch <progandy@bosch-fellbach.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chris Mason <clm@fb.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Olof Johansson <olof@lxom.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Code of Conduct: Let's revamp it.
+Message-ID: <20180920105719.ktnmzcfzih2tytfi@wunner.de>
+References: <20180917114852.hzo36b2fewdzqc4t@wunner.de>
+ <20180917122430.GA3320@kroah.com>
+ <20180918201631.as5zjjkldtkduwll@wunner.de>
+ <61b4a3f9-ccd1-061c-1c1b-ec993b056c66@bosch-fellbach.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61b4a3f9-ccd1-061c-1c1b-ec993b056c66@bosch-fellbach.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most invocations of DEFINE_DYNAMIC_DEBUG_METADATA happen through
-"public" macros such as pr_debug or netdev_dbg, which have been updated
-to ensure they pass a unique identifier to use as the name for the
-struct _ddebug instance. But it is still possible that someone invokes
-DEFINE_DYNAMIC_DEBUG_METADATA directly, or creates a new wrapper macro
-that does not do the extra-level-of-macros-passing-on-a__UNIQUE_ID
-dance. On x86-64, all subsequent uses of that same identifier would
-silently reuse the first instance, which is bad.
+On Thu, Sep 20, 2018 at 12:31:26PM +0200, Andreas Bosch wrote:
+> Am 18.09.18 um 22:16 schrieb Lukas Wunner:
+> > On Mon, Sep 17, 2018 at 02:24:30PM +0200, Greg Kroah-Hartman wrote:
+> >> On Mon, Sep 17, 2018 at 01:48:52PM +0200, Lukas Wunner wrote:
+> >>> On Sun, Sep 16, 2018 at 12:22:43PM -0700, Linus Torvalds wrote:
+> >>>> +Scope
+> >>>> +=====
+> >>>> +
+> >>>> +This Code of Conduct applies both within project spaces and in public
+> >>>> +spaces when an individual is representing the project or its community.
+> >>>> +Examples of representing a project or community include using an
+> >>>> +official project e-mail address, posting via an official social media
+> >>>> +account, or acting as an appointed representative at an online or
+> >>>> +offline event. Representation of a project may be further defined and
+> >>>> +clarified by project maintainers.
+> >>> 
+> >>> Seriously though, I read this to know what I need to be aware of but oddly
+> >>> the language of this paragraph says it doesn't apply to me:  I'm not using
+> >>> an official project e-mail address nor an official social media account,
+> >>> nor has anyone appointed me as representative.  I can live with that, I'm
+> >>> just wondering what the benefit of a document is that only seems to apply
+> >>> to a tiny fraction of the community.
+> >> 
+> >> I do not think you are reading the document correctly.  As an example,
+> >> it should cover any emails sent to this list.  That is not a "tiny
+> >> fraction" by my last count :)
+> 
+> The document applies if you attach the representation qualifier only to
+> the public spaces. The chosen language seems problematic since the scope
+> of the qualifier is unclear. The two possible readings are: 1) This Code
+> of Conduct applies within project spaces. In addition it applies in
+> public spaces when an individual is representing the project or its
+> community. 2) This Code of Conduct applies both within project spaces and
+> in public spaces. It does only apply when an individual is representing
+> the project or its community. The first reading is the expected version
+> I think, but this should be clarified. -- Andreas
 
-But we can catch such cases by defining a guard symbol that is unique
-per expansion of DEFINE_DYNAMIC_DEBUG_METADATA. This still allows gcc to
-emit multiple copies of some static inline function that has a pr_debug
-call (because all such copies would pass the same value of %5 to the
-assembler), but prevents repeated naked
-DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, "bla") - even with a helpful
-error message saying that '"descriptor" used as _ddebug identifer more
-than once'.
+Thanks, that makes sense.  Indeed I had mentally inserted logical
+parentheses like this when parsing the sentence:
 
-Cc: x86@kernel.org
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Just in case it wasn't already ugly enough ;)
+    This Code of Conduct applies ( both within project spaces and in public
+    spaces ) when an individual is representing the project or its community.
 
- arch/x86/include/asm/dynamic_debug.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+It might be beneficial to disambiguate the sentence, e.g.:
 
-diff --git a/arch/x86/include/asm/dynamic_debug.h b/arch/x86/include/asm/dynamic_debug.h
-index 350ef6e2feff..69167f40482c 100644
---- a/arch/x86/include/asm/dynamic_debug.h
-+++ b/arch/x86/include/asm/dynamic_debug.h
-@@ -26,10 +26,15 @@
- 		     "\t.long 0        \t# <padding>\n"			\
- 		     _DPRINTK_ASM_KEY_INIT				\
- 		     ".popsection\n"					\
-+		     ".set "__stringify(name)".ddebug.once, %c5\n"	\
-+		     ".elseif "__stringify(name)".ddebug.once - %c5\n"	\
-+		     ".line "__stringify(__LINE__) " - 1\n"		\
-+		     ".error \"'"__stringify(name)"' used as _ddebug identifier more than once\"\n" \
- 		     ".endif\n"						\
- 		     : : "i" (KBUILD_MODNAME), "i" (__func__),		\
- 		       "i" (__FILE__), "i" (fmt),			\
--		       "i" (_DPRINTK_FLAGS_LINENO_INIT))
-+		       "i" (_DPRINTK_FLAGS_LINENO_INIT),		\
-+		       "i" (__COUNTER__))
- 
- #endif /* _ASM_X86_DYNAMIC_DEBUG_H */
- 
--- 
-2.16.4
+    This Code of Conduct applies within project spaces.  It also applies in
+    public spaces when an individual is representing the project or its
+    community.
 
+If that is the intended meaning.
+
+Kind regards,
+
+Lukas
