@@ -2,112 +2,198 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6252C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788B121531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LGS58myj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788B121531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9742121523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9742121523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbeITXGx (ORCPT
+        id S1732818AbeITXHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:06:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41544 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeITXGx (ORCPT
+        Thu, 20 Sep 2018 19:07:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726990AbeITXHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:06:53 -0400
-Received: by mail-pf1-f193.google.com with SMTP id h79-v6so4681969pfk.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=FgPPmL4FXmwwtPC0Xu1PrMmEcptlwyIuJ2g4SGGX/tk=;
-        b=LGS58myj7jtaUbLJ9icv/nST9eagTfgKafyQi93pZHOSJwDsUOo1K6b0mHV1dAkJpW
-         9rbbaoOj0JPrfbWdFFNHnxAc4BY/j8kxoQKNSHuVft30dK2u9LVkyHnuwOaltAPfaiDc
-         TYWIgh1HGATZhPk9eezHBCAkisX4/bepmeM+j9RLfA6+fRrNtXC98PvKnQkaNy4ABeRB
-         YawTkeSGfNmL8u8q2eM8Ud/hAbhhGahEzijuuE/aSAZTpapdFg0Eu/5BvvSh0P4WA0aC
-         nygCrXddbmIfSp8JcnCBwCf8byxXZzA88HNczCni3J49TZyKcIw1KqnNq2EBF8FjHsne
-         D66w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=FgPPmL4FXmwwtPC0Xu1PrMmEcptlwyIuJ2g4SGGX/tk=;
-        b=eIoT3wB0/QkQDaQU5Dvigtm+z5w4yesIA9vOc2LEBO2DYt3QpJVWTymHcvNWApha3a
-         bPo9W04tt9QG0l2wiw2/4QX7S31RGrcCnIf29QaqYhAiMV2QfeIHNPeiRRSmGqSd1WL2
-         RYuxp8SuhYDXI5HwDUSlmUzp4c+kOYF4ZleSuXil94cIxrCd5gm8a2qh07AI6GV+qEBN
-         kmxr6KbvGn7PRPtwHbQ/bOeJ2OoxVU5/Bd/dhkf5BIGdx5OKB5h3V+u/fTZbFQVKx1VW
-         LUUfz/G9rURHwxrkHYGFVTQgN/5BjpmrwHkVNQF8vp2KKaZObNz+DimQAg5CzYNcOT6m
-         +QzA==
-X-Gm-Message-State: APzg51AmekVnM/wI9JUbLrNeA0KhZh/CNHRlV75nsdd1kiIKEmpSCsst
-        X7v0t9MLPs68hxSkaa1yxNy6lE3Y
-X-Google-Smtp-Source: ANB0VdZgMxmq0O2NSu7jHCcAICpVGg2c/uZNuz4TPNvng0a9xKPgPoun8iT75yMssgEJbCSufunScA==
-X-Received: by 2002:a63:7003:: with SMTP id l3-v6mr15670906pgc.359.1537464142872;
-        Thu, 20 Sep 2018 10:22:22 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([183.82.19.247])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm74992743pfk.149.2018.09.20.10.22.20
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 10:22:21 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 22:55:29 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     willy@infradead.org, gregkh@linuxfoundation.org, arve@android.com,
-        tkjos@android.com, maco@android.com
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org
-Subject: [PATCH] android/binder: Replace vm_insert_page with vmf_insert_page
-Message-ID: <20180920172528.GA22480@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 20 Sep 2018 19:07:24 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8KHHoEl086739
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:23 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mmf5s24cj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:22 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Thu, 20 Sep 2018 11:22:52 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Sep 2018 11:22:50 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8KHMnRh26935542
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Sep 2018 10:22:49 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 587FB13605D;
+        Thu, 20 Sep 2018 11:22:49 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F2FA4136051;
+        Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.212.176])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 47A7F2E2DA7; Thu, 20 Sep 2018 22:52:45 +0530 (IST)
+From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: [PATCH v8 2/3] powerpc: Use cpu_smallcore_sibling_mask at SMT level on bigcores
+Date:   Thu, 20 Sep 2018 22:52:38 +0530
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18092017-0012-0000-0000-000016B8446C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009741; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01091142; UDB=6.00563758; IPR=6.00871165;
+ MB=3.00023416; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-20 17:22:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092017-0013-0000-0000-00005479101F
+Message-Id: <1537464159-25919-3-git-send-email-ego@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809200167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a plan to replace vm_insert_page with new API
-vmf_insert_page. As part of it, converting vm_insert_page
-to use vmf_insert_page.
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Each of the SMT4 cores forming a big-core are more or less independent
+units. Thus when multiple tasks are scheduled to run on the big-core,
+we get the best performance when the tasks are spread across the pair of
+SMT4 cores.
+
+This patch achieves this by setting the SMT level mask to correspond to
+the smallcore sibling mask on big-core systems. This patch also the
+CACHE level sched-domain corresponding to the big-core is created on
+big-core systems.
+
+With this patch, the SMT sched-domain with SMT=8,4,2 on big-core
+systems are as follows:
+
+1) ppc64_cpu --smt=8
+
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0,2,4,6 level=SMT
+   groups: 0:{ span=0 cap=294 }, 2:{ span=2 cap=294 },
+           4:{ span=4 cap=294 }, 6:{ span=6 cap=294 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=1,3,5,7 level=SMT
+   groups: 1:{ span=1 cap=294 }, 3:{ span=3 cap=294 },
+           5:{ span=5 cap=294 }, 7:{ span=7 cap=294 }
+
+2) ppc64_cpu --smt=4
+
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0,2 level=SMT
+   groups: 0:{ span=0 cap=589 }, 2:{ span=2 cap=589 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=1,3 level=SMT
+   groups: 1:{ span=1 cap=589 }, 3:{ span=3 cap=589 }
+
+3) ppc64_cpu --smt=2
+   SMT domain is a trivial domain consisting of just
+   1 CPU. Hence this domain gets collapsed leaving only CACHE, DIE and
+   NUMA domains.
+
+Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
 ---
- drivers/android/binder_alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/smp.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 64fd96e..17368ef 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -238,6 +238,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		int ret;
- 		bool on_lru;
- 		size_t index;
-+		vm_fault_t vmf;
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 15095110..5cdcf44 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -1265,6 +1265,7 @@ static void add_cpu_to_masks(int cpu)
+ void start_secondary(void *unused)
+ {
+ 	unsigned int cpu = smp_processor_id();
++	struct cpumask *(*sibling_mask)(int) = cpu_sibling_mask;
  
- 		index = (page_addr - alloc->buffer) / PAGE_SIZE;
- 		page = &alloc->pages[index];
-@@ -279,8 +280,8 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		}
- 		user_page_addr =
- 			(uintptr_t)page_addr + alloc->user_buffer_offset;
--		ret = vm_insert_page(vma, user_page_addr, page[0].page_ptr);
--		if (ret) {
-+		vmf = vmf_insert_page(vma, user_page_addr, page[0].page_ptr);
-+		if (vmf != VM_FAULT_NOPAGE) {
- 			pr_err("%d: binder_alloc_buf failed to map page at %lx in userspace\n",
- 			       alloc->pid, user_page_addr);
- 			goto err_vm_insert_page_failed;
+ 	mmgrab(&init_mm);
+ 	current->active_mm = &init_mm;
+@@ -1290,11 +1291,13 @@ void start_secondary(void *unused)
+ 	/* Update topology CPU masks */
+ 	add_cpu_to_masks(cpu);
+ 
++	if (has_big_cores)
++		sibling_mask = cpu_smallcore_mask;
+ 	/*
+ 	 * Check for any shared caches. Note that this must be done on a
+ 	 * per-core basis because one core in the pair might be disabled.
+ 	 */
+-	if (!cpumask_equal(cpu_l2_cache_mask(cpu), cpu_sibling_mask(cpu)))
++	if (!cpumask_equal(cpu_l2_cache_mask(cpu), sibling_mask(cpu)))
+ 		shared_caches = true;
+ 
+ 	set_numa_node(numa_cpu_lookup_table[cpu]);
+@@ -1361,6 +1364,13 @@ static const struct cpumask *shared_cache_mask(int cpu)
+ 	return cpu_l2_cache_mask(cpu);
+ }
+ 
++#ifdef CONFIG_SCHED_SMT
++static const struct cpumask *smallcore_smt_mask(int cpu)
++{
++	return cpu_smallcore_mask(cpu);
++}
++#endif
++
+ static struct sched_domain_topology_level power9_topology[] = {
+ #ifdef CONFIG_SCHED_SMT
+ 	{ cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT) },
+@@ -1388,6 +1398,13 @@ void __init smp_cpus_done(unsigned int max_cpus)
+ 	shared_proc_topology_init();
+ 	dump_numa_cpu_topology();
+ 
++#ifdef CONFIG_SCHED_SMT
++	if (has_big_cores) {
++		pr_info("Using small cores at SMT level\n");
++		power9_topology[0].mask = smallcore_smt_mask;
++		powerpc_topology[0].mask = smallcore_smt_mask;
++	}
++#endif
+ 	/*
+ 	 * If any CPU detects that it's sharing a cache with another CPU then
+ 	 * use the deeper topology that is aware of this sharing.
 -- 
-1.9.1
+1.9.4
 
