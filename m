@@ -2,143 +2,130 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E271FECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C369ECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF1720867
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B18120867
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WkpqEJ6N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF1720867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="DyjtuXOY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B18120867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388035AbeITI3e (ORCPT
+        id S2388036AbeITIhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:29:34 -0400
-Received: from mail-dm3nam03on0093.outbound.protection.outlook.com ([104.47.41.93]:53376
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387928AbeITI3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:29:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EHS17MiYLZJGuUGLsqP7Atv4DhmpnOvfd/5lWldrVPY=;
- b=WkpqEJ6NDX0Tmzke3fFM32L4o9KMV4bJ4Pm7EUp8hOI3M531tJpk/j4Bh/sU1Jo2ou1WwTjS0LZfXpXV7WD3MqKKY9izktwmz/R9uQoA6csaEgYyQ/c9NXCp7q5FLVMSB0Y5BQSIj8Sj7dBwqvE9LxAqFgmOImUkXohp5QttxlE=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0165.namprd21.prod.outlook.com (10.173.192.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Thu, 20 Sep 2018 02:48:22 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:48:22 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bo Chen <chenbo@pdx.edu>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 37/56] e1000: ensure to free old tx/rx rings in
- set_ringparam()
-Thread-Topic: [PATCH AUTOSEL 4.18 37/56] e1000: ensure to free old tx/rx rings
- in set_ringparam()
-Thread-Index: AQHUUIxTSWOfIhpCh0ixdCxyUaZd+Q==
-Date:   Thu, 20 Sep 2018 02:47:53 +0000
-Message-ID: <20180920024716.58490-37-alexander.levin@microsoft.com>
-References: <20180920024716.58490-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180920024716.58490-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0165;6:/QTth5HlornuPwl7HXL5sGO1iE36SGCyeVjefgm4vnbp3euAbynEgqH5XfZzZHTjudki1tS7JPfbORsMbQ41vA+Xi8e4eTAD3yFPN0F/WW2z+p4YQTG0kyg2MYYg1Hm9E+oZzxSZL5ltaB9tnZBN2yIBFYQisM3fEgWNqzF0VaD5UL2ILfZjoTTZKJnAP1zQ1ULk+dQBYqtcMwx5V/LrajC9Sud1f72ObPapkuy4ulxSgJck8bPGWHqO9mSsCPeLC29eCzLCKxVER2chR8pMMTuUANGNk+d08jfSSu1MpmAUqDfTxaXGgYAKcY5ALNDg4KemK35/G5g9CaRwn0N66rArIU7FLQ+rGR+9fDoF/AETTUquQL9XTON0kYimc71FGwM7xkX/j+5QtF9jH7+2EI8uPSf8ctIAEeeetOB7Gpk1rBe/H+kMUye6WJuxxKQjISrVP6iKi98c+9Bjsn1pvQ==;5:kygpzljSlpp9UvvgfI4OLY041yF3HiVil99RQa3wUH7nf9TS2F97GNt7cMhRtum1/V576ugoywK6FLYJkTDKDnNbjdhpmEaAVMu7rjY54/ScszQmv949DcmgNAwV7XsOfk40zNVZYr5yNfgZ9/pLC6ZJdxyzgsbc3x9tI/04lgA=;7:St2fJYP7eFs/ylPoX0HO5LJ4Xfol03MyfLjQeASKXY7Z0hQVN3Q4yrSW3xatDbaxcdxy1UuDe7WNZZW7VzbBw1FP6Hgl1Ufr4jokq3DOItG7JxAE59uqR0RyEw+abIaaBf3MmKEw9eMVGAwC7zPSsK6RYdaWVQn63zQUqKDpjtkx0ZcnBtdIPnwMSERRrM5l0rx+it/U4bPlv4Iqp1cTR9okSEGd0z+qI3LB7RLQA+g8tuxIokpU2SPdsrZM/aXw
-x-ms-office365-filtering-correlation-id: a5450fab-fa45-48b1-0429-08d61ea387dd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0165;
-x-ms-traffictypediagnostic: CY4PR21MB0165:
-x-microsoft-antispam-prvs: <CY4PR21MB016501496BDA4772746C6474FB130@CY4PR21MB0165.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(240347492878265)(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0165;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0165;
-x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(376002)(366004)(346002)(189003)(199004)(71190400001)(71200400001)(22452003)(53936002)(66066001)(6436002)(72206003)(97736004)(6512007)(478600001)(1076002)(36756003)(5250100002)(217873002)(10090500001)(6116002)(2501003)(14454004)(3846002)(106356001)(256004)(105586002)(2906002)(99286004)(8676002)(81156014)(81166006)(86362001)(8936002)(316002)(2900100001)(5660300001)(76176011)(7736002)(305945005)(446003)(11346002)(2616005)(486006)(86612001)(476003)(68736007)(102836004)(6506007)(107886003)(10290500003)(6486002)(6666003)(110136005)(54906003)(186003)(6346003)(25786009)(4326008)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0165;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: zmkIO4kD9qWWvWRwu12p1wMCBF/uG5AO1u26qMth/OClANFGoDni9mQAelXR/03oSw9M5K5LpEMWoLvSQRC7okrSORrEpca6eU94Dp1ze77wIrXYNqy2eeHyEl2WrjFudHCO+5wCV4TI00ZjL8QkmpiY0VZjn3VoM9tXvCm3WNSLbyC8pGcJVPatn3QVLgFoOwWUbH8NX3ja0vnsdDo2kMtdupr1mzJw/9XL7iuyBCPCvW0Y3iTkx5uLGFXDnhBQzK/byOJX6DqsSgxx3XUCaZy+0d+X922cSvnN0ltFyc9++qn/Yc68ZZiBVrgc+dLTuJ7LQKt3BmiQiwyTuPkS6pl95IjOU8PnyMv6o4yc/vw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 20 Sep 2018 04:37:22 -0400
+Received: from cock.li ([185.100.85.212]:41772 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732415AbeITIhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:37:21 -0400
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5450fab-fa45-48b1-0429-08d61ea387dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:53.2731
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1537412175; bh=WUN87q+jR9eyal0KWUKnMRba5GFYUEq1N52GdCUGtw8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DyjtuXOYPN38HX48Ba57HtWzn13A2KUV9dP8Pzln9yd1AcYyef0PFd28Xjcdn+pu9
+         zaZFCZuCH2Kyw65w0UVpQgkGgyuW54UsVCiYZZfJQ7eXU3JjaR1bda7jeI0audkIzc
+         fVbTMONdvSXRsAGcydrumwIMzq/SpbGygsNPOuG3Cfy4m3mvBIXN0u7JVz4UP7D8k/
+         AwTo40K76ZI5qlEl30sBjKd7AAsQR4U0RMS/pvcn4k+fOcfJ2bNnI49olzOHm7imZ3
+         t6g6hnk8IixlDbSoHM4YmWoEKM/1wsqTlf+3vPgGl2/8vQ7TOjlxm84tNFnGO7qBFY
+         ltbx6ZeLzeD9w==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 20 Sep 2018 02:56:14 +0000
+From:   observerofaffairs@redchan.it
+To:     Steve Litt <slitt@troubleshooters.com>
+Cc:     dng@lists.dyne.org, linux-kernel@vger.kernel.org,
+        debian-user@lists.debian.org
+Subject: Code of Conduct: Those Ejected should rescind their license grant.
+In-Reply-To: <20180919130952.2b2c23cc@mydesk.domain.cxm>
+References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it>
+ <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
+ <24cf6d6095c740903f16b56e22dd137c@redchan.it>
+ <996c99ea4146a247730d87df14dfca1a@redchan.it>
+ <E1g2TJn-0006lD-Lm@fencepost.gnu.org>
+ <CAK2MWOssGczVO1Cd_SPVVb=ieCs2vkpFUfve9P3sh+gT1VfN7Q@mail.gmail.com>
+ <4f926d0e5b96673926f3a4f163fdb590@redchan.it>
+ <f3ac1e0424fed0fcbf782a6c9b1209a0@redchan.it>
+ <20180919130952.2b2c23cc@mydesk.domain.cxm>
+Message-ID: <39f9be93ddae0da9898df646f960740d@redchan.it>
+X-Sender: observerofaffairs@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bo Chen <chenbo@pdx.edu>
+The grant is not supported by consideration.
+It dispenses only largess, and asks for no recompense.
+It is a bare license.
+Thus it can be revoked by the grantor at any time.
+His act of grace bestowed, and his act of propriety can rescind.
 
-[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
+The free software world is held up muchly by a gentleman's agreement.
+The agreement is that we shall take mutually beneficial actions, vis a 
+vis the field of software engineering, to increase the net freedom 
+available to all.
 
-In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new va=
-lue
-and the old tx/rx rings are freed only when the device is up. There are res=
-ource
-leaks on old tx/rx rings when the device is not up. This bug is reported by=
- COD,
-a tool for testing kernel module binaries I am building.
+It is not so much held up by law, regardless of what the lay programmers 
+and users of programmers would imagine to believe.
 
-This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
-'e1000_set_ringparam()'.
+To turn one's contributions around as a weapon against the contributor:
+to tell him he must not say this or that, he must not act this or that 
+way,
+lest he be barred from his hobby; let he be barred from freely giving
+dispensation, is an abhorrent abuse of his magnanimity
 
-Signed-off-by: Bo Chen <chenbo@pdx.edu>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Now this gentleman's agreement is being, or has been shattered.
+You will find that the law has no supports to bind him;
+but many to fell the ungrateful who saw themselves the inviolate 
+annuitants of his altruism.
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net=
-/ethernet/intel/e1000/e1000_ethtool.c
-index c1e4e94f100f..2569a168334c 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-@@ -624,14 +624,14 @@ static int e1000_set_ringparam(struct net_device *net=
-dev,
- 		adapter->tx_ring =3D tx_old;
- 		e1000_free_all_rx_resources(adapter);
- 		e1000_free_all_tx_resources(adapter);
--		kfree(tx_old);
--		kfree(rx_old);
- 		adapter->rx_ring =3D rxdr;
- 		adapter->tx_ring =3D txdr;
- 		err =3D e1000_up(adapter);
- 		if (err)
- 			goto err_setup;
- 	}
-+	kfree(tx_old);
-+	kfree(rx_old);
-=20
- 	clear_bit(__E1000_RESETTING, &adapter->flags);
- 	return 0;
---=20
-2.17.1
+Bare licenses are revocable at will. They always have been.
+Those who are thrown out of the "Linux Kernel Community" in punishment 
+for not obeying this CoC, who's past contributions count for nothing in 
+the face of those who will throughout the ages to control men in all 
+things; for not "behaving properly" here or there, within their public 
+or private life; for not bending the knee to the Anglo-American 
+religion, should absolutely recind the grant they have dispensed.
+They are well within their rights to do so, and hostile action must be 
+met with the same and worse in response.
+
+
+
+On 2018-09-19 17:09, Steve Litt wrote:
+> On Wed, 19 Sep 2018 15:33:58 +0000
+> observerofaffairs@redchan.it wrote:
+> 
+>> The CoC will lead only to infighting amongst the contributors, with
+>> this new weapon wielded firmly in all participants hands.
+> 
+> You've made your point. Now stop it. The remedies you suggest, if they
+> could even be legally done, would hobble the Linux Kernel project, to
+> the great delight of Google, Microsoft and Apple. Long observation of
+> people resenting CoCs  is they want the right to speak cruelly to
+> individuals and speak cruelly about groups of people, those groups
+> having nothing to do with the list's core foundation (Linux sans
+> systemd, in our case). The person continuing to use terminology, having
+> nothing to do with the core foundation of the mailing list, that others
+> ask them not to use, has a real problem, and it's not the list's duty
+> to help with that problem. The project is probably better off without
+> the person --- his or her priorities are just plain wrong.
+> 
+> Your posts are offtopic. You've made your point. Please stop now.
+> 
+> SteveT
+> 
+> Steve Litt
+> September 2018 featured book: Quit Joblessness: Start Your Own Business
+> http://www.troubleshooters.com/startbiz
+> _______________________________________________
+> Dng mailing list
+> Dng@lists.dyne.org
+> https://mailinglists.dyne.org/cgi-bin/mailman/listinfo/dng
