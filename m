@@ -2,102 +2,109 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF8DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB767C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8CAD20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B9332147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:51:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOfdkR+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8CAD20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v7IapQr6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9332147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388155AbeIUAcv (ORCPT
+        id S2388130AbeIUAgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:32:51 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35866 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387773AbeIUAcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:32:51 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v26-v6so9350665ljj.3;
-        Thu, 20 Sep 2018 11:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RGN5POnzkK2GHMVl2m++1Tn9i0Yy97pcgg1/ixPuOS8=;
-        b=GOfdkR+7PeZuTIZlRcbLpIjXWrSl3QoedtbhIdUzT9rJG0QFuH9MNyrdWn2rXQovAu
-         IKevPqs0TI0FljP/EBSKoVyH1S+2gfPSw6JEj55Tx4uA43HP9o+utcelmgH+Fqh25qAt
-         qRt8Lmmxy3RlHr1LHw/Qnn7it1ykFqnDCHrSqX/6y30/L4wp4PZcXtXccMCyBt17T3Ut
-         rCbMK0Fc1oPxqazClvD+33W8LNoj16JRprjbtAwwqKuoY7VSNQYy9JTuEcAF7Pi5rFg/
-         MMW4cJR1+Xf72wPvnuI2+eJOTp8AP0R+nFj5PNL+vWmKcAFX6JHsrTGX6q6JVqUVZV+3
-         SEkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RGN5POnzkK2GHMVl2m++1Tn9i0Yy97pcgg1/ixPuOS8=;
-        b=OGj46vbux3ClJDIjKJWFf4CDBE8xHf7b/+ZYFLTlClLxY/IFu05Y/6vFjSzan/0D/n
-         CbHY3h1yN/OYsUC0aafaKrnug9HL4bmAD+g/h7kuNvGWB2izrJrb9ruCeqyaoMQDKQmy
-         QKDEXAore1PJUjXt7zGXYWqR1OHWdoCPD5j8CRVtEM776rYh0GSIO9K4SKECOomcCO6z
-         OiB46y3I+q+yQR1NzYzy1wMaoNOTQbSxH/foCFAyra5lXuniKLcp30iDNk3+0n57/CgI
-         6mHLdUSwyKUnWKraEu+iZ5lJ/eCq9KzbbSE+tRjgAlO9iB0A6aYxDeS2RHn4tPenLFRV
-         1khA==
-X-Gm-Message-State: APzg51AFPWL0YN6mzL8oofT47VQzBcT/+TjPa4aU9pOm0U7TJtMeJ6i9
-        /6XI7LeKXhwh3FfgemUffrV3O0yCclrCpwg+hEs=
-X-Google-Smtp-Source: ANB0Vdb6V8UOKwVDju1o0su0YINEiTmenCW8gO6Jxfe3IyLH5WjNmqNEzuSZ3OGvDVto9HjqTiAdcNBnNAz2W0Iev0o=
-X-Received: by 2002:a2e:9883:: with SMTP id b3-v6mr5753376ljj.80.1537469278831;
- Thu, 20 Sep 2018 11:47:58 -0700 (PDT)
+        Thu, 20 Sep 2018 20:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727171AbeIUAgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:36:39 -0400
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E72FA214C2;
+        Thu, 20 Sep 2018 18:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537469508;
+        bh=Yvu/N1EKlA/F38VY/EkNz9Vl8IT6XPTnue0an1ho8Kc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=v7IapQr6xJMV0Gas5Ev8CJYLMVdsBiDci8EFgADeTLFsKKIHUFkCo0idhSFY3wKnY
+         lAdK1C4CEcfJaxkpf9v3ibfeybb0YXTqEFyZccSChdE8/3ya6DxqEy5b0XRZxQQeMf
+         90cNHIgUX8iAlv4t33J0pIvkKOdXu1E0l9jKsoLM=
+Received: by mail-qk1-f172.google.com with SMTP id z78-v6so6136626qka.0;
+        Thu, 20 Sep 2018 11:51:47 -0700 (PDT)
+X-Gm-Message-State: APzg51C6GSe/fxTjDx+8CyUDMbqljGdz4tsfV8I5EwxwdKW6Kr2CGUk+
+        OVXmUEa2PgKvqwMBchNi2Kxn5QZ2tLAcbKREPQ==
+X-Google-Smtp-Source: ANB0VdbivjFUiMf6/5j+1/HsAFRG+nq45uK2MqkHjvOj79pwH8YtZcgcJCwfUgMWqrGiVWDBb3t2AeRUzzgm1rU4DcM=
+X-Received: by 2002:a37:ddcf:: with SMTP id u76-v6mr8470135qku.184.1537469507132;
+ Thu, 20 Sep 2018 11:51:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920161912.17063-1-ricardo.ribalda@gmail.com>
- <20180920161912.17063-2-ricardo.ribalda@gmail.com> <20180920184054.lbd77a3w56cflfym@valkosipuli.retiisi.org.uk>
-In-Reply-To: <20180920184054.lbd77a3w56cflfym@valkosipuli.retiisi.org.uk>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 20 Sep 2018 20:47:42 +0200
-Message-ID: <CAPybu_2teux1qHpL2F+-uojMP+GDVMOaH87vLB1DCmC+gQKTTQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] [media] ad5820: Add support for enable pin
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180627045234.27403-1-rnayak@codeaurora.org> <20180627045234.27403-3-rnayak@codeaurora.org>
+ <20180703223554.GA32313@rob-hp-laptop> <20180704055757.4li26b6poxllmh2k@vireshk-i7>
+ <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
+In-Reply-To: <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 20 Sep 2018 11:51:35 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
+Message-ID: <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
+ driver bindings
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari
-
-On Thu, Sep 20, 2018 at 8:40 PM Sakari Ailus <sakari.ailus@iki.fi> wrote:
+On Wed, Aug 29, 2018 at 11:31 PM Rajendra Nayak <rnayak@codeaurora.org> wrote:
 >
-> Hi Ricardo,
 >
-> Thanks for the set! A few comments below...
 >
-> On Thu, Sep 20, 2018 at 06:19:10PM +0200, Ricardo Ribalda Delgado wrote:
-> > This patch adds support for a programmable enable pin. It can be used in
-> > situations where the ANA-vcc is not configurable (dummy-regulator), or
-> > just to have a more fine control of the power saving.
+> On 7/4/2018 11:27 AM, Viresh Kumar wrote:
+> > On 03-07-18, 16:35, Rob Herring wrote:
+> >>> +qcom,level values specified in the OPP tables for RPMh power domains
+> >>> +should use the RPMH_REGULATOR_LEVEL_* constants from
+> >>> +<dt-bindings/power/qcom-rpmhpd.h>
+> >>> +
+> >>> +   rpmhpd: power-controller {
+> >>> +           compatible = "qcom,sdm845-rpmhpd";
+> >>> +           #power-domain-cells = <1>;
+> >>> +           operating-points-v2 = <&rpmhpd_opp_table>;
+> >>> +   };
+> >>> +
+> >>> +   rpmhpd_opp_table: opp-table {
+> >>> +           compatible = "operating-points-v2-qcom-level";
+> >>> +
+> >>> +           rpmhpd_opp_ret: opp1 {
+> >>> +                   qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
+> >>> +           };
+> >>
+> >> I don't see the point in using the OPP binding here when you aren't
+> >> using *any* of the properties from it.
 > >
-> > The use of the enable pin is optional
+> > Yeah, that's the case for now. But there are cases (as Stephen
+> > mentioned earlier [1]) where the voltage values (and maybe other
+> > values like current, etc) would be known and filled in DT. And that's
+> > why we all agreed to use OPP tables for PM domains as well, as these
+> > are really "operating performance points" of these PM domains.
 >
-> Missing period at the end of the sentence.
->
+> Rob, are you fine with these bindings then?
 
-Thanks for the superfast response.
+Okay, my only thought is whether we should just use 'reg' here, or do
+we need 'level' for anything else and should make it common?
 
-I have just sent a patch with your comments and also resend 4/4. I was
-missing a comma.
-
-Thanks!
-> >
+Rob
