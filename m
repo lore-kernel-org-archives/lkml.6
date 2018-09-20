@@ -2,123 +2,157 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12593ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E08ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7CD21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F9621531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:17:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2w7+5Jn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7CD21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bm4oCCbu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F9621531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbeITT7W (ORCPT
+        id S1732726AbeITUB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:59:22 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45405 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727633AbeITT7V (ORCPT
+        Thu, 20 Sep 2018 16:01:28 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:49110 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730955AbeITUB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:59:21 -0400
-Received: by mail-ot1-f68.google.com with SMTP id a19-v6so9540605otl.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 07:15:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bcrcEFWYFXO0bI7EyLzl7WW70R6tAqP/4IZ8PwOudEQ=;
-        b=b2w7+5JnSq9537KrU+5UbgmZfT1Dghl8RqVpF97knp7AqeDMBNbVOKiXNs/htMpH8y
-         VMyBkw+t0Ksu7JnPzZHVN7WbEhLBVaVl1vcIjlkspw7cMk3zVbUb99lubB9rBN8cMX/v
-         ordeJMcha5MTPWtFv4ndXzr4k4d7rgvVCNLyfvmQGmUvvyA/RUZOFKUGAq3HzVljdVk4
-         +NAk0mpPZZJKzxunP3sbugQpJxQqTlLK+LoCZ1IGxYoGBnZkvWS4EbLUEv706OeShkBG
-         sEDU0Q3s/3+qYil3X3PhZz+Xju3tIRlRUkJLGaSD53VhDlW59o3WRiCoTgZqs/Y4nJvr
-         ++RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bcrcEFWYFXO0bI7EyLzl7WW70R6tAqP/4IZ8PwOudEQ=;
-        b=uAcarwnEglPlBaaEw5NmXPzYjEnd6WKyyTK9JJXtE1byK6GzADjE9c1qsYViey8jeq
-         S2ERXzrZ4sadLbR9KGlmq9CgBkPPe4NZxI+ICRSxNxKKbbR+FymANefV9jGGt48bWBx/
-         ePpV0krm54f341h7qDSsYCy3WHnNt/I0taO/ekK2X+e7kZYMI/xdBHeYLKLfqtOoBNIO
-         Ym31aXdRahl/xkvfIWTYIGIvUc7jiAomW39AtXYyP0bZ/YItDt4heUoeaVQLxlwpKfWW
-         YAqg2WH67wIzH70sTXTbfHUfz0MhjIunI8OSC7RpHA9eiac1L/RZGykC+buBzXHq/0D2
-         uoJQ==
-X-Gm-Message-State: APzg51CSsY+DHI9e0GyV15VGFQAWR6eh1d2N4NiQnL4kQNb+SNbNUTN6
-        eEu0aPBrMSW1lk1YUK3qhrf7HM5iFzyufoKo6COf5A==
-X-Google-Smtp-Source: ANB0Vdbl5r0OYm9cXbW/dOvtUOSyJPB/RohRX/gLNdJRuWKpjRO0KwUAaIiPVMg8yNgnZV2Tj86dr9heOMqzeyMtzDo=
-X-Received: by 2002:a9d:41cd:: with SMTP id v13-v6mr22936941oti.81.1537452939886;
- Thu, 20 Sep 2018 07:15:39 -0700 (PDT)
+        Thu, 20 Sep 2018 16:01:28 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0706410C10A6;
+        Thu, 20 Sep 2018 07:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1537453066; bh=zsBHOhLVohr7OcaQq3fOxdE6nhPN5+KuIYWWTghXlgE=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=bm4oCCbuxDtIAMzw07qgfZj1LPDFpbRxdHJrn1wUyTPCWzORSZEJgaGBBQWZWgKlL
+         LQLL2LC03EVyXztHF1P/0K7YeNxMmL4HIcedqTmA1NYn4NRKVf6Iw/+HVTUZvsENl8
+         Pd5TEqRdpA4ewm3JBPAvpUl0KqfWA6xkWeXCvqDBsHu3h4ZM6SAqniOAMmBO+nGV88
+         hoQPy8zxw46nyDUX2pvRgxL+9MTtP2wGrAUWNZxV5IysiuP5PlBOov6rUZT7wLQ+yi
+         ismC8nHFaWZu5anHiaMPIoHDNWwikvrTw64TAsj/JZOi9bmhjLbFHtDMJEIRk5kTkP
+         skxHAFgUyW3CA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id AF39A30F0;
+        Thu, 20 Sep 2018 07:17:45 -0700 (PDT)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 20 Sep 2018 07:17:45 -0700
+Received: from AM04WEMBXB.internal.synopsys.com ([fe80::1006:bcdd:1b7:579b])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Thu,
+ 20 Sep 2018 18:17:42 +0400
+From:   Artur Petrosyan <Arthur.Petrosyan@synopsys.com>
+To:     John Stultz <john.stultz@linaro.org>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+CC:     lkml <linux-kernel@vger.kernel.org>,
+        John Youn <John.Youn@synopsys.com>,
+        Artur Petrosyan <Arthur.Petrosyan@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Topic: [PATCH] usb: dwc2: Fix HiKey regression caused by power_down
+ feature
+Thread-Index: AQHT7ws4O+8B/axYs0CeMD+6l4m0jQ==
+Date:   Thu, 20 Sep 2018 14:17:42 +0000
+Message-ID: <3AD91E696667BF4BA728303C178E8A63532AAF6D@am04wembxb.internal.synopsys.com>
+References: <1526690943-8211-1-git-send-email-john.stultz@linaro.org>
+ <410670D7E743164D87FA6160E7907A5601313531E1@am04wembxa.internal.synopsys.com>
+ <CALAqxLVZXs97sryfPaGY5Gq50-FZROgaBADNXXadcyiNhP3EPQ@mail.gmail.com>
+ <410670D7E743164D87FA6160E7907A560131356C4E@am04wembxa.internal.synopsys.com>
+ <CALAqxLU3sWrgPjFqZ2vK0m8wVThtE1hDsbNq9zRC7ritzyNHmQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.104.32]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:ac9:50d9:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 07:15:39
- -0700 (PDT)
-In-Reply-To: <s5hbm8sskco.wl-tiwai@suse.de>
-References: <1537295625-8082-1-git-send-email-conmanx360@gmail.com> <s5hbm8sskco.wl-tiwai@suse.de>
-From:   Connor McAdams <conmanx360@gmail.com>
-Date:   Thu, 20 Sep 2018 10:15:39 -0400
-Message-ID: <CAM8Agx2VAfDv5TD4W_VSo-Ln5g=3wecBicyS4Xr7SiKAwQU-Bg@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Add support for Sound BlasterX AE-5
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org,
-        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for fixing that. I was doing that previously, but this time
-I was only doing it every few commits. Will make sure to go back to
-the way I was doing it before. Sorry about that.
-
-On Thu, Sep 20, 2018 at 3:23 AM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Tue, 18 Sep 2018 20:33:28 +0200,
-> Connor McAdams wrote:
->>
->> This patch series adds support for the Sound BlasterX AE-5. I have
->> personally tested it, and had others test it as well. All outputs work,
->> front headphone, rear headphone, rear line-out, surround, digital. The
->> only issue currently is that the microphone suffers from inconsistency
->> like the Sound Blaster Z does, and Creative may be willing to help fix
->> that, but if they're not, I have a few ideas.
->>
->> I also have the ZxR working currently. That will require some more
->> complicated changes of the driver, so I have left it out and just
->> focused on the AE-5.
->>
->> Connor McAdams (15):
->>   ALSA: hda/ca0132 - Define new verbs and control params
->>   ALSA: hda/ca0132 - Add quirk for Sound BlasterX AE-5
->>   ALSA: hda/ca0132 - Add pincfg for AE-5
->>   ALSA: hda/ca0132 - Set AE-5 bools and select mixer
->>   ALSA: hda/ca0132 - Change ca0132_mmio_init for AE-5
->>   ALSA: hda/ca0132 - Add AE-5 pre-init and ca0113 functions
->>   ALSA: hda/ca0132 - Add AE-5 regular init setup
->>   ALSA: hda/ca0132 - Change firmware name and usage
->>   ALSA: hda/ca0132 - Merge post-dsp functions + cleanup
->>   ALSA: hda/ca0132 - Add DSP setup functions for AE-5
->>   ALSA: hda/ca0132 - Clean up ca0132_alt_out_select
->>   ALSA: hda/ca0132 - Add output set commands for AE-5
->>   ALSA: hda/ca0132 - Add input selection commands for AE-5
->>   ALSA: hda/ca0132 - Add AE-5 specific controls
->>   ALSA: hda/ca0132 - Add AE-5 exit function
->
-> Thanks, applied now all 15 patches.
->
-> One patch caused a compile warning in the middle of series due to an
-> unused variable which is used in a later patch.  Since it's a trivial
-> issue, I addressed it by myself locally.  But at the next time, it'd
-> be helpful if you do a compile test for each commit in the series
-> before submission.
->
->
-> Takashi
+Hi John,=0A=
+=0A=
+On 5/23/2018 01:57, John Stultz wrote:=0A=
+> On Tue, May 22, 2018 at 7:24 AM, Minas Harutyunyan=0A=
+> <Minas.Harutyunyan@synopsys.com> wrote:=0A=
+>> Hi John,=0A=
+>>=0A=
+>> Please provide log with debug enabled configuration.=0A=
+> =0A=
+> Ok. Attached.=0A=
+> For dmesg-broken.log:  OTG removed at 77, and OTG plugged in at 82=0A=
+> For dmesg-with-patch.log: OTG removed at 31, OTG plugged in at 38.=0A=
+> =0A=
+> Note with the dmesg-with-patch (using my patch), things seem to be=0A=
+> working ok. Though in the example above it may look odd, as usually it=0A=
+> switches to to host mode, then when it detects a low speed device (a=0A=
+> mouse which I had plugged in), it will reset to switch to low-speed,=0A=
+> but I didn't wait long enough for the reset to complete and the mouse=0A=
+> to be detected before re-plugging in the OTG port.=0A=
+> =0A=
+>> On 5/21/2018 11:41 PM, John Stultz wrote:=0A=
+>>> On Mon, May 21, 2018 at 1:45 AM, Minas Harutyunyan=0A=
+>>> <Minas.Harutyunyan@synopsys.com> wrote:=0A=
+>>>> Hi John,=0A=
+>>>>=0A=
+>>>> On 5/19/2018 4:49 AM, John Stultz wrote:=0A=
+>>>>> In 4.17-rc, commit 03ea6d6e9e1f ("usb: dwc2: Enable power down")=0A=
+>>>>> caused the HiKey board to not correctly handle switching between=0A=
+>>>>> usb-gadget and usb-host mode.=0A=
+>>>>>=0A=
+>>>>> Unplugging the OTG port would result in:=0A=
+>> OTG port you mean MicroAB, Correct?=0A=
+> =0A=
+> Correct.=0A=
+> =0A=
+>> dwc2 driver loaded when some device connected to OTG port?=0A=
+> =0A=
+> Yes, I normally boot with the board plugged in to OTG as a=0A=
+> peripheral/gadget for adb.=0A=
+> =0A=
+>> And below message printed after disconnect the device from OTG port?=0A=
+>>=0A=
+>>>>> [   42.240973] dwc2 f72c0000.usb: dwc2_restore_host_registers: no hos=
+t registers to restore=0A=
+>>>>> [   42.249066] dwc2 f72c0000.usb: dwc2_host_exit_hibernation: failed =
+to restore host registers=0A=
+> =0A=
+> Correct.=0A=
+> =0A=
+>>>>> And the USB-host ports would not function.=0A=
+>> USB-host ports - you mean 2 USB A-ports, connected to TS3USB221 HUB?=0A=
+> =0A=
+> Correct.=0A=
+> =0A=
+>> Switching ports between OTG and Host ports via TS3USB221 Switch=0A=
+>> performing automatically or by some SW tool?=0A=
+> =0A=
+> Its done automatically, when the OTG cable is detected it the host=0A=
+> ports are disabled and when the OTG port is empty the host ports are=0A=
+> enabled.=0A=
+> =0A=
+> Let me know if you need anything else!=0A=
+> =0A=
+> thanks=0A=
+> -john=0A=
+> =0A=
+=0A=
+Please apply the patch set with this cover letter "[PATCH 0/3] usb: =0A=
+dwc2: Fix hibernation for switching between host and device modes."=0A=
+=0A=
+Enable the power down on his devices. Let me know if you still see any =0A=
+issue. If there is no issue, please provide Tested-by tag.=0A=
+=0A=
+=0A=
+Regards,=0A=
+Artur=0A=
