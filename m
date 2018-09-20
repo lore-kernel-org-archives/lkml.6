@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F19C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2E4ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAAD12147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAD12147D
+	by mail.kernel.org (Postfix) with ESMTP id 73EC22147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EC22147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388486AbeIUBs1 (ORCPT
+        id S2388354AbeIUBsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:48:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15936 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388362AbeIUBsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 21:48:03 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62935 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731832AbeIUBsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 21:48:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:55 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:53 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
-   d="scan'208";a="264386380"
+   d="scan'208";a="264386354"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.44])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:05 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:04 -0700
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Shutemov <kirill.shutemov@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2 7/7] mm/gup: Cache dev_pagemap while pinning pages
-Date:   Thu, 20 Sep 2018 14:03:58 -0600
-Message-Id: <20180920200358.31680-8-keith.busch@intel.com>
+Subject: [PATCHv2 2/7] mm/gup_benchmark: Add additional pinning methods
+Date:   Thu, 20 Sep 2018 14:03:53 -0600
+Message-Id: <20180920200358.31680-3-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180920200358.31680-1-keith.busch@intel.com>
 References: <20180920200358.31680-1-keith.busch@intel.com>
@@ -48,242 +48,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pinning pages from ZONE_DEVICE memory needs to check the backing device's
-live-ness, which is tracked in the device's dev_pagemap metadata. This
-metadata is stored in a radix tree and looking it up adds measurable
-software overhead.
-
-This patch avoids repeating this relatively costly operation when
-dev_pagemap is used by caching the last dev_pagemap while getting user
-pages. The gup_benchmark reports this reduces the time to get user pages
-to as low as 1/3 of the previous time.
+This patch provides new gup benchmark ioctl commands to run different
+user page pinning methods, get_user_pages_longterm and get_user_pages,
+in addition to the existing get_user_pages_fast.
 
 Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- include/linux/mm.h |  8 +++++++-
- mm/gup.c           | 41 ++++++++++++++++++++++++-----------------
- mm/huge_memory.c   | 35 +++++++++++++++--------------------
- 3 files changed, 46 insertions(+), 38 deletions(-)
+ mm/gup_benchmark.c                         | 28 ++++++++++++++++++++++++++--
+ tools/testing/selftests/vm/gup_benchmark.c | 13 +++++++++++--
+ 2 files changed, 37 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index f1fd241c9071..d688e18a19c4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -380,6 +380,7 @@ struct vm_fault {
+diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
+index 76cd35e477af..e6d9ce001ffa 100644
+--- a/mm/gup_benchmark.c
++++ b/mm/gup_benchmark.c
+@@ -6,6 +6,8 @@
+ #include <linux/debugfs.h>
  
- struct follow_page_context {
- 	struct vm_area_struct *vma;
-+	struct dev_pagemap *pgmap;
- 	unsigned long address;
- 	unsigned int page_mask;
- 	unsigned int flags;
-@@ -2546,14 +2547,19 @@ struct page *follow_page_mask(struct follow_page_context *ctx);
- static inline struct page *follow_page(struct vm_area_struct *vma,
- 		unsigned long address, unsigned int foll_flags)
- {
-+	struct page *page;
- 	struct follow_page_context ctx = {
- 		.vma = vma,
-+		.pgmap = NULL,
- 		.address = address,
- 		.page_mask = 0,
- 		.flags = foll_flags,
- 	};
+ #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
++#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
++#define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
  
--	return follow_page_mask(&ctx);
-+	page = follow_page_mask(&ctx);
-+	if (ctx.pgmap)
-+		put_dev_pagemap(ctx.pgmap);
-+	return page;
- }
- 
- #define FOLL_WRITE	0x01	/* check pte is writable */
-diff --git a/mm/gup.c b/mm/gup.c
-index 4c4da54f8dbe..c98ea05eaa59 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -72,7 +72,6 @@ static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
- static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
- {
- 	struct mm_struct *mm = ctx->vma->vm_mm;
--	struct dev_pagemap *pgmap = NULL;
- 	struct page *page;
- 	spinlock_t *ptl;
- 	pte_t *ptep, pte;
-@@ -114,8 +113,8 @@ static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
- 		 * Only return device mapping pages in the FOLL_GET case since
- 		 * they are only valid while holding the pgmap reference.
- 		 */
--		pgmap = get_dev_pagemap(pte_pfn(pte), NULL);
--		if (pgmap)
-+		ctx->pgmap = get_dev_pagemap(pte_pfn(pte), ctx->pgmap);
-+		if (ctx->pgmap)
- 			page = pte_page(pte);
- 		else
- 			goto no_page;
-@@ -154,9 +153,9 @@ static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
- 		get_page(page);
- 
- 		/* drop the pgmap reference now that we hold the page */
--		if (pgmap) {
--			put_dev_pagemap(pgmap);
--			pgmap = NULL;
-+		if (ctx->pgmap) {
-+			put_dev_pagemap(ctx->pgmap);
-+			ctx->pgmap = NULL;
+ struct gup_benchmark {
+ 	__u64 get_delta_usec;
+@@ -41,7 +43,23 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
+ 			nr = (next - addr) / PAGE_SIZE;
  		}
- 	}
- 	if (ctx->flags & FOLL_TOUCH) {
-@@ -645,7 +644,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		unsigned int gup_flags, struct page **pages,
- 		struct vm_area_struct **vmas, int *nonblocking)
- {
--	long i = 0;
-+	long ret = 0, i = 0;
- 	struct vm_area_struct *vma = NULL;
- 	struct follow_page_context ctx = {};
  
-@@ -681,8 +680,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 				goto next_page;
- 			}
- 
--			if (!vma || check_vma_flags(vma, gup_flags))
--				return i ? : -EFAULT;
-+			if (!vma || check_vma_flags(vma, gup_flags)) {
-+				ret = -EFAULT;
-+				goto out;
-+			}
- 			if (is_vm_hugetlb_page(vma)) {
- 				i = follow_hugetlb_page(mm, vma, pages, vmas,
- 						&start, &nr_pages, i,
-@@ -697,23 +698,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		 * If we have a pending SIGKILL, don't keep faulting pages and
- 		 * potentially allocating memory.
- 		 */
--		if (unlikely(fatal_signal_pending(current)))
--			return i ? i : -ERESTARTSYS;
-+		if (unlikely(fatal_signal_pending(current))) {
-+			ret = -ERESTARTSYS;
-+			goto out;
+-		nr = get_user_pages_fast(addr, nr, gup->flags & 1, pages + i);
++		switch (cmd) {
++		case GUP_FAST_BENCHMARK:
++			nr = get_user_pages_fast(addr, nr, gup->flags & 1,
++						 pages + i);
++			break;
++		case GUP_LONGTERM_BENCHMARK:
++			nr = get_user_pages_longterm(addr, nr, gup->flags & 1,
++						     pages + i, NULL);
++			break;
++		case GUP_BENCHMARK:
++			nr = get_user_pages(addr, nr, gup->flags & 1, pages + i,
++					    NULL);
++			break;
++		default:
++			return -1;
 +		}
- 		cond_resched();
- 
- 		page = follow_page_mask(&ctx);
- 		if (!page) {
--			int ret;
- 			ret = faultin_page(tsk, &ctx, nonblocking);
- 			switch (ret) {
- 			case 0:
- 				goto retry;
-+			case -EBUSY:
-+				ret = 0;
-+				/* FALLTHRU */
- 			case -EFAULT:
- 			case -ENOMEM:
- 			case -EHWPOISON:
--				return i ? i : ret;
--			case -EBUSY:
--				return i;
-+				goto out;
- 			case -ENOENT:
- 				goto next_page;
- 			}
-@@ -725,7 +728,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			 */
- 			goto next_page;
- 		} else if (IS_ERR(page)) {
--			return i ? i : PTR_ERR(page);
-+			ret = PTR_ERR(page);
-+			goto out;
- 		}
- 		if (pages) {
- 			pages[i] = page;
-@@ -745,7 +749,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		start += page_increm * PAGE_SIZE;
- 		nr_pages -= page_increm;
- 	} while (nr_pages);
--	return i;
-+out:
-+	if (ctx.pgmap)
-+		put_dev_pagemap(ctx.pgmap);
-+	return i ? i : ret;
- }
- 
- static bool vma_permits_fault(struct vm_area_struct *vma,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index abd36e6afe2c..6787011385ce 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -851,12 +851,23 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		update_mmu_cache_pmd(vma, addr, pmd);
- }
- 
-+static struct page *pagemap_page(struct follow_page_context *ctx,
-+				 unsigned long pfn)
-+{
-+	struct page *page;
 +
-+	ctx->pgmap = get_dev_pagemap(pfn, ctx->pgmap);
-+	if (!ctx->pgmap)
-+		return ERR_PTR(-EFAULT);
-+	page = pfn_to_page(pfn);
-+	get_page(page);
-+	return page;
-+}
-+
- struct page *follow_devmap_pmd(struct follow_page_context *ctx, pmd_t *pmd)
- {
- 	unsigned long pfn = pmd_pfn(*pmd);
- 	struct mm_struct *mm = ctx->vma->vm_mm;
--	struct dev_pagemap *pgmap;
--	struct page *page;
+ 		if (nr <= 0)
+ 			break;
+ 		i += nr;
+@@ -70,8 +88,14 @@ static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
+ 	struct gup_benchmark gup;
+ 	int ret;
  
- 	assert_spin_locked(pmd_lockptr(mm, pmd));
+-	if (cmd != GUP_FAST_BENCHMARK)
++	switch (cmd) {
++	case GUP_FAST_BENCHMARK:
++	case GUP_LONGTERM_BENCHMARK:
++	case GUP_BENCHMARK:
++		break;
++	default:
+ 		return -EINVAL;
++	}
  
-@@ -885,14 +896,7 @@ struct page *follow_devmap_pmd(struct follow_page_context *ctx, pmd_t *pmd)
- 		return ERR_PTR(-EEXIST);
+ 	if (copy_from_user(&gup, (void __user *)arg, sizeof(gup)))
+ 		return -EFAULT;
+diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
+index bdcb97acd0ac..c2f785ded9b9 100644
+--- a/tools/testing/selftests/vm/gup_benchmark.c
++++ b/tools/testing/selftests/vm/gup_benchmark.c
+@@ -15,6 +15,8 @@
+ #define PAGE_SIZE sysconf(_SC_PAGESIZE)
  
- 	pfn += (ctx->address & ~PMD_MASK) >> PAGE_SHIFT;
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (!pgmap)
--		return ERR_PTR(-EFAULT);
--	page = pfn_to_page(pfn);
--	get_page(page);
--	put_dev_pagemap(pgmap);
--
--	return page;
-+	return pagemap_page(ctx, pfn);
- }
+ #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
++#define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
++#define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
  
- int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-@@ -1002,8 +1006,6 @@ struct page *follow_devmap_pud(struct follow_page_context *ctx, pud_t *pud)
- {
- 	unsigned long pfn = pud_pfn(*pud);
- 	struct mm_struct *mm = ctx->vma->vm_mm;
--	struct dev_pagemap *pgmap;
--	struct page *page;
+ struct gup_benchmark {
+ 	__u64 get_delta_usec;
+@@ -30,9 +32,10 @@ int main(int argc, char **argv)
+ 	struct gup_benchmark gup;
+ 	unsigned long size = 128 * MB;
+ 	int i, fd, opt, nr_pages = 1, thp = -1, repeats = 1, write = 0;
++	int cmd = GUP_FAST_BENCHMARK;
+ 	char *p;
  
- 	assert_spin_locked(pud_lockptr(mm, pud));
+-	while ((opt = getopt(argc, argv, "m:r:n:tT")) != -1) {
++	while ((opt = getopt(argc, argv, "m:r:n:tTLU")) != -1) {
+ 		switch (opt) {
+ 		case 'm':
+ 			size = atoi(optarg) * MB;
+@@ -49,6 +52,12 @@ int main(int argc, char **argv)
+ 		case 'T':
+ 			thp = 0;
+ 			break;
++		case 'L':
++			cmd = GUP_LONGTERM_BENCHMARK;
++			break;
++		case 'U':
++			cmd = GUP_BENCHMARK;
++			break;
+ 		case 'w':
+ 			write = 1;
+ 		default:
+@@ -79,7 +88,7 @@ int main(int argc, char **argv)
  
-@@ -1026,14 +1028,7 @@ struct page *follow_devmap_pud(struct follow_page_context *ctx, pud_t *pud)
- 		return ERR_PTR(-EEXIST);
+ 	for (i = 0; i < repeats; i++) {
+ 		gup.size = size;
+-		if (ioctl(fd, GUP_FAST_BENCHMARK, &gup))
++		if (ioctl(fd, cmd, &gup))
+ 			perror("ioctl"), exit(1);
  
- 	pfn += (ctx->address & ~PUD_MASK) >> PAGE_SHIFT;
--	pgmap = get_dev_pagemap(pfn, NULL);
--	if (!pgmap)
--		return ERR_PTR(-EFAULT);
--	page = pfn_to_page(pfn);
--	get_page(page);
--	put_dev_pagemap(pgmap);
--
--	return page;
-+	return pagemap_page(ctx, pfn);
- }
- 
- int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+ 		printf("Time: get:%lld put:%lld us", gup.get_delta_usec,
 -- 
 2.14.4
 
