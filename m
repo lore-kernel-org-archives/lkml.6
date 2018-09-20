@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 441CCECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34E8ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFF021522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA472150E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TR0+9qy1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCFF021522
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="AZb6DY7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA472150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbeITGA3 (ORCPT
+        id S2387447AbeITGAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:00:29 -0400
-Received: from sonic306-10.consmr.mail.bf2.yahoo.com ([74.6.132.49]:40003 "EHLO
-        sonic306-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733267AbeITGA2 (ORCPT
+        Thu, 20 Sep 2018 02:00:45 -0400
+Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:36059 "EHLO
+        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726123AbeITGAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:00:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402800; bh=3J+qiALNxSw/NGUe+je3zM3JHobyUgbDaAYk6Vg2OGo=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=TR0+9qy1hlq/5tq65vK+1jP1csZCU9cNJiwMzOq4g8qI+ODAzveda18RMEl8+pka3BO13odL4Of/5EPXbSqyoVCoxiZLEe4RP25CnjbuQj8jUic/dKsHFbzugEJDLB7JnhSivTtEaT/fJpkYngsw7thWBchtueszkOonmQVUx1dJLHDZiJZhrjY1QYX1yDp6KbhNMXOx9AN9Y8CAmymUtA3dj6qUBLUkwgnHuA+VrNCkSlVWDIKHSq03D+4b0ey4BjIpH1N1Rvia9ll8vcI/QdxEDGIaX/zo3IwbYX3wIMnElS441JTK7k1PVFtKuOHAZr3SZ3LK8EEZlbG4qBs3iA==
-X-YMail-OSG: uPnWRtkVM1mpTeDQueSnU7BYFzvCKJZi_k7FuoWmghS5MGHTP8otPKePicrwIuL
- 7ZlQoogatDE7q.DNYIm8Lj5VflgyIIvXbEdndp_4jMedVpN2GfxDtIdjOvbTZvYCjUnKP2JWLeQR
- Vgm9DboTdqCr2FVZlnwzOzJ1JtTxb32aKsLjNkh5qx3ex8EGkpSv.MJ4Y_Guplr8AgYJ0HmTpZCD
- jzC9S23Jy2E800MCMtiD4H25RRYH5SuuWEH_15tph.eknaxB2CFf_zxivo8cOH9ar3WPqcVzkxF9
- Gu0WZEOXQCCvex_JIMI7xzbdeHADHV7QZd6LYHnTHyQXQ_ZYDqzxzPmGBRaTu7LMX_S_3q1orKsf
- dUbXRQ5P4Ac._f9VjN.GpVCSTypF1KJoivKbaUr.T8qK8GI0PJFIKe4OCY98.ime2SQf.FTx26iz
- gt8r0m2Qwd4lbblKoHtxtITlwHAOuP3D3rVMWArd2Kv_Zk_QdO5Y9.s.ZvVBRO1U6KlsgflHMHed
- bQOHDwGe0GE47L5gTw3sCE5IOhnRPITFyWs1dYkOLZxo9baiCSU9YVi8aVc_MyhqzmH8RHa3_JS7
- HUxDE8HjgAVAUQjwC85HMZtAHKhkFWUhEClKFMilhTf0xdftO_J.lIMctzxH1EWh4JG9Xi9QCWb.
- 07RBiDSgyYUmx_kIrhMXOf5ry9s2n9T40Ld1LYasP.UvQ_1pv4IaAt5E5F7Tw1bGVyFlPlveMe_0
- Y7FAptZaWn7LDLm76lwqQlb1HCmkoK2hZPKJ4.vAhuVdoWTjk8FVEOtMSIAhllHWk9kjDfWSp5kP
- 8gqp5fI4N8JgL3CLUQYltHDsjtj7JVZxKcwA.CKeYBIijg.ckXizeOvvVRsiFHF9A4fS2q0cS.Yl
- u9WMzvprrJCDoHHoMPDv._4bzqmIYZK2xk26.GGkVnrvA8ZS3P0Pfs5.jmuCKz6H7wmyL6gibECS
- EGNhTmR9ZErQYMt3LLbadT1MOt4Lfy6jDrfcOxehiiCPU.bvcfPLxkT09Wyo.ycWlO74p5IXzOqb
- wpwAUOh2kfwvkz9EOGC_5A1Lctn2Jfk8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:00 +0000
+        Thu, 20 Sep 2018 02:00:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402817; bh=dO1/+wA5zis+nu9FqdfY7SWRB5KrboIptvARcoyPSMM=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=AZb6DY7yY56/FIiqr0hRpdBjqbPubs15ZndaXBB8H5VU4Lz2cwPRQIBfr5c26+omJ1fJiMbltb7UCYYAXdKQWZqKXOU9Iftzaer6p2tpHAJ52lSHTDivqQBbr7loEBVfXnQpW6XTLNG4yJt11TcLU+qdI0r4JFswqRYNWztA9HTlADACfvlJ/+467bxtLHUQJL0RMRxt/HQQGbWI3uS1rbcaD2DladhBBxhnoCIYTfp6crOjmFU/CfuJvmOGKYsjryMVV2HfBu7dnP9l9wLeBMt8bttMv+nh2UzQQtXkPA2Ie0AUtSyFzzozDYWTNGbZO8pkeFhJXSV0dlpfZIRuPQ==
+X-YMail-OSG: rEFxVKwVM1l68iYLRP.KU247ZpYCpqOGB3TVFwtx0Hvn_LK8ZEjPxRk2w97h8Cq
+ LwQzmqHlPRLDbigySYVUp_sKpdH5z3ySG9yfoMX48ttqIELlGEetOs3_mI34SG2XXOmCgJBzEELM
+ RMrTwG8mJNyWq8xWAhj8uljAYl5NazpSwrlK4v4TzrJXWd0gvnH2nAnH27pNoRpOT6brAJHCWqSa
+ Glhyo5jggSmEVL7gohgnucCZR_cRo8cwt4JYqY3xGiHG.bh9gnR28H8bvl12hDGUwopw3iA4K5D5
+ kiJDL1dpR0pefBY47GNhieC4Xnfqh4YYKvKfsez4L7gWScXTf9hjaOLA9gVKzc4cHpkMdpHDl2wV
+ OFF6FL3fpY6Tq6qwocvTcXpYzKhrWJur_w36mgnfKxfKLsHs7Zp0cL0egNmmeiuDkA4dXwgL79Yj
+ Phhn86ND_CDt5XjCVOBar.inGL0jteqDZ5v712OrQ7dU6j7eDmaxRz2MFzZQe41zHbxlVmGBQHsS
+ hl6ukfnaKw4NLDgWRXNual.qDZju_rTQ9sdQAF3YZELg.1MQgmCcN3Nrc5spOFnoO2CXmZDiDHIw
+ FvXn1G4pKIyO455yUPGqGer47.nBgpaS.nninKE17MotacsIotK.OHBCujHmHVKQhhtMkCsvMusA
+ oFTZDzJ9TIKkzOXV937T8Ed7x1ajlPxkeEpTO_kmG.ADp_SQqhVxfF87UMbkZYJwubJEtUIE8FHc
+ HPNTj7UF5EcpmCwWB.7e_6Cw39P7TzDSvv4ya.OH2zabSuO2bcT6Z8amyRC770E0hLOOP_ZfKV.M
+ ieXC071vClVNUJc1KGfvV_gOfMH.TqVbsmSij7AKks84fkkGK1vacc47OCNLm87ilhOdnXv7P345
+ OQIaOHvcRySfrqjZrUHmPRHNA7eHTVIqtalhGjyJR19bqnHAbJBxF43blPkxQoYlQ9PK0UCKMQqT
+ rQnDnOOEwYmE6ugnknf9qbuk8vq39JDaYgZh.h..lqDeTkjb4Ru32DdUFUb3CMI8TkRJM5onSybm
+ cs73IAchreUfzHApGaSiaB.P.C5uRil8-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:17 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID bdf8f880f25bcf7d213f06dfcd9fb6dd;
-          Thu, 20 Sep 2018 00:19:58 +0000 (UTC)
-Subject: [PATCH v3 03/16] SELinux: Abstract use of cred security blob
+          by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 66b637ae1be03f5963ba7d610a945ce8;
+          Thu, 20 Sep 2018 00:20:13 +0000 (UTC)
+Subject: [PATCH v3 04/16] SELinux: Remove cred security blob poisoning
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         SE Linux <selinux@tycho.nsa.gov>,
@@ -62,8 +61,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <e1441a54-ad48-3177-f753-4ac5bf842920@schaufler-ca.com>
-Date:   Wed, 19 Sep 2018 17:19:54 -0700
+Message-ID: <de3681aa-3e2e-a3dc-bc1d-9c7edb2f12a6@schaufler-ca.com>
+Date:   Wed, 19 Sep 2018 17:20:10 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -76,286 +75,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SELinux: Abstract use of cred security blob
+SELinux: Remove cred security blob poisoning
 
-Don't use the cred->security pointer directly.
-Provide a helper function that provides the security blob pointer.
+The SELinux specific credential poisioning only makes sense
+if SELinux is managing the credentials. As the intent of this
+patch set is to move the blob management out of the modules
+and into the infrastructure, the SELinux specific code has
+to go. The poisioning could be introduced into the infrastructure
+at some later date.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/selinux/hooks.c          | 54 +++++++++++++++----------------
- security/selinux/include/objsec.h |  5 +++
- security/selinux/xfrm.c           |  4 +--
- 3 files changed, 34 insertions(+), 29 deletions(-)
+ kernel/cred.c            | 13 -------------
+ security/selinux/hooks.c |  6 ------
+ 2 files changed, 19 deletions(-)
 
+diff --git a/kernel/cred.c b/kernel/cred.c
+index ecf03657e71c..fa2061ee4955 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
+ {
+ 	if (cred->magic != CRED_MAGIC)
+ 		return true;
+-#ifdef CONFIG_SECURITY_SELINUX
+-	/*
+-	 * cred->security == NULL if security_cred_alloc_blank() or
+-	 * security_prepare_creds() returned an error.
+-	 */
+-	if (selinux_is_enabled() && cred->security) {
+-		if ((unsigned long) cred->security < PAGE_SIZE)
+-			return true;
+-		if ((*(u32 *)cred->security & 0xffffff00) ==
+-		    (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
+-			return true;
+-	}
+-#endif
+ 	return false;
+ }
+ EXPORT_SYMBOL(creds_are_invalid);
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ad9a9b8e9979..9d6cdd21acb6 100644
+index 9d6cdd21acb6..80614ca25a2b 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -228,7 +228,7 @@ static inline u32 cred_sid(const struct cred *cred)
+@@ -3920,12 +3920,6 @@ static void selinux_cred_free(struct cred *cred)
  {
- 	const struct task_security_struct *tsec;
+ 	struct task_security_struct *tsec = selinux_cred(cred);
  
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	return tsec->sid;
+-	/*
+-	 * cred->security == NULL if security_cred_alloc_blank() or
+-	 * security_prepare_creds() returned an error.
+-	 */
+-	BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
+-	cred->security = (void *) 0x7UL;
+ 	kfree(tsec);
  }
  
-@@ -464,7 +464,7 @@ static int may_context_mount_sb_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
- 
- 	rc = avc_has_perm(&selinux_state,
-@@ -483,7 +483,7 @@ static int may_context_mount_inode_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
- 	rc = avc_has_perm(&selinux_state,
- 			  tsec->sid, sbsec->sid, SECCLASS_FILESYSTEM,
-@@ -1949,7 +1949,7 @@ static int may_create(struct inode *dir,
- 		      struct dentry *dentry,
- 		      u16 tclass)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *dsec;
- 	struct superblock_security_struct *sbsec;
- 	u32 sid, newsid;
-@@ -1971,7 +1971,7 @@ static int may_create(struct inode *dir,
- 	if (rc)
- 		return rc;
- 
--	rc = selinux_determine_inode_label(current_security(), dir,
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()), dir,
- 					   &dentry->d_name, tclass, &newsid);
- 	if (rc)
- 		return rc;
-@@ -2478,8 +2478,8 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
- 	if (bprm->called_set_creds)
- 		return 0;
- 
--	old_tsec = current_security();
--	new_tsec = bprm->cred->security;
-+	old_tsec = selinux_cred(current_cred());
-+	new_tsec = selinux_cred(bprm->cred);
- 	isec = inode_security(inode);
- 
- 	/* Default to the current task SID. */
-@@ -2643,7 +2643,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
- 	struct rlimit *rlim, *initrlim;
- 	int rc, i;
- 
--	new_tsec = bprm->cred->security;
-+	new_tsec = selinux_cred(bprm->cred);
- 	if (new_tsec->sid == new_tsec->osid)
- 		return;
- 
-@@ -2686,7 +2686,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
-  */
- static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct itimerval itimer;
- 	u32 osid, sid;
- 	int rc, i;
-@@ -2989,7 +2989,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 	u32 newsid;
- 	int rc;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
-@@ -3009,14 +3009,14 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
- 	int rc;
- 	struct task_security_struct *tsec;
- 
--	rc = selinux_determine_inode_label(old->security,
-+	rc = selinux_determine_inode_label(selinux_cred(old),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
- 	if (rc)
- 		return rc;
- 
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	tsec->create_sid = newsid;
- 	return 0;
- }
-@@ -3026,7 +3026,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 				       const char **name,
- 				       void **value, size_t *len)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct superblock_security_struct *sbsec;
- 	u32 newsid, clen;
- 	int rc;
-@@ -3036,7 +3036,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 
- 	newsid = tsec->create_sid;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 		dir, qstr,
- 		inode_mode_to_security_class(inode->i_mode),
- 		&newsid);
-@@ -3498,7 +3498,7 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
- 			return -ENOMEM;
- 	}
- 
--	tsec = new_creds->security;
-+	tsec = selinux_cred(new_creds);
- 	/* Get label from overlay inode and set it in create_sid */
- 	selinux_inode_getsecid(d_inode(src), &sid);
- 	tsec->create_sid = sid;
-@@ -3918,7 +3918,7 @@ static int selinux_cred_alloc_blank(struct cred *cred, gfp_t gfp)
-  */
- static void selinux_cred_free(struct cred *cred)
- {
--	struct task_security_struct *tsec = cred->security;
-+	struct task_security_struct *tsec = selinux_cred(cred);
- 
- 	/*
- 	 * cred->security == NULL if security_cred_alloc_blank() or
-@@ -3938,7 +3938,7 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
- 	const struct task_security_struct *old_tsec;
- 	struct task_security_struct *tsec;
- 
--	old_tsec = old->security;
-+	old_tsec = selinux_cred(old);
- 
- 	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
- 	if (!tsec)
-@@ -3953,8 +3953,8 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
-  */
- static void selinux_cred_transfer(struct cred *new, const struct cred *old)
- {
--	const struct task_security_struct *old_tsec = old->security;
--	struct task_security_struct *tsec = new->security;
-+	const struct task_security_struct *old_tsec = selinux_cred(old);
-+	struct task_security_struct *tsec = selinux_cred(new);
- 
- 	*tsec = *old_tsec;
- }
-@@ -3970,7 +3970,7 @@ static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
-  */
- static int selinux_kernel_act_as(struct cred *new, u32 secid)
- {
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -3995,7 +3995,7 @@ static int selinux_kernel_act_as(struct cred *new, u32 secid)
- static int selinux_kernel_create_files_as(struct cred *new, struct inode *inode)
- {
- 	struct inode_security_struct *isec = inode_security(inode);
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -4544,7 +4544,7 @@ static int sock_has_perm(struct sock *sk, u32 perms)
- static int selinux_socket_create(int family, int type,
- 				 int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	u32 newsid;
- 	u16 secclass;
- 	int rc;
-@@ -4564,7 +4564,7 @@ static int selinux_socket_create(int family, int type,
- static int selinux_socket_post_create(struct socket *sock, int family,
- 				      int type, int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *isec = inode_security_novalidate(SOCK_INODE(sock));
- 	struct sk_security_struct *sksec;
- 	u16 sclass = socket_type_to_security_class(family, type, protocol);
-@@ -5442,7 +5442,7 @@ static int selinux_secmark_relabel_packet(u32 sid)
- 	const struct task_security_struct *__tsec;
- 	u32 tsid;
- 
--	__tsec = current_security();
-+	__tsec = selinux_cred(current_cred());
- 	tsid = __tsec->sid;
- 
- 	return avc_has_perm(&selinux_state,
-@@ -6379,7 +6379,7 @@ static int selinux_getprocattr(struct task_struct *p,
- 	unsigned len;
- 
- 	rcu_read_lock();
--	__tsec = __task_cred(p)->security;
-+	__tsec = selinux_cred(__task_cred(p));
- 
- 	if (current != p) {
- 		error = avc_has_perm(&selinux_state,
-@@ -6502,7 +6502,7 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	   operation.  See selinux_bprm_set_creds for the execve
- 	   checks and may_create for the file creation checks. The
- 	   operation will then fail if the context is not permitted. */
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	if (!strcmp(name, "exec")) {
- 		tsec->exec_sid = sid;
- 	} else if (!strcmp(name, "fscreate")) {
-@@ -6631,7 +6631,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
- 	if (!ksec)
- 		return -ENOMEM;
- 
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	if (tsec->keycreate_sid)
- 		ksec->sid = tsec->keycreate_sid;
- 	else
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index cc5e26b0161b..734b6833bdff 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -158,4 +158,9 @@ struct bpf_security_struct {
- 	u32 sid;  /*SID of bpf obj creater*/
- };
- 
-+static inline struct task_security_struct *selinux_cred(const struct cred *cred)
-+{
-+	return cred->security;
-+}
-+
- #endif /* _SELINUX_OBJSEC_H_ */
-diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
-index 91dc3783ed94..8ffe7e1053c4 100644
---- a/security/selinux/xfrm.c
-+++ b/security/selinux/xfrm.c
-@@ -79,7 +79,7 @@ static int selinux_xfrm_alloc_user(struct xfrm_sec_ctx **ctxp,
- 				   gfp_t gfp)
- {
- 	int rc;
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct xfrm_sec_ctx *ctx = NULL;
- 	u32 str_len;
- 
-@@ -138,7 +138,7 @@ static void selinux_xfrm_free(struct xfrm_sec_ctx *ctx)
-  */
- static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 
- 	if (!ctx)
- 		return 0;
 -- 
 2.17.1
 
