@@ -2,104 +2,116 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8051C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DDBECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6534621521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 676FC206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:44:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IH1GCFTr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6534621521
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbC2dmmr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676FC206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731709AbeITHYH (ORCPT
+        id S1731904AbeITHZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 03:24:07 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44735 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbeITHYH (ORCPT
+        Thu, 20 Sep 2018 03:25:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45050 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731429AbeITHZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 03:24:07 -0400
-Received: by mail-pl1-f194.google.com with SMTP id ba4-v6so3494586plb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:43:24 -0700 (PDT)
+        Thu, 20 Sep 2018 03:25:32 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so3590440pgp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=MDe98nJtaP52iCM20cLVH1FctWbKDc5NhiV3mOdh0j4=;
-        b=IH1GCFTrq1SyGO046HTsW6poTclRD7/b8+k0+xK45s4jpnB2w9rQTD10KhaA6b66XI
-         RZ43JaqT6ULYXs2vgHGSAphIV7qkki2LI+rhwE/g6FKo9ASoDapX/GAeP/HIZtuufyqH
-         wooj3iRXhGfMMkIMAUi0n/YA8Nj3CgJTZrbLc=
+        bh=G4bPyJhhSNlsKKV6SLTb+myeaA6Y62ufubLkyYNljbI=;
+        b=cbC2dmmrFsUPqWGbNM0kjKNTQZNFZ+vptLzC+MLtlrzeUf0b860uqbV2h7aCF81PW1
+         5rOEVgjcNfWX8SMg2kyctEYjPFNpzXjgauGpbp/V0+5zfERXNjW8okEwtz3JFCW6gRPh
+         CJOwQNL6zul3aUmecQbyxYYy8gCTkZtpbLN0A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MDe98nJtaP52iCM20cLVH1FctWbKDc5NhiV3mOdh0j4=;
-        b=lsTlpt0djRTQcEYsf8IR+9fiI9W0unVt4VHU78wKrb0p89IUeDucWsrWBbEeoQZvSa
-         q/SCXOzyatqfwH4fsnAEWgf3zSDVSgvGeMWmO3Ui6IbSMd7n3zB0Df8sC821qoJvNOxU
-         XfeJBPZkBYLoDTAU+GMcAtzkawGUrxeHY+EKnS9IdyRbjGfaJMn+DOrIcQzFd08divoS
-         WBbFpfY9Txoje+Tz7KaHoMdMxsJ3rXW1QydEsndIRupWKIRfIbrzz9ZKwSiL+qg5PCbf
-         0RDqic6UdIhtw6W2VgKO/crPamYoTLWzS1Je7onKVdg4yBCkrJiZusrcHblkihoM8Rs1
-         NiDg==
-X-Gm-Message-State: APzg51AbYqr88JIhCJ2I+MXe1TAe3j65yxLIFOt4Ve/W4u4tQb711pIw
-        RT5i5x5BnVu11HlafN3ER7cbbQ==
-X-Google-Smtp-Source: ANB0VdYHWHhqql6yK1NUQXy31cVc4Hd+p/FeopCkIwIYkAkhng/caswgHzLvOBt8HQjYJRXDyxFFgw==
-X-Received: by 2002:a17:902:7287:: with SMTP id d7-v6mr37470427pll.54.1537407803916;
-        Wed, 19 Sep 2018 18:43:23 -0700 (PDT)
+        bh=G4bPyJhhSNlsKKV6SLTb+myeaA6Y62ufubLkyYNljbI=;
+        b=shUyOl5F2X/55wdQSM+hJ2zCsm9zXE7xFxv1HlD1H1KAug7R4J7W+6FZedhrKi8ZuW
+         meijqSkBsBZvOM+bfHOlBTprWNmTuPgxvcORlSucfZwxYiZg2NWjhwSywsfnAc9RJPDv
+         5iSOMYV1fF3fYMBg6nxBkBF2yCLhhwYqlkQn0FCsD2IxipGw8s4/VP5SscdUZ7xZQXYD
+         M5s082Ui5QInGpMscCtQrbYEq0M14pVsU1u5UWQ9cetV624hclG3/1kNJMxGUhBoYmnr
+         9ctLYnctk8MBA9nLDUGk3ROYgFd8kberqSEAOW9Kic18SX2r7LG0nz/Qi26jmadXSOLb
+         5Sfw==
+X-Gm-Message-State: APzg51AlxlXNdn65A5ZU5VKecanjyPflUzyk19Ox5SdXyfZ3otV4p29V
+        vLe9LUCDe52IQ1RY77cstG6Hyw==
+X-Google-Smtp-Source: ANB0VdY5aRDUtaDWQpTn+EWjjPoxPhKCkNU17SK4qi/qPsp7QQtDXz1Eha+il1cG5ORi0FGuGYugwA==
+X-Received: by 2002:a63:f616:: with SMTP id m22-v6mr33242278pgh.293.1537407888785;
+        Wed, 19 Sep 2018 18:44:48 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm37746285pgj.84.2018.09.19.18.43.22
+        by smtp.gmail.com with ESMTPSA id e202-v6sm38716634pfh.16.2018.09.19.18.44.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 18:43:23 -0700 (PDT)
+        Wed, 19 Sep 2018 18:44:48 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: smd-rpm: Add QCS404 compatible
-Date:   Wed, 19 Sep 2018 18:45:40 -0700
-Message-Id: <20180920014540.14894-1-bjorn.andersson@linaro.org>
+Subject: [PATCH] pinctrl: qcom: spmi-gpio: Add pms405 gpio support
+Date:   Wed, 19 Sep 2018 18:47:05 -0700
+Message-Id: <20180920014705.15144-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt | 1 +
- drivers/soc/qcom/smd-rpm.c                                  | 1 +
- 2 files changed, 2 insertions(+)
+From: Vinod Koul <vkoul@kernel.org>
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-index 89e1cb9212f6..ec95705ba692 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-@@ -23,6 +23,7 @@ resources.
- 		    "qcom,rpm-msm8916"
- 		    "qcom,rpm-msm8974"
- 		    "qcom,rpm-msm8998"
-+		    "qcom,rpm-qcs404"
+Update the binding and driver for pms405-gpios
+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index ffd4345415f3..ab4000eab07d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -19,6 +19,7 @@ PMIC's from Qualcomm.
+ 		    "qcom,pm8998-gpio"
+ 		    "qcom,pma8084-gpio"
+ 		    "qcom,pmi8994-gpio"
++		    "qcom,pms405-gpio"
  
- - qcom,smd-channels:
+ 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
+ 		    if the device is on an spmi bus or an ssbi bus respectively
+@@ -91,6 +92,7 @@ to specify in a pin configuration subnode:
+ 		    gpio1-gpio26 for pm8998
+ 		    gpio1-gpio22 for pma8084
+ 		    gpio1-gpio10 for pmi8994
++		    gpio1-gpio11 for pms405
+ 
+ - function:
  	Usage: required
-diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-index 93517ed83355..b8e63724a49d 100644
---- a/drivers/soc/qcom/smd-rpm.c
-+++ b/drivers/soc/qcom/smd-rpm.c
-@@ -227,6 +227,7 @@ static const struct of_device_id qcom_smd_rpm_of_match[] = {
- 	{ .compatible = "qcom,rpm-msm8974" },
- 	{ .compatible = "qcom,rpm-msm8996" },
- 	{ .compatible = "qcom,rpm-msm8998" },
-+	{ .compatible = "qcom,rpm-qcs404" },
- 	{}
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index a29efbe08f48..b54891998caa 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -1055,6 +1055,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
+ 	{ .compatible = "qcom,pm8994-gpio" },	/* 22 GPIO's */
+ 	{ .compatible = "qcom,pmi8994-gpio" },  /* 10 GPIO's */
+ 	{ .compatible = "qcom,pma8084-gpio" },	/* 22 GPIO's */
++	{ .compatible = "qcom,pms405-gpio" }, /* 11 GPIO's */
+ 	{ .compatible = "qcom,spmi-gpio" }, /* Generic */
+ 	{ },
  };
- MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
 -- 
 2.18.0
 
