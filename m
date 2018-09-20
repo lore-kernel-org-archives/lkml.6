@@ -2,112 +2,114 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_DBL_ABUSE_MALW,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62467ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E890FECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FB82087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9862087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="COiCOBHM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09FB82087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4YpzziG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9862087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeITV5X (ORCPT
+        id S1728016AbeITV6R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:57:23 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43976 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbeITV5X (ORCPT
+        Thu, 20 Sep 2018 17:58:17 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35367 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeITV6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:57:23 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j26-v6so4590029pfi.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:13:10 -0700 (PDT)
+        Thu, 20 Sep 2018 17:58:17 -0400
+Received: by mail-qt0-f194.google.com with SMTP id j7-v6so9054985qtp.2;
+        Thu, 20 Sep 2018 09:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BMbuZk/S6KBpfbhYO1oujXRRcxe3kAbC1VYLKwZIaSw=;
-        b=COiCOBHM2tDlj4SDbcSqTYiTwnZdz0brO2htDrwCuok5jrFuz9n0iIfNDunQQbor/E
-         IR/QGeFTq9dMK0SbNX43ZQucBOY9Z3C1uGqc/Dr7/zGQn+9auxXL8FRSsoCDszerw/UT
-         akY8eR6ZCgGnhwP8tUiCkeuK52f9NbcDkgq94=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tb327Kui/+MUJmD7N70Bb+VaKbAu9dHeg8c120SQu+k=;
+        b=G4YpzziGfF7BToM7+ZYvkXtDdWwIQWTnRZOW8YxnbyOvyOl9epeXkuqwhxpJhPfD93
+         prasY2UbMFiaJrfy8Y6SxlhYHPYrfNStoJqH0CP5WbkB/bedOGRnTD2+bqrATXAtJzUU
+         6GukBjbxIjEtx4C3t5zu8TDZ+IGOUkMJ6q4xleSbeTL0i5LH1NI5cts/VYWmZT/elgT9
+         tE5FGqHczCpTQbJ17tXBLNtwedcqjvzIyb1DubSX2K2Lq11Vlr0DIyfg5JCFvqQ4vb4i
+         wkC72leSz8+zKL/ygEbQeHCX3FGrDVsBcP1BeeeeFUtc/7UCi+FCkU8OFh0gTh5xBhsT
+         PGDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BMbuZk/S6KBpfbhYO1oujXRRcxe3kAbC1VYLKwZIaSw=;
-        b=QIJmIY7sSzpXencczfC4r+GtxVywiUJyvHv0Q4PJ7AG+tEk89UoJyzNZaB7Aecxgyu
-         EsUIRa29pV7KdxGx+CNjnscTQjHskZHamtv7JXsza1LbMPnD6Eig5muk6lH6vBY3z2RH
-         cE+WTGuzxo+2MFuZL8IDBgq4ID30AvSzZq4MXgQ/uOhYAO/d+N7AQwyXgYCBoYGC5DCI
-         x8031r3duqjatpi7kcG1U7Q7XO6pn7/s/GkKVp685z3VEaEaMcFi7FFf+12ectgPdKCe
-         5kTLwiJiRhFekawhFgZQpReodHoLcnrPF8eiEMtTX6WODpgsTKF/EtwxH5tPlBRg4YG+
-         fHCw==
-X-Gm-Message-State: APzg51A+GGS93Yc/YJ3OGofbZ0yqG1RD54e7uwiinVmpG/ehl0mQ40/W
-        +IfmhzTW++v1SspjGY35/KQpAQ==
-X-Google-Smtp-Source: ANB0VdaQHmoK6tAlPBI9rVS4o8vIuAbMfbkfuHhTufJHcjmkEwkdQhxmd5seRTNmyXuwCE+sgb+rQA==
-X-Received: by 2002:a63:f501:: with SMTP id w1-v6mr37677332pgh.446.1537459990206;
-        Thu, 20 Sep 2018 09:13:10 -0700 (PDT)
-Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id e64-v6sm35287691pfk.87.2018.09.20.09.13.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 09:13:09 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 09:13:08 -0700
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Ilia Lin <ilia.lin@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v3] cpufreq: qcom-kryo: Fix section annotations
-Message-ID: <20180920161308.bitlceo2czyzomsg@vireshk-mac-ubuntu>
-References: <20180920002220.16644-1-natechancellor@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tb327Kui/+MUJmD7N70Bb+VaKbAu9dHeg8c120SQu+k=;
+        b=daV8tnsByxzTyLvbT+7AlBsyzwEoFg1R2CSCtSPoMOgaXV6JXI86sVK51TQrjh4ZUJ
+         Nd1S9WIPpaLYv7C0yY5t+dwvX/f3l9csNFYcG5G2JTlPP3X7zQKx6cJqnYpIq5JSqwqK
+         m02yg84bbjtBxz6B8N/9Y7l//3h6QhuXiw4ZFxzuLjmqNpc0DKsKt9Vt/EP2K231rUJB
+         cVv0sQZc+rKRJQsfSVVoQ1otN6XyhUaHA2XXpyEMrq62XunkJgSlbuGEagJet8mSScSY
+         9mz5W4AQWOCSmc0/exa439TphrSW3PegVmf1qs6rXvFJ8wXQtt2HbPYwH+2T+lyvme3g
+         kyXw==
+X-Gm-Message-State: APzg51C4BKhDIw/9DQyRkSqGqZs2BXv0FyQU9kxomGECe9war1hczE3g
+        VwTWaylaVnsvQ2tDun2xGkbUuvKpWCcMy2pfXMU=
+X-Google-Smtp-Source: ANB0VdYJkfR7YLEExi1wTF6T5ZwopSx7gxpdyrihmOe5PDATMM+5wi9vCCimwR38mPAxff4F7Yddzr1/nQz+2om33cM=
+X-Received: by 2002:a0c:aac9:: with SMTP id g9-v6mr29310856qvb.78.1537460043797;
+ Thu, 20 Sep 2018 09:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920002220.16644-1-natechancellor@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 09:13:43
+ -0700 (PDT)
+In-Reply-To: <20180920135936.GA9117@kroah.com>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180920135748.GA7749@kroah.com> <20180920135936.GA9117@kroah.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 20 Sep 2018 18:13:43 +0200
+Message-ID: <CANiq72=OqZWGophkgH4SQG-Zrdq_Ue=gTrC4mqLqH_F7_VtC+A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Compiler Attributes: (naked only, for v4.19)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-09-18, 17:22, Nathan Chancellor wrote:
-> There is currently a warning when building the Kryo cpufreq driver into
-> the kernel image:
-> 
-> WARNING: vmlinux.o(.text+0x8aa424): Section mismatch in reference from
-> the function qcom_cpufreq_kryo_probe() to the function
-> .init.text:qcom_cpufreq_kryo_get_msm_id()
-> The function qcom_cpufreq_kryo_probe() references
-> the function __init qcom_cpufreq_kryo_get_msm_id().
-> This is often because qcom_cpufreq_kryo_probe lacks a __init
-> annotation or the annotation of qcom_cpufreq_kryo_get_msm_id is wrong.
-> 
-> Remove the '__init' annotation from qcom_cpufreq_kryo_get_msm_id
-> so that there is no more mismatch warning.
-> 
-> Additionally, Nick noticed that the remove function was marked as
-> '__init' when it should really be marked as '__exit'.
+On Thu, Sep 20, 2018 at 3:59 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Sep 20, 2018 at 03:57:48PM +0200, Greg Kroah-Hartman wrote:
+>> On Tue, Sep 18, 2018 at 06:55:40PM +0200, Miguel Ojeda wrote:
+>> > These two patches are the 5th and 6th of the Compiler Attributes series,
+>> > which Stefan and Nick requested to go into v4.19 so that the clang ARM32
+>> > build is fixed. The v5 of Compiler Attributes will have these two removed
+>> > if this goes in.
+>>
+>> As these seem pretty "obvious" and they do fix a problem for one
+>> system/compiler that we want to support, and because odds are I would
+>> end up getting them submitted to the 4.19-stable tree eventually, I've
+>> now applied them to the tree.
 
-I know Rafael asked to merge the two patches into a single one, but I still
-believe its the best to have two separate patches to fix these two separate
-issues. For example, picking this patch for an earlier kernel may produce
-conflicts because the exit code was written at a later point of time and also
-that the below Fixes tag applies only to the first problem only. And the
-individual patch for the exit problem is already on the list.
+Seems the easiest way forward for everyone, indeed.
 
-> Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> Also, it passed my build tests, I didn't just throw these in without
+> doing that :)
 
-Anyway I am fine if Rafael wants to pick it up this way only.
+Thanks for double-checking! Sending in a bit the v5 of Compiler
+Attributes rebased on this commit then.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Cheers,
+Miguel
