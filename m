@@ -2,148 +2,100 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5FFC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD0ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 766452152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92EE2152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gJu9fZKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766452152C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eC4U5AB+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IyR09dfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92EE2152C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732650AbeITSN1 (ORCPT
+        id S2387599AbeITSOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:13:27 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:45402 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730984AbeITSN1 (ORCPT
+        Thu, 20 Sep 2018 14:14:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42970 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730984AbeITSOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:13:27 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 0DE6110C10A6;
-        Thu, 20 Sep 2018 05:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1537446611; bh=6/kqXkQ6hcAqIAfartWIq4CDnupVuzUNvb+Lo3AoL5Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=gJu9fZKA7NcyryPdmDymYvTYErGtUVWd3G/cmL3pJryPHOBgMh34C5rRDz0iYRJwi
-         VWS7lGXEZF6W6bhNObkTO20jajd/GabN5gjnbQgMnvnvrWlw/Oq/omEHVm4QyOqrK7
-         pdAPhDb9KTlgojF/KhhIlkbOfQA+TMiKgK7Umk3umc8sGd3EQotQhZnXF7sEfV1tSV
-         QagNjSj3DZv/+FqW/koJtA3XptL9meWKJkSvCiF/tWytTZBQlR/XnLij6nQ31prsaI
-         OPhN7OkqZJyF90Zfdyi7yzywzMj3FiluWH5WSBwtz4SE2KfhZ3dQQ7kFLgEooQ72/j
-         8/coqa9RIF3mA==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2019A3129;
-        Thu, 20 Sep 2018 05:30:10 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 20 Sep 2018 05:30:09 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 20 Sep 2018 14:30:08 +0200
-Received: from [10.107.25.72] (10.107.25.72) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 20 Sep 2018 14:30:08 +0200
-Subject: Re: [V2, 1/5] media: platform: Add a DesignWare folder to have
- Synopsys drivers
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Luis Oliveira <Luis.Oliveira@synopsys.com>
-CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Joao.Pinto@synopsys.com>, <festevam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>
-References: <20180920111648.27000-1-lolivei@synopsys.com>
- <20180920111648.27000-2-lolivei@synopsys.com> <5939502.lGiqCuzIrn@avalon>
-From:   Luis Oliveira <Luis.Oliveira@synopsys.com>
-Message-ID: <2e28c0fd-d9d9-c78a-3163-536e97a17c9b@synopsys.com>
-Date:   Thu, 20 Sep 2018 13:30:05 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 14:14:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5CF2B600ED; Thu, 20 Sep 2018 12:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537446648;
+        bh=i5YYbXA8haf7G9GkqOIHzi8w/mP6tD0X8dj3GRqL9+o=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=eC4U5AB+b1KgyNr8Pth1TpTwISdg4BCbslVZyWQFcc/LQz6aFtX+qirj8jgH86QnD
+         Ew+KTVYmlv3j+n5UXkv7xtV3o6ctXJrm6om+mdGRYe3w5POQV3LbqWQFxItCAaHrpT
+         vabsX2+OshOVIMpyeubVrtxZg3vRzpPWd6gnFoIE=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7FA360B73;
+        Thu, 20 Sep 2018 12:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537446647;
+        bh=i5YYbXA8haf7G9GkqOIHzi8w/mP6tD0X8dj3GRqL9+o=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=IyR09dfc4T9Mnps/3ARGOmdtdw5ukFV3ak0K8/woEv5xTPh72MK4yElU/NZSPSNGc
+         muvdKUmM0giIbDrd1FKlyFKhWGOknTZOh8LeWPgEYgCgk0GKrW1cFVvwQv+wrI3U76
+         Of7NpERltgw1cMYCQN58LofL5koJDwjOR4t0vtwk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7FA360B73
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <hante.meuleman@broadcom.com>,
+        <franky.lin@broadcom.com>, <arend.vanspriel@broadcom.com>,
+        <linux-wireless@vger.kernel.org>,
+        <brcm80211-dev-list.pdl@broadcom.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] brcm80211: remove redundant condition check before debugfs_remove_recursive
+References: <1536761412-24932-1-git-send-email-zhongjiang@huawei.com>
+        <20180920120709.5FE6960BF7@smtp.codeaurora.org>
+        <5BA391D4.20205@huawei.com>
+Date:   Thu, 20 Sep 2018 15:30:42 +0300
+In-Reply-To: <5BA391D4.20205@huawei.com> (zhong jiang's message of "Thu, 20
+        Sep 2018 20:25:56 +0800")
+Message-ID: <877ejg1hcd.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <5939502.lGiqCuzIrn@avalon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.72]
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-Sep-18 13:26, Laurent Pinchart wrote:
-> Hi Luis,
-> 
-> Thank you for the patch.
-> 
-> 
-> On Thursday, 20 September 2018 14:16:39 EEST Luis Oliveira wrote:
->> This patch has the intention of make the patch series more clear by creating
->> a dwc folder.
->>
->> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
-> 
-> No issue with the content, but you should fold this in patch 3/5, it doesn't 
-> deserve a patch on its own.
-> 
+zhong jiang <zhongjiang@huawei.com> writes:
 
-Thank you, I will do that in V3.
+> On 2018/9/20 20:07, Kalle Valo wrote:
+>> zhong jiang <zhongjiang@huawei.com> wrote:
+>>
+>>> debugfs_remove_recursive has taken IS_ERR_OR_NULL into account. So just
+>>> remove the condition check before debugfs_remove_recursive.
+>>>
+>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+>> It seems you already submitted an identical patch four days earlier:
+>>
+>> https://patchwork.kernel.org/patch/10593061/
+>>
+>> Why the duplicate? Please ALWAYS add a changelog and increase the version number:
+>
+> I am sorry for that. Maybe I send the patch earlier, but I remeber I
+> should forget to cc to
+> netdev@vger.kernel.org and LMLK. So I repost it.  Plese ingore the current patch.
 
->> ---
->> Changelog
->> v2:
->> - Fix Kbuild error with no Makefile present
->>
->>  drivers/media/platform/Kconfig      | 1 +
->>  drivers/media/platform/Makefile     | 3 +++
->>  drivers/media/platform/dwc/Kconfig  | 0
->>  drivers/media/platform/dwc/Makefile | 0
->>  4 files changed, 4 insertions(+)
->>  create mode 100644 drivers/media/platform/dwc/Kconfig
->>  create mode 100644 drivers/media/platform/dwc/Makefile
->>
->> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
->> index f627587..f627a27 100644
->> --- a/drivers/media/platform/Kconfig
->> +++ b/drivers/media/platform/Kconfig
->> @@ -137,6 +137,7 @@ source "drivers/media/platform/am437x/Kconfig"
->>  source "drivers/media/platform/xilinx/Kconfig"
->>  source "drivers/media/platform/rcar-vin/Kconfig"
->>  source "drivers/media/platform/atmel/Kconfig"
->> +source "drivers/media/platform/dwc/Kconfig"
->>
->>  config VIDEO_TI_CAL
->>  	tristate "TI CAL (Camera Adaptation Layer) driver"
->> diff --git a/drivers/media/platform/Makefile
->> b/drivers/media/platform/Makefile index 6ab6200..def2f33 100644
->> --- a/drivers/media/platform/Makefile
->> +++ b/drivers/media/platform/Makefile
->> @@ -98,3 +98,6 @@ obj-$(CONFIG_VIDEO_QCOM_VENUS)		+= qcom/venus/
->>  obj-y					+= meson/
->>
->>  obj-y					+= cros-ec-cec/
->> +
->> +obj-y					+= dwc/
->> +
->> diff --git a/drivers/media/platform/dwc/Kconfig
->> b/drivers/media/platform/dwc/Kconfig new file mode 100644
->> index 0000000..e69de29
->> diff --git a/drivers/media/platform/dwc/Makefile
->> b/drivers/media/platform/dwc/Makefile new file mode 100644
->> index 0000000..e69de29
-> 
+Even then please increase the version number and mention in the change
+log why you sent a new version. Otherwise you will make maintainers
+confused and wasting time with asking what has changed.
 
+-- 
+Kalle Valo
