@@ -2,76 +2,163 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA1DECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB644ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C89E421522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:59:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89E421522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 84ACF21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84ACF21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbeITTnR (ORCPT
+        id S1732789AbeITTpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:43:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37620 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbeITTnR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:43:17 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0ACDA1285;
-        Thu, 20 Sep 2018 13:59:39 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 15:59:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Compiler Attributes: (naked only, for v4.19)
-Message-ID: <20180920135936.GA9117@kroah.com>
-References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
- <20180920135748.GA7749@kroah.com>
+        Thu, 20 Sep 2018 15:45:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727633AbeITTpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:45:22 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EDFBE30C57F7;
+        Thu, 20 Sep 2018 14:01:44 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8C9981E20;
+        Thu, 20 Sep 2018 14:01:29 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 10:01:27 -0400
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Andy Whitcroft <robobotbotbot@gmail.com>,
+        Brian Belleville <bbellevi@uci.edu>,
+        Jiri Kosina <jikos@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] floppy: Do not copy a kernel pointer to user memory in
+ FDGETPRM ioctl
+Message-ID: <20180920140127.72w35olyd4ivnxjp@redhat.com>
+References: <1520467365-7194-1-git-send-email-bbellevi@uci.edu>
+ <20180529132722.GH7445@brain>
+ <CAGXu5jLXm8mJuwtDEO_+dDJk5tRA+2mkEv5S9NaPP87J42B7KQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180920135748.GA7749@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAGXu5jLXm8mJuwtDEO_+dDJk5tRA+2mkEv5S9NaPP87J42B7KQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 20 Sep 2018 14:01:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 03:57:48PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 18, 2018 at 06:55:40PM +0200, Miguel Ojeda wrote:
-> > These two patches are the 5th and 6th of the Compiler Attributes series,
-> > which Stefan and Nick requested to go into v4.19 so that the clang ARM32
-> > build is fixed. The v5 of Compiler Attributes will have these two removed
-> > if this goes in.
+On Mon, Aug 27, 2018 at 12:45:25AM -0700, Kees Cook wrote:
+> On Tue, May 29, 2018 at 6:27 AM, Andy Whitcroft <robobotbotbot@gmail.com> wrote:
+> > On Wed, Mar 07, 2018 at 04:02:45PM -0800, Brian Belleville wrote:
+> >> The final field of a floppy_struct is the field "name", which is a
+> >> pointer to a string in kernel memory. The kernel pointer should not be
+> >> copied to user memory. The FDGETPRM ioctl copies a floppy_struct to
+> >> user memory, including the "name" field. This pointer cannot be used
+> >> by the user, and it will leak a kernel address to user-space, which
+> >> will reveal the location of kernel code and data and undermine KASLR
+> >> protection. Instead, copy the floppy_struct except for the "name"
+> >> field.
+> >>
+> >> Signed-off-by: Brian Belleville <bbellevi@uci.edu>
+> >> ---
+> >>  drivers/block/floppy.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+> >> index eae484a..4d4a422 100644
+> >> --- a/drivers/block/floppy.c
+> >> +++ b/drivers/block/floppy.c
+> >> @@ -3470,6 +3470,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
+> >>                                         (struct floppy_struct **)&outparam);
+> >>               if (ret)
+> >>                       return ret;
+> >> +             size = offsetof(struct floppy_struct, name);
+> >>               break;
+> >>       case FDMSGON:
+> >>               UDP->flags |= FTD_MSG;
+> >
+> > I am not sure it is reasonable to simply set size here to the length of the
+> > valid data.  Though in the real world everyonne should be using the defines
+> > and those should include the full length, the code itself does not require
+> > this, it only prevents overly long reads.  So I think it is possible to do
+> > this read with a shorter userspace buffer; with this change we would
+> > then write beyond the end of the buffer.
+> >
+> > This also seems to introduce a slight behavioural difference between the
+> > primary and compat calls.  The compat call already elides the name but it
+> > also is copying into a new structure for return and this is pre-cleared,
+> > so the name will always be null for the compat case and undefined for
+> > the primary ioctl.
+> >
+> > Perhaps the below patch would be more appropriate.
+> >
+> > -apw
+> >
+> > From ddb8c77229a9507fa5575c910d2847e123a9c94c Mon Sep 17 00:00:00 2001
+> > From: Andy Whitcroft <apw@canonical.com>
+> > Date: Tue, 29 May 2018 13:04:15 +0100
+> > Subject: [PATCH 1/1] floppy: Do not copy a kernel pointer to user memory in
+> >  FDGETPRM ioctl
+> >
+> > The final field of a floppy_struct is the field "name", which is a pointer
+> > to a string in kernel memory.  The kernel pointer should not be copied to
+> > user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
+> > including this "name" field.  This pointer cannot be used by the user
+> > and it will leak a kernel address to user-space, which will reveal the
+> > location of kernel code and data and undermine KASLR protection.
+> >
+> > Model this code after the compat ioctl which copies the returned data
+> > to a previously cleared temporary structure on the stack (excluding the
+> > name pointer) and copy out to userspace from there.  As we already have
+> > an inparam union with an appropriate member and that memory is already
+> > cleared even for read only calls make use of that as a temporary store.
+> >
+> > Based on an initial patch by Brian Belleville.
+> >
+> > CVE-2018-7755
+> > Signed-off-by: Andy Whitcroft <apw@canonical.com>
 > 
-> As these seem pretty "obvious" and they do fix a problem for one
-> system/compiler that we want to support, and because odds are I would
-> end up getting them submitted to the 4.19-stable tree eventually, I've
-> now applied them to the tree.
+> I didn't see this land anywhere? Who's tree is this going through?
+> 
+> -Kees
+> 
 
-Also, it passed my build tests, I didn't just throw these in without
-doing that :)
+Looks like a pretty simple fix, but still don't see this one anywhere...
+maybe Jiri or Jens could pick it up (as per get_maintainer output :)
 
-greg k-h
+-- Joe
+
+> > ---
+> >  drivers/block/floppy.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+> > index 8ec7235fc93b..7512f6ff7c43 100644
+> > --- a/drivers/block/floppy.c
+> > +++ b/drivers/block/floppy.c
+> > @@ -3470,6 +3470,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
+> >                                           (struct floppy_struct **)&outparam);
+> >                 if (ret)
+> >                         return ret;
+> > +               memcpy(&inparam.g, outparam, offsetof(struct floppy_struct, name));
+> > +               outparam = &inparam.g;
+> >                 break;
+> >         case FDMSGON:
+> >                 UDP->flags |= FTD_MSG;
+> > --
+> > 2.17.0
+> >
+> 
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
