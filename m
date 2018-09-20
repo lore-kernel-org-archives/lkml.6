@@ -2,294 +2,416 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 718B5C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA039ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10E652152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:54:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E652152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 42EFB2152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42EFB2152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732456AbeITRh7 (ORCPT
+        id S1732584AbeITRrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 13:37:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44570 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbeITRh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 13:37:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 828A180D;
-        Thu, 20 Sep 2018 04:54:50 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 190763F5BD;
-        Thu, 20 Sep 2018 04:54:47 -0700 (PDT)
-Subject: Re: [PATCH 04/13] iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB mode
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Daniel Kurtz <djkurtz@google.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, arnd@arndb.de,
-        yingjoe.chen@mediatek.com
-References: <1535954502-30646-1-git-send-email-yong.wu@mediatek.com>
- <1535954502-30646-5-git-send-email-yong.wu@mediatek.com>
- <1537422870.17684.1.camel@mhfsdcap03>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <36caefde-066b-1e37-2251-d932a6a15a9a@arm.com>
-Date:   Thu, 20 Sep 2018 12:54:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 13:47:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37213 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727986AbeITRrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 13:47:01 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AD0130027B1;
+        Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B6B1308BDAF;
+        Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id CA7AB181A12D;
+        Thu, 20 Sep 2018 12:03:50 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 08:03:50 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, kwolf@redhat.com,
+        jack@suse.cz, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        riel@surriel.com, niteshnarayanlal@hotmail.com, mst@redhat.com,
+        ross zwisler <ross.zwisler@intel.com>, lcapitulino@redhat.com,
+        hch@infradead.org, stefanha@redhat.com, imammedo@redhat.com,
+        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
+        nilal@redhat.com
+Message-ID: <855855433.14658336.1537445030434.JavaMail.zimbra@redhat.com>
+In-Reply-To: <2721c3ee-88d1-a8e9-1f1e-ffc3eef1d1ca@redhat.com>
+References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-5-pagupta@redhat.com> <2721c3ee-88d1-a8e9-1f1e-ffc3eef1d1ca@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH] qemu: Add virtio pmem device
 MIME-Version: 1.0
-In-Reply-To: <1537422870.17684.1.camel@mhfsdcap03>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.181, 10.4.195.3]
+Thread-Topic: qemu: Add virtio pmem device
+Thread-Index: pvFmR2SdJU6kL0flOMbEz71SH/Ekfw==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/09/18 06:54, Yong Wu wrote:
-> Hi Robin,
-> 
->     Could you help take a look at this patch since I changed the v7s
-> here?
->     Thanks.
 
-Sorry, I did have a very quick skim through this series when it landed 
-in my inbox but I've not yet found the chance to go through it properly. 
-Since I am actually back doing io-pgtable stuff right now, I'll take a 
-look shortly.
+> 
+> > @@ -0,0 +1,241 @@
+> > +/*
+> > + * Virtio pmem device
+> > + *
+> > + * Copyright (C) 2018 Red Hat, Inc.
+> > + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
+> > + *
+> > + * This work is licensed under the terms of the GNU GPL, version 2.
+> > + * See the COPYING file in the top-level directory.
+> > + *
+> > + */
+> > +
+> > +#include "qemu/osdep.h"
+> > +#include "qapi/error.h"
+> > +#include "qemu-common.h"
+> > +#include "qemu/error-report.h"
+> > +#include "hw/virtio/virtio-access.h"
+> > +#include "hw/virtio/virtio-pmem.h"
+> > +#include "hw/mem/memory-device.h"
+> > +#include "block/aio.h"
+> > +#include "block/thread-pool.h"
+> > +
+> > +typedef struct VirtIOPMEMresp {
+> > +    int ret;
+> > +} VirtIOPMEMResp;
+> > +
+> > +typedef struct VirtIODeviceRequest {
+> > +    VirtQueueElement elem;
+> > +    int fd;
+> > +    VirtIOPMEM *pmem;
+> > +    VirtIOPMEMResp resp;
+> > +} VirtIODeviceRequest;
+> 
+> Both, response and request have to go to a linux header (and a header
+> sync patch).
+
+Sure.
+
+> 
+> Also, you are using the same request for host<->guest handling and
+> internal purposes. The fd or pmem pointer definitely don't belong here.
+> Use a separate struct for internal handling purposes. (passing to worker_cb)
+
+o.k. will add another struct for internal handling.
+
+> 
+> > +
+> > +static int worker_cb(void *opaque)
+> > +{
+> > +    VirtIODeviceRequest *req = opaque;
+> > +    int err = 0;
+> > +
+> > +    /* flush raw backing image */
+> > +    err = fsync(req->fd);
+> > +    if (err != 0) {
+> > +        err = EIO;
+> > +    }
+> > +    req->resp.ret = err;
+> > +
+> > +    return 0;
+> > +}
+> > +
+> > +static void done_cb(void *opaque, int ret)
+> > +{
+> > +    VirtIODeviceRequest *req = opaque;
+> > +    int len = iov_from_buf(req->elem.in_sg, req->elem.in_num, 0,
+> > +                              &req->resp, sizeof(VirtIOPMEMResp));
+> > +
+> > +    /* Callbacks are serialized, so no need to use atomic ops.  */
+> > +    virtqueue_push(req->pmem->rq_vq, &req->elem, len);
+> > +    virtio_notify((VirtIODevice *)req->pmem, req->pmem->rq_vq);
+> > +    g_free(req);
+> > +}
+> > +
+> > +static void virtio_pmem_flush(VirtIODevice *vdev, VirtQueue *vq)
+> > +{
+> > +    VirtIODeviceRequest *req;
+> > +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
+> > +    HostMemoryBackend *backend = MEMORY_BACKEND(pmem->memdev);
+> > +    ThreadPool *pool = aio_get_thread_pool(qemu_get_aio_context());
+> > +
+> > +    req = virtqueue_pop(vq, sizeof(VirtIODeviceRequest));
+> > +    if (!req) {
+> > +        virtio_error(vdev, "virtio-pmem missing request data");
+> > +        return;
+> > +    }
+> > +
+> > +    if (req->elem.out_num < 1 || req->elem.in_num < 1) {
+> > +        virtio_error(vdev, "virtio-pmem request not proper");
+> > +        g_free(req);
+> > +        return;
+> > +    }
+> > +    req->fd = memory_region_get_fd(&backend->mr);
+> > +    req->pmem = pmem;
+> > +    thread_pool_submit_aio(pool, worker_cb, req, done_cb, req);
+> > +}
+> > +
+> > +static void virtio_pmem_get_config(VirtIODevice *vdev, uint8_t *config)
+> > +{
+> > +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
+> > +    struct virtio_pmem_config *pmemcfg = (struct virtio_pmem_config *)
+> > config;
+> > +
+> > +    virtio_stq_p(vdev, &pmemcfg->start, pmem->start);
+> > +    virtio_stq_p(vdev, &pmemcfg->size, pmem->size);
+> > +}
+> > +
+> > +static uint64_t virtio_pmem_get_features(VirtIODevice *vdev, uint64_t
+> > features,
+> > +                                        Error **errp)
+> > +{
+> > +    return features;
+> > +}
+> > +
+> > +static void virtio_pmem_realize(DeviceState *dev, Error **errp)
+> > +{
+> > +    VirtIODevice   *vdev   = VIRTIO_DEVICE(dev);
+> > +    VirtIOPMEM     *pmem   = VIRTIO_PMEM(dev);
+> > +    MachineState   *ms     = MACHINE(qdev_get_machine());
+> > +    uint64_t align;
+> > +    Error *local_err = NULL;
+> > +    MemoryRegion *mr;
+> > +
+> > +    if (!pmem->memdev) {
+> > +        error_setg(errp, "virtio-pmem memdev not set");
+> > +        return;
+> > +    }
+> > +
+> > +    mr  = host_memory_backend_get_memory(pmem->memdev);
+> > +    align = memory_region_get_alignment(mr);
+> > +    pmem->size = QEMU_ALIGN_DOWN(memory_region_size(mr), align);
+> > +    pmem->start = memory_device_get_free_addr(ms, NULL, align, pmem->size,
+> > +
+> > &local_err);
+> > +    if (local_err) {
+> > +        error_setg(errp, "Can't get free address in mem device");
+> > +        return;
+> > +    }
+> > +    memory_region_init_alias(&pmem->mr, OBJECT(pmem),
+> > +                             "virtio_pmem-memory", mr, 0, pmem->size);
+> > +    memory_device_plug_region(ms, &pmem->mr, pmem->start);
+> > +
+> > +    host_memory_backend_set_mapped(pmem->memdev, true);
+> > +    virtio_init(vdev, TYPE_VIRTIO_PMEM, VIRTIO_ID_PMEM,
+> > +                                          sizeof(struct
+> > virtio_pmem_config));
+> > +    pmem->rq_vq = virtio_add_queue(vdev, 128, virtio_pmem_flush);
+> > +}
+> > +
+> > +static void virtio_mem_check_memdev(Object *obj, const char *name, Object
+> > *val,
+> > +                                    Error **errp)
+> > +{
+> > +    if (host_memory_backend_is_mapped(MEMORY_BACKEND(val))) {
+> > +        char *path = object_get_canonical_path_component(val);
+> > +        error_setg(errp, "Can't use already busy memdev: %s", path);
+> > +        g_free(path);
+> > +        return;
+> > +    }
+> > +
+> > +    qdev_prop_allow_set_link_before_realize(obj, name, val, errp);
+> > +}
+> > +
+> > +static const char *virtio_pmem_get_device_id(VirtIOPMEM *vm)
+> > +{
+> > +    Object *obj = OBJECT(vm);
+> > +    DeviceState *parent_dev;
+> > +
+> > +    /* always use the ID of the proxy device */
+> > +    if (obj->parent && object_dynamic_cast(obj->parent, TYPE_DEVICE)) {
+> > +        parent_dev = DEVICE(obj->parent);
+> > +        return parent_dev->id;
+> > +    }
+> > +    return NULL;
+> > +}
+> > +
+> > +static void virtio_pmem_md_fill_device_info(const MemoryDeviceState *md,
+> > +                                           MemoryDeviceInfo *info)
+> > +{
+> > +    VirtioPMemDeviceInfo *vi = g_new0(VirtioPMemDeviceInfo, 1);
+> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
+> > +    const char *id = virtio_pmem_get_device_id(vm);
+> > +
+> > +    if (id) {
+> > +        vi->has_id = true;
+> > +        vi->id = g_strdup(id);
+> > +    }
+> > +
+> > +    vi->start = vm->start;
+> > +    vi->size = vm->size;
+> > +    vi->memdev = object_get_canonical_path(OBJECT(vm->memdev));
+> > +
+> > +    info->u.virtio_pmem.data = vi;
+> > +    info->type = MEMORY_DEVICE_INFO_KIND_VIRTIO_PMEM;
+> > +}
+> > +
+> > +static uint64_t virtio_pmem_md_get_addr(const MemoryDeviceState *md)
+> > +{
+> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
+> > +
+> > +    return vm->start;
+> > +}
+> > +
+> > +static uint64_t virtio_pmem_md_get_plugged_size(const MemoryDeviceState
+> > *md)
+> > +{
+> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
+> > +
+> > +    return vm->size;
+> > +}
+> > +
+> > +static uint64_t virtio_pmem_md_get_region_size(const MemoryDeviceState
+> > *md)
+> > +{
+> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
+> > +
+> > +    return vm->size;
+> > +}
+> > +
+> > +static void virtio_pmem_instance_init(Object *obj)
+> > +{
+> > +    VirtIOPMEM *vm = VIRTIO_PMEM(obj);
+> > +    object_property_add_link(obj, "memdev", TYPE_MEMORY_BACKEND,
+> > +                                (Object **)&vm->memdev,
+> > +                                (void *) virtio_mem_check_memdev,
+> > +                                OBJ_PROP_LINK_STRONG,
+> > +                                &error_abort);
+> > +}
+> > +
+> > +
+> > +static void virtio_pmem_class_init(ObjectClass *klass, void *data)
+> > +{
+> > +    VirtioDeviceClass *vdc = VIRTIO_DEVICE_CLASS(klass);
+> > +    MemoryDeviceClass *mdc = MEMORY_DEVICE_CLASS(klass);
+> > +
+> > +    vdc->realize      =  virtio_pmem_realize;
+> > +    vdc->get_config   =  virtio_pmem_get_config;
+> > +    vdc->get_features =  virtio_pmem_get_features;
+> > +
+> > +    mdc->get_addr         = virtio_pmem_md_get_addr;
+> > +    mdc->get_plugged_size = virtio_pmem_md_get_plugged_size;
+> > +    mdc->get_region_size  = virtio_pmem_md_get_region_size;
+> > +    mdc->fill_device_info = virtio_pmem_md_fill_device_info;
+> > +}
+> > +
+> > +static TypeInfo virtio_pmem_info = {
+> > +    .name          = TYPE_VIRTIO_PMEM,
+> > +    .parent        = TYPE_VIRTIO_DEVICE,
+> > +    .class_init    = virtio_pmem_class_init,
+> > +    .instance_size = sizeof(VirtIOPMEM),
+> > +    .instance_init = virtio_pmem_instance_init,
+> > +    .interfaces = (InterfaceInfo[]) {
+> > +        { TYPE_MEMORY_DEVICE },
+> > +        { }
+> > +  },
+> > +};
+> > +
+> > +static void virtio_register_types(void)
+> > +{
+> > +    type_register_static(&virtio_pmem_info);
+> > +}
+> > +
+> > +type_init(virtio_register_types)
+> > diff --git a/include/hw/pci/pci.h b/include/hw/pci/pci.h
+> > index 990d6fcbde..28829b6437 100644
+> > --- a/include/hw/pci/pci.h
+> > +++ b/include/hw/pci/pci.h
+> > @@ -85,6 +85,7 @@ extern bool pci_available;
+> >  #define PCI_DEVICE_ID_VIRTIO_RNG         0x1005
+> >  #define PCI_DEVICE_ID_VIRTIO_9P          0x1009
+> >  #define PCI_DEVICE_ID_VIRTIO_VSOCK       0x1012
+> > +#define PCI_DEVICE_ID_VIRTIO_PMEM        0x1013
+> >  
+> >  #define PCI_VENDOR_ID_REDHAT             0x1b36
+> >  #define PCI_DEVICE_ID_REDHAT_BRIDGE      0x0001
+> > diff --git a/include/hw/virtio/virtio-pmem.h
+> > b/include/hw/virtio/virtio-pmem.h
+> > new file mode 100644
+> > index 0000000000..fda3ee691c
+> > --- /dev/null
+> > +++ b/include/hw/virtio/virtio-pmem.h
+> > @@ -0,0 +1,42 @@
+> > +/*
+> > + * Virtio pmem Device
+> > + *
+> > + * Copyright Red Hat, Inc. 2018
+> > + * Copyright Pankaj Gupta <pagupta@redhat.com>
+> > + *
+> > + * This work is licensed under the terms of the GNU GPL, version 2 or
+> > + * (at your option) any later version.  See the COPYING file in the
+> > + * top-level directory.
+> > + */
+> > +
+> > +#ifndef QEMU_VIRTIO_PMEM_H
+> > +#define QEMU_VIRTIO_PMEM_H
+> > +
+> > +#include "hw/virtio/virtio.h"
+> > +#include "exec/memory.h"
+> > +#include "sysemu/hostmem.h"
+> > +#include "standard-headers/linux/virtio_ids.h"
+> > +#include "hw/boards.h"
+> > +#include "hw/i386/pc.h"
+> > +
+> > +#define TYPE_VIRTIO_PMEM "virtio-pmem"
+> > +
+> > +#define VIRTIO_PMEM(obj) \
+> > +        OBJECT_CHECK(VirtIOPMEM, (obj), TYPE_VIRTIO_PMEM)
+> > +
+> > +/* VirtIOPMEM device structure */
+> > +typedef struct VirtIOPMEM {
+> > +    VirtIODevice parent_obj;
+> > +
+> > +    VirtQueue *rq_vq;
+> > +    uint64_t start;
+> > +    uint64_t size;
+> > +    MemoryRegion mr;
+> > +    HostMemoryBackend *memdev;
+> > +} VirtIOPMEM;
+> > +
+> > +struct virtio_pmem_config {
+> > +    uint64_t start;
+> > +    uint64_t size;
+> > +};
+> > +#endif
+> > diff --git a/include/standard-headers/linux/virtio_ids.h
+> > b/include/standard-headers/linux/virtio_ids.h
+> > index 6d5c3b2d4f..346389565a 100644
+> > --- a/include/standard-headers/linux/virtio_ids.h
+> > +++ b/include/standard-headers/linux/virtio_ids.h
+> > @@ -43,5 +43,6 @@
+> >  #define VIRTIO_ID_INPUT        18 /* virtio input */
+> >  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
+> >  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
+> > +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
+> 
+> This should be moved to a linux header sync patch.
+
+Sure.
 
 Thanks,
-Robin.
-
-> On Mon, 2018-09-03 at 14:01 +0800, Yong Wu wrote:
->> MediaTek extend the arm v7s descriptor to support the dram over 4GB.
->>
->> In the mt2712 and mt8173, it's called "4GB mode", the physical address
->> is from 0x4000_0000 to 0x1_3fff_ffff, but from EMI point of view, it
->> is remapped to high address from 0x1_0000_0000 to 0x1_ffff_ffff, the
->> bit32 is always enabled. thus, in the M4U, we always enable the bit9
->> for all PTEs which means to enable bit32 of physical address.
->>
->> but in mt8183, M4U support the dram from 0x4000_0000 to 0x3_ffff_ffff
->> which isn't remaped. We extend the PTEs: the bit9 represent bit32 of
->> PA and the bit4 represent bit33 of PA. Meanwhile the iova still is
->> 32bits.
->>
->> In order to unify code, in the "4GB mode", we add the bit32 for the
->> physical address manually in our driver.
->>
->> Correspondingly, Adding bit32 and bit33 for the PA in the iova_to_phys
->> has to been moved into v7s.
->>
->> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
->> ---
->> In mt8183, the PA is from 0x4000_0000 to 0x3_ffff_ffff while the iova
->> still is 32bits. Acturally, our HW extend the v7s pgtable. currently
->> the lvl1 pgtable is 16KB, our HW double it. but 32bit iova is enough
->> for us currently, thus we don't change it.
->> ---
->>   drivers/iommu/io-pgtable-arm-v7s.c | 38 ++++++++++++++++++++++++++++++--------
->>   drivers/iommu/io-pgtable.h         |  8 ++++----
->>   drivers/iommu/mtk_iommu.c          | 15 +++++++++------
->>   drivers/iommu/mtk_iommu.h          |  1 +
->>   4 files changed, 44 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
->> index b5948ba..47538dd 100644
->> --- a/drivers/iommu/io-pgtable-arm-v7s.c
->> +++ b/drivers/iommu/io-pgtable-arm-v7s.c
->> @@ -124,7 +124,9 @@
->>   #define ARM_V7S_TEX_MASK		0x7
->>   #define ARM_V7S_ATTR_TEX(val)		(((val) & ARM_V7S_TEX_MASK) << ARM_V7S_TEX_SHIFT)
->>   
->> -#define ARM_V7S_ATTR_MTK_4GB		BIT(9) /* MTK extend it for 4GB mode */
->> +/* MTK extend the two bits below for over 4GB mode */
->> +#define ARM_V7S_ATTR_MTK_PA_BIT32	BIT(9)
->> +#define ARM_V7S_ATTR_MTK_PA_BIT33	BIT(4)
->>   
->>   /* *well, except for TEX on level 2 large pages, of course :( */
->>   #define ARM_V7S_CONT_PAGE_TEX_SHIFT	6
->> @@ -268,7 +270,8 @@ static void __arm_v7s_set_pte(arm_v7s_iopte *ptep, arm_v7s_iopte pte,
->>   }
->>   
->>   static arm_v7s_iopte arm_v7s_prot_to_pte(int prot, int lvl,
->> -					 struct io_pgtable_cfg *cfg)
->> +					 struct io_pgtable_cfg *cfg,
->> +					 phys_addr_t paddr) /* Only for MTK */
->>   {
->>   	bool ap = !(cfg->quirks & IO_PGTABLE_QUIRK_NO_PERMS);
->>   	arm_v7s_iopte pte = ARM_V7S_ATTR_NG | ARM_V7S_ATTR_S;
->> @@ -295,8 +298,12 @@ static arm_v7s_iopte arm_v7s_prot_to_pte(int prot, int lvl,
->>   	if (lvl == 1 && (cfg->quirks & IO_PGTABLE_QUIRK_ARM_NS))
->>   		pte |= ARM_V7S_ATTR_NS_SECTION;
->>   
->> -	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)
->> -		pte |= ARM_V7S_ATTR_MTK_4GB;
->> +	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
->> +		if (paddr & BIT_ULL(32))
->> +			pte |= ARM_V7S_ATTR_MTK_PA_BIT32;
->> +		if (paddr & BIT_ULL(33))
->> +			pte |= ARM_V7S_ATTR_MTK_PA_BIT33;
->> +	}
->>   
->>   	return pte;
->>   }
->> @@ -392,7 +399,7 @@ static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
->>   			return -EEXIST;
->>   		}
->>   
->> -	pte = arm_v7s_prot_to_pte(prot, lvl, cfg);
->> +	pte = arm_v7s_prot_to_pte(prot, lvl, cfg, paddr);
->>   	if (num_entries > 1)
->>   		pte = arm_v7s_pte_to_cont(pte, lvl);
->>   
->> @@ -484,7 +491,11 @@ static int arm_v7s_map(struct io_pgtable_ops *ops, unsigned long iova,
->>   	if (!(prot & (IOMMU_READ | IOMMU_WRITE)))
->>   		return 0;
->>   
->> -	if (WARN_ON(upper_32_bits(iova) || upper_32_bits(paddr)))
->> +	if (WARN_ON(upper_32_bits(iova)))
->> +		return -ERANGE;
->> +
->> +	if (WARN_ON(upper_32_bits(paddr) &&
->> +		    !(iop->cfg.quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)))
->>   		return -ERANGE;
->>   
->>   	ret = __arm_v7s_map(data, iova, paddr, size, prot, 1, data->pgd);
->> @@ -563,7 +574,7 @@ static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
->>   	num_entries = size >> ARM_V7S_LVL_SHIFT(2);
->>   	unmap_idx = ARM_V7S_LVL_IDX(iova, 2);
->>   
->> -	pte = arm_v7s_prot_to_pte(arm_v7s_pte_to_prot(blk_pte, 1), 2, cfg);
->> +	pte = arm_v7s_prot_to_pte(arm_v7s_pte_to_prot(blk_pte, 1), 2, cfg, 0);
->>   	if (num_entries > 1)
->>   		pte = arm_v7s_pte_to_cont(pte, 2);
->>   
->> @@ -677,7 +688,9 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
->>   					unsigned long iova)
->>   {
->>   	struct arm_v7s_io_pgtable *data = io_pgtable_ops_to_data(ops);
->> +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
->>   	arm_v7s_iopte *ptep = data->pgd, pte;
->> +	phys_addr_t paddr;
->>   	int lvl = 0;
->>   	u32 mask;
->>   
->> @@ -693,7 +706,16 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
->>   	mask = ARM_V7S_LVL_MASK(lvl);
->>   	if (arm_v7s_pte_is_cont(pte, lvl))
->>   		mask *= ARM_V7S_CONT_PAGES;
->> -	return (pte & mask) | (iova & ~mask);
->> +	paddr = (pte & mask) | (iova & ~mask);
->> +
->> +	if (IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT) &&
->> +	    cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
->> +		if (pte & ARM_V7S_ATTR_MTK_PA_BIT32)
->> +			paddr |= BIT_ULL(32);
->> +		if (pte & ARM_V7S_ATTR_MTK_PA_BIT33)
->> +			paddr |= BIT_ULL(33);
->> +	}
->> +	return paddr;
->>   }
->>   
->>   static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
->> diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
->> index 2df7909..0eeed94 100644
->> --- a/drivers/iommu/io-pgtable.h
->> +++ b/drivers/iommu/io-pgtable.h
->> @@ -62,10 +62,10 @@ struct io_pgtable_cfg {
->>   	 *	(unmapped) entries but the hardware might do so anyway, perform
->>   	 *	TLB maintenance when mapping as well as when unmapping.
->>   	 *
->> -	 * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) Set bit 9 in all
->> -	 *	PTEs, for Mediatek IOMMUs which treat it as a 33rd address bit
->> -	 *	when the SoC is in "4GB mode" and they can only access the high
->> -	 *	remap of DRAM (0x1_00000000 to 0x1_ffffffff).
->> +	 * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) Set bit 4 and 9 in all
->> +	 *	PTEs, for Mediatek IOMMUs which treat it as the 33rd and 32rd
->> +	 *	address bit when the SoC dram is over 4GB and they can access
->> +	 *	the physical address from 0x4000_0000 to 0x3_ffff_ffff.
->>   	 *
->>   	 * IO_PGTABLE_QUIRK_NO_DMA: Guarantees that the tables will only ever
->>   	 *	be accessed by a fully cache-coherent IOMMU or CPU (e.g. for a
->> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
->> index c0e2da5..86bf647 100644
->> --- a/drivers/iommu/mtk_iommu.c
->> +++ b/drivers/iommu/mtk_iommu.c
->> @@ -367,12 +367,17 @@ static int mtk_iommu_map(struct iommu_domain *domain, unsigned long iova,
->>   			 phys_addr_t paddr, size_t size, int prot)
->>   {
->>   	struct mtk_iommu_domain *dom = to_mtk_domain(domain);
->> +	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
->>   	unsigned long flags;
->>   	int ret;
->>   
->> +	if (IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT) &&
->> +	    data->plat_data->has_4gb_mode &&
->> +	    data->enable_4GB)
->> +		paddr |= BIT_ULL(32);
->> +
->>   	spin_lock_irqsave(&dom->pgtlock, flags);
->> -	ret = dom->iop->map(dom->iop, iova, paddr & DMA_BIT_MASK(32),
->> -			    size, prot);
->> +	ret = dom->iop->map(dom->iop, iova, paddr, size, prot);
->>   	spin_unlock_irqrestore(&dom->pgtlock, flags);
->>   
->>   	return ret;
->> @@ -401,7 +406,6 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
->>   					  dma_addr_t iova)
->>   {
->>   	struct mtk_iommu_domain *dom = to_mtk_domain(domain);
->> -	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
->>   	unsigned long flags;
->>   	phys_addr_t pa;
->>   
->> @@ -409,9 +413,6 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
->>   	pa = dom->iop->iova_to_phys(dom->iop, iova);
->>   	spin_unlock_irqrestore(&dom->pgtlock, flags);
->>   
->> -	if (data->enable_4GB)
->> -		pa |= BIT_ULL(32);
->> -
->>   	return pa;
->>   }
->>   
->> @@ -735,10 +736,12 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
->>   
->>   static const struct mtk_iommu_plat_data mt2712_data = {
->>   	.m4u_plat = M4U_MT2712,
->> +	.has_4gb_mode = true,
->>   };
->>   
->>   static const struct mtk_iommu_plat_data mt8173_data = {
->>   	.m4u_plat = M4U_MT8173,
->> +	.has_4gb_mode = true,
->>   };
->>   
->>   static const struct of_device_id mtk_iommu_of_ids[] = {
->> diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
->> index 333a0ef..a243047 100644
->> --- a/drivers/iommu/mtk_iommu.h
->> +++ b/drivers/iommu/mtk_iommu.h
->> @@ -43,6 +43,7 @@ enum mtk_iommu_plat {
->>   
->>   struct mtk_iommu_plat_data {
->>   	enum mtk_iommu_plat m4u_plat;
->> +	bool has_4gb_mode;
->>   };
->>   
->>   struct mtk_iommu_domain;
+Pankaj
+> 
+> 
+> 
+> 
+> --
+> 
+> Thanks,
+> 
+> David / dhildenb
 > 
 > 
