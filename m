@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9ADC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54321ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB4D21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C2F21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+GMFnnn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB4D21525
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD4VPE9M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C2F21525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388473AbeIUBCZ (ORCPT
+        id S2388491AbeIUBC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:02:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35494 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388353AbeIUBCY (ORCPT
+        Thu, 20 Sep 2018 21:02:27 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37881 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388353AbeIUBC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:02:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 205-v6so3932626pgd.2;
-        Thu, 20 Sep 2018 12:17:26 -0700 (PDT)
+        Thu, 20 Sep 2018 21:02:26 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 2-v6so4883237pgo.4;
+        Thu, 20 Sep 2018 12:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
         bh=193CNgmBH8R6+te4PJDyCo0NhXQlORas2WPVssI+RmU=;
-        b=e+GMFnnnXx7ob6/SWZtMw7RxwRCxAMXL6XEEMZUHtvREX7qGGjIZE9OfVk6w10HTEJ
-         hoKaf3z/orXDc/H1BIZjINaH4XbPLtSGDuW+/ztQKKbY48quQrHvv5hjOkz3SCX4hDos
-         1n9O74TDenmm1M14WiLxsjGROe9/Hsca1+6IMwz21yXhBXKkPsgnKcp6AZ3qrXzkyNEP
-         EtDxBwf6QXVzVvx9maLfO7vySFApKvCFwznFgTKmPWdTnNHmNZhfvN5Z15UJa3E4C3RG
-         QYMO2akAYFZF2lDlIOP2CZoMhkHZquw2FRx153o0+JzJHCXnruNM0XiK7kl4RkU0G+h5
-         q+Cw==
+        b=BD4VPE9MBHJ5KCiGB96FCye83mYYAHHP3hiJRCadwU0qTDp/AYAnsjp+rHus/VYGDM
+         Ki/aMO11sAST+jJocevW3PaP3TDY8XWRrgTkCVkuSdLrgfgoiqie9jX+vxOk1YLKwLJj
+         UDOstZQRhswoSxwnhXrmCkOPFeLbWSmG43wsf+AU/ClXwMiv5JE/hs/7LQNlCcIddgxN
+         7LFZOqdkZpZkAOZ7ID7cVJvaj0f6IK1Q2gHg6rETgTdzobIbCPxxFmlnlyiLUGYmYihQ
+         QO2SE+frf00F183Xl+m8r1TAu3XlMJfG+51ZVN3FAjELEdUvZ+tdBAfj+UqBxD/wWx7g
+         TcAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
         bh=193CNgmBH8R6+te4PJDyCo0NhXQlORas2WPVssI+RmU=;
-        b=CoYcXrUa9eqhRuNSJlXyDcGhEOa2/qvTAwxJPG83bsEzlxpglJ+bKw4ySpaZ4xlyTO
-         5bOvYAkObB7UPy6FmjxhGv4+i1zMiq7RNwFFKDNGuJzAKGP40ghHqejvKB7P0wBjU8bW
-         LmXz9YWif0HrzcOfv5oNIlwi7eS1TPpWZdn8+PTzQDYNeci05TzPyb4p4aaY6YZwg2lO
-         xfN/2MUUN/eIZKUQ4u8bn8w5uIKwiLP38teXycMePJkTdUcfESEuWE32DXdyiE/sKfsz
-         5ocXJEMYaL+NM1BFwVyuM49jWx7T9U2rQjCaH3A9BnkI3RFz7oRS0bi9N9cjjzZFSZqk
-         iLVg==
-X-Gm-Message-State: APzg51AWszT8MtWLVImA9IznYsRluX0UXLSe4DZ4hb/F2XZsTeLmzHMb
-        Rez5cCEtaZ0+gVTczsxPs0dqLdX2
-X-Google-Smtp-Source: ANB0VdaRdSexZ6YF6l2RzJv90/n+IJWZySBKIF1t9cKxPU/ykNtRsr/ywZIvJjYUwZc1Tos+t4vRGA==
-X-Received: by 2002:a63:1316:: with SMTP id i22-v6mr37559006pgl.86.1537471045635;
-        Thu, 20 Sep 2018 12:17:25 -0700 (PDT)
+        b=PX2BRVedyejCa0+2j/NydmKL0Za7WrkfLYxxfSSDwskH5b3OiGE2kF79is543LYIeF
+         zOJKDUz/q/NddF84dayOseQglgZG/XjdQ07O4fvWguqGt5lwaAnsRhCisAM/nJydeEos
+         IAltGRtsCF/uj48R5ViNyjs4kagrzNvar9FUsP3UfXUv8zZO2wuVEIxIyvKhaALLZFjs
+         dSNn168peGWiSX9Z13dlpu5+R29uRmvYmpT2CAX/Ia8hMXY2tKxdYnJBgqg7I8uDxuMi
+         LAWGEFA3PwaI+6HyOieZumSSORcqFVDzTWv/aeMxjLiLv3db5iPouYT6K88etAUALBss
+         S36A==
+X-Gm-Message-State: APzg51AYIoRe6a5FFGoWCwvugEecJQoZCjNIlzVFoAiAI8V1wbRRl0s6
+        O+E8eDtxSmE1rt81OBkKUSNgEFjO
+X-Google-Smtp-Source: ANB0VdbhD0ekh4ynw/FKxjy1M7hUtncBM+C9KFmKo9m/lkmnjGiK/sAE/AvSgpFoALRhv2V1jiYYpw==
+X-Received: by 2002:a63:c046:: with SMTP id z6-v6mr38322495pgi.114.1537471047560;
+        Thu, 20 Sep 2018 12:17:27 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.23
+        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:17:24 -0700 (PDT)
+        Thu, 20 Sep 2018 12:17:26 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +72,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Parallel ATA drivers)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH 5/9] ata: ahci_brcm: Allow optional reset controller to be used
-Date:   Thu, 20 Sep 2018 12:16:40 -0700
-Message-Id: <20180920191646.18198-7-f.fainelli@gmail.com>
+Subject: [PATCH 5/9] ata: sata_brcmstb: Allow optional reset controller to be used
+Date:   Thu, 20 Sep 2018 12:16:41 -0700
+Message-Id: <20180920191646.18198-8-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920191646.18198-1-f.fainelli@gmail.com>
 References: <20180920191646.18198-1-f.fainelli@gmail.com>
