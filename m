@@ -2,63 +2,217 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF4CECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08040ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6242F2146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6242F2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id B3D952146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:09:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D952146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbeITLv1 (ORCPT
+        id S1731914AbeITLvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:51:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35456 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731260AbeITLv1 (ORCPT
+        Thu, 20 Sep 2018 07:51:32 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:50131 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731260AbeITLvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:51:27 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5D68A146501C4;
-        Wed, 19 Sep 2018 23:09:43 -0700 (PDT)
-Date:   Wed, 19 Sep 2018 23:09:42 -0700 (PDT)
-Message-Id: <20180919.230942.1647513192306122153.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] e1000: remove set but not used variable
- 'txb2b'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1537409078-2374-1-git-send-email-yuehaibing@huawei.com>
-References: <1537409078-2374-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 19 Sep 2018 23:09:43 -0700 (PDT)
+        Thu, 20 Sep 2018 07:51:32 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 1A3AC40003;
+        Thu, 20 Sep 2018 06:09:39 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v7 05/11] hugetlb: Introduce generic version of huge_ptep_clear_flush
+Date:   Thu, 20 Sep 2018 06:03:52 +0000
+Message-Id: <20180920060358.16606-6-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
+References: <20180920060358.16606-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 20 Sep 2018 02:04:38 +0000
+arm, x86 architectures use the same version of
+huge_ptep_clear_flush, so move this generic implementation into
+asm-generic/hugetlb.h.
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/ethernet/intel/e1000/e1000_main.c: In function 'e1000_watchdog':
-> drivers/net/ethernet/intel/e1000/e1000_main.c:2436:9: warning:
->  variable 'txb2b' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Helge Deller <deller@gmx.de> # parisc
+Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
+Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Acked-by: Ingo Molnar <mingo@kernel.org> # x86
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ arch/arm/include/asm/hugetlb-3level.h | 6 ------
+ arch/arm64/include/asm/hugetlb.h      | 1 +
+ arch/ia64/include/asm/hugetlb.h       | 1 +
+ arch/mips/include/asm/hugetlb.h       | 1 +
+ arch/parisc/include/asm/hugetlb.h     | 1 +
+ arch/powerpc/include/asm/hugetlb.h    | 1 +
+ arch/sh/include/asm/hugetlb.h         | 1 +
+ arch/sparc/include/asm/hugetlb.h      | 1 +
+ arch/x86/include/asm/hugetlb.h        | 6 ------
+ include/asm-generic/hugetlb.h         | 8 ++++++++
+ 10 files changed, 15 insertions(+), 12 deletions(-)
 
-Applied, thanks.
+diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
+index ad36e84b819a..b897541520ef 100644
+--- a/arch/arm/include/asm/hugetlb-3level.h
++++ b/arch/arm/include/asm/hugetlb-3level.h
+@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
+ 	return retval;
+ }
+ 
+-static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+-					 unsigned long addr, pte_t *ptep)
+-{
+-	ptep_clear_flush(vma, addr, ptep);
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 6ae0bcafe162..4c8dd488554d 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -71,6 +71,7 @@ extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 				     unsigned long addr, pte_t *ptep);
+ extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 				    unsigned long addr, pte_t *ptep);
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ extern void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 				  unsigned long addr, pte_t *ptep);
+ #define __HAVE_ARCH_HUGE_PTE_CLEAR
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index 6719c74da0de..41b5f6adeee4 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -20,6 +20,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 		REGION_NUMBER((addr)+(len)-1) == RGN_HPAGE);
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 0959cc5a41fa..7df1f116a3cc 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -48,6 +48,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 	return pte;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 6e281e1bb336..9afff26747a1 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -32,6 +32,7 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index 91bdc84b76ce..1eb3e131cab4 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -140,6 +140,7 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ #endif
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index 08ee6c00b5e9..9abf9c86b769 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -25,6 +25,7 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 944e3a4bfaff..651a9593fcee 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -42,6 +42,7 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index e9e7fef867ad..fd59673e7a0a 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -28,12 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
+ 	return 0;
+ }
+ 
+-static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+-					 unsigned long addr, pte_t *ptep)
+-{
+-	ptep_clear_flush(vma, addr, ptep);
+-}
+-
+ static inline int huge_pte_none(pte_t pte)
+ {
+ 	return pte_none(pte);
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index 0f6f151780dd..ffa63fd8388d 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -65,4 +65,12 @@ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
++static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
++		unsigned long addr, pte_t *ptep)
++{
++	ptep_clear_flush(vma, addr, ptep);
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
+
