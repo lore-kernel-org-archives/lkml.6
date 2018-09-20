@@ -2,128 +2,141 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF071C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27099ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFC52154C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58C521535
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDwS4pER"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFC52154C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UMjB5ZsO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58C521535
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeIUE2Q (ORCPT
+        id S2388491AbeIUE2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:28:16 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35298 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeIUE2Q (ORCPT
+        Fri, 21 Sep 2018 00:28:34 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37529 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeIUE2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:28:16 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x20-v6so9814302lfg.2;
-        Thu, 20 Sep 2018 15:42:28 -0700 (PDT)
+        Fri, 21 Sep 2018 00:28:34 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q5-v6so1534578pli.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:42:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6oyuf8xff154pzJKk83nIp1tzIZ7DE6n4kvor30qYcc=;
-        b=BDwS4pERPIr93LjbOspNCRoKaIRHJG17eQn7u0YE7H9i88yd0DPMr4XEkorWWk6ePE
-         53jp2i4aGZG5F9wbaICZRGa7hY2F9z+p4IAyRP5JlJ5TD9Oj+mVzU2grGxREArisb19K
-         ICcXMtpSQJ5uR/lBLDrWz3ZHOsxnK2AI04eG2oQaQw7s/HfUc8AcExAFERabQT6z+dli
-         ahv2/mCGSw3KRcztT2i2zCO0LWyi7OnnHWNpX7dSyZtX4IQ24LuNCN7bX98tDrrpxpML
-         RwsacMFjgC2OT2KPGaK5+7vH5EW4EH5Ntq+uqgYI/l55sKse5iTJ420gLGbPYEFqlqhB
-         Z0MA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RiuVd/eZH5Dz5Al4lGnHguqs2hmX6x+p1WFc9tapVFo=;
+        b=UMjB5ZsOkYGRBEBUN6VY8V8MlY4QpwKCyMWxqjhMskEmH2c/yuoDTHUgAQI64Td16y
+         Tse4b6oxcDl0NXszrxXrHVUOmOp6+AoSUMNEfSi2UpsXJtGAfRQmXTpna+dzoOQWNmdV
+         3+ktGArbsRjZIoy3pUK2VzJ45l5mxDr4Fw7bw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6oyuf8xff154pzJKk83nIp1tzIZ7DE6n4kvor30qYcc=;
-        b=erSF/xOgM6Qa67Neks9IvCAhMR4Lq6mJuVTSSnXWxqWQamaoOQOKehs1DHWiRQckl1
-         fpu+xwenMdKA8t6GBir5Humb59TcD8Z2SxfTRRf/SsfQFnIX+oktRJuEe5UQ7qbdGXZG
-         mQlvLbbR2vULf41Iy3DbrOLvoPj4bTnfZVFGjrcLeMfvdiKARJWSielGRNQJsFsdpzQg
-         lBRnYh0Hg6W5+I7CbrhRCpR/X9chXMwmX4YNaTN+/AsgpWiXCV4z9gVasapO45HMpNt/
-         lFiLHDnNh8kgRKiexRjI4D4VJwbdAtZ/SHbm3SVGLAMnjj3X3grO8jsWNiF8JO785BOB
-         y2KA==
-X-Gm-Message-State: APzg51D0zeSZ2Qnlkq/BDOBJxfQ64jEoRRR1iJbmt+jfhzfntwT0RcH1
-        1BLRpi8cttjSTITI3JZTurenP3QRrr+M4A==
-X-Google-Smtp-Source: ANB0VdbNs9HHcRiXeXSmcTwZF4iH9JR4kk8w2my/zod6zzL/toEFSOunv131dZz2Nz6bW8GPQZT78Q==
-X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr11266158lfl.63.1537483348123;
-        Thu, 20 Sep 2018 15:42:28 -0700 (PDT)
-Received: from z50.localnet (apn-37-248-215-56.dynamic.gprs.plus.pl. [37.248.215.56])
-        by smtp.gmail.com with ESMTPSA id j9-v6sm4616259ljh.40.2018.09.20.15.42.24
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RiuVd/eZH5Dz5Al4lGnHguqs2hmX6x+p1WFc9tapVFo=;
+        b=k/G5RzSvsdbt9ocIeNWDy3eEdVYRj3nb7k8D6wvyBejO1XRAXoHQfsf5fPhBPPbXYN
+         BAKGYCX/+l3OEa5D1hDwxSP7Ai+CcqjmHicZXHK6SW3kK2EcRew6ah6EXYroO8+ylRIm
+         KgWznWoA5E5mPJHepR8SmHFDZdvJEz7g6Qtf2l183QR/M0gq2kg/w2TMt6KWZQ9OhHtd
+         ZvHdcLMKn6xQoPnpFO472rWuZP0snWvMBNp3rQaFYccFTYps6RLPFFblBPfQHJtimgyx
+         VwBn1VR51QTy7bmBvxlBlTA5iqcJP57sBV02ySnGo9rQZ2R/dDLidXI0NpAP3d4A+ip0
+         SO1w==
+X-Gm-Message-State: APzg51DIeWdNjz0GIWaNTeILCjYcfe4/TyJlnAHSZesw0Pmug9MTZMjw
+        LsoZWLvb6uGkbQjuxhOOOGjAv6F+WoxXAA==
+X-Google-Smtp-Source: ANB0VdY7/jrOf08BnYvB0mIfE1cfdUJfmMhOyMxXZHwXXXeTZ1v9ad11S6BfFqOEzxyjWLQO2EJgzw==
+X-Received: by 2002:a17:902:be07:: with SMTP id r7-v6mr40715365pls.275.1537483368108;
+        Thu, 20 Sep 2018 15:42:48 -0700 (PDT)
+Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm38704730pfa.158.2018.09.20.15.42.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 15:42:27 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] ARM: OMAP1: ams-delta: Clean up GPIO setup for MODEM
-Date:   Fri, 21 Sep 2018 00:43:49 +0200
-Message-ID: <4137539.DlEMru2qd5@z50>
-In-Reply-To: <20180920212326.GS5662@atomide.com>
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <2690911.AdkODg5D9b@z50> <20180920212326.GS5662@atomide.com>
+        Thu, 20 Sep 2018 15:42:47 -0700 (PDT)
+From:   Ryan Case <ryandcase@chromium.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Ryan Case <ryandcase@chromium.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
+Date:   Thu, 20 Sep 2018 15:40:54 -0700
+Message-Id: <20180920224055.164856-1-ryandcase@chromium.org>
+X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+From: Girish Mahadevan <girishm@codeaurora.org>
 
-On Thursday, September 20, 2018 11:23:26 PM CEST Tony Lindgren wrote:
-> * Janusz Krzysztofik <jmkrzyszt@gmail.com> [180910 21:52]:
-> > On Monday, September 10, 2018 1:44:16 AM CEST Janusz Krzysztofik wrote:
-> > > 
-> > > Convert modem related GPIO setup from integer space to GPIO descriptors.
-> > > Also, restore original initialization order of the MODEM device and its
-> > > related GPIO pins.
-> > > 
-> > > Cleanup of MODEM relaated regulator setup is postponed while waiting for
-> > > upcoming conversion of fixed regulator API to GPIO descriptors.
-> > > 
-> > > 
-> > > Janusz Krzysztofik (3):
-> > >       ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
-> > >       ARM: OMAP1: ams-delta: initialize latch2 pins to safe values
-> > >       ARM: OMAP1: ams-delta: register MODEM device earlier
-> > > 
-> > > 
-> > > Changelog:
-> > > v2:
-> > > - rebased on v4.19-rc1
-> > 
-> > Hi Tony,
-> > 
-> > I forgot to mention: please apply on top of "[PATCH v3 0/3] ARM: OMAP1: ams-
-> > delta: Complete driver gpiod migration" series. Sorry.
-> 
-> Hmm but then in that thread you said that it won't apply.. So I'm applying
-> this series into omap-for-v4.20/omap1 branch. I just modified the second
-> patch in this series for the unchanged header location.
+Bindings for Qualcomm Quad SPI used on SoCs such as sdm845.
 
-OK, thank you.
-Janusz
+Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
+Signed-off-by: Ryan Case <ryandcase@chromium.org>
+---
 
-> I suggest you send the mtd patch separately to mtd maintainers, the fb patch
-> separately to fb maintainers and then let's do the header move after all
-> those are merged as a clean-up. That avoids some dependencies between these
-> branches.
-> 
-> Regards,
-> 
-> Tony
-> 
+Changes in v2:
+- Added commit text
+- Removed invalid property
+- Updated example to match sdm845 with attached spi-nor
 
+ .../bindings/spi/qcom,spi-qcom-qspi.txt       | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
 
-
+diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+new file mode 100644
+index 000000000000..ecfb1e2bd520
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+@@ -0,0 +1,36 @@
++Qualcomm Quad Serial Peripheral Interface (QSPI)
++
++The QSPI controller allows SPI protocol communication in single, dual, or quad
++wire transmission modes for read/write access to slaves such as NOR flash.
++
++Required properties:
++- compatible:	Should contain:
++		"qcom,sdm845-qspi"
++- reg:		Should contain the base register location and length.
++- interrupts:	Interrupt number used by the controller.
++- clocks:	Should contain the core and AHB clock.
++- clock-names:	Should be "core" for core clock and "iface" for AHB clock.
++
++SPI slave nodes must be children of the SPI master node and can contain
++properties described in Documentation/devicetree/bindings/spi/spi-bus.txt
++
++Example:
++
++	qspi: qspi@88df000 {
++		compatible = "qcom,sdm845-qspi";
++		reg = <0x88df000 0x600>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++		clock-names = "iface", "core";
++		clocks = <&gcc GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
++			 <&gcc GCC_QSPI_CORE_CLK>;
++
++		device@0 {
++			compatible = "jedec,spi-nor";
++			reg = <0>;
++			spi-max-frequency = <25000000>;
++			spi-tx-bus-width = <2>;
++			spi-rx-bus-width = <2>;
++		};
++	};
+-- 
+2.19.0.444.g18242da7ef-goog
 
