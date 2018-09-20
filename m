@@ -2,246 +2,119 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A50C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089FDC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A09312087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B301F2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:32:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DJjIroN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09312087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhN2Qols"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B301F2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732783AbeITJNF (ORCPT
+        id S1732914AbeITJNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 05:13:05 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53191 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731479AbeITJNF (ORCPT
+        Thu, 20 Sep 2018 05:13:54 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54413 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbeITJNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 05:13:05 -0400
-Received: by mail-it0-f65.google.com with SMTP id h3-v6so11305744ita.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 20:31:54 -0700 (PDT)
+        Thu, 20 Sep 2018 05:13:54 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c14-v6so8295682wmb.4;
+        Wed, 19 Sep 2018 20:32:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0UI1UJ3VGKb0pjcJ1KCiEileSfBeYUk/GSyLEbrPm7Q=;
-        b=DJjIroN1AeZX9HgqtK7PO7zwI6r+Jxd/7nrbB9vDUc/WiPkO+tn1ow0f4SHSra+ZPQ
-         Ly2QEcDtNVP+NEKpvnKA5wtik4mam4r+jz1me4e2G+jk5a0P3rRQ4vGhquN9YsIgdfW1
-         kKEzsl2esCkt9Jh3kqhrmvGvfUnTHImnG3YgU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VfOMuRjv8r4pEoEs0YPr0UYr7mAMda2bFMBq9QFspuo=;
+        b=MhN2Qolsqolo9OFq92udDlqMX8XY3Wr+Hk797M6rmGwAJcvDc7+EEInVOAUdVaJ0Sb
+         acdYcEJHsjUhS0WbvnM5y9bapKGm4RDU33FEhFuj3BkZbFu7VNIBqvaEG9BE1u/zCs9a
+         EmVdTsFEEeltvHYcHUrEa3A0BFZcgkp0Qz72SzLTUrlvopEvsbIofS1jE5/bn99gJWym
+         8M2qLXbQjL4m8fcg/0J8eBqvcB5rWyzVay6kmAyYvYNsW4+O/Qfq7w6FpjkIqKm8Y+Jv
+         zse0JgYm/4Z+dpJ3Xs57RsSuv2nUWquevEL4Wx5Q1D6QtYqCAnjwP5oHDYPqJjrcfM0Z
+         hmnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0UI1UJ3VGKb0pjcJ1KCiEileSfBeYUk/GSyLEbrPm7Q=;
-        b=osTP6uyPwkdRt807vmNt5LTj6tKRMjRkIXt9Cbl098BjzYNpL+9wgkTBci4WG68gNT
-         1qYqdwWWVeEGjVlQzqlrWlmbMMHYAlcYGWUWjB+6zC7hv6f3MJ/oukExyqu3a1Q0XSVf
-         TDDgMFsyzWWruRU0o9DoWWA6kPaCdNzV/y0vvRf1VteqUZwzsrLL7lk1/G6aEsRsT+bV
-         p6LzkgfsNgyfphvBLuyYqza2LdUMt26z9dx3/e4JBklX5H1e5tcJ3mI4ljKJzftN5wZs
-         AJN/DwhTDyT1ksezYXbEeM7IBVUMkmIMwJpk4sVEXJ+GST4vIsVFv54KlytBu4StMfXw
-         NcyQ==
-X-Gm-Message-State: APzg51BCee4xZtonAMo8MiUIYAyYEVWqgx53EcSkmYqR9WFCELw0JdYW
-        bVyjg1csQoxgPMU4Lq0yn58wy0qn8CXDkA==
-X-Google-Smtp-Source: ANB0VdZPdgDcgbvIdjgwQl6Z+AyExXWCB+LtpXK3SNSg5rIeCkJaz+oE3j/HRl6uD/PqG27fHI7h8Q==
-X-Received: by 2002:a24:7941:: with SMTP id z62-v6mr665833itc.20.1537414313569;
-        Wed, 19 Sep 2018 20:31:53 -0700 (PDT)
-Received: from mail-it0-f46.google.com (mail-it0-f46.google.com. [209.85.214.46])
-        by smtp.gmail.com with ESMTPSA id f74-v6sm358488itf.20.2018.09.19.20.31.52
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VfOMuRjv8r4pEoEs0YPr0UYr7mAMda2bFMBq9QFspuo=;
+        b=YXqA5fxnpLgNIGRXaiy3KuWdCE6dfG23P1zoMS6F79F4pNJmGEsdxcxctcuIe48AYL
+         Oen3Shle6WDTqkJvs0YmhkDAylkbiace2bPUJa5mfz1QCv25NJ6A34qw/XlbAudUDfrA
+         /5wEOSt/5KzhbdL7HNpgNGJkd9iTGoGmAtWe+2MOF84Dw8aWN8qjKFMtmPp/XWGo4vQY
+         qeGqZUit2Y/AkBdmtoWFo/4rgpofGOByQlKD0y7V4PtRHWbRfCU02sQsZCkWCxL4Hofj
+         ipUKr3BdqXZfcLgQd4WEZU0z1CjZG/zLbPLGkm6wapzagHdlITNq/hwfKTzy15EJqDK/
+         K9PA==
+X-Gm-Message-State: APzg51B+0Jk8KkF4fZqZIDE6UczwVXOgff1c/afX2ZqsEcG1bfWde3tu
+        R0P51bzx9tQ0PhDxtBFka84=
+X-Google-Smtp-Source: ANB0Vdb/mVEbgnqVUyUZ2vnE5IA2VXkvx4pRAhrjkfbnV3uf+VeOmwu+S7yHrzrnC/qBylz+ibwMug==
+X-Received: by 2002:a1c:3282:: with SMTP id y124-v6mr590766wmy.11.1537414361162;
+        Wed, 19 Sep 2018 20:32:41 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id n14-v6sm448878wmc.14.2018.09.19.20.32.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 20:31:52 -0700 (PDT)
-Received: by mail-it0-f46.google.com with SMTP id j198-v6so451477ita.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 20:31:52 -0700 (PDT)
-X-Received: by 2002:a24:f54a:: with SMTP id k71-v6mr647746ith.36.1537414311816;
- Wed, 19 Sep 2018 20:31:51 -0700 (PDT)
+        Wed, 19 Sep 2018 20:32:40 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Yishai Hadas <yishaih@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] IB/mlx4: Remove unnecessary parentheses
+Date:   Wed, 19 Sep 2018 20:32:29 -0700
+Message-Id: <20180920033229.15102-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
- <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
- <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
- <97b94b9b-f028-cb8b-a3db-67626dc517ab@linaro.org> <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
-In-Reply-To: <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Thu, 20 Sep 2018 12:31:39 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUo6X+L7UYgmw8qUe_2CiZEBKGxaREFhZGRU1jGq0fO=g@mail.gmail.com>
-Message-ID: <CAPBb6MUo6X+L7UYgmw8qUe_2CiZEBKGxaREFhZGRU1jGq0fO=g@mail.gmail.com>
-Subject: Re: [PATCH v9 1/5] venus: firmware: add routine to reset ARM9
-To:     vgarodia@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-media-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 2:55 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
->
-> On 2018-09-19 20:30, Stanimir Varbanov wrote:
-> > Hi Alex,
-> >
-> > On 09/19/2018 10:32 AM, Alexandre Courbot wrote:
-> >> On Wed, Sep 19, 2018 at 8:43 AM Vikash Garodia
-> >> <vgarodia@codeaurora.org> wrote:
-> >>>
-> >>> Add routine to reset the ARM9 and brings it out of reset. Also
-> >>> abstract the Venus CPU state handling with a new function. This
-> >>> is in preparation to add PIL functionality in venus driver.
-> >>>
-> >>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
-> >>> ---
-> >>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
-> >>>  drivers/media/platform/qcom/venus/firmware.c     | 33
-> >>> ++++++++++++++++++++++++
-> >>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
-> >>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
-> >>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
-> >>>  5 files changed, 57 insertions(+), 9 deletions(-)
-> >>>
-> >>> diff --git a/drivers/media/platform/qcom/venus/core.h
-> >>> b/drivers/media/platform/qcom/venus/core.h
-> >>> index 2f02365..dfd5c10 100644
-> >>> --- a/drivers/media/platform/qcom/venus/core.h
-> >>> +++ b/drivers/media/platform/qcom/venus/core.h
-> >>> @@ -98,6 +98,7 @@ struct venus_caps {
-> >>>   * @dev:               convenience struct device pointer
-> >>>   * @dev_dec:   convenience struct device pointer for decoder device
-> >>>   * @dev_enc:   convenience struct device pointer for encoder device
-> >>> + * @no_tz:     a flag that suggests presence of trustzone
-> >>
-> >> Looks like it suggests the absence of trustzone?
-> >>
-> >> Actually I would rename it as use_tz and set it if TrustZone is used.
-> >> This would avoid double-negative statements like what we see below.
-> >
-> > I find this suggestion reasonable.
->
-> Initially i planned to keep it as a positive flag. The reason behind
-> keeping it
-> as no_tz was to keep the default value of this flag to 0 indicating tz
-> is present
-> by default.
-> I can switch it to use_tz though and set it in firmware_init after the
-> presence of
-> firmware node is checked.
+Clang warns when more than one set of parentheses are used in single
+conditional statements.
 
-Making sure the flag is explicitly initialized instead of relying on
-default initialization is another good reason to have that change
-IMHO. :)
+drivers/infiniband/hw/mlx4/mcg.c:676:16: warning: equality comparison
+with extraneous parentheses [-Wparentheses-equality]
+                        if ((method == IB_MGMT_METHOD_GET_RESP)) {
+                             ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/infiniband/hw/mlx4/mcg.c:676:16: note: remove extraneous
+parentheses around the comparison to silence this warning
+                        if ((method == IB_MGMT_METHOD_GET_RESP)) {
+                            ~       ^                         ~
+drivers/infiniband/hw/mlx4/mcg.c:676:16: note: use '=' to turn this
+equality comparison into an assignment
+                        if ((method == IB_MGMT_METHOD_GET_RESP)) {
+                                    ^~
+                                    =
 
->
-> >>
-> >>>   * @lock:      a lock for this strucure
-> >>>   * @instances: a list_head of all instances
-> >>>   * @insts_count:       num of instances
-> >>> @@ -129,6 +130,7 @@ struct venus_core {
-> >>>         struct device *dev;
-> >>>         struct device *dev_dec;
-> >>>         struct device *dev_enc;
-> >>> +       bool no_tz;
-> >>>         struct mutex lock;
-> >>>         struct list_head instances;
-> >>>         atomic_t insts_count;
-> >>> diff --git a/drivers/media/platform/qcom/venus/firmware.c
-> >>> b/drivers/media/platform/qcom/venus/firmware.c
-> >>> index c4a5778..f2ae2f0 100644
-> >>> --- a/drivers/media/platform/qcom/venus/firmware.c
-> >>> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> >>> @@ -22,10 +22,43 @@
-> >>>  #include <linux/sizes.h>
-> >>>  #include <linux/soc/qcom/mdt_loader.h>
-> >>>
-> >>> +#include "core.h"
-> >>>  #include "firmware.h"
-> >>> +#include "hfi_venus_io.h"
-> >>>
-> >>>  #define VENUS_PAS_ID                   9
-> >>>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
-> >>> +#define VENUS_FW_START_ADDR            0x0
-> >>> +
-> >>> +static void venus_reset_cpu(struct venus_core *core)
-> >>> +{
-> >>> +       void __iomem *base = core->base;
-> >>> +
-> >>> +       writel(0, base + WRAPPER_FW_START_ADDR);
-> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
-> >>> +       writel(0, base + WRAPPER_CPA_START_ADDR);
-> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
-> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
-> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
-> >>> +       writel(0x0, base + WRAPPER_CPU_CGC_DIS);
-> >>> +       writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
-> >>> +
-> >>> +       /* Bring ARM9 out of reset */
-> >>> +       writel(0, base + WRAPPER_A9SS_SW_RESET);
-> >>> +}
-> >>> +
-> >>> +int venus_set_hw_state(struct venus_core *core, bool resume)
-> >>> +{
-> >>> +       if (!core->no_tz)
-> >>
-> >> This is the kind of double negative statement I was referring do
-> >> above: "if we do not not have TrustZone". Turning it into
-> >>
-> >>     if (core->use_tz)
-> >>
-> >> would save the reader a few neurons. :)
-> >>
-> >>> +               return qcom_scm_set_remote_state(resume, 0);
-> >>> +
-> >>> +       if (resume)
-> >>> +               venus_reset_cpu(core);
-> >>> +       else
-> >>> +               writel(1, core->base + WRAPPER_A9SS_SW_RESET);
-> >>> +
-> >>> +       return 0;
-> >>> +}
-> >>>
-> >>>  int venus_boot(struct device *dev, const char *fwname)
-> >>>  {
-> >>> diff --git a/drivers/media/platform/qcom/venus/firmware.h
-> >>> b/drivers/media/platform/qcom/venus/firmware.h
-> >>> index 428efb5..397570c 100644
-> >>> --- a/drivers/media/platform/qcom/venus/firmware.h
-> >>> +++ b/drivers/media/platform/qcom/venus/firmware.h
-> >>> @@ -18,5 +18,16 @@
-> >>>
-> >>>  int venus_boot(struct device *dev, const char *fwname);
-> >>>  int venus_shutdown(struct device *dev);
-> >>> +int venus_set_hw_state(struct venus_core *core, bool suspend);
-> >>> +
-> >>> +static inline int venus_set_hw_state_suspend(struct venus_core
-> >>> *core)
-> >>> +{
-> >>> +       return venus_set_hw_state(core, false);
-> >>> +}
-> >>> +
-> >>> +static inline int venus_set_hw_state_resume(struct venus_core *core)
-> >>> +{
-> >>> +       return venus_set_hw_state(core, true);
-> >>> +}
-> >>
-> >> I think these two venus_set_hw_state_suspend() and
-> >> venus_set_hw_state_resume() are superfluous, if you want to make the
-> >> state explicit you can also define an enum { SUSPEND, RESUME } to use
-> >> as argument of venus_set_hw_state() and call it directly.
-> >
-> > Infact this was by my request, and I wanted to avoid enum and have the
-> > type of the action in the function name and also avoid one extra
-> > function argument. Of course it is a matter of taste.
+Remove the unnecessary parentheses to silence this warning.
 
-That's reasonable as well. I really don't feel strongly about this, so
-please feel free to keep it as it is.
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/infiniband/hw/mlx4/mcg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mlx4/mcg.c b/drivers/infiniband/hw/mlx4/mcg.c
+index 81ffc007e0a1..d844831179cf 100644
+--- a/drivers/infiniband/hw/mlx4/mcg.c
++++ b/drivers/infiniband/hw/mlx4/mcg.c
+@@ -673,7 +673,7 @@ static void mlx4_ib_mcg_work_handler(struct work_struct *work)
+ 			if (!list_empty(&group->pending_list))
+ 				req = list_first_entry(&group->pending_list,
+ 						struct mcast_req, group_list);
+-			if ((method == IB_MGMT_METHOD_GET_RESP)) {
++			if (method == IB_MGMT_METHOD_GET_RESP) {
+ 					if (req) {
+ 						send_reply_to_slave(req->func, group, &req->sa_mad, status);
+ 						--group->func[req->func].num_pend_reqs;
+-- 
+2.19.0
+
