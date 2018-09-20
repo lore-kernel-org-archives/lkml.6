@@ -2,128 +2,275 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73B4ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A864BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 936C4206B5
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QtwElgx6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936C4206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6673A2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6673A2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732047AbeITXEt (ORCPT
+        id S1732601AbeITXFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:04:49 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45157 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731271AbeITXEs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:04:48 -0400
-Received: by mail-pl1-f194.google.com with SMTP id j8-v6so4638317pll.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NaOfTbA5BHfEo4zV49s3Hc2oVirXXIQsKVy7HL8tknw=;
-        b=QtwElgx6osfgEjtI8U932YUq8N3vjzkQMPnrcxBefrPbBaUVKCBeYCb+a/vPEd5OON
-         dGno6CudZaRmM/ZBvTLAAZE+7GrZKpLbq8ct9xDMYiKixHOLNCllYw+c9Ax4jWUwcyuY
-         A4TEQJgCadVIAqsqNMVARqTk8R8zCt2/LrKOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NaOfTbA5BHfEo4zV49s3Hc2oVirXXIQsKVy7HL8tknw=;
-        b=cIuXjKKH+IuX1GBiCF3sJZKdizK1ZgG+4osjOpiSkEupd/mKjmf1DWUSTBazOrfG/9
-         Gc13MlQBpV4EIUrhO+LSGeNVpvGUQp44K4/6201/CQqoGwChdInTYVcTcMuiCZteQDw5
-         iAWnEk3RbFfa5KQoQC43Jq5R9naQBhe4sI/C33zbXwtjILOhWKmK+pvl/Mf4pWWyZOzD
-         XkAb3McAyre9rddfdUG7x9t8Iym57mvvMBiS9oR82zptURWH6Fz2WHAspo1v1BgrhbLt
-         4NguTPuKt6++EIEkgvwg8NV9JTECXOVxNMUhDO3O/JU7HCtG7Ly1oN//EdNpsW3AhriA
-         eeMg==
-X-Gm-Message-State: APzg51Bpn9FkINv8OxUiIbAYB5hc8nqKo82KEc/0LPL8yPi5/VRkGozK
-        6r2WAkKYW9GdoRvASgl1BtMbKw==
-X-Google-Smtp-Source: ANB0Vdaxp6bZSVApsbO/Q344nyoakXnno+U45uLTio1o00Wm2NeM1araWmgrAYwLQJnC0E52GDFz6g==
-X-Received: by 2002:a17:902:7e09:: with SMTP id b9-v6mr40080518plm.221.1537464019170;
-        Thu, 20 Sep 2018 10:20:19 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c28-v6sm8059228pgn.65.2018.09.20.10.20.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:20:18 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom: pas: Add QCS404 remoteprocs
-Date:   Thu, 20 Sep 2018 10:22:37 -0700
-Message-Id: <20180920172237.30965-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Thu, 20 Sep 2018 19:05:25 -0400
+Received: from mga03.intel.com ([134.134.136.65]:12331 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbeITXFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 19:05:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 10:19:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
+   d="scan'208";a="258930067"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga005.jf.intel.com with ESMTP; 20 Sep 2018 10:19:52 -0700
+Date:   Thu, 20 Sep 2018 10:21:14 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, tianyu.lan@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org, jacob.jun.pan@linux.intel.com
+Subject: Re: [RFC v2 01/20] iommu: Introduce bind_pasid_table API
+Message-ID: <20180920102114.23e15767@jacob-builder>
+In-Reply-To: <20180918142457.3325-2-eric.auger@redhat.com>
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+        <20180918142457.3325-2-eric.auger@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Govind Singh <govinds@codeaurora.org>
+On Tue, 18 Sep 2018 16:24:38 +0200
+Eric Auger <eric.auger@redhat.com> wrote:
 
-Add compatibles for the three PAS based remote processors found in
-QCS404.
+> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> 
+> In virtualization use case, when a guest is assigned
+> a PCI host device, protected by a virtual IOMMU on a guest,
+> the physical IOMMU must be programmed to be consistent with
+> the guest mappings. If the physical IOMMU supports two
+> translation stages it makes sense to program guest mappings
+> onto the first stage/level (ARM/VTD terminology) while to host
+> owns the stage/level 2.
+> 
+> In that case, it is mandated to trap on guest configuration
+> settings and pass those to the physical iommu driver.
+> 
+> This patch adds a new API to the iommu subsystem that allows
+> to bind and unbind the guest configuration data to the host.
+> 
+> A generic iommu_pasid_table_config struct is introduced in
+> a new iommu.h uapi header. This is going to be used by the VFIO
+> user API. We foresee at least two specializations of this struct,
+> for PASID table passing and ARM SMMUv3.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> In practice, I think it would be simpler to have a single
+> set_pasid_table function instead of bind/unbind. The "bypass" field
+> tells the stage 1 is bypassed (equivalent to the unbind actually).
+> On userspace we have notifications that the device context has
+> changed. Calling either bind or unbind requires to have an understand
+> of what was the previous state and call different notifiers. So to me
+> the bind/unbind complexifies the user integration while not bring much
+> benefits.
+> 
+I don't have strong preference and I think having a single function
+makes sense. In VT-d2, the bind/unbind operation is a result of PASID
+cache invalidation from the guest. So there is no symmetrical
+bind/unbin user calls.
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
-[bjorn: Added adsp and cdsp to the patch]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  3 +++
- drivers/remoteproc/qcom_adsp_pil.c                   | 12 ++++++++++++
- 2 files changed, 15 insertions(+)
+> This patch generalizes the API introduced by Jacob & co-authors in
+> https://lwn.net/Articles/754331/
+> 
+> v1 -> v2:
+> - restore the original pasid table name
+> - remove the struct device * parameter in the API
+> - reworked iommu_pasid_smmuv3
+> ---
+>  drivers/iommu/iommu.c      | 19 ++++++++++++++
+>  include/linux/iommu.h      | 21 +++++++++++++++
+>  include/uapi/linux/iommu.h | 52
+> ++++++++++++++++++++++++++++++++++++++ 3 files changed, 92
+> insertions(+) create mode 100644 include/uapi/linux/iommu.h
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 8c15c5980299..db2c7c9502ae 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1362,6 +1362,25 @@ int iommu_attach_device(struct iommu_domain
+> *domain, struct device *dev) }
+>  EXPORT_SYMBOL_GPL(iommu_attach_device);
+>  
+> +int iommu_bind_pasid_table(struct iommu_domain *domain,
+> +			   struct iommu_pasid_table_config *cfg)
+> +{
+> +	if (unlikely(!domain->ops->bind_pasid_table))
+> +		return -ENODEV;
+> +
+> +	return domain->ops->bind_pasid_table(domain, cfg);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_bind_pasid_table);
+> +
+> +void iommu_unbind_pasid_table(struct iommu_domain *domain)
+> +{
+> +	if (unlikely(!domain->ops->unbind_pasid_table))
+> +		return;
+> +
+> +	domain->ops->unbind_pasid_table(domain);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_unbind_pasid_table);
+> +
+>  static void __iommu_detach_device(struct iommu_domain *domain,
+>  				  struct device *dev)
+>  {
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 87994c265bf5..e56cad4863f7 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -25,6 +25,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> +#include <uapi/linux/iommu.h>
+>  
+>  #define IOMMU_READ	(1 << 0)
+>  #define IOMMU_WRITE	(1 << 1)
+> @@ -185,6 +186,8 @@ struct iommu_resv_region {
+>   * @domain_get_windows: Return the number of windows for a domain
+>   * @of_xlate: add OF master IDs to iommu grouping
+>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+> + * @bind_pasid_table: bind pasid table
+> + * @unbind_pasid_table: unbind pasid table and restore defaults
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(enum iommu_cap);
+> @@ -231,6 +234,10 @@ struct iommu_ops {
+>  	int (*of_xlate)(struct device *dev, struct of_phandle_args
+> *args); bool (*is_attach_deferred)(struct iommu_domain *domain,
+> struct device *dev); 
+> +	int (*bind_pasid_table)(struct iommu_domain *domain,
+> +				struct iommu_pasid_table_config
+> *cfg);
+> +	void (*unbind_pasid_table)(struct iommu_domain *domain);
+> +
+>  	unsigned long pgsize_bitmap;
+>  };
+>  
+> @@ -292,6 +299,9 @@ extern int iommu_attach_device(struct
+> iommu_domain *domain, struct device *dev);
+>  extern void iommu_detach_device(struct iommu_domain *domain,
+>  				struct device *dev);
+> +extern int iommu_bind_pasid_table(struct iommu_domain *domain,
+> +				  struct iommu_pasid_table_config
+> *cfg); +extern void iommu_unbind_pasid_table(struct iommu_domain
+> *domain); extern struct iommu_domain *iommu_get_domain_for_dev(struct
+> device *dev); extern int iommu_map(struct iommu_domain *domain,
+> unsigned long iova, phys_addr_t paddr, size_t size, int prot);
+> @@ -684,6 +694,17 @@ const struct iommu_ops
+> *iommu_ops_from_fwnode(struct fwnode_handle *fwnode) return NULL;
+>  }
+>  
+> +static inline
+> +int iommu_bind_pasid_table(struct iommu_domain *domain,
+> +			   struct iommu_pasid_table_config *cfg)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline
+> +void iommu_unbind_pasid_table(struct iommu_domain *domain)
+> +{
+> +}
+> +
+>  #endif /* CONFIG_IOMMU_API */
+>  
+>  #ifdef CONFIG_IOMMU_DEBUGFS
+> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> new file mode 100644
+> index 000000000000..babec91ae7e1
+> --- /dev/null
+> +++ b/include/uapi/linux/iommu.h
+> @@ -0,0 +1,52 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * IOMMU user API definitions
+> + *
+> + *
+> + * This program is free software; you can redistribute it and/or
+> modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _UAPI_IOMMU_H
+> +#define _UAPI_IOMMU_H
+> +
+> +#include <linux/types.h>
+> +
+> +/**
+> + * SMMUv3 Stream Table Entry stage 1 related information
+> + * @s1contextptr: Context Descriptor Table GPA
+> + * @abort: shall the STE lead to abort
+> + * @s1fmt: STE s1fmt field as set by the guest
+> + * @s1cdmax: STE s1cdmax as set by the guest
+> + * @s1dss: STE s1dss as set by the guest
+> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
+> + */
+> +struct iommu_pasid_smmuv3 {
+> +	__u64 s1contextptr;
+> +	__u8 bypass;
+> +	__u8 abort;
+> +	__u8 s1fmt;
+> +	__u8 s1cdmax;
+> +	__u8 s1dss;
+> +};
+> +
+> +/**
+> + * PASID table data used to bind guest PASID table to the host IOMMU
+> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
+> + *
+> + * @version: API version to prepare for future extensions
+> + * @format: format of the PASID table
+> + *
+> + */
+> +struct iommu_pasid_table_config {
+don;t you need some vendor neutral data such as 
+ * @base_ptr:	PASID table pointer
+ * @pasid_bits:	number of bits supported in the guest PASID table, must be less
+ *		or equal than the host supported PASID size.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index b7d058228185..9c0cff3a5ed8 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -10,6 +10,9 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,msm8974-adsp-pil"
- 		    "qcom,msm8996-adsp-pil"
- 		    "qcom,msm8996-slpi-pil"
-+		    "qcom,qcs404-adsp-pas"
-+		    "qcom,qcs404-cdsp-pas"
-+		    "qcom,qcs404-wcss-pas"
- 		    "qcom,sdm845-adsp-pas"
- 		    "qcom,sdm845-cdsp-pas"
- 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index da2254ea1135..fcbb816a9698 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -362,10 +362,22 @@ static const struct adsp_data slpi_resource_init = {
- 		.ssctl_id = 0x16,
- };
- 
-+static const struct adsp_data wcss_resource_init = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "wcnss.mdt",
-+	.pas_id = 6,
-+	.ssr_name = "mpss",
-+	.sysmon_name = "wlan",
-+	.ssctl_id = 0x12,
-+};
-+
- static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
-+	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
-+	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
-+	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
- 	{ },
--- 
-2.18.0
+
+> +#define PASID_TABLE_CFG_VERSION_1 1
+> +	__u32 version;
+> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
+> +	__u32 format;
+> +	union {
+> +		struct iommu_pasid_smmuv3 smmuv3;
+> +	};
+> +};
+> +
+> +#endif /* _UAPI_IOMMU_H */
 
