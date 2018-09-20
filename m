@@ -2,111 +2,115 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF592ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156AEECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB0C21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C010A21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:27:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KiAGorQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB0C21523
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u0nJOx2i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C010A21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388491AbeIUDMG (ORCPT
+        id S2388611AbeIUDMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 23:12:06 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41761 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeIUDMG (ORCPT
+        Thu, 20 Sep 2018 23:12:44 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35264 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUDMn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 23:12:06 -0400
-Received: by mail-qk1-f193.google.com with SMTP id n3-v6so6332059qkn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 14:26:36 -0700 (PDT)
+        Thu, 20 Sep 2018 23:12:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o18-v6so1034365wmc.0;
+        Thu, 20 Sep 2018 14:27:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=C65gcnhzFZDrTXelwDqfRuHxABI0s98NpgZXKP8xF8c=;
-        b=KiAGorQh9C3OOh63iZ3begYbjdaS3jVMeUFWvvjasiYjcROsW8A2m3V7cXdhzRRWoh
-         vgQxzoKGxheHhQTft4szSitsOdlNPmeT2DfWrRkAUvUz4dWpIKccbDLxUJ0U7E4KuJJa
-         1yS1SkaCt/opkszbGWT1c95LASoZpiCEwZ9fiH422PTWwe2C1E1ZE1Xm64b8wYahp73w
-         hW5Gf+XZ1jOoxaxaBiSZLjQFxSODiiautZpCdAiu0EaLZSbT3DjAuulU2lb9OZaAdZBh
-         HHkoW+KFO19AQjK06HqMFSqNF3tX+DyxifOh6QG7IXb1t0fRzIMn/pw/si6eicIHYjiw
-         W22A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tVgVxlfs9vyZxkaXlAYhWNe23avDgzXcpA7xki/Hwcc=;
+        b=u0nJOx2iFV2gqRt6aHZJPzxnX7QIMvoqL5+G+yD+lmVDpNGg0JAk3wOyNy01tTyVmM
+         COcbO4OImsMnuA8B4rTfEwujF18IxpnTnGM3jAvMjANp/qbb9GiMe0o81dxd6L/HisbY
+         txHk+sRAThu4VlJDWo/qZAHhjX23X7Wj36p0qZrn3SoXB5U5uHp2qpB4McHsla6hIZPC
+         anVo4BKMf3JvoJ4+2KfpOBKx3H39MA1pzKQsPzpZ8D5lvljzFdckWeK619IUAKbtW+SD
+         lgrf4qSXeM/31QZFXhkICZnsgRBYD61u45A/XDrTyLk8oXJ53e4ikSWw8gYlorvvigml
+         4AmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=C65gcnhzFZDrTXelwDqfRuHxABI0s98NpgZXKP8xF8c=;
-        b=aU6x2Ru5JHgypIyLhihWPtGLsGVpoLHn+AoqS7NzCDAoi1DHmcDL2SCrBbVFm7R9Tv
-         6cOpQ09jcpMhSmPMy7Zvx0uTYTOZ27GNX+t2Ds8qmM8Ec+UQvf0HoyrJZCV4vFzHmY5E
-         hPW+0yrfK9q8vAo/Ao6aUjXGRZqrUEPHDoSJ1ojyqbYEEMuoY0xn5qzBpDrW5hbc2l83
-         rbda7fcWaml/Kx9LsFElxDk2zUVGgqFe+yiIsvsR5MGS/xrFsk1PrgBo3Dc5+8jgipoA
-         Z66TbbYtlWU9xVPP7b4VdqioSsVhJ6pE8JMzVI8dSs2WEr84ocwOC8xQolrCbTDd4H7T
-         z0VA==
-X-Gm-Message-State: APzg51Dd3p9GHOSXV+jyL5SBoiD+svZuUHO6o/bryVNBVo8W8SeW7W7E
-        jqgxrOXkWzznR4FKyTen1IBS+WrwNCQhQvNIMqE=
-X-Google-Smtp-Source: ANB0VdZhGiKjeIHG8bLIUkuWpNieRNcqWTXsZiKvcWb+A/9SBLxY9FaEr+Ka/bDZ4kWjCEp7SAxpFwXDLxH93qJU+P8=
-X-Received: by 2002:ac8:34ce:: with SMTP id x14-v6mr4308377qtb.115.1537478796567;
- Thu, 20 Sep 2018 14:26:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tVgVxlfs9vyZxkaXlAYhWNe23avDgzXcpA7xki/Hwcc=;
+        b=ZyUazKdcoPKHEEgQngNROxZk0sWzROKuzK44JlmHkPSmvh77SHyUAl+O8zv4hCBqUQ
+         xshhocmd+BT+Dqf41RLJTx3HVgP7XZJm9feSN5MKYfaglg2PapubGIy+yFr7FEY1Y7EC
+         ocqAPL6OAENTepszx3YCWHLd6tGG8l7PA5fQA4xuyKqZaClVhdGuQITWDKcv8O42BFOD
+         P/FOm6EnqzY/T6M9k3uVm2j8K4j3if6aonAfn4TJDvHMJt3Et/IbvkdcLDhqbPdYskIo
+         vTNy3bf40EmMrN47C4a1JsZw5bjIieRNsxifGto1IduQOp6dDy8qGQ62EJZxjHm0WFO+
+         ef7Q==
+X-Gm-Message-State: APzg51A3HwQ+GJhRcbEhAGgtNsT6R6gjxXcVlkXPil4FfokD3NBz5MGY
+        BzqTUb49FzYCsr4t7MCXR/o=
+X-Google-Smtp-Source: ACcGV61A82vlDNqkpaILXHB15MhgygtR53OPwyX8RnyRCgVfMNtNXPG/OXX29+NY1w0f1ZV+FsPBUA==
+X-Received: by 2002:a1c:87ca:: with SMTP id j193-v6mr4674673wmd.76.1537478832059;
+        Thu, 20 Sep 2018 14:27:12 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 198-v6sm4945313wmm.0.2018.09.20.14.27.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 14:27:11 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] staging: wilc1000: Remove unnecessary pointer check
+Date:   Thu, 20 Sep 2018 14:26:49 -0700
+Message-Id: <20180920212648.25181-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 14:26:16
- -0700 (PDT)
-In-Reply-To: <20180920202316.GA6038@jordon-HP-15-Notebook-PC>
-References: <20180920202316.GA6038@jordon-HP-15-Notebook-PC>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 20 Sep 2018 23:26:16 +0200
-Message-ID: <CANiq72kQA45ekbSruh-zTsc9B-9EOxZna=cOgOcM7--owxrWsA@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay/cfag12864bfb.c: Replace vm_insert_page
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     willy@infradead.org, linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 10:23 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> There is a plan to remove vm_insert_page permanently
-> and replace it with new API vmf_insert_page which will
-> return vm_fault_t type. As part of it vm_insert_page
-> is removed from this driver.
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-A link to the discussion/plan would be nice. The commit 1c8f422059ae5
-("mm: change return type to vm_fault_t") explains a bit, but has a
-broken link :( Googling for the stuff returns many of the patches, but
-not the actual discussion...
+drivers/staging/wilc1000/linux_wlan.c:267:20: warning: address of
+'vif->ndev->dev' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (!(&vif->ndev->dev))
+            ~  ~~~~~~~~~~~^~~
+1 warning generated.
 
->  static int cfag12864bfb_mmap(struct fb_info *info, struct vm_area_struct *vma)
->  {
-> -       return vm_insert_page(vma, vma->vm_start,
-> -               virt_to_page(cfag12864b_buffer));
-> +       struct page *page;
-> +       unsigned long size = vma->vm_end - vma->vm_start;
-> +
-> +       page = virt_to_page(cfag12864b_buffer);
-> +       return remap_pfn_range(vma, vma->vm_start, page_to_pfn(page),
-> +                               size, vma->vm_page_prot);
+Since this statement always evaluates to false due to the logical not,
+remove it.
 
-I am out of the loop on these mm changes, so please indulge me, but:
+Link: https://github.com/ClangBuiltLinux/linux/issues/121
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/staging/wilc1000/linux_wlan.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-  * Why is there no documentation on vmf_insert_page() while
-vm_insert_page() had it? (specially since it seems you want to remove
-vm_insert_page()).
+diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
+index 49afda669393..323593440e40 100644
+--- a/drivers/staging/wilc1000/linux_wlan.c
++++ b/drivers/staging/wilc1000/linux_wlan.c
+@@ -264,9 +264,6 @@ static int wilc_wlan_get_firmware(struct net_device *dev)
+ 
+ 	netdev_info(dev, "loading firmware %s\n", firmware);
+ 
+-	if (!(&vif->ndev->dev))
+-		goto fail;
+-
+ 	if (request_firmware(&wilc_firmware, firmware, wilc->dev) != 0) {
+ 		netdev_err(dev, "%s - firmware not available\n", firmware);
+ 		ret = -1;
+-- 
+2.19.0
 
-  * Shouldn't we have a simple remap_page() or remap_kernel_page() to
-fit this use case and avoid that dance? (another driver in auxdisplay
-will require the same change, and I guess others in the kernel as
-well).
-
-Thanks!
-
-Cheers,
-Miguel
